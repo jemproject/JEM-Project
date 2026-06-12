@@ -12,13 +12,32 @@ use Joomla\CMS\Language\Text;
 
 $languages = !empty($this->customFieldLanguages) ? $this->customFieldLanguages : array('en-GB');
 $config = is_array($this->customFieldsConfig) ? $this->customFieldsConfig : array();
+$legacyValues = JemCustomFields::getLegacyLanguageValues($languages);
 
-$renderTable = function ($context) use ($languages, $config) {
+$renderTable = function ($context) use ($languages, $config, $legacyValues) {
     $contextLabel = $context === 'event' ? Text::_('COM_JEM_EVENTS') : Text::_('COM_JEM_VENUES');
     ?>
+    <div class="d-flex justify-content-end mb-2">
+        <button type="button"
+                class="btn btn-outline-secondary btn-sm jem-custom-fields-load-language"
+                data-context="<?php echo htmlspecialchars($context, ENT_QUOTES, 'UTF-8'); ?>">
+            <?php echo Text::_('COM_JEM_CUSTOM_FIELDS_LOAD_LANGUAGE'); ?>
+        </button>
+    </div>
     <div class="table-responsive">
-        <table class="table table-striped table-sm align-middle jem-custom-fields-settings">
+        <table class="table table-striped table-sm align-middle jem-custom-fields-settings"
+               style="--jem-custom-field-language-count: <?php echo max(1, count($languages)); ?>;">
             <caption class="visually-hidden"><?php echo htmlspecialchars($contextLabel, ENT_QUOTES, 'UTF-8'); ?></caption>
+            <colgroup>
+                <col class="jem-custom-fields-slot-col">
+                <?php foreach (array('enabled', 'show_backend', 'show_frontend_edit', 'show_detail', 'hide_empty') as $flag) : ?>
+                    <col class="jem-custom-fields-flag-col">
+                <?php endforeach; ?>
+                <?php foreach ($languages as $language) : ?>
+                    <col class="jem-custom-fields-label-col">
+                    <col class="jem-custom-fields-description-col">
+                <?php endforeach; ?>
+            </colgroup>
             <thead>
                 <tr>
                     <th scope="col"><?php echo Text::_('COM_JEM_CUSTOM_FIELD_SLOT'); ?></th>
@@ -28,8 +47,8 @@ $renderTable = function ($context) use ($languages, $config) {
                     <th scope="col" class="jem-custom-fields-flag" title="<?php echo Text::_('COM_JEM_CUSTOM_FIELD_SHOW_DETAIL'); ?>"><?php echo Text::_('COM_JEM_CUSTOM_FIELD_DETAIL_SHORT'); ?></th>
                     <th scope="col" class="jem-custom-fields-flag" title="<?php echo Text::_('COM_JEM_CUSTOM_FIELD_HIDE_EMPTY'); ?>"><?php echo Text::_('COM_JEM_CUSTOM_FIELD_EMPTY_SHORT'); ?></th>
                     <?php foreach ($languages as $language) : ?>
-                        <th scope="col"><?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?> <?php echo Text::_('COM_JEM_CUSTOM_FIELD_LABEL'); ?></th>
-                        <th scope="col"><?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?> <?php echo Text::_('COM_JEM_CUSTOM_FIELD_DESCRIPTION'); ?></th>
+                        <th scope="col" class="jem-custom-fields-label"><?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?> <?php echo Text::_('COM_JEM_CUSTOM_FIELD_LABEL'); ?></th>
+                        <th scope="col" class="jem-custom-fields-description"><?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?> <?php echo Text::_('COM_JEM_CUSTOM_FIELD_DESCRIPTION'); ?></th>
                     <?php endforeach; ?>
                 </tr>
             </thead>
@@ -58,15 +77,23 @@ $renderTable = function ($context) use ($languages, $config) {
                             </td>
                         <?php endforeach; ?>
                         <?php foreach ($languages as $language) : ?>
-                            <td>
+                            <td class="jem-custom-fields-label">
                                 <input type="text"
                                        class="form-control form-control-sm"
+                                       data-context="<?php echo $context; ?>"
+                                       data-field="<?php echo $field; ?>"
+                                       data-kind="labels"
+                                       data-language="<?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?>"
                                        name="jem_custom_fields[<?php echo $context; ?>][<?php echo $field; ?>][labels][<?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?>]"
                                        value="<?php echo htmlspecialchars($fieldConfig['labels'][$language] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             </td>
-                            <td>
+                            <td class="jem-custom-fields-description">
                                 <input type="text"
                                        class="form-control form-control-sm"
+                                       data-context="<?php echo $context; ?>"
+                                       data-field="<?php echo $field; ?>"
+                                       data-kind="descriptions"
+                                       data-language="<?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?>"
                                        name="jem_custom_fields[<?php echo $context; ?>][<?php echo $field; ?>][descriptions][<?php echo htmlspecialchars($language, ENT_QUOTES, 'UTF-8'); ?>]"
                                        value="<?php echo htmlspecialchars($fieldConfig['descriptions'][$language] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             </td>
@@ -82,9 +109,6 @@ $renderTable = function ($context) use ($languages, $config) {
 
 <style>
     .jem-custom-fields-settings .jem-custom-fields-flag {
-        width: 2.85rem;
-        min-width: 2.85rem;
-        max-width: 2.85rem;
         text-align: center;
         vertical-align: middle;
         white-space: normal;
@@ -95,21 +119,59 @@ $renderTable = function ($context) use ($languages, $config) {
         padding-right: .2rem;
     }
 
+    .jem-custom-fields-settings .jem-custom-fields-slot-col,
     .jem-custom-fields-settings th:first-child,
     .jem-custom-fields-settings td:first-child {
         width: 4.75rem;
         min-width: 4.75rem;
     }
 
-    .jem-custom-fields-settings th:not(.jem-custom-fields-flag):not(:first-child),
-    .jem-custom-fields-settings td:not(.jem-custom-fields-flag):not(:first-child) {
-        min-width: 11.5rem;
+    .jem-custom-fields-settings .jem-custom-fields-flag-col,
+    .jem-custom-fields-settings .jem-custom-fields-flag {
+        width: 2.85rem;
+        min-width: 2.85rem;
+        max-width: 2.85rem;
+    }
+
+    .jem-custom-fields-settings .jem-custom-fields-label-col,
+    .jem-custom-fields-settings th.jem-custom-fields-label,
+    .jem-custom-fields-settings td.jem-custom-fields-label {
+        width: 8rem;
+        min-width: 8rem;
+    }
+
+    .jem-custom-fields-settings .jem-custom-fields-description-col,
+    .jem-custom-fields-settings th.jem-custom-fields-description,
+    .jem-custom-fields-settings td.jem-custom-fields-description {
+        width: 16rem;
+        min-width: 16rem;
     }
 
     .jem-custom-fields-settings th,
     .jem-custom-fields-settings td {
-        padding-left: .25rem;
-        padding-right: .25rem;
+        padding-left: .15rem;
+        padding-right: .15rem;
+    }
+
+    .jem-custom-fields-settings th.jem-custom-fields-label,
+    .jem-custom-fields-settings td.jem-custom-fields-label {
+        padding-right: 0;
+    }
+
+    .jem-custom-fields-settings th.jem-custom-fields-description,
+    .jem-custom-fields-settings td.jem-custom-fields-description {
+        padding-left: 0;
+        padding-right: .65rem;
+    }
+
+    .jem-custom-fields-settings td.jem-custom-fields-label .form-control-sm {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .jem-custom-fields-settings td.jem-custom-fields-description .form-control-sm {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 
     .jem-custom-fields-settings thead th {
@@ -118,15 +180,51 @@ $renderTable = function ($context) use ($languages, $config) {
     }
 
     .jem-custom-fields-settings .form-control-sm {
-        min-width: 10.25rem;
-        max-width: 10.75rem;
+        width: 100%;
+        min-width: 8.5rem;
     }
 
     .jem-custom-fields-settings {
-        width: max-content;
-        min-width: 100%;
+        width: 100%;
+        min-width: max(100%, calc(19rem + (var(--jem-custom-field-language-count) * 24rem)));
+        table-layout: fixed;
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var legacyValues = <?php echo json_encode($legacyValues, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
+    document.querySelectorAll('.jem-custom-fields-load-language').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var context = button.getAttribute('data-context');
+            var filled = 0;
+
+            document.querySelectorAll('.jem-custom-fields-settings input[data-context="' + context + '"]').forEach(function (input) {
+                var field = input.getAttribute('data-field');
+                var kind = input.getAttribute('data-kind');
+                var language = input.getAttribute('data-language');
+                var value = legacyValues[context]
+                    && legacyValues[context][field]
+                    && legacyValues[context][field][kind]
+                    && legacyValues[context][field][kind][language]
+                    ? legacyValues[context][field][kind][language]
+                    : '';
+
+                if (value !== '' && input.value.trim() === '') {
+                    input.value = value;
+                    filled++;
+                }
+            });
+
+            if (filled > 0) {
+                button.classList.remove('btn-outline-secondary');
+                button.classList.add('btn-success');
+            }
+        });
+    });
+});
+</script>
 
 <div class="alert alert-info">
     <?php echo Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS_DESC'); ?>

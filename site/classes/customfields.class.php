@@ -15,6 +15,18 @@ use Joomla\CMS\Language\Text;
  */
 class JemCustomFields
 {
+    /**
+     * Cached legacy language files read from INI and Joomla overrides.
+     *
+     * @var array
+     */
+    protected static $languageFileCache = array();
+
+    /**
+     * Return the decoded custom field settings.
+     *
+     * @return array
+     */
     public static function getConfig()
     {
         $settings = JemHelper::config();
@@ -57,6 +69,13 @@ class JemCustomFields
         return is_array($decoded) ? $decoded : array();
     }
 
+    /**
+     * Normalise posted settings before they are stored in JSON.
+     *
+     * @param   array  $posted  Posted custom field settings.
+     *
+     * @return array
+     */
     public static function normaliseConfig($posted)
     {
         $posted = is_array($posted) ? $posted : array();
@@ -69,6 +88,7 @@ class JemCustomFields
             for ($i = 1; $i <= 10; $i++) {
                 $field = 'custom' . $i;
                 $source = isset($posted[$context][$field]) && is_array($posted[$context][$field]) ? $posted[$context][$field] : array();
+
                 $labels = array();
                 $descriptions = array();
 
@@ -100,24 +120,70 @@ class JemCustomFields
         return $config;
     }
 
+    /**
+     * Return active Joomla language tags.
+     *
+     * @return array
+     */
     public static function getLanguageTags()
     {
-        $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(array(0, 1), false);
         $tags = array();
 
-        foreach ($languages as $language) {
-            if (!empty($language->lang_code)) {
-                $tags[] = $language->lang_code;
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('lang_code'))
+                ->from($db->quoteName('#__languages'))
+                ->where($db->quoteName('published') . ' = 1')
+                ->order($db->quoteName('ordering') . ' ASC');
+            $db->setQuery($query);
+            $languages = (array) $db->loadColumn();
+
+            foreach ($languages as $language) {
+                if (!empty($language) && self::hasLegacyLanguageIni($language)) {
+                    $tags[] = $language;
+                }
+            }
+        } catch (Exception $e) {
+            $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(array(1), false);
+
+            foreach ($languages as $language) {
+                if (!empty($language->lang_code) && self::hasLegacyLanguageIni($language->lang_code)) {
+                    $tags[] = $language->lang_code;
+                }
             }
         }
 
         if (!$tags) {
-            $tags[] = Factory::getApplication()->getLanguage()->getTag();
+            $language = Factory::getApplication()->getLanguage()->getTag();
+
+            if (self::hasLegacyLanguageIni($language)) {
+                $tags[] = $language;
+            }
         }
 
         return array_values(array_unique($tags));
     }
 
+    protected static function hasLegacyLanguageIni($language)
+    {
+        foreach (self::getLegacyLanguageFiles($language) as $file) {
+            if (is_file($file)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get a single field configuration with defaults.
+     *
+     * @param   string  $context  event or venue.
+     * @param   string  $field    custom1..custom10.
+     *
+     * @return array
+     */
     public static function getFieldConfig($context, $field)
     {
         $config = self::getConfig();
@@ -142,6 +208,46 @@ class JemCustomFields
     public static function getDescription($context, $field, $fallback = '')
     {
         return self::getTranslatedValue($context, $field, 'descriptions', $fallback);
+    }
+
+    /**
+     * Return legacy INI labels/descriptions for the settings preload button.
+     *
+     * @param   array  $languages  Language tags to export.
+     *
+     * @return array
+     */
+    public static function getLegacyLanguageValues(array $languages = array())
+    {
+        $languages = $languages ?: self::getLanguageTags();
+        $values = array();
+
+        foreach (array('event', 'venue') as $context) {
+            $values[$context] = array();
+
+            for ($i = 1; $i <= 10; $i++) {
+                $field = 'custom' . $i;
+                $values[$context][$field] = array(
+                    'labels'       => array(),
+                    'descriptions' => array(),
+                );
+
+                foreach ($languages as $language) {
+                    $label = self::getLegacyLanguageValue($context, $field, 'labels', $language, true);
+                    $description = self::getLegacyLanguageValue($context, $field, 'descriptions', $language, true);
+
+                    if ($label !== '') {
+                        $values[$context][$field]['labels'][$language] = $label;
+                    }
+
+                    if ($description !== '') {
+                        $values[$context][$field]['descriptions'][$language] = $description;
+                    }
+                }
+            }
+        }
+
+        return $values;
     }
 
     public static function isVisible($context, $field, $scope)
@@ -208,6 +314,12 @@ class JemCustomFields
             }
         }
 
+        $legacyValue = self::getLegacyLanguageValue($context, $field, $key, $language);
+
+        if ($legacyValue !== '') {
+            return $legacyValue;
+        }
+
         return $fallback;
     }
 
@@ -216,5 +328,184 @@ class JemCustomFields
         $languages = self::getLanguageTags();
 
         return $languages[0] ?? Factory::getApplication()->getLanguage()->getTag();
+    }
+
+    protected static function getLegacyLanguageValue($context, $field, $key, $language, $customOnly = false)
+    {
+        $languageKey = self::getLegacyLanguageKey($context, $field, $key);
+
+        if ($languageKey === '') {
+            return '';
+        }
+
+        if ($customOnly) {
+            return self::getCustomLegacyLanguageValue($languageKey, $language);
+        }
+
+        $fallback = '';
+
+        foreach (self::getLegacyLanguageFiles($language) as $file) {
+            $strings = self::loadLegacyLanguageFile($file);
+
+            if (!isset($strings[$languageKey])) {
+                continue;
+            }
+
+            $value = trim((string) $strings[$languageKey]);
+
+            if ($value === '') {
+                continue;
+            }
+
+            if (self::isCustomLegacyValue($context, $field, $key, $value)) {
+                return $value;
+            }
+
+            if ($fallback === '') {
+                $fallback = $value;
+            }
+        }
+
+        return $fallback;
+    }
+
+    protected static function getCustomLegacyLanguageValue($languageKey, $language)
+    {
+        $default = self::getPackageLanguageValue($languageKey, $language);
+
+        foreach (self::getCustomLanguageFiles($language) as $file) {
+            $strings = self::loadLegacyLanguageFile($file);
+
+            if (!isset($strings[$languageKey])) {
+                continue;
+            }
+
+            $value = trim((string) $strings[$languageKey]);
+
+            if ($value === '') {
+                continue;
+            }
+
+            if ($default === '' || $value !== $default) {
+                return $value;
+            }
+        }
+
+        return '';
+    }
+
+    protected static function getLegacyLanguageKey($context, $field, $key)
+    {
+        if (!preg_match('/^custom([1-9]|10)$/', $field, $matches)) {
+            return '';
+        }
+
+        $prefix = strtolower($context) === 'venue' ? 'COM_JEM_VENUE_CUSTOM_FIELD' : 'COM_JEM_EVENT_CUSTOM_FIELD';
+        $suffix = $key === 'descriptions' ? '_DESC' : '';
+
+        return $prefix . (int) $matches[1] . $suffix;
+    }
+
+    protected static function getLegacyLanguageFiles($language)
+    {
+        $app = Factory::getApplication();
+        $isAdmin = method_exists($app, 'isClient') ? $app->isClient('administrator') : $app->isAdmin();
+
+        $adminOverride = JPATH_ADMINISTRATOR . '/language/overrides/' . $language . '.override.ini';
+        $siteOverride = JPATH_SITE . '/language/overrides/' . $language . '.override.ini';
+        $adminIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/com_jem.ini';
+        $adminTaggedIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.com_jem.ini';
+        $siteIni = JPATH_SITE . '/language/' . $language . '/com_jem.ini';
+        $siteTaggedIni = JPATH_SITE . '/language/' . $language . '/' . $language . '.com_jem.ini';
+        $adminComponentIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
+        $adminComponentPlainIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/com_jem.ini';
+        $siteComponentIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
+        $siteComponentPlainIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/com_jem.ini';
+
+        return $isAdmin
+            ? array($adminOverride, $siteOverride, $adminIni, $adminTaggedIni, $siteIni, $siteTaggedIni, $adminComponentIni, $adminComponentPlainIni, $siteComponentIni, $siteComponentPlainIni)
+            : array($siteOverride, $adminOverride, $siteIni, $siteTaggedIni, $adminIni, $adminTaggedIni, $siteComponentIni, $siteComponentPlainIni, $adminComponentIni, $adminComponentPlainIni);
+    }
+
+    protected static function getCustomLanguageFiles($language)
+    {
+        $app = Factory::getApplication();
+        $isAdmin = method_exists($app, 'isClient') ? $app->isClient('administrator') : $app->isAdmin();
+
+        $adminOverride = JPATH_ADMINISTRATOR . '/language/overrides/' . $language . '.override.ini';
+        $siteOverride = JPATH_SITE . '/language/overrides/' . $language . '.override.ini';
+        $adminIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/com_jem.ini';
+        $adminTaggedIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.com_jem.ini';
+        $siteIni = JPATH_SITE . '/language/' . $language . '/com_jem.ini';
+        $siteTaggedIni = JPATH_SITE . '/language/' . $language . '/' . $language . '.com_jem.ini';
+
+        return $isAdmin
+            ? array($adminOverride, $siteOverride, $adminIni, $adminTaggedIni, $siteIni, $siteTaggedIni)
+            : array($siteOverride, $adminOverride, $siteIni, $siteTaggedIni, $adminIni, $adminTaggedIni);
+    }
+
+    protected static function getPackageLanguageValue($languageKey, $language)
+    {
+        $app = Factory::getApplication();
+        $isAdmin = method_exists($app, 'isClient') ? $app->isClient('administrator') : $app->isAdmin();
+
+        $adminComponentIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
+        $adminComponentPlainIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/com_jem.ini';
+        $siteComponentIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
+        $siteComponentPlainIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/com_jem.ini';
+        $files = $isAdmin
+            ? array($adminComponentIni, $adminComponentPlainIni, $siteComponentIni, $siteComponentPlainIni)
+            : array($siteComponentIni, $siteComponentPlainIni, $adminComponentIni, $adminComponentPlainIni);
+
+        foreach ($files as $file) {
+            $strings = self::loadLegacyLanguageFile($file);
+
+            if (!empty($strings[$languageKey])) {
+                return trim((string) $strings[$languageKey]);
+            }
+        }
+
+        return '';
+    }
+
+    protected static function loadLegacyLanguageFile($file)
+    {
+        if (isset(self::$languageFileCache[$file])) {
+            return self::$languageFileCache[$file];
+        }
+
+        if (!is_file($file) || !is_readable($file)) {
+            self::$languageFileCache[$file] = array();
+
+            return array();
+        }
+
+        $parsed = @parse_ini_file($file, false, INI_SCANNER_RAW);
+        self::$languageFileCache[$file] = is_array($parsed) ? $parsed : array();
+
+        return self::$languageFileCache[$file];
+    }
+
+    protected static function getDefaultLegacyValue($context, $field, $key)
+    {
+        if (!preg_match('/^custom([1-9]|10)$/', $field, $matches)) {
+            return '';
+        }
+
+        $number = (int) $matches[1];
+        $contextLabel = strtolower($context) === 'venue' ? 'Venue' : 'Event';
+
+        return $contextLabel . ' Custom Field ' . $number . ($key === 'descriptions' ? ' Description' : '');
+    }
+
+    protected static function isCustomLegacyValue($context, $field, $key, $value)
+    {
+        $default = self::getDefaultLegacyValue($context, $field, $key);
+
+        if ($default === '') {
+            return false;
+        }
+
+        return trim((string) $value) !== $default;
     }
 }
