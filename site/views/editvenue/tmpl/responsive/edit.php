@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -298,24 +298,24 @@ $location = JemHelper::defineCenterMap($this->form);
                         <dl class="adminformlist jem-dl">
                             <dt><label><?php echo Text::_('COM_JEM_STREET'); ?></label></dt>
                             <dd>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_street" />
                                 <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
                                 <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
                             </dd>
                             <dt><label><?php echo Text::_('COM_JEM_ZIP'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_postalCode" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_CITY'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_city" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_STATE'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_state" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_VENUE'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_venue" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_country" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_latitude" /></dd>
                             <dt><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label></dt>
-                            <dd><input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" /></dd>
+                            <dd><input type="text" class="inputbox" id="tmp_form_longitude" /></dd>
                         </dl>
 
                         <div style="clear: both;"><br></div>
