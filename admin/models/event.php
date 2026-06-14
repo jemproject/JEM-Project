@@ -351,6 +351,11 @@ class JemModelEvent extends JemModelAdmin
         if (array_key_exists('article_id', $data)) {
             $data['article_id'] = (int) $data['article_id'];
         }
+        $customFieldErrors = array();
+        if (!JemCustomFields::validateAndSanitizeData('event', $data, $customFieldErrors)) {
+            $this->setError(implode('<br>', $customFieldErrors));
+            return false;
+        }
         if (!$this->validateOnlineMeetingData($data)) {
             return false;
         }

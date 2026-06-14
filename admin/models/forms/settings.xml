@@ -1323,6 +1323,18 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="global_venue_custom_fields_position" type="list"
+                label="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
+            </field>
 
             <field name="global_show_detlinkvenue" type="radio"
                 label="COM_JEM_DISPLAY_LINK_TO_VENUE"
@@ -1401,6 +1413,18 @@
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
+            </field>
+            <field name="event_custom_fields_position" type="list"
+                label="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
             </field>
             <field name="show_date_in_title" type="radio"
                    class="btn-group btn-group-yesno"

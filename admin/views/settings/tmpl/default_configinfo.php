@@ -8,7 +8,17 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+
+$logPath = Factory::getApplication()->get('log_path', JPATH_ADMINISTRATOR . '/logs');
+$logFiles = array(
+    array(
+        'file' => 'jem.log.php',
+        'source' => Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE_COMPONENT'),
+        'condition' => Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION_LOGLEVEL'),
+    ),
+);
 
 ?>
 <div class="width-100" style="padding: 10px 1vw;">
@@ -72,6 +82,24 @@ use Joomla\CMS\Language\Text;
                         <td colspan="3"><b><?php echo $this->config->vs_gd; ?> </b></td>
                     </tr>
                 </table>
+        </fieldset>
+        <fieldset class="options-form">
+            <legend><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_FILES'); ?></legend>
+            <p><?php echo Text::sprintf('COM_JEM_CONFIGINFO_LOG_PATH', htmlspecialchars($logPath, ENT_QUOTES, 'UTF-8')); ?></p>
+            <table class="adminlist table">
+                <tr>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_FILE'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION'); ?></u></th>
+                </tr>
+                <?php foreach ($logFiles as $logFile) : ?>
+                    <tr>
+                        <td><code><?php echo htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'); ?></code></td>
+                        <td><?php echo $logFile['source']; ?></td>
+                        <td><?php echo $logFile['condition']; ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
         </fieldset>
     </div>
 </div>

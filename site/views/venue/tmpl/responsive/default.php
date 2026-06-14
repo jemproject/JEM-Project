@@ -13,6 +13,21 @@ use Joomla\CMS\Language\Text;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
+$venueCustomFieldsPosition = (string) $this->settings->get('global_venue_custom_fields_position', 'details');
+if (!in_array($venueCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
+    $venueCustomFieldsPosition = 'details';
+}
+$venueCustomFieldsRows = JemCustomFields::renderDetailRows('venue', $this->venue, 'COM_JEM_VENUE_CUSTOM_FIELD', 'custom', true);
+$renderVenueCustomFieldsBlock = function () use ($venueCustomFieldsRows) {
+    if ($venueCustomFieldsRows === '') {
+        return '';
+    }
+
+    return '<div class="jem-custom-fields jem-venue-custom-fields">'
+        . '<dl class="jem-dl">' . $venueCustomFieldsRows . '</dl>'
+        . '</div>';
+};
+
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . (int) $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
     <div class="buttons">
@@ -180,19 +195,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
           <?php endif; ?>
 
           <?php
-          for ($cr = 1; $cr <= 10; $cr++) {
-            $fieldName = 'custom' . $cr;
-            $currentRow = $this->venue->{$fieldName};
-            if (preg_match('%^http(s)?://%', $currentRow)) {
-              $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
-            }
-            if ($currentRow && JemCustomFields::isVisible('venue', $fieldName, 'detail')) {
-              $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
-            ?>
-            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo $this->escape($fieldLabel); ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
-            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-            <?php
-            }
+          if ($venueCustomFieldsPosition === 'details') {
+            echo $venueCustomFieldsRows;
           }
           ?>
 
@@ -242,6 +246,10 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
         </div>
     <?php endif; ?>
 
+    <?php if ($venueCustomFieldsPosition === 'before_description') : ?>
+        <?php echo $renderVenueCustomFieldsBlock(); ?>
+    <?php endif; ?>
+
     <?php if ($this->settings->get('global_show_locdescription', 1) && $this->venuedescription != '' &&
               $this->venuedescription != '<br>') : ?>
 
@@ -249,6 +257,14 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
         <div class="description no_space floattext" itemprop="description">
             <?php echo $this->venuedescription; ?>
         </div>
+    <?php endif; ?>
+
+    <?php if ($venueCustomFieldsPosition === 'after_description') : ?>
+        <?php echo $renderVenueCustomFieldsBlock(); ?>
+    <?php endif; ?>
+
+    <?php if ($venueCustomFieldsPosition === 'after_links') : ?>
+        <?php echo $renderVenueCustomFieldsBlock(); ?>
     <?php endif; ?>
 
     <?php $this->attachments = $this->venue->attachments; ?>

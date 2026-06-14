@@ -15,6 +15,8 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
 
 $options = array(
@@ -353,7 +355,15 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
                     <div id="custom" class="accordion-collapse collapse" aria-labelledby="custom-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <ul class="adminformlist">
-                                <?php foreach($this->form->getFieldset('custom') as $field): ?>
+                                <?php
+                                $customFields = array();
+                                foreach ($this->form->getFieldset('custom') as $field) {
+                                    $customFields[$field->fieldname] = $field;
+                                }
+                                ?>
+                                <?php foreach(JemCustomFields::getOrderedFields('event', 'backend') as $fieldName): ?>
+                                    <?php if (empty($customFields[$fieldName])) continue; ?>
+                                    <?php $field = $customFields[$fieldName]; ?>
                                     <li><?php echo $field->label; ?> <?php echo $field->input; ?>
                                     </li>
                                 <?php endforeach; ?>

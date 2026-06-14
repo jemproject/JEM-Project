@@ -2169,12 +2169,89 @@ div#jem .inline-button-right {
     flex-wrap: wrap;
 }
 
+#jem .jem-customfields-edit {
+    margin: 0;
+    padding: 0;
+}
+
+#jem .jem-customfields-edit li {
+    display: grid;
+    grid-template-columns: minmax(12rem, 12rem) minmax(0, 1fr);
+    gap: .45rem 1rem;
+    align-items: start;
+    margin: 0 0 .55rem 0;
+}
+
+#jem.jem_editevent .edit form ul.adminformlist.jem-customfields-edit li,
+#jem.jem_editvenue .edit form ul.adminformlist.jem-customfields-edit li {
+    display: grid;
+    grid-template-columns: minmax(12rem, 12rem) minmax(0, 1fr);
+    flex-wrap: nowrap;
+}
+
+#jem .jem-customfields-edit .jem-customfield-label {
+    padding-top: .25rem;
+}
+
+#jem .jem-customfields-edit .jem-customfield-label label {
+    float: none;
+    display: inline;
+    min-width: 0;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]),
+#jem .jem-customfields-edit .jem-customfield-input select,
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]) {
+    min-width: 16rem;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input select {
+    min-width: 14rem;
+    width: auto;
+    padding-right: 2.75rem;
+    text-overflow: ellipsis;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    width: 100%;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+@media (max-width: 640px) {
+    #jem .jem-customfields-edit li {
+        grid-template-columns: 1fr;
+    }
+
+    #jem .jem-customfields-edit .jem-customfield-input select,
+    #jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]),
+    #jem .jem-customfields-edit .jem-customfield-input textarea {
+        width: 100%;
+    }
+}
+
 #jem.jem_editevent .edit form select[id^="filter_"], #jem.jem_editevent .edit form select, #jem.jem_editevent .edit form input[id^="filter_"] {
     min-width: 70px;
 }
 
 #jem.jem_editevent .edit form input:not([type="checkbox"]):not([type="file"]) {
     width: auto;
+}
+
+#jem.jem_editevent .edit form .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem.jem_editevent .edit form .jem-customfields-edit .jem-customfield-input textarea,
+#jem.jem_editvenue .edit form .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem.jem_editvenue .edit form .jem-customfields-edit .jem-customfield-input textarea {
+    width: 100%;
 }
 
 #jem.jem_editevent .edit form .form-check .form-check-input {

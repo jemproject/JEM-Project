@@ -68,6 +68,44 @@ if ($jemsettings->oldevent > 0) {
     $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 
+$eventCustomFieldsPosition = (string) $params->get('event_custom_fields_position', $this->settings->get('event_custom_fields_position', 'details'));
+if (!in_array($eventCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
+    $eventCustomFieldsPosition = 'details';
+}
+$venueCustomFieldsPosition = (string) $this->settings->get('global_venue_custom_fields_position', 'details');
+if (!in_array($venueCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
+    $venueCustomFieldsPosition = 'details';
+}
+$eventCustomFieldsRows = JemCustomFields::renderDetailRows('event', $this->item, 'COM_JEM_EVENT_CUSTOM_FIELD', 'jem-custom', true);
+$renderEventCustomFieldsBlock = function () use ($eventCustomFieldsRows) {
+    if ($eventCustomFieldsRows === '') {
+        return '';
+    }
+
+    return '<div class="jem-custom-fields jem-event-custom-fields">'
+        . '<dl class="jem-dl">' . $eventCustomFieldsRows . '</dl>'
+        . '</div>';
+};
+$eventVenueCustomFieldsRows = '';
+foreach (JemCustomFields::getOrderedFields('venue', 'detail') as $fieldName) {
+    $cr = (int) substr($fieldName, 6);
+    $currentRow = JemCustomFields::renderValue('venue', $fieldName, $this->item->{'venue'.$cr});
+    if ($currentRow) {
+        $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
+        $eventVenueCustomFieldsRows .= '<dt class="custom' . $cr . ' hasTooltip" data-original-title="' . $this->escape($fieldLabel) . '">' . $this->escape($fieldLabel) . ':</dt>'
+            . '<dd class="custom' . $cr . '">' . $currentRow . '</dd>';
+    }
+}
+$renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRows) {
+    if ($eventVenueCustomFieldsRows === '') {
+        return '';
+    }
+
+    return '<div class="jem-custom-fields jem-venue-custom-fields">'
+        . '<dl class="jem-dl">' . $eventVenueCustomFieldsRows . '</dl>'
+        . '</div>';
+};
+
 ?>
 <style>
     .col-category {
@@ -241,20 +279,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         echo '</dd>';
                         endif;
 
-                        for ($cr = 1; $cr <= 10; $cr++) {
-                        $fieldName = 'custom' . $cr;
-                        $currentRow = $this->item->{$fieldName};
-                        if (preg_match('%^http(s)?://%', $currentRow)) {
-                            $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+                        if ($eventCustomFieldsPosition === 'details') {
+                            echo $eventCustomFieldsRows;
                         }
-                        if ($currentRow && JemCustomFields::isVisible('event', $fieldName, 'detail')) {
-                            $fieldLabel = JemCustomFields::getLabel('event', $fieldName, Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr));
-                        ?>
-                    <dt class="jem-custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo $this->escape($fieldLabel); ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
-                    <dd class="jem-custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                <?php
-                }
-                }
                 ?>
 
                     <?php if ($params->get('event_show_hits')) : ?>
@@ -346,6 +373,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </div>
         </div>
 
+        <?php if ($eventCustomFieldsPosition === 'before_description') : ?>
+            <?php echo $renderEventCustomFieldsBlock(); ?>
+        <?php endif; ?>
+
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
         <?php
@@ -364,6 +395,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         echo $this->item->fulltext;
                     } else {
                         echo $this->item->text;
+                    }
+
+                    if ($eventCustomFieldsPosition === 'after_description') {
+                        echo $renderEventCustomFieldsBlock();
                     }
 
                     if ($showOnlineMeeting) :
@@ -650,6 +685,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </div>
         <?php } ?>
 
+        <?php if ($eventCustomFieldsPosition === 'after_links') : ?>
+            <?php echo $renderEventCustomFieldsBlock(); ?>
+        <?php endif; ?>
+
         <!-- CONTACTS -->
         <?php
         $showContactCategory = $params->get('event_show_contact_category');
@@ -843,22 +882,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         </dd>
                                     <?php endif; ?>
 
-                                    <?php
-                                    for ($cr = 1; $cr <= 10; $cr++) {
-                                        $fieldName = 'custom' . $cr;
-                                        $currentRow = $this->item->{'venue'.$cr};
-                                        if (preg_match('%^http(s)?://%', $currentRow)) {
-                                            $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
-                                        }
-                                        if ($currentRow && JemCustomFields::isVisible('venue', $fieldName, 'detail')) {
-                                            $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
-                                            ?>
-                                            <dt class="custom<?php echo $cr; ?> hasTooltip" data-original-title="<?php echo $this->escape($fieldLabel); ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
-                                            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                                            <?php
-                                        }
-                                    }
-                                    ?>
+                                    <?php if ($venueCustomFieldsPosition === 'details') : ?>
+                                        <?php echo $eventVenueCustomFieldsRows; ?>
+                                    <?php endif; ?>
                                     <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
                                         <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                                     <?php endif; ?>
@@ -913,6 +939,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     </div>
                 <?php endif; ?>
 
+                    <?php if ($venueCustomFieldsPosition === 'before_description') : ?>
+                        <?php echo $renderEventVenueCustomFieldsBlock(); ?>
+                    <?php endif; ?>
+
                     <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
                     && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
@@ -920,6 +950,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php echo $this->item->locdescription; ?>
                     </div>
                 <?php endif; ?>
+
+                    <?php if ($venueCustomFieldsPosition === 'after_description' || $venueCustomFieldsPosition === 'after_links') : ?>
+                        <?php echo $renderEventVenueCustomFieldsBlock(); ?>
+                    <?php endif; ?>
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>

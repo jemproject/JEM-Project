@@ -240,6 +240,18 @@ class JemModelSettings extends AdminModel
     }
 
     /**
+     * Store the built-in example custom field configuration.
+     *
+     * @return bool
+     */
+    public function loadExampleCustomFields()
+    {
+        $config = JemConfig::getInstance();
+
+        return $config->set('custom_fields_config', json_encode(JemCustomFields::getExampleConfig())) !== null;
+    }
+
+    /**
      * Persist enabled countries posted from the Countries settings tab.
      *
      * @return bool

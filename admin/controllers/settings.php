@@ -166,4 +166,32 @@ class JemControllerSettings extends BaseController
         $this->setRedirect('index.php?option=com_jem');
     }
 
+    /**
+     * Load the built-in example custom field configuration.
+     */
+    public function loadExampleCustomFields() {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        if (!$this->allowSave()) {
+            $this->setMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+            return false;
+        }
+
+        $model = $this->getModel();
+
+        if (!$model->loadExampleCustomFields()) {
+            $this->setMessage(Text::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+            return false;
+        }
+
+        $this->setMessage(Text::_('COM_JEM_CUSTOM_FIELDS_EXAMPLE_LOADED'));
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+        return true;
+    }
+
 }

@@ -47,6 +47,9 @@ ALTER TABLE #__jem_groupmembers ENGINE=InnoDB;
 ALTER TABLE #__jem_groups ENGINE=InnoDB;
 ALTER TABLE #__jem_register ENGINE=InnoDB;
 ALTER TABLE #__jem_config ENGINE=InnoDB;
+
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_custom_fields_position', 'details');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('global_venue_custom_fields_position', 'details');
 ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
 
