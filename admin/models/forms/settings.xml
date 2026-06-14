@@ -1093,7 +1093,8 @@
                 class="inputbox form-control w-auto"
                 default="{title}"
                 showon="event_use_associated_article:1"
-            />            <field name="event_show_more_information" type="list"
+            />
+            <field name="event_show_more_information" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"
                 class="inputbox form-select w-auto"
@@ -1322,6 +1323,18 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="global_venue_custom_fields_position" type="list"
+                label="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
+            </field>
 
             <field name="global_show_detlinkvenue" type="radio"
                 label="COM_JEM_DISPLAY_LINK_TO_VENUE"
@@ -1400,6 +1413,18 @@
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
+            </field>
+            <field name="event_custom_fields_position" type="list"
+                label="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
             </field>
             <field name="show_date_in_title" type="radio"
                    class="btn-group btn-group-yesno"
@@ -1580,6 +1605,42 @@
         </fieldset>
 
         <fieldset name="evregistration" label="COM_JEM_SETTINGS_EVENT_LINKS">
+            <field name="event_show_online_meeting" type="radio"
+                    label="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_LABEL"
+                    description="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics_description" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+                    showon="event_online_meeting_ics:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_default_label" type="text"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_DESC"
+                    class="inputbox form-control w-auto"
+                    default=""
+                    hint="COM_JEM_JOIN_ONLINE"
+                    showon="event_show_online_meeting:1"
+            />
             <field name="allowed_link_extensions" type="text"
                     label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_LABEL"
                     description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_DESC"

@@ -12,9 +12,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
@@ -146,7 +146,7 @@ class JemHelper
     static public function getAssociatedArticleLink($article)
     {
         if (empty($article)) {
-            return array('link' => '', 'title' => '', 'edit_link' => '', 'can_edit' => false);
+            return array('link' => '', 'title' => '');
         }
 
         $articleSlug = $article->alias ? ((int) $article->id . ':' . $article->alias) : (int) $article->id;
@@ -163,9 +163,139 @@ class JemHelper
     }
 
     /**
-     * Normalize a display option for action links.
+     * Return a sanitized online meeting URL for display and export.
      *
-     * @param   mixed  $value  Module or global parameter value.
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    static public function getOnlineMeetingUrl($event)
+    {
+        $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
+
+        if ($url === '') {
+            return '';
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$scheme || !in_array(strtolower($scheme), array('http', 'https'), true)) {
+            return '';
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+    }
+
+    /**
+     * Return the label used for the online meeting call to action.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    static public function getOnlineMeetingLabel($event)
+    {
+        $label = isset($event->online_meeting_label) ? trim((string) $event->online_meeting_label) : '';
+
+        if ($label === '') {
+            $settings = self::globalattribs();
+            $label = trim((string) $settings->get('event_online_meeting_default_label', ''));
+        }
+
+        if ($label === '') {
+            $label = Text::_('COM_JEM_JOIN_ONLINE');
+        } elseif (strtoupper($label) === $label) {
+            $label = Text::_($label);
+        }
+
+        return $label;
+    }
+
+    /**
+     * Detect the online meeting platform from a URL.
+     *
+     * @param   string  $url  Online meeting URL.
+     *
+     * @return  array
+     */
+    static public function getOnlineMeetingPlatform($url)
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+        $host = preg_replace('/^www\./', '', $host);
+
+        $platforms = array(
+            'zoom' => array(
+                'label' => 'Zoom',
+                'domains' => array('zoom.us')
+            ),
+            'teams' => array(
+                'label' => 'Microsoft Teams',
+                'domains' => array('teams.microsoft.com', 'teams.live.com')
+            ),
+            'meet' => array(
+                'label' => 'Google Meet',
+                'domains' => array('meet.google.com')
+            ),
+            'webex' => array(
+                'label' => 'Cisco Webex',
+                'domains' => array('webex.com')
+            ),
+            'jitsi' => array(
+                'label' => 'Jitsi Meet',
+                'domains' => array('meet.jit.si', 'jitsi.org')
+            ),
+            'bigbluebutton' => array(
+                'label' => 'BigBlueButton',
+                'domains' => array('bigbluebutton.org')
+            ),
+            'gotomeeting' => array(
+                'label' => 'GoTo Meeting',
+                'domains' => array('gotomeeting.com')
+            ),
+            'whereby' => array(
+                'label' => 'Whereby',
+                'domains' => array('whereby.com')
+            ),
+            'discord' => array(
+                'label' => 'Discord',
+                'domains' => array('discord.gg', 'discord.com')
+            ),
+            'youtube' => array(
+                'label' => 'YouTube Live',
+                'domains' => array('youtube.com', 'youtu.be')
+            )
+        );
+
+        foreach ($platforms as $key => $platform) {
+            foreach ($platform['domains'] as $domain) {
+                if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                    return array(
+                        'key' => $key,
+                        'label' => $platform['label'],
+                        'icon' => 'fa fa-video'
+                    );
+                }
+            }
+        }
+
+        if (preg_match('/(^|\.)bbb[.-]/', $host) || strpos($host, 'bigbluebutton') !== false) {
+            return array(
+                'key' => 'bigbluebutton',
+                'label' => 'BigBlueButton',
+                'icon' => 'fa fa-video'
+            );
+        }
+
+        return array(
+            'key' => 'generic',
+            'label' => Text::_('COM_JEM_ONLINE_MEETING'),
+            'icon' => 'fa fa-globe'
+        );
+    }
+
+    /**
+     * Normalize the More information display option.
+     *
+     * @param   mixed  $value  Module parameter value.
      *
      * @return  string  link, button, or empty string when disabled.
      */
@@ -189,7 +319,7 @@ class JemHelper
     }
 
     /**
-     * Build CSS classes for action links.
+     * Build CSS classes for the More information article link.
      *
      * @param   string  $display  Normalized display option.
      * @param   string  $base     Optional base classes.
@@ -205,8 +335,6 @@ class JemHelper
         }
 
         if ($display === 'button') {
-            $classes .= ' jem-more-information-button';
-
             if (!preg_match('/(^|\s)btn(\s|$)/', $base)) {
                 $classes .= ' btn btn-primary btn-sm';
             }
@@ -218,10 +346,10 @@ class JemHelper
     /**
      * Build a stable id for module event action links.
      *
-     * @param   string  $module    Module name.
-     * @param   string  $action    Action name.
-     * @param   mixed   $eventId   Event id.
-     * @param   mixed   $moduleId  Module id.
+     * @param   string  $module   Module name.
+     * @param   string  $action   Action name.
+     * @param   mixed   $eventId  Event id.
+     * @param   mixed   $moduleId Module id.
      *
      * @return  string
      */
@@ -715,7 +843,7 @@ class JemHelper
             }
             if (empty($usage)) {
                 File::delete($fullPath);
-                if (File::exists($fullPaththumb)) {
+                if (is_file($fullPaththumb)) {
                     File::delete($fullPaththumb);
                 }
 
@@ -737,7 +865,7 @@ class JemHelper
                 {
                     if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
                         File::delete($fullPath.$file);
-                        if (File::exists($fullPaththumb.$file)) {
+                        if (is_file($fullPaththumb.$file)) {
                             File::delete($fullPaththumb.$file);
                         }
                     }
@@ -1208,29 +1336,31 @@ class JemHelper
     /**
      * return initialized calendar tool class for ics export
      *
-     * @return object
+     * @return \Kigkonsult\Icalcreator\Vcalendar
      */
     static public function getCalendarTool()
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
+        require_once JPATH_SITE.'/components/com_jem/classes/icalcreator/autoload.php';
         $timezone_name = JemHelper::getTimeZoneName();
 
-        $vcal = new vcalendar();
-        if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
-            Folder::create(JPATH_SITE.'/cache/com_jem');
-        }
-        $vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
-        $vcal->setProperty("calscale", "GREGORIAN");
-        $vcal->setProperty('method', 'PUBLISH');
+        $vcal = \Kigkonsult\Icalcreator\Vcalendar::factory([
+            \Kigkonsult\Icalcreator\IcalInterface::UNIQUE_ID => 'com_jem',
+        ]);
+        $vcal->setCalscale('GREGORIAN');
+        $vcal->setMethod('PUBLISH');
         if ($timezone_name) {
-            $vcal->setProperty("X-WR-TIMEZONE", $timezone_name);
+            $vcal->setXprop('X-WR-TIMEZONE', $timezone_name);
         }
         return $vcal;
     }
 
     static public function icalAddEvent(&$calendartool, $event)
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
+        $language = Factory::getApplication()->getLanguage();
+        $language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true);
+        $language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem', null, true);
+        $language->load('com_jem', JPATH_SITE, null, false);
+
         $jemsettings   = JemHelper::config();
         $timezone_name = JemHelper::getTimeZoneName();
         $config        = Factory::getConfig();
@@ -1255,27 +1385,27 @@ class JemHelper
             $event->enddates = $event->dates;
         }
 
-        // start
+        // validate start date format
         if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->dates, $start_date)) {
             throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
         }
 
-        $date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
-
         // all day event if start time is not set
         if (!$event->times) // all day !
         {
-            $dateparam = array('VALUE' => 'DATE');
+            // build start DateTime (date only)
+            $dtStart      = new \DateTime($event->dates);
+            $dtStartParams = ['VALUE' => 'DATE'];
 
-            // for ical all day events, dtend must be send to the next day
-            $event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
+            // for ical all day events, dtend must be the next day
+            $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
 
             if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-            $dateendparam = array('VALUE' => 'DATE');
+            $dtEnd       = new \DateTime($event->enddates);
+            $dtEndParams = ['VALUE' => 'DATE'];
         }
         else // not all day events, there is a start time
         {
@@ -1283,12 +1413,11 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date['hour'] = $start_time[1];
-            $date['min']  = $start_time[2];
-            $date['sec']  = $start_time[3];
-            $dateparam = array('VALUE' => 'DATE-TIME');
-            if ($jemsettings->ical_tz == 1) {
-                $dateparam['TZID'] = $timezone_name;
+            $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
+            $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
+            $dtStartParams = ['VALUE' => 'DATE-TIME'];
+            if ($jemsettings->ical_tz == 1 && $timezone_name) {
+                $dtStartParams['TZID'] = $timezone_name;
             }
 
             if (!$event->endtimes || $event->endtimes == '00:00:00') {
@@ -1297,37 +1426,58 @@ class JemHelper
 
             // if same day but end time < start time, change end date to +1 day
             if ($event->enddates == $event->dates &&
-                strtotime($event->dates.' '.$event->endtimes) < strtotime($event->dates.' '.$event->times))
+                strtotime($event->dates . ' ' . $event->endtimes) < strtotime($event->dates . ' ' . $event->times))
             {
-                $event->enddates = date('Y-m-d', strtotime($event->enddates.' +1 day'));
+                $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
             }
 
             if (!preg_match('/([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})/', $event->enddates, $end_date)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $date_end = array('year' => $end_date[1], 'month' => $end_date[2], 'day' => $end_date[3]);
-
             if (!preg_match('/([0-9]{2}):([0-9]{2}):([0-9]{2})/', $event->endtimes, $end_time)) {
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date_end['hour'] = $end_time[1];
-            $date_end['min']  = $end_time[2];
-            $date_end['sec']  = $end_time[3];
-            $dateendparam = array('VALUE' => 'DATE-TIME');
-            if ($jemsettings->ical_tz == 1) {
-                $dateendparam['TZID'] = $timezone_name;
+            $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
+            $dtEndParams = ['VALUE' => 'DATE-TIME'];
+            if ($jemsettings->ical_tz == 1 && $timezone_name) {
+                $dtEndParams['TZID'] = $timezone_name;
             }
         }
 
-        // item description text
-        $description = $event->title.'\\n';
-        $description .= Text::_('COM_JEM_CATEGORY').': '.implode(', ', $categories).'\\n';
-
-        $link = $uri->root().JemHelperRoute::getEventRoute($event->slug);
+        $link = $uri->root() . JemHelperRoute::getEventRoute($event->slug);
         $link = Route::_($link);
-        $description .= Text::_('COM_JEM_ICS_LINK').': '.$link.'\\n';
+
+        $onlineMeetingUrl = self::getOnlineMeetingUrl($event);
+        $onlineMeetingLabel = self::getOnlineMeetingLabel($event);
+        $onlineMeetingPlatform = $onlineMeetingUrl !== '' ? self::getOnlineMeetingPlatform($onlineMeetingUrl) : array('key' => '', 'label' => '');
+        $includeOnlineMeetingInIcs = (int) self::globalattribs()->get('event_online_meeting_ics', 1) === 1;
+        $includeOnlineMeetingInDescription = (int) self::globalattribs()->get('event_online_meeting_ics_description', 1) === 1;
+
+        // item description text
+        $description = $event->title . '\\n\\n';
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
+            $description .= Text::_('COM_JEM_ONLINE_MEETING') . ': ' . $onlineMeetingLabel . ' - ' . $onlineMeetingUrl . '\\n';
+        }
+
+        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . '\\n';
+        $description .= Text::_('COM_JEM_ICS_EVENT_LINK') . ': ' . $link . '\\n';
+
+        $htmlDescription = '<html><body>';
+        $htmlDescription .= '<p>' . htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8') . '</p>';
+
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
+            $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ONLINE_MEETING'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+                . '<a href="' . htmlspecialchars($onlineMeetingUrl, ENT_QUOTES, 'UTF-8') . '">'
+                . htmlspecialchars($onlineMeetingLabel, ENT_QUOTES, 'UTF-8') . '</a></p>';
+        }
+
+        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_CATEGORY'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+            . htmlspecialchars(implode(', ', $categories), ENT_QUOTES, 'UTF-8') . '</p>';
+        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ICS_EVENT_LINK'), ENT_QUOTES, 'UTF-8') . ':</strong> '
+            . '<a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '</a></p>';
+        $htmlDescription .= '</body></html>';
 
         // location
         $location = array($event->venue);
@@ -1336,7 +1486,7 @@ class JemHelper
         }
 
         if (isset($event->postalCode) && !empty($event->postalCode) && isset($event->city) && !empty($event->city)) {
-            $location[] = $event->postalCode.' '.$event->city;
+            $location[] = $event->postalCode . ' ' . $event->city;
         } else {
             if (isset($event->postalCode) && !empty($event->postalCode)) {
                 $location[] = $event->postalCode;
@@ -1347,26 +1497,49 @@ class JemHelper
         }
 
         if (isset($event->countryname) && !empty($event->countryname)) {
-            $exp = explode(",",$event->countryname);
+            $exp = explode(",", $event->countryname);
             $location[] = $exp[0];
         }
 
         $location = implode(",", $location);
 
-        $e = new vevent();
-        $e->setProperty('summary', $event->title);
-        $e->setProperty('categories', implode(', ', $categories));
-        $e->setProperty('dtstart', $date, $dateparam);
-        if (count($date_end)) {
-            $e->setProperty('dtend', $date_end, $dateendparam);
+        if ($onlineMeetingUrl !== '') {
+            $onlineLocation = array();
+
+            if (isset($event->venue) && trim((string) $event->venue) !== '') {
+                $onlineLocation[] = trim((string) $event->venue);
+            }
+
+            if (!empty($onlineMeetingPlatform['label'])) {
+                $onlineLocation[] = $onlineMeetingPlatform['label'];
+            }
+
+            $location = $onlineLocation ? implode(' - ', $onlineLocation) : Text::_('COM_JEM_ONLINE_MEETING');
         }
-        $e->setProperty('description', $description);
-        if ($location != '') {
-            $e->setProperty('location', $location);
+
+        // Build vevent using iCalcreator v2.41 API
+        $e = $calendartool->newVevent();
+        $e->setSummary($event->title);
+        $e->setCategories(implode(', ', $categories));
+        $e->setDtstart($dtStart, $dtStartParams);
+        $e->setDtend($dtEnd, $dtEndParams);
+        $e->setDescription($description);
+        $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
+        if ($location !== '') {
+            $e->setLocation($location);
         }
-        $e->setProperty('url', $link);
-        $e->setProperty('uid', 'event'.$event->id.'@'.$sitename);
-        $calendartool->addComponent($e); // add component to calendar
+        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs) {
+            $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
+
+            if ($onlineMeetingPlatform['key'] === 'teams') {
+                $e->setXprop('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
+                $e->setXprop('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
+                $e->setXprop('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
+            }
+        }
+        $e->setUrl($link);
+        $e->setUid('event' . $event->id . '@' . $sitename);
+
         return true;
     }
 
@@ -1664,7 +1837,7 @@ class JemHelper
             # something was filled, now check if we've a valid file
             if ($file) {
                 $file = preg_replace('%^/([^/]*)%', '$1', $file); // remove leading single slash
-                $is_file = File::exists(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
+                $is_file = is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $file);
 
                 if ($is_file) {
                     # at this point we do have a valid file but let's check the extension too.

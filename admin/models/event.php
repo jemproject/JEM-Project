@@ -338,6 +338,11 @@ class JemModelEvent extends JemModelAdmin
         if (array_key_exists('article_id', $data)) {
             $data['article_id'] = (int) $data['article_id'];
         }
+        $customFieldErrors = array();
+        if (!JemCustomFields::validateAndSanitizeData('event', $data, $customFieldErrors)) {
+            $this->setError(implode('<br>', $customFieldErrors));
+            return false;
+        }
 
         $createArticleMode       = isset($data['create_article']) ? (int) $data['create_article'] : 0;
         $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;

@@ -10,12 +10,12 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Date\Date;
 use Joomla\CMS\Uri\Uri;
+
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
 
@@ -262,25 +262,7 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
                     <?php else : ?>
                         <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
-                    <?php if ($this->form->getField('article_id')) : ?>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('article_id'); ?></div></li>
-                        <li>
-                            <div class="label-form">
-                                <?php echo $this->form->renderfield('create_article'); ?>
-                                <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
-                                    <?php echo $articleAutoInfo; ?>
-                                </div>
-                            </div>
-                        </li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('article_target_category_id'); ?></div></li>
-                    <?php endif; ?>
                 </ul>
             </fieldset>
 
@@ -291,6 +273,31 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
                 <?php echo $this->form->getInput('articletext'); ?>
                 <!-- END OF FIELDSET -->
             </fieldset>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'advanced', Text::_('COM_JEM_ADVANCED')); ?>
+            <fieldset class="adminform">
+                <ul class="adminformlist">
+                    <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_url'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_label'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_up'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('publish_down'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_id'); ?></div></li>
+                    <li>
+                        <div class="label-form">
+                            <?php echo $this->form->renderfield('create_article'); ?>
+                            <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
+                                <?php echo $articleAutoInfo; ?>
+                            </div>
+                        </div>
+                    </li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('article_target_category_id'); ?></div></li>
+                </ul>
+            </fieldset>
+
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
@@ -348,7 +355,15 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
                     <div id="custom" class="accordion-collapse collapse" aria-labelledby="custom-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <ul class="adminformlist">
-                                <?php foreach($this->form->getFieldset('custom') as $field): ?>
+                                <?php
+                                $customFields = array();
+                                foreach ($this->form->getFieldset('custom') as $field) {
+                                    $customFields[$field->fieldname] = $field;
+                                }
+                                ?>
+                                <?php foreach(JemCustomFields::getOrderedFields('event', 'backend') as $fieldName): ?>
+                                    <?php if (empty($customFields[$fieldName])) continue; ?>
+                                    <?php $field = $customFields[$fieldName]; ?>
                                     <li><?php echo $field->label; ?> <?php echo $field->input; ?>
                                     </li>
                                 <?php endforeach; ?>
@@ -694,4 +709,3 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
 <script>
     output_recurrencescript();
 </script>
-

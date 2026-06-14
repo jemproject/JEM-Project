@@ -12,6 +12,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 $wa = $this->document->getWebAssetManager();
         $wa->useStyle('jem.geostyle')
             ->useScript('keepalive')
@@ -1059,7 +1061,15 @@ Text::script('JCANCEL');
                             <div class="accordion-body">
                                 <fieldset class="panelform">
                                     <ul class="adminformlist">
-                                        <?php foreach($this->form->getFieldset('custom') as $field): ?>
+                                        <?php
+                                        $customFields = array();
+                                        foreach ($this->form->getFieldset('custom') as $field) {
+                                            $customFields[$field->fieldname] = $field;
+                                        }
+                                        ?>
+                                        <?php foreach(JemCustomFields::getOrderedFields('venue', 'backend') as $fieldName): ?>
+                                            <?php if (empty($customFields[$fieldName])) continue; ?>
+                                            <?php $field = $customFields[$fieldName]; ?>
                                             <li><?php echo $field->label; ?>
                                                 <?php echo $field->input; ?></li>
                                         <?php endforeach; ?>

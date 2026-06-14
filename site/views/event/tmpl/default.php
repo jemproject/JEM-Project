@@ -68,6 +68,44 @@ if ($jemsettings->oldevent > 0) {
     $document->addCustomTag('<meta http-equiv="expires" content="' . $expDate . '"/>');
 }
 
+$eventCustomFieldsPosition = (string) $params->get('event_custom_fields_position', $this->settings->get('event_custom_fields_position', 'details'));
+if (!in_array($eventCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
+    $eventCustomFieldsPosition = 'details';
+}
+$venueCustomFieldsPosition = (string) $this->settings->get('global_venue_custom_fields_position', 'details');
+if (!in_array($venueCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
+    $venueCustomFieldsPosition = 'details';
+}
+$eventCustomFieldsRows = JemCustomFields::renderDetailRows('event', $this->item, 'COM_JEM_EVENT_CUSTOM_FIELD', 'custom');
+$renderEventCustomFieldsBlock = function () use ($eventCustomFieldsRows) {
+    if ($eventCustomFieldsRows === '') {
+        return '';
+    }
+
+    return '<div class="jem-custom-fields jem-event-custom-fields">'
+        . '<dl class="event_info">' . $eventCustomFieldsRows . '</dl>'
+        . '</div>';
+};
+$eventVenueCustomFieldsRows = '';
+foreach (JemCustomFields::getOrderedFields('venue', 'detail') as $fieldName) {
+    $cr = (int) substr($fieldName, 6);
+    $currentRow = JemCustomFields::renderValue('venue', $fieldName, $this->item->{'venue'.$cr});
+    if ($currentRow) {
+        $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
+        $eventVenueCustomFieldsRows .= '<dt class="custom' . $cr . '">' . $this->escape($fieldLabel) . ':</dt>'
+            . '<dd class="custom' . $cr . '">' . $currentRow . '</dd>';
+    }
+}
+$renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRows) {
+    if ($eventVenueCustomFieldsRows === '') {
+        return '';
+    }
+
+    return '<div class="jem-custom-fields jem-venue-custom-fields">'
+        . '<dl class="location">' . $eventVenueCustomFieldsRows . '</dl>'
+        . '</div>';
+};
+
 ?>
 
 <style>
@@ -194,13 +232,13 @@ if ($jemsettings->oldevent > 0) {
     <div id="jem" class="event_id<?php echo $this->item->did; ?> jem_event<?php echo $this->pageclass_sfx;?>"
          itemscope="itemscope" itemtype="https://schema.org/Event">
 
-        
         <?php if ($this->params->get('showintrotext')) : ?>
             <div class="description no_space floattext">
                 <?php echo $this->params->get('introtext'); ?>
             </div>
         <?php endif; ?>
-<meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
+
+        <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
         <meta itemprop="eventStatus" content="<?php echo $eventStatusOption['schema']; ?>" />
         <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
@@ -314,34 +352,6 @@ if ($jemsettings->oldevent > 0) {
                 </dd>
             <?php endif;
 
-            if (empty($this->item->locid)) : ?>
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                    <meta itemprop="name" content="None"/>
-                </div>
-
-            <?php else : ?>
-                <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;">
-                    <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
-                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display: none;">
-                        <?php if ($this->item->street) : ?>
-                            <meta itemprop="streetAddress" content="<?php echo $this->escape($this->item->street); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->postalCode) : ?>
-                            <meta itemprop="postalCode" content="<?php echo $this->escape($this->item->postalCode); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->city) : ?>
-                            <meta itemprop="addressLocality" content="<?php echo $this->escape($this->item->city); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->state) : ?>
-                            <meta itemprop="addressRegion" content="<?php echo $this->escape($this->item->state); ?>">
-                        <?php endif; ?>
-                        <?php if ($this->item->country) : ?>
-                            <meta itemprop="addressCountry" content="<?php echo $this->escape($this->item->country); ?>">
-                        <?php endif; ?>
-                    </div>
-                </div>
-            <?php endif;
-
             $n = is_array($this->categories) ? count($this->categories) : 0;
             if ($params->get('event_show_category') == 1) : ?>
 
@@ -361,21 +371,10 @@ if ($jemsettings->oldevent > 0) {
                 echo '</dd>';
                 endif;
 
-                for ($cr = 1; $cr <= 10; $cr++) {
-                $fieldName = 'custom' . $cr;
-                $currentRow = $this->item->{$fieldName};
-                if (preg_match('%^http(s)?://%', $currentRow)) {
-                    $currentRow = '<a href="'.$this->escape($currentRow).'" target="_blank">'.$this->escape($currentRow).'</a>';
+                if ($eventCustomFieldsPosition === 'details') {
+                    echo $eventCustomFieldsRows;
                 }
-                if ($currentRow && JemCustomFields::isVisible('event', $fieldName, 'detail')) {
-                $fieldLabel = JemCustomFields::getLabel('event', $fieldName, Text::_('COM_JEM_EVENT_CUSTOM_FIELD'.$cr));
                 ?>
-            <dt class="custom<?php echo $cr; ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
-            <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-        <?php
-        }
-        }
-        ?>
 
             <?php if ($params->get('event_show_hits')) : ?>
                 <dt class="hits"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>
@@ -450,9 +449,17 @@ if ($jemsettings->oldevent > 0) {
         </dl>
         </div>
 
+        <?php if ($eventCustomFieldsPosition === 'before_description') : ?>
+            <?php echo $renderEventCustomFieldsBlock(); ?>
+        <?php endif; ?>
+
         <!-- DESCRIPTION -->
         <?php $hasDescription = ($this->item->fulltext != '' && $this->item->fulltext != '<br>') || ($this->item->introtext != '' && $this->item->introtext != '<br>'); ?>
-        <?php if (($params->get('event_show_description','1') && $hasDescription) || !empty($this->event_links)) { ?>
+        <?php
+        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($this->item);
+        $showOnlineMeeting = $onlineMeetingUrl !== '' && (int) $params->get('event_show_online_meeting', '1') === 1;
+        ?>
+        <?php if (($params->get('event_show_description','1') && $hasDescription) || $showOnlineMeeting || !empty($this->event_links)) { ?>
             <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
@@ -466,7 +473,32 @@ if ($jemsettings->oldevent > 0) {
                         echo $this->item->text;
                     }
 
-                    if (!empty($this->event_links)) : ?>
+                    if ($eventCustomFieldsPosition === 'after_description') {
+                        echo $renderEventCustomFieldsBlock();
+                    }
+
+                    if ($showOnlineMeeting) :
+                        $onlineMeetingLabel = JemHelper::getOnlineMeetingLabel($this->item);
+                        $onlineMeetingPlatform = JemHelper::getOnlineMeetingPlatform($onlineMeetingUrl);
+                        $onlineMeetingPlatformKey = preg_replace('/[^a-z0-9_-]/i', '', $onlineMeetingPlatform['key']);
+                        ?>
+                        <fieldset id="jem-event-online-meeting-<?php echo (int) $this->item->id; ?>"
+                                  class="jem-online-meeting jem-online-meeting-<?php echo $this->escape($onlineMeetingPlatformKey); ?>">
+                            <legend><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+                            <a id="jem-event-online-meeting-link-<?php echo (int) $this->item->id; ?>"
+                               class="jem-online-meeting-link btn btn-primary"
+                               href="<?php echo $this->escape($onlineMeetingUrl); ?>"
+                               target="_blank"
+                               title="<?php echo $this->escape($onlineMeetingPlatform['label']); ?>"
+                               rel="noopener noreferrer">
+                                <span class="jem-online-meeting-icon <?php echo $this->escape($onlineMeetingPlatform['icon']); ?>" aria-hidden="true"></span>
+                                <span class="visually-hidden"><?php echo $this->escape($onlineMeetingPlatform['label']); ?>: </span>
+                                <?php echo $this->escape($onlineMeetingLabel); ?>
+                            </a>
+                        </fieldset>
+                    <?php endif; ?>
+
+                    <?php if (!empty($this->event_links)) : ?>
                         <?php
                         // Default icons by action type.
                         $defaultLinkTypes = array(
@@ -670,8 +702,9 @@ if ($jemsettings->oldevent > 0) {
 
                             <?php endforeach; ?>
                         </div>
-                    <?php endif;
+                    <?php endif; ?>
 
+                    <?php
                     $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
                     $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
                     if ($moreInformationText === '') {
@@ -728,6 +761,10 @@ if ($jemsettings->oldevent > 0) {
                 ?>
             </div>
         <?php } ?>
+
+        <?php if ($eventCustomFieldsPosition === 'after_links') : ?>
+            <?php echo $renderEventCustomFieldsBlock(); ?>
+        <?php endif; ?>
 
         <!-- CONTACTS -->
         <?php
@@ -927,22 +964,9 @@ if ($jemsettings->oldevent > 0) {
                             </dd>
                         <?php endif; ?>
 
-                        <?php
-                        for ($cr = 1; $cr <= 10; $cr++) {
-                            $fieldName = 'custom' . $cr;
-                            $currentRow = $this->item->{'venue'.$cr};
-                            if (preg_match('%^http(s)?://%', $currentRow)) {
-                                $currentRow = '<a href="' . $this->escape($currentRow) . '" target="_blank">' . $this->escape($currentRow) . '</a>';
-                            }
-                            if ($currentRow && JemCustomFields::isVisible('venue', $fieldName, 'detail')) {
-                                $fieldLabel = JemCustomFields::getLabel('venue', $fieldName, Text::_('COM_JEM_VENUE_CUSTOM_FIELD'.$cr));
-                                ?>
-                                <dt class="custom<?php echo $cr; ?>"><?php echo $this->escape($fieldLabel); ?>:</dt>
-                                <dd class="custom<?php echo $cr; ?>"><?php echo $currentRow; ?></dd>
-                                <?php
-                            }
-                        }
-                        ?>
+                        <?php if ($venueCustomFieldsPosition === 'details') : ?>
+                            <?php echo $eventVenueCustomFieldsRows; ?>
+                        <?php endif; ?>
 
                         <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
                             <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
@@ -968,12 +992,20 @@ if ($jemsettings->oldevent > 0) {
                     <?php endif; ?>
                 <?php endif; /* event_show_detailsadress */ ?>
 
+                <?php if ($venueCustomFieldsPosition === 'before_description') : ?>
+                    <?php echo $renderEventVenueCustomFieldsBlock(); ?>
+                <?php endif; ?>
+
                 <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
                     && $this->item->locdescription != '<br>') : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>
+                <?php endif; ?>
+
+                <?php if ($venueCustomFieldsPosition === 'after_description' || $venueCustomFieldsPosition === 'after_links') : ?>
+                    <?php echo $renderEventVenueCustomFieldsBlock(); ?>
                 <?php endif; ?>
 
                 <?php $this->attachments = $this->item->vattachments; ?>

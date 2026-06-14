@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 $max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields', -1); // default to All
 ?>
 
@@ -19,12 +21,20 @@ $max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields',
         <legend><?php echo Text::_('COM_JEM_EDITVENUE_CUSTOMFIELDS'); ?></legend>
         <dl class="adminformlist jem-dl-long">
             <?php
-            $fields = $this->form->getFieldset('custom');
+            $fields = array();
+            foreach ($this->form->getFieldset('custom') as $field) {
+                $fields[$field->fieldname] = $field;
+            }
+            $orderedFields = JemCustomFields::getOrderedFields('venue', 'frontend_edit');
             if ($max_custom_fields < 0) :
-                $max_custom_fields = count($fields);
+                $max_custom_fields = count($orderedFields);
             endif;
             $cnt = 0;
-            foreach ($fields as $field) :
+            foreach ($orderedFields as $fieldName) :
+                if (empty($fields[$fieldName])) :
+                    continue;
+                endif;
+                $field = $fields[$fieldName];
                 if (++$cnt <= $max_custom_fields) :
                     ?>
                     <dt><?php echo $field->label; ?></dt>

@@ -399,6 +399,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('defaultCategory', '0'),
 ('defaultVenue', '0'),
 ('event_show_venue', '1'),
+('event_custom_fields_position', 'details'),
+('global_venue_custom_fields_position', 'details'),
 ('event_show_registration', '1'),
 ('event_show_registration_counters', '1');
 

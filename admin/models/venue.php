@@ -274,7 +274,11 @@ class JemModelVenue extends JemModelAdmin
         $data['language'] = (isset($data['language'])) ? $data['language'] : '';
         $data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
         $data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
-
+        $customFieldErrors = array();
+        if (!JemCustomFields::validateAndSanitizeData('venue', $data, $customFieldErrors)) {
+            $this->setError(implode('<br>', $customFieldErrors));
+            return false;
+        }
         // Store as copy - reset creation date, modification fields, hit counter, version
         if ($task == 'save2copy') {
             unset($data['created']);
