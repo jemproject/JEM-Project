@@ -70,7 +70,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'     => $this->params->get('reg_mail_user', '1'),
-            'admin'    => $this->params->get('reg_mail_admin', '0'),
+            'admin'    => $this->params->get('reg_mail_admin', '1'),
             'creator'  => $this->params->get('reg_mail_creator', '0'),
             'category' => $this->params->get('reg_mail_category', '0'),
             'group'    => $this->params->get('reg_mail_group', '0'),
@@ -256,7 +256,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'     => $this->params->get('reg_mail_user_onoff', '1'),
-            'admin'    => $this->params->get('reg_mail_admin_onoff', '0'),
+            'admin'    => $this->params->get('reg_mail_admin_onoff', '1'),
             'creator'  => $this->params->get('reg_mail_creator_onoff', '0'),
             'category' => $this->params->get('reg_mail_category_onoff', '0'),
             'group'    => $this->params->get('reg_mail_group_onoff', '0'),
@@ -357,7 +357,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'     => $this->params->get('unreg_mail_user', '1'),
-            'admin'    => $this->params->get('unreg_mail_admin', '0'),
+            'admin'    => $this->params->get('unreg_mail_admin', '1'),
             'creator'  => $this->params->get('unreg_mail_creator', '0'),
             'category' => $this->params->get('unreg_mail_category', '0'),
             'group'    => $this->params->get('unreg_mail_group', '0'),
@@ -530,7 +530,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'       => $is_new ? $this->params->get('newevent_mail_user', '1') : $this->params->get('editevent_mail_user', '1'),
-            'admin'      => $is_new ? $this->params->get('newevent_mail_admin', '0') : $this->params->get('editevent_mail_admin', '0'),
+            'admin'      => $is_new ? $this->params->get('newevent_mail_admin', '1') : $this->params->get('editevent_mail_admin', '1'),
             'creator'    => !$is_new && $this->params->get('editevent_mail_creator', '0'),
             'registered' => !$is_new && $this->params->get('editevent_mail_registered', '0'),
             'category'   => $is_new ? $this->params->get('newevent_mail_category', '0') : $this->params->get('editevent_mail_category', '0'),
@@ -671,8 +671,8 @@ class plgJemMailer extends CMSPlugin
     {
         // Sendto
         $send_to = array(
-            'user'       => $is_new ? $this->params->get('newvenue_mail_user', '1') : $this->params->get('editvenue_mail_user', '0'),
-            'admin'      => $is_new ? $this->params->get('newvenue_mail_admin', '1') : $this->params->get('editvenue_mail_admin', '0'),
+            'user'       => $is_new ? $this->params->get('newvenue_mail_user', '1') : $this->params->get('editvenue_mail_user', '1'),
+            'admin'      => $is_new ? $this->params->get('newvenue_mail_admin', '1') : $this->params->get('editvenue_mail_admin', '1'),
             'creator'    => !$is_new && $this->params->get('editvenue_mail_creator', '0'),
             'ev-creator' => !$is_new && $this->params->get('editvenue_mail_ev-creator', '0'),
             'registered' => !$is_new && $this->params->get('editvenue_mail_registered', '0'),
