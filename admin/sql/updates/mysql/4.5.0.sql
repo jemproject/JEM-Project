@@ -22,6 +22,7 @@ ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(80) DEFAULT NULL;
 UPDATE `#__jem_events` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
 ALTER TABLE `#__jem_events` MODIFY `language` char(7) NOT NULL DEFAULT '*';
 ALTER TABLE `#__jem_events` MODIFY `recurrence_number` int(11) NOT NULL DEFAULT '0';
+ALTER TABLE `#__jem_events` ADD COLUMN `recurrence_bylastday` varchar(20) NULL DEFAULT NULL AFTER `recurrence_byday`;
 ALTER TABLE `#__jem_events` CHANGE `fulltext` `fulltext` MEDIUMTEXT NOT NULL AFTER `introtext`;
 ALTER TABLE `#__jem_events` ADD COLUMN `article_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `fulltext`;
 ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_url` VARCHAR(2048) NOT NULL DEFAULT '' AFTER `article_id`;
