@@ -1306,20 +1306,22 @@ class JemHelper
     /**
      * return initialized calendar tool class for ics export
      *
-     * @return \Kigkonsult\Icalcreator\Vcalendar
+     * @return vcalendar
      */
     static public function getCalendarTool()
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/icalcreator/autoload.php';
+        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
         $timezone_name = JemHelper::getTimeZoneName();
 
-        $vcal = \Kigkonsult\Icalcreator\Vcalendar::factory([
-            \Kigkonsult\Icalcreator\IcalInterface::UNIQUE_ID => 'com_jem',
-        ]);
-        $vcal->setCalscale('GREGORIAN');
-        $vcal->setMethod('PUBLISH');
+        $vcal = new vcalendar();
+        if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
+            Folder::create(JPATH_SITE.'/cache/com_jem');
+        }
+        $vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
+        $vcal->setProperty('calscale', 'GREGORIAN');
+        $vcal->setProperty('method', 'PUBLISH');
         if ($timezone_name) {
-            $vcal->setXprop('X-WR-TIMEZONE', $timezone_name);
+            $vcal->setProperty('X-WR-TIMEZONE', $timezone_name);
         }
         return $vcal;
     }
@@ -1360,13 +1362,14 @@ class JemHelper
             throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
         }
 
+        $date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
+        $date_end = array();
+        $dateparam = array('VALUE' => 'DATE');
+        $dateendparam = array('VALUE' => 'DATE');
+
         // all day event if start time is not set
         if (!$event->times) // all day !
         {
-            // build start DateTime (date only)
-            $dtStart      = new \DateTime($event->dates);
-            $dtStartParams = ['VALUE' => 'DATE'];
-
             // for ical all day events, dtend must be the next day
             $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
 
@@ -1374,8 +1377,7 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $dtEnd       = new \DateTime($event->enddates);
-            $dtEndParams = ['VALUE' => 'DATE'];
+            $date_end = array('year' => (int) $end_date[1], 'month' => (int) $end_date[2], 'day' => (int) $end_date[3]);
         }
         else // not all day events, there is a start time
         {
@@ -1383,11 +1385,12 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
-            $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
-            $dtStartParams = ['VALUE' => 'DATE-TIME'];
+            $date['hour'] = (int) $start_time[1];
+            $date['min']  = (int) $start_time[2];
+            $date['sec']  = (int) $start_time[3];
+            $dateparam = array('VALUE' => 'DATE-TIME');
             if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dtStartParams['TZID'] = $timezone_name;
+                $dateparam['TZID'] = $timezone_name;
             }
 
             if (!$event->endtimes || $event->endtimes == '00:00:00') {
@@ -1409,10 +1412,13 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
-            $dtEndParams = ['VALUE' => 'DATE-TIME'];
+            $date_end = array('year' => (int) $end_date[1], 'month' => (int) $end_date[2], 'day' => (int) $end_date[3]);
+            $date_end['hour'] = (int) $end_time[1];
+            $date_end['min']  = (int) $end_time[2];
+            $date_end['sec']  = (int) $end_time[3];
+            $dateendparam = array('VALUE' => 'DATE-TIME');
             if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dtEndParams['TZID'] = $timezone_name;
+                $dateendparam['TZID'] = $timezone_name;
             }
         }
 
@@ -1487,28 +1493,30 @@ class JemHelper
             $location = $onlineLocation ? implode(' - ', $onlineLocation) : Text::_('COM_JEM_ONLINE_MEETING');
         }
 
-        // Build vevent using iCalcreator v2.41 API
-        $e = $calendartool->newVevent();
-        $e->setSummary($event->title);
-        $e->setCategories(implode(', ', $categories));
-        $e->setDtstart($dtStart, $dtStartParams);
-        $e->setDtend($dtEnd, $dtEndParams);
-        $e->setDescription($description);
-        $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
+        $e = new vevent();
+        $e->setProperty('summary', $event->title);
+        $e->setProperty('categories', implode(', ', $categories));
+        $e->setProperty('dtstart', $date, $dateparam);
+        if (count($date_end)) {
+            $e->setProperty('dtend', $date_end, $dateendparam);
+        }
+        $e->setProperty('description', $description);
+        $e->setProperty('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
         if ($location !== '') {
-            $e->setLocation($location);
+            $e->setProperty('location', $location);
         }
         if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs) {
-            $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
+            $e->setProperty('X-JEM-ONLINE-MEETING', $onlineMeetingUrl, array('LABEL' => $onlineMeetingLabel));
 
             if ($onlineMeetingPlatform['key'] === 'teams') {
-                $e->setXprop('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
-                $e->setXprop('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
-                $e->setXprop('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
+                $e->setProperty('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
+                $e->setProperty('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
+                $e->setProperty('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
             }
         }
-        $e->setUrl($link);
-        $e->setUid('event' . $event->id . '@' . $sitename);
+        $e->setProperty('url', $link);
+        $e->setProperty('uid', 'event' . $event->id . '@' . $sitename);
+        $calendartool->addComponent($e);
 
         return true;
     }
