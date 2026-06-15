@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 $renderInlineHelp = function ($field) {
     if (empty($field->description) || empty($field->id)) {
@@ -112,46 +113,139 @@ $renderInlineHelp = function ($field) {
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
         <legend><?php echo Text::_('COM_JEM_SETTINGS_LEGEND_CSS'); ?></legend>
-        <ul class="adminformlist jem-stylesheet-list">
-            <?php
-            $stylesheetFields = $this->form->getFieldset('stylesheet');
-            $stylesheetFieldsByName = array();
+        <div class="jem-stylesheet-header">
+            <p class="small text-muted"><?php echo Text::_('COM_JEM_SETTINGS_CSS_CUSTOM_WORKFLOW'); ?></p>
+            <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=cssmanager'); ?>"><?php echo Text::_('COM_JEM_CSSMANAGER_TITLE'); ?></a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped table-sm jem-stylesheet-table">
+                <thead>
+                    <tr>
+                        <th><?php echo Text::_('COM_JEM_SETTINGS_CSS_STYLESHEET'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_SETTINGS_CSS_SCOPE'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_SETTINGS_CSS_USE_CUSTOM'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_SETTINGS_CSS_CUSTOM_FILE'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $stylesheetFields = $this->form->getFieldset('stylesheet');
+                    $stylesheetFieldsByName = array();
+                    $cssBasePath = JPATH_ROOT . '/media/com_jem/css/';
+                    $cssCustomPath = $cssBasePath . 'custom/';
+                    $customCssFiles = is_dir($cssCustomPath) ? array_values(array_filter(scandir($cssCustomPath), function ($file) use ($cssCustomPath) {
+                        return is_file($cssCustomPath . $file) && strtolower(pathinfo($file, PATHINFO_EXTENSION)) === 'css';
+                    })) : array();
 
-            foreach ($stylesheetFields as $field) {
-                $stylesheetFieldsByName[$field->fieldname] = $field;
-            }
+                    $cssFileFromField = function ($fieldname) {
+                        $name = preg_replace('/^css_|_usecustom$/', '', $fieldname);
+                        return str_replace('_', '-', $name) . '.css';
+                    };
 
-            foreach ($stylesheetFields as $field):
-                if (substr($field->fieldname, -11) === '_customfile') {
-                    continue;
-                }
+                    $customSourceFile = function ($file) use ($cssCustomPath) {
+                        $contents = is_file($cssCustomPath . $file) ? file_get_contents($cssCustomPath . $file, false, null, 0, 512) : false;
 
-                if (strtolower($field->type) === 'spacer') :
-            ?>
-                <li class="jem-stylesheet-separator"><?php echo $field->input; ?></li>
-            <?php
-                    continue;
-                endif;
+                        if ($contents !== false && preg_match('/JEM custom source:\s*([A-Za-z0-9._-]+\.css)/', $contents, $matches)) {
+                            return $matches[1];
+                        }
 
-                if (substr($field->fieldname, -10) === '_usecustom') :
-                    $fileFieldName = substr($field->fieldname, 0, -10) . '_customfile';
-                    $fileField = $stylesheetFieldsByName[$fileFieldName] ?? null;
-            ?>
-                <li class="jem-stylesheet-row">
-                    <div class="jem-stylesheet-toggle">
-                        <?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?>
-                    </div>
-                    <?php if ($fileField) : ?>
-                        <div class="jem-stylesheet-file">
-                            <?php echo $fileField->label; ?> <?php echo $fileField->input; ?><?php echo $renderInlineHelp($fileField); ?>
-                        </div>
-                    <?php endif; ?>
-                </li>
-            <?php else : ?>
-                <li><?php echo $field->label; ?> <?php echo $field->input; ?><?php echo $renderInlineHelp($field); ?></li>
-            <?php endif; ?>
-            <?php endforeach; ?>
-        </ul>
+                        return '';
+                    };
+
+                    $hasCompatibleCustom = function ($sourceFile) use ($customCssFiles, $customSourceFile) {
+                        $sourceStem = preg_replace('/\.css$/', '', $sourceFile);
+
+                        foreach ($customCssFiles as $file) {
+                            $declaredSource = $customSourceFile($file);
+
+                            if ($declaredSource !== '') {
+                                if ($declaredSource === $sourceFile) {
+                                    return true;
+                                }
+
+                                continue;
+                            }
+
+                            $fileStem = preg_replace('/\.css$/', '', $file);
+
+                            if ($file === $sourceFile || strpos($fileStem, $sourceStem . '-') === 0 || strpos($fileStem, $sourceStem . '_') === 0) {
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    };
+
+                    $disableYesOption = function ($input) {
+                        return preg_replace_callback('/<input\b[^>]*\bvalue=(["\'])1\1[^>]*>/i', function ($matches) {
+                            if (stripos($matches[0], ' disabled') !== false) {
+                                return $matches[0];
+                            }
+
+                            return preg_replace('/\s*(\/?)>$/', ' disabled="disabled" aria-disabled="true"$1>', $matches[0]);
+                        }, $input);
+                    };
+
+                    $cssScope = function ($file) {
+                        if (strpos($file, '-responsive.css') !== false) {
+                            return Text::_('COM_JEM_SETTINGS_CSS_SCOPE_RESPONSIVE');
+                        }
+
+                        if ($file === 'backend.css') {
+                            return Text::_('COM_JEM_SETTINGS_CSS_SCOPE_BACKEND');
+                        }
+
+                        if ($file === 'print.css') {
+                            return Text::_('COM_JEM_SETTINGS_CSS_SCOPE_PRINT');
+                        }
+
+                        return Text::_('COM_JEM_SETTINGS_CSS_SCOPE_LEGACY');
+                    };
+
+                    foreach ($stylesheetFields as $field) {
+                        $stylesheetFieldsByName[$field->fieldname] = $field;
+                    }
+
+                    foreach ($stylesheetFields as $field):
+                        if (substr($field->fieldname, -10) !== '_usecustom') {
+                            continue;
+                        }
+
+                        $fileFieldName = substr($field->fieldname, 0, -10) . '_customfile';
+                        $fileField = $stylesheetFieldsByName[$fileFieldName] ?? null;
+                        $cssFile = $cssFileFromField($field->fieldname);
+                        $useCustom = (int) $this->form->getValue($field->fieldname, 'css', 0) === 1;
+                        $customFile = $fileField ? trim((string) $this->form->getValue($fileField->fieldname, 'css', '')) : '';
+                        $customCandidate = $customFile ?: $cssFile;
+                        $customExists = $customCandidate && is_file($cssCustomPath . $customCandidate);
+                        $defaultExists = is_file($cssBasePath . $cssFile);
+                        $hasCustomFile = $hasCompatibleCustom($cssFile);
+                        $useCustomInput = $hasCustomFile ? $field->input : $disableYesOption($field->input);
+
+                    ?>
+                    <tr>
+                        <th scope="row"><code><?php echo htmlspecialchars($cssFile, ENT_COMPAT, 'UTF-8'); ?></code></th>
+                        <td><?php echo $cssScope($cssFile); ?></td>
+                        <td>
+                            <?php echo $useCustomInput; ?>
+                            <?php echo $renderInlineHelp($field); ?>
+                        </td>
+                        <td>
+                            <?php if ($fileField) : ?>
+                                <?php echo $fileField->input; ?>
+                                <?php echo $renderInlineHelp($fileField); ?>
+                            <?php endif; ?>
+                            <?php if ($useCustom && !$customExists) : ?>
+                                <div class="mt-1"><span class="badge bg-warning"><?php echo Text::_('COM_JEM_SETTINGS_CSS_STATUS_CUSTOM_MISSING'); ?></span></div>
+                            <?php elseif (!$defaultExists) : ?>
+                                <div class="mt-1"><span class="badge bg-danger"><?php echo Text::_('COM_JEM_SETTINGS_CSS_STATUS_DEFAULT_MISSING'); ?></span></div>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     </fieldset>
 </div>
     <div class="width-100" style="padding: 10px 1vw;">
@@ -185,4 +279,3 @@ $renderInlineHelp = function ($field) {
     </fieldset>
 </div>
 </div><div class="clr"></div>
-

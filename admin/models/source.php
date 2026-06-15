@@ -9,13 +9,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Path;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Path;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Client\ClientHelper;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 
 /**
@@ -24,11 +25,33 @@ use Joomla\CMS\Plugin\PluginHelper;
 class JemModelSource extends AdminModel
 {
     /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
+    /**
      * Cache for the template information.
      *
      * @var        object
      */
     private $_template = null;
+
+    protected $jemVersion = null;
+
+    protected function logCssOperation($message, $level = Log::INFO)
+    {
+        if (class_exists('JemHelper')) {
+            JemHelper::addLogEntry($message, __METHOD__, $level);
+        }
+    }
 
     /**
      * Resolve and validate a CSS source path inside the allowed JEM media folders.
@@ -67,6 +90,134 @@ class JemModelSource extends AdminModel
             'file'   => $file,
             'path'   => $filePath,
         );
+    }
+
+    protected function getJemVersion()
+    {
+        if ($this->jemVersion !== null) {
+            return $this->jemVersion;
+        }
+
+        $this->jemVersion = '';
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $manifest = json_decode((string) $db->loadResult(), true);
+
+        if (is_array($manifest) && !empty($manifest['version'])) {
+            $this->jemVersion = (string) $manifest['version'];
+        }
+
+        return $this->jemVersion;
+    }
+
+    protected function getCssDefinitions()
+    {
+        return array(
+            'backend.css' => array('use' => 'css_backend_usecustom', 'file' => 'css_backend_customfile', 'label' => 'backend.css'),
+            'backend-responsive.css' => array('use' => 'css_backend_responsive_usecustom', 'file' => 'css_backend_responsive_customfile', 'fallbackUse' => 'css_backend_usecustom', 'label' => 'backend-responsive.css'),
+            'calendar.css' => array('use' => 'css_calendar_usecustom', 'file' => 'css_calendar_customfile', 'label' => 'calendar.css'),
+            'calendar-responsive.css' => array('use' => 'css_calendar_responsive_usecustom', 'file' => 'css_calendar_responsive_customfile', 'fallbackUse' => 'css_calendar_usecustom', 'label' => 'calendar-responsive.css'),
+            'colorpicker.css' => array('use' => 'css_colorpicker_usecustom', 'file' => 'css_colorpicker_customfile', 'label' => 'colorpicker.css'),
+            'colorpicker-responsive.css' => array('use' => 'css_colorpicker_responsive_usecustom', 'file' => 'css_colorpicker_responsive_customfile', 'fallbackUse' => 'css_colorpicker_usecustom', 'label' => 'colorpicker-responsive.css'),
+            'geostyle.css' => array('use' => 'css_geostyle_usecustom', 'file' => 'css_geostyle_customfile', 'label' => 'geostyle.css'),
+            'geostyle-responsive.css' => array('use' => 'css_geostyle_responsive_usecustom', 'file' => 'css_geostyle_responsive_customfile', 'fallbackUse' => 'css_geostyle_usecustom', 'label' => 'geostyle-responsive.css'),
+            'googlemap.css' => array('use' => 'css_googlemap_usecustom', 'file' => 'css_googlemap_customfile', 'label' => 'googlemap.css'),
+            'googlemap-responsive.css' => array('use' => 'css_googlemap_responsive_usecustom', 'file' => 'css_googlemap_responsive_customfile', 'fallbackUse' => 'css_googlemap_usecustom', 'label' => 'googlemap-responsive.css'),
+            'jem.css' => array('use' => 'css_jem_usecustom', 'file' => 'css_jem_customfile', 'label' => 'jem.css'),
+            'jem-responsive.css' => array('use' => 'css_jem_responsive_usecustom', 'file' => 'css_jem_responsive_customfile', 'fallbackUse' => 'css_jem_usecustom', 'label' => 'jem-responsive.css'),
+            'print.css' => array('use' => 'css_print_usecustom', 'file' => 'css_print_customfile', 'label' => 'print.css'),
+            'print-responsive.css' => array('use' => 'css_print_responsive_usecustom', 'file' => 'css_print_responsive_customfile', 'fallbackUse' => 'css_print_usecustom', 'label' => 'print-responsive.css'),
+        );
+    }
+
+    protected function getActiveCustomCssMap($settings)
+    {
+        $active = array();
+
+        foreach ($this->getCssDefinitions() as $defaultFile => $definition) {
+            $useCustom = (int) $settings->get($definition['use'], 0) === 1;
+
+            if (!$useCustom && !empty($definition['fallbackUse'])) {
+                $useCustom = (int) $settings->get($definition['fallbackUse'], 0) === 1;
+            }
+
+            if (!$useCustom) {
+                continue;
+            }
+
+            $customFile = trim((string) $settings->get($definition['file'], ''));
+            $customFile = $customFile ?: $defaultFile;
+
+            if (!isset($active[$customFile])) {
+                $active[$customFile] = array();
+            }
+
+            $active[$customFile][] = $definition['label'];
+        }
+
+        return $active;
+    }
+
+    protected function readCustomHeaderValue($contents, $field)
+    {
+        if ($contents === false || $contents === '') {
+            return '';
+        }
+
+        if (preg_match('/JEM custom ' . preg_quote($field, '/') . ':\s*([^\r\n*]+)/', $contents, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return '';
+    }
+
+    public function getSourceDetails()
+    {
+        $fileName = $this->getState('filename');
+        $source = $this->resolveSourceFile($fileName);
+
+        if (!$source || !is_file($source->path)) {
+            return false;
+        }
+
+        $details = new stdClass;
+        $details->filename = $source->file;
+        $details->custom = $source->custom;
+        $details->size = filesize($source->path);
+        $details->modified = filemtime($source->path);
+        $details->created = $source->custom ? filectime($source->path) : 0;
+        $details->version = $source->custom ? '' : $this->getJemVersion();
+        $details->sourceFile = '';
+        $details->sourceVersion = '';
+        $details->sourceSize = 0;
+        $details->active = false;
+        $details->usedBy = array();
+        $details->id = base64_encode(($source->custom ? 'custom#:' : '') . $source->file);
+
+        if ($source->custom) {
+            $contents = file_get_contents($source->path);
+            $details->sourceFile = $this->readCustomHeaderValue($contents, 'source');
+            $details->sourceVersion = $this->readCustomHeaderValue($contents, 'source version');
+            $sourceSize = $this->readCustomHeaderValue($contents, 'source size');
+
+            if (preg_match('/^\d+/', $sourceSize, $matches)) {
+                $details->sourceSize = (int) $matches[0];
+            }
+
+            $activeCustom = $this->getActiveCustomCssMap(JemHelper::retrieveCss());
+            if (isset($activeCustom[$source->file])) {
+                $details->active = true;
+                $details->usedBy = $activeCustom[$source->file];
+            }
+        }
+
+        return $details;
     }
 
     /**
@@ -219,14 +370,20 @@ class JemModelSource extends AdminModel
         // But report save error with higher priority
         if (!$return) {
             $this->setError(Text::sprintf('COM_JEM_CSSMANAGER_ERROR_FAILED_TO_SAVE_FILENAME', $file));
+            $this->logCssOperation('CSS file save failed: "' . $file . '"', Log::WARNING);
             return false;
         }
 
         // Try to make the custom template file read-only again.
         if (!$ftp['enabled'] && Path::isOwner($filePath) && !Path::setPermissions($filePath, '0444')) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_UNWRITABLE'));
+            $this->logCssOperation('CSS file saved but permissions could not be restored: "' . $file . '"', Log::WARNING);
             return false;
         }
+
+        $user = Factory::getApplication()->getIdentity();
+        $userInfo = $user && (int) $user->id > 0 ? $user->name . ' (#' . (int) $user->id . ')' : 'Unknown';
+        $this->logCssOperation('CSS file saved: "' . $file . '", custom "' . ($source->custom ? 'yes' : 'no') . '", user "' . $userInfo . '"', Log::INFO);
 
         return true;
     }

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 /**
@@ -28,6 +29,8 @@ class JemControllerCssmanager extends AdminController
         // Register Extra task
         $this->registerTask('setlinenumber',         'linenumber');
         $this->registerTask('disablelinenumber',     'linenumber');
+        $this->registerTask('copycustom',            'copycustom');
+        $this->registerTask('deletecustom',          'deletecustom');
     }
 
 
@@ -75,6 +78,58 @@ class JemControllerCssmanager extends AdminController
         }
 
         $this->setRedirect('index.php?option=com_jem&view=cssmanager');
+    }
+
+    public function copycustom()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.edit', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $file = $app->input->getString('file', '');
+        $targetFile = $app->input->getString('customfile', '');
+        $model = $this->getModel();
+
+        if (!$model->copyCustomFile($file, $targetFile)) {
+            $app->enqueueMessage($model->getError(), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
+        }
+
+        $targetFile = $targetFile !== '' ? $targetFile : $file;
+        $app->enqueueMessage(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_CREATED', $targetFile), 'message');
+        $this->setRedirect(Route::_('index.php?option=com_jem&task=source.edit&id=' . base64_encode('custom#:' . $targetFile), false));
+
+        return true;
+    }
+
+    public function deletecustom()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.delete', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $file = $app->input->getString('file', '');
+        $model = $this->getModel();
+
+        if (!$model->deleteCustomFile($file)) {
+            $app->enqueueMessage($model->getError(), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
+        }
+
+        $app->enqueueMessage(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETED', $file), 'message');
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+
+        return true;
     }
 
 }
