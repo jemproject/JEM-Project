@@ -8,9 +8,11 @@
         <field name="source" type="editor"
             editor="codemirror|none"
             buttons="no"
+            syntax="css"
+            mode="css"
             label="COM_JEM_CSSMANAGER_FIELD_SOURCE_LABEL"
             description="COM_JEM_CSSMANAGER_FIELD_SOURCE_DESC"
-            rows="20"
+            rows="28"
             cols="80"
             filter="raw"
         />

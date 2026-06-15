@@ -133,52 +133,299 @@ input#clear:focus {
     width: calc(100% - 140px);
 }
 
-.jem-stylesheet-list .jem-stylesheet-row {
-    align-items: flex-start;
-    clear: both;
+.jem-stylesheet-table {
+    min-width: 760px;
+}
+
+.jem-cssmanager-table {
+    min-width: 1180px;
+    width: 100%;
+}
+
+.jem-stylesheet-table th,
+.jem-stylesheet-table td,
+.jem-cssmanager-table th,
+.jem-cssmanager-table td {
+    vertical-align: middle !important;
+}
+
+.jem-stylesheet-header {
+    align-items: center;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 16px;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 12px;
 }
 
-.jem-stylesheet-list .jem-stylesheet-toggle {
-    flex: 0 0 150px;
+.jem-stylesheet-header p {
+    margin: 0;
 }
 
-.jem-stylesheet-list .jem-stylesheet-file {
-    flex: 1 1 260px;
-    min-width: 0;
-}
-
-.jem-stylesheet-list .jem-stylesheet-toggle > label,
-.jem-stylesheet-list .jem-stylesheet-file label {
-    clear: none;
-    display: block;
-    float: none;
-    margin-bottom: 4px;
-    min-width: 0;
-    width: auto;
-}
-
-.jem-stylesheet-list .jem-stylesheet-file input {
-    box-sizing: border-box;
+.jem-stylesheet-table select {
     min-width: 180px;
     width: 100%;
 }
 
-.jem-stylesheet-list .jem-stylesheet-separator {
+.jem-stylesheet-table td:nth-child(4) {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 82%, var(--body-color, #1f2933) 6%);
+}
+
+.jem-stylesheet-table td:nth-child(4) select {
+    box-sizing: border-box;
+    min-height: 2.45rem;
+}
+
+.jem-stylesheet-table td:nth-child(4) select:disabled {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 76%, var(--body-color, #1f2933) 9%);
+    color: color-mix(in srgb, var(--body-color, #1f2933) 48%, var(--body-bg, #fff) 52%);
+    opacity: 1;
+}
+
+.jem-stylesheet-table .btn-group,
+.jem-stylesheet-table .controls,
+.jem-stylesheet-table .control-group {
+    margin-bottom: 0;
+}
+
+.jem-stylesheet-table .btn-group {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.jem-stylesheet-table .btn,
+.jem-cssmanager-table .btn {
+    margin: 2px 4px 2px 0;
+    white-space: nowrap;
+}
+
+.jem-stylesheet-table .badge,
+.jem-cssmanager-table .badge {
+    white-space: nowrap;
+}
+
+.jem-copy-custom-btn {
+    align-items: center;
+    display: inline-flex !important;
+    gap: .55rem;
+    justify-content: space-between;
+}
+
+.jem-copy-custom-arrow {
+    border-right: 2px solid currentColor;
+    border-top: 2px solid currentColor;
+    display: inline-block;
+    flex: 0 0 auto;
+    height: .45rem;
+    transform: rotate(45deg);
+    width: .45rem;
+}
+
+.jem-stylesheet-table input[disabled] + label,
+.jem-stylesheet-table input[disabled] ~ label {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.jem-cssmanager-empty-row td {
+    height: 38px;
+}
+
+.jem-cssmanager-header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
     margin-bottom: 12px;
 }
 
-@media (max-width: 600px) {
-    .jem-stylesheet-list .jem-stylesheet-toggle,
-    .jem-stylesheet-list .jem-stylesheet-file {
-        flex-basis: 100%;
+.jem-cssmanager-header p {
+    margin: 0;
+}
+
+.jem-cssmanager-table th:nth-child(5),
+.jem-cssmanager-table td:nth-child(5) {
+    border-left: 3px solid color-mix(in srgb, var(--body-color, #1f2933) 28%, transparent);
+}
+
+.jem-cssmanager-table th:nth-child(1),
+.jem-cssmanager-table td:nth-child(1),
+.jem-cssmanager-table th:nth-child(5),
+.jem-cssmanager-table td:nth-child(5) {
+    width: auto;
+}
+
+.jem-cssmanager-table th:nth-child(2),
+.jem-cssmanager-table th:nth-child(3),
+.jem-cssmanager-table th:nth-child(4),
+.jem-cssmanager-table th:nth-child(6),
+.jem-cssmanager-table th:nth-child(7),
+.jem-cssmanager-table th:nth-child(8),
+.jem-cssmanager-table th:nth-child(9),
+.jem-cssmanager-table th:nth-child(10),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(2),
+.jem-cssmanager-table td:nth-child(3),
+.jem-cssmanager-table td:nth-child(4),
+.jem-cssmanager-table td:nth-child(6),
+.jem-cssmanager-table td:nth-child(7),
+.jem-cssmanager-table td:nth-child(8),
+.jem-cssmanager-table td:nth-child(9),
+.jem-cssmanager-table td:nth-child(10),
+.jem-cssmanager-table td:nth-child(11) {
+    width: 1%;
+}
+
+.jem-cssmanager-table tbody tr:hover > th,
+.jem-cssmanager-table tbody tr:hover > td {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 86%, var(--body-color, #1f2933) 10%) !important;
+}
+
+.jem-cssmanager-table th:nth-child(2),
+.jem-cssmanager-table th:nth-child(3),
+.jem-cssmanager-table th:nth-child(6),
+.jem-cssmanager-table th:nth-child(7),
+.jem-cssmanager-table th:nth-child(8),
+.jem-cssmanager-table th:nth-child(9),
+.jem-cssmanager-table th:nth-child(10),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(2),
+.jem-cssmanager-table td:nth-child(3),
+.jem-cssmanager-table td:nth-child(6),
+.jem-cssmanager-table td:nth-child(7),
+.jem-cssmanager-table td:nth-child(8),
+.jem-cssmanager-table td:nth-child(9),
+.jem-cssmanager-table td:nth-child(10),
+.jem-cssmanager-table td:nth-child(11) {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-table th:nth-child(4),
+.jem-cssmanager-table td:nth-child(4),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(11) {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-custom-column {
+    display: grid;
+    gap: 4px;
+}
+
+.jem-cssmanager-custom-line {
+    align-items: center;
+    display: flex;
+    min-height: 2rem;
+}
+
+.jem-cssmanager-actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-status-cell .jem-cssmanager-custom-line {
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-actions-cell .jem-cssmanager-custom-line {
+    justify-content: center;
+}
+
+.jem-source-edit-header {
+    align-items: center;
+    display: grid !important;
+    gap: .35rem 1rem;
+    grid-template-areas:
+        "title title"
+        "meta actions";
+    grid-template-columns: minmax(0, 1fr) max-content;
+    margin: .75rem 0 1rem;
+}
+
+.jem-source-edit-title {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    grid-area: title;
+    margin: 0;
+    min-width: 0;
+}
+
+.jem-source-edit-actions {
+    align-self: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    grid-area: actions;
+    justify-content: flex-end;
+    justify-self: end;
+    white-space: nowrap;
+}
+
+.jem-source-edit-warning {
+    margin-bottom: 1rem;
+}
+
+.jem-source-meta-inline {
+    align-items: center;
+    color: color-mix(in srgb, var(--body-color, #1f2933) 74%, var(--body-bg, #fff) 26%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem .55rem;
+    grid-area: meta;
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.jem-source-meta-inline strong {
+    color: var(--body-color, #1f2933);
+}
+
+.jem-source-check-result {
+    margin: .5rem 0;
+}
+
+.jem-source-editor-wrap {
+    --jem-source-editor-height: max(34rem, calc(100vh - 15rem));
+    background-color: var(--body-bg, #fff);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 14%, transparent);
+    min-height: var(--jem-source-editor-height);
+    padding: 0;
+}
+
+.jem-source-editor-wrap textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    min-height: var(--jem-source-editor-height);
+    width: 100%;
+}
+
+.jem-source-editor-wrap .CodeMirror,
+.jem-source-editor-wrap .cm-editor,
+.jem-source-editor-wrap iframe {
+    height: var(--jem-source-editor-height) !important;
+    min-height: var(--jem-source-editor-height);
+    width: 100%;
+}
+
+@media (max-width: 700px) {
+    .jem-source-edit-header {
+        display: grid;
+        grid-template-areas:
+            "title"
+            "meta"
+            "actions";
+        grid-template-columns: 1fr;
     }
 
-    .jem-stylesheet-list .jem-stylesheet-file input {
-        min-width: 0;
+    .jem-source-edit-actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        justify-self: start;
+        margin-top: .75rem;
+        white-space: normal;
     }
 }
 

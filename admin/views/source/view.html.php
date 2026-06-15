@@ -22,6 +22,7 @@ class JemViewSource extends JemAdminView
     public $form;
     protected $ftp;
     protected $source;
+    protected $details;
     public $state;
     protected $template;
 
@@ -34,13 +35,14 @@ class JemViewSource extends JemAdminView
         $this->form     = $this->get('Form');
         $this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
         $this->source   = $this->get('Source');
+        $this->details  = $this->get('SourceDetails');
         $this->state    = $this->get('State');
         $this->template = $this->get('Template');
 
         // Check for errors.
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
-            \Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+            Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
             return false;
         }
 
