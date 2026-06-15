@@ -238,6 +238,7 @@ $renderTable = function ($context) use ($languages, $config, $legacyValues, $typ
 <style>
     .jem-custom-fields-grid {
         display: flex;
+        font-size: 1rem;
         gap: .6rem;
         align-items: start;
         width: 100%;
@@ -414,7 +415,17 @@ $renderTable = function ($context) use ($languages, $config, $legacyValues, $typ
     }
 
     .jem-custom-fields-settings {
+        font-size: 1rem;
         width: 100%;
+    }
+
+    .jem-custom-fields-settings .form-control-sm,
+    .jem-custom-fields-settings .form-select-sm,
+    .jem-custom-fields-settings .btn-sm,
+    .jem-custom-fields-language-tabs .nav-link,
+    .jem-custom-fields-help,
+    .jem-custom-fields-load-example {
+        font-size: 1rem;
     }
 
     .jem-custom-fields-common-table {
@@ -699,10 +710,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <div class="alert alert-info">
     <?php echo Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS_DESC'); ?>
-    <div class="small mt-2">
+    <div class="jem-custom-fields-help mt-2">
         <?php echo Text::_('COM_JEM_CUSTOM_FIELDS_ABBREVIATIONS_DESC'); ?>
     </div>
-    <div class="small mt-1">
+    <div class="jem-custom-fields-help mt-1">
         <?php echo Text::_('COM_JEM_CUSTOM_FIELD_OPTIONS_DESC'); ?>
     </div>
 </div>

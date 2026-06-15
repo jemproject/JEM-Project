@@ -14,6 +14,8 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
+require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
+
 /**
  * JEM Component Settings Controller
  */
@@ -190,6 +192,66 @@ class JemControllerSettings extends BaseController
 
         $this->setMessage(Text::_('COM_JEM_CUSTOM_FIELDS_EXAMPLE_LOADED'));
         $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+        return true;
+    }
+
+    /**
+     * Display a known JEM log file.
+     *
+     * @return bool
+     */
+    public function viewLog()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        if (!$this->allowEdit()) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $app = Factory::getApplication();
+        $key = $app->input->getCmd('log', '');
+        $files = JemLog::getLogFiles();
+
+        if (!isset($files[$key])) {
+            throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_INVALID'), 400);
+        }
+
+        $logPath = $app->get('log_path', JPATH_ADMINISTRATOR . '/logs');
+        $file = $logPath . '/' . $files[$key];
+        $content = '';
+
+        if (is_file($file) && is_readable($file)) {
+            $maxBytes = 250000;
+            $size = filesize($file);
+            $handle = fopen($file, 'rb');
+
+            if ($handle) {
+                if ($size > $maxBytes) {
+                    fseek($handle, -$maxBytes, SEEK_END);
+                    fgets($handle);
+                }
+
+                $content = stream_get_contents($handle);
+                fclose($handle);
+            }
+        }
+
+        if ($content === '') {
+            $content = Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY');
+        }
+
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+
+        echo '<!doctype html><html><head><meta charset="utf-8"><title>'
+            . htmlspecialchars($files[$key], ENT_QUOTES, 'UTF-8')
+            . '</title><style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:1rem;}pre{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem;line-height:1.45;background:#f6f8fa;border:1px solid #d8dee4;padding:1rem;}</style></head><body><h1>'
+            . htmlspecialchars($files[$key], ENT_QUOTES, 'UTF-8')
+            . '</h1><pre>'
+            . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+            . '</pre></body></html>';
+
+        $app->close();
 
         return true;
     }

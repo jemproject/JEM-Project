@@ -29,6 +29,7 @@ use Joomla\CMS\Language\Multilanguage;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -394,35 +395,7 @@ class JemHelper
      */
     static public function addFileLogger()
     {
-        // Let admin choose the log level.
-        $jemconfig = JemConfig::getInstance()->toRegistry();
-        $lvl = (int)$jemconfig->get('globalattribs.loglevel', 0);
-
-        switch ($lvl) {
-        case 1: // ERROR or higher
-            $loglevel = Log::ERROR   * 2 - 1;
-            break;
-        case 2: // WARNING or higher
-            $loglevel = Log::WARNING * 2 - 1;
-            break;
-        case 3: // INFO or higher
-            $loglevel = Log::INFO    * 2 - 1;
-            break;
-        case 4: // DEBUG or higher
-            $loglevel = Log::DEBUG   * 2 - 1;
-            break;
-        case 5: // ALL
-            $loglevel = Log::ALL;
-            break;
-        case 0: // OFF
-        default:
-            $loglevel = 0;
-            break;
-        }
-
-        if ($loglevel > 0) {
-            Log::addLogger(array('text_file' => 'jem.log.php', 'text_entry_format' => '{DATE} {TIME} {PRIORITY} {CATEGORY} {WHERE} : {MESSAGE}'), $loglevel, array('JEM'));
-        }
+        JemLog::addFileLogger();
     }
 
     /**
@@ -434,10 +407,7 @@ class JemHelper
      */
     static public function addLogEntry($message, $where = null, $type = Log::DEBUG)
     {
-        $logEntry = new LogEntry($message, $type, 'JEM');
-        $logEntry->where = empty($where) ? '' : ($where . '()');
-
-        Log::add($logEntry);
+        JemLog::add($message, $where, $type);
     }
 
     /**
