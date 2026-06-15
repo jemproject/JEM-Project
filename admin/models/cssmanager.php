@@ -192,7 +192,10 @@ class JemModelCssmanager extends BaseDatabaseModel
             }
 
             $customFile = trim((string) $settings->get($definition['file'], ''));
-            $customFile = $customFile ?: $defaultFile;
+
+            if ($customFile === '') {
+                continue;
+            }
 
             if (!isset($active[$customFile])) {
                 $active[$customFile] = array();
