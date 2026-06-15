@@ -10,12 +10,38 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+
+require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 $logPath = Factory::getApplication()->get('log_path', JPATH_ADMINISTRATOR . '/logs');
+$logLevels = array(
+    0 => Text::_('COM_JEM_LOGLEVEL_OFF'),
+    1 => Text::_('COM_JEM_LOGLEVEL_ERROR'),
+    2 => Text::_('COM_JEM_LOGLEVEL_WARNING'),
+    3 => Text::_('COM_JEM_LOGLEVEL_INFO'),
+    4 => Text::_('COM_JEM_LOGLEVEL_DEBUG'),
+    5 => Text::_('COM_JEM_LOGLEVEL_ALL'),
+);
+$currentLogLevel = JemLog::getConfiguredLevel();
 $logFiles = array(
     array(
-        'file' => 'jem.log.php',
+        'key' => JemLog::CHANNEL_COMPONENT,
+        'file' => JemLog::getLogFiles()[JemLog::CHANNEL_COMPONENT],
         'source' => Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE_COMPONENT'),
+        'condition' => Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION_LOGLEVEL'),
+    ),
+    array(
+        'key' => JemLog::CHANNEL_MODULES,
+        'file' => JemLog::getLogFiles()[JemLog::CHANNEL_MODULES],
+        'source' => Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE_MODULES'),
+        'condition' => Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION_LOGLEVEL'),
+    ),
+    array(
+        'key' => JemLog::CHANNEL_PLUGINS,
+        'file' => JemLog::getLogFiles()[JemLog::CHANNEL_PLUGINS],
+        'source' => Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE_PLUGINS'),
         'condition' => Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION_LOGLEVEL'),
     ),
 );
@@ -86,17 +112,33 @@ $logFiles = array(
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_FILES'); ?></legend>
             <p><?php echo Text::sprintf('COM_JEM_CONFIGINFO_LOG_PATH', htmlspecialchars($logPath, ENT_QUOTES, 'UTF-8')); ?></p>
+            <p><?php echo Text::sprintf('COM_JEM_CONFIGINFO_LOG_CURRENT_LEVEL', htmlspecialchars($logLevels[$currentLogLevel] ?? $currentLogLevel, ENT_QUOTES, 'UTF-8')); ?></p>
             <table class="adminlist table">
                 <tr>
                     <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_FILE'); ?></u></th>
                     <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_SOURCE'); ?></u></th>
                     <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_CONDITION'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_ACTION'); ?></u></th>
                 </tr>
                 <?php foreach ($logFiles as $logFile) : ?>
+                    <?php
+                    $logFilePath = $logPath . '/' . $logFile['file'];
+                    $logExists = is_file($logFilePath) && is_readable($logFilePath);
+                    $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                    ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'); ?></code></td>
                         <td><?php echo $logFile['source']; ?></td>
                         <td><?php echo $logFile['condition']; ?></td>
+                        <td>
+                            <?php if ($logExists) : ?>
+                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $viewUrl; ?>" target="_blank" rel="noopener noreferrer">
+                                    <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_VIEW'); ?>
+                                </a>
+                            <?php else : ?>
+                                <span class="text-muted"><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_NOT_CREATED'); ?></span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </table>

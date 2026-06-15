@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `meta_keywords` varchar(200) DEFAULT NULL,
     `meta_description` varchar(255) DEFAULT NULL,
     `recurrence_first_id` int(11) NOT NULL DEFAULT '0',
-    `recurrence_number` int(2) NOT NULL DEFAULT '0',
+    `recurrence_number` int(11) NOT NULL DEFAULT '0',
     `recurrence_type` int(2) NOT NULL DEFAULT '0',
     `recurrence_counter` int(11) NOT NULL DEFAULT '0',
     `recurrence_limit` int(11) NOT NULL DEFAULT '0',
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `city` varchar(50) DEFAULT NULL,
     `state` varchar(50) DEFAULT NULL,
     `country` varchar(2) DEFAULT NULL,
-    `latitude` float(10,6) DEFAULT NULL,
-    `longitude` float(10,6) DEFAULT NULL,
+    `latitude` decimal(10,6) DEFAULT NULL,
+    `longitude` decimal(10,6) DEFAULT NULL,
     `locdescription` mediumtext DEFAULT NULL,
     `meta_keywords` text DEFAULT NULL,
     `meta_description` text DEFAULT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     KEY `idx_article_category` (`article_category_id`),
     KEY `idx_parent` (`parent_id`),
     KEY `idx_type` (`type_id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
     UNIQUE KEY `category event relation` (`catid`,`itemid`),
     KEY `catid` (`catid`),
     KEY `itemid` (`itemid`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_register` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -198,12 +198,13 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
     KEY `idx_event` (`event`),
     KEY `idx_event_status` (`event`,`status`),
     KEY `idx_user` (`uid`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groups` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `name` varchar(150) NOT NULL DEFAULT '',
     `description` mediumtext DEFAULT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,
     `addvenue` int(11) NOT NULL,
@@ -213,7 +214,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
     `publishevent` int(11) NOT NULL,
     `editevent` int(11) NOT NULL,
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -222,7 +223,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
     PRIMARY KEY (`id`),
     KEY `idx_group` (`group_id`),
     KEY `idx_user` (`member`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_config` (
     `keyname` varchar(100) NOT NULL,
@@ -230,7 +231,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_config` (
     `access` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rfu',
     PRIMARY KEY (`keyname`),
     KEY `idx_access` (`access`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -245,7 +246,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `created` datetime NULL DEFAULT NULL,
     `created_by` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -259,7 +260,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     KEY `iso2` (`iso2`),
     KEY `idx_continent` (`continent`),
     KEY `idx_published` (`published`)
-) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `#__jem_links` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -385,7 +387,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
-('globalattribs', ''),
+('globalattribs', '{"loglevel":"2"}'),
 ('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
@@ -657,8 +659,5 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (251, 'EU', 'XK', 'XKX', 688, 'Kosovo');
 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
-(1, 0, 0, 3, 0, 'root', 'root', 1, 1, now(), null),
+(1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
-
-
-
