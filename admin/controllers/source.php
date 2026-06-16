@@ -99,6 +99,8 @@ class JemControllerSource extends BaseController
         // Access check.
         if (!$this->allowEdit()) {
             Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Check-out succeeded, push the new record id into the session.
@@ -153,6 +155,8 @@ class JemControllerSource extends BaseController
         // Access check.
         if (!$this->allowSave()) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Match the stored id's with the submitted.
