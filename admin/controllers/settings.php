@@ -83,6 +83,8 @@ class JemControllerSettings extends BaseController
         // Access check.
         if (!$this->allowSave()) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=main', false));
+            return false;
         }
 
         // Validate the posted data.

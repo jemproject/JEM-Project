@@ -29,6 +29,7 @@ class JemViewHousekeeping extends JemAdminView
         if (!$user->authorise('core.manage', 'com_jem')) {
             $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
             $app->redirect('index.php?option=com_jem&view=main');
+            return false;
         }
 
         // Load css
