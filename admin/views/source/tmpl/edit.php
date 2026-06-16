@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -23,6 +23,7 @@ $wa->useScript('keepalive')
 
 $canDo = JEMHelperBackend::getActions();
 $details = $this->details;
+$isUserOverride = $details && !empty($details->userOverride);
 $formatBytes = function ($bytes) {
     $bytes = (int) $bytes;
 
@@ -305,10 +306,14 @@ $formatBytes = function ($bytes) {
         <div class="jem-source-edit-header">
             <div>
                 <p class="jem-source-edit-title"><code><?php echo htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8'); ?></code></p>
-                <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>">
-                    <?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?>
-                </span>
-                <?php if ($details && $details->custom && $details->active) : ?>
+                <?php if ($isUserOverride) : ?>
+                    <span class="badge bg-primary"><?php echo Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_USER_OVERRIDE'); ?></span>
+                <?php else : ?>
+                    <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>">
+                        <?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?>
+                    </span>
+                <?php endif; ?>
+                <?php if ($details && $details->custom && ($details->active || $isUserOverride)) : ?>
                     <span class="badge bg-success"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS_ACTIVE'); ?></span>
                 <?php endif; ?>
             </div>
@@ -347,7 +352,16 @@ $formatBytes = function ($bytes) {
                     <dt><?php echo Text::_('COM_JEM_CSSMANAGER_MODIFIED'); ?></dt>
                     <dd><?php echo $details->modified ? HTMLHelper::_('date', $details->modified, 'Y-m-d H:i') : '-'; ?></dd>
                 </div>
-                <?php if ($details->custom) : ?>
+                <?php if ($isUserOverride) : ?>
+                    <div>
+                        <dt><?php echo Text::_('COM_JEM_SETTINGS_CSS_SCOPE'); ?></dt>
+                        <dd><?php echo htmlspecialchars($details->scope, ENT_COMPAT, 'UTF-8'); ?></dd>
+                    </div>
+                    <div>
+                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_CREATED'); ?></dt>
+                        <dd><?php echo $details->created ? HTMLHelper::_('date', $details->created, 'Y-m-d H:i') : '-'; ?></dd>
+                    </div>
+                <?php elseif ($details->custom) : ?>
                     <div>
                         <dt><?php echo Text::_('COM_JEM_CSSMANAGER_SOURCE_FILE'); ?></dt>
                         <dd><?php echo $details->sourceFile ? '<code>' . htmlspecialchars($details->sourceFile, ENT_COMPAT, 'UTF-8') . '</code>' : Text::_('COM_JEM_CSSMANAGER_VERSION_UNKNOWN_SHORT'); ?></dd>

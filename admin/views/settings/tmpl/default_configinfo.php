@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
@@ -111,7 +112,7 @@ $logFiles = array(
         </fieldset>
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_FILES'); ?></legend>
-            <p><?php echo Text::sprintf('COM_JEM_CONFIGINFO_LOG_PATH', htmlspecialchars($logPath, ENT_QUOTES, 'UTF-8')); ?></p>
+            <p><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_LOCATION'); ?></p>
             <p><?php echo Text::sprintf('COM_JEM_CONFIGINFO_LOG_CURRENT_LEVEL', htmlspecialchars($logLevels[$currentLogLevel] ?? $currentLogLevel, ENT_QUOTES, 'UTF-8')); ?></p>
             <table class="adminlist table">
                 <tr>
@@ -125,6 +126,8 @@ $logFiles = array(
                     $logFilePath = $logPath . '/' . $logFile['file'];
                     $logExists = is_file($logFilePath) && is_readable($logFilePath);
                     $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                    $downloadUrl = Route::_('index.php?option=com_jem&task=settings.downloadLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                    $modalId = 'jem-log-modal-' . preg_replace('/[^a-z0-9_-]/i', '-', $logFile['key']);
                     ?>
                     <tr>
                         <td><code><?php echo htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'); ?></code></td>
@@ -132,8 +135,25 @@ $logFiles = array(
                         <td><?php echo $logFile['condition']; ?></td>
                         <td>
                             <?php if ($logExists) : ?>
-                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $viewUrl; ?>" target="_blank" rel="noopener noreferrer">
+                                <?php
+                                echo HTMLHelper::_(
+                                    'bootstrap.renderModal',
+                                    $modalId,
+                                    array(
+                                        'url'    => $viewUrl,
+                                        'title'  => htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'),
+                                        'width'  => '100%',
+                                        'height' => '600px',
+                                        'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
+                                    )
+                                );
+                                ?>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#<?php echo $modalId; ?>">
                                     <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_VIEW'); ?>
+                                </button>
+                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $downloadUrl; ?>">
+                                    <span class="icon-download" aria-hidden="true"></span>
+                                    <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_DOWNLOAD'); ?>
                                 </a>
                             <?php else : ?>
                                 <span class="text-muted"><?php echo Text::_('COM_JEM_CONFIGINFO_LOG_NOT_CREATED'); ?></span>

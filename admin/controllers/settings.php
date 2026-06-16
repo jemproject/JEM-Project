@@ -205,6 +205,61 @@ class JemControllerSettings extends BaseController
     {
         Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
 
+        $log = $this->getKnownLogFile();
+        $content = $this->readLogTail($log['path']);
+
+        if ($content === '') {
+            $content = Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY');
+        }
+
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+
+        echo '<!doctype html><html><head><meta charset="utf-8"><title>'
+            . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
+            . '</title><style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:1rem;}h1{font-size:1.25rem;margin:0 0 1rem;}pre{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem;line-height:1.45;background:#f6f8fa;border:1px solid #d8dee4;padding:1rem;}</style></head><body><h1>'
+            . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
+            . '</h1><pre>'
+            . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+            . '</pre></body></html>';
+
+        $app->close();
+
+        return true;
+    }
+
+    /**
+     * Download a known JEM log file.
+     *
+     * @return bool
+     */
+    public function downloadLog()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $log = $this->getKnownLogFile();
+        $app = Factory::getApplication();
+
+        if (!is_file($log['path']) || !is_readable($log['path'])) {
+            throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY'), 404);
+        }
+
+        $app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
+        $app->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true);
+        $app->setHeader('Content-Length', (string) filesize($log['path']), true);
+
+        readfile($log['path']);
+        $app->close();
+
+        return true;
+    }
+
+    /**
+     * Resolve a request key to a known JEM log file.
+     *
+     * @return array
+     */
+    protected function getKnownLogFile()
+    {
         if (!$this->allowEdit()) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
@@ -217,43 +272,44 @@ class JemControllerSettings extends BaseController
             throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_INVALID'), 400);
         }
 
-        $logPath = $app->get('log_path', JPATH_ADMINISTRATOR . '/logs');
-        $file = $logPath . '/' . $files[$key];
-        $content = '';
+        $logPath = rtrim($app->get('log_path', JPATH_ADMINISTRATOR . '/logs'), '/\\');
 
-        if (is_file($file) && is_readable($file)) {
-            $maxBytes = 250000;
-            $size = filesize($file);
-            $handle = fopen($file, 'rb');
+        return array(
+            'name' => $files[$key],
+            'path' => $logPath . DIRECTORY_SEPARATOR . $files[$key],
+        );
+    }
 
-            if ($handle) {
-                if ($size > $maxBytes) {
-                    fseek($handle, -$maxBytes, SEEK_END);
-                    fgets($handle);
-                }
-
-                $content = stream_get_contents($handle);
-                fclose($handle);
-            }
+    /**
+     * Read the last part of a log file for backend preview.
+     *
+     * @param   string  $file  Absolute log file path.
+     *
+     * @return string
+     */
+    protected function readLogTail($file)
+    {
+        if (!is_file($file) || !is_readable($file)) {
+            return '';
         }
 
-        if ($content === '') {
-            $content = Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY');
+        $maxBytes = 250000;
+        $size = filesize($file);
+        $handle = fopen($file, 'rb');
+
+        if (!$handle) {
+            return '';
         }
 
-        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+        if ($size > $maxBytes) {
+            fseek($handle, -$maxBytes, SEEK_END);
+            fgets($handle);
+        }
 
-        echo '<!doctype html><html><head><meta charset="utf-8"><title>'
-            . htmlspecialchars($files[$key], ENT_QUOTES, 'UTF-8')
-            . '</title><style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:1rem;}pre{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem;line-height:1.45;background:#f6f8fa;border:1px solid #d8dee4;padding:1rem;}</style></head><body><h1>'
-            . htmlspecialchars($files[$key], ENT_QUOTES, 'UTF-8')
-            . '</h1><pre>'
-            . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
-            . '</pre></body></html>';
+        $content = stream_get_contents($handle);
+        fclose($handle);
 
-        $app->close();
-
-        return true;
+        return $content ?: '';
     }
 
 }

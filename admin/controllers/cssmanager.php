@@ -31,6 +31,8 @@ class JemControllerCssmanager extends AdminController
         $this->registerTask('disablelinenumber',     'linenumber');
         $this->registerTask('copycustom',            'copycustom');
         $this->registerTask('deletecustom',          'deletecustom');
+        $this->registerTask('downloadcustom',        'downloadcustom');
+        $this->registerTask('createusercss',         'createusercss');
     }
 
 
@@ -128,6 +130,66 @@ class JemControllerCssmanager extends AdminController
 
         $app->enqueueMessage(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETED', $file), 'message');
         $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+
+        return true;
+    }
+
+    public function downloadcustom()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $file = $app->input->getString('file', '');
+        $model = $this->getModel();
+        $download = $model->getCustomDownloadFile($file);
+
+        if (!$download) {
+            $app->enqueueMessage($model->getError(), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
+        }
+
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        header('Content-Type: text/css; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . str_replace('"', '', $download->name) . '"');
+        header('Content-Length: ' . (int) $download->size);
+        header('Cache-Control: private, max-age=0, must-revalidate');
+        header('Pragma: public');
+        readfile($download->path);
+        $app->close();
+
+        return true;
+    }
+
+    public function createusercss()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.edit', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $file = $app->input->getString('file', '');
+        $model = $this->getModel();
+
+        if (!$model->createUserCssFile($file)) {
+            $app->enqueueMessage($model->getError(), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
+        }
+
+        $app->enqueueMessage(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_CREATED', $file), 'message');
+        $this->setRedirect(Route::_('index.php?option=com_jem&task=source.edit&id=' . base64_encode('custom#:' . $file), false));
 
         return true;
     }

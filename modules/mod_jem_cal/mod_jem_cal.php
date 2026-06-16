@@ -167,4 +167,5 @@ JemHelper::loadIconFont();
 
 # Render
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+JemHelper::loadModuleUserCss();
 ?>

@@ -120,6 +120,25 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
     <?php
     return ob_get_clean();
 };
+$renderDownloadButton = function ($fileName) {
+    $label = Text::_('COM_JEM_CSSMANAGER_DOWNLOAD');
+    return '<a class="btn btn-outline-secondary btn-sm" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" aria-label="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" href="'
+        . Route::_('index.php?option=com_jem&task=cssmanager.downloadcustom&file=' . rawurlencode($fileName) . '&' . Session::getFormToken() . '=1')
+        . '"><span class="icon-download" aria-hidden="true"></span></a>';
+};
+$hasReplacementCustomFiles = !empty($this->files['custom']);
+$hasUserCssFiles = false;
+
+if (!empty($this->files['usercss'])) {
+    foreach ($this->files['usercss'] as $userCssFile) {
+        if (!empty($userCssFile->exists)) {
+            $hasUserCssFiles = true;
+            break;
+        }
+    }
+}
+
+$toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
@@ -138,7 +157,27 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
             <div class="table-responsive">
                 <table class="table table-striped table-sm jem-cssmanager-table">
                     <thead>
-                        <tr>
+                        <tr class="table-secondary">
+                            <th scope="col" colspan="11">
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div>
+                                        <?php echo Text::_('COM_JEM_CSSMANAGER_CUSTOM_REPLACEMENTS'); ?>
+                                        <div class="small fw-normal text-muted">
+                                            <?php echo Text::_('COM_JEM_CSSMANAGER_CUSTOM_REPLACEMENTS_DESC'); ?>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm jem-cssmanager-section-toggle"
+                                        data-section="replacements"
+                                        data-force-open="<?php echo $hasReplacementCustomFiles ? '1' : '0'; ?>"
+                                        title="<?php echo htmlspecialchars($toggleLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                                        aria-label="<?php echo htmlspecialchars($toggleLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                                        aria-expanded="true">
+                                        <span class="icon-eye" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr class="jem-cssmanager-section-row" data-section-row="replacements">
                             <th><?php echo Text::_('COM_JEM_CSSMANAGER_FILE'); ?></th>
                             <th><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></th>
                             <th><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></th>
@@ -154,7 +193,7 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
                     </thead>
                     <tbody>
                     <?php foreach ($this->files['css'] as $file) : ?>
-                        <tr>
+                        <tr class="jem-cssmanager-section-row" data-section-row="replacements">
                             <th scope="row"><code><?php echo htmlspecialchars($file->name, ENT_COMPAT, 'UTF-8'); ?></code></th>
                             <td class="text-muted"><?php echo htmlspecialchars($file->version ?: '-', ENT_COMPAT, 'UTF-8'); ?></td>
                             <td class="text-muted"><?php echo $formatBytes($file->size ?? 0); ?></td>
@@ -215,7 +254,7 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canDo) {
+                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canDo, $renderDownloadButton) {
                                     ob_start();
                                     if ($canDo->get('core.edit') && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';
@@ -228,13 +267,103 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
                                             . Text::_('JACTION_DELETE') . '</a>';
                                     }
 
+                                    if ($customFile->exists) {
+                                        echo ' ' . $renderDownloadButton($customFile->name);
+                                    }
+
                                     return ob_get_clean();
                                 }); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                    <?php if (!empty($customExtras)) : ?>
+                    <?php if (!empty($this->files['usercss'])) : ?>
                         <tr>
+                            <td colspan="11" class="bg-white py-4 border-0"></td>
+                        </tr>
+                        <tr class="table-secondary">
+                            <th scope="row" colspan="11">
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div>
+                                        <?php echo Text::_('COM_JEM_CSSMANAGER_USER_FILES'); ?>
+                                        <div class="small fw-normal text-muted">
+                                            <?php echo Text::_('COM_JEM_CSSMANAGER_USER_FILES_DESC'); ?>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm jem-cssmanager-section-toggle"
+                                        data-section="usercss"
+                                        data-force-open="<?php echo $hasUserCssFiles ? '1' : '0'; ?>"
+                                        title="<?php echo htmlspecialchars($toggleLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                                        aria-label="<?php echo htmlspecialchars($toggleLabel, ENT_QUOTES, 'UTF-8'); ?>"
+                                        aria-expanded="true">
+                                        <span class="icon-eye" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr class="jem-cssmanager-section-row" data-section-row="usercss">
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_FILE'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_ACTIONS'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_CUSTOM_FILES'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_CREATED'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_MODIFIED'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_CSSMANAGER_ACTIONS'); ?></th>
+                        </tr>
+                        <?php foreach ($this->files['usercss'] as $userFile) : ?>
+                            <tr class="jem-cssmanager-section-row" data-section-row="usercss">
+                                <th scope="row">
+                                    <code><?php echo htmlspecialchars($userFile->name, ENT_COMPAT, 'UTF-8'); ?></code>
+                                    <div class="small text-muted"><?php echo htmlspecialchars($userFile->scope ?? '', ENT_COMPAT, 'UTF-8'); ?></div>
+                                </th>
+                                <td class="text-muted"><?php echo htmlspecialchars($userFile->definitionVersion ?? '0.0', ENT_COMPAT, 'UTF-8'); ?></td>
+                                <td class="text-muted"><?php echo $formatBytes($userFile->definitionSize ?? 0); ?></td>
+                                <td class="jem-cssmanager-actions-cell">
+                                    <?php if ($canDo->get('core.edit') && !$userFile->exists) : ?>
+                                        <a class="btn btn-secondary btn-sm"
+                                            href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.createusercss&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>">
+                                            <?php echo Text::_('COM_JEM_CSSMANAGER_CREATE'); ?>
+                                        </a>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <span class="text-muted"><?php echo htmlspecialchars($userFile->description ?? '', ENT_COMPAT, 'UTF-8'); ?></span>
+                                </td>
+                                <td class="jem-cssmanager-status-cell">
+                                    <?php if ($userFile->exists) : ?>
+                                        <span class="badge bg-success"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS_ACTIVE'); ?></span>
+                                    <?php else : ?>
+                                        <span class="text-muted"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS_NOT_CREATED'); ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo $userFile->exists ? htmlspecialchars($userFile->userVersion ?: '1.0', ENT_COMPAT, 'UTF-8') : ''; ?></td>
+                                <td class="text-muted"><?php echo $userFile->exists ? $formatBytes($userFile->size ?? 0) : ''; ?></td>
+                                <td class="text-muted"><?php echo !empty($userFile->created) ? HTMLHelper::_('date', $userFile->created, 'Y-m-d') : ''; ?></td>
+                                <td class="text-muted"><?php echo !empty($userFile->modified) ? HTMLHelper::_('date', $userFile->modified, 'Y-m-d') : ''; ?></td>
+                                <td class="jem-cssmanager-actions-cell">
+                                    <?php if ($canDo->get('core.edit') && $userFile->exists) : ?>
+                                        <a class="btn btn-secondary btn-sm" href="<?php echo Route::_('index.php?option=com_jem&task=source.edit&id=' . $userFile->id); ?>">
+                                            <?php echo Text::_('JTOOLBAR_EDIT'); ?>
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if ($canDo->get('core.delete') && $userFile->exists) : ?>
+                                        <a class="btn btn-danger btn-sm" href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>"
+                                            onclick="return confirm('<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $userFile->name), ENT_QUOTES, 'UTF-8'); ?>');">
+                                            <?php echo Text::_('JACTION_DELETE'); ?>
+                                        </a>
+                                    <?php endif; ?>
+                                    <?php if ($userFile->exists) : ?>
+                                        <?php echo $renderDownloadButton($userFile->name); ?>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    <?php if (!empty($customExtras)) : ?>
+                        <tr class="jem-cssmanager-section-row" data-section-row="replacements">
                             <th scope="row"><?php echo Text::_('COM_JEM_CSSMANAGER_UNASSIGNED_CUSTOM_FILES'); ?></th>
                             <td></td>
                             <td></td>
@@ -262,7 +391,7 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canDo) {
+                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canDo, $renderDownloadButton) {
                                     ob_start();
                                     if ($canDo->get('core.edit') && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';
@@ -273,6 +402,10 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
                                             . Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($customFile->name) . '&' . Session::getFormToken() . '=1')
                                             . '" onclick="return confirm(\'' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '\');">'
                                             . Text::_('JACTION_DELETE') . '</a>';
+                                    }
+
+                                    if ($customFile->exists) {
+                                        echo ' ' . $renderDownloadButton($customFile->name);
                                     }
 
                                     return ob_get_clean();
@@ -286,7 +419,37 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
             <input type="hidden" name="task" value="" />
         </fieldset>
     </div>
-    <?php //if (isset($this->sidebar)) : ?>
+            <?php //if (isset($this->sidebar)) : ?>
     <?php //endif; ?>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.jem-cssmanager-section-toggle').forEach(function (button) {
+        var section = button.getAttribute('data-section');
+        var forceOpen = button.getAttribute('data-force-open') === '1';
+        var key = 'jem.cssmanager.section.' + section;
+        var rows = document.querySelectorAll('[data-section-row="' + section + '"]');
+        var setOpen = function (open) {
+            rows.forEach(function (row) {
+                row.hidden = !open;
+            });
+
+            button.setAttribute('aria-expanded', open ? 'true' : 'false');
+            button.innerHTML = '<span class="' + (open ? 'icon-eye' : 'icon-eye-close') + '" aria-hidden="true"></span>';
+            window.localStorage.setItem(key, open ? '1' : '0');
+        };
+
+        setOpen(forceOpen || window.localStorage.getItem(key) !== '0');
+
+        if (forceOpen) {
+            button.disabled = true;
+            return;
+        }
+
+        button.addEventListener('click', function () {
+            setOpen(button.getAttribute('aria-expanded') !== 'true');
+        });
+    });
+});
+</script>

@@ -133,6 +133,7 @@ class JemViewMyattendances extends JemView
             // Set Page title
             $pagetitle = Text::_('COM_JEM_MY_ATTENDANCES');
             $pageheading = $pagetitle;
+            $pageclass_sfx = '';
 
             // Check to see which parameters should take priority
             if ($useMenuItemParams) {

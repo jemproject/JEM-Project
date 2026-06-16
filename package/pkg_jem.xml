@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" version="4.4" method="upgrade">
+<extension type="package" version="4.2" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
     <creationDate>May 2026</creationDate>

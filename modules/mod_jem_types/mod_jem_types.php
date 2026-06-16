@@ -37,3 +37,4 @@ if (empty($data) && !$params->get('show_when_empty', 0)) {
 }
 
 require ModuleHelper::getLayoutPath('mod_jem_types', $params->get('layout', 'default'));
+JemHelper::loadModuleUserCss();

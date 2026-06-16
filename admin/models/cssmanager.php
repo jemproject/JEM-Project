@@ -96,6 +96,7 @@ class JemModelCssmanager extends BaseDatabaseModel
         $temp->sourceFile = '';
         $temp->sourceVersion = '';
         $temp->sourceSize = 0;
+        $temp->userVersion = '';
         $temp->size = 0;
         $temp->created = 0;
         $temp->modified = 0;
@@ -125,6 +126,10 @@ class JemModelCssmanager extends BaseDatabaseModel
 
                 if ($contents !== false && preg_match('/JEM custom source size:\s*(\d+)/', $contents, $matches)) {
                     $temp->sourceSize = (int) $matches[1];
+                }
+
+                if ($contents !== false && preg_match('/JEM user override version:\s*([^\r\n*]+)/', $contents, $matches)) {
+                    $temp->userVersion = trim($matches[1]);
                 }
             }
         }
@@ -174,6 +179,36 @@ class JemModelCssmanager extends BaseDatabaseModel
             'print.css' => array('use' => 'css_print_usecustom', 'file' => 'css_print_customfile', 'label' => 'print.css'),
             'print-responsive.css' => array('use' => 'css_print_responsive_usecustom', 'file' => 'css_print_responsive_customfile', 'fallbackUse' => 'css_print_usecustom', 'label' => 'print-responsive.css'),
         );
+    }
+
+    protected function getUserCssDefinitions()
+    {
+        return array(
+            'jem-user-front.css' => array(
+                'version' => '0.0',
+                'userVersion' => '1.0',
+                'scope' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_SCOPE_FRONT'),
+                'description' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_FRONT_DESC'),
+            ),
+            'jem-user-module.css' => array(
+                'version' => '0.0',
+                'userVersion' => '1.0',
+                'scope' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_SCOPE_MODULE'),
+                'description' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_MODULE_DESC'),
+            ),
+        );
+    }
+
+    protected function getUserCssHeader($file, $definition)
+    {
+        return "/*\n"
+            . " * JEM user override stylesheet: " . $file . "\n"
+            . " * JEM user override version: " . ($definition['userVersion'] ?? '1.0') . "\n"
+            . " * JEM custom source version: " . $definition['version'] . "\n"
+            . " * Scope: " . $definition['scope'] . "\n"
+            . " * This file is loaded after the normal JEM stylesheets for its scope.\n"
+            . " * Add small site-specific CSS overrides here.\n"
+            . " */\n\n";
     }
 
     protected function getActiveCustomCssMap($settings)
@@ -319,6 +354,75 @@ class JemModelCssmanager extends BaseDatabaseModel
         return $deleted;
     }
 
+    public function getCustomDownloadFile($file)
+    {
+        $file = (string) $file;
+
+        if ($file === '' || $file !== \Joomla\CMS\Filter\InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            $this->logCssOperation('CSS custom download rejected: invalid file "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        $customDir = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom');
+        $path = Path::clean($customDir . '/' . $file);
+        $baseCheck = rtrim(strtolower($customDir), '\\/') . DIRECTORY_SEPARATOR;
+        $pathCheck = strtolower($path);
+
+        if (strpos($pathCheck, $baseCheck) !== 0 || preg_match('#(^|[\\\\/])\\.\\.([\\\\/]|$)#', $file) || !is_file($path)) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            $this->logCssOperation('CSS custom download failed: file not found "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        return (object) array(
+            'name' => basename($file),
+            'path' => $path,
+            'size' => filesize($path),
+        );
+    }
+
+    public function createUserCssFile($file)
+    {
+        $file = (string) $file;
+        $definitions = $this->getUserCssDefinitions();
+
+        if (!isset($definitions[$file])) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            $this->logCssOperation('CSS user override create rejected: invalid file "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        $customDir = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom');
+        $target = Path::clean($customDir . '/' . $file);
+
+        if (!is_dir($customDir) && !Folder::create($customDir)) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
+            $this->logCssOperation('CSS user override create failed: custom CSS folder not available for "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        if (is_file($target)) {
+            $this->setError(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_EXISTS', $file));
+            $this->logCssOperation('CSS user override create skipped: target already exists "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        $header = $this->getUserCssHeader($file, $definitions[$file]);
+
+        $written = File::write($target, $header);
+        $user = Factory::getApplication()->getIdentity();
+        $userInfo = $user && (int) $user->id > 0 ? $user->name . ' (#' . (int) $user->id . ')' : 'Unknown';
+
+        if ($written) {
+            $this->logCssOperation('CSS user override file created: "' . $file . '", user "' . $userInfo . '"', Log::INFO);
+        } else {
+            $this->logCssOperation('CSS user override create failed while writing "' . $file . '", user "' . $userInfo . '"', Log::WARNING);
+        }
+
+        return $written;
+    }
+
     /**
      * Method to get a list of all the files to edit in a template.
      *
@@ -362,7 +466,28 @@ class JemModelCssmanager extends BaseDatabaseModel
             $rf = $this->getCustomFile($path.'css/custom/', $cfile);
             $rf->active = isset($activeCustom[$cfile]) && $rf->exists;
             $rf->usedBy = $activeCustom[$cfile] ?? array();
+
+            if (isset($this->getUserCssDefinitions()[$cfile])) {
+                continue;
+            }
+
             $result['custom'][] = $rf;
+        }
+
+        foreach ($this->getUserCssDefinitions() as $userFile => $definition) {
+            $uf = $this->getCustomFile($path . 'css/custom/', $userFile);
+            $uf->definitionVersion = $definition['version'];
+            $uf->definitionSize = strlen($this->getUserCssHeader($userFile, $definition));
+            $uf->scope = $definition['scope'];
+            $uf->description = $definition['description'];
+            $uf->active = $uf->exists;
+            if ($uf->exists && $uf->sourceVersion === '') {
+                $uf->sourceVersion = $definition['version'];
+            }
+            if ($uf->exists && $uf->userVersion === '') {
+                $uf->userVersion = $definition['userVersion'] ?? '1.0';
+            }
+            $result['usercss'][] = $uf;
         }
 
         return $result;
