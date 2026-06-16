@@ -174,6 +174,79 @@ class JemHelper
     {
         $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
 
+        return self::sanitizeOnlineMeetingUrl($url);
+    }
+
+    /**
+     * Return the first valid online event link for ICS fallback.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  array
+     */
+    static public function getOnlineMeetingEventLink($event)
+    {
+        $links = array();
+
+        if (!empty($event->event_links) && is_array($event->event_links)) {
+            $links = $event->event_links;
+        } elseif (!empty($event->id)) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select(array(
+                    $db->quoteName('title'),
+                    $db->quoteName('url')
+                ))
+                ->from($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('event_id') . ' = ' . (int) $event->id)
+                ->where($db->quoteName('type') . ' = ' . $db->quote('online'))
+                ->where($db->quoteName('state') . ' = 1')
+                ->where($db->quoteName('url') . ' <> ' . $db->quote(''))
+                ->order(array($db->quoteName('ordering') . ' ASC', $db->quoteName('id') . ' ASC'));
+
+            try {
+                $db->setQuery($query);
+                $links = $db->loadObjectList() ?: array();
+            } catch (Exception $e) {
+                $links = array();
+            }
+        }
+
+        foreach ($links as $link) {
+            $type = is_array($link) ? ($link['type'] ?? '') : ($link->type ?? '');
+
+            if ($type !== '' && $type !== 'online') {
+                continue;
+            }
+
+            $url = self::sanitizeOnlineMeetingUrl(is_array($link) ? ($link['url'] ?? '') : ($link->url ?? ''));
+
+            if ($url === '') {
+                continue;
+            }
+
+            $label = trim((string) (is_array($link) ? ($link['title'] ?? '') : ($link->title ?? '')));
+
+            return array(
+                'url' => $url,
+                'label' => $label
+            );
+        }
+
+        return array('url' => '', 'label' => '');
+    }
+
+    /**
+     * Sanitize an online meeting URL.
+     *
+     * @param   string  $url  URL to check.
+     *
+     * @return  string
+     */
+    static protected function sanitizeOnlineMeetingUrl($url)
+    {
+        $url = trim((string) $url);
+
         if ($url === '') {
             return '';
         }
@@ -1421,6 +1494,19 @@ class JemHelper
 
         $onlineMeetingUrl = self::getOnlineMeetingUrl($event);
         $onlineMeetingLabel = self::getOnlineMeetingLabel($event);
+
+        if ($onlineMeetingUrl === '') {
+            $onlineMeetingLink = self::getOnlineMeetingEventLink($event);
+
+            if ($onlineMeetingLink['url'] !== '') {
+                $onlineMeetingUrl = $onlineMeetingLink['url'];
+
+                if ($onlineMeetingLink['label'] !== '') {
+                    $onlineMeetingLabel = $onlineMeetingLink['label'];
+                }
+            }
+        }
+
         $onlineMeetingPlatform = $onlineMeetingUrl !== '' ? self::getOnlineMeetingPlatform($onlineMeetingUrl) : array('key' => '', 'label' => '');
         $includeOnlineMeetingInIcs = (int) self::globalattribs()->get('event_online_meeting_ics', 1) === 1;
         $includeOnlineMeetingInDescription = (int) self::globalattribs()->get('event_online_meeting_ics_description', 1) === 1;
@@ -1450,7 +1536,11 @@ class JemHelper
         $htmlDescription .= '</body></html>';
 
         // location
-        $location = array($event->venue);
+        $location = array();
+        if (isset($event->venue) && trim((string) $event->venue) !== '') {
+            $location[] = trim((string) $event->venue);
+        }
+
         if (isset($event->street) && !empty($event->street)) {
             $location[] = $event->street;
         }
@@ -1473,18 +1563,10 @@ class JemHelper
 
         $location = implode(",", $location);
 
-        if ($onlineMeetingUrl !== '') {
-            $onlineLocation = array();
-
-            if (isset($event->venue) && trim((string) $event->venue) !== '') {
-                $onlineLocation[] = trim((string) $event->venue);
-            }
-
-            if (!empty($onlineMeetingPlatform['label'])) {
-                $onlineLocation[] = $onlineMeetingPlatform['label'];
-            }
-
-            $location = $onlineLocation ? implode(' - ', $onlineLocation) : Text::_('COM_JEM_ONLINE_MEETING');
+        if ($location === '' && $onlineMeetingUrl !== '') {
+            $location = !empty($onlineMeetingPlatform['label'])
+                ? $onlineMeetingPlatform['label']
+                : Text::_('COM_JEM_ONLINE_MEETING');
         }
 
         // Build vevent using iCalcreator v2.41 API
