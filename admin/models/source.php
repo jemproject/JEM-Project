@@ -136,6 +136,18 @@ class JemModelSource extends AdminModel
         );
     }
 
+    protected function getUserCssDefinitions()
+    {
+        return array(
+            'jem-user-front.css' => array(
+                'scope' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_SCOPE_FRONT'),
+            ),
+            'jem-user-module.css' => array(
+                'scope' => Text::_('COM_JEM_CSSMANAGER_USER_FILE_SCOPE_MODULE'),
+            ),
+        );
+    }
+
     protected function getActiveCustomCssMap($settings)
     {
         $active = array();
@@ -203,6 +215,8 @@ class JemModelSource extends AdminModel
         $details->sourceSize = 0;
         $details->active = false;
         $details->usedBy = array();
+        $details->userOverride = isset($this->getUserCssDefinitions()[$source->file]);
+        $details->scope = $details->userOverride ? $this->getUserCssDefinitions()[$source->file]['scope'] : '';
         $details->id = base64_encode(($source->custom ? 'custom#:' : '') . $source->file);
 
         if ($source->custom) {

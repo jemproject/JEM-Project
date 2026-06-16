@@ -169,3 +169,4 @@ JemHelper::loadModuleStyleSheet($mod_name, $layout);
 
 // Render layout
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+JemHelper::loadModuleUserCss();

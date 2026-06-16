@@ -1911,6 +1911,59 @@ class JemHelper
     }
 
     /**
+     * Load the optional frontend user override stylesheet once.
+     *
+     * This file is an additive override layer. It is loaded after the normal
+     * component stylesheets used by the current JEM frontend view.
+     *
+     * @return  void
+     */
+    static public function loadFrontendUserCss()
+    {
+        self::loadUserCssFile('jem-user-front.css', 'com_jem.user.front');
+    }
+
+    /**
+     * Load the optional module user override stylesheet once.
+     *
+     * This file is an additive override layer. It is loaded after the normal
+     * stylesheet used by a JEM module.
+     *
+     * @return  void
+     */
+    static public function loadModuleUserCss()
+    {
+        self::loadUserCssFile('jem-user-module.css', 'com_jem.user.module');
+    }
+
+    /**
+     * Load an optional user override CSS file from media/com_jem/css/custom.
+     *
+     * @param   string  $file   The CSS file name.
+     * @param   string  $asset  The WebAssetManager asset name.
+     *
+     * @return  void
+     */
+    protected static function loadUserCssFile($file, $asset)
+    {
+        $path = JPATH_SITE . '/media/com_jem/css/custom/' . $file;
+
+        if (!is_file($path)) {
+            return;
+        }
+
+        $app = Factory::getApplication();
+        $wa  = $app->getDocument()->getWebAssetManager();
+
+        if (method_exists($wa, 'assetExists') && $wa->assetExists('style', $asset)) {
+            $wa->useStyle($asset);
+            return;
+        }
+
+        $wa->registerAndUseStyle($asset, 'media/com_jem/css/custom/' . $file);
+    }
+
+    /**
      * Get the url to a css file for a module respecting layout style configured in JEM Settings.
      *
      * @param   string  $module  The name of the module
@@ -1945,6 +1998,7 @@ class JemHelper
         else {
             JemHelper::addLogEntry("Warning: The file " . $filestyle . " couldn't be found.", __METHOD__);
         }
+
     }
 
     static public function loadIconFont()

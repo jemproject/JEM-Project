@@ -52,6 +52,7 @@ $controller = BaseController::getInstance('Jem');
 // Perform the Request task
 $input = Factory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
+JemHelper::loadFrontendUserCss();
 
 // Redirect if set by the controller
 $controller->redirect();

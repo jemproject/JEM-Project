@@ -61,3 +61,4 @@ JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 JemHelper::loadIconFont();
 
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+JemHelper::loadModuleUserCss();

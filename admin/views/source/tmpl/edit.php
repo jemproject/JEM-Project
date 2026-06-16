@@ -23,6 +23,7 @@ $wa->useScript('keepalive')
 
 $canDo = JEMHelperBackend::getActions();
 $details = $this->details;
+$isUserOverride = $details && !empty($details->userOverride);
 $formatBytes = function ($bytes) {
     $bytes = (int) $bytes;
 
@@ -256,11 +257,15 @@ $formatBytes = function ($bytes) {
     <fieldset class="adminform jem-source-edit">
         <legend class="visually-hidden"><?php echo $this->source->custom ? Text::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', $this->source->filename) : Text::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename); ?></legend>
 
-        <div class="jem-source-edit-header" style="display: grid; grid-template-areas: 'title title' 'meta actions'; grid-template-columns: minmax(0, 1fr) max-content; align-items: center; gap: .35rem 1rem;">
+        <div class="jem-source-edit-header" style="display: grid; grid-template-areas: 'title actions' 'meta actions'; grid-template-columns: minmax(0, 1fr) max-content; align-items: center; gap: .35rem 1rem;">
             <div class="jem-source-edit-title" style="grid-area: title;">
                 <?php echo $this->source->custom ? Text::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', '<code>' . htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8') . '</code>') : Text::sprintf('COM_JEM_CSSMANAGER_FILENAME', '<code>' . htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8') . '</code>'); ?>
-                <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>"><?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?></span>
-                <?php if ($details && $details->custom && $details->active) : ?>
+                <?php if ($isUserOverride) : ?>
+                    <span class="badge bg-primary"><?php echo Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_USER_OVERRIDE'); ?></span>
+                <?php else : ?>
+                    <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>"><?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?></span>
+                <?php endif; ?>
+                <?php if ($details && $details->custom && ($details->active || $isUserOverride)) : ?>
                     <span class="badge bg-success"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS_ACTIVE'); ?></span>
                 <?php endif; ?>
             </div>
@@ -268,7 +273,9 @@ $formatBytes = function ($bytes) {
                 <div class="jem-source-meta-inline" style="grid-area: meta;">
                     <strong><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></strong> <?php echo $formatBytes($details->size); ?>
                     <strong><?php echo Text::_('COM_JEM_CSSMANAGER_MODIFIED'); ?></strong> <?php echo $details->modified ? HTMLHelper::_('date', $details->modified, 'Y-m-d H:i') : '-'; ?>
-                    <?php if ($details->custom) : ?>
+                    <?php if ($isUserOverride) : ?>
+                        <strong><?php echo Text::_('COM_JEM_SETTINGS_CSS_SCOPE'); ?></strong> <?php echo htmlspecialchars($details->scope, ENT_COMPAT, 'UTF-8'); ?>
+                    <?php elseif ($details->custom) : ?>
                         <strong><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></strong> <?php echo $details->sourceVersion ? htmlspecialchars($details->sourceVersion, ENT_COMPAT, 'UTF-8') : Text::_('COM_JEM_CSSMANAGER_VERSION_UNKNOWN_SHORT'); ?>
                         <?php if ($details->sourceFile) : ?>
                             <strong><?php echo Text::_('COM_JEM_CSSMANAGER_SOURCE_FILE'); ?></strong> <code><?php echo htmlspecialchars($details->sourceFile, ENT_COMPAT, 'UTF-8'); ?></code>
