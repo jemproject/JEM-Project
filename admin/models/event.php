@@ -343,6 +343,9 @@ class JemModelEvent extends JemModelAdmin
             $this->setError(implode('<br>', $customFieldErrors));
             return false;
         }
+        if (!$this->validateOnlineMeetingData($data)) {
+            return false;
+        }
 
         $createArticleMode       = isset($data['create_article']) ? (int) $data['create_article'] : 0;
         $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;
@@ -716,7 +719,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
@@ -1526,6 +1529,43 @@ class JemModelEvent extends JemModelAdmin
         }
     }
 
+
+    /**
+     * Security validation for online meeting fields.
+     *
+     * @param   array  &$data  Event data
+     * @return  bool           True if valid
+     */
+    public function validateOnlineMeetingData(&$data)
+    {
+        $url = isset($data['online_meeting_url']) ? trim((string) $data['online_meeting_url']) : '';
+        $label = isset($data['online_meeting_label']) ? trim((string) $data['online_meeting_label']) : '';
+
+        $data['online_meeting_url'] = $url;
+        $data['online_meeting_label'] = $label;
+
+        if ($url === '') {
+            return true;
+        }
+
+        $urlScheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$urlScheme || !in_array(strtolower($urlScheme), array('http', 'https'), true)) {
+            $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+            return false;
+        }
+
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
+            return false;
+        }
+
+        if (StringHelper::strlen($label) > 255) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_ONLINE_MEETING_LABEL_TOO_LONG'));
+            return false;
+        }
+
+        return true;
+    }
     /**
      * Security validation for the link data (Joomla 5 standard)
      *

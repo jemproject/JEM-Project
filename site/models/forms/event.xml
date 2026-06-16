@@ -187,7 +187,22 @@
             <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
             <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
         </field>
-        <field name="type_id" type="jemtype"
+                <field name="online_meeting_url" type="url"
+                label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_LABEL"
+                description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_DESC"
+                class="form-control"
+                validate="url"
+                filter="url"
+                relative="false"
+        />
+        <field name="online_meeting_label" type="text"
+                label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_LABEL_LABEL"
+                description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_LABEL_DESC"
+                class="form-control"
+                maxlength="255"
+                filter="string"
+                hint="COM_JEM_JOIN_ONLINE"
+        /><field name="type_id" type="jemtype"
             label="COM_JEM_TYPE_FIELD_TYPE"
             description="COM_JEM_TYPE_FIELD_TYPE_DESC"
             entity="1"

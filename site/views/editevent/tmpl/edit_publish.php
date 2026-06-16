@@ -31,7 +31,10 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
         <dd><?php echo $this->form->getInput('event_status'); ?></dd>
         <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
         <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
+                <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd><dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
         <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
         <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
         <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
