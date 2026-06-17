@@ -1512,13 +1512,13 @@ class JemHelper
         $includeOnlineMeetingInDescription = (int) self::globalattribs()->get('event_online_meeting_ics_description', 1) === 1;
 
         // item description text
-        $description = $event->title . '\\n\\n';
+        $description = $event->title . "\n\n";
         if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
-            $description .= Text::_('COM_JEM_ONLINE_MEETING') . ': ' . $onlineMeetingLabel . ' - ' . $onlineMeetingUrl . '\\n';
+            $description .= Text::_('COM_JEM_ONLINE_MEETING') . ': ' . $onlineMeetingLabel . ' - ' . $onlineMeetingUrl . "\n";
         }
 
-        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . '\\n';
-        $description .= Text::_('COM_JEM_ICS_EVENT_LINK') . ': ' . $link . '\\n';
+        $description .= Text::_('COM_JEM_CATEGORY') . ': ' . implode(', ', $categories) . "\n";
+        $description .= Text::_('COM_JEM_ICS_EVENT_LINK') . ': ' . $link . "\n";
 
         $htmlDescription = '<html><body>';
         $htmlDescription .= '<p>' . htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8') . '</p>';
