@@ -12,7 +12,9 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('fancy_select_th
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('storeipmode', 'full');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_custom_fields_position', 'details');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('global_venue_custom_fields_position', 'details');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('globalattribs', '{"loglevel":"2"}');
 UPDATE `#__jem_config` SET `value` = '{"loglevel":"2"}' WHERE `keyname` = 'globalattribs' AND (`value` = '' OR `value` IS NULL);
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_show_online_meeting', '1', '$.event_online_meeting_ics', '1', '$.event_online_meeting_ics_description', '1', '$.event_online_meeting_default_label', '') WHERE `keyname` = 'globalattribs';
 
 CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,`event_id` INT(11) NOT NULL,`type` VARCHAR(50) NOT NULL,`title` VARCHAR(255) NOT NULL,`description` VARCHAR(255)  NULL,`url` TEXT NOT NULL,`params` TEXT DEFAULT NULL,`ordering` INT(11) DEFAULT 0,`state` TINYINT(1) DEFAULT 1,`created` DATETIME DEFAULT CURRENT_TIMESTAMP,`created_by` INT(11) NOT NULL,`modified` DATETIME DEFAULT NULL,`modified_by` INT(11) DEFAULT NULL,PRIMARY KEY (`id`),INDEX `idx_event_id` (`event_id`),INDEX `idx_state` (`state`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 

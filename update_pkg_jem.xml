@@ -22,7 +22,7 @@
         <sha256>c63a784f18182d965f9ea3e46328c9af8fad34dabf5376ff12b59192ebc212f4</sha256>
         <sha384>7face308c1cbbb4887db055208c29c3147790fdecfb568fb2fcb7cbea46cd628dab1bd4d9f14bfab1a6103b56a649d04</sha384>
         <sha512>6b5e16bfa58bf03032e053aa5effb3df6f1dee7c3691bf36d35d0032f040637899ab57d99d30f2a4f241efa3365370f36fb6574444a8b030f0af9b8f0b7ae86e</sha512>
-        <date>2026-06-08</date>
+        <date>2026-06-17</date>
         <notes>JEM 5.0.0 RC 2 for Joomla! 6.x only. Requires PHP 8.3 or newer.</notes>
         <changes>JEM 5.0.0 RC 2 focuses on Joomla 6 compatibility. Please refer to the changelog for details.</changes>
     </update>

@@ -2055,3 +2055,158 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
         width: 100%;
     }
 }
+
+div#jem.jem_venueslist .jem-sort #jem_venue_image,
+div#jem.jem_venueslist .jem-event .jem-event-venue-image {
+    flex: 0 0 5rem;
+    justify-content: center;
+    text-align: center;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_type,
+div#jem.jem_venueslist .jem-event .jem-event-type {
+    flex: 0 0 9rem;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_country,
+div#jem.jem_venueslist .jem-event .jem-event-country {
+    flex: 1 20%;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_map,
+div#jem.jem_venueslist .jem-event .jem-event-map-action {
+    flex: 0 0 5rem;
+    justify-content: center;
+    text-align: center;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_calendar,
+div#jem.jem_venueslist .jem-event .jem-event-calendar-action {
+    flex: 0 0 6rem;
+    justify-content: center;
+    text-align: center;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_edit,
+div#jem.jem_venueslist .jem-event .jem-event-edit-action {
+    flex: 0 0 4rem;
+    justify-content: center;
+    text-align: center;
+}
+
+div#jem.jem_venueslist .jem-sort #jem_type,
+div#jem.jem_venueslist .jem-sort #jem_city,
+div#jem.jem_venueslist .jem-sort #jem_state,
+div#jem.jem_venueslist .jem-sort #jem_country,
+div#jem.jem_venueslist .jem-event .jem-event-type,
+div#jem.jem_venueslist .jem-event .jem-event-city,
+div#jem.jem_venueslist .jem-event .jem-event-state,
+div#jem.jem_venueslist .jem-event .jem-event-country {
+    box-sizing: border-box;
+    justify-content: flex-start;
+    text-align: left !important;
+}
+
+div#jem.jem_venueslist .jem-event .jem-event-type,
+div#jem.jem_venueslist .jem-event .jem-event-city,
+div#jem.jem_venueslist .jem-event .jem-event-state,
+div#jem.jem_venueslist .jem-event .jem-event-country {
+    display: block;
+    align-self: center;
+    padding-left: 0;
+    padding-inline-start: 0 !important;
+    margin-left: 0;
+}
+
+div#jem.jem_venueslist .jem-event .jem-event-type .jem-venueslist-text,
+div#jem.jem_venueslist .jem-event .jem-event-city .jem-venueslist-text,
+div#jem.jem_venueslist .jem-event .jem-event-state .jem-venueslist-text,
+div#jem.jem_venueslist .jem-event .jem-event-country .jem-venueslist-text {
+    display: inline-block;
+    transform: none;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country {
+    flex: 0 0 11.5rem;
+    min-width: 0;
+    max-width: 11.5rem;
+    align-items: center;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country #filter_country,
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country joomla-field-fancy-select,
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country .choices {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country .choices__placeholder {
+    display: none;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country .choices__input--cloned {
+    min-width: 1ch !important;
+    width: 1ch !important;
+}
+
+div#jem.jem_venueslist #jem_filter .jem-venueslist-filter-country .choices__input--cloned::placeholder {
+    color: transparent;
+}
+
+div#jem.jem_venueslist .jem-venueslist-map-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    white-space: nowrap;
+}
+
+div#jem.jem_venueslist .jem-event .jem-event-calendar-action,
+div#jem.jem_venueslist .jem-event .jem-event-map-action,
+div#jem.jem_venueslist .jem-event .jem-event-edit-action {
+    display: flex;
+    align-items: center;
+}
+
+div#jem.jem_venueslist .jem-sort .sectiontableheader,
+div#jem.jem_venueslist .jem-event .jem-event-info-small {
+    box-sizing: border-box;
+    padding-right: 0.75rem;
+}
+
+div#jem.jem_venueslist .jem-sort .jem-small-list,
+div#jem.jem_venueslist .eventlist .jem-small-list {
+    align-items: center;
+}
+
+div#jem.jem_venueslist .jem-sort .jem-event-action,
+div#jem.jem_venueslist .jem-event .jem-event-action {
+    padding-right: 0;
+}
+
+@media (min-width: 768px) {
+    div#jem.jem_venueslist .jem-sort .jem-small-list,
+    div#jem.jem_venueslist .eventlist .jem-small-list {
+        flex-wrap: nowrap;
+    }
+}
+
+div#jem.jem_venueslist .jem-event .jem-event-calendar-action a,
+div#jem.jem_venueslist .jem-event .jem-event-edit-action a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+div#jem.jem_venueslist .jem-event .jem-venueslist-venue-image {
+    width: 64px;
+    height: 48px;
+    object-fit: contain;
+}

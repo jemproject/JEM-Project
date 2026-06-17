@@ -13,6 +13,15 @@
                 label="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX"
                 description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC"
             />
+            <field name="show_search_title" type="radio"
+                default="1"
+                label="COM_JEM_SEARCH_SHOW_TITLE"
+                description="COM_JEM_SEARCH_SHOW_TITLE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
         </fieldset>
 
         <fieldset name="filter_fields" label="COM_JEM_SEARCH_FILTER_FIELDS">

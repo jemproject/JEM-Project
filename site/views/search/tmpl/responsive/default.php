@@ -27,9 +27,11 @@ use Joomla\CMS\Language\Text;
     </div>
     <?php endif; ?>
 
-  <h2>
-    <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
-  </h2>
+    <?php if ($this->params->get('show_search_title', 1)) : ?>
+    <h2>
+        <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
+    </h2>
+    <?php endif; ?>
     <!--table-->
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
         <?php
