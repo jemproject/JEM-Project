@@ -104,6 +104,10 @@ class jem_events extends Table
     public $type_id = null;
     /** @var int */
     public $article_id = 0;
+    /** @var string */
+    public $online_meeting_url = '';
+    /** @var string */
+    public $online_meeting_label = '';
     /** @var int */
     public $registra = null;
     /** @var int */

@@ -10,8 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Filesystem\Folder;
-use Joomla\Filesystem\Path;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
 
 FormHelper::loadFieldClass('list');
 

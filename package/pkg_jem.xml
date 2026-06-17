@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <extension type="package" version="4.2" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>May 2026</creationDate>
+    <creationDate>June 2026</creationDate>
     <packagename>jem</packagename>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>

@@ -173,18 +173,16 @@ $buildTypeBadge = static function ($type) {
                 ?>
                 <?php if ($this->params->get('show_category_events', 1)) : ?>
                     <div class="jem-readmore">
-                        <a href="<?php echo $buildCategoryEventsLink($row); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR_SHOWALL'); ?>">
-                            <button class="buttonfilter btn">
-                                <?php echo Text::_('COM_JEM_CALENDAR_SHOWALL') ?>
-                                <?php if ($row->assignedevents > 1) :
-                                    echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENTS');
-                                elseif ($row->assignedevents == 1) :
-                                    echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENT');
-                                else :
-                                    echo '- 0 '.TEXT::_('COM_JEM_EVENTS');
-                                endif;
-                                ?>
-                            </button>
+                        <a class="btn btn-secondary buttonfilter jem-category-events-button" href="<?php echo $buildCategoryEventsLink($row); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR_SHOWALL'); ?>" role="button">
+                            <?php echo Text::_('COM_JEM_CALENDAR_SHOWALL') ?>
+                            <?php if ($row->assignedevents > 1) :
+                                echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENTS');
+                            elseif ($row->assignedevents == 1) :
+                                echo ' - '.$row->assignedevents.' '.TEXT::_('COM_JEM_EVENT');
+                            else :
+                                echo ' - 0 '.TEXT::_('COM_JEM_EVENTS');
+                            endif;
+                            ?>
                         </a>
                     </div>
                 <?php endif; ?>

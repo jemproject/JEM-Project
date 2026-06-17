@@ -62,6 +62,38 @@ $uri = Uri::getInstance();
       flex: 0 0 9rem;
   }
 
+  .jem-sort #jem_type,
+  .jem-sort #jem_city,
+  .jem-sort #jem_state,
+  .jem-sort #jem_country,
+  #jem .jem-event .jem-event-type,
+  #jem .jem-event .jem-event-city,
+  #jem .jem-event .jem-event-state,
+  #jem .jem-event .jem-event-country {
+      box-sizing: border-box;
+      justify-content: flex-start;
+      text-align: left !important;
+  }
+
+  #jem .jem-event .jem-event-type,
+  #jem .jem-event .jem-event-city,
+  #jem .jem-event .jem-event-state,
+  #jem .jem-event .jem-event-country {
+      display: block;
+      align-self: center;
+      padding-left: 0;
+      padding-inline-start: 0 !important;
+      margin-left: 0;
+  }
+
+  #jem .jem-event .jem-event-type .jem-venueslist-text,
+  #jem .jem-event .jem-event-city .jem-venueslist-text,
+  #jem .jem-event .jem-event-state .jem-venueslist-text,
+  #jem .jem-event .jem-event-country .jem-venueslist-text {
+      display: inline-block;
+      transform: none;
+  }
+
   .jem-sort #jem_country,
   #jem .jem-event .jem-event-country {
       flex: 1 20%;
@@ -422,7 +454,56 @@ foreach ((array) $this->rows as $venueRow) {
         break;
     }
 }
+
+$gridColumnMap = array(
+    'image'    => '5rem',
+    'venue'    => 'minmax(7rem, ' . $this->escape((string) $this->jemsettings->locationwidth) . ')',
+    'type'     => '9rem',
+    'city'     => 'minmax(7rem, ' . $this->escape((string) $this->jemsettings->citywidth) . ')',
+    'state'    => ($this->params->get('showstate') && !empty($this->jemsettings->statewidth)) ? 'minmax(7rem, ' . $this->escape((string) $this->jemsettings->statewidth) . ')' : 'minmax(7rem, 1fr)',
+    'country'  => 'minmax(7rem, 20%)',
+    'map'      => '6.5rem',
+    'calendar' => '6rem',
+);
+$gridColumns = array();
+
+foreach ($displayOrder as $field) {
+    if (isset($gridColumnMap[$field])) {
+        $gridColumns[] = $gridColumnMap[$field];
+    }
+}
+
+if ($showEditColumn) {
+    $gridColumns[] = '4rem';
+}
 ?>
+<style>
+  @media (min-width: 768px) {
+      #jem .jem-sort .jem-small-list,
+      #jem .eventlist .jem-small-list {
+          display: grid;
+          grid-template-columns: <?php echo implode(' ', $gridColumns); ?>;
+          align-items: center;
+      }
+
+      #jem .jem-sort .jem-small-list > *,
+      #jem .eventlist .jem-small-list > * {
+          min-width: 0;
+      }
+
+      #jem .jem-sort #jem_type,
+      #jem .jem-sort #jem_city,
+      #jem .jem-sort #jem_state,
+      #jem .jem-sort #jem_country,
+      #jem .jem-event .jem-event-type,
+      #jem .jem-event .jem-event-city,
+      #jem .jem-event .jem-event-state,
+      #jem .jem-event .jem-event-country {
+          justify-self: stretch;
+          text-align: left !important;
+      }
+  }
+</style>
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
   <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
     <div class="jem-venueslist-filter-label">
@@ -540,28 +621,28 @@ foreach ((array) $this->rows as $venueRow) {
                         <?php endif; ?>
                     <?php elseif ($field === 'type') : ?>
                         <div class="jem-event-info-small jem-event-type">
-                            <?php echo jem_venueslist_responsive_type_badge($row) ?: '-'; ?>
+                            <span class="jem-venueslist-text"><?php echo jem_venueslist_responsive_type_badge($row) ?: '-'; ?></span>
                         </div>
                     <?php elseif ($field === 'city') : ?>
                         <?php if (!empty($row->city)) : ?>
                           <div class="jem-event-info-small jem-event-city venue-big" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                            <?php echo $this->escape($row->city); ?>
+                            <span class="jem-venueslist-text"><?php echo $this->escape($row->city); ?></span>
                           </div>
                         <?php else : ?>
-                          <div class="jem-event-info-small jem-event-city">-</div>
+                          <div class="jem-event-info-small jem-event-city"><span class="jem-venueslist-text">-</span></div>
                         <?php endif; ?>
                     <?php elseif ($field === 'state') : ?>
                         <?php if (!empty($row->state)) : ?>
                         <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                            <?php echo $this->escape($row->state); ?>
+                            <span class="jem-venueslist-text"><?php echo $this->escape($row->state); ?></span>
                         </div>
                         <?php else : ?>
-                        <div class="jem-event-info-small jem-event-state">-</div>
+                        <div class="jem-event-info-small jem-event-state"><span class="jem-venueslist-text">-</span></div>
                         <?php endif; ?>
                     <?php elseif ($field === 'country') : ?>
                         <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY') . ': ' . $this->escape(jem_venueslist_country_name($row->country ?? '')); ?>">
                             <?php $countryName = jem_venueslist_country_name($row->country ?? ''); ?>
-                            <?php echo $countryName !== '' ? jem_venueslist_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?>
+                            <span class="jem-venueslist-text"><?php echo $countryName !== '' ? jem_venueslist_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '-'; ?></span>
                         </div>
                     <?php elseif ($field === 'map') : ?>
                         <div class="jem-event-info-small jem-event-action jem-event-map-action" title="<?php echo Text::_('COM_JEM_MAP'); ?>">
