@@ -211,6 +211,25 @@ class JFormFieldMailerprofiles extends FormField
                     'editvenue_mail_admin' => 1,
                 ),
             ),
+            'editorial' => array(
+                'label' => Text::_('PLG_JEM_MAILER_PROFILE_EDITORIAL'),
+                'description' => Text::_('PLG_JEM_MAILER_PROFILE_EDITORIAL_DESC'),
+                'values' => array(
+                    'newevent_mail_user' => 1,
+                    'newevent_mail_admin' => 1,
+                    'newevent_mail_category_acl' => 1,
+                    'editevent_mail_user' => 1,
+                    'editevent_mail_creator' => 1,
+                    'editevent_mail_admin' => 1,
+                    'editevent_mail_category_acl' => 1,
+                    'newvenue_mail_user' => 1,
+                    'newvenue_mail_admin' => 1,
+                    'editvenue_mail_user' => 1,
+                    'editvenue_mail_creator' => 1,
+                    'editvenue_mail_admin' => 1,
+                    'editvenue_mail_ev-creator' => 1,
+                ),
+            ),
             'community' => array(
                 'label' => Text::_('PLG_JEM_MAILER_PROFILE_COMMUNITY'),
                 'description' => Text::_('PLG_JEM_MAILER_PROFILE_COMMUNITY_DESC'),
@@ -251,25 +270,6 @@ class JFormFieldMailerprofiles extends FormField
                     'editvenue_mail_registered' => 1,
                     'editvenue_mail_category' => 1,
                     'editvenue_mail_group' => 1,
-                ),
-            ),
-            'editorial' => array(
-                'label' => Text::_('PLG_JEM_MAILER_PROFILE_EDITORIAL'),
-                'description' => Text::_('PLG_JEM_MAILER_PROFILE_EDITORIAL_DESC'),
-                'values' => array(
-                    'newevent_mail_user' => 1,
-                    'newevent_mail_admin' => 1,
-                    'newevent_mail_category_acl' => 1,
-                    'editevent_mail_user' => 1,
-                    'editevent_mail_creator' => 1,
-                    'editevent_mail_admin' => 1,
-                    'editevent_mail_category_acl' => 1,
-                    'newvenue_mail_user' => 1,
-                    'newvenue_mail_admin' => 1,
-                    'editvenue_mail_user' => 1,
-                    'editvenue_mail_creator' => 1,
-                    'editvenue_mail_admin' => 1,
-                    'editvenue_mail_ev-creator' => 1,
                 ),
             ),
         );
@@ -314,14 +314,38 @@ class JFormFieldMailerprofiles extends FormField
 
         $html[] = '</div>';
         $html[] = '</fieldset>';
+        $commonColumnKeys = array('admin', 'category', 'group');
+        $specificColumnSlotKeys = array(
+            array('affected_attendee', 'registered_attendees'),
+            array('submitter_editor'),
+            array('event_creator', 'venue_creator'),
+            array('category_acl', 'event_creators_using_venue'),
+        );
+        $specificColumnSlots = count($specificColumnSlotKeys);
+
         foreach ($sections as $section) {
+            $sectionColumns = $this->normaliseSectionColumns($section['columns'], $commonColumnKeys, $specificColumnSlotKeys);
+
             $html[] = '<fieldset class="jem-mailer-section">';
             $html[] = '<legend>' . htmlspecialchars($section['label'], ENT_QUOTES, 'UTF-8') . '</legend>';
             $html[] = '<div class="table-responsive">';
             $html[] = '<table class="table table-striped table-sm jem-mailer-matrix-table">';
+            $html[] = '<colgroup><col class="jem-mailer-col-action">';
+            for ($i = 0; $i < $specificColumnSlots; $i++) {
+                $html[] = '<col class="jem-mailer-col-specific">';
+            }
+            foreach ($commonColumnKeys as $commonColumnKey) {
+                $html[] = '<col class="jem-mailer-col-common">';
+            }
+            $html[] = '</colgroup>';
             $html[] = '<thead><tr><th>' . Text::_('PLG_JEM_MAILER_MATRIX_ACTION') . '</th>';
 
-            foreach ($section['columns'] as $columnLabel) {
+            foreach ($sectionColumns as $columnKey => $columnLabel) {
+                if ($this->isSpacerColumn($columnKey)) {
+                    $html[] = '<th class="jem-mailer-spacer" aria-hidden="true"></th>';
+                    continue;
+                }
+
                 $html[] = '<th>' . htmlspecialchars($columnLabel, ENT_QUOTES, 'UTF-8') . '</th>';
             }
 
@@ -329,7 +353,12 @@ class JFormFieldMailerprofiles extends FormField
 
             foreach ($section['rows'] as $row) {
                 $html[] = '<tr><th scope="row">' . htmlspecialchars($row['label'], ENT_QUOTES, 'UTF-8') . '</th>';
-                foreach ($section['columns'] as $columnKey => $columnLabel) {
+                foreach ($sectionColumns as $columnKey => $columnLabel) {
+                    if ($this->isSpacerColumn($columnKey)) {
+                        $html[] = '<td class="jem-mailer-spacer" aria-hidden="true"></td>';
+                        continue;
+                    }
+
                     if (isset($row['fields'][$columnKey])) {
                         $fieldName = $row['fields'][$columnKey];
                         $html[] = '<td><input type="checkbox" class="jem-mailer-toggle" data-param="' . htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8') . '" aria-label="' . htmlspecialchars($row['label'] . ' - ' . $columnLabel, ENT_QUOTES, 'UTF-8') . '"></td>';
@@ -381,6 +410,55 @@ class JFormFieldMailerprofiles extends FormField
         return $default;
     }
 
+    private function normaliseSectionColumns(array $columns, array $commonColumnKeys, array $specificColumnSlotKeys)
+    {
+        $commonColumns = array();
+
+        foreach ($columns as $columnKey => $columnLabel) {
+            if (in_array($columnKey, $commonColumnKeys, true)) {
+                $commonColumns[$columnKey] = $columnLabel;
+            }
+        }
+
+        $normalisedColumns = array();
+        $slot = 0;
+
+        foreach ($specificColumnSlotKeys as $slotColumnKeys) {
+            $matchedColumnKey = null;
+
+            foreach ($slotColumnKeys as $columnKey) {
+                if (isset($columns[$columnKey])) {
+                    $matchedColumnKey = $columnKey;
+                    break;
+                }
+            }
+
+            if ($matchedColumnKey !== null) {
+                $normalisedColumns[$matchedColumnKey] = $columns[$matchedColumnKey];
+            } else {
+                $normalisedColumns['__spacer_' . $slot] = '';
+            }
+
+            $slot++;
+        }
+
+        foreach ($commonColumnKeys as $columnKey) {
+            if (isset($columns[$columnKey])) {
+                $normalisedColumns[$columnKey] = $columns[$columnKey];
+                continue;
+            }
+
+            $normalisedColumns['__common_spacer_' . $columnKey] = '';
+        }
+
+        return $normalisedColumns;
+    }
+
+    private function isSpacerColumn($columnKey)
+    {
+        return strpos($columnKey, '__spacer_') === 0 || strpos($columnKey, '__common_spacer_') === 0;
+    }
+
     private function getScriptAndStyle()
     {
         return '<style>
@@ -396,27 +474,34 @@ class JFormFieldMailerprofiles extends FormField
 .jem-mailer-section{margin:1.15rem 0 0;padding:.75rem 1rem 1rem;border:1px solid #d8dde3;border-radius:6px;background:var(--body-bg,#fff);min-inline-size:0}
 .jem-mailer-section legend{float:none;width:auto;max-width:100%;margin:0 0 .6rem;padding:.35rem .75rem;background:#253f61;color:#fff;border-radius:4px;font-size:1.05rem;font-weight:700;line-height:1.25}
 .jem-mailer-section .table-responsive{overflow-x:auto}
-.jem-mailer-matrix-table{margin-bottom:0;border:1px solid #ccd4dd;min-width:760px}
+.jem-mailer-matrix-table{margin-bottom:0;border:1px solid #ccd4dd;min-width:940px;table-layout:fixed;width:100%}
+.jem-mailer-col-action{width:22%}
+.jem-mailer-col-specific{width:11%}
+.jem-mailer-col-common{width:11.33%}
 .jem-mailer-matrix-table thead th{background:#e7edf5;color:#17324f;font-weight:700;border-bottom:2px solid #8fa2b8;text-align:center;vertical-align:middle}
 .jem-mailer-matrix-table th,.jem-mailer-matrix-table td{text-align:center;vertical-align:middle}
+.jem-mailer-matrix-table th{overflow-wrap:anywhere}
 .jem-mailer-matrix-table tbody th{font-weight:600}
 .jem-mailer-matrix-table th:first-child{text-align:left;min-width:13rem}
 .jem-mailer-matrix-table input[type=checkbox]{width:1.05rem;height:1.05rem}
 .jem-mailer-na{color:#778390;background:#f3f5f7;font-weight:600}
-.jem-mailer-admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;align-items:start}
-.jem-mailer-switch{display:flex;gap:.5rem;align-items:center;margin:.35rem 0}
+.jem-mailer-spacer{color:transparent}
+.jem-mailer-admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),max-content));gap:1rem 1.5rem;align-items:start}
+.jem-mailer-switch{display:flex;gap:.5rem;align-items:center;margin:.35rem 0;white-space:nowrap;min-width:max-content}
+.jem-mailer-switch input{flex:0 0 auto}
+.jem-mailer-switch span{white-space:nowrap}
 .jem-mailer-admin-receivers{display:flex;flex-direction:column;gap:.35rem;grid-column:1/-1;max-width:760px}
 @media (max-width: 900px){
     .jem-mailer-section{padding:.65rem .75rem .8rem}
     .jem-mailer-section legend{font-size:1rem;padding:.3rem .65rem}
-    .jem-mailer-matrix-table{min-width:680px}
+    .jem-mailer-matrix-table{min-width:860px}
     .jem-mailer-matrix-table th:first-child{min-width:11rem}
 }
 @media (max-width: 640px){
     .jem-mailer-legend{display:block}
     .jem-mailer-legend span{display:flex;margin-bottom:.4rem}
     .jem-mailer-profile{min-height:auto}
-    .jem-mailer-matrix-table{font-size:.9rem;min-width:620px}
+    .jem-mailer-matrix-table{font-size:.9rem;min-width:820px}
 }
 </style><script>
 (function(){
