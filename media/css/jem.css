@@ -2662,13 +2662,8 @@ div#jem .inline-button-right {
     border: 1px solid currentColor;
 }
 
-#jem .jem-online-meeting legend {
-    float: none;
-    width: auto;
-    margin: 0 0 .75rem;
-    padding: 0 .35rem;
-    font-size: 1rem;
-    font-weight: 700;
+#jem .jem-online-meeting-title {
+    margin-top: 0 !important;
 }
 
 #jem .jem-online-meeting-link {
@@ -2678,7 +2673,9 @@ div#jem .inline-button-right {
     gap: .45rem;
     max-width: 100%;
     white-space: normal;
+    text-decoration: none;
 }
+
 
 #jem .jem-online-meeting-icon {
     line-height: 1;

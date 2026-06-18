@@ -407,8 +407,11 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         $onlineMeetingPlatformKey = preg_replace('/[^a-z0-9_-]/i', '', $onlineMeetingPlatform['key']);
                         ?>
                         <fieldset id="jem-event-online-meeting-<?php echo (int) $this->item->id; ?>"
+                                  aria-labelledby="jem-event-online-meeting-title-<?php echo (int) $this->item->id; ?>"
                                   class="jem-online-meeting jem-online-meeting-<?php echo $this->escape($onlineMeetingPlatformKey); ?>">
-                            <legend><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+                            <legend class="visually-hidden"><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></legend>
+                            <h2 id="jem-event-online-meeting-title-<?php echo (int) $this->item->id; ?>"
+                                class="description jem-online-meeting-title"><?php echo Text::_('COM_JEM_ONLINE_MEETING'); ?></h2>
                             <a id="jem-event-online-meeting-link-<?php echo (int) $this->item->id; ?>"
                                class="jem-online-meeting-link btn btn-primary"
                                href="<?php echo $this->escape($onlineMeetingUrl); ?>"
