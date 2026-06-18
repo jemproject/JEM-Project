@@ -66,6 +66,26 @@ class JemHelper
     }
 
     /**
+     * Returns true when Community Builder is enabled and its profile table is available.
+     *
+     * @return boolean
+     */
+    static public function isCommunityBuilderEnabled()
+    {
+        if (!ComponentHelper::isEnabled('com_comprofiler')) {
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
+            return in_array($db->replacePrefix('#__comprofiler'), $db->getTableList(), true);
+        } catch (RuntimeException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Load published Joomla articles associated with the given events.
      *
      * @param   array  $events  Event objects that may contain article_id.

@@ -333,6 +333,16 @@ class JemModelEvent extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
 
+        if (!JemHelper::isContactComponentEnabled()) {
+            if ($new) {
+                $data['contactid'] = '';
+            } else {
+                unset($data['contactid']);
+            }
+        } elseif (empty($data['contactid'])) {
+            $data['contactid'] = '';
+        }
+
         // Variables
         $cats                 = $data['cats'];
         $invitedusers         = $data['invited'] ?? '';
@@ -461,7 +471,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Contact
-            if (!JemHelper::isContactComponentEnabled() || empty($data['contactid'])) {
+            if (JemHelper::isContactComponentEnabled() && empty($data['contactid'])) {
                 $data['contactid'] = '';
             }
 

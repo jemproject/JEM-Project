@@ -14,7 +14,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
 $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id.($this->itemid ? '&Itemid='.$this->itemid : '');
@@ -62,6 +61,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
 
         <?php
         $this->registereduser = null;
+        $useCommunityBuilder = JemHelper::isCommunityBuilderEnabled() && ((int) $this->settings->get('event_comunsolution', '0') === 1);
+        $showCommunityBuilderAvatar = $useCommunityBuilder && ((int) $this->settings->get('event_comunoption', '0') === 1);
         // only set style info if users already have registered for event and user is allowed to see it
         if ($this->registers) :
             $showAttendenenames = $this->settings->get('event_show_attendeenames', 2);
@@ -93,8 +94,8 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                 <dd class="register registered-users">
                     <ul class="fa-ul jem-registered-list">
                         <?php
-                        if ($this->settings->get('event_comunsolution', '0') == 1) :
-                            if ($this->settings->get('event_comunoption', '0') == 1) :
+                        if ($useCommunityBuilder) :
+                            if ($showCommunityBuilderAvatar) :
                                 //$cparams = ComponentHelper::getParams('com_media');
                                 //$imgpath = $cparams->get('image_path'); // mostly 'images'
                                 $imgpath = 'images'; // CB does NOT respect path set in Media Manager, so we have to ignore this too
@@ -168,7 +169,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                             }
 
                             // if CB
-                            if ($this->settings->get('event_comunsolution', '0') == 1) :
+                            if ($useCommunityBuilder) :
                                 $needle = 'index.php?option=com_comprofiler&view=userprofile';
                                 $menu = Factory::getApplication()->getMenu();
                                 $item = $menu->getItems('link', $needle, true);
@@ -177,7 +178,7 @@ $linkreg = 'index.php?option=com_jem&amp;view=attendees&amp;id='.$this->item->id
                                 if (!empty($item) && isset($item->id)) {
                                     $cntlink .= '&Itemid=' . $item->id;
                                 }
-                                if ($this->settings->get('event_comunoption', '0') == 1) :
+                                if ($showCommunityBuilderAvatar) :
                                     // User has avatar
                                     if (!empty($register->avatar)) :
                                         if (is_file(JPATH_ROOT . '/' . $imgpath . '/comprofiler/tn' . $register->avatar)) {
