@@ -61,10 +61,10 @@ class JFormFieldModal_Contact extends FormField
     protected function getInput()
     {
         $app      = Factory::getApplication();
-        $currentValues = ComponentHelper::isEnabled('com_contact') ? ($this->value ? $this->value : '') : '';
+        $currentValues = $this->value ? $this->value : '';
 
         if (!$this->hasAvailableContacts()) {
-            return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="" />';
+            return '<input type="hidden" id="' . $this->id . '_id" name="' . $this->name . '" value="' . htmlspecialchars($currentValues, ENT_QUOTES, 'UTF-8') . '" />';
         }
 
         $document = $app->getDocument();
