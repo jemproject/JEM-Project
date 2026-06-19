@@ -226,8 +226,9 @@ class JemImage
         }
 
         if ($image) {
-            $img_orig  = 'images/jem/'.$folder.'/'.$image;
-            $img_thumb = 'images/jem/'.$folder.'/small/'.$image;
+            $isSiteImagePath = strpos($image, '/') !== false || strpos($image, '\\') !== false;
+            $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
+            $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
 
             $filepath  = JPATH_SITE.'/'.$img_orig;
             $save      = JPATH_SITE.'/'.$img_thumb;
@@ -238,7 +239,7 @@ class JemImage
             }
 
             //Create thumbnail if enabled and it does not exist already
-            if ($settings->gddisabled == 1 && !file_exists($save)) {
+            if (!$isSiteImagePath && $settings->gddisabled == 1 && !file_exists($save)) {
                 JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
             }
 
@@ -247,7 +248,7 @@ class JemImage
             $dimage['thumb']    = $img_thumb;
 
             //get imagesize of the original
-            $iminfo = @getimagesize($img_orig);
+            $iminfo = @getimagesize($filepath);
 
             // and it should be an image
             if (!is_array($iminfo) || count($iminfo) < 2) {

@@ -247,6 +247,13 @@ class plgFinderJEM extends Adapter
             return;
         }
 
+        $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+        JemHelper::applyAssociatedArticleEventContent($item, $levels);
+
+        $item->slug = !empty($item->alias) ? ((int) $item->id . ':' . $item->alias) : (int) $item->id;
+        $item->summary = (string) ($item->introtext ?? $item->summary ?? '');
+        $item->body = (string) ($item->fulltext ?? $item->body ?? '');
+
         $item->setLanguage();
 
         // Initialize the item parameters.
@@ -315,6 +322,7 @@ class plgFinderJEM extends Adapter
      */
     protected function setup()
     {
+        require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
         require_once JPATH_SITE . '/components/com_jem/helpers/route.php';
 
         return true;
@@ -334,10 +342,10 @@ class plgFinderJEM extends Adapter
         // Check if we can use the supplied SQL query.
         $sql = $sql instanceof JDatabaseQuery ? $sql : $db->getQuery(true);
 
-        $sql->select('a.id, a.access, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
+        $sql->select('a.id, a.access, a.title, a.alias, a.article_id, a.attribs, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
         $sql->select('a.created AS publish_start_date, a.dates AS start_date, a.enddates AS end_date');
         $sql->select('a.created_by, a.modified, a.version, a.published AS state');
-        $sql->select('a.fulltext AS body, a.introtext AS summary');
+        $sql->select('a.fulltext, a.introtext, a.fulltext AS body, a.introtext AS summary');
         $sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
         $sql->select('l.published AS loc_published');
         $sql->select('ct.name AS countryname');

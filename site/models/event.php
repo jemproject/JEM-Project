@@ -232,6 +232,8 @@ class JemModelEvent extends ItemModel
                 $registry->loadString($data->metadata);
                 $data->metadata = $registry;
 
+                JemHelper::applyAssociatedArticleEventContent($data, $levels);
+
                 $registry = new Registry;
                 $registry->loadString($data->venue_attribs ?? '{}');
                 $data->venue_params = JemHelper::globalattribs();
@@ -507,6 +509,8 @@ class JemModelEvent extends ItemModel
             $registry = new Registry;
             $registry->loadString($data[0]->metadata);
             $data[0]->metadata = $registry;
+
+            JemHelper::applyAssociatedArticleEventContent($data[0], $levels);
 
             $registry = new Registry;
             $registry->loadString($data[0]->venue_attribs ?? '{}');

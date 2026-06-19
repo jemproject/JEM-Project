@@ -55,7 +55,7 @@ class JemViewCategory extends HtmlView
                 $displaydate = JemOutput::formatLongDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $jemsettings->showtime);
 
                 // url link to event
-                $link = Route::_(JemHelperRoute::getEventRoute($row->id));
+                $link = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
                 // feed item description text
                 $description  = Text::_('COM_JEM_TITLE').': '.$title.'<br>';

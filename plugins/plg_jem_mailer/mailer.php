@@ -98,7 +98,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
@@ -112,6 +112,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
 
         // check if currrent user handles on behalf of
@@ -281,7 +282,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
@@ -295,6 +296,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
 
         $attendee     = JemFactory::getUser($event->uid);
@@ -386,7 +388,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         if (empty($registration) && ((int)$register_id > 0)) {
@@ -405,6 +407,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
 
         if (empty($registration)) {
@@ -561,7 +564,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->select($case_when);
@@ -573,6 +576,7 @@ class plgJemMailer extends CMSPlugin
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
         $this->_formatEventMailDateTime($event);
 
         // Link for event
@@ -806,6 +810,27 @@ class plgJemMailer extends CMSPlugin
             $this->_getOnlineMeetingLabel($event),
             $onlineMeetingUrl
         );
+    }
+
+    /**
+     * Apply associated Joomla article content to event data used by mail templates.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  void
+     */
+    private function _applyAssociatedArticleContent($event)
+    {
+        if (empty($event) || empty($event->id)) {
+            return;
+        }
+
+        $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+
+        JemHelper::applyAssociatedArticleEventContent($event, $levels);
+
+        $event->slug = !empty($event->alias) ? ((int) $event->id . ':' . $event->alias) : (int) $event->id;
+        $event->text = (string) ($event->introtext ?? '') . (string) ($event->fulltext ?? '');
     }
 
     /**

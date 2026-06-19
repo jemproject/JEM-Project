@@ -373,12 +373,35 @@ class JemModelEvent extends JemModelAdmin
         $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;
         unset($data['create_article']);
         unset($data['article_target_category_id']);
+        $articleUsage = 'information';
+
+        if (is_array($data['attribs'] ?? null)) {
+            $articleUsage = (string) ($data['attribs']['article_usage'] ?? $articleUsage);
+        } elseif (is_string($data['attribs'] ?? null) && trim($data['attribs']) !== '') {
+            $articleAttribs = new Registry($data['attribs']);
+            $articleUsage = (string) $articleAttribs->get('article_usage', $articleUsage);
+        }
 
         $associatedArticlesEnabled = (int) JemHelper::globalattribs()->get('event_use_associated_article', 1) === 1;
 
-        if (!$associatedArticlesEnabled) {
+        if ($associatedArticlesEnabled && $articleUsage === 'content' && empty($data['article_id']) && $createArticleMode === 0) {
+            foreach ($this->getAssociatedArticleCategoryOptions($cats) as $articleCategoryOption) {
+                if ((int) $articleCategoryOption->article_create_mode === 1) {
+                    $createArticleMode = 2;
+                    break;
+                }
+            }
+        }
+
+        if (!$associatedArticlesEnabled || $articleUsage === 'none') {
             $data['article_id'] = 0;
             $createArticleMode  = 0;
+        } elseif ($articleUsage === 'content' && empty($data['article_id']) && $createArticleMode === 0) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_REQUIRES_ARTICLE'));
+
+            return false;
+        } elseif ($articleUsage === 'content' && empty($data['article_id']) && !$this->resolveAssociatedArticleCategory($cats, $createArticleMode, $new, $articleTargetCategoryId)) {
+            return false;
         } elseif (!empty($data['article_id']) && !$this->validateAssociatedArticleSelection((int) $data['article_id'], $cats)) {
             return false;
         }
@@ -867,7 +890,7 @@ class JemModelEvent extends JemModelAdmin
         $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, $mode, $new, $targetId);
 
         if (!$articleCategoryId) {
-            return true;
+            return !$this->eventUsesAssociatedArticleAsContent($eventData);
         }
 
         $user = Factory::getApplication()->getIdentity();
@@ -909,8 +932,35 @@ class JemModelEvent extends JemModelAdmin
         $db->updateObject('#__jem_events', $article, 'id');
         $this->applyRecurringAssociatedArticleMode($eventId, $articleId, $eventData, $articleCategoryId);
         Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
+        $this->setAssociatedArticleCreationState($articleId, $eventData);
 
         return true;
+    }
+
+    /**
+     * Store controller-facing state for a newly created associated article.
+     *
+     * @param   integer  $articleId  Created article id.
+     * @param   array    $eventData  Event data being saved.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleCreationState($articleId, array $eventData)
+    {
+        $articleId = (int) $articleId;
+
+        if ($articleId <= 0 || !$this->eventUsesAssociatedArticleAsContent($eventData)) {
+            return;
+        }
+
+        $globalAttribs = JemHelper::globalattribs();
+        $createAction = (string) $globalAttribs->get('event_article_content_create_action', 'copy_description');
+        $description = trim(strip_tags((string) ($eventData['introtext'] ?? '') . ' ' . (string) ($eventData['fulltext'] ?? '')));
+
+        $this->setState('event.article_content_article_id', $articleId);
+        $this->setState('event.article_content_create_action', $createAction);
+        $this->setState('event.article_content_empty', $description === '');
+        $this->setState('event.article_content_edit_url', 'index.php?option=com_content&task=article.edit&id=' . $articleId);
     }
 
     /**
@@ -931,7 +981,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language')))
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs')))
             ->from($db->quoteName('#__jem_events'))
             ->where($db->quoteName('id') . ' = ' . $eventId);
 
@@ -1001,12 +1051,6 @@ class JemModelEvent extends JemModelAdmin
             $manual = array_filter($associations, static function ($category) {
                 return (int) $category->article_create_mode === 2 && (int) $category->article_category_id > 0;
             });
-
-            if (!$manualConfigured) {
-                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'), 'warning');
-
-                return 0;
-            }
 
             if ($manual) {
                 return $this->resolveAssociatedArticleCategoryFromCandidates($manual, $targetId, false);
@@ -1148,11 +1192,7 @@ class JemModelEvent extends JemModelAdmin
             return (int) $category->article_create_mode !== 0 && (int) $category->article_category_id > 0;
         });
         if (!$activeAssociations) {
-            $manualAllowed = array_filter($associations, static function ($category) {
-                return (int) $category->article_create_mode === 2;
-            });
-
-            return (bool) $manualAllowed;
+            return true;
         }
 
         $allowedCategoryIds = array_values(array_unique(array_map('intval', array_column($activeAssociations, 'article_category_id'))));
@@ -1287,6 +1327,8 @@ class JemModelEvent extends JemModelAdmin
         $title = $this->buildAssociatedArticleTitle($eventData, $eventId, $recurrenceCounter);
         $categoryAccess = 1;
         $eventId = (int) $eventId;
+        $articleText = $this->getAssociatedArticleInitialText($eventData);
+        $hasArticleText = trim(strip_tags((string) $articleText['introtext'] . ' ' . (string) $articleText['fulltext'])) !== '';
 
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -1301,20 +1343,27 @@ class JemModelEvent extends JemModelAdmin
             $categoryAccess = 1;
         }
 
+        $articleAccess = $this->getAssociatedArticleAccess($eventData, $categoryAccess);
+
         $article = array(
             'id'          => 0,
             'catid'       => (int) $articleCategoryId,
             'title'       => $title,
             'alias'       => $this->buildAssociatedArticleAlias($eventTitle, $eventId),
-            'introtext'   => '',
-            'fulltext'    => '',
-            'state'       => 0,
-            'access'      => $categoryAccess,
+            'introtext'   => $articleText['introtext'],
+            'fulltext'    => $articleText['fulltext'],
+            'state'       => $hasArticleText ? 1 : 0,
+            'access'      => $articleAccess,
             'language'    => !empty($eventData['language']) ? $eventData['language'] : '*',
             'created_by'  => (int) $user->id,
             'metadata'    => array(),
             'attribs'     => array()
         );
+        $articleImages = $this->getAssociatedArticleInitialImages($eventData);
+
+        if ($articleImages) {
+            $article['images'] = $articleImages;
+        }
 
         $created = $this->getAssociatedArticleCreatedDate($eventData);
 
@@ -1335,6 +1384,140 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return (int) $model->getState($model->getName() . '.id');
+    }
+
+    /**
+     * Resolve the access level used by newly-created associated Joomla articles.
+     *
+     * @param   array    $eventData       Event data.
+     * @param   integer  $categoryAccess  Joomla category access level.
+     *
+     * @return  integer
+     */
+    protected function getAssociatedArticleAccess(array $eventData, $categoryAccess)
+    {
+        $access = (int) JemHelper::globalattribs()->get('event_associated_article_access', 0);
+
+        if ($access <= 0) {
+            return (int) $categoryAccess ?: 1;
+        }
+
+        return $access;
+    }
+
+    /**
+     * Get initial Joomla article image fields for a newly-created associated article.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleInitialImages(array $eventData)
+    {
+        $mode = (string) JemHelper::globalattribs()->get('event_associated_article_image_mode', 'intro');
+
+        if (!in_array($mode, array('intro', 'full', 'both'), true)) {
+            return array();
+        }
+
+        $image = $this->getEventImagePathForArticle($eventData);
+
+        if ($image === '') {
+            return array();
+        }
+
+        $images = array();
+
+        if ($mode === 'intro' || $mode === 'both') {
+            $images['image_intro'] = $image;
+        }
+
+        if ($mode === 'full' || $mode === 'both') {
+            $images['image_fulltext'] = $image;
+        }
+
+        return $images;
+    }
+
+    /**
+     * Convert a JEM event image value into a Joomla article image path.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  string
+     */
+    protected function getEventImagePathForArticle(array $eventData)
+    {
+        $image = trim((string) ($eventData['datimage'] ?? ''));
+
+        if ($image === '') {
+            return '';
+        }
+
+        $image = ltrim(str_replace('\\', '/', $image), '/');
+
+        if (strpos($image, '/') !== false) {
+            return $image;
+        }
+
+        return 'images/jem/events/' . $image;
+    }
+
+    /**
+     * Get initial Joomla article text for a newly-created associated article.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleInitialText(array $eventData)
+    {
+        $text = array(
+            'introtext' => '',
+            'fulltext'  => ''
+        );
+
+        if (!$this->eventUsesAssociatedArticleAsContent($eventData)) {
+            return $text;
+        }
+
+        if ((string) JemHelper::globalattribs()->get('event_article_content_create_action', 'copy_description') !== 'copy_description') {
+            return $text;
+        }
+
+        $text['introtext'] = (string) ($eventData['introtext'] ?? '');
+        $text['fulltext'] = (string) ($eventData['fulltext'] ?? '');
+
+        return $text;
+    }
+
+    /**
+     * Check whether this event opted in to use the associated article as event content.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  boolean
+     */
+    protected function eventUsesAssociatedArticleAsContent(array $eventData)
+    {
+        $attribs = $eventData['attribs'] ?? array();
+
+        if ($attribs instanceof Registry) {
+            return (string) $attribs->get('article_usage', 'information') === 'content';
+        }
+
+        if (is_string($attribs)) {
+            $registry = new Registry();
+            $registry->loadString($attribs);
+
+            return (string) $registry->get('article_usage', 'information') === 'content';
+        }
+
+        if (is_array($attribs)) {
+            return (string) ($attribs['article_usage'] ?? 'information') === 'content';
+        }
+
+        return false;
     }
 
     /**
@@ -1359,9 +1542,13 @@ class JemModelEvent extends JemModelAdmin
 
         $date = trim((string) ($eventData['dates'] ?? ''));
         $time = trim((string) ($eventData['times'] ?? ''));
+        $language = trim((string) ($eventData['language'] ?? ''));
+        $languageCode = $language === '*' || $language === ''
+            ? ''
+            : strtolower(substr($language, 0, 2));
         $title = str_replace(
-            array('{title}', '{id}', '{date}', '{time}'),
-            array($eventTitle, (int) $eventId, $date, $time),
+            array('{title}', '{id}', '{date}', '{time}', '{lang}'),
+            array($eventTitle, (int) $eventId, $date, $time, $languageCode),
             $format
         );
         if ($recurrenceCounter !== null) {

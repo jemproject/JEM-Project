@@ -104,7 +104,10 @@ class JemModelMyevents extends BaseDatabaseModel
 
         if ($this->_events) {
             $now = time();
+            $levels = $user->getAuthorisedViewLevels();
             foreach ($this->_events as $i => $item) {
+                JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+
                 $item->categories = $this->getCategories($item->eventid);
 
                 //remove events without categories (users have no access to them)
@@ -240,11 +243,11 @@ class JemModelMyevents extends BaseDatabaseModel
         $orderby = $this->_buildOrderBy();
 
         # Get Events from Database
-        $query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
+        $query = 'SELECT DISTINCT a.id as eventid, a.id, a.dates, a.enddates, a.published, a.times, a.endtimes, a.title, a.alias, a.created, a.created_by, a.locid, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
                . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.attribs,'
                . ' a.access, a.checked_out, a.checked_out_time, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.contactid, a.created_by_alias, a.datimage, a.featured,'
                . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
-               . ' a.fulltext, a.hits, a.introtext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
+               . ' a.fulltext, a.hits, a.introtext, a.article_id, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.version,'
                . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'

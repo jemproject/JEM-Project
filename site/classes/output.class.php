@@ -1440,8 +1440,8 @@ static public function lightbox() {
         if (empty($imagefile) || empty($image)) {
             return;
         } else if(!$settings->flyer){
-            list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];
+            list($imagewidth, $imageheight) = getimagesize(JPATH_SITE . '/' . $image['original']) ?? [100, 100];
+            list($thumbwidth, $thumbheight) = getimagesize(JPATH_SITE . '/' . $image['thumb']) ?? [50, 50];
         }
 
         // Does a thumbnail exist?

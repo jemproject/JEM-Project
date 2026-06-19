@@ -17,7 +17,7 @@
             description="COM_JEM_EVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
             select="true"
             clear="true"
-            new="false"
+            new="true"
             edit="true"
             filter="integer"
         />
@@ -26,7 +26,7 @@
             description="COM_JEM_EVENT_FIELD_ARTICLE_TARGET_CATEGORY_DESC"
             class="inputbox form-select w-auto"
             default="0"
-            showon="create_article:1"
+            showon="create_article:1,2"
         >
             <option value="0">COM_JEM_SELECT_JOOMLA_CATEGORY</option>
         </field>
@@ -820,6 +820,21 @@
                 <option value="">JGLOBAL_USE_GLOBAL</option>
                 <option value="0">COM_JEM_LINK_PROFILE</option>
                 <option value="1">COM_JEM_LINK_AVATAR</option>
+            </field>
+        </fieldset>
+        <fieldset name="article_content_options"
+                  label="COM_JEM_EVENT_ARTICLE_USAGE"
+        >
+            <field name="article_usage" type="list"
+                label="COM_JEM_EVENT_ARTICLE_USAGE"
+                description="COM_JEM_EVENT_ARTICLE_USAGE_DESC"
+                class="inputbox form-select"
+                default="information"
+                required="false"
+            >
+                <option value="none">COM_JEM_EVENT_ARTICLE_USAGE_NONE</option>
+                <option value="information">COM_JEM_EVENT_ARTICLE_USAGE_INFORMATION</option>
+                <option value="content">COM_JEM_EVENT_ARTICLE_USAGE_CONTENT</option>
             </field>
         </fieldset>
         <fieldset name="evevents"

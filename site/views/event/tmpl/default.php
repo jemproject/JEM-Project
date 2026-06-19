@@ -458,6 +458,14 @@ $renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRow
         <?php
         $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($this->item);
         $showOnlineMeeting = $onlineMeetingUrl !== '' && (int) $params->get('event_show_online_meeting', '1') === 1;
+        $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
+        $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
+        if ($moreInformationText === '') {
+            $moreInformationText = Text::_('COM_JEM_EVENT_MORE_INFORMATION');
+        } elseif (strtoupper($moreInformationText) === $moreInformationText) {
+            $moreInformationText = Text::_($moreInformationText);
+        }
+        $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
         ?>
         <?php if (($params->get('event_show_description','1') && $hasDescription) || $showOnlineMeeting || !empty($this->event_links)) { ?>
             <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
@@ -705,35 +713,8 @@ $renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRow
 
                             <?php endforeach; ?>
                         </div>
-                    <?php endif; ?>
-
-                    <?php
-                    $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('event_show_more_information', '1'));
-                    $moreInformationText = trim((string) $params->get('event_more_information_text', ''));
-                    if ($moreInformationText === '') {
-                        $moreInformationText = Text::_('COM_JEM_EVENT_MORE_INFORMATION');
-                    } elseif (strtoupper($moreInformationText) === $moreInformationText) {
-                        $moreInformationText = Text::_($moreInformationText);
-                    }
-                    ?>
-                    <?php if ($moreInformationDisplay !== '' && !empty($this->item->articlelink)) : ?>
-                        <div class="jem-more-information jem-event-more-information">
-                            <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
-                               href="<?php echo htmlspecialchars($this->item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
-                               class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link jem-event__more-information'); ?>">
-                                <?php echo $this->escape($moreInformationText); ?>
-                            </a>
-                            <?php if (!empty($this->item->caneditarticle) && !empty($this->item->articleeditlink)) : ?>
-                                <a id="jem-event-edit-associated-article-<?php echo (int) $this->item->id; ?>"
-                                   href="<?php echo htmlspecialchars($this->item->articleeditlink, ENT_QUOTES, 'UTF-8'); ?>"
-                                   class="jem-associated-article-edit-link btn btn-secondary btn-sm"
-                                   title="<?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?>">
-                                    <span class="icon-edit" aria-hidden="true"></span>
-                                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?></span>
-                                </a>
-                            <?php endif; ?>
-                        </div>
                     <?php endif;
+
                 }
                 /* optional teaser intro text for guests - NOT SUPPORTED YET */
                 elseif (0 /*$params->get('event_show_noauth') == true and  $user->get('guest')*/ ) {
@@ -764,6 +745,25 @@ $renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRow
                 ?>
             </div>
         <?php } ?>
+
+        <?php if ($showMoreInformation) : ?>
+            <div class="jem-more-information jem-event-more-information">
+                <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
+                   href="<?php echo htmlspecialchars($this->item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link jem-event__more-information'); ?>">
+                    <?php echo $this->escape($moreInformationText); ?>
+                </a>
+                <?php if (!empty($this->item->caneditarticle) && !empty($this->item->articleeditlink)) : ?>
+                    <a id="jem-event-edit-associated-article-<?php echo (int) $this->item->id; ?>"
+                       href="<?php echo htmlspecialchars($this->item->articleeditlink, ENT_QUOTES, 'UTF-8'); ?>"
+                       class="jem-associated-article-edit-link btn btn-secondary btn-sm"
+                       title="<?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?>">
+                        <span class="icon-edit" aria-hidden="true"></span>
+                        <span class="visually-hidden"><?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?></span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
         <?php if ($eventCustomFieldsPosition === 'after_links') : ?>
             <?php echo $renderEventCustomFieldsBlock(); ?>

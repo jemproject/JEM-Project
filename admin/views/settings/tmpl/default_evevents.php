@@ -47,7 +47,16 @@ $group = 'globalattribs';
         <legend><?php echo Text::_('COM_JEM_ASSOCIATED_ARTICLES'); ?></legend>
         <ul class="adminformlist">
             <?php foreach ($this->form->getFieldset('associatedarticles') as $field): ?>
-                <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
+                <?php if ($field->fieldname === 'event_article_content_fields_note') : ?>
+                    <li>
+                        <div class="alert alert-info mt-3 mb-3">
+                            <strong><?php echo Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_LABEL'); ?></strong>
+                            <div><?php echo Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_DESC'); ?></div>
+                        </div>
+                    </li>
+                <?php else : ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
+                <?php endif; ?>
             <?php endforeach; ?>
         </ul>
     </fieldset>

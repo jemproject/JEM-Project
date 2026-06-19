@@ -26,6 +26,76 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!$hideEmptyManagedFields || !method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
+$articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
+$articleCategoryRules = array();
+
+try {
+    $db = Factory::getContainer()->get('DatabaseDriver');
+    $query = $db->getQuery(true)
+        ->select(array(
+            $db->quoteName('jc.id'),
+            $db->quoteName('jc.article_category_id'),
+            $db->quoteName('jc.article_create_mode'),
+            $db->quoteName('cc.title', 'article_category_title'),
+        ))
+        ->from($db->quoteName('#__jem_categories', 'jc'))
+        ->join('LEFT', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('cc.id') . ' = ' . $db->quoteName('jc.article_category_id') . ' AND ' . $db->quoteName('cc.extension') . ' = ' . $db->quote('com_content'));
+    $db->setQuery($query);
+
+    foreach ($db->loadObjectList() ?: array() as $categoryRule) {
+        $articleCategoryRules[(int) $categoryRule->id] = array(
+            'categoryId'    => (int) $categoryRule->article_category_id,
+            'categoryTitle' => (string) $categoryRule->article_category_title,
+            'mode'          => (int) $categoryRule->article_create_mode,
+        );
+    }
+} catch (Throwable $e) {
+    $articleCategoryRules = array();
+}
+
+$document->addStyleDeclaration('
+    .jem-associated-article-options {
+        border: 0;
+        margin: 0 !important;
+        padding: 0 .5rem !important;
+    }
+    .jem-associated-article-options .adminformlist {
+        margin-bottom: 0;
+    }
+    .jem-associated-article-options .adminformlist li {
+        display: grid;
+        grid-template-columns: minmax(14rem, 240px) minmax(0, 1fr);
+        align-items: center;
+        column-gap: 0;
+        margin: .35rem 0;
+    }
+    .jem-associated-article-options .adminformlist label {
+        margin-bottom: 0;
+    }
+    .jem-associated-article-options .alert {
+        grid-column: 2;
+    }
+    .jem-associated-article-picker {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        max-width: 100%;
+    }
+    .jem-associated-article-picker > * {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    @media (max-width: 767.98px) {
+        .jem-associated-article-options .adminformlist li {
+            grid-template-columns: 1fr;
+            row-gap: .25rem;
+        }
+        .jem-associated-article-options .alert {
+            grid-column: 1;
+        }
+    }
+');
 ?>
 
 <script>
@@ -100,6 +170,162 @@ $showContactField = $contactField && (!$hideEmptyManagedFields || !method_exists
         // Trigger the change event on page load to initialize the state
         $registraCheckbox.change();
         $minBookedUserInput.change();
+
+        var articleCategoryRules = <?php echo json_encode($articleCategoryRules); ?>;
+        var articleAutoInfoText = <?php echo json_encode($articleAutoInfo); ?>;
+        var articleAutoInfoCategoryText = <?php echo json_encode($articleAutoInfoCategory); ?>;
+        var $articleBlock = $('.jem-associated-article-options');
+        var $articleAction = $('#jform_create_article');
+        var $articleUsage = $('#jform_attribs_article_usage');
+        var $articleAutoInfo = $('#jem-article-auto-info');
+        var $articleTargetCategory = $('#jform_article_target_category_id');
+
+        function getSelectedCategoryIds() {
+            var values = $('#jform_cats').val() || $('select[name="jform[cats][]"]').val() || $('input[name="jform[cats][]"]:checked').map(function () {
+                return this.value;
+            }).get() || [];
+
+            if (!Array.isArray(values)) {
+                values = [values];
+            }
+
+            return values.map(function (value) {
+                return parseInt(value, 10) || 0;
+            }).filter(Boolean);
+        }
+
+        function hasAssociatedArticle() {
+            return $articleBlock.data('hasArticle') === 1 || parseInt($('#jform_article_id_id, #jform_article_id').first().val(), 10) > 0;
+        }
+
+        function setArticleRowVisibility(selector, visible) {
+            $articleBlock.find(selector).toggle(!!visible);
+        }
+
+        function updateArticleTargetCategoryOptions(categories) {
+            if (!$articleTargetCategory.length) {
+                return;
+            }
+
+            if (!$articleTargetCategory.data('originalOptions')) {
+                $articleTargetCategory.data('originalOptions', $articleTargetCategory.find('option').map(function () {
+                    return {
+                        value: this.value,
+                        text: $(this).text()
+                    };
+                }).get());
+            }
+
+            var currentValue = parseInt($articleTargetCategory.val(), 10) || 0;
+            $articleTargetCategory.empty();
+
+            if (!categories.length) {
+                ($articleTargetCategory.data('originalOptions') || []).forEach(function (option) {
+                    $('<option>')
+                        .val(option.value)
+                        .text(option.text)
+                        .appendTo($articleTargetCategory);
+                });
+                $articleTargetCategory.val(currentValue);
+                $articleTargetCategory.trigger('change');
+                return;
+            }
+
+            categories.forEach(function (category) {
+                $('<option>')
+                    .val(category.id)
+                    .text(category.title || ('#' + category.id))
+                    .appendTo($articleTargetCategory);
+            });
+
+            if (categories.length && categories.some(function (category) { return category.id === currentValue; })) {
+                $articleTargetCategory.val(currentValue);
+            } else if (categories.length) {
+                $articleTargetCategory.val(categories[0].id);
+            }
+
+            $articleTargetCategory.trigger('change');
+        }
+
+        function updateAssociatedArticleOptions() {
+            if (!$articleBlock.length || !$articleAction.length) {
+                return;
+            }
+
+            var selected = getSelectedCategoryIds();
+            var rules = selected.map(function (categoryId) {
+                return articleCategoryRules[categoryId] || {categoryId: 0, mode: 0};
+            });
+            var hasAuto = rules.some(function (rule) {
+                return parseInt(rule.mode, 10) === 1;
+            });
+            var hasConfigured = rules.some(function (rule) {
+                return parseInt(rule.mode, 10) !== 0;
+            });
+            var autoArticleCategoryIds = [];
+            var autoArticleCategoryTitles = [];
+            var autoArticleCategories = [];
+            rules.forEach(function (rule) {
+                var categoryId = parseInt(rule.categoryId, 10) || 0;
+                var mode = parseInt(rule.mode, 10);
+
+                if (!categoryId) {
+                    return;
+                }
+
+                if (mode === 1 && autoArticleCategoryIds.indexOf(categoryId) === -1) {
+                    autoArticleCategoryIds.push(categoryId);
+                    autoArticleCategoryTitles.push(rule.categoryTitle || ('#' + categoryId));
+                    autoArticleCategories.push({
+                        id: categoryId,
+                        title: rule.categoryTitle || ('#' + categoryId)
+                    });
+                }
+            });
+            var articleSelected = hasAssociatedArticle();
+            var actionValue = $articleAction.val();
+
+            if (!$articleBlock.data('articleUsageInitialized') && !articleSelected && actionValue === '0' && $articleUsage.val() === 'information' && !hasConfigured) {
+                $articleUsage.val('none');
+            }
+            $articleBlock.data('articleUsageInitialized', 1);
+
+            var usageValue = $articleUsage.val() || 'none';
+            var usesArticle = usageValue !== 'none';
+
+            $articleAction.find('option[value="2"]').prop('disabled', !hasAuto).toggle(hasAuto);
+
+            if (!usesArticle) {
+                $articleAction.val('0');
+                actionValue = '0';
+            } else if (hasAuto) {
+                $articleAction.val('2');
+                actionValue = '2';
+            } else {
+                $articleAction.val('0');
+                actionValue = '0';
+            }
+
+            setArticleRowVisibility('.js-jem-article-selector', usesArticle);
+            setArticleRowVisibility('.js-jem-article-target', usesArticle && hasAuto && autoArticleCategoryIds.length > 1);
+            setArticleRowVisibility('.js-jem-article-usage', true);
+            updateArticleTargetCategoryOptions((usesArticle && hasAuto) ? autoArticleCategories : []);
+            if (hasAuto && autoArticleCategoryTitles.length) {
+                $articleAutoInfo.html(articleAutoInfoCategoryText.replace('%s', $('<div>').text(autoArticleCategoryTitles.join(', ')).html()));
+            } else {
+                $articleAutoInfo.html(articleAutoInfoText);
+            }
+            $articleAutoInfo.prop('hidden', actionValue !== '2');
+        }
+
+        $articleUsage.on('change', updateAssociatedArticleOptions);
+        $articleAction.on('change', updateAssociatedArticleOptions);
+        $('#jform_cats, select[name="jform[cats][]"], input[name="jform[cats][]"]').on('change', updateAssociatedArticleOptions);
+        $('#jform_article_id_id, #jform_article_id').on('change', updateAssociatedArticleOptions);
+        $articleBlock.on('click', '.button-clear, .btn', function () {
+            window.setTimeout(updateAssociatedArticleOptions, 100);
+        });
+        updateAssociatedArticleOptions();
     });
 </script>
 
@@ -242,6 +468,24 @@ $showContactField = $contactField && (!$hideEmptyManagedFields || !method_exists
                     <li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
                 </ul>
             </fieldset>
+            <?php if ($this->form->getField('article_id')) : ?>
+                <fieldset class="jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>">
+                    <ul class="adminformlist">
+                        <li class="js-jem-article-usage"><?php echo $this->form->getLabel('article_usage', 'attribs'); ?><?php echo $this->form->getInput('article_usage', 'attribs'); ?></li>
+                        <li class="js-jem-article-selector">
+                            <?php echo $this->form->getLabel('article_id'); ?>
+                            <div class="jem-associated-article-picker">
+                                <?php echo $this->form->getInput('article_id'); ?>
+                            </div>
+                            <input type="hidden" name="jform[create_article]" id="jform_create_article" value="<?php echo (int) $this->form->getValue('create_article'); ?>">
+                            <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
+                                <?php echo $articleAutoInfo; ?>
+                            </div>
+                        </li>
+                        <li class="js-jem-article-target"><?php echo $this->form->getLabel('article_target_category_id'); ?><?php echo $this->form->getInput('article_target_category_id'); ?></li>
+                    </ul>
+                </fieldset>
+            <?php endif; ?>
             <!-- EVENTDESCRIPTION -->
             <fieldset>
                 <legend><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>

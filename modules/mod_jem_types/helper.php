@@ -158,7 +158,7 @@ class ModJemTypesHelper
 
             $eventQuery = $db->getQuery(true)
                 ->select(array(
-                    'a.id', 'a.title', 'a.alias', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id',
+                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id',
                     '(' . $caseSlug . ') AS slug',
                 ))
                 ->from($db->quoteName('#__jem_events', 'a'))
@@ -175,7 +175,7 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
-                ->group('a.id, a.title, a.alias, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
+                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
 
@@ -186,6 +186,7 @@ class ModJemTypesHelper
 
             $db->setQuery($eventQuery);
             $events = $db->loadObjectList();
+            JemHelper::applyAssociatedArticleEventContentToEvents($events, $levels);
 
             $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 

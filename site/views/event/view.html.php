@@ -232,7 +232,8 @@ class JemViewEvent extends JemView
         $this->dimage = JemImage::flyercreator($item->datimage, 'event');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
-        $associatedArticles = JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels());
+        $articleUsage = (string) $item->params->get('article_usage', 'information');
+        $associatedArticles = empty($item->article_content_applied) && $articleUsage !== 'none' ? JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels()) : array();
         $associatedArticle  = !empty($item->article_id) && isset($associatedArticles[$item->article_id]) ? $associatedArticles[$item->article_id] : null;
         $articleLink        = JemHelper::getAssociatedArticleLink($associatedArticle);
         $item->articlelink  = $articleLink['link'];
