@@ -1126,6 +1126,17 @@
                 <option value="full">COM_JEM_ARTICLE_IMAGE_MODE_FULL</option>
                 <option value="both">COM_JEM_ARTICLE_IMAGE_MODE_BOTH</option>
             </field>
+            <field name="event_article_content_change_action" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_DESC"
+                class="inputbox form-select w-auto"
+                default="ask"
+                showon="event_use_associated_article:1"
+            >
+                <option value="none">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_NONE</option>
+                <option value="ask">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_ASK</option>
+                <option value="auto">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_AUTO</option>
+            </field>
             <field name="event_show_more_information" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"

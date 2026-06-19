@@ -278,14 +278,54 @@ class JemControllerEvent extends JemControllerForm
 
         // If ok, redirect to the return page.
         if ($result) {
-            if ($this->handleCreatedArticleContentRedirect($this->getModel())) {
+            $model = $this->getModel();
+
+            if ($this->handleCreatedArticleContentRedirect($model)) {
                 return $result;
             }
 
+            $this->handleAssociatedArticleSyncNotice($model);
             $this->setRedirect($this->getReturnPage());
         }
 
         return $result;
+    }
+
+    /**
+     * Update the associated Joomla article from the current event data.
+     *
+     * @return  void
+     */
+    public function updateAssociatedArticle()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $id = $app->input->getInt('a_id', $app->input->getInt('id', 0));
+        $fields = $app->input->getString('fields', '');
+        $return = $app->input->getBase64('return', '');
+        $model = $this->getModel();
+        $redirect = $this->getReturnPage();
+
+        if ($return) {
+            $decodedReturn = base64_decode($return, true);
+
+            if ($decodedReturn && Uri::isInternal($decodedReturn)) {
+                $redirect = $decodedReturn;
+            }
+        }
+
+        if ($id && $model && $model->updateAssociatedArticleFromEvent($id, $fields)) {
+            $this->setRedirect($redirect, Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATED'), 'message');
+
+            return;
+        }
+
+        $this->setRedirect(
+            $redirect,
+            $model && $model->getError() ? $model->getError() : Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE_FAILED'),
+            'warning'
+        );
     }
 
     /**
@@ -319,6 +359,34 @@ class JemControllerEvent extends JemControllerForm
         );
 
         return false;
+    }
+
+    /**
+     * Show article sync choices when event content changed after save.
+     *
+     * @param   object  $model  Event model.
+     *
+     * @return  void
+     */
+    protected function handleAssociatedArticleSyncNotice($model)
+    {
+        $eventId = $model ? (int) $model->getState('event.article_sync_event_id', 0) : 0;
+        $fields = $model ? (string) $model->getState('event.article_sync_fields', '') : '';
+        $labels = $model ? (string) $model->getState('event.article_sync_labels', '') : '';
+
+        if (!$eventId || $fields === '') {
+            return;
+        }
+
+        $return = base64_encode($this->getReturnPage());
+        $token = Session::getFormToken();
+        $updateUrl = Route::_('index.php?option=com_jem&task=event.updateAssociatedArticle&a_id=' . $eventId . '&fields=' . rawurlencode($fields) . '&return=' . $return . '&' . $token . '=1', false);
+        $dismissUrl = $this->getReturnPage();
+        $message = Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_NOTICE', htmlspecialchars($labels, ENT_QUOTES, 'UTF-8'))
+            . ' <a class="btn btn-sm btn-primary" href="' . $updateUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</a>'
+            . ' <a class="btn btn-sm btn-secondary" href="' . $dismissUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_DISMISS') . '</a>';
+
+        Factory::getApplication()->enqueueMessage($message, 'notice');
     }
 
     /**
