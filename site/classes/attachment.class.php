@@ -13,6 +13,7 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
@@ -300,6 +301,8 @@ class JemAttachment
 
             if (!($table->check() && $table->store())) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_SAVING_TO_DB').': '.$table->getError(), 'warning');
+            } else {
+                self::triggerActionLog('onJemAfterAttachmentSave', array((object) $table->getProperties(), true));
             }
         } // foreach
 
@@ -352,6 +355,8 @@ class JemAttachment
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
             return false;
         }
+
+        self::triggerActionLog('onJemAfterAttachmentSave', array((object) $table->getProperties(), false));
 
         return true;
     }
@@ -479,7 +484,7 @@ class JemAttachment
         // then get info for files from db
         $db = Factory::getContainer()->get('DatabaseDriver');
 
-        $query = 'SELECT file, object, created_by '
+        $query = 'SELECT * '
                . ' FROM #__jem_attachments '
                . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 
@@ -489,6 +494,8 @@ class JemAttachment
         if (!$res) {
             return false;
         }
+
+        $attachment = $res;
 
         // check permission
         if (empty($userid) || ($userid != $res->created_by)) {
@@ -529,12 +536,32 @@ class JemAttachment
                . ' WHERE id = '. $db->Quote($id);
 
         $db->setQuery($query);
-        $res = $db->execute();
+        $deleted = $db->execute();
 
-        if (!$res) {
+        if (!$deleted) {
             return false;
         }
 
+        self::triggerActionLog('onJemAfterAttachmentDelete', array($attachment));
+
         return true;
+    }
+
+    /**
+     * Trigger optional Joomla action log plugin events.
+     *
+     * @param string $event
+     * @param array  $arguments
+     *
+     * @return void
+     */
+    static protected function triggerActionLog($event, array $arguments)
+    {
+        try {
+            PluginHelper::importPlugin('actionlog', 'jem');
+            JemFactory::getDispatcher()->triggerEvent($event, $arguments);
+        } catch (Throwable $e) {
+            // Attachment operations must not fail because optional action logging failed.
+        }
     }
 }

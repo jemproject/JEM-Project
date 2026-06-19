@@ -135,6 +135,9 @@ class JemControllerAttendee extends BaseController
                 }
             }
 
+            PluginHelper::importPlugin('actionlog', 'jem');
+            JemFactory::getDispatcher()->triggerEvent('onJemAfterAttendeeSave', array($row, empty($id)));
+
             switch ($task) {
             case 'apply':
                 // Redirect back to the edit screen.

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="plugin" group="actionlog" method="upgrade">
+    <name>plg_actionlog_jem</name>
+    <author>JEM Community</author>
+    <creationDate>June 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>5.0.0rc3</version>
+    <description>PLG_ACTIONLOG_JEM_XML_DESCRIPTION</description>
+    <namespace path="src">Joomla\Plugin\Actionlog\Jem</namespace>
+    <files>
+        <folder plugin="jem">services</folder>
+        <folder>src</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/plg_actionlog_jem.ini</language>
+        <language tag="en-GB">language/en-GB/plg_actionlog_jem.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="log_events" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_EVENTS"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_EVENTS_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_venues" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_VENUES"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_VENUES_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_categories" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_CATEGORIES"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_CATEGORIES_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_types" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_TYPES"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_TYPES_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_groups" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_GROUPS"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_GROUPS_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_attendees" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_ATTENDEES"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_ATTENDEES_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_attachments" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_ATTACHMENTS"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_ATTACHMENTS_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="log_settings" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_SETTINGS"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_SETTINGS_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+</extension>

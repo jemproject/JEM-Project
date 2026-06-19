@@ -13,7 +13,9 @@ use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Registry\Registry;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
@@ -236,7 +238,66 @@ class JemModelSettings extends AdminModel
             // ok, old table removed - simply ignore
         }
 
+        $this->logSettingsAction($data);
+
         return true;
+    }
+
+    /**
+     * Record settings saves in Joomla User Actions Log when enabled.
+     *
+     * @param   array  $data  Saved settings data.
+     *
+     * @return void
+     */
+    private function logSettingsAction(array $data): void
+    {
+        $global = $data['globalattribs'] ?? array();
+
+        if (is_object($global)) {
+            $global = get_object_vars($global);
+        }
+
+        if (
+            (int) ($global['actionlog_enabled'] ?? 0) !== 1
+            || !PluginHelper::isEnabled('actionlog', 'jem')
+        ) {
+            return;
+        }
+
+        try {
+            $plugin = PluginHelper::getPlugin('actionlog', 'jem');
+            $params = new Registry($plugin->params ?? '{}');
+
+            if ((int) $params->get('log_settings', 1) !== 1) {
+                return;
+            }
+
+            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_ADMINISTRATOR);
+            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_PLUGINS . '/actionlog/jem');
+
+            $app = Factory::getApplication();
+            $user = $app->getIdentity();
+            $message = array(
+                'action' => 'update',
+                'type' => 'PLG_ACTIONLOG_JEM_TYPE_SETTINGS',
+                'id' => 0,
+                'title' => Text::_('COM_JEM_SETTINGS_TITLE'),
+                'extension' => 'COM_JEM',
+                'userid' => $user->id,
+                'username' => $user->username,
+                'accountlink' => 'index.php?option=com_users&task=user.edit&id=' . (int) $user->id,
+            );
+
+            $model = $app
+                ->bootComponent('com_actionlogs')
+                ->getMVCFactory()
+                ->createModel('Actionlog', 'Administrator', array('ignore_request' => true));
+
+            $model->addLog(array($message), 'PLG_ACTIONLOG_JEM_SETTINGS_UPDATED', 'com_jem.settings', (int) $user->id);
+        } catch (Exception $e) {
+            // Never let action logging block saving settings.
+        }
     }
 
     /**

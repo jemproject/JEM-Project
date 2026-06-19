@@ -81,6 +81,7 @@ class JemControllerAttendees extends BaseController
         $total = count($cid);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
 
         $modelAttendeeList = $this->getModel('attendees');
@@ -97,6 +98,7 @@ class JemControllerAttendees extends BaseController
             }
             if ($modelAttendeeList->remove(array($reg_id), $eventid)) {
                 $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
+                $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($entry));
             } else {
                 $error = true;
             }
@@ -163,6 +165,7 @@ class JemControllerAttendees extends BaseController
             $model = $this->getModel('attendee');
 
             PluginHelper::importPlugin('jem');
+            PluginHelper::importPlugin('actionlog', 'jem');
             $dispatcher = JemFactory::getDispatcher();
 
             foreach ($pks AS $pk) {
@@ -176,6 +179,7 @@ class JemControllerAttendees extends BaseController
 
                 if ($res) {
                     $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
+                    $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array(array($pk), $attendee->waiting ? 1 : 2, (int) $attendee->event));
 
                     if ($attendee->waiting) {
                         $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
@@ -263,6 +267,7 @@ class JemControllerAttendees extends BaseController
                 Factory::getApplication()->enqueueMessage($message, 'warning');
             } else {
                 PluginHelper::importPlugin('jem');
+                PluginHelper::importPlugin('actionlog', 'jem');
                 $dispatcher = JemFactory::getDispatcher();
 
                 switch ($value) {
@@ -295,6 +300,8 @@ class JemControllerAttendees extends BaseController
                         }
                         break;
                 }
+
+                $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array($ids, $value, $eventid));
 
                 JemHelper::addLogEntry($message, __METHOD__, Log::DEBUG);
             }
