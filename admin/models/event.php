@@ -332,6 +332,7 @@ class JemModelEvent extends JemModelAdmin
         // Check if we're in the front or back
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
+        $previousArticleContentEvent = !$new ? $this->getAssociatedArticleSyncEventData((int) $data['id']) : array();
 
         if (!JemHelper::isContactComponentEnabled()) {
             if ($new) {
@@ -738,6 +739,7 @@ class JemModelEvent extends JemModelAdmin
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
+                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
             }
         } else {
             // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
@@ -797,6 +799,7 @@ class JemModelEvent extends JemModelAdmin
 
             if ($saved) {
                 $this->createAssociatedArticleIfRequested((int) $table->id, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
+                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
             }
 
             // Update  and new attachment file
@@ -1489,6 +1492,288 @@ class JemModelEvent extends JemModelAdmin
         $text['fulltext'] = (string) ($eventData['fulltext'] ?? '');
 
         return $text;
+    }
+
+    /**
+     * Load an existing event only when it currently uses an associated article as event content.
+     *
+     * @param   integer  $eventId  Event id.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleSyncEventData($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array(
+                'id',
+                'title',
+                'alias',
+                'introtext',
+                'fulltext',
+                'article_id',
+                'meta_keywords',
+                'meta_description',
+                'metadata',
+                'datimage',
+                'attribs',
+                'dates',
+                'times',
+                'language'
+            )))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+
+        try {
+            $db->setQuery($query);
+            $event = (array) $db->loadAssoc();
+        } catch (Throwable $e) {
+            return array();
+        }
+
+        if (!$event || empty($event['article_id']) || !$this->eventUsesAssociatedArticleAsContent($event)) {
+            return array();
+        }
+
+        return $event;
+    }
+
+    /**
+     * Store controller-facing state when an event-content article may need updating.
+     *
+     * @param   array    $oldEventData  Event data before save.
+     * @param   array    $newEventData  Event data after save.
+     * @param   integer  $eventId       Event id.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleSyncState(array $oldEventData, array $newEventData, $eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0 || empty($oldEventData['article_id'])) {
+            return;
+        }
+
+        $newEventData = $this->prepareAssociatedArticleEventData($newEventData, $eventId);
+
+        if (empty($newEventData['article_id'])) {
+            $newEventData['article_id'] = $oldEventData['article_id'];
+        }
+
+        if (!$this->eventUsesAssociatedArticleAsContent($newEventData)) {
+            return;
+        }
+
+        $changes = $this->getAssociatedArticleSyncChanges($oldEventData, $newEventData);
+
+        if (!$changes) {
+            return;
+        }
+
+        $action = (string) JemHelper::globalattribs()->get('event_article_content_change_action', 'ask');
+
+        if ($action === 'none') {
+            return;
+        }
+
+        if ($action === 'auto') {
+            if ($this->updateAssociatedArticleFromEvent($eventId, array_keys($changes))) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_AUTO_UPDATED', implode(', ', array_values($changes))),
+                    'message'
+                );
+            }
+
+            return;
+        }
+
+        $this->setState('event.article_sync_event_id', $eventId);
+        $this->setState('event.article_sync_article_id', (int) $oldEventData['article_id']);
+        $this->setState('event.article_sync_fields', implode(',', array_keys($changes)));
+        $this->setState('event.article_sync_labels', implode(', ', array_values($changes)));
+    }
+
+    /**
+     * Return event fields changed since the previous save and relevant for the associated article.
+     *
+     * @param   array  $oldEventData  Previous event data.
+     * @param   array  $newEventData  Current event data.
+     *
+     * @return  array  Field => label.
+     */
+    protected function getAssociatedArticleSyncChanges(array $oldEventData, array $newEventData)
+    {
+        $fields = array(
+            'title'            => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_TITLE'),
+            'alias'            => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_ALIAS'),
+            'introtext'        => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_INTROTEXT'),
+            'fulltext'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_FULLTEXT'),
+            'meta_keywords'    => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METAKEYWORDS'),
+            'meta_description' => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METADESCRIPTION'),
+            'datimage'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_IMAGE')
+        );
+        $changes = array();
+
+        foreach ($fields as $field => $label) {
+            $oldValue = $this->normaliseAssociatedArticleSyncValue($oldEventData[$field] ?? '');
+            $newValue = $this->normaliseAssociatedArticleSyncValue($newEventData[$field] ?? '');
+
+            if ($oldValue !== $newValue) {
+                $changes[$field] = $label;
+            }
+        }
+
+        return $changes;
+    }
+
+    /**
+     * Normalise a field value before comparing event/article sync changes.
+     *
+     * @param   mixed  $value  Value.
+     *
+     * @return  string
+     */
+    protected function normaliseAssociatedArticleSyncValue($value)
+    {
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value);
+        }
+
+        return trim((string) $value);
+    }
+
+    /**
+     * Update the associated Joomla article from the current JEM event fields.
+     *
+     * @param   integer       $eventId  Event id.
+     * @param   array|string  $fields   Fields to update.
+     *
+     * @return  boolean
+     */
+    public function updateAssociatedArticleFromEvent($eventId, $fields)
+    {
+        $eventId = (int) $eventId;
+        $eventData = $this->getAssociatedArticleSyncEventData($eventId);
+
+        if ($eventId <= 0 || !$eventData) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        if (is_string($fields)) {
+            $fields = explode(',', $fields);
+        }
+
+        $fields = array_values(array_unique(array_filter(array_map('trim', (array) $fields))));
+        $allowed = array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage');
+        $fields = array_values(array_intersect($fields, $allowed));
+
+        if (!$fields) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        $articleId = (int) $eventData['article_id'];
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('id') . ' = ' . $articleId)
+            ->where($db->quoteName('state') . ' != -2');
+
+        try {
+            $db->setQuery($query);
+            $article = (object) $db->loadAssoc();
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        if (empty($article->id)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        $update = (object) array('id' => $articleId);
+
+        if (in_array('title', $fields, true)) {
+            $update->title = $this->buildAssociatedArticleTitle($eventData, $eventId);
+        }
+
+        if (in_array('alias', $fields, true)) {
+            $update->alias = $this->buildAssociatedArticleAlias((string) ($eventData['title'] ?? ''), $eventId);
+        }
+
+        if (in_array('introtext', $fields, true)) {
+            $update->introtext = (string) ($eventData['introtext'] ?? '');
+        }
+
+        if (in_array('fulltext', $fields, true)) {
+            $update->fulltext = (string) ($eventData['fulltext'] ?? '');
+        }
+
+        if (in_array('meta_keywords', $fields, true)) {
+            $update->metakey = (string) ($eventData['meta_keywords'] ?? '');
+        }
+
+        if (in_array('meta_description', $fields, true)) {
+            $update->metadesc = (string) ($eventData['meta_description'] ?? '');
+        }
+
+        if (in_array('datimage', $fields, true)) {
+            $update->images = $this->mergeAssociatedArticleImagesFromEvent((string) ($article->images ?? ''), $eventData);
+        }
+
+        try {
+            $db->updateObject('#__content', $update, 'id');
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Merge the event image into the Joomla article image JSON.
+     *
+     * @param   string  $articleImages  Current article images JSON.
+     * @param   array   $eventData      Event data.
+     *
+     * @return  string
+     */
+    protected function mergeAssociatedArticleImagesFromEvent($articleImages, array $eventData)
+    {
+        $images = json_decode((string) $articleImages, true);
+
+        if (!is_array($images)) {
+            $images = array();
+        }
+
+        $mode = (string) JemHelper::globalattribs()->get('event_associated_article_image_mode', 'intro');
+        $image = $this->getEventImagePathForArticle($eventData);
+
+        if ($mode === 'intro' || $mode === 'both') {
+            $images['image_intro'] = $image;
+        }
+
+        if ($mode === 'full' || $mode === 'both') {
+            $images['image_fulltext'] = $image;
+        }
+
+        return json_encode($images);
     }
 
     /**
