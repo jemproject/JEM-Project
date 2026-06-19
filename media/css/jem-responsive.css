@@ -2050,6 +2050,20 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
     box-sizing: border-box;
 }
 
+#jem a.btn,
+#jem a.btn:visited {
+    color: var(--bs-btn-color, #fff) !important;
+}
+
+#jem a.btn:hover,
+#jem a.btn:focus {
+    color: var(--bs-btn-hover-color, var(--bs-btn-color, #fff)) !important;
+}
+
+#jem a.btn:active {
+    color: var(--bs-btn-active-color, var(--bs-btn-hover-color, var(--bs-btn-color, #fff))) !important;
+}
+
 @media (max-width: 480px) {
     #jem .jem-online-meeting-link {
         width: 100%;
