@@ -1094,6 +1094,38 @@
                 default="{title}"
                 showon="event_use_associated_article:1"
             />
+            <field name="event_article_content_create_action" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_DESC"
+                class="inputbox form-select w-auto"
+                default="copy_description"
+                showon="event_use_associated_article:1"
+            >
+                <option value="copy_description">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_COPY_DESCRIPTION</option>
+                <option value="empty_notify">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_EMPTY_NOTIFY</option>
+                <option value="empty_edit">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_EMPTY_EDIT</option>
+            </field>
+            <field name="event_associated_article_access" type="accesslevel"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_ACCESS_SOURCE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_ACCESS_SOURCE_DESC"
+                class="inputbox form-select"
+                default="0"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">COM_JEM_ARTICLE_ACCESS_SOURCE_CATEGORY</option>
+            </field>
+            <field name="event_associated_article_image_mode" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_IMAGE_MODE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_IMAGE_MODE_DESC"
+                class="inputbox form-select w-auto"
+                default="intro"
+                showon="event_use_associated_article:1"
+            >
+                <option value="none">COM_JEM_ARTICLE_IMAGE_MODE_NONE</option>
+                <option value="intro">COM_JEM_ARTICLE_IMAGE_MODE_INTRO</option>
+                <option value="full">COM_JEM_ARTICLE_IMAGE_MODE_FULL</option>
+                <option value="both">COM_JEM_ARTICLE_IMAGE_MODE_BOTH</option>
+            </field>
             <field name="event_show_more_information" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"
@@ -1141,6 +1173,82 @@
                 default="{title} {##}"
                 showon="event_use_associated_article:1[AND]event_associated_article_recurrence_mode:2"
             />
+            <field name="event_article_content_fields_note" type="spacer"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_LABEL"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_DESC"
+                showon="event_use_associated_article:1"
+            />
+            <field name="event_article_content_use_title" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_TITLE"
+                description="COM_JEM_EVENT_ARTICLE_USE_TITLE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_alias" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_ALIAS"
+                description="COM_JEM_EVENT_ARTICLE_USE_ALIAS_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_introtext" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_INTROTEXT"
+                description="COM_JEM_EVENT_ARTICLE_USE_INTROTEXT_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_fulltext" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_FULLTEXT"
+                description="COM_JEM_EVENT_ARTICLE_USE_FULLTEXT_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_metadata" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_METADATA"
+                description="COM_JEM_EVENT_ARTICLE_USE_METADATA_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_image" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_IMAGE"
+                description="COM_JEM_EVENT_ARTICLE_USE_IMAGE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_language_fallback" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_LANGUAGE_FALLBACK"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_LANGUAGE_FALLBACK_DESC"
+                class="inputbox form-select w-auto"
+                default="article"
+                showon="event_use_associated_article:1"
+            >
+                <option value="blank">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_BLANK</option>
+                <option value="article">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_ARTICLE</option>
+                <option value="event">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_EVENT</option>
+            </field>
         </fieldset>
 
         <fieldset name="globalparam"

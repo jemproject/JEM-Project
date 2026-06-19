@@ -969,6 +969,7 @@ class JemModelEventslist extends ListModel
         }
 
         $user = JemFactory::getUser();
+        $levels = $user->getAuthorisedViewLevels();
         $calendarMultiday = $this->getState('filter.calendar_multiday');
         $stateParams = $this->getState('params');
 
@@ -985,6 +986,8 @@ class JemModelEventslist extends ListModel
                 $item->params = clone $stateParams;
                 $item->params->merge($eventParams);
             }
+
+            JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
 
             # adding categories
             $item->categories = $this->getCategories($item->id);

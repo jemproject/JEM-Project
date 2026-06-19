@@ -33,8 +33,11 @@ class JemModelMytimeline extends BaseDatabaseModel
         }
 
         $this->_items = $this->_getList($this->_buildQuery());
+        $levels = $user->getAuthorisedViewLevels();
 
         foreach ($this->_items as $i => $item) {
+            JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+
             $item->categories = $this->getCategories($item->eventid);
 
             if (empty($item->categories)) {
@@ -50,9 +53,9 @@ class JemModelMytimeline extends BaseDatabaseModel
         $where = $this->_buildWhere();
         $userId = (int) JemFactory::getUser()->get('id');
 
-        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.locid, a.published,'
+        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.alias, a.created, a.created_by, a.locid, a.published,'
             . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-            . ' a.access, a.datimage, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
+            . ' a.access, a.attribs, a.article_id, a.datimage, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
             . ' a.introtext, a.fulltext,'
             . ' a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces,'
             . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'

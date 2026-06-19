@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component JEM Model
@@ -22,6 +23,7 @@ use Joomla\CMS\Filter\InputFilter;
 class JemModelMyattendances extends BaseDatabaseModel
 {
     protected $_attending = null;
+    protected $_cats = null;
     protected $_total_attending = null;
     protected $_pagination_attending = null;
 
@@ -37,7 +39,7 @@ class JemModelMyattendances extends BaseDatabaseModel
 
         //get the number of events
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myattendances.limitstart', 0);
         }
@@ -73,7 +75,11 @@ class JemModelMyattendances extends BaseDatabaseModel
                 $this->_attending = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
+            $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+
             foreach ($this->_attending as $i => $item) {
+                JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+
                 $item->categories = $this->getCategories($item->eventid);
 
                 //remove events without categories (users have no access to them)
@@ -134,9 +140,9 @@ class JemModelMyattendances extends BaseDatabaseModel
         $groupby = ' GROUP BY a.id';
 
         # Get Events from Database
-        $query = 'SELECT DISTINCT a.id AS eventid, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid, a.published, '
+        $query = 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.alias, a.created, a.locid, a.published, '
                . ' a.recurrence_type, a.recurrence_first_id,'
-               . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
+               . ' a.access, a.attribs, a.article_id, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
                . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, r.places, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
                . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
                . ' a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking, r.status, r.waiting, r.comment,'
@@ -220,7 +226,7 @@ class JemModelMyattendances extends BaseDatabaseModel
 
         $filter   = $app->getUserStateFromRequest('com_jem.myattendances.filter', 'filter', 0, 'int');
         $search   = $app->getUserStateFromRequest('com_jem.myattendances.filter_search', 'filter_search', '', 'string');
-        $search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search   = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
         // First thing we need to do is to select only needed events

@@ -301,7 +301,7 @@ class JemModelAttendees extends BaseDatabaseModel
     public function getEvent()
     {
         if (empty($this->_event)) {
-            $query = 'SELECT a.id, a.alias, a.title, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
+            $query = 'SELECT a.id, a.alias, a.title, a.article_id, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
                    . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
                    . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
                    . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
@@ -311,6 +311,14 @@ class JemModelAttendees extends BaseDatabaseModel
             $this->_db->setQuery($query);
 
             $this->_event = $this->_db->loadObject();
+
+            if (!empty($this->_event)) {
+                $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+                JemHelper::applyAssociatedArticleEventContent($this->_event, $levels);
+                $this->_event->slug = !empty($this->_event->alias)
+                    ? ((int) $this->_event->id . ':' . $this->_event->alias)
+                    : (int) $this->_event->id;
+            }
         }
 
         return $this->_event;

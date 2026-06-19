@@ -17,7 +17,7 @@
             description="COM_JEM_EVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
             select="true"
             clear="true"
-            new="false"
+            new="true"
             edit="true"
             filter="integer"
         />
@@ -26,7 +26,7 @@
             description="COM_JEM_EVENT_FIELD_ARTICLE_TARGET_CATEGORY_DESC"
             class="inputbox form-select w-auto"
             default="0"
-            showon="create_article:1"
+            showon="create_article:1,2"
         >
             <option value="0">COM_JEM_SELECT_JOOMLA_CATEGORY</option>
         </field>
@@ -222,7 +222,7 @@
             <option value="preorder">COM_JEM_EVENT_AVAILABILITY_PREORDER</option>
             <option value="soldout">COM_JEM_EVENT_AVAILABILITY_SOLDOUT</option>
         </field>
-                <field name="online_meeting_url" type="url"
+        <field name="online_meeting_url" type="url"
                label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_LABEL"
                description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_DESC"
                class="form-control"
@@ -237,7 +237,8 @@
                maxlength="255"
                filter="string"
                hint="COM_JEM_JOIN_ONLINE"
-        /><field name="type_id" type="jemtype"
+        />
+        <field name="type_id" type="jemtype"
             label="COM_JEM_TYPE_FIELD_TYPE"
             description="COM_JEM_TYPE_FIELD_TYPE_DESC"
             entity="1"
@@ -819,6 +820,21 @@
                 <option value="">JGLOBAL_USE_GLOBAL</option>
                 <option value="0">COM_JEM_LINK_PROFILE</option>
                 <option value="1">COM_JEM_LINK_AVATAR</option>
+            </field>
+        </fieldset>
+        <fieldset name="article_content_options"
+                  label="COM_JEM_EVENT_ARTICLE_USAGE"
+        >
+            <field name="article_usage" type="list"
+                label="COM_JEM_EVENT_ARTICLE_USAGE"
+                description="COM_JEM_EVENT_ARTICLE_USAGE_DESC"
+                class="inputbox form-select"
+                default="information"
+                required="false"
+            >
+                <option value="none">COM_JEM_EVENT_ARTICLE_USAGE_NONE</option>
+                <option value="information">COM_JEM_EVENT_ARTICLE_USAGE_INFORMATION</option>
+                <option value="content">COM_JEM_EVENT_ARTICLE_USAGE_CONTENT</option>
             </field>
         </fieldset>
         <fieldset name="evevents"

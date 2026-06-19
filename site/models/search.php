@@ -104,7 +104,11 @@ class JemModelSearch extends BaseDatabaseModel
                 $this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
+            $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+
             foreach ($this->_data as $i => $item) {
+                JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+
                 $item->categories = $this->getCategories($item->id);
 
                 //remove events without categories (users have no access to them)
@@ -149,7 +153,7 @@ class JemModelSearch extends BaseDatabaseModel
             # Get Events from Database
             $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
                           . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-                          . ' a.alias, a.attribs, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
+                          . ' a.alias, a.attribs, a.article_id, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
                           . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
                           . ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
                           . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'

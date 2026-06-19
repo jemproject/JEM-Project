@@ -8,24 +8,23 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\String\StringHelper;
 
 /**
  * Event-View
  */
 class JemViewEvent extends JemView
 {
-    protected $item;
-    protected $params;
-    protected $print;
-    protected $state;
-    protected $user;
+    public $item;
+    public $params;
+    public $print;
+    public $state;
+    public $user;
 
     public function __construct($config = array())
     {
@@ -233,7 +232,8 @@ class JemViewEvent extends JemView
         $this->dimage = JemImage::flyercreator($item->datimage, 'event');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
-        $associatedArticles = JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels());
+        $articleUsage = (string) $item->params->get('article_usage', 'information');
+        $associatedArticles = empty($item->article_content_applied) && $articleUsage !== 'none' ? JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels()) : array();
         $associatedArticle  = !empty($item->article_id) && isset($associatedArticles[$item->article_id]) ? $associatedArticles[$item->article_id] : null;
         $articleLink        = JemHelper::getAssociatedArticleLink($associatedArticle);
         $item->articlelink  = $articleLink['link'];
@@ -355,11 +355,11 @@ class JemViewEvent extends JemView
             $description = explode("[", $this->item->meta_description);
             $description_content = "";
             foreach ($description as $desc) {
-                $endpos = \Joomla\String\StringHelper::strpos($desc, "]", 0);
+                $endpos = StringHelper::strpos($desc, "]", 0);
                 if ($endpos > 0) {
-                    $keyword = \Joomla\String\StringHelper::substr($desc, 0, $endpos);
+                    $keyword = StringHelper::substr($desc, 0, $endpos);
                     $description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-                    $description_content .= \Joomla\String\StringHelper::substr($desc, $endpos + 1);
+                    $description_content .= StringHelper::substr($desc, $endpos + 1);
                 } else {
                     $description_content .= $desc;
                 }

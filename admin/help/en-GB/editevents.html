@@ -7,6 +7,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>Edit Event</h1>
         <h2>Description</h2>
         <div>
@@ -89,9 +96,31 @@
         <p><strong>Status:</strong>
             Select Yes to publish the event or No to unpublish. Published events are displayed on the Frontend.
         </p>
+        <p><strong>Event status:</strong>
+            Public status used for visitor messaging and structured data. Options are Scheduled, Cancelled, Postponed, Rescheduled and Moved online. Default: Scheduled.
+            This is separate from Joomla publication status.
+        </p>
+        <p><strong>Availability:</strong>
+            General ticket or booking availability used for visitor messaging and structured data. Options are Available, Preorder and Sold out. Default: Available.
+        </p>
+        <p><strong>Type:</strong>
+            Assign an optional Event type. Only types configured for Events are shown. Default: no type.
+        </p>
         <p><strong>Featured:</strong>
             Select Yes to mark the selected event as a featured event. In the Frontend, the featured event will
             be especially marked or highlighted to distinguish it from other events.
+        </p>
+        <p><strong>Associated article usage:</strong>
+            Choose how this event uses a Joomla article. Select <em>No associated article</em> when the event does not need
+            an article. Select <em>Additional information</em> when the article should be shown as a separate More Information
+            link. Select <em>Event content</em> when the article should provide the event title, alias, description, metadata,
+            or image according to the global Associated Articles settings.
+        </p>
+        <p><strong>Associated Article:</strong>
+            Select an existing Joomla article or create one for this event. When the selected JEM category is configured to
+            create associated articles automatically, JEM can create the Joomla article during save and place it in the linked
+            Joomla category. If several selected JEM categories can create articles, choose the target Joomla category before
+            saving.
         </p>
         <p><strong>Event Description:</strong>
             This is the Event description. You can use Joomla Plugins in this field.
@@ -238,6 +267,48 @@
         <p><strong>Metadata information:</strong>
             Enter or edit (if needed) the Meta Description and the Meta Keywords of the event here. <br>
             You may use the suggestions in the settings to set default values which will be automatically set to the event data.
+        </p>
+        <h3>Event display options</h3>
+        <p><strong>Show venue name, category, author, contact, hits, availability, print icon, email icon, iCal icon and details title:</strong>
+            These event-specific options override the global settings when a value other than Use Global is selected. Most fields offer Use Global, Show and Hide.
+        </p>
+        <p><strong>Link category, author and contact:</strong>
+            Controls whether the shown item is plain text or a link. These options are available when the matching show option is enabled.
+        </p>
+        <p><strong>Contact category and contact description:</strong>
+            Controls extra contact information on the event detail page. Default: No.
+        </p>
+        <h3>Venue display options</h3>
+        <p><strong>Venue description and address:</strong>
+            Event-level overrides for showing venue description and address. Default: Use Global.
+        </p>
+        <p><strong>Venue link:</strong>
+            Options are Use Global, No Link, Link to URL or Link to Venue view.
+        </p>
+        <p><strong>Map service:</strong>
+            Options are Use Global, No Map Service, Google map link, Google map display, Google map display with API, OpenStreetMap link or OpenStreetMap display.
+        </p>
+        <p><strong>Google map TLD and language:</strong>
+            Optional Google map top-level domain and language code used when a Google map service is selected.
+        </p>
+        <h3>Links and attachments</h3>
+        <p><strong>Attachments layout:</strong>
+            Options are Use Global, row, full row, uniform row, column, full column or uniform column. Default: Use Global.
+        </p>
+        <p><strong>Attachment icon size:</strong>
+            Options are Use Global, No icon, Normal, Medium or Large. Default: Use Global.
+        </p>
+        <p><strong>Attachment frame:</strong>
+            Adds a visual frame around attachment output. Default: No.
+        </p>
+        <p><strong>Links layout:</strong>
+            Controls how event links are arranged. Options include row, full row, uniform row, column, full column and uniform column. Default: row.
+        </p>
+        <p><strong>Links order:</strong>
+            Controls the order of image, icon and text inside each link. Default: image, icon, text.
+        </p>
+        <p><strong>Event links:</strong>
+            Add repeatable links with title, description, type, color, URL, target, frame, image and maximum image dimensions. Link target defaults to new tab, frame defaults to Yes, color defaults to #2f6f46, maximum image width defaults to 120 and maximum image height defaults to 60.
         </p>
     </body>
 </html>

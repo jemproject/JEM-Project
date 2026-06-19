@@ -31,31 +31,16 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
         <dd><?php echo $this->form->getInput('event_status'); ?></dd>
         <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
         <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
-                <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
+        <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
         <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
         <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
-        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd><dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
         <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
         <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
         <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
-        <?php if ($this->form->getField('article_id')) : ?>
-            <dt><?php echo $this->form->getLabel('article_id'); ?></dt>
-            <dd><?php echo $this->form->getInput('article_id'); ?></dd>
-            <dt><?php echo $this->form->getLabel('create_article'); ?></dt>
-            <dd>
-            <?php echo $this->form->getInput('create_article'); ?>
-            <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
-                <?php echo $articleAutoInfo; ?>
-            </div>
-            </dd>
-            <dt><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
-            <dd><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
-        <?php endif; ?>
-
     </dl>
 </fieldset>
-
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     var articleActionSelect = document.getElementById('jform_create_article');
@@ -69,7 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
     articleActionSelect.addEventListener('change', updateArticleAutoInfo);
     updateArticleAutoInfo();
 });
-</script><!-- START META FIELDSET -->
+</script>
+
+
+<!-- START META FIELDSET -->
 <fieldset class="">
     <legend><?php echo Text::_('COM_JEM_META_HANDLING'); ?></legend>
     <div class="formelm-area">
@@ -117,5 +105,4 @@ document.addEventListener('DOMContentLoaded', function () {
     </script>
 </fieldset>
 <!--  END META FIELDSET -->
-
 

@@ -12,9 +12,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Log\LogEntry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
@@ -84,6 +84,7 @@ class JemHelper
             return false;
         }
     }
+
     /**
      * Load published Joomla articles associated with the given events.
      *
@@ -98,62 +99,30 @@ class JemHelper
             return array();
         }
 
-        $articleIds = array();
+        $articles = array();
 
         foreach ($events as $event) {
+            $params = $event->params ?? null;
+
+            if (!$params instanceof Registry) {
+                $params = new Registry();
+                $params->loadString((string) ($event->attribs ?? '{}'));
+            }
+
+            if (in_array((string) $params->get('article_usage', 'information'), array('none', 'content'), true)) {
+                continue;
+            }
+
             if (!empty($event->article_id)) {
-                $articleIds[] = (int) $event->article_id;
+                $article = self::getAssociatedArticleForEventContent((int) $event->article_id, $levels);
+
+                if (!empty($article)) {
+                    $articles[(int) $event->article_id] = $article;
+                }
             }
         }
 
-        $articleIds = array_values(array_unique(array_filter($articleIds)));
-
-        if (!$articleIds) {
-            return array();
-        }
-
-        $levels = array_map('intval', $levels);
-
-        if (!$levels) {
-            return array();
-        }
-
-        $db       = Factory::getContainer()->get('DatabaseDriver');
-        $nullDate = $db->quote($db->getNullDate());
-        $nowDate  = $db->quote(Factory::getDate()->toSql());
-        $query    = $db->getQuery(true);
-
-        $query->select(array(
-            $db->quoteName('a.id'),
-            $db->quoteName('a.title'),
-            $db->quoteName('a.alias'),
-            $db->quoteName('a.catid'),
-            $db->quoteName('a.created_by')
-        ))
-            ->from($db->quoteName('#__content', 'a'))
-            ->join('INNER', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid') . ' AND ' . $db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
-            ->where($db->quoteName('a.id') . ' IN (' . implode(',', $articleIds) . ')')
-            ->where($db->quoteName('a.state') . ' = 1')
-            ->where($db->quoteName('a.access') . ' IN (' . implode(',', $levels) . ')')
-            ->where($db->quoteName('c.published') . ' = 1')
-            ->where($db->quoteName('c.access') . ' IN (' . implode(',', $levels) . ')')
-            ->where('(' . $db->quoteName('a.publish_up') . ' IS NULL OR ' . $db->quoteName('a.publish_up') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_up') . ' <= ' . $nowDate . ')')
-            ->where('(' . $db->quoteName('a.publish_down') . ' IS NULL OR ' . $db->quoteName('a.publish_down') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_down') . ' >= ' . $nowDate . ')');
-
-        if (Multilanguage::isEnabled()) {
-            $language = Factory::getApplication()->getLanguage()->getTag();
-            $query->where($db->quoteName('a.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
-        }
-
-        try {
-            $db->setQuery($query);
-
-            return $db->loadObjectList('id') ?: array();
-        } catch (RuntimeException $e) {
-            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
-
-            return array();
-        }
+        return $articles;
     }
 
     /**
@@ -180,6 +149,277 @@ class JemHelper
             'edit_link' => $canEdit ? Route::_('index.php?option=com_content&task=article.edit&a_id=' . (int) $article->id . '&return=' . base64_encode(Uri::getInstance()->toString()) . '&' . Session::getFormToken() . '=1') : '',
             'can_edit'  => $canEdit
         );
+    }
+
+    /**
+     * Apply associated Joomla article content to an event when the event opts in.
+     *
+     * @param   object       $event     Event data.
+     * @param   array|null   $levels    Authorized view levels.
+     * @param   string|null  $language  Preferred language tag.
+     *
+     * @return  object
+     */
+    static public function applyAssociatedArticleEventContent($event, ?array $levels = null, ?string $language = null)
+    {
+        if (empty($event) || empty($event->article_id)) {
+            return $event;
+        }
+
+        $params = $event->params ?? null;
+
+        if (!$params instanceof Registry) {
+            $params = new Registry();
+            $params->loadString((string) ($event->attribs ?? '{}'));
+        }
+
+        if ((string) $params->get('article_usage', 'information') !== 'content') {
+            return $event;
+        }
+
+        $levels = $levels ?: JemFactory::getUser()->getAuthorisedViewLevels();
+        $globalAttribs = self::globalattribs();
+        $fallback = (string) $globalAttribs->get('event_article_content_language_fallback', 'article');
+        $article = self::getAssociatedArticleForEventContent((int) $event->article_id, $levels, $language, $fallback);
+
+        if (empty($article)) {
+            if ($fallback === 'blank') {
+                if ((int) $globalAttribs->get('event_article_content_use_title', 1) === 1) {
+                    $event->title = '';
+                }
+
+                if ((int) $globalAttribs->get('event_article_content_use_alias', 1) === 1) {
+                    $event->alias = '';
+                }
+
+                if ((int) $globalAttribs->get('event_article_content_use_introtext', 1) === 1) {
+                    $event->introtext = '';
+                }
+
+                if ((int) $globalAttribs->get('event_article_content_use_fulltext', 1) === 1) {
+                    $event->fulltext = '';
+                }
+
+                if ((int) $globalAttribs->get('event_article_content_use_metadata', 1) === 1) {
+                    $event->meta_keywords = '';
+                    $event->meta_description = '';
+                    $event->metadata = new Registry();
+                }
+
+                if ((int) $globalAttribs->get('event_article_content_use_image', 1) === 1) {
+                    $event->datimage = '';
+                }
+            }
+
+            return $event;
+        }
+
+        $event->article_content_applied = true;
+        $event->article_content_id = (int) $article->id;
+        $event->article_content_language = (string) $article->language;
+
+        if ((int) $globalAttribs->get('event_article_content_use_title', 1) === 1 && trim((string) $article->title) !== '') {
+            $event->title = $article->title;
+        }
+
+        if ((int) $globalAttribs->get('event_article_content_use_alias', 1) === 1 && trim((string) $article->alias) !== '') {
+            $event->alias = $article->alias;
+        }
+
+        if ((int) $globalAttribs->get('event_article_content_use_introtext', 1) === 1) {
+            $event->introtext = (string) $article->introtext;
+        }
+
+        if ((int) $globalAttribs->get('event_article_content_use_fulltext', 1) === 1) {
+            $event->fulltext = (string) $article->fulltext;
+        }
+
+        if ((int) $globalAttribs->get('event_article_content_use_metadata', 1) === 1) {
+            if (!empty($article->metakey)) {
+                $event->meta_keywords = $article->metakey;
+            }
+
+            if (!empty($article->metadesc)) {
+                $event->meta_description = $article->metadesc;
+            }
+
+            if (isset($article->metadata)) {
+                $registry = new Registry();
+                $registry->loadString((string) $article->metadata);
+                $event->metadata = $registry;
+            }
+        }
+
+        if ((int) $globalAttribs->get('event_article_content_use_image', 1) === 1) {
+            $articleImage = self::getAssociatedArticleImage($article);
+
+            if ($articleImage !== '') {
+                $event->datimage = $articleImage;
+                $event->article_content_image = $articleImage;
+            }
+        }
+
+        return $event;
+    }
+
+    /**
+     * Apply associated Joomla article content to a list of events.
+     *
+     * @param   array        $events    Event objects.
+     * @param   array|null   $levels    Authorized view levels.
+     * @param   string|null  $language  Preferred language tag.
+     *
+     * @return  array
+     */
+    static public function applyAssociatedArticleEventContentToEvents(array $events, ?array $levels = null, ?string $language = null)
+    {
+        foreach ($events as $event) {
+            self::applyAssociatedArticleEventContent($event, $levels, $language);
+
+            if (!empty($event->id)) {
+                $event->slug = !empty($event->alias) ? ((int) $event->id . ':' . $event->alias) : (int) $event->id;
+            }
+        }
+
+        return $events;
+    }
+
+    /**
+     * Resolve the best associated Joomla article for event content.
+     *
+     * @param   int          $articleId  Base article id.
+     * @param   array        $levels     Authorized view levels.
+     * @param   string|null  $language   Preferred language tag.
+     *
+     * @return  object|null
+     */
+    static public function getAssociatedArticleForEventContent(int $articleId, array $levels, ?string $language = null, string $fallback = 'article')
+    {
+        if ($articleId <= 0 || (int) self::globalattribs()->get('event_use_associated_article', 1) !== 1) {
+            return null;
+        }
+
+        $levels = array_values(array_unique(array_map('intval', $levels)));
+
+        if (!$levels) {
+            return null;
+        }
+
+        $app = Factory::getApplication();
+        $language = $language ?: $app->getLanguage()->getTag();
+        $defaultLanguage = (string) ComponentHelper::getParams('com_languages')->get('site', '');
+
+        if ($defaultLanguage === '') {
+            $defaultLanguage = $language;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $nullDate = $db->quote($db->getNullDate());
+        $nowDate = $db->quote(Factory::getDate()->toSql());
+        $associationIds = array($articleId);
+
+        if (Multilanguage::isEnabled()) {
+            $assocQuery = $db->getQuery(true)
+                ->select($db->quoteName('assoc2.id'))
+                ->from($db->quoteName('#__associations', 'assoc1'))
+                ->join('INNER', $db->quoteName('#__associations', 'assoc2') . ' ON ' . $db->quoteName('assoc2.key') . ' = ' . $db->quoteName('assoc1.key') . ' AND ' . $db->quoteName('assoc2.context') . ' = ' . $db->quoteName('assoc1.context'))
+                ->where($db->quoteName('assoc1.id') . ' = ' . (int) $articleId)
+                ->where($db->quoteName('assoc1.context') . ' = ' . $db->quote('com_content.item'));
+
+            try {
+                $db->setQuery($assocQuery);
+                $associationIds = array_merge($associationIds, array_map('intval', (array) $db->loadColumn()));
+            } catch (RuntimeException $e) {
+                $associationIds = array($articleId);
+            }
+        }
+
+        $associationIds = array_values(array_unique(array_filter($associationIds)));
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('a.id'),
+                $db->quoteName('a.title'),
+                $db->quoteName('a.alias'),
+                $db->quoteName('a.catid'),
+                $db->quoteName('a.introtext'),
+                $db->quoteName('a.fulltext'),
+                $db->quoteName('a.metakey'),
+                $db->quoteName('a.metadesc'),
+                $db->quoteName('a.metadata'),
+                $db->quoteName('a.images'),
+                $db->quoteName('a.language'),
+                $db->quoteName('a.created_by')
+            ))
+            ->from($db->quoteName('#__content', 'a'))
+            ->join('INNER', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid') . ' AND ' . $db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
+            ->where($db->quoteName('a.id') . ' IN (' . implode(',', $associationIds) . ')')
+            ->where($db->quoteName('a.state') . ' = 1')
+            ->where($db->quoteName('a.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where($db->quoteName('c.published') . ' = 1')
+            ->where($db->quoteName('c.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where('(' . $db->quoteName('a.publish_up') . ' IS NULL OR ' . $db->quoteName('a.publish_up') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_up') . ' <= ' . $nowDate . ')')
+            ->where('(' . $db->quoteName('a.publish_down') . ' IS NULL OR ' . $db->quoteName('a.publish_down') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_down') . ' >= ' . $nowDate . ')');
+
+        try {
+            $db->setQuery($query);
+            $articles = $db->loadObjectList('id') ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return null;
+        }
+
+        if (!$articles) {
+            return null;
+        }
+
+        if (!Multilanguage::isEnabled()) {
+            return $articles[$articleId] ?? reset($articles) ?: null;
+        }
+
+        $candidateLanguages = array($language, '*');
+
+        if ($fallback === 'article') {
+            $candidateLanguages = array($language, $defaultLanguage, '*');
+        }
+
+        foreach ($candidateLanguages as $candidateLanguage) {
+            if ($candidateLanguage === '') {
+                continue;
+            }
+
+            foreach ($articles as $article) {
+                if ((string) $article->language === (string) $candidateLanguage) {
+                    return $article;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the best image path from a Joomla article.
+     *
+     * @param   object  $article  Joomla article.
+     *
+     * @return  string
+     */
+    static protected function getAssociatedArticleImage($article)
+    {
+        $images = new Registry();
+        $images->loadString((string) ($article->images ?? ''));
+
+        foreach (array('image_fulltext', 'image_intro') as $field) {
+            $image = trim((string) $images->get($field, ''));
+
+            if ($image !== '') {
+                return ltrim($image, '/');
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -1398,22 +1638,20 @@ class JemHelper
     /**
      * return initialized calendar tool class for ics export
      *
-     * @return vcalendar
+     * @return \Kigkonsult\Icalcreator\Vcalendar
      */
     static public function getCalendarTool()
     {
-        require_once JPATH_SITE.'/components/com_jem/classes/iCalcreator.class.php';
+        require_once JPATH_SITE.'/components/com_jem/classes/icalcreator/autoload.php';
         $timezone_name = JemHelper::getTimeZoneName();
 
-        $vcal = new vcalendar();
-        if (!file_exists(JPATH_SITE.'/cache/com_jem')) {
-            Folder::create(JPATH_SITE.'/cache/com_jem');
-        }
-        $vcal->setConfig('directory', JPATH_SITE.'/cache/com_jem');
-        $vcal->setProperty('calscale', 'GREGORIAN');
-        $vcal->setProperty('method', 'PUBLISH');
+        $vcal = \Kigkonsult\Icalcreator\Vcalendar::factory([
+            \Kigkonsult\Icalcreator\IcalInterface::UNIQUE_ID => 'com_jem',
+        ]);
+        $vcal->setCalscale('GREGORIAN');
+        $vcal->setMethod('PUBLISH');
         if ($timezone_name) {
-            $vcal->setProperty('X-WR-TIMEZONE', $timezone_name);
+            $vcal->setXprop('X-WR-TIMEZONE', $timezone_name);
         }
         return $vcal;
     }
@@ -1454,14 +1692,13 @@ class JemHelper
             throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTDATE_FORMAT'), 0);
         }
 
-        $date = array('year' => (int) $start_date[1], 'month' => (int) $start_date[2], 'day' => (int) $start_date[3]);
-        $date_end = array();
-        $dateparam = array('VALUE' => 'DATE');
-        $dateendparam = array('VALUE' => 'DATE');
-
         // all day event if start time is not set
         if (!$event->times) // all day !
         {
+            // build start DateTime (date only)
+            $dtStart      = new \DateTime($event->dates);
+            $dtStartParams = ['VALUE' => 'DATE'];
+
             // for ical all day events, dtend must be the next day
             $event->enddates = date('Y-m-d', strtotime($event->enddates . ' +1 day'));
 
@@ -1469,7 +1706,8 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_ENDDATE_FORMAT'), 0);
             }
 
-            $date_end = array('year' => (int) $end_date[1], 'month' => (int) $end_date[2], 'day' => (int) $end_date[3]);
+            $dtEnd       = new \DateTime($event->enddates);
+            $dtEndParams = ['VALUE' => 'DATE'];
         }
         else // not all day events, there is a start time
         {
@@ -1477,12 +1715,11 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date['hour'] = (int) $start_time[1];
-            $date['min']  = (int) $start_time[2];
-            $date['sec']  = (int) $start_time[3];
-            $dateparam = array('VALUE' => 'DATE-TIME');
+            $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
+            $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
+            $dtStartParams = ['VALUE' => 'DATE-TIME'];
             if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dateparam['TZID'] = $timezone_name;
+                $dtStartParams['TZID'] = $timezone_name;
             }
 
             if (!$event->endtimes || $event->endtimes == '00:00:00') {
@@ -1504,13 +1741,10 @@ class JemHelper
                 throw new Exception(Text::_('COM_JEM_ICAL_EXPORT_WRONG_STARTTIME_FORMAT'), 0);
             }
 
-            $date_end = array('year' => (int) $end_date[1], 'month' => (int) $end_date[2], 'day' => (int) $end_date[3]);
-            $date_end['hour'] = (int) $end_time[1];
-            $date_end['min']  = (int) $end_time[2];
-            $date_end['sec']  = (int) $end_time[3];
-            $dateendparam = array('VALUE' => 'DATE-TIME');
+            $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
+            $dtEndParams = ['VALUE' => 'DATE-TIME'];
             if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dateendparam['TZID'] = $timezone_name;
+                $dtEndParams['TZID'] = $timezone_name;
             }
         }
 
@@ -1594,30 +1828,28 @@ class JemHelper
                 : Text::_('COM_JEM_ONLINE_MEETING');
         }
 
-        $e = new vevent();
-        $e->setProperty('summary', $event->title);
-        $e->setProperty('categories', implode(', ', $categories));
-        $e->setProperty('dtstart', $date, $dateparam);
-        if (count($date_end)) {
-            $e->setProperty('dtend', $date_end, $dateendparam);
-        }
-        $e->setProperty('description', $description);
-        $e->setProperty('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
+        // Build vevent using iCalcreator v2.41 API
+        $e = $calendartool->newVevent();
+        $e->setSummary($event->title);
+        $e->setCategories(implode(', ', $categories));
+        $e->setDtstart($dtStart, $dtStartParams);
+        $e->setDtend($dtEnd, $dtEndParams);
+        $e->setDescription($description);
+        $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
         if ($location !== '') {
-            $e->setProperty('location', $location);
+            $e->setLocation($location);
         }
         if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs) {
-            $e->setProperty('X-JEM-ONLINE-MEETING', $onlineMeetingUrl, array('LABEL' => $onlineMeetingLabel));
+            $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
 
             if ($onlineMeetingPlatform['key'] === 'teams') {
-                $e->setProperty('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
-                $e->setProperty('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
-                $e->setProperty('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
+                $e->setXprop('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);
+                $e->setXprop('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
+                $e->setXprop('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
             }
         }
-        $e->setProperty('url', $link);
-        $e->setProperty('uid', 'event' . $event->id . '@' . $sitename);
-        $calendartool->addComponent($e);
+        $e->setUrl($link);
+        $e->setUid('event' . $event->id . '@' . $sitename);
 
         return true;
     }

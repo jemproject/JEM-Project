@@ -16,8 +16,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
+use Joomla\String\StringHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -51,7 +52,7 @@ static public function lightbox() {
     $settings = JemHelper::config();
     $app = Factory::getApplication();
     if ($settings->lightbox == 1) {
-        $document = Factory::getDocument();
+        $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
         $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
@@ -437,13 +438,7 @@ static public function lightbox() {
             // On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
             $showIcon = $settings->get('global_show_icons', 1);
 
-            if (version_compare(JVERSION, '5.0.0', '>=')) {
-                // Joomla 5 with Font Awesome 6
-                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
-            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-                // Joomla 4 with Font Awesome 5
-                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
-            }
+            $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
 
             switch ($view)
             {
@@ -862,7 +857,7 @@ static public function lightbox() {
     }
 
     /**
-     * Creates attributes for a tooltip depending on Joomla version
+     * Creates tooltip attributes.
      *
      * @param  string  $title   translated title of the tooltip
      * @param  string  $text    translated text of the tooltip
@@ -874,8 +869,6 @@ static public function lightbox() {
     {
         $result = array();
 
-        // on Joomla! 3.3+ we must use the new tooltips
-        // HTMLHelper::_('bootstrap.tooltip');
         $result = 'class="'.$classes.' hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
         if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
             $result .= ' data-placement="'.$position.'"';
@@ -920,7 +913,7 @@ static public function lightbox() {
         $output = null;
         $attributes = null;
 
-        $data->country = \Joomla\String\StringHelper::strtoupper($data->country);
+        $data->country = StringHelper::strtoupper($data->country);
 
         if ($data->latitude == 0.000000) {
             $data->latitude = null;
@@ -1091,15 +1084,8 @@ static public function lightbox() {
             return null;
         }
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5 with Font Awesome 6
-            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
-        } else {
-            // Joomla 4 with Font Awesome 5
-            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
-        }
+        $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+        $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
         $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 
@@ -1454,14 +1440,13 @@ static public function lightbox() {
         if (empty($imagefile) || empty($image)) {
             return;
         } else if(!$settings->flyer){
-            list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];
+            list($imagewidth, $imageheight) = getimagesize(JPATH_SITE . '/' . $image['original']) ?? [100, 100];
+            list($thumbwidth, $thumbheight) = getimagesize(JPATH_SITE . '/' . $image['thumb']) ?? [50, 50];
         }
 
         // Does a thumbnail exist?
         if (!$settings->flyer){
-            if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-
+            if (is_file(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
@@ -1790,6 +1775,42 @@ static public function lightbox() {
             }
         }
         return $output;
+    }
+
+    /**
+     * Returns an array for ical formatting
+     * @todo alter, where is this used for?
+     *
+     * @param string date
+     * @param string time
+     * @return array
+     */
+    static public function getIcalDateArray($date, $time = null)
+    {
+        if ($time) {
+            $sec = strtotime($date. ' ' .$time);
+        } else {
+            $sec = strtotime($date);
+        }
+        if (!$sec) {
+            return false;
+        }
+
+        //Format date
+        $parsed = date('Y-m-d H:i:s', $sec);
+
+        $date = array('year'  => (int) substr($parsed, 0, 4),
+                      'month' => (int) substr($parsed, 5, 2),
+                      'day'   => (int) substr($parsed, 8, 2));
+
+        //Format time
+        if (substr($parsed, 11, 8) != '00:00:00')
+        {
+            $date['hour'] = substr($parsed, 11, 2);
+            $date['min']  = substr($parsed, 14, 2);
+            $date['sec']  = substr($parsed, 17, 2);
+        }
+        return $date;
     }
 
     /**

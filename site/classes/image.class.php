@@ -9,9 +9,9 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
@@ -226,8 +226,9 @@ class JemImage
         }
 
         if ($image) {
-            $img_orig  = 'images/jem/'.$folder.'/'.$image;
-            $img_thumb = 'images/jem/'.$folder.'/small/'.$image;
+            $isSiteImagePath = strpos($image, '/') !== false || strpos($image, '\\') !== false;
+            $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
+            $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
 
             $filepath  = JPATH_SITE.'/'.$img_orig;
             $save      = JPATH_SITE.'/'.$img_thumb;
@@ -238,7 +239,7 @@ class JemImage
             }
 
             //Create thumbnail if enabled and it does not exist already
-            if ($settings->gddisabled == 1 && !file_exists($save)) {
+            if (!$isSiteImagePath && $settings->gddisabled == 1 && !file_exists($save)) {
                 JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
             }
 
@@ -247,7 +248,7 @@ class JemImage
             $dimage['thumb']    = $img_thumb;
 
             //get imagesize of the original
-            $iminfo = @getimagesize($img_orig);
+            $iminfo = @getimagesize($filepath);
 
             // and it should be an image
             if (!is_array($iminfo) || count($iminfo) < 2) {
@@ -271,7 +272,7 @@ class JemImage
                 $dimage['height'] = $iminfo[1];
             }
 
-            if (File::exists(JPATH_SITE.'/'.$img_thumb)) {
+            if (is_file(JPATH_SITE.'/'.$img_thumb)) {
                 //get imagesize of the thumbnail
                 $thumbiminfo = @getimagesize(JPATH_SITE.'/'.$img_thumb);
 
@@ -365,7 +366,7 @@ class JemImage
 
         $now = rand();
 
-        while (File::exists($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
+        while (is_file($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
             $now++;
         }
 

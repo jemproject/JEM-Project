@@ -7,6 +7,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>JEM Settings</h1>
         <h2>Description</h2>
         <div>
@@ -454,7 +461,24 @@
         </p>
         <p><strong>Associated Article Title Format:</strong><br>
             Defines the article title used for one-time events and for the parent event of a recurring series. You can combine
-            plain text with placeholders such as <code>{title}</code>, <code>{id}</code>, <code>{date}</code>, and <code>{time}</code>.
+            plain text with placeholders such as <code>{title}</code>, <code>{id}</code>, <code>{date}</code>, <code>{time}</code>,
+            and <code>{lang}</code>. The <code>{lang}</code> placeholder inserts the two-letter language code, for example
+            <code>en</code> or <code>es</code>. Events assigned to all languages leave <code>{lang}</code> empty.
+        </p>
+        <p><strong>New event content article:</strong><br>
+            Controls what JEM does when an event uses its associated article as the event content and JEM must create a new
+            Joomla article automatically. JEM can copy the current event description into the article, create an empty article
+            and show an edit notice, or create an empty article and open the Joomla article editor.
+        </p>
+        <p><strong>New Associated Article Access:</strong><br>
+            Defines the access level for new associated Joomla articles created by JEM. The default option,
+            <em>Use Joomla category access</em>, copies the access level from the Joomla category where the article is created.
+            You can also select any Joomla access level to force all newly-created associated articles to use that access level.
+        </p>
+        <p><strong>New Associated Article Image:</strong><br>
+            Defines whether the JEM event image is copied into the Joomla article image fields when JEM creates a new associated
+            article. The image can be copied as the Joomla article intro image, as the full article image, or into both fields.
+            This only affects newly-created articles; it does not overwrite images in an existing associated article.
         </p>
         <p><strong>Show More Information / More Information Text:</strong><br>
             Controls whether the event detail page displays a link or button to the associated article, and defines the text
@@ -471,6 +495,16 @@
             This field is shown when recurring events create one article per occurrence. It supports the same placeholders as
             the normal article title format and also supports counters. Use <code>{#}</code> for a plain counter,
             <code>{##}</code> for a two-digit counter, or <code>{###}</code> for a three-digit counter.
+        </p>
+        <p><strong>Event content article fields:</strong><br>
+            These options only apply when an individual event is configured to use its associated Joomla article as the event
+            content source. They define which article fields replace the JEM event fields on the frontend and in integrations:
+            title, alias, intro text, full text, metadata, and image.
+        </p>
+        <p><strong>Missing language fallback:</strong><br>
+            Defines what JEM shows when an event uses the associated Joomla article as event content, but there is no published
+            associated article for the current language. You can show no article content, use the Joomla default-language article,
+            or fall back to the content stored directly in the JEM event.
         </p>
         <table class="help">
             <tr>
@@ -494,6 +528,11 @@
                 <td>Recurring events with one article per occurrence.</td>
             </tr>
             <tr>
+                <td><code>{title} ({lang})</code></td>
+                <td>Concert in Madrid (es)</td>
+                <td>Multilingual article sets where generated titles should identify the article language.</td>
+            </tr>
+            <tr>
                 <td><code>{###} - {title} - {date}</code></td>
                 <td>001 - Workshop - 2026-06-20</td>
                 <td>Long recurring series that need stable sortable titles.</td>
@@ -506,6 +545,16 @@
                 per occurrence when each occurrence needs its own text, date-specific information, modules, comments, or SEO title.
                 Add <code>{##}</code> or <code>{###}</code> to the recurring title format when generated titles must stay unique
                 and easy to sort.
+            </p>
+        </div>
+        <div class="box">
+            <p class="hintheader">Multilingual example</p>
+            <p class="hint">
+                Create a JEM event in the default language and set <em>Associated article usage</em> to <em>Event content</em>.
+                Link or create a Joomla article for the event description, then create Joomla article associations for the
+                translated article versions. When visitors switch language, JEM keeps the same event and resolves the associated
+                article for the current language. If no translation exists, the <em>Missing language fallback</em> setting decides
+                whether JEM uses the default-language article, the original JEM event content, or no article content.
             </p>
         </div>
         <p><strong>Timezone Handling:</strong><br>

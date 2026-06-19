@@ -146,7 +146,7 @@ class JemViewCalendar extends JemView
 
         $print_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component');
         $ical_link = $partDate;
-        //http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
+        //http://localhost/jl500rc3/index.php/jem/calendar?format=raw&layout=ics
 
         // init calendar
         $cal = new JemCalendar($year, $month, 0);

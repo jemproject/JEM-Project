@@ -278,10 +278,48 @@ class JemControllerEvent extends JemControllerForm
 
         // If ok, redirect to the return page.
         if ($result) {
+            if ($this->handleCreatedArticleContentRedirect($this->getModel())) {
+                return $result;
+            }
+
             $this->setRedirect($this->getReturnPage());
         }
 
         return $result;
+    }
+
+
+    /**
+     * Notify or redirect after an empty event-content article is created.
+     *
+     * @param   object  $model  Event model.
+     *
+     * @return  boolean  True when a redirect was set.
+     */
+    protected function handleCreatedArticleContentRedirect($model)
+    {
+        $articleId = $model ? (int) $model->getState('event.article_content_article_id', 0) : 0;
+
+        if (!$articleId || !(bool) $model->getState('event.article_content_empty', false)) {
+            return false;
+        }
+
+        $return = base64_encode($this->getReturnPage());
+        $editUrl = Route::_('index.php?option=com_content&task=article.edit&a_id=' . $articleId . '&return=' . $return . '&' . Session::getFormToken() . '=1', false);
+        $action = (string) $model->getState('event.article_content_create_action', 'copy_description');
+
+        if ($action === 'empty_edit') {
+            $this->setRedirect($editUrl, Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT'), 'notice');
+
+            return true;
+        }
+
+        Factory::getApplication()->enqueueMessage(
+            Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT') . ' <a href="' . $editUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EDIT_LINK') . '</a>',
+            'notice'
+        );
+
+        return false;
     }
 
     /**

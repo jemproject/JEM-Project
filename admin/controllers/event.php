@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -37,6 +38,57 @@ class JemControllerEvent extends JemControllerForm
      */
     public function __construct($config = array()) {
         parent::__construct($config);
+    }
+
+
+    /**
+     * Method to save a record.
+     *
+     * @param   string  $key     The name of the primary key of the URL variable.
+     * @param   string  $urlVar  The name of the URL variable.
+     *
+     * @return  boolean
+     */
+    public function save($key = null, $urlVar = 'id')
+    {
+        $result = parent::save($key, $urlVar);
+        $model = $this->getModel();
+
+        if ($result && $model) {
+            $this->handleCreatedArticleContentRedirect($model);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Notify or redirect after an empty event-content article is created.
+     *
+     * @param   object  $model  Event model.
+     *
+     * @return  void
+     */
+    protected function handleCreatedArticleContentRedirect($model)
+    {
+        $articleId = (int) $model->getState('event.article_content_article_id', 0);
+
+        if (!$articleId || !(bool) $model->getState('event.article_content_empty', false)) {
+            return;
+        }
+
+        $editUrl = Route::_('index.php?option=com_content&task=article.edit&id=' . $articleId, false);
+        $action = (string) $model->getState('event.article_content_create_action', 'copy_description');
+
+        if ($action === 'empty_edit') {
+            $this->setRedirect($editUrl, Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT'), 'notice');
+
+            return;
+        }
+
+        Factory::getApplication()->enqueueMessage(
+            Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT') . ' <a href="' . $editUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EDIT_LINK') . '</a>',
+            'notice'
+        );
     }
 
     /**
