@@ -2677,6 +2677,20 @@ div#jem .inline-button-right {
 }
 
 
+#jem a.btn,
+#jem a.btn:visited {
+    color: var(--bs-btn-color, #fff) !important;
+}
+
+#jem a.btn:hover,
+#jem a.btn:focus {
+    color: var(--bs-btn-hover-color, var(--bs-btn-color, #fff)) !important;
+}
+
+#jem a.btn:active {
+    color: var(--bs-btn-active-color, var(--bs-btn-hover-color, var(--bs-btn-color, #fff))) !important;
+}
+
 #jem .jem-online-meeting-icon {
     line-height: 1;
 }
