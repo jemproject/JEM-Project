@@ -311,9 +311,14 @@ $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . 
 
         $slotCount = max(1, (int) (($gridEnd - $gridStart) / $slotSeconds));
         $timeSlots = array();
-        if ($hourDisplay === 'event_hours' && !empty($activeHourKeys)) {
-            ksort($activeHourKeys);
-            $timeSlots = array_values($activeHourKeys);
+        if ($hourDisplay === 'event_hours') {
+            if (!empty($activeHourKeys)) {
+                ksort($activeHourKeys);
+                $timeSlots = array_values($activeHourKeys);
+            } else {
+                $timeSlots = range($rangeStartHour, $rangeEndHour - 1);
+            }
+
             $slotCount = count($timeSlots);
         } else {
             for ($slot = 0; $slot < $slotCount; $slot++) {
@@ -322,10 +327,6 @@ $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . 
         }
 
         if ($hourDisplay === 'event_hours') {
-            if (empty($timeSlots)) {
-                $timeSlots = range($rangeStartHour, $rangeEndHour - 1);
-            }
-
             $slotCount = count($timeSlots);
             if ($slotCount < $minimumVisibleHours) {
                 $firstHour = (int) reset($timeSlots);

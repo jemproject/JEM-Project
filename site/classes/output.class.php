@@ -130,16 +130,16 @@ static public function lightbox() {
 
         # Middle block ----------------
 
-        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('annualcalendar', 'categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
             $buttons[$idx][] = JemOutput::archivebutton($archive_link, $task , $id); // task: archive, id: for '&id='
         }
         if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
             $buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
         }
-        if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
+        if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('annualcalendar', 'attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
             $buttons[$idx][] = JemOutput::printbutton($print_link, null);
         }
-        if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'venue', 'venue-cal', 'weekcal', 'category', 'category-cal')))) {
+        if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'annualcalendar', 'venue', 'venue-cal', 'weekcal', 'category', 'category-cal')))) {
             $buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view, $task); // slug: for '&id='
         }
         if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {

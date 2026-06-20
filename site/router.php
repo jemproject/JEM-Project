@@ -52,6 +52,7 @@ class JemRouter extends RouterView
 
        
         $viewsWithId = [
+            'annualcalendar',
             'calendar',
             'eventslist',
             'event',

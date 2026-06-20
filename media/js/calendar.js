@@ -89,8 +89,72 @@ jQuery(document).ready(function ($) {
         $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues').addClass('catoff');
         refreshCalendarFilters();
     });
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl, {html: true})
-    })
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {html: true});
+    });
+
+    var annualPopoverSelector = '.jem-annual-calendar .jem-annual-day-popover';
+    var annualPopoverOptions = {
+        trigger: 'manual',
+        placement: 'top',
+        html: true,
+        sanitize: false
+    };
+
+    function getAnnualPopover(element) {
+        return bootstrap.Popover.getInstance(element);
+    }
+
+    function ensureAnnualPopover(element) {
+        return getAnnualPopover(element) || new bootstrap.Popover(element, annualPopoverOptions);
+    }
+
+    function hideAnnualPopovers(except) {
+        document.querySelectorAll(annualPopoverSelector).forEach(function (element) {
+            var popover = getAnnualPopover(element);
+
+            if (popover && element !== except) {
+                popover.hide();
+            }
+        });
+    }
+
+    document.addEventListener('click', function (event) {
+        var trigger = event.target.closest(annualPopoverSelector);
+
+        if (trigger) {
+            event.preventDefault();
+            event.stopPropagation();
+            hideAnnualPopovers(trigger);
+            ensureAnnualPopover(trigger).toggle();
+            return;
+        }
+
+        var annualDay = event.target.closest('.jem-annual-calendar .jem-annual-day[data-day-link]');
+
+        if (annualDay && !event.target.closest('a, button, .popover')) {
+            window.location.href = annualDay.getAttribute('data-day-link');
+            return;
+        }
+
+        if (!event.target.closest('.popover')) {
+            hideAnnualPopovers();
+        }
+    });
+
+    document.addEventListener('keydown', function (event) {
+        var annualDay = event.target.closest('.jem-annual-calendar .jem-annual-day[data-day-link]');
+
+        if (!annualDay || event.target.closest('a, button')) {
+            return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            window.location.href = annualDay.getAttribute('data-day-link');
+        }
+    });
+
+    document.querySelectorAll(annualPopoverSelector).forEach(ensureAnnualPopover);
 });

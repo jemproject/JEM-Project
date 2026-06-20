@@ -121,6 +121,13 @@ class JemModelDay extends JemModelEventslist
         $requestVenueId    = $app->input->getInt('locid', 0);
         $requestCategoryId = $app->input->getInt('catid', 0);
         $item              = $app->input->getInt('Itemid', 0);
+        $showArchivedRequest = $app->input->getString('show_archived_events', null);
+        $showArchivedEvents  = $showArchivedRequest === null
+            ? (bool) $params->get('show_archived_events', 0)
+            : (bool) $app->input->getInt('show_archived_events', 0);
+
+        $this->show_archived_events = $showArchivedEvents;
+        $this->setState('filter.show_archived_events', $showArchivedEvents);
         $normaliseIds      = static function ($value) {
             if (is_array($value)) {
                 $ids = $value;
