@@ -131,7 +131,6 @@ class JemViewEditevent extends JemView
 
             $params->set('page_title', $pagetitle);
             $params->set('page_heading', $pagetitle);
-            $params->set('show_page_heading', 1); // ensure page heading is shown
             $params->set('introtext', ''); // there is definitely no introtext.
             $params->set('showintrotext', 0);
             $pathway->addItem($pagetitle, ''); // link not required here so '' is ok

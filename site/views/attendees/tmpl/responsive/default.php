@@ -143,11 +143,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <div class="jem-attendees-filter-group">
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>
-            <?php if (empty($this->rows)) : ?>
-                <div style="padding-bottom: 8px;">
-                    <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
-                </div>
-             <?php endif;?>
         </div>
 
         <div class="jem-sort jem-sort-small" id="articleList">
@@ -170,6 +165,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         <ul class="eventlist eventtable">
             <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.Session::getFormToken().'=1';
             ?>
+            <?php if (empty($this->rows)) : ?>
+                <li class="jem-event jem-list-row jem-small-list row0">
+                    <div class="jem-event-info-small jem-attendees-empty">
+                        <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
+                    </div>
+                </li>
+            <?php endif; ?>
             <?php foreach ($this->rows as $i => $row) : ?>
                 <li class="jem-event jem-list-row jem-small-list row<?php echo $i % 2; ?>">
                     <div class="jem-event-info-small jem-attendee-number">

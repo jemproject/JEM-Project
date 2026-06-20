@@ -29,6 +29,14 @@ $buildTypeBadge = static function ($type) {
     return '<span class="badge jem-type-badge" style="background-color: ' . $background . '; color: ' . $textColor . ';">' . $label . '</span>';
 };
 
+$renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
+    if ($type) {
+        return '<div class="jem-type-section-header"><h2 class="jem-type-section-title">' . $buildTypeBadge($type) . '</h2></div>';
+    }
+
+    return '<div class="jem-type-section-header"><h2 class="jem-type-section-title">' . Text::_('COM_JEM_TYPECATEGORIES_UNASSIGNED') . '</h2></div>';
+};
+
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -38,7 +46,7 @@ $buildTypeBadge = static function ($type) {
         ?>
     </div>
 
-    <?php if ($this->params->get('show_page_heading', 1) && empty($this->isTypeCategoryView)) : ?>
+    <?php if ($this->params->get('show_page_heading', 1)) : ?>
         <h1 class="componentheading">
         <?php echo $this->escape($this->params->get('page_heading')); ?>
         </h1>
@@ -46,12 +54,12 @@ $buildTypeBadge = static function ($type) {
 
     <?php if (!empty($this->categoryType)) : ?>
         <div class="jem-type-header mb-3">
-            <h1 class="componentheading">
+            <h2 class="jem-type-title">
                 <?php if ($this->categoryType->icon) : ?>
                     <span class="<?php echo htmlspecialchars($this->categoryType->icon, ENT_QUOTES, 'UTF-8'); ?>"></span>
                 <?php endif; ?>
                 <?php echo htmlspecialchars($this->categoryType->name, ENT_QUOTES, 'UTF-8'); ?>
-            </h1>
+            </h2>
             <?php if ($this->categoryType->description) : ?>
                 <div class="jem-type-description"><?php echo htmlspecialchars($this->categoryType->description, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
@@ -72,7 +80,7 @@ $buildTypeBadge = static function ($type) {
 
     <?php if (!empty($this->isTypeCategoryView) && empty($this->rows) && empty($this->missingTypeId)) : ?>
         <div class="alert alert-info">
-            <?php echo !empty($this->categoryType) ? Text::_('COM_JEM_TYPECATEGORIES_NO_CATEGORIES') : Text::_('COM_JEM_TYPECATEGORIES_NO_TYPES'); ?>
+            <?php echo Text::_('COM_JEM_TYPECATEGORIES_NO_CATEGORIES'); ?>
         </div>
     <?php endif; ?>
 
@@ -96,7 +104,7 @@ $buildTypeBadge = static function ($type) {
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="view" value="categories" />
             <input type="hidden" name="id" value="<?php echo (int) $this->id; ?>" />
-            <?php if ($this->isTypeCategoryView && $this->model->getRequestedTypeId() > 0) : ?>
+            <?php if ($this->isTypeCategoryView) : ?>
                 <input type="hidden" name="typeid" value="<?php echo (int) $this->model->getRequestedTypeId(); ?>" />
             <?php endif; ?>
             <?php if ($this->task) : ?>
@@ -105,7 +113,15 @@ $buildTypeBadge = static function ($type) {
         </form>
     <?php endif; ?>
 
+    <?php $currentTypeId = null; ?>
     <?php foreach ($this->rows as $row) : ?>
+            <?php if (!empty($this->isGroupedTypeCategoryView)) : ?>
+                <?php $rowTypeId = (int) ($row->type_id ?? 0); ?>
+                <?php if ($currentTypeId !== $rowTypeId) : ?>
+                    <?php $currentTypeId = $rowTypeId; ?>
+                    <?php echo $renderTypeSectionHeader($this->typeItems[$rowTypeId] ?? null); ?>
+                <?php endif; ?>
+            <?php endif; ?>
             <?php
             // has user access
             $categoriesaccess = '';
@@ -143,7 +159,7 @@ $buildTypeBadge = static function ($type) {
                 </div>
             <?php } ?>
             <div class="description cat<?php echo $row->id; ?>">
-                <?php if (empty($this->isTypeCategoryView) && $this->params->get('show_category_description', 1)) : ?>
+                <?php if ($this->params->get('show_category_description', 1)) : ?>
                     <?php echo $row->description; ?>
                 <?php endif; ?>
                 <p>
@@ -185,7 +201,7 @@ $buildTypeBadge = static function ($type) {
 
         <!--table-->
         <?php
-            if ($this->params->get('show_category_events', 1) && $this->params->get('detcat_nr', 0) > 0) {
+            if ($this->params->get('show_category_events', 1) && $this->params->get('detcat_nr', 3) > 0) {
                 $this->catrow = $row;
                 echo $this->loadTemplate('table');
             }

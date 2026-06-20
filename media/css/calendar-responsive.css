@@ -152,7 +152,11 @@ div[id^='scat'] {
 }
 
 .eventcontentinner .eventcontenttextbar {
-    padding: 0px;
+    padding: 0;
+}
+
+.eventcontentinner .eventcontenttextbody {
+    padding: 0 5px;
 }
 
 .eventcontentinner .eventcontenttextblock {
@@ -184,11 +188,12 @@ div#jem .jem-calendar-event-title {
 
 div#jem .jem-calendar-event-time {
     color: inherit !important;
-    font-size: .88em;
+    font-size: 1em;
     font-weight: 500;
     line-height: 1.15;
     margin-bottom: 3px;
     opacity: .62;
+    padding-top: 3px;
 }
 
 div#jem .jem-calendar-event-title {
@@ -378,6 +383,36 @@ div#jem .rowcolor {
     font-weight: 400;
 }
 
+#jlcalendarlegend .eventCat.jem-calendar-legend-full {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    line-height: 1.2;
+    min-height: 50px;
+    padding: 0.55rem 0.95rem;
+}
+
+#jlcalendarlegend .eventCat.jem-calendar-legend-full .colorpicblocktext {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.45rem;
+    padding: 0;
+}
+
+#jlcalendarlegend .eventCat.jem-calendar-legend-full .jem-calendar-legend-name {
+    font-weight: 700;
+}
+
+#jlcalendarlegend .eventCat.jem-calendar-legend-full .jem-calendar-legend-count {
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.82;
+    padding: 0.2rem 0.45rem;
+}
+
 #jlcalendarlegend .eventVenues {
     cursor: pointer;
     padding: 0px;
@@ -401,7 +436,26 @@ div#jem .rowcolor {
 }
 
 #jlcalendarlegend .eventVenues .colorpicbartext {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.45rem;
     padding: 0 14px 10px;
+}
+
+#jlcalendarlegend .eventVenues .colorpicblocktext {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.45rem;
+}
+
+#jlcalendarlegend .eventVenues .jem-calendar-legend-count {
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1;
+    opacity: 0.82;
+    padding: 0.2rem 0.45rem;
 }
 
 #jlcalendarlegend .eventCat.catoff,

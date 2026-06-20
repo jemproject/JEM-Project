@@ -129,7 +129,7 @@
 <field name="categoryswitchcats" type="text"
                 default=""
                 label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC" class="form-control w-auto"
             />
             <field name="includesubcategories" type="radio"
                 default="0"
@@ -143,7 +143,7 @@
             <field name="showopendates" type="list"
                 default="0"
                 label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
-                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC" class="form-select w-auto"
             >
                 <option value="0">JNO</option>
                 <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>

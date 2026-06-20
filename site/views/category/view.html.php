@@ -308,7 +308,6 @@ class JemViewCategory extends JemView
             } else {
                 $pagetitle   = $category->catname;
                 $pageheading = $pagetitle;
-                $params->set('show_page_heading', 1); // ensure page heading is shown
                 $pathway->addItem($category->catname, Route::_(JemHelperRoute::getCategoryRoute($category->slug)) );
             }
             $pageclass_sfx = $params->get('pageclass_sfx');

@@ -135,14 +135,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         </table>
         <br>
 
-        <?php if (empty($this->rows)) : ?>
-
-        <div class="eventtable">
-            <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
-        </div>
-
-        <?php else : /* empty($this->rows) */ ?>
-
         <div id="jem_filter" class="floattext">
             <div class="jem_fleft jem-attendees-search">
                 <label for="filter"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
@@ -182,6 +174,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     </tr>
                 </thead>
                 <tbody>
+                <?php if (empty($this->rows)) : ?>
+                    <tr class="row0">
+                        <td colspan="<?php echo (int) $colspan; ?>">
+                            <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
+                        </td>
+                    </tr>
+                <?php endif; ?>
                 <?php foreach ($this->rows as $i => $row) : ?>
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
@@ -217,8 +216,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 </tbody>
             </table>
         </div>
-
-        <?php endif; /* empty($this->rows) */ ?>
 
         <?php echo HTMLHelper::_('form.token'); ?>
         <input type="hidden" name="option" value="com_jem" />

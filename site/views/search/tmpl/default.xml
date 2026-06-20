@@ -11,7 +11,7 @@
 <field name="template_suffix" type="text"
                 default=""
                 label="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX"
-                description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC"
+                description="COM_JEM_SEARCH_TABLE_LAYOUT_SUFFIX_DESC" class="form-control w-auto"
             />
             <field name="show_search_title" type="radio"
                 default="1"

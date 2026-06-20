@@ -12,7 +12,7 @@
                 size="2"
                 default="5"
                 label="COM_JEM_VENUE_NUMBER"
-                description="COM_JEM_VENUE_NUMBER_DESC"
+                description="COM_JEM_VENUE_NUMBER_DESC" class="form-control w-auto"
             />
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"

@@ -21,18 +21,24 @@ $this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl')
 
 <div id="jem" class="jem_typevenues jem_venueslist<?php echo $this->pageclass_sfx; ?>">
 
+    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+        <h1 class="componentheading">
+            <?php echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php endif; ?>
+
     <?php if (!$this->type) : ?>
         <div class="alert alert-info">
             <?php echo !empty($this->missingTypeId) ? Text::sprintf('COM_JEM_TYPEVENUES_TYPE_NOT_FOUND', (int) $this->missingTypeId) : Text::_('COM_JEM_TYPEVENUES_NO_TYPES'); ?>
         </div>
     <?php elseif ($this->type) : ?>
         <div class="jem-type-header mb-3">
-            <h1 class="componentheading">
+            <h2 class="jem-type-title">
                 <?php if ($this->type->icon) : ?>
                     <span class="<?php echo htmlspecialchars($this->type->icon, ENT_QUOTES, 'UTF-8'); ?>"></span>
                 <?php endif; ?>
                 <?php echo htmlspecialchars($this->type->name, ENT_QUOTES, 'UTF-8'); ?>
-            </h1>
+            </h2>
             <?php if ($this->type->description) : ?>
                 <div class="jem-type-description"><?php echo htmlspecialchars($this->type->description, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
