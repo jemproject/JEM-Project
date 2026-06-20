@@ -46,6 +46,7 @@ $group = 'attribs';
     <fieldset class="adminform">
         <legend><?php echo Text::_('COM_JEM_VENUE'); ?></legend>
         <ul class="adminformlist">
+            <li><?php echo $this->form->getLabel('event_venue_layout',$group); ?> <?php echo $this->form->getInput('event_venue_layout',$group); ?></li>
             <li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
             <li><?php echo $this->form->getLabel('event_show_detailsadress',$group); ?> <?php echo $this->form->getInput('event_show_detailsadress',$group); ?></li>
             <li><?php echo $this->form->getLabel('event_show_detlinkvenue',$group); ?> <?php echo $this->form->getInput('event_show_detlinkvenue',$group); ?></li>

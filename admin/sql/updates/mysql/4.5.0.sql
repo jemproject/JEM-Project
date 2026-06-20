@@ -86,3 +86,6 @@ ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
 
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
+
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_venue_layout', 'details') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_venue_layout') IS NULL;
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_details_layout', 'details') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_details_layout') IS NULL;
