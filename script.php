@@ -690,6 +690,7 @@ class com_jemInstallerScript
     {
         // obsolete files
         $files = array(
+            '/components/com_jem/classes/iCalcreator.class.php',
             '/administrator/components/com_jem/help/images/administrator.gif',
             '/administrator/components/com_jem/help/images/checked_out.png',
             '/administrator/components/com_jem/help/images/icon-32-attention.png',

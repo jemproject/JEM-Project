@@ -29,10 +29,14 @@ class JemViewCategory extends HtmlView
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
         $catid = (int)$jinput->getInt('id', 0);
+        if (empty($catid)) {
+            $catid = (int)$app->getParams()->get('id', 0);
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model
             $model = $this->getModel('CategoryCal');
+            $model->setId($catid);
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
@@ -41,8 +45,8 @@ class JemViewCategory extends HtmlView
 
             // initiate new CALENDAR
             $category = $model->getCategories($catid);
-            $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events_category_" . $category[0]->catname . "_". $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events_category_" . $category[0]->catname . "_" . $year . str_pad($month, 2, '0', STR_PAD_LEFT) . ".ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -51,7 +55,7 @@ class JemViewCategory extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }

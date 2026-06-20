@@ -31,8 +31,8 @@ class JemViewEventslist extends HtmlView
             $rows = $model->getItems();
 
             // initiate new CALENDAR
-            $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events.ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events.ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -41,7 +41,7 @@ class JemViewEventslist extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }
