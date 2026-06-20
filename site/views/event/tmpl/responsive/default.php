@@ -76,6 +76,31 @@ $venueCustomFieldsPosition = (string) $this->settings->get('global_venue_custom_
 if (!in_array($venueCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
     $venueCustomFieldsPosition = 'details';
 }
+$venueLayout = (string) $params->get('event_venue_layout', '');
+if ($venueLayout === '') {
+    $venueLayout = (string) $this->settings->get('event_venue_layout', 'details');
+}
+if (!in_array($venueLayout, array('details', 'compact'), true)) {
+    $venueLayout = 'details';
+}
+$eventLayout = (string) $params->get('event_details_layout', '');
+if ($eventLayout === '') {
+    $eventLayout = (string) $this->settings->get('event_details_layout', 'details');
+}
+if (!in_array($eventLayout, array('details', 'compact'), true)) {
+    $eventLayout = 'details';
+}
+$layoutOverride = $app->input->getCmd('jem_layout', '');
+if (in_array($layoutOverride, array('details', 'compact'), true)) {
+    $eventLayout = $layoutOverride;
+    $venueLayout = $layoutOverride;
+}
+$layoutToggleTarget = ($eventLayout === 'compact' && $venueLayout === 'compact') ? 'details' : 'compact';
+$layoutToggleUri = clone $uri;
+$layoutToggleUri->setVar('jem_layout', $layoutToggleTarget);
+$layoutToggleUrl = Route::_($layoutToggleUri->toString());
+$layoutToggleText = $layoutToggleTarget === 'details' ? Text::_('COM_JEM_SHOW_FULL_VIEW') : Text::_('COM_JEM_SHOW_COMPACT_VIEW');
+$layoutToggleIcon = $layoutToggleTarget === 'details' ? 'fa-expand' : 'fa-compress';
 $eventCustomFieldsRows = JemCustomFields::renderDetailRows('event', $this->item, 'COM_JEM_EVENT_CUSTOM_FIELD', 'jem-custom', true);
 $renderEventCustomFieldsBlock = function () use ($eventCustomFieldsRows) {
     if ($eventCustomFieldsRows === '') {
@@ -104,6 +129,129 @@ $renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRow
     return '<div class="jem-custom-fields jem-venue-custom-fields">'
         . '<dl class="jem-dl">' . $eventVenueCustomFieldsRows . '</dl>'
         . '</div>';
+};
+$renderEventCategoryLinks = function () use ($params) {
+    $categoryLinks = array();
+
+    foreach ((array) $this->categories as $category) {
+        if ($params->get('event_link_category') == 1) {
+            $categoryLinks[] = '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' . $this->escape($category->catname) . '</a>';
+        } else {
+            $categoryLinks[] = $this->escape($category->catname);
+        }
+    }
+
+    return implode(', ', $categoryLinks);
+};
+$renderVenueName = function () use ($params) {
+    if (($params->get('event_show_detlinkvenue') == 1) && !empty($this->item->url)) {
+        return '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+    }
+
+    if (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
+        return '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+    }
+
+    return $this->escape($this->item->venue);
+};
+$renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($params) {
+    $locality = array_filter(array(
+        trim((string) $this->item->postalCode),
+        trim((string) $this->item->city),
+    ));
+    $addressParts = array_filter(array(
+        trim((string) $this->item->street),
+        implode(' ', $locality),
+        trim((string) $this->item->state),
+        trim((string) $this->item->country),
+    ));
+
+    if (!empty($this->item->venueslug)) {
+        $venueName = '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+    } else {
+        $venueName = $this->escape($this->item->venue);
+    }
+
+    $html = '<div class="jem-venue-compact">';
+    $html .= '<div class="jem-venue-compact-name">' . $venueName . $venueaccess . '</div>';
+
+    if ($includeAddress && $addressParts) {
+        $html .= '<div class="jem-venue-compact-address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">';
+
+        if (!empty($this->item->street)) {
+            $html .= '<span itemprop="streetAddress">' . $this->escape($this->item->street) . '</span>';
+        }
+
+        if ($locality) {
+            $html .= '<span class="jem-venue-compact-locality">';
+
+            if (!empty($this->item->postalCode)) {
+                $html .= '<span itemprop="postalCode">' . $this->escape($this->item->postalCode) . '</span>';
+            }
+
+            if (!empty($this->item->city)) {
+                $html .= '<span itemprop="addressLocality">' . $this->escape($this->item->city) . '</span>';
+            }
+
+            $html .= '</span>';
+        }
+
+        if (!empty($this->item->state)) {
+            $html .= '<span itemprop="addressRegion">' . $this->escape($this->item->state) . '</span>';
+        }
+
+        if (trim((string) $this->item->country) !== '') {
+            $html .= '<span class="jem-venue-compact-country">' . $this->escape($this->item->country);
+            if ($this->item->countryimg) {
+                $html .= ' ' . $this->item->countryimg;
+            }
+            $html .= '<meta itemprop="addressCountry" content="' . $this->escape($this->item->country) . '" /></span>';
+        }
+
+        $html .= '</div>';
+    }
+
+    $links = array();
+    $mapService = (int) $params->get('event_show_mapserv');
+    $hasCoordinates = !empty($this->item->latitude) && !empty($this->item->longitude)
+        && (float) $this->item->latitude !== 0.0 && (float) $this->item->longitude !== 0.0;
+
+    if ($this->item->user_has_access_venue && in_array($mapService, array(1, 2, 3, 4, 5), true) && ($hasCoordinates || $addressParts)) {
+        if (in_array($mapService, array(4, 5), true)) {
+            if ($hasCoordinates) {
+                $mapUrl = 'https://www.openstreetmap.org/?mlat=' . urlencode($this->item->latitude) . '&mlon=' . urlencode($this->item->longitude)
+                    . '&zoom=15#map=15/' . urlencode($this->item->latitude) . '/' . urlencode($this->item->longitude);
+            } else {
+                $mapUrl = 'https://nominatim.openstreetmap.org/ui/search.html?q=' . urlencode(implode(', ', $addressParts));
+            }
+        } else {
+            if ($hasCoordinates) {
+                $mapUrl = 'https://maps.google.' . $params->get('event_tld', 'com') . '/maps?hl=' . $params->get('event_lg', 'en')
+                    . '&q=loc:' . urlencode($this->item->latitude) . ',+' . urlencode($this->item->longitude);
+            } else {
+                $mapUrl = 'https://www.google.' . $params->get('event_tld', 'com') . '/maps/place/' . urlencode(implode(', ', $addressParts))
+                    . '?hl=' . $params->get('event_lg', 'en');
+            }
+        }
+
+        $links[] = '<a class="venue_mapicon" target="_blank" href="' . $this->escape($mapUrl) . '">' . Text::_('COM_JEM_MAP_LINK') . '</a>';
+    }
+
+    if (!empty($this->item->url)) {
+        $links[] = '<a class="venue_weblink" target="_blank" href="' . $this->escape($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+    }
+
+    if (!empty($this->item->email)) {
+        $links[] = '<a class="venue_email" href="mailto:' . $this->escape($this->item->email) . '">' . Text::_('COM_JEM_EMAIL') . '</a>';
+    }
+
+    if ($links) {
+        $html .= '<div class="jem-venue-compact-links">' . implode('<span class="jem-venue-compact-link-separator" aria-hidden="true">|</span>', $links) . '</div>';
+    }
+
+    $html .= '</div>';
+
+    return $html;
 };
 
 ?>
@@ -166,11 +314,14 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <link itemprop="availability" href="<?php echo $ticketAvailabilityOption['schema']; ?>" />
         </div>
 
-        <div class="buttons">
+        <div class="buttons jem-event-toolbar">
             <?php
             $btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
             echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
             ?>
+            <a class="jem-layout-toggle" href="<?php echo $this->escape($layoutToggleUrl); ?>" title="<?php echo $this->escape($layoutToggleText); ?>" aria-label="<?php echo $this->escape($layoutToggleText); ?>" data-jem-layout-target="<?php echo $this->escape($layoutToggleTarget); ?>">
+                <span class="fa fa-fw fa-lg <?php echo $this->escape($layoutToggleIcon); ?> jem-layoutbutton" aria-hidden="true"></span>
+            </a>
         </div>
 
         <?php if ($this->params->get('show_page_heading', 1)) : ?>
@@ -180,7 +331,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php else : ?>
             <h1 class="componentheading">
                 <?php echo $this->escape($this->item->title); ?>
-                <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
+                <?php if ($eventLayout !== 'compact' && ($showEventStatusBadge || $showTicketAvailabilityBadge)) : ?>
                     <span class="jem-event-badges">
                         <?php if ($showEventStatusBadge) : ?>
                             <span class="jem-event-state-badge <?php echo $eventStatusOption['class']; ?>"><?php echo $this->escape($eventStatusText); ?></span>
@@ -190,26 +341,52 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php endif; ?>
                     </span>
                 <?php endif; ?>
-                <?php echo JemOutput::typeBadge($this->item); ?>
+                <?php if ($eventLayout !== 'compact') : ?>
+                    <?php echo JemOutput::typeBadge($this->item); ?>
+                <?php endif; ?>
             </h1>
         <?php endif; ?>
-
         <!-- Event -->
-        <h2 class="jem">
-            <?php
-            echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) . ' ';
-            if($this->item_root) {
-                echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
-            }
-            if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
-                echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
-            }
-            echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
-            ?>
-        </h2>
+        <?php if ($eventLayout !== 'compact') : ?>
+            <h2 class="jem">
+                <?php
+                echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) . ' ';
+                if($this->item_root) {
+                    echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
+                }
+                if(!$this->item_root || ($this->item_root && $this->item->recurrence_first_id)) {
+                    echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditEvent, 'editevent') .' ';
+                }
+                echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddEvent, 'editevent');
+                ?>
+            </h2>
+        <?php endif; ?>
         <div class="jem-row jem-event-main-responsive">
             <div class="jem-info">
-                <dl class="jem-dl">
+                <?php if ($eventLayout === 'compact') : ?>
+                    <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
+                    <div class="jem-event-compact">
+                        <?php $eventCategories = $renderEventCategoryLinks(); ?>
+                        <?php if (($params->get('event_show_category') == 1 && $eventCategories !== '') || JemOutput::typeBadge($this->item)) : ?>
+                            <div class="jem-event-compact-meta">
+                                <?php if ($params->get('event_show_category') == 1 && $eventCategories !== '') : ?>
+                                    <span class="jem-event-compact-categories"><?php echo $eventCategories; ?></span>
+                                <?php endif; ?>
+                                <?php echo JemOutput::typeBadge($this->item); ?>
+                            </div>
+                        <?php endif; ?>
+                        <div class="jem-event-compact-when">
+                            <?php
+                            echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
+                            echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
+                            ?>
+                        </div>
+                        <?php if ($eventCustomFieldsPosition === 'details') : ?>
+                            <?php echo $renderEventCustomFieldsBlock(); ?>
+                        <?php endif; ?>
+                    </div>
+                <?php else : ?>
+                <dl class="jem-dl jem-event-info-list">
                     <?php if ($params->get('event_show_detailstitle',1)) : ?>
                         <dt class="jem-title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                         <dd class="jem-title" itemprop="name">
@@ -355,6 +532,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </dd>
                     <?php endif; ?>
                 </dl>
+                <?php endif; ?>
             </div>
             <style>
                 .jem-event-main-responsive > .jem-img {
@@ -392,7 +570,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
         ?>
         <?php if (($params->get('event_show_description','1') && $hasDescription) || $showOnlineMeeting || !empty($this->event_links)) { ?>
-            <?php if ($params->get('event_show_description','1') && $hasDescription) : ?>
+            <?php if ($eventLayout !== 'compact' && $params->get('event_show_description','1') && $hasDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
             <div class="description event_desc" itemprop="description">
@@ -811,12 +989,25 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
                 <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
                 <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
-                <h2 class="jem-location">
-                    <?php
-                    echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
-                    ?>
-                </h2>
+                <?php if ($venueLayout !== 'compact') : ?>
+                    <h2 class="jem-location">
+                        <?php
+                        echo Text::_('COM_JEM_VENUE').' '.JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue').' '.JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
+                        ?>
+                    </h2>
+                <?php endif; ?>
 
+                <?php if ($venueLayout === 'compact') : ?>
+                    <div class="jem-row jem-wrap-reverse jem-venue-compact-row">
+                        <div class="jem-grow-2">
+                            <?php echo $renderVenueCompact($venueaccess, $this->item->user_has_access_venue && (bool) $params->get('event_show_detailsadress', '1')); ?>
+                        </div>
+
+                        <div class="jem-img">
+                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+                        </div>
+                    </div>
+                <?php else : ?>
                 <div class="jem-row jem-wrap-reverse">
                     <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                         <div class="jem-grow-2">
@@ -922,14 +1113,18 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
+                <?php endif; ?>
                 <?php if($this->item->user_has_access_venue) :
                     $event_show_mapserv = $params->get('event_show_mapserv');
-                    if ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5) : ?>
+                    if ($venueLayout === 'compact' && $venueCustomFieldsPosition === 'details') : ?>
+                        <?php echo $renderEventVenueCustomFieldsBlock(); ?>
+                    <?php endif; ?>
+                    <?php if ($venueLayout !== 'compact' && ($params->get('event_show_mapserv') == 2 || $params->get('event_show_mapserv') == 5)) : ?>
                         <div class="jem-map">
                             <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                         </div>
                     <?php endif; ?>
-                    <?php if ($event_show_mapserv == 3) : ?>
+                    <?php if ($venueLayout !== 'compact' && $event_show_mapserv == 3) : ?>
                     <div class="jem-map">
                         <input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
                         <input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
@@ -948,7 +1143,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
                     <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
                     && $this->item->locdescription != '<br>') : ?>
-                    <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
+                    <?php if ($venueLayout !== 'compact') : ?>
+                        <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
+                    <?php endif; ?>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>
@@ -974,6 +1171,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <dl class="jem-dl floattext">
                 <?php
                 $timeNow = time();
+                $showCancellationInfo = (!$this->user->get('guest') && $this->isregistered !== false) || !empty($this->permissions->canEditAttendees);
 
                 switch ($this->e_reg) {
                     case 0:
@@ -981,15 +1179,19 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         break;
                     case 1:
                         //Event with registration (YES with or witout UNTIL)
-                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        if ($eventLayout !== 'compact') {
+                            echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        }
                         echo $this->loadTemplate('attendees');
-                        if($this->dateUnregistationUntil) {
+                        if($showCancellationInfo && $this->dateUnregistationUntil) {
                             echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                         }
                         break;
                     case 2:
                         //Event with date starting registration (FROM with or witout UNTIL)
-                        echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        if ($eventLayout !== 'compact') {
+                            echo '<h2 class="register">' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+                        }
                         if($this->dateRegistationFrom > $timeNow) {
                             echo '<dt>' . Text::_('COM_JEM_EVENT_REGISTRATION_WILLBE_FROM') . '</dt><dd>' . HTMLHelper::_('date', $this->dateRegistationFrom, Text::_('DATE_FORMAT_LC2'));
                         }else if ($this->allowRegistration) {
@@ -1001,7 +1203,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
-                            if($this->dateUnregistationUntil) {
+                            if($showCancellationInfo && $this->dateUnregistationUntil) {
                                 echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         }else if($this->dateRegistationUntil !== false && $this->dateRegistationUntil < $timeNow) {
@@ -1009,7 +1211,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             echo $this->loadTemplate('attendees');
 
                             //Event with date starting annulation
-                            if($this->dateUnregistationUntil) {
+                            if($showCancellationInfo && $this->dateUnregistationUntil) {
                                 echo '<dt>' . ($this->allowAnnulation? Text::_('COM_JEM_EVENT_ANNULATION_NOTWILLBE_FROM') : Text::_('COM_JEM_EVENT_ANNULATION_ISNOT_FROM')) . '</dt><dd>' . HTMLHelper::_('date', $this->dateUnregistationUntil, Text::_('DATE_FORMAT_LC2')) . '</dd>';
                             }
                         } else {

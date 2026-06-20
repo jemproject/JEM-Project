@@ -580,6 +580,17 @@
         <fieldset name="basic"
                   label="COM_JEM_EVENT_FIELDSET_ATTRIBS_LABEL"
         >
+            <field name="event_details_layout" type="list"
+                label="COM_JEM_EVENT_DETAILS_LAYOUT"
+                description="COM_JEM_EVENT_DETAILS_LAYOUT_DESC"
+                class="inputbox"
+                default=""
+                required="false"
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="details">COM_JEM_EVENT_DETAILS_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_DETAILS_LAYOUT_COMPACT</option>
+            </field>
             <field name="event_show_venue_name" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_DESC"
@@ -728,6 +739,17 @@
         <fieldset name="evvenues"
                   label="COM_JEM_VENUES"
         >
+            <field name="event_venue_layout" type="list"
+                label="COM_JEM_EVENT_VENUE_LAYOUT"
+                description="COM_JEM_EVENT_VENUE_LAYOUT_DESC"
+                class="inputbox"
+                default=""
+                required="false"
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="details">COM_JEM_EVENT_VENUE_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_VENUE_LAYOUT_COMPACT</option>
+            </field>
             <field name="event_show_locdescription" type="list"
                 label="COM_JEM_DISPLAY_VENUE_DESCRIPT"
                 description="COM_JEM_DISPLAY_VENUE_DESCRIPT_DESC"

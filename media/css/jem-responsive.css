@@ -141,8 +141,38 @@ body.com_jem.body-overlayed {
     float: right;
 }
 
+#jem.jem_event .buttons {
+    clear: both;
+    display: flex !important;
+    float: none !important;
+    justify-content: flex-end;
+    margin-bottom: 0.65rem;
+    width: 100%;
+}
+
+#jem.jem_event .jem-event-toolbar {
+    clear: both !important;
+    float: none !important;
+    width: 100% !important;
+}
+
+#jem.jem_event .jem-event-toolbar a,
+#jem.jem_event .jem-event-toolbar button {
+    float: none !important;
+}
+
 #jem .buttons a{
     margin-left: 5px;
+}
+
+#jem .buttons a.jem-layout-toggle {
+    align-items: center;
+    display: inline-flex;
+    text-decoration: none;
+}
+
+#jem .buttons a.jem-layout-toggle:visited {
+    color: currentColor;
 }
 
 #jem .buttons::after {
@@ -249,6 +279,187 @@ body.com_jem.body-overlayed {
 #jem .jem-dl dd .venue_country_flag {
     width: 20px;
     height: auto;
+}
+
+#jem div.register > hr {
+    display: none;
+}
+
+#jem div.register dl.jem-registration-summary {
+    display: grid !important;
+    grid-template-columns: minmax(8.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.35rem;
+}
+
+#jem div.register dl.jem-registration-summary > dt,
+#jem div.register dl.jem-registration-summary > dd {
+    float: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+#jem div.register dl.jem-registration-action {
+    display: block !important;
+}
+
+#jem div.register .jem-registration-action-label {
+    display: none !important;
+}
+
+#jem div.register dd.registration {
+    margin-left: 0;
+    margin-top: 0.75rem;
+    padding-left: 0 !important;
+    text-align: center;
+    width: auto;
+}
+
+#jem div.register.jem-registration-compact dl.jem-registration-summary,
+#jem div.register.jem-registration-compact dl.jem-registration-action {
+    display: grid !important;
+    grid-template-columns: minmax(8.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.35rem;
+}
+
+#jem div.register.jem-registration-compact dl.jem-registration-summary > dt,
+#jem div.register.jem-registration-compact dl.jem-registration-summary > dd,
+#jem div.register.jem-registration-compact dl.jem-registration-action > dt,
+#jem div.register.jem-registration-compact dl.jem-registration-action > dd {
+    float: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+#jem div.register.jem-registration-compact .jem-registration-action-label {
+    display: none !important;
+}
+
+#jem div.register.jem-registration-compact dd.registration {
+    grid-column: 1 / -1;
+    margin-top: 0.75rem;
+    padding-left: 0 !important;
+    text-align: center;
+}
+
+#jem .jem-registration-login-prompt {
+    text-align: center;
+}
+
+#jem .jem-registration-message {
+    margin: 0 0 0.65rem;
+}
+
+#jem .jem-registration-buttons {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+#jem .jem-venue-compact {
+    margin: 0.35rem 0 1rem;
+    line-height: 1.45;
+}
+
+#jem .jem-venue-compact-name {
+    font-weight: 600;
+}
+
+#jem .jem-venue-compact-name a {
+    font-size: 1.22rem;
+}
+
+#jem .jem-venue-compact-address {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+#jem .jem-venue-compact-locality {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+#jem .jem-venue-compact-address > span:not(:first-child)::before {
+    content: ", ";
+}
+
+#jem .jem-venue-compact-locality > span:not(:first-child)::before {
+    content: " ";
+}
+
+#jem .jem-venue-compact-country img.venue_country_flag {
+    height: 1em;
+    margin-left: 0.25rem;
+    vertical-align: -0.1em;
+    width: auto;
+}
+
+#jem .jem-venue-compact-links {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.45rem;
+    margin: 0.2rem 0 0;
+}
+
+#jem .jem-venue-compact-link-separator {
+    color: currentColor;
+    opacity: 0.55;
+}
+
+#jem .jem-event-compact {
+    margin: 0.15rem 0 1rem;
+    line-height: 1.55;
+}
+
+#jem .jem-event-compact-meta {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.55rem;
+}
+
+#jem .jem-event-compact-when {
+    margin: 0.25rem 0 0.9rem;
+}
+
+#jem .jem-event-compact .jem-custom-fields {
+    margin-top: 0.65rem;
+}
+
+#jem.jem_event dl.event_info,
+#jem.jem_event dl.jem-event-info-list,
+#jem.jem_event div[class^="venue_id"] dl.location,
+#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.45rem;
+}
+
+#jem.jem_event dl.event_info > dt,
+#jem.jem_event dl.event_info > dd,
+#jem.jem_event dl.jem-event-info-list > dt,
+#jem.jem_event dl.jem-event-info-list > dd,
+#jem.jem_event div[class^="venue_id"] dl.location > dt,
+#jem.jem_event div[class^="venue_id"] dl.location > dd,
+#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt,
+#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd {
+    float: none;
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+    width: auto;
 }
 
 #jem .jem-dl dd.time-input {
@@ -1147,6 +1358,47 @@ div#jem #jem_filter.jem-events-filter input#filter_month {
 
 @media not print {
     @media only all and (max-width: 47.938rem) {
+        #jem.jem_event .jem-event-main-responsive,
+        #jem.jem_event div[class^="venue_id"] .jem-row,
+        #jem.jem_event .jem-venue-compact-row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #jem.jem_event .jem-event-main-responsive > .jem-img,
+        #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img,
+        #jem.jem_event .jem-venue-compact-row > .jem-img {
+            flex-basis: 100%;
+            order: -1;
+            text-align: left;
+            width: 100%;
+        }
+
+        #jem.jem_event .jem-event-main > .jem-img .flyerimage,
+        #jem.jem_event .jem-event-main-responsive > .jem-img .flyerimage,
+        #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img .flyerimage,
+        #jem.jem_event .jem-venue-compact-row > .jem-img .flyerimage,
+        #jem.jem_event .jem-event-main > .jem-img .flyermodal,
+        #jem.jem_event .jem-event-main-responsive > .jem-img .flyermodal,
+        #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img .flyermodal,
+        #jem.jem_event .jem-venue-compact-row > .jem-img .flyermodal,
+        #jem.jem_event .jem-event-main > .jem-img img,
+        #jem.jem_event .jem-event-main-responsive > .jem-img img,
+        #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img img,
+        #jem.jem_event .jem-venue-compact-row > .jem-img img {
+            display: block;
+            height: auto;
+            max-width: 100%;
+            width: 100%;
+        }
+
+        #jem.jem_event div[class^="venue_id"] .jem-row > .jem-grow-2,
+        #jem.jem_event .jem-venue-compact-row > .jem-grow-2 {
+            flex-basis: 100%;
+            order: 0;
+            width: 100%;
+        }
+
         #jem .jem-dl dt, #jem .jem-dl-long dt {
             float: none;
             width: auto;
@@ -2223,4 +2475,31 @@ div#jem.jem_venueslist .jem-event .jem-venueslist-venue-image {
     width: 64px;
     height: 48px;
     object-fit: contain;
+}
+
+@media (max-width: 22rem) {
+    #jem.jem_event dl.event_info,
+    #jem.jem_event dl.jem-event-info-list,
+    #jem.jem_event div[class^="venue_id"] dl.location,
+    #jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"],
+    #jem div.register dl.jem-registration-summary {
+        grid-template-columns: 1fr;
+        row-gap: 0.15rem;
+    }
+
+    #jem.jem_event dl.event_info > dt:not(:first-child),
+    #jem.jem_event dl.jem-event-info-list > dt:not(:first-child),
+    #jem.jem_event div[class^="venue_id"] dl.location > dt:not(:first-child),
+    #jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt:not(:first-child),
+    #jem div.register dl.jem-registration-summary > dt:not(:first-child) {
+        margin-top: 0.45rem;
+    }
+
+    #jem.jem_event dl.event_info > dd,
+    #jem.jem_event dl.jem-event-info-list > dd,
+    #jem.jem_event div[class^="venue_id"] dl.location > dd,
+    #jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd,
+    #jem div.register dl.jem-registration-summary > dd {
+        padding-left: 0.35rem;
+    }
 }

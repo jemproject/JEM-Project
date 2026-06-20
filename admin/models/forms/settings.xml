@@ -1522,6 +1522,16 @@
         <fieldset name="evevents"
                   label="COM_JEM_EVENTS"
         >
+            <field name="event_details_layout" type="list"
+                label="COM_JEM_EVENT_DETAILS_LAYOUT"
+                description="COM_JEM_EVENT_DETAILS_LAYOUT_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_EVENT_DETAILS_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_DETAILS_LAYOUT_COMPACT</option>
+            </field>
             <field name="event_show_detailstitle" type="radio"
                 label="COM_JEM_DISPLAY_EVENT_TITLE"
                 description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
@@ -1568,6 +1578,17 @@
         <fieldset name="evvenues"
                   label="COM_JEM_VENUES"
         >
+            <field name="event_venue_layout" type="list"
+                label="COM_JEM_EVENT_VENUE_LAYOUT"
+                description="COM_JEM_EVENT_VENUE_LAYOUT_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_EVENT_VENUE_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_VENUE_LAYOUT_COMPACT</option>
+            </field>
+
             <field name="event_show_venue" type="radio"
                 label="COM_JEM_EVENT_DISPLAY_VENUE"
                 description="COM_JEM_EVENT_DISPLAY_VENUE_DESC"
