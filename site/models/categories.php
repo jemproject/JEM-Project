@@ -139,9 +139,10 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
+        $typeParam = $params->get('typeid', null);
+        $this->_typeFilterRequested = $app->input->exists('typeid') || (int) $typeParam > 0;
         $requestedTypeId = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
-        $this->_typeFilterRequested = $requestedTypeId > 0;
-        $this->_typeid = $this->_typeFilterRequested ? $requestedTypeId : 0;
+        $this->_typeid = ($this->_typeFilterRequested && $requestedTypeId > 0) ? $requestedTypeId : 0;
         $this->_filterTypeid = $this->_typeFilterRequested ? 0 : $app->input->getInt('filter_typeid', 0);
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
@@ -595,8 +596,6 @@ class JemModelCategories extends BaseDatabaseModel
         $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
         if ($effectiveTypeId > 0) {
             $where_sub .= ' AND cc.type_id = ' . (int) $effectiveTypeId;
-        } elseif ($this->_typeFilterRequested) {
-            $where_sub .= ' AND 1 = 0';
         }
 
         // show/hide empty categories
@@ -643,7 +642,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' AND '.$parentCategoryQuery
                . $where_access
                . $where_search
-               . ($effectiveTypeId > 0 ? ' AND c.type_id = ' . (int) $effectiveTypeId : ($this->_typeFilterRequested ? ' AND 1 = 0' : ''))
+               . ($effectiveTypeId > 0 ? ' AND c.type_id = ' . (int) $effectiveTypeId : '')
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;
@@ -680,8 +679,6 @@ class JemModelCategories extends BaseDatabaseModel
         $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
         if ($effectiveTypeId > 0) {
             $query .= ' AND c.type_id = ' . (int) $effectiveTypeId;
-        } elseif ($this->_typeFilterRequested) {
-            $query .= ' AND 1 = 0';
         }
 
         if ($this->_search !== '') {

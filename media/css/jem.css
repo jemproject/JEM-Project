@@ -114,6 +114,21 @@ div#jem h1.componentheading {
 }
 
 /* ── Search Filter ── */
+#jem .jem-type-section-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+    clear: both;
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.35rem;
+}
+
+#jem .jem-type-section-title {
+    margin: 0;
+}
+
+#jem .jem-type-section-title .jem-type-badge {
+    font-size: 0.9rem;
+}
+
 div#jem .jem-search-filter {
     container-type: inline-size;
     padding: 1rem;
@@ -482,6 +497,39 @@ div#jem .buttons a.jem-layout-toggle:visited {
 div#jem .buttons span.gap {
     float: left;
     margin: 0 0 0 7px;
+}
+
+@media (max-width: 48rem) {
+    div#jem .buttons {
+        align-items: center;
+        clear: both;
+        display: flex !important;
+        flex-wrap: nowrap;
+        float: none !important;
+        gap: 0.35rem;
+        justify-content: flex-end;
+        margin-bottom: 0.65rem;
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    div#jem .buttons a,
+    div#jem .buttons button {
+        flex: 0 0 auto;
+        float: none !important;
+        margin-left: 0;
+    }
+
+    div#jem .buttons span.gap {
+        display: none;
+    }
+
+    div#jem h1.componentheading,
+    div#jem .jemcomponentheading,
+    div#jem .jem-type-title {
+        clear: both;
+        width: 100%;
+    }
 }
 
 /* Edit-event view */
@@ -2930,18 +2978,90 @@ div#jem .inline-button-right {
     text-decoration: none;
 }
 
+#jem .btn,
 #jem a.btn,
+#jem a.btn:link,
 #jem a.btn:visited {
     color: var(--bs-btn-color, #fff) !important;
 }
 
+#jem .btn:hover,
+#jem .btn:focus,
 #jem a.btn:hover,
 #jem a.btn:focus {
     color: var(--bs-btn-hover-color, var(--bs-btn-color, #fff)) !important;
 }
 
+#jem .btn:active,
 #jem a.btn:active {
     color: var(--bs-btn-active-color, var(--bs-btn-hover-color, var(--bs-btn-color, #fff))) !important;
+}
+
+#jem .btn-primary,
+#jem a.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--cassiopeia-color-primary, #0d6efd);
+    --bs-btn-border-color: var(--cassiopeia-color-primary, #0d6efd);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-hover-border-color: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-active-border-color: var(--cassiopeia-color-hover, #0a58ca);
+}
+
+#jem .btn-secondary,
+#jem a.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #6c757d;
+    --bs-btn-border-color: #6c757d;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #5c636a;
+    --bs-btn-hover-border-color: #565e64;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #565e64;
+    --bs-btn-active-border-color: #51585e;
+}
+
+#jem .btn-outline-dark,
+#jem a.btn-outline-dark {
+    --bs-btn-color: #212529;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: #212529;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #212529;
+    --bs-btn-hover-border-color: #212529;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #212529;
+    --bs-btn-active-border-color: #212529;
+}
+
+#jem .btn-primary,
+#jem a.btn-primary,
+#jem .btn-secondary,
+#jem a.btn-secondary {
+    background-color: var(--bs-btn-bg, #6c757d) !important;
+    border-color: var(--bs-btn-border-color, var(--bs-btn-bg, #6c757d)) !important;
+}
+
+#jem .btn-primary:hover,
+#jem .btn-primary:focus,
+#jem a.btn-primary:hover,
+#jem a.btn-primary:focus,
+#jem .btn-secondary:hover,
+#jem .btn-secondary:focus,
+#jem a.btn-secondary:hover,
+#jem a.btn-secondary:focus {
+    background-color: var(--bs-btn-hover-bg, var(--bs-btn-bg, #6c757d)) !important;
+    border-color: var(--bs-btn-hover-border-color, var(--bs-btn-border-color, var(--bs-btn-bg, #6c757d))) !important;
+}
+
+#jem .btn-primary:active,
+#jem a.btn-primary:active,
+#jem .btn-secondary:active,
+#jem a.btn-secondary:active {
+    background-color: var(--bs-btn-active-bg, var(--bs-btn-hover-bg, var(--bs-btn-bg, #6c757d))) !important;
+    border-color: var(--bs-btn-active-border-color, var(--bs-btn-hover-border-color, var(--bs-btn-border-color, #6c757d))) !important;
 }
 
 #jem .jem-online-meeting-icon {

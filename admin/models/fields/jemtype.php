@@ -83,6 +83,7 @@ class JFormFieldJemtype extends FormField
             ->useScript('webcomponent.field-fancy-select');
 
         $fancyAttr = ' class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '"';
+        $fancyAttr .= ' style="width: min(100%, 36rem); max-width: 36rem;"';
         $fancyAttr .= $this->multiple ? ' multiple' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';
 

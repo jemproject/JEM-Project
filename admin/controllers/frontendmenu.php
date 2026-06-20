@@ -109,10 +109,7 @@ class JemControllerFrontendmenu extends BaseController
             ? array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types'])
             : array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues', $groups['types']);
 
-        $categoryType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 2', array('id', 'alias'));
-        $items[] = $categoryType
-            ? array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=' . (int) $categoryType->id, $groups['types'])
-            : array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
+        $items[] = array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
 
         foreach ($items as $item) {
             $itemType        = $item[4] ?? 'component';

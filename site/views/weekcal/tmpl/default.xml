@@ -29,14 +29,14 @@
             <field name="categoryswitchcats" type="categoryedit"
                 multiple="true"
                 removeroot="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
             />
             <field name="timeline_filter_venues" type="venueoptions"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_VENUES_DESC"
@@ -44,14 +44,14 @@
             <field name="timeline_filter_types" type="jemtype"
                 entity="1"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_TYPES_DESC"
             />
             <field name="timeline_filter_countries" type="countryoptions"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
@@ -59,12 +59,12 @@
             <field name="nrweeks" type="text"
                 default="1"
                 label="COM_JEM_WKCAL_NRWEEKS"
-                description="COM_JEM_WKCAL_NRWEEKS_DESC"
+                description="COM_JEM_WKCAL_NRWEEKS_DESC" class="form-control w-auto"
             />
             <field name="top_category" type="categories"
                 default="0"
                 label="COM_JEM_SELECT_TOP_CATEGORY"
-                description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
+                description="COM_JEM_SELECT_TOP_CATEGORY_DESC" class="form-select w-auto"
             />
             <field name="show_archived_events" type="radio"
                 default="0"
@@ -78,7 +78,7 @@
             <field name="displayLegend" type="list"
                 default="1"
                 label="COM_JEM_DISPLAY_LEGEND"
-                description="COM_JEM_DISPLAY_LEGEND_DESC"
+                description="COM_JEM_DISPLAY_LEGEND_DESC" class="form-select w-auto"
             >
                 <option value="0">JNO</option>
                 <option value="2">COM_JEM_ABOVE</option>
@@ -96,7 +96,7 @@
             <field name="firstweekday" type="list"
                 default="1"
                 label="COM_JEM_SELECTFIRSTWEEKDAY"
-                description="COM_JEM_SELECTFIRSTWEEKDAYDESC"
+                description="COM_JEM_SELECTFIRSTWEEKDAYDESC" class="form-select w-auto"
             >
                 <option value="0">COM_JEM_SUNDAY</option>
                 <option value="1">COM_JEM_MONDAY</option>
@@ -113,7 +113,7 @@
             <field name="daylimit" type="text"
                 default="10"
                 label="COM_JEM_MAX_EVENTS_PER_DAY"
-                description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
+                description="COM_JEM_MAX_EVENTS_PER_DAY_DESC" class="form-control w-auto"
             />
             <field name="show_addevent_icon" type="radio"
                 default="0"

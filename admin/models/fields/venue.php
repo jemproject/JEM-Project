@@ -75,7 +75,7 @@ class JFormFieldVenue extends ListField
 
         // The current user display field.
         $html[] = '<div class="fltlft">';
-        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" class="form-control valid form-control-success" />';
+        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" class="form-control valid form-control-success w-auto" style="max-width: 36rem;" />';
         $html[] = '</div>';
 
         //

@@ -91,7 +91,7 @@
                 multiple="true"
                 label="COM_JEM_VENUESLIST_FILTER_COUNTRIES"
                 description="COM_JEM_VENUESLIST_FILTER_COUNTRIES_DESC"
-                class="inputbox form-select"
+                class="inputbox form-select w-auto"
             />
 
             <field name="showcountryfilter" type="radio"

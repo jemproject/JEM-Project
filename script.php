@@ -642,7 +642,7 @@ class com_jemInstallerScript
             ),
             'categories-by-type' => array(
                 'entity' => 2,
-                'link'   => 'index.php?option=com_jem&view=categories&id=1&typeid=%d',
+                'link'   => 'index.php?option=com_jem&view=categories&id=1&typeid=0',
             ),
         );
 
@@ -662,8 +662,10 @@ class com_jemInstallerScript
                 ->where($db->quoteName('menutype') . ' = ' . $db->quote('jem-frontend-menu'))
                 ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
 
-            if ($typeId) {
-                $query->set($db->quoteName('link') . ' = ' . $db->quote(sprintf($item['link'], $typeId)))
+            if ($typeId || $alias === 'categories-by-type') {
+                $link = (strpos($item['link'], '%d') !== false) ? sprintf($item['link'], $typeId) : $item['link'];
+
+                $query->set($db->quoteName('link') . ' = ' . $db->quote($link))
                     ->set($db->quoteName('type') . ' = ' . $db->quote('component'))
                     ->set($db->quoteName('published') . ' = 1')
                     ->set($db->quoteName('access') . ' = 1');

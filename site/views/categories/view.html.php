@@ -36,6 +36,7 @@ class JemViewCategories extends JemView
         $isTypeCategoryView = $model->isTypeFilterRequested();
         $categoryType = $model->getType();
         $missingTypeId = (!$categoryType && $model->getRequestedTypeId() > 0) ? $model->getRequestedTypeId() : 0;
+        $isGroupedTypeCategoryView = $isTypeCategoryView && !$categoryType && !$missingTypeId;
         $rows        = $this->get('Data');
         $pagination  = $this->get('Pagination');
         $filterSearch = $app->input->getString('filter_search', '');
@@ -127,17 +128,41 @@ class JemViewCategories extends JemView
         );
 
         // Get events if requested
-        if (!empty($rows) && $params->get('show_category_events', 1) && $params->get('detcat_nr', 0) > 0) {
+        if (!empty($rows) && $params->get('show_category_events', 1) && $params->get('detcat_nr', 3) > 0) {
             foreach($rows as $row) {
                 $row->events = $model->getEventdata($row->id);
             }
         }
 
+        $typeItems = $model->getTypeItems();
+
+        if ($isGroupedTypeCategoryView && !empty($rows)) {
+            $typeOrder = array();
+            $position = 0;
+            foreach ($typeItems as $typeId => $typeItem) {
+                $typeOrder[(int) $typeId] = $position++;
+            }
+
+            usort($rows, static function ($left, $right) use ($typeOrder) {
+                $leftType  = (int) ($left->type_id ?? 0);
+                $rightType = (int) ($right->type_id ?? 0);
+                $leftOrder = $leftType > 0 && isset($typeOrder[$leftType]) ? $typeOrder[$leftType] : PHP_INT_MAX;
+                $rightOrder = $rightType > 0 && isset($typeOrder[$rightType]) ? $typeOrder[$rightType] : PHP_INT_MAX;
+
+                if ($leftOrder !== $rightOrder) {
+                    return $leftOrder <=> $rightOrder;
+                }
+
+                return strcasecmp((string) ($left->catname ?? ''), (string) ($right->catname ?? ''));
+            });
+        }
+
         $this->rows          = $rows;
         $this->isTypeCategoryView = $isTypeCategoryView;
+        $this->isGroupedTypeCategoryView = $isGroupedTypeCategoryView;
         $this->categoryType  = $categoryType;
         $this->typeNames     = $model->getTypeNames();
-        $this->typeItems     = $model->getTypeItems();
+        $this->typeItems     = $typeItems;
         $this->missingTypeId = $missingTypeId;
         $this->task          = $task;
         $this->params        = $params;

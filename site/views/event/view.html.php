@@ -156,7 +156,6 @@ class JemViewEvent extends JemView
             $pagetitle = $item->title;
             $params->set('page_title', $pagetitle);
             $params->set('page_heading', $pagetitle);
-            $params->set('show_page_heading', 1); // ensure page heading is shown
             $pathway->addItem($pagetitle, Route::_(JemHelperRoute::getEventRoute($item->slug)));
 
             // Check for alternative layouts (since we are not in a single-event menu item)

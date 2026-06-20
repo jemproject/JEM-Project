@@ -24,14 +24,14 @@
                 type="text"
                 default="1"
                 label="COM_JEM_MYREGSPAST"
-                description="COM_JEM_MYREGSPAST_DESC"
+                description="COM_JEM_MYREGSPAST_DESC" class="form-control w-auto"
             />
             <field
                 name="timeline_side"
                 type="list"
                 default="right"
                 label="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_LABEL"
-                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC" class="form-select w-auto"
                 >
                 <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
                 <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>

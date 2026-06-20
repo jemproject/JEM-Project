@@ -417,9 +417,10 @@ use Joomla\CMS\Factory;
             $content .= $color;
         }
 
+        $content .= '<div class="eventcontenttextbody">';
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $eventaccess . $venueColorBar . '</div></div></div>';
+        $content .= $eventaccess . '</div>' . $venueColorBar . '</div></div></div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;
@@ -434,6 +435,7 @@ use Joomla\CMS\Factory;
     $this->calendarLegendCountCatEvents = $countcatevents;
     $this->calendarLegendCountVenueEvents = $countvenueevents;
     $this->calendarLegendCategoryColorMarker = $categoryColorMarker;
+    $this->calendarLegendEventUseCategoryBackground = !empty($evbg_usecatcolor);
 
     if (in_array($displayLegend, array(2, 4, 6), true)) : ?>
         <!-- Calendar legend above -->

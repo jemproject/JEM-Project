@@ -14,7 +14,7 @@
                 default="1"
                 label="COM_JEM_SELECTTOPCAT"
                 description="COM_JEM_SELECTTOPCATDESC"
-                required="false"
+                required="false" class="form-select w-auto"
             />
             <field
                 name="typeid"
@@ -24,7 +24,7 @@
                 query="SELECT 0 AS value, '- ' AS text UNION SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 2 ORDER BY text ASC"
                 key_field="value"
                 value_field="text"
-                required="false"
+                required="false" class="form-select w-auto"
             />
         </fieldset>
     </fields>
@@ -98,13 +98,13 @@
                 size="2"
                 default="4"
                 label="COM_JEM_CAT_DISPLAY"
-                description="COM_JEM_CAT_DISPLAY_DESC"
+                description="COM_JEM_CAT_DISPLAY_DESC" class="form-control w-auto"
             />
             <field name="detcat_nr" type="text"
                 size="1"
                 default="3"
                 label="COM_JEM_DET_CATEGORIES_PREVIEW"
-                description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC"
+                description="COM_JEM_DET_CATEGORIES_PREVIEW_DESC" class="form-control w-auto"
             />
             <field name="usecat" type="radio"
                 default="1"

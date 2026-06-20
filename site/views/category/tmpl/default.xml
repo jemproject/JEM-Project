@@ -14,7 +14,7 @@
                 default=""
                 label="COM_JEM_SELECT_CATEGORY"
                 description="COM_JEM_SELECT_CATEGORY_DESC"
-                required="true"
+                required="true" class="form-select w-auto"
             />
         </fieldset>
     </fields>

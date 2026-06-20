@@ -12,7 +12,7 @@
                 default="0"
                 size="2"
                 label="COM_JEM_DAYS_FIELD"
-                description="COM_JEM_DAYS_FIELD_DESC"
+                description="COM_JEM_DAYS_FIELD_DESC" class="form-control w-auto"
             />
 
             <field name="onlyfeatured" type="radio"
@@ -27,7 +27,7 @@
             <field name="timetable_orientation" type="list"
                 default="horizontal"
                 label="COM_JEM_TIMETABLE_ORIENTATION"
-                description="COM_JEM_TIMETABLE_ORIENTATION_DESC"
+                description="COM_JEM_TIMETABLE_ORIENTATION_DESC" class="form-select w-auto"
             >
                 <option value="horizontal">COM_JEM_TIMETABLE_ORIENTATION_HORIZONTAL</option>
                 <option value="vertical">COM_JEM_TIMETABLE_ORIENTATION_VERTICAL</option>
@@ -35,7 +35,7 @@
             <field name="timetable_hour_display" type="list"
                 default="event_hours"
                 label="COM_JEM_TIMETABLE_HOUR_DISPLAY"
-                description="COM_JEM_TIMETABLE_HOUR_DISPLAY_DESC"
+                description="COM_JEM_TIMETABLE_HOUR_DISPLAY_DESC" class="form-select w-auto"
             >
                 <option value="event_hours">COM_JEM_TIMETABLE_HOUR_DISPLAY_EVENT_HOURS</option>
                 <option value="all_hours">COM_JEM_TIMETABLE_HOUR_DISPLAY_ALL_HOURS</option>
@@ -46,7 +46,7 @@
                 max="23"
                 step="1"
                 label="COM_JEM_TIMETABLE_RANGE_START"
-                description="COM_JEM_TIMETABLE_RANGE_START_DESC"
+                description="COM_JEM_TIMETABLE_RANGE_START_DESC" class="form-control w-auto"
             />
             <field name="timetable_range_end" type="number"
                 default="22"
@@ -54,7 +54,7 @@
                 max="24"
                 step="1"
                 label="COM_JEM_TIMETABLE_RANGE_END"
-                description="COM_JEM_TIMETABLE_RANGE_END_DESC"
+                description="COM_JEM_TIMETABLE_RANGE_END_DESC" class="form-control w-auto"
             />
             <field name="timetable_minimum_hours" type="number"
                 default="8"
@@ -63,12 +63,12 @@
                 step="1"
                 label="COM_JEM_TIMETABLE_MINIMUM_HOURS"
                 description="COM_JEM_TIMETABLE_MINIMUM_HOURS_DESC"
-                showon="timetable_hour_display:event_hours"
+                showon="timetable_hour_display:event_hours" class="form-control w-auto"
             />
             <field name="timetable_event_background" type="list"
                 default="category"
                 label="COM_JEM_TIMETABLE_EVENT_BACKGROUND"
-                description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC"
+                description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC" class="form-select w-auto"
             >
                 <option value="category">COM_JEM_TIMETABLE_EVENT_BACKGROUND_CATEGORY</option>
                 <option value="venue">COM_JEM_TIMETABLE_EVENT_BACKGROUND_VENUE</option>
@@ -83,14 +83,14 @@
 <field name="categoryswitchcats" type="categoryedit"
                 multiple="true"
                 removeroot="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
             />
             <field name="timeline_filter_venues" type="venueoptions"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_VENUES_DESC"
@@ -98,14 +98,14 @@
             <field name="timeline_filter_types" type="jemtype"
                 entity="1"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_TYPES_DESC"
             />
             <field name="timeline_filter_countries" type="countryoptions"
                 multiple="true"
-                class="form-select"
+                class="form-select w-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"

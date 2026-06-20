@@ -118,7 +118,7 @@
                 size="4"
                 default="1"
                 label="COM_JEM_MYREGSPAST"
-                description="COM_JEM_MYREGSPAST_DESC"
+                description="COM_JEM_MYREGSPAST_DESC" class="form-control w-auto"
             />
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
