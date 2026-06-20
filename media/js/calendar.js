@@ -91,6 +91,13 @@ jQuery(document).ready(function ($) {
     });
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl, {html: true})
+        var options = {html: true};
+
+        if (tooltipTriggerEl.classList.contains('jem-annual-day')) {
+            options.trigger = 'hover focus click';
+            options.delay = {show: 100, hide: 450};
+        }
+
+        return new bootstrap.Tooltip(tooltipTriggerEl, options)
     })
 });

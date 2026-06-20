@@ -249,6 +249,198 @@ div#jem .rowcolor {
     text-align: right;
 }
 
+.jem-annual-calendar .jem-annual-nav {
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 0.75rem 0 1.25rem;
+}
+
+.jem-annual-calendar .jem-annual-period {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    min-width: 12rem;
+    text-align: center;
+}
+
+.jem-annual-calendar .jem-annual-period-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+}
+
+.jem-annual-calendar .jem-annual-period-range {
+    color: #5f6670;
+    font-size: 0.9rem;
+}
+
+.jem-annual-calendar .jem-annual-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.jem-annual-calendar .jem-annual-month {
+    border: 1px solid #c8ccd2;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.jem-annual-calendar .jem-annual-month-title {
+    background: #f5f6f8;
+    border-bottom: 1px solid #d9dce1;
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0.55rem 0.7rem;
+    text-align: center;
+}
+
+.jem-annual-calendar .jem-annual-weekdays,
+.jem-annual-calendar .jem-annual-days {
+    display: grid;
+    grid-template-columns: 2rem repeat(7, minmax(0, 1fr));
+}
+
+.jem-annual-calendar .jem-annual-weekdays span {
+    background: #444444;
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0;
+    text-align: center;
+}
+
+.jem-annual-calendar .jem-annual-week-heading {
+    background: #303030 !important;
+}
+
+.jem-annual-calendar .jem-annual-day {
+    align-items: flex-start;
+    border-bottom: 1px solid #e4e6e8;
+    border-right: 1px solid #e4e6e8;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    min-height: 3.35rem;
+    padding: 0.25rem;
+    position: relative;
+    text-decoration: none;
+}
+
+.jem-annual-calendar .jem-annual-week-number {
+    align-items: center;
+    background: #f0f2f4;
+    border-bottom: 1px solid #e4e6e8;
+    border-right: 1px solid #d4d8dd;
+    color: #304050;
+    display: flex;
+    font-size: 0.72rem;
+    font-weight: 700;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.jem-annual-calendar .jem-annual-day.is-empty {
+    background: #f6f6f6;
+}
+
+.jem-annual-calendar .jem-annual-day.has-events {
+    background: #fffaf0;
+}
+
+.jem-annual-calendar .jem-annual-day-number {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.jem-annual-calendar .jem-annual-day-count {
+    align-items: center;
+    background: #1f2933;
+    border-radius: 999px;
+    color: #ffffff;
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 700;
+    justify-content: center;
+    line-height: 1;
+    min-width: 1.25rem;
+    padding: 0.18rem 0.35rem;
+    position: absolute;
+    right: 0.2rem;
+    top: 0.2rem;
+}
+
+.jem-annual-calendar .jem-annual-markers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.16rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+}
+
+.jem-annual-calendar .jem-annual-marker {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 999px;
+    display: inline-block;
+    height: 0.45rem;
+    width: 0.45rem;
+}
+
+.jem-annual-tooltip {
+    pointer-events: auto;
+}
+
+.jem-annual-tooltip .tooltip-inner {
+    max-width: 18rem;
+    text-align: left;
+}
+
+.jem-annual-tooltip-count {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.jem-annual-tooltip-events {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.jem-annual-tooltip-events li + li {
+    margin-top: 0.25rem;
+}
+
+.jem-annual-tooltip-events a {
+    color: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+@media (max-width: 75rem) {
+    .jem-annual-calendar .jem-annual-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 56rem) {
+    .jem-annual-calendar .jem-annual-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 38rem) {
+    .jem-annual-calendar .jem-annual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-annual-calendar .jem-annual-nav {
+        justify-content: space-between;
+    }
+}
+
 /* *** CALENDAR WEEK ADDITIONS END *** */
 
 .eventandmore {

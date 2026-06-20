@@ -63,6 +63,7 @@ class JemControllerFrontendmenu extends BaseController
             array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
             array('Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
             array('Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', $groups['calendars']),
+            array('Annual Calendar', 'annual-calendar', 'index.php?option=com_jem&view=annualcalendar', $groups['calendars']),
             array('Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
             array('Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
             array('Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', $groups['venues']),
