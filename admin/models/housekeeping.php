@@ -11,11 +11,11 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Client\ClientHelper;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
 /**
@@ -78,7 +78,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
             if (is_file($fullPath)) {
                 File::delete($fullPath);
-                if (File::exists($fullPaththumb)) {
+                if (is_file($fullPaththumb)) {
                     File::delete($fullPaththumb);
                 }
             }
@@ -108,6 +108,26 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $db->execute();
 
         return true;
+    }
+
+    /**
+     * Deletes physical attachment files that are no longer referenced by attachment records.
+     *
+     * @param string|false $type Optional object type prefix, e.g. event, venue, category.
+     *
+     * @return object Cleanup counters.
+     */
+    public function cleanupUnusedAttachmentFiles($type = false)
+    {
+        $result = null;
+
+        JemHelper::delete_unused_attachment_files($type, $result);
+
+        return $result ?: (object) array(
+            'files'   => 0,
+            'folders' => 0,
+            'failed'  => 0,
+        );
     }
 
     /**

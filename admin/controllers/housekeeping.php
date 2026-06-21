@@ -92,6 +92,29 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
+     * Deletes physical attachment files that have no matching database record.
+     */
+    public function cleanupUnusedAttachmentFiles() {
+        // Check for request forgeries
+        Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $model = $this->getModel('housekeeping');
+        $result = $model->cleanupUnusedAttachmentFiles();
+
+        $link = 'index.php?option=com_jem&view=housekeeping';
+        $msg = Text::sprintf(
+            'COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_DONE',
+            (int) $result->files,
+            (int) $result->folders,
+            (int) $result->failed
+        );
+        $type = $result->failed ? 'warning' : 'message';
+
+        $this->setRedirect($link, $msg, $type);
+    }
+
+    /**
      * Regenerates event, venue and category thumbnails using current image settings.
      */
     public function resizethumbs() {

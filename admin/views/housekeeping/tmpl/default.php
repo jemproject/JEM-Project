@@ -106,6 +106,21 @@ use Joomla\CMS\Session\Session;
                         <?php echo Text::sprintf('COM_JEM_HOUSEKEEPING_TOTAL_CATSEVENT_RELS', $this->totalcats) ?>
                     </td>
                 </tr>
+            <!-- CLEAN UNUSED ATTACHMENT FILES -->
+                <tr>
+                    <td>
+                        <div class="linkicon">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleanupUnusedAttachmentFiles&amp;<?php echo Session::getFormToken(); ?>=1"
+                               onclick="return confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>);">
+                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanattachmentfiles.svg', Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES'), NULL, true); ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                    <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES'); ?></h3>
+                        <?php echo Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_DESC'); ?>
+                    </td>
+                </tr>
             <!-- TRUNCATE ALL DATA -->
                 <tr>
                     <td>

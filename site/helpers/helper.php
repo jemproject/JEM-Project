@@ -1534,55 +1534,110 @@ class JemHelper
     /**
      * This method deletes attachment files if unused.
      *
-     * @param  mixed $type one of 'event', 'venue', 'category', ... or false for all
+     * @param  mixed       $type  one of 'event', 'venue', 'category', ... or false for all
+     * @param  object|null $stats Optional cleanup counters.
      *
      * @return bool true on success, false on error
      * @access public
      */
-    static public function delete_unused_attachment_files($type = false)
+    static public function delete_unused_attachment_files($type = false, &$stats = null)
     {
         $jemsettings = JemHelper::config();
-        $basepath    = JPATH_SITE.'/'.$jemsettings->attachments_path;
-        $db          = Factory::getContainer()->get('DatabaseDriver');
-        $res         = true;
+        $relativePath = trim((string) $jemsettings->attachments_path);
+        $stats = (object) array(
+            'files'   => 0,
+            'folders' => 0,
+            'failed'  => 0,
+        );
 
-        // Get list of all folders matching type (format is "$type$id")
-        $folders = Folder::folders($basepath, ($type ? '^'.$type : '.'), false, false, array('.', '..'));
+        if ($relativePath === '') {
+            return true;
+        }
 
-        // Get list of all used attachments of given type
-        $fnames = array();
-        foreach ($folders as $f) {
-            $fnames[] = $db->Quote($f);
+        $basePath = Path::clean(JPATH_SITE . '/' . $relativePath);
+        $sitePath = rtrim(Path::clean(JPATH_SITE), '\\/');
+
+        if (
+            $basePath === $sitePath
+            || strpos(rtrim($basePath, '\\/') . DIRECTORY_SEPARATOR, $sitePath . DIRECTORY_SEPARATOR) !== 0
+            || !Folder::exists($basePath)
+        ) {
+            return true;
         }
-        $query = ' SELECT object, file '
-               . ' FROM #__jem_attachments ';
-        if (!empty($fnames)) {
-            $query .= ' WHERE object IN ('.implode(',', $fnames).')';
+
+        $type = $type ? preg_replace('/[^a-z0-9_-]/i', '', (string) $type) : false;
+        $folders = Folder::folders($basePath, '.', false, true, array('.', '..'));
+        $objects = array();
+
+        foreach ($folders as $folder) {
+            $object = basename($folder);
+
+            if (!preg_match('/^[a-z]+[0-9]+$/i', $object)) {
+                continue;
+            }
+
+            if ($type && stripos($object, $type) !== 0) {
+                continue;
+            }
+
+            $objects[$object] = $folder;
         }
+
+        if (!$objects) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $quotedObjects = array_map(array($db, 'quote'), array_keys($objects));
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('object'), $db->quoteName('file')))
+            ->from($db->quoteName('#__jem_attachments'))
+            ->where($db->quoteName('object') . ' IN (' . implode(',', $quotedObjects) . ')');
+
         $db->setQuery($query);
-        $files_used = $db->loadObjectList();
+        $filesUsed = $db->loadObjectList() ?: array();
         $usedFiles = array();
-        foreach ($files_used as $used) {
-            $usedFiles[$used->object.'/'.$used->file] = true;
+
+        foreach ($filesUsed as $used) {
+            $usedFiles[$used->object . '/' . $used->file] = true;
         }
 
         // Delete unused files and folders (ignore 'index.html')
-        foreach ($folders as $folder) {
-            $folderFiles = Folder::files($basepath.'/'.$folder, '.', false, false, array('index.html'), array());
-            if (!empty($folderFiles)) {
-                foreach ($folderFiles as $file) {
-                    if (!array_key_exists($folder.'/'.$file, $usedFiles)) {
-                        $res &= File::delete($basepath.'/'.$folder.'/'.$file);
-                    }
+        foreach ($objects as $object => $folder) {
+            $folderFiles = Folder::files($folder, '.', false, true, array('index.html'), array());
+
+            foreach ($folderFiles as $file) {
+                if (!is_file($file)) {
+                    continue;
+                }
+
+                $filename = basename($file);
+
+                if (isset($usedFiles[$object . '/' . $filename])) {
+                    continue;
+                }
+
+                if (File::delete($file)) {
+                    $stats->files++;
+                } else {
+                    $stats->failed++;
+                    JemHelper::addLogEntry('Unable to delete unused attachment file: ' . $file, __METHOD__, Log::WARNING);
                 }
             }
-            $remainingFiles = Folder::files($basepath.'/'.$folder, '.', false, true, array('index.html'), array());
+
+            $remainingFiles = Folder::files($folder, '.', true, true, array('index.html'), array());
+
             if (empty($remainingFiles)) {
-                $res &= Folder::delete($basepath.'/'.$folder);
+                if (Folder::delete($folder)) {
+                    $stats->folders++;
+                } else {
+                    $stats->failed++;
+                    JemHelper::addLogEntry('Unable to delete empty attachment folder: ' . $folder, __METHOD__, Log::WARNING);
+                }
             }
         }
 
-        return $res;
+        return $stats->failed === 0;
     }
 
     /**
