@@ -184,20 +184,6 @@ class JemModelCategory extends AdminModel
     }
 
     /**
-     * A protected method to get the where clause for the reorder
-     * This ensures that the row will be moved relative to a row with the same
-     * extension
-     *
-     * @param  JCategoryTable $table Current table instance
-     *
-     * @return array An array of conditions to add to add to ordering queries.
-     */
-    protected function getReorderConditionsDISABLED($table)
-    {
-        return 'extension = ' . $this->_db->Quote($table->extension);
-    }
-
-    /**
      * Method to get the data that should be injected in the form.
      *
      * @return mixed The data for the form.

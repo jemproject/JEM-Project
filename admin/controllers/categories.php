@@ -61,59 +61,6 @@ class JemControllerCategories extends AdminController
         }
     }
 
-    /**
-     * Save the manual order inputs from the categories list page.
-     *
-     * @return    void
-     */
-    public function saveorderDisabled() {
-        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
-
-        // Get the arrays from the Request
-        $order = Factory::getApplication()->input->post->get('order', array(), 'array');
-        $originalOrder = explode(',', Factory::getApplication()->input->getString('original_order_values', ''));
-
-        // Make sure something has changed
-        if ($order !== $originalOrder) {
-            parent::saveorder();
-        } else {
-            // Nothing to reorder
-            $this->setRedirect(Route::_('index.php?option='.$this->option.'&view='.$this->view_list, false));
-            return true;
-        }
-    }
-
-    /** Deletes and returns correctly.
-      *
-      * @return    void
-      */
-     public function deleteDisabled() {
-         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
-
-         // Get items to remove from the request.
-         $cid = Factory::getApplication()->input->get('cid', array(), 'array');
-         $extension = Factory::getApplication()->input->get('extension', '');
-
-         if (!is_array($cid) || count($cid) < 1) {
-             Factory::getApplication()->enqueueMessage(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
-         } else {
-             // Get the model.
-             $model = $this->getModel();
-
-             // Make sure the item ids are integers
-             ArrayHelper::toInteger($cid);
-
-             // Remove the items.
-             if ($model->delete($cid)) {
-                 $this->setMessage(Text::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
-             } else {
-                 $this->setMessage($model->getError());
-             }
-         }
-
-         $this->setRedirect(Route::_('index.php?option=' . $this->option . '&extension=' . $extension, false));
-     }
-
      /**
       * Logic to delete categories
       *
