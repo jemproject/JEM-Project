@@ -111,6 +111,26 @@ class JemModelHousekeeping extends BaseDatabaseModel
     }
 
     /**
+     * Deletes physical attachment files that are no longer referenced by attachment records.
+     *
+     * @param string|false $type Optional object type prefix, e.g. event, venue, category.
+     *
+     * @return object Cleanup counters.
+     */
+    public function cleanupUnusedAttachmentFiles($type = false)
+    {
+        $result = null;
+
+        JemHelper::delete_unused_attachment_files($type, $result);
+
+        return $result ?: (object) array(
+            'files'   => 0,
+            'folders' => 0,
+            'failed'  => 0,
+        );
+    }
+
+    /**
      * Regenerates thumbnails for assigned event, venue, category and event link images.
      *
      * @return int Number of regenerated thumbnails.
