@@ -2601,6 +2601,296 @@ div#jem.jem_venueslist .jem-event .jem-venueslist-venue-image {
     object-fit: contain;
 }
 
+div#jem.jem_specialdays .jem-specialdays-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .65rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-header .componentheading {
+    margin: 0;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: nowrap;
+    padding: .65rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+div#jem.jem_specialdays .jem-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: .35rem;
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import legend {
+    float: none;
+    width: auto;
+    padding: 0 .5rem;
+    margin: 0 0 .75rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import .jem-specialdays-import-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file,
+div#jem.jem_specialdays .jem-specialdays-import-replace,
+div#jem.jem_specialdays .jem-specialdays-import-action {
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+    width: auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 27rem;
+    min-width: 21rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-replace {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 auto;
+    min-width: 21rem;
+    margin-left: auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-action {
+    flex: 0 0 auto;
+    margin-left: 0;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import .form-label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file .form-control {
+    flex: 1 1 auto;
+    min-width: 11rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import #replace_specialdays {
+    width: auto;
+    min-width: 5.5rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    padding: .15rem;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--cassiopeia-color-primary, #0d6efd);
+    text-decoration: none;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button:hover,
+div#jem.jem_specialdays .jem-specialdays-action-button:focus {
+    background: #f1f3f5;
+    color: var(--cassiopeia-color-hover, #0a58ca);
+    text-decoration: none;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button i {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button img {
+    display: block;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search {
+    flex: 1 1 22rem;
+    min-width: 8rem;
+    max-width: 23rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group .form-control {
+    flex: 1 1 auto;
+    min-width: 6rem;
+    width: 1%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-actions {
+    display: flex;
+    gap: .35rem;
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-year,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-limit {
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter #filter_year {
+    width: 5.5rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="filter_state"] {
+    width: 12rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="filter_day_type"] {
+    width: 14rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="limit"] {
+    width: 5rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .form-select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter input.form-control {
+    width: auto;
+    max-width: 100%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter input.form-control {
+    width: 100%;
+}
+
+div#jem.jem_specialdays .jem-specialdays-location-country {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays .jem-specialdays-location-flag {
+    display: inline-block;
+    font-size: .95rem;
+    line-height: 1;
+}
+
+div#jem.jem_specialdays #specialDayList thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #adb5bd;
+    color: #212529;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+div#jem.jem_specialdays #specialDayList thead th a {
+    color: inherit;
+    font-weight: 700;
+}
+
+div#jem.jem_specialdays #specialDayList .jem-specialdays-location-heading,
+div#jem.jem_specialdays #specialDayList .jem-specialdays-location-cell {
+    text-align: center;
+}
+
+@media (max-width: 767.98px) {
+    div#jem.jem_specialday_edit .jem-specialday-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    div#jem.jem_specialday_edit .jem-specialday-toolbar .jem-buttons {
+        justify-content: flex-start;
+    }
+
+    div#jem.jem_specialday_edit .jem-field-short,
+    div#jem.jem_specialday_edit .jem-field-medium,
+    div#jem.jem_specialday_edit .jem-field-long,
+    div#jem.jem_specialday_edit .jem-field-date {
+        max-width: none;
+    }
+}
+
+@media (max-width: 575.98px) {
+    div#jem.jem_specialdays .jem-specialdays-header {
+        align-items: flex-start;
+    }
+
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    div#jem.jem_specialdays .jem-specialdays-import .jem-specialdays-import-row {
+        flex-wrap: wrap;
+    }
+
+    div#jem.jem_specialdays .jem-specialdays-import-file,
+    div#jem.jem_specialdays .jem-specialdays-import-replace,
+    div#jem.jem_specialdays .jem-specialdays-import-action {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+
+    div#jem.jem_specialdays .jem-specialdays-import-action {
+        margin-left: 0;
+    }
+
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search,
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-actions,
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-select,
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-year,
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-limit {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-actions .btn,
+    div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select {
+        width: 100%;
+    }
+}
+
 @media (max-width: 22rem) {
     #jem.jem_event dl.event_info,
     #jem.jem_event dl.jem-event-info-list,

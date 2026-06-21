@@ -20,11 +20,11 @@ use Joomla\CMS\Plugin\PluginHelper;
  */
 class JemViewCategory extends JemView
 {
-    protected $state;
-    protected $items;
-    protected $category;
+    public $state;
+    public $items;
+    public $category;
     protected $children;
-    protected $pagination;
+    public $pagination;
 
 
     public function __construct($config = array())
@@ -94,10 +94,11 @@ class JemViewCategory extends JemView
             if (empty($catid)) {
                 $catid = $params->get('id');
             }
+            $catid = (int) $catid;
 
             // get data from model and set the month
             $model = $this->getModel('CategoryCal');
-            $model->setId((int) $catid);
+            $model->setId($catid);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
             $category = $this->get('Category', 'CategoryCal');
@@ -164,6 +165,8 @@ class JemViewCategory extends JemView
             $this->settings      = $settings;
             $this->permissions   = $permissions;
             $this->cal           = $cal;
+            $this->calendarYear  = $year;
+            $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
             $this->print_link    = $print_link;
@@ -334,7 +337,7 @@ class JemViewCategory extends JemView
             // Set Page title & Meta data
             $this->document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
-            $document->setMetadata('keywords', $category->meta_keywords);
+            $document->setMetadata('keywords', (string) $category->meta_keywords);
             $document->setDescription(strip_tags($category->meta_description ?? ''));
 
             // Check if the user has permission to add things
@@ -358,7 +361,7 @@ class JemViewCategory extends JemView
                 $description = $category->text;
             }
 
-            $cimage = JemImage::flyercreator($category->image,'category');
+            $cimage = JemImage::flyercreator((string) $category->image,'category');
 
             $this->lists         = $lists;
             $this->action        = $uri->toString();

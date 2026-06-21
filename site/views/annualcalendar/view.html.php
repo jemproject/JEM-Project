@@ -35,6 +35,11 @@ class JemViewAnnualcalendar extends JemView
         $jinput       = $app->input;
         $print        = $jinput->getBool('print', false);
         $task         = $jinput->getCmd('task', '');
+        $displayMode  = $jinput->getCmd('mode', (string) $params->get('annual_display_mode', 'calendar'));
+
+        if (!in_array($displayMode, array('calendar', 'agenda'), true)) {
+            $displayMode = 'calendar';
+        }
 
         $this->param_topcat = $top_category > 0 ? ('&topcat=' . $top_category) : '';
         $url = Uri::root();
@@ -77,15 +82,6 @@ class JemViewAnnualcalendar extends JemView
             $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
         }
 
-        if ($app->get('sitename_pagetitles', 0) == 1) {
-            $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
-        } elseif ($app->get('sitename_pagetitles', 0) == 2) {
-            $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
-        }
-
-        $document->setTitle($pagetitle);
-        $document->setMetaData('title', $pagetitle);
-
         $permissions = new stdClass();
         $catIds = $model->getCategories('all');
         $permissions->canAddEvent = $user->can('add', 'event', false, false, $catIds);
@@ -96,8 +92,26 @@ class JemViewAnnualcalendar extends JemView
         $partDate = '&yearID=' . $year;
         $url_base = 'index.php?option=com_jem&view=annualcalendar';
 
-        $print_link = Route::_($url_base . $partItemid . $partDate . '&print=1&tmpl=component');
-        $archive_link = Route::_($url_base . $partItemid . $partDate);
+        $partMode = $displayMode === 'agenda' ? '&mode=agenda' : '';
+
+        $print_link = Route::_($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1');
+        $ical_link = $partDate;
+        $archive_link = Route::_($url_base . $partItemid . $partDate . $partMode);
+
+        if ($task == 'archive') {
+            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($url_base . $partItemid . $partDate . $partMode . '&task=archive'));
+            $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            $params->set('page_heading', $params->get('page_heading') . ' - ' . Text::_('COM_JEM_ARCHIVE'));
+        }
+
+        if ($app->get('sitename_pagetitles', 0) == 1) {
+            $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
+        } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+            $pagetitle = Text::sprintf('JPAGETITLE', $pagetitle, $app->get('sitename'));
+        }
+
+        $document->setTitle($pagetitle);
+        $document->setMetaData('title', $pagetitle);
 
         $periodLabel = (int) $startMonth === 1
             ? (string) $year
@@ -111,16 +125,21 @@ class JemViewAnnualcalendar extends JemView
         $this->permissions   = $permissions;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->print_link    = $print_link;
+        $this->ical_link     = $ical_link;
         $this->print         = $print;
         $this->archive_link  = $archive_link;
         $this->task          = $task;
         $this->year          = $year;
+        $this->itemid        = $itemid;
         $this->startMonth    = $startMonth;
         $this->periodStart   = $periodStart;
         $this->periodEnd     = $periodEnd;
         $this->periodLabel   = $periodLabel;
-        $this->previous_link = Route::_($url_base . $partItemid . '&yearID=' . ($year - 1));
-        $this->next_link     = Route::_($url_base . $partItemid . '&yearID=' . ($year + 1));
+        $this->displayMode   = $displayMode;
+        $this->calendar_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : ''));
+        $this->agenda_link   = Route::_($url_base . $partItemid . $partDate . '&mode=agenda' . ($task == 'archive' ? '&task=archive' : ''));
+        $this->previous_link = Route::_($url_base . $partItemid . '&yearID=' . ($year - 1) . $partMode . ($task == 'archive' ? '&task=archive' : ''));
+        $this->next_link     = Route::_($url_base . $partItemid . '&yearID=' . ($year + 1) . $partMode . ($task == 'archive' ? '&task=archive' : ''));
 
         parent::display($tpl);
     }

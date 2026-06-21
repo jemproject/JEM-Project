@@ -53,6 +53,7 @@ class JemControllerFrontendmenu extends BaseController
             'venues'     => $this->createMenuItem($menutype, 'Venues', 'venues', '#', $rootId, 'heading', 0),
             'categories' => $this->createMenuItem($menutype, 'Categories', 'categories', '#', $rootId, 'heading', 0),
             'types'      => $this->createMenuItem($menutype, 'Types', 'types', '#', $rootId, 'heading', 0),
+            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'heading', 0),
             'user'       => $this->createMenuItem($menutype, 'User Area', 'user-area', '#', $rootId, 'heading', 0),
         );
 
@@ -72,6 +73,8 @@ class JemControllerFrontendmenu extends BaseController
             array('Submit Venue', 'submit-venue', 'index.php?option=com_jem&view=editvenue', $groups['venues']),
             array('Categories', 'categories-list', 'index.php?option=com_jem&view=categories', $groups['categories']),
             array('Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
+            array('Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
+            array('Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
             array('My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
             array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
             array('My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),

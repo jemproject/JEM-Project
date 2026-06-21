@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\String\StringHelper;
 
 /**
  * Venue-View
@@ -167,6 +168,8 @@ class JemViewVenue extends JemView
             $this->settings      = $settings;
             $this->permissions   = $permissions;
             $this->cal           = $cal;
+            $this->calendarYear  = $year;
+            $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
             $this->print_link    = $print_link;
             $this->archive_link  = $archive_link;
@@ -329,8 +332,8 @@ class JemViewVenue extends JemView
             }
 
             // prepare the url for output
-            if (\Joomla\String\StringHelper::strlen($venue->url) > 35) {
-                $venue->urlclean = $this->escape(\Joomla\String\StringHelper::substr($venue->url, 0, 35)) . '...';
+            if (StringHelper::strlen($venue->url) > 35) {
+                $venue->urlclean = $this->escape(StringHelper::substr($venue->url, 0, 35)) . '...';
             } else {
                 $venue->urlclean = $this->escape($venue->url);
             }

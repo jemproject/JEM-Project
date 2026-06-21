@@ -75,6 +75,8 @@ class JemControllerSettings extends BaseController
         // Initialise variables.
         $app = Factory::getApplication();
         $data = $app->input->get('jform', array(), 'array');
+        $specialDayTypeRenames = $this->getSpecialDayTypeRenameMap();
+        $this->normaliseSpecialDayTypes($data);
 
         $task = $this->getTask();
         $model = $this->getModel();
@@ -131,7 +133,13 @@ class JemControllerSettings extends BaseController
             return false;
         }
 
+        $renamed = $this->applySpecialDayTypeRenames($specialDayTypeRenames);
+
         $this->setMessage(Text::_('COM_JEM_SETTINGS_SAVED'));
+
+        if ($renamed > 0) {
+            $app->enqueueMessage(Text::plural('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAY_TYPES_RENAMED', $renamed), 'message');
+        }
 
         // Redirect the user and adjust session state based on the chosen task.
         switch ($task) {
@@ -152,6 +160,111 @@ class JemControllerSettings extends BaseController
                 $this->setRedirect(Route::_('index.php?option=com_jem&view=main', false));
                 break;
         }
+    }
+
+    /**
+     * Rebuild the Types of Days textarea value from the visible table rows.
+     *
+     * The settings tab renders editable row controls for usability. Rebuilding the
+     * pipe-separated value server-side keeps the setting reliable even if a browser
+     * skips the helper JavaScript that mirrors rows into the hidden form field.
+     *
+     * @param   array  &$data  Posted jform data.
+     *
+     * @return  void
+     */
+    private function normaliseSpecialDayTypes(array &$data): void
+    {
+        $input = Factory::getApplication()->input;
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $colors = $input->get('special_day_type_color', array(), 'array');
+        $blocks = $input->get('special_day_type_block_events', array(), 'array');
+
+        if (empty($names)) {
+            return;
+        }
+
+        $lines = array();
+
+        foreach ($names as $index => $name) {
+            $name = trim((string) $name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $color = strtolower(trim((string) ($colors[$index] ?? '#d1d5db')));
+
+            if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
+                $color = '#d1d5db';
+            }
+
+            $blockEvents = !empty($blocks[$index]) ? '1' : '0';
+            $lines[] = $name . ' | ' . $color . ' | ' . $blockEvents;
+        }
+
+        $data['calendar_special_day_types'] = implode("\n", $lines);
+        $data['globalattribs'] = $data['globalattribs'] ?? array();
+        $data['globalattribs']['calendar_special_day_types'] = implode("\n", $lines);
+    }
+
+    /**
+     * Build a rename map from the visible Types of Days editor rows.
+     *
+     * @return  array
+     */
+    private function getSpecialDayTypeRenameMap(): array
+    {
+        $input = Factory::getApplication()->input;
+        $originalNames = $input->get('special_day_type_original_name', array(), 'array');
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $renames = array();
+
+        foreach ($names as $index => $name) {
+            $oldName = trim((string) ($originalNames[$index] ?? ''));
+            $newName = trim((string) $name);
+
+            if ($oldName === '' || $newName === '' || $oldName === $newName) {
+                continue;
+            }
+
+            $renames[$oldName] = $newName;
+        }
+
+        return $renames;
+    }
+
+    /**
+     * Rename already assigned Special Day records when a type name changes.
+     *
+     * @param   array  $renames  Old type name => new type name.
+     *
+     * @return  int
+     */
+    private function applySpecialDayTypeRenames(array $renames): int
+    {
+        if (!$renames) {
+            return 0;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $updated = 0;
+
+        foreach ($renames as $oldName => $newName) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_special_days'))
+                ->set($db->quoteName('day_type') . ' = ' . $db->quote($newName))
+                ->where($db->quoteName('day_type') . ' = ' . $db->quote($oldName));
+
+            try {
+                $db->setQuery($query)->execute();
+                $updated += (int) $db->getAffectedRows();
+            } catch (Exception $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+            }
+        }
+
+        return $updated;
     }
 
     /**

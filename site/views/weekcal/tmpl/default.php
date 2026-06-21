@@ -20,8 +20,6 @@ use Joomla\CMS\Factory;
         $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
         if (!$this->params->get('show_archived_events', 0)) {
             $btn_params['show'] = array('archive');
-        } else {
-            $btn_params['hide'] = array('archive');
         }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
@@ -47,6 +45,9 @@ use Joomla\CMS\Factory;
     $evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
     $currentWeek = $this->currentweek;
     $firstDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($currentWeek));
+    $nrweeks = max(1, (int) $this->params->get('nrweeks', 1));
+    $weekLegendEndDate = (new DateTimeImmutable($firstDate))->modify('+' . (($nrweeks * 7) - 1) . ' days')->format('Y-m-d');
+    $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($firstDate, $weekLegendEndDate, $this->params);
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
@@ -455,12 +456,12 @@ use Joomla\CMS\Factory;
                 }
                 ?>
             </div>
+            <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>
 
     <?php
     // print the calendar
-    $nrweeks = $this->params->get('nrweeks', 1);
     echo $this->cal->showWeeksByID($currentWeek, $nrweeks);
     ?>
 
@@ -524,12 +525,13 @@ use Joomla\CMS\Factory;
                 }
                 ?>
             </div>
+            <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>
 
     <div class="clr"></div>
 
-        <?php if ($this->params->get('showfootertext')) : ?>
+    <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>

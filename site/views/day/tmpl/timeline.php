@@ -267,17 +267,42 @@ $gridSubintervalMinutes = max(0, min(120, (int) $this->params->get('timetable_gr
 if ($gridSubintervalMinutes > 0 && $gridSubintervalMinutes >= $gridIntervalMinutes) {
     $gridSubintervalMinutes = 0;
 }
+$input = Joomla\CMS\Factory::getApplication()->input;
+$requestedTimelineDays = $input->getInt('timeline_days_to_show', 0);
+$timelineDaysToShow = $requestedTimelineDays > 0
+    ? max(1, min(30, $requestedTimelineDays))
+    : max(1, min(30, (int) $this->params->get('timeline_days_to_show', 1)));
+$timelineDayOptions = array(1, 2, 3, 4, 5, 6, 7, 15, 30);
+if (!in_array($timelineDaysToShow, $timelineDayOptions, true)) {
+    $timelineDayOptions[] = $timelineDaysToShow;
+    sort($timelineDayOptions);
+}
 if ($rangeEndMinutes <= $rangeStartMinutes) {
     $rangeEndMinutes = min(1440, $rangeStartMinutes + $gridIntervalMinutes);
 }
 
-$timelineDaysToShow = max(1, min(60, (int) $this->params->get('timeline_days_to_show', 1)));
-$showEmptyDays = (bool) $this->params->get('timeline_show_empty_days', 1);
+$showEmptyDays = (bool) $this->params->get('timeline_show_empty_days', 0);
 $currentDate = new DateTimeImmutable($this->day ?? date('Y-m-d'));
 $rangeEndDate = $currentDate->modify('+' . ($timelineDaysToShow - 1) . ' days');
+$showWeekNavigation = (int) $this->params->get('show_week_navigation', 1) === 1;
+$previousWeekDate = $currentDate->modify('-1 week');
+$nextWeekDate = $currentDate->modify('+1 week');
 $previousDate = $currentDate->modify('-' . $timelineDaysToShow . ' days');
 $nextDate = $currentDate->modify('+' . $timelineDaysToShow . ' days');
-$input = Joomla\CMS\Factory::getApplication()->input;
+$dayModel = method_exists($this, 'getModel') ? $this->getModel() : null;
+
+if (!$showEmptyDays && $dayModel && method_exists($dayModel, 'getAdjacentEventDate')) {
+    $previousEventDate = $dayModel->getAdjacentEventDate($currentDate->format('Y-m-d'), 'previous');
+    $nextEventDate = $dayModel->getAdjacentEventDate($rangeEndDate->format('Y-m-d'), 'next');
+
+    if ($previousEventDate) {
+        $previousDate = new DateTimeImmutable($previousEventDate);
+    }
+
+    if ($nextEventDate) {
+        $nextDate = new DateTimeImmutable($nextEventDate);
+    }
+}
 $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
 $locId = $input->getInt('locid', 0);
@@ -291,9 +316,18 @@ if ($catId > 0) {
 if ($locId > 0) {
     $extraLinkParts[] = 'locid=' . $locId;
 }
+$baseLinkParts = $extraLinkParts;
+$extraLinkParts[] = 'timeline_days_to_show=' . $timelineDaysToShow;
 $extraLink = empty($extraLinkParts) ? '' : '&' . implode('&', $extraLinkParts);
+$baseExtraLink = empty($baseLinkParts) ? '' : '&' . implode('&', $baseLinkParts);
+$previousWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timeline&id=' . $previousWeekDate->format('Ymd') . $extraLink);
+$nextWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timeline&id=' . $nextWeekDate->format('Ymd') . $extraLink);
 $previousLink = Route::_('index.php?option=com_jem&view=day&layout=timeline&id=' . $previousDate->format('Ymd') . $extraLink);
 $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timeline&id=' . $nextDate->format('Ymd') . $extraLink);
+$todayMenuLink = 'index.php?option=com_jem&view=day&id=0';
+$todayMenuItem = Factory::getApplication()->getMenu()->getItems('link', $todayMenuLink, true);
+$todayLink = Route::_($todayMenuLink . ($todayMenuItem ? '&Itemid=' . (int) $todayMenuItem->id : ''));
+$windowAction = Route::_('index.php?option=com_jem&view=day&layout=timeline&id=' . $currentDate->format('Ymd') . $baseExtraLink);
 $navigationTitle = $timelineDaysToShow > 1
     ? HTMLHelper::_('date', $currentDate->format('Y-m-d'), Text::_('DATE_FORMAT_LC3')) . ' - ' . HTMLHelper::_('date', $rangeEndDate->format('Y-m-d'), Text::_('DATE_FORMAT_LC3'))
     : $this->daydate;
@@ -312,30 +346,52 @@ for ($dayIndex = 0; $dayIndex < $timelineDaysToShow; $dayIndex++) {
 }
 
 foreach ($rows as $row) {
-    $rowDate = (string) ($row->dates ?? '');
+    $rowStart = (string) ($row->dates ?? '');
 
-    if (!isset($dayRange[$rowDate])) {
+    if (!JemHelper::isValidDate($rowStart)) {
         continue;
     }
 
-    $startTime = $getDisplayTimeValue($row, 'times');
+    $rowEnd = (string) ($row->enddates ?? '');
+    if (!JemHelper::isValidDate($rowEnd) || $rowEnd < $rowStart) {
+        $rowEnd = $rowStart;
+    }
 
-    if (!$startTime) {
-        $dayRange[$rowDate]['allDayRows'][] = $row;
+    $rowStartDate = new DateTimeImmutable(max($rowStart, $currentDate->format('Y-m-d')));
+    $rowEndDate = new DateTimeImmutable(min($rowEnd, $rangeEndDate->format('Y-m-d')));
+
+    if ($rowStartDate > $rowEndDate) {
         continue;
     }
 
-    if ($hourDisplay === 'event_hours') {
-        $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
+    for ($activeDate = $rowStartDate; $activeDate <= $rowEndDate; $activeDate = $activeDate->modify('+1 day')) {
+        $rowDate = $activeDate->format('Y-m-d');
 
-        if ($eventMinutes < $rangeStartMinutes || $eventMinutes >= $rangeEndMinutes) {
+        if (!isset($dayRange[$rowDate])) {
             continue;
         }
-    }
 
-    $dayRange[$rowDate]['timedRows'][] = $row;
-    $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
-    $dayRange[$rowDate]['timedRowsByHour'][$eventMinutes][] = $row;
+        $dayRow = clone $row;
+        $dayRow->dates = $rowDate;
+        $startTime = $getDisplayTimeValue($dayRow, 'times');
+
+        if (!$startTime) {
+            $dayRange[$rowDate]['allDayRows'][] = $dayRow;
+            continue;
+        }
+
+        if ($hourDisplay === 'event_hours') {
+            $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
+
+            if ($eventMinutes < $rangeStartMinutes || $eventMinutes >= $rangeEndMinutes) {
+                continue;
+            }
+        }
+
+        $dayRange[$rowDate]['timedRows'][] = $dayRow;
+        $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
+        $dayRange[$rowDate]['timedRowsByHour'][$eventMinutes][] = $dayRow;
+    }
 }
 ?>
 <style>
@@ -384,10 +440,23 @@ foreach ($rows as $row) {
         margin: .75rem 0 1rem;
     }
 
+    #jem .jem-day-timeline-window-form {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    #jem .jem-day-timeline-window-select {
+        min-height: 2rem;
+        width: auto;
+    }
+
     #jem .jem-day-timeline-navigation .jem-calendar-nav-title {
+        min-width: 0;
         font-size: 1.1rem;
         font-weight: 700;
         line-height: 1.2;
+        text-align: center;
+        white-space: nowrap;
     }
 
     #jem .jem-day-timeline-navigation .jem-calendar-nav-link {
@@ -399,6 +468,10 @@ foreach ($rows as $row) {
         min-height: 2rem;
         min-width: 2rem;
         text-decoration: none;
+    }
+
+    #jem .jem-day-timeline-navigation .jem-day-timeline-nav-today {
+        padding: 0 .85rem;
     }
 
     #jem .jem-day-timeline-navigation .jem-calendar-nav-icon img,
@@ -948,7 +1021,7 @@ foreach ($rows as $row) {
 <div id="jem" class="jem_day jem_day_timeline jem-day-timeline-<?php echo $this->escape($timelineSide); ?> <?php echo $eventFrame ? 'jem-day-timeline-framed' : 'jem-day-timeline-no-frame'; ?><?php echo $this->pageclass_sfx; ?>" style="--jem-timeline-right-text-align: <?php echo $this->escape($timelineRightTextAlign); ?>; --jem-timeline-left-text-align: <?php echo $this->escape($timelineLeftTextAlign); ?>; --jem-timeline-right-meta-justify: <?php echo $this->escape($timelineJustifyMap[$timelineRightTextAlign]); ?>; --jem-timeline-left-meta-justify: <?php echo $this->escape($timelineJustifyMap[$timelineLeftTextAlign]); ?>; --jem-timeline-right-badge-margin-left: <?php echo $timelineRightTextAlign === 'right' ? 'auto' : ($timelineRightTextAlign === 'center' ? 'auto' : '0'); ?>; --jem-timeline-right-badge-margin-right: <?php echo $timelineRightTextAlign === 'left' ? 'auto' : ($timelineRightTextAlign === 'center' ? 'auto' : '0'); ?>; --jem-timeline-left-badge-margin-left: <?php echo $timelineLeftTextAlign === 'right' ? 'auto' : ($timelineLeftTextAlign === 'center' ? 'auto' : '0'); ?>; --jem-timeline-left-badge-margin-right: <?php echo $timelineLeftTextAlign === 'left' ? 'auto' : ($timelineLeftTextAlign === 'center' ? 'auto' : '0'); ?>;">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'today_link' => $todayLink);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
@@ -962,15 +1035,54 @@ foreach ($rows as $row) {
     <div class="clr"> </div>
 
     <nav class="jem-calendar-navigation jem-timetable-navigation jem-day-timeline-navigation" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_DAY_NAVIGATION'); ?>">
+        <?php if ($showWeekNavigation) : ?>
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousWeekLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'); ?>">
+                <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
+            </a>
+        <?php endif; ?>
         <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
         <div class="jem-calendar-nav-title jem-timetable-nav-title">
             <?php echo $navigationTitle; ?>
         </div>
+        <a class="jem-calendar-nav-link jem-timetable-nav-link jem-day-timeline-nav-today" href="<?php echo $todayLink; ?>" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>">
+            <?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>
+        </a>
         <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
+        <?php if ($showWeekNavigation) : ?>
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextWeekLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'); ?>">
+                <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
+            </a>
+        <?php endif; ?>
+        <form class="jem-day-timeline-window-form" action="<?php echo $windowAction; ?>" method="get">
+            <input type="hidden" name="option" value="com_jem">
+            <input type="hidden" name="view" value="day">
+            <input type="hidden" name="layout" value="timeline">
+            <input type="hidden" name="id" value="<?php echo $currentDate->format('Ymd'); ?>">
+            <?php if ($itemId > 0) : ?>
+                <input type="hidden" name="Itemid" value="<?php echo (int) $itemId; ?>">
+            <?php endif; ?>
+            <?php if ($catId > 0) : ?>
+                <input type="hidden" name="catid" value="<?php echo (int) $catId; ?>">
+            <?php endif; ?>
+            <?php if ($locId > 0) : ?>
+                <input type="hidden" name="locid" value="<?php echo (int) $locId; ?>">
+            <?php endif; ?>
+            <label class="visually-hidden" for="jem-day-timeline-days-window"><?php echo Text::_('COM_JEM_TIMELINE_DAYS_TO_SHOW_LABEL'); ?></label>
+            <select id="jem-day-timeline-days-window" name="timeline_days_to_show" class="form-select jem-day-timeline-window-select" onchange="this.form.submit()">
+                <?php foreach ($timelineDayOptions as $daysOption) : ?>
+                    <option value="<?php echo $daysOption; ?>"<?php echo $daysOption === $timelineDaysToShow ? ' selected="selected"' : ''; ?>>
+                        <?php echo $daysOption === 1 ? Text::_('COM_JEM_TIMELINE_DAYS_WINDOW_1') : Text::sprintf('COM_JEM_TIMELINE_DAYS_WINDOW_MORE', $daysOption); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <noscript>
+                <button type="submit" class="btn btn-primary"><?php echo Text::_('JAPPLY'); ?></button>
+            </noscript>
+        </form>
     </nav>
 
     <?php if ($this->params->get('showintrotext')) : ?>
@@ -1162,4 +1274,3 @@ foreach ($rows as $row) {
         <?php echo JemOutput::footer(); ?>
     </div>
 </div>
-

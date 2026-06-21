@@ -136,8 +136,7 @@
 }
 
 #jem.jem_day_timetable .jem-timetable-navigation {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+    display: flex;
     align-items: center;
     gap: 1rem;
     margin: 0.8rem 0 0;
@@ -149,6 +148,7 @@
 }
 
 #jem.jem_day_timetable .jem-timetable-nav-title {
+    flex: 1 1 auto;
     min-width: 0;
     padding: 0.25rem 0.7rem;
     color: #111111;
@@ -156,9 +156,11 @@
     font-weight: 700;
     line-height: 1.25;
     text-align: center;
+    white-space: nowrap;
 }
 
 #jem.jem_day_timetable .jem-timetable-nav-link {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,6 +173,14 @@
     font-size: 1.1rem;
     line-height: 1;
     text-decoration: none;
+}
+
+#jem.jem_day_timetable .jem-timetable-nav-today {
+    width: auto;
+    min-width: 4.75rem;
+    padding: 0 0.85rem;
+    font-size: 0.95rem;
+    font-weight: 700;
 }
 
 #jem.jem_day_timetable .jem-timetable-nav-link:hover,
@@ -407,6 +417,7 @@
 
     #jem.jem_day_timetable .jem-timetable-navigation {
         padding: 0.45rem;
+        gap: 0.45rem;
     }
 
     #jem.jem_day_timetable .jem-timetable-item {

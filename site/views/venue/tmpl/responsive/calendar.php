@@ -48,6 +48,11 @@ use Joomla\CMS\Factory;
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
+    $calendarYear = isset($this->calendarYear) ? (int) $this->calendarYear : (int) date('Y');
+    $calendarMonth = isset($this->calendarMonth) ? (int) $this->calendarMonth : (int) date('m');
+    $calendarStartDate = sprintf('%04d-%02d-01', $calendarYear, $calendarMonth);
+    $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
+    $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -412,7 +417,7 @@ use Joomla\CMS\Factory;
         <div class="clr"></div>
 
         <!-- Calendar Legend -->
-        <div class="calendarLegends jem-row jem-justify-start"">
+        <div class="calendarLegends jem-row jem-justify-start">
         <?php
         if ($this->params->get('displayLegend')) {
 
@@ -451,6 +456,7 @@ use Joomla\CMS\Factory;
         }
         ?>
     </div>
+    <?php echo $specialDaysLegendHtml; ?>
 </div>
 <?php endif; ?>
 
@@ -469,11 +475,11 @@ echo $this->cal->showMonth();
                 <button id="buttonshowall" class="calendarButton btn btn-outline-dark">
                     <?php echo Text::_('COM_JEM_SHOWALL'); ?>
                 </button>
-                <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
-                    <?php echo Text::_('COM_JEM_HIDEALL'); ?>
-                </button>
-            </div>
+            <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
+                <?php echo Text::_('COM_JEM_HIDEALL'); ?>
+            </button>
         </div>
+    </div>
         <div class="clr"></div>
 
         <!-- Calendar Legend -->
@@ -518,15 +524,16 @@ echo $this->cal->showMonth();
                 }
             }
             ?>
+            </div>
+            <?php echo $specialDaysLegendHtml; ?>
         </div>
-    </div>
 <?php endif; ?>
 
 <div class="clr"></div>
 
-    <?php if ($this->params->get('showfootertext')) : ?>
-        <div class="description no_space floattext">
-            <?php echo $this->params->get('footertext'); ?>
+<?php if ($this->params->get('showfootertext')) : ?>
+    <div class="description no_space floattext">
+        <?php echo $this->params->get('footertext'); ?>
         </div>
     <?php endif; ?>
     <div class="copyright">

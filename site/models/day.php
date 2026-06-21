@@ -85,7 +85,10 @@ class JemModelDay extends JemModelEventslist
         $this->_date = $date;
 
         $params = Factory::getApplication()->getParams('com_jem');
-        $daysToShow = max(1, min(60, (int) $params->get('timeline_days_to_show', 1)));
+        $requestedDaysToShow = Factory::getApplication()->input->getInt('timeline_days_to_show', 0);
+        $daysToShow = $requestedDaysToShow > 0
+            ? max(1, min(30, $requestedDaysToShow))
+            : max(1, min(30, (int) $params->get('timeline_days_to_show', 1)));
         $startDate = new DateTimeImmutable($date);
         $this->_dateEnd = $startDate->modify('+' . ($daysToShow - 1) . ' days')->format('Y-m-d');
     }
@@ -121,6 +124,13 @@ class JemModelDay extends JemModelEventslist
         $requestVenueId    = $app->input->getInt('locid', 0);
         $requestCategoryId = $app->input->getInt('catid', 0);
         $item              = $app->input->getInt('Itemid', 0);
+        $showArchivedRequest = $app->input->getString('show_archived_events', null);
+        $showArchivedEvents  = $showArchivedRequest === null
+            ? (bool) $params->get('show_archived_events', 0)
+            : (bool) $app->input->getInt('show_archived_events', 0);
+
+        $this->show_archived_events = $showArchivedEvents;
+        $this->setState('filter.show_archived_events', $showArchivedEvents);
         $normaliseIds      = static function ($value) {
             if (is_array($value)) {
                 $ids = $value;
@@ -313,6 +323,44 @@ class JemModelDay extends JemModelEventslist
         }
 
         return array();
+    }
+
+    /**
+     * Return the closest event date before or after the given date.
+     *
+     * Multi-day events are treated as active on every date between start and end.
+     */
+    public function getAdjacentEventDate($date, $direction = 'next')
+    {
+        if (!JemHelper::isValidDate($date)) {
+            return null;
+        }
+
+        $direction = $direction === 'previous' ? 'previous' : 'next';
+        $db = $this->_db;
+        $query = parent::getListQuery();
+        $query->clear('select');
+        $query->clear('order');
+        $query->clear('group');
+
+        $eventEnd = 'IF(a.enddates >= a.dates, a.enddates, a.dates)';
+
+        if ($direction === 'previous') {
+            $candidateDate = 'LEAST(' . $eventEnd . ', DATE_SUB(' . $db->quote($date) . ', INTERVAL 1 DAY))';
+            $query->select($candidateDate . ' AS navigation_date')
+                ->where('a.dates <= DATE_SUB(' . $db->quote($date) . ', INTERVAL 1 DAY)')
+                ->order('navigation_date DESC');
+        } else {
+            $candidateDate = 'GREATEST(a.dates, DATE_ADD(' . $db->quote($date) . ', INTERVAL 1 DAY))';
+            $query->select($candidateDate . ' AS navigation_date')
+                ->where($eventEnd . ' >= DATE_ADD(' . $db->quote($date) . ', INTERVAL 1 DAY)')
+                ->where('a.dates <= ' . $eventEnd)
+                ->order('navigation_date ASC');
+        }
+
+        $db->setQuery($query, 0, 1);
+
+        return $db->loadResult() ?: null;
     }
 
     /**
