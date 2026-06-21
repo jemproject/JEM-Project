@@ -24,6 +24,24 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="show_week_navigation" type="radio"
+                default="1"
+                label="COM_JEM_TIMETABLE_SHOW_WEEK_NAVIGATION"
+                description="COM_JEM_TIMETABLE_SHOW_WEEK_NAVIGATION_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_empty_days" type="radio"
+                default="0"
+                label="COM_JEM_TIMELINE_SHOW_EMPTY_DAYS_LABEL"
+                description="COM_JEM_TIMELINE_SHOW_EMPTY_DAYS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="timetable_orientation" type="list"
                 default="horizontal"
                 label="COM_JEM_TIMETABLE_ORIENTATION"

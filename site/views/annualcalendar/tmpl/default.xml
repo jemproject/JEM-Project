@@ -27,7 +27,7 @@
                 <option value="12">DECEMBER</option>
             </field>
             <field name="annual_marker_limit" type="number"
-                default="4"
+                default="6"
                 min="1"
                 max="12"
                 label="COM_JEM_ANNUALCALENDAR_MARKER_LIMIT"
@@ -43,7 +43,7 @@
                 <option value="0">JNO</option>
             </field>
             <field name="annual_day_link_target" type="list"
-                default="timetable"
+                default="default"
                 label="COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET"
                 description="COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET_DESC"
                 class="form-select w-auto"
@@ -51,6 +51,15 @@
                 <option value="default">COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET_DAY</option>
                 <option value="timetable">COM_JEM_DAY_VIEW_TIMETABLE_TITLE</option>
                 <option value="timeline">COM_JEM_DAY_VIEW_TIMELINE_TITLE</option>
+            </field>
+            <field name="show_types_of_days_legend" type="radio"
+                default="1"
+                label="COM_JEM_CALENDAR_SHOW_TYPES_OF_DAYS_LEGEND"
+                description="COM_JEM_CALENDAR_SHOW_TYPES_OF_DAYS_LEGEND_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
             <field name="annual_agenda_show_empty_days" type="radio"
                 default="0"
@@ -193,6 +202,7 @@
                 default="#CCCC99"
                 label="COM_JEM_CALENDAR_CURRENTDAYCOLOR"
                 description="COM_JEM_CALENDAR_CURRENTDAYCOLOR_DESC"
+                class="form-control-color w-auto"
             />
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"

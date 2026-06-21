@@ -78,6 +78,8 @@ class JemController extends BaseController
                 case 'myevents':
                 case 'myvenues':
                 case 'search':
+                case 'specialday':
+                case 'specialdays':
                 case 'venue':
                 case 'venues':
                 case 'venueslist':

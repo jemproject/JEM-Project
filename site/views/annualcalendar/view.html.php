@@ -95,7 +95,6 @@ class JemViewAnnualcalendar extends JemView
         $partMode = $displayMode === 'agenda' ? '&mode=agenda' : '';
 
         $print_link = Route::_($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1');
-        $pdf_link = Route::_($url_base . $partItemid . $partDate . $partMode . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component');
         $ical_link = $partDate;
         $archive_link = Route::_($url_base . $partItemid . $partDate . $partMode);
 
@@ -126,7 +125,6 @@ class JemViewAnnualcalendar extends JemView
         $this->permissions   = $permissions;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->print_link    = $print_link;
-        $this->pdf_link      = $pdf_link;
         $this->ical_link     = $ical_link;
         $this->print         = $print;
         $this->archive_link  = $archive_link;

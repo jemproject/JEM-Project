@@ -180,8 +180,26 @@ $getEventBackgroundColor = static function ($row) use ($eventBackgroundMode, $cu
 };
 $useStrongVenueHeader = ($eventBackgroundMode === 'venue');
 $currentDate = new DateTimeImmutable($this->day ?? date('Y-m-d'));
+$showEmptyDays = (int) $this->params->get('show_empty_days', 0) === 1;
+$showWeekNavigation = (int) $this->params->get('show_week_navigation', 1) === 1;
+$previousWeekDate = $currentDate->modify('-1 week');
+$nextWeekDate = $currentDate->modify('+1 week');
 $previousDate = $currentDate->modify('-1 day');
 $nextDate = $currentDate->modify('+1 day');
+$dayModel = method_exists($this, 'getModel') ? $this->getModel() : null;
+
+if (!$showEmptyDays && $dayModel && method_exists($dayModel, 'getAdjacentEventDate')) {
+    $previousEventDate = $dayModel->getAdjacentEventDate($currentDate->format('Y-m-d'), 'previous');
+    $nextEventDate = $dayModel->getAdjacentEventDate($currentDate->format('Y-m-d'), 'next');
+
+    if ($previousEventDate) {
+        $previousDate = new DateTimeImmutable($previousEventDate);
+    }
+
+    if ($nextEventDate) {
+        $nextDate = new DateTimeImmutable($nextEventDate);
+    }
+}
 $input = Factory::getApplication()->input;
 $itemId = $input->getInt('Itemid', 0);
 $catId = $input->getInt('catid', 0);
@@ -197,13 +215,18 @@ if ($locId > 0) {
     $extraLinkParts[] = 'locid=' . $locId;
 }
 $extraLink = empty($extraLinkParts) ? '' : '&' . implode('&', $extraLinkParts);
+$previousWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $previousWeekDate->format('Ymd') . $extraLink);
+$nextWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $nextWeekDate->format('Ymd') . $extraLink);
 $previousLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $previousDate->format('Ymd') . $extraLink);
 $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $nextDate->format('Ymd') . $extraLink);
+$todayMenuLink = 'index.php?option=com_jem&view=day&id=0';
+$todayMenuItem = Factory::getApplication()->getMenu()->getItems('link', $todayMenuLink, true);
+$todayLink = Route::_($todayMenuLink . ($todayMenuItem ? '&Itemid=' . (int) $todayMenuItem->id : ''));
 ?>
 <div id="jem" class="jem_day jem_day_timetable jem_day_timetable_<?php echo $this->escape($orientation); ?> jem_day_timetable_axis_<?php echo $this->escape($horizontalAxis); ?><?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'today_link' => $todayLink);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
@@ -217,15 +240,28 @@ $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . 
     <div class="clr"> </div>
 
     <nav class="jem-calendar-navigation jem-timetable-navigation" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_DAY_NAVIGATION'); ?>">
+        <?php if ($showWeekNavigation) : ?>
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousWeekLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'); ?>">
+                <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angles-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
+            </a>
+        <?php endif; ?>
         <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $previousLink; ?>" rel="prev" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
         <div class="jem-calendar-nav-title jem-timetable-nav-title">
             <?php echo $this->daydate; ?>
         </div>
+        <a class="jem-calendar-nav-link jem-timetable-nav-link jem-timetable-nav-today" href="<?php echo $todayLink; ?>" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>">
+            <?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>
+        </a>
         <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_DAY'); ?>">
             <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angle-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
+        <?php if ($showWeekNavigation) : ?>
+            <a class="jem-calendar-nav-link jem-timetable-nav-link" href="<?php echo $nextWeekLink; ?>" rel="next" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'); ?>">
+                <?php echo jemhtml::icon('com_jem/next.webp', 'fa-solid fa-angles-right jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_NEXT_WEEK'), array('class' => 'jem-calendar-nav-icon')); ?>
+            </a>
+        <?php endif; ?>
     </nav>
 
     <?php if ($this->params->get('showintrotext')) : ?>

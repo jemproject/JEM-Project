@@ -641,22 +641,25 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             $moreInformationText = Text::_($moreInformationText);
         }
         $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
+        $showEventDescription = $eventLayout !== 'compact' && $params->get('event_show_description','1') && $hasDescription;
         ?>
-        <?php if (($params->get('event_show_description','1') && $hasDescription) || $showOnlineMeeting || !empty($this->event_links)) { ?>
-            <?php if ($eventLayout !== 'compact' && $params->get('event_show_description','1') && $hasDescription) : ?>
+        <?php if ($showEventDescription || $showOnlineMeeting || !empty($this->event_links)) { ?>
+            <?php if ($showEventDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
             <div class="description event_desc" itemprop="description">
 
                 <?php
                 if ($params->get('access-view')) {
-                    if (!$params->get('event_show_intro') && $this->item->fulltext != null) {
-                        echo $this->item->fulltext;
-                    } else {
-                        echo $this->item->text;
+                    if ($showEventDescription) {
+                        if (!$params->get('event_show_intro') && $this->item->fulltext != null) {
+                            echo $this->item->fulltext;
+                        } else {
+                            echo $this->item->text;
+                        }
                     }
 
-                    if ($eventCustomFieldsPosition === 'after_description') {
+                    if ($showEventDescription && $eventCustomFieldsPosition === 'after_description') {
                         echo $renderEventCustomFieldsBlock();
                     }
 
@@ -1187,11 +1190,9 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     <?php echo $renderEventVenueCustomFieldsBlock(); ?>
                 <?php endif; ?>
 
-                <?php if ($params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
+                <?php if ($venueLayout !== 'compact' && $params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
                     && $this->item->locdescription != '<br>') : ?>
-                    <?php if ($venueLayout !== 'compact') : ?>
-                        <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
-                    <?php endif; ?>
+                    <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
                         <?php echo $this->item->locdescription; ?>
                     </div>

@@ -311,6 +311,34 @@ CREATE TABLE IF NOT EXISTS `#__jem_types` (
     KEY `idx_checkout`  (`checked_out`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `alias` varchar(255) NOT NULL DEFAULT '',
+  `day_type` varchar(100) NOT NULL DEFAULT '',
+  `start_date` date NULL DEFAULT NULL,
+  `end_date` date NULL DEFAULT NULL,
+  `weekdays` varchar(32) NOT NULL DEFAULT '',
+  `country` varchar(255) NOT NULL DEFAULT '',
+  `region` varchar(100) NOT NULL DEFAULT '',
+  `city` varchar(100) NOT NULL DEFAULT '',
+  `description` text DEFAULT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT 1,
+  `ordering` int(11) NOT NULL DEFAULT 0,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `modified` datetime NULL DEFAULT NULL,
+  `modified_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `checked_out` int(11) unsigned NULL DEFAULT NULL,
+  `checked_out_time` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_published_dates` (`published`, `start_date`, `end_date`),
+  KEY `idx_weekdays` (`weekdays`),
+  KEY `idx_day_type` (`day_type`),
+  KEY `idx_location` (`country`, `region`, `city`),
+  KEY `idx_checkout` (`checked_out`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('oldevent', '2'),
 ('minus', '1'),
@@ -387,7 +415,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
-('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_venue_layout":"details"}'),
+('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_venue_layout":"details","calendar_special_days_enabled":"1","calendar_special_day_types":"Weekend | #d1d5db | 0\\nHoliday | #e5e7eb | 0\\nVacation | #fef3c7 | 0\\nExam | #dbeafe | 0\\nSchool day | #dcfce7 | 0"}'),
 ('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
@@ -661,3 +689,6 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
+
+INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `start_date`, `end_date`, `weekdays`, `published`, `ordering`, `created`) VALUES
+(1, 'Weekend', 'weekend', 'Weekend', '2026-01-01', '2030-12-31', '0,6', 1, 1, NOW());

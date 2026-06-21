@@ -53,6 +53,10 @@ class JemModelEvent extends JemModelAdmin
      */
     public function publish(&$pks, $value = 1)
     {
+        if ((int) $value === 1 && !$this->validateSpecialDayPublishEvents($pks)) {
+            return false;
+        }
+
         // Additionally include the JEM plugins for the onContentChangeState event.
         PluginHelper::importPlugin('jem');
 
@@ -422,6 +426,10 @@ class JemModelEvent extends JemModelAdmin
             $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
         }
 
+        if (!$this->validateSpecialDayEventDates($data)) {
+            return false;
+        }
+
         // Load the event from the database, check if the event is the initial event (new, root, and not a recurrence).
         // In this case, the event only needs to be updated if the recurrence setting has not changed.
         $isInitialEvent = true;
@@ -773,6 +781,12 @@ class JemModelEvent extends JemModelAdmin
             foreach ($events as $event) {
                 $fieldsupdated = "";
 
+                if (!$this->validateSpecialDayEventDates($event)) {
+                    $saved = false;
+                    Factory::getApplication()->enqueueMessage($this->getError() . ' [ID:' . (int) ($event['id'] ?? 0) . ']', 'error');
+                    continue;
+                }
+
                 // save the event
                 $saved = parent::save($event);
 
@@ -936,6 +950,96 @@ class JemModelEvent extends JemModelAdmin
         $this->applyRecurringAssociatedArticleMode($eventId, $articleId, $eventData, $articleCategoryId);
         Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
         $this->setAssociatedArticleCreationState($articleId, $eventData);
+
+        return true;
+    }
+
+    /**
+     * Prevent event scheduling on configured blocking Special Days.
+     */
+    protected function validateSpecialDayEventDates(array $data)
+    {
+        if (array_key_exists('published', $data) && (int) $data['published'] !== 1) {
+            return true;
+        }
+
+        $start = trim((string) ($data['dates'] ?? ''));
+
+        if ($start === '' || $start === '0000-00-00') {
+            return true;
+        }
+
+        $end = trim((string) ($data['enddates'] ?? ''));
+        if ($end === '' || $end === '0000-00-00') {
+            $end = $start;
+        }
+
+        if ($end < $start) {
+            $end = $start;
+        }
+
+        $blockedDays = JemHelper::calendarBlockedSpecialDays($start, $end);
+
+        if (!$blockedDays) {
+            return true;
+        }
+
+        $messages = array();
+        foreach ($blockedDays as $date => $specialDays) {
+            $labels = array();
+            foreach ($specialDays as $specialDay) {
+                $labels[] = trim((string) ($specialDay['title'] ?: $specialDay['type']));
+            }
+            $labels = array_values(array_unique(array_filter($labels)));
+            $messages[] = $date . ($labels ? ' (' . implode(', ', $labels) . ')' : '');
+        }
+
+        $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_BLOCKED_SPECIAL_DAY', implode(', ', $messages)));
+
+        return false;
+    }
+
+    /**
+     * Prevent publishing existing events on configured blocking Special Days.
+     *
+     * @param   array  $pks  Event ids being published.
+     *
+     * @return  boolean
+     */
+    protected function validateSpecialDayPublishEvents($pks)
+    {
+        $pks = array_values(array_filter(array_map('intval', (array) $pks)));
+
+        if (!$pks) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'title', 'dates', 'enddates')))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $pks) . ')');
+
+        try {
+            $db->setQuery($query);
+            $events = $db->loadAssocList() ?: array();
+        } catch (RuntimeException $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        foreach ($events as $event) {
+            $event['published'] = 1;
+
+            if (!$this->validateSpecialDayEventDates($event)) {
+                $title = trim((string) ($event['title'] ?? ''));
+                $prefix = $title !== '' ? $title . ' [ID:' . (int) $event['id'] . ']: ' : '[ID:' . (int) $event['id'] . ']: ';
+                $this->setError($prefix . $this->getError());
+
+                return false;
+            }
+        }
 
         return true;
     }

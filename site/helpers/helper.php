@@ -710,6 +710,357 @@ class JemHelper
     }
 
     /**
+     * Returns the configured calendar special day types.
+     *
+     * @return  array
+     */
+    static public function calendarSpecialDayTypes()
+    {
+        static $types;
+
+        if (is_array($types)) {
+            return $types;
+        }
+
+        $default = "Weekend | #d1d5db | 0\nHoliday | #e5e7eb | 0\nVacation | #fef3c7 | 0\nExam | #dbeafe | 0\nSchool day | #dcfce7 | 0";
+        $raw = (string) self::globalattribs()->get('calendar_special_day_types', $default);
+        $types = array();
+
+        $priority = 0;
+
+        foreach (preg_split('/\R/u', $raw) as $line) {
+            $line = trim((string) $line);
+
+            if ($line === '') {
+                continue;
+            }
+
+            $parts = array_map('trim', explode('|', $line));
+            $name = $parts[0] ?? '';
+
+            if ($name === '') {
+                continue;
+            }
+
+            $color = $parts[1] ?? '#d1d5db';
+            if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+                $color = '#d1d5db';
+            }
+
+            $types[$name] = array(
+                'name' => $name,
+                'color' => strtolower($color),
+                'block_events' => !empty($parts[2]) && (int) $parts[2] === 1,
+                'priority' => $priority++,
+            );
+        }
+
+        if (!$types) {
+            $types['Weekend'] = array('name' => 'Weekend', 'color' => '#d1d5db', 'block_events' => false, 'priority' => 0);
+        }
+
+        return $types;
+    }
+
+    /**
+     * Returns calendar special days expanded by date for the requested period.
+     *
+     * @param   string  $startDate  Period start date, Y-m-d.
+     * @param   string  $endDate    Period end date, Y-m-d.
+     *
+     * @return  array
+     */
+    static public function calendarSpecialDays($startDate, $endDate)
+    {
+        if ((int) self::globalattribs()->get('calendar_special_days_enabled', 0) !== 1) {
+            return array();
+        }
+
+        try {
+            $periodStart = new DateTimeImmutable((string) $startDate);
+            $periodEnd = new DateTimeImmutable((string) $endDate);
+        } catch (Exception $e) {
+            return array();
+        }
+
+        if ($periodEnd < $periodStart) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $nullDate = $db->quote($db->getNullDate());
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array(
+                'id',
+                'title',
+                'day_type',
+                'start_date',
+                'end_date',
+                'weekdays',
+                'description',
+            )))
+            ->from($db->quoteName('#__jem_special_days'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->where('('
+                . '(' . $db->quoteName('weekdays') . ' IS NOT NULL AND ' . $db->quoteName('weekdays') . ' <> ' . $db->quote('') . ')'
+                . ' OR '
+                . '('
+                    . $db->quoteName('start_date') . ' IS NOT NULL'
+                    . ' AND ' . $db->quoteName('start_date') . ' <> ' . $nullDate
+                    . ' AND ' . $db->quoteName('start_date') . ' <= ' . $db->quote($periodEnd->format('Y-m-d'))
+                    . ' AND ('
+                        . $db->quoteName('end_date') . ' IS NULL'
+                        . ' OR ' . $db->quoteName('end_date') . ' = ' . $nullDate
+                        . ' OR ' . $db->quoteName('end_date') . ' >= ' . $db->quote($periodStart->format('Y-m-d'))
+                    . ')'
+                . ')'
+            . ')')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
+
+        try {
+            $db->setQuery($query);
+            $rows = $db->loadObjectList() ?: array();
+        } catch (RuntimeException $e) {
+            return array();
+        }
+
+        $types = self::calendarSpecialDayTypes();
+        $days = array();
+        $nullDateValue = $db->getNullDate();
+
+        $addDay = static function (array &$days, DateTimeImmutable $date, $row, array $type, $isDatedRule) {
+            $dateKey = $date->format('Y-m-d');
+            $days[$dateKey][] = array(
+                'id' => (int) $row->id,
+                'title' => (string) $row->title,
+                'type' => $type['name'],
+                'color' => $type['color'],
+                'block_events' => (bool) $type['block_events'],
+                'description' => (string) $row->description,
+                'is_dated_rule' => (bool) $isDatedRule,
+                'priority' => (int) ($type['priority'] ?? 999),
+            );
+        };
+
+        foreach ($rows as $row) {
+            $type = $types[$row->day_type] ?? array(
+                'name' => (string) $row->day_type,
+                'color' => '#d1d5db',
+                'block_events' => false,
+                'priority' => 999,
+            );
+
+            $rangeStart = $periodStart;
+            $rangeEnd = $periodEnd;
+            $isDatedRule = !empty($row->start_date) && $row->start_date !== $nullDateValue;
+            $rowStartDate = null;
+            $rowEndDate = null;
+
+            if ($isDatedRule) {
+                try {
+                    $rowStartDate = new DateTimeImmutable((string) $row->start_date);
+                    if ($rowStartDate > $rangeStart) {
+                        $rangeStart = $rowStartDate;
+                    }
+                } catch (Exception $e) {
+                    continue;
+                }
+            }
+
+            if (!empty($row->end_date) && $row->end_date !== $nullDateValue) {
+                try {
+                    $rowEndDate = new DateTimeImmutable((string) $row->end_date);
+                    if ($rowEndDate < $rangeEnd) {
+                        $rangeEnd = $rowEndDate;
+                    }
+                } catch (Exception $e) {
+                    continue;
+                }
+            } elseif (empty($row->weekdays) || ($isDatedRule && trim((string) $row->weekdays) === '0')) {
+                $rangeEnd = $rangeStart;
+            }
+
+            if ($rangeEnd < $rangeStart) {
+                continue;
+            }
+
+            $weekdays = array_filter(array_map('trim', explode(',', (string) $row->weekdays)), 'strlen');
+            $weekdays = array_map('intval', $weekdays);
+            $hasMultiDayDatedRange = $rowStartDate instanceof DateTimeImmutable
+                && $rowEndDate instanceof DateTimeImmutable
+                && $rowEndDate > $rowStartDate;
+            $ignoreDefaultWeekday = $isDatedRule && !$hasMultiDayDatedRange && trim((string) $row->weekdays) === '0';
+
+            for ($date = $rangeStart; $date <= $rangeEnd; $date = $date->modify('+1 day')) {
+                if (!$ignoreDefaultWeekday && $weekdays && !in_array((int) $date->format('w'), $weekdays, true)) {
+                    continue;
+                }
+
+                $addDay($days, $date, $row, $type, $isDatedRule);
+            }
+        }
+
+        foreach ($days as &$specialDays) {
+            usort($specialDays, static function ($a, $b) {
+                $priority = ((int) ($a['priority'] ?? 999)) <=> ((int) ($b['priority'] ?? 999));
+
+                if ($priority !== 0) {
+                    return $priority;
+                }
+
+                return (int) !empty($b['is_dated_rule']) <=> (int) !empty($a['is_dated_rule']);
+            });
+        }
+        unset($specialDays);
+
+        return $days;
+    }
+
+    /**
+     * Build the Types of Days legend items applied in a calendar period.
+     *
+     * @param   string  $startDate  Period start date, Y-m-d.
+     * @param   string  $endDate    Period end date, Y-m-d.
+     *
+     * @return  array
+     */
+    static public function calendarSpecialDayLegend($startDate, $endDate)
+    {
+        $legend = array();
+
+        foreach (self::calendarSpecialDays($startDate, $endDate) as $specialDays) {
+            foreach ($specialDays as $specialDay) {
+                $type = trim((string) ($specialDay['type'] ?? ''));
+
+                if ($type === '') {
+                    $type = trim((string) ($specialDay['title'] ?? ''));
+                }
+
+                if ($type === '') {
+                    continue;
+                }
+
+                $color = !empty($specialDay['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $specialDay['color'])
+                    ? strtolower((string) $specialDay['color'])
+                    : '#d1d5db';
+                $legendKey = strtolower($type);
+
+                if (!isset($legend[$legendKey])) {
+                    $legend[$legendKey] = array(
+                        'color' => $color,
+                        'type' => $type,
+                        'titles' => array(),
+                        'descriptions' => array(),
+                    );
+                }
+
+                $title = trim((string) ($specialDay['title'] ?? ''));
+                $description = trim((string) ($specialDay['description'] ?? ''));
+
+                if ($title !== '') {
+                    if (!in_array($title, $legend[$legendKey]['titles'], true)) {
+                        $legend[$legendKey]['titles'][] = $title;
+                    }
+                }
+
+                if ($description !== '') {
+                    if (!in_array($description, $legend[$legendKey]['descriptions'], true)) {
+                        $legend[$legendKey]['descriptions'][] = $description;
+                    }
+                }
+            }
+        }
+
+        foreach ($legend as &$legendItem) {
+            $legendItem['title'] = implode('; ', $legendItem['titles']);
+            $legendItem['description'] = implode('; ', $legendItem['descriptions']);
+            unset($legendItem['titles']);
+            unset($legendItem['descriptions']);
+        }
+        unset($legendItem);
+
+        return $legend;
+    }
+
+    /**
+     * Render the Types of Days legend for a calendar period.
+     *
+     * @param   string    $startDate  Period start date, Y-m-d.
+     * @param   string    $endDate    Period end date, Y-m-d.
+     * @param   Registry  $params     View parameters.
+     *
+     * @return  string
+     */
+    static public function renderCalendarSpecialDayLegend($startDate, $endDate, $params = null)
+    {
+        if ($params && method_exists($params, 'get') && (int) $params->get('show_types_of_days_legend', 1) !== 1) {
+            return '';
+        }
+
+        $legend = self::calendarSpecialDayLegend($startDate, $endDate);
+
+        if (!$legend) {
+            return '';
+        }
+
+        $html = array();
+        $html[] = '<div class="jem-annual-special-days-legend">';
+        $html[] = '<h2 class="jem-annual-special-days-heading">' . Text::_('COM_JEM_CALENDAR_TYPES_OF_DAYS_APPLIED') . '</h2>';
+        $html[] = '<div class="jem-annual-special-days-table-wrap">';
+        $html[] = '<table class="jem-annual-special-days-table">';
+        $html[] = '<thead><tr>'
+            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_COLOR') . '</th>'
+            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE') . '</th>'
+            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TITLE') . '</th>'
+            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION') . '</th>'
+            . '</tr></thead>';
+        $html[] = '<tbody>';
+
+        foreach ($legend as $legendItem) {
+            $color = htmlspecialchars($legendItem['color'], ENT_COMPAT, 'UTF-8');
+            $type = htmlspecialchars($legendItem['type'], ENT_COMPAT, 'UTF-8');
+            $title = htmlspecialchars($legendItem['title'], ENT_COMPAT, 'UTF-8');
+            $description = trim((string) $legendItem['description']);
+            $titleText = $title !== '' ? $title : '&nbsp;';
+            $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '&nbsp;';
+
+            $html[] = '<tr>'
+                . '<td class="jem-annual-special-days-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';" aria-hidden="true"></span><span class="visually-hidden">' . $color . '</span></td>'
+                . '<td class="jem-annual-special-days-type">' . $type . '</td>'
+                . '<td class="jem-annual-special-days-label">' . $titleText . '</td>'
+                . '<td class="jem-annual-special-days-description">' . $descriptionText . '</td>'
+                . '</tr>';
+        }
+
+        $html[] = '</tbody></table></div></div>';
+
+        return implode("\n", $html);
+    }
+
+    /**
+     * Returns special days that block event scheduling for the requested period.
+     *
+     * @param   string  $startDate  Period start date, Y-m-d.
+     * @param   string  $endDate    Period end date, Y-m-d.
+     *
+     * @return  array
+     */
+    static public function calendarBlockedSpecialDays($startDate, $endDate)
+    {
+        $blocked = array();
+
+        foreach (self::calendarSpecialDays($startDate, $endDate) as $date => $specialDays) {
+            foreach ($specialDays as $specialDay) {
+                if (!empty($specialDay['block_events'])) {
+                    $blocked[$date][] = $specialDay;
+                }
+            }
+        }
+
+        return $blocked;
+    }
+
+    /**
      * Retrieves the CSS-settings from database and stores in an static object
      */
     static public function retrieveCss()

@@ -80,6 +80,7 @@ static public function lightbox() {
      *                              slug: for '&id=', for Mail and iCal button,
      *                              task: e.g. 'archive', for Archive button,
      *                              print_link: for Print button
+     *                              today_link: for Today button
      *                              show, hide: to override button visibility; array of one or more of
      *                              'addEvent', 'addVenue', 'addUsers'
      *                              'archive' 'mail', 'print', 'ical', ('export', 'back',)
@@ -93,15 +94,15 @@ static public function lightbox() {
             ${$key} = isset($permissions->$key) ? $permissions->$key: null;
         }
         if (is_object($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = isset($params->$key) ? $params->$key : null;
             }
         } elseif (is_array($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = key_exists($key, $params) ? $params[$key] : null;
             }
         } else {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'today_link') as $key) {
                 ${$key} = null;
             }
         }
@@ -135,6 +136,9 @@ static public function lightbox() {
         }
         if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
             $buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
+        }
+        if (!empty($today_link) && !in_array('today', $btns_hide)) {
+            $buttons[$idx][] = JemOutput::todaybutton($today_link);
         }
         if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('annualcalendar', 'attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
             $buttons[$idx][] = JemOutput::printbutton($print_link, null);
@@ -633,6 +637,31 @@ static public function lightbox() {
             return $output;
         }
         return;
+    }
+
+    /**
+     * Creates the Today button.
+     *
+     * @param string $today_link
+     */
+    static public function todaybutton($today_link)
+    {
+        $app      = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
+
+        if (empty($today_link) || $app->input->get('print', '', 'int')) {
+            return;
+        }
+
+        if ($settings->get('global_show_icons', 1)) {
+            $image = jemhtml::icon('com_jem/el.webp', 'fa fa-fw fa-lg fa-calendar-day jem-todaybutton', Text::_('COM_JEM_TIMETABLE_TODAY'), null, !$app->isClient('site'));
+        } else {
+            $image = Text::_('COM_JEM_TIMETABLE_TODAY');
+        }
+
+        $text = Text::_('COM_JEM_TIMETABLE_TODAY');
+
+        return HTMLHelper::_('link', Route::_($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
     }
 
     /**

@@ -56,6 +56,9 @@ use Joomla\CMS\Factory;
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
     $displayLegend = (int)$this->params->get('displayLegend', 1);
+    $calendarStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
+    $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
+    $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -452,6 +455,7 @@ use Joomla\CMS\Factory;
             </div>
 
             <?php include __DIR__ . '/default_legend.php'; ?>
+            <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>
 
@@ -475,12 +479,13 @@ use Joomla\CMS\Factory;
             </div>
 
             <?php include __DIR__ . '/default_legend.php'; ?>
+            <?php echo $specialDaysLegendHtml; ?>
         </div>
     <?php endif; ?>
 
     <div class="clr"></div>
 
-        <?php if ($this->params->get('showfootertext')) : ?>
+    <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>

@@ -68,6 +68,7 @@ class JemRouter extends RouterView
             'mytimeline',
             'myvenues',
             'search',
+            'specialday',
             'venue',
             'venueslist',
             'venuesmap',
@@ -83,6 +84,8 @@ class JemRouter extends RouterView
             $viewConfig->setKey('id');
             $this->registerView($viewConfig);
         }
+
+        $this->registerView(new RouterViewConfiguration('specialdays'));
 
         parent::__construct($app, $menu);
 

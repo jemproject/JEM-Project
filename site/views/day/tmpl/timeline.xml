@@ -22,16 +22,25 @@
             <field name="timeline_days_to_show" type="number"
                 default="1"
                 min="1"
-                max="60"
+                max="30"
                 step="1"
                 class="inputbox form-control w-auto"
                 label="COM_JEM_TIMELINE_DAYS_TO_SHOW_LABEL"
                 description="COM_JEM_TIMELINE_DAYS_TO_SHOW_DESC"
             />
             <field name="timeline_show_empty_days" type="radio"
-                default="1"
+                default="0"
                 label="COM_JEM_TIMELINE_SHOW_EMPTY_DAYS_LABEL"
                 description="COM_JEM_TIMELINE_SHOW_EMPTY_DAYS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_week_navigation" type="radio"
+                default="1"
+                label="COM_JEM_TIMETABLE_SHOW_WEEK_NAVIGATION"
+                description="COM_JEM_TIMETABLE_SHOW_WEEK_NAVIGATION_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>

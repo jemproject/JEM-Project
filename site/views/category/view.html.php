@@ -165,6 +165,8 @@ class JemViewCategory extends JemView
             $this->settings      = $settings;
             $this->permissions   = $permissions;
             $this->cal           = $cal;
+            $this->calendarYear  = $year;
+            $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
             $this->print_link    = $print_link;

@@ -87,6 +87,18 @@ class JemHelperBackend
             $vName == 'attachments'
         );
 
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_TYPES'),
+            'index.php?option=com_jem&view=types',
+            $vName == 'types'
+        );
+
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_SPECIAL_DAYS'),
+            'index.php?option=com_jem&view=specialdays',
+            $vName == 'specialdays'
+        );
+
         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),
