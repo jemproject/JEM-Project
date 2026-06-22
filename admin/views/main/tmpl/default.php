@@ -164,7 +164,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                         $this->quickiconButton($link, 'icon-48-typesedit.svg', Text::_('COM_JEM_ADD_TYPE'));
 
                                         $link = 'index.php?option=com_jem&amp;view=specialdays';
-                                        $this->quickiconButton($link, 'icon-48-events.svg', Text::_('COM_JEM_SPECIAL_DAYS'));
+                                        $this->quickiconButton($link, 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'));
 
                                         $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
                                         $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
