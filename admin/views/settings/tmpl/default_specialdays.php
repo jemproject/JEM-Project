@@ -65,9 +65,7 @@ if (empty($rows)) {
 }
 ?>
 <div class="width-100" style="padding: 10px 1vw;">
-    <fieldset class="options-form">
-        <legend><?php echo Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS'); ?></legend>
-
+    <div class="jem-special-days-settings">
         <ul class="adminformlist">
             <li><div class="label-form"><?php echo $this->form->renderfield('calendar_special_days_enabled', $group); ?></div></li>
         </ul>
@@ -141,7 +139,7 @@ if (empty($rows)) {
                 <?php echo Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAY_TYPE_ADD'); ?>
             </button>
         </div>
-    </fieldset>
+    </div>
 </div>
 
 <style>
