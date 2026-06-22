@@ -6,16 +6,16 @@
             <path d="M14.678,14.972L14.678,52.972L46.678,83.972C47.848,85.142 49.758,85.142 50.928,83.972L83.678,51.222C84.848,50.052 84.848,48.142 83.678,46.972L52.678,14.972L14.678,14.972Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
             <circle cx="29.351" cy="29.461" r="5" style="fill:none;stroke:rgb(114,149,177);stroke-width:4px;stroke-linejoin:miter;"/>
             <g>
-                <path d="M42.82,43.274L68.82,69.274" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
-                <path d="M49.184,36.91L75.114,62.841" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
-                <path d="M55.548,30.546L81.548,56.546" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
-            </g>
-            <g>
-                <circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
-                <g transform="matrix(27,0,0,27,89.0077,91.1059)">
+                <g>
+                    <path d="M81.098,58.387L55.509,31.982" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                    <path d="M73.917,65.346L48.397,39.011" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
+                    <path d="M66.735,72.305L41.147,45.9" style="fill:none;stroke:rgb(249,159,0);stroke-width:5px;stroke-linecap:round;stroke-linejoin:miter;"/>
                 </g>
-                <text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
             </g>
+        </g>
+        <g>
+            <circle cx="81.166" cy="81.611" r="11.35" style="fill:none;stroke:rgb(0,185,0);stroke-width:4.5px;stroke-linecap:round;stroke-miterlimit:1.5;"/>
+            <text x="73.24px" y="91.106px" style="font-family:'Arial-BoldMT', 'Arial', sans-serif;font-weight:700;font-size:27px;fill:rgb(0,185,0);">+</text>
         </g>
     </g>
 </svg>
