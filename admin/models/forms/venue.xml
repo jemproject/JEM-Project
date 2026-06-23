@@ -50,7 +50,7 @@
         />
         <field name="locdescription" type="editor"
             filter="\Joomla\CMS\Component\ComponentHelper::filterText"
-            hide="pagebreak,readmore,image"
+            hide="pagebreak,image"
             class="inputbox"
             rows="3" cols="20"
             width="100%"
