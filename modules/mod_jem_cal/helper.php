@@ -168,7 +168,7 @@ abstract class ModJemCalHelper extends ModuleHelper
 
         foreach ($events as $index => $event) {
             $hasEventAccess = !isset($event->user_has_access_event) || (bool) $event->user_has_access_event;
-            $eventRoute     = $hasEventAccess ? Route::_(JemHelperRoute::getEventRoute($event->slug)) : Route::_('index.php?option=com_users&view=login');
+            $eventRoute     = $hasEventAccess ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params)) : Route::_('index.php?option=com_users&view=login');
 
             # Adding categories
             $nr      = is_array($event->categories) ? count($event->categories) : 0;
@@ -280,7 +280,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                             $link = $eventRoute;
                         } else {
                             # Create the link - copied from Route
-                            $evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
+                            $evlink = JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID, $params);
                             $link = Route::_($evlink);
                         }
                     } else {

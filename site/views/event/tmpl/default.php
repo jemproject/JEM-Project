@@ -95,6 +95,14 @@ if (in_array($layoutOverride, array('details', 'compact'), true)) {
     $eventLayout = $layoutOverride;
     $venueLayout = $layoutOverride;
 }
+$eventLayoutOverride = $app->input->getCmd('jem_event_layout', '');
+if (in_array($eventLayoutOverride, array('details', 'compact'), true)) {
+    $eventLayout = $eventLayoutOverride;
+}
+$venueLayoutOverride = $app->input->getCmd('jem_venue_layout', '');
+if (in_array($venueLayoutOverride, array('details', 'compact'), true)) {
+    $venueLayout = $venueLayoutOverride;
+}
 $layoutToggleTarget = ($eventLayout === 'compact' && $venueLayout === 'compact') ? 'details' : 'compact';
 $layoutToggleUri = clone $uri;
 $layoutToggleUri->setVar('jem_layout', $layoutToggleTarget);
@@ -110,7 +118,7 @@ $renderCompactReadmore = function ($url) {
 };
 $splitReadmoreText = function ($text) {
     $text = (string) $text;
-    $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*/?>#i';
+    $pattern = '~(?:<hr\s+id=("|\')system-readmore\1\s*/?>|&lt;hr\s+id=(?:&quot;|&#039;|"|\')system-readmore(?:&quot;|&#039;|"|\')\s*/?&gt;)~i';
     $parts = preg_split($pattern, $text, 2);
 
     return (object) array(
@@ -658,15 +666,19 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             $moreInformationText = Text::_($moreInformationText);
         }
         $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
+        $eventIntroHtml = trim((string) $this->item->introtext);
+        $eventFullHtml = trim((string) $this->item->fulltext);
         $eventCompactHasMore = $eventLayout === 'compact'
-            && $this->item->fulltext != ''
-            && $this->item->fulltext != '<br>';
+            && $eventFullHtml !== ''
+            && $eventFullHtml !== '<br>';
         $eventDescriptionHtml = '';
 
         if ($eventLayout === 'compact') {
-            $eventDescriptionHtml = trim((string) $this->item->introtext);
-        } elseif (!$params->get('event_show_intro') && $this->item->fulltext != null) {
-            $eventDescriptionHtml = $this->item->fulltext;
+            $eventDescriptionHtml = $eventIntroHtml;
+        } elseif ($eventFullHtml !== '' && $eventFullHtml !== '<br>') {
+            $eventDescriptionHtml = $params->get('event_show_intro')
+                ? trim($eventIntroHtml . $eventFullHtml)
+                : $eventFullHtml;
         } else {
             $eventDescriptionHtml = $this->item->text;
         }

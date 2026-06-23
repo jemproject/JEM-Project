@@ -108,6 +108,28 @@
                     <option value="1">MOD_JEM_DATE</option>
                     <option value="2">MOD_JEM_TITLE</option>
                 </field>
+                <field name="event_link_event_layout" type="list"
+                       default=""
+                       label="MOD_JEM_EVENT_LINK_EVENT_LAYOUT"
+                       description="MOD_JEM_EVENT_LINK_EVENT_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="linkdet:1,2"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+                <field name="event_link_venue_layout" type="list"
+                       default=""
+                       label="MOD_JEM_EVENT_LINK_VENUE_LAYOUT"
+                       description="MOD_JEM_EVENT_LINK_VENUE_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="linkdet:1,2"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
                 <field name="show_more_information" type="list"
                        default="1"
                        label="MOD_JEM_SHOW_MORE_INFORMATION"

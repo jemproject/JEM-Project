@@ -151,7 +151,7 @@ abstract class ModJemWideHelper
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
+            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JEMHelperRoute::getEventRoute($row->slug), $params)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->featured    = $row->featured;
             $lists[$i]->articlelink = '';

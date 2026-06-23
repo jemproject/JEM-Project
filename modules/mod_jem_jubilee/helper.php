@@ -230,7 +230,7 @@ abstract class ModJemJubileeHelper
             # check view access
             if ($hasEventAccess) {
                 # We know that user has the privilege to view the event
-                $lists[$i]->link = Route::_(JemHelperRoute::getEventRoute($row->slug));
+                $lists[$i]->link = Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params));
                 $lists[$i]->linkText = Text::_('MOD_JEM_JUBILEE_READMORE');
             } else {
                 $lists[$i]->link = Route::_('index.php?option=com_users&view=login');
@@ -254,7 +254,7 @@ abstract class ModJemJubileeHelper
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelperRoute::getEventRoute($row->slug)) : '';
+            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->articlelink = '';
             $lists[$i]->articletitle = '';
