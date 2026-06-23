@@ -2322,6 +2322,50 @@ class JemHelper
     }
 
     /**
+     * Adds optional event page layout parameters to an event route.
+     *
+     * @param   string    $route   Internal event route.
+     * @param   Registry  $params  Module parameters.
+     *
+     * @return  string
+     */
+    static public function applyEventRouteLayout($route, $params)
+    {
+        $eventLayout = (string) $params->get('event_link_event_layout', '');
+        $venueLayout = (string) $params->get('event_link_venue_layout', '');
+        $query = array();
+
+        if (in_array($eventLayout, array('details', 'compact'), true)) {
+            $query['jem_event_layout'] = $eventLayout;
+        }
+
+        if (in_array($venueLayout, array('details', 'compact'), true)) {
+            $query['jem_venue_layout'] = $venueLayout;
+        }
+
+        if (!$query) {
+            return $route;
+        }
+
+        $fragment = '';
+        $hashPos = strpos($route, '#');
+
+        if ($hashPos !== false) {
+            $fragment = substr($route, $hashPos);
+            $route = substr($route, 0, $hashPos);
+        }
+
+        $separator = strpos($route, '?') === false ? '?' : '&';
+
+        foreach ($query as $key => $value) {
+            $route .= $separator . rawurlencode($key) . '=' . rawurlencode($value);
+            $separator = '&';
+        }
+
+        return $route . $fragment;
+    }
+
+    /**
      * Creates a tooltip
      */
     static public function caltooltip($tooltip, $title = '', $text = '', $href = '', $class = '', $time = '', $color = '')

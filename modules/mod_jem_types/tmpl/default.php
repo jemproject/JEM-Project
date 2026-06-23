@@ -74,7 +74,7 @@ $mode = $params->get('display_mode', 'summary');
                     <ul class="mod-jem-types__events list-unstyled">
                         <?php foreach ($type->events as $event) : ?>
                             <li class="mod-jem-types__event">
-                                <a href="<?php echo htmlspecialchars(Route::_(JemHelperRoute::getEventRoute($event->slug)), ENT_QUOTES, 'UTF-8'); ?>">
+                                <a href="<?php echo htmlspecialchars(Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params)), ENT_QUOTES, 'UTF-8'); ?>">
                                     <?php echo htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8'); ?>
                                 </a>
                                 <small class="mod-jem-types__date text-muted ms-1">

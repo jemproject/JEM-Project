@@ -56,6 +56,28 @@
                     <option value="2">MOD_JEM_TYPES_MORE_INFORMATION_BUTTON</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="event_link_event_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TYPES_EVENT_LINK_EVENT_LAYOUT"
+                       description="MOD_JEM_TYPES_EVENT_LINK_EVENT_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="display_mode:topn"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+                <field name="event_link_venue_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TYPES_EVENT_LINK_VENUE_LAYOUT"
+                       description="MOD_JEM_TYPES_EVENT_LINK_VENUE_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="display_mode:topn"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
 
                 <field name="show_more_information_title" type="radio"
                     label="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_TITLE"
