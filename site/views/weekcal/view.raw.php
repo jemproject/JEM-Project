@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -28,6 +29,22 @@ class JemViewWeekcal extends HtmlView
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+        $layout = $jinput->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $rows = $this->get('Items');
+
+            JemPdfView::renderEventList(
+                Text::_('COM_JEM_WEEKCALENDAR') . ' ' . $year . ' / ' . str_pad((string) $week, 2, '0', STR_PAD_LEFT),
+                (array) $rows,
+                'jem-week-' . $year . str_pad((string) $week, 2, '0', STR_PAD_LEFT) . '.pdf'
+            );
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model

@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 /**
  * Raw: Venue
@@ -29,6 +30,23 @@ class JemViewVenue extends HtmlView
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
+        $layout = $jinput->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel('VenueCal');
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $venueid = $jinput->getInt('id');
+
+            JemPdfView::renderEventList(
+                Text::_('COM_JEM_VENUE') . ' ' . $venueid . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+                (array) $model->getItems(),
+                'jem-venue-' . $venueid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+            );
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model

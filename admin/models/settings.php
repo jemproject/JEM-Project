@@ -65,6 +65,10 @@ class JemModelSettings extends AdminModel
         $config = JemConfig::getInstance();
         $data = $config->toObject();
 
+        if (isset($data->pdf_enabled_views) && !is_array($data->pdf_enabled_views)) {
+            $data->pdf_enabled_views = array_filter(array_map('trim', explode(',', (string) $data->pdf_enabled_views)));
+        }
+
         return $data;
     }
 
@@ -174,6 +178,62 @@ class JemModelSettings extends AdminModel
         }
         if (empty($data['imagehight'])) {
             $data['imagehight'] = 100;
+        }
+        if (empty($data['pdf_imagewidth'])) {
+            $data['pdf_imagewidth'] = 40;
+        }
+        if (empty($data['pdf_imageheight'])) {
+            $data['pdf_imageheight'] = 40;
+        }
+        if (!empty($data['pdf_enabled_views']) && is_array($data['pdf_enabled_views'])) {
+            $data['pdf_enabled_views'] = implode(',', array_unique(array_filter(array_map('trim', $data['pdf_enabled_views']))));
+        }
+        if (empty($data['pdf_enabled_views'])) {
+            $data['pdf_enabled_views'] = 'event,annualcalendar';
+        }
+        $pdfDefaults = array(
+            'pdf_paper_size' => 'A4',
+            'pdf_orientation' => 'P',
+            'pdf_margin_profile' => 'medium',
+            'pdf_margin_top' => 14,
+            'pdf_margin_right' => 14,
+            'pdf_margin_bottom' => 14,
+            'pdf_margin_left' => 14,
+            'pdf_background_color' => '#ffffff',
+            'pdf_accent_color' => '#1d4ed8',
+            'pdf_base_font_size' => 8,
+            'pdf_heading_font_size' => 12,
+            'pdf_event_layout' => 'details',
+            'pdf_event_description_mode' => 'complete',
+            'pdf_venue_description_mode' => 'complete',
+            'pdf_event_imagewidth' => 40,
+            'pdf_event_imageheight' => 40,
+            'pdf_event_image_position' => 'right',
+            'pdf_venue_imagewidth' => 40,
+            'pdf_venue_imageheight' => 40,
+            'pdf_venue_image_position' => 'right',
+            'pdf_event_show_images' => 1,
+            'pdf_event_include_links' => 1,
+            'pdf_event_include_attachments' => 1,
+            'pdf_event_include_registration' => 1,
+            'pdf_event_include_contacts' => 1,
+            'pdf_event_include_online_meeting' => 1,
+            'pdf_event_venue_mode' => 'full',
+            'pdf_event_include_venue_map' => 'none',
+            'pdf_annual_paper_size' => 'A4',
+            'pdf_annual_orientation' => 'L',
+            'pdf_annual_show_day_types_legend' => 1,
+            'pdf_annual_show_categories_legend' => 1,
+            'pdf_annual_event_titles' => 'auto',
+            'pdf_annual_event_limit' => 6,
+            'pdf_annual_column_gap' => 1,
+            'pdf_annual_row_gap' => 1,
+        );
+
+        foreach ($pdfDefaults as $key => $value) {
+            if (!isset($data[$key]) || $data[$key] === '') {
+                $data[$key] = $value;
+            }
         }
 
         //

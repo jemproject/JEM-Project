@@ -1024,11 +1024,12 @@ class JemHelper
             $titleText = $title !== '' ? $title : '&nbsp;';
             $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '&nbsp;';
 
+            $textColor = self::getContrastTextColor($color) ?: '#111827';
+
             $html[] = '<tr>'
-                . '<td class="jem-annual-special-days-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';" aria-hidden="true"></span><span class="visually-hidden">' . $color . '</span></td>'
-                . '<td class="jem-annual-special-days-type">' . $type . '</td>'
-                . '<td class="jem-annual-special-days-label">' . $titleText . '</td>'
-                . '<td class="jem-annual-special-days-description">' . $descriptionText . '</td>'
+                . '<td class="jem-annual-special-days-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';">' . $type . '</span><span class="visually-hidden">' . $color . '</span></td>'
+                . '<td class="jem-annual-special-days-label"><strong>' . $titleText . '</strong></td>'
+                . '<td class="jem-annual-special-days-description" colspan="2">' . $descriptionText . '</td>'
                 . '</tr>';
         }
 

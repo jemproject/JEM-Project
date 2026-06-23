@@ -94,15 +94,15 @@ static public function lightbox() {
             ${$key} = isset($permissions->$key) ? $permissions->$key: null;
         }
         if (is_object($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'pdf_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = isset($params->$key) ? $params->$key : null;
             }
         } elseif (is_array($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'pdf_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = key_exists($key, $params) ? $params[$key] : null;
             }
         } else {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'today_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'pdf_link', 'today_link') as $key) {
                 ${$key} = null;
             }
         }
@@ -142,6 +142,13 @@ static public function lightbox() {
         }
         if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('annualcalendar', 'attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
             $buttons[$idx][] = JemOutput::printbutton($print_link, null);
+        }
+        if (empty($pdf_link) && JemOutput::isPdfViewEnabled($view)) {
+            $pdf_link = JemOutput::buildCurrentPdfLink();
+        }
+
+        if (!empty($pdf_link) && JemOutput::isPdfViewEnabled($view) && (in_array('pdf', $btns_show) || !in_array('pdf', $btns_hide))) {
+            $buttons[$idx][] = JemOutput::pdfbutton($pdf_link);
         }
         if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'annualcalendar', 'venue', 'venue-cal', 'weekcal', 'category', 'category-cal')))) {
             $buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view, $task); // slug: for '&id='
@@ -337,6 +344,37 @@ static public function lightbox() {
         $html .= '</div>';
 
         return $html;
+    }
+
+    /**
+     * Returns true when the current view is enabled for PDF output.
+     *
+     * @param   string  $view  View name.
+     *
+     * @return  boolean
+     */
+    static protected function isPdfViewEnabled($view)
+    {
+        $settings = JemHelper::config();
+        $enabled = isset($settings->pdf_enabled_views) ? (string) $settings->pdf_enabled_views : 'event,annualcalendar';
+        $views = array_filter(array_map('trim', explode(',', $enabled)));
+
+        return in_array((string) $view, $views, true);
+    }
+
+    /**
+     * Builds a PDF link from the current request.
+     */
+    static protected function buildCurrentPdfLink()
+    {
+        $uri = Uri::getInstance();
+        $query = $uri->getQuery(true);
+        $query['format'] = 'raw';
+        $query['layout'] = 'pdf';
+        unset($query['print'], $query['tmpl']);
+        $uri->setQuery($query);
+
+        return $uri->toString(array('path', 'query'));
     }
 
     /**
@@ -637,6 +675,35 @@ static public function lightbox() {
             return $output;
         }
         return;
+    }
+
+    /**
+     * Creates the PDF download button.
+     *
+     * @param string $pdf_link
+     */
+    static public function pdfbutton($pdf_link)
+    {
+        $app      = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
+
+        if (empty($pdf_link) || $app->input->get('print', '', 'int')) {
+            return;
+        }
+
+        if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
+            return;
+        }
+
+        if ($settings->get('global_show_icons', 1)) {
+            $image = '<i class="fa fa-fw fa-lg fa-file-pdf jem-pdfbutton" aria-hidden="true"></i><span class="visually-hidden">'
+                . Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF')
+                . '</span>';
+        } else {
+            $image = Text::_('COM_JEM_ANNUALCALENDAR_PDF');
+        }
+
+        return HTMLHelper::_('link', Route::_($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
     }
 
     /**
