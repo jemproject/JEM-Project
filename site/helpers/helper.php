@@ -722,7 +722,7 @@ class JemHelper
             return $types;
         }
 
-        $default = "Weekend | #d1d5db | 0\nHoliday | #e5e7eb | 0\nVacation | #fef3c7 | 0\nExam | #dbeafe | 0\nSchool day | #dcfce7 | 0";
+        $default = "Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0";
         $raw = (string) self::globalattribs()->get('calendar_special_day_types', $default);
         $types = array();
 

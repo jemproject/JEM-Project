@@ -61,7 +61,7 @@ ALTER TABLE `#__jem_attachments` CHANGE `added` `created` DATETIME NULL DEFAULT 
 ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0;
 
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.calendar_special_days_enabled') IS NULL;
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_day_types', 'Weekend | #d1d5db | 0\nHoliday | #e5e7eb | 0\nVacation | #fef3c7 | 0\nExam | #dbeafe | 0\nSchool day | #dcfce7 | 0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.calendar_special_day_types') IS NULL;
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_day_types', 'Weekend | #d1d5db | 0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.calendar_special_day_types') IS NULL;
 -- update values
 UPDATE `#__jem_events` SET `contactid` = '' WHERE `contactid` = 0 OR `contactid` IS NULL;
 UPDATE `#__menu` SET `params` = REPLACE(`params`, '"tablefiltereventuntil":"0"', '"tablefiltereventuntil":""') WHERE `link` LIKE '%com_jem&view=eventslist%' AND `params` LIKE '%"tablefiltereventuntil":"0"%';
