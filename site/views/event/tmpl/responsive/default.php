@@ -101,6 +101,23 @@ $layoutToggleUri->setVar('jem_layout', $layoutToggleTarget);
 $layoutToggleUrl = Route::_($layoutToggleUri->toString());
 $layoutToggleText = $layoutToggleTarget === 'details' ? Text::_('COM_JEM_SHOW_FULL_VIEW') : Text::_('COM_JEM_SHOW_COMPACT_VIEW');
 $layoutToggleIcon = $layoutToggleTarget === 'details' ? 'fa-expand' : 'fa-compress';
+$detailsLayoutUri = clone $uri;
+$detailsLayoutUri->setVar('jem_layout', 'details');
+$detailsLayoutUrl = Route::_($detailsLayoutUri->toString());
+$renderCompactReadmore = function ($url) {
+    return '<p class="readmore"><a href="' . $this->escape($url) . '">'
+        . Text::_('COM_JEM_EVENT_READ_MORE_TITLE') . '</a></p>';
+};
+$splitReadmoreText = function ($text) {
+    $text = (string) $text;
+    $pattern = '#<hr\s+id=("|\')system-readmore("|\')\s*/?>#i';
+    $parts = preg_split($pattern, $text, 2);
+
+    return (object) array(
+        'intro' => trim($parts[0] ?? ''),
+        'full'  => trim($parts[1] ?? ''),
+    );
+};
 $eventCustomFieldsRows = JemCustomFields::renderDetailRows('event', $this->item, 'COM_JEM_EVENT_CUSTOM_FIELD', 'jem-custom', true);
 $renderEventCustomFieldsBlock = function () use ($eventCustomFieldsRows) {
     if ($eventCustomFieldsRows === '') {
@@ -568,7 +585,22 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             $moreInformationText = Text::_($moreInformationText);
         }
         $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
-        $showEventDescription = $eventLayout !== 'compact' && $params->get('event_show_description','1') && $hasDescription;
+        $eventCompactHasMore = $eventLayout === 'compact'
+            && $this->item->fulltext != ''
+            && $this->item->fulltext != '<br>';
+        $eventDescriptionHtml = '';
+
+        if ($eventLayout === 'compact') {
+            $eventDescriptionHtml = trim((string) $this->item->introtext);
+        } elseif (!$params->get('event_show_intro') && $this->item->fulltext != null) {
+            $eventDescriptionHtml = $this->item->fulltext;
+        } else {
+            $eventDescriptionHtml = $this->item->text;
+        }
+
+        $showEventDescription = $params->get('event_show_description','1')
+            && ($eventDescriptionHtml !== '' && $eventDescriptionHtml !== '<br>' || $eventCompactHasMore)
+            && $hasDescription;
         ?>
         <?php if ($showEventDescription || $showOnlineMeeting || !empty($this->event_links)) { ?>
             <?php if ($showEventDescription) : ?>
@@ -579,10 +611,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php
                 if ($params->get('access-view')) {
                     if ($showEventDescription) {
-                        if (!$params->get('event_show_intro') && $this->item->fulltext != null) {
-                            echo $this->item->fulltext;
-                        } else {
-                            echo $this->item->text;
+                        if ($eventDescriptionHtml !== '' && $eventDescriptionHtml !== '<br>') {
+                            echo $eventDescriptionHtml;
+                        }
+
+                        if ($eventLayout === 'compact' && $eventCompactHasMore) {
+                            echo $renderCompactReadmore($detailsLayoutUrl);
                         }
                     }
 
@@ -1144,11 +1178,25 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php echo $renderEventVenueCustomFieldsBlock(); ?>
                     <?php endif; ?>
 
-                <?php if ($venueLayout !== 'compact' && $params->get('event_show_locdescription', '1') && $this->item->locdescription != ''
-                    && $this->item->locdescription != '<br>') : ?>
+                <?php
+                $venueDescriptionParts = $splitReadmoreText($this->item->locdescription);
+                $venueDescriptionHtml = $venueLayout === 'compact'
+                    ? $venueDescriptionParts->intro
+                    : trim($venueDescriptionParts->intro . $venueDescriptionParts->full);
+                $venueCompactHasMore = $venueLayout === 'compact'
+                    && $venueDescriptionParts->full !== ''
+                    && $venueDescriptionParts->full !== '<br>';
+                ?>
+                <?php if ($params->get('event_show_locdescription', '1') && ($venueDescriptionHtml !== ''
+                    && $venueDescriptionHtml !== '<br>' || $venueCompactHasMore)) : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
                     <div class="description location_desc" itemprop="description">
-                        <?php echo $this->item->locdescription; ?>
+                        <?php echo $venueDescriptionHtml; ?>
+                        <?php
+                        if ($venueCompactHasMore) {
+                            echo $renderCompactReadmore($detailsLayoutUrl);
+                        }
+                        ?>
                     </div>
                 <?php endif; ?>
 
