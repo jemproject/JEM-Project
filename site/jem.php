@@ -28,6 +28,8 @@ require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/pdf.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/pdfview.class.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
@@ -58,4 +60,3 @@ JemHelper::loadFrontendUserCss();
 $controller->redirect();
 HTMLHelper::_('bootstrap.framework');
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
-

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -28,6 +29,22 @@ class JemViewCalendar extends HtmlView
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
+        $layout = $jinput->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+
+            JemPdfView::renderEventList(
+                Text::_('COM_JEM_CALENDAR') . ' ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+                (array) $model->getItems(),
+                'jem-calendar-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+            );
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model

@@ -504,6 +504,426 @@
             maxlength="10"
             required="false"
         />
+        <field name="pdf_imagewidth" type="number"
+            label="COM_JEM_PDF_IMAGE_WIDTH"
+            description="COM_JEM_PDF_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_imageheight" type="number"
+            label="COM_JEM_PDF_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_paper_size" type="list"
+            label="COM_JEM_PDF_PAPER_SIZE"
+            description="COM_JEM_PDF_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_enabled_views" type="list"
+            label="COM_JEM_PDF_ENABLED_VIEWS"
+            description="COM_JEM_PDF_ENABLED_VIEWS_DESC"
+            class="inputbox form-select"
+            default="event,annualcalendar"
+            multiple="true"
+            required="false"
+        >
+            <option value="event">COM_JEM_EVENT</option>
+            <option value="annualcalendar">COM_JEM_ANNUALCALENDAR_VIEW_DEFAULT_TITLE</option>
+            <option value="calendar">COM_JEM_CALENDAR</option>
+            <option value="weekcal">COM_JEM_WEEKCALENDAR</option>
+            <option value="day">COM_JEM_DAY_VIEW</option>
+            <option value="category">COM_JEM_CATEGORY</option>
+            <option value="venue">COM_JEM_VENUE</option>
+            <option value="eventslist">COM_JEM_EVENTS</option>
+            <option value="venueslist">COM_JEM_VENUES</option>
+            <option value="categories">COM_JEM_CATEGORIES</option>
+            <option value="typeevents">COM_JEM_TYPES</option>
+            <option value="typevenues">COM_JEM_TYPES</option>
+            <option value="specialdays">COM_JEM_SPECIAL_DAYS</option>
+            <option value="eventsmap">COM_JEM_EVENTS_MAP</option>
+            <option value="venuesmap">COM_JEM_VENUES_MAP</option>
+            <option value="myattendances">COM_JEM_MY_ATTENDANCES</option>
+        </field>
+        <field name="pdf_orientation" type="list"
+            label="COM_JEM_PDF_ORIENTATION"
+            description="COM_JEM_PDF_ORIENTATION_DESC"
+            class="inputbox"
+            default="P"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_margin_profile" type="list"
+            label="COM_JEM_PDF_MARGIN_PROFILE"
+            description="COM_JEM_PDF_MARGIN_PROFILE_DESC"
+            class="inputbox"
+            default="medium"
+            required="false"
+        >
+            <option value="none">COM_JEM_PDF_MARGIN_NONE</option>
+            <option value="small">COM_JEM_PDF_MARGIN_SMALL</option>
+            <option value="medium">COM_JEM_PDF_MARGIN_MEDIUM</option>
+            <option value="large">COM_JEM_PDF_MARGIN_LARGE</option>
+            <option value="custom">COM_JEM_PDF_MARGIN_CUSTOM</option>
+        </field>
+        <field name="pdf_margin_top" type="number"
+            label="COM_JEM_PDF_MARGIN_TOP"
+            description="COM_JEM_PDF_MARGIN_TOP_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_margin_right" type="number"
+            label="COM_JEM_PDF_MARGIN_RIGHT"
+            description="COM_JEM_PDF_MARGIN_RIGHT_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_margin_bottom" type="number"
+            label="COM_JEM_PDF_MARGIN_BOTTOM"
+            description="COM_JEM_PDF_MARGIN_BOTTOM_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_margin_left" type="number"
+            label="COM_JEM_PDF_MARGIN_LEFT"
+            description="COM_JEM_PDF_MARGIN_LEFT_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_background_color" type="text"
+            label="COM_JEM_PDF_BACKGROUND_COLOR"
+            description="COM_JEM_PDF_BACKGROUND_COLOR_DESC"
+            class="inputbox"
+            default="#ffffff"
+            size="10"
+            maxlength="7"
+            required="false"
+        />
+        <field name="pdf_accent_color" type="text"
+            label="COM_JEM_PDF_ACCENT_COLOR"
+            description="COM_JEM_PDF_ACCENT_COLOR_DESC"
+            class="inputbox"
+            default="#1d4ed8"
+            size="10"
+            maxlength="7"
+            required="false"
+        />
+        <field name="pdf_base_font_size" type="number"
+            label="COM_JEM_PDF_BASE_FONT_SIZE"
+            description="COM_JEM_PDF_BASE_FONT_SIZE_DESC"
+            class="inputbox"
+            default="8"
+            min="6"
+            max="16"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_heading_font_size" type="number"
+            label="COM_JEM_PDF_HEADING_FONT_SIZE"
+            description="COM_JEM_PDF_HEADING_FONT_SIZE_DESC"
+            class="inputbox"
+            default="12"
+            min="8"
+            max="24"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_event_layout" type="list"
+            label="COM_JEM_PDF_EVENT_LAYOUT"
+            description="COM_JEM_PDF_EVENT_LAYOUT_DESC"
+            class="inputbox"
+            default="details"
+            required="false"
+        >
+            <option value="details">COM_JEM_PDF_LAYOUT_DETAILS</option>
+            <option value="compact">COM_JEM_PDF_LAYOUT_COMPACT</option>
+        </field>
+        <field name="pdf_event_description_mode" type="list"
+            label="COM_JEM_PDF_EVENT_DESCRIPTION_MODE"
+            description="COM_JEM_PDF_EVENT_DESCRIPTION_MODE_DESC"
+            class="inputbox"
+            default="complete"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="intro">COM_JEM_PDF_DESCRIPTION_INTRO</option>
+            <option value="full">COM_JEM_PDF_DESCRIPTION_FULL</option>
+            <option value="complete">COM_JEM_PDF_DESCRIPTION_COMPLETE</option>
+        </field>
+        <field name="pdf_venue_description_mode" type="list"
+            label="COM_JEM_PDF_VENUE_DESCRIPTION_MODE"
+            description="COM_JEM_PDF_VENUE_DESCRIPTION_MODE_DESC"
+            class="inputbox"
+            default="complete"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="intro">COM_JEM_PDF_DESCRIPTION_INTRO</option>
+            <option value="full">COM_JEM_PDF_DESCRIPTION_FULL</option>
+            <option value="complete">COM_JEM_PDF_DESCRIPTION_COMPLETE</option>
+        </field>
+        <field name="pdf_event_imagewidth" type="number"
+            label="COM_JEM_PDF_EVENT_IMAGE_WIDTH"
+            description="COM_JEM_PDF_EVENT_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_event_imageheight" type="number"
+            label="COM_JEM_PDF_EVENT_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_EVENT_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_event_image_position" type="list"
+            label="COM_JEM_PDF_EVENT_IMAGE_POSITION"
+            description="COM_JEM_PDF_EVENT_IMAGE_POSITION_DESC"
+            class="inputbox"
+            default="right"
+            required="false"
+        >
+            <option value="right">COM_JEM_PDF_IMAGE_POSITION_RIGHT</option>
+            <option value="left">COM_JEM_PDF_IMAGE_POSITION_LEFT</option>
+            <option value="top">COM_JEM_PDF_IMAGE_POSITION_TOP</option>
+        </field>
+        <field name="pdf_venue_imagewidth" type="number"
+            label="COM_JEM_PDF_VENUE_IMAGE_WIDTH"
+            description="COM_JEM_PDF_VENUE_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_venue_imageheight" type="number"
+            label="COM_JEM_PDF_VENUE_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_VENUE_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_venue_image_position" type="list"
+            label="COM_JEM_PDF_VENUE_IMAGE_POSITION"
+            description="COM_JEM_PDF_VENUE_IMAGE_POSITION_DESC"
+            class="inputbox"
+            default="right"
+            required="false"
+        >
+            <option value="right">COM_JEM_PDF_IMAGE_POSITION_RIGHT</option>
+            <option value="left">COM_JEM_PDF_IMAGE_POSITION_LEFT</option>
+            <option value="top">COM_JEM_PDF_IMAGE_POSITION_TOP</option>
+        </field>
+        <field name="pdf_event_show_images" type="radio"
+            label="COM_JEM_PDF_SHOW_IMAGES"
+            description="COM_JEM_PDF_SHOW_IMAGES_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_links" type="radio"
+            label="COM_JEM_PDF_INCLUDE_LINKS"
+            description="COM_JEM_PDF_INCLUDE_LINKS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_attachments" type="radio"
+            label="COM_JEM_PDF_INCLUDE_ATTACHMENTS"
+            description="COM_JEM_PDF_INCLUDE_ATTACHMENTS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_registration" type="radio"
+            label="COM_JEM_PDF_INCLUDE_REGISTRATION"
+            description="COM_JEM_PDF_INCLUDE_REGISTRATION_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_contacts" type="radio"
+            label="COM_JEM_PDF_INCLUDE_CONTACTS"
+            description="COM_JEM_PDF_INCLUDE_CONTACTS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_online_meeting" type="radio"
+            label="COM_JEM_PDF_INCLUDE_ONLINE_MEETING"
+            description="COM_JEM_PDF_INCLUDE_ONLINE_MEETING_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_venue_mode" type="list"
+            label="COM_JEM_PDF_VENUE_MODE"
+            description="COM_JEM_PDF_VENUE_MODE_DESC"
+            class="inputbox"
+            default="full"
+            required="false"
+        >
+            <option value="full">COM_JEM_PDF_VENUE_MODE_FULL</option>
+            <option value="summary">COM_JEM_PDF_VENUE_MODE_SUMMARY</option>
+            <option value="none">COM_JEM_PDF_VENUE_MODE_NONE</option>
+        </field>
+        <field name="pdf_event_include_venue_map" type="list"
+            label="COM_JEM_PDF_INCLUDE_VENUE_MAP"
+            description="COM_JEM_PDF_INCLUDE_VENUE_MAP_DESC"
+            class="inputbox"
+            default="none"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="link">COM_JEM_PDF_MAP_LINK_ONLY</option>
+        </field>
+        <field name="pdf_annual_paper_size" type="list"
+            label="COM_JEM_PDF_ANNUAL_PAPER_SIZE"
+            description="COM_JEM_PDF_ANNUAL_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_annual_orientation" type="list"
+            label="COM_JEM_PDF_ANNUAL_ORIENTATION"
+            description="COM_JEM_PDF_ANNUAL_ORIENTATION_DESC"
+            class="inputbox"
+            default="L"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_annual_show_day_types_legend" type="radio"
+            label="COM_JEM_PDF_ANNUAL_SHOW_DAY_TYPES_LEGEND"
+            description="COM_JEM_PDF_ANNUAL_SHOW_DAY_TYPES_LEGEND_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_show_categories_legend" type="radio"
+            label="COM_JEM_PDF_ANNUAL_SHOW_CATEGORIES_LEGEND"
+            description="COM_JEM_PDF_ANNUAL_SHOW_CATEGORIES_LEGEND_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_event_titles" type="list"
+            label="COM_JEM_PDF_ANNUAL_EVENT_TITLES"
+            description="COM_JEM_PDF_ANNUAL_EVENT_TITLES_DESC"
+            class="inputbox"
+            default="auto"
+            required="false"
+        >
+            <option value="auto">COM_JEM_PDF_AUTO</option>
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_event_limit" type="number"
+            label="COM_JEM_PDF_ANNUAL_EVENT_LIMIT"
+            description="COM_JEM_PDF_ANNUAL_EVENT_LIMIT_DESC"
+            class="inputbox"
+            default="6"
+            min="1"
+            max="12"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_annual_column_gap" type="number"
+            label="COM_JEM_PDF_ANNUAL_COLUMN_GAP"
+            description="COM_JEM_PDF_ANNUAL_COLUMN_GAP_DESC"
+            class="inputbox"
+            default="1"
+            min="0"
+            max="10"
+            step="0.5"
+            required="false"
+        />
+        <field name="pdf_annual_row_gap" type="number"
+            label="COM_JEM_PDF_ANNUAL_ROW_GAP"
+            description="COM_JEM_PDF_ANNUAL_ROW_GAP_DESC"
+            class="inputbox"
+            default="1"
+            min="0"
+            max="10"
+            step="0.5"
+            required="false"
+        />
         <field name="gddisabled" type="radio"
             label="COM_JEM_GD_LIBRARY"
             description="COM_JEM_GD_LIBRARY_DESC"

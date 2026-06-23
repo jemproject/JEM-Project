@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -31,6 +32,25 @@ class JemViewCategory extends HtmlView
         $catid = (int)$jinput->getInt('id', 0);
         if (empty($catid)) {
             $catid = (int)$app->getParams()->get('id', 0);
+        }
+        $layout = $jinput->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel('CategoryCal');
+            $model->setId($catid);
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $category = $model->getCategories($catid);
+            $categoryName = !empty($category[0]->catname) ? (string) $category[0]->catname : Text::_('COM_JEM_CATEGORY');
+
+            JemPdfView::renderEventList(
+                $categoryName . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+                (array) $model->getItems(),
+                'jem-category-' . $catid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+            );
+
+            return;
         }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {

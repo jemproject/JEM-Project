@@ -472,17 +472,17 @@ function registraoff()
                     <div class="clr"></div>
 
 
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'custom-fields', Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS')); ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
                         <fieldset class="adminform">
-                            <?php echo $this->loadTemplate('customfields'); ?>
+                           <?php echo $this->loadTemplate('usercontrol'); ?>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
 
 
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'custom-fields', Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS')); ?>
                         <fieldset class="adminform">
-                           <?php echo $this->loadTemplate('usercontrol'); ?>
+                            <?php echo $this->loadTemplate('customfields'); ?>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
@@ -499,6 +499,14 @@ function registraoff()
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'calendar-special-days', Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS')); ?>
                         <fieldset class="adminform">
                             <?php echo $this->loadTemplate('specialdays'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'pdf-settings', Text::_('COM_JEM_PDF_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('pdf'); ?>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>

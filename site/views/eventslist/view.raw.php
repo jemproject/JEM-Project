@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -22,6 +24,19 @@ class JemViewEventslist extends HtmlView
     {
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
+        $app = Factory::getApplication();
+        $layout = $app->input->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $rows = $model->getItems();
+
+            JemPdfView::renderEventList(Text::_('COM_JEM_EVENTS'), (array) $rows, 'jem-events.pdf');
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model

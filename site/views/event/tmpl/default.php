@@ -421,7 +421,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
         <div class="buttons jem-event-toolbar">
             <?php
-            $btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link);
+            $btn_params = array('slug' => $this->item->slug, 'print_link' => $this->print_link, 'pdf_link' => $this->pdf_link);
             echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
             ?>
             <a class="jem-layout-toggle" href="<?php echo $this->escape($layoutToggleUrl); ?>" title="<?php echo $this->escape($layoutToggleText); ?>" aria-label="<?php echo $this->escape($layoutToggleText); ?>" data-jem-layout-target="<?php echo $this->escape($layoutToggleTarget); ?>">
