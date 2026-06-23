@@ -4,11 +4,11 @@
     <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
         <g id="Special-Days" serif:id="Special Days">
             <path d="M67.311,10.02L67.311,17.721M28.617,10.02L28.617,17.721M76.232,19.971C77.576,19.971 78.865,20.498 79.815,21.435C80.766,22.373 81.3,23.645 81.3,24.971C81.3,37.201 81.3,68.519 81.3,80.75C81.3,82.076 80.766,83.348 79.815,84.286C78.865,85.223 77.576,85.75 76.232,85.75C63.843,85.75 32.136,85.75 19.747,85.75C18.403,85.75 17.114,85.223 16.163,84.286C15.212,83.348 14.678,82.076 14.678,80.75C14.678,68.519 14.678,37.201 14.678,24.971C14.678,23.645 15.212,22.373 16.163,21.435C17.114,20.498 18.403,19.971 19.747,19.971C32.136,19.971 63.843,19.971 76.232,19.971ZM16.55,40.29L78.813,40.29" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.53px;stroke-linecap:square;stroke-miterlimit:100;"/>
-            <rect x="25.5" y="49.5" width="11.5" height="11.5" rx="2" style="fill:rgb(209,213,219);stroke:rgb(114,149,177);stroke-width:3px;"/>
-            <rect x="42.25" y="49.5" width="11.5" height="11.5" rx="2" style="fill:rgb(254,243,199);stroke:rgb(246,157,0);stroke-width:3px;"/>
-            <rect x="59" y="49.5" width="11.5" height="11.5" rx="2" style="fill:rgb(220,252,231);stroke:rgb(114,149,177);stroke-width:3px;"/>
+            <rect x="25.5" y="49.5" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(0,185,0);stroke-width:3px;"/>
+            <rect x="42.25" y="49.5" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(246,157,0);stroke-width:3px;"/>
+            <rect x="59" y="49.5" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(114,149,177);stroke-width:3px;"/>
             <rect x="25.5" y="66" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(114,149,177);stroke-width:3px;"/>
-            <rect x="42.25" y="66" width="11.5" height="11.5" rx="2" style="fill:rgb(219,234,254);stroke:rgb(114,149,177);stroke-width:3px;"/>
+            <rect x="42.25" y="66" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(114,149,177);stroke-width:3px;"/>
             <rect x="59" y="66" width="11.5" height="11.5" rx="2" style="fill:none;stroke:rgb(225,0,26);stroke-width:3px;"/>
             <path d="M61.75,74.75L67.75,68.75" style="fill:none;stroke:rgb(225,0,26);stroke-width:3px;"/>
             <path d="M28.428,30.29L36.428,30.29M44.428,30.29L52.428,30.29M60.428,30.29L68.428,30.29" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;"/>
