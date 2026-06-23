@@ -15,7 +15,7 @@ $deleteText = htmlspecialchars(Text::_('JACTION_DELETE'), ENT_QUOTES, 'UTF-8');
 $yesText = htmlspecialchars(Text::_('JYES'), ENT_QUOTES, 'UTF-8');
 $noText = htmlspecialchars(Text::_('JNO'), ENT_QUOTES, 'UTF-8');
 $removeUsedText = htmlspecialchars(Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAY_TYPE_REMOVE_USED_CONFIRM'), ENT_QUOTES, 'UTF-8');
-$rawTypes = (string) $this->settings->get('calendar_special_day_types', "Weekend | #d1d5db | 0\nHoliday | #e5e7eb | 0\nVacation | #fef3c7 | 0\nExam | #dbeafe | 0\nSchool day | #dcfce7 | 0");
+$rawTypes = (string) $this->settings->get('calendar_special_day_types', "Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0");
 $rows = array();
 $usedDayTypes = array();
 

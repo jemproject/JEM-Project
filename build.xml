@@ -138,6 +138,9 @@
         <available file="${cfg.validateDir}/component/site/jem.php" property="validate.component.site" />
         <fail unless="validate.component.site" message="Component site entry point site/jem.php is missing inside ${cfg.comName}.zip." />
 
+        <available file="${cfg.validateDir}/component/site/classes/icalcreator/autoload.php" property="validate.component.icalcreator.autoload" />
+        <fail unless="validate.component.icalcreator.autoload" message="iCalcreator autoload.php is missing inside ${cfg.comName}.zip." />
+
         <available file="${cfg.validateDir}/component/media/index.html" property="validate.component.media" />
         <fail unless="validate.component.media" message="Component media folder is missing inside ${cfg.comName}.zip." />
 

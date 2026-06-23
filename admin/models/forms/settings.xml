@@ -908,7 +908,7 @@
             </field>
             <field name="calendar_special_day_types" type="hidden"
                 filter="raw"
-                default="Weekend | #d1d5db | 0&#10;Holiday | #e5e7eb | 0&#10;Vacation | #fef3c7 | 0&#10;Exam | #dbeafe | 0&#10;School day | #dcfce7 | 0"
+                default="Weekend | #d1d5db | 0&#10;Public holiday | #e5e7eb | 0"
             />
         </fieldset>
 
