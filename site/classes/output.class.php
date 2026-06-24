@@ -356,10 +356,19 @@ static public function lightbox() {
     static protected function isPdfViewEnabled($view)
     {
         $settings = JemHelper::config();
-        $enabled = isset($settings->pdf_enabled_views) ? (string) $settings->pdf_enabled_views : 'event,annualcalendar';
+        $enabled = isset($settings->pdf_enabled_views) ? (string) $settings->pdf_enabled_views : self::getDefaultPdfViews();
         $views = array_filter(array_map('trim', explode(',', $enabled)));
+        $view = (string) $view;
 
-        return in_array((string) $view, $views, true);
+        return in_array($view, $views, true) && is_file(JPATH_COMPONENT_SITE . '/views/' . $view . '/view.raw.php');
+    }
+
+    /**
+     * Returns the frontend views with implemented PDF output.
+     */
+    static protected function getDefaultPdfViews()
+    {
+        return 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
     }
 
     /**
@@ -1383,11 +1392,11 @@ static public function lightbox() {
         }
 
         if (!empty($event->type_color) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $event->type_color)) {
-            $style = ' style="background-color:' . htmlspecialchars($event->type_color, ENT_QUOTES, 'UTF-8') . ';"';
+            $style = ' style="background-color:' . htmlspecialchars($event->type_color, ENT_QUOTES, 'UTF-8') . '; color:' . self::contrastingTextColor((string) $event->type_color) . ';"';
         }
 
         $inner = '';
-        if (!empty($event->type_icon)) {
+        if (!empty($event->type_icon) && self::isValidIconClass((string) $event->type_icon)) {
             $icon  = htmlspecialchars($event->type_icon, ENT_QUOTES, 'UTF-8');
             $inner .= '<span class="' . $icon . '" aria-hidden="true"></span> ';
         }
@@ -1401,6 +1410,30 @@ static public function lightbox() {
         $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($typeRouteId)), ENT_QUOTES, 'UTF-8');
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
+    }
+
+    static protected function isValidIconClass($icon)
+    {
+        $icon = trim((string) $icon);
+
+        return $icon !== ''
+            && preg_match('/^[a-zA-Z0-9_ -]+$/', $icon)
+            && preg_match('/\b(fa|fa-[a-z0-9-]+|icon-[a-z0-9-]+)\b/i', $icon);
+    }
+
+    static protected function contrastingTextColor($background)
+    {
+        if (!preg_match('/^#?([0-9a-fA-F]{6})$/', (string) $background, $matches)) {
+            return '#ffffff';
+        }
+
+        $hex = $matches[1];
+        $red = hexdec(substr($hex, 0, 2));
+        $green = hexdec(substr($hex, 2, 2));
+        $blue = hexdec(substr($hex, 4, 2));
+        $luminance = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+
+        return $luminance > 145 ? '#111827' : '#ffffff';
     }
 
     static public function typeDescriptionSummary($description)

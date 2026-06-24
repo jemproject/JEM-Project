@@ -62,19 +62,27 @@ class plgJemMailer extends CMSPlugin
      * @return  boolean
      *
      */
-    public function onEventUserRegistered($register_id, $registration = false)
+    public function onEventUserRegistered($register_id, $registration = false, $userOnly = false)
     {
         ####################
         ## DEFINING ARRAY ##
         ####################
 
-        $send_to = array(
-            'user'     => $this->params->get('reg_mail_user', '1'),
-            'admin'    => $this->params->get('reg_mail_admin', '1'),
-            'creator'  => $this->params->get('reg_mail_creator', '0'),
-            'category' => $this->params->get('reg_mail_category', '0'),
-            'group'    => $this->params->get('reg_mail_group', '0'),
-        );
+        $send_to = $userOnly
+            ? array(
+                'user'     => 1,
+                'admin'    => 0,
+                'creator'  => 0,
+                'category' => 0,
+                'group'    => 0,
+            )
+            : array(
+                'user'     => $this->params->get('reg_mail_user', '1'),
+                'admin'    => $this->params->get('reg_mail_admin', '1'),
+                'creator'  => $this->params->get('reg_mail_creator', '0'),
+                'category' => $this->params->get('reg_mail_category', '0'),
+                'group'    => $this->params->get('reg_mail_group', '0'),
+            );
 
         // skip if processing not needed
         if (!array_filter($send_to)) {

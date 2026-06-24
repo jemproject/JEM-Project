@@ -36,11 +36,17 @@ class JemViewCalendar extends HtmlView
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $params = $app->getParams();
+            $menuitem = $app->getMenu()->getActive();
+            $title = (string) $params->get('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_CALENDAR'));
 
-            JemPdfView::renderEventList(
-                Text::_('COM_JEM_CALENDAR') . ' ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+            JemPdfView::renderMonthlyCalendar(
+                $title,
                 (array) $model->getItems(),
-                'jem-calendar-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+                'jem-calendar-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
+                $year,
+                $month,
+                $params
             );
 
             return;

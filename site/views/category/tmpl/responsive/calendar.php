@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -39,6 +41,19 @@ use Joomla\CMS\Factory;
         </div>
         <p> </p>
     <?php endif; ?>
+
+    <?php
+    echo JemCalendarAgendaHelper::renderToggle();
+    if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows);
+        if ($this->params->get('showfootertext')) :
+            echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
+        endif;
+        echo JemOutput::footer();
+        echo '</div>';
+        return;
+    endif;
+    ?>
 
     <?php
     $countcatevents = array ();

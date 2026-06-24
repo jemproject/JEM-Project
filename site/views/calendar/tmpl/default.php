@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -22,6 +24,7 @@ use Joomla\CMS\Factory;
             $btn_params['show'] = array('archive');
         }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        echo JemCalendarAgendaHelper::renderToggle();
         ?>
     </div>
 
@@ -37,6 +40,20 @@ use Joomla\CMS\Factory;
         </div>
         <p> </p>
     <?php endif; ?>
+
+    <?php
+    if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
+        $agendaStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
+        $agendaEndDate = date('Y-m-t', strtotime($agendaStartDate));
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, date('F Y', strtotime($agendaStartDate)));
+        if ($this->params->get('showfootertext')) :
+            echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
+        endif;
+        echo JemOutput::footer();
+        echo '</div>';
+        return;
+    endif;
+    ?>
 
     <?php
     $countcatevents = array ();

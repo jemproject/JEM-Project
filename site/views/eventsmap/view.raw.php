@@ -7,9 +7,13 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/map.php';
+
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 /**
  * Raw: Eventsmap
@@ -29,10 +33,122 @@ class JemViewEventsMap extends HtmlView
             return;
         }
 
-        $model = $this->getModel();
-        $model->setState('list.start', 0);
-        $model->setState('list.limit', 0);
+        $params = $app->getParams();
+        $filters = $this->getMapFilters($params);
+        $rows = JemMapHelper::getEvents(
+            $params,
+            $filters['start'],
+            $filters['end'],
+            $filters['category'],
+            $filters['country']
+        );
+        $title = $this->getPdfTitle($app, Text::_('COM_JEM_EVENTS_MAP'));
 
-        JemPdfView::renderVenueList(Text::_('COM_JEM_EVENTS_MAP'), (array) $model->getItems(), 'jem-events-map.pdf');
+        JemPdfView::renderEventsMapList(
+            $title,
+            (array) $rows,
+            'jem-events-map.pdf',
+            (string) $params->get('map_provider', 'osm') === 'google' ? 'google' : 'osm'
+        );
+    }
+
+    /**
+     * Returns the active map filters for the PDF export.
+     */
+    private function getMapFilters($params): array
+    {
+        $app = Factory::getApplication();
+        $showDateFilter = (int) $params->get('show_date_filter', 0);
+        $showCategoryFilter = (int) $params->get('show_category_filter', 0);
+        $showCountryFilter = (int) $params->get('show_country_filter', 0);
+        $defaultCountry = trim((string) $params->get('default_country', ''));
+        $filterMode = 'all';
+        $filterDate = '';
+        $filterStartDate = null;
+        $filterEndDate = null;
+
+        if ($defaultCountry === '0') {
+            $defaultCountry = '';
+        }
+
+        if ($showDateFilter) {
+            $filterMode = $app->input->get('jem_map_filter_mode', $params->get('date_filter_default', 'all'), 'string');
+            $filterDate = $app->input->get('jem_map_filter_date', '', 'string');
+            $now = Factory::getDate();
+
+            switch ($filterMode) {
+                case 'date':
+                    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $filterDate)) {
+                        $date = Date::createFromFormat('Y-m-d', $filterDate);
+
+                        if ($date && $date->format('Y-m-d') === $filterDate) {
+                            $filterStartDate = $filterDate;
+                            $filterEndDate = $filterDate;
+                        }
+                    }
+                    break;
+
+                case 'today':
+                    $filterStartDate = $now->format('Y-m-d');
+                    $filterEndDate = $now->format('Y-m-d');
+                    break;
+
+                case 'tomorrow':
+                    $tomorrow = clone $now;
+                    $tomorrow->modify('+1 day');
+                    $filterStartDate = $tomorrow->format('Y-m-d');
+                    $filterEndDate = $tomorrow->format('Y-m-d');
+                    break;
+
+                case 'week':
+                    $endOfWeek = clone $now;
+                    $endOfWeek->modify('Sunday this week');
+                    $filterStartDate = $now->format('Y-m-d');
+                    $filterEndDate = $endOfWeek->format('Y-m-d');
+                    break;
+
+                case 'month':
+                    $endOfMonth = clone $now;
+                    $endOfMonth->modify('last day of this month');
+                    $filterStartDate = $now->format('Y-m-d');
+                    $filterEndDate = $endOfMonth->format('Y-m-d');
+                    break;
+
+                case 'year':
+                    $endOfYear = clone $now;
+                    $endOfYear->setDate((int) $now->format('Y'), 12, 31);
+                    $filterStartDate = $now->format('Y-m-d');
+                    $filterEndDate = $endOfYear->format('Y-m-d');
+                    break;
+            }
+        }
+
+        return array(
+            'start' => $filterStartDate,
+            'end' => $filterEndDate,
+            'category' => $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0,
+            'country' => $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry,
+        );
+    }
+
+    /**
+     * Returns the view/menu title for the PDF.
+     */
+    private function getPdfTitle($app, string $fallback): string
+    {
+        $params = $app->getParams();
+        $menu = $app->getMenu();
+        $menuActive = $menu ? $menu->getActive() : null;
+        $title = trim((string) $params->get('page_heading', ''));
+
+        if ($title === '') {
+            $title = trim((string) $params->get('page_title', ''));
+        }
+
+        if ($title === '' && $menuActive) {
+            $title = trim((string) $menuActive->title);
+        }
+
+        return $title !== '' ? $title : $fallback;
     }
 }

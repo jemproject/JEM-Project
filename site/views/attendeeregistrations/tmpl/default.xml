@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-    <layout title="COM_JEM_EVENT_VIEW_DEFAULT_TITLE">
+    <layout title="COM_JEM_ATTENDEE_REGISTRATIONS_VIEW_DEFAULT_TITLE">
         <message>
-            <![CDATA[COM_JEM_EVENT_VIEW_DEFAULT_DESC]]>
+            <![CDATA[COM_JEM_ATTENDEE_REGISTRATIONS_VIEW_DEFAULT_DESC]]>
         </message>
     </layout>
 
-    <fields name="request">
-        <fieldset name="request"
-            addfieldpath="/administrator/components/com_jem/models/fields"
-        >
-            <field name="id" type="event"
-                label="COM_JEM_SELECT_EVENT"
-                description="COM_JEM_SELECT_EVENT_DESC"
-                required="true"
-            />
-        </fieldset>
-    </fields>
-
-    <!-- Add fields to the parameters object for the layout. -->
     <fields name="params">
+        <fieldset name="columns" label="COM_JEM_MYATTENDANCES_FIELDSET_COLUMNS">
+            <field name="registration_columns" type="list"
+                default="registration_id,name,username,places,uregdate,event,event_date,status"
+                label="COM_JEM_ATTENDEE_REGISTRATIONS_COLUMNS"
+                description="COM_JEM_ATTENDEE_REGISTRATIONS_COLUMNS_DESC"
+                multiple="true"
+                size="12"
+                class="form-select"
+            >
+                <option value="registration_id">COM_JEM_ATTENDEES_REGID</option>
+                <option value="name">COM_JEM_NAME</option>
+                <option value="username">COM_JEM_USERNAME</option>
+                <option value="user_id">COM_JEM_USER_ID</option>
+                <option value="email">COM_JEM_EMAIL</option>
+                <option value="places">COM_JEM_TABLE_PLACES</option>
+                <option value="uregdate">COM_JEM_ATTENDEE_REGISTRATION_DATE</option>
+                <option value="event">COM_JEM_EVENT</option>
+                <option value="event_date">COM_JEM_ATTENDEE_EVENT_DATE</option>
+                <option value="venue">COM_JEM_VENUE</option>
+                <option value="status">COM_JEM_STATUS</option>
+                <option value="comment">COM_JEM_COMMENT</option>
+            </field>
+        </fieldset>
         <fieldset name="basic">
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"

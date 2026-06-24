@@ -25,13 +25,46 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
 ?>
 <style>
+    <?php if (!empty($this->isModal)) : ?>
+    body {
+        background: #fff !important;
+        overflow: auto !important;
+    }
+
+    body > .container-header,
+    body > .container-footer,
+    .container-header,
+    .container-footer,
+    .site-grid > .container-sidebar-left,
+    .site-grid > .container-sidebar-right,
+    .container-sidebar-left,
+    .container-sidebar-right,
+    .sidebar-left,
+    .sidebar-right,
+    aside {
+        display: none !important;
+    }
+
+    .site-grid,
+    .grid-child,
+    .container-component,
+    main {
+        display: block !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+
+    .container-component {
+        padding: 0 !important;
+    }
+    <?php endif; ?>
+
     #jem.jem_attendees #jem_filter {
-        display: flex;
-        flex-flow: row nowrap;
+        display: grid;
+        grid-template-columns: auto minmax(7rem, auto) minmax(14rem, 1fr) auto auto auto minmax(7rem, auto) minmax(4.5rem, auto);
         align-items: center;
         gap: .5rem;
         clear: both;
-        grid-column: 1 / -1;
         width: 100%;
         max-width: none;
         margin: 0;
@@ -40,37 +73,43 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
     }
 
     #jem.jem_attendees #jem_filter .jem-attendees-filter-group {
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        gap: .5rem;
-        width: auto;
-        min-width: 0;
-    }
-
-    #jem.jem_attendees #jem_filter .jem-attendees-search {
-        flex: 1 1 auto;
+        display: contents;
     }
 
     #jem.jem_attendees #jem_filter #filter_search {
-        flex: 1 1 14rem;
-        min-width: 8rem;
+        min-width: 10rem;
+        width: 100%;
     }
 
     #jem.jem_attendees #jem_filter select {
-        width: auto;
         min-width: 5.5rem;
+        width: auto;
     }
 
-    @media (max-width: 768px) {
-        #jem.jem_attendees #jem_filter,
-        #jem.jem_attendees #jem_filter .jem-attendees-filter-group {
-            flex-wrap: wrap;
+    #jem.jem_attendees #jem_filter button,
+    #jem.jem_attendees #jem_filter label {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: auto minmax(7rem, auto) minmax(12rem, 1fr) auto auto;
         }
 
-        #jem.jem_attendees #jem_filter .jem-attendees-filter-group,
         #jem.jem_attendees #jem_filter #filter_search {
-            flex: 1 1 100%;
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+
+        #jem.jem_attendees #jem_filter select,
+        #jem.jem_attendees #jem_filter button {
+            width: 100%;
         }
     }
 </style>
@@ -141,6 +180,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <?php echo $this->lists['status']; ?>
             </div>
             <div class="jem-attendees-filter-group">
+                <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>
         </div>

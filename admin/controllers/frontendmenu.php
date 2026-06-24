@@ -75,6 +75,7 @@ class JemControllerFrontendmenu extends BaseController
             array('Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
             array('Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
             array('Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
+            array('Attendee Registrations', 'attendee-registrations', 'index.php?option=com_jem&view=attendeeregistrations', $groups['management']),
             array('My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
             array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
             array('My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),

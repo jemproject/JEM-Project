@@ -10,10 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
 
 /**
  * Attendees-view
@@ -56,6 +55,7 @@ class JemViewAttendees extends JemView
         $menu        = $app->getMenu();
         $menuitem    = $menu->getActive();
         $uri        = Uri::getInstance();
+        $isModal    = $app->input->getCmd('tmpl', '') === 'component';
 
         // Load css
         JemHelper::loadCss('jem');
@@ -140,6 +140,7 @@ class JemViewAttendees extends JemView
         $this->rows         = $rows;
         $this->pagination     = $pagination;
         $this->event         = $event;
+        $this->isModal       = $isModal;
         $this->pagetitle    = $pagetitle;
         $this->backlink        = $backlink;
         $this->print_link    = $print_link;

@@ -32,8 +32,28 @@ class JemViewEventslist extends HtmlView
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
             $rows = $model->getItems();
+            $params = $app->getParams();
+            $menu = $app->getMenu();
+            $menuActive = $menu ? $menu->getActive() : null;
+            $title = trim((string) $params->get('page_heading', ''));
 
-            JemPdfView::renderEventList(Text::_('COM_JEM_EVENTS'), (array) $rows, 'jem-events.pdf');
+            if ($title === '') {
+                $title = trim((string) $params->get('page_title', ''));
+            }
+
+            if ($title === '' && $menuActive) {
+                $title = trim((string) $menuActive->title);
+            }
+
+            if ($title === '') {
+                $title = Text::_('COM_JEM_EVENTS');
+            }
+
+            if ($app->input->getCmd('task', '') === 'archive') {
+                $title .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            }
+
+            JemPdfView::renderLinkedEventList($title, (array) $rows, 'jem-events.pdf');
 
             return;
         }

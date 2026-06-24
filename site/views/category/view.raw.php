@@ -44,10 +44,13 @@ class JemViewCategory extends HtmlView
             $category = $model->getCategories($catid);
             $categoryName = !empty($category[0]->catname) ? (string) $category[0]->catname : Text::_('COM_JEM_CATEGORY');
 
-            JemPdfView::renderEventList(
+            JemPdfView::renderMonthlyCalendar(
                 $categoryName . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
                 (array) $model->getItems(),
-                'jem-category-' . $catid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+                'jem-category-' . $catid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
+                $year,
+                $month,
+                $app->getParams()
             );
 
             return;

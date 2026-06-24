@@ -1,9 +1,6 @@
 -- delete values
 
 -- new values
-
-CREATE TABLE IF NOT EXISTS `#__jem_special_days` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `title` varchar(255) NOT NULL DEFAULT '', `alias` varchar(255) NOT NULL DEFAULT '', `day_type` varchar(100) NOT NULL DEFAULT '', `start_date` date NULL DEFAULT NULL, `end_date` date NULL DEFAULT NULL, `weekdays` varchar(32) NOT NULL DEFAULT '', `country` varchar(3) NOT NULL DEFAULT '', `region` varchar(100) NOT NULL DEFAULT '', `city` varchar(100) NOT NULL DEFAULT '', `description` text DEFAULT NULL, `published` tinyint(1) NOT NULL DEFAULT 1, `ordering` int(11) NOT NULL DEFAULT 0, `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` int(11) unsigned NOT NULL DEFAULT 0, `modified` datetime NULL DEFAULT NULL, `modified_by` int(11) unsigned NOT NULL DEFAULT 0, `checked_out` int(11) unsigned NULL DEFAULT NULL, `checked_out_time` datetime NULL DEFAULT NULL, PRIMARY KEY (`id`), KEY `idx_published_dates` (`published`, `start_date`, `end_date`), KEY `idx_weekdays` (`weekdays`), KEY `idx_day_type` (`day_type`), KEY `idx_location` (`country`, `region`, `city`), KEY `idx_checkout` (`checked_out`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `weekdays`, `published`, `ordering`, `created`) VALUES (1, 'Weekend', 'weekend', 'Weekend', '0,6', 1, 1, NOW());
 CREATE TABLE IF NOT EXISTS `#__jem_types` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(100) NOT NULL, `type` TINYINT(1) NOT NULL COMMENT '1 = Event, 2 = Category, 3 = Venue', `icon` VARCHAR(255) DEFAULT NULL, PRIMARY KEY (`id`));
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_show_venue', '1');
@@ -21,7 +18,8 @@ UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_show_online_m
 
 CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,`event_id` INT(11) NOT NULL,`type` VARCHAR(50) NOT NULL,`title` VARCHAR(255) NOT NULL,`description` VARCHAR(255)  NULL,`url` TEXT NOT NULL,`params` TEXT DEFAULT NULL,`ordering` INT(11) DEFAULT 0,`state` TINYINT(1) DEFAULT 1,`created` DATETIME DEFAULT CURRENT_TIMESTAMP,`created_by` INT(11) NOT NULL,`modified` DATETIME DEFAULT NULL,`modified_by` INT(11) DEFAULT NULL,PRIMARY KEY (`id`),INDEX `idx_event_id` (`event_id`),INDEX `idx_state` (`state`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `#__jem_special_days` (`id` int(11) unsigned NOT NULL AUTO_INCREMENT,`title` varchar(255) NOT NULL DEFAULT '',`alias` varchar(255) NOT NULL DEFAULT '',`day_type` varchar(100) NOT NULL DEFAULT '',`start_date` date DEFAULT NULL,`end_date` date DEFAULT NULL,`weekdays` varchar(30) NOT NULL DEFAULT '',`country` varchar(255) NOT NULL DEFAULT '',`region` varchar(100) NOT NULL DEFAULT '',`city` varchar(100) NOT NULL DEFAULT '',`description` text DEFAULT NULL,`published` tinyint(1) NOT NULL DEFAULT 1,`ordering` int(11) NOT NULL DEFAULT 0,`created` datetime DEFAULT NULL,`created_by` int(11) unsigned NOT NULL DEFAULT 0,`modified` datetime DEFAULT NULL,`modified_by` int(11) unsigned NOT NULL DEFAULT 0,`checked_out` int(11) unsigned DEFAULT NULL,`checked_out_time` datetime DEFAULT NULL,PRIMARY KEY (`id`),KEY `idx_type` (`day_type`),KEY `idx_dates` (`start_date`,`end_date`),KEY `idx_weekdays` (`weekdays`),KEY `idx_location` (`country`,`region`,`city`),KEY `idx_published` (`published`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
-INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `weekdays`, `published`, `ordering`, `created`) VALUES (1, 'Weekend', 'weekend', 'Weekend', '0,6', 1, 1, CURRENT_TIMESTAMP);
+INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `weekdays`, `description`, `published`, `ordering`, `created`) VALUES (1, 'Saturday and Sunday', 'weekend', 'Weekend', '0,6', 'Regular weekend days', 1, 1, CURRENT_TIMESTAMP);
+UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` = 'Regular weekend days' WHERE `title` = 'Weekend' AND `day_type` = 'Weekend' AND (`description` IS NULL OR `description` = '');
 
 -- change values
 ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100) NOT NULL DEFAULT '';
@@ -29,6 +27,7 @@ ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(80) DEFAULT NULL;
 UPDATE `#__jem_events` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
 ALTER TABLE `#__jem_events` MODIFY `language` char(7) NOT NULL DEFAULT '*';
 ALTER TABLE `#__jem_events` MODIFY `recurrence_number` int(11) NOT NULL DEFAULT '0';
+ALTER TABLE `#__jem_events` ADD COLUMN `recurrence_bylastday` varchar(20) NULL DEFAULT NULL AFTER `recurrence_byday`;
 ALTER TABLE `#__jem_events` CHANGE `fulltext` `fulltext` MEDIUMTEXT NOT NULL AFTER `introtext`;
 ALTER TABLE `#__jem_events` ADD COLUMN `article_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `fulltext`;
 ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_url` VARCHAR(2048) NOT NULL DEFAULT '' AFTER `article_id`;
@@ -60,8 +59,6 @@ ALTER TABLE `#__jem_groups` ADD COLUMN `published` tinyint(1) NOT NULL DEFAULT 1
 ALTER TABLE `#__jem_attachments` CHANGE `added` `created` DATETIME NULL DEFAULT NULL;
 ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0;
 
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.calendar_special_days_enabled') IS NULL;
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_day_types', 'Weekend | #d1d5db | 0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.calendar_special_day_types') IS NULL;
 -- update values
 UPDATE `#__jem_events` SET `contactid` = '' WHERE `contactid` = 0 OR `contactid` IS NULL;
 UPDATE `#__menu` SET `params` = REPLACE(`params`, '"tablefiltereventuntil":"0"', '"tablefiltereventuntil":""') WHERE `link` LIKE '%com_jem&view=eventslist%' AND `params` LIKE '%"tablefiltereventuntil":"0"%';
@@ -91,10 +88,3 @@ ALTER TABLE #__jem_register ENGINE=InnoDB;
 ALTER TABLE #__jem_config ENGINE=InnoDB;
 ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
-
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
-
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_venue_layout', 'details') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_venue_layout') IS NULL;
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_details_layout', 'details') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_details_layout') IS NULL;
-
-

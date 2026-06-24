@@ -106,7 +106,7 @@ class JemViewEvent extends HtmlView
         $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
         $pdf->SetAutoPageBreak(!$singlePageTarget, $singlePageTarget ? 0 : $margins['bottom']);
         $pdf->setPrintHeader(false);
-        $pdf->setPrintFooter(false);
+        $pdf->setPrintFooter(true);
         $pdf->AddPage();
         $pdf->writeHTML($this->buildEventPdfHtml($row, $singlePageTarget, $paperSize), true, false, true, false, '');
 
@@ -212,15 +212,23 @@ class JemViewEvent extends HtmlView
             .jem-pdf-file-icon { color: #111827; font-weight: bold; }
             .jem-pdf-button { background-color: #b45309; color: #ffffff; font-weight: bold; text-align: center; border-radius: 1.4mm; padding: 2mm 5mm; }
             .jem-pdf-separator { border-top: 0.25mm solid #d1d5db; height: 2mm; }
+            .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $baseFontSize . 'pt; line-height: ' . $sectionLineHeight . 'pt; }
+            .jem-pdf-view-intro { margin-bottom: 4mm; }
+            .jem-pdf-view-footer-text { margin-top: 4mm; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
             .jem-pdf-muted { color: #6b7280; }
-            .jem-pdf-footer { color: #6b7280; font-size: ' . $footerFontSize . 'pt; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
         </style>';
         $html[] = '<div class="jem-pdf-title-with-type">' . htmlspecialchars((string) $row->title, ENT_COMPAT, 'UTF-8') . '</div>';
+        $intro = JemPdfView::buildViewTextBlock('intro');
+
+        if ($intro !== '') {
+            $html[] = $intro;
+        }
+
         $html[] = '<h2>' . Text::_('COM_JEM_EVENT') . ' &#8635;' . $this->buildPdfTypeBadge($row) . '</h2>';
         $eventSummaryHtml = array();
         $eventSummaryHtml[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="2" cellspacing="0">';
         $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_TITLE'), htmlspecialchars((string) $row->title, ENT_COMPAT, 'UTF-8'));
-        $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHEN'), JemOutput::formatLongDateTime($row->dates, $row->times, $row->enddates, $row->endtimes));
+        $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHEN'), htmlspecialchars($this->htmlToPlainText(JemOutput::formatLongDateTime($row->dates, $row->times, $row->enddates, $row->endtimes)), ENT_COMPAT, 'UTF-8'));
 
         if (!empty($row->venue)) {
             $venue = htmlspecialchars((string) $row->venue, ENT_COMPAT, 'UTF-8');
@@ -321,7 +329,11 @@ class JemViewEvent extends HtmlView
             $html[] = $this->buildPdfRegistrationHtml($row);
         }
 
-        $html[] = '<div class="jem-pdf-footer">Powered by JEM</div>';
+        $footer = JemPdfView::buildViewTextBlock('footer');
+
+        if ($footer !== '') {
+            $html[] = $footer;
+        }
 
         return implode("\n", $html);
     }
@@ -604,6 +616,19 @@ class JemViewEvent extends HtmlView
         $html = strip_tags($html, '<p><br><strong><b><em><i><ul><ol><li><a>');
 
         return trim($html);
+    }
+
+    /**
+     * Converts frontend HTML snippets to plain text for PDF summary values.
+     */
+    private function htmlToPlainText(string $value): string
+    {
+        $value = str_replace(array('<br>', '<br/>', '<br />'), "\n", $value);
+        $value = html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $value = preg_replace("/[ \t]+/", ' ', $value);
+        $value = preg_replace("/ *\n */", "\n", $value);
+
+        return trim((string) $value);
     }
 
     /**

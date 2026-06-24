@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -22,6 +24,7 @@ use Joomla\CMS\Factory;
             $btn_params['show'] = array('archive');
         }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        echo JemCalendarAgendaHelper::renderToggle();
         ?>
     </div>
 
@@ -37,6 +40,25 @@ use Joomla\CMS\Factory;
         </div>
         <p> </p>
     <?php endif; ?>
+
+    <?php
+    if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
+        $agendaWeek = (int) $this->currentweek;
+        $agendaStartDate = date("Y-m-d", $this->cal->getFirstDayTimeOfWeek($agendaWeek));
+        $agendaNrWeeks = max(1, (int) $this->params->get('nrweeks', 1));
+        $agendaEndDate = (new DateTimeImmutable($agendaStartDate))->modify('+' . (($agendaNrWeeks * 7) - 1) . ' days')->format('Y-m-d');
+        $agendaSubtitle = $agendaNrWeeks > 1
+            ? Text::_('COM_JEM_WKCAL_WEEKS') . ' ' . (int) date('W', strtotime($agendaStartDate)) . '-' . (int) date('W', strtotime($agendaEndDate)) . ', ' . date('o', strtotime($agendaStartDate))
+            : Text::sprintf('COM_JEM_WEEKCAL_WEEK_NUMBER', (int) date('W', strtotime($agendaStartDate)), (int) date('o', strtotime($agendaStartDate)));
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, $agendaSubtitle);
+        if ($this->params->get('showfootertext')) :
+            echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
+        endif;
+        echo JemOutput::footer();
+        echo '</div>';
+        return;
+    endif;
+    ?>
 
     <?php
     $countcatevents = array ();

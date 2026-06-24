@@ -33,6 +33,6 @@ class JemViewVenuesMap extends HtmlView
         $model->setState('list.start', 0);
         $model->setState('list.limit', 0);
 
-        JemPdfView::renderVenueList(Text::_('COM_JEM_VENUES_MAP'), (array) $model->getItems(), 'jem-venues-map.pdf');
+        JemPdfView::renderVenueList(Text::_('COM_JEM_VENUES_MAP'), (array) $model->getItems(), 'jem-venues-map.pdf', 'map');
     }
 }

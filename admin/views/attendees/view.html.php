@@ -132,6 +132,7 @@ class JemViewAttendees extends JemAdminView
         if ($this->event->waitinglist) {
             ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
         }
+        ToolbarHelper::custom('attendees.renotify', 'envelope', 'envelope', Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_SELECTED'), true);
         ToolbarHelper::spacer();
         ToolbarHelper::custom('attendees.export', 'download', 'download', Text::_('COM_JEM_EXPORT'), false);
 

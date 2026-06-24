@@ -310,4 +310,48 @@ class JemControllerAttendees extends BaseController
 
         $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message);
     }
+
+    public function renotify()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
+
+        $app = Factory::getApplication();
+        $eventid = $app->input->getInt('eventid', 0);
+        $ids = $app->input->get('cid', array(), 'array');
+
+        if (empty($ids)) {
+            $message = Text::_('JERROR_NO_ITEMS_SELECTED');
+            $type = 'warning';
+        } else {
+            ArrayHelper::toInteger($ids);
+            $ids = array_filter($ids);
+
+            PluginHelper::importPlugin('jem');
+            $dispatcher = JemFactory::getDispatcher();
+            $model = $this->getModel('attendee');
+            $sent = 0;
+
+            foreach ($ids as $id) {
+                $model->setId($id);
+                $attendee = $model->getData();
+
+                if (empty($attendee->id) || (int) $attendee->event !== (int) $eventid) {
+                    continue;
+                }
+
+                $dispatcher->triggerEvent('onEventUserRegistered', array($id, $attendee->places, true));
+                ++$sent;
+            }
+
+            if (!PluginHelper::isEnabled('jem', 'mailer')) {
+                $app->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+            }
+
+            $message = Text::plural('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFIED_N', $sent);
+            $type = 'message';
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message, $type);
+    }
 }

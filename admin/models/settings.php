@@ -189,21 +189,30 @@ class JemModelSettings extends AdminModel
             $data['pdf_enabled_views'] = implode(',', array_unique(array_filter(array_map('trim', $data['pdf_enabled_views']))));
         }
         if (empty($data['pdf_enabled_views'])) {
-            $data['pdf_enabled_views'] = 'event,annualcalendar';
+            $data['pdf_enabled_views'] = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
         }
         $pdfDefaults = array(
             'pdf_paper_size' => 'A4',
-            'pdf_orientation' => 'P',
+            'pdf_orientation' => 'L',
+            'pdf_calendar_layout' => 'calendar',
             'pdf_margin_profile' => 'medium',
             'pdf_margin_top' => 14,
             'pdf_margin_right' => 14,
             'pdf_margin_bottom' => 14,
             'pdf_margin_left' => 14,
             'pdf_background_color' => '#ffffff',
+            'pdf_include_view_text' => 1,
+            'pdf_title_font_family' => 'helvetica',
+            'pdf_header_font_family' => 'helvetica',
+            'pdf_body_font_family' => 'helvetica',
             'pdf_accent_color' => '#1d4ed8',
             'pdf_base_font_size' => 8,
             'pdf_heading_font_size' => 12,
             'pdf_event_layout' => 'details',
+            'pdf_list_paper_size' => 'A4',
+            'pdf_list_orientation' => 'P',
+            'pdf_map_paper_size' => 'A4',
+            'pdf_map_orientation' => 'L',
             'pdf_event_description_mode' => 'complete',
             'pdf_venue_description_mode' => 'complete',
             'pdf_event_imagewidth' => 40,
@@ -222,6 +231,8 @@ class JemModelSettings extends AdminModel
             'pdf_event_include_venue_map' => 'none',
             'pdf_annual_paper_size' => 'A4',
             'pdf_annual_orientation' => 'L',
+            'pdf_annual_month_matrix' => 'auto',
+            'pdf_annual_vertical_align' => 'top',
             'pdf_annual_show_day_types_legend' => 1,
             'pdf_annual_show_categories_legend' => 1,
             'pdf_annual_event_titles' => 'auto',

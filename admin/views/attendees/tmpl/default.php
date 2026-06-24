@@ -96,6 +96,7 @@ $wa->addInlineScript('
                     <?php endif;?>
                     <th class="title center"><?php echo Text::_('COM_JEM_REMOVE_USER'); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_REGID', 'r.id', $listDirn, $listOrder ); ?></th>
+                    <th style="width: 1%" class="center nowrap"><?php echo Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY'); ?></th>
                 </tr>
             </thead>
 
@@ -142,6 +143,12 @@ $wa->addInlineScript('
                     </td>
                     <td class="center">
                     <?php echo $this->escape($row->id); ?>
+                    </td>
+                    <td class="center">
+                        <a class="btn btn-sm btn-outline-primary hasTooltip" href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.renotify')" title="<?php echo Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_DESC'); ?>">
+                            <span class="fa fa-envelope" aria-hidden="true"></span><span class="fa fa-share" aria-hidden="true"></span>
+                            <span class="visually-hidden"><?php echo Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY'); ?></span>
+                        </a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
