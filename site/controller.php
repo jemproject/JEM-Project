@@ -203,10 +203,8 @@ class JemController extends BaseController
         $paramShowMonthRow = $params->get('showmonthrow', '');
         
         // Safari Browser Detection
-        $isSafari = false;
-        if (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-            $isSafari = true;
-        }
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+        $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
         
         $showMonthRow = false;
         $uri = Uri::getInstance();

@@ -156,10 +156,8 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
         <?php
         // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
         // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
-        $isSafari = false;
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-            $isSafari = true;
-        }
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+        $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
         ?>
         <?php
         $this->rows = $this->getRows();

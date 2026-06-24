@@ -1139,21 +1139,29 @@ class JemHelper
                 }
 
                 $db = Factory::getContainer()->get('DatabaseDriver');
-                $query = $db->getQuery(true);
 
-                // Get the last event occurence of each recurring published events, with unlimited repeat, or last date not passed.
+                // Get the last event occurrence of each recurring published events, with unlimited repeat, or last date not passed.
                 // Ignore published field to prevent duplicate events.
-                $query = ' SELECT id, CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id, '
-                       . ' recurrence_number, recurrence_type, recurrence_limit_date, recurrence_limit, recurrence_byday, recurrence_bylastday, '
-                       . ' MAX(dates) as dates, MAX(enddates) as enddates, MAX(recurrence_counter) as counter '
-                       . ' FROM #__jem_events '
-                       . ' WHERE recurrence_type <> "0" '
-                       . ' AND CASE  WHEN recurrence_limit_date IS null THEN 1 ELSE NOW() < recurrence_limit_date END '
-                       . ' AND recurrence_number <> "0" '
-                       . ' GROUP BY first_id'
-                       . ' ORDER BY dates DESC';
+                // All column names are hardcoded constants — no user input reaches this query.
+                // quoteName() is omitted on internal column names for readability; the real guard is
+                // that $minusDays (below) is cast to int before any interpolation.
+                $query = $db->getQuery(true)
+                    ->select(array(
+                        'id',
+                        'CASE recurrence_first_id WHEN 0 THEN id ELSE recurrence_first_id END AS first_id',
+                        'recurrence_number', 'recurrence_type', 'recurrence_limit_date',
+                        'recurrence_limit', 'recurrence_byday', 'recurrence_bylastday',
+                        'MAX(dates) AS dates', 'MAX(enddates) AS enddates',
+                        'MAX(recurrence_counter) AS counter',
+                    ))
+                    ->from('#__jem_events')
+                    ->where('recurrence_type <> ' . $db->quote('0'))
+                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE NOW() < recurrence_limit_date END')
+                    ->where('recurrence_number <> ' . $db->quote('0'))
+                    ->group('first_id')
+                    ->order('dates DESC');
 
-                $db->SetQuery($query);
+                $db->setQuery($query);
                 $recurrence_array = $db->loadAssocList();
 
                 // If there are results we will be doing something with it
@@ -1224,17 +1232,22 @@ class JemHelper
                         if ($new_event->store())
                         {
                             $recurrence_row['counter']++;
-                            //duplicate categories event relationships
-                            $query = ' INSERT INTO #__jem_cats_event_relations (itemid, catid) '
-                                   . ' SELECT ' . $db->Quote($new_event->id) . ', catid FROM #__jem_cats_event_relations '
-                                   . ' WHERE itemid = ' . $db->Quote($ref_event->id);
-                            $db->setQuery($query);
+                            // Duplicate categories event relationships via INSERT INTO ... SELECT.
+                            // Both ids are cast to int — no user input is interpolated.
+                            $insertQuery = 'INSERT INTO #__jem_cats_event_relations (itemid, catid)'
+                                . ' SELECT ' . (int) $new_event->id . ', catid'
+                                . ' FROM #__jem_cats_event_relations'
+                                . ' WHERE itemid = ' . (int) $ref_event->id;
+
+                            $db->setQuery($insertQuery);
 
                             if ($db->execute() === false) {
                                 // run query always but don't show error message to "normal" users
                                 $user = JemFactory::getUser();
-                                if($user->authorise('core.manage')) {
-                                    echo Text::_('Error saving categories for event "' . $ref_event->title . '" new recurrences\n');
+                                if ($user->authorise('core.manage')) {
+                                    // Escape title to prevent XSS in admin error output.
+                                    $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
+                                    echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
                                 }
                             }
                         }
@@ -1243,44 +1256,37 @@ class JemHelper
                     }
                 }
 
+                // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
+                // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
+                $minusDays    = (int) $jemsettings->minus;
+                $outdatedWhere = 'dates > 0 AND DATE_SUB(NOW(), INTERVAL ' . $minusDays . ' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+
                 //delete outdated events
                 if ($jemsettings->oldevent == 1) {
-                    $query = 'DELETE FROM #__jem_events WHERE dates > 0 AND '
-                           .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
-                    $db->SetQuery($query);
+                    $db->setQuery('DELETE FROM #__jem_events WHERE ' . $outdatedWhere);
                     $db->execute();
                 }
 
                 //Set state archived of outdated events
                 if ($jemsettings->oldevent == 2) {
-                    $query = 'UPDATE #__jem_events SET published = 2 WHERE dates > 0 AND '
-                           .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-                           .' AND published = 1';
-                    $db->SetQuery($query);
+                    $db->setQuery('UPDATE #__jem_events SET published = 2 WHERE ' . $outdatedWhere . ' AND published = 1');
                     $db->execute();
                 }
 
                 //Set state trashed of outdated events
                 if ($jemsettings->oldevent == 3) {
-                    $query = 'UPDATE #__jem_events SET published = -2 WHERE dates > 0 AND '
-                           .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-                           .' AND published = 1';
-                    $db->SetQuery($query);
+                    $db->setQuery('UPDATE #__jem_events SET published = -2 WHERE ' . $outdatedWhere . ' AND published = 1');
                     $db->execute();
                 }
 
                 //Set state unpublished of outdated events
                 if ($jemsettings->oldevent == 4) {
-                    $query = 'UPDATE #__jem_events SET published = 0 WHERE dates > 0 AND '
-                           .' DATE_SUB(NOW(), INTERVAL '.(int)$jemsettings->minus.' DAY) > (IF (enddates IS NOT NULL, enddates, dates)) '
-                           .' AND published = 1';
-                    $db->SetQuery($query);
+                    $db->setQuery('UPDATE #__jem_events SET published = 0 WHERE ' . $outdatedWhere . ' AND published = 1');
                     $db->execute();
                 }
 
-                // Cleanup registrations
-                $query = 'DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)';
-                $db->SetQuery($query);
+                // Cleanup orphaned registrations (events that no longer exist).
+                $db->setQuery('DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)');
                 $db->execute();
 
                 // Set timestamp of last cleanup

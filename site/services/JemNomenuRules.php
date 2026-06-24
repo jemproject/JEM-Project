@@ -56,7 +56,6 @@ class JemNomenuRules implements RulesInterface
             $query['Itemid'] = is_array($itmid) ? $itmid[0] : $itmid;
         }
 
-        // echo "preprocess <pre/>";print_R($query);die;
         $test = 'Test';
     }
 

@@ -270,7 +270,6 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if successful, false otherwise.
      */
     public function save($key = null, $urlVar = 'a_id') {
-    // echo "<pre/>";print_R($_POST);die;
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 

@@ -63,7 +63,20 @@ class JemModelImagehandler extends BaseDatabaseModel
         static $set = false;
 
         if (!$set) {
-            $folder = Factory::getApplication()->input->get('folder', '');
+            // Sanitize folder: only allow alphanumeric, hyphens, underscores and forward slashes.
+            // This prevents path traversal attacks (e.g. ../../etc/passwd).
+            $folder = Factory::getApplication()->input->getString('folder', '');
+            $folder = preg_replace('/[^a-zA-Z0-9_\-\/]/', '', $folder);
+            $folder = trim($folder, '/');
+
+            // Verify the resolved path stays inside the allowed JEM images directory.
+            $allowedBase = Path::clean(JPATH_SITE . '/images/jem');
+            $resolved    = Path::clean($allowedBase . '/' . $folder);
+
+            if ($folder !== '' && strpos($resolved . DIRECTORY_SEPARATOR, $allowedBase . DIRECTORY_SEPARATOR) !== 0) {
+                $folder = '';
+            }
+
             $this->setState('folder', $folder);
 
             $set = true;
