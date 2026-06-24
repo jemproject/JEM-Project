@@ -64,3 +64,4 @@ UPDATE `#__jem_categories` SET `path` = NULL WHERE `id` = 1 AND `catname` = 'roo
 UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal' WHERE `keyname` = 'pdf_enabled_views' AND `value` = 'event,annualcalendar';
 
 -- update values
+UPDATE `#__jem_events` SET `publish_up` = `created` WHERE `publish_up` IS NULL AND `created` IS NOT NULL;

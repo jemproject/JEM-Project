@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
 use Joomla\CMS\User\User;
-
+
 use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Event Table
@@ -213,9 +213,11 @@ class JemTableEvent extends Table
             $this->created_by = $currentUserId;
         }
 
-        // If publish_up does not exist or is empty, use created datetime
-        if (empty($this->publish_up) && !empty($this->created)) {
-            $this->publish_up = $this->created;
+        // If publish_up does not exist, is empty, or is the unresolved form default 'now'
+        if (empty($this->publish_up) || $this->publish_up === 'now') {
+            $this->publish_up = !empty($this->created)
+                ? $this->created
+                : Factory::getDate()->toSql();
         }
 
         return true;
