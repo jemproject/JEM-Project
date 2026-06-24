@@ -1,5 +1,8 @@
 -- delete values
 
+-- update values
+UPDATE `#__jem_events` SET `publish_up` = `created` WHERE `publish_up` IS NULL AND `created` IS NOT NULL;
+
 -- new values
 CREATE TABLE IF NOT EXISTS `#__jem_types` (`id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(100) NOT NULL, `type` TINYINT(1) NOT NULL COMMENT '1 = Event, 2 = Category, 3 = Venue', `icon` VARCHAR(255) DEFAULT NULL, PRIMARY KEY (`id`));
 

@@ -18,7 +18,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 use Joomla\String\StringHelper;
-
+
 use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
@@ -648,6 +648,7 @@ class JemModelEvent extends JemModelAdmin
                 unset($data['modified_by']);
                 unset($data['version']);
                 unset($data['hits']);
+                $data['publish_up'] = Factory::getDate()->toSql();
             }
 
             // Save the event
