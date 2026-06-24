@@ -537,7 +537,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
                         ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
-                        ?><a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)); ?>"><?php echo $this->item->venue; ?></a><?php
+                        ?><a href="<?php echo $this->escape(Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug))); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     else :
                         echo $this->escape($this->item->venue);
                     endif;
@@ -1220,13 +1220,13 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     <?php endif; ?>
 
                     <?php if ($params->get('event_show_mapserv') == 3) : ?>
-                        <input type="hidden" id="latitude" value="<?php echo $this->item->latitude; ?>">
-                        <input type="hidden" id="longitude" value="<?php echo $this->item->longitude; ?>">
-                        <input type="hidden" id="venue" value="<?php echo $this->item->venue; ?>">
-                        <input type="hidden" id="street" value="<?php echo $this->item->street; ?>">
-                        <input type="hidden" id="city" value="<?php echo $this->item->city; ?>">
-                        <input type="hidden" id="state" value="<?php echo $this->item->state; ?>">
-                        <input type="hidden" id="postalCode" value="<?php echo $this->item->postalCode; ?>">
+                        <input type="hidden" id="latitude" value="<?php echo $this->escape($this->item->latitude); ?>">
+                        <input type="hidden" id="longitude" value="<?php echo $this->escape($this->item->longitude); ?>">
+                        <input type="hidden" id="venue" value="<?php echo $this->escape($this->item->venue); ?>">
+                        <input type="hidden" id="street" value="<?php echo $this->escape($this->item->street); ?>">
+                        <input type="hidden" id="city" value="<?php echo $this->escape($this->item->city); ?>">
+                        <input type="hidden" id="state" value="<?php echo $this->escape($this->item->state); ?>">
+                        <input type="hidden" id="postalCode" value="<?php echo $this->escape($this->item->postalCode); ?>">
 
                         <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                     <?php endif; ?>

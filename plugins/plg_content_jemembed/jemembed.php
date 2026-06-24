@@ -16,6 +16,7 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 $helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
 $output = JPATH_SITE . '/components/com_jem/classes/output.class.php';
@@ -155,15 +156,19 @@ class PlgContentJemembed extends CMSPlugin
     }
 
     /**
-     * Get the site domain for absolute URLs
-     * 
+     * Get the site domain for absolute URLs.
+     *
+     * Uses Joomla's Uri::getInstance() instead of raw $_SERVER superglobals to
+     * prevent Host Header Injection attacks where an attacker could forge the
+     * HTTP_HOST header to redirect users to a malicious domain.
+     *
      * @return string The site domain with protocol
      */
     protected function getSiteDomain()
     {
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                      $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        return rtrim($protocol . $_SERVER['HTTP_HOST'], '/');
+        $uri = Uri::getInstance();
+
+        return rtrim($uri->toString(array('scheme', 'host')), '/');
     }
 
     /**

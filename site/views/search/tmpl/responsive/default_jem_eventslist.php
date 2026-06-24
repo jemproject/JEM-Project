@@ -215,10 +215,8 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
       <?php
       // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
       // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
-      $isSafari = false;
-      if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-        $isSafari = true;
-      }
+      $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+      $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
       ?>
             <?php $this->rows = $this->getRows(); ?>
             <?php foreach ($this->rows as $row) : ?>
