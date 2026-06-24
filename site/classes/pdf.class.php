@@ -58,15 +58,89 @@ class JemPdf
             return null;
         }
 
-        $pdf = new TCPDF($orientation, 'mm', $format, true, $encoding, false);
+        $pdf = new class($orientation, 'mm', $format, true, $encoding, false) extends TCPDF {
+            public $jemShowFooter = true;
+            public $jemFooterStamp = '';
+            public $jemFooterPowered = 'Powered by JEM';
+
+            public function Footer()
+            {
+                if (!$this->jemShowFooter) {
+                    return;
+                }
+
+                $pageWidth = $this->getPageWidth();
+                $pageHeight = $this->getPageHeight();
+                $left = $this->lMargin;
+                $right = $this->rMargin;
+                $width = $pageWidth - $left - $right;
+                $lineY = $pageHeight - 11;
+
+                $this->SetDrawColor(209, 213, 219);
+                $this->SetLineWidth(0.2);
+                $this->Line($left, $lineY, $pageWidth - $right, $lineY);
+                $this->SetY($lineY + 1.5);
+                $this->SetFont('helvetica', '', 7);
+                $this->SetTextColor(107, 114, 128);
+                $this->Cell($width / 2, 4, (string) $this->jemFooterStamp, 0, 0, 'L', false, '', 0, false, 'T', 'M');
+                $this->Cell($width / 2, 4, (string) $this->jemFooterPowered, 0, 0, 'R', false, '', 0, false, 'T', 'M');
+            }
+        };
         $pdf->SetCreator('JEM');
         $pdf->SetFont(self::resolveFontFamily($fontFamily), '', 10);
+        $pdf->setPrintFooter(true);
+        $pdf->setFooterMargin(8);
+        self::applyFooterSettings($pdf);
 
         if ($title !== '') {
             $pdf->SetTitle($title);
         }
 
         return $pdf;
+    }
+
+    public static function applyFooterSettings($pdf): void
+    {
+        if (!is_object($pdf)) {
+            return;
+        }
+
+        $showFooter = true;
+        $showStamp = true;
+
+        if (class_exists('JemHelper', false)) {
+            $settings = JemHelper::config();
+            $showFooter = (int) ($settings->pdf_show_footer ?? 1) === 1;
+            $showStamp = (int) ($settings->pdf_include_generated_stamp ?? 1) === 1;
+        }
+
+        $pdf->jemShowFooter = $showFooter;
+        $pdf->jemFooterStamp = $showStamp ? self::buildGeneratedStamp() : '';
+        $pdf->jemFooterPowered = 'Powered by JEM';
+        $pdf->setPrintFooter($showFooter);
+    }
+
+    private static function buildGeneratedStamp(): string
+    {
+        $label = 'Generated: %s';
+        $timezone = 'UTC';
+
+        if (class_exists('\Joomla\CMS\Factory')) {
+            $app = \Joomla\CMS\Factory::getApplication();
+            $timezone = (string) $app->get('offset', 'UTC');
+        }
+
+        try {
+            $date = new DateTime('now', new DateTimeZone($timezone));
+        } catch (Exception $e) {
+            $date = new DateTime('now');
+        }
+
+        if (class_exists('\Joomla\CMS\Language\Text')) {
+            return \Joomla\CMS\Language\Text::sprintf('COM_JEM_PDF_GENERATED_STAMP', $date->format('Y-m-d H:i'));
+        }
+
+        return sprintf($label, $date->format('Y-m-d H:i'));
     }
 
     /**

@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Raw: Annual Calendar
@@ -99,6 +101,8 @@ class JemViewAnnualcalendar extends HtmlView
         $eventLimit = max(1, min(12, (int) ($jemsettings->pdf_annual_event_limit ?? 6)));
         $columnGap = max(0, min(10, (float) ($jemsettings->pdf_annual_column_gap ?? 1)));
         $rowGap = max(0, min(10, (float) ($jemsettings->pdf_annual_row_gap ?? 1)));
+        $monthMatrix = $this->normalisePdfMonthMatrix((string) ($jemsettings->pdf_annual_month_matrix ?? 'auto'));
+        $verticalAlign = $this->normalisePdfVerticalAlign((string) ($jemsettings->pdf_annual_vertical_align ?? 'top'));
         $pdf = JemPdf::createDocument($title, $orientation, $paperSize);
 
         if (!$pdf) {
@@ -114,7 +118,7 @@ class JemViewAnnualcalendar extends HtmlView
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(false);
         $pdf->AddPage();
-        $pdf->writeHTML($this->buildPdfHtml($title, $periodStart, $eventsByDate, $specialDaysByDate, $legend, $categoryLegend, $params, $orientation, $showEventTitles, $eventLimit, $paperSize, $columnGap, $rowGap), true, false, true, false, '');
+        $pdf->writeHTML($this->buildPdfHtml($title, $periodStart, $eventsByDate, $specialDaysByDate, $legend, $categoryLegend, $params, $orientation, $showEventTitles, $eventLimit, $paperSize, $columnGap, $rowGap, $monthMatrix, $verticalAlign), true, false, true, false, '');
         if ($showDayTypesLegend || $showCategoriesLegend) {
             $pdf->setPage(1);
             $pdf->SetY(-max(18, (int) round(18 * $posterScale)));
@@ -190,6 +194,7 @@ class JemViewAnnualcalendar extends HtmlView
             for ($eventDate = $eventStartDate; $eventDate <= $eventEndDate; $eventDate = $eventDate->modify('+1 day')) {
                 $eventsByDate[$eventDate->format('Y-m-d')][] = array(
                     'title' => $row->title,
+                    'link' => !empty($row->slug) ? $this->buildAbsoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '',
                     'colors' => array_values($categoryColors),
                     'is_multiday' => $eventEndDate > $eventStartDate,
                 );
@@ -220,6 +225,30 @@ class JemViewAnnualcalendar extends HtmlView
     }
 
     /**
+     * Normalises the annual PDF month matrix.
+     */
+    private function normalisePdfMonthMatrix(string $matrix): string
+    {
+        $matrix = strtolower(str_replace(array(' ', ','), array('', 'x'), trim($matrix)));
+
+        return in_array($matrix, array('auto', '1x12', '2x6', '3x4', '4x3', '6x2', '12x1'), true) ? $matrix : 'auto';
+    }
+
+    /**
+     * Normalises the annual PDF month block vertical alignment.
+     */
+    private function normalisePdfVerticalAlign(string $align): string
+    {
+        $align = strtolower(trim($align));
+
+        if ($align === 'center') {
+            $align = 'middle';
+        }
+
+        return in_array($align, array('top', 'middle', 'bottom'), true) ? $align : 'top';
+    }
+
+    /**
      * Builds the TCPDF-compatible HTML for the annual calendar.
      */
     private function buildPdfHtml(
@@ -235,15 +264,24 @@ class JemViewAnnualcalendar extends HtmlView
         int $eventLimit,
         string $paperSize,
         float $columnGap,
-        float $rowGap
+        float $rowGap,
+        string $monthMatrix,
+        string $verticalAlign
     ): string {
         $firstWeekDay = (int) $params->get('firstweekday', 1);
         $markerLimit = $showEventTitles
             ? max(1, min(12, $eventLimit))
             : max(1, (int) $params->get('annual_marker_limit', $eventLimit));
         $orientation = $this->normalisePdfOrientation($orientation);
+        $monthMatrix = $this->normalisePdfMonthMatrix($monthMatrix);
+        $verticalAlign = $this->normalisePdfVerticalAlign($verticalAlign);
         $monthColumns = $orientation === 'P' ? 3 : 4;
         $monthRows = (int) ceil(12 / $monthColumns);
+
+        if ($monthMatrix !== 'auto') {
+            [$monthColumns, $monthRows] = array_map('intval', explode('x', $monthMatrix, 2));
+        }
+
         $monthCellWidth = number_format(100 / $monthColumns, 4, '.', '') . '%';
         $posterScale = JemPdf::getPosterScale($paperSize);
         $titleFontSize = round(12 * $posterScale, 1);
@@ -265,7 +303,7 @@ class JemViewAnnualcalendar extends HtmlView
             h1 { font-size: ' . $titleFontSize . 'pt; margin: 0 0 2px 0; }
             h2 { font-size: ' . $monthTitleFontSize . 'pt; margin: 0 0 1px 0; }
             table { border-collapse: collapse; }
-            .jem-pdf-month-cell { padding: ' . $monthVerticalPadding . 'mm ' . $monthHorizontalPadding . 'mm; vertical-align: top; }
+            .jem-pdf-month-cell { padding: ' . $monthVerticalPadding . 'mm ' . $monthHorizontalPadding . 'mm; vertical-align: ' . $verticalAlign . '; }
             .jem-pdf-month { width: 99%; }
             .jem-pdf-month th { background-color: #e5e7eb; border: 0.2mm solid #9ca3af; font-size: ' . $headerFontSize . 'pt; font-weight: bold; text-align: center; }
             .jem-pdf-month td { border: 0.2mm solid #9ca3af; font-size: ' . $cellFontSize . 'pt; height: ' . $cellHeight . 'mm; vertical-align: top; }
@@ -277,8 +315,19 @@ class JemViewAnnualcalendar extends HtmlView
             .jem-pdf-legend th { background-color: #e5e7eb; border: 0.2mm solid #cbd5e1; font-size: ' . $legendFontSize . 'pt; font-weight: bold; }
             .jem-pdf-legend td { border: 0.2mm solid #d1d5db; font-size: ' . $legendFontSize . 'pt; }
             .jem-pdf-compact-legend td { font-size: ' . $legendFontSize . 'pt; vertical-align: middle; }
+            .jem-pdf-event-marker-legend { font-size: ' . $legendFontSize . 'pt; margin-top: 1mm; text-align: center; }
+            .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $legendFontSize . 'pt; line-height: ' . ($legendFontSize + 2) . 'pt; }
+            .jem-pdf-view-intro { margin-bottom: 2mm; }
+            .jem-pdf-view-footer-text { margin-top: 2mm; border-top: 0.2mm solid #d1d5db; padding-top: 1mm; }
+            a { color: #1f5b99; text-decoration: underline; }
         </style>';
         $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
+        $intro = JemPdfView::buildViewTextBlock('intro');
+
+        if ($intro !== '') {
+            $html[] = $intro;
+        }
+
         $html[] = '<table width="100%" cellpadding="1" cellspacing="0">';
 
         for ($row = 0; $row < $monthRows; $row++) {
@@ -300,6 +349,11 @@ class JemViewAnnualcalendar extends HtmlView
         }
 
         $html[] = '</table>';
+        $footer = JemPdfView::buildViewTextBlock('footer');
+
+        if ($footer !== '') {
+            $html[] = $footer;
+        }
 
         return implode("\n", $html);
     }
@@ -398,9 +452,16 @@ class JemViewAnnualcalendar extends HtmlView
 
             if ($showEventTitles) {
                 $title = trim((string) ($event['title'] ?? ''));
+                $link = trim((string) ($event['link'] ?? ''));
 
                 if ($title !== '') {
-                    $markerHtml .= ' ' . htmlspecialchars($this->truncatePdfEventTitle($title, 18), ENT_COMPAT, 'UTF-8');
+                    $titleHtml = htmlspecialchars($this->truncatePdfEventTitle($title, 18), ENT_COMPAT, 'UTF-8');
+
+                    if ($link !== '') {
+                        $titleHtml = '<a href="' . htmlspecialchars($link, ENT_COMPAT, 'UTF-8') . '">' . $titleHtml . '</a>';
+                    }
+
+                    $markerHtml .= ' ' . $titleHtml;
                 }
             }
 
@@ -471,6 +532,29 @@ class JemViewAnnualcalendar extends HtmlView
     }
 
     /**
+     * Builds an absolute URL for links embedded in downloaded PDFs.
+     */
+    private function buildAbsoluteUrl(string $url): string
+    {
+        if ($url === '' || $url === '#') {
+            return '';
+        }
+
+        if (preg_match('#^(?:https?:)?//#i', $url)) {
+            return $url;
+        }
+
+        if ($url[0] === '/') {
+            $uri = Uri::getInstance();
+            $port = $uri->getPort() ? ':' . $uri->getPort() : '';
+
+            return $uri->getScheme() . '://' . $uri->getHost() . $port . $url;
+        }
+
+        return rtrim(Uri::root(), '/') . '/' . ltrim($url, '/');
+    }
+
+    /**
      * Returns the primary special day colour for a date.
      */
     private function getSpecialDayColor(array $specialDays): string
@@ -495,18 +579,24 @@ class JemViewAnnualcalendar extends HtmlView
         $html[] = '<table class="jem-pdf-legend" width="100%" cellpadding="2" cellspacing="0">';
         $html[] = '<tr>'
             . '<th width="8%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_COLOR') . '</th>'
-            . '<th width="18%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE') . '</th>'
-            . '<th width="24%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TITLE') . '</th>'
-            . '<th width="50%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION') . '</th>'
+            . '<th width="22%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE') . '</th>'
+            . '<th width="28%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_SPECIAL_DAYS') . '</th>'
+            . '<th width="42%">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION') . '</th>'
             . '</tr>';
 
         foreach ($legend as $legendItem) {
             $color = htmlspecialchars($legendItem['color'], ENT_COMPAT, 'UTF-8');
+            $title = (string) ($legendItem['title'] ?? '');
+
+            if (strcasecmp($title, (string) ($legendItem['type'] ?? '')) === 0) {
+                $title = '';
+            }
+
             $html[] = '<tr>'
                 . '<td width="8%" style="background-color:' . $color . ';">&nbsp;</td>'
-                . '<td width="18%">' . htmlspecialchars($legendItem['type'], ENT_COMPAT, 'UTF-8') . '</td>'
-                . '<td width="24%">' . htmlspecialchars($legendItem['title'], ENT_COMPAT, 'UTF-8') . '</td>'
-                . '<td width="50%">' . htmlspecialchars($legendItem['description'], ENT_COMPAT, 'UTF-8') . '</td>'
+                . '<td width="22%">' . htmlspecialchars($legendItem['type'], ENT_COMPAT, 'UTF-8') . '</td>'
+                . '<td width="28%">' . ($title !== '' ? htmlspecialchars($title, ENT_COMPAT, 'UTF-8') : '-') . '</td>'
+                . '<td width="42%">' . (trim((string) $legendItem['description']) !== '' ? htmlspecialchars($legendItem['description'], ENT_COMPAT, 'UTF-8') : '-') . '</td>'
                 . '</tr>';
         }
 
@@ -523,7 +613,7 @@ class JemViewAnnualcalendar extends HtmlView
         $html = array();
         $html[] = '<table class="jem-pdf-compact-legend" width="100%" cellpadding="1" cellspacing="0" style="border-top:0.2mm solid #9ca3af;border-bottom:0.2mm solid #9ca3af;">';
         $html[] = '<tr>';
-        $html[] = '<td width="40%" align="left">';
+        $html[] = '<td width="50%" align="left">';
         if ($showDayTypes) {
             $html[] = '<strong>' . Text::_('COM_JEM_CALENDAR_TYPES_OF_DAYS') . '</strong> '
                 . $this->buildPdfLegendItems($dayTypeLegend, 3, 3);
@@ -531,8 +621,7 @@ class JemViewAnnualcalendar extends HtmlView
             $html[] = '&nbsp;';
         }
         $html[] = '</td>';
-        $html[] = '<td width="20%" align="center">&#9679; 1 day&nbsp;&nbsp; &#9632; multi-day</td>';
-        $html[] = '<td width="40%" align="right">';
+        $html[] = '<td width="50%" align="right">';
         if ($showCategories) {
             $html[] = '<strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> '
                 . $this->buildPdfLegendItems($categoryLegend, 4, 3);
@@ -541,9 +630,16 @@ class JemViewAnnualcalendar extends HtmlView
         }
         $html[] = '</td>';
         $html[] = '</tr>';
+        $html[] = '<tr><td colspan="2" align="center">' . $this->buildEventMarkerLegendHtml() . '</td></tr>';
         $html[] = '</table>';
 
         return implode('', $html);
+    }
+
+    private function buildEventMarkerLegendHtml(): string
+    {
+        return '&#9679; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY')
+            . '&nbsp;&nbsp; &#9632; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY');
     }
 
     /**

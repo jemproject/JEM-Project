@@ -139,6 +139,30 @@ class JemModelAttendee extends BaseDatabaseModel
         return $row->store();
     }
 
+    public function setRegistrationStatus($status)
+    {
+        $attendee = $this->getData();
+
+        if (!$attendee->id) {
+            $this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
+            return false;
+        }
+
+        $status = (int) $status;
+
+        if (!in_array($status, array(-1, 0, 1, 2), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
+        $row = Table::getInstance('jem_register', '');
+        $row->bind($attendee);
+        $row->status = $status === 2 ? 1 : $status;
+        $row->waiting = $status === 2 ? 1 : 0;
+
+        return $row->store();
+    }
+
     /**
      * Method to store the attendee
      *

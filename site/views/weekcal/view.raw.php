@@ -36,11 +36,17 @@ class JemViewWeekcal extends HtmlView
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
             $rows = $this->get('Items');
+            $params = $app->getParams();
+            $menuitem = $app->getMenu()->getActive();
+            $title = (string) $params->get('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_WEEKCALENDAR'));
 
-            JemPdfView::renderEventList(
-                Text::_('COM_JEM_WEEKCALENDAR') . ' ' . $year . ' / ' . str_pad((string) $week, 2, '0', STR_PAD_LEFT),
+            JemPdfView::renderWeeklyCalendar(
+                $title,
                 (array) $rows,
-                'jem-week-' . $year . str_pad((string) $week, 2, '0', STR_PAD_LEFT) . '.pdf'
+                'jem-week-' . $year . str_pad((string) $week, 2, '0', STR_PAD_LEFT) . '.pdf',
+                $year,
+                $week,
+                $params
             );
 
             return;

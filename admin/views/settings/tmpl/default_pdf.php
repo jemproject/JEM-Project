@@ -12,22 +12,50 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 ?>
 
+<style>
+    .jem-pdf-enabled-views-field .control-group {
+        align-items: flex-start;
+    }
+
+    .jem-pdf-enabled-views-field .control-label {
+        padding-top: .35rem;
+    }
+
+    .jem-pdf-enabled-views-field select[multiple] {
+        height: auto;
+        min-height: calc(15 * 1.9em);
+        overflow-y: visible;
+    }
+</style>
+
 <div class="width-100" style="padding: 10px 1vw;">
     <?php echo HTMLHelper::_('uitab.startTabSet', 'pdf-settings-pane', array('active' => 'pdf-settings-general', 'recall' => true, 'breakpoint' => 768)); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'pdf-settings-pane', 'pdf-settings-general', Text::_('COM_JEM_PDF_GENERAL')); ?>
         <fieldset class="options-form">
-            <ul class="adminformlist">
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_enabled_views'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_profile'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_top'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_right'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_bottom'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_left'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_background_color'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imageheight'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imagewidth'); ?></div></li>
-            </ul>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="adminformlist">
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_profile'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_top'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_right'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_bottom'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_left'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_background_color'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_include_view_text'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_title_font_family'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_header_font_family'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_body_font_family'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imageheight'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imagewidth'); ?></div></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="adminformlist">
+                        <li><div class="label-form jem-pdf-enabled-views-field"><?php echo $this->form->renderfield('pdf_enabled_views'); ?></div></li>
+                    </ul>
+                </div>
+            </div>
         </fieldset>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
@@ -60,6 +88,7 @@ use Joomla\CMS\Language\Text;
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_orientation'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_paper_size'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_calendar_layout'); ?></div></li>
             </ul>
         </fieldset>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -67,6 +96,8 @@ use Joomla\CMS\Language\Text;
     <?php echo HTMLHelper::_('uitab.addTab', 'pdf-settings-pane', 'pdf-settings-lists', Text::_('COM_JEM_PDF_LISTS')); ?>
         <fieldset class="options-form">
             <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_paper_size'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_orientation'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_base_font_size'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_heading_font_size'); ?></div></li>
             </ul>
@@ -76,6 +107,8 @@ use Joomla\CMS\Language\Text;
     <?php echo HTMLHelper::_('uitab.addTab', 'pdf-settings-pane', 'pdf-settings-maps', Text::_('COM_JEM_PDF_MAPS')); ?>
         <fieldset class="options-form">
             <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_map_paper_size'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_map_orientation'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_accent_color'); ?></div></li>
             </ul>
         </fieldset>
@@ -86,6 +119,8 @@ use Joomla\CMS\Language\Text;
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_paper_size'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_orientation'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_month_matrix'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_vertical_align'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_show_day_types_legend'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_show_categories_legend'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_annual_event_titles'); ?></div></li>

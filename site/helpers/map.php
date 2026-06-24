@@ -216,6 +216,7 @@ class JemMapHelper
                 'v.venue',
                 'v.alias AS venue_alias',
                 'v.city',
+                'v.state',
                 'v.country',
                 'v.latitude',
                 'v.longitude',

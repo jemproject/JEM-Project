@@ -55,6 +55,7 @@ class JemViewAttendees extends JemView
         $menu        = $app->getMenu();
         $menuitem    = $menu->getActive();
         $uri        = Uri::getInstance();
+        $isModal    = $app->input->getCmd('tmpl', '') === 'component';
 
         // Load css
         JemHelper::loadCss('jem');
@@ -139,6 +140,7 @@ class JemViewAttendees extends JemView
         $this->rows         = $rows;
         $this->pagination     = $pagination;
         $this->event         = $event;
+        $this->isModal       = $isModal;
         $this->pagetitle    = $pagetitle;
         $this->backlink        = $backlink;
         $this->print_link    = $print_link;

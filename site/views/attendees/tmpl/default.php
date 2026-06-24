@@ -24,13 +24,46 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 ?>
 <style>
+    <?php if (!empty($this->isModal)) : ?>
+    body {
+        background: #fff !important;
+        overflow: auto !important;
+    }
+
+    body > .container-header,
+    body > .container-footer,
+    .container-header,
+    .container-footer,
+    .site-grid > .container-sidebar-left,
+    .site-grid > .container-sidebar-right,
+    .container-sidebar-left,
+    .container-sidebar-right,
+    .sidebar-left,
+    .sidebar-right,
+    aside {
+        display: none !important;
+    }
+
+    .site-grid,
+    .grid-child,
+    .container-component,
+    main {
+        display: block !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+
+    .container-component {
+        padding: 0 !important;
+    }
+    <?php endif; ?>
+
     #jem.jem_attendees #jem_filter {
-        display: flex;
-        flex-flow: row nowrap;
+        display: grid;
+        grid-template-columns: auto minmax(7rem, auto) minmax(14rem, 1fr) auto auto auto minmax(7rem, auto) auto minmax(4.5rem, auto);
         align-items: center;
         gap: .5rem;
         clear: both;
-        grid-column: 1 / -1;
         width: 100%;
         max-width: none;
         margin: 0;
@@ -40,41 +73,45 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
     #jem.jem_attendees #jem_filter .jem_fleft,
     #jem.jem_attendees #jem_filter .jem_fright {
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        gap: .5rem;
+        display: contents;
         float: none;
         margin: 0;
-        width: auto;
-    }
-
-    #jem.jem_attendees #jem_filter .jem-attendees-search {
-        flex: 1 1 auto;
-        min-width: 0;
     }
 
     #jem.jem_attendees #jem_filter #filter_search {
-        flex: 1 1 14rem;
-        min-width: 8rem;
+        min-width: 10rem;
+        width: 100%;
     }
 
     #jem.jem_attendees #jem_filter select {
-        width: auto;
         min-width: 5.5rem;
+        width: auto;
     }
 
-    @media (max-width: 768px) {
-        #jem.jem_attendees #jem_filter,
-        #jem.jem_attendees #jem_filter .jem_fleft,
-        #jem.jem_attendees #jem_filter .jem_fright {
-            flex-wrap: wrap;
+    #jem.jem_attendees #jem_filter button,
+    #jem.jem_attendees #jem_filter label {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: auto minmax(7rem, auto) minmax(12rem, 1fr) auto auto;
         }
 
-        #jem.jem_attendees #jem_filter .jem_fleft,
-        #jem.jem_attendees #jem_filter .jem_fright,
         #jem.jem_attendees #jem_filter #filter_search {
-            flex: 1 1 100%;
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+
+        #jem.jem_attendees #jem_filter select,
+        #jem.jem_attendees #jem_filter button {
+            width: 100%;
         }
     }
 </style>
@@ -143,8 +180,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </div>
-            <div class="jem_fleft" style="white-space:nowrap;">
-                <?php echo Text::_('COM_JEM_STATUS').' '.$this->lists['status']; ?>
+            <div class="jem_fleft">
+                <label for="filter_status"><?php echo Text::_('COM_JEM_STATUS'); ?></label>
+                <?php echo $this->lists['status']; ?>
             </div>
             <div class="jem_fright">
                 <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>

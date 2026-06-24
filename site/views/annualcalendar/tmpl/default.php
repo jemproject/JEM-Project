@@ -207,6 +207,10 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             </div>
             <div class="clr"></div>
             <?php include JPATH_COMPONENT . '/views/calendar/tmpl/default_legend.php'; ?>
+            <div class="calendarLegends mt-3 jem-annual-event-marker-legend">
+                <span class="me-3">&#9679; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY'); ?></span>
+                <span>&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY'); ?></span>
+            </div>
         </div>
     <?php endif; ?>
 
@@ -442,6 +446,10 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             </div>
             <div class="clr"></div>
             <?php include JPATH_COMPONENT . '/views/calendar/tmpl/default_legend.php'; ?>
+            <div class="calendarLegends mt-3 jem-annual-event-marker-legend">
+                <span class="me-3">&#9679; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY'); ?></span>
+                <span>&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY'); ?></span>
+            </div>
         </div>
     <?php endif; ?>
 

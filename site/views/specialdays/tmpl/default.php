@@ -91,6 +91,10 @@ $renderLocation = function ($item) {
 
 <div id="jem" class="jem_specialdays">
     <div class="buttons jem-buttons jem-specialdays-buttons">
+        <?php
+        $btn_params = array('print_link' => $this->printLink);
+        echo JemOutput::createButtonBar($this->getName(), (object) array(), $btn_params);
+        ?>
         <a class="jem-specialdays-action-button" href="<?php echo $this->newLink; ?>" title="<?php echo Text::_('COM_JEM_SPECIAL_DAY_NEW'); ?>" aria-label="<?php echo Text::_('COM_JEM_SPECIAL_DAY_NEW'); ?>">
             <?php echo jemhtml::icon('com_jem/icon-16-new.webp', 'fa fa-fw fa-lg fa-plus-square jem-specialdays-newbutton', Text::_('COM_JEM_SPECIAL_DAY_NEW')); ?>
         </a>

@@ -974,6 +974,11 @@ class JemHelper
         foreach ($legend as &$legendItem) {
             $legendItem['title'] = implode('; ', $legendItem['titles']);
             $legendItem['description'] = implode('; ', $legendItem['descriptions']);
+
+            if (strcasecmp($legendItem['title'], $legendItem['type']) === 0) {
+                $legendItem['title'] = '';
+            }
+
             unset($legendItem['titles']);
             unset($legendItem['descriptions']);
         }
@@ -1011,7 +1016,7 @@ class JemHelper
         $html[] = '<thead><tr>'
             . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_COLOR') . '</th>'
             . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE') . '</th>'
-            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TITLE') . '</th>'
+            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_SPECIAL_DAYS') . '</th>'
             . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION') . '</th>'
             . '</tr></thead>';
         $html[] = '<tbody>';
@@ -1021,15 +1026,16 @@ class JemHelper
             $type = htmlspecialchars($legendItem['type'], ENT_COMPAT, 'UTF-8');
             $title = htmlspecialchars($legendItem['title'], ENT_COMPAT, 'UTF-8');
             $description = trim((string) $legendItem['description']);
-            $titleText = $title !== '' ? $title : '&nbsp;';
-            $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '&nbsp;';
+            $titleText = $title !== '' ? $title : '-';
+            $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '-';
 
             $textColor = self::getContrastTextColor($color) ?: '#111827';
 
             $html[] = '<tr>'
-                . '<td class="jem-annual-special-days-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';">' . $type . '</span><span class="visually-hidden">' . $color . '</span></td>'
-                . '<td class="jem-annual-special-days-label"><strong>' . $titleText . '</strong></td>'
-                . '<td class="jem-annual-special-days-description" colspan="2">' . $descriptionText . '</td>'
+                . '<td class="jem-annual-special-days-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';">&nbsp;</span><span class="visually-hidden">' . $color . '</span></td>'
+                . '<td class="jem-annual-special-days-type"><strong>' . $type . '</strong></td>'
+                . '<td class="jem-annual-special-days-label">' . $titleText . '</td>'
+                . '<td class="jem-annual-special-days-description">' . $descriptionText . '</td>'
                 . '</tr>';
         }
 

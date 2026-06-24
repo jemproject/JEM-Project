@@ -39,10 +39,13 @@ class JemViewVenue extends HtmlView
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
             $venueid = $jinput->getInt('id');
 
-            JemPdfView::renderEventList(
+            JemPdfView::renderMonthlyCalendar(
                 Text::_('COM_JEM_VENUE') . ' ' . $venueid . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
                 (array) $model->getItems(),
-                'jem-venue-' . $venueid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf'
+                'jem-venue-' . $venueid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
+                $year,
+                $month,
+                $app->getParams()
             );
 
             return;

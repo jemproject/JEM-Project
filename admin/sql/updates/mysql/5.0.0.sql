@@ -3,19 +3,30 @@
 -- new values
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_imageheight', '40');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_imagewidth', '40');
-INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_enabled_views', 'event,annualcalendar');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_paper_size', 'A4');
-INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_orientation', 'P');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_orientation', 'L');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_calendar_layout', 'calendar');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_margin_profile', 'medium');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_margin_top', '14');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_margin_right', '14');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_margin_bottom', '14');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_margin_left', '14');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_background_color', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_include_view_text', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_show_footer', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_include_generated_stamp', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_title_font_family', 'helvetica');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_header_font_family', 'helvetica');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_body_font_family', 'helvetica');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_accent_color', '#1d4ed8');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_base_font_size', '8');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_heading_font_size', '12');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_layout', 'details');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_list_paper_size', 'A4');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_list_orientation', 'P');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_map_paper_size', 'A4');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_map_orientation', 'L');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_description_mode', 'complete');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_venue_description_mode', 'complete');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_imagewidth', '40');
@@ -34,6 +45,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_venue
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_include_venue_map', 'none');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_paper_size', 'A4');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_orientation', 'L');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_month_matrix', 'auto');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_vertical_align', 'top');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_show_day_types_legend', '1');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_show_categories_legend', '1');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_event_titles', 'auto');
@@ -43,9 +56,11 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_row_
 
 -- change values
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
+UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` = 'Regular weekend days' WHERE `title` = 'Weekend' AND `day_type` = 'Weekend' AND (`description` IS NULL OR `description` = '');
 UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_events` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_categories` SET `metadata` = '{}' WHERE `metadata` IS NULL OR `metadata` = '' OR `metadata` = '""' OR `metadata` = "''" OR NOT JSON_VALID(`metadata`);
 UPDATE `#__jem_categories` SET `path` = NULL WHERE `id` = 1 AND `catname` = 'root' AND `path` IS NOT NULL;
+UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal' WHERE `keyname` = 'pdf_enabled_views' AND `value` = 'event,annualcalendar';
 
 -- update values

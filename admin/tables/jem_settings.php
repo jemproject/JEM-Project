@@ -111,11 +111,12 @@ class jem_settings extends Table
     /** @var int */
     public $pdf_imageheight = '40';
     /** @var string */
-    public $pdf_enabled_views = 'event,annualcalendar';
+    public $pdf_enabled_views = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
     /** @var string */
     public $pdf_paper_size = 'A4';
     /** @var string */
-    public $pdf_orientation = 'P';
+    public $pdf_orientation = 'L';
+    public $pdf_calendar_layout = 'calendar';
     /** @var string */
     public $pdf_margin_profile = 'medium';
     /** @var int */
@@ -128,6 +129,18 @@ class jem_settings extends Table
     public $pdf_margin_left = '14';
     /** @var string */
     public $pdf_background_color = '#ffffff';
+    /** @var int */
+    public $pdf_include_view_text = '1';
+    /** @var int */
+    public $pdf_show_footer = '1';
+    /** @var int */
+    public $pdf_include_generated_stamp = '1';
+    /** @var string */
+    public $pdf_title_font_family = 'helvetica';
+    /** @var string */
+    public $pdf_header_font_family = 'helvetica';
+    /** @var string */
+    public $pdf_body_font_family = 'helvetica';
     /** @var string */
     public $pdf_accent_color = '#1d4ed8';
     /** @var int */
@@ -136,6 +149,14 @@ class jem_settings extends Table
     public $pdf_heading_font_size = '12';
     /** @var string */
     public $pdf_event_layout = 'details';
+    /** @var string */
+    public $pdf_list_paper_size = 'A4';
+    /** @var string */
+    public $pdf_list_orientation = 'P';
+    /** @var string */
+    public $pdf_map_paper_size = 'A4';
+    /** @var string */
+    public $pdf_map_orientation = 'L';
     /** @var string */
     public $pdf_event_description_mode = 'complete';
     /** @var string */
@@ -172,6 +193,10 @@ class jem_settings extends Table
     public $pdf_annual_paper_size = 'A4';
     /** @var string */
     public $pdf_annual_orientation = 'L';
+    /** @var string */
+    public $pdf_annual_month_matrix = 'auto';
+    /** @var string */
+    public $pdf_annual_vertical_align = 'top';
     /** @var int */
     public $pdf_annual_show_day_types_legend = '1';
     /** @var int */

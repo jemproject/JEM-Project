@@ -34,6 +34,6 @@ class JemViewDay extends HtmlView
         $model->setState('list.start', 0);
         $model->setState('list.limit', 0);
 
-        JemPdfView::renderEventList(Text::_('COM_JEM_DAY_VIEW'), (array) $model->getItems(), 'jem-day.pdf');
+        JemPdfView::renderEventList(Text::_('COM_JEM_DAY_VIEW'), (array) $model->getItems(), 'jem-day.pdf', 'calendar');
     }
 }

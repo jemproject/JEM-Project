@@ -172,7 +172,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                         //only admins should be able to see these items
                                         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
                                             $link = 'index.php?option=com_jem&amp;view=settings';
-                                            $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_SETTINGS_TITLE'));
+                                            $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
 
                                             $link = 'index.php?option=com_jem&amp;view=housekeeping';
                                             $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));

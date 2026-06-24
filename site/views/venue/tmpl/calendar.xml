@@ -86,6 +86,15 @@
                 <option value="2">COM_JEM_ABOVE</option>
                 <option value="1">COM_JEM_BELOW</option>
             </field>
+            <field name="calendar_display_mode" type="list"
+                default="calendar"
+                label="COM_JEM_CALENDAR_DISPLAY_MODE"
+                description="COM_JEM_CALENDAR_DISPLAY_MODE_DESC"
+                class="form-select w-auto"
+            >
+                <option value="calendar">COM_JEM_PDF_CALENDAR_LAYOUT_CALENDAR</option>
+                <option value="agenda">COM_JEM_PDF_CALENDAR_LAYOUT_AGENDA</option>
+            </field>
             <field name="show_types_of_days_legend" type="radio"
                 default="1"
                 label="COM_JEM_CALENDAR_SHOW_TYPES_OF_DAYS_LEGEND"
