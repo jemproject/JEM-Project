@@ -634,7 +634,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             <?php endif; ?>
 
             <!-- PUBLISHING STATE -->
-            <?php if (!empty($this->showeventstate) && isset($this->item->published)) : ?>
+            <?php if (!empty($this->showeventstate) && (int) $params->get('event_show_publish_state', 0) === 1 && isset($this->item->published)) : ?>
                 <dt class="published"><?php echo Text::_('JSTATUS'); ?>:</dt>
                 <dd class="published">
                     <?php switch ($this->item->published) {

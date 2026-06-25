@@ -146,6 +146,7 @@ class com_jemInstallerScript
             "event_show_detailstitle" => "1",
             "event_show_detlinkvenue" => "1",
             "event_show_hits" => "0",
+            "event_show_publish_state" => "0",
             "event_show_locdescription" => "1",
             "event_show_mapserv" => "0",
             "event_show_print_icon" => "1",

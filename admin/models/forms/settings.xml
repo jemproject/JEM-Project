@@ -2154,6 +2154,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_show_publish_state" type="radio"
+                label="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="event_custom_fields_position" type="list"
                 label="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION"
                 description="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION_DESC"
