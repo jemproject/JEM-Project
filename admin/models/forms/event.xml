@@ -687,6 +687,15 @@
                 <option    value="0">JHIDE</option>
                 <option    value="1">JSHOW</option>
             </field>
+            <field name="event_show_publish_state" type="list"
+                label="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_DESC"
+                default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
             <field name="event_show_availability" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
