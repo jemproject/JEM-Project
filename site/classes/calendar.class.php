@@ -26,7 +26,6 @@ use Joomla\CMS\Router\Route;
 
 require_once JPATH_SITE . '/administrator/components/com_jem/helpers/html/jemhtml.php';
 
-#[AllowDynamicProperties]
 class JemCalendar
 {
     /*
@@ -122,6 +121,31 @@ class JemCalendar
     */
     var $startYear=1971;
     var $endYear=2037;
+    var $timetoday=false;
+    var $selectedday=-2;
+    var $selectedyear=false;
+    var $selectedmonth=false;
+    var $unixtime=false;
+    var $daytoday=false;
+    var $monthtoday=false;
+    var $yeartoday=false;
+    var $actday=false;
+    var $actmonth=false;
+    var $actyear=false;
+    var $has31days=false;
+    var $isSchalt=false;
+    var $maxdays=false;
+    var $firstday=false;
+    var $GMTDiff='none';
+    var $yearNavBack=false;
+    var $yearNavForw=false;
+    var $monthNavBack=false;
+    var $monthNavForw=false;
+    var $selBtn='Go';
+    var $monthYearDivider=' ';
+    var $weekNumTitle='';
+    var $showNoMonthDays=false;
+    var $eventID=false;
     /*
     ----------------------
     @START PUBLIC METHODS
@@ -321,6 +345,42 @@ class JemCalendar
     }
     /*
     ********************************************************************************
+    PUBLIC setDayAttributes() -> sets extra class/style/title attributes on a day cell
+    ********************************************************************************
+    */
+    function setDayAttributes($year, $month, $day, $classes = array(), $style = '', $title = '')
+    {
+        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
+
+        if (!is_array($classes)) {
+            $classes = preg_split('/\s+/', (string) $classes, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        if (!isset($this->calDayAttributes[$dayTime])) {
+            $this->calDayAttributes[$dayTime] = array(
+                'classes' => array(),
+                'style'   => '',
+                'title'   => '',
+            );
+        }
+
+        foreach ($classes as $class) {
+            $class = trim((string) $class);
+            if ($class !== '') {
+                $this->calDayAttributes[$dayTime]['classes'][$class] = $class;
+            }
+        }
+
+        if ((string) $style !== '') {
+            $this->calDayAttributes[$dayTime]['style'] = (string) $style;
+        }
+
+        if ((string) $title !== '') {
+            $this->calDayAttributes[$dayTime]['title'] = (string) $title;
+        }
+    }
+    /*
+    ********************************************************************************
     PUBLIC setMonthNames() -> sets the month names, $namesArray must be an array of 12 months starting with January
     ********************************************************************************
     */
@@ -417,9 +477,10 @@ class JemCalendar
     var $calEventContent=[];
     var $calEventContentUrl=[];
     var $calEventContentId=[];
+    var $calDayAttributes=[];
     var $calInit=0;
     var $weekNum=false;
-    var $WeekUrl=false;
+    var $weekUrl=false;
     var $javaScriptWeek=false;
 
     /*
@@ -521,7 +582,7 @@ class JemCalendar
                 $out.=$this->mkUrl($this->actyear,$this->actmonth-1);
             }
             $out .= $this->monthNavBack."</a></td>";
-            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-4)."\">";
+            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-($this->yearNav ? 4 : 4))."\">";
             $out .= $this->getMonthName().$this->monthYearDivider.$this->actyear."</td>";
             $out .= "<td class=\"".$this->cssMonthNav."\"".($this->yearNav ? '' : ' colspan="2"').">";
             if ($this->actmonth==12) { //december
@@ -669,6 +730,8 @@ class JemCalendar
     */
     function mkDay($var) {
         $eventContent = $this->mkEventContent($var);
+        $dayAttributes = $this->getDayAttributes($var);
+        $dayAttributeHtml = $dayAttributes['html'];
         $linktext = $var;
         if ($this->dayLinks) {
             if ($eventContent) {
@@ -687,11 +750,13 @@ class JemCalendar
         }
 
         if ($this->isEvent($var)) {
+            $eventClasses = array_filter(array_merge(array($this->eventID), $dayAttributes['classes']));
+            $eventClassAttribute = implode(' ', array_unique($eventClasses));
             if ($this->eventUrl) {
-                $out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink."<a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
+                $out="<td class=\"".$eventClassAttribute."\"".$dayAttributeHtml."><div class=\"daynum\">".$htmlNewEventLink."<a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
                 $this->eventUrl=false;
             } else {
-                $out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
+                $out="<td class=\"".$eventClassAttribute."\"".$dayAttributeHtml."><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
             }
         } else {
             /* allow styling of multiple things like "today is Sunday" */
@@ -711,10 +776,30 @@ class JemCalendar
             if ($eventContent) {
                 $cssClass[] = 'busy';
             }
-            $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
+            $cssClass = array_merge($cssClass, $dayAttributes['classes']);
+            $out = "<td class=\"".implode(' ', array_unique($cssClass))."\"".$dayAttributeHtml."><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
         }
 
         return $out;
+    }
+    function getDayAttributes($day) {
+        $dayTime = $this->mkActiveTime(0, 0, 1, $this->actmonth, $day, $this->actyear);
+        $attributes = $this->calDayAttributes[$dayTime] ?? array();
+        $classes = array_values($attributes['classes'] ?? array());
+        $html = '';
+
+        if (!empty($attributes['style'])) {
+            $html .= ' style="' . htmlspecialchars((string) $attributes['style'], ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        if (!empty($attributes['title'])) {
+            $html .= ' title="' . htmlspecialchars((string) $attributes['title'], ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        return array(
+            'classes' => $classes,
+            'html'    => $html,
+        );
     }
     /*
     ********************************************************************************

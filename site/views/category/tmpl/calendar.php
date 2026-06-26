@@ -68,6 +68,37 @@ use Joomla\CMS\Factory;
     $calendarStartDate = sprintf('%04d-%02d-01', $calendarYear, $calendarMonth);
     $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
     $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
+    $specialDaysByDate = JemHelper::calendarSpecialDays($calendarStartDate, $calendarEndDate);
+
+    foreach ($specialDaysByDate as $specialDate => $specialDays) {
+        if (empty($specialDays)) {
+            continue;
+        }
+
+        $specialTimestamp = strtotime($specialDate);
+        if (!$specialTimestamp) {
+            continue;
+        }
+
+        usort($specialDays, static function ($a, $b) {
+            return ((int) ($a['priority'] ?? 999)) <=> ((int) ($b['priority'] ?? 999));
+        });
+
+        $primarySpecialDay = reset($specialDays);
+        $specialColor = $primarySpecialDay['color'] ?? '#d1d5db';
+        $specialTitle = implode(', ', array_unique(array_map(static function ($specialDay) {
+            return (string) ($specialDay['title'] ?? $specialDay['type'] ?? '');
+        }, $specialDays)));
+
+        $this->cal->setDayAttributes(
+            (int) date('Y', $specialTimestamp),
+            (int) date('m', $specialTimestamp),
+            (int) date('d', $specialTimestamp),
+            array('is-special-day'),
+            '--jem-calendar-special-day-bg:' . $specialColor . ';background-color:' . $specialColor . ';color:#111827;',
+            $specialTitle
+        );
+    }
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -445,6 +476,9 @@ use Joomla\CMS\Factory;
 
             <!-- Calendar Legend -->
             <div class="calendarLegends">
+                <?php if (!empty($countcatevents)) : ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                <?php endif; ?>
                 <?php
                 if ($this->params->get('displayLegend')) {
 
@@ -513,6 +547,11 @@ use Joomla\CMS\Factory;
             <div class="calendarLegends">
                 <?php
                 if ($displayLegend == 1) {
+                    if (!empty($countcatevents)) {
+                    ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                    <?php
+                    }
 
                     ##############
                     ## FOR EACH ##

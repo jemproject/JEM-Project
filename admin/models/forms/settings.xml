@@ -541,7 +541,7 @@
             label="COM_JEM_PDF_ENABLED_VIEWS"
             description="COM_JEM_PDF_ENABLED_VIEWS_DESC"
             class="inputbox form-select"
-            default="annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal"
+            default="annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal"
             multiple="true"
             size="15"
             required="false"
@@ -560,6 +560,9 @@
             <option value="eventsmap">COM_JEM_EVENTS_MAP</option>
             <option value="venuesmap">COM_JEM_VENUES_MAP</option>
             <option value="myattendances">COM_JEM_MY_ATTENDANCES</option>
+            <option value="myevents">COM_JEM_MY_EVENTS</option>
+            <option value="mytimeline">COM_JEM_MY_TIMELINE</option>
+            <option value="myvenues">COM_JEM_MY_VENUES</option>
             <option value="attendeeregistrations">COM_JEM_ATTENDEE_REGISTRATIONS</option>
         </field>
         <field name="pdf_orientation" type="list"

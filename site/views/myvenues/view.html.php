@@ -130,6 +130,7 @@ class JemViewMyvenues extends JemView
 
             // ($task == 'archive') useless
             $print_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&print=1&tmpl=component');
+            $pdf_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&format=raw&layout=pdf');
 
             $params->set('page_heading', $pageheading);
 
@@ -169,6 +170,7 @@ class JemViewMyvenues extends JemView
             $this->novenues     = $novenues;
             $this->permissions     = $permissions;
             $this->print_link = $print_link;
+            $this->pdf_link = $pdf_link;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         }
         parent::display($tpl);

@@ -39,6 +39,7 @@ class JemViewMytimeline extends JemView
         $this->permissions = new stdClass();
         $this->pagetitle = Text::_('COM_JEM_MY_TIMELINE');
         $this->print_link = '';
+        $this->pdf_link = '';
         $this->archive_link = '';
         $this->pageclass_sfx = '';
 
@@ -75,9 +76,11 @@ class JemViewMytimeline extends JemView
                 $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $print_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive&print=1&tmpl=component');
+                $pdf_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive&format=raw&layout=pdf');
                 $archive_link = Route::_('index.php?option=com_jem&view=mytimeline');
             } else {
                 $print_link = Route::_('index.php?option=com_jem&view=mytimeline&print=1&tmpl=component');
+                $pdf_link = Route::_('index.php?option=com_jem&view=mytimeline&format=raw&layout=pdf');
                 $archive_link = Route::_('index.php?option=com_jem&view=mytimeline&task=archive');
             }
 
@@ -95,6 +98,7 @@ class JemViewMytimeline extends JemView
             $this->items = $this->get('Items');
             $this->pagetitle = $pagetitle;
             $this->print_link = $print_link;
+            $this->pdf_link = $pdf_link;
             $this->archive_link = $archive_link;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         }

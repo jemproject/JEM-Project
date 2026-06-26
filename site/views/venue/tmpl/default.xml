@@ -62,6 +62,30 @@
                 height="300px"
                 label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
                 description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
-            /></fieldset>
+            />
+            <field type="spacer" name="venue_details_spacer"
+                label="COM_JEM_VENUE_DETAILS_OPTIONS"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="venue_show_status" type="radio"
+                default="1"
+                label="COM_JEM_VENUE_SHOW_STATUS"
+                description="COM_JEM_VENUE_SHOW_STATUS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_map_display" type="list"
+                default="global"
+                label="COM_JEM_VENUE_MAP_DISPLAY"
+                description="COM_JEM_VENUE_MAP_DISPLAY_DESC"
+            >
+                <option value="global">COM_JEM_USE_GLOBAL</option>
+                <option value="hide">COM_JEM_HIDE</option>
+                <option value="link">COM_JEM_MAP_LINK</option>
+                <option value="map">COM_JEM_EMBEDDED_MAP</option>
+            </field>
+        </fieldset>
     </fields>
 </metadata>

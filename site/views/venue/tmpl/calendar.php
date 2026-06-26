@@ -68,6 +68,7 @@ use Joomla\CMS\Factory;
     $calendarStartDate = sprintf('%04d-%02d-01', $calendarYear, $calendarMonth);
     $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
     $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
+    JemHelper::applyCalendarSpecialDayAttributes($this->cal, $calendarStartDate, $calendarEndDate);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -435,6 +436,9 @@ use Joomla\CMS\Factory;
 
             <!-- Calendar Legend -->
             <div class="calendarLegends">
+                <?php if (!empty($countcatevents)) : ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                <?php endif; ?>
                 <?php
                 if ($this->params->get('displayLegend')) {
 
@@ -503,6 +507,11 @@ use Joomla\CMS\Factory;
             <div class="calendarLegends mt-4">
                 <?php
                 if ($displayLegend == 1) {
+                    if (!empty($countcatevents)) {
+                    ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                    <?php
+                    }
 
                     ##############
                     ## FOR EACH ##

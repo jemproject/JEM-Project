@@ -13,6 +13,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Global attendee registrations controller.
@@ -42,10 +43,20 @@ class JemControllerAttendeeregistrations extends BaseController
 
     private function assertCanManageAttendeeRegistrations()
     {
+        $app = Factory::getApplication();
         $user = JemFactory::getUser();
 
-        if (!$user->get('id') || !$user->authorise('core.manage', 'com_jem')) {
-            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        if (!$user->get('id')) {
+            $uri = Uri::getInstance();
+            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_LOGIN_REQUIRED'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $app->close();
+        }
+
+        if (!$user->authorise('core.manage', 'com_jem')) {
+            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php', false));
+            $app->close();
         }
     }
 

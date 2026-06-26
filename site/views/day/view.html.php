@@ -48,6 +48,16 @@ class JemViewDay extends JemView
         $user        = JemFactory::getUser();
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
+        if ($menuitem
+            && isset($menuitem->query['option'], $menuitem->query['view'])
+            && $menuitem->query['option'] === 'com_jem'
+            && $menuitem->query['view'] === 'day'
+            && method_exists($menuitem, 'getParams')) {
+            foreach ($menuitem->getParams()->toArray() as $key => $value) {
+                $params->set($key, $value);
+            }
+        }
+
         // Decide which parameters should take priority
         $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
                                         && $menuitem->query['view'] == 'day'

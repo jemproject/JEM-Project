@@ -368,7 +368,7 @@ static public function lightbox() {
      */
     static protected function getDefaultPdfViews()
     {
-        return 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
+        return 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
     }
 
     /**
@@ -1041,7 +1041,7 @@ static public function lightbox() {
 
                 $message = Text::_('COM_JEM_MAP').':';
                 $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
+                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
                 break;
 
             case 2:
@@ -1126,7 +1126,8 @@ static public function lightbox() {
                 }
 
                 $message = Text::_('COM_JEM_MAP') . ':';
-                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '">' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
 
                 break;
 
@@ -1375,14 +1376,26 @@ static public function lightbox() {
 
     static public function typeBadge($event)
     {
-        self::translateType($event, 'type_');
+        return self::typedEntityBadge($event, 'type_', 'event');
+    }
 
-        if (empty($event->type_name)) {
+    static public function typedEntityBadge($item, $prefix = 'type_', $entity = 'event')
+    {
+        self::translateType($item, $prefix);
+
+        $nameProperty = $prefix . 'name';
+        if (empty($item->{$nameProperty})) {
             return '';
         }
 
-        $name       = htmlspecialchars($event->type_name, ENT_QUOTES, 'UTF-8');
-        $tooltip    = self::typeDescriptionSummary(isset($event->type_description) ? $event->type_description : '');
+        $descriptionProperty = $prefix . 'description';
+        $colorProperty       = $prefix . 'color';
+        $iconProperty        = $prefix . 'icon';
+        $idProperty          = $prefix . 'id';
+        $aliasProperty       = $prefix . 'alias';
+
+        $name       = htmlspecialchars($item->{$nameProperty}, ENT_QUOTES, 'UTF-8');
+        $tooltip    = self::typeDescriptionSummary(isset($item->{$descriptionProperty}) ? $item->{$descriptionProperty} : '');
         $attributes = '';
         $style      = '';
 
@@ -1391,23 +1404,26 @@ static public function lightbox() {
             $attributes .= ' title="' . $safeTooltip . '" aria-label="' . $name . ': ' . $safeTooltip . '"';
         }
 
-        if (!empty($event->type_color) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $event->type_color)) {
-            $style = ' style="background-color:' . htmlspecialchars($event->type_color, ENT_QUOTES, 'UTF-8') . '; color:' . self::contrastingTextColor((string) $event->type_color) . ';"';
+        if (!empty($item->{$colorProperty}) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $item->{$colorProperty})) {
+            $style = ' style="background-color:' . htmlspecialchars($item->{$colorProperty}, ENT_QUOTES, 'UTF-8') . '; color:' . self::contrastingTextColor((string) $item->{$colorProperty}) . ';"';
         }
 
         $inner = '';
-        if (!empty($event->type_icon) && self::isValidIconClass((string) $event->type_icon)) {
-            $icon  = htmlspecialchars($event->type_icon, ENT_QUOTES, 'UTF-8');
+        if (!empty($item->{$iconProperty}) && self::isValidIconClass((string) $item->{$iconProperty})) {
+            $icon  = htmlspecialchars($item->{$iconProperty}, ENT_QUOTES, 'UTF-8');
             $inner .= '<span class="' . $icon . '" aria-hidden="true"></span> ';
         }
         $inner .= $name;
 
-        $typeRouteId = (int) $event->type_id;
-        if (!empty($event->type_alias)) {
-            $typeRouteId .= ':' . $event->type_alias;
+        $typeRouteId = (int) $item->{$idProperty};
+        if (!empty($item->{$aliasProperty})) {
+            $typeRouteId .= ':' . $item->{$aliasProperty};
         }
 
-        $link = htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($typeRouteId)), ENT_QUOTES, 'UTF-8');
+        $route = $entity === 'venue'
+            ? JemHelperRoute::getTypevenuesRoute($typeRouteId)
+            : JemHelperRoute::getTypeeventsRoute($typeRouteId);
+        $link = htmlspecialchars(Route::_($route), ENT_QUOTES, 'UTF-8');
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
     }

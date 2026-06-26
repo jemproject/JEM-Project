@@ -32,6 +32,7 @@ class JemViewAttendeeregistrations extends HtmlView
 
         if (!$user->get('id')) {
             $uri = Uri::getInstance();
+            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_LOGIN_REQUIRED'), 'warning');
             $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
 
             return;

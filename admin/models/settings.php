@@ -189,7 +189,7 @@ class JemModelSettings extends AdminModel
             $data['pdf_enabled_views'] = implode(',', array_unique(array_filter(array_map('trim', $data['pdf_enabled_views']))));
         }
         if (empty($data['pdf_enabled_views'])) {
-            $data['pdf_enabled_views'] = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
+            $data['pdf_enabled_views'] = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
         }
         $pdfDefaults = array(
             'pdf_paper_size' => 'A4',

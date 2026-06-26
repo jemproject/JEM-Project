@@ -25,14 +25,17 @@ class JemViewAttendeeregistrations extends JemView
         $uri = Uri::getInstance();
 
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_LOGIN_REQUIRED'), 'warning');
             $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
 
             return;
         }
 
         if (!$user->authorise('core.manage', 'com_jem')) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php', false));
+
+            return;
         }
 
         $document = $app->getDocument();

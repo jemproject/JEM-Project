@@ -13,7 +13,8 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 /**
  * Event-Model
  */
@@ -26,7 +27,11 @@ class JemModelEvent extends ItemModel
      */
     protected $_context = 'com_jem.event';
 
+    protected $_item = null;
+
     protected $_registers = null;
+
+    protected $_registerid = null;
 
     /**
      * Method to auto-populate the model state.
@@ -101,7 +106,7 @@ class JemModelEvent extends ItemModel
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                     'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
                 # Join over the category tables
@@ -113,6 +118,10 @@ class JemModelEvent extends ItemModel
                 $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
                 $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
                 $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
+
+                # Venue Type
+                $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
+                $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
 
                 if (JemHelper::isContactComponentEnabled()) {
                     # Get contact id
@@ -405,7 +414,7 @@ class JemModelEvent extends ItemModel
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
-                    'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.article_id, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
+                    'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                     'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
@@ -428,7 +437,7 @@ class JemModelEvent extends ItemModel
                 'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                 'l.attribs AS venue_attribs, ' .
                 'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
+                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
             $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
             # Join over the category tables
@@ -440,6 +449,10 @@ class JemModelEvent extends ItemModel
             $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
             $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
             $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1 AND ' . $typeLanguageCondition);
+
+            # Venue Type
+            $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
+            $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
 
             if (JemHelper::isContactComponentEnabled()) {
                 # Get contact id
@@ -698,7 +711,7 @@ class JemModelEvent extends ItemModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && count($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');

@@ -526,6 +526,22 @@
             value="1"
             checked="0"
         />
+        <field name="registration_intro" type="textarea"
+            label="COM_JEM_EVENT_REGISTRATION_INTRO"
+            description="COM_JEM_EVENT_REGISTRATION_INTRO_DESC"
+            class="inputbox"
+            rows="5"
+            cols="60"
+            filter="safehtml"
+        />
+        <field name="registration_footer" type="textarea"
+            label="COM_JEM_EVENT_REGISTRATION_FOOTER"
+            description="COM_JEM_EVENT_REGISTRATION_FOOTER_DESC"
+            class="inputbox"
+            rows="5"
+            cols="60"
+            filter="safehtml"
+        />
     </fieldset>
 
     <fieldset name="recurrence"

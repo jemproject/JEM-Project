@@ -70,6 +70,7 @@ use Joomla\CMS\Factory;
     $nrweeks = max(1, (int) $this->params->get('nrweeks', 1));
     $weekLegendEndDate = (new DateTimeImmutable($firstDate))->modify('+' . (($nrweeks * 7) - 1) . ' days')->format('Y-m-d');
     $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($firstDate, $weekLegendEndDate, $this->params);
+    JemHelper::applyCalendarSpecialDayAttributes($this->cal, $firstDate, $weekLegendEndDate);
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
@@ -440,6 +441,9 @@ use Joomla\CMS\Factory;
 
             <!-- Calendar Legend -->
             <div class="calendarLegends">
+                <?php if (!empty($countcatevents)) : ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                <?php endif; ?>
                 <?php
                 if ($this->params->get('displayLegend')) {
 
@@ -508,6 +512,11 @@ use Joomla\CMS\Factory;
             <div class="calendarLegends mt-4">
                 <?php
                 if ($displayLegend == 1) {
+                    if (!empty($countcatevents)) {
+                    ?>
+                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
+                    <?php
+                    }
 
                     ##############
                     ## FOR EACH ##

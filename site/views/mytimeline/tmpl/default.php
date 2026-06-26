@@ -185,13 +185,13 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
 </style>
 
 <div id="jem" class="jem_mytimeline jem-mytimeline-<?php echo $this->escape($timelineSide); ?><?php echo $this->pageclass_sfx; ?>">
-    
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
         </div>
     <?php endif; ?>
-<?php if ($this->needLoginFirst) : ?>
+
+    <?php if ($this->needLoginFirst) : ?>
         <?php
         $uri = Uri::getInstance();
         $returnUrl = $uri->toString();
@@ -206,7 +206,7 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
     <?php else : ?>
         <div class="buttons">
             <?php
-            $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
+            $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'pdf_link' => $this->pdf_link, 'archive_link' => $this->archive_link);
             echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
             ?>
         </div>

@@ -187,6 +187,8 @@ class JemModelEvent extends JemModelAdmin
             $registry = new Registry;
             $registry->loadString($item->attribs ?? '{}');
             $item->attribs = $registry->toArray();
+            $item->registration_intro = $item->attribs['registration_intro'] ?? '';
+            $item->registration_footer = $item->attribs['registration_footer'] ?? '';
 
             // Convert the metadata field to an array.
             $registry = new Registry;
@@ -360,6 +362,18 @@ class JemModelEvent extends JemModelAdmin
         $data['metadata']     = $data['metadata'] ?? '';
         $data['attribs']      = $data['attribs'] ?? '';
         $data['ordering']     = $data['ordering'] ?? '';
+        $registrationIntro    = $data['registration_intro'] ?? '';
+        $registrationFooter   = $data['registration_footer'] ?? '';
+
+        if (!is_array($data['attribs'])) {
+            $registrationAttribs = new Registry((string) $data['attribs']);
+            $data['attribs'] = $registrationAttribs->toArray();
+        }
+
+        $data['attribs']['registration_intro'] = $registrationIntro;
+        $data['attribs']['registration_footer'] = $registrationFooter;
+        unset($data['registration_intro'], $data['registration_footer']);
+
         if (array_key_exists('type_id', $data) && $data['type_id'] === '') {
             $data['type_id'] = null;
         }

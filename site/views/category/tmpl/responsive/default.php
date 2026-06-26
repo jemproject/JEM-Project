@@ -52,15 +52,19 @@ use Joomla\CMS\HTML\HTMLHelper;
     }
   </style>
 
-  <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
-  <div class="jem-catimg">
-    <?php    echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
+  <div class="jem-category-overview-panel">
+    <div class="jem-category-overview-details">
+      <div class="description">
+        <p><?php echo $this->description; ?></p>
+      </div>
+    </div>
+    <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
+    <div class="jem-catimg jem-category-overview-media">
+      <?php echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
+    </div>
+    <?php endif; ?>
   </div>
-  <?php endif; ?>
-
-  <div class="description">
-    <p><?php echo $this->description; ?></p>
-  </div>
+  <div class="jem-category-section-separator"></div>
 
   <div class="jem-clear">
   </div>
@@ -107,11 +111,6 @@ use Joomla\CMS\HTML\HTMLHelper;
     <!--pagination-->
     <div class="pagination">
         <?php echo $this->pagination->getPagesLinks(); ?>
-    </div>
-
-    <!-- iCal -->
-    <div id="iCal" class="iCal">
-        <?php echo JemOutput::icalbutton($this->category->id, 'category'); ?>
     </div>
 
     <!-- copyright -->
