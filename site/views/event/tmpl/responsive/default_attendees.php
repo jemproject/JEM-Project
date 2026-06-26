@@ -54,9 +54,17 @@ $renderRegistrationLoginActions = function ($urlLogin, $urlRegister) {
     echo '</div>';
     echo '</div>';
 };
+$registrationIntro = trim((string) $this->item->params->get('registration_intro', ''));
+$registrationFooter = trim((string) $this->item->params->get('registration_footer', ''));
 ?>
 
 <div class="register<?php echo $eventLayout === 'compact' ? ' jem-registration-compact' : ''; ?>">
+    <?php if ($registrationIntro !== '' && trim(strip_tags($registrationIntro)) !== '') : ?>
+        <div class="jem-registration-text jem-registration-text-intro">
+            <?php echo $registrationIntro; ?>
+        </div>
+    <?php endif; ?>
+
     <dl class="jem-dl floattext jem-registration-summary">
         <?php $maxplaces        = (int)$this->item->maxplaces; ?>
         <?php $reservedplaces   = (int)$this->item->reservedplaces; ?>
@@ -338,5 +346,11 @@ $renderRegistrationLoginActions = function ($urlLogin, $urlRegister) {
                 ?>
             </dd>
         </dl>
+    <?php endif; ?>
+
+    <?php if ($registrationFooter !== '' && trim(strip_tags($registrationFooter)) !== '') : ?>
+        <div class="jem-registration-text jem-registration-text-footer">
+            <?php echo $registrationFooter; ?>
+        </div>
     <?php endif; ?>
 </div>

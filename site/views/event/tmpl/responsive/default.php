@@ -170,14 +170,14 @@ $renderEventCategoryLinks = function () use ($params) {
 };
 $renderVenueName = function () use ($params) {
     if (($params->get('event_show_detlinkvenue') == 1) && !empty($this->item->url)) {
-        return '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+        $venueName = '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+    } elseif (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
+        $venueName = '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+    } else {
+        $venueName = $this->escape($this->item->venue);
     }
 
-    if (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
-        return '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-    }
-
-    return $this->escape($this->item->venue);
+    return $venueName . ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
 };
 $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($params) {
     $locality = array_filter(array(
@@ -196,6 +196,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     } else {
         $venueName = $this->escape($this->item->venue);
     }
+    $venueName .= ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
 
     $html = '<div class="jem-venue-compact">';
     $html .= '<div class="jem-venue-compact-name">' . $venueName . $venueaccess . '</div>';
@@ -386,8 +387,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 ?>
             </h2>
         <?php endif; ?>
-        <div class="jem-row jem-event-main-responsive">
-            <div class="jem-info">
+        <div class="jem-row jem-event-main-responsive jem-event-overview-panel">
+            <div class="jem-info jem-event-overview-details">
                 <?php if ($eventLayout === 'compact') : ?>
                     <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
                     <div class="jem-event-compact">
@@ -564,7 +565,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
                 }
             </style>
-            <div class="jem-img">
+            <div class="jem-img jem-event-overview-media">
                 <?php if ($eventImageRibbonText) : ?>
                     <div class="jem-event-image-ribbon-wrap">
                         <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
@@ -1045,6 +1046,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         ?>
                     </h2>
                 <?php endif; ?>
+                <div class="jem-event-venue-overview-panel">
 
                 <?php if ($venueLayout === 'compact') : ?>
                     <div class="jem-row jem-wrap-reverse jem-venue-compact-row">
@@ -1065,13 +1067,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_LOCATION'); ?>"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
                                 <dd class="venue">
                                     <?php
-                                    if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
-                                        echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
-                                    elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
-                                        echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                                    else :
-                                        echo $this->escape($this->item->venue);
-                                    endif;
+                                    echo $renderVenueName();
                                     echo $venueaccess;
                                     ?>
                                 </dd>
@@ -1144,15 +1140,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 itemtype="https://schema.org/PostalAddress">
                                 <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_LOCATION'); ?>"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
                                 <dd class="venue">
-                                    <?php
-                                    if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
-                                        echo '<a target="_blank" href="' . $this->item->url . '">' . $this->escape($this->item->venue) . '</a>';
-                                    elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
-                                        echo '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-                                    else :
-                                        echo $this->escape($this->item->venue);
-                                    endif;
-                                    ?>
+                                    <?php echo $renderVenueName(); ?>
                                 </dd>
                             </dl>
                         </div>
@@ -1222,6 +1210,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php unset($this->attachmentParams); ?>
 
+                </div>
             </div>
 
         <?php endif; ?>

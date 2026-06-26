@@ -156,6 +156,42 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="timeline_event_height_mode" type="list"
+                default="same"
+                class="inputbox form-select w-auto"
+                label="COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_LABEL"
+                description="COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_DESC"
+            >
+                <option value="same">COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_SAME</option>
+                <option value="duration">COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_DURATION</option>
+            </field>
+            <field name="timeline_card_layout" type="list"
+                default="compact"
+                class="inputbox form-select w-auto"
+                label="COM_JEM_TIMELINE_CARD_LAYOUT_LABEL"
+                description="COM_JEM_TIMELINE_CARD_LAYOUT_DESC"
+            >
+                <option value="details">COM_JEM_TIMELINE_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_TIMELINE_LAYOUT_COMPACT</option>
+            </field>
+            <field name="timeline_day_background" type="list"
+                default="alternate"
+                class="inputbox form-select w-auto"
+                label="COM_JEM_TIMELINE_DAY_BACKGROUND_LABEL"
+                description="COM_JEM_TIMELINE_DAY_BACKGROUND_DESC"
+            >
+                <option value="none">COM_JEM_TIMELINE_DAY_BACKGROUND_NONE</option>
+                <option value="alternate">COM_JEM_TIMELINE_DAY_BACKGROUND_ALTERNATE</option>
+                <option value="special_day">COM_JEM_TIMELINE_DAY_BACKGROUND_SPECIAL_DAY</option>
+                <option value="alternate_special_day">COM_JEM_TIMELINE_DAY_BACKGROUND_ALTERNATE_SPECIAL_DAY</option>
+            </field>
+            <field name="timeline_alternate_day_background_color" type="color"
+                default="#f3f4f6"
+                class="inputbox form-control w-auto"
+                label="COM_JEM_TIMELINE_ALTERNATE_DAY_BACKGROUND_COLOR_LABEL"
+                description="COM_JEM_TIMELINE_ALTERNATE_DAY_BACKGROUND_COLOR_DESC"
+                showon="timeline_day_background:alternate,alternate_special_day"
+            />
             <field name="timetable_event_background" type="list"
                 default="category"
                 class="inputbox form-select w-auto"
@@ -163,6 +199,7 @@
                 description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC"
             >
                 <option value="category">COM_JEM_TIMETABLE_EVENT_BACKGROUND_CATEGORY</option>
+                <option value="type">COM_JEM_TIMETABLE_EVENT_BACKGROUND_TYPE</option>
                 <option value="venue">COM_JEM_TIMETABLE_EVENT_BACKGROUND_VENUE</option>
                 <option value="custom">COM_JEM_TIMETABLE_EVENT_BACKGROUND_CUSTOM</option>
             </field>
@@ -194,6 +231,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="timeline_category_display" type="list"
+                default="text"
+                class="inputbox form-select w-auto"
+                label="COM_JEM_TIMELINE_CATEGORY_DISPLAY_LABEL"
+                description="COM_JEM_TIMELINE_CATEGORY_DISPLAY_DESC"
+                showon="timeline_show_category:1"
+            >
+                <option value="text">COM_JEM_TIMELINE_CATEGORY_DISPLAY_TEXT</option>
+                <option value="badge">COM_JEM_TIMELINE_CATEGORY_DISPLAY_BADGE</option>
+            </field>
             <field name="timeline_show_venue" type="radio"
                 default="1"
                 label="COM_JEM_TIMELINE_SHOW_VENUE_LABEL"
@@ -212,8 +259,17 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="timeline_show_detail_icons" type="radio"
+                default="1"
+                label="COM_JEM_TIMELINE_SHOW_DETAIL_ICONS_LABEL"
+                description="COM_JEM_TIMELINE_SHOW_DETAIL_ICONS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="timeline_show_event_intro" type="radio"
-                default="0"
+                default="1"
                 label="COM_JEM_TIMELINE_SHOW_EVENT_INTRO_LABEL"
                 description="COM_JEM_TIMELINE_SHOW_EVENT_INTRO_DESC"
                 class="btn-group btn-group-yesno"
@@ -222,14 +278,35 @@
                 <option value="0">JNO</option>
             </field>
             <field name="timeline_event_intro_limit" type="number"
-                default="160"
+                default="300"
                 min="0"
                 max="1000"
                 step="10"
                 class="inputbox form-control w-auto"
                 label="COM_JEM_TIMELINE_EVENT_INTRO_LIMIT_LABEL"
                 description="COM_JEM_TIMELINE_EVENT_INTRO_LIMIT_DESC"
+                showon="timeline_show_event_intro:1"
             />
+            <field name="timeline_show_event_readmore" type="radio"
+                default="1"
+                label="COM_JEM_TIMELINE_SHOW_EVENT_READMORE_LABEL"
+                description="COM_JEM_TIMELINE_SHOW_EVENT_READMORE_DESC"
+                class="btn-group btn-group-yesno"
+                showon="timeline_show_event_intro:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="timeline_readmore_style" type="list"
+                default="button"
+                class="inputbox form-select w-auto"
+                label="COM_JEM_TIMELINE_READMORE_STYLE_LABEL"
+                description="COM_JEM_TIMELINE_READMORE_STYLE_DESC"
+                showon="timeline_show_event_intro:1[AND]timeline_show_event_readmore:1"
+            >
+                <option value="text">COM_JEM_TIMELINE_READMORE_STYLE_TEXT</option>
+                <option value="button">COM_JEM_TIMELINE_READMORE_STYLE_BUTTON</option>
+            </field>
             <field name="timeline_show_event_image" type="radio"
                 default="1"
                 label="COM_JEM_TIMELINE_SHOW_EVENT_IMAGE_LABEL"
@@ -239,6 +316,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="timeline_event_image_position" type="list"
+                default="left"
+                label="COM_JEM_TIMELINE_EVENT_IMAGE_POSITION_LABEL"
+                description="COM_JEM_TIMELINE_EVENT_IMAGE_POSITION_DESC"
+                class="inputbox form-select w-auto"
+                showon="timeline_show_event_image:1"
+            >
+                <option value="left">JGLOBAL_LEFT</option>
+                <option value="right">JGLOBAL_RIGHT</option>
+            </field>
             <field name="timeline_show_venue_image" type="radio"
                 default="0"
                 label="COM_JEM_TIMELINE_SHOW_VENUE_IMAGE_LABEL"
@@ -247,6 +334,16 @@
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
+            </field>
+            <field name="timeline_venue_image_position" type="list"
+                default="right"
+                label="COM_JEM_TIMELINE_VENUE_IMAGE_POSITION_LABEL"
+                description="COM_JEM_TIMELINE_VENUE_IMAGE_POSITION_DESC"
+                class="inputbox form-select w-auto"
+                showon="timeline_show_venue_image:1"
+            >
+                <option value="left">JGLOBAL_LEFT</option>
+                <option value="right">JGLOBAL_RIGHT</option>
             </field>
             <field type="spacer" name="timeline_filtering_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_FILTERING"

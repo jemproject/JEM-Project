@@ -917,6 +917,52 @@ class JemHelper
     }
 
     /**
+     * Apply active special day styling to a JemCalendar-compatible calendar object.
+     *
+     * @param   object  $calendar   Calendar instance with setDayAttributes().
+     * @param   string  $startDate  Period start date, Y-m-d.
+     * @param   string  $endDate    Period end date, Y-m-d.
+     *
+     * @return  void
+     */
+    static public function applyCalendarSpecialDayAttributes($calendar, $startDate, $endDate)
+    {
+        if (!is_object($calendar) || !method_exists($calendar, 'setDayAttributes')) {
+            return;
+        }
+
+        foreach (self::calendarSpecialDays($startDate, $endDate) as $specialDate => $specialDays) {
+            if (empty($specialDays)) {
+                continue;
+            }
+
+            $specialTimestamp = strtotime($specialDate);
+            if (!$specialTimestamp) {
+                continue;
+            }
+
+            usort($specialDays, static function ($a, $b) {
+                return ((int) ($a['priority'] ?? 999)) <=> ((int) ($b['priority'] ?? 999));
+            });
+
+            $primarySpecialDay = reset($specialDays);
+            $specialColor = $primarySpecialDay['color'] ?? '#d1d5db';
+            $specialTitle = implode(', ', array_unique(array_map(static function ($specialDay) {
+                return (string) ($specialDay['title'] ?? $specialDay['type'] ?? '');
+            }, $specialDays)));
+
+            $calendar->setDayAttributes(
+                (int) date('Y', $specialTimestamp),
+                (int) date('m', $specialTimestamp),
+                (int) date('d', $specialTimestamp),
+                array('is-special-day'),
+                '--jem-calendar-special-day-bg:' . $specialColor . ';background-color:' . $specialColor . ';color:#111827;',
+                $specialTitle
+            );
+        }
+    }
+
+    /**
      * Build the Types of Days legend items applied in a calendar period.
      *
      * @param   string  $startDate  Period start date, Y-m-d.

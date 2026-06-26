@@ -497,6 +497,22 @@
             description="COM_JEM_EDITEVENT_FIELD_SINGLE_EVENT_BOOKING_DESC"
             checked="0"
         />
+        <field name="registration_intro" type="textarea"
+            label="COM_JEM_EVENT_REGISTRATION_INTRO"
+            description="COM_JEM_EVENT_REGISTRATION_INTRO_DESC"
+            rows="5"
+            cols="60"
+            filter="safehtml"
+            class="form-control"
+        />
+        <field name="registration_footer" type="textarea"
+            label="COM_JEM_EVENT_REGISTRATION_FOOTER"
+            description="COM_JEM_EVENT_REGISTRATION_FOOTER_DESC"
+            rows="5"
+            cols="60"
+            filter="safehtml"
+            class="form-control"
+        />
     </fieldset>
 
     <fieldset name="recurrence"

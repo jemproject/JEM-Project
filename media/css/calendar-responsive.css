@@ -906,6 +906,31 @@ div#jem .rowcolor {
     padding: 5px 0;
 }
 
+#jlcalendarlegend .calendarLegends {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    justify-content: flex-start;
+}
+
+#jlcalendarlegend .calendarLegends .legend-label,
+#jlcalendarlegend .calendarLegends > .col-md-2 {
+    flex: 0 0 auto;
+    margin-inline-end: 0.75rem;
+    width: auto;
+}
+
+#jlcalendarlegend .calendarLegends > .col-md-10 {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    min-width: 12rem;
+    width: auto;
+}
+
 #jlcalendarlegend .legend-label {
     font-weight: 700;
 }
@@ -934,6 +959,35 @@ div#jem .rowcolor {
     margin-bottom: 5px;
     line-height: 40px;
     font-weight: 400;
+}
+
+#jlcalendarlegend .calendarButton,
+#jlcalendarlegend .eventCat,
+#jlcalendarlegend .eventVenues,
+#jlcalendarlegend .calendarButton:visited,
+#jlcalendarlegend .eventCat:visited,
+#jlcalendarlegend .eventVenues:visited,
+#jlcalendarlegend .eventCat a,
+#jlcalendarlegend .eventVenues a,
+#jlcalendarlegend .eventCat a:visited,
+#jlcalendarlegend .eventVenues a:visited {
+    color: inherit;
+}
+
+#jlcalendarlegend .btn-outline-dark,
+#jlcalendarlegend .btn-outline-dark:visited {
+    color: #212529;
+}
+
+#jlcalendarlegend .btn-outline-dark:hover,
+#jlcalendarlegend .btn-outline-dark:focus,
+#jlcalendarlegend .btn-outline-dark:active,
+#jlcalendarlegend .btn-outline-dark.active {
+    color: #fff;
+}
+
+#jem table.month td.is-special-day {
+    background: var(--jem-calendar-special-day-bg, #d1d5db);
 }
 
 #jlcalendarlegend .eventCat.jem-calendar-legend-full {

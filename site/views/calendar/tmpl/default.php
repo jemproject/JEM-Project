@@ -69,6 +69,7 @@ use Joomla\CMS\Factory;
     $calendarStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
     $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
     $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
+    JemHelper::applyCalendarSpecialDayAttributes($this->cal, $calendarStartDate, $calendarEndDate);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {

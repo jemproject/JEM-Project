@@ -170,14 +170,14 @@ $renderEventCategoryLinks = function () use ($params) {
 };
 $renderVenueName = function () use ($params) {
     if (($params->get('event_show_detlinkvenue') == 1) && !empty($this->item->url)) {
-        return '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+        $venueName = '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+    } elseif (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
+        $venueName = '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
+    } else {
+        $venueName = $this->escape($this->item->venue);
     }
 
-    if (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
-        return '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
-    }
-
-    return $this->escape($this->item->venue);
+    return $venueName . ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
 };
 $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($params) {
     $locality = array_filter(array(
@@ -196,6 +196,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     } else {
         $venueName = $this->escape($this->item->venue);
     }
+    $venueName .= ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
 
     $html = '<div class="jem-venue-compact">';
     $html .= '<div class="jem-venue-compact-name">' . $venueName . $venueaccess . '</div>';
@@ -470,8 +471,8 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             </h2>
         <?php endif; ?>
 
-        <div class="jem-event-main">
-            <div class="jem-img jem-img-event">
+        <div class="jem-event-main jem-event-overview-panel">
+            <div class="jem-img jem-img-event jem-event-overview-media">
                 <?php if ($eventImageRibbonText) : ?>
                     <div class="jem-event-image-ribbon-wrap jem-event-image-ribbon-wrap--legacy">
                         <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
@@ -484,7 +485,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
         <?php if ($eventLayout === 'compact') : ?>
             <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
-            <div class="jem-event-compact">
+            <div class="jem-event-compact jem-event-overview-details">
                 <?php $eventCategories = $renderEventCategoryLinks(); ?>
                 <?php if (($params->get('event_show_category') == 1 && $eventCategories !== '') || JemOutput::typeBadge($this->item)) : ?>
                     <div class="jem-event-compact-meta">
@@ -505,7 +506,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 <?php endif; ?>
             </div>
         <?php else : ?>
-        <dl class="event_info floattext">
+        <dl class="event_info floattext jem-event-overview-details">
             <?php if ($params->get('event_show_detailstitle',1)) : ?>
                 <dt class="title"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
                 <dd class="title" itemprop="name">
@@ -1122,6 +1123,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     ?>
                 </h2>
             <?php endif; ?>
+            <div class="jem-event-venue-overview-panel">
             <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
 
             <?php if ($venueLayout === 'compact') : ?>
@@ -1136,6 +1138,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     else :
                         echo $this->escape($this->item->venue);
                     endif;
+                    echo ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
                     if (!empty($this->item->url)) :
                         echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
                     endif;
@@ -1266,9 +1269,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 <?php $this->attachmentParams = $this->item->venue_params ?? null; ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php unset($this->attachmentParams); ?>
-
-                </div>
             <?php endif; ?>
+
+            </div>
+        </div>
         <?php endif; ?>
 
         <!-- Registration -->

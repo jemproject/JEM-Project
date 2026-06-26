@@ -44,6 +44,28 @@ class JemModelDay extends JemModelEventslist
     }
 
     /**
+     * Returns component params with active Day menu params applied.
+     */
+    private function getDayParams()
+    {
+        $app = Factory::getApplication();
+        $params = $app->getParams('com_jem');
+        $menuitem = $app->getMenu()->getActive();
+
+        if ($menuitem
+            && isset($menuitem->query['option'], $menuitem->query['view'])
+            && $menuitem->query['option'] === 'com_jem'
+            && $menuitem->query['view'] === 'day'
+            && method_exists($menuitem, 'getParams')) {
+            foreach ($menuitem->getParams()->toArray() as $key => $value) {
+                $params->set($key, $value);
+            }
+        }
+
+        return $params;
+    }
+
+    /**
      * Method to set the date
      *
      * @access public
@@ -54,7 +76,7 @@ class JemModelDay extends JemModelEventslist
         $app = Factory::getApplication();
 
         # Get the params of the active menu item
-        $params = $app->getParams('com_jem');
+        $params = $this->getDayParams();
 
         $date = trim((string) $date);
 
@@ -84,7 +106,7 @@ class JemModelDay extends JemModelEventslist
 
         $this->_date = $date;
 
-        $params = Factory::getApplication()->getParams('com_jem');
+        $params = $this->getDayParams();
         $requestedDaysToShow = Factory::getApplication()->input->getInt('timeline_days_to_show', 0);
         $daysToShow = $requestedDaysToShow > 0
             ? max(1, min(30, $requestedDaysToShow))

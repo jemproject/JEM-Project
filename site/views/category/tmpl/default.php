@@ -47,29 +47,31 @@ use Joomla\CMS\HTML\HTMLHelper;
 
     <div class="clr"></div>
 
-    <div class="floattext">
+    <div class="floattext jem-category-overview-panel">
+        <div class="jem-category-overview-details">
+            <div class="description">
+                <p><?php echo $this->description; ?></p>
+            </div>
+        </div>
         <?php if ($this->jemsettings->discatheader) : ?>
-        <div class="catimg">
-        <?php
-        // flyer
-        if (empty($this->category->image)) {
-            $jemsettings = JEMHelper::config();
-            $imgattribs['width'] = $jemsettings->imagewidth;
-            $imgattribs['height'] = $jemsettings->imagehight;
+            <div class="catimg jem-category-overview-media">
+            <?php
+            // flyer
+            if (empty($this->category->image)) {
+                $jemsettings = JEMHelper::config();
+                $imgattribs['width'] = $jemsettings->imagewidth;
+                $imgattribs['height'] = $jemsettings->imagehight;
 
-            echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
-        }
-        else {
-            echo JemOutput::flyer($this->category, $this->cimage, 'category');
-        }
-        ?>
-        </div>
+                echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
+            }
+            else {
+                echo JemOutput::flyer($this->category, $this->cimage, 'category');
+            }
+            ?>
+            </div>
         <?php endif; ?>
-
-        <div class="description">
-            <p><?php echo $this->description; ?></p>
-        </div>
     </div>
+    <div class="jem-category-section-separator"></div>
 
     <!--subcategories-->
     <?php
@@ -111,11 +113,6 @@ use Joomla\CMS\HTML\HTMLHelper;
     <!--pagination-->
     <div class="pagination">
         <?php echo $this->pagination->getPagesLinks(); ?>
-    </div>
-
-    <!-- iCal -->
-    <div id="iCal" class="iCal">
-        <?php echo JemOutput::icalbutton($this->category->id, 'category'); ?>
     </div>
 
     <!-- copyright -->

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
@@ -70,6 +71,46 @@ class JemPdfView
         $pdf->setPrintFooter(true);
         $pdf->AddPage();
         $pdf->writeHTML(self::buildLinkedEventListHtml($title, $rows, $paperSize), true, false, true, false, '');
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        $pdf->Output($filename, 'D');
+        Factory::getApplication()->close();
+    }
+
+    /**
+     * Renders the Day Timeline PDF using a compact timeline layout.
+     */
+    public static function renderDayTimeline(string $title, array $rows, string $filename, string $day = '', $params = null): void
+    {
+        if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
+            Factory::getApplication()->close();
+
+            return;
+        }
+
+        $settings = JemHelper::config();
+        $paper = self::getProfilePaperSettings($settings, 'calendar');
+        $paperSize = $paper['size'];
+        $orientation = $paper['orientation'];
+        $singlePageTarget = JemPdf::prefersSinglePage($paperSize);
+        $pdf = JemPdf::createDocument($title, $orientation, $paperSize);
+
+        if (!$pdf) {
+            Factory::getApplication()->close();
+
+            return;
+        }
+
+        $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paperSize);
+        $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
+        $pdf->SetAutoPageBreak(!$singlePageTarget, $singlePageTarget ? 0 : $margins['bottom']);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(true);
+        $pdf->AddPage();
+        $pdf->writeHTML(self::buildDayTimelineHtml($title, $rows, $day, $params, $paperSize), true, false, true, false, '');
 
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -259,6 +300,613 @@ class JemPdfView
 
         $pdf->Output($filename, 'D');
         Factory::getApplication()->close();
+    }
+
+    private static function buildDayTimelineHtml(string $title, array $rows, string $day, $params, string $paperSize): string
+    {
+        $scale = JemPdf::getPosterScale($paperSize);
+        $settings = JemHelper::config();
+        $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
+        $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
+        $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
+        $baseFontSize = max(7, min(13, (int) round(8 * $scale)));
+        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $fallbackImageWidth = max(1, min(200, (int) ($settings->pdf_imagewidth ?? 40)));
+        $fallbackImageHeight = max(1, min(200, (int) ($settings->pdf_imageheight ?? 40)));
+        $eventImageWidth = max(1, min(200, (int) ($settings->pdf_event_imagewidth ?? $fallbackImageWidth)));
+        $eventImageHeight = max(1, min(200, (int) ($settings->pdf_event_imageheight ?? $fallbackImageHeight)));
+        $venueImageWidth = max(1, min(200, (int) ($settings->pdf_venue_imagewidth ?? $fallbackImageWidth)));
+        $venueImageHeight = max(1, min(200, (int) ($settings->pdf_venue_imageheight ?? $fallbackImageHeight)));
+        $showEventImage = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_event_image', $params->get('timeline_show_images', 1));
+        $eventImagePosition = $params && method_exists($params, 'get') ? (string) $params->get('timeline_event_image_position', 'left') : 'left';
+        $eventImagePosition = in_array($eventImagePosition, array('left', 'right'), true) ? $eventImagePosition : 'left';
+        $showVenueImage = $params && method_exists($params, 'get') ? (bool) $params->get('timeline_show_venue_image', false) : false;
+        $venueImagePosition = $params && method_exists($params, 'get') ? (string) $params->get('timeline_venue_image_position', 'right') : 'right';
+        $venueImagePosition = in_array($venueImagePosition, array('left', 'right'), true) ? $venueImagePosition : 'right';
+        $showCategory = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_category', 1);
+        $categoryDisplay = $params && method_exists($params, 'get') ? (string) $params->get('timeline_category_display', 'text') : 'text';
+        $categoryDisplay = in_array($categoryDisplay, array('text', 'badge'), true) ? $categoryDisplay : 'text';
+        $showVenue = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_venue', 1);
+        $showType = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_type', 1);
+        $cardLayout = $params && method_exists($params, 'get') ? (string) $params->get('timeline_card_layout', 'compact') : 'compact';
+        $cardLayout = in_array($cardLayout, array('details', 'compact'), true) ? $cardLayout : 'details';
+        $layoutOverride = Factory::getApplication()->input->getCmd('jem_timeline_layout', '');
+        if (in_array($layoutOverride, array('details', 'compact'), true)) {
+            $cardLayout = $layoutOverride;
+        }
+        $showIntro = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_event_intro', 1);
+        $introLimit = $params && method_exists($params, 'get') ? max(0, (int) $params->get('timeline_event_intro_limit', 300)) : 300;
+        $showReadmore = !$params || !method_exists($params, 'get') || (bool) $params->get('timeline_show_event_readmore', 1);
+        $readmoreStyle = $params && method_exists($params, 'get') ? (string) $params->get('timeline_readmore_style', 'button') : 'button';
+        $readmoreStyle = in_array($readmoreStyle, array('text', 'button'), true) ? $readmoreStyle : 'text';
+        $eventBackgroundMode = $params && method_exists($params, 'get') ? (string) $params->get('timetable_event_background', 'category') : 'category';
+        $eventBackgroundMode = in_array($eventBackgroundMode, array('category', 'type', 'venue', 'custom'), true) ? $eventBackgroundMode : 'category';
+        $customEventBackground = $params && method_exists($params, 'get') ? self::normalisePdfColor($params->get('timetable_event_background_custom', '#6bbf59')) : '#6bbf59';
+        $customEventBackground = $customEventBackground !== '' ? $customEventBackground : '#6bbf59';
+        $legacyAlternateDayBackground = $params && method_exists($params, 'get') ? (bool) $params->get('timeline_alternate_day_background', 1) : true;
+        $dayBackground = $params && method_exists($params, 'get') ? (string) $params->get('timeline_day_background', $legacyAlternateDayBackground ? 'alternate' : 'none') : 'alternate';
+        $dayBackground = in_array($dayBackground, array('none', 'alternate', 'special_day', 'alternate_special_day'), true) ? $dayBackground : 'alternate';
+        $alternateDayBackgroundColor = $params && method_exists($params, 'get') ? trim((string) $params->get('timeline_alternate_day_background_color', '#f3f4f6')) : '#f3f4f6';
+        if ($alternateDayBackgroundColor === '' || !preg_match('/^#[0-9a-fA-F]{3,6}$/', $alternateDayBackgroundColor)) {
+            $alternateDayBackgroundColor = '#f3f4f6';
+        }
+        $rows = self::sortTimelineRows($rows);
+        $rowsByDay = self::groupTimelineRowsByDisplayDay($rows, $day, $params);
+        $timelineSpecialDays = in_array($dayBackground, array('special_day', 'alternate_special_day'), true) && $rowsByDay
+            ? JemHelper::calendarSpecialDays((string) array_key_first($rowsByDay), (string) array_key_last($rowsByDay))
+            : array();
+        $html = array();
+
+        $html[] = '<style>
+            body { font-family: ' . $bodyFontFamily . '; color: #111827; }
+            h1 { font-family: ' . $titleFontFamily . '; font-size: ' . $titleFontSize . 'pt; margin: 0 0 4mm 0; color: #111827; }
+            a { color: #1f5b99; text-decoration: underline; }
+            .jem-pdf-timeline-nav { margin: 3mm auto 7mm auto; }
+            .jem-pdf-timeline-nav td { border: 0.25mm solid #6b7280; background-color: #f9fafb; text-align: center; font-family: ' . $headerFontFamily . '; font-size: ' . ($baseFontSize + 1) . 'pt; font-weight: bold; color: #111827; padding: 1.4mm 5mm; }
+            .jem-pdf-timeline-day-section { padding: 2mm 0 1mm 0; }
+            .jem-pdf-timeline-day { text-align: center; margin: 3mm 0 4mm 0; font-family: ' . $headerFontFamily . '; font-weight: bold; }
+            .jem-pdf-timeline-row td { vertical-align: top; font-size: ' . $baseFontSize . 'pt; }
+            .jem-pdf-time { text-align: right; font-family: ' . $headerFontFamily . '; font-weight: bold; color: #111827; line-height: ' . ($baseFontSize + 2) . 'pt; }
+            .jem-pdf-time small { color: #6b7280; font-weight: normal; }
+            .jem-pdf-axis { border-left: 0.25mm solid #9ca3af; text-align: center; color: #6b7280; }
+            .jem-pdf-point { color: #6b7280; font-size: ' . ($baseFontSize + 4) . 'pt; }
+            .jem-pdf-card td { border: none; }
+            .jem-pdf-media { vertical-align: middle; }
+            .jem-pdf-media-left { text-align: left; }
+            .jem-pdf-media-right { text-align: right; }
+            .jem-pdf-content { vertical-align: middle; }
+            .jem-pdf-image { border: 0.2mm solid #d1d5db; display: block; vertical-align: middle; }
+            .jem-pdf-event-title { font-family: ' . $headerFontFamily . '; font-size: ' . ($baseFontSize + 2) . 'pt; font-weight: bold; color: #111827; }
+            .jem-pdf-meta { color: #111827; font-size: ' . max(6, $baseFontSize - 1) . 'pt; }
+            .jem-pdf-detail-label { font-family: ' . $headerFontFamily . '; font-weight: bold; color: #111827; }
+            .jem-pdf-detail-title { font-size: ' . ($baseFontSize + 3) . 'pt; font-weight: bold; }
+            .jem-pdf-detail-description { border-top: 0.2mm solid #d1d5db; padding-top: 1mm; }
+            .jem-pdf-category-badge { border-radius: 1.2mm; font-weight: bold; padding: 0.5mm 1.4mm; }
+            .jem-pdf-badge { color: #ffffff; font-weight: bold; border-radius: 1.4mm; padding: 0.8mm 1.8mm; }
+            .jem-pdf-intro { color: #374151; font-size: ' . max(6, $baseFontSize - 1) . 'pt; line-height: ' . ($baseFontSize + 1) . 'pt; }
+            .jem-pdf-readmore-button { border: 0.2mm solid #1f5b99; border-radius: 1mm; padding: 0.6mm 1.6mm; text-decoration: none; }
+            .jem-pdf-empty { color: #6b7280; text-align: center; margin-top: 8mm; }
+            .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $baseFontSize . 'pt; line-height: ' . ($baseFontSize + 3) . 'pt; }
+            .jem-pdf-view-intro { margin-bottom: 4mm; }
+            .jem-pdf-view-footer-text { margin-top: 4mm; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
+            .jem-pdf-muted { color: #6b7280; }
+        </style>';
+        $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
+
+        $subtitle = self::formatTimelineRangeLabel($day, $params);
+        if ($subtitle !== '') {
+            $html[] = '<table class="jem-pdf-timeline-nav" width="42%" align="center" border="1" cellpadding="3" cellspacing="0"><tr><td>' . htmlspecialchars($subtitle, ENT_COMPAT, 'UTF-8') . '</td></tr></table>';
+        }
+
+        $intro = self::buildViewTextBlock('intro');
+        if ($intro !== '') {
+            $html[] = $intro;
+        }
+
+        if (!$rowsByDay) {
+            $html[] = '<div class="jem-pdf-empty">' . Text::_('COM_JEM_NO_EVENTS') . '</div>';
+        }
+
+        $dayIndex = 0;
+        foreach ($rowsByDay as $date => $dayRows) {
+            $specialDayColor = '';
+            if (!empty($timelineSpecialDays[$date][0]['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $timelineSpecialDays[$date][0]['color'])) {
+                $specialDayColor = (string) $timelineSpecialDays[$date][0]['color'];
+            }
+
+            $dayBackgroundColor = '';
+            if (in_array($dayBackground, array('special_day', 'alternate_special_day'), true) && $specialDayColor !== '') {
+                $dayBackgroundColor = $specialDayColor;
+            } elseif (in_array($dayBackground, array('alternate', 'alternate_special_day'), true) && ($dayIndex % 2) === 1) {
+                $dayBackgroundColor = $alternateDayBackgroundColor;
+            }
+
+            $hasDayBackground = $dayBackgroundColor !== '';
+            $dayStyle = $hasDayBackground
+                ? ' style="background-color:' . htmlspecialchars($dayBackgroundColor, ENT_COMPAT, 'UTF-8') . ';"'
+                : '';
+
+            $html[] = '<div class="jem-pdf-timeline-day-section"' . $dayStyle . '>';
+            $html[] = '<div class="jem-pdf-timeline-day">' . htmlspecialchars(self::formatTimelineDayLabel($date), ENT_COMPAT, 'UTF-8') . '</div>';
+
+            if (!$dayRows) {
+                $html[] = '<div class="jem-pdf-empty">' . Text::_('COM_JEM_NO_EVENTS') . '</div>';
+                $html[] = '</div>';
+                $dayIndex++;
+                continue;
+            }
+
+            $html[] = '<table width="100%" cellpadding="0" cellspacing="0">';
+
+            foreach ($dayRows as $row) {
+                if (isset($row->user_has_access_category) && !$row->user_has_access_category) {
+                    continue;
+                }
+
+                $html[] = self::buildDayTimelineRow($row, $showEventImage, $eventImagePosition, $showVenueImage, $venueImagePosition, $eventImageWidth, $eventImageHeight, $venueImageWidth, $venueImageHeight, $showCategory, $categoryDisplay, $showVenue, $showType, $showIntro, $introLimit, $showReadmore, $readmoreStyle, $eventBackgroundMode, $customEventBackground, $cardLayout, $hasDayBackground);
+            }
+
+            $html[] = '</table>';
+            $html[] = '</div>';
+            $dayIndex++;
+        }
+
+        $footer = self::buildViewTextBlock('footer');
+        if ($footer !== '') {
+            $html[] = $footer;
+        }
+
+        return implode("\n", $html);
+    }
+
+    private static function buildDayTimelineRow($row, bool $showEventImage, string $eventImagePosition, bool $showVenueImage, string $venueImagePosition, int $eventImageWidth, int $eventImageHeight, int $venueImageWidth, int $venueImageHeight, bool $showCategory, string $categoryDisplay, bool $showVenue, bool $showType, bool $showIntro, int $introLimit, bool $showReadmore, string $readmoreStyle, string $eventBackgroundMode, string $customEventBackground, string $cardLayout, bool $isAlternateDay): string
+    {
+        $start = JemOutput::formattime($row->times ?? '', '', false);
+        $end = JemOutput::formattime($row->endtimes ?? '', '', false);
+        $categories = (array) ($row->categories ?? array());
+        $accent = self::getTimelinePdfAccentColor($row, $eventBackgroundMode, $customEventBackground);
+
+        $eventImage = $showEventImage ? self::buildTimelinePdfImage((string) ($row->datimage ?? ''), 'event', (string) ($row->title ?? ''), $eventImageWidth, $eventImageHeight) : '';
+        $venueImage = $showVenueImage ? self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) (($row->venue ?? '') ?: ($row->title ?? '')), $venueImageWidth, $venueImageHeight) : '';
+
+        $title = htmlspecialchars((string) ($row->title ?? ''), ENT_COMPAT, 'UTF-8');
+        $url = !empty($row->slug) ? self::absoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '';
+        if ($url !== '') {
+            $title = '<a class="jem-pdf-event-title" href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . $title . '</a>';
+        }
+
+        $meta = array();
+        $categoryDetail = '';
+        if ($showCategory) {
+            $categoryHtml = $categoryDisplay === 'badge'
+                ? self::buildTimelinePdfCategoryBadges($categories)
+                : self::buildPdfCategoryLinks($categories);
+            if ($categoryHtml !== '') {
+                $categoryDetail = $categoryHtml;
+                $meta[] = $categoryHtml;
+            }
+        }
+        if ($showVenue && !empty($row->venue)) {
+            $meta[] = (string) (self::buildPdfVenueLink($row)['html'] ?? '');
+        }
+        if ($showVenue && !empty($row->city)) {
+            $meta[] = htmlspecialchars((string) $row->city, ENT_COMPAT, 'UTF-8');
+        }
+
+        $badge = '';
+        $typeDetail = '';
+        if ($showType && !empty($row->type_name)) {
+            $typeColor = trim((string) ($row->type_color ?? ''));
+            if (!preg_match('/^#[0-9a-fA-F]{6}$/', $typeColor)) {
+                $typeColor = $accent;
+            }
+            $badge = '<span class="jem-pdf-badge" style="background-color:' . htmlspecialchars($typeColor, ENT_COMPAT, 'UTF-8') . '; color:' . self::getContrastingTextColor($typeColor) . ';">'
+                . htmlspecialchars((string) $row->type_name, ENT_COMPAT, 'UTF-8') . '</span>';
+            $typeDetail = $badge;
+        }
+
+        $intro = '';
+        $detailsDescription = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($row->introtext ?? ''))));
+        if ($showIntro && $introLimit > 0) {
+            $introData = self::truncatePlainText((string) ($row->introtext ?? ''), $introLimit);
+            $text = (string) $introData['text'];
+            if ($text !== '') {
+                $intro = '<br /><span class="jem-pdf-intro">' . htmlspecialchars($text, ENT_COMPAT, 'UTF-8') . '</span>';
+
+                if ($showReadmore && !empty($introData['truncated']) && $url !== '') {
+                    $class = $readmoreStyle === 'button' ? ' class="jem-pdf-readmore-button"' : '';
+                    $intro .= ' <a' . $class . ' href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_TIMELINE_READ_MORE') . '</a>';
+                }
+            }
+        }
+
+        $venueDetail = array();
+        if ($showVenue && !empty($row->venue)) {
+            $venueDetail[] = (string) (self::buildPdfVenueLink($row)['html'] ?? '');
+        }
+        if ($showVenue && !empty($row->city)) {
+            $venueDetail[] = htmlspecialchars((string) $row->city, ENT_COMPAT, 'UTF-8');
+        }
+
+        if ($cardLayout === 'details') {
+            $detailRows = array(
+                '<tr><td width="22%" class="jem-pdf-detail-label">' . Text::_('COM_JEM_TITLE') . '</td><td width="78%" class="jem-pdf-detail-title">' . $title . self::buildPdfEventIndicators($row, false) . '</td></tr>',
+            );
+
+            if ($showCategory && $categoryDetail !== '') {
+                $detailRows[] = '<tr><td class="jem-pdf-detail-label">' . Text::_('COM_JEM_CATEGORY') . '</td><td>' . $categoryDetail . '</td></tr>';
+            }
+
+            if ($typeDetail !== '') {
+                $detailRows[] = '<tr><td class="jem-pdf-detail-label">' . Text::_('COM_JEM_TYPE') . '</td><td>' . $typeDetail . '</td></tr>';
+            }
+
+            if (!empty($venueDetail)) {
+                $detailRows[] = '<tr><td class="jem-pdf-detail-label">' . Text::_('COM_JEM_VENUE') . '</td><td>' . implode(' ', $venueDetail) . '</td></tr>';
+            }
+
+            if ($showIntro && $detailsDescription !== '') {
+                $detailRows[] = '<tr><td class="jem-pdf-detail-label jem-pdf-detail-description">' . Text::_('COM_JEM_DESCRIPTION') . '</td><td class="jem-pdf-detail-description">' . htmlspecialchars($detailsDescription, ENT_COMPAT, 'UTF-8') . '</td></tr>';
+            }
+
+            $content = '<table width="100%" cellpadding="1" cellspacing="0">' . implode('', $detailRows) . '</table>';
+        } else {
+            $content = '<div>' . $title . self::buildPdfEventIndicators($row, false) . '</div>'
+                . (!empty($meta) ? '<div class="jem-pdf-meta">' . implode(' &nbsp; ', array_filter($meta)) . '</div>' : '')
+                . ($badge !== '' ? '<br />' . $badge : '')
+                . $intro;
+        }
+
+        $leftImages = array();
+        $rightImages = array();
+
+        if ($eventImage !== '') {
+            if ($eventImagePosition === 'right') {
+                $rightImages[] = $eventImage;
+            } else {
+                $leftImages[] = $eventImage;
+            }
+        }
+
+        if ($venueImage !== '') {
+            if ($venueImagePosition === 'left') {
+                $leftImages[] = $venueImage;
+            } else {
+                $rightImages[] = $venueImage;
+            }
+        }
+
+        $leftMedia = implode('<br />', $leftImages);
+        $rightMedia = implode('<br />', $rightImages);
+
+        if ($leftMedia !== '' && $rightMedia !== '') {
+            $cardInner = '<table width="100%" cellpadding="1" cellspacing="0"><tr>'
+                . '<td width="18%" valign="middle" class="jem-pdf-media jem-pdf-media-left" style="vertical-align:middle;text-align:left;">' . $leftMedia . '</td>'
+                . '<td width="64%" valign="middle" class="jem-pdf-content" style="vertical-align:middle;">' . $content . '</td>'
+                . '<td width="18%" valign="middle" class="jem-pdf-media jem-pdf-media-right" style="vertical-align:middle;text-align:right;">' . $rightMedia . '</td>'
+                . '</tr></table>';
+        } elseif ($leftMedia !== '') {
+            $cardInner = '<table width="100%" cellpadding="1" cellspacing="0"><tr>'
+                . '<td width="22%" valign="middle" class="jem-pdf-media jem-pdf-media-left" style="vertical-align:middle;text-align:left;">' . $leftMedia . '</td>'
+                . '<td width="78%" valign="middle" class="jem-pdf-content" style="vertical-align:middle;">' . $content . '</td>'
+                . '</tr></table>';
+        } elseif ($rightMedia !== '') {
+            $cardInner = '<table width="100%" cellpadding="1" cellspacing="0"><tr>'
+                . '<td width="78%" valign="middle" class="jem-pdf-content" style="vertical-align:middle;">' . $content . '</td>'
+                . '<td width="22%" valign="middle" class="jem-pdf-media jem-pdf-media-right" style="vertical-align:middle;text-align:right;">' . $rightMedia . '</td>'
+                . '</tr></table>';
+        } else {
+            $cardInner = '<table width="100%" cellpadding="1" cellspacing="0"><tr><td>' . $content . '</td></tr></table>';
+        }
+
+        $cardStyle = 'border:0.35mm solid ' . htmlspecialchars($accent, ENT_COMPAT, 'UTF-8')
+            . ';border-left:1.2mm solid ' . htmlspecialchars($accent, ENT_COMPAT, 'UTF-8') . ';';
+        $axisStyle = $isAlternateDay ? ' style="border-left:0.45mm solid #4b5563;color:#4b5563;"' : '';
+        $pointStyle = $isAlternateDay ? ' style="color:#4b5563;"' : '';
+
+        return '<tr class="jem-pdf-timeline-row">'
+            . '<td width="11%" class="jem-pdf-time">' . htmlspecialchars($start, ENT_COMPAT, 'UTF-8') . ($end !== '' ? '<br /><small>' . htmlspecialchars($end, ENT_COMPAT, 'UTF-8') . '</small>' : '') . '</td>'
+            . '<td width="3%" class="jem-pdf-axis"' . $axisStyle . '><span class="jem-pdf-point"' . $pointStyle . '>&#9679;</span></td>'
+            . '<td width="86%"><table class="jem-pdf-card" width="100%" cellpadding="0" cellspacing="0" style="' . $cardStyle . '"><tr><td>' . $cardInner . '</td></tr></table></td>'
+            . '</tr><tr><td colspan="3" height="3mm">&nbsp;</td></tr>';
+    }
+
+    private static function buildTimelinePdfCategoryBadges(array $categories): string
+    {
+        $badges = array();
+
+        foreach ($categories as $category) {
+            $name = trim((string) ($category->catname ?? ''));
+
+            if ($name === '') {
+                continue;
+            }
+
+            $color = self::normalisePdfColor($category->color ?? '');
+            $color = $color !== '' ? $color : '#6c757d';
+            $textColor = self::getContrastingTextColor($color);
+            $label = htmlspecialchars($name, ENT_COMPAT, 'UTF-8');
+            $slug = $category->catslug ?? $category->slug ?? $category->id ?? '';
+            $style = 'background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . '; color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';';
+
+            if ($slug !== '') {
+                $label = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getCategoryRoute($slug), false)), ENT_COMPAT, 'UTF-8') . '" style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . '; text-decoration:none;">' . $label . '</a>';
+            }
+
+            $badges[] = '<span class="jem-pdf-category-badge" style="' . $style . '">' . $label . '</span>';
+        }
+
+        return implode(' ', $badges);
+    }
+
+    private static function getTimelinePdfAccentColor($row, string $mode, string $fallback): string
+    {
+        if ($mode === 'custom') {
+            return $fallback;
+        }
+
+        if ($mode === 'type') {
+            $typeColor = self::normalisePdfColor($row->type_color ?? '');
+
+            if ($typeColor !== '') {
+                return $typeColor;
+            }
+        }
+
+        if ($mode === 'venue') {
+            foreach (array('l_color', 'venuecolor') as $field) {
+                $venueColor = self::normalisePdfColor($row->$field ?? '');
+
+                if ($venueColor !== '') {
+                    return self::lightenPdfColor($venueColor);
+                }
+            }
+        }
+
+        foreach ((array) ($row->categories ?? array()) as $category) {
+            $categoryColor = self::normalisePdfColor($category->color ?? '');
+
+            if ($categoryColor !== '') {
+                return $categoryColor;
+            }
+        }
+
+        return $fallback;
+    }
+
+    private static function normalisePdfColor($color): string
+    {
+        $color = trim((string) $color);
+
+        if ($color !== '' && $color[0] !== '#') {
+            $color = '#' . $color;
+        }
+
+        return preg_match('/^#[0-9a-fA-F]{3,6}$/', $color) ? $color : '';
+    }
+
+    private static function lightenPdfColor(string $color, int $colorWeight = 45): string
+    {
+        $color = self::normalisePdfColor($color);
+
+        if ($color === '') {
+            return '#dce8e6';
+        }
+
+        if (strlen($color) < 5) {
+            $scan = sscanf($color, '#%1x%1x%1x');
+            $rgb = array($scan[0] * 17, $scan[1] * 17, $scan[2] * 17);
+        } else {
+            $rgb = sscanf($color, '#%2x%2x%2x');
+        }
+
+        $colorWeight = max(0, min(100, $colorWeight)) / 100;
+
+        return sprintf(
+            '#%02x%02x%02x',
+            (int) round(($rgb[0] * $colorWeight) + (255 * (1 - $colorWeight))),
+            (int) round(($rgb[1] * $colorWeight) + (255 * (1 - $colorWeight))),
+            (int) round(($rgb[2] * $colorWeight) + (255 * (1 - $colorWeight)))
+        );
+    }
+
+    private static function sortTimelineRows(array $rows): array
+    {
+        usort($rows, static function ($left, $right): int {
+            $leftDate = (string) ($left->dates ?? '');
+            $rightDate = (string) ($right->dates ?? '');
+
+            if ($leftDate !== $rightDate) {
+                return strcmp($leftDate, $rightDate);
+            }
+
+            $leftStart = self::timelineSortTimestamp($left, 'times', PHP_INT_MAX);
+            $rightStart = self::timelineSortTimestamp($right, 'times', PHP_INT_MAX);
+
+            if ($leftStart !== $rightStart) {
+                return $leftStart <=> $rightStart;
+            }
+
+            $leftEnd = self::timelineSortTimestamp($left, 'endtimes', $leftStart === PHP_INT_MAX ? PHP_INT_MAX : $leftStart + 3600);
+            $rightEnd = self::timelineSortTimestamp($right, 'endtimes', $rightStart === PHP_INT_MAX ? PHP_INT_MAX : $rightStart + 3600);
+
+            if ($leftEnd !== $rightEnd) {
+                return $leftEnd <=> $rightEnd;
+            }
+
+            return strcmp((string) ($left->title ?? ''), (string) ($right->title ?? ''));
+        });
+
+        return $rows;
+    }
+
+    private static function timelineSortTimestamp($row, string $field, int $fallback): int
+    {
+        $time = trim((string) ($row->$field ?? ''));
+
+        if ($time === '') {
+            return $fallback;
+        }
+
+        $timestamp = strtotime((string) ($row->dates ?? '') . ' ' . $time);
+
+        return $timestamp ?: $fallback;
+    }
+
+    private static function groupTimelineRowsByDisplayDay(array $rows, string $day, $params): array
+    {
+        $startDate = JemHelper::isValidDate($day) ? $day : date('Y-m-d');
+        $requestedDays = Factory::getApplication()->input->getInt('timeline_days_to_show', 0);
+        $daysToShow = $requestedDays > 0
+            ? max(1, min(30, $requestedDays))
+            : ($params && method_exists($params, 'get') ? max(1, min(30, (int) $params->get('timeline_days_to_show', 1))) : 1);
+        $showEmptyDays = $params && method_exists($params, 'get') ? (bool) $params->get('timeline_show_empty_days', 0) : false;
+        $rangeStart = new DateTimeImmutable($startDate);
+        $rangeEnd = $rangeStart->modify('+' . ($daysToShow - 1) . ' days');
+        $groups = array();
+
+        for ($index = 0; $index < $daysToShow; $index++) {
+            $groups[$rangeStart->modify('+' . $index . ' days')->format('Y-m-d')] = array();
+        }
+
+        foreach ($rows as $row) {
+            $rowStart = (string) ($row->dates ?? '');
+
+            if (!JemHelper::isValidDate($rowStart)) {
+                continue;
+            }
+
+            $rowEnd = (string) ($row->enddates ?? '');
+            if (!JemHelper::isValidDate($rowEnd) || $rowEnd < $rowStart) {
+                $rowEnd = $rowStart;
+            }
+
+            $activeStart = new DateTimeImmutable(max($rowStart, $rangeStart->format('Y-m-d')));
+            $activeEnd = new DateTimeImmutable(min($rowEnd, $rangeEnd->format('Y-m-d')));
+
+            if ($activeStart > $activeEnd) {
+                if ($daysToShow === 1) {
+                    $displayRow = clone $row;
+                    $displayRow->dates = $rangeStart->format('Y-m-d');
+                    $groups[$rangeStart->format('Y-m-d')][] = $displayRow;
+                }
+
+                continue;
+            }
+
+            for ($date = $activeStart; $date <= $activeEnd; $date = $date->modify('+1 day')) {
+                $dateKey = $date->format('Y-m-d');
+
+                if (!array_key_exists($dateKey, $groups)) {
+                    continue;
+                }
+
+                $displayRow = clone $row;
+                $displayRow->dates = $dateKey;
+                $groups[$dateKey][] = $displayRow;
+            }
+        }
+
+        foreach ($groups as $date => $groupRows) {
+            $groups[$date] = self::sortTimelineRows($groupRows);
+
+            if (!$showEmptyDays && !$groupRows) {
+                unset($groups[$date]);
+            }
+        }
+
+        return $groups;
+    }
+
+    private static function formatTimelineRangeLabel(string $date, $params): string
+    {
+        if (!JemHelper::isValidDate($date)) {
+            return '';
+        }
+
+        $requestedDays = Factory::getApplication()->input->getInt('timeline_days_to_show', 0);
+        $daysToShow = $requestedDays > 0
+            ? max(1, min(30, $requestedDays))
+            : ($params && method_exists($params, 'get') ? max(1, min(30, (int) $params->get('timeline_days_to_show', 1))) : 1);
+
+        if ($daysToShow <= 1) {
+            return self::formatTimelineDayLabel($date);
+        }
+
+        $rangeStart = new DateTimeImmutable($date);
+        $rangeEnd = $rangeStart->modify('+' . ($daysToShow - 1) . ' days');
+
+        return self::formatTimelineDayLabel($rangeStart->format('Y-m-d')) . ' - ' . self::formatTimelineDayLabel($rangeEnd->format('Y-m-d'));
+    }
+
+    private static function formatTimelineDayLabel(string $date): string
+    {
+        if (!JemHelper::isValidDate($date)) {
+            return '';
+        }
+
+        return HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC3'));
+    }
+
+    private static function buildTimelinePdfImage(string $imageFile, string $type, string $alt, int $maxWidth, int $maxHeight): string
+    {
+        $imageFile = trim($imageFile);
+
+        if ($imageFile === '') {
+            return '';
+        }
+
+        $image = JemImage::flyercreator($imageFile, $type);
+
+        if (!is_array($image)) {
+            return '';
+        }
+
+        $source = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb'])
+            ? $image['thumb']
+            : ($image['original'] ?? '');
+
+        if ($source === '' || !is_file(JPATH_SITE . '/' . $source)) {
+            return '';
+        }
+
+        $path = JPATH_SITE . '/' . $source;
+        $size = @getimagesize($path);
+        $width = $maxWidth;
+        $height = 0;
+
+        if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
+            $ratio = min($maxWidth / (int) $size[0], $maxHeight / (int) $size[1]);
+            $width = max(1, round((int) $size[0] * $ratio, 1));
+            $height = max(1, round((int) $size[1] * $ratio, 1));
+        }
+
+        $attributes = ' width="' . htmlspecialchars((string) $width, ENT_COMPAT, 'UTF-8') . 'mm"';
+
+        if ($height > 0) {
+            $attributes .= ' height="' . htmlspecialchars((string) $height, ENT_COMPAT, 'UTF-8') . 'mm"';
+        }
+
+        return '<img class="jem-pdf-image" src="' . htmlspecialchars(str_replace('\\', '/', $path), ENT_COMPAT, 'UTF-8') . '"' . $attributes . ' alt="' . htmlspecialchars($alt, ENT_COMPAT, 'UTF-8') . '" />';
+    }
+
+    private static function truncatePlainText(string $text, int $limit): array
+    {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags($text)));
+
+        if ($text === '' || $limit <= 0) {
+            return array('text' => $text, 'truncated' => false);
+        }
+
+        if (function_exists('mb_strlen') && mb_strlen($text) <= $limit || !function_exists('mb_strlen') && strlen($text) <= $limit) {
+            return array('text' => $text, 'truncated' => false);
+        }
+
+        if (function_exists('mb_substr')) {
+            return array('text' => rtrim(mb_substr($text, 0, $limit - 1)) . '...', 'truncated' => true);
+        }
+
+        return array('text' => rtrim(substr($text, 0, $limit - 1)) . '...', 'truncated' => true);
     }
 
     private static function buildEventListRows(array $rows): array
@@ -1134,7 +1782,7 @@ class JemPdfView
         return array('html' => '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_MAP') . '</a>');
     }
 
-    private static function buildPdfEventIndicators($row): string
+    private static function buildPdfEventIndicators($row, bool $includeType = true): string
     {
         $html = '';
 
@@ -1142,7 +1790,7 @@ class JemPdfView
             $html .= ' <span class="jem-pdf-muted">!</span>';
         }
 
-        if (!empty($row->type_name)) {
+        if ($includeType && !empty($row->type_name)) {
             $color = trim((string) ($row->type_color ?? ''));
 
             if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {

@@ -84,6 +84,8 @@ class JemViewEvent extends HtmlView
         $row->contacts = $this->get('Contacts');
         $row->id = $row->did;
         $row->slug = $row->alias ? ($row->id . ':' . $row->alias) : $row->id;
+        $row->venueslug = $row->localias ? ($row->locid . ':' . $row->localias) : $row->locid;
+        $this->applyPdfEventPageParams($row);
         $this->applyPdfInheritedEventData($row);
 
         $jemsettings = JemHelper::config();
@@ -127,6 +129,9 @@ class JemViewEvent extends HtmlView
     {
         $categoryNames = array();
         $jemsettings = JemHelper::config();
+        $params = (!empty($row->params) && is_object($row->params) && method_exists($row->params, 'get'))
+            ? $row->params
+            : JemHelper::globalattribs();
         $posterScale = JemPdf::getPosterScale($paperSize);
         $fallbackImageWidth = max(1, min(200, (int) ($jemsettings->pdf_imagewidth ?? 40)));
         $fallbackImageHeight = max(1, min(200, (int) ($jemsettings->pdf_imageheight ?? 40)));
@@ -141,7 +146,7 @@ class JemViewEvent extends HtmlView
             $venueImageHeight = max(1, min(200, (int) round($venueImageHeight * $posterScale)));
         }
         $showImages = (int) ($jemsettings->pdf_event_show_images ?? 1) === 1;
-        $eventImageHtml = $showImages ? $this->buildPdfImageHtml($row->datimage ?? '', 'event', (string) $row->title, $eventImageWidth, $eventImageHeight) : '';
+        $eventImageHtml = $showImages ? $this->buildPdfEventImageHtml($row, $eventImageWidth, $eventImageHeight) : '';
         $venueImageHtml = $showImages ? $this->buildPdfImageHtml($row->locimage ?? '', 'venue', (string) $row->venue, $venueImageWidth, $venueImageHeight) : '';
         $includeLinks = (int) ($jemsettings->pdf_event_include_links ?? 1) === 1;
         $includeAttachments = (int) ($jemsettings->pdf_event_include_attachments ?? 1) === 1;
@@ -154,6 +159,18 @@ class JemViewEvent extends HtmlView
             ? (string) $jemsettings->pdf_event_venue_mode
             : 'full';
         $isCompact = (string) ($jemsettings->pdf_event_layout ?? 'details') === 'compact';
+        $showEventDetailsTitle = (int) $params->get('event_show_detailstitle', 1) === 1;
+        $showEventVenueName = (int) $params->get('event_show_venue_name', 0) === 1;
+        $showEventCategory = (int) $params->get('event_show_category', 0) === 1;
+        $showEventAuthor = (int) $params->get('event_show_author', 0) === 1;
+        $showEventDescription = (int) $params->get('event_show_description', 1) === 1;
+        $showVenueSection = (int) $params->get('event_show_venue', 1) === 1;
+        $showVenueAddress = (int) $params->get('event_show_detailsadress', 1) === 1;
+        $showVenueDescription = (int) $params->get('event_show_locdescription', 1) === 1;
+        $showVenueMap = in_array((int) $params->get('event_show_mapserv', 0), array(1, 2, 3, 4, 5), true);
+        $showOnlineMeeting = (int) $params->get('event_show_online_meeting', 1) === 1;
+        $showContacts = (int) $params->get('event_show_contact', 0) === 1;
+        $showRegistration = (int) $params->get('event_show_registration', 1) === 1;
         $eventDescriptionMode = $this->normalisePdfDescriptionMode((string) ($jemsettings->pdf_event_description_mode ?? 'complete'));
         $venueDescriptionMode = $this->normalisePdfDescriptionMode((string) ($jemsettings->pdf_venue_description_mode ?? 'complete'));
         $baseFontSize = max(6, min(16, (int) ($jemsettings->pdf_base_font_size ?? 8)));
@@ -200,6 +217,7 @@ class JemViewEvent extends HtmlView
             .jem-pdf-label { color: #111827; font-weight: bold; width: 24%; }
             .jem-pdf-image-cell { text-align: right; vertical-align: top; }
             .jem-pdf-image { border: 0.3mm solid #d1d5db; }
+            .jem-pdf-description-image { border: 0.2mm solid #d1d5db; margin: 0 3mm 2mm 0; }
             .jem-pdf-section { font-size: ' . $baseFontSize . 'pt; line-height: ' . $sectionLineHeight . 'pt; }
             .jem-pdf-inline-link { color: ' . $accentColor . '; text-decoration: underline; }
             .jem-pdf-link-card { border: 0.25mm solid ' . $accentColor . '; border-radius: 1.5mm; padding: 2mm; background-color: #ffffff; }
@@ -224,35 +242,37 @@ class JemViewEvent extends HtmlView
             $html[] = $intro;
         }
 
-        $html[] = '<h2>' . Text::_('COM_JEM_EVENT') . ' &#8635;' . $this->buildPdfTypeBadge($row) . '</h2>';
+        $html[] = '<h2>' . Text::_('COM_JEM_EVENT') . ' &#8635;</h2>';
         $eventSummaryHtml = array();
         $eventSummaryHtml[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="2" cellspacing="0">';
-        $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_TITLE'), htmlspecialchars((string) $row->title, ENT_COMPAT, 'UTF-8'));
+        if ($showEventDetailsTitle) {
+            $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_TITLE'), htmlspecialchars((string) $row->title, ENT_COMPAT, 'UTF-8') . $this->buildPdfTypeBadge($row));
+        }
         $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHEN'), htmlspecialchars($this->htmlToPlainText(JemOutput::formatLongDateTime($row->dates, $row->times, $row->enddates, $row->endtimes)), ENT_COMPAT, 'UTF-8'));
 
-        if (!empty($row->venue)) {
+        if ($showEventVenueName && !empty($row->venue)) {
             $venue = htmlspecialchars((string) $row->venue, ENT_COMPAT, 'UTF-8');
             $location = trim(implode(', ', array_filter(array($row->city ?? '', $row->state ?? '', $row->country ?? ''))));
             $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHERE'), '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($this->buildPdfVenueUrl($row), ENT_COMPAT, 'UTF-8') . '">' . $venue . '</a>' . ($location !== '' ? ' - ' . htmlspecialchars($location, ENT_COMPAT, 'UTF-8') : ''));
         }
 
-        if ($categoryNames) {
+        if ($showEventCategory && $categoryNames) {
             $eventSummaryHtml[] = $this->buildSummaryRow(count($categoryNames) > 1 ? Text::_('COM_JEM_CATEGORIES') : Text::_('COM_JEM_CATEGORY'), htmlspecialchars(implode(', ', $categoryNames), ENT_COMPAT, 'UTF-8'));
         }
 
-        if (!$isCompact && !empty($row->author)) {
+        if (!$isCompact && $showEventAuthor && !empty($row->author)) {
             $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'), htmlspecialchars((string) ($row->created_by_alias ?: $row->author), ENT_COMPAT, 'UTF-8'));
         }
 
         $eventSummaryHtml[] = '</table>';
         $html[] = $this->buildPdfImageLayoutHtml(implode("\n", $eventSummaryHtml), $eventImageHtml, $eventImagePosition, 68, 32);
 
-        if ($description !== '') {
+        if ($showEventDescription && $description !== '') {
             $html[] = '<h2>' . Text::_('COM_JEM_DESCRIPTION') . '</h2>';
             $html[] = '<div class="jem-pdf-section">' . $description . '</div>';
         }
 
-        if ((int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && !empty($row->online_meeting_url)) {
+        if ($showOnlineMeeting && (int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && !empty($row->online_meeting_url)) {
             $meetingLabel = !empty($row->online_meeting_label) ? (string) $row->online_meeting_label : Text::_('COM_JEM_ONLINE_MEETING');
             $html[] = '<h2>' . htmlspecialchars($meetingLabel, ENT_COMPAT, 'UTF-8') . '</h2>';
             $html[] = '<div class="jem-pdf-section"><a class="jem-pdf-inline-link" href="' . htmlspecialchars((string) $row->online_meeting_url, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->online_meeting_url, ENT_COMPAT, 'UTF-8') . '</a></div>';
@@ -266,29 +286,29 @@ class JemViewEvent extends HtmlView
             $html[] = $eventAttachmentsHtml;
         }
 
-        if ($venueMode !== 'none' && !empty($row->venue)) {
+        if ($showVenueSection && $venueMode !== 'none' && !empty($row->venue)) {
             $html[] = '<h2>' . Text::_('COM_JEM_VENUE') . '</h2>';
             $venueSummaryHtml = array();
             $venueSummaryHtml[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="2" cellspacing="0">';
-            $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_LOCATION'), '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($this->buildPdfVenueUrl($row), ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->venue, ENT_COMPAT, 'UTF-8') . '</a>');
+            $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_LOCATION'), '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($this->buildPdfVenueUrl($row), ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->venue, ENT_COMPAT, 'UTF-8') . '</a>' . $this->buildPdfTypedBadge($row, 'venue_type_', 'venue'));
 
-            if (!empty($row->street)) {
+            if ($showVenueAddress && !empty($row->street)) {
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_STREET'), htmlspecialchars((string) $row->street, ENT_COMPAT, 'UTF-8'));
             }
 
-            if (!empty($row->postalCode)) {
+            if ($showVenueAddress && !empty($row->postalCode)) {
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_ZIP'), htmlspecialchars((string) $row->postalCode, ENT_COMPAT, 'UTF-8'));
             }
 
-            if (!empty($row->city)) {
+            if ($showVenueAddress && !empty($row->city)) {
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_CITY'), htmlspecialchars((string) $row->city, ENT_COMPAT, 'UTF-8'));
             }
 
-            if (!empty($row->state)) {
+            if ($showVenueAddress && !empty($row->state)) {
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_STATE'), htmlspecialchars((string) $row->state, ENT_COMPAT, 'UTF-8'));
             }
 
-            if (!empty($row->country)) {
+            if ($showVenueAddress && !empty($row->country)) {
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_COUNTRY'), htmlspecialchars((string) $row->country, ENT_COMPAT, 'UTF-8'));
             }
 
@@ -300,7 +320,7 @@ class JemViewEvent extends HtmlView
                 $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_EMAIL'), '<a class="jem-pdf-inline-link" href="mailto:' . htmlspecialchars((string) $row->email, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->email, ENT_COMPAT, 'UTF-8') . '</a>');
             }
 
-            if ((string) ($jemsettings->pdf_event_include_venue_map ?? 'none') === 'link') {
+            if ($showVenueMap && (string) ($jemsettings->pdf_event_include_venue_map ?? 'none') === 'link') {
                 $mapUrl = $this->buildPdfVenueMapUrl($row);
 
                 if ($mapUrl !== '') {
@@ -311,7 +331,7 @@ class JemViewEvent extends HtmlView
             $venueSummaryHtml[] = '</table>';
             $html[] = $this->buildPdfImageLayoutHtml(implode("\n", $venueSummaryHtml), $venueImageHtml, $venueImagePosition, 72, 28);
 
-            if ($venueMode === 'full' && $venueDescription !== '') {
+            if ($venueMode === 'full' && $showVenueDescription && $venueDescription !== '') {
                 $html[] = '<h2>' . Text::_('COM_JEM_DESCRIPTION') . '</h2>';
                 $html[] = '<div class="jem-pdf-section">' . $venueDescription . '</div>';
             }
@@ -321,11 +341,11 @@ class JemViewEvent extends HtmlView
             }
         }
 
-        if ((int) ($jemsettings->pdf_event_include_contacts ?? 1) === 1 && !empty($row->contacts)) {
+        if ($showContacts && (int) ($jemsettings->pdf_event_include_contacts ?? 1) === 1 && !empty($row->contacts)) {
             $html[] = $this->buildPdfContactsHtml((array) $row->contacts);
         }
 
-        if ((int) ($jemsettings->pdf_event_include_registration ?? 1) === 1 && $this->eventAllowsRegistration($row)) {
+        if ($showRegistration && (int) ($jemsettings->pdf_event_include_registration ?? 1) === 1 && $this->eventAllowsRegistration($row)) {
             $html[] = $this->buildPdfRegistrationHtml($row);
         }
 
@@ -336,6 +356,35 @@ class JemViewEvent extends HtmlView
         }
 
         return implode("\n", $html);
+    }
+
+    /**
+     * Applies the same Event Page parameter precedence used by the HTML event view.
+     */
+    private function applyPdfEventPageParams($row): void
+    {
+        $app = Factory::getApplication();
+        $params = $app->getParams('com_jem');
+        $menuitem = $app->getMenu()->getActive();
+        $useMenuItemParams = ($menuitem
+            && isset($menuitem->query['option'], $menuitem->query['view'], $menuitem->query['id'])
+            && $menuitem->query['option'] === 'com_jem'
+            && $menuitem->query['view'] === 'event'
+            && (int) $menuitem->query['id'] === (int) $row->id);
+
+        if (empty($row->params) || !is_object($row->params) || !method_exists($row->params, 'merge')) {
+            $row->params = JemHelper::globalattribs();
+        }
+
+        if ($useMenuItemParams) {
+            $row->params->merge($params);
+
+            return;
+        }
+
+        $eventParams = $row->params;
+        $row->params = clone $params;
+        $row->params->merge($eventParams);
     }
 
     /**
@@ -567,28 +616,43 @@ class JemViewEvent extends HtmlView
      */
     private function buildPdfTypeBadge($row): string
     {
-        $typeName = trim((string) ($row->type_name ?? ''));
+        return $this->buildPdfTypedBadge($row, 'type_', 'event');
+    }
+
+    /**
+     * Builds an optional entity type badge.
+     */
+    private function buildPdfTypedBadge($row, string $prefix = 'type_', string $entity = 'event'): string
+    {
+        JemOutput::translateType($row, $prefix);
+
+        $typeName = trim((string) ($row->{$prefix . 'name'} ?? ''));
 
         if ($typeName === '') {
             return '';
         }
 
-        $color = trim((string) ($row->type_color ?? ''));
+        $color = trim((string) ($row->{$prefix . 'color'} ?? ''));
 
         if (!preg_match('/^#[0-9a-f]{3,6}$/i', $color)) {
             $color = '#6d28d9';
         }
 
         $badge = '<span class="jem-pdf-type-badge" style="background-color: ' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . ';">' . htmlspecialchars($typeName, ENT_COMPAT, 'UTF-8') . '</span>';
+        $typeId = (int) ($row->{$prefix . 'id'} ?? 0);
 
-        if (!empty($row->type_id)) {
-            $slug = (int) $row->type_id;
+        if ($typeId > 0) {
+            $slug = $typeId;
+            $alias = (string) ($row->{$prefix . 'alias'} ?? '');
 
-            if (!empty($row->type_alias)) {
-                $slug .= ':' . $row->type_alias;
+            if ($alias !== '') {
+                $slug .= ':' . $alias;
             }
 
-            $badge = '<a href="' . htmlspecialchars($this->buildPdfAbsoluteUrl(Route::_(JemHelperRoute::getTypeeventsRoute($slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $badge . '</a>';
+            $route = $entity === 'venue'
+                ? JemHelperRoute::getTypevenuesRoute($slug)
+                : JemHelperRoute::getTypeeventsRoute($slug);
+            $badge = '<a href="' . htmlspecialchars($this->buildPdfAbsoluteUrl(Route::_($route, false)), ENT_COMPAT, 'UTF-8') . '">' . $badge . '</a>';
         }
 
         return ' ' . $badge;
@@ -613,7 +677,8 @@ class JemViewEvent extends HtmlView
     {
         $html = str_replace('<hr id="system-readmore" />', '', $html);
         $html = str_replace('<hr id="system-readmore">', '', $html);
-        $html = strip_tags($html, '<p><br><strong><b><em><i><ul><ol><li><a>');
+        $html = $this->normalisePdfDescriptionImages($html);
+        $html = strip_tags($html, '<p><br><strong><b><em><i><ul><ol><li><a><img>');
 
         return trim($html);
     }
@@ -638,16 +703,103 @@ class JemViewEvent extends HtmlView
     {
         $flyer = JemImage::flyercreator($image, $type);
 
-        if (empty($flyer['original'])) {
+        if (!empty($flyer['original'])) {
+            $path = JPATH_SITE . '/' . $flyer['original'];
+
+            if (is_file($path)) {
+                return $this->buildPdfImageTag($path, $alt, $maxWidth, $maxHeight);
+            }
+        }
+
+        $path = $this->resolvePdfImagePath($image, $type);
+
+        if ($path === '') {
             return '';
         }
 
-        $path = JPATH_SITE . '/' . $flyer['original'];
+        return $this->buildPdfImageTag($path, $alt, $maxWidth, $maxHeight);
+    }
 
-        if (!is_file($path)) {
-            return '';
+    /**
+     * Builds the configured event image.
+     */
+    private function buildPdfEventImageHtml($row, int $maxWidth, int $maxHeight): string
+    {
+        $candidates = array(
+            $row->datimage ?? '',
+            $row->article_content_image ?? '',
+        );
+
+        foreach ($candidates as $candidate) {
+            $html = $this->buildPdfImageHtml((string) $candidate, 'event', (string) $row->title, $maxWidth, $maxHeight);
+
+            if ($html !== '') {
+                return $html;
+            }
         }
 
+        return '';
+    }
+
+    /**
+     * Keeps local images embedded in descriptions and converts them to TCPDF-friendly tags.
+     */
+    private function normalisePdfDescriptionImages(string $html): string
+    {
+        if (stripos($html, '<img') === false) {
+            return $html;
+        }
+
+        return (string) preg_replace_callback('/<img\b[^>]*>/i', function (array $match): string {
+            $tag = (string) $match[0];
+            $src = $this->extractPdfImageAttribute($tag, 'src');
+
+            if ($src === '') {
+                return '';
+            }
+
+            $path = $this->resolvePdfImagePath($src, 'event');
+
+            if ($path === '') {
+                return '';
+            }
+
+            $alt = $this->extractPdfImageAttribute($tag, 'alt');
+
+            return $this->buildPdfDescriptionImageTag($path, $alt);
+        }, $html);
+    }
+
+    /**
+     * Builds an image tag for an image embedded in the description.
+     */
+    private function buildPdfDescriptionImageTag(string $path, string $alt): string
+    {
+        $size = @getimagesize($path);
+        $width = 45;
+        $height = 0;
+
+        if (is_array($size) && !empty($size[0]) && !empty($size[1])) {
+            $ratio = min($width / (int) $size[0], 80 / (int) $size[1]);
+            $width = max(1, round((int) $size[0] * $ratio, 1));
+            $height = max(1, round((int) $size[1] * $ratio, 1));
+        }
+
+        $attributes = ' class="jem-pdf-description-image" src="' . htmlspecialchars(str_replace('\\', '/', $path), ENT_COMPAT, 'UTF-8') . '"'
+            . ' width="' . htmlspecialchars((string) $width, ENT_COMPAT, 'UTF-8') . 'mm"';
+
+        if ($height > 0) {
+            $attributes .= ' height="' . htmlspecialchars((string) $height, ENT_COMPAT, 'UTF-8') . 'mm"';
+        }
+
+        return '<img' . $attributes . ' alt="' . htmlspecialchars($alt, ENT_COMPAT, 'UTF-8') . '" />';
+    }
+
+    /**
+     * Builds an image tag for an already resolved local image path.
+     */
+    private function buildPdfImageTag(string $path, string $alt, int $maxWidth, int $maxHeight): string
+    {
         $size = @getimagesize($path);
         $width = $maxWidth;
         $height = 0;
@@ -665,6 +817,91 @@ class JemViewEvent extends HtmlView
         }
 
         return '<img class="jem-pdf-image" src="' . htmlspecialchars(str_replace('\\', '/', $path), ENT_COMPAT, 'UTF-8') . '"' . $attributes . ' alt="' . htmlspecialchars($alt, ENT_COMPAT, 'UTF-8') . '" />';
+    }
+
+    /**
+     * Resolves JEM image names, site-relative paths, and local absolute URLs to a local file path.
+     */
+    private function resolvePdfImagePath(string $image, string $type): string
+    {
+        $image = trim(html_entity_decode($image, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+        if ($image === '' || stripos($image, 'data:') === 0) {
+            return '';
+        }
+
+        $path = $image;
+        $parts = parse_url($image);
+
+        if (is_array($parts) && !empty($parts['scheme'])) {
+            if (!in_array(strtolower((string) $parts['scheme']), array('http', 'https'), true)) {
+                return '';
+            }
+
+            $host = strtolower((string) ($parts['host'] ?? ''));
+            $siteHost = strtolower(Uri::getInstance()->getHost());
+
+            $localHosts = array('localhost', '127.0.0.1', '::1');
+
+            if ($host !== '' && $siteHost !== '' && $host !== $siteHost && !in_array($host, $localHosts, true)) {
+                return '';
+            }
+
+            $path = (string) ($parts['path'] ?? '');
+        }
+
+        $path = rawurldecode(str_replace('\\', '/', $path));
+        $basePath = trim((string) Uri::root(true), '/');
+
+        if ($basePath !== '' && strpos(ltrim($path, '/'), $basePath . '/') === 0) {
+            $path = substr(ltrim($path, '/'), strlen($basePath) + 1);
+        }
+
+        $path = ltrim($path, '/');
+
+        if ($path !== '' && is_file(JPATH_SITE . '/' . $path)) {
+            return JPATH_SITE . '/' . $path;
+        }
+
+        $imagesPos = strpos($path, 'images/');
+
+        if ($imagesPos !== false && $imagesPos > 0) {
+            $imagePath = substr($path, $imagesPos);
+
+            if (is_file(JPATH_SITE . '/' . $imagePath)) {
+                return JPATH_SITE . '/' . $imagePath;
+            }
+        }
+
+        $folders = array(
+            'event' => 'events',
+            'venue' => 'venues',
+            'category' => 'categories',
+        );
+
+        if (strpos($path, '/') === false && isset($folders[$type]) && is_file(JPATH_SITE . '/images/jem/' . $folders[$type] . '/' . $path)) {
+            return JPATH_SITE . '/images/jem/' . $folders[$type] . '/' . $path;
+        }
+
+        return '';
+    }
+
+    /**
+     * Extracts an attribute value from an image tag.
+     */
+    private function extractPdfImageAttribute(string $tag, string $attribute): string
+    {
+        $attribute = preg_quote($attribute, '/');
+
+        if (preg_match('/\b' . $attribute . '\s*=\s*(["\'])(.*?)\1/i', $tag, $match)) {
+            return trim((string) $match[2]);
+        }
+
+        if (preg_match('/\b' . $attribute . '\s*=\s*([^>\s]+)/i', $tag, $match)) {
+            return trim((string) $match[1], " \t\n\r\0\x0B\"'");
+        }
+
+        return '';
     }
 
     /**
@@ -865,12 +1102,26 @@ class JemViewEvent extends HtmlView
     {
         $return = base64_encode(JemHelperRoute::getRoute($row->slug));
         $login = $this->buildPdfAbsoluteUrl(Route::_('index.php?option=com_users&view=login&return=' . $return, false));
+        $params = (!empty($row->params) && is_object($row->params) && method_exists($row->params, 'get'))
+            ? $row->params
+            : JemHelper::globalattribs();
+        $intro = $this->normalisePdfHtml((string) $params->get('registration_intro', ''));
+        $footer = $this->normalisePdfHtml((string) $params->get('registration_footer', ''));
 
-        return '<h2>' . Text::_('COM_JEM_REGISTRATION') . '</h2>'
-            . '<div class="jem-pdf-section" style="text-align:center;">'
+        $html = array();
+        $html[] = '<h2>' . Text::_('COM_JEM_REGISTRATION') . '</h2>';
+        if ($intro !== '') {
+            $html[] = '<div class="jem-pdf-section">' . $intro . '</div>';
+        }
+        $html[] = '<div class="jem-pdf-section" style="text-align:center;">'
             . '<p>' . Text::_('COM_JEM_LOGIN_REQUIRED_FOR_REGISTER') . '</p>'
             . '<a class="jem-pdf-button" href="' . htmlspecialchars($login, ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_LOGIN') . '</a>'
             . '</div>';
+        if ($footer !== '') {
+            $html[] = '<div class="jem-pdf-section">' . $footer . '</div>';
+        }
+
+        return implode("\n", $html);
     }
 
     /**

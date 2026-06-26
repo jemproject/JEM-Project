@@ -111,7 +111,7 @@ class jem_settings extends Table
     /** @var int */
     public $pdf_imageheight = '40';
     /** @var string */
-    public $pdf_enabled_views = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
+    public $pdf_enabled_views = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
     /** @var string */
     public $pdf_paper_size = 'A4';
     /** @var string */

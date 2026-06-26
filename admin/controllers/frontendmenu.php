@@ -40,6 +40,7 @@ class JemControllerFrontendmenu extends BaseController
         $db          = Factory::getContainer()->get('DatabaseDriver');
         $menutype    = 'jem-frontend-menu';
         $componentId = $this->getComponentId();
+        $specialAccessId = $this->getAccessLevelId('Special', 3);
         $created     = 0;
 
         $this->ensureMenuType($menutype);
@@ -53,7 +54,7 @@ class JemControllerFrontendmenu extends BaseController
             'venues'     => $this->createMenuItem($menutype, 'Venues', 'venues', '#', $rootId, 'heading', 0),
             'categories' => $this->createMenuItem($menutype, 'Categories', 'categories', '#', $rootId, 'heading', 0),
             'types'      => $this->createMenuItem($menutype, 'Types', 'types', '#', $rootId, 'heading', 0),
-            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'heading', 0),
+            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'heading', 0, array(), $specialAccessId),
             'user'       => $this->createMenuItem($menutype, 'User Area', 'user-area', '#', $rootId, 'heading', 0),
         );
 
@@ -119,8 +120,9 @@ class JemControllerFrontendmenu extends BaseController
         foreach ($items as $item) {
             $itemType        = $item[4] ?? 'component';
             $itemComponentId = $item[5] ?? $componentId;
+            $itemAccess      = ((int) $item[3] === (int) $groups['management']) ? $specialAccessId : 1;
 
-            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId)) {
+            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess)) {
                 $created++;
             }
         }
@@ -250,12 +252,12 @@ class JemControllerFrontendmenu extends BaseController
         $db->execute();
     }
 
-    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array())
+    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1)
     {
         $existing = $this->getExistingMenuItem($menutype, array_merge(array($alias), $legacyAliases), $parentId);
 
         if ($existing) {
-            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId);
+            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId, $access);
             return (int) $existing;
         }
 
@@ -276,7 +278,7 @@ class JemControllerFrontendmenu extends BaseController
             'component_id' => (int) $componentId,
             'checked_out'  => 0,
             'browserNav'   => 0,
-            'access'       => 1,
+            'access'       => max(1, (int) $access),
             'img'          => '',
             'template_style_id' => 0,
             'params'       => '{}',
@@ -324,7 +326,7 @@ class JemControllerFrontendmenu extends BaseController
         return (int) $db->loadResult();
     }
 
-    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null)
+    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null, $access = 1)
     {
         $table = Table::getInstance('Menu');
 
@@ -342,7 +344,7 @@ class JemControllerFrontendmenu extends BaseController
             'type'         => $type,
             'component_id' => (int) $componentId,
             'published'    => 1,
-            'access'       => 1,
+            'access'       => max(1, (int) $access),
             'parent_id'    => $parentId !== null ? (int) $parentId : (int) $table->parent_id,
         );
 
@@ -401,6 +403,19 @@ class JemControllerFrontendmenu extends BaseController
         $db->setQuery($query);
 
         return (int) $db->loadResult();
+    }
+
+    protected function getAccessLevelId($title, $fallback)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__viewlevels'))
+            ->where($db->quoteName('title') . ' = ' . $db->quote($title));
+        $db->setQuery($query, 0, 1);
+
+        return (int) $db->loadResult() ?: (int) $fallback;
     }
 
     protected function getRandomRecord($table, $where, array $columns)

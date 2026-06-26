@@ -3,7 +3,7 @@
 -- new values
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_imageheight', '40');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_imagewidth', '40');
-INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_paper_size', 'A4');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_orientation', 'L');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_calendar_layout', 'calendar');
@@ -61,7 +61,7 @@ UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs`
 UPDATE `#__jem_events` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_categories` SET `metadata` = '{}' WHERE `metadata` IS NULL OR `metadata` = '' OR `metadata` = '""' OR `metadata` = "''" OR NOT JSON_VALID(`metadata`);
 UPDATE `#__jem_categories` SET `path` = NULL WHERE `id` = 1 AND `catname` = 'root' AND `path` IS NOT NULL;
-UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,specialdays,typeevents,venue,venueslist,venuesmap,weekcal' WHERE `keyname` = 'pdf_enabled_views' AND `value` = 'event,annualcalendar';
+UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal' WHERE `keyname` = 'pdf_enabled_views' AND `value` = 'event,annualcalendar';
 
 -- update values
 UPDATE `#__jem_events` SET `publish_up` = `created` WHERE `publish_up` IS NULL AND `created` IS NOT NULL;
