@@ -21,6 +21,30 @@
     <!-- Add fields to the parameters object for the layout. -->
     <fields name="params">
         <fieldset name="basic">
+            <field type="spacer" name="event_headings_spacer"
+                label="COM_JEM_EVENT_HEADINGS_OPTIONS"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="event_heading_display" type="list"
+                default="label_name"
+                label="COM_JEM_EVENT_HEADING_DISPLAY"
+                description="COM_JEM_EVENT_HEADING_DISPLAY_DESC"
+                class="form-select w-auto"
+            >
+                <option value="label">COM_JEM_EVENT_HEADING_LABEL</option>
+                <option value="label_name">COM_JEM_EVENT_HEADING_LABEL_NAME</option>
+                <option value="name">COM_JEM_EVENT_HEADING_NAME</option>
+            </field>
+            <field name="event_venue_heading_display" type="list"
+                default="label_name"
+                label="COM_JEM_EVENT_VENUE_HEADING_DISPLAY"
+                description="COM_JEM_EVENT_VENUE_HEADING_DISPLAY_DESC"
+                class="form-select w-auto"
+            >
+                <option value="label">COM_JEM_VENUE_HEADING_LABEL</option>
+                <option value="label_name">COM_JEM_VENUE_HEADING_LABEL_NAME</option>
+                <option value="name">COM_JEM_VENUE_HEADING_NAME</option>
+            </field>
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"

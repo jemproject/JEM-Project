@@ -90,6 +90,14 @@ if ($eventLayout === '') {
 if (!in_array($eventLayout, array('details', 'compact'), true)) {
     $eventLayout = 'details';
 }
+$eventHeadingDisplay = (string) $params->get('event_heading_display', 'label_name');
+if (!in_array($eventHeadingDisplay, array('label', 'label_name', 'name'), true)) {
+    $eventHeadingDisplay = 'label_name';
+}
+$eventVenueHeadingDisplay = (string) $params->get('event_venue_heading_display', 'label_name');
+if (!in_array($eventVenueHeadingDisplay, array('label', 'label_name', 'name'), true)) {
+    $eventVenueHeadingDisplay = 'label_name';
+}
 $layoutOverride = $app->input->getCmd('jem_layout', '');
 if (in_array($layoutOverride, array('details', 'compact'), true)) {
     $eventLayout = $layoutOverride;
@@ -178,6 +186,19 @@ $renderVenueName = function () use ($params) {
     }
 
     return $venueName . ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
+};
+$renderBlockHeading = function ($display, $label, $name) {
+    $name = $this->escape((string) $name);
+
+    if ($display === 'name') {
+        return $name;
+    }
+
+    if ($display === 'label_name' && $name !== '') {
+        return $label . ' - ' . $name;
+    }
+
+    return $label;
 };
 $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($params) {
     $locality = array_filter(array(
@@ -458,7 +479,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             <h2 class="jem">
             <span style="white-space: nowrap;">
                 <?php
-                echo Text::_('COM_JEM_EVENT') . JemOutput::recurrenceicon($this->item) .' ';
+                echo $renderBlockHeading($eventHeadingDisplay, Text::_('COM_JEM_EVENT'), $this->item->title) . JemOutput::recurrenceicon($this->item) .' ';
                 if($this->item_root) {
                     echo JemOutput::editbutton($this->item_root, $params, $attribs, $this->permissions->canEditEvent, 'editevent') . ' ';
                 }
@@ -1116,7 +1137,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             <?php if ($venueLayout !== 'compact') : ?>
                 <h2 class="location">
                     <?php
-                    echo Text::_('COM_JEM_VENUE') ;
+                    echo $renderBlockHeading($eventVenueHeadingDisplay, Text::_('COM_JEM_VENUE'), $this->item->venue) ;
                     $itemid = $this->item ? $this->item->id : 0 ;
                     echo JemOutput::editbutton($this->item, $params, $attribs, $this->permissions->canEditVenue, 'editvenue');
                     echo JemOutput::copybutton($this->item, $params, $attribs, $this->permissions->canAddVenue, 'editvenue');
