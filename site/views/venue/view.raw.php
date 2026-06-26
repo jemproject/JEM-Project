@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 /**
  * Raw: Venue
@@ -32,7 +34,7 @@ class JemViewVenue extends HtmlView
         $month = (int)$jinput->getInt('monthID', date("m"));
         $layout = $jinput->getCmd('layout', '');
 
-        if ($layout === 'pdf') {
+        if ($layout === 'pdf' && $jinput->getBool('venue_calendar_pdf', false)) {
             $model = $this->getModel('VenueCal');
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
@@ -46,6 +48,58 @@ class JemViewVenue extends HtmlView
                 $year,
                 $month,
                 $app->getParams()
+            );
+
+            return;
+        }
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $venue = $this->get('Venue');
+
+            if (empty($venue)) {
+                Factory::getApplication()->close();
+
+                return;
+            }
+
+            $user = JemFactory::getUser();
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($app->input->server->getString('REQUEST_URI')), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            if (trim((string) $venue->locdescription) !== '' && trim((string) $venue->locdescription) !== '<br>') {
+                $venue->text = $venue->locdescription;
+                $venue->title = $venue->venue;
+                $params = $app->getParams();
+                PluginHelper::importPlugin('content');
+                $app->triggerEvent('onContentPrepare', array('com_jem.venue', &$venue, &$params, 0));
+                $venue->locdescription = $venue->text;
+            }
+
+            if (!empty($venue->url) && !preg_match('%^http(s)?://%', $venue->url)) {
+                $venue->url = 'https://' . $venue->url;
+            }
+
+            $rows = $model->getItems();
+            $alias = trim((string) ($venue->slug ?: $venue->id));
+            $alias = preg_replace('/[^a-zA-Z0-9_-]+/', '-', $alias);
+
+            JemPdfView::renderVenueDetail(
+                trim((string) $venue->venue) !== '' ? (string) $venue->venue : Text::_('COM_JEM_VENUE'),
+                $venue,
+                (array) $rows,
+                $app->getParams(),
+                'jem-venue-' . $alias . '.pdf'
             );
 
             return;

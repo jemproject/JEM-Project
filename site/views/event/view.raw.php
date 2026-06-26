@@ -168,6 +168,10 @@ class JemViewEvent extends HtmlView
         $showVenueAddress = (int) $params->get('event_show_detailsadress', 1) === 1;
         $showVenueDescription = (int) $params->get('event_show_locdescription', 1) === 1;
         $showVenueMap = in_array((int) $params->get('event_show_mapserv', 0), array(1, 2, 3, 4, 5), true);
+        $eventHeadingDisplay = (string) $params->get('event_heading_display', 'label_name');
+        $eventHeadingDisplay = in_array($eventHeadingDisplay, array('label', 'label_name', 'name'), true) ? $eventHeadingDisplay : 'label_name';
+        $eventVenueHeadingDisplay = (string) $params->get('event_venue_heading_display', 'label_name');
+        $eventVenueHeadingDisplay = in_array($eventVenueHeadingDisplay, array('label', 'label_name', 'name'), true) ? $eventVenueHeadingDisplay : 'label_name';
         $showOnlineMeeting = (int) $params->get('event_show_online_meeting', 1) === 1;
         $showContacts = (int) $params->get('event_show_contact', 0) === 1;
         $showRegistration = (int) $params->get('event_show_registration', 1) === 1;
@@ -242,7 +246,7 @@ class JemViewEvent extends HtmlView
             $html[] = $intro;
         }
 
-        $html[] = '<h2>' . Text::_('COM_JEM_EVENT') . ' &#8635;</h2>';
+        $html[] = '<h2>' . $this->buildPdfBlockHeading($eventHeadingDisplay, Text::_('COM_JEM_EVENT'), (string) $row->title) . ' &#8635;</h2>';
         $eventSummaryHtml = array();
         $eventSummaryHtml[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="2" cellspacing="0">';
         if ($showEventDetailsTitle) {
@@ -287,7 +291,7 @@ class JemViewEvent extends HtmlView
         }
 
         if ($showVenueSection && $venueMode !== 'none' && !empty($row->venue)) {
-            $html[] = '<h2>' . Text::_('COM_JEM_VENUE') . '</h2>';
+            $html[] = '<h2>' . $this->buildPdfBlockHeading($eventVenueHeadingDisplay, Text::_('COM_JEM_VENUE'), (string) $row->venue) . '</h2>';
             $venueSummaryHtml = array();
             $venueSummaryHtml[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="2" cellspacing="0">';
             $venueSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_LOCATION'), '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($this->buildPdfVenueUrl($row), ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->venue, ENT_COMPAT, 'UTF-8') . '</a>' . $this->buildPdfTypedBadge($row, 'venue_type_', 'venue'));
@@ -668,6 +672,21 @@ class JemViewEvent extends HtmlView
         }
 
         return '<tr><td class="jem-pdf-label" width="24%">' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</td><td width="76%">' . $value . '</td></tr>';
+    }
+
+    private function buildPdfBlockHeading(string $display, string $label, string $name): string
+    {
+        $name = trim($name);
+
+        if ($display === 'name') {
+            return htmlspecialchars($name, ENT_COMPAT, 'UTF-8');
+        }
+
+        if ($display === 'label_name' && $name !== '') {
+            return htmlspecialchars($label . ' - ' . $name, ENT_COMPAT, 'UTF-8');
+        }
+
+        return htmlspecialchars($label, ENT_COMPAT, 'UTF-8');
     }
 
     /**

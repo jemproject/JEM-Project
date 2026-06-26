@@ -150,6 +150,7 @@ class JemViewVenue extends JemView
             $url_base = 'index.php?option=com_jem&view=venue&layout=calendar' . $partVenid . $partItemid;
 
             $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
+            $pdf_link = Route::_($url_base . $partDate . '&layout=pdf&venue_calendar_pdf=1&format=raw');
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
@@ -172,6 +173,7 @@ class JemViewVenue extends JemView
             $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
             $this->print_link    = $print_link;
+            $this->pdf_link      = $pdf_link;
             $this->archive_link  = $archive_link;
             $this->print         = $print;
             $this->ical_link     = $partDate;

@@ -21,6 +21,67 @@
 
     <fields name="params">
         <fieldset name="basic">
+            <field type="spacer" name="venue_details_spacer"
+                label="COM_JEM_VENUE_DETAILS_OPTIONS"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="venue_heading_display" type="list"
+                default="label_name"
+                label="COM_JEM_VENUE_HEADING_DISPLAY"
+                description="COM_JEM_VENUE_HEADING_DISPLAY_DESC"
+                class="form-select w-auto"
+            >
+                <option value="label">COM_JEM_VENUE_HEADING_LABEL</option>
+                <option value="label_name">COM_JEM_VENUE_HEADING_LABEL_NAME</option>
+                <option value="name">COM_JEM_VENUE_HEADING_NAME</option>
+            </field>
+            <field name="venue_show_status" type="radio"
+                default="1"
+                label="COM_JEM_VENUE_SHOW_STATUS"
+                description="COM_JEM_VENUE_SHOW_STATUS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_show_image" type="radio"
+                default="1"
+                label="COM_JEM_VENUE_SHOW_IMAGE"
+                description="COM_JEM_VENUE_SHOW_IMAGE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_show_description" type="radio"
+                default="1"
+                label="COM_JEM_VENUE_SHOW_DESCRIPTION"
+                description="COM_JEM_VENUE_SHOW_DESCRIPTION_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_show_events" type="radio"
+                default="1"
+                label="COM_JEM_VENUE_SHOW_EVENTS"
+                description="COM_JEM_VENUE_SHOW_EVENTS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_map_display" type="list"
+                default="link_button"
+                label="COM_JEM_VENUE_MAP_DISPLAY"
+                description="COM_JEM_VENUE_MAP_DISPLAY_DESC"
+                class="form-select w-auto"
+            >
+                <option value="none">COM_JEM_HIDE</option>
+                <option value="link_text">COM_JEM_MAP_LINK_TEXT</option>
+                <option value="link_button">COM_JEM_MAP_LINK_BUTTON</option>
+                <option value="map">COM_JEM_EMBEDDED_MAP</option>
+            </field>
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"
@@ -63,29 +124,6 @@
                 label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
                 description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
             />
-            <field type="spacer" name="venue_details_spacer"
-                label="COM_JEM_VENUE_DETAILS_OPTIONS"
-                class="badge border px-3 py-2 fs-5 fw-bold text-body"
-            />
-            <field name="venue_show_status" type="radio"
-                default="1"
-                label="COM_JEM_VENUE_SHOW_STATUS"
-                description="COM_JEM_VENUE_SHOW_STATUS_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="venue_map_display" type="list"
-                default="global"
-                label="COM_JEM_VENUE_MAP_DISPLAY"
-                description="COM_JEM_VENUE_MAP_DISPLAY_DESC"
-            >
-                <option value="global">COM_JEM_USE_GLOBAL</option>
-                <option value="hide">COM_JEM_HIDE</option>
-                <option value="link">COM_JEM_MAP_LINK</option>
-                <option value="map">COM_JEM_EMBEDDED_MAP</option>
-            </field>
         </fieldset>
     </fields>
 </metadata>
