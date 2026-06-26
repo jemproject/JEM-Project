@@ -511,6 +511,159 @@ class JemModelSettings extends AdminModel
                 $config->$name = clone $extension;
             }
         }
+
+        $config->libraries = $this->getLibraryInfo();
+
         return $config;
+    }
+
+    /**
+     * Return third-party library and font information included or used by JEM.
+     *
+     * @return array
+     */
+    protected function getLibraryInfo()
+    {
+        return array(
+            array(
+                'name'    => 'Joomla CMS API',
+                'version' => defined('JVERSION') ? JVERSION : '?',
+                'license' => 'GPL-2.0-or-later',
+                'scope'   => 'runtime',
+                'path'    => 'Joomla CMS',
+            ),
+            array(
+                'name'    => 'TCPDF',
+                'version' => $this->readFirstLine(JPATH_SITE . '/components/com_jem/classes/tcpdf/VERSION', '6.10.0'),
+                'license' => 'LGPL-3.0-or-later',
+                'scope'   => 'bundled',
+                'path'    => 'site/classes/tcpdf',
+            ),
+            array(
+                'name'    => 'TCPDF core font definitions',
+                'version' => $this->readFirstLine(JPATH_SITE . '/components/com_jem/classes/tcpdf/VERSION', '6.10.0'),
+                'license' => 'LGPL-3.0-or-later',
+                'scope'   => 'bundled',
+                'path'    => 'site/classes/tcpdf/fonts',
+                'notes'   => 'Courier, Helvetica, Times, Symbol, ZapfDingbats',
+            ),
+            array(
+                'name'    => 'DejaVu Sans TCPDF fonts',
+                'version' => 'bundled TCPDF font files',
+                'license' => 'Bitstream Vera / DejaVu Fonts license; public domain additions',
+                'scope'   => 'bundled',
+                'path'    => 'site/classes/tcpdf/fonts/dejavusans*',
+                'notes'   => 'Regular and bold Unicode font files for PDF output',
+            ),
+            array(
+                'name'    => 'iCalcreator',
+                'version' => $this->detectIcalcreatorVersion(),
+                'license' => 'LGPL-3.0-or-later',
+                'scope'   => 'bundled',
+                'path'    => 'site/classes/icalcreator',
+            ),
+            array(
+                'name'    => 'Zebra_Image',
+                'version' => '3.0.0',
+                'license' => 'LGPL-3.0',
+                'scope'   => 'bundled',
+                'path'    => 'site/classes/Zebra_Image.php',
+            ),
+            array(
+                'name'    => 'Leaflet',
+                'version' => '1.9.4+v1.d15112c',
+                'license' => 'BSD-2-Clause',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/leaflet.js; media/css/leaflet.css',
+            ),
+            array(
+                'name'    => 'Leaflet.fullscreen',
+                'version' => '?',
+                'license' => 'MIT',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/leaflet-fullscreen.js; media/css/leaflet-fullscreen.css',
+            ),
+            array(
+                'name'    => 'Leaflet.heat / simpleheat',
+                'version' => '?',
+                'license' => 'BSD-2-Clause',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/leaflet-heat.js',
+            ),
+            array(
+                'name'    => 'Lightbox2',
+                'version' => '2.11.4',
+                'license' => 'MIT',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/lightbox.min.js; media/css/lightbox.min.css',
+            ),
+            array(
+                'name'    => 'jQuery Geocomplete',
+                'version' => '1.7.0',
+                'license' => 'MIT',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/jquery.geocomplete.js',
+            ),
+            array(
+                'name'    => 'Google Maps InfoBox',
+                'version' => '1.1.13',
+                'license' => 'Apache-2.0',
+                'scope'   => 'bundled',
+                'path'    => 'media/js/infobox.js',
+            ),
+            array(
+                'name'    => 'Font Awesome Free',
+                'version' => '6.7.2',
+                'license' => 'Icons: CC BY 4.0; Fonts: SIL OFL 1.1; Code: MIT',
+                'scope'   => 'bundled',
+                'path'    => 'media/vendor/fontawesome-free',
+            ),
+        );
+    }
+
+    /**
+     * Read the first line of a small text file.
+     *
+     * @param string $path
+     * @param string $fallback
+     *
+     * @return string
+     */
+    protected function readFirstLine($path, $fallback = '?')
+    {
+        if (!is_file($path) || !is_readable($path)) {
+            return $fallback;
+        }
+
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        return !empty($lines[0]) ? trim($lines[0]) : $fallback;
+    }
+
+    /**
+     * Detect the bundled iCalcreator version from its autoload/constants file.
+     *
+     * @return string
+     */
+    protected function detectIcalcreatorVersion()
+    {
+        $paths = array(
+            JPATH_SITE . '/components/com_jem/classes/icalcreator/autoload.php',
+            JPATH_SITE . '/components/com_jem/classes/icalcreator/IcalBase.php',
+        );
+
+        foreach ($paths as $path) {
+            if (!is_file($path) || !is_readable($path)) {
+                continue;
+            }
+
+            $contents = file_get_contents($path);
+
+            if (preg_match("/ICALCREATOR_VERSION'\\s*,\\s*'iCalcreator\\s+([^']+)'/", $contents, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return '2.41.92';
     }
 }

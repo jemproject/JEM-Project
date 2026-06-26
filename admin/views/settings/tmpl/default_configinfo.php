@@ -163,6 +163,37 @@ $logFiles = array(
                 <?php endforeach; ?>
             </table>
         </fieldset>
+        <?php if (!empty($this->config->libraries)) : ?>
+        <fieldset class="options-form">
+            <legend><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARIES'); ?></legend>
+            <p><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARIES_DESC'); ?></p>
+            <table class="adminlist table">
+                <tr>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_NAME'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_VERSION'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_LICENSE'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_SCOPE'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_LOCATION'); ?></u></th>
+                    <th><u><?php echo Text::_('COM_JEM_CONFIGINFO_LIBRARY_NOTES'); ?></u></th>
+                </tr>
+                <?php foreach ($this->config->libraries as $library) : ?>
+                    <?php
+                    $scopeKey = !empty($library['scope']) && $library['scope'] === 'runtime'
+                        ? 'COM_JEM_CONFIGINFO_LIBRARY_SCOPE_RUNTIME'
+                        : 'COM_JEM_CONFIGINFO_LIBRARY_SCOPE_BUNDLED';
+                    ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($library['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><b><?php echo htmlspecialchars($library['version'] ?? '?', ENT_QUOTES, 'UTF-8'); ?></b></td>
+                        <td><?php echo htmlspecialchars($library['license'] ?? '?', ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo Text::_($scopeKey); ?></td>
+                        <td><code><?php echo htmlspecialchars($library['path'] ?? '', ENT_QUOTES, 'UTF-8'); ?></code></td>
+                        <td><?php echo htmlspecialchars($library['notes'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+        </fieldset>
+        <?php endif; ?>
     </div>
 </div>
 
