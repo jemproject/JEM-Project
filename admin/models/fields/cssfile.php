@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Form\FormHelper;
+use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\Folder;
@@ -18,7 +19,7 @@ FormHelper::loadFieldClass('list');
 /**
  * Custom CSS file selector.
  */
-class JFormFieldCssFile extends JFormFieldList
+class JFormFieldCssFile extends ListField
 {
     protected $type = 'CssFile';
     protected $hasCompatibleFiles = false;
