@@ -832,6 +832,7 @@ class JemHelper
             $dateKey = $date->format('Y-m-d');
             $days[$dateKey][] = array(
                 'id' => (int) $row->id,
+                'date' => $dateKey,
                 'title' => (string) $row->title,
                 'type' => $type['name'],
                 'color' => $type['color'],
@@ -996,16 +997,23 @@ class JemHelper
                         'color' => $color,
                         'type' => $type,
                         'titles' => array(),
+                        'title_dates' => array(),
                         'descriptions' => array(),
                     );
                 }
 
                 $title = trim((string) ($specialDay['title'] ?? ''));
+                $date = !empty($specialDay['is_dated_rule']) ? trim((string) ($specialDay['date'] ?? '')) : '';
                 $description = trim((string) ($specialDay['description'] ?? ''));
 
                 if ($title !== '') {
-                    if (!in_array($title, $legend[$legendKey]['titles'], true)) {
-                        $legend[$legendKey]['titles'][] = $title;
+                    $titleKey = ($date !== '' ? $date : '0000-00-00') . '|' . $title;
+
+                    if (!isset($legend[$legendKey]['title_dates'][$titleKey])) {
+                        $legend[$legendKey]['title_dates'][$titleKey] = array(
+                            'date' => $date,
+                            'title' => $title,
+                        );
                     }
                 }
 
@@ -1018,7 +1026,34 @@ class JemHelper
         }
 
         foreach ($legend as &$legendItem) {
-            $legendItem['title'] = implode('; ', $legendItem['titles']);
+            uasort($legendItem['title_dates'], static function ($a, $b) {
+                $dateCompare = strcmp((string) ($a['date'] ?? ''), (string) ($b['date'] ?? ''));
+
+                if ($dateCompare !== 0) {
+                    return $dateCompare;
+                }
+
+                return strcasecmp((string) ($a['title'] ?? ''), (string) ($b['title'] ?? ''));
+            });
+
+            foreach ($legendItem['title_dates'] as $titleDate) {
+                $date = trim((string) ($titleDate['date'] ?? ''));
+                $title = trim((string) ($titleDate['title'] ?? ''));
+
+                if ($title === '') {
+                    continue;
+                }
+
+                if ($date !== '') {
+                    $timestamp = strtotime($date);
+                    $dateLabel = $timestamp ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC4')) : $date;
+                    $legendItem['titles'][] = $dateLabel . ' - ' . $title;
+                } else {
+                    $legendItem['titles'][] = $title;
+                }
+            }
+
+            $legendItem['title'] = implode("\n", $legendItem['titles']);
             $legendItem['description'] = implode('; ', $legendItem['descriptions']);
 
             if (strcasecmp($legendItem['title'], $legendItem['type']) === 0) {
@@ -1026,6 +1061,7 @@ class JemHelper
             }
 
             unset($legendItem['titles']);
+            unset($legendItem['title_dates']);
             unset($legendItem['descriptions']);
         }
         unset($legendItem);
@@ -1070,7 +1106,7 @@ class JemHelper
         foreach ($legend as $legendItem) {
             $color = htmlspecialchars($legendItem['color'], ENT_COMPAT, 'UTF-8');
             $type = htmlspecialchars($legendItem['type'], ENT_COMPAT, 'UTF-8');
-            $title = htmlspecialchars($legendItem['title'], ENT_COMPAT, 'UTF-8');
+            $title = nl2br(htmlspecialchars($legendItem['title'], ENT_COMPAT, 'UTF-8'), false);
             $description = trim((string) $legendItem['description']);
             $titleText = $title !== '' ? $title : '-';
             $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '-';
