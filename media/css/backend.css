@@ -598,7 +598,11 @@ label#replace_venues1-lbl,
 label#replace_categories0-lbl,
 label#replace_categories1-lbl,
 label#replace_catevents0-lbl,
-label#replace_catevents1-lbl {
+label#replace_catevents1-lbl,
+label#replace_types0-lbl,
+label#replace_types1-lbl,
+label#replace_attachments0-lbl,
+label#replace_attachments1-lbl {
     float: none;
     display: inline-block;
     min-width: 60px;
@@ -613,38 +617,282 @@ input#replace_venues1.inputbox,
 input#replace_categories0.inputbox,
 input#replace_categories1.inputbox,
 input#replace_catevents0.inputbox,
-input#replace_catevents1.inputbox {
+input#replace_catevents1.inputbox,
+input#replace_types0.inputbox,
+input#replace_types1.inputbox,
+input#replace_attachments0.inputbox,
+input#replace_attachments1.inputbox {
     float: none;
     display: inline-block;
 }
 
+.jem-import-page .jem-import-tab-intro {
+    margin: 0 0 1rem;
+}
+
+.jem-import-page .jem-import-tab-intro h2 {
+    margin: 0 0 .35rem;
+}
+
+.jem-import-page .jem-import-tab-intro p {
+    max-width: 65rem;
+}
+
 .jem-import-grid {
+    --jem-import-label-width: 13rem;
+    --jem-import-control-width: 16rem;
+    --jem-import-action-width: 10rem;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: .65rem;
     align-items: stretch;
 }
 
-.jem-import-grid > hr {
-    display: none;
+.jem-import-card {
+    background: var(--body-bg, #fff);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
+    border-radius: .35rem;
+    box-sizing: border-box;
+    padding: .85rem;
 }
 
-.jem-import-grid > div {
+.jem-import-grid > .jem-import-card:only-child {
+    grid-column: 1 / -1;
+}
+
+.jem-import-card h3 {
+    font-size: 1.15rem;
+    margin: 0 0 .3rem;
+}
+
+.jem-import-card p {
+    margin: 0 0 .75rem;
+}
+
+.jem-import-card-planned {
+    background: color-mix(in srgb, var(--body-bg, #fff) 94%, var(--template-bg-dark, #1f2933) 6%);
+}
+
+.jem-import-row {
+    align-items: stretch;
+    display: grid;
+    gap: .55rem;
+    grid-template-columns: 1fr;
+}
+
+.jem-import-row-compact {
+    grid-template-columns: 1fr;
+}
+
+.jem-import-field {
+    align-items: center;
+    display: grid;
+    gap: .65rem;
+    grid-template-columns: var(--jem-import-label-width) var(--jem-import-control-width) var(--jem-import-action-width);
+}
+
+.jem-import-field > input,
+.jem-import-field > textarea,
+.jem-import-field > .form-control,
+.jem-import-field > .btn-group,
+.jem-import-field > .field-calendar,
+.jem-import-field > .input-group,
+.jem-import-field > .choices {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-import-field > select,
+.jem-import-field > .form-select,
+.jem-import-field > .inputbox {
+    max-width: 100%;
+    min-width: 8rem;
+    width: var(--jem-import-control-width);
+}
+
+.jem-import-field > .field-calendar,
+.jem-import-field > .input-group {
+    max-width: 100%;
+    width: var(--jem-import-control-width);
+}
+
+.jem-import-select-actions {
+    display: contents;
     min-width: 0;
 }
 
-.jem-import-grid > div > fieldset.adminform {
-    height: 100%;
-    margin: 0;
-    box-sizing: border-box;
+.jem-import-select-actions > select,
+.jem-import-select-actions > .form-select,
+.jem-import-select-actions > .inputbox {
+    max-width: 100%;
+    min-width: 8rem;
+    width: 100%;
 }
 
-.jem-import-grid input[type="file"] {
+.jem-import-create-btn {
+    justify-content: center;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.jem-import-field-spacer {
+    display: block;
+    min-height: 1px;
+}
+
+.jem-import-field > label {
+    display: block;
+    font-weight: 600;
+    margin: 0;
+}
+
+.jem-import-field > label span {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 68%, var(--body-bg, #fff) 32%);
+    display: block;
+    font-size: .85rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.jem-import-field-file input[type="file"] {
+    grid-column: 2 / -1;
     max-width: 100%;
+    width: 100%;
+}
+
+.jem-import-field-file .jem-import-field-spacer {
+    display: none;
+}
+
+.jem-import-specialdays-card .jem-import-field:not(.jem-import-field-file) {
+    grid-template-columns: var(--jem-import-label-width) max-content;
+    justify-content: start;
+}
+
+.jem-import-specialdays-card .jem-import-field-file {
+    grid-template-columns: var(--jem-import-label-width) minmax(16rem, 1fr);
+}
+
+.jem-import-specialdays-card .jem-import-field-file > input[type="file"] {
+    width: 100%;
+}
+
+.jem-import-actions .btn {
+    min-height: 2.35rem;
+    white-space: nowrap;
+}
+
+.jem-import-row > .jem-import-actions {
+    margin-left: calc(var(--jem-import-label-width) + .65rem);
+}
+
+.jem-import-actions-row {
+    margin-left: calc(var(--jem-import-label-width) + .65rem);
+    margin-top: .75rem;
+}
+
+.jem-import-actions-row .btn {
+    margin: 0 .35rem .35rem 0;
+}
+
+.jem-import-columns {
+    margin: .75rem 0;
+}
+
+.jem-import-columns summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.jem-import-columns-list,
+.jem-import-example {
+    background: color-mix(in srgb, var(--body-bg, #fff) 88%, var(--body-color, #1f2933) 7%);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
+    border-radius: .25rem;
+    box-sizing: border-box;
+    margin: 0 0 .5rem;
+    overflow: auto;
+    padding: .75rem;
+}
+
+.jem-import-help-note {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 78%, var(--body-bg, #fff) 22%);
+    font-size: .9rem;
+}
+
+.jem-import-feature-list {
+    margin: 0 0 1rem 1.2rem;
+}
+
+.jem-import-secondary-action {
+    margin-top: 1rem !important;
+}
+
+.jem-import-logs-table code {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.jem-import-catalog-controls {
+    grid-template-columns: 1fr;
+}
+
+.jem-import-catalog-table code {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.jem-import-catalog-table td,
+.jem-import-catalog-table th {
+    vertical-align: middle;
+}
+
+.jem-import-logs-table .btn {
+    margin: 0 .25rem .25rem 0;
 }
 
 @media (max-width: 900px) {
     .jem-import-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-row {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field > select,
+    .jem-import-field > .form-select,
+    .jem-import-field > .inputbox {
+        width: 100%;
+    }
+
+    .jem-import-select-actions {
+        display: grid;
+        gap: .45rem;
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field-spacer {
+        display: none;
+    }
+
+    .jem-import-specialdays-card .jem-import-field {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-actions-row {
+        margin-left: 0;
+    }
+
+    .jem-import-row > .jem-import-actions {
+        margin-left: 0;
+    }
+
+    .jem-import-catalog-controls {
         grid-template-columns: 1fr;
     }
 }

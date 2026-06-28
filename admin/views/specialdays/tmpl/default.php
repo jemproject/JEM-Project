@@ -88,42 +88,6 @@ $renderLocation = function ($item) {
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=specialdays'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
     <div id="j-main-container" class="j-main-container">
-        <?php if ($user->authorise('core.create', 'com_jem')) : ?>
-            <fieldset class="adminform mb-3 jem-specialdays-import">
-                <legend><?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV'); ?></legend>
-                <div class="row g-2 align-items-end jem-specialdays-import-row">
-                    <div class="col-md-5 jem-specialdays-import-file">
-                        <label for="specialdays-file-upload" class="form-label"><?php echo Text::_('COM_JEM_IMPORT_SELECTCSV'); ?></label>
-                        <input type="file" id="specialdays-file-upload" accept=".csv,text/csv,text/plain" name="FileSpecialDays" class="form-control" />
-                    </div>
-                    <div class="col-md-3 jem-specialdays-import-replace">
-                        <label for="replace_specialdays" class="form-label"><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS'); ?></label>
-                        <select name="replace_specialdays" id="replace_specialdays" class="form-select">
-                            <option value="0"><?php echo Text::_('JNO'); ?></option>
-                            <option value="1"><?php echo Text::_('JYES'); ?></option>
-                        </select>
-                    </div>
-                    <div class="col-md-4 jem-specialdays-import-action">
-                        <button type="submit" class="btn btn-primary"
-                                onclick="document.adminForm.task.value='specialdays.importCsv';">
-                            <span class="icon-upload" aria-hidden="true"></span>
-                            <?php echo Text::_('COM_JEM_IMPORT_START'); ?>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-text mt-2">
-                    <?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_DESC'); ?>
-                </div>
-                <details class="mt-2">
-                    <summary><?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_HELP_TITLE'); ?></summary>
-                    <div class="mt-2">
-                        <p class="mb-2"><?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_FIELDS'); ?></p>
-                        <pre class="p-2 bg-light border rounded mb-0"><code><?php echo $this->escape(str_replace('\n', "\n", Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_EXAMPLE'))); ?></code></pre>
-                    </div>
-                </details>
-            </fieldset>
-        <?php endif; ?>
-
         <fieldset id="filter-bar" class="mb-3">
             <div class="jem-admin-filter-bar jem-specialdays-admin-filter-bar">
                 <div class="jem-admin-filter-search">

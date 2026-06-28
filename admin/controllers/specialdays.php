@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Table\Table;
@@ -19,6 +20,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 class JemControllerSpecialdays extends AdminController
 {
     protected $text_prefix = 'COM_JEM_SPECIAL_DAYS';
+    protected static $importLoggerAdded = false;
 
     public function getModel($name = 'Specialday', $prefix = 'JemModel', $config = array('ignore_request' => true))
     {
@@ -68,14 +70,19 @@ class JemControllerSpecialdays extends AdminController
 
         $file = $app->input->files->get('FileSpecialDays', array(), 'array');
         $replace = $app->input->post->getInt('replace_specialdays', 0);
+        $redirect = $app->input->getInt('return_import', 0)
+            ? 'index.php?option=com_jem&view=import#special-days'
+            : 'index.php?option=com_jem&view=specialdays';
 
         if (empty($file['name'])) {
-            $this->setRedirect('index.php?option=com_jem&view=specialdays', Text::_('COM_JEM_IMPORT_SELECT_FILE'), 'error');
+            $this->addSpecialDaysImportLog(Text::_('COM_JEM_IMPORT_SELECT_FILE'), Log::WARNING);
+            $this->setRedirect($redirect, Text::_('COM_JEM_IMPORT_SELECT_FILE'), 'error');
             return;
         }
 
         if (!empty($file['error']) || strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)) !== 'csv' || !is_uploaded_file($file['tmp_name'])) {
-            $this->setRedirect('index.php?option=com_jem&view=specialdays', Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
+            $this->addSpecialDaysImportLog(Text::_('COM_JEM_IMPORT_PARSE_ERROR') . ' File: ' . ($file['name'] ?? ''), Log::WARNING);
+            $this->setRedirect($redirect, Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
             return;
         }
 
@@ -85,7 +92,8 @@ class JemControllerSpecialdays extends AdminController
         $handle = fopen($file['tmp_name'], 'r');
 
         if (!$handle) {
-            $this->setRedirect('index.php?option=com_jem&view=specialdays', Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'), 'error');
+            $this->addSpecialDaysImportLog(Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR') . ' File: ' . $file['name'], Log::WARNING);
+            $this->setRedirect($redirect, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'), 'error');
             return;
         }
 
@@ -107,7 +115,8 @@ class JemControllerSpecialdays extends AdminController
         }
         if ($header === false) {
             fclose($handle);
-            $this->setRedirect('index.php?option=com_jem&view=specialdays', Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
+            $this->addSpecialDaysImportLog(Text::_('COM_JEM_IMPORT_PARSE_ERROR') . ' File: ' . $file['name'], Log::WARNING);
+            $this->setRedirect($redirect, Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
             return;
         }
 
@@ -116,7 +125,8 @@ class JemControllerSpecialdays extends AdminController
 
         if (!$fields) {
             fclose($handle);
-            $this->setRedirect('index.php?option=com_jem&view=specialdays', Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
+            $this->addSpecialDaysImportLog(Text::_('COM_JEM_IMPORT_PARSE_ERROR') . ' File: ' . $file['name'], Log::WARNING);
+            $this->setRedirect($redirect, Text::_('COM_JEM_IMPORT_PARSE_ERROR'), 'error');
             return;
         }
 
@@ -184,7 +194,38 @@ class JemControllerSpecialdays extends AdminController
         fclose($handle);
 
         $message = Text::sprintf('COM_JEM_SPECIAL_DAYS_IMPORT_RESULT', $result['added'], $result['updated'], $result['ignored'], $result['error']);
-        $this->setRedirect('index.php?option=com_jem&view=specialdays', $message, $result['error'] ? 'warning' : 'message');
+        $this->addSpecialDaysImportLog(
+            'Special Days CSV import from file "' . $file['name'] . '" completed. '
+            . 'Added: ' . $result['added'] . ', updated: ' . $result['updated']
+            . ', ignored: ' . $result['ignored'] . ', errors: ' . $result['error'] . '.',
+            $result['error'] ? Log::WARNING : Log::INFO
+        );
+        $this->setRedirect($redirect, $message, $result['error'] ? 'warning' : 'message');
+    }
+
+    /**
+     * Add a message to the Special Days import log file.
+     *
+     * @param   string   $message   Log message.
+     * @param   integer  $priority  Joomla log priority.
+     *
+     * @return void
+     */
+    protected function addSpecialDaysImportLog($message, $priority = Log::INFO)
+    {
+        if (!self::$importLoggerAdded) {
+            Log::addLogger(
+                array(
+                    'text_file' => 'jem-import-specialdays.log.php',
+                    'text_entry_format' => '{DATE} {TIME} | {PRIORITY} | {CATEGORY} | {MESSAGE}',
+                ),
+                Log::ALL,
+                array('JEM_IMPORT_SPECIAL_DAYS')
+            );
+            self::$importLoggerAdded = true;
+        }
+
+        Log::add($message, $priority, 'JEM_IMPORT_SPECIAL_DAYS');
     }
 
     private function normaliseSpecialDayCsvHeader(array $header)
