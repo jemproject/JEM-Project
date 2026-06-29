@@ -7,10 +7,10 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>5.0.0rc3</version>
+        <version>5.0.0rc4</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem-5</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-rc3</downloadurl>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-rc4</downloadurl>
         </downloads>
         <tags>
             <tag>beta</tag>
@@ -23,8 +23,8 @@
         <sha384>7face308c1cbbb4887db055208c29c3147790fdecfb568fb2fcb7cbea46cd628dab1bd4d9f14bfab1a6103b56a649d04</sha384>
         <sha512>6b5e16bfa58bf03032e053aa5effb3df6f1dee7c3691bf36d35d0032f040637899ab57d99d30f2a4f241efa3365370f36fb6574444a8b030f0af9b8f0b7ae86e</sha512>
         <date>2026-06-17</date>
-        <notes>JEM 5.0.0 RC 3 for Joomla! 6.x only. Requires PHP 8.3 or newer.</notes>
-        <changes>JEM 5.0.0 RC 3 focuses on Joomla 6 compatibility. Please refer to the changelog for details.</changes>
+        <notes>JEM 5.0.0 RC 4 for Joomla! 6.x only. Requires PHP 8.3 or newer.</notes>
+        <changes>JEM 5.0.0 RC 4 focuses on Joomla 6 compatibility, import workflows, Special Days and PDF calendar refinements. Please refer to the changelog for details.</changes>
     </update>
 </updates>
 
