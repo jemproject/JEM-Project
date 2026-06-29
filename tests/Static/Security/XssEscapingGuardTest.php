@@ -43,11 +43,12 @@ final class XssEscapingGuardTest extends TestCase
     {
         $contents = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
 
-        self::assertStringContainsString('htmlspecialchars($event->type_name, ENT_QUOTES, \'UTF-8\')', $contents);
+        self::assertStringContainsString('htmlspecialchars($item->{$nameProperty}, ENT_QUOTES, \'UTF-8\')', $contents);
         self::assertStringContainsString('strip_tags((string) $description)', $contents);
-        self::assertStringContainsString('htmlspecialchars($event->type_color, ENT_QUOTES, \'UTF-8\')', $contents);
-        self::assertStringContainsString('htmlspecialchars($event->type_icon, ENT_QUOTES, \'UTF-8\')', $contents);
-        self::assertStringContainsString('htmlspecialchars(Route::_(JemHelperRoute::getTypeeventsRoute($event->type_id)), ENT_QUOTES, \'UTF-8\')', $contents);
+        self::assertStringContainsString('htmlspecialchars($item->{$colorProperty}, ENT_QUOTES, \'UTF-8\')', $contents);
+        self::assertStringContainsString('htmlspecialchars($item->{$iconProperty}, ENT_QUOTES, \'UTF-8\')', $contents);
+        self::assertStringContainsString('JemHelperRoute::getTypeeventsRoute($typeRouteId)', $contents);
+        self::assertStringContainsString('htmlspecialchars(Route::_($route), ENT_QUOTES, \'UTF-8\')', $contents);
     }
 
     public function testSiteTemplatesEscapeCommonTextInputs(): void

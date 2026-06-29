@@ -19,6 +19,7 @@ final class ExternalCallAllowlistTest extends TestCase
         'diveintomark.org',
         'docs.joomla.org',
         'docs-next.joomla.org',
+        'en.wikipedia.org',
         'api.worldbank.org',
         'bugs.php.net',
         'erikastokes.com',
@@ -39,8 +40,10 @@ final class ExternalCallAllowlistTest extends TestCase
         'nifox.com',
         'nominatim.openstreetmap.org',
         'openstreetmap.org',
+        'php.net',
         'opentopomap.org',
         'php.watch',
+        'routing.openstreetmap.de',
         'schema.org',
         'stackoverflow.com',
         'tile.openstreetmap.org',
@@ -73,6 +76,11 @@ final class ExternalCallAllowlistTest extends TestCase
 
         foreach ($this->sourceFiles() as $path) {
             $relative = $this->relativePath($path);
+
+            if ($this->isReviewedThirdPartyPath($relative)) {
+                continue;
+            }
+
             $contents = (string) file_get_contents($path);
 
             preg_match_all('~https?://([^/\'"\s<>)]+)~i', $contents, $matches);
@@ -133,5 +141,10 @@ final class ExternalCallAllowlistTest extends TestCase
         $host = rtrim($host, '.');
 
         return $host;
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }

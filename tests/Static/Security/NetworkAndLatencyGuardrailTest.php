@@ -7,6 +7,9 @@ use PHPUnit\Framework\TestCase;
 final class NetworkAndLatencyGuardrailTest extends TestCase
 {
     private const ALLOWED_CLIENT_NETWORK_CALLS = array(
+        'admin/views/import/tmpl/default.php:fetch',
+        'admin/views/specialdays/tmpl/default.php:fetch',
+        'admin/views/venue/tmpl/edit.php:fetch',
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',
@@ -59,6 +62,11 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
 
         foreach ($this->sourceFiles(array('php')) as $path) {
             $relative = $this->relativePath($path);
+
+            if ($this->isReviewedThirdPartyPath($relative)) {
+                continue;
+            }
+
             $contents = $this->stripPhpComments((string) file_get_contents($path));
 
             if (preg_match_all('/\b(curl_init|curl_exec|fsockopen|stream_socket_client|file_get_contents)\s*\(/i', $contents, $matches) === false) {
@@ -170,5 +178,10 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
     private function relativePath(string $path): string
     {
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }

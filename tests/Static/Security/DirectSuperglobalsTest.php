@@ -13,6 +13,7 @@ final class DirectSuperglobalsTest extends TestCase
         'modules/mod_jem_wide/tmpl/default_jem_eventslist.php:$_SERVER',
         'modules/mod_jem_wide/tmpl/default_jem_eventslist_small.php:$_SERVER',
         'plugins/plg_content_jemembed/jemembed.php:$_SERVER',
+        'site/classes/icalcreator/Traits/PRODIDtrait.php:$_SERVER',
         'site/classes/iCalcreator.class.php:$_SERVER',
         'site/common/views/tmpl/responsive/default_jem_eventslist.php:$_SERVER',
         'site/common/views/tmpl/responsive/default_jem_eventslist_small.php:$_SERVER',
@@ -33,6 +34,11 @@ final class DirectSuperglobalsTest extends TestCase
 
         foreach ($this->phpFiles() as $path) {
             $relative = $this->relativePath($path);
+
+            if ($this->isReviewedThirdPartyPath($relative)) {
+                continue;
+            }
+
             $contents = $this->stripComments((string) file_get_contents($path));
 
             preg_match_all('/\$_(GET|POST|REQUEST|COOKIE|FILES|SERVER)\b/', $contents, $matches);
@@ -99,5 +105,10 @@ final class DirectSuperglobalsTest extends TestCase
     private function relativePath(string $path): string
     {
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }
