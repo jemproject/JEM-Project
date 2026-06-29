@@ -1070,7 +1070,7 @@ class JemHelper
         );
     }
 
-    static public function renderCalendarSpecialDayBadges($date, array $specialDays = null)
+    static public function renderCalendarSpecialDayBadges($date, ?array $specialDays = null)
     {
         $date = (string) $date;
 
