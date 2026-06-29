@@ -12,10 +12,10 @@ final class ZipArtifactContentsTest extends TestCase
             self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
         }
 
-        $zipFiles = $this->packageZipFiles();
+        $zipFiles = $this->currentPackageZipFiles();
 
         if ($zipFiles === array()) {
-            self::markTestSkipped('No package ZIP artifacts found. Run the Ant build before inspecting artifact contents.');
+            self::markTestSkipped('No current package ZIP artifacts found. Run the build before inspecting artifact contents.');
         }
 
         $findings = array();

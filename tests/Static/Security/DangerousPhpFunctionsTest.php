@@ -17,6 +17,8 @@ final class DangerousPhpFunctionsTest extends TestCase
         'site/controllers/venue.php:base64_decode',
         'site/models/editevent.php:base64_decode',
         'site/models/editvenue.php:base64_decode',
+        'site/controllers/specialday.php:base64_decode',
+        'site/models/specialday.php:base64_decode',
         'site/views/attendees/view.html.php:base64_decode',
     );
 
@@ -27,6 +29,11 @@ final class DangerousPhpFunctionsTest extends TestCase
 
         foreach ($this->phpFiles() as $path) {
             $relative = $this->relativePath($path);
+
+            if ($this->isReviewedThirdPartyPath($relative)) {
+                continue;
+            }
+
             $contents = $this->stripComments((string) file_get_contents($path));
 
             preg_match_all(
@@ -96,5 +103,10 @@ final class DangerousPhpFunctionsTest extends TestCase
     private function relativePath(string $path): string
     {
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }

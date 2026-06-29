@@ -56,7 +56,13 @@ final class BuildPackageExcludesTest extends TestCase
 
     public function testBuildConfigIsLocalOnlyAndNotCommitted(): void
     {
-        self::assertFileDoesNotExist(JEM_TEST_ROOT . '/build.config', 'build.config should remain local and ignored.');
+        $gitignore = (string) file_get_contents(JEM_TEST_ROOT . '/.gitignore');
+        self::assertStringContainsString('/build.config', $gitignore, 'build.config should remain local and ignored.');
+
+        $tracked = array();
+        exec('git -C ' . escapeshellarg(JEM_TEST_ROOT) . ' ls-files build.config', $tracked);
+        self::assertSame(array(), $tracked, 'build.config should remain local and untracked.');
+
         self::assertFileExists(JEM_TEST_ROOT . '/build.config.example', 'build.config.example documents local build values.');
     }
 

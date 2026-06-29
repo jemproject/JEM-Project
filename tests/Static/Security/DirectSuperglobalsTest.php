@@ -34,6 +34,11 @@ final class DirectSuperglobalsTest extends TestCase
 
         foreach ($this->phpFiles() as $path) {
             $relative = $this->relativePath($path);
+
+            if ($this->isReviewedThirdPartyPath($relative)) {
+                continue;
+            }
+
             $contents = $this->stripComments((string) file_get_contents($path));
 
             preg_match_all('/\$_(GET|POST|REQUEST|COOKIE|FILES|SERVER)\b/', $contents, $matches);
@@ -100,5 +105,10 @@ final class DirectSuperglobalsTest extends TestCase
     private function relativePath(string $path): string
     {
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }

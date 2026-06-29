@@ -6,25 +6,26 @@ use PHPUnit\Framework\TestCase;
 
 final class ImportViewLayoutTest extends TestCase
 {
-    public function testImportViewKeepsSixImportBlocksInsideResponsiveGrid(): void
+    public function testImportViewKeepsCurrentImportTabsAndBlocks(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/tmpl/default.php');
 
-        self::assertSame(
-            1,
-            substr_count($template, 'class="jem-import-grid"'),
-            'The backend import view should have one responsive grid wrapper around the import blocks.'
-        );
-
-        preg_match_all('/<fieldset\s+class="adminform"/i', $template, $fieldsetMatches);
-
-        self::assertCount(
-            6,
-            $fieldsetMatches[0],
-            'The backend import view should expose the six expected import blocks in the grid.'
-        );
+        foreach (array(
+            'event-import',
+            'venue-import',
+            'jem-migration',
+            'special-days',
+            'advanced-tools',
+            'download-lists',
+        ) as $tabId) {
+            self::assertStringContainsString("'" . $tabId . "'", $template);
+        }
 
         foreach (array(
+            'COM_JEM_IMPORT_EXTERNAL_EVENTS',
+            'COM_JEM_IMPORT_EXTERNAL_VENUES',
+            'COM_JEM_IMPORT_SPECIAL_DAYS',
+            'COM_JEM_IMPORT_CATALOG',
             'COM_JEM_IMPORT_VENUES',
             'COM_JEM_IMPORT_CATEGORIES',
             'COM_JEM_IMPORT_EVENTS',
@@ -34,6 +35,11 @@ final class ImportViewLayoutTest extends TestCase
         ) as $languageKey) {
             self::assertStringContainsString($languageKey, $template);
         }
+
+        self::assertStringContainsString('$renderImportMappingBlock', $template);
+        self::assertStringContainsString('jem-import-paged-table', $template);
+        self::assertStringContainsString('data-page-size="50"', $template);
+        self::assertStringContainsString('JemImportCatalogHelper::getContext', $template);
     }
 
     public function testImportGridCssKeepsTwoColumnsWithSingleColumnResponsiveFallback(): void

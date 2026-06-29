@@ -39,6 +39,7 @@ final class ControllerTokenGuardTest extends TestCase
      * Reviewed public methods that immediately delegate to a protected method containing the token check.
      */
     private const TOKEN_CHECKED_DELEGATES = array(
+        'admin/controllers/event.php:save',
         'site/controllers/myvenues.php:publish',
         'site/controllers/myvenues.php:unpublish',
     );

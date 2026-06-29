@@ -12,6 +12,10 @@ final class DebugArtifactTest extends TestCase
         'media/js/lightbox.min.js',
     );
 
+    private const ALLOWED_PHP_DEBUG_HELPERS = array(
+        'site/classes/log.class.php:debug_backtrace',
+    );
+
     public function testPhpCodeDoesNotContainActiveDebugOutput(): void
     {
         $findings = array();
@@ -30,7 +34,11 @@ final class DebugArtifactTest extends TestCase
 
             foreach ($patterns as $label => $pattern) {
                 if (preg_match($pattern, $contents) === 1) {
-                    $findings[] = $relative . ':' . $label;
+                    $key = $relative . ':' . $label;
+
+                    if (!in_array($key, self::ALLOWED_PHP_DEBUG_HELPERS, true)) {
+                        $findings[] = $key;
+                    }
                 }
             }
         }

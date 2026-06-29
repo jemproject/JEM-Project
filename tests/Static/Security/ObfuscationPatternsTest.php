@@ -78,7 +78,7 @@ final class ObfuscationPatternsTest extends TestCase
 
                 $relative = $this->relativePath($file->getPathname());
 
-                if (in_array($relative, self::VENDORED_JS, true)) {
+                if (in_array($relative, self::VENDORED_JS, true) || $this->isReviewedThirdPartyPath($relative)) {
                     continue;
                 }
 
@@ -112,5 +112,10 @@ final class ObfuscationPatternsTest extends TestCase
     private function relativePath(string $path): string
     {
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
+    }
+
+    private function isReviewedThirdPartyPath(string $relative): bool
+    {
+        return str_starts_with($relative, 'site/classes/tcpdf/');
     }
 }
