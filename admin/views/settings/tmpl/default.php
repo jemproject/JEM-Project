@@ -392,10 +392,40 @@ function registraoff()
 
         updateLightboxVisibility();
 
-        $('input[name="jform[gddisabled]"]').on('change', function() {
-            updateLightboxVisibility();
-        });
+    $('input[name="jform[gddisabled]"]').on('change', function() {
+        updateLightboxVisibility();
     });
+
+    function activateSettingsHashTab() {
+        var requestedTab = (window.location.hash || '').replace('#', '').replace(/_/g, '-');
+
+        if (!requestedTab) {
+            return;
+        }
+
+        var tabTrigger = document.querySelector(
+            'button[data-bs-target="#' + requestedTab + '"], ' +
+            'a[href="#' + requestedTab + '"], ' +
+            '[aria-controls="' + requestedTab + '"], ' +
+            'button[data-bs-target="#settings-pane-' + requestedTab + '"], ' +
+            'a[href="#settings-pane-' + requestedTab + '"], ' +
+            '[aria-controls="settings-pane-' + requestedTab + '"]'
+        );
+
+        if (!tabTrigger) {
+            return;
+        }
+
+        if (window.bootstrap && bootstrap.Tab) {
+            bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+        } else {
+            $(tabTrigger).trigger('click');
+        }
+    }
+
+    activateSettingsHashTab();
+    $(window).on('hashchange', activateSettingsHashTab);
+});
 </script>
 
 <script>

@@ -222,6 +222,7 @@ $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . 
 $todayMenuLink = 'index.php?option=com_jem&view=day&id=0';
 $todayMenuItem = Factory::getApplication()->getMenu()->getItems('link', $todayMenuLink, true);
 $todayLink = Route::_($todayMenuLink . ($todayMenuItem ? '&Itemid=' . (int) $todayMenuItem->id : ''));
+$specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->format('Y-m-d'));
 ?>
 <div id="jem" class="jem_day jem_day_timetable jem_day_timetable_<?php echo $this->escape($orientation); ?> jem_day_timetable_axis_<?php echo $this->escape($horizontalAxis); ?><?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -249,7 +250,8 @@ $todayLink = Route::_($todayMenuLink . ($todayMenuItem ? '&Itemid=' . (int) $tod
             <?php echo jemhtml::icon('com_jem/prev.webp', 'fa-solid fa-angle-left jem-calendar-nav-icon', Text::_('COM_JEM_TIMETABLE_PREVIOUS_DAY'), array('class' => 'jem-calendar-nav-icon')); ?>
         </a>
         <div class="jem-calendar-nav-title jem-timetable-nav-title">
-            <?php echo $this->daydate; ?>
+            <span><?php echo $this->daydate; ?></span>
+            <?php echo $specialDayBadges; ?>
         </div>
         <a class="jem-calendar-nav-link jem-timetable-nav-link jem-timetable-nav-today" href="<?php echo $todayLink; ?>" aria-label="<?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>">
             <?php echo Text::_('COM_JEM_TIMETABLE_TODAY'); ?>

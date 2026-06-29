@@ -148,6 +148,9 @@
 }
 
 #jem.jem_day_timetable .jem-timetable-nav-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     flex: 1 1 auto;
     min-width: 0;
     padding: 0.25rem 0.7rem;
@@ -156,7 +159,42 @@
     font-weight: 700;
     line-height: 1.25;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+}
+
+#jem.jem_day_timetable .jem-special-day-badges,
+#jem.jem_day_timeline .jem-special-day-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.18rem;
+    margin: 0.25rem 0 0;
+    line-height: 1.2;
+}
+
+#jem.jem_day_timetable .jem-special-day-badge,
+#jem.jem_day_timeline .jem-special-day-badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 0.16rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+    background: var(--jem-special-day-badge-color, #6b7280);
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+    font-size: 1rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    #jem.jem_day_timetable .jem-special-day-badge,
+    #jem.jem_day_timeline .jem-special-day-badge {
+        border-color: rgba(255, 255, 255, 0.28);
+        background: var(--jem-special-day-badge-color, #6b7280);
+        color: var(--jem-special-day-badge-text-color, #ffffff);
+    }
 }
 
 #jem.jem_day_timetable .jem-timetable-nav-link {

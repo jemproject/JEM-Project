@@ -22,6 +22,7 @@ class JemModelSpecialdays extends ListModel
                 'start_date', 'a.start_date',
                 'end_date', 'a.end_date',
                 'published', 'a.published',
+                'access', 'a.access', 'access_level',
                 'ordering', 'a.ordering',
             );
         }
@@ -42,7 +43,14 @@ class JemModelSpecialdays extends ListModel
         $dayType = $this->getUserStateFromRequest($this->context . '.filter_day_type', 'filter_day_type', '', 'string');
         $this->setState('filter.day_type', $dayType);
 
-        $year = $this->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', (int) date('Y'), 'int');
+        $availableYears = $this->getAvailableYears();
+        $defaultYear = $this->getDefaultYear($availableYears);
+        $year = $this->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', $defaultYear, 'int');
+
+        if (!empty($availableYears) && !isset($availableYears[(int) $year])) {
+            $year = $defaultYear;
+        }
+
         $this->setState('filter.year', $year);
         $this->setState('params', $params);
 
@@ -64,7 +72,9 @@ class JemModelSpecialdays extends ListModel
         $db = $this->getDatabase();
         $query = $db->getQuery(true)
             ->select('a.*')
-            ->from($db->quoteName('#__jem_special_days', 'a'));
+            ->select($db->quoteName('vl.title', 'access_level'))
+            ->from($db->quoteName('#__jem_special_days', 'a'))
+            ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'));
 
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -128,8 +138,7 @@ class JemModelSpecialdays extends ListModel
     public function getAvailableYears()
     {
         $db = $this->getDatabase();
-        $defaultYear = (int) date('Y');
-        $years = array($defaultYear => $defaultYear);
+        $years = array();
         $query = $db->getQuery(true)
             ->select($db->quoteName(array('start_date', 'end_date')))
             ->from($db->quoteName('#__jem_special_days'))
@@ -146,30 +155,39 @@ class JemModelSpecialdays extends ListModel
 
         foreach ($rows as $row) {
             $start = (!empty($row->start_date) && $row->start_date !== $nullDate) ? (string) $row->start_date : '';
-            $end = (!empty($row->end_date) && $row->end_date !== $nullDate) ? (string) $row->end_date : $start;
 
             if ($start === '') {
                 continue;
             }
 
             try {
-                $startYear = (int) (new DateTimeImmutable($start))->format('Y');
-                $endYear = (int) (new DateTimeImmutable($end))->format('Y');
+                $year = (int) (new DateTimeImmutable($start))->format('Y');
             } catch (Exception $e) {
                 continue;
             }
 
-            if ($endYear < $startYear) {
-                $endYear = $startYear;
-            }
-
-            for ($year = $startYear; $year <= $endYear; $year++) {
-                $years[$year] = $year;
-            }
+            $years[$year] = $year;
         }
 
         ksort($years);
 
         return $years;
+    }
+
+    protected function getDefaultYear(array $years)
+    {
+        $currentYear = (int) date('Y');
+
+        if (isset($years[$currentYear])) {
+            return $currentYear;
+        }
+
+        foreach ($years as $year) {
+            if ((int) $year > $currentYear) {
+                return (int) $year;
+            }
+        }
+
+        return $years ? (int) max($years) : $currentYear;
     }
 }

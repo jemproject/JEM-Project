@@ -369,6 +369,7 @@ $rangeEndDate = $currentDate->modify('+' . ($timelineDaysToShow - 1) . ' days');
 $timelineSpecialDays = in_array($dayBackground, array('special_day', 'alternate_special_day'), true)
     ? JemHelper::calendarSpecialDays($currentDate->format('Y-m-d'), $rangeEndDate->format('Y-m-d'))
     : array();
+$timelineBadgeSpecialDays = JemHelper::calendarSpecialDays($currentDate->format('Y-m-d'), $rangeEndDate->format('Y-m-d'));
 $showWeekNavigation = (int) $this->params->get('show_week_navigation', 1) === 1;
 $previousWeekDate = $currentDate->modify('-1 week');
 $nextWeekDate = $currentDate->modify('+1 week');
@@ -644,6 +645,7 @@ unset($dayData);
     .jem-day-timeline-day-label {
         align-items: center;
         display: flex;
+        flex-direction: column;
         font-weight: 700;
         justify-content: center;
         margin: 0 auto 1rem;
@@ -652,11 +654,18 @@ unset($dayData);
         width: var(--jem-timeline-width, 80%);
     }
 
-    .jem-day-timeline-day-label span {
+    .jem-day-timeline-day-date {
         border: 1px solid currentColor;
         border-radius: 999px;
         display: inline-block;
+        font-size: 1.25rem;
+        font-weight: 700;
+        line-height: 1.25;
         padding: .35rem .9rem;
+    }
+
+    .jem-day-timeline-day-label .jem-special-day-badges {
+        margin-top: .65rem;
     }
 
     .jem-day-timeline-day-empty {
@@ -1389,15 +1398,181 @@ document.addEventListener('keydown', function (event) {
             ?>
             <section class="<?php echo $this->escape(implode(' ', $dayClasses)); ?>" style="--jem-timeline-width: <?php echo (int) $timelineWidth; ?>%; --jem-timeline-alternate-day-background: <?php echo $this->escape($alternateDayBackgroundColor); ?>;<?php echo $specialDayColor !== '' ? ' --jem-timeline-special-day-background: ' . $this->escape($specialDayColor) . ';' : ''; ?>">
                 <div class="jem-day-timeline-day-label">
-                    <span><?php echo HTMLHelper::_('date', $dayDate, Text::_('DATE_FORMAT_LC3')); ?></span>
+                    <span class="jem-day-timeline-day-date"><?php echo HTMLHelper::_('date', $dayDate, Text::_('DATE_FORMAT_LC3')); ?></span>
+                    <?php echo JemHelper::renderCalendarSpecialDayBadges($dayDate, $timelineBadgeSpecialDays[$dayDate] ?? array()); ?>
                 </div>
 
                 <?php if (!empty($dayData['allDayRows'])) : ?>
                     <div class="jem-day-timeline-all-day">
                         <strong><?php echo Text::_('COM_JEM_TIMETABLE_ALL_DAY'); ?></strong>
-                        <div class="jem-day-timeline-meta">
+                        <div class="jem-day-timeline-all-day-events">
                             <?php foreach ($dayData['allDayRows'] as $row) : ?>
-                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+                                <?php
+                                $accentColor = $getEventBackgroundColor($row);
+                                $cardBackgroundColor = $eventColorMode === 'background' ? $accentColor : 'transparent';
+                                $cardTextColor = $eventColorMode === 'background' ? $getContrastColor($accentColor) : 'inherit';
+                                $cardLinkColor = $eventColorMode === 'background' ? $cardTextColor : 'inherit';
+                                $categoryList = $showCategory ? trim(implode(', ', JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))) : '';
+                                $categoryBadges = array();
+                                if ($showCategory && $categoryDisplay === 'badge') {
+                                    foreach ((array) $row->categories as $category) {
+                                        $categoryName = trim((string) ($category->catname ?? ''));
+                                        if ($categoryName === '') {
+                                            continue;
+                                        }
+
+                                        $categoryColor = $normaliseTimelineColor($category->color ?? '');
+                                        $categoryColor = $categoryColor !== '' ? $categoryColor : '#6c757d';
+                                        $categoryTextColor = $getContrastColor($categoryColor);
+                                        $categorySlug = $category->catslug ?? $category->slug ?? $category->id ?? '';
+                                        $categoryLabel = $this->escape($categoryName);
+                                        $categoryStyle = 'background: ' . $this->escape($categoryColor) . '; color: ' . $this->escape($categoryTextColor) . ';';
+
+                                        if ($this->jemsettings->catlinklist && $categorySlug !== '') {
+                                            $categoryBadges[] = '<a class="jem-day-timeline-category-badge" style="' . $categoryStyle . '" href="' . Route::_(JemHelperRoute::getCategoryRoute($categorySlug)) . '">' . $categoryLabel . '</a>';
+                                        } else {
+                                            $categoryBadges[] = '<span class="jem-day-timeline-category-badge" style="' . $categoryStyle . '">' . $categoryLabel . '</span>';
+                                        }
+                                    }
+                                }
+                                JemOutput::translateType($row, 'type_');
+                                $typeName = trim((string) ($row->type_name ?? ''));
+                                $typeIcon = trim((string) ($row->type_icon ?? ''));
+                                $typeColor = trim((string) ($row->type_color ?? ''));
+                                if ($typeColor === '' || !preg_match('/^#[0-9a-f]{3,6}$/i', $typeColor)) {
+                                    $typeColor = $accentColor;
+                                }
+                                $typeTextColor = $getContrastColor($typeColor);
+                                $eventImage = $showEventImage ? $getEventImage($row) : '';
+                                $venueImage = $showVenueImage ? $getVenueImage($row) : '';
+                                $hasLeadingEventMedia = $eventImage !== '' && $eventImagePosition === 'left';
+                                $hasTrailingEventMedia = $eventImage !== '' && $eventImagePosition === 'right';
+                                $hasLeadingVenueMedia = $venueImage !== '' && $venueImagePosition === 'left';
+                                $hasTrailingVenueMedia = $venueImage !== '' && $venueImagePosition === 'right';
+                                $hasLeadingMedia = $hasLeadingEventMedia || $hasLeadingVenueMedia;
+                                $hasTrailingMedia = $hasTrailingEventMedia || $hasTrailingVenueMedia;
+                                $hasMedia = $hasLeadingMedia || $hasTrailingMedia;
+                                $eventUrl = Route::_(JemHelperRoute::getEventRoute($row->slug));
+                                $intro = $showEventIntro ? $truncateText($row->introtext ?? '', $eventIntroLimit) : array('text' => '', 'truncated' => false);
+                                $introText = (string) $intro['text'];
+                                $introTruncated = !empty($intro['truncated']);
+                                $categoryOutput = $categoryDisplay === 'badge' ? '<span class="jem-day-timeline-category-badges">' . implode('', $categoryBadges) . '</span>' : $categoryList;
+                                $venueOutput = array();
+                                if ($showVenue && !empty($row->venue)) {
+                                    $venueOutput[] = $this->escape($row->venue);
+                                }
+                                if ($showVenue && !empty($row->city)) {
+                                    $venueOutput[] = $this->escape($row->city);
+                                }
+                                $typeOutput = '';
+                                if ($showType && $typeName !== '') {
+                                    $typeOutput = '<span class="jem-day-timeline-type-badge" style="background: ' . $this->escape($typeColor) . '; color: ' . $this->escape($typeTextColor) . ';">'
+                                        . ($typeIcon !== '' ? '<span class="' . $this->escape($typeIcon) . '" aria-hidden="true"></span>' : '')
+                                        . '<span>' . $this->escape($typeName) . '</span></span>';
+                                }
+                                $introOutput = '';
+                                if ($introText !== '') {
+                                    $introOutput = $this->escape($introText);
+                                    if ($showEventReadmore && $introTruncated) {
+                                        $introOutput .= ' <a class="jem-day-timeline-readmore' . ($readmoreStyle === 'button' ? ' jem-day-timeline-readmore-button' : '') . '" href="' . $eventUrl . '">' . Text::_('COM_JEM_TIMELINE_READ_MORE') . '</a>';
+                                    }
+                                }
+                                $detailsDescription = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($row->introtext ?? ''))));
+                                ?>
+                                <div class="jem-day-timeline-card jem-day-timeline-all-day-card is-clickable" data-href="<?php echo $this->escape($eventUrl); ?>" role="link" tabindex="0" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>;">
+                                    <div class="jem-day-timeline-card-inner<?php echo $hasMedia ? ' has-media' : ''; ?><?php echo $hasLeadingMedia ? ' has-leading-media' : ''; ?><?php echo $hasTrailingMedia ? ' has-venue-media' : ''; ?>">
+                                        <?php if ($hasLeadingMedia) : ?>
+                                            <div class="jem-day-timeline-media jem-day-timeline-leading-media">
+                                                <?php if ($hasLeadingEventMedia) : ?>
+                                                    <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
+                                                        <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                                <?php if ($hasLeadingVenueMedia) : ?>
+                                                    <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
+                                                        <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="jem-day-timeline-content">
+                                            <?php if ($cardLayout === 'details') : ?>
+                                                <div class="jem-day-timeline-details">
+                                                    <div class="jem-day-timeline-detail-row jem-day-timeline-detail-title">
+                                                        <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_TITLE'); ?></span>
+                                                        <span class="jem-day-timeline-detail-value">
+                                                            <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" itemprop="url">
+                                                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                                            </a>
+                                                            <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                                        </span>
+                                                    </div>
+                                                    <?php if ($categoryOutput !== '') : ?>
+                                                        <div class="jem-day-timeline-detail-row">
+                                                            <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_CATEGORY'); ?></span>
+                                                            <span class="jem-day-timeline-detail-value"><?php echo $categoryOutput; ?></span>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <?php if ($typeOutput !== '') : ?>
+                                                        <div class="jem-day-timeline-detail-row">
+                                                            <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_TYPE'); ?></span>
+                                                            <span class="jem-day-timeline-detail-value"><?php echo $typeOutput; ?></span>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <?php if (!empty($venueOutput)) : ?>
+                                                        <div class="jem-day-timeline-detail-row">
+                                                            <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_VENUE'); ?></span>
+                                                            <span class="jem-day-timeline-detail-value"><?php echo implode(' ', $venueOutput); ?></span>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                    <?php if ($showEventIntro && $detailsDescription !== '') : ?>
+                                                        <div class="jem-day-timeline-detail-row jem-day-timeline-detail-description">
+                                                            <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_DESCRIPTION'); ?></span>
+                                                            <span class="jem-day-timeline-detail-value"><?php echo $this->escape($detailsDescription); ?></span>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php else : ?>
+                                                <h3>
+                                                    <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" itemprop="url">
+                                                        <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                                    </a>
+                                                    <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                                </h3>
+                                                <div class="jem-day-timeline-meta">
+                                                    <?php if ($categoryOutput !== '') : ?>
+                                                        <span class="jem-day-timeline-meta-item"><?php echo $showDetailIcons ? '<span class="fa fa-folder-open jem-day-timeline-meta-icon" aria-hidden="true"></span>' : ''; ?><?php echo $categoryOutput; ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if ($showVenue && !empty($row->venue)) : ?>
+                                                        <span class="jem-day-timeline-meta-item"><?php echo $showDetailIcons ? '<span class="fa fa-map-marker-alt jem-day-timeline-meta-icon" aria-hidden="true"></span>' : ''; ?><?php echo $this->escape($row->venue); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if ($showVenue && !empty($row->city)) : ?>
+                                                        <span class="jem-day-timeline-meta-item"><?php echo $showDetailIcons ? '<span class="fa fa-city jem-day-timeline-meta-icon" aria-hidden="true"></span>' : ''; ?><?php echo $this->escape($row->city); ?></span>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <?php echo $typeOutput; ?>
+                                                <?php if ($introOutput !== '') : ?>
+                                                    <div class="jem-day-timeline-intro"><?php echo $introOutput; ?></div>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                        <?php if ($hasTrailingMedia) : ?>
+                                            <div class="jem-day-timeline-media jem-day-timeline-venue-media">
+                                                <?php if ($hasTrailingEventMedia) : ?>
+                                                    <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
+                                                        <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                                <?php if ($hasTrailingVenueMedia) : ?>
+                                                    <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
+                                                        <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+                                </div>
                             <?php endforeach; ?>
                         </div>
                     </div>

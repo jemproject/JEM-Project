@@ -27,6 +27,47 @@ class JemControllerSpecialdays extends AdminController
         return parent::getModel($name, $prefix, $config);
     }
 
+    public function saveOrderAjax()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+            echo '0';
+            $app->close();
+        }
+
+        $cid = $app->input->get('cid', array(), 'array');
+        $order = $app->input->get('order', array(), 'array');
+        ArrayHelper::toInteger($cid);
+        ArrayHelper::toInteger($order);
+
+        if (empty($cid) || count($cid) !== count($order)) {
+            echo '0';
+            $app->close();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        foreach ($cid as $index => $id) {
+            if ($id <= 0) {
+                continue;
+            }
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_special_days'))
+                ->set($db->quoteName('ordering') . ' = ' . (int) ($order[$index] ?? ($index + 1)))
+                ->where($db->quoteName('id') . ' = ' . (int) $id);
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        echo '1';
+        $app->close();
+    }
+
     public function remove()
     {
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
@@ -242,8 +283,20 @@ class JemControllerSpecialdays extends AdminController
             'end_date' => 'end_date',
             'weekday' => 'weekdays',
             'weekdays' => 'weekdays',
+            'showdays' => 'show_dates',
+            'show_days' => 'show_dates',
+            'showdates' => 'show_dates',
+            'show_dates' => 'show_dates',
+            'listdays' => 'show_dates',
+            'list_days' => 'show_dates',
+            'listdates' => 'show_dates',
+            'list_dates' => 'show_dates',
+            'accesslevel' => 'access',
+            'access_level' => 'access',
+            'viewlevel' => 'access',
+            'view_level' => 'access',
         );
-        $allowed = array('id', 'title', 'alias', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'published', 'ordering');
+        $allowed = array('id', 'title', 'alias', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'show_dates', 'published', 'access', 'ordering');
         $fields = array();
 
         foreach ($header as $column) {
@@ -267,7 +320,9 @@ class JemControllerSpecialdays extends AdminController
         $data['start_date'] = $this->normaliseSpecialDayCsvDate($data['start_date'] ?? '');
         $data['end_date'] = $this->normaliseSpecialDayCsvDate($data['end_date'] ?? '');
         $data['weekdays'] = $this->normaliseSpecialDayCsvWeekdays($data['weekdays'] ?? '');
+        $data['show_dates'] = $this->normaliseSpecialDayCsvBoolean($data['show_dates'] ?? 1, 1);
         $data['published'] = isset($data['published']) && trim((string) $data['published']) !== '' ? (int) $data['published'] : 1;
+        $data['access'] = isset($data['access']) && trim((string) $data['access']) !== '' ? max(1, (int) $data['access']) : 1;
         $data['ordering'] = isset($data['ordering']) ? (int) $data['ordering'] : 0;
 
         return $data;
@@ -316,5 +371,24 @@ class JemControllerSpecialdays extends AdminController
         }
 
         return implode(',', array_values(array_unique($result)));
+    }
+
+    private function normaliseSpecialDayCsvBoolean($value, $default = 1)
+    {
+        $value = strtolower(trim((string) $value));
+
+        if ($value === '') {
+            return (int) $default;
+        }
+
+        if (in_array($value, array('1', 'yes', 'y', 'true', 'on', 'si', 'sí'), true)) {
+            return 1;
+        }
+
+        if (in_array($value, array('0', 'no', 'n', 'false', 'off'), true)) {
+            return 0;
+        }
+
+        return (int) $default;
     }
 }

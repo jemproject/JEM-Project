@@ -172,3 +172,8 @@ pip-log.txt
 /build.number
 
 /docs
+
+# Local scratch files generated while preparing docs or patches
+/.tmp/
+/.tmp-*
+/JEM 5.0/

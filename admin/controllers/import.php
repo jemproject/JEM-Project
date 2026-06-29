@@ -123,6 +123,7 @@ class JemControllerImport extends BaseController
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'events');
         $this->setRedirect('index.php?option=com_jem&view=import#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -145,7 +146,32 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        $fields = array('title', 'dates', 'enddates', 'times', 'endtimes', 'introtext', 'fulltext', 'metadata', 'published', 'publish_up', 'type_id', 'locid', 'language', 'categories');
+        $input = $app->input;
+        $postedMapping = $this->getPostedImportMapping('external_import_mapping');
+        $rawPostedMapping = $input->post->get('external_import_mapping', null, 'array');
+        if (is_array($rawPostedMapping) && !empty($preview['source_records']) && strtolower((string) ($preview['format'] ?? '')) !== 'ics') {
+            $options = array(
+                'catid' => $input->post->getInt('external_import_catid', (int) ($preview['catid'] ?? 0)),
+                'category_label' => $preview['category_label'] ?? '',
+                'mode' => $input->post->getCmd('external_import_mode', 'standard'),
+                'type_id' => $input->post->getInt('external_import_type_id', (int) ($preview['type_id'] ?? 0)),
+                'locid' => $input->post->getInt('external_import_locid', (int) ($preview['locid'] ?? 0)),
+                'published' => $input->post->getInt('external_import_published', 1),
+                'publish_up' => $this->normaliseExternalPublishUp($input->post->getString('external_import_publish_up', (string) ($preview['publish_up'] ?? ''))),
+                'language' => $input->post->getCmd('external_import_language', (string) ($preview['language'] ?? '*')),
+                'mapping' => $postedMapping,
+            );
+            $options['type_label'] = $this->getTypeLabel($options['type_id']);
+            $options['venue_label'] = $this->getVenueLabel($options['locid']);
+            $options['language_label'] = $this->getLanguageLabel($options['language']);
+            $options['record_fields'] = $this->getExternalEventRecordFields($postedMapping);
+            $preview = $this->buildExternalStructuredPreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
+            $preview['format'] = strtolower((string) ($app->getUserState('com_jem.import.external_import.preview', array())['format'] ?? 'csv'));
+        }
+
+        $fields = !empty($preview['record_fields']) && is_array($preview['record_fields'])
+            ? $preview['record_fields']
+            : $this->getExternalEventRecordFields();
         $records = $preview['records'];
         $model = $this->getModel('import');
         ob_start();
@@ -230,6 +256,7 @@ class JemControllerImport extends BaseController
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'events');
         $this->setRedirect('index.php?option=com_jem&view=import#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -298,6 +325,7 @@ class JemControllerImport extends BaseController
         $catid = $input->post->getInt('external_import_catid', 0);
         $file = $input->files->get('FileExternalImport', array(), 'array');
         $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
 
         if ($catid <= 0) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_CATEGORY_REQUIRED_ERROR');
@@ -306,7 +334,12 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        if (empty($file['name']) || !empty($file['error']) || !in_array($extension, array('csv', 'ics'), true) || !is_uploaded_file($file['tmp_name'])) {
+        $existingPreview = $app->getUserState('com_jem.import.external_import.preview', null);
+        if (!$hasUpload && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
+            $extension = strtolower((string) $existingPreview['format']);
+        }
+
+        if ((!$hasUpload && empty($existingPreview['source_records'])) || !in_array($extension, array('csv', 'json', 'xml', 'ics'), true)) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_UNSUPPORTED_FILE');
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
@@ -323,26 +356,65 @@ class JemControllerImport extends BaseController
             'publish_up' => $this->normaliseExternalPublishUp($input->post->getString('external_import_publish_up', '')),
             'language' => $input->post->getCmd('external_import_language', '*'),
         );
+        $profile = $this->getExternalImportProfile($input->post->getInt('external_import_profile_id', 0), $extension, 'events');
+        $postedMapping = $this->getPostedImportMapping('external_import_mapping');
+        $options['mapping'] = $postedMapping ?: ($profile['mapping'] ?? array());
+        $options['record_fields'] = $this->getExternalEventRecordFields($options['mapping']);
+        $options['profile_id'] = (int) ($profile['id'] ?? 0);
+        $options['profile_title'] = (string) ($profile['title'] ?? '');
         $options['type_label'] = $this->getTypeLabel($options['type_id']);
         $options['venue_label'] = $this->getVenueLabel($options['locid']);
         $options['language_label'] = $this->getLanguageLabel($options['language']);
 
-        $preview = $extension === 'ics'
-            ? $this->buildExternalIcsPreview($file, $options)
-            : $this->buildExternalCsvPreview($file, $options);
+        if (!$hasUpload && $extension !== 'ics') {
+            $preview = $this->buildExternalStructuredPreviewFromRecords(
+                (array) ($existingPreview['source_records'] ?? array()),
+                $options,
+                (array) ($existingPreview['source_fields'] ?? array())
+            );
+        } elseif ($extension === 'ics') {
+            $preview = $this->buildExternalIcsPreview($file, $options);
+        } elseif ($extension === 'json') {
+            $preview = $this->buildExternalJsonPreview($file, $options);
+        } elseif ($extension === 'xml') {
+            $preview = $this->buildExternalXmlPreview($file, $options);
+        } else {
+            $preview = $this->buildExternalCsvPreview($file, $options);
+        }
         $preview['format'] = $extension;
+        $preview['mapping'] = (array) ($preview['mapping'] ?? $options['mapping']);
+        $preview['profile_id'] = (int) $options['profile_id'];
+        $preview['profile_title'] = (string) $options['profile_title'];
+
+        $profileTitle = $input->post->getString('external_import_profile_title', '');
+        if ($extension !== 'ics' && ($input->post->getInt('external_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+            $savedProfile = $this->saveExternalImportProfile(
+                'events',
+                $extension,
+                $profileTitle,
+                (array) $preview['mapping']
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
+
         $app->setUserState('com_jem.import.external_import.preview', $preview);
         $app->setUserState('com_jem.import.external_csv.preview', null);
         $app->setUserState('com_jem.import.external_ics.preview', null);
 
         $logKey = $extension === 'ics' ? 'external_ics' : 'external_csv';
+        $fileName = $hasUpload ? $file['name'] : Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW');
         $this->addImportLogEntry(
             $logKey,
-            'External ' . strtoupper($extension) . ' preview for file "' . $file['name'] . '". Parser: ' . strtoupper($extension) . '. '
+            'External ' . strtoupper($extension) . ' preview for file "' . $fileName . '". Parser: ' . strtoupper($extension) . '. '
             . 'Valid rows: ' . $preview['valid_count'] . ', errors: ' . $preview['error_count'] . '.',
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'events');
         $this->setRedirect('index.php?option=com_jem&view=import#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -365,14 +437,55 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        $fields = array('title', 'dates', 'enddates', 'times', 'endtimes', 'introtext', 'fulltext', 'metadata', 'published', 'publish_up', 'type_id', 'locid', 'language', 'categories');
+        $input = $app->input;
+        $format = strtolower($preview['format'] ?? 'csv');
+        $postedMapping = $this->getPostedImportMapping('external_import_mapping');
+        $rawPostedMapping = $input->post->get('external_import_mapping', null, 'array');
+
+        if ($format !== 'ics' && is_array($rawPostedMapping) && !empty($preview['source_records'])) {
+            $options = array(
+                'catid' => $input->post->getInt('external_import_catid', (int) ($preview['catid'] ?? 0)),
+                'category_label' => $preview['category_label'] ?? '',
+                'mode' => $input->post->getCmd('external_import_mode', 'standard'),
+                'type_id' => $input->post->getInt('external_import_type_id', (int) ($preview['type_id'] ?? 0)),
+                'locid' => $input->post->getInt('external_import_locid', (int) ($preview['locid'] ?? 0)),
+                'published' => $input->post->getInt('external_import_published', 1),
+                'publish_up' => $this->normaliseExternalPublishUp($input->post->getString('external_import_publish_up', (string) ($preview['publish_up'] ?? ''))),
+                'language' => $input->post->getCmd('external_import_language', (string) ($preview['language'] ?? '*')),
+                'mapping' => $postedMapping,
+            );
+            $options['type_label'] = $this->getTypeLabel($options['type_id']);
+            $options['venue_label'] = $this->getVenueLabel($options['locid']);
+            $options['language_label'] = $this->getLanguageLabel($options['language']);
+            $options['record_fields'] = $this->getExternalEventRecordFields($postedMapping);
+            $preview = $this->buildExternalStructuredPreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
+            $preview['format'] = $format;
+        }
+
+        $profileTitle = $input->post->getString('external_import_profile_title', '');
+        if ($format !== 'ics' && ($input->post->getInt('external_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+            $savedProfile = $this->saveExternalImportProfile(
+                'events',
+                $format,
+                $profileTitle,
+                (array) ($preview['mapping'] ?? $postedMapping)
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
+
+        $fields = !empty($preview['record_fields']) && is_array($preview['record_fields'])
+            ? $preview['record_fields']
+            : $this->getExternalEventRecordFields();
         $model = $this->getModel('import');
         ob_start();
         $result = $model->eventsimport($fields, $preview['records'], false);
         $importOutput = trim((string) ob_get_clean());
         $app->setUserState('com_jem.import.external_import.preview', null);
 
-        $format = strtolower($preview['format'] ?? 'csv');
         $msgKey = $format === 'ics' ? 'COM_JEM_IMPORT_EXTERNAL_ICS_COMMIT_RESULT' : 'COM_JEM_IMPORT_EXTERNAL_COMMIT_RESULT';
         $msg = Text::sprintf($msgKey, (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
         $this->addImportLogEntry(
@@ -397,6 +510,181 @@ class JemControllerImport extends BaseController
 
         Factory::getApplication()->setUserState('com_jem.import.external_import.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#event-import');
+    }
+
+    /**
+     * Preview an external CSV, JSON or XML file as normalized JEM venues.
+     *
+     * @return void
+     */
+    public function previewExternalVenueImport()
+    {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $file = $input->files->get('FileExternalVenueImport', array(), 'array');
+        $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
+
+        $existingPreview = $app->getUserState('com_jem.import.external_venue_import.preview', null);
+        if (!$hasUpload && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
+            $extension = strtolower((string) $existingPreview['format']);
+        }
+
+        if ((!$hasUpload && empty($existingPreview['source_records'])) || !in_array($extension, array('csv', 'json', 'xml'), true)) {
+            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_UNSUPPORTED_VENUE_FILE');
+            $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
+            return;
+        }
+
+        $profile = $this->getExternalImportProfile($input->post->getInt('external_venue_import_profile_id', 0), $extension, 'venues');
+        $postedMapping = $this->getPostedImportMapping('external_venue_import_mapping');
+        $options = array(
+            'type_id' => $input->post->getInt('external_venue_import_type_id', 0),
+            'published' => $input->post->getInt('external_venue_import_published', 1),
+            'language' => $input->post->getCmd('external_venue_import_language', '*'),
+            'mapping' => $postedMapping ?: ($profile['mapping'] ?? array()),
+            'profile_id' => (int) ($profile['id'] ?? 0),
+            'profile_title' => (string) ($profile['title'] ?? ''),
+        );
+        $options['type_label'] = $this->getTypeLabel($options['type_id']);
+        $options['language_label'] = $this->getLanguageLabel($options['language']);
+        $options['record_fields'] = $this->getExternalVenueRecordFields($options['mapping']);
+
+        if (!$hasUpload) {
+            $preview = $this->buildExternalVenuePreviewFromRecords(
+                (array) ($existingPreview['source_records'] ?? array()),
+                $options,
+                (array) ($existingPreview['source_fields'] ?? array())
+            );
+        } elseif ($extension === 'json') {
+            $preview = $this->buildExternalJsonVenuePreview($file, $options);
+        } elseif ($extension === 'xml') {
+            $preview = $this->buildExternalXmlVenuePreview($file, $options);
+        } else {
+            $preview = $this->buildExternalCsvVenuePreview($file, $options);
+        }
+
+        $preview['format'] = $extension;
+        $preview['mapping'] = (array) ($preview['mapping'] ?? $options['mapping']);
+        $preview['profile_id'] = (int) $options['profile_id'];
+        $preview['profile_title'] = (string) $options['profile_title'];
+
+        $profileTitle = $input->post->getString('external_venue_import_profile_title', '');
+        if ($input->post->getInt('external_venue_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+            $savedProfile = $this->saveExternalImportProfile(
+                'venues',
+                $extension,
+                $profileTitle,
+                (array) $preview['mapping']
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
+
+        $app->setUserState('com_jem.import.external_venue_import.preview', $preview);
+
+        $fileName = $hasUpload ? $file['name'] : Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW');
+        $this->addImportLogEntry(
+            'external_csv',
+            'External venue ' . strtoupper($extension) . ' preview for file "' . $fileName . '". '
+            . 'Valid rows: ' . $preview['valid_count'] . ', errors: ' . $preview['error_count'] . '.',
+            $preview['error_count'] ? Log::WARNING : Log::INFO
+        );
+
+        $app->setUserState('com_jem.import.active_preview', 'venues');
+        $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
+    }
+
+    /**
+     * Import the valid rows from the last external venue preview.
+     *
+     * @return void
+     */
+    public function commitExternalVenueImport()
+    {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+        $preview = $app->getUserState('com_jem.import.external_venue_import.preview', null);
+
+        if (empty($preview['records'])) {
+            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_NO_PREVIEW');
+            $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
+            return;
+        }
+
+        $input = $app->input;
+        $postedMapping = $this->getPostedImportMapping('external_venue_import_mapping');
+        $rawPostedMapping = $input->post->get('external_venue_import_mapping', null, 'array');
+        if (is_array($rawPostedMapping) && !empty($preview['source_records'])) {
+            $options = array(
+                'type_id' => $input->post->getInt('external_venue_import_type_id', (int) ($preview['type_id'] ?? 0)),
+                'published' => $input->post->getInt('external_venue_import_published', 1),
+                'language' => $input->post->getCmd('external_venue_import_language', (string) ($preview['language'] ?? '*')),
+                'mapping' => $postedMapping,
+            );
+            $options['type_label'] = $this->getTypeLabel($options['type_id']);
+            $options['language_label'] = $this->getLanguageLabel($options['language']);
+            $options['record_fields'] = $this->getExternalVenueRecordFields($postedMapping);
+            $previousFormat = strtolower((string) ($preview['format'] ?? 'csv'));
+            $preview = $this->buildExternalVenuePreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
+            $preview['format'] = $previousFormat;
+        }
+
+        $profileTitle = $input->post->getString('external_venue_import_profile_title', '');
+        if ($input->post->getInt('external_venue_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+            $savedProfile = $this->saveExternalImportProfile(
+                'venues',
+                strtolower((string) ($preview['format'] ?? 'csv')),
+                $profileTitle,
+                (array) ($preview['mapping'] ?? $postedMapping)
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
+
+        $fields = !empty($preview['record_fields']) && is_array($preview['record_fields'])
+            ? $preview['record_fields']
+            : $this->getExternalVenueRecordFields();
+        $model = $this->getModel('import');
+        ob_start();
+        $result = $model->venuesimport($fields, $preview['records'], false);
+        $importOutput = trim((string) ob_get_clean());
+        $app->setUserState('com_jem.import.external_venue_import.preview', null);
+
+        $msg = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_VENUES_COMMIT_RESULT', (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
+        $this->addImportLogEntry(
+            'external_csv',
+            'External venue import committed. ' . strip_tags($msg) . $this->formatExternalImportLogDetails($preview, $result, $importOutput),
+            $result['error'] ? Log::WARNING : Log::INFO
+        );
+
+        $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, $result['error'] ? 'warning' : 'message');
+    }
+
+    /**
+     * Clear the external venue preview.
+     *
+     * @return void
+     */
+    public function clearExternalVenueImportPreview()
+    {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanImport();
+
+        Factory::getApplication()->setUserState('com_jem.import.external_venue_import.preview', null);
+        $this->setRedirect('index.php?option=com_jem&view=import#venue-import');
     }
 
     /**
@@ -443,6 +731,7 @@ class JemControllerImport extends BaseController
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'specialdays');
         $this->setRedirect('index.php?option=com_jem&view=import#special-days', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -517,6 +806,7 @@ class JemControllerImport extends BaseController
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'specialdays');
         $this->setRedirect('index.php?option=com_jem&view=import#special-days', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -562,16 +852,22 @@ class JemControllerImport extends BaseController
         $dayType = trim($input->post->getString('specialdays_import_day_type', ''));
         $file = $input->files->get('FileSpecialDaysImport', array(), 'array');
         $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
+        $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
 
-        if ($dayType === '') {
-            $msg = Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_TYPE_REQUIRED');
+        $existingPreview = $app->getUserState('com_jem.import.specialdays_import.preview', null);
+        if (!$hasUpload && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
+            $extension = strtolower((string) $existingPreview['format']);
+        }
+
+        if ((!$hasUpload && empty($existingPreview['source_records'])) || !in_array($extension, array('csv', 'ics'), true)) {
+            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_UNSUPPORTED_FILE');
             $this->addImportLogEntry('special_days', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
             return;
         }
 
-        if (empty($file['name']) || !empty($file['error']) || !in_array($extension, array('csv', 'ics'), true) || !is_uploaded_file($file['tmp_name'])) {
-            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_UNSUPPORTED_FILE');
+        if ($extension === 'ics' && $dayType === '') {
+            $msg = Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_TYPE_REQUIRED');
             $this->addImportLogEntry('special_days', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
             return;
@@ -583,10 +879,35 @@ class JemControllerImport extends BaseController
             'source' => $extension,
             'title' => Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_PREVIEW_TITLE'),
         );
-        $preview = $extension === 'ics'
+        $profile = $this->getExternalImportProfile($input->post->getInt('specialdays_import_profile_id', 0), $extension, 'specialdays');
+        $postedMapping = $this->getPostedImportMapping('specialdays_import_mapping');
+        $options['mapping'] = $postedMapping ?: ($profile['mapping'] ?? array());
+        $options['profile_id'] = (int) ($profile['id'] ?? 0);
+        $options['profile_title'] = (string) ($profile['title'] ?? '');
+
+        $preview = !$hasUpload && $extension === 'csv'
+            ? $this->buildSpecialDaysPreviewFromRecords((array) ($existingPreview['source_records'] ?? array()), $options, (array) ($existingPreview['source_fields'] ?? array()))
+            : ($extension === 'ics'
             ? $this->buildSpecialDaysIcsPreview($file, $options)
-            : $this->buildSpecialDaysCsvPreview($file, $options);
+            : $this->buildSpecialDaysCsvPreview($file, $options));
         $preview['format'] = $extension;
+        $preview['profile_id'] = (int) ($options['profile_id'] ?? 0);
+        $preview['profile_title'] = (string) ($options['profile_title'] ?? '');
+
+        $profileTitle = $input->post->getString('specialdays_import_profile_title', '');
+        if ($extension === 'csv' && ($input->post->getInt('specialdays_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+            $savedProfile = $this->saveExternalImportProfile(
+                'specialdays',
+                $extension,
+                $profileTitle,
+                (array) ($preview['mapping'] ?? $options['mapping'])
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
 
         $app->setUserState('com_jem.import.specialdays_import.preview', $preview);
         $app->setUserState('com_jem.import.specialdays_csv.preview', null);
@@ -594,11 +915,12 @@ class JemControllerImport extends BaseController
 
         $this->addImportLogEntry(
             'special_days',
-            'Special Days ' . strtoupper($extension) . ' preview for file "' . $file['name'] . '". Parser: ' . strtoupper($extension)
+            'Special Days ' . strtoupper($extension) . ' preview for file "' . ($hasUpload ? $file['name'] : Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW')) . '". Parser: ' . strtoupper($extension)
             . '; Type fallback: ' . $dayType . '; Valid rows: ' . $preview['valid_count'] . ', errors: ' . $preview['error_count'] . '.',
             $preview['error_count'] ? Log::WARNING : Log::INFO
         );
 
+        $app->setUserState('com_jem.import.active_preview', 'specialdays');
         $this->setRedirect('index.php?option=com_jem&view=import#special-days', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
@@ -612,9 +934,50 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        $preview = Factory::getApplication()->getUserState('com_jem.import.specialdays_import.preview', null);
-        $format = strtoupper($preview['format'] ?? 'CSV');
-        $this->commitSpecialDaysPreview('com_jem.import.specialdays_import.preview', $format);
+        $app = Factory::getApplication();
+        $input = $app->input;
+        $preview = $app->getUserState('com_jem.import.specialdays_import.preview', null);
+
+        if (empty($preview['records'])) {
+            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_NO_PREVIEW');
+            $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
+            return;
+        }
+
+        $format = strtolower((string) ($preview['format'] ?? 'csv'));
+        $postedMapping = $this->getPostedImportMapping('specialdays_import_mapping');
+        $rawPostedMapping = $input->post->get('specialdays_import_mapping', null, 'array');
+
+        if ($format === 'csv' && is_array($rawPostedMapping) && !empty($preview['source_records'])) {
+            $options = array(
+                'day_type' => $input->post->getString('specialdays_import_day_type', (string) ($preview['day_type'] ?? '')),
+                'replace' => $input->post->getInt('replace_specialdays_import', (int) ($preview['replace'] ?? 0)),
+                'source' => $format,
+                'title' => $preview['title'] ?? Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_PREVIEW_TITLE'),
+                'mapping' => $postedMapping,
+                'profile_title' => $preview['profile_title'] ?? '',
+            );
+            $preview = $this->buildSpecialDaysPreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
+            $preview['format'] = $format;
+        }
+
+        $profileTitle = $input->post->getString('specialdays_import_profile_title', '');
+        if ($format === 'csv' && ($input->post->getInt('specialdays_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+            $savedProfile = $this->saveExternalImportProfile(
+                'specialdays',
+                $format,
+                $profileTitle,
+                (array) ($preview['mapping'] ?? $postedMapping)
+            );
+
+            if ($savedProfile) {
+                $preview['profile_id'] = (int) $savedProfile['id'];
+                $preview['profile_title'] = (string) $savedProfile['title'];
+            }
+        }
+
+        $app->setUserState('com_jem.import.specialdays_import.preview', $preview);
+        $this->commitSpecialDaysPreview('com_jem.import.specialdays_import.preview', strtoupper($format));
     }
 
     /**
@@ -1141,6 +1504,7 @@ class JemControllerImport extends BaseController
     {
         $rows = array();
         $records = array();
+        $sourceRecords = array();
         $valid = 0;
         $errors = 0;
         $skipped = 0;
@@ -1214,7 +1578,11 @@ class JemControllerImport extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
-        $fields = $this->normaliseExternalCsvHeader($header);
+        $effectiveMapping = $this->getEffectiveExternalMapping($header, $options['mapping'] ?? array(), 'events');
+        $fields = $this->normaliseExternalSourceFields($header, $effectiveMapping, 'events');
+        $rowOptions = $options;
+        $rowOptions['mapping'] = $effectiveMapping;
+        $rowOptions['record_fields'] = $this->getExternalEventRecordFields($effectiveMapping);
         $line = 1;
 
         while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
@@ -1226,14 +1594,19 @@ class JemControllerImport extends BaseController
             }
 
             $data = array();
-            foreach ($fields as $index => $field) {
+            $sourceRecord = array();
+            foreach ($header as $index => $sourceField) {
+                $sourceRecord[$sourceField] = $raw[$index] ?? '';
+                $field = $fields[$sourceField] ?? null;
+
                 if ($field === null) {
                     continue;
                 }
-                $data[$field] = $raw[$index] ?? '';
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
             }
+            $sourceRecords[] = $sourceRecord;
 
-            $row = $this->normaliseExternalCsvRow($data, $options, $line);
+            $row = $this->normaliseExternalCsvRow($data, $rowOptions, $line);
             $rows[] = $row['preview'];
 
             if ($row['valid']) {
@@ -1264,7 +1637,343 @@ class JemControllerImport extends BaseController
             'venue_label' => $options['venue_label'],
             'language_label' => $options['language_label'],
             'publish_up_label' => $options['publish_up'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'source_fields' => $header,
+            'source_records' => $sourceRecords,
+            'mapping' => $effectiveMapping,
+            'record_fields' => $rowOptions['record_fields'],
             'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors),
+        );
+    }
+
+    /**
+     * Build a preview from an external JSON upload.
+     *
+     * @param   array  $file     Uploaded file info.
+     * @param   array  $options  Import defaults.
+     *
+     * @return array
+     */
+    protected function buildExternalJsonPreview(array $file, array $options)
+    {
+        $content = file_get_contents($file['tmp_name']);
+
+        if ($content === false || trim($content) === '') {
+            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        $json = json_decode($content, true);
+
+        if (!is_array($json)) {
+            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
+        }
+
+        $records = $this->findExternalStructuredRecords($json);
+
+        return $this->buildExternalStructuredPreviewFromRecords($records, $options);
+    }
+
+    /**
+     * Build a preview from an external XML upload.
+     *
+     * @param   array  $file     Uploaded file info.
+     * @param   array  $options  Import defaults.
+     *
+     * @return array
+     */
+    protected function buildExternalXmlPreview(array $file, array $options)
+    {
+        $content = file_get_contents($file['tmp_name']);
+
+        if ($content === false || trim($content) === '') {
+            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        if (!$xml) {
+            libxml_clear_errors();
+            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
+        }
+
+        $records = $this->extractExternalXmlRecords($xml);
+
+        return $this->buildExternalStructuredPreviewFromRecords($records, $options);
+    }
+
+    protected function buildExternalStructuredPreviewFromRecords(array $records, array $options, array $sourceFields = array())
+    {
+        if (!$records) {
+            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
+        }
+
+        $rows = array();
+        $importRecords = array();
+        $valid = 0;
+        $errors = 0;
+        $skipped = 0;
+        if (!$sourceFields) {
+            $sourceFields = array_keys(reset($records) ?: array());
+        }
+
+        $effectiveMapping = $this->getEffectiveExternalMapping($sourceFields, $options['mapping'] ?? array(), 'events');
+        $fields = $this->normaliseExternalSourceFields($sourceFields, $effectiveMapping, 'events');
+        $rowOptions = $options;
+        $rowOptions['mapping'] = $effectiveMapping;
+        $rowOptions['record_fields'] = $this->getExternalEventRecordFields($effectiveMapping);
+        $line = 0;
+
+        foreach ($records as $record) {
+            $line++;
+            $data = array();
+
+            foreach ($fields as $source => $field) {
+                if ($field === null) {
+                    continue;
+                }
+
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+            }
+
+            $row = $this->normaliseExternalCsvRow($data, $rowOptions, $line);
+            $rows[] = $row['preview'];
+
+            if ($row['valid']) {
+                $importRecords[] = $row['record'];
+                $valid++;
+            } else {
+                $errors++;
+                $skipped++;
+            }
+        }
+
+        return array(
+            'rows' => $rows,
+            'records' => $importRecords,
+            'valid_count' => $valid,
+            'error_count' => $errors,
+            'skipped_count' => $skipped,
+            'has_errors' => $errors > 0,
+            'catid' => (int) $options['catid'],
+            'type_id' => (int) $options['type_id'],
+            'locid' => (int) $options['locid'],
+            'language' => $options['language'],
+            'publish_up' => $options['publish_up'],
+            'category_label' => $options['category_label'],
+            'type_label' => $options['type_label'],
+            'venue_label' => $options['venue_label'],
+            'language_label' => $options['language_label'],
+            'publish_up_label' => $options['publish_up'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'source_fields' => $sourceFields,
+            'source_records' => $records,
+            'mapping' => $effectiveMapping,
+            'record_fields' => $rowOptions['record_fields'],
+            'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors),
+        );
+    }
+
+    protected function emptyExternalPreview(array $options, $errors, $summary)
+    {
+        return array(
+            'rows' => array(),
+            'records' => array(),
+            'valid_count' => 0,
+            'error_count' => (int) $errors,
+            'skipped_count' => 0,
+            'has_errors' => (int) $errors > 0,
+            'catid' => (int) $options['catid'],
+            'type_id' => (int) $options['type_id'],
+            'locid' => (int) $options['locid'],
+            'language' => $options['language'],
+            'publish_up' => $options['publish_up'],
+            'category_label' => $options['category_label'],
+            'type_label' => $options['type_label'],
+            'venue_label' => $options['venue_label'],
+            'language_label' => $options['language_label'],
+            'publish_up_label' => $options['publish_up'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'summary' => $summary,
+        );
+    }
+
+    protected function buildExternalCsvVenuePreview(array $file, array $options)
+    {
+        $handle = fopen($file['tmp_name'], 'r');
+
+        if (!$handle) {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        $jemconfig = JemConfig::getInstance()->toRegistry();
+        $separator = $jemconfig->get('csv_separator', ';');
+        $delimiter = $jemconfig->get('csv_delimiter', '"');
+        $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
+        $firstChars = fread($handle, 3);
+        $hasBom = strncmp($firstChars, $bom, 3) === 0;
+
+        if (!$hasBom) {
+            fseek($handle, 0);
+        }
+
+        $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
+            $separator = ',';
+            fseek($handle, $hasBom ? 3 : 0);
+            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
+            $separator = ';';
+            fseek($handle, $hasBom ? 3 : 0);
+            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        }
+
+        if ($header === false) {
+            fclose($handle);
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
+        }
+
+        array_walk($header, 'jem_normalise_csv_utf8');
+        $sourceRecords = array();
+
+        while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+            array_walk($raw, 'jem_normalise_csv_utf8');
+
+            if (count(array_filter($raw, 'strlen')) === 0) {
+                continue;
+            }
+
+            $record = array();
+            foreach ($header as $index => $field) {
+                $record[$field] = $raw[$index] ?? '';
+            }
+            $sourceRecords[] = $record;
+        }
+
+        fclose($handle);
+
+        return $this->buildExternalVenuePreviewFromRecords($sourceRecords, $options, $header);
+    }
+
+    protected function buildExternalJsonVenuePreview(array $file, array $options)
+    {
+        $content = file_get_contents($file['tmp_name']);
+
+        if ($content === false || trim($content) === '') {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        $json = json_decode($content, true);
+
+        if (!is_array($json)) {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
+        }
+
+        $records = $this->findExternalStructuredRecords($json);
+
+        return $this->buildExternalVenuePreviewFromRecords($records, $options);
+    }
+
+    protected function buildExternalXmlVenuePreview(array $file, array $options)
+    {
+        $content = file_get_contents($file['tmp_name']);
+
+        if ($content === false || trim($content) === '') {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        libxml_use_internal_errors(true);
+        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+        if (!$xml) {
+            libxml_clear_errors();
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
+        }
+
+        return $this->buildExternalVenuePreviewFromRecords($this->extractExternalXmlRecords($xml), $options);
+    }
+
+    protected function buildExternalVenuePreviewFromRecords(array $records, array $options, array $sourceFields = array())
+    {
+        if (!$records) {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
+        }
+
+        if (!$sourceFields) {
+            $sourceFields = array_keys(reset($records) ?: array());
+        }
+
+        $effectiveMapping = $this->getEffectiveExternalMapping($sourceFields, $options['mapping'] ?? array(), 'venues');
+        $fields = $this->normaliseExternalSourceFields($sourceFields, $effectiveMapping, 'venues');
+        $rowOptions = $options;
+        $rowOptions['mapping'] = $effectiveMapping;
+        $rowOptions['record_fields'] = $this->getExternalVenueRecordFields($effectiveMapping);
+        $rows = array();
+        $importRecords = array();
+        $valid = 0;
+        $errors = 0;
+        $skipped = 0;
+        $line = 0;
+
+        foreach ($records as $record) {
+            $line++;
+            $data = array();
+
+            foreach ($fields as $source => $field) {
+                if ($field === null) {
+                    continue;
+                }
+
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+            }
+
+            $row = $this->normaliseExternalVenueRow($data, $rowOptions, $line);
+            $rows[] = $row['preview'];
+
+            if ($row['valid']) {
+                $importRecords[] = $row['record'];
+                $valid++;
+            } else {
+                $errors++;
+                $skipped++;
+            }
+        }
+
+        return array(
+            'rows' => $rows,
+            'records' => $importRecords,
+            'valid_count' => $valid,
+            'error_count' => $errors,
+            'skipped_count' => $skipped,
+            'has_errors' => $errors > 0,
+            'type_id' => (int) $options['type_id'],
+            'language' => $options['language'],
+            'type_label' => $options['type_label'],
+            'language_label' => $options['language_label'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'source_fields' => $sourceFields,
+            'source_records' => $records,
+            'mapping' => $effectiveMapping,
+            'record_fields' => $rowOptions['record_fields'],
+            'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors),
+        );
+    }
+
+    protected function emptyExternalVenuePreview(array $options, $errors, $summary)
+    {
+        return array(
+            'rows' => array(),
+            'records' => array(),
+            'valid_count' => 0,
+            'error_count' => (int) $errors,
+            'skipped_count' => 0,
+            'has_errors' => (int) $errors > 0,
+            'type_id' => (int) $options['type_id'],
+            'language' => $options['language'],
+            'type_label' => $options['type_label'],
+            'language_label' => $options['language_label'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'summary' => $summary,
         );
     }
 
@@ -1417,12 +2126,18 @@ class JemControllerImport extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
-        $fields = $this->normaliseSpecialDaysCsvHeader($header);
+        $sourceRecords = array();
+        $effectiveMapping = $this->getEffectiveSpecialDaysMapping($header, $options['mapping'] ?? array());
+        $fields = $this->normaliseSpecialDaysCsvHeader($header, $effectiveMapping);
 
         if (!$fields) {
             fclose($handle);
             return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
         }
+
+        $rowOptions = $options;
+        $rowOptions['mapping'] = $effectiveMapping;
+        $rowOptions['record_fields'] = $this->getSpecialDaysRecordFields($effectiveMapping);
 
         $line = 1;
 
@@ -1435,14 +2150,20 @@ class JemControllerImport extends BaseController
             }
 
             $data = array();
+            $sourceRecord = array();
             foreach ($fields as $index => $field) {
+                $sourceField = $header[$index] ?? (string) $index;
+                $sourceRecord[$sourceField] = $raw[$index] ?? '';
+
                 if ($field === null) {
                     continue;
                 }
-                $data[$field] = $raw[$index] ?? '';
-            }
 
-            $row = $this->normaliseSpecialDaysCsvRow($data, $options, $line);
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
+            }
+            $sourceRecords[] = $sourceRecord;
+
+            $row = $this->normaliseSpecialDaysCsvRow($data, $rowOptions, $line);
             $rows[] = $row['preview'];
 
             if ($row['valid']) {
@@ -1466,6 +2187,78 @@ class JemControllerImport extends BaseController
             'has_errors' => $errors > 0,
             'day_type' => $options['day_type'],
             'replace' => (int) $options['replace'],
+            'source_fields' => $header,
+            'source_records' => $sourceRecords,
+            'mapping' => $effectiveMapping,
+            'record_fields' => $rowOptions['record_fields'],
+            'profile_title' => $options['profile_title'] ?? '',
+            'summary' => Text::sprintf('COM_JEM_IMPORT_SPECIAL_DAYS_PREVIEW_SUMMARY', $valid, $errors),
+        );
+    }
+
+    protected function buildSpecialDaysPreviewFromRecords(array $records, array $options, array $sourceFields = array())
+    {
+        if (!$records) {
+            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
+        }
+
+        if (!$sourceFields) {
+            $sourceFields = array_keys(reset($records) ?: array());
+        }
+
+        $effectiveMapping = $this->getEffectiveSpecialDaysMapping($sourceFields, $options['mapping'] ?? array());
+        $fields = $this->normaliseSpecialDaysCsvHeader($sourceFields, $effectiveMapping);
+        $rowOptions = $options;
+        $rowOptions['mapping'] = $effectiveMapping;
+        $rowOptions['record_fields'] = $this->getSpecialDaysRecordFields($effectiveMapping);
+        $rows = array();
+        $importRecords = array();
+        $valid = 0;
+        $errors = 0;
+        $skipped = 0;
+        $line = 0;
+
+        foreach ($records as $record) {
+            $line++;
+            $data = array();
+
+            foreach ($sourceFields as $index => $sourceField) {
+                $field = $fields[$index] ?? null;
+
+                if ($field === null) {
+                    continue;
+                }
+
+                $this->addExternalMappedValue($data, $field, $record[$sourceField] ?? '');
+            }
+
+            $row = $this->normaliseSpecialDaysCsvRow($data, $rowOptions, $line);
+            $rows[] = $row['preview'];
+
+            if ($row['valid']) {
+                $importRecords[] = $row['record'];
+                $valid++;
+            } else {
+                $errors++;
+                $skipped++;
+            }
+        }
+
+        return array(
+            'title' => $options['title'],
+            'rows' => $rows,
+            'records' => $importRecords,
+            'valid_count' => $valid,
+            'error_count' => $errors,
+            'skipped_count' => $skipped,
+            'has_errors' => $errors > 0,
+            'day_type' => $options['day_type'],
+            'replace' => (int) $options['replace'],
+            'source_fields' => $sourceFields,
+            'source_records' => $records,
+            'mapping' => $effectiveMapping,
+            'record_fields' => $rowOptions['record_fields'],
+            'profile_title' => $options['profile_title'] ?? '',
             'summary' => Text::sprintf('COM_JEM_IMPORT_SPECIAL_DAYS_PREVIEW_SUMMARY', $valid, $errors),
         );
     }
@@ -1860,18 +2653,27 @@ class JemControllerImport extends BaseController
      */
     protected function normaliseExternalCsvHeader(array $header)
     {
-        $aliases = array(
+        return array_values($this->normaliseExternalSourceFields($header));
+    }
+
+    protected function normaliseExternalSourceFields(array $sourceFields, array $mapping = array(), $context = 'events')
+    {
+        $eventAliases = array(
             'title' => 'title',
             'name' => 'title',
+            'nombre' => 'title',
+            'summary' => 'title',
             'event' => 'title',
             'event_title' => 'title',
             'date' => 'dates',
             'dates' => 'dates',
             'start' => 'dates',
             'start_date' => 'dates',
+            'dtstart' => 'start_datetime',
             'end' => 'enddates',
             'end_date' => 'enddates',
             'enddates' => 'enddates',
+            'dtend' => 'end_datetime',
             'time' => 'times',
             'start_time' => 'times',
             'times' => 'times',
@@ -1881,20 +2683,511 @@ class JemControllerImport extends BaseController
             'start_datetime' => 'start_datetime',
             'end_datetime' => 'end_datetime',
             'description' => 'introtext',
+            'descripcion' => 'introtext',
+            'descripcion_entidad' => 'introtext',
             'introtext' => 'introtext',
             'text' => 'introtext',
         );
+        $venueAliases = array(
+            'venue' => 'venue',
+            'title' => 'venue',
+            'name' => 'venue',
+            'nombre' => 'venue',
+            'nombre_entidad' => 'venue',
+            'url' => 'url',
+            'link' => 'url',
+            'relation' => 'url',
+            'content_url' => 'url',
+            'street' => 'street',
+            'street_address' => 'street',
+            'address_street_address' => 'street',
+            'nombre_via' => 'street',
+            'postalcode' => 'postalCode',
+            'postal_code' => 'postalCode',
+            'postalcode' => 'postalCode',
+            'codigo_postal' => 'postalCode',
+            'city' => 'city',
+            'locality' => 'city',
+            'address_locality' => 'city',
+            'localidad' => 'city',
+            'state' => 'state',
+            'province' => 'state',
+            'provincia' => 'state',
+            'country' => 'country',
+            'latitude' => 'latitude',
+            'latitud' => 'latitude',
+            'location_latitude' => 'latitude',
+            'longitude' => 'longitude',
+            'longitud' => 'longitude',
+            'location_longitude' => 'longitude',
+            'description' => 'locdescription',
+            'descripcion' => 'locdescription',
+            'descripcion_entidad' => 'locdescription',
+            'organization_desc' => 'locdescription',
+            'organization_organization_desc' => 'locdescription',
+        );
+        $allowedFields = (string) $context === 'venues'
+            ? $this->getExternalVenueAllowedFields()
+            : $this->getExternalEventAllowedFields();
+        $aliases = (string) $context === 'venues' ? $venueAliases : $eventAliases;
 
         $fields = array();
+        $mappingByKey = array();
+        $allowedByKey = array();
 
-        foreach ($header as $column) {
-            $key = strtolower(trim((string) $column));
-            $key = preg_replace('/[^a-z0-9_]+/', '_', $key);
-            $key = trim($key, '_');
-            $fields[] = $aliases[$key] ?? null;
+        foreach ($allowedFields as $field) {
+            $allowedByKey[$this->normaliseExternalSourceKey($field)] = $field;
+        }
+
+        foreach ($mapping as $source => $target) {
+            $target = trim((string) $target);
+            $sourceKey = $this->normaliseExternalSourceKey($source);
+
+            if ($sourceKey === '') {
+                continue;
+            }
+
+            $mappingByKey[$sourceKey] = $target !== '' && in_array($target, $allowedFields, true) ? $target : '';
+        }
+
+        foreach ($sourceFields as $column) {
+            $key = $this->normaliseExternalSourceKey($column);
+            if (array_key_exists($key, $mappingByKey)) {
+                $fields[$column] = $mappingByKey[$key] !== '' ? $mappingByKey[$key] : null;
+            } else {
+                $fields[$column] = $aliases[$key] ?? ($allowedByKey[$key] ?? null);
+            }
         }
 
         return $fields;
+    }
+
+    protected function getEffectiveExternalMapping(array $sourceFields, array $mapping = array(), $context = 'events')
+    {
+        $fields = $this->normaliseExternalSourceFields($sourceFields, $mapping, $context);
+        $effective = array();
+
+        foreach ($fields as $source => $target) {
+            if ($target !== null && trim((string) $target) !== '') {
+                $effective[$source] = $target;
+            }
+        }
+
+        return $effective;
+    }
+
+    protected function addExternalMappedValue(array &$data, $field, $value)
+    {
+        $field = trim((string) $field);
+        $value = trim((string) $value);
+
+        if ($field === '' || $value === '') {
+            return;
+        }
+
+        if (!isset($data[$field]) || trim((string) $data[$field]) === '') {
+            $data[$field] = $value;
+            return;
+        }
+
+        $data[$field] = rtrim((string) $data[$field]) . ', ' . $value;
+    }
+
+    protected function buildExternalRecord(array $fields, array $data)
+    {
+        $record = array();
+
+        foreach ($fields as $field) {
+            $record[] = array_key_exists($field, $data) ? $data[$field] : '';
+        }
+
+        return $record;
+    }
+
+    protected function getExternalEventBaseFields()
+    {
+        return array(
+            'title',
+            'alias',
+            'dates',
+            'enddates',
+            'times',
+            'endtimes',
+            'introtext',
+            'fulltext',
+            'metadata',
+            'published',
+            'publish_up',
+            'publish_down',
+            'type_id',
+            'locid',
+            'language',
+            'categories',
+            'online_meeting_url',
+            'online_meeting_label',
+            'meta_keywords',
+            'meta_description',
+            'event_status',
+            'ticket_availability',
+        );
+    }
+
+    protected function getExternalVenueBaseFields()
+    {
+        return array(
+            'venue',
+            'alias',
+            'color',
+            'url',
+            'street',
+            'postalCode',
+            'city',
+            'state',
+            'country',
+            'latitude',
+            'longitude',
+            'locdescription',
+            'meta_keywords',
+            'meta_description',
+            'locimage',
+            'map',
+            'published',
+            'publish_up',
+            'publish_down',
+            'access',
+            'attribs',
+            'language',
+            'type_id',
+        );
+    }
+
+    protected function getExternalCustomFields()
+    {
+        $fields = array();
+
+        for ($i = 1; $i <= 10; $i++) {
+            $fields[] = 'custom' . $i;
+        }
+
+        return $fields;
+    }
+
+    protected function getExternalEventAllowedFields()
+    {
+        return array_values(array_unique(array_merge($this->getExternalEventBaseFields(), $this->getExternalCustomFields())));
+    }
+
+    protected function getExternalVenueAllowedFields()
+    {
+        return array_values(array_unique(array_merge($this->getExternalVenueBaseFields(), $this->getExternalCustomFields())));
+    }
+
+    protected function getMappedExternalFields(array $mapping, array $allowedFields)
+    {
+        $fields = array();
+
+        foreach ($mapping as $target) {
+            $target = trim((string) $target);
+
+            if ($target !== '' && in_array($target, $allowedFields, true)) {
+                $fields[] = $target;
+            }
+        }
+
+        return array_values(array_unique($fields));
+    }
+
+    protected function getExternalEventRecordFields(array $mapping = array())
+    {
+        $required = array('title', 'dates', 'enddates', 'times', 'endtimes', 'introtext', 'fulltext', 'metadata', 'published', 'publish_up', 'type_id', 'locid', 'language', 'categories');
+        $mapped = $this->getMappedExternalFields($mapping, $this->getExternalEventAllowedFields());
+
+        return array_values(array_unique(array_merge($required, $mapped)));
+    }
+
+    protected function getExternalVenueRecordFields(array $mapping = array())
+    {
+        $required = array('venue', 'alias', 'url', 'street', 'postalCode', 'city', 'state', 'country', 'latitude', 'longitude', 'locdescription', 'published', 'type_id', 'language', 'map');
+        $mapped = $this->getMappedExternalFields($mapping, $this->getExternalVenueAllowedFields());
+
+        return array_values(array_unique(array_merge($required, $mapped)));
+    }
+
+    protected function normaliseExternalSourceKey($value)
+    {
+        $key = strtolower(trim((string) $value));
+        $key = strtr($key, array(
+            'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a',
+            'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+            'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+            'ñ' => 'n',
+        ));
+        $key = preg_replace('/[^a-z0-9_]+/', '_', $key);
+
+        return trim($key, '_');
+    }
+
+    protected function getPostedImportMapping($name)
+    {
+        $mapping = Factory::getApplication()->input->post->get((string) $name, array(), 'array');
+        $clean = array();
+
+        foreach ((array) $mapping as $source => $target) {
+            $source = trim((string) $source);
+            $target = trim((string) $target);
+
+            if ($source === '') {
+                continue;
+            }
+
+            $clean[$source] = $target;
+        }
+
+        return $clean;
+    }
+
+    protected function saveExternalImportProfile($context, $format, $title, array $mapping)
+    {
+        $title = trim((string) $title);
+
+        if ($title === '' || !$mapping) {
+            return null;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $user = Factory::getApplication()->getIdentity();
+        $now = Factory::getDate()->toSql();
+
+        try {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_import_profiles'))
+                ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context))
+                ->where($db->quoteName('source_format') . ' = ' . $db->quote(strtolower((string) $format)))
+                ->where($db->quoteName('title') . ' = ' . $db->quote($title));
+            $db->setQuery($query);
+            $existingId = (int) $db->loadResult();
+
+            if ($existingId > 0) {
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_import_profiles'))
+                    ->set($db->quoteName('mapping') . ' = ' . $db->quote(json_encode($mapping)))
+                    ->set($db->quoteName('options') . ' = ' . $db->quote('{}'))
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('modified') . ' = ' . $db->quote($now))
+                    ->set($db->quoteName('modified_by') . ' = ' . (int) $user->id)
+                    ->where($db->quoteName('id') . ' = ' . (int) $existingId);
+                $db->setQuery($query);
+                $db->execute();
+
+                return array(
+                    'id' => $existingId,
+                    'title' => $title,
+                );
+            }
+
+            $query = $db->getQuery(true)
+                ->select('MAX(' . $db->quoteName('ordering') . ')')
+                ->from($db->quoteName('#__jem_import_profiles'))
+                ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context));
+            $db->setQuery($query);
+            $ordering = (int) $db->loadResult() + 1;
+
+            $columns = array(
+                'title',
+                'context',
+                'source_format',
+                'mapping',
+                'options',
+                'published',
+                'access',
+                'ordering',
+                'created',
+                'created_by',
+                'modified',
+                'modified_by',
+            );
+            $values = array(
+                $db->quote($title),
+                $db->quote((string) $context),
+                $db->quote(strtolower((string) $format)),
+                $db->quote(json_encode($mapping)),
+                $db->quote('{}'),
+                1,
+                1,
+                (int) $ordering,
+                $db->quote($now),
+                (int) $user->id,
+                $db->quote($now),
+                (int) $user->id,
+            );
+
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_import_profiles'))
+                ->columns($db->quoteName($columns))
+                ->values(implode(',', $values));
+            $db->setQuery($query);
+            $db->execute();
+
+            return array(
+                'id' => (int) $db->insertid(),
+                'title' => $title,
+            );
+        } catch (RuntimeException $e) {
+            return null;
+        }
+    }
+
+    protected function getExternalImportProfile($profileId, $format, $context = 'events')
+    {
+        $profileId = (int) $profileId;
+
+        if ($profileId <= 0) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $query = $db->getQuery(true)
+                ->select('*')
+                ->from($db->quoteName('#__jem_import_profiles'))
+                ->where($db->quoteName('id') . ' = ' . (int) $profileId)
+                ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context))
+                ->where($db->quoteName('published') . ' = 1')
+                ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', Factory::getApplication()->getIdentity()->getAuthorisedViewLevels())) . ')');
+            $db->setQuery($query);
+            $profile = $db->loadAssoc();
+        } catch (RuntimeException $e) {
+            return array();
+        }
+
+        if (!$profile) {
+            return array();
+        }
+
+        $profileFormat = strtolower((string) ($profile['source_format'] ?? ''));
+        if ($profileFormat !== '' && $profileFormat !== strtolower((string) $format)) {
+            return array();
+        }
+
+        $mapping = json_decode((string) ($profile['mapping'] ?? ''), true);
+        $options = json_decode((string) ($profile['options'] ?? ''), true);
+
+        $profile['mapping'] = is_array($mapping) ? $mapping : array();
+        $profile['options'] = is_array($options) ? $options : array();
+
+        return $profile;
+    }
+
+    protected function findExternalStructuredRecords(array $data)
+    {
+        if ($this->isExternalRecordList($data)) {
+            return array_map(array($this, 'flattenExternalStructuredRecord'), $data);
+        }
+
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $records = $this->findExternalStructuredRecords($value);
+
+                if ($records) {
+                    return $records;
+                }
+            }
+        }
+
+        return array();
+    }
+
+    protected function isExternalRecordList(array $data)
+    {
+        if (!$data) {
+            return false;
+        }
+
+        $first = reset($data);
+
+        return is_array($first) && array_keys($data) === range(0, count($data) - 1);
+    }
+
+    protected function flattenExternalStructuredRecord(array $record, $prefix = '')
+    {
+        $flat = array();
+
+        foreach ($record as $key => $value) {
+            $path = $prefix === '' ? (string) $key : $prefix . '.' . $key;
+
+            if (is_array($value)) {
+                if ($this->isExternalRecordList($value)) {
+                    $flat[$path] = implode(', ', array_map(static function ($item) {
+                        return is_scalar($item) ? (string) $item : json_encode($item);
+                    }, $value));
+                } else {
+                    $flat += $this->flattenExternalStructuredRecord($value, $path);
+                }
+            } else {
+                $flat[$path] = is_scalar($value) ? (string) $value : '';
+            }
+        }
+
+        return $flat;
+    }
+
+    protected function extractExternalXmlRecords(SimpleXMLElement $xml)
+    {
+        $records = array();
+
+        foreach ($xml->xpath('//contenido') ?: array() as $contenido) {
+            $record = array();
+
+            foreach ($contenido->xpath('.//atributo[@nombre]') ?: array() as $attribute) {
+                $name = (string) $attribute['nombre'];
+                $value = trim((string) $attribute);
+
+                if ($name !== '' && $value !== '') {
+                    $record[$name] = $value;
+                }
+            }
+
+            if ($record) {
+                $records[] = $record;
+            }
+        }
+
+        if ($records) {
+            return $records;
+        }
+
+        foreach ($xml->children() as $child) {
+            $flat = $this->flattenExternalXmlNode($child);
+
+            if ($flat) {
+                $records[] = $flat;
+            }
+        }
+
+        return $records;
+    }
+
+    protected function flattenExternalXmlNode(SimpleXMLElement $node, $prefix = '')
+    {
+        $flat = array();
+        $name = $node->getName();
+        $path = $prefix === '' ? $name : $prefix . '.' . $name;
+        $children = $node->children();
+
+        if ($children->count() === 0) {
+            $flat[$path] = trim((string) $node);
+            return $flat;
+        }
+
+        foreach ($children as $child) {
+            $flat += $this->flattenExternalXmlNode($child, $path);
+        }
+
+        return $flat;
     }
 
     /**
@@ -1965,32 +3258,124 @@ class JemControllerImport extends BaseController
 
         $status = $valid ? Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_OK') : Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_ERROR');
 
+        $recordData = array(
+            'title' => $title,
+            'dates' => $startDate,
+            'enddates' => $endDate,
+            'times' => $startTime,
+            'endtimes' => $endTime,
+            'introtext' => trim((string) ($data['introtext'] ?? '')),
+            'fulltext' => (string) ($data['fulltext'] ?? ''),
+            'metadata' => (string) ($data['metadata'] ?? '{}'),
+            'published' => array_key_exists('published', $data) ? (int) $data['published'] : (int) $options['published'],
+            'publish_up' => (string) ($data['publish_up'] ?? $options['publish_up']),
+            'type_id' => array_key_exists('type_id', $data) ? (int) $data['type_id'] : (!empty($options['type_id']) ? (int) $options['type_id'] : null),
+            'locid' => array_key_exists('locid', $data) ? (int) $data['locid'] : (!empty($options['locid']) ? (int) $options['locid'] : null),
+            'language' => (string) ($data['language'] ?? $options['language']),
+            'categories' => (string) ($data['categories'] ?? (int) $options['catid']),
+        );
+
+        foreach ($data as $field => $value) {
+            if (!array_key_exists($field, $recordData)) {
+                $recordData[$field] = $value;
+            }
+        }
+
         return array(
             'valid' => $valid,
-            'record' => array(
-                $title,
-                $startDate,
-                $endDate,
-                $startTime,
-                $endTime,
-                trim((string) ($data['introtext'] ?? '')),
-                '',
-                '{}',
-                (int) $options['published'],
-                (string) $options['publish_up'],
-                !empty($options['type_id']) ? (int) $options['type_id'] : null,
-                !empty($options['locid']) ? (int) $options['locid'] : null,
-                (string) $options['language'],
-                (string) (int) $options['catid'],
-            ),
+            'record' => $this->buildExternalRecord((array) ($options['record_fields'] ?? $this->getExternalEventRecordFields()), $recordData),
             'preview' => array(
                 'status' => $status,
                 'title' => $title !== '' ? $title : Text::sprintf('COM_JEM_IMPORT_EXTERNAL_UNTITLED_ROW', $line),
                 'date_label' => trim(($startDate ?: '-') . ($endDate ? ' - ' . $endDate : '')),
                 'time_label' => trim(($startTime ?: '-') . ($endTime ? ' - ' . $endTime : '')),
                 'notes' => $notes,
+                'import_data' => $recordData,
             ),
         );
+    }
+
+    protected function normaliseExternalVenueRow(array $data, array $options, $line)
+    {
+        $notes = array();
+        $venue = trim((string) ($data['venue'] ?? ''));
+        $street = trim((string) ($data['street'] ?? ''));
+        $postalCode = trim((string) ($data['postalCode'] ?? ''));
+        $city = trim((string) ($data['city'] ?? ''));
+        $state = trim((string) ($data['state'] ?? ''));
+        $country = strtoupper(trim((string) ($data['country'] ?? 'ES')));
+        $latitude = $this->normaliseExternalVenueCoordinate($data['latitude'] ?? '');
+        $longitude = $this->normaliseExternalVenueCoordinate($data['longitude'] ?? '');
+        $description = trim((string) ($data['locdescription'] ?? ''));
+        $url = trim((string) ($data['url'] ?? ''));
+
+        if (strlen($country) !== 2) {
+            $country = 'ES';
+            $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_NOTE_COUNTRY_DEFAULT');
+        }
+
+        if ($url !== '' && strlen($url) > 199) {
+            $url = '';
+            $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_NOTE_URL_TOO_LONG');
+        }
+
+        $valid = true;
+
+        if ($venue === '') {
+            $valid = false;
+            $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_ERROR_MISSING_VENUE');
+        }
+
+        $status = $valid ? Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_OK') : Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_ERROR');
+
+        $recordData = array(
+            'venue' => $venue,
+            'alias' => (string) ($data['alias'] ?? ''),
+            'url' => $url,
+            'street' => $street,
+            'postalCode' => $postalCode,
+            'city' => $city,
+            'state' => $state,
+            'country' => $country,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'locdescription' => $description,
+            'published' => array_key_exists('published', $data) ? (int) $data['published'] : (int) $options['published'],
+            'type_id' => array_key_exists('type_id', $data) ? (int) $data['type_id'] : (!empty($options['type_id']) ? (int) $options['type_id'] : null),
+            'language' => (string) ($data['language'] ?? $options['language']),
+            'map' => array_key_exists('map', $data) ? (int) $data['map'] : (($latitude !== null && $longitude !== null) ? 1 : 0),
+        );
+
+        foreach ($data as $field => $value) {
+            if (!array_key_exists($field, $recordData)) {
+                $recordData[$field] = $value;
+            }
+        }
+
+        return array(
+            'valid' => $valid,
+            'record' => $this->buildExternalRecord((array) ($options['record_fields'] ?? $this->getExternalVenueRecordFields()), $recordData),
+            'preview' => array(
+                'status' => $status,
+                'venue' => $venue !== '' ? $venue : Text::sprintf('COM_JEM_IMPORT_EXTERNAL_UNTITLED_ROW', $line),
+                'city' => $city,
+                'state' => $state,
+                'country' => $country,
+                'notes' => $notes,
+                'import_data' => $recordData,
+            ),
+        );
+    }
+
+    protected function normaliseExternalVenueCoordinate($value)
+    {
+        $value = trim(str_replace(',', '.', (string) $value));
+
+        if ($value === '' || !is_numeric($value)) {
+            return null;
+        }
+
+        return number_format((float) $value, 6, '.', '');
     }
 
     protected function normaliseExternalCsvDate($date)
@@ -2038,7 +3423,7 @@ class JemControllerImport extends BaseController
         return $timestamp ? date('Y-m-d H:i:s', $timestamp) : Factory::getDate()->toSql();
     }
 
-    protected function normaliseSpecialDaysCsvHeader(array $header)
+    protected function normaliseSpecialDaysCsvHeader(array $header, array $mapping = array())
     {
         $aliases = array(
             'name' => 'title',
@@ -2056,15 +3441,45 @@ class JemControllerImport extends BaseController
             'weekdays' => 'weekdays',
             'desc' => 'description',
             'text' => 'description',
+            'showdays' => 'show_dates',
+            'show_days' => 'show_dates',
+            'showdates' => 'show_dates',
+            'show_dates' => 'show_dates',
+            'listdays' => 'show_dates',
+            'list_days' => 'show_dates',
+            'listdates' => 'show_dates',
+            'list_dates' => 'show_dates',
+            'accesslevel' => 'access',
+            'access_level' => 'access',
+            'viewlevel' => 'access',
+            'view_level' => 'access',
         );
-        $allowed = array('id', 'title', 'alias', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'published', 'ordering');
+        $allowed = $this->getSpecialDaysAllowedFields();
         $fields = array();
+        $mappingByKey = array();
+
+        foreach ($mapping as $source => $target) {
+            $target = trim((string) $target);
+            $sourceKey = $this->normaliseExternalSourceKey($source);
+
+            if ($sourceKey === '') {
+                continue;
+            }
+
+            $mappingByKey[$sourceKey] = $target !== '' && in_array($target, $allowed, true) ? $target : '';
+        }
 
         foreach ($header as $column) {
             $key = strtolower(trim((string) $column));
             $key = preg_replace('/[^a-z0-9_]+/', '_', $key);
             $key = trim($key, '_');
-            $key = $aliases[$key] ?? $key;
+            $sourceKey = $this->normaliseExternalSourceKey($column);
+
+            if (array_key_exists($sourceKey, $mappingByKey)) {
+                $key = $mappingByKey[$sourceKey];
+            } else {
+                $key = $aliases[$key] ?? $key;
+            }
             $fields[] = in_array($key, $allowed, true) ? $key : null;
         }
 
@@ -2129,7 +3544,9 @@ class JemControllerImport extends BaseController
             'region' => trim((string) ($data['region'] ?? '')),
             'city' => trim((string) ($data['city'] ?? '')),
             'description' => trim((string) ($data['description'] ?? '')),
+            'show_dates' => $this->normaliseSpecialDaysBoolean($data['show_dates'] ?? 1, 1),
             'published' => isset($data['published']) && trim((string) $data['published']) !== '' ? (int) $data['published'] : 1,
+            'access' => isset($data['access']) && trim((string) $data['access']) !== '' ? max(1, (int) $data['access']) : 1,
             'ordering' => isset($data['ordering']) ? (int) $data['ordering'] : 0,
         );
 
@@ -2143,8 +3560,38 @@ class JemControllerImport extends BaseController
                 'day_type' => $dayType,
                 'description' => $record['description'],
                 'notes' => $notes,
+                'import_data' => $record,
             ),
         );
+    }
+
+    protected function getSpecialDaysAllowedFields()
+    {
+        return array('id', 'title', 'alias', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'show_dates', 'published', 'access', 'ordering');
+    }
+
+    protected function getSpecialDaysRecordFields(array $mapping = array())
+    {
+        $required = array('title', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'show_dates', 'published', 'access', 'ordering');
+        $mapped = $this->getMappedExternalFields($mapping, $this->getSpecialDaysAllowedFields());
+
+        return array_values(array_unique(array_merge($required, $mapped)));
+    }
+
+    protected function getEffectiveSpecialDaysMapping(array $sourceFields, array $mapping = array())
+    {
+        $fields = $this->normaliseSpecialDaysCsvHeader($sourceFields, $mapping);
+        $effective = array();
+
+        foreach (array_values($sourceFields) as $index => $source) {
+            $target = $fields[$index] ?? null;
+
+            if ($target !== null && trim((string) $target) !== '') {
+                $effective[$source] = $target;
+            }
+        }
+
+        return $effective;
     }
 
     protected function normaliseSpecialDaysIcsEvent(array $event, array $options, $line)
@@ -2202,7 +3649,9 @@ class JemControllerImport extends BaseController
             'region' => '',
             'city' => '',
             'description' => $description,
+            'show_dates' => 1,
             'published' => 1,
+            'access' => 1,
             'ordering' => 0,
         );
 
@@ -2259,6 +3708,25 @@ class JemControllerImport extends BaseController
         }
 
         return implode(',', array_values(array_unique($result)));
+    }
+
+    protected function normaliseSpecialDaysBoolean($value, $default = 1)
+    {
+        $value = strtolower(trim((string) $value));
+
+        if ($value === '') {
+            return (int) $default;
+        }
+
+        if (in_array($value, array('1', 'yes', 'y', 'true', 'on', 'si', 'sí'), true)) {
+            return 1;
+        }
+
+        if (in_array($value, array('0', 'no', 'n', 'false', 'off'), true)) {
+            return 0;
+        }
+
+        return (int) $default;
     }
 
     protected function storeSpecialDaysRecords(array $records, $replace)

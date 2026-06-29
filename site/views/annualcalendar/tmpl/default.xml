@@ -61,6 +61,21 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="special_day_legend_order" type="list"
+                default="order_asc"
+                label="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER"
+                description="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER_DESC"
+                class="form-select w-auto"
+            >
+                <option value="id_asc">COM_JEM_ORDER_ID_ASC</option>
+                <option value="id_desc">COM_JEM_ORDER_ID_DESC</option>
+                <option value="order_asc">COM_JEM_ORDER_ORDER_ASC</option>
+                <option value="order_desc">COM_JEM_ORDER_ORDER_DESC</option>
+                <option value="name_asc">COM_JEM_ORDER_NAME_ASC</option>
+                <option value="name_desc">COM_JEM_ORDER_NAME_DESC</option>
+                <option value="start_date">COM_JEM_ORDER_START_DATE</option>
+                <option value="end_date">COM_JEM_ORDER_END_DATE</option>
+            </field>
             <field name="annual_agenda_show_empty_days" type="radio"
                 default="0"
                 label="COM_JEM_ANNUALCALENDAR_AGENDA_SHOW_EMPTY_DAYS"

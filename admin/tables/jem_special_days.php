@@ -25,7 +25,9 @@ class jem_special_days extends Table
     public $region = '';
     public $city = '';
     public $description = null;
+    public $show_dates = 1;
     public $published = 1;
+    public $access = 1;
     public $ordering = 0;
     public $created = null;
     public $created_by = 0;
@@ -99,6 +101,8 @@ class jem_special_days extends Table
         if (!in_array($this->published, array(-2, 0, 1), true)) {
             $this->published = 0;
         }
+        $this->show_dates = (int) $this->show_dates === 0 ? 0 : 1;
+        $this->access = max(1, (int) $this->access);
         $this->ordering = (int) $this->ordering;
         $this->created_by = (int) $this->created_by;
         $this->modified_by = (int) $this->modified_by;

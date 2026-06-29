@@ -697,6 +697,7 @@ input#replace_attachments1.inputbox {
 .jem-import-field > .btn-group,
 .jem-import-field > .field-calendar,
 .jem-import-field > .input-group,
+.jem-import-field > joomla-field-fancy-select,
 .jem-import-field > .choices {
     min-width: 0;
     width: 100%;
@@ -704,6 +705,7 @@ input#replace_attachments1.inputbox {
 
 .jem-import-field > select,
 .jem-import-field > .form-select,
+.jem-import-field > joomla-field-fancy-select,
 .jem-import-field > .inputbox {
     max-width: 100%;
     min-width: 8rem;
@@ -723,10 +725,155 @@ input#replace_attachments1.inputbox {
 
 .jem-import-select-actions > select,
 .jem-import-select-actions > .form-select,
+.jem-import-select-actions > joomla-field-fancy-select,
 .jem-import-select-actions > .inputbox {
     max-width: 100%;
     min-width: 8rem;
     width: 100%;
+}
+
+.jem-import-select-actions > joomla-field-fancy-select .choices,
+.jem-import-field > joomla-field-fancy-select .choices {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.jem-import-fancy-select > select {
+    display: none;
+}
+
+.jem-import-preview-table-wrap {
+    overflow-x: auto;
+}
+
+.jem-import-dynamic-preview {
+    min-width: max-content;
+}
+
+.jem-import-dynamic-preview th,
+.jem-import-dynamic-preview td {
+    white-space: nowrap;
+}
+
+.jem-import-mapping-option-jem {
+    font-weight: 700;
+}
+
+.jem-import-mapping-option-custom {
+    font-style: italic;
+}
+
+.jem-import-mapping-table {
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .95em;
+    width: max-content !important;
+    max-width: none;
+}
+
+.jem-import-mapping-table th,
+.jem-import-mapping-table td {
+    border: 0 !important;
+    padding: .22rem .45rem;
+    width: auto;
+    white-space: nowrap;
+}
+
+.jem-import-mapping-table tbody tr:nth-child(odd) > * {
+    background-color: transparent !important;
+}
+
+.jem-import-mapping-table tbody tr:nth-child(even) > * {
+    background-color: rgba(0, 0, 0, .035) !important;
+}
+
+.jem-import-mapping-table thead th {
+    background-color: transparent !important;
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+}
+
+.jem-import-mapping-table th:first-child,
+.jem-import-mapping-table td:first-child {
+    max-width: 22rem;
+    width: 1%;
+}
+
+.jem-import-mapping-table th:last-child,
+.jem-import-mapping-table td:last-child {
+    min-width: 13rem;
+    width: 17rem;
+}
+
+.jem-import-mapping-table .jem-import-mapping-select {
+    min-height: 1.85rem;
+    padding-top: .12rem;
+    padding-bottom: .12rem;
+    width: 16rem;
+}
+
+.jem-import-status {
+    align-items: center;
+    display: inline-flex;
+    gap: .35rem;
+    white-space: nowrap;
+}
+
+.jem-import-status::before {
+    content: "";
+    display: none;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.jem-import-status.is-ok::before {
+    color: #198754;
+    content: "\2713";
+    display: inline-block;
+}
+
+.jem-import-status.is-error::before {
+    color: #dc3545;
+    content: "\00d7";
+    display: inline-block;
+    font-size: 1.12em;
+}
+
+.jem-import-profile-row {
+    align-items: center;
+    display: grid;
+    gap: .5rem 1.25rem;
+    grid-template-columns: max-content minmax(18rem, 34rem);
+    justify-content: start;
+    margin: .75rem 0 .5rem;
+}
+
+.jem-import-profile-row .jem-import-field {
+    align-items: center;
+    display: grid;
+    gap: .5rem;
+}
+
+.jem-import-profile-save label {
+    align-items: center;
+    display: inline-flex;
+    gap: .25rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-import-profile-name {
+    grid-template-columns: max-content minmax(14rem, 24rem);
+}
+
+.jem-import-profile-name label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-import-profile-name input {
+    width: min(100%, 24rem);
 }
 
 .jem-import-create-btn {
@@ -795,6 +942,19 @@ input#replace_attachments1.inputbox {
     margin: 0 .35rem .35rem 0;
 }
 
+.jem-import-preview-actions {
+    border-top: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 14%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: .85rem;
+}
+
+.jem-import-preview-actions .btn {
+    margin: 0 0 .35rem .35rem;
+}
+
 .jem-import-columns {
     margin: .75rem 0;
 }
@@ -802,6 +962,17 @@ input#replace_attachments1.inputbox {
 .jem-import-columns summary {
     cursor: pointer;
     font-weight: 600;
+}
+
+.jem-import-mapping-panel {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.jem-import-mapping-panel > summary {
+    margin-bottom: .35rem;
 }
 
 .jem-import-columns-list,
@@ -894,6 +1065,89 @@ input#replace_attachments1.inputbox {
 
     .jem-import-catalog-controls {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .jem-import-columns {
+        padding: .45rem;
+    }
+
+    .jem-import-columns .table-responsive {
+        overflow-x: visible;
+    }
+
+    .jem-import-mapping-table {
+        display: block;
+        width: 100% !important;
+    }
+
+    .jem-import-mapping-table thead {
+        display: none;
+    }
+
+    .jem-import-mapping-table tbody {
+        display: grid;
+        gap: .45rem;
+    }
+
+    .jem-import-mapping-table tr {
+        display: grid;
+        gap: .2rem;
+        padding: .45rem;
+        background-color: rgba(0, 0, 0, .025);
+        border: 1px solid rgba(0, 0, 0, .08);
+    }
+
+    .jem-import-mapping-table tbody tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, .045);
+    }
+
+    .jem-import-mapping-table tbody tr > * {
+        background-color: transparent !important;
+    }
+
+    .jem-import-mapping-table td {
+        display: block;
+        max-width: none !important;
+        min-width: 0 !important;
+        padding: 0;
+        width: 100% !important;
+    }
+
+    .jem-import-mapping-table td:first-child::before,
+    .jem-import-mapping-table td:last-child::before {
+        display: block;
+        color: #5f6b7a;
+        font-size: .78rem;
+        font-weight: 600;
+        margin-bottom: .1rem;
+    }
+
+    .jem-import-mapping-table td:first-child::before {
+        content: "File field";
+    }
+
+    .jem-import-mapping-table td:last-child::before {
+        content: "JEM field";
+    }
+
+    .jem-import-mapping-table td:first-child code {
+        display: block;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .jem-import-mapping-table .jem-import-mapping-select {
+        width: 100%;
+    }
+
+    .jem-import-profile-row {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-profile-name input {
+        width: 100%;
     }
 }
 

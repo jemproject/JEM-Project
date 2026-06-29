@@ -110,6 +110,25 @@
             <option value="0">JUNPUBLISHED</option>
         </field>
 
+        <field name="access"
+               type="accesslevel"
+               label="JFIELD_ACCESS_LABEL"
+               description="JFIELD_ACCESS_DESC"
+               default="1"
+               class="form-select w-auto"
+        />
+
+        <field name="show_dates"
+               type="radio"
+               label="COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES"
+               description="COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES_DESC"
+               default="1"
+               class="btn-group btn-group-yesno"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
         <field name="ordering" type="hidden" default="0" />
     </fieldset>
 </form>

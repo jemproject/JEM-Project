@@ -29,8 +29,6 @@ class JemViewSpecialdays extends JemAdminView
         $this->state      = $this->get('State');
         $this->dayTypes   = JemHelper::calendarSpecialDayTypes();
         $this->years      = $this->get('AvailableYears');
-        $selectedYear     = (int) $this->state->get('filter.year', (int) date('Y'));
-        $this->years[$selectedYear] = $selectedYear;
         ksort($this->years);
 
         $errors = $this->get('Errors');
