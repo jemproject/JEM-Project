@@ -27,6 +27,7 @@ class JemViewImport extends JemAdminView
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        $wa->usePreset('choicesjs')->useScript('webcomponent.field-fancy-select');
 
         // Get data from the model
         $eventfields = $this->get('EventFields');
@@ -73,17 +74,23 @@ class JemViewImport extends JemAdminView
             array('key' => 'jem_types', 'label' => Text::_('COM_JEM_IMPORT_TYPES'), 'file' => 'jem-import-types.log.php'),
             array('key' => 'special_days', 'label' => Text::_('COM_JEM_SPECIAL_DAYS'), 'file' => 'jem-import-specialdays.log.php'),
         );
-        $this->externalImportPreview = $app->getUserState('com_jem.import.external_import.preview', null);
+        $activeImportPreview = (string) $app->getUserState('com_jem.import.active_preview', '');
+        $app->setUserState('com_jem.import.active_preview', null);
+        $this->externalImportPreview = $activeImportPreview === 'events' ? $this->normaliseImportPreviewState('com_jem.import.external_import.preview') : null;
         $this->externalCsvPreview = $this->externalImportPreview;
         $this->externalIcsPreview = null;
         $this->externalCategoryOptions = $this->getExternalCategoryOptions();
         $this->externalTypeOptions = $this->getExternalTypeOptions();
         $this->externalVenueOptions = $this->getExternalVenueOptions();
+        $this->externalImportProfileOptions = $this->getExternalImportProfileOptions('events');
+        $this->externalVenueImportPreview = $activeImportPreview === 'venues' ? $this->normaliseImportPreviewState('com_jem.import.external_venue_import.preview') : null;
+        $this->externalVenueImportProfileOptions = $this->getExternalImportProfileOptions('venues');
         $this->externalLanguageOptions = HTMLHelper::_('contentlanguage.existing', true, true);
         $this->externalPublishUpDefault = Factory::getDate()->toSql();
-        $this->specialDaysImportPreview = $app->getUserState('com_jem.import.specialdays_import.preview', null);
+        $this->specialDaysImportPreview = $activeImportPreview === 'specialdays' ? $this->normaliseImportPreviewState('com_jem.import.specialdays_import.preview') : null;
         $this->specialDaysCsvPreview = $this->specialDaysImportPreview;
         $this->specialDaysIcsPreview = null;
+        $this->specialDaysImportProfileOptions = $this->getExternalImportProfileOptions('specialdays');
         $this->specialDayTypeOptions = $this->getSpecialDayTypeOptions();
 
         // Do not show default prefix #__ but its replacement value
@@ -96,6 +103,34 @@ class JemViewImport extends JemAdminView
         $this->addToolbar();
 
         parent::display($tpl);
+    }
+
+    /**
+     * Load a preview state and discard stale empty previews.
+     *
+     * @param   string  $stateKey  Joomla user-state key.
+     *
+     * @return  array|null
+     */
+    protected function normaliseImportPreviewState($stateKey)
+    {
+        $app = Factory::getApplication();
+        $preview = $app->getUserState($stateKey, null);
+
+        if (empty($preview)) {
+            return null;
+        }
+
+        $hasRows = !empty($preview['rows']);
+        $hasRecords = !empty($preview['records']);
+        $hasValidRows = !empty($preview['valid_count']);
+
+        if (!$hasRows && !$hasRecords && !$hasValidRows) {
+            $app->setUserState($stateKey, null);
+            return null;
+        }
+
+        return $preview;
     }
 
     /**
@@ -120,6 +155,42 @@ class JemViewImport extends JemAdminView
         }
 
         return array_merge(array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_EXTERNAL_SELECT_CATEGORY'))), $rows);
+    }
+
+    /**
+     * Get saved import profile options for external event imports.
+     *
+     * @return array
+     */
+    protected function getExternalImportProfileOptions($context = 'events')
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $tables = $db->getTableList();
+            if (!in_array(str_replace('#__', $db->getPrefix(), '#__jem_import_profiles'), $tables, true)) {
+                return array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_PROFILE_NONE')));
+            }
+
+            $query = $db->getQuery(true)
+                ->select(array($db->quoteName('id', 'value'), $db->quoteName('title', 'text'), $db->quoteName('source_format')))
+                ->from($db->quoteName('#__jem_import_profiles'))
+                ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context))
+                ->where($db->quoteName('published') . ' = 1')
+                ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', Factory::getApplication()->getIdentity()->getAuthorisedViewLevels())) . ')')
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('title') . ' ASC');
+            $db->setQuery($query);
+            $rows = $db->loadObjectList() ?: array();
+        } catch (RuntimeException $e) {
+            $rows = array();
+        }
+
+        foreach ($rows as $row) {
+            $format = strtoupper((string) $row->source_format);
+            $row->text = $format ? $row->text . ' (' . $format . ')' : $row->text;
+        }
+
+        return array_merge(array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_PROFILE_NONE'))), $rows);
     }
 
     /**

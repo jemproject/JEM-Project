@@ -30,6 +30,7 @@ use Joomla\CMS\HTML\HTMLHelper;
     <h2 class="jem">
         <?php echo $this->daydate; ?>
     </h2>
+    <?php echo JemHelper::renderCalendarSpecialDayBadges($this->day); ?>
     <?php endif; ?>
 
     <?php if ($this->params->get('showintrotext')) : ?>

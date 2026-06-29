@@ -252,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <?php echo $this->form->getLabel('description'); ?>
                         <?php echo $this->form->getInput('description'); ?>
                     </div>
+
                 </div>
             </div>
 
@@ -321,6 +322,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3 jem-field-auto">
                         <?php echo $this->form->getLabel('published'); ?>
                         <?php echo $this->form->getInput('published'); ?>
+                    </div>
+                    <div class="mb-3 jem-field-auto">
+                        <?php echo $this->form->getLabel('access'); ?>
+                        <?php echo $this->form->getInput('access'); ?>
+                    </div>
+                    <div class="mb-3 jem-field-auto">
+                        <?php echo $this->form->getLabel('show_dates'); ?>
+                        <?php echo $this->form->getInput('show_dates'); ?>
                     </div>
                     <div class="mb-3 jem-field-short">
                         <?php echo $this->form->getLabel('ordering'); ?>

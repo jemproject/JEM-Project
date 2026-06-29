@@ -68,7 +68,9 @@ class JemModelSpecialday extends JemModelAdmin
                 'region' => '',
                 'city' => '',
                 'description' => '',
+                'show_dates' => 1,
                 'published' => 1,
+                'access' => 1,
                 'ordering' => 0,
             ));
         }

@@ -219,6 +219,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <?php echo $renderLabel('published'); ?>
                             <?php echo $this->form->getInput('published'); ?>
                         </div>
+                        <div class="mb-3 jem-field-auto">
+                            <?php echo $renderLabel('access'); ?>
+                            <?php echo $this->form->getInput('access'); ?>
+                        </div>
+                        <div class="mb-3 jem-field-auto">
+                            <?php echo $renderLabel('show_dates'); ?>
+                            <?php echo $this->form->getInput('show_dates'); ?>
+                        </div>
                     </div>
                 </div>
 

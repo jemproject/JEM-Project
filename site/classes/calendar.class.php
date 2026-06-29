@@ -342,13 +342,54 @@ class JemCalendar
         // add url
         if ($url) $this->calEventContentUrl[] = $url;
         else $this->calEventContentUrl[] = $this->calInit++;
+
+        $this->appendDayTitle($year, $month, $day, $content);
+    }
+
+    function appendDayTitle($year, $month, $day, $content)
+    {
+        $labels = is_array($content) ? $content : array($content);
+        $cleanLabels = array();
+
+        foreach ($labels as $label) {
+            $label = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $label), ENT_QUOTES, 'UTF-8')));
+
+            if ($label !== '' && !in_array($label, $cleanLabels, true)) {
+                $cleanLabels[] = $label;
+            }
+        }
+
+        if (!$cleanLabels) {
+            return;
+        }
+
+        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
+
+        if (!isset($this->calDayAttributes[$dayTime])) {
+            $this->calDayAttributes[$dayTime] = array(
+                'classes' => array(),
+                'style'   => '',
+                'title'   => '',
+                'data'    => array(),
+            );
+        }
+
+        $existingLabels = array_filter(array_map('trim', preg_split('/\r\n|\r|\n|, /', (string) $this->calDayAttributes[$dayTime]['title'])));
+
+        foreach ($cleanLabels as $label) {
+            if (!in_array($label, $existingLabels, true)) {
+                $existingLabels[] = $label;
+            }
+        }
+
+        $this->calDayAttributes[$dayTime]['title'] = implode("\n", $existingLabels);
     }
     /*
     ********************************************************************************
     PUBLIC setDayAttributes() -> sets extra class/style/title attributes on a day cell
     ********************************************************************************
     */
-    function setDayAttributes($year, $month, $day, $classes = array(), $style = '', $title = '')
+    function setDayAttributes($year, $month, $day, $classes = array(), $style = '', $title = '', $data = array())
     {
         $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
 
@@ -361,6 +402,7 @@ class JemCalendar
                 'classes' => array(),
                 'style'   => '',
                 'title'   => '',
+                'data'    => array(),
             );
         }
 
@@ -377,6 +419,16 @@ class JemCalendar
 
         if ((string) $title !== '') {
             $this->calDayAttributes[$dayTime]['title'] = (string) $title;
+        }
+
+        if (is_array($data)) {
+            foreach ($data as $name => $value) {
+                $name = strtolower(preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $name));
+
+                if ($name !== '') {
+                    $this->calDayAttributes[$dayTime]['data'][$name] = (string) $value;
+                }
+            }
         }
     }
     /*
@@ -794,6 +846,10 @@ class JemCalendar
 
         if (!empty($attributes['title'])) {
             $html .= ' title="' . htmlspecialchars((string) $attributes['title'], ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        foreach (($attributes['data'] ?? array()) as $name => $value) {
+            $html .= ' data-' . htmlspecialchars((string) $name, ENT_COMPAT, 'UTF-8') . '="' . htmlspecialchars((string) $value, ENT_COMPAT, 'UTF-8') . '"';
         }
 
         return array(

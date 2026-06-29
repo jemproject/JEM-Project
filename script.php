@@ -1070,6 +1070,7 @@ class com_jemInstallerScript
     private function checkColumnsIntoDatabase()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $existingTables = $db->getTableList();
 
         // Array the columns to check
         $columnsToCheck = [
@@ -1078,11 +1079,19 @@ class com_jemInstallerScript
             ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
             ['table' => '#__jem_attachments','column' => 'description',   'definition' => "VARCHAR(255) DEFAULT NULL AFTER `name`"],
             ['table' => '#__jem_attachments','column' => 'frontend',      'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `icon`"],
-            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"]
+            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"],
+            ['table' => '#__jem_special_days','column' => 'show_dates',   'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `description`"],
+            ['table' => '#__jem_special_days','column' => 'access',       'definition' => "INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `published`"]
         ];
 
         // check if the each column exists
         foreach ($columnsToCheck as $data) {
+            $tableName = str_replace('#__', $db->getPrefix(), $data['table']);
+
+            if (!in_array($tableName, $existingTables, true)) {
+                continue;
+            }
+
             $query = 'SHOW COLUMNS FROM ' . $db->quoteName($data['table']) . ' WHERE Field = ' . $db->quote($data['column']);
             $db->setQuery($query);
             $result = $db->loadResult();
@@ -1092,7 +1101,25 @@ class com_jemInstallerScript
                 $db->setQuery($alterQuery);
                 $db->execute();
             }
-        }    
+        }
+
+        if (in_array(str_replace('#__', $db->getPrefix(), '#__jem_special_days'), $existingTables, true)) {
+            $db->setQuery('SHOW INDEX FROM ' . $db->quoteName('#__jem_special_days') . ' WHERE Key_name = ' . $db->quote('idx_access'));
+
+            if (!$db->loadResult()) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_special_days') . ' ADD KEY ' . $db->quoteName('idx_access') . ' (' . $db->quoteName('access') . ')');
+                $db->execute();
+            }
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_special_days'))
+                ->set($db->quoteName('show_dates') . ' = 0')
+                ->where($db->quoteName('alias') . ' = ' . $db->quote('weekend'))
+                ->where($db->quoteName('day_type') . ' = ' . $db->quote('Weekend'))
+                ->where($db->quoteName('weekdays') . ' IN (' . $db->quote('0,6') . ', ' . $db->quote('6,0') . ')');
+            $db->setQuery($query);
+            $db->execute();
+        }
     }
 
     /**

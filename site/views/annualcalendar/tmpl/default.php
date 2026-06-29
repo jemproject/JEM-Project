@@ -19,6 +19,7 @@ $showDayEventCount = (bool) $this->params->get('annual_show_day_event_count', 0)
 $eventUseCategoryBackground = !empty($this->params->get('eventbg_usecatcolor', 0));
 $today = (new DateTimeImmutable())->format('Y-m-d');
 $eventsByDate = array();
+$eventDateKeys = array();
 $countcatevents = array();
 $countvenueevents = array();
 $dayLinkTarget = (string) $this->params->get('annual_day_link_target', 'timetable');
@@ -33,36 +34,58 @@ $createDayLink = static function (DateTimeImmutable $date) use ($dayLinkTarget, 
 $specialDaysByDate = JemHelper::calendarSpecialDays($this->periodStart->format('Y-m-d'), $this->periodEnd->format('Y-m-d'));
 
 $getSpecialDayPresentation = static function (array $specialDays) {
-    if (!$specialDays) {
-        return array('', '', '');
-    }
+    $presentation = JemHelper::calendarSpecialDayPresentation($specialDays);
 
-    $primary = reset($specialDays);
-    $color = !empty($primary['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $primary['color'])
-        ? (string) $primary['color']
-        : '#d1d5db';
-    $textColor = '#111827';
-    if (preg_match('/^#([0-9a-fA-F]{6})$/', $color, $matches)) {
-        $hex = $matches[1];
-        $red = hexdec(substr($hex, 0, 2));
-        $green = hexdec(substr($hex, 2, 2));
-        $blue = hexdec(substr($hex, 4, 2));
-        $textColor = (($red * 299 + $green * 587 + $blue * 114) / 1000) < 150 ? '#ffffff' : '#111827';
-    }
+    return array(
+        $presentation['classes'] ? ' ' . implode(' ', $presentation['classes']) : '',
+        $presentation['style'],
+        $presentation['title'],
+        $presentation['layers'] ? ' data-special-day-layers="' . htmlspecialchars(json_encode($presentation['layers']), ENT_COMPAT, 'UTF-8') . '"' : '',
+    );
+};
+$buildDayTitle = static function (array $specialDays, array $dayEvents) {
     $labels = array();
+    $specialTitle = JemHelper::calendarSpecialDayPresentation($specialDays)['title'] ?? '';
 
-    foreach ($specialDays as $specialDay) {
-        $label = trim((string) ($specialDay['title'] ?: $specialDay['type']));
+    foreach (array_filter(array_map('trim', explode(',', (string) $specialTitle))) as $label) {
         if ($label !== '' && !in_array($label, $labels, true)) {
             $labels[] = $label;
         }
     }
 
-    return array(
-        ' is-special-day',
-        '--jem-calendar-special-day-bg:' . $color . ';--jem-calendar-special-day-color:' . $textColor . ';color:' . $textColor . ';',
-        implode(', ', $labels),
-    );
+    foreach ($dayEvents as $event) {
+        $time = '';
+        if (!empty($event['times']) && $event['times'] !== '00:00:00') {
+            $time = JemOutput::formattime($event['times']);
+        }
+        if (!empty($event['endtimes']) && $event['endtimes'] !== '00:00:00') {
+            $time .= ($time ? ' - ' : '') . JemOutput::formattime($event['endtimes']);
+        }
+
+        $label = trim(($time !== '' ? $time . ' ' : '') . (string) ($event['title'] ?? ''));
+        if ($label !== '' && !in_array($label, $labels, true)) {
+            $labels[] = $label;
+        }
+    }
+
+    return implode("\n", $labels);
+};
+$getAnnualMarkerClass = static function ($durationDays) {
+    $durationDays = max(1, (int) $durationDays);
+
+    if ($durationDays === 1) {
+        return 'jem-annual-marker-one-day';
+    }
+
+    if ($durationDays <= 3) {
+        return 'jem-annual-marker-two-three-days';
+    }
+
+    if ($durationDays <= 7) {
+        return 'jem-annual-marker-four-seven-days';
+    }
+
+    return 'jem-annual-marker-eight-plus-days';
 };
 
 foreach ($this->rows as $row) {
@@ -70,15 +93,23 @@ foreach ($this->rows as $row) {
         continue;
     }
 
-    if (isset($row->multi) && $row->multi !== 'first') {
-        continue;
-    }
-
-    $eventStartDate = new DateTimeImmutable($row->dates);
-    $eventEndDate = JemHelper::isValidDate($row->enddates) && $row->enddates >= $row->dates
-        ? new DateTimeImmutable($row->enddates)
-        : $eventStartDate;
-    $isMultidayEvent = $eventEndDate > $eventStartDate;
+    $baseStartDate = !empty($row->multistartdate) && JemHelper::isValidDate($row->multistartdate)
+        ? new DateTimeImmutable($row->multistartdate)
+        : new DateTimeImmutable($row->dates);
+    $baseEndDateValue = !empty($row->multienddate) && JemHelper::isValidDate($row->multienddate)
+        ? $row->multienddate
+        : $row->enddates;
+    $baseEndDate = JemHelper::isValidDate($baseEndDateValue) && $baseEndDateValue >= $baseStartDate->format('Y-m-d')
+        ? new DateTimeImmutable($baseEndDateValue)
+        : $baseStartDate;
+    $eventStartDate = (isset($row->multi) && $row->multi !== 'first')
+        ? new DateTimeImmutable($row->dates)
+        : $baseStartDate;
+    $eventEndDate = (isset($row->multi) && $row->multi !== 'first')
+        ? new DateTimeImmutable($row->dates)
+        : $baseEndDate;
+    $isMultidayEvent = $baseEndDate > $baseStartDate;
+    $eventDurationDays = ((int) $baseStartDate->diff($baseEndDate)->days) + 1;
     $eventStartDate = $eventStartDate < $this->periodStart ? $this->periodStart : $eventStartDate;
     $eventEndDate = $eventEndDate > $this->periodEnd ? $this->periodEnd : $eventEndDate;
     $categoryClasses = array();
@@ -114,7 +145,15 @@ foreach ($this->rows as $row) {
     }
 
     for ($eventDate = $eventStartDate; $eventDate <= $eventEndDate; $eventDate = $eventDate->modify('+1 day')) {
-        $eventsByDate[$eventDate->format('Y-m-d')][] = array(
+        $eventDateKey = $eventDate->format('Y-m-d');
+        $dedupeKey = (int) ($row->id ?? 0) . ':' . $eventDateKey;
+
+        if (isset($eventDateKeys[$dedupeKey])) {
+            continue;
+        }
+
+        $eventDateKeys[$dedupeKey] = true;
+        $eventsByDate[$eventDateKey][] = array(
             'title' => $row->title,
             'dates' => $row->dates,
             'times' => $row->times,
@@ -128,6 +167,7 @@ foreach ($this->rows as $row) {
             'venue' => $venueId > 0 ? 'venue' . $venueId : '',
             'colors' => array_values($categoryColors),
             'is_multiday' => $isMultidayEvent,
+            'duration_days' => $eventDurationDays,
             'link' => Route::_(JemHelperRoute::getEventRoute($row->slug)),
         );
     }
@@ -209,7 +249,9 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             <?php include JPATH_COMPONENT . '/views/calendar/tmpl/default_legend.php'; ?>
             <div class="calendarLegends mt-3 jem-annual-event-marker-legend">
                 <span class="me-3">&#9679; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY'); ?></span>
-                <span>&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY'); ?></span>
+                <span class="me-3">&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_TWO_THREE_DAYS'); ?></span>
+                <span class="me-3">&#9650; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_FOUR_SEVEN_DAYS'); ?></span>
+                <span>&#9733; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_EIGHT_PLUS_DAYS'); ?></span>
             </div>
         </div>
     <?php endif; ?>
@@ -262,7 +304,8 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $date = $dayDate->format('Y-m-d');
                             $dayEvents = $eventsByDate[$date] ?? array();
                             $specialDays = $specialDaysByDate[$date] ?? array();
-                            [$specialClass, $specialStyle, $specialTitle] = $getSpecialDayPresentation($specialDays);
+                            [$specialClass, $specialStyle, $specialTitle, $specialLayerData] = $getSpecialDayPresentation($specialDays);
+                            $dayTitle = $buildDayTitle($specialDays, $dayEvents);
 
                             if (!$showEmptyDays && empty($dayEvents)) {
                                 continue;
@@ -271,7 +314,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $monthHasVisibleDays = true;
                             $dayLink = $createDayLink($dayDate);
                             ?>
-                            <div class="jem-annual-agenda-day<?php echo empty($dayEvents) ? ' is-empty' : ' has-events'; ?><?php echo $specialClass; ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $specialTitle ? ' title="' . $this->escape($specialTitle) . '"' : ''; ?>>
+                            <div class="jem-annual-agenda-day<?php echo empty($dayEvents) ? ' is-empty' : ' has-events'; ?><?php echo $specialClass; ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $dayTitle ? ' title="' . $this->escape($dayTitle) . '"' : ''; ?><?php echo $specialLayerData; ?>>
                                 <a class="jem-annual-agenda-date" href="<?php echo $dayLink; ?>">
                                     <span class="jem-annual-agenda-day-number"><?php echo (int) $dayDate->format('j'); ?></span>
                                     <span class="jem-annual-agenda-weekday"><?php echo HTMLHelper::_('date', $date, 'D'); ?></span>
@@ -367,13 +410,18 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                         $date = $cellDate->format('Y-m-d');
                         $dayEvents = $eventsByDate[$date] ?? array();
                         $specialDays = $specialDaysByDate[$date] ?? array();
-                        [$specialClass, $specialStyle, $specialTitle] = $getSpecialDayPresentation($specialDays);
+                        [$specialClass, $specialStyle, $specialTitle, $specialLayerData] = $getSpecialDayPresentation($specialDays);
                         $dayLink = $createDayLink($cellDate);
                         $dayClass = 'jem-annual-day' . ($date === $today ? ' is-today' : '') . (!empty($dayEvents) ? ' has-events' : '') . $specialClass;
+                        $dayTitle = $buildDayTitle($specialDays, $dayEvents);
                         $popoverAttributes = '';
 
                         if (!empty($dayEvents)) {
                             $popoverHtml = '<div class="jem-annual-popover-content">';
+                            $specialBadges = JemHelper::renderCalendarSpecialDayBadges($date, $specialDays);
+                            if ($specialBadges !== '') {
+                                $popoverHtml .= $specialBadges;
+                            }
                             $popoverHtml .= '<div class="jem-annual-popover-count">' . Text::plural('COM_JEM_ANNUALCALENDAR_EVENTS_COUNT', count($dayEvents)) . '</div>';
                             $popoverHtml .= '<ul class="jem-annual-popover-events">';
 
@@ -385,7 +433,7 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                             $popoverAttributes = ' data-bs-content="' . htmlspecialchars($popoverHtml, ENT_QUOTES, 'UTF-8') . '" data-bs-custom-class="jem-annual-popover"';
                         }
                         ?>
-                        <div class="<?php echo $dayClass; ?>" data-day-link="<?php echo $dayLink; ?>" role="link" tabindex="0" aria-label="<?php echo $this->escape($date); ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $specialTitle ? ' title="' . $this->escape($specialTitle) . '"' : ''; ?>>
+                        <div class="<?php echo $dayClass; ?>" data-day-link="<?php echo $dayLink; ?>" role="link" tabindex="0" aria-label="<?php echo $this->escape($date); ?>"<?php echo $specialStyle ? ' style="' . $this->escape($specialStyle) . '"' : ''; ?><?php echo $dayTitle ? ' title="' . $this->escape($dayTitle) . '"' : ''; ?><?php echo $specialLayerData; ?>>
                             <a class="jem-annual-day-number" href="<?php echo $dayLink; ?>" aria-label="<?php echo $this->escape($date); ?>">
                                 <?php echo (int) $cellDate->format('j'); ?>
                             </a>
@@ -411,8 +459,9 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
                                         $color = !empty($event['colors']) ? reset($event['colors']) : '';
                                         $hasCategoryColor = $color !== '';
                                         $style = $hasCategoryColor ? 'background-color:' . $this->escape($color) . ';' : '';
+                                        $durationClass = $getAnnualMarkerClass($event['duration_days'] ?? 1);
                                         ?>
-                                        <span class="event-filter jem-annual-marker<?php echo !empty($event['is_multiday']) ? ' jem-annual-marker-multiday' : ''; ?><?php echo $hasCategoryColor ? '' : ' jem-annual-marker-no-color'; ?> <?php echo $this->escape($event['classes']); ?>"
+                                        <span class="event-filter jem-annual-marker <?php echo $durationClass; ?><?php echo $hasCategoryColor ? '' : ' jem-annual-marker-no-color'; ?> <?php echo $this->escape($event['classes']); ?>"
                                             data-categories="<?php echo $this->escape($event['categories']); ?>"
                                             data-venue="<?php echo $this->escape($event['venue']); ?>"
                                             <?php echo $style ? 'style="' . $style . '"' : ''; ?>
@@ -448,7 +497,9 @@ HTMLHelper::_('bootstrap.popover', '.jem-annual-day-popover', array('trigger' =>
             <?php include JPATH_COMPONENT . '/views/calendar/tmpl/default_legend.php'; ?>
             <div class="calendarLegends mt-3 jem-annual-event-marker-legend">
                 <span class="me-3">&#9679; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY'); ?></span>
-                <span>&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY'); ?></span>
+                <span class="me-3">&#9632; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_TWO_THREE_DAYS'); ?></span>
+                <span class="me-3">&#9650; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_FOUR_SEVEN_DAYS'); ?></span>
+                <span>&#9733; <?php echo Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_EIGHT_PLUS_DAYS'); ?></span>
             </div>
         </div>
     <?php endif; ?>

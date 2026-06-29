@@ -323,7 +323,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   `region` varchar(100) NOT NULL DEFAULT '',
   `city` varchar(100) NOT NULL DEFAULT '',
   `description` text DEFAULT NULL,
+  `show_dates` tinyint(1) NOT NULL DEFAULT 1,
   `published` tinyint(1) NOT NULL DEFAULT 1,
+  `access` int(10) unsigned NOT NULL DEFAULT 1,
   `ordering` int(11) NOT NULL DEFAULT 0,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int(11) unsigned NOT NULL DEFAULT 0,
@@ -335,8 +337,30 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   KEY `idx_published_dates` (`published`, `start_date`, `end_date`),
   KEY `idx_weekdays` (`weekdays`),
   KEY `idx_day_type` (`day_type`),
+  KEY `idx_access` (`access`),
   KEY `idx_location` (`country`, `region`, `city`),
   KEY `idx_checkout` (`checked_out`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__jem_import_profiles` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `context` varchar(50) NOT NULL DEFAULT 'events',
+  `source_format` varchar(20) NOT NULL DEFAULT 'csv',
+  `source_signature` varchar(64) DEFAULT NULL,
+  `mapping` mediumtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT 1,
+  `access` int(10) unsigned NOT NULL DEFAULT 1,
+  `ordering` int(11) NOT NULL DEFAULT 0,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `modified` datetime NULL DEFAULT NULL,
+  `modified_by` int(11) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_context_format` (`context`, `source_format`),
+  KEY `idx_published` (`published`),
+  KEY `idx_access` (`access`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
@@ -742,5 +766,5 @@ INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
 
-INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `published`, `ordering`, `created`) VALUES
-(1, 'Saturday and Sunday', 'weekend', 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 1, 1, NOW());
+INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
+(1, 'Saturday and Sunday', 'weekend', 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());

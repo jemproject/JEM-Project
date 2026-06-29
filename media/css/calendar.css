@@ -503,14 +503,41 @@ div#jem .rowcolor {
     width: 0.65rem;
 }
 
+.jem-annual-calendar .jem-annual-marker-two-three-days,
 .jem-annual-calendar .jem-annual-marker-multiday {
     border-radius: 2px;
+}
+
+.jem-annual-calendar .jem-annual-marker-four-seven-days {
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    height: 0.72rem;
+    width: 0.78rem;
+}
+
+.jem-annual-calendar .jem-annual-marker-eight-plus-days {
+    border: 0;
+    border-radius: 0;
+    clip-path: polygon(50% 0, 61% 34%, 98% 35%, 68% 56%, 79% 91%, 50% 70%, 21% 91%, 32% 56%, 2% 35%, 39% 34%);
+    height: 0.78rem;
+    width: 0.78rem;
 }
 
 .jem-annual-calendar .jem-annual-marker-no-color {
     background-color: transparent !important;
     border: 2px solid #64748b;
     box-shadow: none;
+}
+
+.jem-annual-calendar .jem-annual-marker-four-seven-days.jem-annual-marker-no-color {
+    background-color: #64748b !important;
+    border: 0;
+}
+
+.jem-annual-calendar .jem-annual-marker-eight-plus-days.jem-annual-marker-no-color {
+    background-color: #64748b !important;
+    border: 0;
 }
 
 .jem-annual-calendar .jem-annual-marker-more {
@@ -700,7 +727,7 @@ div#jem .rowcolor {
 #jem .jem-annual-special-days-table {
     border-collapse: collapse;
     font-size: 0.9rem;
-    min-width: 44rem;
+    min-width: 36rem;
     width: 100%;
 }
 
@@ -716,15 +743,6 @@ div#jem .rowcolor {
     background: #f5f6f8;
     color: #3e4856;
     font-weight: 700;
-}
-
-#jem .jem-annual-special-days-color {
-    text-align: center;
-    width: 4.5rem;
-}
-
-#jem .jem-annual-special-days-table th:first-child {
-    text-align: center;
 }
 
 #jem .jem-annual-special-days-swatch {
@@ -749,13 +767,58 @@ div#jem .rowcolor {
     color: #1d2733;
     font-weight: 700;
     white-space: nowrap;
-    width: 10rem;
+    width: 15rem;
+}
+
+#jem .jem-annual-special-days-filter {
+    align-items: center;
+    color: #1d2733 !important;
+    display: inline-flex;
+    gap: 0.45rem;
+    justify-content: flex-start;
+    max-width: 100%;
+    text-align: left;
+}
+
+#jem .jem-annual-special-days-filter:hover,
+#jem .jem-annual-special-days-filter:focus,
+#jem .jem-annual-special-days-filter:active {
+    color: #1d2733 !important;
+}
+
+#jem .jem-annual-special-days-filter-color {
+    align-items: center;
+    border-right: 1px solid #cbd3dd;
+    display: inline-flex;
+    flex: 0 0 auto;
+    margin-right: 0.15rem;
+    padding-right: 0.55rem;
+}
+
+#jem .jem-annual-special-days-filter-name {
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #jem .jem-annual-special-days-description {
     color: #5f6670;
     line-height: 1.35;
     width: 100%;
+}
+
+#jem .is-special-day.is-special-day-filtered,
+#jem table.month td.is-special-day.is-special-day-filtered,
+.jem-annual-calendar .jem-annual-day.is-special-day.is-special-day-filtered,
+.jem-annual-calendar .jem-annual-agenda-day.is-special-day.is-special-day-filtered {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+#jem .is-special-day.is-special-day-filtered .jem-annual-day-number {
+    color: inherit !important;
 }
 
 @media (max-width: 75rem) {
@@ -847,6 +910,38 @@ div#jem .rowcolor {
 
 .custom-tip .location .legend {
     font-weight: bold;
+}
+
+.jem-special-day-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.18rem;
+    margin: 0.25rem 0 0;
+    line-height: 1.2;
+}
+
+.jem-special-day-badge {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 0.16rem 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 4px;
+    background: var(--jem-special-day-badge-color, #6b7280);
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+    font-size: 1rem;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+    .jem-special-day-badge {
+        border-color: rgba(255, 255, 255, 0.28);
+        background: var(--jem-special-day-badge-color, #6b7280);
+        color: var(--jem-special-day-badge-text-color, #ffffff);
+    }
 }
 
 
@@ -942,7 +1037,8 @@ div#jem .rowcolor {
 }
 
 #jlcalendarlegend .eventCat,
-#jlcalendarlegend .eventVenues {
+#jlcalendarlegend .eventVenues,
+#jlcalendarlegend .eventSpecialDayType {
     float: left;
     cursor: pointer;
     box-shadow: 2px 2px 2px #888888;
@@ -959,6 +1055,7 @@ div#jem .rowcolor {
 #jlcalendarlegend .calendarButton,
 #jlcalendarlegend .eventCat,
 #jlcalendarlegend .eventVenues,
+#jlcalendarlegend .eventSpecialDayType,
 #jlcalendarlegend .calendarButton:visited,
 #jlcalendarlegend .eventCat:visited,
 #jlcalendarlegend .eventVenues:visited,
@@ -1046,10 +1143,20 @@ div#jem .rowcolor {
 }
 
 #jlcalendarlegend .eventCat.catoff,
-#jlcalendarlegend .eventVenues.catoff {
-    color: lightgrey;
+#jlcalendarlegend .eventVenues.catoff,
+#jlcalendarlegend .eventSpecialDayType.catoff,
+#jem .jem-annual-special-days-filter.catoff {
+    color: #6c757d !important;
+    background-color: #f1f3f5;
+    border-color: #adb5bd;
     font-style: italic;
     opacity: 0.55;
+}
+
+#jem .jem-annual-special-days-filter.catoff:hover,
+#jem .jem-annual-special-days-filter.catoff:focus,
+#jem .jem-annual-special-days-filter.catoff:active {
+    color: #6c757d !important;
 }
 
 div#buttonshowall,
