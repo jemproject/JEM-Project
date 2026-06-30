@@ -128,6 +128,7 @@ class JemViewTypeevents extends JemView
         $pagetitle = Text::sprintf('COM_JEM_TYPEEVENTS_TITLE', $typeName);
 
         $pathway->addItem($pagetitle);
+        $params->set('page_heading', $pagetitle);
 
         if ($app->get('sitename_pagetitles', 0) == 1) {
             $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
