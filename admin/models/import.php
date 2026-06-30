@@ -11,12 +11,14 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\User\User;
+
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 
 /**
  * JEM Component Import Model
@@ -129,7 +131,6 @@ class JemModelImport extends BaseDatabaseModel
      * Helper function to return table fields of a given table
      *
      * @param  string $tablename The name of the table we want to get fields from
-
      * @return array An array with the fields of the table
      */
     private function getFields($tablename)
@@ -152,7 +153,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into categories table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -166,7 +167,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into cats_event_relations table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -180,7 +181,7 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
-     * Import data corresponding to fieldsname into events table
+     * Import data corresponding to fieldsname into venues table
      *
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
@@ -258,6 +259,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0;
             }
 
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
             $this->normaliseImportedManagerUserIds($values);
 
             $object = Table::getInstance($tableclass, '');
@@ -360,6 +362,7 @@ class JemModelImport extends BaseDatabaseModel
      * Import data corresponding to fieldsname into events table
      *
      * @param  string  $tablename  Name of the table where to add the data
+     * @param  string  $prefix     Table class prefix
      * @param  array   $fieldsname Name of the fields
      * @param  array   $data       The records
      * @param  boolean $replace    Replace if ID already exists
@@ -404,6 +407,7 @@ class JemModelImport extends BaseDatabaseModel
         if (!empty($presetkey)) {
             $replace = false; // useless without imported key values
         }
+
         // we MUST reset key 'id' ourself
         $pk = $replace ? false : 'id';
 
@@ -412,18 +416,22 @@ class JemModelImport extends BaseDatabaseModel
         $objectname = get_class($object);
         $rootkey = $this->_rootkey();
 
-        $events = array(); // collects cat event relations
+        $events = []; // collects cat event relations
 
         // parse each row
         foreach ($data as $row) {
-            $values = array();
+            $values = [];
+
             if ($presetkey) {
                 $values[$presetkey] = 0;
             }
+
             // parse each specified field and retrieve corresponding value for the record
             foreach ($fieldsname as $k => $field) {
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
             }
+
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
                 if ((int) ($values['id'] ?? 0) === 1 || strtolower(trim($values['catname'] ?? '')) === 'root') {
@@ -818,7 +826,6 @@ class JemModelImport extends BaseDatabaseModel
      *
      * @param  string $tablename The name of the table
      * @param  array  $data      The data to work with
-     * @param  int    $j15       Import from Joomla! 1.5
      * @return array  The changed data
      *
      * @Todo   potentially dangerous references to "foreign" objects:
@@ -826,7 +833,7 @@ class JemModelImport extends BaseDatabaseModel
      *         contact id: contact for events
      *         access id: view access level for events, categories
      */
-    public function transformEventlistData($tablename, &$data, $j15)
+    public function transformEventlistData($tablename, &$data)
     {
         // attachments - MUST be transformed after potential objects are stored!
         if (strcasecmp($tablename, 'attachments') === 0) {
@@ -836,13 +843,6 @@ class JemModelImport extends BaseDatabaseModel
             $valid_user_ids     = $this->_getUserIds();
 
             foreach ($data as $row) {
-                // Set view access level to e.g. event's view level or default view level
-                if (isset($row->access) && $j15) {
-                    // on Joomla! 1.5 levels are 0 (public), 1 (registered), 2 (special)
-                    // now we have (normally) 1 (public), 2 (registered), 3 (special), ...
-                    // (hopefully admin hadn't changed this default levels, but we have no other chance)
-                    ++$row->access;
-                }
                 if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
                     $row->access = $this->_getObjectViewLevel($row->object, $default_view_level);
                 }
@@ -971,7 +971,7 @@ class JemModelImport extends BaseDatabaseModel
                     } else {
                         // no catsid field, so we should have cats_event_relations table
                         // try to find unique level
-                        $row->access = $this->_getEventViewLevelFromCats($row->id, $default_view_level, $j15);
+                        $row->access = $this->_getEventViewLevelFromCats($row->id, $default_view_level);
                         if (!in_array($row->access, $valid_view_levels)) {
                             $row->access = $default_view_level;
                         }
@@ -1069,6 +1069,7 @@ class JemModelImport extends BaseDatabaseModel
 
         foreach ($data as $row) {
             $object = Table::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
+            $row = (object) JemImportSecurityHelper::sanitiseRecord(get_object_vars($row), $tablename);
             $object->bind($row, $ignore);
 
             // Make sure the data is valid
@@ -1139,11 +1140,11 @@ class JemModelImport extends BaseDatabaseModel
             $fromFolder = JPATH_SITE.'/images/eventlist/'.$folder.'/';
             $toFolder   = JPATH_SITE.'/images/jem/'.$folder.'/';
 
-            if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+            if (is_dir($fromFolder) && is_dir($toFolder)) {
                 $files = Folder::files($fromFolder, null, false, false);
 
                 foreach ($files as $file) {
-                    if (!File::exists($toFolder.$file)) {
+                    if (!is_file($toFolder.$file)) {
                         File::copy($fromFolder.$file, $toFolder.$file);
                     }
                 }
@@ -1161,14 +1162,14 @@ class JemModelImport extends BaseDatabaseModel
         $fromFolder = JPATH_SITE.'/media/com_eventlist/attachments/';
         $toFolder   = JPATH_SITE.'/'.$jemsettings->attachments_path.'/';
 
-        if (!Folder::exists($toFolder)) {
+        if (!is_dir($toFolder)) {
             Folder::create($toFolder);
         }
 
-        if (Folder::exists($fromFolder) && Folder::exists($toFolder)) {
+        if (is_dir($fromFolder) && is_dir($toFolder)) {
             $files = Folder::files($fromFolder, null, false, false);
             foreach ($files as $file) {
-                if (!File::exists($toFolder.$file)) {
+                if (!is_file($toFolder.$file)) {
                     File::copy($fromFolder.$file, $toFolder.$file);
                 }
             }
@@ -1177,14 +1178,14 @@ class JemModelImport extends BaseDatabaseModel
             // so we need to walk through all these subfolders
             $folders = Folder::folders($fromFolder, null, false, false);
             foreach ($folders as $folder) {
-                if (!Folder::exists($toFolder.$folder)) {
+                if (!is_dir($toFolder.$folder)) {
                     Folder::create($toFolder.$folder);
                 }
 
                 $files = Folder::files($fromFolder.$folder, null, false, false);
                 $folder .= '/';
                 foreach ($files as $file) {
-                    if (!File::exists($toFolder.$folder.$file)) {
+                    if (!is_file($toFolder.$folder.$file)) {
                         File::copy($fromFolder.$folder.$file, $toFolder.$folder.$file);
                     }
                 }
@@ -1258,12 +1259,9 @@ class JemModelImport extends BaseDatabaseModel
      *
      * @param  int     $eventId      ID of the event
      * @param  int     $defaultLevel Level returned if no one found
-     * @param  boolean $j15          Do we need to increment found level?
-     *                               On Joomla! 1.5 levels have IDs 0, 1, 2 - we need 1, 2, 3, ...
-     *
      * @return int     The view level found or $defaultLevel.
      */
-    protected function _getEventViewLevelFromCats($eventId, $defaultLevel, $j15 = false)
+    protected function _getEventViewLevelFromCats($eventId, $defaultLevel)
     {
         $ret = $defaultLevel;
 
@@ -1279,7 +1277,7 @@ class JemModelImport extends BaseDatabaseModel
         if (is_array($result)) {
             $result = array_unique($result);
             if (count($result) == 1) {
-                $ret = array_pop($result) + ($j15 ? 1 : 0);
+                $ret = array_pop($result);
             }
         }
 

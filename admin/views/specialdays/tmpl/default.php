@@ -121,6 +121,16 @@ $renderLocation = function ($item) {
         cursor: default;
         opacity: .55;
     }
+
+    #specialDayList > tbody > tr:nth-of-type(odd) > * {
+        --bs-table-accent-bg: transparent;
+        background-color: var(--bs-table-bg, #fff);
+    }
+
+    #specialDayList > tbody > tr:nth-of-type(even) > * {
+        --bs-table-accent-bg: rgba(0, 0, 0, .03);
+        background-color: var(--bs-table-striped-bg, rgba(0, 0, 0, .03));
+    }
 </style>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=specialdays'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -162,7 +172,8 @@ $renderLocation = function ($item) {
                     <select name="filter_day_type" class="form-select" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('COM_JEM_SPECIAL_DAY_FILTER_TYPE'); ?></option>
                         <?php foreach ($this->dayTypes as $type) : ?>
-                            <option value="<?php echo $this->escape($type['name']); ?>"<?php echo $this->state->get('filter.day_type') === $type['name'] ? ' selected' : ''; ?>>
+                            <?php $typeValue = !empty($type['id']) ? (string) (int) $type['id'] : (string) $type['name']; ?>
+                            <option value="<?php echo $this->escape($typeValue); ?>"<?php echo (string) $this->state->get('filter.day_type') === $typeValue ? ' selected' : ''; ?>>
                                 <?php echo $this->escape($type['name']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -187,7 +198,7 @@ $renderLocation = function ($item) {
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TITLE', 'a.title', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:12%">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type_id', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:22%">
                         <?php echo Text::_('COM_JEM_SPECIAL_DAY_RULE'); ?>
@@ -211,7 +222,9 @@ $renderLocation = function ($item) {
                 <?php
                 $editUrl = Route::_('index.php?option=com_jem&task=specialday.edit&id=' . (int) $item->id);
                 $dayType = $item->day_type ?? '';
-                $type = $this->dayTypes[$dayType] ?? array('name' => $dayType, 'color' => '#d1d5db');
+                $type = !empty($item->day_type_id) && isset($this->dayTypesById[(int) $item->day_type_id])
+                    ? $this->dayTypesById[(int) $item->day_type_id]
+                    : ($this->dayTypes[$dayType] ?? array('name' => $dayType, 'color' => '#d1d5db'));
                 $position = (int) ($i + 1);
                 ?>
                 <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>">

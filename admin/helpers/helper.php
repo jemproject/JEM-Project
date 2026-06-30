@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\Registry\Registry;
 
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -125,6 +125,12 @@ class JemHelperBackend
             );
 
             JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_IMPORT_PROFILES'),
+                'index.php?option=com_jem&amp;view=importprofiles',
+                $vName == 'importprofiles'
+            );
+
+            JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_EXPORT_DATA'),
                 'index.php?option=com_jem&amp;view=export',
                 $vName == 'export'
@@ -149,12 +155,12 @@ class JemHelperBackend
      *
      * @param    int        The category ID.
      *
-     * @return    CMSObject
+     * @return    Registry
      */
     public static function getActions($categoryId = 0)
     {
         $user    = JemFactory::getUser();
-        $result    = new CMSObject;;
+        $result  = new Registry();
 
         if (empty($categoryId)) {
             $assetName = 'com_jem';
@@ -168,7 +174,7 @@ class JemHelperBackend
         $actions = Access::getActionsFromFile(JPATH_ADMINISTRATOR.'/components/com_jem/access.xml',"/access/section[@name='".$level."']/");
 
         foreach ($actions as $action) {
-            $result->set($action->name,    $user->authorise($action->name, $assetName));
+            $result->set($action->name, $user->authorise($action->name, $assetName));
         }
 
         return $result;

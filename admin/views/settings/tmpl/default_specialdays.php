@@ -9,14 +9,16 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
+require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
 $group = 'globalattribs';
 $deleteText = htmlspecialchars(Text::_('JACTION_DELETE'), ENT_QUOTES, 'UTF-8');
 $yesText = htmlspecialchars(Text::_('JYES'), ENT_QUOTES, 'UTF-8');
 $noText = htmlspecialchars(Text::_('JNO'), ENT_QUOTES, 'UTF-8');
 $removeUsedText = htmlspecialchars(Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAY_TYPE_REMOVE_USED_CONFIRM'), ENT_QUOTES, 'UTF-8');
-$rawTypes = (string) $this->settings->get('calendar_special_day_types', "Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0");
-$rows = array();
+$rows = array_values(JemHelper::calendarSpecialDayTypes());
 $usedDayTypes = array();
 
 try {
@@ -32,36 +34,8 @@ try {
     $usedDayTypes = array();
 }
 
-foreach (preg_split('/\R/', $rawTypes) as $line) {
-    $line = trim($line);
-
-    if ($line === '') {
-        continue;
-    }
-
-    $parts = array_map('trim', explode('|', $line));
-    $name = $parts[0] ?? '';
-
-    if ($name === '') {
-        continue;
-    }
-
-    $color = $parts[1] ?? '#d1d5db';
-    $blockEvents = (int) ($parts[2] ?? 0);
-
-    if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
-        $color = '#d1d5db';
-    }
-
-    $rows[] = array(
-        'name' => $name,
-        'color' => strtolower($color),
-        'block_events' => $blockEvents ? 1 : 0,
-    );
-}
-
 if (empty($rows)) {
-    $rows[] = array('name' => 'Weekend', 'color' => '#d1d5db', 'block_events' => 0);
+    $rows[] = array('id' => 0, 'name' => 'Weekend', 'color' => '#d1d5db', 'block_events' => 0);
 }
 ?>
 <div class="width-100" style="padding: 10px 1vw;">
@@ -99,6 +73,7 @@ if (empty($rows)) {
                                     <span class="jem-special-day-type-position"><?php echo (int) ($position + 1); ?></span>
                                 </td>
                                 <td>
+                                    <input type="hidden" name="special_day_type_id[]" value="<?php echo (int) ($row['id'] ?? 0); ?>">
                                     <input type="hidden" name="special_day_type_original_name[]" value="<?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <input type="text" name="special_day_type_name[]" class="form-control jem-special-day-type-name" value="<?php echo htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8'); ?>">
                                 </td>
@@ -239,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function () {
         row.draggable = true;
         row.innerHTML = ''
             + '<td class="text-center jem-special-day-type-order"><span class="jem-special-day-type-drag" aria-hidden="true">::</span><span class="jem-special-day-type-position"></span></td>'
-            + '<td><input type="hidden" name="special_day_type_original_name[]" value=""><input type="text" name="special_day_type_name[]" class="form-control jem-special-day-type-name" value=""></td>'
+            + '<td><input type="hidden" name="special_day_type_id[]" value="0"><input type="hidden" name="special_day_type_original_name[]" value=""><input type="text" name="special_day_type_name[]" class="form-control jem-special-day-type-name" value=""></td>'
             + '<td><div class="d-flex align-items-center gap-2"><input type="color" class="form-control form-control-color jem-special-day-type-color-picker" style="width:4.5rem;height:2.5rem;padding:.25rem;" value="#d1d5db"><input type="text" name="special_day_type_color[]" class="form-control jem-special-day-type-color-code" style="width:7.5rem;" maxlength="7" pattern="#[0-9a-fA-F]{6}" value="#d1d5db"></div></td>'
             + '<td><select name="special_day_type_block_events[]" class="form-select jem-special-day-type-block-events"><option value="0"><?php echo $noText; ?></option><option value="1"><?php echo $yesText; ?></option></select></td>'
             + '<td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger jem-special-day-type-remove" data-day-type="" data-used-count="0" title="<?php echo $deleteText; ?>"><span class="icon-trash" aria-hidden="true"></span></button></td>';

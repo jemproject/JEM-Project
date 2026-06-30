@@ -26,7 +26,8 @@ class JemModelAnnualcalendar extends JemModelEventslist
         $params               = $app->getParams();
         $task                 = $app->input->getCmd('task', '');
         $top_category         = (int) $params->get('top_category', 0);
-        $show_archived_events = $params->get('show_archived_events', 0);
+        $show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->show_archived_events = $show_archived_events;
         $startdayonly         = $params->get('show_only_start', false);
         $year                 = (int) $app->input->getInt('yearID', date('Y'));
         $startMonth           = max(1, min(12, (int) $params->get('annual_start_month', 1)));
@@ -62,7 +63,7 @@ class JemModelAnnualcalendar extends JemModelEventslist
         $this->setState('filter.calendar_multiday', true);
         $this->setState('filter.calendar_startdayonly', (bool) $startdayonly);
         $this->setState('filter.groupby', array('a.id'));
-        $this->setState('filter.show_archived_events', (bool) $show_archived_events);
+        $this->setState('filter.show_archived_events', $show_archived_events);
     }
 
     /**

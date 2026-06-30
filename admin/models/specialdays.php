@@ -18,6 +18,7 @@ class JemModelSpecialdays extends ListModel
             $config['filter_fields'] = array(
                 'id', 'a.id',
                 'title', 'a.title',
+                'day_type_id', 'a.day_type_id',
                 'day_type', 'a.day_type',
                 'start_date', 'a.start_date',
                 'end_date', 'a.end_date',
@@ -91,7 +92,11 @@ class JemModelSpecialdays extends ListModel
 
         $dayType = trim((string) $this->getState('filter.day_type'));
         if ($dayType !== '') {
-            $query->where('a.day_type = ' . $db->quote($dayType));
+            if (is_numeric($dayType)) {
+                $query->where('a.day_type_id = ' . (int) $dayType);
+            } else {
+                $query->where('a.day_type = ' . $db->quote($dayType));
+            }
         }
 
         $year = (int) $this->getState('filter.year', (int) date('Y'));

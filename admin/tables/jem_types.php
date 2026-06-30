@@ -76,7 +76,7 @@ class jem_types extends Table
         }
 
         $this->entity = (int) $this->entity;
-        if (!in_array($this->entity, array(1, 2, 3), true)) {
+        if (!in_array($this->entity, array(1, 2, 3, 4), true)) {
             $this->entity = 1;
         }
 

@@ -31,6 +31,7 @@ class JemViewSpecialdays extends JemView
         $this->state = $this->get('State');
         $this->params = $this->state->get('params');
         $this->dayTypes = JemHelper::calendarSpecialDayTypes();
+        $this->dayTypesById = JemHelper::calendarSpecialDayTypesById();
         $this->years = $this->get('AvailableYears');
         $selectedYear = (int) $this->state->get('filter.year', (int) date('Y'));
         $this->years[$selectedYear] = $selectedYear;

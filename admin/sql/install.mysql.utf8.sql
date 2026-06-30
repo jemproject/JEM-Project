@@ -290,7 +290,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_types` (
   `base_language`     CHAR(7)          NOT NULL DEFAULT '',
   `translation_languages` VARCHAR(255) DEFAULT NULL,
   `translations`      MEDIUMTEXT       DEFAULT NULL,
-  `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue',
+  `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day',
     `icon`              VARCHAR(255)     DEFAULT NULL,
     `color`             VARCHAR(7)       DEFAULT NULL,
     `published`         TINYINT(1)       NOT NULL DEFAULT 1,
@@ -315,6 +315,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL DEFAULT '',
   `alias` varchar(255) NOT NULL DEFAULT '',
+  `day_type_id` int(11) unsigned NOT NULL DEFAULT 0,
   `day_type` varchar(100) NOT NULL DEFAULT '',
   `start_date` date NULL DEFAULT NULL,
   `end_date` date NULL DEFAULT NULL,
@@ -323,6 +324,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   `region` varchar(100) NOT NULL DEFAULT '',
   `city` varchar(100) NOT NULL DEFAULT '',
   `description` text DEFAULT NULL,
+  `article_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `url` varchar(2048) NOT NULL DEFAULT '',
   `show_dates` tinyint(1) NOT NULL DEFAULT 1,
   `published` tinyint(1) NOT NULL DEFAULT 1,
   `access` int(10) unsigned NOT NULL DEFAULT 1,
@@ -336,7 +339,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   PRIMARY KEY (`id`),
   KEY `idx_published_dates` (`published`, `start_date`, `end_date`),
   KEY `idx_weekdays` (`weekdays`),
+  KEY `idx_day_type_id` (`day_type_id`),
   KEY `idx_day_type` (`day_type`),
+  KEY `idx_article_id` (`article_id`),
   KEY `idx_access` (`access`),
   KEY `idx_location` (`country`, `region`, `city`),
   KEY `idx_checkout` (`checked_out`)
@@ -766,5 +771,9 @@ INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`
 (1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
 
-INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
-(1, 'Saturday and Sunday', 'weekend', 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());
+INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`) VALUES
+('Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', NOW(), '{"block_events":0}'),
+('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', NOW(), '{"block_events":0}');
+
+INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type_id`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
+(1, 'Saturday and Sunday', 'weekend', (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1), 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());

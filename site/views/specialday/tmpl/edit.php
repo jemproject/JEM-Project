@@ -63,11 +63,18 @@ $renderFullWidthInput = function ($fieldName) {
 };
 
 foreach ((array) ($this->dayTypes ?? array()) as $typeName => $type) {
-    $dayTypePreviewData[$typeName] = array(
+    $typeId = (int) ($type['id'] ?? 0);
+    $preview = array(
         'name' => $type['name'] ?? $typeName,
         'color' => $type['color'] ?? '#d1d5db',
         'block_events' => !empty($type['block_events']),
     );
+
+    $dayTypePreviewData[$typeName] = $preview;
+
+    if ($typeId > 0) {
+        $dayTypePreviewData[$typeId] = $preview;
+    }
 }
 ?>
 
@@ -80,7 +87,8 @@ Joomla.submitbutton = function(task) {
 
 document.addEventListener('DOMContentLoaded', function() {
     var typeData = <?php echo json_encode($dayTypePreviewData); ?>;
-    var typeSelect = document.getElementById('jform_day_type');
+    var typeSelect = document.getElementById('jform_day_type_id');
+    var typeName = document.getElementById('jform_day_type');
     var preview = document.getElementById('jem-specialday-type-preview');
     var blockText = <?php echo json_encode(Text::_('COM_JEM_SPECIAL_DAY_BLOCK_EVENTS')); ?>;
     var permitText = <?php echo json_encode(Text::_('COM_JEM_SPECIAL_DAY_PERMIT_EVENTS')); ?>;
@@ -121,6 +129,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var value = typeSelect.value || '';
         var data = typeData[value] || null;
         var backgroundColor;
+
+        if (typeName) {
+            typeName.value = data && data.name ? data.name : '';
+        }
 
         if (!data) {
             preview.style.backgroundColor = '#f8f9fa';
@@ -204,9 +216,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <?php echo $renderFullWidthInput('description'); ?>
                         </div>
 
+                        <div class="mb-3 jem-field-fluid">
+                            <?php echo $renderLabel('link'); ?>
+                            <?php echo $this->form->getInput('link'); ?>
+                        </div>
+
                         <div class="mb-3 jem-field-auto">
-                            <?php echo $renderLabel('day_type'); ?>
+                            <?php echo $renderLabel('day_type_id'); ?>
                             <div class="jem-specialday-type-row" style="display: flex; flex-wrap: nowrap; align-items: center; gap: .75rem; width: max-content; max-width: 100%;">
+                                <?php echo $this->form->getInput('day_type_id'); ?>
                                 <?php echo $this->form->getInput('day_type'); ?>
                                 <span id="jem-specialday-type-preview"
                                       class="jem-specialday-type-preview"

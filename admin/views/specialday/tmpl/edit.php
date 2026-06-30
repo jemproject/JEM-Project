@@ -44,11 +44,18 @@ $selectedWeekdays = array_map('strval', $selectedWeekdays);
 $dayTypePreviewData = array();
 
 foreach ((array) ($this->dayTypes ?? array()) as $typeName => $type) {
-    $dayTypePreviewData[$typeName] = array(
+    $typeId = (int) ($type['id'] ?? 0);
+    $preview = array(
         'name' => $type['name'] ?? $typeName,
         'color' => $type['color'] ?? '#d1d5db',
         'block_events' => !empty($type['block_events']),
     );
+
+    $dayTypePreviewData[$typeName] = $preview;
+
+    if ($typeId > 0) {
+        $dayTypePreviewData[$typeId] = $preview;
+    }
 }
 ?>
 
@@ -156,7 +163,8 @@ foreach ((array) ($this->dayTypes ?? array()) as $typeName => $type) {
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var typeData = <?php echo json_encode($dayTypePreviewData); ?>;
-    var typeSelect = document.getElementById('jform_day_type');
+    var typeSelect = document.getElementById('jform_day_type_id');
+    var typeName = document.getElementById('jform_day_type');
     var preview = document.getElementById('jem-specialday-type-preview');
     var blockText = <?php echo json_encode(Text::_('COM_JEM_SPECIAL_DAY_BLOCK_EVENTS')); ?>;
     var permitText = <?php echo json_encode(Text::_('COM_JEM_SPECIAL_DAY_PERMIT_EVENTS')); ?>;
@@ -197,6 +205,10 @@ document.addEventListener('DOMContentLoaded', function() {
         var value = typeSelect.value || '';
         var data = typeData[value] || null;
         var backgroundColor;
+
+        if (typeName) {
+            typeName.value = data && data.name ? data.name : '';
+        }
 
         if (!data) {
             preview.style.backgroundColor = '#f8f9fa';
@@ -241,8 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
 
                     <div class="mb-3 jem-field-auto">
-                        <?php echo $this->form->getLabel('day_type'); ?>
+                        <?php echo $this->form->getLabel('day_type_id'); ?>
                         <div class="jem-specialday-type-row">
+                            <?php echo $this->form->getInput('day_type_id'); ?>
                             <?php echo $this->form->getInput('day_type'); ?>
                             <div id="jem-specialday-type-preview" class="jem-specialday-type-preview" style="display: none;" aria-live="polite"></div>
                         </div>
@@ -251,6 +264,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="mb-3 jem-field-textarea">
                         <?php echo $this->form->getLabel('description'); ?>
                         <?php echo $this->form->getInput('description'); ?>
+                    </div>
+
+                    <div class="mb-3 jem-field-long">
+                        <?php echo $this->form->getLabel('link'); ?>
+                        <?php echo $this->form->getInput('link'); ?>
                     </div>
 
                 </div>

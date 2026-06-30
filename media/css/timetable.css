@@ -176,21 +176,63 @@
 #jem.jem_day_timeline .jem-special-day-badge {
     display: inline-flex;
     align-items: center;
+    gap: 0.28rem;
     max-width: 100%;
     padding: 0.16rem 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.18);
     border-radius: 4px;
-    background: var(--jem-special-day-badge-color, #6b7280);
-    color: var(--jem-special-day-badge-text-color, #ffffff);
+    background: transparent;
+    color: inherit;
     font-size: 1rem;
     font-weight: 500;
     overflow-wrap: anywhere;
     text-align: center;
 }
 
+#jem.jem_day_timetable .jem-special-day-badge.has-special-day-color,
+#jem.jem_day_timeline .jem-special-day-badge.has-special-day-color {
+    background: var(--jem-special-day-badge-color, #6b7280);
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+}
+
+#jem.jem_day_timetable .jem-special-day-badge-icon,
+#jem.jem_day_timeline .jem-special-day-badge-icon {
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
+#jem.jem_day_timetable .jem-special-day-badge-label,
+#jem.jem_day_timeline .jem-special-day-badge-label {
+    min-width: 0;
+}
+
+#jem.jem_day_timetable .jem-special-day-badge-link,
+#jem.jem_day_timeline .jem-special-day-badge-link,
+#jem.jem_day_timetable .jem-special-day-badge-link:visited,
+#jem.jem_day_timeline .jem-special-day-badge-link:visited,
+#jem.jem_day_timetable .jem-special-day-badge-link:hover,
+#jem.jem_day_timeline .jem-special-day-badge-link:hover,
+#jem.jem_day_timetable .jem-special-day-badge-link:focus,
+#jem.jem_day_timeline .jem-special-day-badge-link:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
+#jem.jem_day_timetable .jem-special-day-badge-link.has-special-day-color,
+#jem.jem_day_timeline .jem-special-day-badge-link.has-special-day-color,
+#jem.jem_day_timetable .jem-special-day-badge-link.has-special-day-color:visited,
+#jem.jem_day_timeline .jem-special-day-badge-link.has-special-day-color:visited,
+#jem.jem_day_timetable .jem-special-day-badge-link.has-special-day-color:hover,
+#jem.jem_day_timeline .jem-special-day-badge-link.has-special-day-color:hover,
+#jem.jem_day_timetable .jem-special-day-badge-link.has-special-day-color:focus,
+#jem.jem_day_timeline .jem-special-day-badge-link.has-special-day-color:focus {
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+    text-decoration: none;
+}
+
 @media (prefers-color-scheme: dark) {
-    #jem.jem_day_timetable .jem-special-day-badge,
-    #jem.jem_day_timeline .jem-special-day-badge {
+    #jem.jem_day_timetable .jem-special-day-badge.has-special-day-color,
+    #jem.jem_day_timeline .jem-special-day-badge.has-special-day-color {
         border-color: rgba(255, 255, 255, 0.28);
         background: var(--jem-special-day-badge-color, #6b7280);
         color: var(--jem-special-day-badge-text-color, #ffffff);

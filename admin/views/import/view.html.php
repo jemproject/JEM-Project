@@ -13,6 +13,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
+
 /**
  * View class for the JEM import screen
  *
@@ -76,6 +78,11 @@ class JemViewImport extends JemAdminView
         );
         $activeImportPreview = (string) $app->getUserState('com_jem.import.active_preview', '');
         $app->setUserState('com_jem.import.active_preview', null);
+        $this->selectedExternalImportProfileId = (int) $app->getUserState('com_jem.import.external_import.selected_profile_id', 0);
+        $this->selectedExternalVenueImportProfileId = (int) $app->getUserState('com_jem.import.external_venue_import.selected_profile_id', 0);
+        $this->selectedSpecialDaysImportProfileId = (int) $app->getUserState('com_jem.import.specialdays_import.selected_profile_id', 0);
+        $this->specialDaysImportFormState = (array) $app->getUserState('com_jem.import.specialdays_import.form', array());
+        $this->selectedImportCatalogEntry = (array) $app->getUserState('com_jem.import.catalog.selected', array());
         $this->externalImportPreview = $activeImportPreview === 'events' ? $this->normaliseImportPreviewState('com_jem.import.external_import.preview') : null;
         $this->externalCsvPreview = $this->externalImportPreview;
         $this->externalIcsPreview = null;
@@ -92,6 +99,11 @@ class JemViewImport extends JemAdminView
         $this->specialDaysIcsPreview = null;
         $this->specialDaysImportProfileOptions = $this->getExternalImportProfileOptions('specialdays');
         $this->specialDayTypeOptions = $this->getSpecialDayTypeOptions();
+        $this->importCatalogSource = JemImportCatalogHelper::getCatalogSource();
+        $this->importCatalogEntries = JemImportCatalogHelper::getEntries();
+        $this->importCatalogCountries = JemImportCatalogHelper::getCountries($this->importCatalogEntries);
+        $this->importCatalogCounties = JemImportCatalogHelper::getCounties($this->importCatalogEntries);
+        $this->importCatalogCities = JemImportCatalogHelper::getCities($this->importCatalogEntries);
 
         // Do not show default prefix #__ but its replacement value
         $this->prefixToShow = $progress->prefix;
@@ -242,9 +254,10 @@ class JemViewImport extends JemAdminView
 
         foreach ($types as $type) {
             $name = is_array($type) ? (string) ($type['name'] ?? '') : (string) $type;
+            $id = is_array($type) ? (int) ($type['id'] ?? 0) : 0;
 
             if ($name !== '') {
-                $options[] = HTMLHelper::_('select.option', $name, $name);
+                $options[] = HTMLHelper::_('select.option', $id > 0 ? $id : $name, $name);
             }
         }
 

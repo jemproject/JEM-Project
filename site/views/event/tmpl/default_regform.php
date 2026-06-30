@@ -244,7 +244,7 @@ if ($this->showRegForm && empty($this->print)) :
                 }
                 ?>
             </p>
-            <?php if ($placesRegisteredUser || $waitingPlacesUser || ($this->item->requestanswer && $this->isregistered !== false)) {?>
+            <?php if ($placesRegisteredUser || $waitingPlacesUser || $this->item->requestanswer) {?>
                 <p>
 
                     <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>
@@ -302,7 +302,8 @@ if ($this->showRegForm && empty($this->print)) :
                 </p>
             <?php }
 
-            $disabledOptions = ($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration);
+            $canSendExplicitNoAnswer = !empty($this->item->requestanswer) && $this->isregistered === false;
+            $disabledOptions = (($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration)) && !$canSendExplicitNoAnswer;
 
             //Comment?>
             <?php if (!empty($this->jemsettings->regallowcomments)) { ?>

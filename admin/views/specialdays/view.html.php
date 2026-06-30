@@ -20,6 +20,7 @@ class JemViewSpecialdays extends JemAdminView
     public $pagination;
     public $state;
     public $dayTypes;
+    public $dayTypesById;
     public $years;
 
     public function display($tpl = null)
@@ -28,6 +29,7 @@ class JemViewSpecialdays extends JemAdminView
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
         $this->dayTypes   = JemHelper::calendarSpecialDayTypes();
+        $this->dayTypesById = JemHelper::calendarSpecialDayTypesById();
         $this->years      = $this->get('AvailableYears');
         ksort($this->years);
 
@@ -76,6 +78,12 @@ class JemViewSpecialdays extends JemAdminView
             if ($filterState != 2) {
                 $childBar->publish('specialdays.publish')->listCheck(true);
                 $childBar->unpublish('specialdays.unpublish')->listCheck(true);
+            }
+
+            if ($filterState != 2) {
+                $childBar->archive('specialdays.archive')->listCheck(true);
+            } else {
+                $childBar->publish('specialdays.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
             }
 
             $childBar->checkin('specialdays.checkin')->listCheck(true);

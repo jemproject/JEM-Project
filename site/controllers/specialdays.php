@@ -15,6 +15,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Table\Table;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/importencoding.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jem/tables');
 
 class JemControllerSpecialdays extends BaseController
@@ -177,6 +178,10 @@ class JemControllerSpecialdays extends BaseController
     {
         $aliases = array(
             'type' => 'day_type',
+            'typeid' => 'day_type_id',
+            'type_id' => 'day_type_id',
+            'daytypeid' => 'day_type_id',
+            'day_type_id' => 'day_type_id',
             'daytype' => 'day_type',
             'day_type' => 'day_type',
             'start' => 'start_date',
@@ -188,7 +193,7 @@ class JemControllerSpecialdays extends BaseController
             'weekday' => 'weekdays',
             'weekdays' => 'weekdays',
         );
-        $allowed = array('id', 'title', 'alias', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'published', 'ordering');
+        $allowed = array('id', 'title', 'alias', 'day_type_id', 'day_type', 'start_date', 'end_date', 'weekdays', 'country', 'region', 'city', 'description', 'published', 'ordering');
         $fields = array();
 
         foreach ($header as $column) {
@@ -208,7 +213,18 @@ class JemControllerSpecialdays extends BaseController
     {
         $data['id'] = isset($data['id']) ? (int) $data['id'] : 0;
         $data['title'] = trim((string) ($data['title'] ?? ''));
+        $data['day_type_id'] = isset($data['day_type_id']) ? (int) $data['day_type_id'] : 0;
         $data['day_type'] = trim((string) ($data['day_type'] ?? ''));
+
+        if ($data['day_type_id'] > 0 && $data['day_type'] === '') {
+            $type = JemHelper::resolveCalendarSpecialDayType($data['day_type_id']);
+            $data['day_type'] = (string) ($type['name'] ?? '');
+        } elseif ($data['day_type_id'] <= 0 && $data['day_type'] !== '') {
+            $type = JemHelper::resolveCalendarSpecialDayType($data['day_type']);
+            $data['day_type_id'] = (int) ($type['id'] ?? 0);
+            $data['day_type'] = (string) ($type['name'] ?? $data['day_type']);
+        }
+
         $data['start_date'] = $this->normaliseSpecialDayCsvDate($data['start_date'] ?? '');
         $data['end_date'] = $this->normaliseSpecialDayCsvDate($data['end_date'] ?? '');
         $data['weekdays'] = $this->normaliseSpecialDayCsvWeekdays($data['weekdays'] ?? '');

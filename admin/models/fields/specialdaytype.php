@@ -25,7 +25,13 @@ class JFormFieldSpecialdaytype extends ListField
         $types = JemHelper::calendarSpecialDayTypes();
 
         foreach ($types as $type) {
-            $options[] = HTMLHelper::_('select.option', $type['name'], $type['name']);
+            $id = (int) ($type['id'] ?? 0);
+
+            if ($id > 0) {
+                $options[] = HTMLHelper::_('select.option', $id, $type['name']);
+            } else {
+                $options[] = HTMLHelper::_('select.option', $type['name'], $type['name']);
+            }
         }
 
         return array_merge(parent::getOptions(), $options);

@@ -100,7 +100,8 @@ class JemModelCategoryCal extends JemModelEventslist
         $itemid       = $app->input->getInt('Itemid', 0);
         $task         = $app->input->getCmd('task', '');
         $startdayonly = $params->get('show_only_start', false);
-        $show_archived_events = $params->get('show_archived_events', 0);
+        $show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->show_archived_events = $show_archived_events;
 
         # params
         $this->setState('params', $params);
@@ -131,7 +132,7 @@ class JemModelCategoryCal extends JemModelEventslist
         $this->setState('filter.calendar_multiday', true);
         $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
         $this->setState('filter.filter_catid', $this->_id);
-        $this->setState('filter.show_archived_events',(bool)$show_archived_events);
+        $this->setState('filter.show_archived_events', $show_archived_events);
 
         $app->setUserState('com_jem.categorycal.catid'.$itemid, $this->_id);
 

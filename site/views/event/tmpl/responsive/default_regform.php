@@ -246,7 +246,7 @@ if ($this->showRegForm && empty($this->print)) :
                     }
                     ?>
                 </li>
-                <?php if ($placesRegisteredUser || $waitingPlacesUser || ($this->item->requestanswer && $this->isregistered !== false)) {?>
+                <?php if ($placesRegisteredUser || $waitingPlacesUser || $this->item->requestanswer) {?>
                     <li class="jem-event" onclick="document.getElementById('jem_unregister_event').click();">
 
                         <?php if ($this->allowAnnulation || ($this->isregistered != 1) || $waitingPlacesUser) : ?>
@@ -304,7 +304,8 @@ if ($this->showRegForm && empty($this->print)) :
                     </li>
                 <?php }
 
-                $disabledOptions = ($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration);
+                $canSendExplicitNoAnswer = !empty($this->item->requestanswer) && $this->isregistered === false;
+                $disabledOptions = (($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration)) && !$canSendExplicitNoAnswer;
 
                 //Comment?>
                 <?php if (!empty($this->jemsettings->regallowcomments)) { ?>

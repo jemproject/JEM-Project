@@ -741,6 +741,12 @@ class JemHelper
             return $types;
         }
 
+        $types = self::loadCalendarSpecialDayTypesFromTable();
+
+        if ($types) {
+            return $types;
+        }
+
         $default = "Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0";
         $raw = (string) self::globalattribs()->get('calendar_special_day_types', $default);
         $types = array();
@@ -767,7 +773,9 @@ class JemHelper
             }
 
             $types[$name] = array(
+                'id' => 0,
                 'name' => $name,
+                'icon' => '',
                 'color' => strtolower($color),
                 'block_events' => !empty($parts[2]) && (int) $parts[2] === 1,
                 'priority' => $priority++,
@@ -775,7 +783,122 @@ class JemHelper
         }
 
         if (!$types) {
-            $types['Weekend'] = array('name' => 'Weekend', 'color' => '#d1d5db', 'block_events' => false, 'priority' => 0);
+            $types['Weekend'] = array('id' => 0, 'name' => 'Weekend', 'icon' => '', 'color' => '#d1d5db', 'block_events' => false, 'priority' => 0);
+        }
+
+        return $types;
+    }
+
+    /**
+     * Returns configured Day types keyed by their numeric id.
+     *
+     * @return  array
+     */
+    static public function calendarSpecialDayTypesById()
+    {
+        $types = array();
+
+        foreach (self::calendarSpecialDayTypes() as $type) {
+            $id = (int) ($type['id'] ?? 0);
+
+            if ($id > 0) {
+                $types[$id] = $type;
+            }
+        }
+
+        return $types;
+    }
+
+    /**
+     * Resolve a Day type from id or name.
+     *
+     * @param   mixed  $value  Type id or name.
+     *
+     * @return  array|null
+     */
+    static public function resolveCalendarSpecialDayType($value)
+    {
+        if (is_numeric($value) && (int) $value > 0) {
+            $typesById = self::calendarSpecialDayTypesById();
+
+            return $typesById[(int) $value] ?? null;
+        }
+
+        $name = trim((string) $value);
+
+        if ($name === '') {
+            return null;
+        }
+
+        $types = self::calendarSpecialDayTypes();
+
+        if (isset($types[$name])) {
+            return $types[$name];
+        }
+
+        foreach ($types as $type) {
+            if (strcasecmp((string) ($type['name'] ?? ''), $name) === 0) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Load Day types from #__jem_types.
+     *
+     * @return  array
+     */
+    static private function loadCalendarSpecialDayTypesFromTable()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('id'),
+                $db->quoteName('name'),
+                $db->quoteName('icon'),
+                $db->quoteName('color'),
+                $db->quoteName('ordering'),
+                $db->quoteName('attribs'),
+            ))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 4')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . implode(',', array_map('intval', Factory::getApplication()->getIdentity()->getAuthorisedViewLevels())) . ')')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        try {
+            $db->setQuery($query);
+            $rows = $db->loadObjectList() ?: array();
+        } catch (RuntimeException $e) {
+            return array();
+        }
+
+        $types = array();
+        $priority = 0;
+
+        foreach ($rows as $row) {
+            $name = trim((string) $row->name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $color = trim((string) ($row->color ?? ''));
+            $color = preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : '';
+
+            $attribs = new Registry((string) ($row->attribs ?? ''));
+
+            $types[$name] = array(
+                'id' => (int) $row->id,
+                'name' => $name,
+                'icon' => trim((string) ($row->icon ?? '')),
+                'color' => $color,
+                'block_events' => (int) $attribs->get('block_events', 0) === 1,
+                'show_dates_default' => (int) $attribs->get('show_dates_default', 1) === 0 ? 0 : 1,
+                'priority' => $priority++,
+            );
         }
 
         return $types;
@@ -812,11 +935,14 @@ class JemHelper
             ->select($db->quoteName(array(
                 'id',
                 'title',
+                'day_type_id',
                 'day_type',
                 'start_date',
                 'end_date',
                 'weekdays',
                 'description',
+                'article_id',
+                'url',
                 'show_dates',
                 'access',
                 'ordering',
@@ -848,6 +974,7 @@ class JemHelper
         }
 
         $types = self::calendarSpecialDayTypes();
+        $typesById = self::calendarSpecialDayTypesById();
         $days = array();
         $nullDateValue = $db->getNullDate();
 
@@ -858,9 +985,12 @@ class JemHelper
                 'date' => $dateKey,
                 'title' => (string) $row->title,
                 'type' => $type['name'],
+                'icon' => (string) ($type['icon'] ?? ''),
                 'color' => $type['color'],
                 'block_events' => (bool) $type['block_events'],
                 'description' => (string) $row->description,
+                'article_id' => (int) ($row->article_id ?? 0),
+                'url' => (string) ($row->url ?? ''),
                 'show_dates' => (int) ($row->show_dates ?? 1) === 1,
                 'is_dated_rule' => (bool) $isDatedRule,
                 'rule_start_date' => (string) ($row->start_date ?? ''),
@@ -871,12 +1001,16 @@ class JemHelper
         };
 
         foreach ($rows as $row) {
-            $type = $types[$row->day_type] ?? array(
+            $type = !empty($row->day_type_id) && isset($typesById[(int) $row->day_type_id])
+                ? $typesById[(int) $row->day_type_id]
+                : ($types[$row->day_type] ?? array(
+                    'id' => (int) ($row->day_type_id ?? 0),
                 'name' => (string) $row->day_type,
+                'icon' => '',
                 'color' => '#d1d5db',
                 'block_events' => false,
                 'priority' => 999,
-            );
+                ));
 
             $rangeStart = $periodStart;
             $rangeEnd = $periodEnd;
@@ -1044,7 +1178,7 @@ class JemHelper
             $filterClass = self::calendarSpecialDayTypeClass($type);
             $color = !empty($specialDay['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $specialDay['color'])
                 ? strtolower((string) $specialDay['color'])
-                : '#d1d5db';
+                : '';
             $title = trim((string) ($specialDay['title'] ?: $type));
 
             if ($title !== '' && !in_array($title, $labels, true)) {
@@ -1055,22 +1189,35 @@ class JemHelper
             $layers[] = array(
                 'filterClass' => $filterClass,
                 'color'       => $color,
-                'textColor'   => self::getContrastTextColor($color) ?: '#111827',
+                'textColor'   => $color !== '' ? (self::getContrastTextColor($color) ?: '#111827') : '',
                 'title'       => $title,
             );
         }
 
-        $primaryLayer = reset($layers) ?: array('color' => '#d1d5db', 'textColor' => '#111827');
+        $primaryLayer = array('color' => '', 'textColor' => '');
+
+        foreach ($layers as $layer) {
+            if (!empty($layer['color'])) {
+                $primaryLayer = $layer;
+                break;
+            }
+        }
+
+        if (!empty($primaryLayer['color'])) {
+            $classes[] = 'has-special-day-color';
+        }
 
         return array(
             'classes' => array_values(array_unique($classes)),
-            'style'   => '--jem-calendar-special-day-bg:' . $primaryLayer['color'] . ';--jem-calendar-special-day-color:' . $primaryLayer['textColor'] . ';background-color:' . $primaryLayer['color'] . ';color:' . $primaryLayer['textColor'] . ';',
+            'style'   => !empty($primaryLayer['color'])
+                ? '--jem-calendar-special-day-bg:' . $primaryLayer['color'] . ';--jem-calendar-special-day-color:' . $primaryLayer['textColor'] . ';background-color:' . $primaryLayer['color'] . ';color:' . $primaryLayer['textColor'] . ';'
+                : '',
             'title'   => implode(', ', $labels),
             'layers'  => $layers,
         );
     }
 
-    static public function renderCalendarSpecialDayBadges($date, array $specialDays = null)
+    static public function renderCalendarSpecialDayBadges($date, ?array $specialDays = null)
     {
         $date = (string) $date;
 
@@ -1098,11 +1245,38 @@ class JemHelper
 
             $color = !empty($specialDay['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $specialDay['color'])
                 ? strtolower((string) $specialDay['color'])
-                : '#6b7280';
-            $textColor = self::getContrastTextColor($color) ?: '#111827';
+                : '';
+            $textColor = $color !== '' ? (self::getContrastTextColor($color) ?: '#111827') : '';
+            $icon = trim((string) ($specialDay['icon'] ?? ''));
+            $iconHtml = $icon !== '' && preg_match('/^[a-zA-Z0-9_\-\s]+$/', $icon)
+                ? '<span class="jem-special-day-badge-icon ' . htmlspecialchars($icon, ENT_COMPAT, 'UTF-8') . '" aria-hidden="true"></span>'
+                : '';
+            $articleId = (int) ($specialDay['article_id'] ?? 0);
+            $externalUrl = trim((string) ($specialDay['url'] ?? ''));
+            $href = '';
+            $target = '';
 
-            $badges[] = '<span class="jem-special-day-badge" style="--jem-special-day-badge-color: ' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . '; --jem-special-day-badge-text-color: ' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';">'
-                . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</span>';
+            if ($articleId > 0) {
+                $href = Route::_('index.php?option=com_content&view=article&id=' . $articleId);
+            } elseif ($externalUrl !== '' && filter_var($externalUrl, FILTER_VALIDATE_URL)) {
+                $href = $externalUrl;
+                $target = ' target="_blank" rel="noopener noreferrer"';
+            } elseif ($externalUrl !== '' && (strpos($externalUrl, 'index.php?') === 0 || strpos($externalUrl, '/') === 0)) {
+                $href = Route::_($externalUrl);
+            }
+
+            $badgeContent = $iconHtml . '<span class="jem-special-day-badge-label">' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</span>';
+            $badgeStyle = $color !== ''
+                ? '--jem-special-day-badge-color: ' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . '; --jem-special-day-badge-text-color: ' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';'
+                : '';
+
+            if ($href !== '') {
+                $badges[] = '<a class="jem-special-day-badge jem-special-day-badge-link' . ($color !== '' ? ' has-special-day-color' : '') . '" href="' . htmlspecialchars($href, ENT_COMPAT, 'UTF-8') . '"' . $target . ($badgeStyle !== '' ? ' style="' . $badgeStyle . '"' : '') . '>'
+                    . $badgeContent . '</a>';
+            } else {
+                $badges[] = '<span class="jem-special-day-badge' . ($color !== '' ? ' has-special-day-color' : '') . '"' . ($badgeStyle !== '' ? ' style="' . $badgeStyle . '"' : '') . '>'
+                    . $badgeContent . '</span>';
+            }
         }
 
         return $badges
@@ -1136,7 +1310,7 @@ class JemHelper
 
                 $color = !empty($specialDay['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $specialDay['color'])
                     ? strtolower((string) $specialDay['color'])
-                    : '#d1d5db';
+                    : '';
                 $legendKey = strtolower($type);
 
                 if (!isset($legend[$legendKey])) {
@@ -1331,11 +1505,14 @@ class JemHelper
             $titleText = $title !== '' ? $title : '-';
             $descriptionText = $description !== '' ? htmlspecialchars($description, ENT_COMPAT, 'UTF-8') : '-';
 
-            $textColor = self::getContrastTextColor($color) ?: '#111827';
+            $textColor = $color !== '' ? (self::getContrastTextColor($color) ?: '#111827') : '#111827';
+            $swatchStyle = $color !== ''
+                ? 'background-color:' . $color . ';color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';'
+                : 'background-color:transparent;color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';';
 
             $html[] = '<tr>'
                 . '<td class="jem-annual-special-days-type"><button type="button" class="eventSpecialDayType btn btn-outline-dark jem-annual-special-days-filter" data-filter-class="' . $filterClass . '" aria-pressed="true">'
-                . '<span class="jem-annual-special-days-filter-color"><span class="jem-annual-special-days-swatch" style="background-color:' . $color . ';color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';">&nbsp;</span></span>'
+                . '<span class="jem-annual-special-days-filter-color"><span class="jem-annual-special-days-swatch" style="' . $swatchStyle . '">&nbsp;</span></span>'
                 . '<span class="jem-annual-special-days-filter-name">' . $type . '</span>'
                 . '<span class="visually-hidden">' . $color . '</span></button></td>'
                 . '<td class="jem-annual-special-days-label">' . $titleText . '</td>'

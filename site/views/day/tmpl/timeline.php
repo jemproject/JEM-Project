@@ -1375,15 +1375,14 @@ document.addEventListener('keydown', function (event) {
         </div>
     <?php endif; ?>
 
-    <?php if (empty($rows)) : ?>
-        <div class="jem-timetable-empty"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></div>
-    <?php else : ?>
-        <?php $timelineEventIndex = 0; ?>
+    <?php $timelineEventIndex = 0; ?>
+    <?php $timelineRenderedDays = 0; ?>
         <?php foreach ($dayRange as $dayDate => $dayData) : ?>
-            <?php if (!$showEmptyDays && empty($dayData['timedRows']) && empty($dayData['allDayRows'])) : ?>
+            <?php if (!$showEmptyDays && empty($dayData['timedRows']) && empty($dayData['allDayRows']) && empty($timelineBadgeSpecialDays[$dayDate])) : ?>
                 <?php continue; ?>
             <?php endif; ?>
             <?php
+            $timelineRenderedDays++;
             $specialDayColor = '';
             if (!empty($timelineSpecialDays[$dayDate][0]['color']) && preg_match('/^#[0-9a-f]{6}$/i', (string) $timelineSpecialDays[$dayDate][0]['color'])) {
                 $specialDayColor = (string) $timelineSpecialDays[$dayDate][0]['color'];
@@ -1819,6 +1818,8 @@ document.addEventListener('keydown', function (event) {
                 <?php endif; ?>
             </section>
         <?php endforeach; ?>
+    <?php if ($timelineRenderedDays === 0) : ?>
+        <div class="jem-timetable-empty"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></div>
     <?php endif; ?>
 
     <?php if ($this->params->get('showfootertext')) : ?>
