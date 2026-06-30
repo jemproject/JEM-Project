@@ -57,6 +57,7 @@
         <zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
             <exclude name="${cfg.buildDir}/**" />
             <exclude name=".settings/**" />
+            <exclude name=".tmp/**" />
             <exclude name=".phpunit.cache/**" />
             <exclude name=".agents/**" />
             <exclude name=".claude/**" />
@@ -81,6 +82,7 @@
             <exclude name="**/*~" />
             <exclude name="*.code-workspace" />
             <exclude name="CODEX_PENDING_DIARY.md" />
+            <exclude name="import-catalog.xml" />
             <exclude name="update_pkg_*.xml" />
             <exclude name="pkg_*.zip" />
             <exclude name="build.*" />
