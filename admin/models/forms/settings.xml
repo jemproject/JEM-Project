@@ -299,6 +299,7 @@
             description="COM_JEM_SETTINGS_DATE_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formatShortDate" type="text"
@@ -306,6 +307,7 @@
             description="COM_JEM_SETTINGS_SHORT_DATE_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formattime" type="text"
@@ -313,6 +315,7 @@
             description="COM_JEM_TIME_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formathour" type="text"
@@ -320,6 +323,7 @@
             description="COM_JEM_HOUR_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="timename" type="text"
