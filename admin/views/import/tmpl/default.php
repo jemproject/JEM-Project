@@ -115,8 +115,10 @@ $renderPreviewActions = function ($commitTask, $clearTask, $tabId, $validCount) 
 $renderImportMappingBlock = function (array $preview, $inputName, array $jemFields, $profileName) {
     $sourceFields = array_values(array_filter((array) ($preview['source_fields'] ?? array()), 'strlen'));
     $mapping = (array) ($preview['mapping'] ?? array());
+    $staticValues = array_values((array) ($preview['static_values'] ?? array()));
     $profileId = (int) ($preview['profile_id'] ?? 0);
     $profileTitle = (string) ($preview['profile_title'] ?? '');
+    $staticName = preg_replace('/_mapping$/', '_static_values', $inputName);
 
     if (!$sourceFields) {
         return;
@@ -135,41 +137,95 @@ $renderImportMappingBlock = function (array $preview, $inputName, array $jemFiel
             <input type="text" id="<?php echo $profileName; ?>_title" name="<?php echo $profileName; ?>_title" class="form-control" value="<?php echo htmlspecialchars($profileTitle, ENT_QUOTES, 'UTF-8'); ?>">
         </div>
     </div>
-    <details class="jem-import-columns jem-import-mapping-panel" open data-profile-id="<?php echo $profileId; ?>" data-original-mapping="<?php echo htmlspecialchars(json_encode($mapping), ENT_QUOTES, 'UTF-8'); ?>">
-        <summary><?php echo Text::_('COM_JEM_IMPORT_MAPPING_TITLE'); ?></summary>
-        <div class="table-responsive mt-2">
-            <table class="adminlist table jem-import-mapping-table">
-                <thead>
-                    <tr>
-                        <th><?php echo Text::_('COM_JEM_IMPORT_SOURCE_FIELD'); ?></th>
-                        <th><?php echo Text::_('COM_JEM_IMPORT_JEM_FIELD'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($sourceFields as $sourceField) : ?>
-                        <?php $selected = $mapping[$sourceField] ?? ''; ?>
+    <div class="jem-import-mapping-layout">
+        <details class="jem-import-columns jem-import-mapping-panel" open data-profile-id="<?php echo $profileId; ?>" data-original-mapping="<?php echo htmlspecialchars(json_encode($mapping), ENT_QUOTES, 'UTF-8'); ?>">
+            <summary><?php echo Text::_('COM_JEM_IMPORT_MAPPING_TITLE'); ?></summary>
+            <p class="small text-muted mt-2 mb-2"><?php echo Text::_('COM_JEM_IMPORT_MAPPING_DESC'); ?></p>
+            <div class="table-responsive mt-2">
+                <table class="adminlist table jem-import-mapping-table">
+                    <thead>
                         <tr>
-                            <td><code><?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?></code></td>
-                            <td>
-                                <select name="<?php echo $inputName; ?>[<?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?>]" class="form-select jem-import-mapping-select" data-source-field="<?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?>">
-                                    <option value=""><?php echo Text::_('JNONE'); ?></option>
-                                    <?php foreach ($jemFields as $value => $field) : ?>
-                                        <?php
-                                        $label = is_array($field) ? ($field['label'] ?? $value) : $field;
-                                        $kind = is_array($field) ? ($field['kind'] ?? 'jem') : 'jem';
-                                        ?>
-                                        <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>" class="jem-import-mapping-option-<?php echo htmlspecialchars($kind, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $selected === $value ? ' selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
+                            <th><?php echo Text::_('COM_JEM_IMPORT_SOURCE_FIELD'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_IMPORT_JEM_FIELD'); ?></th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </details>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($sourceFields as $sourceField) : ?>
+                            <?php $selected = $mapping[$sourceField] ?? ''; ?>
+                            <tr>
+                                <td><code><?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?></code></td>
+                                <td>
+                                    <select name="<?php echo $inputName; ?>[<?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?>]" class="form-select jem-import-mapping-select" data-source-field="<?php echo htmlspecialchars($sourceField, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <option value=""><?php echo Text::_('JNONE'); ?></option>
+                                        <?php foreach ($jemFields as $value => $field) : ?>
+                                            <?php
+                                            $label = is_array($field) ? ($field['label'] ?? $value) : $field;
+                                            $kind = is_array($field) ? ($field['kind'] ?? 'jem') : 'jem';
+                                            ?>
+                                            <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>" class="jem-import-mapping-option-<?php echo htmlspecialchars($kind, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $selected === $value ? ' selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </details>
+        <details class="jem-import-columns jem-import-static-panel" open>
+            <summary><?php echo Text::_('COM_JEM_IMPORT_STATIC_VALUES_TITLE'); ?></summary>
+            <p class="small text-muted mt-2 mb-2"><?php echo Text::_('COM_JEM_IMPORT_STATIC_VALUES_DESC'); ?></p>
+            <div class="table-responsive">
+                <table class="adminlist table jem-import-static-table" data-static-name="<?php echo htmlspecialchars($staticName, ENT_QUOTES, 'UTF-8'); ?>">
+                    <thead>
+                        <tr>
+                            <th><?php echo Text::_('COM_JEM_IMPORT_JEM_FIELD'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_IMPORT_STATIC_VALUE'); ?></th>
+                            <th><?php echo Text::_('COM_JEM_IMPORT_STATIC_MODE'); ?></th>
+                            <th class="center"><?php echo Text::_('JACTION_DELETE'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $rows = $staticValues ?: array(array('field' => '', 'value' => '', 'mode' => 'if_empty')); ?>
+                        <?php foreach ($rows as $index => $staticValue) : ?>
+                            <?php
+                            $selectedField = (string) ($staticValue['field'] ?? '');
+                            $value = (string) ($staticValue['value'] ?? '');
+                            $mode = (string) ($staticValue['mode'] ?? 'if_empty');
+                            ?>
+                            <tr class="jem-import-static-row">
+                                <td>
+                                    <select name="<?php echo $staticName; ?>[<?php echo (int) $index; ?>][field]" class="form-select jem-import-static-field">
+                                        <option value=""><?php echo Text::_('JNONE'); ?></option>
+                                        <?php foreach ($jemFields as $fieldValue => $field) : ?>
+                                            <?php $label = is_array($field) ? ($field['label'] ?? $fieldValue) : $field; ?>
+                                            <option value="<?php echo htmlspecialchars($fieldValue, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $selectedField === $fieldValue ? ' selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </td>
+                                <td><input type="text" name="<?php echo $staticName; ?>[<?php echo (int) $index; ?>][value]" class="form-control jem-import-static-value" value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>"></td>
+                                <td>
+                                    <select name="<?php echo $staticName; ?>[<?php echo (int) $index; ?>][mode]" class="form-select jem-import-static-mode">
+                                        <option value="if_empty"<?php echo $mode !== 'always' ? ' selected' : ''; ?>><?php echo Text::_('COM_JEM_IMPORT_STATIC_MODE_IF_EMPTY'); ?></option>
+                                        <option value="always"<?php echo $mode === 'always' ? ' selected' : ''; ?>><?php echo Text::_('COM_JEM_IMPORT_STATIC_MODE_ALWAYS'); ?></option>
+                                    </select>
+                                </td>
+                                <td class="center"><button type="button" class="btn btn-danger btn-sm jem-import-static-remove" aria-label="<?php echo Text::_('JACTION_DELETE'); ?>"><span class="icon-trash" aria-hidden="true"></span></button></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm jem-import-static-add">
+                <span class="icon-plus" aria-hidden="true"></span>
+                <?php echo Text::_('COM_JEM_IMPORT_STATIC_ADD'); ?>
+            </button>
+        </details>
+    </div>
     <?php
 };
 
@@ -182,7 +238,59 @@ $renderImportStatus = function ($status) {
     return '<span class="jem-import-status ' . $statusClass . '">' . htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8') . '</span>';
 };
 
-$renderDynamicPreviewTable = function (array $preview, array $fallbackFields = array()) use ($renderImportStatus) {
+$renderImportFieldValue = function ($value, $field, array $row) {
+    $fieldStatus = (array) ($row['field_status'][$field] ?? array());
+    $state = (string) ($fieldStatus['state'] ?? '');
+    $value = (string) $value;
+
+    if ($field !== 'day_type' && $field !== 'day_type_id') {
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    }
+
+    if ($state === 'ok') {
+        return '<span class="jem-import-field-badge jem-import-field-badge-ok"><span aria-hidden="true">&#10003;</span> '
+            . htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
+            . '</span>';
+    }
+
+    if ($state === 'error') {
+        $source = (string) ($fieldStatus['source'] ?? '');
+        $fallback = (string) ($fieldStatus['fallback'] ?? $value);
+
+        return '<span class="jem-import-field-badge jem-import-field-badge-error" title="'
+            . htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_SPECIAL_DAYS_TYPE_FALLBACK_TITLE', $source, $fallback), ENT_QUOTES, 'UTF-8')
+            . '"><span aria-hidden="true">&#10007;</span> '
+            . htmlspecialchars($source !== '' ? $source : $value, ENT_QUOTES, 'UTF-8')
+            . '</span>'
+            . '<span class="jem-import-field-fallback"> &rarr; ' . htmlspecialchars($fallback, ENT_QUOTES, 'UTF-8') . '</span>';
+    }
+
+    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+};
+
+$renderCatalogSelectionNotice = function ($context) {
+    $entry = (array) ($this->selectedImportCatalogEntry ?? array());
+
+    if (!$entry || JemImportCatalogHelper::getContext($entry['type'] ?? '') !== $context) {
+        return;
+    }
+    ?>
+    <div class="alert alert-info jem-import-catalog-selected">
+        <strong><?php echo htmlspecialchars($entry['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong>
+        <?php if (!empty($entry['source'])) : ?>
+            <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SELECTED_SOURCE'); ?>:</span>
+            <a href="<?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                <?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>
+            </a>
+        <?php endif; ?>
+        <?php if (!empty($entry['profile'])) : ?>
+            <span><?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_SELECTED_PROFILE', htmlspecialchars($entry['profile'], ENT_QUOTES, 'UTF-8')); ?></span>
+        <?php endif; ?>
+    </div>
+    <?php
+};
+
+$renderDynamicPreviewTable = function (array $preview, array $fallbackFields = array()) use ($renderImportStatus, $renderImportFieldValue) {
     $recordFields = array_values(array_filter((array) ($preview['record_fields'] ?? $fallbackFields), 'strlen'));
     $rows = (array) ($preview['rows'] ?? array());
     ?>
@@ -194,6 +302,7 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
         <table class="adminlist table jem-import-paged-table jem-import-dynamic-preview" data-page-size="50" data-source-records="<?php echo htmlspecialchars(json_encode($preview['source_records'] ?? array()), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
                 <tr>
+                    <th class="center">#</th>
                     <th><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_STATUS'); ?></th>
                     <th><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_NOTES'); ?></th>
                     <?php foreach ($recordFields as $field) : ?>
@@ -202,16 +311,17 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($rows as $row) : ?>
+                <?php foreach ($rows as $index => $row) : ?>
                     <?php
                     $importData = (array) ($row['import_data'] ?? array());
                     $statusText = (string) ($row['status'] ?? '');
                     ?>
                     <tr>
+                        <td class="center" data-fixed="row-number"><?php echo (int) $index + 1; ?></td>
                         <td data-fixed="status"><?php echo $renderImportStatus($statusText); ?></td>
                         <td data-fixed="notes"><?php echo htmlspecialchars(implode('; ', (array) ($row['notes'] ?? array())), ENT_QUOTES, 'UTF-8'); ?></td>
                         <?php foreach ($recordFields as $field) : ?>
-                            <td data-field="<?php echo htmlspecialchars($field, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($importData[$field] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td data-field="<?php echo htmlspecialchars($field, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $renderImportFieldValue($importData[$field] ?? '', $field, (array) $row); ?></td>
                         <?php endforeach; ?>
                     </tr>
                 <?php endforeach; ?>
@@ -298,6 +408,7 @@ foreach (array(
     'id',
     'title',
     'alias',
+    'day_type_id',
     'day_type',
     'start_date',
     'end_date',
@@ -306,6 +417,8 @@ foreach (array(
     'region',
     'city',
     'description',
+    'article_id',
+    'url',
     'show_dates',
     'published',
     'access',
@@ -315,6 +428,16 @@ foreach (array(
         'label' => $field . ' (JEM)',
         'kind' => 'jem',
     );
+}
+
+$eventCatalogEntry = (array) ($this->selectedImportCatalogEntry ?? array());
+if (!$eventCatalogEntry || JemImportCatalogHelper::getContext($eventCatalogEntry['type'] ?? '') !== 'events') {
+    $eventCatalogEntry = array();
+}
+
+$venueCatalogEntry = (array) ($this->selectedImportCatalogEntry ?? array());
+if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry['type'] ?? '') !== 'venues') {
+    $venueCatalogEntry = array();
 }
 
 ?>
@@ -340,6 +463,69 @@ foreach (array(
         width: 100% !important;
         height: 100% !important;
     }
+
+    .jem-import-mapping-layout {
+        display: grid;
+        grid-template-columns: max-content minmax(38rem, 1fr);
+        gap: 1rem;
+        align-items: start;
+        max-width: 100%;
+    }
+
+    .jem-import-mapping-panel,
+    .jem-import-static-panel {
+        min-width: 0;
+    }
+
+    .jem-import-static-panel {
+        width: min(100%, 68rem);
+        max-width: 100%;
+    }
+
+    .jem-import-static-table th,
+    .jem-import-static-table td {
+        padding: .35rem .5rem;
+        vertical-align: middle;
+        width: auto;
+    }
+
+    .jem-import-static-table tbody tr:nth-child(odd) {
+        background: rgba(0, 0, 0, .035);
+    }
+
+    .jem-import-static-table .form-control,
+    .jem-import-static-table .form-select {
+        min-height: 2rem;
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+    }
+
+    .jem-import-static-table .jem-import-static-field {
+        width: max-content;
+        min-width: 14rem;
+        max-width: min(28rem, 100%);
+    }
+
+    .jem-import-static-table .jem-import-static-value {
+        width: 18rem;
+        min-width: 12rem;
+        max-width: 100%;
+    }
+
+    .jem-import-static-table .jem-import-static-mode {
+        width: max-content;
+        min-width: 9rem;
+    }
+
+    @media (max-width: 1100px) {
+        .jem-import-mapping-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .jem-import-static-table .jem-import-static-field {
+            max-width: none;
+        }
+    }
 </style>
 <?php if($this->progress->step > 1) : ?>
     <meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
@@ -359,10 +545,18 @@ foreach (array(
             <?php echo HTMLHelper::_('uitab.startTabSet', 'jem-import-tabs', array('active' => 'event-import', 'recall' => false, 'breakpoint' => 768)); ?>
 
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'event-import', Text::_('COM_JEM_IMPORT_TAB_EVENT_IMPORT')); ?>
+                <?php
+                $eventSelectedProfileId = (int) (($this->externalImportPreview['profile_id'] ?? 0) ?: ($this->selectedExternalImportProfileId ?? 0));
+                $eventSelectedMode = (string) ($this->externalImportPreview['mode'] ?? 'standard');
+                $eventSelectedPublished = (int) ($this->externalImportPreview['published'] ?? 1);
+                $eventSelectedPublishUp = (string) ($this->externalImportPreview['publish_up'] ?? $this->externalPublishUpDefault);
+                $eventSelectedLanguage = (string) ($this->externalImportPreview['language'] ?? '*');
+                ?>
                 <div class="jem-import-tab-intro">
                     <h2><?php echo Text::_('COM_JEM_IMPORT_EVENT_IMPORT_TITLE'); ?></h2>
                     <p><?php echo Text::_('COM_JEM_IMPORT_EVENT_IMPORT_DESC'); ?></p>
                 </div>
+                <?php $renderCatalogSelectionNotice('events'); ?>
                 <div class="jem-import-grid">
                     <section class="jem-import-card">
                         <div class="jem-import-card-header">
@@ -373,10 +567,42 @@ foreach (array(
                         </div>
                         <div class="jem-import-row">
                             <div class="jem-import-field jem-import-field-file">
-                                <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
-                                <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
+                                <label><?php echo Text::_('COM_JEM_IMPORT_SOURCE'); ?></label>
+                                <?php if (!empty($eventCatalogEntry['source'])) : ?>
+                                    <div class="jem-import-source-choice" data-source-choice="external-import">
+                                        <label>
+                                            <input type="radio" name="external_import_source_mode" value="url" checked>
+                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="external_import_source_mode" value="file">
+                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
+                                        </label>
+                                    </div>
+                                    <div class="jem-import-source-url" data-source-panel="external-import-url">
+                                        <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_URL_READY'); ?></span>
+                                        <a href="<?php echo htmlspecialchars($eventCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                                            <?php echo htmlspecialchars($eventCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </a>
+                                    </div>
+                                    <div class="jem-import-source-file" data-source-panel="external-import-file" hidden>
+                                        <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
+                                        <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
+                                    </div>
+                                <?php else : ?>
+                                    <input type="hidden" name="external_import_source_mode" value="file">
+                                    <div class="jem-import-source-file">
+                                        <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
+                                        <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($this->externalImportPreview['source_name'])) : ?>
+                                    <div class="form-text">
+                                        <?php echo htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_PREVIEW_SOURCE_FILE', $this->externalImportPreview['source_name']), ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                <?php endif; ?>
                                 <label for="external_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text', $eventSelectedProfileId); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
@@ -389,8 +615,8 @@ foreach (array(
                             <div class="jem-import-field">
                                 <label for="external_import_mode"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_IMPORT_AS'); ?></label>
                                 <select name="external_import_mode" id="external_import_mode" class="form-select">
-                                    <option value="standard"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_STANDARD_EVENTS'); ?></option>
-                                    <option value="openday"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_OPEN_DAY_EVENTS'); ?></option>
+                                    <option value="standard" <?php echo $eventSelectedMode === 'standard' ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_STANDARD_EVENTS'); ?></option>
+                                    <option value="openday" <?php echo $eventSelectedMode === 'openday' ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_OPEN_DAY_EVENTS'); ?></option>
                                 </select>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
@@ -413,19 +639,19 @@ foreach (array(
                             <div class="jem-import-field">
                                 <label for="external_import_published"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PUBLISHED_STATE'); ?></label>
                                 <select name="external_import_published" id="external_import_published" class="form-select">
-                                    <option value="1"><?php echo Text::_('JPUBLISHED'); ?></option>
-                                    <option value="0"><?php echo Text::_('JUNPUBLISHED'); ?></option>
+                                    <option value="1" <?php echo $eventSelectedPublished === 1 ? 'selected' : ''; ?>><?php echo Text::_('JPUBLISHED'); ?></option>
+                                    <option value="0" <?php echo $eventSelectedPublished === 0 ? 'selected' : ''; ?>><?php echo Text::_('JUNPUBLISHED'); ?></option>
                                 </select>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
                                 <label for="external_import_publish_up"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PUBLISH_UP'); ?></label>
-                                <?php echo HTMLHelper::_('calendar', $this->externalPublishUpDefault, 'external_import_publish_up', 'external_import_publish_up', '%Y-%m-%d %H:%M:%S', array('class' => 'form-control', 'showTime' => true, 'timeFormat' => '24')); ?>
+                                <?php echo HTMLHelper::_('calendar', $eventSelectedPublishUp, 'external_import_publish_up', 'external_import_publish_up', '%Y-%m-%d %H:%M:%S', array('class' => 'form-control', 'showTime' => true, 'timeFormat' => '24')); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
                                 <label for="external_import_language"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_LANGUAGE'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalLanguageOptions, 'external_import_language', 'class="form-select" id="external_import_language"', 'value', 'text', '*'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->externalLanguageOptions, 'external_import_language', 'class="form-select" id="external_import_language"', 'value', 'text', $eventSelectedLanguage); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -468,6 +694,7 @@ foreach (array(
                             <table class="adminlist table jem-import-paged-table" data-page-size="50">
                                 <thead>
                                     <tr>
+                                        <th class="center">#</th>
                                         <th><?php echo Text::_('COM_JEM_TITLE'); ?></th>
                                         <th><?php echo Text::_('COM_JEM_DATE'); ?></th>
                                         <th><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_TIME'); ?></th>
@@ -481,8 +708,9 @@ foreach (array(
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach (($this->externalIcsPreview['rows'] ?? array()) as $row) : ?>
+                                    <?php foreach (($this->externalIcsPreview['rows'] ?? array()) as $index => $row) : ?>
                                         <tr>
+                                            <td class="center"><?php echo (int) $index + 1; ?></td>
                                             <td><?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo htmlspecialchars($row['date_label'], ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo htmlspecialchars($row['time_label'], ENT_QUOTES, 'UTF-8'); ?></td>
@@ -508,6 +736,7 @@ foreach (array(
                     <h2><?php echo Text::_('COM_JEM_IMPORT_VENUE_IMPORT_TITLE'); ?></h2>
                     <p><?php echo Text::_('COM_JEM_IMPORT_VENUE_IMPORT_DESC'); ?></p>
                 </div>
+                <?php $renderCatalogSelectionNotice('venues'); ?>
                 <div class="jem-import-grid">
                     <section class="jem-import-card">
                         <div class="jem-import-card-header">
@@ -518,10 +747,37 @@ foreach (array(
                         </div>
                         <div class="jem-import-row">
                             <div class="jem-import-field jem-import-field-file">
-                                <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_OR_XML'); ?></label>
-                                <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                <label><?php echo Text::_('COM_JEM_IMPORT_SOURCE'); ?></label>
+                                <?php if (!empty($venueCatalogEntry['source'])) : ?>
+                                    <div class="jem-import-source-choice" data-source-choice="external-venue-import">
+                                        <label>
+                                            <input type="radio" name="external_venue_import_source_mode" value="url" checked>
+                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="external_venue_import_source_mode" value="file">
+                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
+                                        </label>
+                                    </div>
+                                    <div class="jem-import-source-url" data-source-panel="external-venue-import-url">
+                                        <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_URL_READY'); ?></span>
+                                        <a href="<?php echo htmlspecialchars($venueCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                                            <?php echo htmlspecialchars($venueCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </a>
+                                    </div>
+                                    <div class="jem-import-source-file" data-source-panel="external-venue-import-file" hidden>
+                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_OR_XML'); ?></label>
+                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                    </div>
+                                <?php else : ?>
+                                    <input type="hidden" name="external_venue_import_source_mode" value="file">
+                                    <div class="jem-import-source-file">
+                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_OR_XML'); ?></label>
+                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                    </div>
+                                <?php endif; ?>
                                 <label for="external_venue_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalVenueImportProfileOptions, 'external_venue_import_profile_id', 'class="form-select" id="external_venue_import_profile_id"', 'value', 'text'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->externalVenueImportProfileOptions, 'external_venue_import_profile_id', 'class="form-select" id="external_venue_import_profile_id"', 'value', 'text', $this->selectedExternalVenueImportProfileId ?? 0); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
@@ -604,10 +860,18 @@ foreach (array(
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'special-days', Text::_('COM_JEM_IMPORT_TAB_SPECIAL_DAYS')); ?>
+                <?php
+                $specialDaysFormState = (array) ($this->specialDaysImportFormState ?? array());
+                $specialDaysSelectedProfileId = (int) (($this->specialDaysImportPreview['profile_id'] ?? 0) ?: ($specialDaysFormState['profile_id'] ?? ($this->selectedSpecialDaysImportProfileId ?? 0)));
+                $specialDaysSelectedType = (string) (($this->specialDaysImportPreview['day_type_id'] ?? '') ?: ($specialDaysFormState['day_type'] ?? ($this->specialDaysImportPreview['day_type'] ?? '')));
+                $specialDaysReplace = (int) ($this->specialDaysImportPreview['replace'] ?? ($specialDaysFormState['replace'] ?? 0));
+                $specialDaysShowDates = (int) ($this->specialDaysImportPreview['show_dates'] ?? ($specialDaysFormState['show_dates'] ?? 1));
+                ?>
                 <div class="jem-import-tab-intro">
                     <h2><?php echo Text::_('COM_JEM_SPECIAL_DAYS'); ?></h2>
                     <p><?php echo Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_DESC'); ?></p>
                 </div>
+                <?php $renderCatalogSelectionNotice('specialdays'); ?>
                 <div class="jem-import-grid">
                     <section class="jem-import-card jem-import-specialdays-card">
                         <div class="jem-import-card-header">
@@ -618,10 +882,15 @@ foreach (array(
                         </div>
                         <div class="jem-import-row">
                             <div class="jem-import-field jem-import-field-file">
-                                <label for="specialdays-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_OR_ICS'); ?></label>
-                                <input type="file" id="specialdays-import-file-upload" accept=".csv,.ics,text/csv,text/calendar,text/plain" name="FileSpecialDaysImport" class="form-control" />
+                                <label for="specialdays-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_FILE'); ?></label>
+                                <input type="file" id="specialdays-import-file-upload" accept=".csv,.clm,.json,.xml,.ics,text/csv,application/json,application/xml,text/xml,text/calendar,text/plain" name="FileSpecialDaysImport" class="form-control" />
+                                <?php if (!empty($this->specialDaysImportPreview['source_name'])) : ?>
+                                    <div class="form-text jem-import-source-note">
+                                        <?php echo htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_PREVIEW_SOURCE_FILE', $this->specialDaysImportPreview['source_name']), ENT_QUOTES, 'UTF-8'); ?>
+                                    </div>
+                                <?php endif; ?>
                                 <label for="specialdays_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->specialDaysImportProfileOptions, 'specialdays_import_profile_id', 'class="form-select" id="specialdays_import_profile_id"', 'value', 'text'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->specialDaysImportProfileOptions, 'specialdays_import_profile_id', 'class="form-select" id="specialdays_import_profile_id"', 'value', 'text', $specialDaysSelectedProfileId); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
@@ -629,7 +898,7 @@ foreach (array(
                                     <?php echo Text::_('COM_JEM_SPECIAL_DAY_FIELD_TYPE'); ?>
                                     <span><?php echo Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_TYPE_FALLBACK_DESC'); ?></span>
                                 </label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->specialDayTypeOptions, 'specialdays_import_day_type', 'class="form-select" id="specialdays_import_day_type"', 'value', 'text'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->specialDayTypeOptions, 'specialdays_import_day_type', 'class="form-select" id="specialdays_import_day_type"', 'value', 'text', $specialDaysSelectedType); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field jem-import-field-replace">
@@ -638,8 +907,19 @@ foreach (array(
                                     <span><?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS_HELP'); ?></span>
                                 </label>
                                 <select name="replace_specialdays_import" id="replace_specialdays_import" class="form-select">
-                                    <option value="0"><?php echo Text::_('JNO'); ?></option>
-                                    <option value="1"><?php echo Text::_('JYES'); ?></option>
+                                    <option value="0" <?php echo $specialDaysReplace === 0 ? 'selected' : ''; ?>><?php echo Text::_('JNO'); ?></option>
+                                    <option value="1" <?php echo $specialDaysReplace === 1 ? 'selected' : ''; ?>><?php echo Text::_('JYES'); ?></option>
+                                </select>
+                                <span class="jem-import-field-spacer" aria-hidden="true"></span>
+                            </div>
+                            <div class="jem-import-field jem-import-field-show-dates">
+                                <label for="specialdays_import_show_dates">
+                                    <?php echo Text::_('COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES'); ?>
+                                    <span><?php echo Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_SHOW_DATES_FALLBACK_DESC'); ?></span>
+                                </label>
+                                <select name="specialdays_import_show_dates" id="specialdays_import_show_dates" class="form-select">
+                                    <option value="1" <?php echo $specialDaysShowDates === 1 ? 'selected' : ''; ?>><?php echo Text::_('JYES'); ?></option>
+                                    <option value="0" <?php echo $specialDaysShowDates === 0 ? 'selected' : ''; ?>><?php echo Text::_('JNO'); ?></option>
                                 </select>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
@@ -665,7 +945,7 @@ foreach (array(
                             <h3><?php echo htmlspecialchars($specialDaysPreview['title'] ?? Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_PREVIEW_TITLE'), ENT_QUOTES, 'UTF-8'); ?></h3>
                             <p><?php echo htmlspecialchars($specialDaysPreview['summary'] ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
                             <p><?php echo Text::sprintf('COM_JEM_IMPORT_DETECTED_FORMAT', strtoupper($specialDaysPreview['format'] ?? 'csv')); ?></p>
-                            <?php if (($specialDaysPreview['format'] ?? 'csv') === 'csv' && !empty($specialDaysPreview['source_fields'])) : ?>
+                            <?php if (!empty($specialDaysPreview['source_fields'])) : ?>
                                 <?php if (!empty($specialDaysPreview['profile_title'])) : ?>
                                     <p><?php echo Text::sprintf('COM_JEM_IMPORT_PROFILE_APPLIED', htmlspecialchars($specialDaysPreview['profile_title'], ENT_QUOTES, 'UTF-8')); ?></p>
                                 <?php endif; ?>
@@ -677,6 +957,7 @@ foreach (array(
                                     <table class="adminlist table jem-import-paged-table" data-page-size="50">
                                         <thead>
                                             <tr>
+                                                <th class="center">#</th>
                                                 <th><?php echo Text::_('COM_JEM_TITLE'); ?></th>
                                                 <th><?php echo Text::_('COM_JEM_DATE'); ?></th>
                                                 <th><?php echo Text::_('COM_JEM_SPECIAL_DAY_FIELD_TYPE'); ?></th>
@@ -686,11 +967,12 @@ foreach (array(
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach (($specialDaysPreview['rows'] ?? array()) as $row) : ?>
+                                            <?php foreach (($specialDaysPreview['rows'] ?? array()) as $index => $row) : ?>
                                                 <tr>
+                                                    <td class="center"><?php echo (int) $index + 1; ?></td>
                                                     <td><?php echo htmlspecialchars($row['title'], ENT_QUOTES, 'UTF-8'); ?></td>
                                                     <td><?php echo htmlspecialchars($row['date_label'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                                    <td><?php echo htmlspecialchars($row['day_type'] ?? ($specialDaysPreview['day_type'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                                                    <td><?php echo $renderImportFieldValue($row['day_type'] ?? ($specialDaysPreview['day_type'] ?? ''), 'day_type', (array) $row); ?></td>
                                                     <td><?php echo htmlspecialchars($row['description'], ENT_QUOTES, 'UTF-8'); ?></td>
                                                     <td><?php echo htmlspecialchars(implode('; ', $row['notes']), ENT_QUOTES, 'UTF-8'); ?></td>
                                                     <td><?php echo $renderImportStatus($row['status'] ?? ''); ?></td>
@@ -791,16 +1073,35 @@ foreach (array(
                             <label for="jem-import-catalog-country"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_COUNTRY'); ?></label>
                             <select id="jem-import-catalog-country" class="form-select">
                                 <option value=""><?php echo Text::_('JALL'); ?></option>
-                                <option value="ES"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_COUNTRY_ES'); ?></option>
-                                <option value="DE"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_COUNTRY_DE'); ?></option>
+                                <?php foreach (($this->importCatalogCountries ?? array()) as $code => $label) : ?>
+                                    <option value="<?php echo htmlspecialchars($code, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($label ?: $code, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="jem-import-field">
+                            <label for="jem-import-catalog-county"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_COUNTY'); ?></label>
+                            <select id="jem-import-catalog-county" class="form-select">
+                                <option value=""><?php echo Text::_('JALL'); ?></option>
+                                <?php foreach (($this->importCatalogCounties ?? array()) as $value => $label) : ?>
+                                    <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="jem-import-field">
+                            <label for="jem-import-catalog-city"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CITY'); ?></label>
+                            <select id="jem-import-catalog-city" class="form-select">
+                                <option value=""><?php echo Text::_('JALL'); ?></option>
+                                <?php foreach (($this->importCatalogCities ?? array()) as $value => $label) : ?>
+                                    <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="jem-import-field">
                             <label><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SOURCE'); ?></label>
-                            <code><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SOURCE_EXAMPLE'); ?></code>
+                            <code><?php echo htmlspecialchars($this->importCatalogSource ?? 'import-catalog.xml', ENT_QUOTES, 'UTF-8'); ?></code>
                         </div>
                         <div class="jem-import-actions">
-                            <button type="button" class="btn btn-secondary" disabled>
+                            <button type="button" class="btn btn-secondary" onclick="window.location.reload();">
                                 <?php echo Text::_('COM_JEM_IMPORT_CATALOG_REFRESH'); ?>
                             </button>
                         </div>
@@ -813,6 +1114,8 @@ foreach (array(
                             <thead>
                                 <tr>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_COUNTRY'); ?></th>
+                                    <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_COUNTY'); ?></th>
+                                    <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_CITY'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_LIST'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_TYPE'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_FORMAT'); ?></th>
@@ -822,35 +1125,45 @@ foreach (array(
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr data-country="ES">
-                                    <td>ES</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SAMPLE_ES_LABOUR'); ?></td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TYPE_SPECIAL_DAYS'); ?></td>
-                                    <td>CSV</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CATEGORY_SPECIAL_DAYS'); ?></td>
-                                    <td><code>imports/ES/specialdays/labour-calendar-2026.csv</code></td>
-                                    <td><button type="button" class="btn btn-sm btn-secondary" disabled><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_NEXT_PHASE'); ?></button></td>
-                                </tr>
-                                <tr data-country="ES">
-                                    <td>ES</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SAMPLE_ES_SCHOOL'); ?></td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TYPE_EVENTS'); ?></td>
-                                    <td>CSV</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CATEGORY_SELECTED_SUBCATEGORIES'); ?></td>
-                                    <td><code>imports/ES/events/madrid-school-year-2026.csv</code></td>
-                                    <td><button type="button" class="btn btn-sm btn-secondary" disabled><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_NEXT_PHASE'); ?></button></td>
-                                </tr>
-                                <tr data-country="DE">
-                                    <td>DE</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SAMPLE_DE_BAVARIA'); ?></td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TYPE_EVENTS'); ?></td>
-                                    <td>ICS</td>
-                                    <td><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CATEGORY_SELECTED'); ?></td>
-                                    <td><code>imports/DE/events/bavaria-school-holidays-2026.ics</code></td>
-                                    <td><button type="button" class="btn btn-sm btn-secondary" disabled><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_NEXT_PHASE'); ?></button></td>
-                                </tr>
-                                <tr class="jem-import-catalog-empty" hidden>
-                                    <td colspan="7"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_EMPTY'); ?></td>
+                                <?php foreach (($this->importCatalogEntries ?? array()) as $entry) : ?>
+                                    <?php
+                                    $context = JemImportCatalogHelper::getContext($entry['type'] ?? '');
+                                    $typeKey = $context === 'venues'
+                                        ? 'COM_JEM_IMPORT_CATALOG_TYPE_VENUES'
+                                        : ($context === 'specialdays' ? 'COM_JEM_IMPORT_CATALOG_TYPE_SPECIAL_DAYS' : 'COM_JEM_IMPORT_CATALOG_TYPE_EVENTS');
+                                    ?>
+                                    <tr data-country="<?php echo htmlspecialchars($entry['country'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-county="<?php echo htmlspecialchars($entry['county'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-city="<?php echo htmlspecialchars($entry['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                        <td><?php echo htmlspecialchars($entry['country'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($entry['county'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($entry['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td>
+                                            <strong><?php echo htmlspecialchars($entry['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong>
+                                            <?php if (!empty($entry['description'])) : ?>
+                                                <span class="d-block text-muted"><?php echo htmlspecialchars($entry['description'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                            <?php endif; ?>
+                                            <?php if (!empty($entry['profile'])) : ?>
+                                                <span class="d-block text-muted"><?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_PROFILE_HINT', htmlspecialchars($entry['profile'], ENT_QUOTES, 'UTF-8')); ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td><?php echo Text::_($typeKey); ?></td>
+                                        <td><?php echo strtoupper(htmlspecialchars($entry['format'] ?? '', ENT_QUOTES, 'UTF-8')); ?></td>
+                                        <td><?php echo htmlspecialchars($entry['category_rule'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td>
+                                            <?php if (!empty($entry['source'])) : ?>
+                                                <a href="<?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
+                                                    <?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>
+                                                </a>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-primary" onclick="JemImportLoadCatalogItem('<?php echo htmlspecialchars($entry['id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>');">
+                                                <?php echo Text::_('COM_JEM_IMPORT_CATALOG_LOAD'); ?>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <tr class="jem-import-catalog-empty"<?php echo !empty($this->importCatalogEntries) ? ' hidden' : ''; ?>>
+                                    <td colspan="9"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_EMPTY'); ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -897,6 +1210,7 @@ foreach (array(
             <input type="hidden" name="view" value="import" />
             <input type="hidden" name="controller" value="import" />
             <input type="hidden" name="task" id="task1" value="" />
+            <input type="hidden" name="catalog_id" id="jem-import-catalog-id" value="" />
         </form>
     </div>
 </div>
@@ -929,6 +1243,17 @@ function JemImportSubmit(task, tab) {
     }
 
     form.submit();
+}
+
+function JemImportLoadCatalogItem(id) {
+    var field = document.getElementById('jem-import-catalog-id');
+
+    if (!field) {
+        return;
+    }
+
+    field.value = id || '';
+    JemImportSubmit('import.loadCatalogItem', 'download-lists');
 }
 
 function JemImportShowHashTab() {
@@ -989,6 +1314,26 @@ function JemImportUpdateDynamicPreview(select) {
         }
     });
 
+    var staticRows = Array.prototype.slice.call(card.querySelectorAll('.jem-import-static-row')).map(function (row) {
+        var field = row.querySelector('.jem-import-static-field');
+        var value = row.querySelector('.jem-import-static-value');
+        var mode = row.querySelector('.jem-import-static-mode');
+
+        return {
+            field: field ? field.value : '',
+            value: value ? value.value : '',
+            mode: mode ? mode.value : 'if_empty'
+        };
+    }).filter(function (item) {
+        return item.field && item.value !== '';
+    });
+
+    staticRows.forEach(function (item) {
+        if (targetFields.indexOf(item.field) === -1) {
+            targetFields.push(item.field);
+        }
+    });
+
     var fixedRows = Array.prototype.slice.call(table.tBodies[0] ? table.tBodies[0].rows : []).map(function (row) {
         return {
             status: row.querySelector('[data-fixed="status"]') ? row.querySelector('[data-fixed="status"]').textContent : '',
@@ -998,9 +1343,12 @@ function JemImportUpdateDynamicPreview(select) {
 
     var theadRow = table.tHead && table.tHead.rows[0] ? table.tHead.rows[0] : table.createTHead().insertRow();
     theadRow.innerHTML = '';
-    ['<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_STATUS'), ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_NOTES'), ENT_QUOTES, 'UTF-8'); ?>'].forEach(function (label) {
+    ['#', '<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_STATUS'), ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_NOTES'), ENT_QUOTES, 'UTF-8'); ?>'].forEach(function (label) {
         var th = document.createElement('th');
         th.textContent = label;
+        if (label === '#') {
+            th.className = 'center';
+        }
         theadRow.appendChild(th);
     });
     targetFields.forEach(function (field) {
@@ -1028,13 +1376,24 @@ function JemImportUpdateDynamicPreview(select) {
             values[target] = values[target] ? values[target] + ', ' + value : value;
         });
 
+        staticRows.forEach(function (item) {
+            if (item.mode === 'always' || !values[item.field]) {
+                values[item.field] = item.value;
+            }
+        });
+
         var tr = document.createElement('tr');
+        var rowNumber = document.createElement('td');
         var status = document.createElement('td');
         var notes = document.createElement('td');
+        rowNumber.className = 'center';
+        rowNumber.setAttribute('data-fixed', 'row-number');
+        rowNumber.textContent = String(index + 1);
         status.setAttribute('data-fixed', 'status');
         notes.setAttribute('data-fixed', 'notes');
         status.appendChild(JemImportRenderStatus(fixedRows[index] ? fixedRows[index].status : ''));
         notes.textContent = fixedRows[index] ? fixedRows[index].notes : '';
+        tr.appendChild(rowNumber);
         tr.appendChild(status);
         tr.appendChild(notes);
 
@@ -1047,6 +1406,53 @@ function JemImportUpdateDynamicPreview(select) {
 
         tbody.appendChild(tr);
     });
+}
+
+function JemImportRenumberStaticRows(table) {
+    var staticName = table.getAttribute('data-static-name') || '';
+
+    Array.prototype.slice.call(table.querySelectorAll('.jem-import-static-row')).forEach(function (row, index) {
+        var field = row.querySelector('.jem-import-static-field');
+        var value = row.querySelector('.jem-import-static-value');
+        var mode = row.querySelector('.jem-import-static-mode');
+
+        if (field) {
+            field.name = staticName + '[' + index + '][field]';
+        }
+
+        if (value) {
+            value.name = staticName + '[' + index + '][value]';
+        }
+
+        if (mode) {
+            mode.name = staticName + '[' + index + '][mode]';
+        }
+    });
+}
+
+function JemImportBindStaticRow(row) {
+    row.querySelectorAll('.jem-import-static-field, .jem-import-static-value, .jem-import-static-mode').forEach(function (input) {
+        input.addEventListener('change', function () {
+            JemImportUpdateDynamicPreview(input);
+        });
+        input.addEventListener('input', function () {
+            JemImportUpdateDynamicPreview(input);
+        });
+    });
+
+    var remove = row.querySelector('.jem-import-static-remove');
+
+    if (remove) {
+        remove.addEventListener('click', function () {
+            var table = row.closest('.jem-import-static-table');
+            row.remove();
+
+            if (table) {
+                JemImportRenumberStaticRows(table);
+                JemImportUpdateDynamicPreview(table);
+            }
+        });
+    }
 }
 
 function JemImportModalSaveAndSelect(modalId, selectId, nameFieldId, saveTask) {
@@ -1208,20 +1614,87 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    document.querySelectorAll('.jem-import-static-row').forEach(function (row) {
+        JemImportBindStaticRow(row);
+    });
+
+    document.querySelectorAll('.jem-import-static-add').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var panel = button.closest('.jem-import-static-panel');
+            var table = panel ? panel.querySelector('.jem-import-static-table') : null;
+            var tbody = table && table.tBodies[0] ? table.tBodies[0] : null;
+            var firstRow = tbody && tbody.querySelector('.jem-import-static-row') ? tbody.querySelector('.jem-import-static-row') : null;
+
+            if (!table || !tbody || !firstRow) {
+                return;
+            }
+
+            var row = firstRow.cloneNode(true);
+
+            row.querySelectorAll('select').forEach(function (select) {
+                select.selectedIndex = 0;
+            });
+            row.querySelectorAll('input').forEach(function (input) {
+                input.value = '';
+            });
+
+            tbody.appendChild(row);
+            JemImportRenumberStaticRows(table);
+            JemImportBindStaticRow(row);
+            JemImportUpdateDynamicPreview(table);
+        });
+    });
+
+    document.querySelectorAll('[data-source-choice]').forEach(function (choice) {
+        var key = choice.getAttribute('data-source-choice');
+        var urlPanel = document.querySelector('[data-source-panel="' + key + '-url"]');
+        var filePanel = document.querySelector('[data-source-panel="' + key + '-file"]');
+        var fileInput = filePanel ? filePanel.querySelector('input[type="file"]') : null;
+
+        var updateSourcePanels = function () {
+            var selected = choice.querySelector('input[type="radio"]:checked');
+            var useUrl = selected && selected.value === 'url';
+
+            if (urlPanel) {
+                urlPanel.hidden = !useUrl;
+            }
+
+            if (filePanel) {
+                filePanel.hidden = useUrl;
+            }
+
+            if (fileInput && useUrl) {
+                fileInput.value = '';
+            }
+        };
+
+        choice.querySelectorAll('input[type="radio"]').forEach(function (radio) {
+            radio.addEventListener('change', updateSourcePanels);
+        });
+
+        updateSourcePanels();
+    });
+
     var filter = document.getElementById('jem-import-catalog-country');
+    var countyFilter = document.getElementById('jem-import-catalog-county');
+    var cityFilter = document.getElementById('jem-import-catalog-city');
     var table = document.getElementById('jem-import-catalog-table');
 
     if (!filter || !table) {
         return;
     }
 
-    filter.addEventListener('change', function () {
+    var filterCatalog = function () {
         var selected = filter.value;
+        var county = countyFilter ? countyFilter.value : '';
+        var city = cityFilter ? cityFilter.value : '';
         var visible = 0;
         var rows = table.querySelectorAll('tbody tr[data-country]');
 
         rows.forEach(function (row) {
-            var show = !selected || row.getAttribute('data-country') === selected;
+            var show = (!selected || row.getAttribute('data-country') === selected)
+                && (!county || row.getAttribute('data-county') === county)
+                && (!city || row.getAttribute('data-city') === city);
             row.hidden = !show;
             if (show) {
                 visible++;
@@ -1232,7 +1705,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (empty) {
             empty.hidden = visible > 0;
         }
-    });
+    };
+
+    filter.addEventListener('change', filterCatalog);
+
+    if (countyFilter) {
+        countyFilter.addEventListener('change', filterCatalog);
+    }
+
+    if (cityFilter) {
+        cityFilter.addEventListener('change', filterCatalog);
+    }
 });
 
 function JemImportLogCreatedOption(selectId, label, value) {

@@ -8,6 +8,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
 /**
  * Minimal PDF integration wrapper for JEM.
  */
@@ -125,8 +128,8 @@ class JemPdf
         $label = 'Generated: %s';
         $timezone = 'UTC';
 
-        if (class_exists('\Joomla\CMS\Factory')) {
-            $app = \Joomla\CMS\Factory::getApplication();
+        if (class_exists(Factory::class)) {
+            $app = Factory::getApplication();
             $timezone = (string) $app->get('offset', 'UTC');
         }
 
@@ -136,8 +139,8 @@ class JemPdf
             $date = new DateTime('now');
         }
 
-        if (class_exists('\Joomla\CMS\Language\Text')) {
-            return \Joomla\CMS\Language\Text::sprintf('COM_JEM_PDF_GENERATED_STAMP', $date->format('Y-m-d H:i'));
+        if (class_exists(Text::class)) {
+            return Text::sprintf('COM_JEM_PDF_GENERATED_STAMP', $date->format('Y-m-d H:i'));
         }
 
         return sprintf($label, $date->format('Y-m-d H:i'));

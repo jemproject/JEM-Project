@@ -36,7 +36,8 @@ class JemModelWeekcal extends JemModelEventslist
         $task          = $app->input->getCmd('task', '');
         $params        = $app->getParams();
         $top_category  = $params->get('top_category', 0);
-        $show_archived_events = $params->get('show_archived_events', 0);
+        $show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->show_archived_events = $show_archived_events;
         $startdayonly  = $params->get('show_only_start', false);
         $numberOfWeeks = $params->get('nrweeks', '1');
         $firstweekday  = $params->get('firstweekday', 1);
@@ -91,7 +92,7 @@ class JemModelWeekcal extends JemModelEventslist
         # set filter
         $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
         $this->setState('filter.groupby', 'a.id');
-        $this->setState('filter.show_archived_events',(bool)$show_archived_events);
+        $this->setState('filter.show_archived_events', $show_archived_events);
     }
 
     /**

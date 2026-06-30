@@ -406,7 +406,7 @@ div#jem .rowcolor {
     background: #fffaf0;
 }
 
-.jem-annual-calendar .jem-annual-day.is-special-day {
+.jem-annual-calendar .jem-annual-day.is-special-day.has-special-day-color {
     background: var(--jem-calendar-special-day-bg, #d1d5db);
     color: var(--jem-calendar-special-day-color, #111827);
 }
@@ -431,7 +431,7 @@ div#jem .rowcolor {
     z-index: 1;
 }
 
-.jem-annual-calendar .jem-annual-day.is-special-day .jem-annual-day-number {
+.jem-annual-calendar .jem-annual-day.is-special-day.has-special-day-color .jem-annual-day-number {
     color: var(--jem-calendar-special-day-color, inherit) !important;
     text-shadow: 0 1px 1px rgba(0, 0, 0, 0.28);
 }
@@ -597,7 +597,7 @@ div#jem .rowcolor {
     padding: 0.55rem 0.8rem;
 }
 
-.jem-annual-calendar .jem-annual-agenda-day.is-special-day {
+.jem-annual-calendar .jem-annual-agenda-day.is-special-day.has-special-day-color {
     background: var(--jem-calendar-special-day-bg, #d1d5db);
 }
 
@@ -918,20 +918,51 @@ div#jem .rowcolor {
 .jem-special-day-badge {
     display: inline-flex;
     align-items: center;
+    gap: 0.28rem;
     max-width: 100%;
     padding: 0.16rem 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.18);
     border-radius: 4px;
-    background: var(--jem-special-day-badge-color, #6b7280);
-    color: var(--jem-special-day-badge-text-color, #ffffff);
+    background: transparent;
+    color: inherit;
     font-size: 1rem;
     font-weight: 500;
     overflow-wrap: anywhere;
     text-align: center;
 }
 
+.jem-special-day-badge.has-special-day-color {
+    background: var(--jem-special-day-badge-color, #6b7280);
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+}
+
+.jem-special-day-badge-icon {
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
+.jem-special-day-badge-label {
+    min-width: 0;
+}
+
+.jem-special-day-badge-link,
+.jem-special-day-badge-link:visited,
+.jem-special-day-badge-link:hover,
+.jem-special-day-badge-link:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
+.jem-special-day-badge-link.has-special-day-color,
+.jem-special-day-badge-link.has-special-day-color:visited,
+.jem-special-day-badge-link.has-special-day-color:hover,
+.jem-special-day-badge-link.has-special-day-color:focus {
+    color: var(--jem-special-day-badge-text-color, #ffffff);
+    text-decoration: none;
+}
+
 @media (prefers-color-scheme: dark) {
-    .jem-special-day-badge {
+    .jem-special-day-badge.has-special-day-color {
         border-color: rgba(255, 255, 255, 0.28);
         background: var(--jem-special-day-badge-color, #6b7280);
         color: var(--jem-special-day-badge-text-color, #ffffff);
@@ -1083,7 +1114,7 @@ div#jem .rowcolor {
     color: #fff;
 }
 
-#jem table.month td.is-special-day {
+#jem table.month td.is-special-day.has-special-day-color {
     background: var(--jem-calendar-special-day-bg, #d1d5db);
 }
 

@@ -9,10 +9,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
 class JemModelSpecialday extends JemModelAdmin
 {
@@ -56,10 +56,11 @@ class JemModelSpecialday extends JemModelAdmin
         $pk = $pk ?: (int) $this->getState($this->getName() . '.id');
 
         if ($pk <= 0) {
-            return new CMSObject(array(
+            return (object) array(
                 'id' => 0,
                 'title' => '',
                 'alias' => '',
+                'day_type_id' => 0,
                 'day_type' => '',
                 'start_date' => null,
                 'end_date' => null,
@@ -68,14 +69,23 @@ class JemModelSpecialday extends JemModelAdmin
                 'region' => '',
                 'city' => '',
                 'description' => '',
+                'article_id' => 0,
+                'url' => '',
+                'link' => '',
                 'show_dates' => 1,
                 'published' => 1,
                 'access' => 1,
                 'ordering' => 0,
-            ));
+            );
         }
 
-        return parent::getItem($pk);
+        $item = parent::getItem($pk);
+
+        if ($item) {
+            $item->link = $this->buildLinkValue($item);
+        }
+
+        return $item;
     }
 
     protected function preprocessForm(Form $form, $data, $group = 'content')
@@ -99,6 +109,15 @@ class JemModelSpecialday extends JemModelAdmin
             $data->country = trim((string) $data->country) === '' ? array() : explode(',', (string) $data->country);
         }
 
+        if (is_object($data) && empty($data->day_type_id) && !empty($data->day_type)) {
+            $type = JemHelper::resolveCalendarSpecialDayType($data->day_type);
+            $data->day_type_id = (int) ($type['id'] ?? 0);
+        }
+
+        if (is_object($data) && !isset($data->link)) {
+            $data->link = $this->buildLinkValue($data);
+        }
+
         return $data;
     }
 
@@ -114,5 +133,16 @@ class JemModelSpecialday extends JemModelAdmin
             $table->modified = $date->toSql();
             $table->modified_by = $user->get('id');
         }
+    }
+
+    protected function buildLinkValue($item)
+    {
+        $articleId = (int) ($item->article_id ?? 0);
+
+        if ($articleId > 0) {
+            return 'index.php?option=com_content&view=article&id=' . $articleId;
+        }
+
+        return trim((string) ($item->url ?? ''));
     }
 }

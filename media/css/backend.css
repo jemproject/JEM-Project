@@ -840,6 +840,30 @@ input#replace_attachments1.inputbox {
     font-size: 1.12em;
 }
 
+.jem-import-field-badge {
+    align-items: center;
+    border-radius: .2rem;
+    display: inline-flex;
+    font-weight: 600;
+    gap: .35rem;
+    padding: .15rem .45rem;
+}
+
+.jem-import-field-badge-ok {
+    background: #d8f3dc;
+    color: #155724;
+}
+
+.jem-import-field-badge-error {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.jem-import-field-fallback {
+    color: #6c757d;
+    white-space: nowrap;
+}
+
 .jem-import-profile-row {
     align-items: center;
     display: grid;
@@ -904,6 +928,55 @@ input#replace_attachments1.inputbox {
 .jem-import-field-file input[type="file"] {
     grid-column: 2 / -1;
     max-width: 100%;
+    width: 100%;
+}
+
+.jem-import-source-note {
+    grid-column: 2 / -1;
+    margin-top: .25rem;
+}
+
+.jem-import-source-choice,
+.jem-import-source-url,
+.jem-import-source-file {
+    grid-column: 2 / -1;
+}
+
+.jem-import-source-choice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem;
+}
+
+.jem-import-source-choice label {
+    align-items: center;
+    display: inline-flex;
+    gap: .3rem;
+    margin: 0;
+}
+
+.jem-import-source-url {
+    align-items: center;
+    background: color-mix(in srgb, var(--body-bg, #fff) 88%, var(--template-bg-dark, #1f2933) 12%);
+    border: 1px solid var(--border-color, #d8dee4);
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    padding: .45rem .6rem;
+}
+
+.jem-import-source-url a {
+    overflow-wrap: anywhere;
+}
+
+.jem-import-source-file label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: .25rem;
+}
+
+.jem-import-source-file input[type="file"] {
     width: 100%;
 }
 

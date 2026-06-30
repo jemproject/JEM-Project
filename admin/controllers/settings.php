@@ -9,10 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\Registry\Registry;
 
 require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
@@ -75,8 +77,6 @@ class JemControllerSettings extends BaseController
         // Initialise variables.
         $app = Factory::getApplication();
         $data = $app->input->get('jform', array(), 'array');
-        $specialDayTypeRenames = $this->getSpecialDayTypeRenameMap();
-        $this->normaliseSpecialDayTypes($data);
 
         $task = $this->getTask();
         $model = $this->getModel();
@@ -133,13 +133,7 @@ class JemControllerSettings extends BaseController
             return false;
         }
 
-        $renamed = $this->applySpecialDayTypeRenames($specialDayTypeRenames);
-
         $this->setMessage(Text::_('COM_JEM_SETTINGS_SAVED'));
-
-        if ($renamed > 0) {
-            $app->enqueueMessage(Text::plural('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAY_TYPES_RENAMED', $renamed), 'message');
-        }
 
         // Redirect the user and adjust session state based on the chosen task.
         switch ($task) {
@@ -176,6 +170,7 @@ class JemControllerSettings extends BaseController
     private function normaliseSpecialDayTypes(array &$data): void
     {
         $input = Factory::getApplication()->input;
+        $ids = $input->get('special_day_type_id', array(), 'array');
         $names = $input->get('special_day_type_name', array(), 'array');
         $colors = $input->get('special_day_type_color', array(), 'array');
         $blocks = $input->get('special_day_type_block_events', array(), 'array');
@@ -193,6 +188,7 @@ class JemControllerSettings extends BaseController
                 continue;
             }
 
+            $id = (int) ($ids[$index] ?? 0);
             $color = strtolower(trim((string) ($colors[$index] ?? '#d1d5db')));
 
             if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
@@ -206,6 +202,107 @@ class JemControllerSettings extends BaseController
         $data['calendar_special_day_types'] = implode("\n", $lines);
         $data['globalattribs'] = $data['globalattribs'] ?? array();
         $data['globalattribs']['calendar_special_day_types'] = implode("\n", $lines);
+    }
+
+    /**
+     * Persist Day types in #__jem_types.
+     *
+     * @return  void
+     */
+    private function saveSpecialDayTypesToTable(): void
+    {
+        $input = Factory::getApplication()->input;
+        $ids = $input->get('special_day_type_id', array(), 'array');
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $colors = $input->get('special_day_type_color', array(), 'array');
+        $blocks = $input->get('special_day_type_block_events', array(), 'array');
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $userId = (int) Factory::getApplication()->getIdentity()->id;
+        $now = Factory::getDate()->toSql();
+        $keptIds = array();
+        $ordering = 0;
+
+        foreach ($names as $index => $name) {
+            $name = trim((string) $name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $id = (int) ($ids[$index] ?? 0);
+            $color = strtolower(trim((string) ($colors[$index] ?? '#d1d5db')));
+
+            if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
+                $color = '#d1d5db';
+            }
+
+            $attribs = new Registry(array(
+                'block_events' => !empty($blocks[$index]) ? 1 : 0,
+            ));
+            $alias = OutputFilter::stringURLSafe($name);
+            $ordering++;
+
+            if ($id <= 0) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__jem_types'))
+                    ->where($db->quoteName('entity') . ' = 4')
+                    ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
+                $db->setQuery($query);
+                $id = (int) $db->loadResult();
+            }
+
+            if ($id > 0) {
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_types'))
+                    ->set($db->quoteName('name') . ' = ' . $db->quote($name))
+                    ->set($db->quoteName('alias') . ' = ' . $db->quote($alias))
+                    ->set($db->quoteName('color') . ' = ' . $db->quote($color))
+                    ->set($db->quoteName('entity') . ' = 4')
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('ordering') . ' = ' . (int) $ordering)
+                    ->set($db->quoteName('attribs') . ' = ' . $db->quote((string) $attribs))
+                    ->set($db->quoteName('modified') . ' = ' . $db->quote($now))
+                    ->set($db->quoteName('modified_by') . ' = ' . $userId)
+                    ->where($db->quoteName('id') . ' = ' . (int) $id)
+                    ->where($db->quoteName('entity') . ' = 4');
+                $db->setQuery($query)->execute();
+            } else {
+                $columns = array('name', 'alias', 'entity', 'color', 'published', 'ordering', 'access', 'language', 'created', 'created_by', 'attribs');
+                $values = array(
+                    $db->quote($name),
+                    $db->quote($alias),
+                    4,
+                    $db->quote($color),
+                    1,
+                    (int) $ordering,
+                    1,
+                    $db->quote('*'),
+                    $db->quote($now),
+                    $userId,
+                    $db->quote((string) $attribs),
+                );
+                $query = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jem_types'))
+                    ->columns($db->quoteName($columns))
+                    ->values(implode(',', $values));
+                $db->setQuery($query)->execute();
+                $id = (int) $db->insertid();
+            }
+
+            if ($id > 0) {
+                $keptIds[] = $id;
+            }
+        }
+
+        if ($keptIds) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_types'))
+                ->set($db->quoteName('published') . ' = 0')
+                ->where($db->quoteName('entity') . ' = 4')
+                ->where($db->quoteName('id') . ' NOT IN (' . implode(',', array_map('intval', $keptIds)) . ')');
+            $db->setQuery($query)->execute();
+        }
     }
 
     /**

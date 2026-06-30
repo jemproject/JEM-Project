@@ -18,6 +18,8 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\User\User;
 
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+
 /**
  * JEM Component Import Model
  * @package JEM
@@ -257,6 +259,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0;
             }
 
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
             $this->normaliseImportedManagerUserIds($values);
 
             $object = Table::getInstance($tableclass, '');
@@ -427,6 +430,8 @@ class JemModelImport extends BaseDatabaseModel
             foreach ($fieldsname as $k => $field) {
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
             }
+
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
                 if ((int) ($values['id'] ?? 0) === 1 || strtolower(trim($values['catname'] ?? '')) === 'root') {
@@ -1064,6 +1069,7 @@ class JemModelImport extends BaseDatabaseModel
 
         foreach ($data as $row) {
             $object = Table::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
+            $row = (object) JemImportSecurityHelper::sanitiseRecord(get_object_vars($row), $tablename);
             $object->bind($row, $ignore);
 
             // Make sure the data is valid

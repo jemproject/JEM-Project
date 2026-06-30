@@ -125,6 +125,12 @@ class JemHelperBackend
             );
 
             JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_IMPORT_PROFILES'),
+                'index.php?option=com_jem&amp;view=importprofiles',
+                $vName == 'importprofiles'
+            );
+
+            JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_EXPORT_DATA'),
                 'index.php?option=com_jem&amp;view=export',
                 $vName == 'export'

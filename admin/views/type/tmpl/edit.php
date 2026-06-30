@@ -12,6 +12,14 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('behavior.formvalidator');
+
+$typeAttribs = json_decode((string) ($this->item->attribs ?? ''), true);
+if (!is_array($typeAttribs)) {
+    $typeAttribs = array();
+}
+
+$showDatesDefault = (int) ($typeAttribs['show_dates_default'] ?? 1);
+$blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id=' . (int) $this->item->id); ?>"
@@ -318,6 +326,30 @@ HTMLHelper::_('behavior.formvalidator');
                         <?php echo $this->form->getInput('entity'); ?>
                     </div>
 
+                    <div class="mb-3 jem-type-day-settings" data-day-settings>
+                        <h3 class="h5 mb-2"><?php echo Text::_('COM_JEM_TYPE_DAY_SETTINGS'); ?></h3>
+                        <div class="mb-3">
+                            <label for="jem_type_show_dates_default" class="form-label">
+                                <?php echo Text::_('COM_JEM_TYPE_FIELD_SHOW_DATES_DEFAULT'); ?>
+                            </label>
+                            <select id="jem_type_show_dates_default" class="form-select" data-attrib-key="show_dates_default">
+                                <option value="1"<?php echo $showDatesDefault ? ' selected' : ''; ?>><?php echo Text::_('JYES'); ?></option>
+                                <option value="0"<?php echo !$showDatesDefault ? ' selected' : ''; ?>><?php echo Text::_('JNO'); ?></option>
+                            </select>
+                            <div class="form-text"><?php echo Text::_('COM_JEM_TYPE_FIELD_SHOW_DATES_DEFAULT_DESC'); ?></div>
+                        </div>
+                        <div>
+                            <label for="jem_type_block_events" class="form-label">
+                                <?php echo Text::_('COM_JEM_TYPE_FIELD_BLOCK_EVENTS'); ?>
+                            </label>
+                            <select id="jem_type_block_events" class="form-select" data-attrib-key="block_events">
+                                <option value="0"<?php echo !$blockEvents ? ' selected' : ''; ?>><?php echo Text::_('JNO'); ?></option>
+                                <option value="1"<?php echo $blockEvents ? ' selected' : ''; ?>><?php echo Text::_('JYES'); ?></option>
+                            </select>
+                            <div class="form-text"><?php echo Text::_('COM_JEM_TYPE_FIELD_BLOCK_EVENTS_DESC'); ?></div>
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <?php echo $this->form->getLabel('published'); ?>
                         <?php echo $this->form->getInput('published'); ?>
@@ -387,6 +419,10 @@ HTMLHelper::_('behavior.formvalidator');
         background: var(--template-link-color, #2a69b8);
         color: #fff;
     }
+
+    .jem-type-day-settings[hidden] {
+        display: none !important;
+    }
 </style>
 <script>
 (function () {
@@ -428,6 +464,52 @@ HTMLHelper::_('behavior.formvalidator');
         field.addEventListener('change', collectTypeTranslations);
     });
     collectTypeTranslations();
+})();
+
+(function () {
+    var form = document.getElementById('adminForm');
+    var entity = document.getElementById('jform_entity');
+    var attribsInput = document.getElementById('jform_attribs');
+    var daySettings = document.querySelector('[data-day-settings]');
+    var fields = document.querySelectorAll('[data-attrib-key]');
+
+    if (!form || !entity || !attribsInput || !daySettings) { return; }
+
+    function parseAttribs() {
+        try {
+            var parsed = JSON.parse(attribsInput.value || '{}');
+            return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function collectDayAttribs() {
+        var attribs = parseAttribs();
+
+        delete attribs.show_dates_default;
+        delete attribs.block_events;
+
+        if (String(entity.value) === '4') {
+            fields.forEach(function (field) {
+                attribs[field.getAttribute('data-attrib-key')] = field.value === '1' ? 1 : 0;
+            });
+        }
+
+        attribsInput.value = Object.keys(attribs).length ? JSON.stringify(attribs) : '';
+    }
+
+    function toggleDaySettings() {
+        daySettings.hidden = String(entity.value) !== '4';
+        collectDayAttribs();
+    }
+
+    entity.addEventListener('change', toggleDaySettings);
+    fields.forEach(function (field) {
+        field.addEventListener('change', collectDayAttribs);
+    });
+    form.addEventListener('submit', collectDayAttribs);
+    toggleDaySettings();
 })();
 
 (function () {

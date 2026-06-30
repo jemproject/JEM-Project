@@ -71,6 +71,22 @@ class JemModelType extends JemModelAdmin
         $color = trim((string) $table->color);
         $table->color = preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : '';
 
+        $attribs = json_decode((string) $table->attribs, true);
+        if (!is_array($attribs)) {
+            $attribs = array();
+        }
+
+        if ((int) $table->entity === 4) {
+            $attribs = array(
+                'show_dates_default' => !empty($attribs['show_dates_default']) ? 1 : 0,
+                'block_events' => !empty($attribs['block_events']) ? 1 : 0,
+            );
+        } else {
+            unset($attribs['show_dates_default'], $attribs['block_events']);
+        }
+
+        $table->attribs = $attribs ? json_encode($attribs) : null;
+
         $translations = json_decode((string) $table->translations, true);
         if (!is_array($translations)) {
             $translations = array();

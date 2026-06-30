@@ -526,14 +526,6 @@ function registraoff()
                     <div class="clr"></div>
 
 
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'calendar-special-days', Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS')); ?>
-                        <fieldset class="adminform">
-                            <?php echo $this->loadTemplate('specialdays'); ?>
-                        </fieldset>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <div class="clr"></div>
-
-
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'pdf-settings', Text::_('COM_JEM_PDF_SETTINGS')); ?>
                         <fieldset class="adminform">
                             <?php echo $this->loadTemplate('pdf'); ?>

@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_COMPONENT_SITE . '/classes/controller.form.class.php';
 
@@ -85,7 +86,7 @@ class JemControllerSpecialday extends JemControllerForm
         $return = Factory::getApplication()->input->get('return', '', 'base64');
         $decodedReturn = $return ? base64_decode($return, true) : false;
 
-        if ($decodedReturn && \Joomla\CMS\Uri\Uri::isInternal($decodedReturn)) {
+        if ($decodedReturn && Uri::isInternal($decodedReturn)) {
             return $decodedReturn;
         }
 

@@ -14,6 +14,7 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\Path;
 
@@ -248,13 +249,13 @@ class JemModelCssmanager extends BaseDatabaseModel
         $targetFile = trim((string) $targetFile);
         $targetFile = $targetFile !== '' ? $targetFile : $file;
 
-        if ($file === '' || $file !== \Joomla\CMS\Filter\InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy rejected: invalid source file "' . $file . '"', Log::WARNING);
             return false;
         }
 
-        if ($targetFile === '' || $targetFile !== \Joomla\CMS\Filter\InputFilter::getInstance()->clean($targetFile, 'path') || File::getExt($targetFile) !== 'css') {
+        if ($targetFile === '' || $targetFile !== InputFilter::getInstance()->clean($targetFile, 'path') || File::getExt($targetFile) !== 'css') {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy rejected: invalid target file "' . $targetFile . '" for source "' . $file . '"', Log::WARNING);
             return false;
@@ -316,7 +317,7 @@ class JemModelCssmanager extends BaseDatabaseModel
     {
         $file = (string) $file;
 
-        if ($file === '' || $file !== \Joomla\CMS\Filter\InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom delete rejected: invalid custom file "' . $file . '"', Log::WARNING);
             return false;
@@ -361,7 +362,7 @@ class JemModelCssmanager extends BaseDatabaseModel
     {
         $file = (string) $file;
 
-        if ($file === '' || $file !== \Joomla\CMS\Filter\InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom download rejected: invalid file "' . $file . '"', Log::WARNING);
             return false;

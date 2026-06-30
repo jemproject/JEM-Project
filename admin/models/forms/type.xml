@@ -54,6 +54,7 @@
             <option value="1">COM_JEM_TYPE_ENTITY_EVENT</option>
             <option value="2">COM_JEM_TYPE_ENTITY_CATEGORY</option>
             <option value="3">COM_JEM_TYPE_ENTITY_VENUE</option>
+            <option value="4">COM_JEM_TYPE_ENTITY_DAY</option>
         </field>
 
         <field name="icon"

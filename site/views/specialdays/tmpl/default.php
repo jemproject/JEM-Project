@@ -176,7 +176,8 @@ $renderLocation = function ($item) {
                 <select name="filter_day_type" class="form-select form-select-sm" onchange="this.form.submit()">
                     <option value=""><?php echo Text::_('COM_JEM_SPECIAL_DAY_FILTER_TYPE'); ?></option>
                     <?php foreach ($this->dayTypes as $type) : ?>
-                        <option value="<?php echo $this->escape($type['name']); ?>"<?php echo $this->state->get('filter.day_type') === $type['name'] ? ' selected' : ''; ?>>
+                        <?php $typeValue = !empty($type['id']) ? (string) (int) $type['id'] : (string) $type['name']; ?>
+                        <option value="<?php echo $this->escape($typeValue); ?>"<?php echo (string) $this->state->get('filter.day_type') === $typeValue ? ' selected="selected"' : ''; ?>>
                             <?php echo $this->escape($type['name']); ?>
                         </option>
                     <?php endforeach; ?>
@@ -195,7 +196,7 @@ $renderLocation = function ($item) {
                             <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TITLE', 'a.title', $listDirn, $listOrder); ?>
                         </th>
                         <th style="width:12%">
-                            <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type', $listDirn, $listOrder); ?>
+                            <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type_id', $listDirn, $listOrder); ?>
                         </th>
                         <th style="width:22%">
                             <?php echo Text::_('COM_JEM_SPECIAL_DAY_RULE'); ?>
@@ -216,7 +217,9 @@ $renderLocation = function ($item) {
                     <?php
                     $editUrl = Route::_('index.php?option=com_jem&view=specialday&layout=edit&id=' . (int) $item->id . '&return=' . base64_encode($this->action));
                     $dayType = $item->day_type ?? '';
-                    $type = $this->dayTypes[$dayType] ?? array('name' => $dayType, 'color' => '#d1d5db');
+                    $type = !empty($item->day_type_id) && isset($this->dayTypesById[(int) $item->day_type_id])
+                        ? $this->dayTypesById[(int) $item->day_type_id]
+                        : ($this->dayTypes[$dayType] ?? array('name' => $dayType, 'color' => '#d1d5db'));
                     ?>
                     <tr>
                         <td>

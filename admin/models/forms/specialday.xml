@@ -21,13 +21,15 @@
                class="form-control"
         />
 
-        <field name="day_type"
+        <field name="day_type_id"
                type="specialdaytype"
                label="COM_JEM_SPECIAL_DAY_FIELD_TYPE"
                description="COM_JEM_SPECIAL_DAY_FIELD_TYPE_DESC"
                required="true"
                class="form-select w-auto"
         />
+
+        <field name="day_type" type="hidden" />
 
         <field name="start_date"
                type="calendar"
@@ -100,6 +102,14 @@
                class="form-control"
         />
 
+        <field name="link"
+               type="specialdaylink"
+               label="COM_JEM_SPECIAL_DAY_FIELD_LINK"
+               description="COM_JEM_SPECIAL_DAY_FIELD_LINK_DESC"
+               maxlength="2048"
+               filter="string"
+        />
+
         <field name="show_dates"
                type="radio"
                label="COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES"
@@ -119,6 +129,8 @@
         >
             <option value="1">JPUBLISHED</option>
             <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
         </field>
 
         <field name="access"
