@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE project> <!-- For Eclipse -->
 <project name="JEM" default="build" basedir=".">
     <description>Ant Build File for JEM by diesl. Based on Ant build file by Evan Fillman (mole84)</description>
@@ -56,6 +57,7 @@
         <zip destfile="${cfg.buildVersionDir}/components/${cfg.comName}.zip" basedir="${cfg.comDir}">
             <exclude name="${cfg.buildDir}/**" />
             <exclude name=".settings/**" />
+            <exclude name=".tmp/**" />
             <exclude name=".phpunit.cache/**" />
             <exclude name=".agents/**" />
             <exclude name=".claude/**" />
@@ -78,7 +80,14 @@
             <exclude name="**/*.log" />
             <exclude name="**/*.tmp" />
             <exclude name="**/*~" />
+            <exclude name="*.code-workspace" />
+            <exclude name="CODEX_PENDING_DIARY.md" />
+            <exclude name="import-catalog.xml" />
+            <exclude name="update_pkg_*.xml" />
+            <exclude name="pkg_*.zip" />
             <exclude name="build.*" />
+            <exclude name="_old*/**" />
+            <exclude name="old*/**" />
             <exclude name="3rd/**" />
             <exclude name="composer.json" />
             <exclude name="composer.lock" />
@@ -87,6 +96,7 @@
             <exclude name="package/**" />
             <exclude name="phpunit.xml" />
             <exclude name="phpunit.xml.dist" />
+            <exclude name="phpunit.progress.xml.dist" />
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
             <exclude name="tools/**" />
@@ -151,6 +161,9 @@
         <available file="${cfg.validateDir}/mod_types/mod_${cfg.name}_types.xml" property="validate.mod.types.manifest" />
         <fail unless="validate.mod.types.manifest" message="Module manifest mod_${cfg.name}_types.xml is missing inside mod_${cfg.name}_types.zip." />
 
+        <available file="${cfg.validateDir}/mod_types/script.php" property="validate.mod.types.script" />
+        <fail unless="validate.mod.types.script" message="Module script.php is missing inside mod_${cfg.name}_types.zip." />
+
         <delete dir="${cfg.validateDir}" />
     </target>
 
@@ -209,10 +222,18 @@
 
     <target name="build_3rd" description="packages any 3rd party plugins">
         <!-- add all 3rd party plugins directories here -->
-        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents" />
-        <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/" />
+        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myevents.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myevents">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/jcomments_${cfg.name}.zip" basedir="3rd/JComments/">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
     </target>
 
     <!--
