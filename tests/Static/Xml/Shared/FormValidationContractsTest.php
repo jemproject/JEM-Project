@@ -63,6 +63,17 @@ final class FormValidationContractsTest extends TestCase
         $this->assertFieldAttribute($xpath, 'max_height', 'min', '0', $path);
     }
 
+    public function testSettingsDateAndTimeFormatFieldsKeepStringFilters(): void
+    {
+        $path = JEM_TEST_ROOT . '/admin/models/forms/settings.xml';
+        $xpath = $this->xpath($path);
+
+        $this->assertFieldAttribute($xpath, 'formatdate', 'filter', 'string', $path);
+        $this->assertFieldAttribute($xpath, 'formatShortDate', 'filter', 'string', $path);
+        $this->assertFieldAttribute($xpath, 'formattime', 'filter', 'string', $path);
+        $this->assertFieldAttribute($xpath, 'formathour', 'filter', 'string', $path);
+    }
+
     public function testVenueTableKeepsRuntimeUrlValidation(): void
     {
         $contents = (string) file_get_contents(JEM_TEST_ROOT . '/admin/tables/venue.php');
