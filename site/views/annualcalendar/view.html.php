@@ -69,6 +69,19 @@ class JemViewAnnualcalendar extends JemView
         $periodEnd   = $periodStart->modify('+12 months -1 day');
 
         $model = $this->getModel();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $model->getState('params');
+        $model->setState('filter.calendar_from', ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($periodStart->format('Y-m-d')) . ') >= 0');
+        $model->setState('filter.calendar_to', ' DATEDIFF(a.dates, ' . $db->quote($periodEnd->format('Y-m-d')) . ') <= 0');
+        $model->setState('filter.date.from', $periodStart->format('Y-m-d'));
+        $model->setState('filter.date.to', $periodEnd->format('Y-m-d'));
+        $model->setState('filter.published', 1);
+        $model->setState('filter.show_archived_events', (bool) $params->get('show_archived_events', 0));
+        $model->setState('filter.calendar_multiday', true);
+        $model->setState('filter.calendar_startdayonly', (bool) $params->get('show_only_start', false));
+        $model->setState('filter.groupby', array('a.id'));
+        $model->setState('list.start', 0);
+        $model->setState('list.limit', 0);
         $rows  = $this->get('Items');
 
         $pagetitle = $params->def('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_ANNUALCALENDAR_VIEW_DEFAULT_TITLE'));
