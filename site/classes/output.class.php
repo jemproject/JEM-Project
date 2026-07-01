@@ -368,7 +368,7 @@ static public function lightbox() {
      */
     static protected function getDefaultPdfViews()
     {
-        return 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal';
+        return 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
     }
 
     /**

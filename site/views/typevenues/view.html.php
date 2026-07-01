@@ -46,7 +46,6 @@ class JemViewTypevenues extends JemView
 
         if (!$typeObj) {
             $requestedTypeId = $app->input->getInt('id', 0) ?: (int) $params->get('id', 0);
-
             $pagetitle = Text::_('COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE');
             $pathway->addItem($pagetitle);
             $params->set('page_heading', $pagetitle);
@@ -79,6 +78,7 @@ class JemViewTypevenues extends JemView
             $this->pageclass_sfx = '';
             $this->print         = $print;
             $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+            $this->pdf_link      = Route::_('index.php?option=com_jem&view=typevenues&id=' . (int) $requestedTypeId . '&format=raw&layout=pdf');
             $this->task          = '';
             $this->show_status   = false;
 
@@ -152,6 +152,7 @@ class JemViewTypevenues extends JemView
         $this->pageclass_sfx = '';
         $this->print         = $print;
         $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+        $this->pdf_link      = Route::_('index.php?option=com_jem&view=typevenues&id=' . (int) $typeObj->id . '&format=raw&layout=pdf');
         $this->task          = '';
         $this->show_status   = $permissions->canEditPublishVenue;
 

@@ -46,7 +46,6 @@ class JemViewTypeevents extends JemView
 
         if (!$typeObj) {
             $requestedTypeId = $app->input->getInt('id', 0) ?: (int) $params->get('id', 0);
-
             $pagetitle = Text::_('COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE');
             $pathway->addItem($pagetitle);
 
@@ -74,6 +73,7 @@ class JemViewTypeevents extends JemView
             $this->pageclass_sfx = '';
             $this->print         = $print;
             $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+            $this->pdf_link      = Route::_('index.php?option=com_jem&view=typeevents&id=' . (int) $requestedTypeId . '&format=raw&layout=pdf');
             $this->archive_link  = $uri->toString();
             $this->task          = '';
 
@@ -157,6 +157,7 @@ class JemViewTypeevents extends JemView
         $this->pageclass_sfx = '';
         $this->print         = $print;
         $this->print_link    = $uri->toString() . '?print=1&tmpl=component';
+        $this->pdf_link      = Route::_('index.php?option=com_jem&view=typeevents&id=' . (int) $typeObj->id . '&format=raw&layout=pdf');
         $this->archive_link  = $uri->toString();
         $this->task          = '';
 

@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\CMS\Router\Route;
 
 /**
  * Raw: Category
@@ -36,21 +38,52 @@ class JemViewCategory extends HtmlView
         $layout = $jinput->getCmd('layout', '');
 
         if ($layout === 'pdf') {
-            $model = $this->getModel('CategoryCal');
+            $model = $this->getModel('Category');
             $model->setId($catid);
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
-            $category = $model->getCategories($catid);
-            $categoryName = !empty($category[0]->catname) ? (string) $category[0]->catname : Text::_('COM_JEM_CATEGORY');
+            $category = $model->getCategory();
 
-            JemPdfView::renderMonthlyCalendar(
-                $categoryName . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+            if (empty($category)) {
+                $app->close();
+
+                return;
+            }
+
+            if (empty($category->user_has_access_category)) {
+                $user = JemFactory::getUser();
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($app->input->server->getString('REQUEST_URI')), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            $description = Text::_('COM_JEM_NO_DESCRIPTION');
+            if (!empty($category->description)) {
+                $category->text = $category->description;
+                $category->title = $category->catname ?? $category->title ?? Text::_('COM_JEM_CATEGORY');
+                $params = $app->getParams();
+                PluginHelper::importPlugin('content');
+                $app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
+                $description = (string) $category->text;
+            }
+
+            $categoryName = trim((string) ($category->catname ?? $category->title ?? ''));
+            if ($categoryName === '') {
+                $categoryName = Text::_('COM_JEM_CATEGORY');
+            }
+
+            JemPdfView::renderCategoryDetail(
+                $categoryName,
+                $category,
+                (array) $model->getChildren(),
                 (array) $model->getItems(),
-                'jem-category-' . $catid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
-                $year,
-                $month,
-                $app->getParams()
+                $description,
+                'jem-category-' . $catid . '.pdf'
             );
 
             return;

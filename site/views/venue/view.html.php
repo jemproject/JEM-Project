@@ -292,6 +292,7 @@ class JemViewVenue extends JemView
                 $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
             }
             $archive_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug));
+            $pdf_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug) . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf');
 
             $params->set('page_heading', $pageheading);
 
@@ -387,6 +388,7 @@ class JemViewVenue extends JemView
             $this->noevents         = $noevents;
             $this->venue            = $venue;
             $this->print_link       = $print_link;
+            $this->pdf_link         = $pdf_link;
             $this->archive_link     = $archive_link;
             $this->print            = $print;
             $this->params           = $params;

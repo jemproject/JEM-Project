@@ -119,22 +119,26 @@ class JemViewAnnualcalendar extends HtmlView
         $pdf->setPrintFooter(false);
         $pdf->AddPage();
         $pdf->writeHTML($this->buildPdfHtml($title, $periodStart, $eventsByDate, $specialDaysByDate, $legend, $categoryLegend, $params, $orientation, $showEventTitles, $eventLimit, $paperSize, $columnGap, $rowGap, $monthMatrix, $verticalAlign), true, false, true, false, '');
-        if ($showDayTypesLegend || $showCategoriesLegend) {
-            $pdf->setPage(1);
-            $pdf->SetY(-max(18, (int) round(18 * $posterScale)));
-            $pdf->writeHTML(
-                $this->buildPdfCompactLegendHtml(
-                    $showDayTypesLegend ? $legend : array(),
-                    $showCategoriesLegend ? $categoryLegend : array(),
-                    $showDayTypesLegend,
-                    $showCategoriesLegend
-                ),
-                true,
-                false,
-                true,
-                false,
-                ''
-            );
+        $pdf->setPage(1);
+        $pdf->SetY(-max(27, (int) round(27 * $posterScale)));
+        $pdf->writeHTML(
+            $this->buildPdfCompactLegendHtml(
+                $showDayTypesLegend ? $legend : array(),
+                $showCategoriesLegend ? $categoryLegend : array(),
+                $showDayTypesLegend,
+                $showCategoriesLegend,
+                (int) $params->get('categoryColorMarker', 0) === 1
+            ),
+            true,
+            false,
+            true,
+            false,
+            ''
+        );
+
+        if (!empty($pdf->jemShowFooter)) {
+            $pdf->SetY(-9);
+            $pdf->writeHTML($this->buildPdfBottomFooterHtml((string) ($pdf->jemFooterStamp ?? ''), (string) ($pdf->jemFooterPowered ?? 'Powered by JEM')), true, false, true, false, '');
         }
 
         while (ob_get_level() > 0) {
@@ -165,6 +169,7 @@ class JemViewAnnualcalendar extends HtmlView
             $eventEndDate = JemHelper::isValidDate($row->enddates) && $row->enddates >= $row->dates
                 ? new DateTimeImmutable($row->enddates)
                 : $eventStartDate;
+            $durationDays = max(1, (int) $eventStartDate->diff($eventEndDate)->days + 1);
             $eventStartDate = $eventStartDate < $periodStart ? $periodStart : $eventStartDate;
             $eventEndDate = $eventEndDate > $periodEnd ? $periodEnd : $eventEndDate;
             $categoryColors = array();
@@ -197,6 +202,7 @@ class JemViewAnnualcalendar extends HtmlView
                     'link' => !empty($row->slug) ? $this->buildAbsoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '',
                     'colors' => array_values($categoryColors),
                     'is_multiday' => $eventEndDate > $eventStartDate,
+                    'duration_days' => $durationDays,
                 );
             }
         }
@@ -445,9 +451,7 @@ class JemViewAnnualcalendar extends HtmlView
 
             $hasCategoryColor = !empty($event['colors']);
             $color = $hasCategoryColor ? reset($event['colors']) : '#111827';
-            $marker = !empty($event['is_multiday'])
-                ? ($hasCategoryColor ? '&#9632;' : '&#9633;')
-                : ($hasCategoryColor ? '&#9679;' : '&#9675;');
+            $marker = $this->getPdfEventDurationMarker((int) ($event['duration_days'] ?? 1), $hasCategoryColor);
             $markerHtml = '<span style="color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . ';">' . $marker . '</span>';
 
             if ($showEventTitles) {
@@ -563,10 +567,23 @@ class JemViewAnnualcalendar extends HtmlView
             return '';
         }
 
-        $primary = reset($specialDays);
-        $color = (string) ($primary['color'] ?? '');
+        foreach ($specialDays as $specialDay) {
+            $color = strtolower(trim((string) ($specialDay['color'] ?? '')));
 
-        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? $color : '#d1d5db';
+            if ($color === '' || $color === 'transparent' || $color === 'none') {
+                continue;
+            }
+
+            if (preg_match('/^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*0(?:\.0+)?\s*\)$/', $color)) {
+                continue;
+            }
+
+            if (preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+                return $color;
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -608,38 +625,57 @@ class JemViewAnnualcalendar extends HtmlView
     /**
      * Builds a compact colour key for day types and event categories.
      */
-    private function buildPdfCompactLegendHtml(array $dayTypeLegend, array $categoryLegend, bool $showDayTypes, bool $showCategories): string
+    private function buildPdfCompactLegendHtml(array $dayTypeLegend, array $categoryLegend, bool $showDayTypes, bool $showCategories, bool $useCategoryBadges): string
     {
         $html = array();
         $html[] = '<table class="jem-pdf-compact-legend" width="100%" cellpadding="1" cellspacing="0" style="border-top:0.2mm solid #9ca3af;border-bottom:0.2mm solid #9ca3af;">';
-        $html[] = '<tr>';
-        $html[] = '<td width="50%" align="left">';
-        if ($showDayTypes) {
-            $html[] = '<strong>' . Text::_('COM_JEM_CALENDAR_TYPES_OF_DAYS') . '</strong> '
-                . $this->buildPdfLegendItems($dayTypeLegend, 3, 3);
-        } else {
-            $html[] = '&nbsp;';
-        }
-        $html[] = '</td>';
-        $html[] = '<td width="50%" align="right">';
-        if ($showCategories) {
-            $html[] = '<strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> '
-                . $this->buildPdfLegendItems($categoryLegend, 4, 3);
-        } else {
-            $html[] = '&nbsp;';
-        }
-        $html[] = '</td>';
-        $html[] = '</tr>';
-        $html[] = '<tr><td colspan="2" align="center">' . $this->buildEventMarkerLegendHtml() . '</td></tr>';
+        $html[] = '<tr><td width="100%" align="left">' . $this->buildEventMarkerLegendHtml() . '</td></tr>';
+        $html[] = '<tr><td width="100%" align="left"><strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> '
+            . ($showCategories ? $this->buildPdfCategoryLegendItems($categoryLegend, 6, 1, $useCategoryBadges) : '-')
+            . '</td></tr>';
+        $html[] = '<tr><td width="100%" align="left"><strong>' . Text::_('COM_JEM_CALENDAR_TYPES_OF_DAYS') . '</strong> '
+            . ($showDayTypes ? $this->buildPdfDayTypeLegendItems($dayTypeLegend, 5, 1) : '-')
+            . '</td></tr>';
         $html[] = '</table>';
 
         return implode('', $html);
     }
 
+    private function buildPdfBottomFooterHtml(string $stamp, string $powered): string
+    {
+        return '<table width="100%" cellpadding="0" cellspacing="0" style="font-size:7pt;color:#6b7280;">'
+            . '<tr>'
+            . '<td width="50%" align="left">' . htmlspecialchars($stamp, ENT_COMPAT, 'UTF-8') . '</td>'
+            . '<td width="50%" align="right">' . htmlspecialchars($powered, ENT_COMPAT, 'UTF-8') . '</td>'
+            . '</tr>'
+            . '</table>';
+    }
+
     private function buildEventMarkerLegendHtml(): string
     {
-        return '&#9679; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY')
-            . '&nbsp;&nbsp; &#9632; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_MULTI_DAY');
+        return '&#9679; 1-day events'
+            . '&nbsp;&nbsp; &#9632; 2 or 3 day events'
+            . '&nbsp;&nbsp; &#9650; 4 to 6 day events'
+            . '&nbsp;&nbsp; &#9733; 7 or more day events';
+    }
+
+    private function getPdfEventDurationMarker(int $durationDays, bool $filled): string
+    {
+        $durationDays = max(1, $durationDays);
+
+        if ($durationDays === 1) {
+            return $filled ? '&#9679;' : '&#9675;';
+        }
+
+        if ($durationDays <= 3) {
+            return $filled ? '&#9632;' : '&#9633;';
+        }
+
+        if ($durationDays <= 6) {
+            return '&#9650;';
+        }
+
+        return '&#9733;';
     }
 
     /**
@@ -694,6 +730,106 @@ class JemViewAnnualcalendar extends HtmlView
         }
 
         return $lines ? implode('<br />', $lines) : '-';
+    }
+
+    private function buildPdfCategoryLegendItems(array $items, int $itemsPerLine, int $maxLines, bool $useBadges): string
+    {
+        return $this->buildPdfCompactColorItems($items, $itemsPerLine, $maxLines, $useBadges, false);
+    }
+
+    private function buildPdfDayTypeLegendItems(array $items, int $itemsPerLine, int $maxLines): string
+    {
+        return $this->buildPdfCompactColorItems($items, $itemsPerLine, $maxLines, false, true);
+    }
+
+    private function buildPdfCompactColorItems(array $items, int $itemsPerLine, int $maxLines, bool $useBadges, bool $largeSwatch): string
+    {
+        if (!$items) {
+            return '-';
+        }
+
+        $lines = array();
+        $lineItems = array();
+        $shownItems = 0;
+        $maxItems = max(1, $itemsPerLine) * max(1, $maxLines);
+
+        foreach ($items as $item) {
+            if ($shownItems >= $maxItems) {
+                break;
+            }
+
+            $color = !empty($item['color']) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $item['color'])
+                ? (string) $item['color']
+                : '#ffffff';
+            $label = trim((string) ($item['type'] ?? $item['title'] ?? ''));
+
+            if ($label === '') {
+                continue;
+            }
+
+            if ($useBadges && $color !== '#ffffff') {
+                $lineItems[] = '<span style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
+                    . ';color:' . $this->getContrastTextColor($color)
+                    . ';border:0.2mm solid ' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
+                    . ';padding:0.3mm 1mm;">' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</span>';
+            } else {
+                $lineItems[] = $this->buildPdfLegendSwatch($color, $largeSwatch)
+                    . ' '
+                    . htmlspecialchars($label, ENT_COMPAT, 'UTF-8');
+            }
+
+            $shownItems++;
+
+            if (count($lineItems) >= $itemsPerLine) {
+                $lines[] = implode(' &nbsp; ', $lineItems);
+                $lineItems = array();
+            }
+        }
+
+        if ($lineItems) {
+            $lines[] = implode(' &nbsp; ', $lineItems);
+        }
+
+        $hiddenItems = count($items) - $shownItems;
+
+        if ($hiddenItems > 0) {
+            $lastLine = array_pop($lines);
+            $lastLine = trim((string) $lastLine);
+            $lines[] = ($lastLine !== '' ? $lastLine . ' &nbsp; ' : '') . '+' . (int) $hiddenItems;
+        }
+
+        return $lines ? implode('<br />', $lines) : '-';
+    }
+
+    private function buildPdfLegendSwatch(string $color, bool $large): string
+    {
+        $hasColor = preg_match('/^#[0-9a-fA-F]{6}$/', $color);
+        $color = $hasColor ? $color : '#ffffff';
+        $width = $large ? '3.2mm' : '1.4mm';
+        $height = $large ? '3.2mm' : '3.0mm';
+
+        if (!$hasColor) {
+            return '<span style="color:#6b7280;font-size:' . $height . ';line-height:' . $height . ';">&#9633;</span>';
+        }
+
+        return '<span style="display:inline-block;background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
+            . ';border:0.25mm solid #6b7280;color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
+            . ';font-size:' . $height . ';line-height:' . $height . ';">'
+            . ($large ? '&nbsp;&nbsp;&nbsp;' : '&nbsp;')
+            . '</span>';
+    }
+
+    private function getContrastTextColor(string $background): string
+    {
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $background)) {
+            return '#111827';
+        }
+
+        $red = hexdec(substr($background, 1, 2));
+        $green = hexdec(substr($background, 3, 2));
+        $blue = hexdec(substr($background, 5, 2));
+
+        return (($red * 299 + $green * 587 + $blue * 114) / 1000) > 145 ? '#111827' : '#ffffff';
     }
 
     /**

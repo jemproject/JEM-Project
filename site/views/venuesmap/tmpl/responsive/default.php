@@ -8,4 +8,6 @@
 
 defined('_JEXEC') or die;
 
+$this->jemLayoutStyle = 'responsive';
+
 require dirname(__DIR__) . '/default.php';

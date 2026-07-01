@@ -49,6 +49,7 @@ $mapProvider = $mapProvider === 'google' ? 'google' : 'osm';
 $mapType = (string) $this->params->get('map_type', 'political');
 $settings = JemHelper::globalattribs();
 $googleApiKey = trim((string) $settings->get('global_googleapi', ''));
+$isResponsiveLayout = !empty($this->jemLayoutStyle) && $this->jemLayoutStyle === 'responsive';
 
 if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
@@ -164,6 +165,49 @@ foreach (($this->venueslist ?? []) as $venue) {
 
 ?>
 
+<?php if ($isResponsiveLayout) : ?>
+    <style>
+        #jem.jem_venuesmap .jem-venuesmap-responsive-list {
+            display: grid;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card {
+            border: 1px solid #d6dde8;
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title {
+            font-size: 1.05rem;
+            margin: 0 0 0.5rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta {
+            display: grid;
+            grid-template-columns: minmax(6rem, 28%) 1fr;
+            gap: 0.25rem 0.75rem;
+            margin: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta dt {
+            font-weight: 700;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta dd {
+            margin: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+    </style>
+<?php endif; ?>
+
 
 <div id="jem" class="jem_venuesmap<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
@@ -277,7 +321,54 @@ foreach (($this->venueslist ?? []) as $venue) {
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($this->venueslist)) : ?>
+    <?php if (!empty($this->venueslist) && $isResponsiveLayout) : ?>
+        <div class="jem-venuesmap-responsive-list">
+            <?php foreach ($this->venueslist as $venue) : ?>
+                <?php
+                $venueName = $this->escape($venue->venue);
+                $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
+                $canEditVenue = $editableVenues[(int) $venue->id] ?? false;
+                $latitude = $formatCoordinate($venue->latitude ?? '');
+                $longitude = $formatCoordinate($venue->longitude ?? '');
+                $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
+                ?>
+                <article class="jem-venuesmap-card">
+                    <div class="jem-venuesmap-card-main">
+                        <h2 class="jem-venuesmap-card-title">
+                            <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo $venueName; ?>
+                            </a>
+                        </h2>
+                        <dl class="jem-venuesmap-card-meta">
+                            <dt><?php echo Text::_('COM_JEM_CITY'); ?></dt>
+                            <dd><?php echo $venue->city !== '' ? $this->escape($venue->city) : '-'; ?></dd>
+                            <dt><?php echo Text::_('COM_JEM_COUNTRY'); ?></dt>
+                            <dd><?php echo $countryName !== '' ? $this->escape($countryName) : '-'; ?></dd>
+                            <dt><?php echo Text::_('COM_JEM_LATITUDE'); ?></dt>
+                            <dd><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></dd>
+                            <dt><?php echo Text::_('COM_JEM_LONGITUDE'); ?></dt>
+                            <dd><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></dd>
+                        </dl>
+                    </div>
+                    <div class="jem-venuesmap-card-actions">
+                        <?php if ($mapLink !== '') : ?>
+                            <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                <?php echo Text::_('COM_JEM_MAP_LINK'); ?>
+                            </a>
+                        <?php endif; ?>
+                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php echo Text::_('COM_JEM_CALENDAR'); ?>
+                        </a>
+                        <?php if ($showEditColumn && $canEditVenue) : ?>
+                            <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php elseif (!empty($this->venueslist)) : ?>
         <div class="table table-responsive table-striped table-hover table-sm jem-venuesmap-list">
             <table class="eventtable table table-striped" style="width:100%;" summary="<?php echo Text::_('COM_JEM_VENUESMAP_PAGETITLE'); ?>">
                 <thead>

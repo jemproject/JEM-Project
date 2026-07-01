@@ -402,7 +402,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('imagewidth', '200'),
 ('pdf_imageheight', '40'),
 ('pdf_imagewidth', '40'),
-('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal'),
+('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal'),
 ('pdf_paper_size', 'A4'),
 ('pdf_orientation', 'L'),
 ('pdf_calendar_layout', 'calendar'),

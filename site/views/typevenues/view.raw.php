@@ -12,12 +12,12 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
- * Raw: Typeevents
+ * Raw: Typevenues
  */
-class JemViewTypeevents extends HtmlView
+class JemViewTypevenues extends HtmlView
 {
     /**
-     * Creates the PDF output for the Type events view.
+     * Creates the PDF output for the Type venues view.
      */
     public function display($tpl = null)
     {
@@ -34,9 +34,9 @@ class JemViewTypeevents extends HtmlView
         $model->setState('list.limit', 0);
         $type = $model->getType();
         $typeName = $type && trim((string) ($type->name ?? '')) !== ''
-            ? Text::sprintf('COM_JEM_TYPEEVENTS_TITLE', (string) $type->name)
-            : Text::_('COM_JEM_EVENTS');
+            ? Text::sprintf('COM_JEM_TYPEVENUES_TITLE', (string) $type->name)
+            : Text::_('COM_JEM_VENUES');
 
-        JemPdfView::renderTypeEventList($typeName, $type, (array) $model->getItems(), 'jem-type-events.pdf');
+        JemPdfView::renderTypeVenueList($typeName, $type, (array) $model->getItems(), 'jem-type-venues.pdf');
     }
 }

@@ -369,27 +369,29 @@ class JemModelCategories extends BaseDatabaseModel
      * @access public
      * @return array
      */
-    public function getEventdata($id)
+    public function getEventdata($id, ?int $limit = null)
     {
         $app = Factory::getApplication();
         $params = $app->getParams('com_jem');
+        $limit = $limit !== null ? max(0, $limit) : (int) $params->get('detcat_nr', 3);
+        $cacheKey = (int) $id . ':' . (int) $limit;
 
-        if (empty($this->_data[$id])) {
+        if (empty($this->_data[$cacheKey])) {
             // Lets load the content
             $query = $this->_buildDataQuery($id);
-            $this->_data[$id] = $this->_getList($query, 0, $params->get('detcat_nr'));
+            $this->_data[$cacheKey] = $this->_getList($query, 0, $limit);
 
-            foreach ($this->_data[$id] as $i => &$item) {
+            foreach ($this->_data[$cacheKey] as $i => &$item) {
                 $item->categories = $this->getCategories($item->id);
 
                 //remove events without categories (users have no access to them)
                 if (empty($item->categories)) {
-                    unset ($this->_data[$id][$i]);
+                    unset ($this->_data[$cacheKey][$i]);
                 }
             }
         }
 
-        return $this->_data[$id];
+        return $this->_data[$cacheKey];
     }
 
     /**

@@ -81,7 +81,7 @@ $getAnnualMarkerClass = static function ($durationDays) {
         return 'jem-annual-marker-two-three-days';
     }
 
-    if ($durationDays <= 7) {
+    if ($durationDays <= 6) {
         return 'jem-annual-marker-four-seven-days';
     }
 
