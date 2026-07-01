@@ -115,6 +115,7 @@ class JemModelImagehandler extends BaseDatabaseModel
 
             $list[$i]->width  = $info[0];
             $list[$i]->height = $info[1];
+            $list[$i]->modified = filemtime($list[$i]->path) ?: null;
             //$list[$i]->type = $info[2];
             //$list[$i]->mime = $info['mime'];
 

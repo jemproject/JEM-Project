@@ -44,6 +44,13 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $updatedata->failed           = 0;
         $updatedata->installedversion = $installedversion;
         $updatedata->current          = null;
+        $updatedata->updateurl        = $updateFile;
+        $updatedata->joomlaversion    = JVERSION;
+        $updatedata->phpversion       = PHP_VERSION;
+        $updatedata->installeddate    = $this->getInstalledDate();
+        $updatedata->manifestpath     = JPATH_COMPONENT_ADMINISTRATOR . '/jem.xml';
+        $updatedata->localnotes       = array();
+        $updatedata->localdate        = '';
 
         $updateXml = self::fetchUpdateXml($updateFile);
 
@@ -53,14 +60,22 @@ class JemModelUpdatecheck extends BaseDatabaseModel
             if ($xml !== false && isset($xml->update)) {
                 $jversion = JVERSION;
                 $selectedUpdate = null;
-                $latestUpdate = null;
+                $highestPlatformUpdate = null;
+                $installedUpdate = null;
 
                 foreach ($xml->update as $updatexml) {
-                    if ($latestUpdate === null || version_compare((string) $updatexml->version, (string) $latestUpdate->version, 'gt')) {
-                        $latestUpdate = $updatexml;
+                    if (version_compare($installedversion, (string) $updatexml->version) === 0) {
+                        $installedUpdate = $updatexml;
                     }
 
                     $versionPattern = (string) $updatexml->targetplatform['version'];
+
+                    if (
+                        $highestPlatformUpdate === null
+                        || $this->compareUpdatePlatform($updatexml, $highestPlatformUpdate) > 0
+                    ) {
+                        $highestPlatformUpdate = $updatexml;
+                    }
 
                     if ($versionPattern !== '' && preg_match('/^' . str_replace('/', '\/', $versionPattern) . '/', $jversion) === 1) {
                         if ($selectedUpdate === null || version_compare((string) $updatexml->version, (string) $selectedUpdate->version, 'gt')) {
@@ -69,10 +84,18 @@ class JemModelUpdatecheck extends BaseDatabaseModel
                     }
                 }
 
-                $selectedUpdate = $selectedUpdate ?: $latestUpdate;
+                $selectedUpdate = $selectedUpdate ?: $highestPlatformUpdate;
 
                 if ($selectedUpdate !== null) {
                     $this->assignUpdateData($updatedata, $selectedUpdate, $installedversion);
+
+                    if ($installedUpdate !== null) {
+                        $updatedata->localnotes = explode(';', (string) $installedUpdate->notes);
+                        $updatedata->localdate  = JemOutput::formatdate($installedUpdate->date);
+                    } elseif ((int) $updatedata->current > 0) {
+                        $updatedata->localnotes = $updatedata->notes;
+                        $updatedata->localdate  = $updatedata->date;
+                    }
                 }
             } else {
                 $updatedata->failed = 1;
@@ -99,6 +122,8 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $updatedata->date             = JemOutput::formatdate($updatexml->date);
         $updatedata->info             = (string) $updatexml->infourl;
         $updatedata->download         = (string) $updatexml->downloads->downloadurl;
+        $updatedata->targetplatform   = (string) $updatexml->targetplatform['version'];
+        $updatedata->phpminimum       = $this->getPhpMinimum($updatexml);
         $updatedata->notes            = explode(';', (string) $updatexml->notes);
         $updatedata->changes          = explode(';', (string) $updatexml->changes);
         $updatedata->failed           = 0;
@@ -126,6 +151,70 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $contents = @file_get_contents($filename, false, $context);
 
         return ($contents === false || trim($contents) === '') ? false : $contents;
+    }
+
+    private function getInstalledDate()
+    {
+        try {
+            $db = $this->getDatabase();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('manifest_cache'))
+                ->from($db->quoteName('#__extensions'))
+                ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+                ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+            $db->setQuery($query);
+            $manifest = json_decode((string) $db->loadResult(), true);
+
+            if (!empty($manifest['creationDate'])) {
+                return JemOutput::formatdate($manifest['creationDate']);
+            }
+        } catch (Exception $e) {
+            return '';
+        }
+
+        return '';
+    }
+
+    private function getPhpMinimum($updatexml)
+    {
+        foreach (array('php_minimum', 'phpminimum', 'php_minimum_version') as $property) {
+            if (isset($updatexml->{$property}) && trim((string) $updatexml->{$property}) !== '') {
+                return trim((string) $updatexml->{$property});
+            }
+        }
+
+        return '';
+    }
+
+    private function compareUpdatePlatform($leftUpdate, $rightUpdate)
+    {
+        $leftPlatform  = $this->getPlatformVersionRank((string) $leftUpdate->targetplatform['version']);
+        $rightPlatform = $this->getPlatformVersionRank((string) $rightUpdate->targetplatform['version']);
+        $platformCompare = version_compare($leftPlatform, $rightPlatform);
+
+        if ($platformCompare !== 0) {
+            return $platformCompare;
+        }
+
+        return version_compare((string) $leftUpdate->version, (string) $rightUpdate->version);
+    }
+
+    private function getPlatformVersionRank($versionPattern)
+    {
+        if (preg_match_all('/\d+(?:\.\d+)*/', $versionPattern, $matches) === false || empty($matches[0])) {
+            return '0';
+        }
+
+        $highest = '0';
+
+        foreach ($matches[0] as $version) {
+            if (version_compare($version, $highest, 'gt')) {
+                $highest = $version;
+            }
+        }
+
+        return $highest;
     }
 }
 ?>
