@@ -22,6 +22,7 @@ UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',typevenues') WHERE `keyna
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',venues') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('venues', `value`) = 0;
 UPDATE `#__jem_config` SET `value` = '{"loglevel":"2"}' WHERE `keyname` = 'globalattribs' AND (`value` = '' OR `value` IS NULL);
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_show_online_meeting', '1', '$.event_online_meeting_ics', '1', '$.event_online_meeting_ics_description', '1', '$.event_online_meeting_default_label', '') WHERE `keyname` = 'globalattribs';
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_detail_image_layout', 'right') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_detail_image_layout') IS NULL;
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1', '$.calendar_special_day_types', 'Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0') WHERE `keyname` = 'globalattribs';
 
 CREATE TABLE IF NOT EXISTS `#__jem_links` (`id` INT(11) NOT NULL AUTO_INCREMENT,`event_id` INT(11) NOT NULL,`type` VARCHAR(50) NOT NULL,`title` VARCHAR(255) NOT NULL,`description` VARCHAR(255)  NULL,`url` TEXT NOT NULL,`params` TEXT DEFAULT NULL,`ordering` INT(11) DEFAULT 0,`state` TINYINT(1) DEFAULT 1,`created` DATETIME DEFAULT CURRENT_TIMESTAMP,`created_by` INT(11) NOT NULL,`modified` DATETIME DEFAULT NULL,`modified_by` INT(11) DEFAULT NULL,PRIMARY KEY (`id`),INDEX `idx_event_id` (`event_id`),INDEX `idx_state` (`state`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 DEFAULT COLLATE=utf8mb4_unicode_ci;
@@ -47,6 +48,8 @@ ALTER TABLE `#__jem_events` ADD COLUMN `online_meeting_label` VARCHAR(255) NOT N
 ALTER TABLE `#__jem_events` ADD COLUMN `event_status` VARCHAR(30) NOT NULL DEFAULT 'scheduled' AFTER `language`;
 ALTER TABLE `#__jem_events` ADD COLUMN `ticket_availability` VARCHAR(30) NOT NULL DEFAULT 'instock' AFTER `event_status`;
 ALTER TABLE `#__jem_events` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`;
+ALTER TABLE `#__jem_events` ADD COLUMN `fullimage` VARCHAR(100) NOT NULL DEFAULT '' AFTER `datimage`;
+ALTER TABLE `#__jem_events` ADD COLUMN `fullimage_layout` VARCHAR(20) NOT NULL DEFAULT 'global' AFTER `fullimage`;
 ALTER TABLE `#__jem_events` ADD KEY `idx_article` (`article_id`);
 ALTER TABLE `#__jem_events` ADD KEY `idx_type` (`type_id`);
 ALTER TABLE `#__jem_venues` ADD COLUMN `type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`;

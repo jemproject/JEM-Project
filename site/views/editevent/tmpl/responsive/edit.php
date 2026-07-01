@@ -55,6 +55,38 @@ try {
     $articleCategoryRules = array();
 }
 
+$uploadSizeToBytes = static function ($value) {
+    $value = trim((string) $value);
+    $unit  = strtolower(substr($value, -1));
+    $size  = (float) $value;
+
+    if ($unit === 'g') {
+        $size *= 1024 * 1024 * 1024;
+    } elseif ($unit === 'm') {
+        $size *= 1024 * 1024;
+    } elseif ($unit === 'k') {
+        $size *= 1024;
+    }
+
+    return $size;
+};
+$formatUploadSize = static function ($bytes) {
+    $bytes = (float) $bytes;
+
+    if ($bytes >= 1024 * 1024) {
+        return number_format($bytes / (1024 * 1024), 2) . ' MB';
+    }
+
+    if ($bytes >= 1024) {
+        return number_format($bytes / 1024, 2) . ' KB';
+    }
+
+    return number_format($bytes, 0) . ' B';
+};
+$uploadMaxBytes = $uploadSizeToBytes(ini_get('upload_max_filesize'));
+$postMaxBytes   = $uploadSizeToBytes(ini_get('post_max_size'));
+$uploadLimit    = $formatUploadSize($postMaxBytes > 0 ? min($uploadMaxBytes, $postMaxBytes) : $uploadMaxBytes);
+
 $document->addStyleDeclaration('
     .jem-associated-article-options {
         border: 0;
@@ -88,6 +120,185 @@ $document->addStyleDeclaration('
         flex: 1 1 auto;
         min-width: 0;
     }
+    .jem-editevent-field-date .field-calendar,
+    .jem-editevent-field-date .input-group,
+    .jem-editevent-field-date .input-append {
+        display: inline-flex;
+        width: min(100%, 28rem);
+        max-width: 28rem;
+    }
+    .jem-editevent-field-date input[type="text"],
+    .jem-editevent-field-date input[type="date"] {
+        width: 14rem !important;
+        max-width: 14rem;
+        flex: 0 0 14rem;
+    }
+    .jem-editevent-field-cats joomla-field-fancy-select,
+    .jem-editevent-field-cats joomla-field-fancy-select .choices,
+    .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
+    .jem-editevent-field-cats .choices,
+    .jem-editevent-field-cats select {
+        width: min(100%, 36rem) !important;
+        max-width: 36rem !important;
+    }
+    .jem-editevent-field-cats .choices__list--dropdown,
+    .jem-editevent-field-cats .choices__list[aria-expanded] {
+        width: 100%;
+        min-width: 100%;
+        max-width: 36rem;
+        overflow-x: hidden;
+    }
+    .jem-editevent-field-cats .choices__item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .jem-editevent-image-fields {
+        display: grid;
+        gap: .9rem;
+        max-width: 100%;
+    }
+    .jem-editevent-image-field {
+        display: grid;
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        gap: .75rem 1rem;
+        align-items: center;
+        min-width: 0;
+        border: 1px solid #b8bec8;
+        border-radius: .55rem;
+        padding: .75rem 1rem;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-copy strong,
+    .jem-editevent-image-copy span {
+        display: block;
+    }
+    .jem-editevent-image-copy span {
+        color: #6c757d;
+        font-size: .9rem;
+        line-height: 1.3;
+        margin-top: .15rem;
+    }
+    .jem-editevent-image-maxsize {
+        color: #495057;
+        display: block;
+        font-size: .82rem;
+        line-height: 1.25;
+        margin-top: .75rem;
+    }
+    .jem-editevent-image-maxsize strong {
+        white-space: nowrap;
+    }
+    .jem-editevent-image-control {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: .65rem .75rem;
+        align-items: center;
+        min-width: 0;
+    }
+    .jem-editevent-image-choice {
+        display: grid;
+        grid-column: 1;
+        grid-template-columns: minmax(9rem, 10rem) minmax(18rem, 1fr);
+        gap: .4rem .75rem;
+        align-items: center;
+        min-width: 0;
+    }
+    .jem-editevent-image-choice span {
+        color: #6c757d;
+        font-size: .82rem;
+        font-weight: 600;
+        line-height: 1.2;
+        grid-column: 1;
+    }
+    .jem-editevent-image-choice select,
+    .jem-editevent-image-choice input[type="file"],
+    .jem-editevent-image-choice joomla-field-fancy-select,
+    .jem-editevent-image-choice .choices {
+        grid-column: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-choice joomla-field-fancy-select,
+    .jem-editevent-image-choice joomla-field-fancy-select .choices,
+    .jem-editevent-image-choice joomla-field-fancy-select .choices__inner {
+        width: min(100%, 24rem) !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-upload {
+        align-items: start;
+    }
+    .jem-editevent-image-upload,
+    .jem-editevent-image-upload > :not(span) {
+        white-space: nowrap;
+    }
+    .jem-editevent-image-upload br {
+        display: none;
+    }
+    .jem-editevent-image-upload .form-text,
+    .jem-editevent-image-upload small,
+    .jem-editevent-image-upload > div:not(:first-child) {
+        display: none;
+    }
+    .jem-editevent-image-control input[type="file"] {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+    .jem-editevent-image-preview {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        max-width: 140px;
+    }
+    .jem-editevent-image-preview img {
+        max-width: 140px;
+        max-height: 110px;
+        object-fit: contain;
+    }
+    .jem-editevent-image-field--layout select {
+        width: min(420px, 100%);
+    }
+    .jem-editevent-image-clear {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: start;
+        white-space: nowrap;
+    }
+    .jem-editevent-image-remove {
+        grid-column: 1 / 4;
+        justify-self: start;
+    }
+    .jem-editevent-image-layout-choice {
+        grid-column: 1 / 4;
+        border-top: 1px solid #d9dee7;
+        margin-top: .25rem;
+        padding-top: .75rem;
+    }
+    .jem-editevent-image-layout-choice span {
+        align-self: start;
+    }
+    .jem-editevent-image-layout-copy {
+        display: block;
+    }
+    .jem-editevent-image-layout-copy small {
+        display: block;
+        color: #6c757d;
+        font-weight: 400;
+        line-height: 1.3;
+        margin-top: .15rem;
+    }
+    .jem-editevent-image-layout-choice {
+        grid-template-columns: minmax(9rem, 10rem) max-content;
+    }
+    .jem-editevent-image-layout-choice select {
+        width: auto;
+        min-width: 12rem;
+        max-width: 100%;
+    }
     @media (max-width: 767.98px) {
         .jem-associated-article-options .jem-dl {
             grid-template-columns: 1fr;
@@ -96,9 +307,118 @@ $document->addStyleDeclaration('
         .jem-associated-article-options .jem-dl .alert {
             grid-column: 1;
         }
+        .jem-editevent-field-date .field-calendar,
+        .jem-editevent-field-date .input-group,
+        .jem-editevent-field-date .input-append,
+        .jem-editevent-field-date input[type="text"],
+        .jem-editevent-field-date input[type="date"],
+        .jem-editevent-field-cats joomla-field-fancy-select,
+        .jem-editevent-field-cats joomla-field-fancy-select .choices,
+        .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
+        .jem-editevent-field-cats .choices,
+        .jem-editevent-field-cats select {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .jem-editevent-image-field {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-control {
+            display: grid;
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+        .jem-editevent-image-choice,
+        .jem-editevent-image-choice span,
+        .jem-editevent-image-choice select,
+        .jem-editevent-image-choice input[type="file"],
+        .jem-editevent-image-choice joomla-field-fancy-select,
+        .jem-editevent-image-choice .choices,
+        .jem-editevent-image-layout-choice,
+        .jem-editevent-image-clear,
+        .jem-editevent-image-remove,
+        .jem-editevent-image-preview {
+            grid-column: 1;
+            grid-row: auto;
+        }
+        .jem-editevent-image-choice,
+        .jem-editevent-image-layout-choice,
+        .jem-editevent-image-control .btn,
+        .jem-editevent-image-control .button3 {
+            width: 100%;
+        }
+        .jem-editevent-image-choice {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-layout-choice {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-choice joomla-field-fancy-select,
+        .jem-editevent-image-choice joomla-field-fancy-select .choices,
+        .jem-editevent-image-choice joomla-field-fancy-select .choices__inner {
+            width: 100% !important;
+        }
+        .jem-editevent-image-upload,
+        .jem-editevent-image-upload > :not(span) {
+            white-space: normal;
+        }
     }
 ');
 ?>
+
+<script>
+    jQuery(document).ready(function($) {
+        var imageConflictMessage = <?php echo json_encode(Text::_('COM_JEM_IMAGE_UPLOAD_CONFLICT')); ?>;
+
+        function resetSelect($select) {
+            if (!$select.length) {
+                return;
+            }
+
+            $select.val('').trigger('change');
+            var fancy = $select.closest('joomla-field-fancy-select').get(0);
+
+            if (fancy) {
+                fancy.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+        }
+
+        function showImageConflictMessage() {
+            if (window.Joomla && typeof Joomla.renderMessages === 'function') {
+                Joomla.renderMessages({error: [imageConflictMessage]});
+                return;
+            }
+
+            window.alert(imageConflictMessage);
+        }
+
+        $('.jem-editevent-image-clear').on('click', function() {
+            var $button = $(this);
+            resetSelect($('#' + $button.data('jemImageSelect')));
+            $('#' + $button.data('jemImageFile')).val('').trigger('change');
+        });
+
+        $('.jem-editevent-image-upload').each(function() {
+            $(this).contents().filter(function() {
+                return this.nodeType === 3 && this.nodeValue.indexOf('Maximum upload size') !== -1;
+            }).remove();
+
+            $(this).find('strong').filter(function() {
+                return /^\s*\d+([.,]\d+)?\s*(KB|MB|GB)\s*$/i.test($(this).text());
+            }).remove();
+        });
+
+        $('#jform_userfile, #jform_fulluserfile').on('change', function() {
+            var $file = $(this);
+            var selectId = this.id === 'jform_fulluserfile' ? 'jform_fullimage' : 'jform_datimage';
+
+            if ($file.val() && $('#' + selectId).val()) {
+                $file.val('');
+                showImageConflictMessage();
+            }
+        });
+    });
+</script>
 
 <script>
     jQuery(document).ready(function($){
@@ -453,10 +773,10 @@ $document->addStyleDeclaration('
                         <dt><?php echo $this->form->getLabel('alias'); ?></dt>
                         <dd><?php echo $this->form->getInput('alias'); ?></dd>
                     <?php endif; ?>
-                    <dt><?php echo $this->form->getLabel('dates'); ?></dt>
-                    <dd><?php echo $this->form->getInput('dates'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('enddates'); ?></dt>
-                    <dd><?php echo $this->form->getInput('enddates'); ?></dd>
+                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('dates'); ?></dt>
+                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('dates'); ?></dd>
+                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('enddates'); ?></dt>
+                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('enddates'); ?></dd>
                     <dt><?php echo $this->form->getLabel('times'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
@@ -464,8 +784,8 @@ $document->addStyleDeclaration('
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
-                    <dt><?php echo $this->form->getLabel('cats'); ?></dt>
-                    <dd><?php echo $this->form->getInput('cats'); ?></dd>
+                    <dt class="jem-editevent-field-cats-label"><?php echo $this->form->getLabel('cats'); ?></dt>
+                    <dd class="jem-editevent-field-cats"><?php echo $this->form->getInput('cats'); ?></dd>
                     <?php if($this->jemsettings->defaultVenue && empty($this->item->id)) {
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
@@ -517,30 +837,76 @@ $document->addStyleDeclaration('
             </fieldset>
 
             <!-- IMAGE -->
-            <?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
+            <?php if ($this->item->datimage || !empty($this->item->fullimage) || $this->jemsettings->imageenabled != 0) : ?>
                 <fieldset class="jem_fldst_image">
                     <legend><?php echo Text::_('COM_JEM_IMAGE'); ?></legend>
                     <?php if ($this->jemsettings->imageenabled != 0) : ?>
-                        <dl class="adminformlist jem-dl">
-                            <dt><?php echo $this->form->getLabel('userfile'); ?></dt>
-                            <?php if ($this->item->datimage) : ?>
-                                <dd>
-                                    <?php echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
-                                    <input type="hidden" name="datimage" id="datimage" value="<?php echo $this->item->datimage; ?>" />
-                                </dd>
-                                <dt> </dt>
-                            <?php endif; ?>
-                            <dd><?php echo $this->form->getInput('userfile'); ?></dd>
-                            <dt> </dt>
-                            <dd><button type="button" class="button3 btn btn-secondary" onclick="document.getElementById('jform_userfile').value = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button></dd>
-                            <?php if ($this->item->datimage) : ?>
-                                <dt><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></dt>
-                                <dd><?php
-                                    echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE'), 'class' => 'btn')); ?>
-                                </dd>
-                            <?php endif; ?>
-                        </dl>
-                        <input type="hidden" name="removeimage" id="removeimage" value="0" />
+                        <div class="jem-editevent-image-fields">
+                            <div class="jem-editevent-image-field">
+                                <div class="jem-editevent-image-copy">
+                                    <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
+                                    <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
+                                    <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                </div>
+                                <div class="jem-editevent-image-control">
+                                    <?php if ($this->item->datimage) : ?>
+                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--intro">
+                                            <?php echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="jem-editevent-image-choice">
+                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
+                                        <?php echo $this->form->getInput('datimage'); ?>
+                                    </div>
+                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
+                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
+                                    <?php echo $this->form->getInput('userfile'); ?>
+                                    </div>
+                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                    <?php if ($this->item->datimage) : ?>
+                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removeimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
+                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                    <input type="hidden" name="removeimage" id="removeimage" value="0" />
+                                </div>
+                            </div>
+                            <div class="jem-editevent-image-field">
+                                <div class="jem-editevent-image-copy">
+                                    <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
+                                    <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_FE_DESC'); ?></span>
+                                    <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                </div>
+                                <div class="jem-editevent-image-control">
+                                    <?php if (!empty($this->item->fullimage)) : ?>
+                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--detail">
+                                            <?php echo JEMOutput::flyer($this->item, $this->dfullimage, 'event', 'fullimage'); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="jem-editevent-image-choice">
+                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
+                                        <?php echo $this->form->getInput('fullimage'); ?>
+                                    </div>
+                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
+                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
+                                    <?php echo $this->form->getInput('fulluserfile'); ?>
+                                    </div>
+                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                    <?php if (!empty($this->item->fullimage)) : ?>
+                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removefullimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
+                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                    <input type="hidden" name="removefullimage" id="removefullimage" value="0" />
+                                    <div class="jem-editevent-image-choice jem-editevent-image-layout-choice">
+                                        <span class="jem-editevent-image-layout-copy">
+                                            <?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?>
+                                        </span>
+                                        <?php echo $this->form->getInput('fullimage_layout'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </fieldset>
             <?php endif; ?>

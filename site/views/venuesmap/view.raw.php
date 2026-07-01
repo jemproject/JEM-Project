@@ -35,7 +35,8 @@ class JemViewVenuesMap extends HtmlView
 
         $params = $app->getParams();
         $mapProvider = (string) $params->get('map_provider', 'osm') === 'google' ? 'google' : 'osm';
+        $showVenueImage = (int) $params->get('showvenueimage', 1) === 1;
 
-        JemPdfView::renderVenueList(Text::_('COM_JEM_VENUES_MAP'), (array) $model->getItems(), 'jem-venues-map.pdf', 'map', $mapProvider);
+        JemPdfView::renderVenueList(Text::_('COM_JEM_VENUES_MAP'), (array) $model->getItems(), 'jem-venues-map.pdf', 'map', $mapProvider, $showVenueImage);
     }
 }

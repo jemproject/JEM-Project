@@ -267,19 +267,25 @@ class JemTableEvent extends Table
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
-        $image_to_delete = false;
+        $images_to_delete = array();
 
         // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
         if (!$backend) {
             if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
                 $file = $jinput->files->get('userfile', array(), 'array');
+                $fullFile = $jinput->files->get('fulluserfile', array(), 'array');
                 $removeimage = $jinput->getInt('removeimage', 0);
+                $removefullimage = $jinput->getInt('removefullimage', 0);
                 $datimage = $jinput->getCmd('datimage', '');
+                $fullimage = $jinput->getCmd('fullimage', '');
 
                 if (empty($file)) {
                     $file2 = $jinput->files->get('jform', array(), 'array');
                     if (!empty($file2['userfile'])) {
                         $file = $file2['userfile'];
+                    }
+                    if (!empty($file2['fulluserfile'])) {
+                        $fullFile = $file2['fulluserfile'];
                     }
                 }
 
@@ -295,7 +301,7 @@ class JemTableEvent extends Table
                             $filepath = $image_dir . $filename;
 
                             if (File::upload($file['tmp_name'], $filepath)) {
-                                $image_to_delete = $this->datimage; // delete previous image
+                                $images_to_delete[] = $this->datimage; // delete previous image
                                 $this->datimage = $filename;
                             }
                         }
@@ -303,7 +309,7 @@ class JemTableEvent extends Table
                 } elseif (!empty($removeimage)) {
                     // if removeimage is non-zero remove image from event
                     // (file will be deleted later (e.g. housekeeping) if unused)
-                    $image_to_delete = $this->datimage;
+                    $images_to_delete[] = $this->datimage;
                     $this->datimage = '';
                 } elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
                     // event is a copy so copy datimage too
@@ -312,13 +318,44 @@ class JemTableEvent extends Table
                         $this->datimage = $datimage;
                     }
                 }
+
+                if (!empty($fullFile['name'])) {
+                    $check = JemImage::check($fullFile, $jemsettings);
+
+                    if ($check !== false) {
+                        $filename = JemImage::sanitize($image_dir, $fullFile['name']);
+                        $filepath = $image_dir . $filename;
+
+                        if (File::upload($fullFile['tmp_name'], $filepath)) {
+                            $images_to_delete[] = $this->fullimage;
+                            $this->fullimage = $filename;
+                        }
+                    }
+                } elseif (!empty($removefullimage)) {
+                    $images_to_delete[] = $this->fullimage;
+                    $this->fullimage = '';
+                } elseif (!$this->id && is_null($this->fullimage) && !empty($fullimage)) {
+                    if (is_file($image_dir . $fullimage)) {
+                        $this->fullimage = $fullimage;
+                    }
+                }
             } // end image if
         } // if (!backend)
 
-        $format = File::getExt($image_dir . $this->datimage);
-        if (!in_array($format, $allowable))
-        {
-            $this->datimage = '';
+        foreach (array('datimage', 'fullimage') as $imageField) {
+            if (!property_exists($this, $imageField)) {
+                continue;
+            }
+
+            $format = File::getExt($image_dir . $this->$imageField);
+            if (!in_array($format, $allowable))
+            {
+                $this->$imageField = '';
+            }
+        }
+
+        if (property_exists($this, 'fullimage_layout') && !in_array($this->fullimage_layout, array('global', 'right', 'header', 'poster', 'hidden'), true)) {
+            $this->fullimage_layout = 'global';
         }
 
         // user check on frontend but not if caused by cleanup function (recurrence)
@@ -331,8 +368,10 @@ class JemTableEvent extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
-        if ($ret && $image_to_delete) {
-            JemHelper::delete_unused_image_files('event', $image_to_delete);
+        if ($ret && $images_to_delete) {
+            foreach (array_filter(array_unique($images_to_delete)) as $image_to_delete) {
+                JemHelper::delete_unused_image_files('event', $image_to_delete);
+            }
         }
 
         return $ret;

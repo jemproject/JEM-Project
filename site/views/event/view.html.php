@@ -229,7 +229,8 @@ class JemViewEvent extends JemView
         $this->pdf_link = Route::_(JemHelperRoute::getRoute($item->slug).'&format=raw&layout=pdf');
 
         // Get images
-        $this->dimage = JemImage::flyercreator($item->datimage, 'event');
+        $detailImage = !empty($item->fullimage) ? $item->fullimage : $item->datimage;
+        $this->dimage = JemImage::flyercreator($detailImage, 'event');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
         $articleUsage = (string) $item->params->get('article_usage', 'information');

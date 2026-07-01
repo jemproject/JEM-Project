@@ -111,6 +111,34 @@ $venueLayoutOverride = $app->input->getCmd('jem_venue_layout', '');
 if (in_array($venueLayoutOverride, array('details', 'compact'), true)) {
     $venueLayout = $venueLayoutOverride;
 }
+$detailImageField = !empty($this->item->fullimage) ? 'fullimage' : 'datimage';
+$detailImageLayout = (string) ($this->item->fullimage_layout ?? 'global');
+if ($detailImageLayout === 'global' || $detailImageLayout === '') {
+    $detailImageLayout = (string) $this->settings->get('event_detail_image_layout', 'right');
+}
+if (!in_array($detailImageLayout, array('right', 'header', 'poster', 'hidden'), true)) {
+    $detailImageLayout = 'right';
+}
+$renderEventDetailImage = function ($layoutClass = '') use ($eventImageRibbonText, $eventImageRibbonClass, $detailImageField) {
+    $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField);
+    if (empty($image)) {
+        return '';
+    }
+
+    $classes = trim('jem-img jem-event-overview-media ' . $layoutClass);
+    $html = '<div class="' . $this->escape($classes) . '">';
+    if ($eventImageRibbonText) {
+        $html .= '<div class="jem-event-image-ribbon-wrap">'
+            . $image
+            . '<span class="jem-event-image-ribbon ' . $this->escape($eventImageRibbonClass) . '">' . $this->escape($eventImageRibbonText) . '</span>'
+            . '</div>';
+    } else {
+        $html .= $image;
+    }
+    $html .= '</div>';
+
+    return $html;
+};
 $layoutToggleTarget = ($eventLayout === 'compact' && $venueLayout === 'compact') ? 'details' : 'compact';
 $layoutToggleUri = clone $uri;
 $layoutToggleUri->setVar('jem_layout', $layoutToggleTarget);
@@ -303,6 +331,34 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
 ?>
 <style>
+    .jem-event-detail-image--header {
+        float: none;
+        width: 100%;
+        margin: 0 0 20px;
+    }
+    .jem-event-detail-image--header div.flyerimage,
+    .jem-event-detail-image--header div.flyerimage a,
+    .jem-event-detail-image--header .flyermodal {
+        display: block;
+        width: 100%;
+    }
+    .jem-event-detail-image--header .flyerimage img,
+    .jem-event-detail-image--header img {
+        display: block;
+        width: 100%;
+        min-width: 100%;
+        max-height: 420px;
+        object-fit: cover;
+    }
+    .jem-event-detail-image--poster {
+        max-width: 360px;
+    }
+    .jem-event-detail-image--poster .flyerimage img,
+    .jem-event-detail-image--poster img {
+        width: auto;
+        max-width: 100%;
+        max-height: 620px;
+    }
     .col-category {
         letter-spacing: 0.5px;
         color: #444 !important;
@@ -408,6 +464,10 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 ?>
             </h2>
         <?php endif; ?>
+        <?php if ($detailImageLayout === 'header') : ?>
+            <?php echo $renderEventDetailImage('jem-event-detail-image--header'); ?>
+        <?php endif; ?>
+
         <div class="jem-row jem-event-main-responsive jem-event-overview-panel">
             <div class="jem-info jem-event-overview-details">
                 <?php if ($eventLayout === 'compact') : ?>
@@ -586,16 +646,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     flex-basis: <?php echo $this->jemsettings->imagewidth; ?>px;
                 }
             </style>
-            <div class="jem-img jem-event-overview-media">
-                <?php if ($eventImageRibbonText) : ?>
-                    <div class="jem-event-image-ribbon-wrap">
-                        <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-                        <span class="jem-event-image-ribbon <?php echo $eventImageRibbonClass; ?>"><?php echo $this->escape($eventImageRibbonText); ?></span>
-                    </div>
-                <?php else : ?>
-                    <?php echo JemOutput::flyer($this->item, $this->dimage, 'event'); ?>
-                <?php endif; ?>
-            </div>
+            <?php if (in_array($detailImageLayout, array('right', 'poster'), true)) : ?>
+                <?php echo $renderEventDetailImage($detailImageLayout === 'poster' ? 'jem-event-detail-image--poster' : ''); ?>
+            <?php endif; ?>
         </div>
 
         <?php if ($eventCustomFieldsPosition === 'before_description') : ?>

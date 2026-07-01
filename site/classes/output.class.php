@@ -1548,7 +1548,7 @@ static public function lightbox() {
         switch($type) {
             case 'event':
                 $folder = 'events';
-                $imagefile = $data->datimage;
+                $imagefile = $id && isset($data->$id) ? $data->$id : $data->datimage;
                 $info = $data->title;
                 if(!$settings->flyer){
                     $precaption = Text::_('COM_JEM_EVENT');

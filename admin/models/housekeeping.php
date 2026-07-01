@@ -386,7 +386,12 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     private function getAssigned($type)
     {
-        $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+        if ($type === JemModelHousekeeping::EVENTS) {
+            $query = 'SELECT datimage FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
+                . ' UNION SELECT fullimage FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
+        } else {
+            $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
+        }
 
         $this->_db->setQuery($query);
         $assigned = $this->_db->loadColumn();

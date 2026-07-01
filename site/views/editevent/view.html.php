@@ -201,6 +201,7 @@ class JemViewEditevent extends JemView
         $pageclass_sfx          = $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
+        $this->dfullimage    = JemImage::flyercreator($this->item->fullimage ?? '', 'event');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
         $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
@@ -227,6 +228,7 @@ class JemViewEditevent extends JemView
             $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
+        $this->form->setFieldAttribute('fulluserfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {
             $this->form->setFieldAttribute('userfile', 'required', 'true');
         }

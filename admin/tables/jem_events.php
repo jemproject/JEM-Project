@@ -99,6 +99,8 @@ class jem_events extends Table
     public $recurrence_first_id = 0;
     /** @var string */
     public $datimage = '';
+    public $fullimage = '';
+    public $fullimage_layout = 'global';
     /** @var string */
     public $author_ip = null;
     /** @var int */

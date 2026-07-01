@@ -1956,12 +1956,15 @@ class JemHelper
      */
     static public function delete_unused_image_files($type, $filename = null)
     {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
         switch ($type) {
         case 'event':
         case 'events':
             $folder = 'events';
-            $countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = ';
-            $imagequery      = ' SELECT datimage AS image, COUNT(*) AS count FROM #__jem_events GROUP BY datimage';
+            $countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = %s OR fullimage = %s';
+            $imagequery      = ' SELECT datimage AS image, COUNT(*) AS count FROM #__jem_events WHERE datimage <> ' . $db->quote('') . ' GROUP BY datimage'
+                . ' UNION SELECT fullimage AS image, COUNT(*) AS count FROM #__jem_events WHERE fullimage <> ' . $db->quote('') . ' GROUP BY fullimage';
             break;
         case 'venue':
         case 'venues':
@@ -1984,7 +1987,8 @@ class JemHelper
         if (is_file($fullPath)) {
             // Count usage and don't delete if used elsewhere.
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $db->setQuery($countquery_tmpl . $db->quote($filename));
+            $quotedFilename = $db->quote($filename);
+            $db->setQuery(strpos($countquery_tmpl, '%s') !== false ? sprintf($countquery_tmpl, $quotedFilename, $quotedFilename) : $countquery_tmpl . $quotedFilename);
             if (null === ($usage = $db->loadObjectList())) {
                 return false;
             }
