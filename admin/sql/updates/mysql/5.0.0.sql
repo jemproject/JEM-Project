@@ -58,6 +58,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_row_
 ALTER TABLE `#__jem_special_days` ADD COLUMN `access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `published`;
 ALTER TABLE `#__jem_special_days` ADD KEY `idx_access` (`access`);
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1', '$.calendar_special_day_types', 'Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0') WHERE `keyname` = 'globalattribs';
 UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` = 'Regular weekend days' WHERE `title` = 'Weekend' AND `day_type` = 'Weekend' AND (`description` IS NULL OR `description` = '');
 UPDATE `#__jem_special_days` SET `show_dates` = 0 WHERE `alias` = 'weekend' AND `day_type` = 'Weekend' AND `weekdays` IN ('0,6', '6,0');
 ALTER TABLE `#__jem_types` MODIFY `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day';
@@ -75,3 +76,6 @@ UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calen
 
 -- update values
 UPDATE `#__jem_events` SET `publish_up` = `created` WHERE `publish_up` IS NULL AND `created` IS NOT NULL;
+UPDATE `#__jem_events` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
+UPDATE `#__jem_categories` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
+UPDATE `#__jem_venues` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;

@@ -132,20 +132,31 @@ class JemPdfView
     /**
      * Renders a venue list PDF.
      */
-    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list'): void
+    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list', string $mapProvider = 'osm'): void
     {
+        $isMapProfile = $profile === 'map';
+        $headers = array(
+            Text::_('COM_JEM_VENUE'),
+            Text::_('COM_JEM_CITY'),
+            Text::_('COM_JEM_STATE'),
+            Text::_('COM_JEM_COUNTRY'),
+            Text::_('COM_JEM_WEBSITE'),
+        );
+
+        if ($isMapProfile) {
+            $headers[] = Text::_('COM_JEM_LATITUDE');
+            $headers[] = Text::_('COM_JEM_LONGITUDE');
+            $headers[] = Text::_('COM_JEM_MAP_LINK');
+        }
+
         self::renderTable(
             $title,
-            array(
-                Text::_('COM_JEM_VENUE'),
-                Text::_('COM_JEM_CITY'),
-                Text::_('COM_JEM_STATE'),
-                Text::_('COM_JEM_COUNTRY'),
-                Text::_('COM_JEM_WEBSITE'),
-            ),
-            self::buildVenueListRows($rows),
+            $headers,
+            self::buildVenueListRows($rows, $isMapProfile, $mapProvider),
             $filename,
-            $profile
+            $profile,
+            '',
+            $isMapProfile ? self::buildVenueMapPreviewHtml($rows, $mapProvider) : ''
         );
     }
 
@@ -1179,21 +1190,157 @@ class JemPdfView
         return $tableRows;
     }
 
-    private static function buildVenueListRows(array $rows): array
+    private static function buildVenueListRows(array $rows, bool $includeMapColumns = false, string $mapProvider = 'osm'): array
     {
         $tableRows = array();
 
         foreach ($rows as $row) {
-            $tableRows[] = array(
+            $tableRow = array(
                 self::buildPdfVenueListLink($row),
                 (string) ($row->city ?? ''),
                 (string) ($row->state ?? ''),
                 (string) ($row->country ?? ''),
                 self::buildPdfExternalLink((string) ($row->url ?? '')),
             );
+
+            if ($includeMapColumns) {
+                $tableRow[] = self::formatCoordinate($row->latitude ?? '');
+                $tableRow[] = self::formatCoordinate($row->longitude ?? '');
+                $tableRow[] = self::buildPdfMapLink($row, $mapProvider, 'COM_JEM_MAP_LINK');
+            }
+
+            $tableRows[] = $tableRow;
         }
 
         return $tableRows;
+    }
+
+    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider): string
+    {
+        $url = self::buildStaticMapImageUrl($rows, $mapProvider);
+
+        if ($url === '') {
+            return '';
+        }
+
+        return '<div class="jem-pdf-map-preview">'
+            . '<img src="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" style="width:100%; max-height:75mm; border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
+            . '</div>';
+    }
+
+    private static function buildStaticMapImageUrl(array $rows, string $mapProvider): string
+    {
+        $points = array();
+
+        foreach ($rows as $row) {
+            $lat = self::normaliseCoordinate($row->latitude ?? null);
+            $lng = self::normaliseCoordinate($row->longitude ?? null);
+
+            if ($lat === null || $lng === null) {
+                continue;
+            }
+
+            $points[] = array($lat, $lng);
+        }
+
+        if (!$points) {
+            return '';
+        }
+
+        $markerPoints = array_slice($points, 0, 40);
+        $centerLat = array_sum(array_column($points, 0)) / count($points);
+        $centerLng = array_sum(array_column($points, 1)) / count($points);
+        $settings = JemHelper::globalattribs();
+        $googleApiKey = trim((string) ($settings && method_exists($settings, 'get') ? $settings->get('global_googleapi', '') : ''));
+
+        if ($mapProvider === 'google' && $googleApiKey !== '') {
+            $url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x320&scale=2&maptype=roadmap'
+                . '&center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
+                . '&zoom=' . self::estimateStaticMapZoom($points);
+
+            foreach ($markerPoints as $point) {
+                $url .= '&markers=' . rawurlencode(self::formatCoordinate($point[0]) . ',' . self::formatCoordinate($point[1]));
+            }
+
+            return $url . '&key=' . rawurlencode($googleApiKey);
+        }
+
+        $markers = array_map(static function (array $point): string {
+            return JemPdfView::formatCoordinate($point[0]) . ',' . JemPdfView::formatCoordinate($point[1]) . ',red-pushpin';
+        }, $markerPoints);
+
+        return 'https://staticmap.openstreetmap.de/staticmap.php?'
+            . 'center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
+            . '&zoom=' . self::estimateStaticMapZoom($points)
+            . '&size=900x320'
+            . '&markers=' . rawurlencode(implode('|', $markers));
+    }
+
+    private static function normaliseCoordinate($value): ?float
+    {
+        $value = trim((string) $value);
+
+        if ($value === '' || !is_numeric($value)) {
+            return null;
+        }
+
+        return (float) $value;
+    }
+
+    private static function formatCoordinate($value): string
+    {
+        $coordinate = self::normaliseCoordinate($value);
+
+        if ($coordinate === null) {
+            return '';
+        }
+
+        return rtrim(rtrim(number_format($coordinate, 6, '.', ''), '0'), '.');
+    }
+
+    private static function estimateStaticMapZoom(array $points): int
+    {
+        if (count($points) < 2) {
+            return 15;
+        }
+
+        $latitudes = array_column($points, 0);
+        $longitudes = array_column($points, 1);
+        $spread = max(max($latitudes) - min($latitudes), max($longitudes) - min($longitudes));
+
+        if ($spread > 40) {
+            return 2;
+        }
+
+        if ($spread > 20) {
+            return 3;
+        }
+
+        if ($spread > 10) {
+            return 4;
+        }
+
+        if ($spread > 5) {
+            return 5;
+        }
+
+        if ($spread > 2) {
+            return 6;
+        }
+
+        if ($spread > 1) {
+            return 7;
+        }
+
+        if ($spread > 0.5) {
+            return 9;
+        }
+
+        if ($spread > 0.1) {
+            return 11;
+        }
+
+        return 13;
     }
 
     private static function buildEventsMapRows(array $rows, string $mapProvider): array
@@ -2029,7 +2176,7 @@ class JemPdfView
         return array('html' => '<a href="' . htmlspecialchars($href, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '</a>');
     }
 
-    private static function buildPdfMapLink($row, string $mapProvider): array
+    private static function buildPdfMapLink($row, string $mapProvider, string $labelKey = 'COM_JEM_MAP'): array
     {
         $lat = trim((string) ($row->latitude ?? ''));
         $lng = trim((string) ($row->longitude ?? ''));
@@ -2048,7 +2195,7 @@ class JemPdfView
                 . '&zoom=15#map=15/' . rawurlencode($lat) . '/' . rawurlencode($lng);
         }
 
-        return array('html' => '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_MAP') . '</a>');
+        return array('html' => '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . Text::_($labelKey) . '</a>');
     }
 
     private static function buildSpecialDayBadgesHtml(array $specialDays): string

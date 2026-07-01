@@ -99,6 +99,15 @@ $buildFullMapLink = static function ($lat, $lng) use ($mapProvider) {
         . '&mlon=' . rawurlencode((string) $lng)
         . '&zoom=15#map=15/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lng);
 };
+$formatCoordinate = static function ($value) {
+    $value = trim((string) $value);
+
+    if ($value === '' || !is_numeric($value)) {
+        return '';
+    }
+
+    return rtrim(rtrim(number_format((float) $value, 6, '.', ''), '0'), '.');
+};
 $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $showFullMapLink, $buildDirectionsLink, $buildFullMapLink) {
     $links = [];
 
@@ -276,6 +285,9 @@ foreach (($this->venueslist ?? []) as $venue) {
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_VENUE'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_CITY'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_LATITUDE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_LONGITUDE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_MAP_LINK'); ?></th>
                         <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_CALENDAR'); ?></th>
                         <?php if ($showEditColumn) : ?>
                             <th class="center" style="width:1%;"><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></th>
@@ -288,6 +300,9 @@ foreach (($this->venueslist ?? []) as $venue) {
                         $venueName = $this->escape($venue->venue);
                         $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
                         $canEditVenue = $editableVenues[(int) $venue->id] ?? false;
+                        $latitude = $formatCoordinate($venue->latitude ?? '');
+                        $longitude = $formatCoordinate($venue->longitude ?? '');
+                        $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
                         ?>
                         <tr>
                             <td>
@@ -297,6 +312,17 @@ foreach (($this->venueslist ?? []) as $venue) {
                             </td>
                             <td><?php echo $venue->city !== '' ? $this->escape($venue->city) : '-'; ?></td>
                             <td><?php echo $countryName !== '' ? $this->escape($countryName) : '-'; ?></td>
+                            <td><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+                            <td><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+                            <td>
+                                <?php if ($mapLink !== '') : ?>
+                                    <a href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                        <?php echo Text::_('COM_JEM_MAP_LINK'); ?>
+                                    </a>
+                                <?php else : ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
                             <td class="center">
                                 <a href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
                                     <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
