@@ -15,7 +15,7 @@ use Joomla\String\StringHelper;
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'pdf_link' => $this->pdf_link);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>

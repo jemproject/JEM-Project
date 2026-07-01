@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
@@ -52,7 +53,7 @@ class JemPdfView
     /**
      * Renders the Events List PDF with links and event type badges.
      */
-    public static function renderLinkedEventList(string $title, array $rows, string $filename, string $profile = 'list'): void
+    public static function renderLinkedEventList(string $title, array $rows, string $filename, string $profile = 'list', string $preListHtml = ''): void
     {
         if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
             Factory::getApplication()->close();
@@ -79,7 +80,7 @@ class JemPdfView
         $pdf->setPrintHeader(false);
         $pdf->setPrintFooter(true);
         $pdf->AddPage();
-        $pdf->writeHTML(self::buildLinkedEventListHtml($title, $rows, $paperSize), true, false, true, false, '');
+        $pdf->writeHTML(self::buildLinkedEventListHtml($title, $rows, $paperSize, $preListHtml), true, false, true, false, '');
 
         while (ob_get_level() > 0) {
             ob_end_clean();
@@ -87,6 +88,15 @@ class JemPdfView
 
         $pdf->Output($filename, 'D');
         Factory::getApplication()->close();
+    }
+
+    /**
+     * Renders an event type page PDF with the same type header and event list
+     * concept used by the frontend view.
+     */
+    public static function renderTypeEventList(string $title, $type, array $rows, string $filename, string $profile = 'list'): void
+    {
+        self::renderLinkedEventList($title, $rows, $filename, $profile, self::buildTypeHeaderHtml($type));
     }
 
     /**
@@ -158,6 +168,79 @@ class JemPdfView
             '',
             $isMapProfile ? self::buildVenueMapPreviewHtml($rows, $mapProvider) : ''
         );
+    }
+
+    /**
+     * Renders a venue type page PDF with the type header and venue table.
+     */
+    public static function renderTypeVenueList(string $title, $type, array $rows, string $filename, string $profile = 'list'): void
+    {
+        self::renderTable(
+            $title,
+            array(
+                Text::_('COM_JEM_VENUE'),
+                Text::_('COM_JEM_CITY'),
+                Text::_('COM_JEM_STATE'),
+                Text::_('COM_JEM_COUNTRY'),
+                Text::_('COM_JEM_WEBSITE'),
+                Text::_('COM_JEM_MAP_LINK'),
+            ),
+            self::buildVenueListRows($rows, false, 'osm', true),
+            $filename,
+            $profile,
+            '',
+            self::buildTypeHeaderHtml($type)
+        );
+    }
+
+    /**
+     * Renders a single category page PDF mirroring the category overview plus
+     * the event list shown below it.
+     */
+    public static function renderCategoryDetail(string $title, $category, array $children, array $rows, string $description, string $filename, string $profile = 'list'): void
+    {
+        self::renderLinkedEventList($title, $rows, $filename, $profile, self::buildCategoryDetailIntroHtml($category, $children, $description));
+    }
+
+    /**
+     * Renders the categories overview, including category type grouping when
+     * that is the active frontend mode.
+     */
+    public static function renderCategoryList(string $title, array $rows, array $typeItems, string $filename, string $profile = 'list'): void
+    {
+        if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
+            Factory::getApplication()->close();
+
+            return;
+        }
+
+        $settings = JemHelper::config();
+        $paper = self::getProfilePaperSettings($settings, $profile);
+        $paperSize = $paper['size'];
+        $orientation = $paper['orientation'];
+        $singlePageTarget = JemPdf::prefersSinglePage($paperSize);
+        $pdf = JemPdf::createDocument($title, $orientation, $paperSize);
+
+        if (!$pdf) {
+            Factory::getApplication()->close();
+
+            return;
+        }
+
+        $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paperSize);
+        $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
+        $pdf->SetAutoPageBreak(!$singlePageTarget, $singlePageTarget ? 0 : $margins['bottom']);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(true);
+        $pdf->AddPage();
+        $pdf->writeHTML(self::buildCategoryListHtml($title, $rows, $typeItems, $paperSize), true, false, true, false, '');
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        $pdf->Output($filename, 'D');
+        Factory::getApplication()->close();
     }
 
     /**
@@ -1190,7 +1273,7 @@ class JemPdfView
         return $tableRows;
     }
 
-    private static function buildVenueListRows(array $rows, bool $includeMapColumns = false, string $mapProvider = 'osm'): array
+    private static function buildVenueListRows(array $rows, bool $includeMapColumns = false, string $mapProvider = 'osm', bool $includeMapLink = false): array
     {
         $tableRows = array();
 
@@ -1199,13 +1282,16 @@ class JemPdfView
                 self::buildPdfVenueListLink($row),
                 (string) ($row->city ?? ''),
                 (string) ($row->state ?? ''),
-                (string) ($row->country ?? ''),
+                self::formatPdfCountryName((string) ($row->country ?? '')),
                 self::buildPdfExternalLink((string) ($row->url ?? '')),
             );
 
             if ($includeMapColumns) {
                 $tableRow[] = self::formatCoordinate($row->latitude ?? '');
                 $tableRow[] = self::formatCoordinate($row->longitude ?? '');
+            }
+
+            if ($includeMapColumns || $includeMapLink) {
                 $tableRow[] = self::buildPdfMapLink($row, $mapProvider, 'COM_JEM_MAP_LINK');
             }
 
@@ -1213,6 +1299,25 @@ class JemPdfView
         }
 
         return $tableRows;
+    }
+
+    private static function formatPdfCountryName(string $country): string
+    {
+        $country = trim($country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        if (class_exists('JemHelperCountries', false) && method_exists('JemHelperCountries', 'getCountryName')) {
+            $countryName = JemHelperCountries::getCountryName($country);
+
+            if (trim((string) $countryName) !== '') {
+                return (string) $countryName;
+            }
+        }
+
+        return $country;
     }
 
     private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider): string
@@ -1223,9 +1328,441 @@ class JemPdfView
             return '';
         }
 
+        $imagePath = self::cacheRemoteMapImage($url);
+
+        if ($imagePath === '') {
+            $imagePath = self::buildFallbackVenueMapPreviewImage($rows);
+        }
+
+        if ($imagePath === '') {
+            return '';
+        }
+
         return '<div class="jem-pdf-map-preview">'
-            . '<img src="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" style="width:100%; max-height:75mm; border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
+            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="270mm" style="border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
             . '</div>';
+    }
+
+    private static function cacheRemoteMapImage(string $url): string
+    {
+        $cacheDir = self::getPdfMapCacheDirectory();
+
+        if ($cacheDir === '') {
+            return '';
+        }
+
+        $hash = sha1($url);
+        $basePath = $cacheDir . '/pdf-map-' . $hash;
+        foreach (array('png', 'jpg', 'gif') as $extension) {
+            $cached = $basePath . '.' . $extension;
+            if (is_file($cached) && filesize($cached) > 0 && filemtime($cached) > time() - 86400) {
+                return $cached;
+            }
+        }
+
+        $data = self::downloadRemoteMapImage($url);
+        if ($data === '' || strlen($data) > 5242880) {
+            return '';
+        }
+
+        $imageInfo = @getimagesizefromstring($data);
+        if (!is_array($imageInfo) || empty($imageInfo[2])) {
+            return '';
+        }
+
+        $extension = 'png';
+        if ((int) $imageInfo[2] === IMAGETYPE_JPEG) {
+            $extension = 'jpg';
+        } elseif ((int) $imageInfo[2] === IMAGETYPE_GIF) {
+            $extension = 'gif';
+        } elseif ((int) $imageInfo[2] !== IMAGETYPE_PNG) {
+            return '';
+        }
+
+        $path = $basePath . '.' . $extension;
+
+        return @file_put_contents($path, $data) !== false ? $path : '';
+    }
+
+    private static function getPdfMapCacheDirectory(): string
+    {
+        $candidates = array(
+            JPATH_SITE . '/media/com_jem/cache',
+            JPATH_CACHE . '/com_jem',
+        );
+
+        foreach ($candidates as $candidate) {
+            if ((is_dir($candidate) || @mkdir($candidate, 0755, true)) && is_writable($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return '';
+    }
+
+    private static function downloadRemoteMapImage(string $url): string
+    {
+        try {
+            $response = HttpFactory::getHttp()->get($url, array('User-Agent' => 'JEM PDF map preview'), 15);
+            if ((int) ($response->code ?? 0) >= 200 && (int) ($response->code ?? 0) < 300) {
+                return (string) ($response->body ?? '');
+            }
+        } catch (\Throwable $e) {
+            // Fall back to PHP streams below.
+        }
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'timeout' => 15,
+                'header' => "User-Agent: JEM PDF map preview\r\n",
+            ),
+            'https' => array(
+                'timeout' => 15,
+                'header' => "User-Agent: JEM PDF map preview\r\n",
+            ),
+        ));
+        $data = @file_get_contents($url, false, $context);
+
+        return is_string($data) ? $data : '';
+    }
+
+    private static function buildFallbackVenueMapPreviewImage(array $rows): string
+    {
+        $points = self::getVenueMapPoints($rows);
+
+        if (!$points) {
+            return '';
+        }
+
+        $cacheDir = self::getPdfMapCacheDirectory();
+        if ($cacheDir === '') {
+            return '';
+        }
+
+        $hash = sha1(json_encode($points));
+        $pngPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.png';
+        $svgPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.svg';
+
+        if (is_file($pngPath) && filesize($pngPath) > 0) {
+            return $pngPath;
+        }
+
+        if (function_exists('imagecreatetruecolor')) {
+            $generated = self::buildFallbackVenueMapFromOsmTiles($points, $cacheDir . '/pdf-map-osm-' . $hash . '.png');
+            if ($generated !== '') {
+                return $generated;
+            }
+
+            $generated = self::buildFallbackVenueMapPng($points, $pngPath);
+            if ($generated !== '') {
+                return $generated;
+            }
+        }
+
+        if (is_file($svgPath) && filesize($svgPath) > 0) {
+            return $svgPath;
+        }
+
+        return self::buildFallbackVenueMapSvg($points, $svgPath);
+    }
+
+    private static function buildFallbackVenueMapFromOsmTiles(array $points, string $path): string
+    {
+        if (is_file($path) && filesize($path) > 0 && filemtime($path) > time() - 86400) {
+            return $path;
+        }
+
+        $width = 1600;
+        $height = 700;
+        $zoom = max(2, min(13, self::estimateStaticMapZoom(array_map(static function (array $point): array {
+            return array($point['lat'], $point['lng']);
+        }, $points))));
+
+        $centerLat = array_sum(array_column($points, 'lat')) / count($points);
+        $centerLng = array_sum(array_column($points, 'lng')) / count($points);
+        $centerPixel = self::latLngToOsmPixel($centerLat, $centerLng, $zoom);
+        $topLeftX = $centerPixel['x'] - ($width / 2);
+        $topLeftY = $centerPixel['y'] - ($height / 2);
+        $tileStartX = (int) floor($topLeftX / 256);
+        $tileStartY = (int) floor($topLeftY / 256);
+        $tileEndX = (int) floor(($topLeftX + $width) / 256);
+        $tileEndY = (int) floor(($topLeftY + $height) / 256);
+        $maxTile = (1 << $zoom) - 1;
+        $image = imagecreatetruecolor($width, $height);
+
+        if (!$image) {
+            return '';
+        }
+
+        $background = imagecolorallocate($image, 232, 238, 246);
+        imagefilledrectangle($image, 0, 0, $width, $height, $background);
+        $loadedTiles = 0;
+
+        for ($x = $tileStartX; $x <= $tileEndX; $x++) {
+            $wrappedX = (($x % ($maxTile + 1)) + ($maxTile + 1)) % ($maxTile + 1);
+            for ($y = $tileStartY; $y <= $tileEndY; $y++) {
+                if ($y < 0 || $y > $maxTile) {
+                    continue;
+                }
+
+                $tilePath = self::cacheOsmTile($zoom, $wrappedX, $y);
+                if ($tilePath === '') {
+                    continue;
+                }
+
+                $tile = @imagecreatefrompng($tilePath);
+                if (!$tile) {
+                    continue;
+                }
+
+                imagecopy(
+                    $image,
+                    $tile,
+                    (int) round(($x * 256) - $topLeftX),
+                    (int) round(($y * 256) - $topLeftY),
+                    0,
+                    0,
+                    256,
+                    256
+                );
+                imagedestroy($tile);
+                $loadedTiles++;
+            }
+        }
+
+        if ($loadedTiles === 0) {
+            imagedestroy($image);
+
+            return '';
+        }
+
+        self::drawVenueMapMarkers($image, $points, $topLeftX, $topLeftY, $zoom);
+        $ok = imagepng($image, $path);
+        imagedestroy($image);
+
+        return $ok && is_file($path) ? $path : '';
+    }
+
+    private static function cacheOsmTile(int $zoom, int $x, int $y): string
+    {
+        $cacheDir = self::getPdfMapCacheDirectory();
+        if ($cacheDir === '') {
+            return '';
+        }
+
+        $tileDir = $cacheDir . '/osm-tiles/' . $zoom . '/' . $x;
+        if (!is_dir($tileDir) && !@mkdir($tileDir, 0755, true) && !is_dir($tileDir)) {
+            return '';
+        }
+
+        $path = $tileDir . '/' . $y . '.png';
+        if (is_file($path) && filesize($path) > 0 && filemtime($path) > time() - 604800) {
+            return $path;
+        }
+
+        $data = self::downloadRemoteMapImage('https://tile.openstreetmap.org/' . $zoom . '/' . $x . '/' . $y . '.png');
+        if ($data === '' || strlen($data) > 1048576 || @getimagesizefromstring($data) === false) {
+            return '';
+        }
+
+        return @file_put_contents($path, $data) !== false ? $path : '';
+    }
+
+    private static function getVenueMapPoints(array $rows): array
+    {
+        $points = array();
+
+        foreach ($rows as $row) {
+            $lat = self::normaliseCoordinate($row->latitude ?? null);
+            $lng = self::normaliseCoordinate($row->longitude ?? null);
+
+            if ($lat === null || $lng === null) {
+                continue;
+            }
+
+            $label = trim((string) ($row->venue ?? $row->title ?? ''));
+            $points[] = array(
+                'lat' => $lat,
+                'lng' => $lng,
+                'label' => $label !== '' ? $label : self::formatCoordinate($lat) . ', ' . self::formatCoordinate($lng),
+            );
+        }
+
+        return $points;
+    }
+
+    private static function buildFallbackVenueMapPng(array $points, string $path): string
+    {
+        $width = 1600;
+        $height = 620;
+        $padding = 18;
+        $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
+
+        $image = imagecreatetruecolor($width, $height);
+        if (!$image) {
+            return '';
+        }
+
+        $background = imagecolorallocate($image, 248, 250, 252);
+        $grid = imagecolorallocate($image, 226, 232, 240);
+        $border = imagecolorallocate($image, 148, 163, 184);
+        $marker = imagecolorallocate($image, 29, 78, 216);
+        $markerBorder = imagecolorallocate($image, 15, 23, 42);
+        $text = imagecolorallocate($image, 17, 24, 39);
+        $muted = imagecolorallocate($image, 100, 116, 139);
+        imagefilledrectangle($image, 0, 0, $width, $height, $background);
+
+        for ($i = 1; $i < 6; $i++) {
+            $x = (int) round($padding + ($width - 2 * $padding) * $i / 6);
+            $y = (int) round($padding + ($height - 2 * $padding) * $i / 6);
+            imageline($image, $x, $padding, $x, $height - $padding, $grid);
+            imageline($image, $padding, $y, $width - $padding, $y, $grid);
+        }
+
+        imagerectangle($image, $padding, $padding, $width - $padding, $height - $padding, $border);
+        imagestring($image, 3, $padding, 14, Text::_('COM_JEM_VENUES_MAP'), $text);
+        imagestring($image, 2, $padding, $height - 26, self::buildVenueMapBoundsLabel($plot['bounds']), $muted);
+
+        $labelCount = 0;
+        foreach ($plot['points'] as $point) {
+            imagefilledellipse($image, (int) $point['x'], (int) $point['y'], 12, 12, $marker);
+            imageellipse($image, (int) $point['x'], (int) $point['y'], 12, 12, $markerBorder);
+
+            if ($labelCount < 18) {
+                imagestring($image, 2, (int) $point['x'] + 8, max($padding, (int) $point['y'] - 7), self::asciiImageLabel($point['label']), $text);
+                $labelCount++;
+            }
+        }
+
+        $ok = imagepng($image, $path);
+        imagedestroy($image);
+
+        return $ok && is_file($path) ? $path : '';
+    }
+
+    private static function drawVenueMapMarkers($image, array $points, float $topLeftX, float $topLeftY, int $zoom): void
+    {
+        $marker = imagecolorallocate($image, 29, 78, 216);
+        $markerBorder = imagecolorallocate($image, 15, 23, 42);
+        $text = imagecolorallocate($image, 17, 24, 39);
+        $labelBackground = imagecolorallocate($image, 255, 255, 255);
+        $labelCount = 0;
+
+        foreach ($points as $point) {
+            $pixel = self::latLngToOsmPixel($point['lat'], $point['lng'], $zoom);
+            $x = (int) round($pixel['x'] - $topLeftX);
+            $y = (int) round($pixel['y'] - $topLeftY);
+            imagefilledellipse($image, $x, $y, 16, 16, $marker);
+            imageellipse($image, $x, $y, 16, 16, $markerBorder);
+
+            if ($labelCount < 18) {
+                $label = self::asciiImageLabel($point['label']);
+                imagefilledrectangle($image, $x + 10, $y - 9, $x + 12 + strlen($label) * 6, $y + 7, $labelBackground);
+                imagestring($image, 2, $x + 12, $y - 7, $label, $text);
+                $labelCount++;
+            }
+        }
+    }
+
+    private static function latLngToOsmPixel(float $lat, float $lng, int $zoom): array
+    {
+        $lat = max(-85.05112878, min(85.05112878, $lat));
+        $sinLat = sin(deg2rad($lat));
+        $scale = 256 * (1 << $zoom);
+
+        return array(
+            'x' => ($lng + 180.0) / 360.0 * $scale,
+            'y' => (0.5 - log((1 + $sinLat) / (1 - $sinLat)) / (4 * pi())) * $scale,
+        );
+    }
+
+    private static function buildFallbackVenueMapSvg(array $points, string $path): string
+    {
+        $width = 1600;
+        $height = 620;
+        $padding = 18;
+        $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
+        $svg = array();
+        $svg[] = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' ' . $height . '">';
+        $svg[] = '<rect width="100%" height="100%" fill="#f8fafc"/>';
+
+        for ($i = 1; $i < 6; $i++) {
+            $x = round($padding + ($width - 2 * $padding) * $i / 6, 2);
+            $y = round($padding + ($height - 2 * $padding) * $i / 6, 2);
+            $svg[] = '<line x1="' . $x . '" y1="' . $padding . '" x2="' . $x . '" y2="' . ($height - $padding) . '" stroke="#e2e8f0"/>';
+            $svg[] = '<line x1="' . $padding . '" y1="' . $y . '" x2="' . ($width - $padding) . '" y2="' . $y . '" stroke="#e2e8f0"/>';
+        }
+
+        $svg[] = '<rect x="' . $padding . '" y="' . $padding . '" width="' . ($width - 2 * $padding) . '" height="' . ($height - 2 * $padding) . '" fill="none" stroke="#94a3b8"/>';
+        $svg[] = '<text x="' . $padding . '" y="24" font-size="14" font-family="Helvetica, Arial, sans-serif" fill="#111827">' . htmlspecialchars(Text::_('COM_JEM_VENUES_MAP'), ENT_COMPAT, 'UTF-8') . '</text>';
+        $svg[] = '<text x="' . $padding . '" y="' . ($height - 12) . '" font-size="11" font-family="Helvetica, Arial, sans-serif" fill="#64748b">' . htmlspecialchars(self::buildVenueMapBoundsLabel($plot['bounds']), ENT_COMPAT, 'UTF-8') . '</text>';
+
+        $labelCount = 0;
+        foreach ($plot['points'] as $point) {
+            $svg[] = '<circle cx="' . $point['x'] . '" cy="' . $point['y'] . '" r="6" fill="#1d4ed8" stroke="#0f172a"/>';
+            if ($labelCount < 18) {
+                $svg[] = '<text x="' . ($point['x'] + 9) . '" y="' . max($padding + 12, $point['y'] + 4) . '" font-size="11" font-family="Helvetica, Arial, sans-serif" fill="#111827">' . htmlspecialchars($point['label'], ENT_COMPAT, 'UTF-8') . '</text>';
+                $labelCount++;
+            }
+        }
+
+        $svg[] = '</svg>';
+
+        return @file_put_contents($path, implode("\n", $svg)) !== false ? $path : '';
+    }
+
+    private static function projectVenueMapPoints(array $points, int $width, int $height, int $padding): array
+    {
+        $lats = array_column($points, 'lat');
+        $lngs = array_column($points, 'lng');
+        $minLat = min($lats);
+        $maxLat = max($lats);
+        $minLng = min($lngs);
+        $maxLng = max($lngs);
+
+        if (abs($maxLat - $minLat) < 0.000001) {
+            $minLat -= 0.01;
+            $maxLat += 0.01;
+        }
+
+        if (abs($maxLng - $minLng) < 0.000001) {
+            $minLng -= 0.01;
+            $maxLng += 0.01;
+        }
+
+        $projected = array();
+        foreach ($points as $point) {
+            $x = $padding + (($point['lng'] - $minLng) / ($maxLng - $minLng)) * ($width - 2 * $padding);
+            $y = $height - $padding - (($point['lat'] - $minLat) / ($maxLat - $minLat)) * ($height - 2 * $padding);
+            $projected[] = array(
+                'x' => round($x, 2),
+                'y' => round($y, 2),
+                'label' => $point['label'],
+            );
+        }
+
+        return array(
+            'points' => $projected,
+            'bounds' => array(
+                'minLat' => $minLat,
+                'maxLat' => $maxLat,
+                'minLng' => $minLng,
+                'maxLng' => $maxLng,
+            ),
+        );
+    }
+
+    private static function buildVenueMapBoundsLabel(array $bounds): string
+    {
+        return 'Lat ' . self::formatCoordinate($bounds['minLat']) . '...' . self::formatCoordinate($bounds['maxLat'])
+            . ' / Lng ' . self::formatCoordinate($bounds['minLng']) . '...' . self::formatCoordinate($bounds['maxLng']);
+    }
+
+    private static function asciiImageLabel(string $label): string
+    {
+        $label = preg_replace('/[^\x20-\x7E]/', '', $label);
+
+        return strlen($label) > 38 ? substr($label, 0, 35) . '...' : $label;
     }
 
     private static function buildStaticMapImageUrl(array $rows, string $mapProvider): string
@@ -1999,7 +2536,312 @@ class JemPdfView
         return (string) ($link['html'] ?? '');
     }
 
-    private static function buildLinkedEventListHtml(string $title, array $rows, string $paperSize): string
+    private static function buildTypeHeaderHtml($type): string
+    {
+        if (!$type) {
+            return '';
+        }
+
+        $name = trim((string) ($type->name ?? ''));
+        $description = trim((string) ($type->description ?? ''));
+        $icon = trim((string) ($type->icon ?? ''));
+        $color = trim((string) ($type->color ?? ''));
+
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            $color = '#6b7280';
+        }
+
+        $iconText = $icon !== '' ? htmlspecialchars($icon, ENT_COMPAT, 'UTF-8') . ' ' : '';
+        $html = '<div class="jem-pdf-type-header" style="border:0.25mm solid #d1d5db; background-color:#f8fafc; padding:2mm; margin-bottom:4mm;">'
+            . '<div style="font-weight:bold; color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8') . ';">'
+            . $iconText . htmlspecialchars($name, ENT_COMPAT, 'UTF-8') . '</div>';
+
+        if ($description !== '') {
+            $html .= '<div style="color:#374151; margin-top:1mm;">' . self::normaliseEditorHtmlForPdf($description) . '</div>';
+        }
+
+        return $html . '</div>';
+    }
+
+    private static function buildCategoryDetailIntroHtml($category, array $children, string $description): string
+    {
+        $html = array();
+        $description = trim($description);
+
+        if ($description !== '' && $description !== Text::_('COM_JEM_NO_DESCRIPTION')) {
+            $html[] = '<div class="jem-pdf-category-description" style="border:0.25mm solid #d1d5db; background-color:#f8fafc; padding:2mm; margin-bottom:4mm;">'
+                . self::normaliseEditorHtmlForPdf($description)
+                . '</div>';
+        }
+
+        $subcategories = array();
+        foreach ($children as $child) {
+            $name = trim((string) ($child->catname ?? $child->title ?? ''));
+            if ($name !== '') {
+                $subcategories[] = htmlspecialchars($name, ENT_COMPAT, 'UTF-8');
+            }
+        }
+
+        if ($subcategories) {
+            $html[] = '<div class="jem-pdf-subcategories" style="margin-bottom:4mm;"><strong>'
+                . Text::_('COM_JEM_SUBCATEGORIES') . ':</strong> '
+                . implode(', ', $subcategories)
+                . '</div>';
+        }
+
+        return implode("\n", $html);
+    }
+
+    private static function buildCategoryListHtml(string $title, array $rows, array $typeItems, string $paperSize): string
+    {
+        $scale = JemPdf::getPosterScale($paperSize);
+        $settings = JemHelper::config();
+        $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
+        $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
+        $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
+        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
+        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $categoryTitleSize = max(11, min(20, (int) round(14 * $scale)));
+        $html = array();
+
+        $html[] = '<style>
+            body { font-family: ' . $bodyFontFamily . '; }
+            h1 { font-family: ' . $titleFontFamily . '; font-size: ' . $titleFontSize . 'pt; margin: 0 0 4mm 0; color: #111827; }
+            a { color: #1f5b99; text-decoration: underline; }
+            .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $baseFontSize . 'pt; line-height: ' . ($baseFontSize + 3) . 'pt; }
+            .jem-pdf-view-intro { margin-bottom: 4mm; }
+            .jem-pdf-view-footer-text { margin-top: 4mm; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
+            .jem-pdf-category-type { font-family: ' . $headerFontFamily . '; font-size: ' . ($baseFontSize + 3) . 'pt; font-weight: bold; color: #111827; border-bottom: 0.35mm solid #d1d5db; padding-bottom: 1mm; margin: 5mm 0 2mm 0; }
+            .jem-pdf-category-card { border: 0.2mm solid #d1d5db; background-color: #f8fafc; padding: 2.2mm; margin-bottom: 2.5mm; }
+            .jem-pdf-category-name { font-family: ' . $headerFontFamily . '; font-size: ' . $categoryTitleSize . 'pt; font-weight: bold; color: #1f5b99; }
+            .jem-pdf-category-description { color: #374151; font-size: ' . $baseFontSize . 'pt; line-height: ' . ($baseFontSize + 3) . 'pt; margin-top: 1mm; }
+            .jem-pdf-category-meta { color: #4b5563; font-size: ' . $baseFontSize . 'pt; margin-top: 1mm; }
+            .jem-pdf-type-badge { color: #ffffff; font-weight: bold; border-radius: 1.5mm; padding: 0.5mm 1.6mm; }
+            .jem-pdf-preview-title { font-family: ' . $headerFontFamily . '; font-weight: bold; color: #111827; margin-top: 2mm; }
+            .jem-pdf-preview-event { border-top: 0.15mm solid #e5e7eb; padding: 1.3mm 0; font-size: ' . $baseFontSize . 'pt; }
+            .jem-pdf-preview-event-title { font-family: ' . $headerFontFamily . '; font-weight: bold; color: #1f5b99; }
+            .jem-pdf-preview-meta { color: #111827; line-height: ' . ($baseFontSize + 3) . 'pt; }
+            .jem-pdf-muted { color: #6b7280; }
+        </style>';
+        $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
+        $intro = self::buildViewTextBlock('intro');
+
+        if ($intro !== '') {
+            $html[] = $intro;
+        }
+
+        if (!$rows) {
+            $html[] = '<div class="jem-pdf-category-card jem-pdf-muted">' . Text::_('COM_JEM_NO_CATEGORY') . '</div>';
+        }
+
+        $currentTypeId = null;
+        foreach ($rows as $row) {
+            $typeId = (int) ($row->type_id ?? 0);
+
+            if (!empty($typeItems) && $typeId !== $currentTypeId) {
+                $currentTypeId = $typeId;
+                $typeName = '';
+
+                if ($typeId > 0 && !empty($typeItems[$typeId])) {
+                    $typeName = trim((string) ($typeItems[$typeId]->name ?? ''));
+                }
+
+                if ($typeName !== '') {
+                    $html[] = '<div class="jem-pdf-category-type">' . htmlspecialchars($typeName, ENT_COMPAT, 'UTF-8') . '</div>';
+                }
+            }
+
+            $categoryName = trim((string) ($row->catname ?? $row->title ?? ''));
+            $categoryTitle = htmlspecialchars($categoryName, ENT_COMPAT, 'UTF-8');
+
+            if (!empty($row->linktarget)) {
+                $categoryTitle = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($row->linktarget, false)), ENT_COMPAT, 'UTF-8') . '">' . $categoryTitle . '</a>';
+            } elseif (!empty($row->slug)) {
+                $categoryTitle = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getCategoryRoute($row->slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $categoryTitle . '</a>';
+            }
+
+            $typeBadge = self::buildCategoryTypeBadge($row, $typeItems);
+            $description = trim((string) ($row->description ?? ''));
+            $descriptionHtml = '';
+
+            if ($description !== '' && $description !== Text::_('COM_JEM_NO_DESCRIPTION')) {
+                $descriptionHtml = '<div class="jem-pdf-category-description">' . self::normaliseEditorHtmlForPdf($description) . '</div>';
+            }
+
+            $subcats = self::buildCategorySubcategoryList((array) ($row->subcats ?? array()));
+            $eventCount = (int) ($row->assignedevents ?? 0);
+            $meta = array();
+
+            if ($typeBadge !== '') {
+                $meta[] = $typeBadge;
+            }
+
+            if ($eventCount > 0) {
+                $meta[] = htmlspecialchars((string) $eventCount . ' ' . Text::_('COM_JEM_EVENTS'), ENT_COMPAT, 'UTF-8');
+            }
+
+            if ($subcats !== '') {
+                $meta[] = '<strong>' . Text::_('COM_JEM_SUBCATEGORIES') . ':</strong> ' . $subcats;
+            }
+
+            $html[] = '<div class="jem-pdf-category-card">'
+                . '<div class="jem-pdf-category-name">' . $categoryTitle . '</div>'
+                . ($meta ? '<div class="jem-pdf-category-meta">' . implode(' &nbsp; ', $meta) . '</div>' : '')
+                . $descriptionHtml
+                . self::buildCategoryEventPreviewHtml((array) ($row->events ?? array()))
+                . '</div>';
+        }
+
+        $footer = self::buildViewTextBlock('footer');
+
+        if ($footer !== '') {
+            $html[] = $footer;
+        }
+
+        return implode("\n", $html);
+    }
+
+    private static function buildCategoryTypeBadge($row, array $typeItems): string
+    {
+        $typeId = (int) ($row->type_id ?? 0);
+
+        if ($typeId <= 0 || empty($typeItems[$typeId])) {
+            return '';
+        }
+
+        $type = $typeItems[$typeId];
+        $name = trim((string) ($type->name ?? ''));
+
+        if ($name === '') {
+            return '';
+        }
+
+        $color = trim((string) ($type->color ?? ''));
+
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            $color = '#6b7280';
+        }
+
+        return '<span class="jem-pdf-type-badge" style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
+            . '; color:' . self::getContrastingTextColor($color) . ';">'
+            . htmlspecialchars($name, ENT_COMPAT, 'UTF-8')
+            . '</span>';
+    }
+
+    private static function buildCategorySubcategoryList(array $subcats): string
+    {
+        $items = array();
+
+        foreach ($subcats as $subcat) {
+            $name = trim((string) ($subcat->catname ?? $subcat->title ?? ''));
+
+            if ($name === '') {
+                continue;
+            }
+
+            $label = htmlspecialchars($name, ENT_COMPAT, 'UTF-8');
+            $slug = $subcat->slug ?? $subcat->catslug ?? '';
+
+            if ($slug !== '') {
+                $label = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getCategoryRoute($slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $label . '</a>';
+            }
+
+            $items[] = $label;
+        }
+
+        return implode(', ', $items);
+    }
+
+    private static function buildCategoryEventPreviewHtml(array $events): string
+    {
+        if (!$events) {
+            return '';
+        }
+
+        $html = array();
+        $html[] = '<div class="jem-pdf-preview-title">' . Text::_('COM_JEM_EVENTS') . '</div>';
+
+        foreach ($events as $event) {
+            $title = (string) (self::buildPdfEventLink($event)['html'] ?? '');
+            $date = self::htmlToPlainText(JemOutput::formatShortDateTime($event->dates ?? '', $event->times ?? '', $event->enddates ?? '', $event->endtimes ?? ''));
+            $meta = array();
+
+            if ($date !== '') {
+                $meta[] = '&#9719; ' . htmlspecialchars($date, ENT_COMPAT, 'UTF-8');
+            }
+
+            if (!empty($event->venue)) {
+                $venue = (string) (self::buildPdfVenueLink($event)['html'] ?? '');
+                if ($venue !== '') {
+                    $meta[] = '&#9679; ' . $venue;
+                }
+            }
+
+            if (!empty($event->city)) {
+                $meta[] = '&#9638; ' . htmlspecialchars((string) $event->city, ENT_COMPAT, 'UTF-8');
+            }
+
+            if (!empty($event->state)) {
+                $meta[] = '&#9636; ' . htmlspecialchars((string) $event->state, ENT_COMPAT, 'UTF-8');
+            }
+
+            $categories = self::buildPdfCategoryLinks((array) ($event->categories ?? array()));
+            if ($categories !== '') {
+                $meta[] = '&#9670; ' . $categories;
+            }
+
+            $html[] = '<div class="jem-pdf-preview-event">'
+                . '<div class="jem-pdf-preview-event-title">' . $title . '</div>'
+                . ($meta ? '<div class="jem-pdf-preview-meta">' . implode(' &nbsp; ', $meta) . '</div>' : '')
+                . '</div>';
+        }
+
+        return implode("\n", $html);
+    }
+
+    private static function buildCategoryListRows(array $rows, array $typeItems): array
+    {
+        $tableRows = array();
+
+        foreach ($rows as $row) {
+            $categoryName = trim((string) ($row->catname ?? $row->title ?? ''));
+            $categoryHtml = htmlspecialchars($categoryName, ENT_COMPAT, 'UTF-8');
+            if (!empty($row->linktarget)) {
+                $categoryHtml = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($row->linktarget, false)), ENT_COMPAT, 'UTF-8') . '">' . $categoryHtml . '</a>';
+            } elseif (!empty($row->slug)) {
+                $categoryHtml = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getCategoryRoute($row->slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $categoryHtml . '</a>';
+            }
+
+            $typeName = '';
+            $typeId = (int) ($row->type_id ?? 0);
+            if ($typeId > 0 && !empty($typeItems[$typeId])) {
+                $typeName = (string) ($typeItems[$typeId]->name ?? '');
+            }
+
+            $description = self::htmlToPlainText((string) ($row->description ?? ''));
+            $description = self::truncatePlainText($description, 180)['text'];
+
+            $subcats = array();
+            foreach ((array) ($row->subcats ?? array()) as $subcat) {
+                $subName = trim((string) ($subcat->catname ?? $subcat->title ?? ''));
+                if ($subName !== '') {
+                    $subcats[] = $subName;
+                }
+            }
+
+            $tableRows[] = array(
+                array('html' => $categoryHtml),
+                $typeName,
+                $description,
+                (string) (int) ($row->assignedevents ?? 0),
+                implode(', ', $subcats),
+            );
+        }
+
+        return $tableRows;
+    }
+
+    private static function buildLinkedEventListHtml(string $title, array $rows, string $paperSize, string $preListHtml = ''): string
     {
         $scale = JemPdf::getPosterScale($paperSize);
         $settings = JemHelper::config();
@@ -2030,6 +2872,10 @@ class JemPdfView
 
         if ($intro !== '') {
             $html[] = $intro;
+        }
+
+        if ($preListHtml !== '') {
+            $html[] = $preListHtml;
         }
 
         $html[] = '<div class="jem-pdf-event-list">';

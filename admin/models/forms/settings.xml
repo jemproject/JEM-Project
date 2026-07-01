@@ -545,7 +545,7 @@
             label="COM_JEM_PDF_ENABLED_VIEWS"
             description="COM_JEM_PDF_ENABLED_VIEWS_DESC"
             class="inputbox form-select"
-            default="annualcalendar,attendeeregistrations,calendar,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,venue,venueslist,venuesmap,weekcal"
+            default="annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal"
             multiple="true"
             size="15"
             required="false"
@@ -555,11 +555,14 @@
             <option value="calendar">COM_JEM_CALENDAR</option>
             <option value="weekcal">COM_JEM_WEEKCALENDAR</option>
             <option value="day">COM_JEM_DAY_VIEW</option>
+            <option value="categories">COM_JEM_CATEGORIES</option>
             <option value="category">COM_JEM_CATEGORY</option>
             <option value="venue">COM_JEM_VENUE</option>
+            <option value="venues">COM_JEM_VENUES</option>
             <option value="eventslist">COM_JEM_EVENTS</option>
             <option value="venueslist">COM_JEM_VENUES</option>
-            <option value="typeevents">COM_JEM_TYPES</option>
+            <option value="typeevents">COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE</option>
+            <option value="typevenues">COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE</option>
             <option value="specialdays">COM_JEM_SPECIAL_DAYS</option>
             <option value="eventsmap">COM_JEM_EVENTS_MAP</option>
             <option value="venuesmap">COM_JEM_VENUES_MAP</option>

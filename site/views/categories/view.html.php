@@ -128,9 +128,11 @@ class JemViewCategories extends JemView
         );
 
         // Get events if requested
-        if (!empty($rows) && $params->get('show_category_events', 1) && $params->get('detcat_nr', 3) > 0) {
+        $categoryPreviewLimit = (int) $params->get('detcat_nr', 3);
+
+        if (!empty($rows) && $params->get('show_category_events', 1) && $categoryPreviewLimit > 0) {
             foreach($rows as $row) {
-                $row->events = $model->getEventdata($row->id);
+                $row->events = $model->getEventdata($row->id, $categoryPreviewLimit);
             }
         }
 
