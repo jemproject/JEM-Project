@@ -48,6 +48,6 @@
     "sort-packages": true
   },
   "require": {
-    "tecnickcom/tcpdf": "^6.10"
+    "tecnickcom/tcpdf": "6.11.3"
   }
 }

@@ -4,25 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19337d166c264722cb66e8966c3ccdc3",
+    "content-hash": "870b22925fee0e2a90d8737620643b5b",
     "packages": [
         {
             "name": "tecnickcom/tcpdf",
-            "version": "6.10.0",
+            "version": "6.11.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tecnickcom/TCPDF.git",
-                "reference": "ca5b6de294512145db96bcbc94e61696599c391d"
+                "reference": "b18f6119161019916c5bb07cb8da5205ae5c1b63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/ca5b6de294512145db96bcbc94e61696599c391d",
-                "reference": "ca5b6de294512145db96bcbc94e61696599c391d",
+                "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/b18f6119161019916c5bb07cb8da5205ae5c1b63",
+                "reference": "b18f6119161019916c5bb07cb8da5205ae5c1b63",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "php": ">=7.1.0"
+            },
+            "suggest": {
+                "ext-gd": "Enables additional image handling in some workflows.",
+                "ext-imagick": "Enables additional image format support when available.",
+                "ext-zlib": "Recommended for compressed streams and related features.",
+                "tecnickcom/tc-lib-pdf": "Modern replacement for TCPDF for new projects."
             },
             "type": "library",
             "autoload": {
@@ -54,8 +60,8 @@
                     "role": "lead"
                 }
             ],
-            "description": "TCPDF is a PHP class for generating PDF documents and barcodes.",
-            "homepage": "http://www.tcpdf.org/",
+            "description": "Deprecated legacy PDF engine for PHP. For new projects use tecnickcom/tc-lib-pdf.",
+            "homepage": "https://tcpdf.org",
             "keywords": [
                 "PDFD32000-2008",
                 "TCPDF",
@@ -67,15 +73,15 @@
             ],
             "support": {
                 "issues": "https://github.com/tecnickcom/TCPDF/issues",
-                "source": "https://github.com/tecnickcom/TCPDF/tree/6.10.0"
+                "source": "https://github.com/tecnickcom/TCPDF"
             },
             "funding": [
                 {
                     "url": "https://www.paypal.com/donate/?hosted_button_id=NZUEC5XS8MFBJ",
-                    "type": "custom"
+                    "type": "paypal"
                 }
             ],
-            "time": "2025-05-27T18:02:28+00:00"
+            "time": "2026-04-21T17:00:18+00:00"
         }
     ],
     "packages-dev": [
