@@ -1107,7 +1107,8 @@ static public function lightbox() {
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM 4.0 on" . $websiteUrl
+                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5') . " on " . $websiteUrl,
+                        "timeout" => 10 // Timeout in Seconds
                     ]
                 ];
 
@@ -1137,36 +1138,36 @@ static public function lightbox() {
                     $lat = $data->latitude;
                     $lng = $data->longitude;
                 } else {
-
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
-                 $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
-                 $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
+                $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
+                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
 
-                 $httpOptions = [
-                     "http" => [
-                         "method" => "GET",
-                         "header" => "User-Agent: JEM 4.0 on" . $websiteUrl
-                         ]
-                     ];
+                $httpOptions = [
+                    "http" => [
+                        "method" => "GET",
+                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5.0.0') . " on " . $websiteUrl,
+                        "timeout" => 10 // Timeout in seconds
+                    ]
+                ];
 
-                 $streamContext = stream_context_create($httpOptions);
-                 $json = file_get_contents($search_url, false, $streamContext);
+                $streamContext = stream_context_create($httpOptions);
+                $json = file_get_contents($search_url, false, $streamContext);
 
-                 $decoded = json_decode($json, true);
-                 $lat = $decoded[0]["lat"] ?? null;
-                 $lng = $decoded[0]["lon"] ?? null;
-                 }
+                $decoded = json_decode($json, true);
+                $lat = $decoded[0]["lat"] ?? null;
+                $lng = $decoded[0]["lon"] ?? null;
+                }
 
-                 $wa = $app->getDocument()->getWebAssetManager();
-                 $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
+                $wa = $app->getDocument()->getWebAssetManager();
+                $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
 
-                 if ($lat && $lng) {
+                if ($lat && $lng) {
                     $zoom = 15; // Adjust the zoom level as per your requirement
                     $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
-                 } else {
-                     $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
-                     $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
-                 }
+                } else {
+                    $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
+                    $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
+                }
             break;
         }
         return $output;
