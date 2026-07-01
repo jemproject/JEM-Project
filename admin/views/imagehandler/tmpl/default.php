@@ -12,7 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
 ?>
-<form action="index.php" method="post" name="adminForm" id="adminForm">
+<form action="index.php" method="post" name="adminForm" id="adminForm" class="jem-imagehandler is-gallery">
     <style>
         .jem-imagehandler-toolbar {
             display: flex;
@@ -47,63 +47,112 @@ use Joomla\CMS\Session\Session;
             white-space: nowrap;
         }
 
-        .jem-imagehandler-view {
-            display: none;
+        .jem-imagehandler [data-jem-image-panel] {
+            display: none !important;
         }
 
-        .jem-imagehandler-view.is-active {
-            display: block;
+        .jem-imagehandler.is-gallery [data-jem-image-panel="grid"],
+        .jem-imagehandler.is-details [data-jem-image-panel="details"] {
+            display: block !important;
+        }
+
+        .jem-imagehandler.is-gallery .jem-imagehandler-grid {
+            display: grid !important;
         }
 
         .jem-imagehandler-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
             gap: 0.75rem;
         }
 
         .jem-imagehandler-grid .item-image {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 0.55rem;
             float: none;
             width: auto;
-            min-height: 0;
+            min-height: 13rem;
             margin: 0;
             padding: 0.5rem;
             border: 1px solid #d6dde8;
             background: #fff;
+            box-sizing: border-box;
         }
 
         .jem-imagehandler-grid .imgBorder {
             border: 0;
-            min-height: 4.75rem;
+            height: 7.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0.5rem;
+            margin: 0;
+            padding: 0.2rem 2.2rem 0.2rem 0.2rem;
         }
 
         .jem-imagehandler-grid .image {
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .jem-imagehandler-grid .image img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
         .jem-imagehandler-grid .controls {
-            display: flex;
+            display: grid;
+            grid-template-columns: auto auto auto;
             align-items: center;
             justify-content: space-between;
             gap: 0.5rem;
-            margin-bottom: 0.35rem;
+            margin: 0;
         }
 
         .jem-imagehandler-grid .imageinfo {
+            display: block;
+            width: 100%;
             overflow: hidden;
-            color: #4b5563;
-            font-size: 0.8rem;
+            color: #1f2937;
+            font-size: 0.9rem;
+            line-height: 1.25;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
         .jem-imagehandler-card-size {
             color: #374151;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        .jem-imagehandler-card-date {
+            color: #6b7280;
+            font-size: 0.82rem;
+            white-space: nowrap;
+        }
+
+        .jem-imagehandler-grid .jem-imagehandler-delete {
+            position: absolute;
+            top: 0.35rem;
+            right: 0.35rem;
+            width: 2rem;
+            height: 2rem;
+            padding: 0;
+            gap: 0;
+        }
+
+        .jem-imagehandler-grid .jem-imagehandler-delete .jem-imagehandler-delete-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
             white-space: nowrap;
         }
 
@@ -117,9 +166,22 @@ use Joomla\CMS\Session\Session;
             min-width: 720px;
         }
 
+        .jem-imagehandler-table thead th {
+            background: #fff;
+            border-bottom: 1px solid #9ca3af;
+        }
+
         .jem-imagehandler-table th,
         .jem-imagehandler-table td {
             vertical-align: middle;
+        }
+
+        .jem-imagehandler-table tbody tr:nth-child(odd) {
+            background: #f3f4f6;
+        }
+
+        .jem-imagehandler-table tbody tr:nth-child(even) {
+            background: #fff;
         }
 
         .jem-imagehandler-thumb {
@@ -170,7 +232,7 @@ use Joomla\CMS\Session\Session;
         </div>
     </div>
 
-    <div class="imglist jem-imagehandler-view jem-imagehandler-grid is-active" data-jem-image-panel="grid">
+    <div class="imglist jem-imagehandler-grid" data-jem-image-panel="grid">
         <?php
         $n = is_array($this->images) ? count($this->images) : 0;
         for ($i = 0; $i < $n; $i++) :
@@ -180,7 +242,7 @@ use Joomla\CMS\Session\Session;
         ?>
     </div>
 
-    <div class="jem-imagehandler-view jem-imagehandler-table-wrap" data-jem-image-panel="details">
+    <div class="jem-imagehandler-table-wrap" data-jem-image-panel="details">
         <table class="table table-striped table-hover table-sm jem-imagehandler-table">
             <thead>
                 <tr>
@@ -188,6 +250,7 @@ use Joomla\CMS\Session\Session;
                     <th><?php echo Text::_('COM_JEM_IMAGEHANDLER_FILE_NAME'); ?></th>
                     <th><?php echo Text::_('COM_JEM_ATTACHMENT_FILE_SIZE'); ?></th>
                     <th><?php echo Text::_('COM_JEM_IMAGEHANDLER_DIMENSIONS'); ?></th>
+                    <th><?php echo Text::_('JDATE'); ?></th>
                     <th class="text-end"><?php echo Text::_('COM_JEM_ACTIONS'); ?></th>
                 </tr>
             </thead>
@@ -200,6 +263,7 @@ use Joomla\CMS\Session\Session;
                     $folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
                     $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
                     $deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
+                    $modified = !empty($image->modified) ? HTMLHelper::_('date', $image->modified, Text::_('DATE_FORMAT_LC4')) : '-';
                     ?>
                     <tr>
                         <td>
@@ -214,6 +278,7 @@ use Joomla\CMS\Session\Session;
                         </td>
                         <td><?php echo htmlspecialchars((string) $image->size, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo (int) $image->width; ?> x <?php echo (int) $image->height; ?> px</td>
+                        <td><?php echo htmlspecialchars($modified, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td class="text-end">
                             <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <span class="icon-trash" aria-hidden="true"></span>
@@ -253,9 +318,8 @@ use Joomla\CMS\Session\Session;
                     item.classList.toggle('btn-outline-primary', item !== button);
                 });
 
-                panels.forEach(function (panel) {
-                    panel.classList.toggle('is-active', panel.getAttribute('data-jem-image-panel') === target);
-                });
+                document.getElementById('adminForm').classList.toggle('is-gallery', target === 'grid');
+                document.getElementById('adminForm').classList.toggle('is-details', target === 'details');
             });
         });
 

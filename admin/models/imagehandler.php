@@ -9,12 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component Imagehandler Model
@@ -51,7 +51,7 @@ class JemModelImagehandler extends BaseDatabaseModel
         $limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $search     = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-        $search     = trim(\Joomla\String\StringHelper::strtolower($search));
+        $search     = trim(StringHelper::strtolower($search));
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);
@@ -115,6 +115,7 @@ class JemModelImagehandler extends BaseDatabaseModel
 
             $list[$i]->width  = $info[0];
             $list[$i]->height = $info[1];
+            $list[$i]->modified = filemtime($list[$i]->path) ?: null;
             //$list[$i]->type = $info[2];
             //$list[$i]->mime = $info['mime'];
 
@@ -159,7 +160,7 @@ class JemModelImagehandler extends BaseDatabaseModel
                 foreach ($fileList as $file) {
                     if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
                         if (empty($search) || stristr($file, $search)) {
-                            $tmp = new CMSObject();
+                            $tmp = new stdClass();
                             $tmp->name = $file;
                             $tmp->path = Path::clean($basePath.'/'.$file);
 
