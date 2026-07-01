@@ -98,6 +98,7 @@ class JemControllerSettings extends BaseController
 
         // Validate the posted data.
         $form = $model->getForm();
+        $postedData = $data;
         $data = $model->validate($form, $data);
 
         // Check for validation errors.
@@ -121,6 +122,8 @@ class JemControllerSettings extends BaseController
             $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
             return false;
         }
+
+        $this->preserveSpecialDaysGlobalSettings($data, $postedData);
 
         // Attempt to save the data.
         if (!$model->store($data)) {
@@ -153,6 +156,33 @@ class JemControllerSettings extends BaseController
                 // Redirect to the list screen.
                 $this->setRedirect(Route::_('index.php?option=com_jem&view=main', false));
                 break;
+        }
+    }
+
+    /**
+     * Preserve Special Days settings from the submitted form.
+     *
+     * Joomla's form validation can drop newly moved nested globalattribs fields
+     * if a layout renders them outside their original fieldset. Keep the posted
+     * values explicit so the Yes/No toggle persists reliably.
+     *
+     * @param   array  &$data       Validated settings data.
+     * @param   array  $postedData  Raw jform data.
+     *
+     * @return  void
+     */
+    private function preserveSpecialDaysGlobalSettings(array &$data, array $postedData): void
+    {
+        if (!isset($postedData['globalattribs']) || !is_array($postedData['globalattribs'])) {
+            return;
+        }
+
+        $data['globalattribs'] = $data['globalattribs'] ?? array();
+
+        foreach (array('calendar_special_days_enabled', 'calendar_special_day_types') as $key) {
+            if (array_key_exists($key, $postedData['globalattribs'])) {
+                $data['globalattribs'][$key] = $postedData['globalattribs'][$key];
+            }
         }
     }
 
