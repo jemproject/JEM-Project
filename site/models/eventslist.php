@@ -720,7 +720,9 @@ class JemModelEventslist extends ListModel
         $jubilee_show_past = $this->getState('filter.jubilee_show_past', 0);
         $published = $this->getState('filter.published', 1);
 
-        if($opendates != 2 && $published < 2) {
+        $applyCalendarDateFilters = !is_numeric($published) || (int) $published < 2 || (bool) $this->getState('filter.show_archived_events', false);
+
+        if($opendates != 2 && $applyCalendarDateFilters) {
 
             // Check if calendar_from or calendar_to is set
             if ($calendar_from != '' || $calendar_to != '') {
@@ -731,7 +733,7 @@ class JemModelEventslist extends ListModel
                     $query->where($calendar_to);
                 }
             } else {
-                if($published < 2) {
+                if($applyCalendarDateFilters) {
                     if (empty($jubilee_filter) || !$jubilee_show_past) {
                         if ($cal_month) {
                             // Apply Month filter

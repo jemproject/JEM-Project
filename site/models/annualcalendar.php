@@ -64,6 +64,8 @@ class JemModelAnnualcalendar extends JemModelEventslist
         $this->setState('filter.calendar_startdayonly', (bool) $startdayonly);
         $this->setState('filter.groupby', array('a.id'));
         $this->setState('filter.show_archived_events', $show_archived_events);
+        $this->setState('list.start', 0);
+        $this->setState('list.limit', 0);
     }
 
     /**
