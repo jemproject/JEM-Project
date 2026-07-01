@@ -2144,6 +2144,18 @@
                 <option value="details">COM_JEM_EVENT_DETAILS_LAYOUT_DETAILS</option>
                 <option value="compact">COM_JEM_EVENT_DETAILS_LAYOUT_COMPACT</option>
             </field>
+            <field name="event_detail_image_layout" type="list"
+                label="COM_JEM_EVENT_DETAIL_IMAGE_LAYOUT"
+                description="COM_JEM_EVENT_DETAIL_IMAGE_LAYOUT_DESC"
+                class="inputbox"
+                default="right"
+                required="false"
+            >
+                <option value="right">COM_JEM_EVENT_FULLIMAGE_LAYOUT_RIGHT</option>
+                <option value="header">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HEADER</option>
+                <option value="poster">COM_JEM_EVENT_FULLIMAGE_LAYOUT_POSTER</option>
+                <option value="hidden">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HIDDEN</option>
+            </field>
             <field name="event_show_detailstitle" type="radio"
                 label="COM_JEM_DISPLAY_EVENT_TITLE"
                 description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"

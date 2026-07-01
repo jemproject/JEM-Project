@@ -9,14 +9,15 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 ?>
 <?php
 $imageName = (string) $this->_tmp_img->name;
 $imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
 $folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
 $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
+$deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
 ?>
 <div class="item-image">
     <div class="imgBorder center">
@@ -27,12 +28,13 @@ $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawu
         </a>
     </div>
     <div class="controls">
-        <?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?> -
-        <a class="delete-item" href="index.php?option=com_jem&amp;task=imagehandler.delete&amp;tmpl=component&amp;folder=<?php echo $folderAttr; ?>&amp;rm[]=<?php echo rawurlencode($imageName); ?>&amp;<?php echo Session::getFormToken(); ?>=1">
-            <?php echo HTMLHelper::_('image','/media/com_jem/images/publish_r.webp',Text::_('COM_JEM_DELETE_IMAGE'),array('title' => Text::_('COM_JEM_DELETE_IMAGE')),true); ?>
+        <span class="jem-imagehandler-card-size"><?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?></span>
+        <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
+            <span class="icon-trash" aria-hidden="true"></span>
+            <?php echo Text::_('COM_JEM_DELETE_IMAGE'); ?>
         </a>
     </div>
     <div class="imageinfo">
-        <?php echo $this->escape(\Joomla\String\StringHelper::substr($this->_tmp_img->name, 0, 10) . (\Joomla\String\StringHelper::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
+        <?php echo $this->escape(StringHelper::substr($this->_tmp_img->name, 0, 10) . (StringHelper::strlen($this->_tmp_img->name) > 10 ? '...' : '')); ?>
     </div>
 </div>

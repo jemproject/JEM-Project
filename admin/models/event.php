@@ -789,7 +789,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
@@ -1103,7 +1103,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs', 'datimage')))
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs', 'datimage', 'fullimage')))
             ->from($db->quoteName('#__jem_events'))
             ->where($db->quoteName('id') . ' = ' . $eventId);
 
@@ -1542,20 +1542,28 @@ class JemModelEvent extends JemModelAdmin
             return array();
         }
 
-        $image = $this->getEventImagePathForArticle($eventData);
+        $introImage = $this->getEventImagePathForArticle($eventData, 'datimage');
+        $fullImage  = $this->getEventImagePathForArticle($eventData, 'fullimage');
 
-        if ($image === '') {
+        if ($introImage === '' && $fullImage === '') {
             return array();
+        }
+
+        if ($fullImage === '') {
+            $fullImage = $introImage;
+        }
+        if ($introImage === '') {
+            $introImage = $fullImage;
         }
 
         $images = array();
 
-        if ($mode === 'intro' || $mode === 'both') {
-            $images['image_intro'] = $image;
+        if ($mode === 'intro' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'datimage') !== '') {
+            $images['image_intro'] = $introImage;
         }
 
-        if ($mode === 'full' || $mode === 'both') {
-            $images['image_fulltext'] = $image;
+        if ($mode === 'full' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'fullimage') !== '') {
+            $images['image_fulltext'] = $fullImage;
         }
 
         return $images;
@@ -1568,9 +1576,9 @@ class JemModelEvent extends JemModelAdmin
      *
      * @return  string
      */
-    protected function getEventImagePathForArticle(array $eventData)
+    protected function getEventImagePathForArticle(array $eventData, $field = 'datimage')
     {
-        $image = trim((string) ($eventData['datimage'] ?? ''));
+        $image = trim((string) ($eventData[$field] ?? ''));
 
         if ($image === '') {
             return '';
@@ -1641,6 +1649,7 @@ class JemModelEvent extends JemModelAdmin
                 'meta_description',
                 'metadata',
                 'datimage',
+                'fullimage',
                 'attribs',
                 'dates',
                 'times',
@@ -1696,6 +1705,19 @@ class JemModelEvent extends JemModelAdmin
             return;
         }
 
+        $imageChanges = array_intersect_key($changes, array('datimage' => true, 'fullimage' => true));
+        if ($imageChanges && $this->updateAssociatedArticleFromEvent($eventId, array_keys($imageChanges))) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_AUTO_UPDATED', implode(', ', array_values($imageChanges))),
+                'message'
+            );
+            $changes = array_diff_key($changes, $imageChanges);
+        }
+
+        if (!$changes) {
+            return;
+        }
+
         $action = (string) JemHelper::globalattribs()->get('event_article_content_change_action', 'ask');
 
         if ($action === 'none') {
@@ -1736,7 +1758,8 @@ class JemModelEvent extends JemModelAdmin
             'fulltext'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_FULLTEXT'),
             'meta_keywords'    => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METAKEYWORDS'),
             'meta_description' => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METADESCRIPTION'),
-            'datimage'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_IMAGE')
+            'datimage'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_IMAGE'),
+            'fullimage'        => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_FULLIMAGE')
         );
         $changes = array();
 
@@ -1792,7 +1815,7 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $fields = array_values(array_unique(array_filter(array_map('trim', (array) $fields))));
-        $allowed = array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage');
+        $allowed = array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage');
         $fields = array_values(array_intersect($fields, $allowed));
 
         if (!$fields) {
@@ -1850,7 +1873,7 @@ class JemModelEvent extends JemModelAdmin
             $update->metadesc = (string) ($eventData['meta_description'] ?? '');
         }
 
-        if (in_array('datimage', $fields, true)) {
+        if (array_intersect(array('datimage', 'fullimage'), $fields)) {
             $update->images = $this->mergeAssociatedArticleImagesFromEvent((string) ($article->images ?? ''), $eventData);
         }
 
@@ -1882,14 +1905,22 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $mode = (string) JemHelper::globalattribs()->get('event_associated_article_image_mode', 'intro');
-        $image = $this->getEventImagePathForArticle($eventData);
+        $introImage = $this->getEventImagePathForArticle($eventData, 'datimage');
+        $fullImage  = $this->getEventImagePathForArticle($eventData, 'fullimage');
 
-        if ($mode === 'intro' || $mode === 'both') {
-            $images['image_intro'] = $image;
+        if ($fullImage === '') {
+            $fullImage = $introImage;
+        }
+        if ($introImage === '') {
+            $introImage = $fullImage;
         }
 
-        if ($mode === 'full' || $mode === 'both') {
-            $images['image_fulltext'] = $image;
+        if ($mode === 'intro' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'datimage') !== '') {
+            $images['image_intro'] = $introImage;
+        }
+
+        if ($mode === 'full' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'fullimage') !== '') {
+            $images['image_fulltext'] = $fullImage;
         }
 
         return json_encode($images);
@@ -2399,7 +2430,7 @@ class JemModelEvent extends JemModelAdmin
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                    'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                    'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                     'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');

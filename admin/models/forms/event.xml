@@ -295,6 +295,25 @@
             imagetype="events"
             description="COM_JEM_IMAGESELECT"
         />
+        <field name="fullimage" type="imageselect"
+            class="inputbox"
+            size="40"
+            label="COM_JEM_EVENT_FULLIMAGE"
+            imagetype="events"
+            description="COM_JEM_EVENT_FULLIMAGE_DESC"
+        />
+        <field name="fullimage_layout" type="list"
+            class="inputbox form-select"
+            label="COM_JEM_EVENT_FULLIMAGE_LAYOUT"
+            description="COM_JEM_EVENT_FULLIMAGE_LAYOUT_DESC"
+            default="global"
+        >
+            <option value="global">COM_JEM_USE_GLOBAL</option>
+            <option value="right">COM_JEM_EVENT_FULLIMAGE_LAYOUT_RIGHT</option>
+            <option value="header">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HEADER</option>
+            <option value="poster">COM_JEM_EVENT_FULLIMAGE_LAYOUT_POSTER</option>
+            <option value="hidden">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HIDDEN</option>
+        </field>
     </fieldset>
 
     <fieldset name="custom">

@@ -111,6 +111,60 @@ $this->document->addStyleDeclaration('
         flex: 1 1 auto;
         min-width: 0;
     }
+    .jem-event-image-fields {
+        display: grid;
+        gap: 1rem;
+        max-width: 980px;
+    }
+    .jem-event-image-field {
+        display: grid;
+        grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
+        align-items: start;
+        gap: 1rem;
+    }
+    .jem-event-image-label strong {
+        display: block;
+        margin-bottom: .2rem;
+    }
+    .jem-event-image-label span {
+        display: block;
+        color: #6c757d;
+        font-size: .875rem;
+        line-height: 1.25;
+    }
+    .jem-event-image-control {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .5rem;
+        min-width: 0;
+    }
+    .jem-event-image-control .fltlft,
+    .jem-event-image-control .button2-left,
+    .jem-event-image-control .button2-left .blank {
+        float: none;
+        display: contents;
+    }
+    .jem-event-image-control input[type="text"] {
+        width: min(260px, 100%);
+    }
+    .jem-event-image-control .venue-image {
+        width: 76px;
+        height: 86px;
+        object-fit: contain;
+        margin: 0 0 0 .25rem;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+    .jem-event-image-field--layout .jem-event-image-control select {
+        width: min(420px, 100%);
+    }
+    @media (max-width: 720px) {
+        .jem-event-image-field {
+            grid-template-columns: 1fr;
+        }
+    }
 ');
 
 ?>
@@ -656,9 +710,35 @@ $this->document->addStyleDeclaration('
 
                     <div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
-                            <ul class="adminformlist" style="margin-bottom: 130px;">
-                                <li><div class="label-form"><?php echo $this->form->renderfield('datimage'); ?></div></li>
-                            </ul>
+                            <div class="jem-event-image-fields">
+                                <div class="jem-event-image-field">
+                                    <div class="jem-event-image-label">
+                                        <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
+                                        <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
+                                    </div>
+                                    <div class="jem-event-image-control">
+                                        <?php echo $this->form->getInput('datimage'); ?>
+                                    </div>
+                                </div>
+                                <div class="jem-event-image-field">
+                                    <div class="jem-event-image-label">
+                                        <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
+                                        <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_DESC'); ?></span>
+                                    </div>
+                                    <div class="jem-event-image-control">
+                                        <?php echo $this->form->getInput('fullimage'); ?>
+                                    </div>
+                                </div>
+                                <div class="jem-event-image-field jem-event-image-field--layout">
+                                    <div class="jem-event-image-label">
+                                        <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?></strong>
+                                        <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT_DESC'); ?></span>
+                                    </div>
+                                    <div class="jem-event-image-control">
+                                        <?php echo $this->form->getInput('fullimage_layout'); ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

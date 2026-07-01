@@ -142,27 +142,41 @@ class JemPdfView
     /**
      * Renders a venue list PDF.
      */
-    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list', string $mapProvider = 'osm'): void
+    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list', string $mapProvider = 'osm', bool $showVenueImage = false): void
     {
         $isMapProfile = $profile === 'map';
-        $headers = array(
-            Text::_('COM_JEM_VENUE'),
-            Text::_('COM_JEM_CITY'),
-            Text::_('COM_JEM_STATE'),
-            Text::_('COM_JEM_COUNTRY'),
-            Text::_('COM_JEM_WEBSITE'),
-        );
 
         if ($isMapProfile) {
-            $headers[] = Text::_('COM_JEM_LATITUDE');
-            $headers[] = Text::_('COM_JEM_LONGITUDE');
-            $headers[] = Text::_('COM_JEM_MAP_LINK');
+            $headers = array();
+
+            if ($showVenueImage) {
+                $headers[] = Text::_('COM_JEM_IMAGE');
+            }
+
+            $headers = array_merge($headers, array(
+                Text::_('COM_JEM_VENUE'),
+                Text::_('COM_JEM_CITY'),
+                Text::_('COM_JEM_COUNTRY'),
+                Text::_('COM_JEM_LATITUDE'),
+                Text::_('COM_JEM_LONGITUDE'),
+                Text::_('COM_JEM_ACTIONS'),
+            ));
+            $tableRows = self::buildVenueMapRows($rows, $mapProvider, $showVenueImage);
+        } else {
+            $headers = array(
+                Text::_('COM_JEM_VENUE'),
+                Text::_('COM_JEM_CITY'),
+                Text::_('COM_JEM_STATE'),
+                Text::_('COM_JEM_COUNTRY'),
+                Text::_('COM_JEM_WEBSITE'),
+            );
+            $tableRows = self::buildVenueListRows($rows, false, $mapProvider);
         }
 
         self::renderTable(
             $title,
             $headers,
-            self::buildVenueListRows($rows, $isMapProfile, $mapProvider),
+            $tableRows,
             $filename,
             $profile,
             '',
@@ -1268,6 +1282,30 @@ class JemPdfView
                 (string) ($row->city ?? ''),
                 array('html' => self::buildPdfCategoryLinks((array) ($row->categories ?? array()))),
             );
+        }
+
+        return $tableRows;
+    }
+
+    private static function buildVenueMapRows(array $rows, string $mapProvider = 'osm', bool $showVenueImage = false): array
+    {
+        $tableRows = array();
+
+        foreach ($rows as $row) {
+            $tableRow = array();
+
+            if ($showVenueImage) {
+                $tableRow[] = self::buildPdfVenueImageCell($row);
+            }
+
+            $tableRow[] = self::buildPdfVenueListLink($row);
+            $tableRow[] = (string) ($row->city ?? '');
+            $tableRow[] = self::formatPdfCountryName((string) ($row->country ?? ''));
+            $tableRow[] = self::formatCoordinate($row->latitude ?? '');
+            $tableRow[] = self::formatCoordinate($row->longitude ?? '');
+            $tableRow[] = self::buildPdfVenueMapActions($row, $mapProvider);
+
+            $tableRows[] = $tableRow;
         }
 
         return $tableRows;
@@ -3000,13 +3038,70 @@ class JemPdfView
     private static function buildPdfVenueListLink($row): array
     {
         $venue = htmlspecialchars((string) ($row->venue ?? $row->title ?? ''), ENT_COMPAT, 'UTF-8');
-        $slug = $row->slug ?? $row->venueslug ?? '';
+        $slug = self::getPdfVenueSlug($row);
 
         if ($venue === '' || $slug === '') {
             return array('html' => $venue);
         }
 
         return array('html' => '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_(JemHelperRoute::getVenueRoute($slug), false)), ENT_COMPAT, 'UTF-8') . '">' . $venue . '</a>');
+    }
+
+    private static function getPdfVenueSlug($row): string
+    {
+        $slug = (string) ($row->slug ?? $row->venueslug ?? '');
+
+        if ($slug !== '') {
+            return $slug;
+        }
+
+        $id = (int) ($row->id ?? $row->venue_id ?? 0);
+
+        if ($id <= 0) {
+            return '';
+        }
+
+        $alias = (string) ($row->alias ?? $row->venue_alias ?? '');
+
+        return $id . ($alias !== '' ? ':' . $alias : '');
+    }
+
+    private static function buildPdfVenueImageCell($row): array
+    {
+        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 22, 16);
+
+        return array('html' => $image !== '' ? $image : '-');
+    }
+
+    private static function buildPdfVenueMapActions($row, string $mapProvider): array
+    {
+        $links = array();
+        $mapLink = self::buildPdfMapLink($row, $mapProvider, 'COM_JEM_MAP_LINK');
+
+        if (!empty($mapLink['html'])) {
+            $links[] = $mapLink['html'];
+        }
+
+        $slug = self::getPdfVenueSlug($row);
+
+        if ($slug !== '') {
+            $calendarRoute = 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug;
+            $links[] = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($calendarRoute, false)), ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_CALENDAR') . '</a>';
+        }
+
+        $venueId = (int) ($row->id ?? $row->venue_id ?? 0);
+
+        if ($venueId > 0 && class_exists('JemFactory', false)) {
+            $user = JemFactory::getUser();
+            $createdBy = (int) ($row->created_by ?? 0);
+
+            if ($user && method_exists($user, 'can') && $user->can('edit', 'venue', $venueId, $createdBy)) {
+                $editRoute = 'index.php?option=com_jem&task=venue.edit&a_id=' . $venueId;
+                $links[] = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($editRoute, false)), ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_EDIT_VENUE') . '</a>';
+            }
+        }
+
+        return array('html' => $links ? implode('<br />', $links) : '-');
     }
 
     private static function buildPdfExternalLink(string $url): array

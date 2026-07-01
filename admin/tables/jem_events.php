@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\String\StringHelper;
 
 /**
  * JEM events Model class
@@ -40,6 +41,12 @@ class jem_events extends Table
     public $title = '';
     /** @var string */
     public $alias = '';
+    /** @var int */
+    public $article_id = 0;
+    /** @var string */
+    public $online_meeting_url = '';
+    /** @var string */
+    public $online_meeting_label = '';
     /** @var date */
     public $created = null;
     /** @var int */
@@ -92,6 +99,8 @@ class jem_events extends Table
     public $recurrence_first_id = 0;
     /** @var string */
     public $datimage = '';
+    public $fullimage = '';
+    public $fullimage_layout = 'global';
     /** @var string */
     public $author_ip = null;
     /** @var int */
@@ -102,12 +111,6 @@ class jem_events extends Table
     public $ticket_availability = 'instock';
     /** @var int */
     public $type_id = null;
-    /** @var int */
-    public $article_id = 0;
-    /** @var string */
-    public $online_meeting_url = '';
-    /** @var string */
-    public $online_meeting_label = '';
     /** @var int */
     public $registra = null;
     /** @var int */
@@ -170,7 +173,7 @@ class jem_events extends Table
         }
 
         $this->title = strip_tags(trim($this->title));
-        $titlelength = \Joomla\String\StringHelper::strlen($this->title);
+        $titlelength = StringHelper::strlen($this->title);
 
         if ($this->title == '') {
             $this->_error = Text::_('COM_JEM_ADD_TITLE');

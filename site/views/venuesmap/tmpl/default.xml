@@ -98,6 +98,16 @@
                 <option value="0">JNO</option>
             </field>
 
+            <field name="showvenueimage" type="radio"
+                   default="1"
+                   label="COM_JEM_VENUESMAP_SHOW_VENUE_IMAGE"
+                   description="COM_JEM_VENUESMAP_SHOW_VENUE_IMAGE_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
             <field name="show_country_filter" type="radio"
                    default="1"
                    label="COM_JEM_VENUESMAP_SHOW_COUNTRY_FILTER_LABEL"
