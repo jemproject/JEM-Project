@@ -1199,7 +1199,17 @@ class JemModelEventslist extends ListModel
             foreach ($items as $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
-                    $day = $item->start_day;
+                    $startTimestamp = strtotime((string) $item->dates);
+                    $endTimestamp   = strtotime((string) $item->enddates);
+
+                    if (!$startTimestamp || !$endTimestamp || $endTimestamp <= $startTimestamp) {
+                        continue;
+                    }
+
+                    $day        = isset($item->start_day) ? (int) $item->start_day : (int) date('j', $startTimestamp);
+                    $startMonth = isset($item->start_month) ? (int) $item->start_month : (int) date('n', $startTimestamp);
+                    $startYear  = isset($item->start_year) ? (int) $item->start_year : (int) date('Y', $startTimestamp);
+                    $datesdiff  = isset($item->datesdiff) ? (int) $item->datesdiff : (int) floor(($endTimestamp - $startTimestamp) / 86400);
                     $multi = array();
 
                     # it's multiday regardless if other days are on next month
@@ -1208,11 +1218,11 @@ class JemModelEventslist extends ListModel
                     $item->multiname = $item->title;
                     $item->sort = 'zlast';
 
-                    for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
+                    for ($counter = 0; $counter <= $datesdiff - 1; $counter++)
                     {
                         # next day:
                         $day++;
-                        $nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+                        $nextday = mktime(0, 0, 0, $startMonth, $day, $startYear);
 
                         # ensure we only generate days of current month in this loop
                         if (date('m', $this->_date) == date('m', $nextday)) {
