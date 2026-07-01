@@ -1103,7 +1103,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs')))
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs', 'datimage')))
             ->from($db->quoteName('#__jem_events'))
             ->where($db->quoteName('id') . ' = ' . $eventId);
 
