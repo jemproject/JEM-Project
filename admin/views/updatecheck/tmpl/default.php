@@ -170,6 +170,12 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             min-width: 0;
         }
 
+        .jem-updatecheck-long-value,
+        .jem-updatecheck-long-value a {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
         .jem-updatecheck-list ul {
             margin: 0;
             padding-left: 1.2rem;
@@ -242,7 +248,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
                         <dd><?php echo htmlspecialchars((string) $update->phpversion, ENT_QUOTES, 'UTF-8'); ?></dd>
 
                         <dt><?php echo Text::_('COM_JEM_UPDATECHECK_LOCAL_MANIFEST'); ?></dt>
-                        <dd><?php echo htmlspecialchars((string) $update->manifestpath, ENT_QUOTES, 'UTF-8'); ?></dd>
+                        <dd class="jem-updatecheck-long-value"><?php echo htmlspecialchars((string) $update->manifestpath, ENT_QUOTES, 'UTF-8'); ?></dd>
                     </dl>
                 </section>
 
@@ -263,7 +269,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
                             <dd><?php echo htmlspecialchars((string) ($update->phpminimum ?: '-'), ENT_QUOTES, 'UTF-8'); ?></dd>
 
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE_SOURCE'); ?></dt>
-                            <dd><a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a></dd>
+                            <dd class="jem-updatecheck-long-value"><a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a></dd>
                         </dl>
                     <?php else : ?>
                         <div class="p-3">
