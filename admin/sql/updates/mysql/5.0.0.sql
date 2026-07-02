@@ -55,8 +55,6 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_colu
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_row_gap', '1');
 
 -- change values
-ALTER TABLE `#__jem_special_days` ADD COLUMN `access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `published`;
-ALTER TABLE `#__jem_special_days` ADD KEY `idx_access` (`access`);
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_detail_image_layout', 'right') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_detail_image_layout') IS NULL;
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1', '$.calendar_special_day_types', 'Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0') WHERE `keyname` = 'globalattribs';
@@ -64,11 +62,7 @@ UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` 
 UPDATE `#__jem_special_days` SET `show_dates` = 0 WHERE `alias` = 'weekend' AND `day_type` = 'Weekend' AND `weekdays` IN ('0,6', '6,0');
 ALTER TABLE `#__jem_types` MODIFY `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day';
 INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`) VALUES ('Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}'), ('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', CURRENT_TIMESTAMP, '{"block_events":0}');
-ALTER TABLE `#__jem_special_days` ADD COLUMN `day_type_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `alias`, ADD KEY `idx_day_type_id` (`day_type_id`);
 UPDATE `#__jem_special_days` AS sd INNER JOIN `#__jem_types` AS t ON t.entity = 4 AND t.name = sd.day_type SET sd.day_type_id = t.id WHERE sd.day_type_id = 0;
-ALTER TABLE `#__jem_special_days` ADD COLUMN `article_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 AFTER `description`;
-ALTER TABLE `#__jem_special_days` ADD COLUMN `url` VARCHAR(2048) NOT NULL DEFAULT '' AFTER `article_id`;
-ALTER TABLE `#__jem_special_days` ADD KEY `idx_article_id` (`article_id`);
 UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_events` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_categories` SET `metadata` = '{}' WHERE `metadata` IS NULL OR `metadata` = '' OR `metadata` = '""' OR `metadata` = "''" OR NOT JSON_VALID(`metadata`);
