@@ -69,10 +69,10 @@ use Joomla\CMS\Session\Session;
             position: relative;
             display: flex;
             flex-direction: column;
-            gap: 0.55rem;
+            gap: 0.6rem;
             float: none;
             width: auto;
-            min-height: 13rem;
+            min-height: 14.5rem;
             margin: 0;
             padding: 0.5rem;
             border: 1px solid #d6dde8;
@@ -82,12 +82,24 @@ use Joomla\CMS\Session\Session;
 
         .jem-imagehandler-grid .imgBorder {
             border: 0;
-            height: 7.75rem;
+            height: clamp(9rem, 16vw, 11rem);
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0;
             padding: 0.2rem 2.2rem 0.2rem 0.2rem;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .jem-imagehandler-grid .imgBorder a,
+        .jem-imagehandler-grid .imgBorder a:hover {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: transparent;
         }
 
         .jem-imagehandler-grid .image {
@@ -100,8 +112,10 @@ use Joomla\CMS\Session\Session;
 
         .jem-imagehandler-grid .image img {
             display: block;
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            max-height: none;
             object-fit: contain;
         }
 
