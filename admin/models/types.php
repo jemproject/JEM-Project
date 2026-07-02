@@ -24,6 +24,8 @@ class JemModelTypes extends ListModel
                 'published', 'a.published',
                 'ordering', 'a.ordering',
                 'created', 'a.created',
+                'created_by', 'a.created_by',
+                'author_name', 'u.name',
             );
         }
         parent::__construct($config);
@@ -67,8 +69,10 @@ class JemModelTypes extends ListModel
 
         $query->select('a.*')
               ->select($db->quoteName('vl.title', 'access_level'))
+              ->select($db->quoteName('u.name', 'author_name'))
               ->from($db->quoteName('#__jem_types', 'a'))
-              ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'));
+              ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'))
+              ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
         $search = $this->getState('filter_search');
         if (!empty($search)) {

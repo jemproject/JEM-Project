@@ -22,8 +22,13 @@ class JemModelSpecialdays extends ListModel
                 'day_type', 'a.day_type',
                 'start_date', 'a.start_date',
                 'end_date', 'a.end_date',
+                'show_dates', 'a.show_dates',
+                'article_id', 'a.article_id',
+                'url', 'a.url',
                 'published', 'a.published',
                 'access', 'a.access', 'access_level',
+                'created_by', 'a.created_by',
+                'author_name', 'u.name',
                 'ordering', 'a.ordering',
             );
         }
@@ -74,8 +79,10 @@ class JemModelSpecialdays extends ListModel
         $query = $db->getQuery(true)
             ->select('a.*')
             ->select($db->quoteName('vl.title', 'access_level'))
+            ->select($db->quoteName('u.name', 'author_name'))
             ->from($db->quoteName('#__jem_special_days', 'a'))
-            ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'));
+            ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'))
+            ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
         $search = $this->getState('filter.search');
         if (!empty($search)) {

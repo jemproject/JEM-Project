@@ -12,9 +12,9 @@ use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 // TODO: Improve error handling
 
@@ -112,9 +112,30 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function ensureSampleDataSchema()
     {
+        $this->ensureTypeAssignmentSchema();
         $this->ensureTypesSchema();
         $this->ensureAttachmentsSchema();
         $this->ensureLinksSchema();
+    }
+
+    /**
+     * @return void
+     */
+    private function ensureTypeAssignmentSchema()
+    {
+        $definitions = array(
+            '#__jem_events' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ticket_availability`",
+            '#__jem_venues' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`",
+            '#__jem_categories' => "`type_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `modified_user_id`",
+        );
+
+        foreach ($definitions as $table => $definition) {
+            $columns = $this->getTableColumns($table);
+
+            if (!empty($columns) && !isset($columns['type_id'])) {
+                $this->executeSchemaQuery("ALTER TABLE `" . $table . "` ADD COLUMN " . $definition);
+            }
+        }
     }
 
     /**
@@ -241,7 +262,7 @@ class JemModelSampledata extends BaseDatabaseModel
     /**
      * Unpack archive and build array of files
      *
-     * @return boolean Ambigous mixed>
+     * @return boolean|array
      */
     private function unpack()
     {
@@ -261,7 +282,6 @@ class JemModelSampledata extends BaseDatabaseModel
             $result = $archiveObj->extract($archive, $extractdir);
         } catch (\Exception $e) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'), 'warning');
-
             return false;
         }
 
@@ -358,7 +378,8 @@ class JemModelSampledata extends BaseDatabaseModel
                 $subDirectory .= "small/";
             }
 
-            File::copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
+            // Use native PHP copy function instead of File::copy
+            copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
         }
         return true;
     }
@@ -409,12 +430,38 @@ class JemModelSampledata extends BaseDatabaseModel
     private function deleteTmpFolder()
     {
         if ($this->filelist['folder']) {
-            if (!Folder::delete($this->filelist['folder'])) {
+            // Use native PHP function to recursively delete directory
+            if (!$this->removeDirectory($this->filelist['folder'])) {
                 return false;
             }
             return true;
         }
         return false;
+    }
+
+    /**
+     * Recursively remove directory using native PHP functions
+     *
+     * @param string $dir Directory path
+     * @return boolean True on success
+     */
+    private function removeDirectory($dir)
+    {
+        if (!is_dir($dir)) {
+            return false;
+        }
+
+        $files = array_diff(scandir($dir), array('.', '..'));
+        
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            if (is_dir($path)) {
+                $this->removeDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+        return rmdir($dir);
     }
 
     /**
@@ -464,7 +511,6 @@ class JemModelSampledata extends BaseDatabaseModel
         return true;
     }
 
-
     /**
      * Assign current user id to sample records.
      *
@@ -488,6 +534,14 @@ class JemModelSampledata extends BaseDatabaseModel
             $db->setQuery($query);
             $db->execute();
         }
+
+        $query = $db->getQuery(true);
+        $query->update($db->quoteName('#__jem_categories'));
+        $query->set($db->quoteName('created_user_id') . ' = ' . $db->quote($userId));
+        $query->where($db->quoteName('created_user_id') . ' IN (0, 62)');
+        $query->where($db->quoteName('id') . ' > 1');
+        $db->setQuery($query);
+        $db->execute();
 
         return true;
     }

@@ -48,9 +48,14 @@ $mapProvider = (string) $this->params->get('map_provider', 'osm');
 $mapProvider = $mapProvider === 'google' ? 'google' : 'osm';
 $mapType = (string) $this->params->get('map_type', 'political');
 $settings = JemHelper::globalattribs();
+$jemImageSettings = JemHelper::config();
 $googleApiKey = trim((string) $settings->get('global_googleapi', ''));
 $isResponsiveLayout = !empty($this->jemLayoutStyle) && $this->jemLayoutStyle === 'responsive';
 $showVenueImage = (int) $this->params->get('showvenueimage', 1);
+$showVenueDescription = (int) $this->params->get('showvenuedescription', 1) === 1
+    && (int) $settings->get('global_show_locdescription', 1) === 1;
+$venueImageWidth = max(1, (int) ($jemImageSettings->imagewidth ?? 200));
+$venueImageHeight = max(1, (int) ($jemImageSettings->imagehight ?? 200));
 
 if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
@@ -126,7 +131,6 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 $currentUri = Uri::getInstance()->toString();
 $user = JemFactory::getUser();
 $mediaRoot = rtrim(Uri::root(true), '/');
-$calendarIcon = $mediaRoot . '/media/com_jem/images/el.webp';
 $editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
 
 if (!function_exists('jem_venuesmap_venue_image')) {
@@ -139,14 +143,107 @@ if (!function_exists('jem_venuesmap_venue_image')) {
         }
 
         $src = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb']) ? $image['thumb'] : ($image['original'] ?? '');
+        $original = !empty($image['original']) ? $image['original'] : $src;
 
-        if (empty($src)) {
+        if (empty($src) || empty($original)) {
             return '';
         }
 
         $alt = htmlspecialchars((string) ($venue->venue ?? ''), ENT_QUOTES, 'UTF-8');
+        $img = '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" loading="lazy" title="' . htmlspecialchars(Text::_('COM_JEM_CLICK_TO_ENLARGE'), ENT_QUOTES, 'UTF-8') . '" />';
 
-        return '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" loading="lazy" />';
+        return '<a href="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($original, '/'), ENT_QUOTES, 'UTF-8') . '" rel="lightbox" class="flyermodal jem-venuesmap-image-link" data-lightbox="venuesmap-venue-images" data-title="' . $alt . '">' . $img . '</a>';
+    }
+}
+
+if (!function_exists('jem_venuesmap_country_html')) {
+    function jem_venuesmap_country_html($code, $name)
+    {
+        $code = trim((string) $code);
+        $name = trim((string) $name);
+
+        if ($code === '' && $name === '') {
+            return '-';
+        }
+
+        $html = '';
+
+        if ($code !== '') {
+            $flag = 'media/com_jem/images/flags/w20-png/' . strtolower($code) . '.png';
+
+            if (is_file(JPATH_SITE . '/' . $flag)) {
+                $html .= '<img class="jem-venuesmap-country-flag" src="' . htmlspecialchars(Uri::root(true) . '/' . $flag, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /> ';
+            }
+        }
+
+        $html .= htmlspecialchars($name !== '' ? $name : $code, ENT_QUOTES, 'UTF-8');
+
+        return $html;
+    }
+}
+
+if (!function_exists('jem_venuesmap_link_url')) {
+    function jem_venuesmap_link_url($url)
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
+            return '';
+        }
+
+        if (!preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+            $url = 'https://' . $url;
+        }
+
+        return $url;
+    }
+}
+
+if (!function_exists('jem_venuesmap_clean_text')) {
+    function jem_venuesmap_clean_text($text, $limit = 260)
+    {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags((string) $text)));
+
+        if ($text === '' || $text === '<br>') {
+            return '';
+        }
+
+        if (function_exists('mb_strlen') && mb_strlen($text) > $limit) {
+            return rtrim(mb_substr($text, 0, $limit - 1)) . '...';
+        }
+
+        if (!function_exists('mb_strlen') && strlen($text) > $limit) {
+            return rtrim(substr($text, 0, $limit - 1)) . '...';
+        }
+
+        return $text;
+    }
+}
+
+if (!function_exists('jem_venuesmap_normalise_color')) {
+    function jem_venuesmap_normalise_color($color, $fallback = '#d9ddb5')
+    {
+        $color = trim((string) $color);
+
+        return preg_match('/^#[0-9a-f]{6}$/i', $color) ? $color : $fallback;
+    }
+}
+
+if (!function_exists('jem_venuesmap_contrast_color')) {
+    function jem_venuesmap_contrast_color($color)
+    {
+        $color = ltrim((string) $color, '#');
+
+        if (!preg_match('/^[0-9a-f]{6}$/i', $color)) {
+            return '#1f2933';
+        }
+
+        $r = hexdec(substr($color, 0, 2));
+        $g = hexdec(substr($color, 2, 2));
+        $b = hexdec(substr($color, 4, 2));
+        $luminance = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return $luminance < 145 ? '#ffffff' : '#1f2933';
     }
 }
 
@@ -204,37 +301,145 @@ foreach (($this->venueslist ?? []) as $venue) {
             padding: 0.75rem;
         }
 
+        #jem.jem_venuesmap {
+            --jem-venuesmap-image-width: <?php echo (int) $venueImageWidth; ?>px;
+            --jem-venuesmap-image-height: <?php echo (int) $venueImageHeight; ?>px;
+            --jem-venuesmap-table-image-width: <?php echo (int) min($venueImageWidth, 120); ?>px;
+            --jem-venuesmap-table-image-height: <?php echo (int) min($venueImageHeight, 90); ?>px;
+        }
+
         #jem.jem_venuesmap .jem-venuesmap-card-media {
-            width: 7.5rem;
+            display: flex;
+            justify-content: center;
+            width: var(--jem-venuesmap-image-width);
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty,
+        #jem.jem_venuesmap .jem-venuesmap-image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty {
+            width: var(--jem-venuesmap-image-width);
+            height: var(--jem-venuesmap-image-height);
         }
 
         #jem.jem_venuesmap .jem-venuesmap-venue-image,
         #jem.jem_venuesmap .jem-venuesmap-card-image {
-            width: 7.5rem;
-            height: 5.25rem;
-            object-fit: cover;
+            width: var(--jem-venuesmap-image-width);
+            height: var(--jem-venuesmap-image-height);
+            object-fit: contain;
             border: 1px solid #d6dde8;
             background: #f5f7fa;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-card-title {
-            font-size: 1.05rem;
-            margin: 0 0 0.5rem;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            font-size: 1.32rem;
+            font-weight: 700;
+            margin: 0;
+            outline: 0 !important;
+            padding: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            min-width: 0;
+            width: 100%;
+            border: 1px solid color-mix(in srgb, var(--jem-venuesmap-title-bg, #d9ddb5) 70%, #000000);
+            background: var(--jem-venuesmap-title-bg, #d9ddb5);
+            color: var(--jem-venuesmap-title-text, #1f2933);
+            padding: 0.25rem 0.55rem;
+            text-align: center;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:link,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:visited,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:hover,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:focus,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:focus-visible,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:active {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            color: inherit !important;
+            outline: 0 !important;
+            outline-offset: 0;
+            padding: 0 !important;
+            text-decoration: none !important;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a::before,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a::after {
+            border: 0 !important;
+            box-shadow: none !important;
+            content: none !important;
+            outline: 0 !important;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-venue-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-width: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-edit-link {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-content {
+            display: grid;
+            grid-template-columns: minmax(14rem, 0.95fr) minmax(14rem, 1.05fr);
+            gap: 0.85rem 1rem;
+            margin-top: 0.55rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-details,
+        #jem.jem_venuesmap .jem-venuesmap-card-description {
+            min-width: 0;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-card-meta {
             display: grid;
-            grid-template-columns: minmax(6rem, 28%) 1fr;
-            gap: 0.25rem 0.75rem;
+            grid-template-columns: minmax(4rem, 25%) 1fr;
+            gap: 0 0.35rem;
             margin: 0;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-card-meta dt {
             font-weight: 700;
+            line-height: 1.2;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-card-meta dd {
             margin: 0;
+            line-height: 1.2;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-description-label {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-description-text {
+            color: #374151;
+            line-height: 1.35;
+            max-height: var(--jem-venuesmap-image-height);
+            overflow: hidden;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-card-actions {
@@ -246,25 +451,73 @@ foreach (($this->venueslist ?? []) as $venue) {
 
         #jem.jem_venuesmap .jem-venuesmap-card-actions .btn {
             display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             justify-content: center;
             white-space: nowrap;
         }
 
+        #jem.jem_venuesmap .jem-venuesmap-coordinates {
+            border: 1px solid #d6dde8;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 0.9rem;
+            line-height: 1.35;
+            padding: 0.45rem 0.55rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-country-flag {
+            width: 20px;
+            height: auto;
+            vertical-align: -0.15em;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-link {
+            display: inline-flex;
+            justify-content: center;
+            max-width: 100%;
+        }
+
         #jem.jem_venuesmap .jem-venuesmap-image-col {
-            width: 7rem;
+            width: calc(var(--jem-venuesmap-table-image-width) + 1rem);
         }
 
         #jem.jem_venuesmap .jem-venuesmap-image-cell {
-            width: 7rem;
+            width: calc(var(--jem-venuesmap-table-image-width) + 1rem);
             text-align: center;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-table-image {
-            width: 5rem;
-            height: 3.75rem;
-            object-fit: cover;
+            width: var(--jem-venuesmap-table-image-width);
+            height: var(--jem-venuesmap-table-image-height);
+            object-fit: contain;
             border: 1px solid #d6dde8;
             background: #f5f7fa;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-placeholder {
+            width: var(--jem-venuesmap-table-image-width);
+            height: var(--jem-venuesmap-table-image-height);
+            margin: 0 auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-action-icon {
+            width: 1rem;
+            height: 1rem;
+            object-fit: contain;
+            margin-right: 0.25rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-list {
+            overflow-x: auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-list table {
+            width: auto;
+            min-width: 100%;
+            table-layout: auto;
         }
 
         #jem.jem_venuesmap .jem-venuesmap-actions-cell {
@@ -281,6 +534,8 @@ foreach (($this->venueslist ?? []) as $venue) {
 
         #jem.jem_venuesmap .jem-venuesmap-actions-stack .btn {
             display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
             justify-content: center;
             white-space: nowrap;
         }
@@ -291,13 +546,19 @@ foreach (($this->venueslist ?? []) as $venue) {
             }
 
             #jem.jem_venuesmap .jem-venuesmap-card-media,
-            #jem.jem_venuesmap .jem-venuesmap-card-image {
+            #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty {
                 width: 100%;
             }
 
             #jem.jem_venuesmap .jem-venuesmap-card-image {
+                width: auto;
                 height: auto;
-                max-height: 12rem;
+                max-width: min(100%, var(--jem-venuesmap-image-width));
+                max-height: var(--jem-venuesmap-image-height);
+            }
+
+            #jem.jem_venuesmap .jem-venuesmap-card-content {
+                grid-template-columns: 1fr;
             }
 
             #jem.jem_venuesmap .jem-venuesmap-card-actions {
@@ -419,7 +680,7 @@ foreach (($this->venueslist ?? []) as $venue) {
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($this->venueslist) && $isResponsiveLayout) : ?>
+    <?php if (!empty($this->venueslist)) : ?>
         <div class="jem-venuesmap-responsive-list">
             <?php foreach ($this->venueslist as $venue) : ?>
                 <?php
@@ -430,59 +691,99 @@ foreach (($this->venueslist ?? []) as $venue) {
                 $longitude = $formatCoordinate($venue->longitude ?? '');
                 $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
                 $venueImage = $showVenueImage ? jem_venuesmap_venue_image($venue, 'jem-venuesmap-card-image') : '';
+                $website = jem_venuesmap_link_url($venue->url ?? '');
+                $description = $showVenueDescription ? jem_venuesmap_clean_text($venue->locdescription ?? '') : '';
+                $cityLine = trim((string) ($venue->city ?? ''));
+                $postcode = trim((string) ($venue->postalCode ?? ''));
+                $cityLine = trim($cityLine . ($postcode !== '' ? ' ' . $postcode : ''));
+                $venueTitleColor = jem_venuesmap_normalise_color($venue->color ?? '');
+                $venueTitleTextColor = jem_venuesmap_contrast_color($venueTitleColor);
                 ?>
-                <article class="jem-venuesmap-card">
-                    <?php if ($venueImage !== '') : ?>
-                        <div class="jem-venuesmap-card-media">
-                            <?php echo $venueImage; ?>
-                        </div>
+                <article class="jem-venuesmap-card" style="--jem-venuesmap-title-bg: <?php echo htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8'); ?>; --jem-venuesmap-title-text: <?php echo htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8'); ?>;">
+                    <?php if ($showVenueImage) : ?>
+                        <?php if ($venueImage !== '') : ?>
+                            <div class="jem-venuesmap-card-media">
+                                <?php echo $venueImage; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="jem-venuesmap-card-media is-empty" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMAGE'), ENT_QUOTES, 'UTF-8'); ?>">-</div>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <div class="jem-venuesmap-card-main">
-                        <h2 class="jem-venuesmap-card-title">
-                            <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
-                                <?php echo $venueName; ?>
-                            </a>
-                        </h2>
-                        <dl class="jem-venuesmap-card-meta">
-                            <dt><?php echo Text::_('COM_JEM_CITY'); ?></dt>
-                            <dd><?php echo $venue->city !== '' ? $this->escape($venue->city) : '-'; ?></dd>
-                            <dt><?php echo Text::_('COM_JEM_COUNTRY'); ?></dt>
-                            <dd><?php echo $countryName !== '' ? $this->escape($countryName) : '-'; ?></dd>
-                            <dt><?php echo Text::_('COM_JEM_LATITUDE'); ?></dt>
-                            <dd><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></dd>
-                            <dt><?php echo Text::_('COM_JEM_LONGITUDE'); ?></dt>
-                            <dd><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></dd>
-                        </dl>
+                        <div class="jem-venuesmap-card-title-row">
+                            <h2 class="jem-venuesmap-card-title">
+                                <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo $venueName; ?>
+                                </a>
+                            </h2>
+                            <?php if ($showEditColumn && $canEditVenue) : ?>
+                                <a class="jem-venuesmap-edit-link" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                    <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                        <div class="jem-venuesmap-card-content">
+                            <div class="jem-venuesmap-card-details">
+                                <dl class="jem-venuesmap-card-meta">
+                                    <dt><?php echo Text::_('COM_JEM_STREET'); ?></dt>
+                                    <dd><?php echo trim((string) ($venue->street ?? '')) !== '' ? $this->escape($venue->street) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_CITY'); ?></dt>
+                                    <dd><?php echo $cityLine !== '' ? $this->escape($cityLine) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_STATE'); ?></dt>
+                                    <dd><?php echo trim((string) ($venue->state ?? '')) !== '' ? $this->escape($venue->state) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_COUNTRY'); ?></dt>
+                                    <dd><?php echo jem_venuesmap_country_html($venue->country ?? '', $countryName); ?></dd>
+                                    <?php if ($website !== '') : ?>
+                                        <dt><?php echo Text::_('COM_JEM_WEBSITE'); ?></dt>
+                                        <dd><a href="<?php echo htmlspecialchars($website, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo $this->escape($venue->url); ?></a></dd>
+                                    <?php endif; ?>
+                                </dl>
+                            </div>
+                            <?php if ($description !== '') : ?>
+                                <div class="jem-venuesmap-card-description">
+                                    <div class="jem-venuesmap-card-description-label"><?php echo Text::_('COM_JEM_DESCRIPTION'); ?></div>
+                                    <div class="jem-venuesmap-card-description-text"><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
                     <div class="jem-venuesmap-card-actions">
+                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
+                        </a>
+                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                            <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
+                        </a>
                         <?php if ($mapLink !== '') : ?>
                             <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
-                                <?php echo Text::_('COM_JEM_MAP_LINK'); ?>
+                                <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
                             </a>
                         <?php endif; ?>
-                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
-                            <?php echo Text::_('COM_JEM_CALENDAR'); ?>
-                        </a>
-                        <?php if ($showEditColumn && $canEditVenue) : ?>
-                            <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
-                                <?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>
-                            </a>
-                        <?php endif; ?>
+                        <div class="jem-venuesmap-coordinates">
+                            <div>Lat: <?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                            <div>Lon: <?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                        </div>
                     </div>
                 </article>
             <?php endforeach; ?>
         </div>
     <?php elseif (!empty($this->venueslist)) : ?>
         <div class="table table-responsive table-striped table-hover table-sm jem-venuesmap-list">
-            <table class="eventtable table table-striped" style="width:100%;" summary="<?php echo Text::_('COM_JEM_VENUESMAP_PAGETITLE'); ?>">
+            <table class="eventtable table table-striped" summary="<?php echo Text::_('COM_JEM_VENUESMAP_PAGETITLE'); ?>">
                 <thead>
                     <tr>
                         <?php if ($showVenueImage) : ?>
                             <th class="jem-venuesmap-image-col" style="text-align:left;"><?php echo Text::_('COM_JEM_IMAGE'); ?></th>
                         <?php endif; ?>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_STREET'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_CITY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_STATE'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_WEBSITE'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_LATITUDE'); ?></th>
                         <th style="text-align:left;"><?php echo Text::_('COM_JEM_LONGITUDE'); ?></th>
                         <th class="center jem-venuesmap-actions-cell"><?php echo Text::_('COM_JEM_ACTIONS'); ?></th>
@@ -498,39 +799,62 @@ foreach (($this->venueslist ?? []) as $venue) {
                         $longitude = $formatCoordinate($venue->longitude ?? '');
                         $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
                         $venueImage = $showVenueImage ? jem_venuesmap_venue_image($venue, 'jem-venuesmap-table-image') : '';
+                        $website = jem_venuesmap_link_url($venue->url ?? '');
+                        $cityLine = trim((string) ($venue->city ?? ''));
+                        $postcode = trim((string) ($venue->postalCode ?? ''));
+                        $cityLine = trim($cityLine . ($postcode !== '' ? ' ' . $postcode : ''));
                         ?>
                         <tr>
                             <?php if ($showVenueImage) : ?>
                                 <td class="jem-venuesmap-image-cell">
-                                    <?php echo $venueImage !== '' ? $venueImage : '-'; ?>
+                                    <?php echo $venueImage !== '' ? $venueImage : '<span class="jem-venuesmap-image-placeholder" aria-label="' . htmlspecialchars(Text::_('COM_JEM_IMAGE'), ENT_QUOTES, 'UTF-8') . '">-</span>'; ?>
                                 </td>
                             <?php endif; ?>
                             <td>
-                                <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo $venueName; ?>
-                                </a>
+                                <div class="jem-venuesmap-venue-title-row">
+                                    <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo $venueName; ?>
+                                    </a>
+                                    <?php if ($showEditColumn && $canEditVenue) : ?>
+                                        <a class="jem-venuesmap-edit-link" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                            <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
                             </td>
-                            <td><?php echo $venue->city !== '' ? $this->escape($venue->city) : '-'; ?></td>
-                            <td><?php echo $countryName !== '' ? $this->escape($countryName) : '-'; ?></td>
+                            <td><?php echo trim((string) ($venue->street ?? '')) !== '' ? $this->escape($venue->street) : '-'; ?></td>
+                            <td><?php echo $cityLine !== '' ? $this->escape($cityLine) : '-'; ?></td>
+                            <td><?php echo trim((string) ($venue->state ?? '')) !== '' ? $this->escape($venue->state) : '-'; ?></td>
+                            <td><?php echo jem_venuesmap_country_html($venue->country ?? '', $countryName); ?></td>
+                            <td>
+                                <?php if ($website !== '') : ?>
+                                    <a href="<?php echo htmlspecialchars($website, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo $this->escape($venue->url); ?></a>
+                                <?php else : ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
                             <td><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
                             <td class="center jem-venuesmap-actions-cell">
                                 <div class="jem-venuesmap-actions-stack">
-                                <?php if ($mapLink !== '') : ?>
-                                    <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
-                                        <?php echo Text::_('COM_JEM_MAP_LINK'); ?>
-                                    </a>
-                                <?php endif; ?>
                                 <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
-                                    <img src="<?php echo htmlspecialchars($calendarIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_CALENDAR'); ?>" class="jem-venuesmap-action-icon" />
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
                                     <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
                                 </a>
-                                <?php if ($showEditColumn && $canEditVenue) : ?>
-                                    <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
-                                        <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
-                                        <span><?php echo Text::_('COM_JEM_EDIT_VENUE'); ?></span>
+                                <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EVENTS'); ?>">
+                                    <i class="fa fa-list" aria-hidden="true"></i>
+                                    <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
+                                </a>
+                                <?php if ($mapLink !== '') : ?>
+                                    <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                        <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
                                     </a>
                                 <?php endif; ?>
+                                <div class="jem-venuesmap-coordinates">
+                                    <div>Lat: <?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                                    <div>Lon: <?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                                </div>
                                 </div>
                             </td>
                         </tr>
@@ -555,6 +879,8 @@ foreach (($this->venueslist ?? []) as $venue) {
         <?php
         echo $this->pagination->getPagesLinks(); ?>
     </div>
+
+    <?php echo JemOutput::lightbox(); ?>
 </div>
 
 <script>

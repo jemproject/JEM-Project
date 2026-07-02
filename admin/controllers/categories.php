@@ -37,6 +37,33 @@ class JemControllerCategories extends AdminController
         return $model;
     }
 
+    public function saveOrderAjax()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+            echo '0';
+            $app->close();
+        }
+
+        $cid = $app->input->get('cid', array(), 'array');
+        $order = $app->input->get('order', array(), 'array');
+        ArrayHelper::toInteger($cid);
+        ArrayHelper::toInteger($order);
+
+        if (empty($cid) || count($cid) !== count($order)) {
+            echo '0';
+            $app->close();
+        }
+
+        $model = $this->getModel('category');
+        echo $model->saveorder($cid, $order) ? '1' : '0';
+        $app->close();
+    }
+
     /**
      * Rebuild the nested set tree.
      *

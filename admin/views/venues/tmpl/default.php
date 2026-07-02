@@ -12,14 +12,17 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 
 $user        = JemFactory::getUser();
 $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder    = $listOrder=='a.ordering';
+$canOrder    = $user->authorise('core.edit.state', 'com_jem');
+$saveOrder    = $canOrder && $listOrder == 'a.ordering' && strtolower($listDirn) === 'asc';
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
 
@@ -64,6 +67,40 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
 };
 ?>
 
+<style>
+    #venueList .jem-venues-order {
+        cursor: grab;
+        text-align: center;
+        user-select: none;
+        white-space: nowrap;
+        width: 5rem;
+    }
+
+    #venueList tr.is-dragging {
+        opacity: .55;
+    }
+
+    #venueList .jem-venues-drag {
+        color: #6c757d;
+        display: inline-block;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-right: .35rem;
+        transform: rotate(90deg);
+    }
+
+    #venueList .jem-venues-position {
+        display: inline-block;
+        font-weight: 700;
+        min-width: 1.35rem;
+    }
+
+    #venueList .jem-venues-order.is-disabled {
+        cursor: default;
+        opacity: .55;
+    }
+</style>
+
 <form action="<?php echo Route::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
@@ -90,7 +127,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <div class="jem-admin-filter-item">
                     <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions',array('all' => 0, 'archived' => 0, 'trash' => 0)), 'value', 'text', $this->state->get('filter_state'), true);?>
+                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true); ?>
                     </select>
                 </div>
                 <div class="jem-admin-filter-limit">
@@ -100,11 +137,17 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
         </fieldset>
         <div class="clr"> </div>
 
-        <table class="table table-striped" id="articleList">
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList">
             <thead>
             <tr>
-                <th style="width:1%" class="center">
+                <th class="center jem-list-check">
                     <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+                </th>
+                <th class="center jem-list-order-heading">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder ); ?>
+                </th>
+                <th class="center nowrap jem-list-status">
+                    <?php echo Text::_('JSTATUS'); ?>
                 </th>
                 <th class="title">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder ); ?>
@@ -127,21 +170,18 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?>
                 </th>
-                <th style="width:5%" class="center" nowrap="nowrap">
-                    <?php echo Text::_('JSTATUS'); ?>
+                <th style="width:15%" class="center" nowrap="nowrap">
+                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
+                    <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
                 <th>
-                    <?php echo Text::_('COM_JEM_CREATION'); ?>
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:15%" class="center" nowrap="nowrap">
-                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
-                    <?php echo $renderEventStateHeader($eventStateColumns); ?>
-                </th>
-                <th style="width:5%" class="center">
-                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder ); ?>
+                <th class="center nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:1%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?>
@@ -149,7 +189,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
             </tr>
             </thead>
 
-            <tbody>
+            <tbody data-save-order="<?php echo $saveOrder ? '1' : '0'; ?>" data-save-url="<?php echo $this->escape($saveOrderingUrl); ?>">
             <?php
             $countItems = count($this->items);
             foreach ($this->items as $i => $item) :
@@ -162,9 +202,15 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 $link         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
                 $published     = HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
                 ?>
-                <tr class="row<?php echo $i % 2; ?>">
+                <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>">
                     <td class="center">
                         <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?></td>
+                    <td class="jem-venues-order<?php echo $saveOrder ? '' : ' is-disabled'; ?>" title="<?php echo $saveOrder ? Text::_('JGRID_HEADING_ORDERING') : Text::_('JORDERINGDISABLED'); ?>">
+                        <span class="jem-venues-drag" aria-hidden="true">::</span>
+                        <span class="jem-venues-position"><?php echo (int) $item->ordering; ?></span>
+                        <input type="hidden" name="order[]" class="jem-venues-order-input" value="<?php echo (int) $item->ordering; ?>">
+                    </td>
+                    <td class="center"><?php echo $published; ?></td>
                     <td style="text-align:left" class="venue">
                         <?php if ($item->checked_out) : ?>
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'venues.', $canCheckin); ?>
@@ -178,8 +224,8 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <?php endif; ?>
                     </td>
                     <td>
-                        <?php if (\Joomla\String\StringHelper::strlen($item->alias) > 25) : ?>
-                            <?php echo $this->escape(\Joomla\String\StringHelper::substr($item->alias, 0 , 25)).'...'; ?>
+                        <?php if (StringHelper::strlen($item->alias) > 25) : ?>
+                            <?php echo $this->escape(StringHelper::substr($item->alias, 0 , 25)).'...'; ?>
                         <?php else : ?>
                             <?php echo $this->escape($item->alias); ?>
                         <?php endif; ?>
@@ -195,8 +241,8 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     <td style="text-align:left">
                         <?php if ($item->url) : ?>
                             <a href="<?php echo $this->escape($item->url); ?>" target="_blank">
-                                <?php if (\Joomla\String\StringHelper::strlen($item->url) > 25) : ?>
-                                    <?php echo $this->escape(\Joomla\String\StringHelper::substr($item->url, 0 , 25)).'...'; ?>
+                                <?php if (StringHelper::strlen($item->url) > 25) : ?>
+                                    <?php echo $this->escape(StringHelper::substr($item->url, 0 , 25)).'...'; ?>
                                 <?php else : ?>
                                     <?php echo $this->escape($item->url); ?>
                                 <?php endif; ?>
@@ -208,62 +254,26 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     <td style="text-align:left" class="city"><?php echo $item->city ? $this->escape($item->city) : '-'; ?></td>
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
-                    <td class="center"><?php echo $published; ?></td>
+                    <td class="center"><?php echo $renderEventStateCounts($item); ?></td>
                     <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
-                        $created         = HTMLHelper::_('date',$item->created,Text::_('DATE_FORMAT_LC5'));
-                        $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp', NULL,NULL,true);
-                        $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br>';
-                        $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $item->author.'<br>';
-                        $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $item->email.'<br>';
+                        $created = HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5'));
+                        $overlib = Text::_('COM_JEM_CREATED_AT') . ': ' . $created . '<br>';
+                        $overlib .= Text::_('COM_JEM_AUTHOR') . ': ' . $item->author . '<br>';
+                        $overlib .= Text::_('COM_JEM_EMAIL') . ': ' . $item->email . '<br>';
                         if ($item->author_ip != '') {
-                            $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$item->author_ip.'<br>';
+                            $overlib .= Text::_('COM_JEM_WITH_IP') . ': ' . $item->author_ip . '<br>';
                         }
                         if (!empty($item->modified)) {
-                            $overlib     .= '<br>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$item->modified,Text::_('DATE_FORMAT_LC5') ) .'<br>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$item->modified_by;
+                            $overlib .= '<br>' . Text::_('COM_JEM_EDITED_AT') . ': ' . HTMLHelper::_('date', $item->modified, Text::_('DATE_FORMAT_LC5')) . '<br>' . Text::_('COM_JEM_GLOBAL_MODIFIEDBY') . ': ' . $item->modified_by;
                         }
                         ?>
                         <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
-                        <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$item->created_by; ?>"><?php echo $item->author; ?></a></span>
+                            <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]=' . (int) $item->created_by; ?>"><?php echo $this->escape($item->author); ?></a>
+                        </span>
                     </td>
-                    <td class="center"><?php echo $renderEventStateCounts($item); ?></td>
-                    <td class="order">
-                        <?php if ($canChange) : ?>
-                            <?php $disabled = $saveOrder ?  '' : 'disabled="disabled"'; ?>
-                            <div style="display:-webkit-box">
-                                <div><input type="text" style="text-align: center; margin: auto 0; min-width: 50px;" name="order[]" size="5" value="<?php echo $item->ordering;?>" <?php echo $disabled ?> class="text-area-order" /></div>
-
-                                <?php if ($saveOrder) :
-                                    if ($listDirn == 'asc') : ?>
-                                        <div><?php if($i) : ?>
-                                                <span><?php echo $this->pagination->orderUpIcon( $i, true, 'venues.orderup', 'JLIB_HTML_MOVE_UP', $ordering ); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                        <div><?php if($countItems != $i+1) : ?>
-                                                <span><?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'venues.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                    <?php elseif ($listDirn == 'desc') : ?>
-                                        <div><?php if($i) : ?>
-                                                <span><?php echo $this->pagination->orderUpIcon( $i, true, 'venues.orderdown', 'JLIB_HTML_MOVE_UP', $ordering ); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                        <div><?php if($countItems != $i+1) : ?>
-                                                <span><?php echo $this->pagination->orderDownIcon( $i,$this->pagination->total, true, 'venues.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering ); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            </div>
-                        <?php else : ?>
-                            <?php echo $item->ordering; ?>
-                        <?php endif; ?>
-                    </td>
+                    <td class="center"><?php echo $created; ?></td>
                     <td class="center">
                         <?php echo (int) $item->id; ?>
                     </td>
@@ -286,3 +296,102 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var table = document.getElementById('venueList');
+
+    if (!table || !table.tBodies.length) {
+        return;
+    }
+
+    var body = table.tBodies[0];
+    var saveOrder = body.getAttribute('data-save-order') === '1';
+    var saveUrl = body.getAttribute('data-save-url') || '';
+    var draggedRow = null;
+
+    var rows = function () {
+        return Array.prototype.slice.call(body.querySelectorAll('tr[data-id]'));
+    };
+
+    var updateOrder = function () {
+        rows().forEach(function (row, index) {
+            var value = index + 1;
+            var position = row.querySelector('.jem-venues-position');
+            var input = row.querySelector('.jem-venues-order-input');
+
+            if (position) {
+                position.textContent = value;
+            }
+
+            if (input) {
+                input.value = value;
+            }
+        });
+    };
+
+    var persistOrder = function () {
+        if (!saveOrder || !saveUrl) {
+            return;
+        }
+
+        var params = new URLSearchParams();
+
+        rows().forEach(function (row, index) {
+            params.append('cid[]', row.getAttribute('data-id'));
+            params.append('order[]', index + 1);
+        });
+
+        window.fetch(saveUrl + '&' + params.toString(), {
+            credentials: 'same-origin',
+            method: 'GET'
+        });
+    };
+
+    if (!saveOrder) {
+        return;
+    }
+
+    body.addEventListener('dragstart', function (event) {
+        draggedRow = event.target.closest('tr[data-id]');
+
+        if (!draggedRow) {
+            return;
+        }
+
+        draggedRow.classList.add('is-dragging');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', draggedRow.getAttribute('data-id'));
+    });
+
+    body.addEventListener('dragover', function (event) {
+        var targetRow = event.target.closest('tr[data-id]');
+
+        if (!draggedRow || !targetRow || targetRow === draggedRow) {
+            return;
+        }
+
+        event.preventDefault();
+
+        var bounds = targetRow.getBoundingClientRect();
+        var before = event.clientY < bounds.top + bounds.height / 2;
+        targetRow.parentNode.insertBefore(draggedRow, before ? targetRow : targetRow.nextSibling);
+        updateOrder();
+    });
+
+    body.addEventListener('drop', function (event) {
+        event.preventDefault();
+    });
+
+    body.addEventListener('dragend', function () {
+        if (!draggedRow) {
+            return;
+        }
+
+        draggedRow.classList.remove('is-dragging');
+        draggedRow = null;
+        updateOrder();
+        persistOrder();
+    });
+});
+</script>

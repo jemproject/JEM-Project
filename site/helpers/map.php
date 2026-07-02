@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Filesystem\File;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 
@@ -26,7 +27,7 @@ class JemMapHelper
      *
      * @return  array<object>
      */
-    public static function getVenues($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '', $city = '')
+    public static function getVenues($params, $filterStartDate = null, $filterEndDate = null, $selectedCategoryId = 0, $country = '', $city = '', $venueOrder = '')
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
@@ -42,7 +43,7 @@ class JemMapHelper
         $country  = trim((string) $country);
         $city     = trim((string) $city);
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.city, v.latitude, v.longitude, v.country, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time')
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time')
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->where($db->quoteName('v.published') . ' = 1')
             ->where([
@@ -93,10 +94,34 @@ class JemMapHelper
             self::applyDateRange($query, 'e', $filterStartDate, $filterEndDate);
         }
 
-        $query->order($db->quoteName('v.venue') . ' ASC');
+        $query->order(self::getVenueOrderClause($db, (string) $venueOrder));
         $db->setQuery($query);
 
         return $db->loadObjectList();
+    }
+
+    private static function getVenueOrderClause($db, string $venueOrder): array
+    {
+        switch (strtolower(trim($venueOrder))) {
+            case 'id_asc':
+                return array($db->quoteName('v.id') . ' ASC');
+
+            case 'id_desc':
+                return array($db->quoteName('v.id') . ' DESC');
+
+            case 'name_desc':
+                return array($db->quoteName('v.venue') . ' DESC', $db->quoteName('v.id') . ' DESC');
+
+            case 'order_asc':
+                return array($db->quoteName('v.ordering') . ' ASC', $db->quoteName('v.venue') . ' ASC', $db->quoteName('v.id') . ' ASC');
+
+            case 'order_desc':
+                return array($db->quoteName('v.ordering') . ' DESC', $db->quoteName('v.venue') . ' ASC', $db->quoteName('v.id') . ' ASC');
+
+            case 'name_asc':
+            default:
+                return array($db->quoteName('v.venue') . ' ASC', $db->quoteName('v.id') . ' ASC');
+        }
     }
 
     /**
@@ -425,7 +450,7 @@ class JemMapHelper
         }
 
         foreach (array_unique($candidates) as $candidate) {
-            if (is_file(JPATH_SITE . '/' . $candidate)) {
+            if (File::exists(JPATH_SITE . '/' . $candidate)) {
                 return rtrim(Uri::root(), '/') . '/' . $candidate;
             }
         }

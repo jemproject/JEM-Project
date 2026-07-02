@@ -21,7 +21,7 @@ class JemModelCategories extends ListModel
      * Constructor.
      *
      * @param  array  An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array())
     {
@@ -37,6 +37,7 @@ class JemModelCategories extends ListModel
                 'checked_out_time', 'a.checked_out_time',
                 'created_time', 'a.created_time',
                 'created_user_id', 'a.created_user_id',
+                'author_name', 'ua.name',
                 'article_category_id', 'a.article_category_id',
                 'article_create_mode', 'a.article_create_mode',
                 'lft', 'a.lft',
@@ -130,21 +131,19 @@ class JemModelCategories extends ListModel
         $db    = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $user  = JemFactory::getUser();
-        $categoryColumns = $db->getTableColumns('#__jem_categories');
-        $hasTypeId = isset($categoryColumns['type_id']);
-        $hasArticleCategoryId = isset($categoryColumns['article_category_id']);
-        $hasArticleCreateMode = isset($categoryColumns['article_create_mode']);
 
         // Select the required fields from the table.
-        $select = 'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
-            ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
-            ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
-            ', a.language';
-        $select .= $hasArticleCategoryId ? ', a.article_category_id' : ', 0 AS article_category_id';
-        $select .= $hasArticleCreateMode ? ', a.article_create_mode' : ', 0 AS article_create_mode';
-        $select .= $hasTypeId ? ', a.type_id' : ', NULL AS type_id';
-
-        $query->select($this->getState('list.select', $select));
+        $query->select(
+            $this->getState(
+                'list.select',
+                'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
+                ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id, a.created_time' .
+                ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
+                ', a.article_category_id, a.article_create_mode' .
+                ', a.type_id' .
+                ', a.language'
+            )
+        );
         $query->from('#__jem_categories AS a');
 
         // Join over the language
@@ -168,12 +167,8 @@ class JemModelCategories extends ListModel
         $query->join('LEFT', '#__jem_groups AS gr ON gr.id = a.groupid');
 
         // Join over Joomla content categories for associated article creation.
-        if ($hasArticleCategoryId) {
-            $query->select('jc.title AS article_category_title');
-            $query->join('LEFT', '#__categories AS jc ON jc.id = a.article_category_id');
-        } else {
-            $query->select($db->quote('') . ' AS article_category_title');
-        }
+        $query->select('jc.title AS article_category_title');
+        $query->join('LEFT', '#__categories AS jc ON jc.id = a.article_category_id');
 
         // Filter on the level.
         if ($level = $this->getState('filter.level')) {
@@ -203,7 +198,7 @@ class JemModelCategories extends ListModel
 
         // Filter by category type.
         $categoryTypeId = (int) $this->getState('filter.category_type_id');
-        if ($hasTypeId && $categoryTypeId > 0) {
+        if ($categoryTypeId > 0) {
             $query->where('a.type_id = ' . $categoryTypeId);
         }
 
@@ -233,19 +228,6 @@ class JemModelCategories extends ListModel
         // Add the list ordering clause
         $listOrdering = $this->getState('list.ordering', 'a.lft');
         $listDirn = $db->escape($this->getState('list.direction', 'ASC'));
-
-        if (!$hasArticleCategoryId && $listOrdering === 'a.article_category_id') {
-            $listOrdering = 'a.lft';
-        }
-
-        if (!$hasArticleCreateMode && $listOrdering === 'a.article_create_mode') {
-            $listOrdering = 'a.lft';
-        }
-
-        if (!$hasTypeId && $listOrdering === 'a.type_id') {
-            $listOrdering = 'a.lft';
-        }
-
         if ($listOrdering == 'a.access') {
             $query->order('a.access '.$listDirn.', a.lft '.$listDirn);
         } else {
@@ -262,11 +244,6 @@ class JemModelCategories extends ListModel
     public function getItems()
     {
         $items = parent::getItems();
-
-        if (!is_array($items)) {
-            return $items;
-        }
-
         $counts = $this->getCategoryEventStateCounts($items);
 
         foreach ($items as $item) {

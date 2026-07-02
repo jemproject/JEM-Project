@@ -100,6 +100,7 @@ class JemViewVenuesMap extends JemView
         $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
         $selectedCity       = $showCountryFilter ? trim($app->input->getString('jem_map_filter_city', '')) : '';
         $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+        $venueOrder         = (string) $params->get('venues_order', 'name_asc');
         $countries          = JemMapHelper::getVenueCountries();
         $categories         = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
         foreach ($countries as $country) {
@@ -136,7 +137,7 @@ class JemViewVenuesMap extends JemView
         }
 
         $categoryStartDate = $selectedCategoryId > 0 ? Factory::getDate()->format('Y-m-d') : null;
-        $venueslist = JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity);
+        $venueslist = JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder);
 
         if ($params->get('map_auto_center', 1)) {
             [$centerLat, $centerLng] = JemMapHelper::getCenter($venueslist);

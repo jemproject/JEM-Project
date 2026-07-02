@@ -164,10 +164,19 @@ class JemModelMain extends BaseDatabaseModel
             [$table, $field, $where] = $queryData;
 
             if ($key === 'events') {
-                $query = 'SELECT COUNT(DISTINCT image) FROM ('
-                    . ' SELECT datimage AS image FROM #__jem_events WHERE datimage IS NOT NULL AND datimage <> ' . $db->quote('')
-                    . ' UNION SELECT fullimage AS image FROM #__jem_events WHERE fullimage IS NOT NULL AND fullimage <> ' . $db->quote('')
-                    . ') AS event_images';
+                $eventColumns = $db->getTableColumns('#__jem_events');
+                $eventImageSelects = array();
+
+                foreach (array('datimage', 'fullimage') as $imageField) {
+                    if (isset($eventColumns[$imageField])) {
+                        $eventImageSelects[] = 'SELECT ' . $db->quoteName($imageField) . ' AS image FROM ' . $db->quoteName('#__jem_events')
+                            . ' WHERE ' . $db->quoteName($imageField) . ' IS NOT NULL AND ' . $db->quoteName($imageField) . ' <> ' . $db->quote('');
+                    }
+                }
+
+                $query = $eventImageSelects
+                    ? 'SELECT COUNT(DISTINCT image) FROM (' . implode(' UNION ', $eventImageSelects) . ') AS event_images'
+                    : 'SELECT 0';
             } else {
                 $query = $db->getQuery(true)
                     ->select('COUNT(*)')

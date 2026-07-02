@@ -33,6 +33,47 @@ class JemControllerVenues extends AdminController
         return $model;
     }
 
+    public function saveOrderAjax()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+            echo '0';
+            $app->close();
+        }
+
+        $cid = $app->input->get('cid', array(), 'array');
+        $order = $app->input->get('order', array(), 'array');
+        ArrayHelper::toInteger($cid);
+        ArrayHelper::toInteger($order);
+
+        if (empty($cid) || count($cid) !== count($order)) {
+            echo '0';
+            $app->close();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        foreach ($cid as $index => $id) {
+            if ($id <= 0) {
+                continue;
+            }
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_venues'))
+                ->set($db->quoteName('ordering') . ' = ' . (int) ($order[$index] ?? ($index + 1)))
+                ->where($db->quoteName('id') . ' = ' . (int) $id);
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        echo '1';
+        $app->close();
+    }
+
     /**
      * logic for remove venues
      *
