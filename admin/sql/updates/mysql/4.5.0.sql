@@ -33,8 +33,6 @@ UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` 
 UPDATE `#__jem_special_days` SET `show_dates` = 0 WHERE `alias` = 'weekend' AND `day_type` = 'Weekend' AND `weekdays` IN ('0,6', '6,0');
 
 -- change values
-ALTER TABLE `#__jem_special_days` ADD COLUMN `access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `published`;
-ALTER TABLE `#__jem_special_days` ADD KEY `idx_access` (`access`);
 ALTER TABLE `#__jem_events` MODIFY `contactid` VARCHAR(100) NOT NULL DEFAULT '';
 ALTER TABLE `#__jem_events` MODIFY `author_ip` varchar(80) DEFAULT NULL;
 UPDATE `#__jem_events` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
