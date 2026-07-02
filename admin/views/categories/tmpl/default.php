@@ -12,13 +12,16 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
 $user = JemFactory::getUser();
 $userId = $user->get('id');
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn = $this->escape($this->state->get('list.direction'));
 $canOrder = $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder = $listOrder == 'a.lft';
+$saveOrder = $canOrder && $listOrder == 'a.lft' && strtolower($listDirn) === 'asc';
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=categories.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
 $articleCreateModes = array(
@@ -68,6 +71,40 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
 };
 ?>
 
+<style>
+    #categoryList .jem-categories-order {
+        cursor: grab;
+        text-align: center;
+        user-select: none;
+        white-space: nowrap;
+        width: 5rem;
+    }
+
+    #categoryList tr.is-dragging {
+        opacity: .55;
+    }
+
+    #categoryList .jem-categories-drag {
+        color: #6c757d;
+        display: inline-block;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-right: .35rem;
+        transform: rotate(90deg);
+    }
+
+    #categoryList .jem-categories-position {
+        display: inline-block;
+        font-weight: 700;
+        min-width: 1.35rem;
+    }
+
+    #categoryList .jem-categories-order.is-disabled {
+        cursor: default;
+        opacity: .55;
+    }
+</style>
+
 <form action="<?php echo Route::_('index.php?option=com_jem&view=categories'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class="mb-3">
@@ -111,12 +148,18 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
 
         <div class="clr"></div>
 
-        <table class="table table-striped" id="articleList">
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="categoryList">
             <thead>
             <tr>
-                <th style="width:1%" class="center">
+                <th class="center jem-list-check">
                     <input type="checkbox" name="checkall-toggle" value=""
                            title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)"/>
+                </th>
+                <th class="center jem-list-order-heading">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.lft', $listDirn, $listOrder); ?>
+                </th>
+                <th class="center jem-list-status">
+                    <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                 </th>
                 <th>
                     <?php echo HTMLHelper::_('grid.sort', 'JGLOBAL_TITLE', 'a.catname', $listDirn, $listOrder); ?>
@@ -135,17 +178,14 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
                     <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
                     <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
-                <th style="width:5%" class="center">
-                    <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
-                </th>
-                <th style="width:5px%" class="center">
-                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.lft', $listDirn, $listOrder); ?>
-                    <?php if ($saveOrder) : ?>
-                        <?php //echo HTMLHelper::_('grid.order',  $this->items, 'filesave.webp', 'categories.saveorder'); ?>
-                    <?php endif; ?>
-                </th>
                 <th style="width:10%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                </th>
+                <th>
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'ua.name', $listDirn, $listOrder); ?>
+                </th>
+                <th class="center nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created_time', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:1%" class="center nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -153,7 +193,7 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
             </tr>
             </thead>
 
-            <tbody>
+            <tbody data-save-order="<?php echo $saveOrder ? '1' : '0'; ?>" data-save-url="<?php echo $this->escape($saveOrderingUrl); ?>">
             <?php
             $originalOrders = array();
             $countItems = count($this->items);
@@ -174,9 +214,17 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
                     $repeat = 0;
                 }
                 ?>
-                <tr class="row<?php echo $i % 2; ?>">
+                <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>">
                     <td class="center">
                         <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                    </td>
+                    <td class="jem-categories-order<?php echo $saveOrder ? '' : ' is-disabled'; ?>" title="<?php echo $saveOrder ? Text::_('JGRID_HEADING_ORDERING') : Text::_('JORDERINGDISABLED'); ?>">
+                        <span class="jem-categories-drag" aria-hidden="true">::</span>
+                        <span class="jem-categories-position"><?php echo (int) ($orderkey + 1); ?></span>
+                        <input type="hidden" name="order[]" class="jem-categories-order-input" value="<?php echo (int) ($orderkey + 1); ?>">
+                    </td>
+                    <td class="center">
+                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'categories.', $canChange); ?>
                     </td>
                     <td>
                         <?php echo str_repeat('<span class="gi">|&mdash;</span>', $repeat) ?>
@@ -233,48 +281,13 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
                         <?php echo $renderEventStateCounts($item->event_state_counts, $item->id); ?>
                     </td>
                     <td class="center">
-                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'categories.', $canChange); ?>
+                        <?php echo $this->escape($item->access_level); ?>
                     </td>
-                    <td class="order">
-                        <?php if ($canChange) : ?>
-                            <?php $disabled = $saveOrder ? '' : 'disabled="disabled"'; ?>
-                            <div style="display:-webkit-box">
-                                <div><input type="text" style="text-align: center; margin: auto 0; min-width: 50px;" name="order[]"
-                                            size="5" value="<?php echo $orderkey + 1; ?>" <?php echo $disabled ?>
-                                            class="text-area-order"/></div>
-
-                                <?php if ($saveOrder) :
-                                    if ($listDirn == 'asc') : ?>
-                                        <div><?php if ($i) : ?>
-                                                <span><?php echo $this->pagination->orderUpIcon($i, true, 'categories.orderup', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                        <div><?php if ($countItems != $i + 1) : ?>
-                                                <span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, true, 'categories.orderdown', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                    <?php elseif ($listDirn == 'desc') : ?>
-                                        <div><?php if ($i) : ?>
-                                                <span><?php echo $this->pagination->orderUpIcon($i, true, 'categories.orderdown', 'JLIB_HTML_MOVE_UP', $ordering); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                        <div><?php if ($countItems != $i + 1) : ?>
-                                                <span><?php echo $this->pagination->orderDownIcon($i, $this->pagination->total, true, 'categories.orderup', 'JLIB_HTML_MOVE_DOWN', $ordering); ?></span>
-                                            <?php else : ?>
-                                                <div style='width:32px;'>&nbsp;</div>
-                                            <?php endif; ?></div>
-                                    <?php endif; ?>
-                                <?php endif; ?>
-                            </div>
-                        <?php else : ?>
-                            <?php echo $item->ordering; ?>
-                        <?php endif; ?>
+                    <td>
+                        <?php echo !empty($item->author_name) ? $this->escape($item->author_name) : '-'; ?>
                     </td>
                     <td class="center">
-                        <?php echo $this->escape($item->access_level); ?>
+                        <?php echo !empty($item->created_time) ? HTMLHelper::_('date', $item->created_time, Text::_('DATE_FORMAT_LC5')) : '-'; ?>
                     </td>
                     <td class="center">
                         <span title="<?php echo sprintf('%d-%d', $item->lft, $item->rgt); ?>">
@@ -301,3 +314,102 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var table = document.getElementById('categoryList');
+
+    if (!table || !table.tBodies.length) {
+        return;
+    }
+
+    var body = table.tBodies[0];
+    var saveOrder = body.getAttribute('data-save-order') === '1';
+    var saveUrl = body.getAttribute('data-save-url') || '';
+    var draggedRow = null;
+
+    var rows = function () {
+        return Array.prototype.slice.call(body.querySelectorAll('tr[data-id]'));
+    };
+
+    var updateOrder = function () {
+        rows().forEach(function (row, index) {
+            var value = index + 1;
+            var position = row.querySelector('.jem-categories-position');
+            var input = row.querySelector('.jem-categories-order-input');
+
+            if (position) {
+                position.textContent = value;
+            }
+
+            if (input) {
+                input.value = value;
+            }
+        });
+    };
+
+    var persistOrder = function () {
+        if (!saveOrder || !saveUrl) {
+            return;
+        }
+
+        var params = new URLSearchParams();
+
+        rows().forEach(function (row, index) {
+            params.append('cid[]', row.getAttribute('data-id'));
+            params.append('order[]', index + 1);
+        });
+
+        window.fetch(saveUrl + '&' + params.toString(), {
+            credentials: 'same-origin',
+            method: 'GET'
+        });
+    };
+
+    if (!saveOrder) {
+        return;
+    }
+
+    body.addEventListener('dragstart', function (event) {
+        draggedRow = event.target.closest('tr[data-id]');
+
+        if (!draggedRow) {
+            return;
+        }
+
+        draggedRow.classList.add('is-dragging');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', draggedRow.getAttribute('data-id'));
+    });
+
+    body.addEventListener('dragover', function (event) {
+        var targetRow = event.target.closest('tr[data-id]');
+
+        if (!draggedRow || !targetRow || targetRow === draggedRow) {
+            return;
+        }
+
+        event.preventDefault();
+
+        var bounds = targetRow.getBoundingClientRect();
+        var before = event.clientY < bounds.top + bounds.height / 2;
+        targetRow.parentNode.insertBefore(draggedRow, before ? targetRow : targetRow.nextSibling);
+        updateOrder();
+    });
+
+    body.addEventListener('drop', function (event) {
+        event.preventDefault();
+    });
+
+    body.addEventListener('dragend', function () {
+        if (!draggedRow) {
+            return;
+        }
+
+        draggedRow.classList.remove('is-dragging');
+        draggedRow = null;
+        updateOrder();
+        persistOrder();
+    });
+});
+</script>

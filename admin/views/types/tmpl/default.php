@@ -20,8 +20,9 @@ $canEditState = $user->authorise('core.edit.state', 'com_jem');
 $activeEntityFilter = (int) $this->state->get('filter_entity');
 $saveOrder = $canEditState && $activeEntityFilter > 0;
 $saveOrderingUrl = Route::_('index.php?option=com_jem&task=types.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $showDayColumns = $activeEntityFilter === 4;
-$emptyColspan = $showDayColumns ? 13 : 11;
+$emptyColspan = $showDayColumns ? 15 : 13;
 
 $entityLabels = array(
     1 => Text::_('COM_JEM_TYPE_ENTITY_EVENT'),
@@ -264,16 +265,19 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
             </div>
         </fieldset>
 
-        <table class="table table-striped" id="typeList">
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="typeList">
             <thead>
                 <tr>
-                    <th style="width:5rem" class="center jem-types-order-heading<?php echo $saveOrder ? '' : ' is-disabled'; ?>">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
-                    </th>
-                    <th style="width:1%" class="center">
+                    <th class="center jem-list-check">
                         <input type="checkbox" name="checkall-toggle" value=""
                                title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
                                onclick="Joomla.checkAll(this)" />
+                    </th>
+                    <th class="center jem-list-order-heading jem-types-order-heading<?php echo $saveOrder ? '' : ' is-disabled'; ?>">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class="center jem-list-status">
+                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                     <th class="title">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_NAME', 'a.name', $listDirn, $listOrder); ?>
@@ -290,9 +294,6 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                     <th style="width:6%" class="center">
                         <?php echo Text::_('COM_JEM_TYPE_FIELD_COLOR'); ?>
                     </th>
-                    <th style="width:10%">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
-                    </th>
                     <?php if ($showDayColumns) : ?>
                         <th style="width:9%" class="center">
                             <?php echo Text::_('COM_JEM_TYPE_FIELD_SHOW_DATES_DEFAULT'); ?>
@@ -305,8 +306,14 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                         <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
                         <?php echo $renderEventStateHeader(); ?>
                     </th>
-                    <th style="width:8%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
+                    <th style="width:10%">
+                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
+                    </th>
+                    <th>
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class="center nowrap">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:5%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -317,13 +324,16 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
             <?php foreach ($this->items as $i => $item) : ?>
                 <?php $editUrl = Route::_('index.php?option=com_jem&task=type.edit&id=' . $item->id); ?>
                 <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>" data-entity="<?php echo (int) $item->entity; ?>">
+                    <td class="center">
+                        <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                    </td>
                     <td class="jem-types-order<?php echo $saveOrder ? '' : ' is-disabled'; ?>" title="<?php echo $saveOrder ? Text::_('JGRID_HEADING_ORDERING') : Text::_('JORDERINGDISABLED'); ?>">
                         <span class="jem-types-drag" aria-hidden="true">::</span>
                         <span class="jem-types-position"><?php echo (int) $item->ordering; ?></span>
                         <input type="hidden" name="order[]" class="jem-types-order-input" value="<?php echo (int) $item->ordering; ?>">
                     </td>
                     <td class="center">
-                        <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'types.', $canEditState); ?>
                     </td>
                     <td class="jem-types-name">
                         <?php if ($canEdit) : ?>
@@ -356,9 +366,6 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                             <span style="display:inline-block;width:24px;height:24px;border-radius:4px;background:<?php echo $this->escape($item->color); ?>;border:1px solid #ccc;" title="<?php echo $this->escape($item->color); ?>"></span>
                         <?php endif; ?>
                     </td>
-                    <td>
-                        <?php echo $this->escape($item->access_level); ?>
-                    </td>
                     <?php if ($showDayColumns) : ?>
                         <td class="center">
                             <?php echo (int) ($item->attribs_data['show_dates_default'] ?? 1) === 0 ? Text::_('JNO') : Text::_('JYES'); ?>
@@ -370,8 +377,14 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                     <td class="center">
                         <?php echo $renderTypeRelatedCounts($item); ?>
                     </td>
+                    <td>
+                        <?php echo $this->escape($item->access_level); ?>
+                    </td>
+                    <td>
+                        <?php echo !empty($item->author_name) ? $this->escape($item->author_name) : '-'; ?>
+                    </td>
                     <td class="center">
-                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'types.', $canEditState); ?>
+                        <?php echo !empty($item->created) ? HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5')) : '-'; ?>
                     </td>
                     <td class="center">
                         <?php echo $item->id; ?>

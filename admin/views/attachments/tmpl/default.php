@@ -143,13 +143,16 @@ $fileExtension = function ($filename) {
             </div>
         </fieldset>
 
-        <table class="table table-striped" id="attachmentList">
+        <table class="table table-striped itemList" id="attachmentList">
             <thead>
                 <tr>
                     <th style="width:1%" class="center">
                         <input type="checkbox" name="checkall-toggle" value=""
                                title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
                                onclick="Joomla.checkAll(this)" />
+                    </th>
+                    <th style="width:8%" class="center">
+                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'linked_published', $listDirn, $listOrder); ?>
                     </th>
                     <th class="title">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTACHMENT_FILE', 'a.file', $listDirn, $listOrder); ?>
@@ -159,9 +162,6 @@ $fileExtension = function ($filename) {
                     </th>
                     <th style="width:18%">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTACHMENT_LINKED_ITEM', 'linked_title', $listDirn, $listOrder); ?>
-                    </th>
-                    <th style="width:8%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'linked_published', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:10%">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
@@ -198,6 +198,15 @@ $fileExtension = function ($filename) {
                     <td class="center">
                         <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
                     </td>
+                    <td class="center">
+                        <?php
+                        if ($item->linked_published === null) {
+                            echo '<span class="badge bg-warning text-dark">' . Text::_('COM_JEM_ATTACHMENT_ORPHANED') . '</span>';
+                        } else {
+                            echo HTMLHelper::_('jgrid.published', (int) $item->linked_published, $i, 'attachments.', false);
+                        }
+                        ?>
+                    </td>
                     <td>
                         <div class="jem-attachment-file-cell">
                             <span class="jem-attachment-extension-icon jem-attachment-extension-icon-small jem-attachment-extension-icon-<?php echo $this->escape($fileType($item->file)); ?>" aria-hidden="true">
@@ -228,15 +237,6 @@ $fileExtension = function ($filename) {
                             <?php echo $this->escape($title); ?>
                         <?php endif; ?>
                         <br><small class="text-muted"><?php echo $this->escape($item->object); ?></small>
-                    </td>
-                    <td class="center">
-                        <?php
-                        if ($item->linked_published === null) {
-                            echo '<span class="badge bg-warning text-dark">' . Text::_('COM_JEM_ATTACHMENT_ORPHANED') . '</span>';
-                        } else {
-                            echo HTMLHelper::_('jgrid.published', (int) $item->linked_published, $i, 'attachments.', false);
-                        }
-                        ?>
                     </td>
                     <td>
                         <?php echo $this->escape($item->access_level); ?>

@@ -31,6 +31,7 @@ class JemModelEvents extends ListModel
                     'venue','loc.venue',
                     'city','loc.city',
                     'dates', 'a.dates',
+                    'created', 'a.created',
                     'hits', 'a.hits',
                     'event_status', 'a.event_status',
                     'ticket_availability', 'a.ticket_availability',
@@ -39,6 +40,7 @@ class JemModelEvents extends ListModel
                     'id', 'a.id',
                     'catname', 'c.catname',
                     'featured', 'a.featured',
+                    'author', 'u.name',
                     'access', 'a.access', 'access_level',
             );
         }

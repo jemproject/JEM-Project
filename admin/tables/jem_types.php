@@ -98,6 +98,11 @@ class jem_types extends Table
             $this->created = Factory::getDate()->toSql();
         }
 
+        if (empty($this->created_by)) {
+            $user = Factory::getApplication()->getIdentity();
+            $this->created_by = (int) ($user->id ?? 0);
+        }
+
         return true;
     }
 }

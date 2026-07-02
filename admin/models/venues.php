@@ -38,6 +38,7 @@ class JemModelVenues extends ListModel
                     'city', 'a.city',
                     'ordering', 'a.ordering',
                     'created', 'a.created',
+                    'author', 'u.name',
                     'assignedevents'
             );
         }

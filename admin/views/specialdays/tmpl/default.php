@@ -11,6 +11,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 
 $user = JemFactory::getUser();
 $listOrder = $this->escape($this->state->get('list.ordering'));
@@ -19,6 +20,7 @@ $canEdit = $user->authorise('core.edit', 'com_jem');
 $canEditState = $user->authorise('core.edit.state', 'com_jem');
 $saveOrder = $canEditState && $listOrder === 'a.ordering' && strtolower($listDirn) === 'asc';
 $saveOrderingUrl = Route::_('index.php?option=com_jem&task=specialdays.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 
 $weekdayLabels = array(
     0 => Text::_('SUN'),
@@ -87,6 +89,20 @@ $renderLocation = function ($item) {
 
     return implode(', ', $parts);
 };
+
+$renderUrl = function ($url) {
+    $url = trim((string) $url);
+
+    if ($url === '') {
+        return '<span class="text-muted">-</span>';
+    }
+
+    $label = StringHelper::strlen($url) > 60 ? StringHelper::substr($url, 0, 60) . '...' : $url;
+
+    return '<a href="' . $this->escape($url) . '" target="_blank" rel="noopener noreferrer" title="' . $this->escape($url) . '">'
+        . $this->escape($label)
+        . '</a>';
+};
 ?>
 
 <style>
@@ -122,15 +138,6 @@ $renderLocation = function ($item) {
         opacity: .55;
     }
 
-    #specialDayList > tbody > tr:nth-of-type(odd) > * {
-        --bs-table-accent-bg: transparent;
-        background-color: var(--bs-table-bg, #fff);
-    }
-
-    #specialDayList > tbody > tr:nth-of-type(even) > * {
-        --bs-table-accent-bg: rgba(0, 0, 0, .03);
-        background-color: var(--bs-table-striped-bg, rgba(0, 0, 0, .03));
-    }
 </style>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=specialdays'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
@@ -185,14 +192,17 @@ $renderLocation = function ($item) {
             </div>
         </fieldset>
 
-        <table class="table table-striped" id="specialDayList">
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="specialDayList">
             <thead>
                 <tr>
-                    <th style="width:5rem" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ORDERING', 'a.ordering', $listDirn, $listOrder); ?>
-                    </th>
-                    <th style="width:1%" class="center">
+                    <th class="center jem-list-check">
                         <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+                    </th>
+                    <th class="center jem-list-order-heading">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class="center jem-list-status">
+                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                     <th>
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TITLE', 'a.title', $listDirn, $listOrder); ?>
@@ -206,11 +216,20 @@ $renderLocation = function ($item) {
                     <th style="width:16%" class="center jem-specialdays-location-heading">
                         <?php echo Text::_('COM_JEM_SPECIAL_DAY_LOCATION'); ?>
                     </th>
-                    <th style="width:8%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
+                    <th style="width:6%" class="center">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES', 'a.show_dates', $listDirn, $listOrder); ?>
+                    </th>
+                    <th style="width:6%" class="center">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?>
+                    </th>
+                    <th style="width:16%">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_URL', 'a.url', $listDirn, $listOrder); ?>
+                    </th>
+                    <th style="width:10%">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:8%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:5%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
@@ -228,13 +247,16 @@ $renderLocation = function ($item) {
                 $position = (int) ($i + 1);
                 ?>
                 <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>">
+                    <td class="center">
+                        <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                    </td>
                     <td class="jem-specialdays-order<?php echo $saveOrder ? '' : ' is-disabled'; ?>" title="<?php echo $saveOrder ? Text::_('JGRID_HEADING_ORDERING') : Text::_('JORDERINGDISABLED'); ?>">
                         <span class="jem-specialdays-drag" aria-hidden="true">::</span>
                         <span class="jem-specialdays-position"><?php echo $position; ?></span>
                         <input type="hidden" name="order[]" class="jem-specialdays-order-input" value="<?php echo $position; ?>">
                     </td>
                     <td class="center">
-                        <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'specialdays.', $canEditState); ?>
                     </td>
                     <td>
                         <?php if ($canEdit) : ?>
@@ -257,10 +279,25 @@ $renderLocation = function ($item) {
                         <?php echo $renderLocation($item); ?>
                     </td>
                     <td class="center">
-                        <?php echo $this->escape($item->access_level ?? ''); ?>
+                        <?php echo (int) ($item->show_dates ?? 1) === 1 ? Text::_('JYES') : Text::_('JNO'); ?>
                     </td>
                     <td class="center">
-                        <?php echo HTMLHelper::_('jgrid.published', $item->published, $i, 'specialdays.', $canEditState); ?>
+                        <?php if ((int) ($item->article_id ?? 0) > 0) : ?>
+                            <a href="<?php echo Route::_('index.php?option=com_content&task=article.edit&id=' . (int) $item->article_id); ?>">
+                                <?php echo (int) $item->article_id; ?>
+                            </a>
+                        <?php else : ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php echo $renderUrl($item->url ?? ''); ?>
+                    </td>
+                    <td>
+                        <?php echo !empty($item->author_name) ? $this->escape($item->author_name) : '<span class="text-muted">-</span>'; ?>
+                    </td>
+                    <td class="center">
+                        <?php echo $this->escape($item->access_level ?? ''); ?>
                     </td>
                     <td class="center">
                         <?php echo (int) $item->id; ?>
@@ -268,7 +305,7 @@ $renderLocation = function ($item) {
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($this->items)) : ?>
-                <tr><td colspan="9" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
+                <tr><td colspan="13" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>

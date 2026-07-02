@@ -108,6 +108,30 @@
                 <option value="0">JNO</option>
             </field>
 
+            <field name="showvenuedescription" type="radio"
+                   default="1"
+                   label="COM_JEM_VENUE_SHOW_DESCRIPTION"
+                   description="COM_JEM_VENUE_SHOW_DESCRIPTION_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="venues_order" type="list"
+                   default="name_asc"
+                   label="COM_JEM_VENUESMAP_VENUES_ORDER_LABEL"
+                   description="COM_JEM_VENUESMAP_VENUES_ORDER_DESC"
+                   class="form-select w-auto"
+            >
+                <option value="id_asc">COM_JEM_ORDER_ID_ASC</option>
+                <option value="id_desc">COM_JEM_ORDER_ID_DESC</option>
+                <option value="name_asc">COM_JEM_ORDER_NAME_ASC</option>
+                <option value="name_desc">COM_JEM_ORDER_NAME_DESC</option>
+                <option value="order_asc">COM_JEM_ORDER_ORDER_ASC</option>
+                <option value="order_desc">COM_JEM_ORDER_ORDER_DESC</option>
+            </field>
+
             <field name="show_country_filter" type="radio"
                    default="1"
                    label="COM_JEM_VENUESMAP_SHOW_COUNTRY_FILTER_LABEL"

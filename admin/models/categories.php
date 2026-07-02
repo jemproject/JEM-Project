@@ -37,6 +37,7 @@ class JemModelCategories extends ListModel
                 'checked_out_time', 'a.checked_out_time',
                 'created_time', 'a.created_time',
                 'created_user_id', 'a.created_user_id',
+                'author_name', 'ua.name',
                 'article_category_id', 'a.article_category_id',
                 'article_create_mode', 'a.article_create_mode',
                 'lft', 'a.lft',
@@ -136,7 +137,7 @@ class JemModelCategories extends ListModel
             $this->getState(
                 'list.select',
                 'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
-                ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
+                ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id, a.created_time' .
                 ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
                 ', a.article_category_id, a.article_create_mode' .
                 ', a.type_id' .

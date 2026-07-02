@@ -535,6 +535,14 @@ class JemModelSampledata extends BaseDatabaseModel
             $db->execute();
         }
 
+        $query = $db->getQuery(true);
+        $query->update($db->quoteName('#__jem_categories'));
+        $query->set($db->quoteName('created_user_id') . ' = ' . $db->quote($userId));
+        $query->where($db->quoteName('created_user_id') . ' IN (0, 62)');
+        $query->where($db->quoteName('id') . ' > 1');
+        $db->setQuery($query);
+        $db->execute();
+
         return true;
     }
 }

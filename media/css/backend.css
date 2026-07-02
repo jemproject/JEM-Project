@@ -2628,22 +2628,96 @@ fieldset.jem-specialdays-import #replace_specialdays {
     line-height: 1;
 }
 
-#specialDayList thead th {
-    background-color: #f1f3f5;
-    border-bottom: 2px solid #adb5bd;
-    color: #212529;
-    font-weight: 700;
-    vertical-align: middle;
-}
-
-#specialDayList thead th a {
-    color: inherit;
-    font-weight: 700;
-}
-
 #specialDayList .jem-specialdays-location-heading,
 #specialDayList .jem-specialdays-location-cell {
     text-align: center;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] {
+    align-items: center;
+    display: inline-flex;
+    gap: .25rem;
+    text-decoration: none;
+}
+
+table.itemList .jem-list-check,
+table.itemList .jem-list-order-heading,
+table.itemList .jem-list-featured,
+table.itemList .jem-list-status {
+    min-width: 3rem;
+    width: 3rem;
+}
+
+table.itemList .jem-list-order-heading {
+    max-width: 4rem;
+    min-width: 4rem;
+    text-align: center;
+    width: 4rem;
+}
+
+table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"] {
+    justify-content: center;
+    width: 100%;
+}
+
+table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"]::after {
+    font-size: .75rem;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] .icon-arrow-up-3,
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] .icon-arrow-down-3 {
+    display: none;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]::after {
+    color: currentColor;
+    content: "\2195";
+    display: inline-block;
+    font-size: .9em;
+    font-weight: 700;
+    line-height: 1;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]:has(.icon-arrow-up-3)::after {
+    content: "\25B2";
+    font-size: .75em;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]:has(.icon-arrow-down-3)::after {
+    content: "\25BC";
+    font-size: .75em;
+}
+
+table.itemList [class*="-drag"] {
+    color: #212529;
+    display: inline-block;
+    font-size: 0 !important;
+    font-weight: 700;
+    height: 1rem;
+    letter-spacing: 0 !important;
+    line-height: 1;
+    margin-right: .35rem;
+    position: relative;
+    transform: none !important;
+    vertical-align: middle;
+    width: .6rem;
+}
+
+table.itemList [class*="-drag"]::before {
+    background: currentColor;
+    border-radius: 1px;
+    box-shadow: 0 .32rem 0 currentColor, 0 .64rem 0 currentColor;
+    content: "";
+    height: 3px;
+    left: 50%;
+    position: absolute;
+    top: .12rem;
+    transform: translateX(-50%);
+    width: 3px;
+}
+
+table.itemList.jem-hide-order-numbers [class*="-position"] {
+    display: none !important;
 }
 
 .jem-admin-filter-calendar .field-calendar .input-group {

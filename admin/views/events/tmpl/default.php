@@ -39,7 +39,7 @@ $eventStatusOptions = array(
 
 $ticketAvailabilityOptions = array(
     'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'icon' => 'fa fa-check-circle', 'class' => 'bg-success'),
-    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'icon' => 'fa fa-hourglass-half', 'class' => 'bg-info text-dark'),
+    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'icon' => 'fa fa-hourglass-half', 'class' => 'bg-warning text-dark'),
     'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'icon' => 'fa fa-times-circle', 'class' => 'bg-danger'),
 );
 ?>
@@ -111,7 +111,9 @@ $ticketAvailabilityOptions = array(
             <table class="table table-striped itemList" id="eventList">
                 <thead>
                 <tr>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                    <th class="center jem-list-check"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                    <th class="center jem-list-featured"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
+                    <th class="center nowrap jem-list-status"><?php echo Text::_('JSTATUS'); ?></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE', 'a.dates', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STARTTIME_SHORT', 'a.times', $listDirn, $listOrder ); ?></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_EVENT_TITLE', 'a.title', $listDirn, $listOrder ); ?></th>
@@ -120,13 +122,11 @@ $ticketAvailabilityOptions = array(
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE', 'jt.name', $listDirn, $listOrder ); ?></th>
                     <th><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'loc.venue', $listDirn, $listOrder ); ?></th>
                     <th><?php echo Text::_('COM_JEM_CATEGORIES'); ?></th>
-                    <th style="width: 1%"><?php echo HTMLHelper::_('grid.sort', 'JFEATURED', 'a.featured', $listDirn, $listOrder, NULL, 'desc'); ?></th>
-                    <th style="width: 1%" class="center nowrap"><?php echo Text::_('JSTATUS'); ?></th>
-                    <th class="nowrap"><?php echo Text::_('COM_JEM_AUTHOR'); ?></th>
-                    <th class="center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder ); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
-                    <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?></th>
+                    <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
+                    <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?></th>
+                    <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
                 </tr>
                 </thead>
@@ -157,6 +157,26 @@ $ticketAvailabilityOptions = array(
                     ?>
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
+                        <td class="center">
+                            <?php
+                            $options = [
+                                'task_prefix' => 'events.',
+                                'disabled' => !$canChange,
+                                'id' => 'featured-' . $row->id
+                            ];
+                            echo (new FeaturedButton())->render((int) $row->featured, $i, $options);
+                            ?>
+                        </td>
+                        <td class="center">
+                            <?php
+                            $options = [
+                            'task_prefix' => 'events.',
+                            'disabled' => !$canChange,
+                            'id' => 'state-' . $row->id
+                            ];
+                            echo (new PublishedButton())->render((int) $row->published, $i, $options, $row->publish_up, $row->publish_down);
+                            ?>
+                        </td>
                         <td class="startdate">
                             <?php if ($row->checked_out) : ?>
                                 <?php echo HTMLHelper::_('jgrid.checkedout', $i, $row->editor, $row->checked_out_time, 'events.', $canCheckin); ?>
@@ -231,48 +251,6 @@ $ticketAvailabilityOptions = array(
                             <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist,true)); ?>
                         </td>
                         <td class="center">
-                            <?php //echo HTMLHelper::_('jemhtml.featured', $i, $row->featured, $canChange);
-                            $options = [
-                                'task_prefix' => 'events.',
-                                'disabled' => !$canChange,
-                                'id' => 'featured-' . $row->id
-                            ];
-                            echo (new FeaturedButton())->render((int) $row->featured, $i, $options);
-                            ?>
-                        </td>
-                        <td class="center">
-                            <?php
-                            $options = [
-                            'task_prefix' => 'events.',
-                            'disabled' => !$canChange,
-                            'id' => 'state-' . $row->id
-                            ];
-                            echo (new PublishedButton())->render((int) $row->published, $i, $options, $row->publish_up, $row->publish_down);
-                            ?>
-                        </td>
-                        <td>
-                            <?php
-                            $created         = HTMLHelper::_('date',$row->created,Text::_('DATE_FORMAT_LC5'));
-                            $image             = HTMLHelper::_('image','com_jem/icon-16-info.webp',NULL,NULL,true );
-                            $overlib         = Text::_('COM_JEM_CREATED_AT').': '.$created.'<br>';
-                            $overlib         .= Text::_('COM_JEM_AUTHOR').'</strong>: ' . $row->author.'<br>';
-                            $overlib         .= Text::_('COM_JEM_EMAIL').'</strong>: ' . $row->email.'<br>';
-                            if ($row->author_ip != '') {
-                                $overlib        .= Text::_('COM_JEM_WITH_IP').': '.$row->author_ip.'<br>';
-                            }
-                            if (!empty($row->modified)) {
-                                $overlib     .= '<br>'.Text::_('COM_JEM_EDITED_AT').': '. HTMLHelper::_('date',$row->modified,Text::_('DATE_FORMAT_LC5') ) .'<br>'. Text::_('COM_JEM_GLOBAL_MODIFIEDBY').': '.$row->modified_by;
-                            }
-                            ?>
-                            <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>
-
-                            <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]='.$row->created_by; ?>"><?php echo $row->author; ?></a></span>
-
-
-                        </td>
-                        <td class="center"><?php echo $row->hits; ?></td>
-
-                        <td class="center">
                             <?php
                             if ($this->jemsettings->showfroregistra || ($row->registra & 1)) {
                                 $linkreg     = 'index.php?option=com_jem&amp;view=attendees&amp;eventid='.$row->id;
@@ -299,9 +277,6 @@ $ticketAvailabilityOptions = array(
                             <?php } ?>
                         </td>
                         <td class="center">
-                            <?php echo $this->escape($row->access_level); ?>
-                        </td>
-                        <td class="center">
                             <?php if (!empty($row->article_id)) : ?>
                                 <a href="<?php echo Route::_('index.php?option=com_content&task=article.edit&id=' . (int) $row->article_id); ?>" title="<?php echo Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE'); ?>">
                                     <?php echo (int) $row->article_id; ?>
@@ -310,6 +285,27 @@ $ticketAvailabilityOptions = array(
                                 <?php echo '-'; ?>
                             <?php endif; ?>
                         </td>
+                        <td class="center">
+                            <?php echo $this->escape($row->access_level); ?>
+                        </td>
+                        <td>
+                            <?php
+                            $created = HTMLHelper::_('date', $row->created, Text::_('DATE_FORMAT_LC5'));
+                            $overlib = Text::_('COM_JEM_CREATED_AT') . ': ' . $created . '<br>';
+                            $overlib .= Text::_('COM_JEM_AUTHOR') . ': ' . $row->author . '<br>';
+                            $overlib .= Text::_('COM_JEM_EMAIL') . ': ' . $row->email . '<br>';
+                            if ($row->author_ip != '') {
+                                $overlib .= Text::_('COM_JEM_WITH_IP') . ': ' . $row->author_ip . '<br>';
+                            }
+                            if (!empty($row->modified)) {
+                                $overlib .= '<br>' . Text::_('COM_JEM_EDITED_AT') . ': ' . HTMLHelper::_('date', $row->modified, Text::_('DATE_FORMAT_LC5')) . '<br>' . Text::_('COM_JEM_GLOBAL_MODIFIEDBY') . ': ' . $row->modified_by;
+                            }
+                            ?>
+                            <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EVENTS_STATS'), $overlib, 'editlinktip'); ?>>
+                                <a href="<?php echo 'index.php?option=com_users&amp;task=edit&amp;hidemainmenu=1&amp;cid[]=' . (int) $row->created_by; ?>"><?php echo $this->escape($row->author); ?></a>
+                            </span>
+                        </td>
+                        <td class="center"><?php echo $created; ?></td>
                         <td class="center">
                             <?php echo (int) $row->id; ?>
                         </td>

@@ -1987,6 +1987,16 @@
                 maxlength="10"
                 required="false"
             />
+            <field name="backend_show_order_numbers" type="radio"
+                label="COM_JEM_SETTINGS_FIELD_SHOW_ORDER_NUMBERS"
+                description="COM_JEM_SETTINGS_FIELD_SHOW_ORDER_NUMBERS_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="loglevel" type="list"
                 label="COM_JEM_SETTINGS_FIELD_LOGLEVEL"
                 description="COM_JEM_SETTINGS_FIELD_LOGLEVEL_DESC"

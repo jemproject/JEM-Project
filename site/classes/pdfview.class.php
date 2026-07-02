@@ -142,46 +142,70 @@ class JemPdfView
     /**
      * Renders a venue list PDF.
      */
-    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list', string $mapProvider = 'osm', bool $showVenueImage = false): void
+    public static function renderVenueList(string $title, array $rows, string $filename, string $profile = 'list', string $mapProvider = 'osm', bool $showVenueImage = false, bool $showVenueDescription = true): void
     {
         $isMapProfile = $profile === 'map';
 
         if ($isMapProfile) {
-            $headers = array();
+            self::renderVenueMapList($title, $rows, $filename, $mapProvider, $showVenueImage, $showVenueDescription);
 
-            if ($showVenueImage) {
-                $headers[] = Text::_('COM_JEM_IMAGE');
-            }
+            return;
+        }
 
-            $headers = array_merge($headers, array(
-                Text::_('COM_JEM_VENUE'),
-                Text::_('COM_JEM_CITY'),
-                Text::_('COM_JEM_COUNTRY'),
-                Text::_('COM_JEM_LATITUDE'),
-                Text::_('COM_JEM_LONGITUDE'),
-                Text::_('COM_JEM_ACTIONS'),
-            ));
-            $tableRows = self::buildVenueMapRows($rows, $mapProvider, $showVenueImage);
-        } else {
-            $headers = array(
+        self::renderTable(
+            $title,
+            array(
                 Text::_('COM_JEM_VENUE'),
                 Text::_('COM_JEM_CITY'),
                 Text::_('COM_JEM_STATE'),
                 Text::_('COM_JEM_COUNTRY'),
                 Text::_('COM_JEM_WEBSITE'),
-            );
-            $tableRows = self::buildVenueListRows($rows, false, $mapProvider);
+            ),
+            self::buildVenueListRows($rows, false, $mapProvider),
+            $filename,
+            $profile
+        );
+    }
+
+    /**
+     * Renders the Venues Map PDF as a visual list that mirrors the frontend
+     * map cards instead of using the legacy tabular export.
+     */
+    private static function renderVenueMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', bool $showVenueImage = false, bool $showVenueDescription = true): void
+    {
+        if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
+            Factory::getApplication()->close();
+
+            return;
         }
 
-        self::renderTable(
-            $title,
-            $headers,
-            $tableRows,
-            $filename,
-            $profile,
-            '',
-            $isMapProfile ? self::buildVenueMapPreviewHtml($rows, $mapProvider) : ''
-        );
+        $settings = JemHelper::config();
+        $paper = self::getProfilePaperSettings($settings, 'map');
+        $paperSize = $paper['size'];
+        $orientation = $paper['orientation'];
+        $singlePageTarget = JemPdf::prefersSinglePage($paperSize);
+        $pdf = JemPdf::createDocument($title, $orientation, $paperSize);
+
+        if (!$pdf) {
+            Factory::getApplication()->close();
+
+            return;
+        }
+
+        $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paperSize);
+        $pdf->SetMargins($margins['left'], $margins['top'], $margins['right']);
+        $pdf->SetAutoPageBreak(!$singlePageTarget, $singlePageTarget ? 0 : $margins['bottom']);
+        $pdf->setPrintHeader(false);
+        $pdf->setPrintFooter(true);
+        $pdf->AddPage();
+        $pdf->writeHTML(self::buildVenueMapListHtml($title, $rows, $mapProvider, $showVenueImage, $showVenueDescription, $paperSize, $orientation, $margins), true, false, true, false, '');
+
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
+        $pdf->Output($filename, 'D');
+        Factory::getApplication()->close();
     }
 
     /**
@@ -1311,6 +1335,192 @@ class JemPdfView
         return $tableRows;
     }
 
+    private static function buildVenueMapListHtml(string $title, array $rows, string $mapProvider, bool $showVenueImage, bool $showVenueDescription, string $paperSize, string $orientation, array $margins): string
+    {
+        $scale = JemPdf::getPosterScale($paperSize);
+        $settings = JemHelper::config();
+        $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
+        $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
+        $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
+        $baseFontSize = max(7, min(13, (int) round((int) ($settings->pdf_base_font_size ?? 8) * $scale)));
+        $titleFontSize = max(18, min(34, (int) round(((int) ($settings->pdf_heading_font_size ?? 12) + 9) * $scale)));
+        $html = array();
+
+        $html[] = '<style>
+            body { font-family: ' . $bodyFontFamily . '; color: #111827; font-size: ' . $baseFontSize . 'pt; }
+            h1 { font-family: ' . $titleFontFamily . '; font-size: ' . $titleFontSize . 'pt; margin: 0 0 5mm 0; color: #111827; }
+            a { color: #1f5b99; text-decoration: underline; }
+            .jem-pdf-venuesmap-card { border: 0.25mm solid #d6dde8; background-color: #f8fafc; margin-bottom: 4mm; }
+            .jem-pdf-venuesmap-card td { vertical-align: top; font-size: ' . $baseFontSize . 'pt; }
+            .jem-pdf-venuesmap-media { text-align: center; padding: 2mm; vertical-align: middle; }
+            .jem-pdf-venuesmap-image { border: 0.25mm solid #cbd5e1; }
+            .jem-pdf-venuesmap-title { font-family: ' . $headerFontFamily . '; font-size: ' . ($baseFontSize + 3) . 'pt; font-weight: bold; text-align: center; padding: 1.6mm 2mm; }
+            .jem-pdf-venuesmap-content { padding: 2mm; }
+            .jem-pdf-venuesmap-actions { padding: 2mm; text-align: center; }
+            .jem-pdf-venuesmap-action-cell { background-color: #6b7280; color: #ffffff; text-align: center; font-family: ' . $headerFontFamily . '; font-weight: bold; padding: 1.2mm 2mm; }
+            .jem-pdf-venuesmap-action-cell-map { background-color: #9f1d3a; }
+            .jem-pdf-venuesmap-meta td { padding: 0.45mm 0.7mm; line-height: ' . ($baseFontSize + 2) . 'pt; }
+            .jem-pdf-venuesmap-label { font-family: ' . $headerFontFamily . '; font-weight: bold; color: #111827; }
+            .jem-pdf-venuesmap-description-label { font-family: ' . $headerFontFamily . '; font-weight: bold; margin-top: 1.5mm; }
+            .jem-pdf-venuesmap-description { color: #374151; line-height: ' . ($baseFontSize + 2) . 'pt; }
+            .jem-pdf-venuesmap-coordinates { border: 0.2mm solid #d6dde8; background-color: #ffffff; color: #475569; line-height: ' . ($baseFontSize + 2) . 'pt; padding: 1.2mm; text-align: center; }
+            .jem-pdf-empty { color: #6b7280; text-align: center; margin-top: 8mm; }
+        </style>';
+        $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
+
+        if (!$rows) {
+            $html[] = '<div class="jem-pdf-empty">' . Text::_('COM_JEM_NO_VENUES') . '</div>';
+
+            return implode("\n", array_filter($html));
+        }
+
+        foreach ($rows as $row) {
+            $html[] = self::buildVenueMapCardHtml($row, $mapProvider, $showVenueImage, $showVenueDescription);
+        }
+
+        return implode("\n", array_filter($html));
+    }
+
+    private static function buildVenueMapCardHtml($row, string $mapProvider, bool $showVenueImage, bool $showVenueDescription): string
+    {
+        $title = trim((string) ($row->venue ?? $row->title ?? ''));
+        $slug = self::getPdfVenueSlug($row);
+        $titleHtml = htmlspecialchars($title, ENT_COMPAT, 'UTF-8');
+
+        if ($slug !== '') {
+            $titleUrl = self::absoluteUrl(Route::_(JemHelperRoute::getVenueRoute($slug), false));
+        } else {
+            $titleUrl = '';
+        }
+
+        $barColor = self::normalisePdfColor($row->color ?? '') ?: '#d9ddb5';
+        $textColor = self::getContrastingTextColor($barColor);
+
+        if ($titleUrl !== '') {
+            $titleHtml = '<a href="' . htmlspecialchars($titleUrl, ENT_COMPAT, 'UTF-8') . '" style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . '; text-decoration:none;">' . $titleHtml . '</a>';
+        }
+
+        $imageHtml = $showVenueImage ? self::buildVenueMapCardImageHtml($row) : '';
+        $details = self::buildVenueMapCardDetailsHtml($row);
+        $description = '';
+
+        if ($showVenueDescription) {
+            $descriptionText = self::truncatePlainText((string) ($row->locdescription ?? ''), 420);
+            if ($descriptionText['text'] !== '') {
+                $description = '<div class="jem-pdf-venuesmap-description-label">' . Text::_('COM_JEM_DESCRIPTION') . '</div>'
+                    . '<div class="jem-pdf-venuesmap-description">' . htmlspecialchars($descriptionText['text'], ENT_COMPAT, 'UTF-8') . '</div>';
+            }
+        }
+
+        $mediaColumn = $showVenueImage
+            ? '<td class="jem-pdf-venuesmap-media" width="19%">' . ($imageHtml !== '' ? $imageHtml : '-') . '</td>'
+            : '';
+        $mainWidth = $showVenueImage ? '61.5%' : '80.5%';
+
+        return '<table class="jem-pdf-venuesmap-card" width="100%" cellpadding="0" cellspacing="0" nobr="true">'
+            . '<tr>'
+            . $mediaColumn
+            . '<td width="' . $mainWidth . '">'
+            . '<table width="100%" cellpadding="5" cellspacing="0"><tr><td class="jem-pdf-venuesmap-title" style="background-color:' . htmlspecialchars($barColor, ENT_COMPAT, 'UTF-8') . '; color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . '; text-align:center;">' . $titleHtml . '</td></tr></table>'
+            . '<div class="jem-pdf-venuesmap-content">' . $details . $description . '</div>'
+            . '</td>'
+            . '<td width="1.5%">&nbsp;</td>'
+            . '<td class="jem-pdf-venuesmap-actions" width="18%">' . self::buildVenueMapCardActionsHtml($row, $mapProvider) . '</td>'
+            . '</tr>'
+            . '</table>';
+    }
+
+    private static function buildVenueMapCardImageHtml($row): string
+    {
+        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 42, 32);
+
+        return str_replace('class="jem-pdf-image"', 'class="jem-pdf-venuesmap-image"', $image);
+    }
+
+    private static function buildVenueMapCardDetailsHtml($row): string
+    {
+        $lines = array();
+        $street = trim((string) ($row->street ?? ''));
+        $city = trim((string) ($row->city ?? ''));
+        $postalCode = trim((string) ($row->postalCode ?? ''));
+        $cityLine = trim($city . ($postalCode !== '' ? ' ' . $postalCode : ''));
+        $state = trim((string) ($row->state ?? ''));
+        $country = self::formatPdfCountryName((string) ($row->country ?? ''));
+        $website = self::buildPdfExternalLink((string) ($row->url ?? ''));
+
+        if ($street !== '') {
+            $lines[] = array(Text::_('COM_JEM_STREET'), htmlspecialchars($street, ENT_COMPAT, 'UTF-8'));
+        }
+
+        if ($cityLine !== '') {
+            $lines[] = array(Text::_('COM_JEM_CITY'), htmlspecialchars($cityLine, ENT_COMPAT, 'UTF-8'));
+        }
+
+        if ($state !== '') {
+            $lines[] = array(Text::_('COM_JEM_STATE'), htmlspecialchars($state, ENT_COMPAT, 'UTF-8'));
+        }
+
+        if ($country !== '') {
+            $lines[] = array(Text::_('COM_JEM_COUNTRY'), htmlspecialchars($country, ENT_COMPAT, 'UTF-8'));
+        }
+
+        if (!empty($website['html'])) {
+            $lines[] = array(Text::_('COM_JEM_WEBSITE'), $website['html']);
+        }
+
+        if (!$lines) {
+            return '';
+        }
+
+        $html = array('<table class="jem-pdf-venuesmap-meta" width="100%" cellpadding="1" cellspacing="0">');
+        foreach ($lines as $line) {
+            $html[] = '<tr><td class="jem-pdf-venuesmap-label" width="24%">' . $line[0] . '</td><td width="76%">' . $line[1] . '</td></tr>';
+        }
+        $html[] = '</table>';
+
+        return implode('', $html);
+    }
+
+    private static function buildVenueMapCardActionsHtml($row, string $mapProvider): string
+    {
+        $rows = array();
+        $slug = self::getPdfVenueSlug($row);
+
+        if ($slug !== '') {
+            $calendarRoute = 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug;
+            $eventsRoute = JemHelperRoute::getVenueRoute($slug);
+            $rows[] = self::buildPdfActionButtonRow(self::absoluteUrl(Route::_($calendarRoute, false)), Text::_('COM_JEM_CALENDAR'));
+            $rows[] = self::buildPdfActionButtonRow(self::absoluteUrl(Route::_($eventsRoute, false)), Text::_('COM_JEM_EVENTS'));
+        }
+
+        $mapLink = self::buildPdfMapLink($row, $mapProvider, 'COM_JEM_MAP_LINK');
+        if (!empty($mapLink['html']) && preg_match('#href="([^"]+)"#', $mapLink['html'], $matches)) {
+            $rows[] = self::buildPdfActionButtonRow(html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'), Text::_('COM_JEM_MAP_LINK'), true);
+        }
+
+        $lat = self::formatCoordinate($row->latitude ?? '');
+        $lng = self::formatCoordinate($row->longitude ?? '');
+        if ($lat !== '' || $lng !== '') {
+            $rows[] = '<tr><td class="jem-pdf-venuesmap-coordinates">Lat: ' . htmlspecialchars($lat, ENT_COMPAT, 'UTF-8') . '<br />Lon: ' . htmlspecialchars($lng, ENT_COMPAT, 'UTF-8') . '</td></tr>';
+        }
+
+        return $rows ? '<table width="100%" cellpadding="2" cellspacing="0">' . implode(self::buildPdfActionSpacerRow(), $rows) . '</table>' : '-';
+    }
+
+    private static function buildPdfActionButtonRow(string $url, string $label, bool $isMap = false): string
+    {
+        $background = $isMap ? '#9f1d3a' : '#6b7280';
+
+        return '<tr><td class="jem-pdf-venuesmap-action-cell" style="background-color:' . $background . '; color:#ffffff; text-align:center;">'
+            . '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '" style="color:#ffffff; text-decoration:none;">' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</a>'
+            . '</td></tr>';
+    }
+
+    private static function buildPdfActionSpacerRow(): string
+    {
+        return '<tr><td style="background-color:#f8fafc; color:#f8fafc; font-size:2pt; line-height:2pt;">&nbsp;</td></tr>';
+    }
+
     private static function buildVenueListRows(array $rows, bool $includeMapColumns = false, string $mapProvider = 'osm', bool $includeMapLink = false): array
     {
         $tableRows = array();
@@ -1358,7 +1568,7 @@ class JemPdfView
         return $country;
     }
 
-    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider): string
+    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider, float $widthMm = 260.0): string
     {
         $url = self::buildStaticMapImageUrl($rows, $mapProvider);
 
@@ -1376,8 +1586,10 @@ class JemPdfView
             return '';
         }
 
+        $widthMm = max(120.0, min(280.0, $widthMm));
+
         return '<div class="jem-pdf-map-preview">'
-            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="270mm" style="border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
+            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
             . '</div>';
     }
 
@@ -1449,14 +1661,38 @@ class JemPdfView
             // Fall back to PHP streams below.
         }
 
+        if (function_exists('curl_init')) {
+            $curl = curl_init($url);
+
+            if ($curl) {
+                curl_setopt_array($curl, array(
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_CONNECTTIMEOUT => 10,
+                    CURLOPT_TIMEOUT => 15,
+                    CURLOPT_USERAGENT => 'JEM PDF map preview (https://www.joomlaeventmanager.net)',
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_SSL_VERIFYHOST => 2,
+                ));
+
+                $data = curl_exec($curl);
+                $code = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+                curl_close($curl);
+
+                if (is_string($data) && $data !== '' && $code >= 200 && $code < 300) {
+                    return $data;
+                }
+            }
+        }
+
         $context = stream_context_create(array(
             'http' => array(
                 'timeout' => 15,
-                'header' => "User-Agent: JEM PDF map preview\r\n",
+                'header' => "User-Agent: JEM PDF map preview (https://www.joomlaeventmanager.net)\r\n",
             ),
             'https' => array(
                 'timeout' => 15,
-                'header' => "User-Agent: JEM PDF map preview\r\n",
+                'header' => "User-Agent: JEM PDF map preview (https://www.joomlaeventmanager.net)\r\n",
             ),
         ));
         $data = @file_get_contents($url, false, $context);
@@ -3304,6 +3540,24 @@ class JemPdfView
             'size' => self::normalisePaperSize((string) ($settings->{$sizeKey} ?? $settings->pdf_paper_size ?? 'A4')),
             'orientation' => self::normaliseOrientation((string) ($settings->{$orientationKey} ?? $settings->pdf_orientation ?? ($profile === 'calendar' ? 'L' : 'P'))),
         );
+    }
+
+    private static function getPdfPaperWidth(string $paperSize, string $orientation): float
+    {
+        $paperSize = strtoupper(trim($paperSize));
+        $orientation = strtoupper(trim($orientation)) === 'L' ? 'L' : 'P';
+        $sizes = array(
+            'A5' => array(148.0, 210.0),
+            'A4' => array(210.0, 297.0),
+            'A3' => array(297.0, 420.0),
+            'A2' => array(420.0, 594.0),
+            'LETTER' => array(215.9, 279.4),
+            'LEGAL' => array(215.9, 355.6),
+        );
+
+        $size = $sizes[$paperSize] ?? $sizes['A4'];
+
+        return $orientation === 'L' ? max($size[0], $size[1]) : min($size[0], $size[1]);
     }
 
     private static function getPdfFontFamily($settings, string $key): string
