@@ -166,7 +166,7 @@ final class JemPackageBuilder
         $relative = str_replace('\\', '/', $relative);
         $basename = basename($relative);
 
-        if ($basename === '' || $basename === '.' || str_starts_with($basename, '.tmp-')) {
+        if ($basename === '' || $basename === '.' || str_starts_with($basename, '.')) {
             return false;
         }
 
@@ -240,10 +240,10 @@ final class JemPackageBuilder
 
         for ($i = 0; $i < $component->numFiles; $i++) {
             $name = $component->getNameIndex($i);
-            if (basename($name) !== '' && str_starts_with(basename($name), '.tmp-')) {
+            if (basename($name) !== '' && str_starts_with(basename($name), '.')) {
                 $component->close();
                 @unlink($tmpComponent);
-                throw new RuntimeException($package . ':packages/com_jem.zip contains temporary entry ' . $name);
+                throw new RuntimeException($package . ':packages/com_jem.zip contains hidden/development entry ' . $name);
             }
         }
 

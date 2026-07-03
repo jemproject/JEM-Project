@@ -90,22 +90,78 @@ $uploadLimit    = $formatUploadSize($postMaxBytes > 0 ? min($uploadMaxBytes, $po
 $document->addStyleDeclaration('
     .jem-associated-article-options {
         border: 0;
-        margin: 0 !important;
-        padding: 0 .5rem !important;
+        margin: -0.75rem 0 0 !important;
+        padding: 0 !important;
+    }
+    #jem.jem_editevent .jem-editevent-details-fieldset {
+        margin-bottom: 0;
+    }
+    #jem.jem_editevent .jem-editevent-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        margin: 0 0 1rem;
+    }
+    #jem.jem_editevent .nav-tabs,
+    #jem.jem_editevent joomla-tab > div[role="tablist"] {
+        border-bottom: 1px solid #c8d0da;
+        margin-bottom: 1rem;
+    }
+    #jem.jem_editevent .nav-tabs .nav-link,
+    #jem.jem_editevent joomla-tab button[role="tab"],
+    #jem.jem_editevent joomla-tab a[role="tab"] {
+        background: #f4f6f8;
+        border: 1px solid #d6dce5;
+        border-bottom: 0;
+        color: #1f2d3d;
+        margin-right: .15rem;
+        padding: .65rem 1rem;
+    }
+    #jem.jem_editevent .nav-tabs .nav-link.active,
+    #jem.jem_editevent joomla-tab button[role="tab"][aria-selected="true"],
+    #jem.jem_editevent joomla-tab a[role="tab"][aria-selected="true"] {
+        background: #fff;
+        border-color: #c8d0da;
+        color: #0f172a;
+        font-weight: 600;
     }
     .jem-associated-article-options .jem-dl {
         display: grid;
-        grid-template-columns: minmax(14rem, 240px) minmax(0, 1fr);
+        grid-template-columns: minmax(160px, 276px) minmax(14rem, 36rem);
         align-items: center;
         column-gap: 0;
         margin-bottom: 0;
     }
     .jem-associated-article-options .jem-dl dt,
     .jem-associated-article-options .jem-dl dd {
-        margin-bottom: .35rem;
+        margin: 0 0 .35rem !important;
+        padding: 0;
+    }
+    .jem-associated-article-options .jem-dl dt {
+        grid-column: 1;
+    }
+    .jem-associated-article-options .jem-dl dd {
+        grid-column: 2;
     }
     .jem-associated-article-options .alert {
         margin-top: .35rem !important;
+        width: min(100%, 36rem);
+    }
+    .jem-associated-article-options .js-jem-article-usage select,
+    .jem-associated-article-options .js-jem-article-usage .choices,
+    .jem-associated-article-options .js-jem-article-usage joomla-field-fancy-select {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: start;
+        min-width: 14rem;
+        width: auto !important;
+        max-width: 36rem;
+    }
+    .jem-associated-article-options .js-jem-article-usage .choices__list--dropdown,
+    .jem-associated-article-options .js-jem-article-usage .choices__list[aria-expanded] {
+        left: 0;
+        min-width: 100%;
+        text-align: left;
     }
     .jem-associated-article-options .jem-dl .alert {
         grid-column: 2;
@@ -114,11 +170,30 @@ $document->addStyleDeclaration('
         display: flex;
         flex-wrap: nowrap;
         align-items: stretch;
+        grid-column: 2;
         max-width: 100%;
+        width: min(100%, 36rem);
     }
     .jem-associated-article-picker > * {
         flex: 1 1 auto;
         min-width: 0;
+    }
+    .jem-associated-article-picker .input-group {
+        flex-wrap: nowrap;
+    }
+    .jem-associated-article-picker .btn {
+        white-space: nowrap;
+    }
+    .jem_editevent .button-select {
+        background-color: #4c7f3f !important;
+        border-color: #4c7f3f !important;
+        color: #fff !important;
+    }
+    .jem_editevent .button-select:hover,
+    .jem_editevent .button-select:focus {
+        background-color: #3f6d34 !important;
+        border-color: #3f6d34 !important;
+        color: #fff !important;
     }
     .jem-editevent-field-date .field-calendar,
     .jem-editevent-field-date .input-group,
@@ -157,6 +232,12 @@ $document->addStyleDeclaration('
         gap: .9rem;
         max-width: 100%;
     }
+    .jem_fldst_image {
+        margin-top: 1.5rem;
+    }
+    .jem_fldst_image > legend {
+        padding-top: .25rem;
+    }
     .jem-editevent-image-field {
         display: grid;
         grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
@@ -185,8 +266,11 @@ $document->addStyleDeclaration('
         font-size: .82rem;
         line-height: 1.25;
         margin-top: .75rem;
+        white-space: nowrap;
     }
     .jem-editevent-image-maxsize strong {
+        display: inline;
+        font-weight: 400;
         white-space: nowrap;
     }
     .jem-editevent-image-control {
@@ -205,6 +289,7 @@ $document->addStyleDeclaration('
         min-width: 0;
     }
     .jem-editevent-image-choice span {
+        align-self: center;
         color: #6c757d;
         font-size: .82rem;
         font-weight: 600;
@@ -304,6 +389,14 @@ $document->addStyleDeclaration('
             grid-template-columns: 1fr;
             row-gap: .25rem;
         }
+        .jem-associated-article-options .js-jem-article-usage select,
+        .jem-associated-article-options .js-jem-article-usage .choices,
+        .jem-associated-article-options .js-jem-article-usage joomla-field-fancy-select {
+            grid-column: 1;
+            grid-row: auto;
+            min-width: 0;
+            width: 100% !important;
+        }
         .jem-associated-article-options .jem-dl .alert {
             grid-column: 1;
         }
@@ -400,7 +493,7 @@ $document->addStyleDeclaration('
 
         $('.jem-editevent-image-upload').each(function() {
             $(this).contents().filter(function() {
-                return this.nodeType === 3 && this.nodeValue.indexOf('Maximum upload size') !== -1;
+                return this.nodeType === 3 && /maximum upload size|upload size|max\.?\s*(image\s*)?filesize|file\s*size|tama[ñn]o m[aá]ximo|subida/i.test(this.nodeValue);
             }).remove();
 
             $(this).find('strong').filter(function() {
@@ -729,9 +822,10 @@ $document->addStyleDeclaration('
 
         <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-            <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
-            <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-            <br>
+            <div class="jem-editevent-toolbar">
+                <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
+                <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+            </div>
             <?php if ($this->item->recurrence_type > 0) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
@@ -828,10 +922,9 @@ $document->addStyleDeclaration('
                 </fieldset>
             <?php endif; ?>
             <!-- EVENTDESCRIPTION -->
-            <fieldset class="adminform">
+            <fieldset class="adminform jem-editevent-details-fieldset">
                 <legend><?php echo Text::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>
                 <div>
-                    <?php echo $this->form->getLabel('articletext'); ?>
                     <?php echo $this->form->getInput('articletext'); ?>
                 </div>
             </fieldset>

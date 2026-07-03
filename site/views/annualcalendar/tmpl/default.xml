@@ -11,7 +11,7 @@
             <field name="annual_start_month" type="list"
                 default="1"
                 label="COM_JEM_ANNUALCALENDAR_START_MONTH"
-                description="COM_JEM_ANNUALCALENDAR_START_MONTH_DESC" class="form-select w-auto"
+                description="COM_JEM_ANNUALCALENDAR_START_MONTH_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="1">JANUARY</option>
                 <option value="2">FEBRUARY</option>
@@ -46,7 +46,7 @@
                 default="default"
                 label="COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET"
                 description="COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="default">COM_JEM_ANNUALCALENDAR_DAY_LINK_TARGET_DAY</option>
                 <option value="timetable">COM_JEM_DAY_VIEW_TIMETABLE_TITLE</option>
@@ -65,7 +65,7 @@
                 default="order_asc"
                 label="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER"
                 description="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="id_asc">COM_JEM_ORDER_ID_ASC</option>
                 <option value="id_desc">COM_JEM_ORDER_ID_DESC</option>
@@ -115,7 +115,7 @@
             <field name="categoryswitchcats" type="categoryedit"
                 multiple="true"
                 removeroot="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
@@ -137,7 +137,7 @@
             />
             <field name="timeline_filter_countries" type="countryoptions"
                 multiple="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
@@ -159,7 +159,7 @@
             <field name="displayLegend" type="list"
                 default="1"
                 label="COM_JEM_DISPLAY_LEGEND"
-                description="COM_JEM_DISPLAY_LEGEND_DESC" class="form-select w-auto"
+                description="COM_JEM_DISPLAY_LEGEND_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">JNO</option>
                 <option value="1">COM_JEM_BELOW</option>
@@ -181,7 +181,7 @@
             <field name="firstweekday" type="list"
                 default="1"
                 label="COM_JEM_SELECTFIRSTWEEKDAY"
-                description="COM_JEM_SELECTFIRSTWEEKDAYDESC" class="form-select w-auto"
+                description="COM_JEM_SELECTFIRSTWEEKDAYDESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">COM_JEM_SUNDAY</option>
                 <option value="1">COM_JEM_MONDAY</option>

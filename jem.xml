@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="component" method="upgrade">
     <name>com_jem</name>
-    <creationDate>June 2026</creationDate>
+    <creationDate>3 July 2026</creationDate>
     <author>JEM Community</author>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0rc4</version>
+    <version>5.0.0rc5</version>
     <description>COM_JEM_INSTALLATION_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -67,7 +67,6 @@
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=specialdays">COM_JEM_MENU_SPECIAL_DAYS</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=attachments">COM_JEM_MENU_ATTACHMENTS</menu>
-            <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=help">COM_JEM_MENU_HELP</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
         </submenu>
 

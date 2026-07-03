@@ -203,8 +203,12 @@ final class BuildPackageExcludesTest extends TestCase
                 $missing[] = $module . ': installer class ' . $expectedClass . ' is missing';
             }
 
-            if (preg_match('/Version::MAJOR_VERSION\s*(?:===|!==)\s*6/', $script) !== 1) {
-                $missing[] = $module . ': installer script must guard Joomla 6 runtime';
+            if (strpos($script, "version_compare(JVERSION, '5.4.0'") === false) {
+                $missing[] = $module . ': installer script must require Joomla 5.4.0 or newer';
+            }
+
+            if (strpos($script, 'Version::MAJOR_VERSION > 6') === false && strpos($script, "version_compare(JVERSION, '7.0.0'") === false) {
+                $missing[] = $module . ': installer script must reject Joomla 7 or newer until tested';
             }
         }
 

@@ -6,15 +6,15 @@ use PHPUnit\Framework\TestCase;
 
 final class Joomla6CompatibilityTest extends TestCase
 {
-    public function testPackageManifestTargetsJoomla6InstallerSchema(): void
+    public function testPackageManifestTargetsJoomla5InstallerSchema(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
 
         self::assertNotFalse($manifest);
-        self::assertSame('6.0', (string) $manifest['version']);
+        self::assertSame('5.0', (string) $manifest['version']);
     }
 
-    public function testUpdateFeedTargetsOnlyJoomla6WithPhp83(): void
+    public function testUpdateFeedTargetsJoomla54AndJoomla6WithPhp83(): void
     {
         $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
 
@@ -23,14 +23,14 @@ final class Joomla6CompatibilityTest extends TestCase
         $current = null;
 
         foreach ($updates->update as $update) {
-            if ((string) $update->version === '5.0.0rc4') {
+            if ((string) $update->version === '5.0.0rc5') {
                 $current = $update;
                 break;
             }
         }
 
-        self::assertNotNull($current, 'The Joomla 6 package release must be present in update_pkg_jem.xml.');
-        self::assertSame('6\.[0-9]+', (string) $current->targetplatform['version']);
+        self::assertNotNull($current, 'The Joomla 5.4/6 package release must be present in update_pkg_jem.xml.');
+        self::assertSame('^(5\.[4-9].*|6\..*)$', (string) $current->targetplatform['version']);
         self::assertSame('8.3', (string) $current->php_minimum);
     }
 
@@ -56,12 +56,12 @@ final class Joomla6CompatibilityTest extends TestCase
             }
         }
 
-        self::assertSame(array(), $wrong, "Joomla 6 package manifests should use JEM 5.x versions:\n" . implode("\n", $wrong));
+        self::assertSame(array(), $wrong, "Joomla 5.4/6 package manifests should use JEM 5.x versions:\n" . implode("\n", $wrong));
     }
 
     public function testReleaseManifestsUseCurrentJemVersion(): void
     {
-        $expectedVersion = '5.0.0rc4';
+        $expectedVersion = '5.0.0rc5';
         $manifestPaths = array_merge(
             array(JEM_TEST_ROOT . '/jem.xml', JEM_TEST_ROOT . '/package/pkg_jem.xml'),
             glob(JEM_TEST_ROOT . '/modules/*/*.xml') ?: array(),
@@ -94,7 +94,7 @@ final class Joomla6CompatibilityTest extends TestCase
         self::assertSame(array(), $wrong, "JEM release manifests should use $expectedVersion:\n" . implode("\n", $wrong));
     }
 
-    public function testInstallerScriptsGuardJoomla6Runtime(): void
+    public function testInstallerScriptsGuardJoomla54AndJoomla6Runtime(): void
     {
         $scriptPaths = array_merge(
             array(
@@ -105,18 +105,24 @@ final class Joomla6CompatibilityTest extends TestCase
             glob(JEM_TEST_ROOT . '/plugins/*/script.php') ?: array()
         );
 
-        $missing = array();
+        $missingMinimum = array();
+        $missingMaximum = array();
 
         foreach ($scriptPaths as $path) {
             $code = file_get_contents($path);
             self::assertIsString($code);
 
-            if (preg_match('/Version::MAJOR_VERSION\s*(?:===|!==)\s*6/', $code) !== 1) {
-                $missing[] = $this->relativePath($path);
+            if (strpos($code, "version_compare(JVERSION, '5.4.0'") === false) {
+                $missingMinimum[] = $this->relativePath($path);
+            }
+
+            if (strpos($code, "version_compare(JVERSION, '7.0.0'") === false && strpos($code, 'Version::MAJOR_VERSION > 6') === false) {
+                $missingMaximum[] = $this->relativePath($path);
             }
         }
 
-        self::assertSame(array(), $missing, "Installer scripts must guard Joomla 6 runtime:\n" . implode("\n", $missing));
+        self::assertSame(array(), $missingMinimum, "Installer scripts must require Joomla 5.4.0 or newer:\n" . implode("\n", $missingMinimum));
+        self::assertSame(array(), $missingMaximum, "Installer scripts must reject Joomla 7 or newer until tested:\n" . implode("\n", $missingMaximum));
     }
 
     public function testComponentInstallerAllowsFreshInstallWhenUpdatePreflightHasNoInstalledVersion(): void
@@ -133,7 +139,7 @@ final class Joomla6CompatibilityTest extends TestCase
         );
     }
 
-    public function testJoomlaIntegrationTestsExpectJoomla6(): void
+    public function testJoomlaIntegrationTestsExpectJoomla5Or6(): void
     {
         $testPaths = array();
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(JEM_TEST_ROOT . '/tests/Joomla'));
@@ -150,12 +156,12 @@ final class Joomla6CompatibilityTest extends TestCase
             $code = file_get_contents($path);
             self::assertIsString($code);
 
-            if (preg_match('/assertSame\(5|\/\^5\\\\\.\//', $code) === 1) {
+            if (preg_match('/assertSame\(\s*4\s*,\s*Version::MAJOR_VERSION|\/\^4\\\\\.\//', $code) === 1) {
                 $offenders[] = $this->relativePath($path);
             }
         }
 
-        self::assertSame(array(), $offenders, "Joomla integration tests must target Joomla 6 only:\n" . implode("\n", $offenders));
+        self::assertSame(array(), $offenders, "Joomla integration tests must target Joomla 5.4 or Joomla 6:\n" . implode("\n", $offenders));
     }
 
     private function relativePath(string $path): string

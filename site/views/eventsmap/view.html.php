@@ -105,7 +105,11 @@ class JemViewEventsMap extends JemView
         $filterStartDate   = null;
         $filterEndDate     = null;
         $selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
-        $selectedCountry    = $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry;
+        $selectedCountry    = $defaultCountry;
+
+        if ($showCountryFilter && $app->input->exists('jem_map_filter_country')) {
+            $selectedCountry = trim($app->input->getString('jem_map_filter_country', ''));
+        }
 
         if ($showDateFilter) {
             $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');

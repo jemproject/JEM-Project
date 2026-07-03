@@ -10,9 +10,9 @@ final class UpdateCheckModelContractTest extends TestCase
     {
         $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/updatecheck.php');
 
-        self::assertStringContainsString('$latestUpdate = null;', $code);
-        self::assertStringContainsString('version_compare((string) $updatexml->version, (string) $latestUpdate->version, \'gt\')', $code);
-        self::assertStringContainsString('$selectedUpdate = $selectedUpdate ?: $latestUpdate;', $code);
+        self::assertStringContainsString('$highestPlatformUpdate = null;', $code);
+        self::assertStringContainsString('$this->compareUpdatePlatform($updatexml, $highestPlatformUpdate) > 0', $code);
+        self::assertStringContainsString('$selectedUpdate = $selectedUpdate ?: $highestPlatformUpdate;', $code);
         self::assertStringContainsString('$this->assignUpdateData($updatedata, $selectedUpdate, $installedversion);', $code);
     }
 

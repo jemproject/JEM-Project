@@ -153,12 +153,14 @@ use Joomla\CMS\Session\Session;
 
         .jem-imagehandler-grid .jem-imagehandler-delete {
             position: absolute;
-            top: 0.35rem;
-            right: 0.35rem;
-            width: 2rem;
-            height: 2rem;
+            top: 0.3rem;
+            right: 0.3rem;
+            width: 1.35rem;
+            height: 1.35rem;
             padding: 0;
             gap: 0;
+            font-size: 0.75rem;
+            line-height: 1;
         }
 
         .jem-imagehandler-grid .jem-imagehandler-delete .jem-imagehandler-delete-label {

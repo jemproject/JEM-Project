@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
@@ -25,6 +26,69 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditevent extends JemModelEvent
 {
+    /**
+     * Create a placeholder Joomla article from the front-end article selector and
+     * return it so the event form can store the associated article id.
+     *
+     * @param   string        $title       Article title.
+     * @param   integer       $targetId    Preferred Joomla article category id.
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  array  Article id and title.
+     */
+    public function createAssociatedArticlePlaceholder($title, $targetId = 0, $categories = array())
+    {
+        $title = trim((string) $title);
+
+        if ($title === '') {
+            $title = Text::_('COM_JEM_SELECT_ARTICLE');
+        }
+
+        $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, 2, true, (int) $targetId);
+
+        if (!$articleCategoryId && (int) $targetId > 0) {
+            $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, 1, true, (int) $targetId);
+        }
+
+        if (!$articleCategoryId) {
+            return array();
+        }
+
+        $user = Factory::getApplication()->getIdentity();
+
+        if (!$user->authorise('core.create', 'com_content.category.' . $articleCategoryId) && !$user->authorise('core.create', 'com_content')) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_PERMISSION'));
+
+            return array();
+        }
+
+        $articleId = $this->createAssociatedContentArticle(
+            array(
+                'title'     => $title,
+                'alias'     => '',
+                'introtext' => '',
+                'fulltext'  => '',
+                'language'  => '*',
+                'attribs'   => array('article_usage' => 'content'),
+            ),
+            $articleCategoryId,
+            0
+        );
+
+        if (!$articleId) {
+            if (!$this->getError()) {
+                $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED'));
+            }
+
+            return array();
+        }
+
+        return array(
+            'id'    => (int) $articleId,
+            'title' => $title,
+        );
+    }
+
     public function getForm($data = array(), $loadData = true)
     {
         $form = parent::getForm($data, $loadData);

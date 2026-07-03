@@ -16,7 +16,7 @@
                 query="SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 3 ORDER BY ordering ASC, name ASC"
                 key_field="value"
                 value_field="text"
-                required="true" class="form-select w-auto"
+                required="true" class="form-select w-auto jem-options-width-auto"
             />
         </fieldset>
     </fields>
@@ -46,7 +46,7 @@
             <field name="display_order" type="list"
                 default="venue_city_country"
                 label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
-                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC" class="form-select w-auto"
+                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="venue_city_country">COM_JEM_VENUESLIST_ORDER_VENUE_CITY_COUNTRY</option>
                 <option value="venue_country_city">COM_JEM_VENUESLIST_ORDER_VENUE_COUNTRY_CITY</option>

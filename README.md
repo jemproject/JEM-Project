@@ -1,5 +1,7 @@
-﻿# JEM 5.0.0beta3 (the Joomla Event Manager)
-# released 2026-05-21
+# JEM 5.0.0 RC5 (the Joomla Event Manager)
+released 2026-07-03
+
+JEM 5.0.0 RC5 supports Joomla 5.4.x and Joomla 6.x and requires PHP 8.3 or newer.
 
 ## To install
 Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla via the web installer.
@@ -18,16 +20,11 @@ links, attachments, maps, categories, venues and event types.
 ## Community Support
 https://www.joomlaeventmanager.net/forum
 
-## Translation:
+## Translation
 https://app.transifex.com/jemproject/
 
 ## Changelog
-https://www.joomlaeventmanager.net/project/changelog-jem-4
-
--->
+https://www.joomlaeventmanager.net/project/changelog-jem-5
 
 ## Errors
-Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
-
-
-
+Please report errors here: https://github.com/jemproject/JEM-Project/issues.

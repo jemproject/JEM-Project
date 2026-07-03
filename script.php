@@ -239,9 +239,9 @@ class com_jemInstallerScript
 
         $app = Factory::getApplication();
         
-        // Verify that we are in Joomla 6.
-        if (Version::MAJOR_VERSION !== 6) {
-            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', '6.0', JVERSION), 'error');
+        // Verify that we are in Joomla 5.4 or Joomla 6.
+        if (version_compare(JVERSION, '5.4.0', 'lt') || version_compare(JVERSION, '7.0.0', 'ge')) {
+            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', '5.4.0 / 6.x', JVERSION), 'error');
             return false;
         }
 
@@ -261,7 +261,7 @@ class com_jemInstallerScript
             // Installed component version
             $this->oldRelease = $this->getParam('version');
 
-            $minUpgradeVersion = '4.5.0';
+            $minUpgradeVersion = '4.4.2';
 
             if ($this->oldRelease !== '' && version_compare($this->oldRelease, $minUpgradeVersion, 'lt')) {
                 $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $minUpgradeVersion, $this->oldRelease), 'error');
@@ -313,6 +313,7 @@ class com_jemInstallerScript
         }
 
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
         }
     }
@@ -627,6 +628,46 @@ class com_jemInstallerScript
             $db->setQuery($query);
             $db->execute();
         }
+    }
+
+    /**
+     * Remove the legacy Help entry from Joomla's administrator component menu.
+     *
+     * The Help view remains available from the JEM control panel, but it should
+     * no longer be shown as a separate item in the Joomla Components menu.
+     *
+     * @return void
+     */
+    private function removeObsoleteAdminHelpMenuItem()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__menu'))
+            ->where($db->quoteName('client_id') . ' = 1')
+            ->where(
+                '('
+                . $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' = ' . $db->quote('option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' LIKE ' . $db->quote('%option=com_jem%view=help%')
+                . ')'
+            );
+
+        if ($componentId > 0) {
+            $query->where($db->quoteName('component_id') . ' = ' . $componentId);
+        }
+
+        $db->setQuery($query);
+        $db->execute();
     }
 
     /**

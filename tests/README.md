@@ -242,7 +242,7 @@ vendor/bin/phpunit --list-tests
 
 ## Joomla Version Compatibility
 
-This suite targets JEM 5.x for Joomla 6 only. Tests should prefer JEM-owned contracts over Joomla internals so future Joomla 6 minors remain easy to review.
+This suite targets JEM 5.x for Joomla 5.4 and Joomla 6. Tests should prefer JEM-owned contracts over Joomla internals so future Joomla minors remain easy to review.
 
 Static and pure unit tests should remain mostly portable. Joomla bootstrap, database, functional, and visual tests should stay isolated in their own suites.
 

@@ -14,7 +14,7 @@
                 description="COM_JEM_ATTENDEE_REGISTRATIONS_COLUMNS_DESC"
                 multiple="true"
                 size="12"
-                class="form-select"
+                class="form-select jem-options-width-auto w-auto"
             >
                 <option value="registration_id">COM_JEM_ATTENDEES_REGID</option>
                 <option value="name">COM_JEM_NAME</option>

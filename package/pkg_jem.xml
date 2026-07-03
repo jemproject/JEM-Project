@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="package" version="6.0" method="upgrade">
+<extension type="package" version="5.0" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>June 2026</creationDate>
+    <creationDate>3 July 2026</creationDate>
     <packagename>jem</packagename>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0rc4</version>
+    <version>5.0.0rc5</version>
     <url>https://www.joomlaeventmanager.net/</url>
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>

@@ -9,7 +9,7 @@ class PlgQuickiconJemInstallerScript extends InstallerScript
 {
     public function preflight($type, $parent)
     {
-        return Version::MAJOR_VERSION === 6;
+        return version_compare(JVERSION, '5.4.0', '>=') && version_compare(JVERSION, '7.0.0', '<');
     }
 
     public function postflight($type, $parent)

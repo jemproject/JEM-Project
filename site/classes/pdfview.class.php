@@ -324,8 +324,22 @@ class JemPdfView
     /**
      * Renders an event-first Events Map PDF.
      */
-    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm'): void
+    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null): void
     {
+        $mapWidth = 260.0;
+
+        if (class_exists('JemPdf', false)) {
+            $settings = JemHelper::config();
+            $paper = self::getProfilePaperSettings($settings, 'map');
+            $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paper['size']);
+            $mapWidth = self::getPdfPaperWidth($paper['size'], $paper['orientation'])
+                - (float) ($margins['left'] ?? 0)
+                - (float) ($margins['right'] ?? 0)
+                - 4.0;
+        }
+
+        $mapPreviewHtml = self::buildVenueMapPreviewHtml(self::buildEventsMapPreviewRows($rows), $mapProvider, $mapWidth, $mapZoom);
+
         self::renderTable(
             $title,
             array(
@@ -339,7 +353,9 @@ class JemPdfView
             ),
             self::buildEventsMapRows($rows, $mapProvider),
             $filename,
-            'map'
+            'map',
+            '',
+            $mapPreviewHtml
         );
     }
 
@@ -1364,6 +1380,7 @@ class JemPdfView
             .jem-pdf-venuesmap-description-label { font-family: ' . $headerFontFamily . '; font-weight: bold; margin-top: 1.5mm; }
             .jem-pdf-venuesmap-description { color: #374151; line-height: ' . ($baseFontSize + 2) . 'pt; }
             .jem-pdf-venuesmap-coordinates { border: 0.2mm solid #d6dde8; background-color: #ffffff; color: #475569; line-height: ' . ($baseFontSize + 2) . 'pt; padding: 1.2mm; text-align: center; }
+            .jem-pdf-map-preview { text-align: center; margin-bottom: 4mm; }
             .jem-pdf-empty { color: #6b7280; text-align: center; margin-top: 8mm; }
         </style>';
         $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
@@ -1373,6 +1390,9 @@ class JemPdfView
 
             return implode("\n", array_filter($html));
         }
+
+        $mapWidth = self::getPdfPaperWidth($paperSize, $orientation) - (float) ($margins['left'] ?? 0) - (float) ($margins['right'] ?? 0) - 4.0;
+        $html[] = self::buildVenueMapPreviewHtml($rows, $mapProvider, $mapWidth);
 
         foreach ($rows as $row) {
             $html[] = self::buildVenueMapCardHtml($row, $mapProvider, $showVenueImage, $showVenueDescription);
@@ -1568,9 +1588,9 @@ class JemPdfView
         return $country;
     }
 
-    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider, float $widthMm = 260.0): string
+    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider, float $widthMm = 260.0, ?int $mapZoom = null): string
     {
-        $url = self::buildStaticMapImageUrl($rows, $mapProvider);
+        $url = self::buildStaticMapImageUrl($rows, $mapProvider, $mapZoom);
 
         if ($url === '') {
             return '';
@@ -1586,10 +1606,11 @@ class JemPdfView
             return '';
         }
 
-        $widthMm = max(120.0, min(280.0, $widthMm));
+        $widthMm = max(120.0, $widthMm);
+        $heightMm = $widthMm * 320.0 / 900.0;
 
-        return '<div class="jem-pdf-map-preview">'
-            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
+        return '<div class="jem-pdf-map-preview" style="text-align:center; margin-bottom:6mm; padding-bottom:3mm;">'
+            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" height="' . htmlspecialchars(number_format($heightMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1;" />'
             . '</div>';
     }
 
@@ -1713,7 +1734,7 @@ class JemPdfView
             return '';
         }
 
-        $hash = sha1(json_encode($points));
+        $hash = sha1('wide-900x320|' . json_encode($points));
         $pngPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.png';
         $svgPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.svg';
 
@@ -1747,7 +1768,7 @@ class JemPdfView
         }
 
         $width = 1600;
-        $height = 700;
+        $height = 569;
         $zoom = max(2, min(13, self::estimateStaticMapZoom(array_map(static function (array $point): array {
             return array($point['lat'], $point['lng']);
         }, $points))));
@@ -1868,7 +1889,7 @@ class JemPdfView
     private static function buildFallbackVenueMapPng(array $points, string $path): string
     {
         $width = 1600;
-        $height = 620;
+        $height = 569;
         $padding = 18;
         $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
 
@@ -1953,7 +1974,7 @@ class JemPdfView
     private static function buildFallbackVenueMapSvg(array $points, string $path): string
     {
         $width = 1600;
-        $height = 620;
+        $height = 569;
         $padding = 18;
         $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
         $svg = array();
@@ -2039,7 +2060,7 @@ class JemPdfView
         return strlen($label) > 38 ? substr($label, 0, 35) . '...' : $label;
     }
 
-    private static function buildStaticMapImageUrl(array $rows, string $mapProvider): string
+    private static function buildStaticMapImageUrl(array $rows, string $mapProvider, ?int $mapZoom = null): string
     {
         $points = array();
 
@@ -2061,13 +2082,14 @@ class JemPdfView
         $markerPoints = array_slice($points, 0, 40);
         $centerLat = array_sum(array_column($points, 0)) / count($points);
         $centerLng = array_sum(array_column($points, 1)) / count($points);
+        $zoom = $mapZoom === null ? self::estimateStaticMapZoom($points) : max(0, min(19, $mapZoom));
         $settings = JemHelper::globalattribs();
         $googleApiKey = trim((string) ($settings && method_exists($settings, 'get') ? $settings->get('global_googleapi', '') : ''));
 
         if ($mapProvider === 'google' && $googleApiKey !== '') {
-            $url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x320&scale=2&maptype=roadmap'
+            $url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x228&scale=2&maptype=roadmap'
                 . '&center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
-                . '&zoom=' . self::estimateStaticMapZoom($points);
+                . '&zoom=' . $zoom;
 
             foreach ($markerPoints as $point) {
                 $url .= '&markers=' . rawurlencode(self::formatCoordinate($point[0]) . ',' . self::formatCoordinate($point[1]));
@@ -2082,7 +2104,7 @@ class JemPdfView
 
         return 'https://staticmap.openstreetmap.de/staticmap.php?'
             . 'center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
-            . '&zoom=' . self::estimateStaticMapZoom($points)
+            . '&zoom=' . $zoom
             . '&size=900x320'
             . '&markers=' . rawurlencode(implode('|', $markers));
     }
@@ -2171,6 +2193,39 @@ class JemPdfView
         }
 
         return $tableRows;
+    }
+
+    private static function buildEventsMapPreviewRows(array $rows): array
+    {
+        $points = array();
+        $seen = array();
+
+        foreach ($rows as $row) {
+            $lat = self::normaliseCoordinate($row->latitude ?? null);
+            $lng = self::normaliseCoordinate($row->longitude ?? null);
+
+            if ($lat === null || $lng === null) {
+                continue;
+            }
+
+            $venueId = (int) ($row->venue_id ?? 0);
+            $key = $venueId > 0
+                ? 'venue:' . $venueId
+                : 'coords:' . self::formatCoordinate($lat) . ',' . self::formatCoordinate($lng);
+
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $point = new \stdClass();
+            $point->latitude = $lat;
+            $point->longitude = $lng;
+            $point->venue = (string) ($row->venue ?? $row->title ?? '');
+            $points[] = $point;
+        }
+
+        return $points;
     }
 
     private static function buildSpecialDayRows(array $rows): array

@@ -392,15 +392,19 @@ class JemModelSettings extends AdminModel
     {
         $input = Factory::getApplication()->input;
 
-        if (!$input->exists('jem_country_published')) {
+        if (!$input->exists('jem_country_selection') && !$input->exists('jem_country_published')) {
             return true;
         }
-
-        $states = $input->get('jem_country_published', array(), 'array');
 
         try {
             $db = Factory::getContainer()->get(DatabaseDriver::class);
             $this->ensureCountriesPublishedColumn($db);
+
+            if ($input->exists('jem_country_selection')) {
+                return $this->storeCountrySelection($db, (string) $input->get('jem_country_selection', '', 'raw'));
+            }
+
+            $states = $input->get('jem_country_published', array(), 'array');
 
             foreach ($states as $iso2 => $published) {
                 $iso2 = strtoupper(substr(preg_replace('/[^A-Z]/i', '', (string) $iso2), 0, 2));
@@ -423,6 +427,91 @@ class JemModelSettings extends AdminModel
         }
 
         return true;
+    }
+
+    /**
+     * Persist the compact Countries settings payload.
+     *
+     * @param   DatabaseDriver  $db       Database driver.
+     * @param   string          $payload  JSON payload posted by the settings form.
+     *
+     * @return bool
+     */
+    protected function storeCountrySelection(DatabaseDriver $db, string $payload): bool
+    {
+        $selection = json_decode($payload, true);
+
+        if (!is_array($selection)) {
+            $this->setError(Text::_('COM_JEM_COUNTRIES_INVALID_SELECTION'));
+
+            return false;
+        }
+
+        $all = !empty($selection['all']);
+        $continents = $this->normaliseCountryCodes((array) ($selection['continents'] ?? array()), 2);
+        $include = $this->normaliseCountryCodes((array) ($selection['include'] ?? array()), 2);
+
+        if ($all) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_countries'))
+                ->set($db->quoteName('published') . ' = 1');
+
+            $db->setQuery($query)->execute();
+
+            return true;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_countries'))
+            ->set($db->quoteName('published') . ' = 0');
+
+        $db->setQuery($query)->execute();
+
+        $where = array();
+
+        if ($continents) {
+            $where[] = $db->quoteName('continent') . ' IN (' . implode(',', array_map(array($db, 'quote'), $continents)) . ')';
+        }
+
+        if ($include) {
+            $where[] = $db->quoteName('iso2') . ' IN (' . implode(',', array_map(array($db, 'quote'), $include)) . ')';
+        }
+
+        if (!$where) {
+            return true;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_countries'))
+            ->set($db->quoteName('published') . ' = 1')
+            ->where('(' . implode(' OR ', $where) . ')');
+
+        $db->setQuery($query)->execute();
+
+        return true;
+    }
+
+    /**
+     * Normalise country or continent codes.
+     *
+     * @param   array  $codes   Raw codes.
+     * @param   int    $length  Maximum code length.
+     *
+     * @return array
+     */
+    protected function normaliseCountryCodes(array $codes, int $length): array
+    {
+        $normalised = array();
+
+        foreach ($codes as $code) {
+            $code = strtoupper(substr(preg_replace('/[^A-Z]/i', '', (string) $code), 0, $length));
+
+            if ($code !== '') {
+                $normalised[] = $code;
+            }
+        }
+
+        return array_values(array_unique($normalised));
     }
 
     /**

@@ -87,7 +87,9 @@ class JFormFieldImageselect extends ListField
         $document = Factory::getApplication()->getDocument();
         $document->getWebAssetManager()->addInlineScript(implode("\n", $script));
         $document->addStyleDeclaration('
-#' . $uploadModalId . ' .modal-dialog,
+#' . $uploadModalId . ' .modal-dialog {
+    max-width: min(78vw, 980px);
+}
 #' . $selectModalId . ' .modal-dialog {
     max-width: min(90vw, 1200px);
 }

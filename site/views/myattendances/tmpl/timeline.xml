@@ -31,7 +31,7 @@
                 type="list"
                 default="right"
                 label="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_LABEL"
-                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC" class="form-select w-auto"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC" class="form-select w-auto jem-options-width-auto"
                 >
                 <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
                 <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>

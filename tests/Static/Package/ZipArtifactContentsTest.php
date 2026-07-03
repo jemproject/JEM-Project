@@ -160,9 +160,9 @@ final class ZipArtifactContentsTest extends TestCase
             );
 
             self::assertStringContainsString(
-                '$selectedUpdate = $selectedUpdate ?: $latestUpdate;',
+                '$selectedUpdate = $selectedUpdate ?: $highestPlatformUpdate;',
                 $this->componentEntryContents($zipFile, 'admin/models/updatecheck.php'),
-                $source . ':admin/models/updatecheck.php should fall back to the newest XML update entry.'
+                $source . ':admin/models/updatecheck.php should fall back to the highest compatible platform XML update entry.'
             );
 
             self::assertStringContainsString(

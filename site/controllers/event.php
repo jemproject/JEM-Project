@@ -328,6 +328,45 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Create a Joomla article from the front-end selector modal and return it to
+     * the event form as the selected associated article.
+     *
+     * @return  void
+     */
+    public function createAssociatedArticle()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app      = Factory::getApplication();
+        $input    = $app->input;
+        $function = preg_replace('/[^A-Za-z0-9_]/', '', $input->getCmd('function', 'jSelectArticle'));
+        $title    = $input->getString('article_title', '');
+        $targetId = $input->getInt('article_catid', 0);
+        $jemcats  = array_values(array_filter(array_map('intval', explode(',', (string) $input->getString('jemcats', '')))));
+        $model    = $this->getModel();
+        $article  = $model ? $model->createAssociatedArticlePlaceholder($title, $targetId, $jemcats) : array();
+
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+
+        if (!empty($article['id']) && $function !== '') {
+            echo '<!doctype html><html><body><script>';
+            echo 'var fn = ' . json_encode($function) . ';';
+            echo 'if (window.parent && typeof window.parent[fn] === "function") {';
+            echo 'window.parent[fn](' . (int) $article['id'] . ', ' . json_encode((string) $article['title']) . ');';
+            echo '}';
+            echo '</script></body></html>';
+            $app->close();
+        }
+
+        $message = $model && $model->getError() ? $model->getError() : Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED');
+        echo '<!doctype html><html><body style="font-family: sans-serif; padding: 1rem;">';
+        echo '<div class="alert alert-danger" style="border:1px solid #c52827;color:#842029;background:#f8d7da;padding:.75rem 1rem;">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</div>';
+        echo '<button type="button" onclick="history.back();" style="padding:.45rem .75rem;">' . Text::_('JPREVIOUS') . '</button>';
+        echo '</body></html>';
+        $app->close();
+    }
+
+    /**
      * Notify or redirect after an empty event-content article is created.
      *
      * @param   object  $model  Event model.

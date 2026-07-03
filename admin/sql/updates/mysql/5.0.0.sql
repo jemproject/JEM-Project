@@ -56,7 +56,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_annual_row_
 
 -- change values
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.actionlog_enabled', '0') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.actionlog_enabled') IS NULL;
-UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_detail_image_layout', 'right') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_detail_image_layout') IS NULL;
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_detail_image_layout', 'right', '$.event_detail_image_header_display', 'fill', '$.event_detail_image_header_max_height', '420') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_detail_image_layout') IS NULL;
+UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.event_detail_image_header_display', 'fill', '$.event_detail_image_header_max_height', '420') WHERE `keyname` = 'globalattribs' AND JSON_EXTRACT(`value`, '$.event_detail_image_header_display') IS NULL;
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.calendar_special_days_enabled', '1', '$.calendar_special_day_types', 'Weekend | #d1d5db | 0\nPublic holiday | #e5e7eb | 0') WHERE `keyname` = 'globalattribs';
 UPDATE `#__jem_special_days` SET `title` = 'Saturday and Sunday', `description` = 'Regular weekend days' WHERE `title` = 'Weekend' AND `day_type` = 'Weekend' AND (`description` IS NULL OR `description` = '');
 UPDATE `#__jem_special_days` SET `show_dates` = 0 WHERE `alias` = 'weekend' AND `day_type` = 'Weekend' AND `weekdays` IN ('0,6', '6,0');

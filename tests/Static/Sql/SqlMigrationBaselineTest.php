@@ -19,14 +19,14 @@ final class SqlMigrationBaselineTest extends TestCase
             }
         }
 
-        self::assertSame(array(), $relative, "JEM 5 migration requires JEM 4.5.0 or newer; older SQL scripts must not be shipped:\n" . implode("\n", $relative));
+        self::assertSame(array(), $relative, "JEM 5 ships the 4.5.0 schema step as the internal migration baseline from JEM 4.4.2; older SQL scripts must not be shipped:\n" . implode("\n", $relative));
     }
 
-    public function testInstallerRequiresJem450BeforeUpdate(): void
+    public function testInstallerAllowsJem442BeforeUpdate(): void
     {
         $script = (string) file_get_contents(JEM_TEST_ROOT . '/script.php');
 
-        self::assertStringContainsString("\$minUpgradeVersion = '4.5.0';", $script);
+        self::assertStringContainsString("\$minUpgradeVersion = '4.4.2';", $script);
         self::assertStringContainsString("version_compare(\$this->oldRelease, \$minUpgradeVersion, 'lt')", $script);
         self::assertStringContainsString('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $script);
     }

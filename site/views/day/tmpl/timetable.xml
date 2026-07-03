@@ -45,7 +45,7 @@
             <field name="timetable_orientation" type="list"
                 default="horizontal"
                 label="COM_JEM_TIMETABLE_ORIENTATION"
-                description="COM_JEM_TIMETABLE_ORIENTATION_DESC" class="form-select w-auto"
+                description="COM_JEM_TIMETABLE_ORIENTATION_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="horizontal">COM_JEM_TIMETABLE_ORIENTATION_HORIZONTAL</option>
                 <option value="vertical">COM_JEM_TIMETABLE_ORIENTATION_VERTICAL</option>
@@ -53,7 +53,7 @@
             <field name="timetable_hour_display" type="list"
                 default="event_hours"
                 label="COM_JEM_TIMETABLE_HOUR_DISPLAY"
-                description="COM_JEM_TIMETABLE_HOUR_DISPLAY_DESC" class="form-select w-auto"
+                description="COM_JEM_TIMETABLE_HOUR_DISPLAY_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="event_hours">COM_JEM_TIMETABLE_HOUR_DISPLAY_EVENT_HOURS</option>
                 <option value="all_hours">COM_JEM_TIMETABLE_HOUR_DISPLAY_ALL_HOURS</option>
@@ -86,7 +86,7 @@
             <field name="timetable_event_background" type="list"
                 default="category"
                 label="COM_JEM_TIMETABLE_EVENT_BACKGROUND"
-                description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC" class="form-select w-auto"
+                description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="category">COM_JEM_TIMETABLE_EVENT_BACKGROUND_CATEGORY</option>
                 <option value="venue">COM_JEM_TIMETABLE_EVENT_BACKGROUND_VENUE</option>
@@ -101,7 +101,7 @@
 <field name="categoryswitchcats" type="categoryedit"
                 multiple="true"
                 removeroot="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
@@ -123,7 +123,7 @@
             />
             <field name="timeline_filter_countries" type="countryoptions"
                 multiple="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"

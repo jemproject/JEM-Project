@@ -182,11 +182,11 @@ class Pkg_JemInstallerScript
     protected function checkJoomlaVersion() {
         $app = Factory::getApplication();
 
-        if (Version::MAJOR_VERSION === 6 && version_compare(JVERSION, '6.0', '>=')) {
+        if (version_compare(JVERSION, '5.4.0', '>=') && version_compare(JVERSION, '7.0.0', '<')) {
             return true;
         }
 
-        $app->enqueueMessage(sprintf("Joomla! %s is not supported. This package requires Joomla! 6.x.", JVERSION), 'notice');
+        $app->enqueueMessage(sprintf("Joomla! %s is not supported. This package requires Joomla! 5.4.x or Joomla! 6.x.", JVERSION), 'notice');
         return false;
     }
 

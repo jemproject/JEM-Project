@@ -31,7 +31,7 @@ class mod_jem_typesInstallerScript
     {
         $type = strtolower($type);
 
-        if (Version::MAJOR_VERSION !== 6) {
+        if (version_compare(JVERSION, '5.4.0', 'lt') || Version::MAJOR_VERSION > 6) {
             return false;
         }
 

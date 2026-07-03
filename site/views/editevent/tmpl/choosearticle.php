@@ -14,7 +14,11 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$function = Factory::getApplication()->input->getCmd('function', 'jSelectArticle');
+$input = Factory::getApplication()->input;
+$function = $input->getCmd('function', 'jSelectArticle');
+$articleTitle = $input->getString('article_title', '');
+$articleCatid = $input->getInt('article_catid', 0);
+$jemcats = $input->getString('jemcats', '');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
 $cssSettings = JemHelper::retrieveCss();
 $filterBackground = $cssSettings->get('css_color_bg_filter');
@@ -108,6 +112,28 @@ if (!empty($filterBorder)) {
         white-space: nowrap;
     }
 
+    #jem.jem_select_article .jem-create-associated-article {
+        display: grid;
+        grid-template-columns: auto minmax(12rem, 1fr) auto;
+        gap: .5rem;
+        align-items: center;
+        margin: 0 0 1rem;
+        padding: .65rem;
+        border: 1px solid #d8dee8;
+        border-radius: .25rem;
+        background: #f6f8fb;
+    }
+
+    #jem.jem_select_article .jem-create-associated-article label {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    #jem.jem_select_article .jem-create-associated-article input[type="text"] {
+        width: 100%;
+        min-width: 10rem;
+    }
+
     @media (max-width: 560px) {
         #jem.jem_select_article #jem_filter {
             display: flex;
@@ -127,11 +153,25 @@ if (!empty($filterBorder)) {
         #jem.jem_select_article #filter_search {
             flex: 1 1 100%;
         }
+
+        #jem.jem_select_article .jem-create-associated-article {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
 <div id="jem" class="jem_select_article">
     <div class="clr"></div>
+
+    <form action="<?php echo Route::_('index.php?option=com_jem&task=event.createAssociatedArticle&tmpl=component'); ?>" method="post" class="jem-create-associated-article">
+        <label for="jem_article_title"><?php echo Text::_('JGLOBAL_TITLE'); ?></label>
+        <input type="text" name="article_title" id="jem_article_title" value="<?php echo htmlspecialchars($articleTitle, ENT_QUOTES, 'UTF-8'); ?>" required>
+        <button type="submit" class="btn btn-success"><?php echo Text::_('JACTION_CREATE') . ' / ' . Text::_('COM_JEM_SELECT'); ?></button>
+        <input type="hidden" name="article_catid" value="<?php echo (int) $articleCatid; ?>">
+        <input type="hidden" name="jemcats" value="<?php echo htmlspecialchars($jemcats, ENT_QUOTES, 'UTF-8'); ?>">
+        <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>">
+        <?php echo HTMLHelper::_('form.token'); ?>
+    </form>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component&function=' . $this->escape($function) . '&' . Session::getFormToken() . '=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter" class="floattext"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
@@ -143,7 +183,7 @@ if (!empty($filterBorder)) {
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onchange="document.adminForm.submit();" />
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>(0, '<?php echo $this->escape(addslashes(Text::_('COM_JEM_SELECT_ARTICLE'))); ?>');"><?php echo Text::_('COM_JEM_NO_ARTICLE'); ?></button>
+                <button type="button" class="pointer btn btn-primary" onclick="if (window.parent && typeof window.parent[<?php echo htmlspecialchars(json_encode($function), ENT_QUOTES, 'UTF-8'); ?>] === 'function') window.parent[<?php echo htmlspecialchars(json_encode($function), ENT_QUOTES, 'UTF-8'); ?>](0, '<?php echo $this->escape(addslashes(Text::_('COM_JEM_SELECT_ARTICLE'))); ?>');"><?php echo Text::_('COM_JEM_NO_ARTICLE'); ?></button>
             </div>
             <div class="jem_fright">
                 <?php
@@ -169,7 +209,7 @@ if (!empty($filterBorder)) {
                     <tr class="row<?php echo $i % 2; ?>">
                         <td><?php echo $this->pagination->getRowOffset($i); ?></td>
                         <td style="text-align: left;">
-                            <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>('<?php echo (int) $row->id; ?>', '<?php echo $this->escape(addslashes($row->title)); ?>');"><?php echo $this->escape($row->title); ?></a>
+                            <a class="pointer" onclick="if (window.parent && typeof window.parent[<?php echo htmlspecialchars(json_encode($function), ENT_QUOTES, 'UTF-8'); ?>] === 'function') window.parent[<?php echo htmlspecialchars(json_encode($function), ENT_QUOTES, 'UTF-8'); ?>]('<?php echo (int) $row->id; ?>', '<?php echo $this->escape(addslashes($row->title)); ?>');"><?php echo $this->escape($row->title); ?></a>
                         </td>
                         <td style="text-align: left;"><?php echo $this->escape($row->category_title); ?></td>
                     </tr>
@@ -183,6 +223,9 @@ if (!empty($filterBorder)) {
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="tmpl" value="component" />
             <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+            <input type="hidden" name="article_title" value="<?php echo htmlspecialchars($articleTitle, ENT_QUOTES, 'UTF-8'); ?>" />
+            <input type="hidden" name="article_catid" value="<?php echo (int) $articleCatid; ?>" />
+            <input type="hidden" name="jemcats" value="<?php echo htmlspecialchars($jemcats, ENT_QUOTES, 'UTF-8'); ?>" />
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         </p>
