@@ -103,6 +103,7 @@
                    label="COM_JEM_EVENTS_MAP_DATE_FILTER_DEFAULT"
                    description="COM_JEM_EVENTS_MAP_DATE_FILTER_DEFAULT_DESC"
                    class="inputbox btn-group btn-group-yesno"
+                   showon="show_date_filter:1"
             >
                 <option value="all">COM_JEM_EVENTS_MAP_ALL</option>
                 <option value="today">COM_JEM_EVENTS_MAP_TODAY</option>
