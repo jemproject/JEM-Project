@@ -153,7 +153,7 @@ class JemViewWeekcal extends JemView
         // init calendar
         $cal = new activeCalendarWeek($year,1,1);
         $cal->enableWeekNum(Text::_('COM_JEM_WKCAL_WEEK'),null,''); // enables week number column with linkable week numbers
-        $cal->setFirstWeekDay($params->get('firstweekday', 0));
+        $cal->setFirstWeekDay($params->get('firstweekday', 1));
         $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
         $cal->setWeekNavigation(
             $this->escape($weekTitle),

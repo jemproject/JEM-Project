@@ -102,7 +102,7 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Sample Category', 'sample-category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
             $items[] = array('Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
         } else {
-            $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'category-calendar'));
+            $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
@@ -120,9 +120,10 @@ class JemControllerFrontendmenu extends BaseController
         foreach ($items as $item) {
             $itemType        = $item[4] ?? 'component';
             $itemComponentId = $item[5] ?? $componentId;
+            $itemParams      = array_merge($this->getMenuItemDefaultParams($item[2]), $item[6] ?? array());
             $itemAccess      = ((int) $item[3] === (int) $groups['management']) ? $specialAccessId : 1;
 
-            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess)) {
+            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess, $itemParams)) {
                 $created++;
             }
         }
@@ -252,12 +253,12 @@ class JemControllerFrontendmenu extends BaseController
         $db->execute();
     }
 
-    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1)
+    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1, array $params = array())
     {
         $existing = $this->getExistingMenuItem($menutype, array_merge(array($alias), $legacyAliases), $parentId);
 
         if ($existing) {
-            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId, $access);
+            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId, $access, $params);
             return (int) $existing;
         }
 
@@ -281,7 +282,7 @@ class JemControllerFrontendmenu extends BaseController
             'access'       => max(1, (int) $access),
             'img'          => '',
             'template_style_id' => 0,
-            'params'       => '{}',
+            'params'       => $params ? json_encode($params) : '{}',
             'home'         => 0,
             'language'     => '*',
             'client_id'    => 0,
@@ -326,7 +327,7 @@ class JemControllerFrontendmenu extends BaseController
         return (int) $db->loadResult();
     }
 
-    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null, $access = 1)
+    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null, $access = 1, array $defaultParams = array())
     {
         $table = Table::getInstance('Menu');
 
@@ -348,9 +349,70 @@ class JemControllerFrontendmenu extends BaseController
             'parent_id'    => $parentId !== null ? (int) $parentId : (int) $table->parent_id,
         );
 
+        if ($defaultParams) {
+            $data['params'] = $this->mergeMenuParamDefaults((string) $table->params, $defaultParams);
+        }
+
         if (!$table->bind($data) || !$table->check() || !$table->store()) {
             throw new \RuntimeException($table->getError());
         }
+    }
+
+    protected function mergeMenuParamDefaults(string $currentParams, array $defaultParams): string
+    {
+        $params = json_decode($currentParams, true);
+
+        if (!is_array($params)) {
+            $params = array();
+        }
+
+        foreach ($defaultParams as $key => $value) {
+            if (!array_key_exists($key, $params)) {
+                $params[$key] = $value;
+            }
+        }
+
+        return json_encode($params);
+    }
+
+    protected function getMenuItemDefaultParams(string $link): array
+    {
+        $query = parse_url($link, PHP_URL_QUERY);
+
+        if (!is_string($query) || $query === '') {
+            return array();
+        }
+
+        parse_str($query, $parts);
+
+        if (($parts['option'] ?? '') !== 'com_jem' || empty($parts['view'])) {
+            return array();
+        }
+
+        $view = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $parts['view']);
+        $layout = preg_replace('/[^A-Za-z0-9_-]/', '', (string) ($parts['layout'] ?? 'default'));
+        $xmlPath = JPATH_SITE . '/components/com_jem/views/' . $view . '/tmpl/' . $layout . '.xml';
+
+        if (!is_file($xmlPath)) {
+            return array();
+        }
+
+        $xml = @simplexml_load_file($xmlPath);
+
+        if (!$xml) {
+            return array();
+        }
+
+        $defaults = array();
+        foreach ($xml->xpath('./fields[@name="params"]//field[@name and @default]') ?: array() as $field) {
+            $name = trim((string) $field['name']);
+
+            if ($name !== '') {
+                $defaults[$name] = (string) $field['default'];
+            }
+        }
+
+        return $defaults;
     }
 
     protected function unpublishGeneratedMenuItems($menutype, array $aliases)
