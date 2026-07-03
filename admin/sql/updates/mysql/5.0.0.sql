@@ -20,6 +20,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_title_font_
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_header_font_family', 'helvetica');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_body_font_family', 'helvetica');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_accent_color', '#1d4ed8');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_title_font_size', '18');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_base_font_size', '8');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_heading_font_size', '12');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_event_layout', 'details');

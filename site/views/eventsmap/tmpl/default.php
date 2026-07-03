@@ -319,7 +319,7 @@ foreach ((array) $events as $event) {
                         <th><?php echo Text::_('COM_JEM_VENUE'); ?></th>
                         <th><?php echo Text::_('COM_JEM_CITY'); ?></th>
                         <th><?php echo Text::_('COM_JEM_STATE'); ?></th>
-                        <th><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th class="jem-eventsmap-country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
                         <th><?php echo Text::_('COM_JEM_MAP'); ?></th>
                     </tr>
                 </thead>
@@ -349,7 +349,7 @@ foreach ((array) $events as $event) {
                             </td>
                             <td><?php echo htmlspecialchars((string) ($event->city ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
                             <td><?php echo htmlspecialchars((string) ($event->state ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-                            <td><?php echo htmlspecialchars((string) ($event->country ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td class="jem-eventsmap-country"><?php echo htmlspecialchars((string) ($event->country ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
                             <td>
                                 <a href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                     <?php echo Text::_('COM_JEM_MAP'); ?>

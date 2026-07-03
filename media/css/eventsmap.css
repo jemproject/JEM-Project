@@ -122,6 +122,10 @@
     background-color: #e5e7eb;
 }
 
+#jem.jem_eventsmap .jem-eventsmap-table .jem-eventsmap-country {
+    text-align: center;
+}
+
 #jem.jem_eventsmap .copyright {
     clear: both;
     float: none;

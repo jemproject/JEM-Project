@@ -1081,6 +1081,32 @@ input#replace_attachments1.inputbox {
     grid-template-columns: 1fr;
 }
 
+.jem-import-catalog-source-field code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.jem-import-catalog-source-line {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.jem-import-catalog-source-status {
+    align-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    height: 1.25rem;
+    justify-content: center;
+    line-height: 1;
+    width: 1.25rem;
+}
+
 .jem-import-catalog-table code {
     white-space: normal;
     word-break: break-all;

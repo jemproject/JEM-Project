@@ -100,6 +100,7 @@ class JemViewImport extends JemAdminView
         $this->specialDaysImportProfileOptions = $this->getExternalImportProfileOptions('specialdays');
         $this->specialDayTypeOptions = $this->getSpecialDayTypeOptions();
         $this->importCatalogSource = JemImportCatalogHelper::getCatalogSource();
+        $this->importCatalogStatus = JemImportCatalogHelper::getStatus();
         $this->importCatalogEntries = JemImportCatalogHelper::getEntries();
         $this->importCatalogCountries = JemImportCatalogHelper::getCountries($this->importCatalogEntries);
         $this->importCatalogCounties = JemImportCatalogHelper::getCounties($this->importCatalogEntries);

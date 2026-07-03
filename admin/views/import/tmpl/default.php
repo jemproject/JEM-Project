@@ -1096,9 +1096,29 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="jem-import-field">
+                        <?php
+                        $catalogStatus = (array) ($this->importCatalogStatus ?? array());
+                        $catalogAvailable = !empty($catalogStatus['available']);
+                        $catalogStatusClass = $catalogAvailable ? 'text-success' : 'text-danger';
+                        $catalogStatusIcon = $catalogAvailable ? 'icon-check' : 'icon-times';
+                        $catalogStatusText = $catalogAvailable ? Text::_('COM_JEM_IMPORT_CATALOG_AVAILABLE') : Text::_('COM_JEM_IMPORT_CATALOG_UNAVAILABLE');
+                        ?>
+                        <div class="jem-import-field jem-import-catalog-source-field">
                             <label><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SOURCE'); ?></label>
-                            <code><?php echo htmlspecialchars($this->importCatalogSource ?? 'import-catalog.xml', ENT_QUOTES, 'UTF-8'); ?></code>
+                            <span class="jem-import-catalog-source-line">
+                                <code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code>
+                                <span class="jem-import-catalog-source-status <?php echo $catalogStatusClass; ?>" title="<?php echo htmlspecialchars($catalogStatusText, ENT_QUOTES, 'UTF-8'); ?>">
+                                    <span class="<?php echo $catalogStatusIcon; ?>" aria-hidden="true"></span>
+                                    <span class="visually-hidden"><?php echo $catalogStatusText; ?></span>
+                                </span>
+                            </span>
+                            <?php if ($catalogAvailable && (!empty($catalogStatus['version']) || !empty($catalogStatus['published']))) : ?>
+                                <span class="d-block text-muted">
+                                    <?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_STATUS_DESC', htmlspecialchars((string) ($catalogStatus['version'] ?? ''), ENT_QUOTES, 'UTF-8'), htmlspecialchars((string) ($catalogStatus['published'] ?? ''), ENT_QUOTES, 'UTF-8')); ?>
+                                </span>
+                            <?php elseif (!$catalogAvailable) : ?>
+                                <span class="d-block text-muted"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_UNAVAILABLE_DESC'); ?></span>
+                            <?php endif; ?>
                         </div>
                         <div class="jem-import-actions">
                             <button type="button" class="btn btn-secondary" onclick="window.location.reload();">

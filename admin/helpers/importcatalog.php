@@ -8,33 +8,124 @@
 defined('_JEXEC') or die;
 
 /**
- * Helper for the optional root import-catalog.xml file.
+ * Helper for the remote JEM import catalog XML.
  */
 class JemImportCatalogHelper
 {
+    const CATALOG_FILE = 'import_catalog_jem.xml';
+    const CATALOG_URL = 'https://www.joomlaeventmanager.net/updatecheck/import_catalog_jem.xml';
+
+    protected static $catalog = null;
+
     public static function getCatalogPath()
     {
-        return JPATH_ROOT . '/import-catalog.xml';
+        return JPATH_ROOT . '/' . self::CATALOG_FILE;
     }
 
     public static function getCatalogSource()
     {
-        return 'import-catalog.xml';
+        return self::CATALOG_URL;
+    }
+
+    public static function getStatus()
+    {
+        $catalog = self::getCatalog();
+
+        return array(
+            'available' => (bool) $catalog['available'],
+            'source' => (string) $catalog['source'],
+            'version' => (string) $catalog['version'],
+            'published' => (string) $catalog['published'],
+            'error' => (string) $catalog['error'],
+        );
     }
 
     public static function getEntries()
     {
-        $path = self::getCatalogPath();
+        $catalog = self::getCatalog();
 
-        if (!is_file($path)) {
-            return array();
+        return $catalog['entries'];
+    }
+
+    protected static function getCatalog()
+    {
+        if (self::$catalog !== null) {
+            return self::$catalog;
         }
 
+        self::$catalog = array(
+            'available' => false,
+            'source' => self::getCatalogSource(),
+            'version' => '',
+            'published' => '',
+            'error' => '',
+            'entries' => array(),
+        );
+
+        $xmlSource = self::downloadCatalogXml(self::getCatalogSource());
+
+        if ($xmlSource === '') {
+            self::$catalog['error'] = 'download';
+
+            return self::$catalog;
+        }
+
+        self::parseCatalogXml($xmlSource);
+
+        return self::$catalog;
+    }
+
+    protected static function downloadCatalogXml($url)
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
+            return '';
+        }
+
+        try {
+            if (class_exists('\\Joomla\\CMS\\Http\\HttpFactory')) {
+                $http = \Joomla\CMS\Http\HttpFactory::getHttp();
+                $response = $http->get($url, array(), 10);
+
+                if ((int) $response->code >= 200 && (int) $response->code < 300) {
+                    return (string) $response->body;
+                }
+            }
+        } catch (\Throwable $e) {
+            // Fall through to the stream fallback below.
+        }
+
+        if (!ini_get('allow_url_fopen')) {
+            return '';
+        }
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'timeout' => 10,
+                'user_agent' => 'JEM import catalog',
+            ),
+            'ssl' => array(
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+            ),
+        ));
+
+        $data = @file_get_contents($url, false, $context);
+
+        return is_string($data) ? $data : '';
+    }
+
+    protected static function parseCatalogXml($xmlSource)
+    {
         libxml_use_internal_errors(true);
-        $xml = simplexml_load_file($path);
+        $xml = simplexml_load_string((string) $xmlSource);
 
         if (!$xml) {
-            return array();
+            self::$catalog['error'] = 'parse';
+            libxml_clear_errors();
+
+            return;
         }
 
         $entries = array();
@@ -47,7 +138,11 @@ class JemImportCatalogHelper
             }
         }
 
-        return $entries;
+        self::$catalog['available'] = true;
+        self::$catalog['version'] = trim((string) $xml['version']);
+        self::$catalog['published'] = trim((string) $xml['published']);
+        self::$catalog['entries'] = $entries;
+        libxml_clear_errors();
     }
 
     public static function getEntry($id)

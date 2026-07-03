@@ -614,6 +614,7 @@
             max="50"
             step="1"
             required="false"
+            showon="pdf_margin_profile:custom"
         />
         <field name="pdf_margin_right" type="number"
             label="COM_JEM_PDF_MARGIN_RIGHT"
@@ -624,6 +625,7 @@
             max="50"
             step="1"
             required="false"
+            showon="pdf_margin_profile:custom"
         />
         <field name="pdf_margin_bottom" type="number"
             label="COM_JEM_PDF_MARGIN_BOTTOM"
@@ -634,6 +636,7 @@
             max="50"
             step="1"
             required="false"
+            showon="pdf_margin_profile:custom"
         />
         <field name="pdf_margin_left" type="number"
             label="COM_JEM_PDF_MARGIN_LEFT"
@@ -644,6 +647,7 @@
             max="50"
             step="1"
             required="false"
+            showon="pdf_margin_profile:custom"
         />
         <field name="pdf_background_color" type="color"
             label="COM_JEM_PDF_BACKGROUND_COLOR"
@@ -701,6 +705,16 @@
             <option value="freeserif">FreeSerif</option>
             <option value="freemono">FreeMono</option>
         </field>
+        <field name="pdf_title_font_size" type="number"
+            label="COM_JEM_PDF_TITLE_FONT_SIZE"
+            description="COM_JEM_PDF_TITLE_FONT_SIZE_DESC"
+            class="inputbox"
+            default="18"
+            min="8"
+            max="40"
+            step="1"
+            required="false"
+        />
         <field name="pdf_header_font_family" type="list"
             label="COM_JEM_PDF_HEADER_FONT_FAMILY"
             description="COM_JEM_PDF_HEADER_FONT_FAMILY_DESC"
@@ -718,6 +732,16 @@
             <option value="freeserif">FreeSerif</option>
             <option value="freemono">FreeMono</option>
         </field>
+        <field name="pdf_heading_font_size" type="number"
+            label="COM_JEM_PDF_HEADING_FONT_SIZE"
+            description="COM_JEM_PDF_HEADING_FONT_SIZE_DESC"
+            class="inputbox"
+            default="12"
+            min="7"
+            max="30"
+            step="1"
+            required="false"
+        />
         <field name="pdf_body_font_family" type="list"
             label="COM_JEM_PDF_BODY_FONT_FAMILY"
             description="COM_JEM_PDF_BODY_FONT_FAMILY_DESC"
@@ -735,6 +759,16 @@
             <option value="freeserif">FreeSerif</option>
             <option value="freemono">FreeMono</option>
         </field>
+        <field name="pdf_base_font_size" type="number"
+            label="COM_JEM_PDF_BASE_FONT_SIZE"
+            description="COM_JEM_PDF_BASE_FONT_SIZE_DESC"
+            class="inputbox"
+            default="8"
+            min="6"
+            max="20"
+            step="1"
+            required="false"
+        />
         <field name="pdf_accent_color" type="color"
             label="COM_JEM_PDF_ACCENT_COLOR"
             description="COM_JEM_PDF_ACCENT_COLOR_DESC"
@@ -742,26 +776,6 @@
             default="#1d4ed8"
             size="10"
             maxlength="7"
-            required="false"
-        />
-        <field name="pdf_base_font_size" type="number"
-            label="COM_JEM_PDF_BASE_FONT_SIZE"
-            description="COM_JEM_PDF_BASE_FONT_SIZE_DESC"
-            class="inputbox"
-            default="8"
-            min="6"
-            max="16"
-            step="1"
-            required="false"
-        />
-        <field name="pdf_heading_font_size" type="number"
-            label="COM_JEM_PDF_HEADING_FONT_SIZE"
-            description="COM_JEM_PDF_HEADING_FONT_SIZE_DESC"
-            class="inputbox"
-            default="12"
-            min="8"
-            max="24"
-            step="1"
             required="false"
         />
         <field name="pdf_event_layout" type="list"

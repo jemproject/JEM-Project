@@ -182,7 +182,7 @@ final class JemPackageBuilder
             return false;
         }
 
-        if ($basename === 'CODEX_PENDING_DIARY.md' || $basename === 'import-catalog.xml') {
+        if ($basename === 'CODEX_PENDING_DIARY.md' || $basename === 'import-catalog.xml' || $basename === 'import_catalog_jem.xml') {
             return false;
         }
 
@@ -230,7 +230,7 @@ final class JemPackageBuilder
             }
         }
 
-        foreach (['import-catalog.xml', 'composer.json', 'composer.lock', 'vendor/autoload.php'] as $forbidden) {
+        foreach (['import-catalog.xml', 'import_catalog_jem.xml', 'composer.json', 'composer.lock', 'vendor/autoload.php'] as $forbidden) {
             if ($component->locateName($forbidden) !== false) {
                 $component->close();
                 @unlink($tmpComponent);

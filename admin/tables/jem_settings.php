@@ -144,6 +144,8 @@ class jem_settings extends Table
     /** @var string */
     public $pdf_accent_color = '#1d4ed8';
     /** @var int */
+    public $pdf_title_font_size = '18';
+    /** @var int */
     public $pdf_base_font_size = '8';
     /** @var int */
     public $pdf_heading_font_size = '12';
