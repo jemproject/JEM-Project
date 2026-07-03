@@ -34,7 +34,7 @@
                 default="1"
                 label="COM_JEM_ANNUALCALENDAR_START_MONTH"
                 description="COM_JEM_ANNUALCALENDAR_START_MONTH_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="1">JANUARY</option>
                 <option value="2">FEBRUARY</option>

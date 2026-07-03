@@ -9,13 +9,10 @@
         hide="pagebreak"
     />
         <field name="article_id" type="modal_article"
-            addfieldprefix="Joomla\Component\Content\Administrator\Field"
             label="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_LABEL"
             description="COM_JEM_EDITEVENT_FIELD_ASSOCIATED_ARTICLE_DESC"
             select="true"
             clear="true"
-            new="true"
-            edit="true"
             required="false"
             filter="integer"
         />

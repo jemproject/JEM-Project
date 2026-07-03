@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version    4.2.3
  * @package    JEM
@@ -317,6 +317,7 @@ class com_jemInstallerScript
         }
 
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
         }
     }
@@ -615,6 +616,46 @@ class com_jemInstallerScript
     }
 
 
+
+    /**
+     * Remove the legacy Help entry from Joomla's administrator component menu.
+     *
+     * The Help view remains available from the JEM control panel, but it should
+     * no longer be shown as a separate item in the Joomla Components menu.
+     *
+     * @return void
+     */
+    private function removeObsoleteAdminHelpMenuItem()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__menu'))
+            ->where($db->quoteName('client_id') . ' = 1')
+            ->where(
+                '('
+                . $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' = ' . $db->quote('option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' LIKE ' . $db->quote('%option=com_jem%view=help%')
+                . ')'
+            );
+
+        if ($componentId > 0) {
+            $query->where($db->quoteName('component_id') . ' = ' . $componentId);
+        }
+
+        $db->setQuery($query);
+        $db->execute();
+    }
     /**
      * Repair generated frontend type menu items whose stored type id became stale.
      *
@@ -1327,3 +1368,4 @@ class com_jemInstallerScript
     }
 
 }
+

@@ -28,7 +28,7 @@
 <field name="categoryswitchcats" type="categoryedit"
                     multiple="true"
                     removeroot="true"
-                    class="form-select w-auto"
+                    class="form-select w-auto jem-options-width-auto"
                     default=""
                     label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                     description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
@@ -50,7 +50,7 @@
                 />
                 <field name="timeline_filter_countries" type="countryoptions"
                     multiple="true"
-                    class="form-select w-auto"
+                    class="form-select w-auto jem-options-width-auto"
                     default=""
                     label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                     description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"

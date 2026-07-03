@@ -143,7 +143,7 @@
             <field name="showopendates" type="list"
                 default="0"
                 label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
-                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC" class="form-select w-auto"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">JNO</option>
                 <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>

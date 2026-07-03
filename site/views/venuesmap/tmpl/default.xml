@@ -36,7 +36,7 @@
             <field name="map_provider" type="list"
                    default="osm"
                    label="COM_JEM_MAP_PROVIDER"
-                   description="COM_JEM_MAP_PROVIDER_DESC" class="form-select w-auto"
+                   description="COM_JEM_MAP_PROVIDER_DESC" class="form-select w-auto jem-options-width-auto"
            >
                 <option value="osm">COM_JEM_MAP_PROVIDER_OSM</option>
                 <option value="google">COM_JEM_MAP_PROVIDER_GOOGLE</option>
@@ -44,7 +44,7 @@
             <field name="map_type" type="list"
                    default="political"
                    label="COM_JEM_VENUESMAP_TYPE_LABEL"
-                   description="COM_JEM_VENUESMAP_TYPE_DESC" class="form-select w-auto"
+                   description="COM_JEM_VENUESMAP_TYPE_DESC" class="form-select w-auto jem-options-width-auto"
            >
                 <option value="political">COM_JEM_MAP_TYPE_POLITICAL</option>
                 <option value="physical">COM_JEM_MAP_TYPE_PHYSICAL</option>
@@ -122,7 +122,7 @@
                    default="name_asc"
                    label="COM_JEM_VENUESMAP_VENUES_ORDER_LABEL"
                    description="COM_JEM_VENUESMAP_VENUES_ORDER_DESC"
-                   class="form-select w-auto"
+                   class="form-select w-auto jem-options-width-auto"
             >
                 <option value="id_asc">COM_JEM_ORDER_ID_ASC</option>
                 <option value="id_desc">COM_JEM_ORDER_ID_DESC</option>
@@ -145,7 +145,7 @@
             <field name="default_country" type="countryoptions"
                    default="0"
                    label="COM_JEM_VENUESMAP_DEFAULT_COUNTRY_LABEL"
-                   description="COM_JEM_VENUESMAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto"
+                   description="COM_JEM_VENUESMAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto jem-options-width-auto"
             />
 
             <field name="show_category_filter" type="radio"
@@ -163,10 +163,10 @@
                    multiple="true"
                    removeroot="true"
                    label="COM_JEM_VENUESMAP_CATEGORY_ID_LABEL"
-                   description="COM_JEM_VENUESMAP_CATEGORY_ID_DESC" class="form-select w-auto"
+                   description="COM_JEM_VENUESMAP_CATEGORY_ID_DESC" class="form-select w-auto jem-options-width-auto"
             />
 
-            <field name="jem_itemid" type="menuitem"
+            <field class="form-select w-auto jem-options-width-auto" name="jem_itemid" type="menuitem"
                    label="COM_JEM_VENUESMAP_JEM_ITEMID_LABEL"
                    description="COM_JEM_VENUESMAP_JEM_ITEMID_DESC"/>
 

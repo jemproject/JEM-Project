@@ -54,6 +54,7 @@ $heatMapLayer  = (int)  $this->params->get('heat_layer', '1');
 $fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
 $showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
 $showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
+$showEventsTable = (int) $this->params->get('show_events_table', '1');
 $showControls  = !empty($showDateFilter) || !empty($showCategoryFilter) || !empty($showCountryFilter) || (int) $this->params->get('show_my_location', '0');
 $mapType       = (string) $this->params->get('map_type', 'political');
 $settings      = JemHelper::globalattribs();
@@ -109,6 +110,20 @@ $buildFullMapLink = static function ($lat, $lng) use ($mapProvider) {
         . '&mlon=' . rawurlencode((string) $lng)
         . '&zoom=15#map=15/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lng);
 };
+$buildEventLink = static function ($event) {
+    $slug = !empty($event->slug)
+        ? (string) $event->slug
+        : (int) $event->id . (!empty($event->alias) ? ':' . $event->alias : '');
+
+    return Route::_(JemHelperRoute::getEventRoute($slug), false);
+};
+$buildVenueLink = static function ($event) {
+    $venueId = (int) ($event->venue_id ?? 0);
+    $venueAlias = (string) ($event->venue_alias ?? '');
+    $slug = $venueId . ($venueAlias !== '' ? ':' . $venueAlias : '');
+
+    return $venueId > 0 ? Route::_(JemHelperRoute::getVenueRoute($slug), false) : '';
+};
 $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $showFullMapLink, $buildDirectionsLink, $buildFullMapLink) {
     $links = [];
 
@@ -149,10 +164,7 @@ foreach ((array) $events as $event) {
         ];
     }
 
-    $slug = !empty($event->slug)
-        ? (string) $event->slug
-        : (int) $event->id . (!empty($event->alias) ? ':' . $event->alias : '');
-    $link = Route::_(JemHelperRoute::getEventRoute($slug), false);
+    $link = $buildEventLink($event);
     $dateText = !empty($event->dates) ? JemOutput::formatdate($event->dates) : '';
     $timeText = !empty($event->times) ? JemOutput::formattime($event->times) : '';
 
@@ -234,7 +246,7 @@ foreach ((array) $events as $event) {
                     <div class="btn-group btn-group-sm" style="margin:0px;" role="group">
                         <input type="radio" class="btn-check"  name="jem_map_filter_mode" value="<?= $value ?>"
                                id="filter-<?= $value ?>" <?= $isActive ? 'checked' : '' ?>>
-                        <label class="btn btn-outline-primary btn-sm" style="padding-top: 6px;" for="filter-<?= $value ?>">
+                        <label class="btn btn-outline-primary btn-sm" for="filter-<?= $value ?>">
                             <?= Text::_($label) ?>
                         </label>
                         <input type="date" name="jem_map_filter_date" value="<?= htmlspecialchars($currentDate, ENT_QUOTES) ?>"
@@ -296,6 +308,64 @@ foreach ((array) $events as $event) {
     <?php endif; ?>
 
     <div id="<?= $map_id ?>" class="jem-eventsmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>;"></div>
+
+    <?php if ($showEventsTable): ?>
+        <div class="jem-eventsmap-table-wrap table-responsive">
+            <table class="jem-eventsmap-table table table-striped table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th><?php echo Text::_('COM_JEM_DATE'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_EVENT'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_CITY'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_STATE'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th><?php echo Text::_('COM_JEM_MAP'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (!empty($events)): ?>
+                    <?php foreach ((array) $events as $event): ?>
+                        <?php
+                        $eventLink = $buildEventLink($event);
+                        $venueLink = $buildVenueLink($event);
+                        $mapLink = $buildFullMapLink($event->latitude ?? 0, $event->longitude ?? 0);
+                        ?>
+                        <tr>
+                            <td><?php echo JemOutput::formatShortDateTime($event->dates ?? '', $event->times ?? '', $event->enddates ?? '', $event->endtimes ?? ''); ?></td>
+                            <td>
+                                <a href="<?php echo htmlspecialchars($eventLink, ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo htmlspecialchars((string) ($event->title ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <?php if ($venueLink !== ''): ?>
+                                    <a href="<?php echo htmlspecialchars($venueLink, ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo htmlspecialchars((string) ($event->venue ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <?php echo htmlspecialchars((string) ($event->venue ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars((string) ($event->city ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars((string) ($event->state ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td><?php echo htmlspecialchars((string) ($event->country ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+                            <td>
+                                <a href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                    <?php echo Text::_('COM_JEM_MAP'); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7"><?php echo Text::_('COM_JEM_NO_EVENTS'); ?></td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
 
 
     <!--footer-->  

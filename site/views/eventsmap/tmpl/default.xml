@@ -8,11 +8,11 @@
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
 <field name="map_center_lat" type="text"
-                   default="48.750"
+                   default="54.526"
                    label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC" class="form-control w-auto"/>
             <field name="map_center_lng" type="text"
-                   default="18.917"
+                   default="15.255"
                    label="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE_DESC" class="form-control w-auto"/>
             <field name="map_zoom" type="number"
@@ -24,7 +24,7 @@
             <field name="map_provider" type="list"
                    default="osm"
                    label="COM_JEM_MAP_PROVIDER"
-                   description="COM_JEM_MAP_PROVIDER_DESC" class="form-select w-auto"
+                   description="COM_JEM_MAP_PROVIDER_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="osm">COM_JEM_MAP_PROVIDER_OSM</option>
                 <option value="google">COM_JEM_MAP_PROVIDER_GOOGLE</option>
@@ -32,7 +32,7 @@
             <field name="map_type" type="list"
                    default="political"
                    label="COM_JEM_EVENTS_MAP_TYPE"
-                   description="COM_JEM_EVENTS_MAP_TYPE_DESC" class="form-select w-auto"
+                   description="COM_JEM_EVENTS_MAP_TYPE_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="political">COM_JEM_MAP_TYPE_POLITICAL</option>
                 <option value="physical">COM_JEM_MAP_TYPE_PHYSICAL</option>
@@ -126,7 +126,7 @@
                    multiple="true"
                    removeroot="true"
                    label="COM_JEM_EVENTS_MAP_CATEGORY_ID"
-                   description="COM_JEM_EVENTS_MAP_CATEGORY_ID_DESC" class="form-select w-auto"
+                   description="COM_JEM_EVENTS_MAP_CATEGORY_ID_DESC" class="form-select w-auto jem-options-width-auto"
             />
             <field name="show_country_filter" type="radio"
                    default="0"
@@ -140,14 +140,24 @@
             <field name="default_country" type="countryoptions"
                    default="0"
                    label="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY"
-                   description="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto"
+                   description="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto jem-options-width-auto"
             />
             <field name="jem_itemid" type="menuitem"
                    label="COM_JEM_EVENTS_MAP_JEM_ITEMID"
-                   description="COM_JEM_EVENTS_MAP_JEM_ITEMID_DESC" />
+                   description="COM_JEM_EVENTS_MAP_JEM_ITEMID_DESC"
+                   class="form-select w-auto jem-options-width-auto" />
             <field name="height" type="text" default="500px"
                    label="COM_JEM_EVENTS_MAP_HEIGHT"
                    description="COM_JEM_EVENTS_MAP_HEIGHT_DESC" class="form-control w-auto" />
+            <field name="show_events_table" type="radio"
+                   default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_EVENTS_TABLE"
+                   description="COM_JEM_EVENTS_MAP_SHOW_EVENTS_TABLE_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"

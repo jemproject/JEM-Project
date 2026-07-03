@@ -13,7 +13,7 @@
                 multiple="true"
                 default="personal_calendar,planning"
                 label="COM_JEM_MY_TIMELINE_PURPOSES"
-                description="COM_JEM_MY_TIMELINE_PURPOSES_DESC" class="form-select w-auto"
+                description="COM_JEM_MY_TIMELINE_PURPOSES_DESC" class="form-select w-auto jem-options-width-auto"
                 >
                 <option value="personal_calendar">COM_JEM_MY_TIMELINE_PURPOSE_PERSONAL_CALENDAR</option>
                 <option value="activity_history">COM_JEM_MY_TIMELINE_PURPOSE_ACTIVITY_HISTORY</option>
@@ -57,7 +57,7 @@
                 type="list"
                 default="right"
                 label="COM_JEM_TIMELINE_SIDE_LABEL"
-                description="COM_JEM_TIMELINE_SIDE_DESC" class="form-select w-auto"
+                description="COM_JEM_TIMELINE_SIDE_DESC" class="form-select w-auto jem-options-width-auto"
                 >
                 <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
                 <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>

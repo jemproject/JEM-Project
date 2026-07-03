@@ -1485,14 +1485,41 @@ class JemHelper
         }
 
         $html = array();
+        $typeLabel = Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE');
+        $specialDaysLabel = Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_SPECIAL_DAYS');
+        $descriptionLabel = Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION');
         $html[] = '<div class="jem-annual-special-days-legend">';
+        $html[] = '<style>
+            .jem-annual-special-days-table-wrap { max-width: 100%; overflow-x: auto; }
+            .jem-annual-special-days-table { table-layout: auto; }
+            .jem-annual-special-days-table th,
+            .jem-annual-special-days-table td { vertical-align: top; }
+            .jem-annual-special-days-filter { max-width: 100%; }
+            .jem-annual-special-days-filter-name { overflow-wrap: anywhere; }
+            .jem-annual-special-days-label,
+            .jem-annual-special-days-description { overflow-wrap: anywhere; word-break: normal; }
+            @media (max-width: 640px) {
+                .jem-annual-special-days-table-wrap { overflow-x: visible; }
+                .jem-annual-special-days-table,
+                .jem-annual-special-days-table thead,
+                .jem-annual-special-days-table tbody,
+                .jem-annual-special-days-table tr,
+                .jem-annual-special-days-table th,
+                .jem-annual-special-days-table td { display: block; width: 100%; }
+                .jem-annual-special-days-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+                .jem-annual-special-days-table tr { border: 1px solid #d1d5db; margin-bottom: .75rem; background: #fff; }
+                .jem-annual-special-days-table td { border: 0; padding: .45rem .6rem; }
+                .jem-annual-special-days-table td::before { content: attr(data-label); display: block; margin-bottom: .2rem; font-weight: 700; color: #374151; }
+                .jem-annual-special-days-type .jem-annual-special-days-filter { width: 100%; justify-content: flex-start; }
+            }
+        </style>';
         $html[] = '<h2 class="jem-annual-special-days-heading">' . Text::_('COM_JEM_CALENDAR_TYPES_OF_DAYS_APPLIED') . '</h2>';
         $html[] = '<div class="jem-annual-special-days-table-wrap">';
         $html[] = '<table class="jem-annual-special-days-table">';
         $html[] = '<thead><tr>'
-            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_TYPE') . '</th>'
-            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_SPECIAL_DAYS') . '</th>'
-            . '<th scope="col">' . Text::_('COM_JEM_CALENDAR_TYPE_OF_DAY_DESCRIPTION') . '</th>'
+            . '<th scope="col">' . $typeLabel . '</th>'
+            . '<th scope="col">' . $specialDaysLabel . '</th>'
+            . '<th scope="col">' . $descriptionLabel . '</th>'
             . '</tr></thead>';
         $html[] = '<tbody>';
 
@@ -1511,12 +1538,12 @@ class JemHelper
                 : 'background-color:transparent;color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';';
 
             $html[] = '<tr>'
-                . '<td class="jem-annual-special-days-type"><button type="button" class="eventSpecialDayType btn btn-outline-dark jem-annual-special-days-filter" data-filter-class="' . $filterClass . '" aria-pressed="true">'
+                . '<td class="jem-annual-special-days-type" data-label="' . htmlspecialchars($typeLabel, ENT_COMPAT, 'UTF-8') . '"><button type="button" class="eventSpecialDayType btn btn-outline-dark jem-annual-special-days-filter" data-filter-class="' . $filterClass . '" aria-pressed="true">'
                 . '<span class="jem-annual-special-days-filter-color"><span class="jem-annual-special-days-swatch" style="' . $swatchStyle . '">&nbsp;</span></span>'
                 . '<span class="jem-annual-special-days-filter-name">' . $type . '</span>'
                 . '<span class="visually-hidden">' . $color . '</span></button></td>'
-                . '<td class="jem-annual-special-days-label">' . $titleText . '</td>'
-                . '<td class="jem-annual-special-days-description">' . $descriptionText . '</td>'
+                . '<td class="jem-annual-special-days-label" data-label="' . htmlspecialchars($specialDaysLabel, ENT_COMPAT, 'UTF-8') . '">' . $titleText . '</td>'
+                . '<td class="jem-annual-special-days-description" data-label="' . htmlspecialchars($descriptionLabel, ENT_COMPAT, 'UTF-8') . '">' . $descriptionText . '</td>'
                 . '</tr>';
         }
 

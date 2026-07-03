@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_teaser</name>
     <author>JEM Community</author>
-    <creationDate>June 2026</creationDate>
+    <creationDate>3 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0rc4</version>
+    <version>4.5.0rc5</version>
     <description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>

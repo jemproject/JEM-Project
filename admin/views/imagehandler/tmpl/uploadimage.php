@@ -43,6 +43,7 @@ $imageTypes = [
         gap: 1rem;
         align-items: stretch;
         max-width: 58rem;
+        margin: 0 auto;
     }
 
     #jem.jem-image-upload .jem-upload-card {
@@ -111,7 +112,7 @@ $imageTypes = [
 
     #jem.jem-image-upload .jem-upload-note {
         max-width: 58rem;
-        margin-top: 1rem;
+        margin: 1rem auto 0;
         border-left: 4px solid #5579b7;
         background: #f4f7fb;
         padding: 0.8rem 1rem;

@@ -21,7 +21,7 @@
                 default="-1"
                 label="COM_JEM_MYEVENTS_SHOW_TITLE_COLUMN"
                 description="COM_JEM_MYEVENTS_SHOW_TITLE_COLUMN_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="-1">JGLOBAL_USE_GLOBAL</option>
                 <option value="1">JSHOW</option>
@@ -31,7 +31,7 @@
                 default="-1"
                 label="COM_JEM_MYEVENTS_SHOW_VENUE_COLUMN"
                 description="COM_JEM_MYEVENTS_SHOW_VENUE_COLUMN_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="-1">JGLOBAL_USE_GLOBAL</option>
                 <option value="1">JSHOW</option>
@@ -41,7 +41,7 @@
                 default="-1"
                 label="COM_JEM_MYEVENTS_SHOW_CITY_COLUMN"
                 description="COM_JEM_MYEVENTS_SHOW_CITY_COLUMN_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="-1">JGLOBAL_USE_GLOBAL</option>
                 <option value="1">JSHOW</option>
@@ -51,7 +51,7 @@
                 default="0"
                 label="COM_JEM_MYEVENTS_SHOW_STATE_COLUMN"
                 description="COM_JEM_MYEVENTS_SHOW_STATE_COLUMN_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="-1">JGLOBAL_USE_GLOBAL</option>
                 <option value="1">JSHOW</option>
@@ -61,7 +61,7 @@
                 default="-1"
                 label="COM_JEM_MYEVENTS_SHOW_CATEGORY_COLUMN"
                 description="COM_JEM_MYEVENTS_SHOW_CATEGORY_COLUMN_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="-1">JGLOBAL_USE_GLOBAL</option>
                 <option value="1">JSHOW</option>
