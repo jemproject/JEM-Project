@@ -211,6 +211,11 @@ class JemModelVenue extends JemModelAdmin
             $item->country = $jemsettings->defaultCountry;
         }
 
+        list($item->latitude, $item->longitude) = $this->normaliseCoordinates(
+            $item->latitude ?? null,
+            $item->longitude ?? null
+        );
+
         return $item;
     }
 
@@ -238,6 +243,11 @@ class JemModelVenue extends JemModelAdmin
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
+
+        list($table->latitude, $table->longitude) = $this->normaliseCoordinates(
+            $table->latitude ?? null,
+            $table->longitude ?? null
+        );
 
         // Increment version number.
         $table->version ++;
@@ -272,8 +282,16 @@ class JemModelVenue extends JemModelAdmin
         $data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : null;
         $data['attribs'] = (isset($data['attribs'])) ? $data['attribs'] : '';
         $data['language'] = (isset($data['language'])) ? $data['language'] : '';
-        $data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
-        $data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
+        list($data['latitude'], $data['longitude']) = $this->normaliseCoordinates(
+            $data['latitude'] ?? null,
+            $data['longitude'] ?? null
+        );
+        $data['map'] = $this->isMapEnabled($data['map'] ?? 0) ? 1 : 0;
+        if ($data['map'] && !$this->hasMappableLocation($data)) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
+            return false;
+        }
+
         $customFieldErrors = array();
         if (!JemCustomFields::validateAndSanitizeData('venue', $data, $customFieldErrors)) {
             $this->setError(implode('<br>', $customFieldErrors));
@@ -348,5 +366,64 @@ class JemModelVenue extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+    /**
+     * A venue can expose a map link only when it has a full address or valid coordinates.
+     */
+    protected function hasMappableLocation(array $data): bool
+    {
+        $hasAddress = trim((string) ($data['street'] ?? '')) !== ''
+            && trim((string) ($data['city'] ?? '')) !== ''
+            && trim((string) ($data['country'] ?? '')) !== ''
+            && trim((string) ($data['postalCode'] ?? '')) !== '';
+
+        if ($hasAddress) {
+            return true;
+        }
+
+        $latitude = trim((string) ($data['latitude'] ?? ''));
+        $longitude = trim((string) ($data['longitude'] ?? ''));
+
+        if ($latitude === '' || $longitude === '' || !is_numeric($latitude) || !is_numeric($longitude)) {
+            return false;
+        }
+
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        return $latitude >= -90.0 && $latitude <= 90.0
+            && $longitude >= -180.0 && $longitude <= 180.0
+            && $latitude !== 0.0
+            && $longitude !== 0.0;
+    }
+    /**
+     * Store incomplete, empty and Null Island coordinates as NULL.
+     */
+    protected function normaliseCoordinates($latitude, $longitude): array
+    {
+        $latitude = trim((string) $latitude);
+        $longitude = trim((string) $longitude);
+
+        if (
+            $latitude === ''
+            || $longitude === ''
+            || !is_numeric($latitude)
+            || !is_numeric($longitude)
+            || (float) $latitude === 0.0
+            || (float) $longitude === 0.0
+        ) {
+            return array(null, null);
+        }
+
+        return array($latitude, $longitude);
+    }
+
+    /**
+     * Normalise map checkbox values before validation and storage.
+     */
+    protected function isMapEnabled($value): bool
+    {
+        return in_array($value, array(1, '1', true, 'true', 'on', 'yes'), true);
     }
 }

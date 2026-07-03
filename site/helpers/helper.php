@@ -2726,8 +2726,19 @@ class JemHelper
         $htmlDescription .= '</body></html>';
 
         // location
+        $hasAddressLocation = (isset($event->street) && trim((string) $event->street) !== '')
+            || (isset($event->postalCode) && trim((string) $event->postalCode) !== '')
+            || (isset($event->city) && trim((string) $event->city) !== '')
+            || (isset($event->countryname) && trim((string) $event->countryname) !== '');
+        $hasCoordinateLocation = isset($event->latitude, $event->longitude)
+            && is_numeric($event->latitude)
+            && is_numeric($event->longitude)
+            && (float) $event->latitude != 0.0
+            && (float) $event->longitude != 0.0;
+        $hasPhysicalLocation = $hasAddressLocation || $hasCoordinateLocation;
+
         $location = array();
-        if (isset($event->venue) && trim((string) $event->venue) !== '') {
+        if (isset($event->venue) && trim((string) $event->venue) !== '' && $hasPhysicalLocation) {
             $location[] = trim((string) $event->venue);
         }
 
@@ -2752,12 +2763,6 @@ class JemHelper
         }
 
         $location = implode(",", $location);
-
-        if ($location === '' && $onlineMeetingUrl !== '') {
-            $location = !empty($onlineMeetingPlatform['label'])
-                ? $onlineMeetingPlatform['label']
-                : Text::_('COM_JEM_ONLINE_MEETING');
-        }
 
         // Build vevent using iCalcreator v2.41 API
         $e = $calendartool->newVevent();
