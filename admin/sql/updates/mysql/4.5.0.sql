@@ -72,6 +72,7 @@ ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL
 
 -- update values
 UPDATE `#__jem_events` SET `contactid` = '' WHERE `contactid` = 0 OR `contactid` IS NULL;
+UPDATE `#__jem_venues` SET `map` = 0 WHERE `map` = 1 AND (`street` = '' OR `street` IS NULL OR `city` = '' OR `city` IS NULL OR `country` = '' OR `country` IS NULL OR `postalCode` = '' OR `postalCode` IS NULL) AND NOT (`latitude` IS NOT NULL AND `longitude` IS NOT NULL AND `latitude` <> 0 AND `longitude` <> 0);
 UPDATE `#__menu` SET `params` = REPLACE(`params`, '"tablefiltereventuntil":"0"', '"tablefiltereventuntil":""') WHERE `link` LIKE '%com_jem&view=eventslist%' AND `params` LIKE '%"tablefiltereventuntil":"0"%';
 UPDATE `#__jem_config` SET `value` = 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz' WHERE `keyname` =  'attachments_types'  AND `value` = 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz';
 

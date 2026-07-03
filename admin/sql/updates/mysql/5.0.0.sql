@@ -79,3 +79,4 @@ UPDATE `#__jem_events` SET `publish_up` = `created` WHERE `publish_up` IS NULL A
 UPDATE `#__jem_events` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
 UPDATE `#__jem_categories` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
 UPDATE `#__jem_venues` SET `language` = '*' WHERE `language` = '' OR `language` IS NULL;
+UPDATE `#__jem_venues` SET `map` = 0 WHERE `map` = 1 AND (`street` = '' OR `street` IS NULL OR `city` = '' OR `city` IS NULL OR `country` = '' OR `country` IS NULL OR `postalCode` = '' OR `postalCode` IS NULL) AND NOT (`latitude` IS NOT NULL AND `longitude` IS NOT NULL AND `latitude` <> 0 AND `longitude` <> 0);

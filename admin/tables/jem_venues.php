@@ -108,14 +108,10 @@ class jem_venues extends Table
             $this->alias = $alias;
         }
 
-        if ($this->map) {
-            if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
-                if ((!trim($this->latitude) && !trim($this->longitude))) {
-                    $this->_error = Text::_('COM_JEM_ERROR_ADDRESS');
-                    Factory::getApplication()->enqueueMessage($this->_error, 'warning');
-                    return false;
-                }
-            }
+        if ($this->map && !$this->hasMappableLocation()) {
+            $this->_error = Text::_('COM_JEM_ERROR_ADDRESS');
+            Factory::getApplication()->enqueueMessage($this->_error, 'warning');
+            return false;
         }
 
         if (InputFilter::checkAttribute(array ('href', $this->url))) {
@@ -261,6 +257,36 @@ class jem_venues extends Table
             $object->$keyName = $id;
         }
         return $this->_db->getAffectedRows();
+    }
+
+    /**
+     * A venue can expose a map link only when it has a full address or valid coordinates.
+     */
+    protected function hasMappableLocation(): bool
+    {
+        $hasAddress = trim((string) $this->street) !== ''
+            && trim((string) $this->city) !== ''
+            && trim((string) $this->country) !== ''
+            && trim((string) $this->postalCode) !== '';
+
+        if ($hasAddress) {
+            return true;
+        }
+
+        $latitude = trim((string) $this->latitude);
+        $longitude = trim((string) $this->longitude);
+
+        if ($latitude === '' || $longitude === '' || !is_numeric($latitude) || !is_numeric($longitude)) {
+            return false;
+        }
+
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        return $latitude >= -90.0 && $latitude <= 90.0
+            && $longitude >= -180.0 && $longitude <= 180.0
+            && $latitude !== 0.0
+            && $longitude !== 0.0;
     }
 }
 ?>
