@@ -206,6 +206,7 @@ class JemModelSettings extends AdminModel
             'pdf_header_font_family' => 'helvetica',
             'pdf_body_font_family' => 'helvetica',
             'pdf_accent_color' => '#1d4ed8',
+            'pdf_title_font_size' => 18,
             'pdf_base_font_size' => 8,
             'pdf_heading_font_size' => 12,
             'pdf_event_layout' => 'details',

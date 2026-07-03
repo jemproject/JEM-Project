@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jem-import-catalog version="1.0" published="2026-06-29">
-    <entry id="es-aeat-tax-calendar-iva" country="ES" country_name="España" county="" city="" type="events" format="ics" profile="AEAT tax calendar - IVA">
+<jem-import-catalog version="1.0" published="2026-07-03">
+    <entry id="es-aeat-tax-calendar-iva" country="ES" country_name="Spain" county="" city="" type="events" format="ics" profile="AEAT tax calendar - IVA">
         <title>AEAT tax calendar - IVA</title>
         <description>Official AEAT iCalendar feed for IVA due dates. Import as events and choose the destination category in JEM.</description>
         <source provider="AEAT" url="https://www.google.com/calendar/ical/517mcuhcis0lldnp9b7c0nk2q8%40group.calendar.google.com/public/basic.ics" />
@@ -12,7 +12,7 @@
         <updated>2026-06-29</updated>
         <license>Official public administration calendar</license>
     </entry>
-    <entry id="es-madrid-venues-culture-rooms" country="ES" country_name="España" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Madrid cultural rooms - JSON">
+    <entry id="es-madrid-venues-culture-rooms" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Madrid cultural rooms - JSON">
         <title>Madrid cultural rooms</title>
         <description>Madrid open-data venue list for cinemas, cultural rooms and similar locations. The mapping preloads JEM venue fields.</description>
         <source provider="datos.madrid.es" url="https://datos.madrid.es/egob/catalogo/208862-7-ocio_salas-json.json" />
@@ -34,7 +34,7 @@
         <updated>2026-06-29</updated>
         <license>Open data source</license>
     </entry>
-    <entry id="es-madrid-specialdays-school" country="ES" country_name="España" county="Comunidad de Madrid" city="Madrid" type="specialdays" format="csv" profile="Madrid school special days - CSV">
+    <entry id="es-madrid-specialdays-school" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="specialdays" format="csv" profile="Madrid school special days - CSV">
         <title>Madrid school special days</title>
         <description>Template entry for local school holidays or non-working days managed as JEM Special Days.</description>
         <source provider="JEM catalog" url="imports/ES/Madrid/specialdays/school-special-days.csv" />

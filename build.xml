@@ -83,6 +83,7 @@
             <exclude name="*.code-workspace" />
             <exclude name="CODEX_PENDING_DIARY.md" />
             <exclude name="import-catalog.xml" />
+            <exclude name="import_catalog_jem.xml" />
             <exclude name="update_pkg_*.xml" />
             <exclude name="pkg_*.zip" />
             <exclude name="build.*" />

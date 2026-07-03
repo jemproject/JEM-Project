@@ -334,8 +334,7 @@ class JemPdfView
             $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paper['size']);
             $mapWidth = self::getPdfPaperWidth($paper['size'], $paper['orientation'])
                 - (float) ($margins['left'] ?? 0)
-                - (float) ($margins['right'] ?? 0)
-                - 4.0;
+                - (float) ($margins['right'] ?? 0);
         }
 
         $mapPreviewHtml = self::buildVenueMapPreviewHtml(self::buildEventsMapPreviewRows($rows), $mapProvider, $mapWidth, $mapZoom);
@@ -506,9 +505,9 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round((int) ($settings->pdf_base_font_size ?? 8) * $scale)));
-        $headingFontSize = max(10, min(24, (int) round((int) ($settings->pdf_heading_font_size ?? 12) * $scale)));
-        $titleFontSize = max(18, min(34, $headingFontSize + 10));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $headingFontSize = self::getPdfHeaderFontSize($settings, $scale, 10, 24);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 18, 34);
         $fallbackImageWidth = max(1, min(200, (int) ($settings->pdf_imagewidth ?? 40)));
         $fallbackImageHeight = max(1, min(200, (int) ($settings->pdf_imageheight ?? 40)));
         $venueImageWidth = max(1, min(200, (int) ($settings->pdf_venue_imagewidth ?? $fallbackImageWidth)));
@@ -703,8 +702,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(13, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $fallbackImageWidth = max(1, min(200, (int) ($settings->pdf_imagewidth ?? 40)));
         $fallbackImageHeight = max(1, min(200, (int) ($settings->pdf_imageheight ?? 40)));
         $eventImageWidth = max(1, min(200, (int) ($settings->pdf_event_imagewidth ?? $fallbackImageWidth)));
@@ -1358,8 +1357,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(13, (int) round((int) ($settings->pdf_base_font_size ?? 8) * $scale)));
-        $titleFontSize = max(18, min(34, (int) round(((int) ($settings->pdf_heading_font_size ?? 12) + 9) * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 18, 34);
         $html = array();
 
         $html[] = '<style>
@@ -1391,7 +1390,7 @@ class JemPdfView
             return implode("\n", array_filter($html));
         }
 
-        $mapWidth = self::getPdfPaperWidth($paperSize, $orientation) - (float) ($margins['left'] ?? 0) - (float) ($margins['right'] ?? 0) - 4.0;
+        $mapWidth = self::getPdfPaperWidth($paperSize, $orientation) - (float) ($margins['left'] ?? 0) - (float) ($margins['right'] ?? 0);
         $html[] = self::buildVenueMapPreviewHtml($rows, $mapProvider, $mapWidth);
 
         foreach ($rows as $row) {
@@ -1606,10 +1605,10 @@ class JemPdfView
             return '';
         }
 
-        $widthMm = max(120.0, $widthMm);
+        $widthMm = max(60.0, $widthMm);
         $heightMm = $widthMm * 320.0 / 900.0;
 
-        return '<div class="jem-pdf-map-preview" style="text-align:center; margin-bottom:6mm; padding-bottom:3mm;">'
+        return '<div class="jem-pdf-map-preview" style="text-align:left; margin-bottom:6mm; padding-bottom:3mm;">'
             . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" height="' . htmlspecialchars(number_format($heightMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1;" />'
             . '</div>';
     }
@@ -2187,7 +2186,7 @@ class JemPdfView
                 self::buildPdfVenueLink($row),
                 (string) ($row->city ?? ''),
                 (string) ($row->state ?? ''),
-                (string) ($row->country ?? ''),
+                array('html' => '<div class="jem-pdf-country-code">' . htmlspecialchars((string) ($row->country ?? ''), ENT_COMPAT, 'UTF-8') . '</div>'),
                 self::buildPdfMapLink($row, $mapProvider),
             );
         }
@@ -2259,6 +2258,11 @@ class JemPdfView
         return $tableRows;
     }
 
+    private static function buildPdfHeaderLabel($text): string
+    {
+        return '<nobr>' . htmlspecialchars((string) $text, ENT_COMPAT, 'UTF-8') . '</nobr>';
+    }
+
     private static function buildTableHtml(string $title, array $headers, array $rows, string $paperSize, string $filterSummary = '', string $preTableHtml = ''): string
     {
         $scale = JemPdf::getPosterScale($paperSize);
@@ -2266,8 +2270,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(12, min(28, (int) round(15 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 12, 28);
         $cellPadding = JemPdf::prefersSinglePage($paperSize) ? '1.2mm' : '1.6mm';
         $columnWidths = self::calculateTableColumnWidths($headers, $rows);
         $html = array();
@@ -2276,9 +2280,10 @@ class JemPdfView
             body { font-family: ' . $bodyFontFamily . '; }
             h1 { font-family: ' . $titleFontFamily . '; font-size: ' . $titleFontSize . 'pt; margin: 0 0 4mm 0; }
             table { border-collapse: collapse; width: 100%; }
-            th { font-family: ' . $headerFontFamily . '; background-color: #e5e7eb; border: 0.2mm solid #9ca3af; font-size: ' . $baseFontSize . 'pt; font-weight: bold; padding: ' . $cellPadding . '; }
+            th { font-family: ' . $headerFontFamily . '; background-color: #e5e7eb; border: 0.2mm solid #9ca3af; font-size: ' . $baseFontSize . 'pt; font-weight: bold; padding: ' . $cellPadding . '; white-space: nowrap; }
             td { font-family: ' . $bodyFontFamily . '; border: 0.2mm solid #cbd5e1; font-size: ' . $baseFontSize . 'pt; padding: ' . $cellPadding . '; vertical-align: top; }
             a { color: #1f5b99; text-decoration: underline; }
+            .jem-pdf-country-code { text-align: center; }
             .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $baseFontSize . 'pt; line-height: ' . ($baseFontSize + 3) . 'pt; }
             .jem-pdf-view-intro { margin-bottom: 4mm; }
             .jem-pdf-view-footer-text { margin-top: 4mm; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
@@ -2302,7 +2307,7 @@ class JemPdfView
 
         foreach ($headers as $index => $header) {
             $width = isset($columnWidths[$index]) ? ' width="' . $columnWidths[$index] . '%"' : '';
-            $html[] = '<th' . $width . '>' . htmlspecialchars((string) $header, ENT_COMPAT, 'UTF-8') . '</th>';
+            $html[] = '<th' . $width . '>' . self::buildPdfHeaderLabel($header) . '</th>';
         }
 
         $html[] = '</tr></thead><tbody>';
@@ -2459,8 +2464,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $titleFontSize = max(13, min(30, (int) round(18 * $scale)));
-        $baseFontSize = max(7, min(13, (int) round(8 * $scale)));
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 13, 30);
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
         $smallFontSize = max(6, min(11, (int) round(7 * $scale)));
         $html = array();
 
@@ -2496,12 +2501,12 @@ class JemPdfView
 
         $html[] = '<table class="jem-pdf-agenda" cellpadding="2" cellspacing="0">';
         $html[] = '<tr>'
-            . '<th width="13%">' . Text::_('COM_JEM_DATE') . '</th>'
-            . '<th width="11%">' . Text::_('COM_JEM_TIME') . '</th>'
-            . '<th width="28%">' . Text::_('COM_JEM_EVENT') . '</th>'
-            . '<th width="18%">' . Text::_('COM_JEM_VENUE') . '</th>'
-            . '<th width="13%">' . Text::_('COM_JEM_TYPES') . '</th>'
-            . '<th width="17%">' . Text::_('COM_JEM_CATEGORY') . '</th>'
+            . '<th width="13%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_DATE')) . '</th>'
+            . '<th width="11%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_TIME')) . '</th>'
+            . '<th width="28%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_EVENT')) . '</th>'
+            . '<th width="18%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_VENUE')) . '</th>'
+            . '<th width="13%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_TYPES')) . '</th>'
+            . '<th width="17%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_CATEGORY')) . '</th>'
             . '</tr>';
         $hasEvents = false;
 
@@ -2569,8 +2574,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $titleFontSize = max(13, min(30, (int) round(18 * $scale)));
-        $headerFontSize = max(7, min(14, (int) round(8 * $scale)));
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 13, 30);
+        $headerFontSize = self::getPdfHeaderFontSize($settings, $scale, 7, 14);
         $dayFontSize = max(6, min(12, (int) round(7 * $scale)));
         $eventFontSize = max(5, min(11, (int) round(6 * $scale)));
         $dayWidth = number_format(100 / 7, 4, '.', '') . '%';
@@ -2612,7 +2617,7 @@ class JemPdfView
         $html[] = '<tr>';
 
         foreach ($weekdays as $weekday) {
-            $html[] = '<th width="' . $dayWidth . '">' . Text::_($weekday) . '</th>';
+            $html[] = '<th width="' . $dayWidth . '">' . self::buildPdfHeaderLabel(Text::_($weekday)) . '</th>';
         }
 
         $html[] = '</tr>';
@@ -2928,8 +2933,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $categoryTitleSize = max(11, min(20, (int) round(14 * $scale)));
         $html = array();
 
@@ -3177,8 +3182,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $eventTitleFontSize = max(10, min(18, (int) round(12 * $scale)));
         $html = array();
 
@@ -3631,6 +3636,29 @@ class JemPdfView
         );
 
         return in_array($font, $fonts, true) ? $font : 'helvetica';
+    }
+
+    private static function getPdfTitleFontSize($settings, float $scale = 1.0, int $min = 8, int $max = 40): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_title_font_size ?? 18, $scale, $min, $max);
+    }
+
+    private static function getPdfHeaderFontSize($settings, float $scale = 1.0, int $min = 7, int $max = 30): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_heading_font_size ?? 12, $scale, $min, $max);
+    }
+
+    private static function getPdfBodyFontSize($settings, float $scale = 1.0, int $min = 6, int $max = 20): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_base_font_size ?? 8, $scale, $min, $max);
+    }
+
+    private static function getPdfScaledFontSize($value, float $scale, int $min, int $max): int
+    {
+        $fontSize = (int) $value;
+        $fontSize = $fontSize > 0 ? $fontSize : $min;
+
+        return max($min, min($max, (int) round($fontSize * $scale)));
     }
 
     private static function htmlToPlainText(string $value): string
