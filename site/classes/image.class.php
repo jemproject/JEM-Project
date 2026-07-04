@@ -15,6 +15,7 @@ use Joomla\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
 
 /**
  * Holds the logic for image manipulation
@@ -206,7 +207,7 @@ class JemImage
      *
      * @return imagedata if available
      */
-    static public function flyercreator($image, $type)
+    static public function flyercreator($image, $type, $folderPath = '')
     {
         $settings = JemHelper::config();
 
@@ -227,8 +228,14 @@ class JemImage
 
         if ($image) {
             $isSiteImagePath = strpos($image, '/') !== false || strpos($image, '\\') !== false;
-            $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
-            $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+
+            if (!$isSiteImagePath && $type === 'event') {
+                $img_orig  = JemEventImagePath::imagePath($folderPath, $image);
+                $img_thumb = JemEventImagePath::thumbPath($folderPath, $image);
+            } else {
+                $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
+                $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+            }
 
             $filepath  = JPATH_SITE.'/'.$img_orig;
             $save      = JPATH_SITE.'/'.$img_thumb;

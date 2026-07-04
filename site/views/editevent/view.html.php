@@ -200,8 +200,8 @@ class JemViewEditevent extends JemView
         // Escape strings for HTML output
         $pageclass_sfx          = $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
-        $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
-        $this->dfullimage    = JemImage::flyercreator($this->item->fullimage ?? '', 'event');
+        $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event', $this->item->image_path ?? '');
+        $this->dfullimage    = JemImage::flyercreator($this->item->fullimage ?? '', 'event', $this->item->image_path ?? '');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
         $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);

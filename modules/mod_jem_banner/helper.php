@@ -214,7 +214,7 @@ abstract class ModJemBannerHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '') : null;
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
 
             #################

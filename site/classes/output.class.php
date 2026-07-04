@@ -1625,7 +1625,9 @@ static public function lightbox() {
 
         // Does a thumbnail exist?
         if (!$settings->flyer){
-            if (is_file(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+            $thumbPath = $image['thumb'] ?? '';
+
+            if ($thumbPath !== '' && is_file(JPATH_SITE . '/' . $thumbPath)) {
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';

@@ -102,7 +102,7 @@ if (empty($this->catrow->events)) { return; }
           <?php if (($this->jemsettings->showeventimage == 1) && (!empty($row->datimage))): ?>
             <div headers="jem_eventimage" class="jem-list-img" >
               <?php
-              $dimage = JemImage::flyercreator($row->datimage, 'event');
+              $dimage = JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '');
               echo JemOutput::flyer($row, $dimage, 'event');
               ?>
             </div>

@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
     `datimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage` varchar(100) NOT NULL DEFAULT '',
+    `image_path` varchar(255) NOT NULL DEFAULT '',
     `fullimage_layout` varchar(20) NOT NULL DEFAULT 'global',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,

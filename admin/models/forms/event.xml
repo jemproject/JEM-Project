@@ -302,6 +302,7 @@
             imagetype="events"
             description="COM_JEM_EVENT_FULLIMAGE_DESC"
         />
+        <field name="image_path" type="hidden" filter="string" />
         <field name="fullimage_layout" type="list"
             class="inputbox form-select"
             label="COM_JEM_EVENT_FULLIMAGE_LAYOUT"

@@ -236,7 +236,7 @@ function jem_common_show_filter(&$obj) {
                     <div class="jem-event-info-small jem-eventimage">
                         <?php if (!empty($row->datimage)) : ?>
                             <?php
-                            $dimage = JemImage::flyercreator($row->datimage, 'event');
+                            $dimage = JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '');
 
                             echo JemOutput::flyer($row, $dimage, 'event');
                             ?>

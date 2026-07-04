@@ -230,7 +230,7 @@ class JemViewEvent extends JemView
 
         // Get images
         $detailImage = !empty($item->fullimage) ? $item->fullimage : $item->datimage;
-        $this->dimage = JemImage::flyercreator($detailImage, 'event');
+        $this->dimage = JemImage::flyercreator($detailImage, 'event', $item->image_path ?? '');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
 
         $articleUsage = (string) $item->params->get('article_usage', 'information');

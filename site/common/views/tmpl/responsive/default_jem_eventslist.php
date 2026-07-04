@@ -207,7 +207,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                 <div class="jem-list-img">
                     <?php if (!empty($row->datimage)) : ?>
                         <?php
-                        $dimage = JemImage::flyercreator($row->datimage, 'event');
+                        $dimage = JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '');
                         echo JemOutput::flyer($row, $dimage, 'event');
                         ?>
                     <?php endif; ?>

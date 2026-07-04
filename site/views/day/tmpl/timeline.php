@@ -189,7 +189,7 @@ $getEventImage = static function ($row) {
         return '';
     }
 
-    $image = JemImage::flyercreator($imageFile, 'event');
+    $image = JemImage::flyercreator($imageFile, 'event', $row->image_path ?? '');
 
     if (!is_array($image)) {
         return '';

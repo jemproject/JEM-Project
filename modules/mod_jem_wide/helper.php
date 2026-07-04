@@ -123,7 +123,7 @@ abstract class ModJemWideHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event', $row->image_path ?? '') : null;
             $limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
 
 

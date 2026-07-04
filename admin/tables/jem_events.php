@@ -100,6 +100,7 @@ class jem_events extends Table
     /** @var string */
     public $datimage = '';
     public $fullimage = '';
+    public $image_path = '';
     public $fullimage_layout = 'global';
     /** @var string */
     public $author_ip = null;
