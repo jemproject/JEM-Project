@@ -19,11 +19,11 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(4\..*|5\..*)$"/>
         <php_minimum>8.1</php_minimum>
-        <sha256>2ccf656117a965bc28d3813fe6e4c963a35027fb8c7a664aac922263889fedad</sha256>
-        <sha384>0fd1d3555abb568339a7785b96b34f32007b803b9b4dce9fd819a9a3365bdf305ed0e7c0801861d1c6def7fb5090ac92</sha384>
-        <sha512>38eee270ed69d88b1925c3ba923a874a1d82694f378170f1877f1486b30a34e13a3c4d171f5fb7f67cf8170e37820e95926d8578efff96f668983f9c9e2acf57</sha512>
-        <date>2026-07-03</date>
+        <sha256>ddebf0fb45dc5742725010807e957b1e4fb8de48635ed50902cae05b52e20a6e</sha256>
+        <sha384>1529cecfa2b8bf4d55e078f617d5c6697a33a063468bfb815362e0d85658479c885313cbcd2a398f9736a6dd0bf1b7a9</sha384>
+        <sha512>595d9b1051a9317d4b94ae8f3f248d693a65b54399422d89690738a3cb4c7e8ee34a1e651c6f516f41b34ee3634ed2c77e33477f5950765a82850e4b7dd1d1c0</sha512>
+        <date>2026-07-04 20:00</date>
         <notes>JEM 4.5.0 RC 5 for Joomla! 4.x and Joomla! 5.x. Please refer to the changelog for details.</notes>
-        <changes>JEM 4.5.0 RC 5 includes the latest RC fixes for import workflows, Special Days, PDF output, media handling, and backend usability.</changes>
+        <changes>JEM 4.5.0 RC 5 includes the latest RC fixes for import workflows, Special Days, PDF output, media handling, modules and backend usability.</changes>
     </update>
 </updates>
