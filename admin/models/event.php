@@ -340,6 +340,7 @@ class JemModelEvent extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
         $previousArticleContentEvent = !$new ? $this->getAssociatedArticleSyncEventData((int) $data['id']) : array();
+        $previousImageEvent = !$new ? $this->getEventImageStorageData((int) $data['id']) : array();
 
         if (!JemHelper::isContactComponentEnabled()) {
             if ($new) {
@@ -457,6 +458,13 @@ class JemModelEvent extends JemModelAdmin
 
         if (!$this->validateSpecialDayEventDates($data)) {
             return false;
+        }
+
+
+        if (JemEventImagePath::isSubfoldersEnabled()) {
+            $data['image_path'] = JemEventImagePath::configuredFolderFromEvent($data);
+        } elseif (array_key_exists('image_path', $data)) {
+            $data['image_path'] = JemEventImagePath::normaliseRelativeFolder($data['image_path']);
         }
 
         // Load the event from the database, check if the event is the initial event (new, root, and not a recurrence).
@@ -743,6 +751,17 @@ class JemModelEvent extends JemModelAdmin
                     $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
                     $saved = false;
                 }
+                if ($saved && !$this->syncEventImageFolder((int) $pk, $previousImageEvent)) {
+                    $saved = false;
+                }
+
+                if ($saved) {
+                    $table->load($pk);
+                    $data['image_path'] = (string) $table->image_path;
+                    $data['datimage'] = (string) $table->datimage;
+                    $data['fullimage'] = (string) $table->fullimage;
+                }
+
 
                 // Store invited users (frontend only, on backend no attendees on editevent view)
                 if (!$backend && ($jemsettings->regallowinvitation == 1)) {
@@ -922,6 +941,192 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+    /**
+     * Create and associate an unpublished Joomla article when requested.
+     *
+     * @param   integer       $eventId     Event id.
+     * @param   array         $eventData   Event data being saved.
+     * @param   array|string  $categories  Selected JEM category ids.
+     * @param   integer       $mode        0 disabled, 1 manual create, 2 category auto.
+     * @param   boolean       $new         True when saving a new event.
+     * @param   integer       $targetId    Selected Joomla category id.
+     *
+     * @return  boolean
+     */
+    protected function getEventImageStorageData($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $fields = array('id', 'alias', 'dates', 'created', 'locid', 'type_id', 'datimage', 'fullimage', 'image_path', 'article_id', 'attribs');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName($fields))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+
+        try {
+            $db->setQuery($query);
+            $event = (array) $db->loadAssoc();
+        } catch (Throwable $e) {
+            return array();
+        }
+
+        if (!$event) {
+            return array();
+        }
+
+        $event['cats'] = $this->getEventImageCategoryIds($eventId);
+        $event['image_path'] = JemEventImagePath::normaliseRelativeFolder($event['image_path'] ?? '');
+
+        return $event;
+    }
+
+    protected function getEventImageCategoryIds($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__jem_cats_event_relations'))
+            ->where($db->quoteName('itemid') . ' = ' . $eventId)
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('catid') . ' ASC');
+
+        try {
+            $db->setQuery($query);
+
+            return array_map('intval', (array) $db->loadColumn());
+        } catch (Throwable $e) {
+            return array();
+        }
+    }
+
+    protected function syncEventImageFolder($eventId, array $previousImageEvent = array())
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return true;
+        }
+
+        $eventData = $this->getEventImageStorageData($eventId);
+
+        if (!$eventData) {
+            return true;
+        }
+
+        $currentFolder = JemEventImagePath::normaliseRelativeFolder($eventData['image_path'] ?? '');
+        $sourceFolder  = JemEventImagePath::normaliseRelativeFolder($previousImageEvent['image_path'] ?? $currentFolder);
+        $targetFolder  = JemEventImagePath::configuredFolderFromEvent($eventData);
+
+        if ($sourceFolder === $targetFolder && $currentFolder === $targetFolder) {
+            return true;
+        }
+
+        $images = array_unique(array_filter(array(
+            (string) ($eventData['datimage'] ?? ''),
+            (string) ($eventData['fullimage'] ?? '')
+        )));
+        $settings = JemHelper::config();
+
+        foreach ($images as $image) {
+            $move = !$this->isEventImageUsedOutsideEvent($eventId, $sourceFolder, $image)
+                && !$this->isEventImageReferencedByContent($sourceFolder, $image, (int) ($eventData['article_id'] ?? 0));
+
+            if (!JemEventImagePath::relocateEventImages($sourceFolder, $targetFolder, array($image), $settings, $move)) {
+                $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                return false;
+            }
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $update = (object) array(
+            'id' => $eventId,
+            'image_path' => $targetFolder
+        );
+
+        try {
+            $db->updateObject('#__jem_events', $update, 'id');
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function isEventImageUsedOutsideEvent($eventId, $folder, $filename)
+    {
+        $eventId = (int) $eventId;
+        $folder = JemEventImagePath::normaliseRelativeFolder($folder);
+        $filename = File::makeSafe((string) $filename);
+
+        if ($filename === '') {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' != ' . $eventId)
+            ->where($db->quoteName('image_path') . ' = ' . $db->quote($folder))
+            ->where('(' . $db->quoteName('datimage') . ' = ' . $db->quote($filename) . ' OR ' . $db->quoteName('fullimage') . ' = ' . $db->quote($filename) . ')');
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult() > 0;
+        } catch (Throwable $e) {
+            return true;
+        }
+    }
+
+    protected function isEventImageReferencedByContent($folder, $filename, $associatedArticleId = 0)
+    {
+        $filename = File::makeSafe((string) $filename);
+
+        if ($filename === '') {
+            return false;
+        }
+
+        $path = JemEventImagePath::imagePath($folder, $filename);
+
+        if ($path === '') {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('state') . ' != -2')
+            ->where($db->quoteName('images') . ' LIKE ' . $db->quote('%' . $db->escape($path, true) . '%', false));
+
+        $associatedArticleId = (int) $associatedArticleId;
+        if ($associatedArticleId > 0) {
+            $query->where($db->quoteName('id') . ' != ' . $associatedArticleId);
+        }
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult() > 0;
+        } catch (Throwable $e) {
+            return true;
+        }
     }
 
     /**

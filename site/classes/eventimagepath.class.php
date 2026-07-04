@@ -176,6 +176,70 @@ class JemEventImagePath
         }
     }
 
+    public static function relocateEventImages($fromFolder, $toFolder, array $filenames, $settings, $move = true)
+    {
+        $fromFolder = self::normaliseRelativeFolder($fromFolder);
+        $toFolder   = self::normaliseRelativeFolder($toFolder);
+
+        if ($fromFolder === $toFolder) {
+            return true;
+        }
+
+        if (!self::ensureEventFolders($toFolder)) {
+            return false;
+        }
+
+        $basePath      = Path::clean(JPATH_SITE . '/' . self::BASE);
+        $baseThumbPath = Path::clean(JPATH_SITE . '/' . self::BASE . '/' . self::THUMB);
+        $filenames     = array_unique(array_filter(array_map(static function ($filename) {
+            return File::makeSafe((string) $filename);
+        }, $filenames)));
+
+        foreach ($filenames as $filename) {
+            if ($filename === '') {
+                continue;
+            }
+
+            $source = Path::clean(JPATH_SITE . '/' . self::imagePath($fromFolder, $filename));
+            $target = Path::clean(JPATH_SITE . '/' . self::imagePath($toFolder, $filename));
+
+            if (!self::isInsideBase($source, $basePath) || !self::isInsideBase($target, $basePath)) {
+                return false;
+            }
+
+            if (!File::exists($source)) {
+                continue;
+            }
+
+            if (!File::exists($target)) {
+                $ok = $move ? File::move($source, $target) : File::copy($source, $target);
+
+                if (!$ok) {
+                    return false;
+                }
+            }
+
+            $sourceThumb = Path::clean(JPATH_SITE . '/' . self::thumbPath($fromFolder, $filename));
+            $targetThumb = Path::clean(JPATH_SITE . '/' . self::thumbPath($toFolder, $filename));
+
+            if (!self::isInsideBase($sourceThumb, $baseThumbPath) || !self::isInsideBase($targetThumb, $baseThumbPath)) {
+                return false;
+            }
+
+            if (File::exists($sourceThumb) && !File::exists($targetThumb)) {
+                $ok = $move ? File::move($sourceThumb, $targetThumb) : File::copy($sourceThumb, $targetThumb);
+
+                if (!$ok) {
+                    return false;
+                }
+            } elseif (!File::exists($targetThumb)) {
+                self::createThumbnail($toFolder, $filename, $target, $settings);
+            }
+        }
+
+        return true;
+    }
+
     public static function isInsideBase($absolutePath, $basePath)
     {
         $absolutePath = Path::clean((string) $absolutePath);
