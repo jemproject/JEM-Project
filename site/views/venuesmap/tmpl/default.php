@@ -682,7 +682,7 @@ foreach (($this->venueslist ?? []) as $venue) {
 
     <?php if (!empty($this->venueslist)) : ?>
         <div class="jem-venuesmap-responsive-list">
-            <?php foreach ($this->venueslist as $venue) : ?>
+            <?php foreach ($this->venueslistPage as $venue) : ?>
                 <?php
                 $venueName = $this->escape($venue->venue);
                 $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
@@ -748,16 +748,17 @@ foreach (($this->venueslist ?? []) as $venue) {
                         </div>
                     </div>
                     <div class="jem-venuesmap-card-actions">
-                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                        <?php $btnStyle = 'background-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';'; ?>
+                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                             <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
                         </a>
-                        <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
                             <i class="fa fa-list" aria-hidden="true"></i>
                             <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
                         </a>
                         <?php if ($mapLink !== '') : ?>
-                            <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                            <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                 <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
                                 <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
                             </a>
@@ -790,7 +791,7 @@ foreach (($this->venueslist ?? []) as $venue) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($this->venueslist as $venue) : ?>
+                    <?php foreach ($this->venueslistPage as $venue) : ?>
                         <?php
                         $venueName = $this->escape($venue->venue);
                         $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
@@ -836,17 +837,22 @@ foreach (($this->venueslist ?? []) as $venue) {
                             <td><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
                             <td><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
                             <td class="center jem-venuesmap-actions-cell">
+                                <?php
+                                $tblBtnColor     = jem_venuesmap_normalise_color($venue->color ?? '');
+                                $tblBtnTextColor = jem_venuesmap_contrast_color($tblBtnColor);
+                                $tblBtnStyle     = 'background-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($tblBtnTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';';
+                                ?>
                                 <div class="jem-venuesmap-actions-stack">
-                                <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
+                                <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
                                     <i class="fa fa-calendar" aria-hidden="true"></i>
                                     <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
                                 </a>
-                                <a class="btn btn-sm btn-secondary" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EVENTS'); ?>">
+                                <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EVENTS'); ?>">
                                     <i class="fa fa-list" aria-hidden="true"></i>
                                     <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
                                 </a>
                                 <?php if ($mapLink !== '') : ?>
-                                    <a class="btn btn-sm btn-primary" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                    <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                         <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
                                         <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
                                     </a>
@@ -864,6 +870,12 @@ foreach (($this->venueslist ?? []) as $venue) {
         </div>
     <?php endif; ?>
 
+    <?php if ($this->pagination->get('pages.total') > 1) : ?>
+        <div class="pagination">
+            <?php echo $this->pagination->getPagesLinks(); ?>
+        </div>
+    <?php endif; ?>
+
     <!--footer-->
         <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
@@ -875,10 +887,6 @@ foreach (($this->venueslist ?? []) as $venue) {
         echo JemOutput::footer(); ?>
     </div>
 
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
 
     <?php echo JemOutput::lightbox(); ?>
 </div>
