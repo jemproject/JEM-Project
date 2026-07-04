@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 $datemethod      = (int)$params->get('datemethod', 0);
 $showtime        = (int)$params->get('showtime', 0);
 $showcalendar    = (int)$params->get('showcalendar', 1);
+$showCategory    = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 $introtext       = $params->get('introtext', '');
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
@@ -186,7 +188,7 @@ if ($flyer_link_type == 1) {
                             <div class="clr"></div>
 
                             <?php /*venue*/ ?>
-                            <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) :?>
+                            <?php if ($showVenue && !empty($item->venue)) :?>
                                 <div class="venue-title">
                                     <?php if ($item->venuelink) : ?>
                                         <a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
@@ -197,7 +199,7 @@ if ($flyer_link_type == 1) {
                             <?php endif; ?>
 
                             <?php /*category*/ ?>
-                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                            <?php if ($showCategory && !empty($item->catname)) :?>
                                 <div class="category">
                                     <?php echo $item->catname; ?>
                                 </div>

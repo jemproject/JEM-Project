@@ -121,7 +121,7 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <?php $showCategoryBadge = (($params->get('showcategory', 1) == 1) && !empty($item->catname)); ?>
+                <?php $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)); ?>
                 <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <?php if ($showflyer == 1) : ?>
                         <div class="event-media">
@@ -169,7 +169,7 @@ $wa->addInlineStyle($css);
                         </div>
 
                         <div class="event-meta">
-                            <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) : ?>
+                            <?php if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && !empty($item->venue)) : ?>
                                 <div class="meta-item">
                                     <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-map-marker-alt"></i></div>
                                     <div class="meta-text"><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></div>

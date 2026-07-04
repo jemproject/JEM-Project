@@ -47,6 +47,8 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
 }
 
 $document = Factory::getApplication()->getDocument();
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 $css = '
   #jemmodulewide .jem-list-img {
     width: ' . $imagewidth . ';
@@ -120,7 +122,7 @@ $document->addStyleDeclaration($css);
                     </div>
                 <?php endif; ?>
 
-                <?php if (!empty($item->venue) && (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
+                <?php if ($showVenue && !empty($item->venue)) : ?>
                     <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                         <i class="fa fa-map-marker" aria-hidden="true"></i>
                         <?php if ($params->get('linkvenue') == 1) : ?>
@@ -152,7 +154,7 @@ $document->addStyleDeclaration($css);
                     </div>
                 <?php endif;?>
 
-                <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+                <?php if ($showCategory) : ?>
                     <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                         <i class="fa fa-tag" aria-hidden="true"></i>
                         <?php echo $item->catname; ?>

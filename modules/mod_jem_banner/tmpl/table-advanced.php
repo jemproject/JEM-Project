@@ -131,7 +131,7 @@ $wa->addInlineStyle($css);
                             </h3>
 
                             <div class="event-title-meta">
-                                <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                                <?php if (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)) :?>
                                     <div class="event-category-badge">
                                         <span><?php echo $item->catname; ?></span>
                                     </div>
@@ -144,7 +144,7 @@ $wa->addInlineStyle($css);
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                                <?php if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && (!empty($item->venue))) :?>
                                     <div class="event-venue">
                                         <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
                                         <span><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></span>

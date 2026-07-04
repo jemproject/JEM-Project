@@ -15,6 +15,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 $highlight_featured = $params->get('highlight_featured');
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 
 ?>
 
@@ -25,8 +27,12 @@ $highlight_featured = $params->get('highlight_featured');
 
             <colgroup>
                 <col style="width:30%" class="jemmodw_col_title" />
+                <?php if ($showCategory) : ?>
                 <col style="width:20%" class="jemmodw_col_category" />
+                <?php endif; ?>
+                <?php if ($showVenue) : ?>
                 <col style="width:20%" class="jemmodw_col_venue" />
+                <?php endif; ?>
                 <col style="width:15%" class="jemmodw_col_eventimage" />
                 <col style="width:15%" class="jemmodw_col_venueimage" />
             </colgroup>
@@ -59,12 +65,15 @@ $highlight_featured = $params->get('highlight_featured');
                         <?php endif; ?>
                     </td>
 
+                    <?php if ($showCategory) : ?>
                     <td>
                         <?php if (!empty($item->catname)) : ?>
                             <span class="category"><?= $item->catname; ?></span>
                         <?php endif; ?>
                     </td>
+                    <?php endif; ?>
 
+                    <?php if ($showVenue) : ?>
                     <td itemprop="location" itemscope itemtype="https://schema.org/Place">
                         <?php if (!empty($item->venue)) : ?>
                             <?php if ($item->venuelink) : ?>
@@ -80,6 +89,7 @@ $highlight_featured = $params->get('highlight_featured');
                             </div>
                         <?php endif; ?>
                     </td>
+                    <?php endif; ?>
 
                     <td class="event-image-cell">
                         <?php if ($params->get('use_modal')) : ?>

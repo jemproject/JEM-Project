@@ -186,7 +186,7 @@ $wa->addInlineStyle($css);
 
                     <?php
                     // venue
-                    if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                    if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && (!empty($item->venue))) :?>
                         <div class="venue-title">
                             <?php if ($item->venuelink) : ?>
                                 <a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
@@ -197,7 +197,7 @@ $wa->addInlineStyle($css);
                     <?php endif;
 
                     // category
-                    if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                    if (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)) :?>
                         <div class="category">
                             <?php echo $item->catname; ?>
                         </div>

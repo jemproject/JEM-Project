@@ -15,6 +15,8 @@ $imageWidthMax = (int) $params->get('imagewidthmax', 0);
 $imageRatio    = preg_match('#^\d+\s*/\s*\d+$#', (string) $params->get('imageratio', '1 / 1')) ? (string) $params->get('imageratio', '1 / 1') : '1 / 1';
 $noImageText   = Text::_('MOD_JEM_BANNER_NO_IMAGE');
 $noImageText   = ($noImageText === 'MOD_JEM_BANNER_NO_IMAGE') ? 'No image' : $noImageText;
+$showCategory  = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue     = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 
 Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
     #jemmodulebanner_cards_places .jem-banner-card-image {
@@ -77,13 +79,13 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                                 <dt><i class="far fa-clock" aria-hidden="true"></i><span class="visually-hidden"><?php echo Text::_('COM_JEM_TIME'); ?></span></dt>
                                 <dd><?php echo $item->time ?: Text::_('MOD_JEM_BANNER_ALL_DAY'); ?></dd>
                             </div>
-                            <?php if ($location !== '') : ?>
+                            <?php if ($showVenue && $location !== '') : ?>
                                 <div itemprop="location" itemscope itemtype="https://schema.org/Place">
                                     <dt><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span class="visually-hidden"><?php echo Text::_('COM_JEM_VENUE'); ?></span></dt>
                                     <dd itemprop="name"><?php echo $location; ?></dd>
                                 </div>
                             <?php endif; ?>
-                            <?php if (!empty($item->catname)) : ?>
+                            <?php if ($showCategory && !empty($item->catname)) : ?>
                                 <div>
                                     <dt><i class="fas fa-tag" aria-hidden="true"></i><span class="visually-hidden"><?php echo Text::_('COM_JEM_CATEGORY'); ?></span></dt>
                                     <dd><?php echo $item->catname; ?></dd>

@@ -17,6 +17,7 @@ $highlight_featured = $params->get('highlight_featured');
 $displayorder       = $params->get('display_order', 0);
 $showtitle          = $params->get('showtitle');
 $showvenue          = $params->get('showvenue');
+$showcategory       = ((int) $params->get('showcategory', 0) === 1);
 $linkloc            = $params->get('linkloc');
 $linkdet            = $params->get('linkdet');
 $showiconcountry    = $params->get('showiconcountry');
@@ -56,6 +57,12 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                     $contentVenue  = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkAttrVenue.'>'.$item->venue.'</a>' : $item->venue;
                     $blockVenue    = '<div class="event-venue" style="font-style: italic; font-size: 0.9em;">' . $contentVenue . '</div>';
                 }
+
+                // Block C: Category
+                $blockCategory = '';
+                if ($showcategory && !empty($item->catname)) {
+                    $blockCategory = '<div class="event-category" style="font-size: 0.9em;">' . $item->catname . '</div>';
+                }
                 ?>
 
                 <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="margin-bottom: 15px;">
@@ -74,23 +81,23 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                             <?php
                             switch ($displayorder) {
                                 case 1:
-                                    echo $blockTitle . $blockVenue . $blockDate;
+                                    echo $blockTitle . $blockVenue . $blockDate . $blockCategory;
                                     break;
                                 case 2:
-                                    echo $blockVenue . $blockTitle . $blockDate;
+                                    echo $blockVenue . $blockTitle . $blockDate . $blockCategory;
                                     break;
                                 case 3:
-                                    echo $blockVenue . $blockDate . $blockTitle;
+                                    echo $blockVenue . $blockDate . $blockTitle . $blockCategory;
                                     break;
                                 case 4:
-                                    echo $blockDate . $blockTitle . $blockVenue;
+                                    echo $blockDate . $blockTitle . $blockVenue . $blockCategory;
                                     break;
                                 case 5:
-                                    echo $blockDate . $blockVenue . $blockTitle;
+                                    echo $blockDate . $blockVenue . $blockTitle . $blockCategory;
                                     break;
                                 case 0:
                                 default:
-                                    echo $blockTitle . $blockDate . $blockVenue;
+                                    echo $blockTitle . $blockDate . $blockVenue . $blockCategory;
                                     break;
                             }
                             ?>

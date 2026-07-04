@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 $showcalendar    = (int)$params->get('showcalendar', 1);
+$showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 
 if ($params->get('use_modal', 0)) {
     echo JemOutput::lightbox();
@@ -147,13 +148,11 @@ $document->addStyleDeclaration($css);
                 <?php echo $item->time; ?>
               </div>
             <?php */endif; ?>
-                                <?php if ($item->user_has_access_venue) : ?>
+                                <?php if ($showVenue && $item->user_has_access_venue) : ?>
                                     <?php if (!empty($item->venue)) : ?>
-                                        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
-                                            <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                                                <?php echo $item->venuename; ?>
-                                            </div>
-                                        <?php endif; ?>
+                                        <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
+                                            <?php echo $item->venuename; ?>
+                                        </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 <?php if ((int)$params->get('showcategory', 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>

@@ -10,6 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
+
 ?>
 
 <div class="jem-sort jem-sort-small">
@@ -18,7 +21,7 @@ use Joomla\CMS\Language\Text;
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
             <div id="jem-title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
         <?php endif; ?>
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+        <?php if ($showVenue) : ?>
             <div id="jem-location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
         <?php endif; ?>
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
@@ -27,7 +30,7 @@ use Joomla\CMS\Language\Text;
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
             <div id="jem-state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_STATE'); ?></div>
         <?php endif; ?>
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+        <?php if ($showCategory) : ?>
             <div id="jem-category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
         <?php endif; ?>
     </div>
@@ -78,7 +81,7 @@ use Joomla\CMS\Language\Text;
             </div>
         <?php endif; ?>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+        <?php if ($showVenue) : ?>
             <?php if (!empty($item->venue)) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
@@ -122,7 +125,7 @@ use Joomla\CMS\Language\Text;
             <?php endif; ?>
         <?php endif; ?>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+        <?php if ($showCategory) : ?>
             <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo $item->catname; ?>

@@ -17,6 +17,7 @@ $highlight_featured = $params->get('highlight_featured');
 $displayorder       = (int) $params->get('display_order', 0);
 $showtitle          = $params->get('showtitle');
 $showvenue          = $params->get('showvenue');
+$showcategory       = ((int) $params->get('showcategory', 0) === 1);
 $linkloc            = $params->get('linkloc');
 $linkdet            = $params->get('linkdet');
 $showiconcountry    = $params->get('showiconcountry');
@@ -57,6 +58,9 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
             <th><i class="fa-solid fa-hourglass-start"></i><?php echo Text::_('COM_JEM_STARTTIME'); ?></th>
             <th><i class="fa-solid fa-calendar-xmark"></i><?php echo Text::_('COM_JEM_ENDDATE'); ?></th>
             <th><i class="fa-solid fa-hourglass-end"></i><?php echo Text::_('COM_JEM_ENDTIME'); ?></th>
+            <?php if ($showcategory) : ?>
+                <th><i class="fa-solid fa-tag"></i><?php echo Text::_('COM_JEM_CATEGORY'); ?></th>
+            <?php endif; ?>
             <th><i class="fa-solid fa-link"></i><?php echo Text::_('COM_JEM_LINK'); ?></th>
             </thead>
             <?php foreach ($list as $item) : ?>
@@ -125,6 +129,9 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
                         <?php echo $item->endtimes; ?>
                         </span>
                     </td>
+                    <?php if ($showcategory) : ?>
+                        <td><span class="event-category"><?php echo $item->catname; ?></span></td>
+                    <?php endif; ?>
                     <td>
                         <?php if ($params->get('linkdet') == 1) : ?>
                             <a href="<?php echo $item->link; ?>"><div style="text-align: center;"><i class="far fa-eye"></i></div></a>
