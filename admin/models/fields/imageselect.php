@@ -109,6 +109,13 @@ class JFormFieldImageselect extends ListField
         margin-right: auto;
     }
 }
+img.venue-image {
+    max-width: 200px;
+    max-height: 150px;
+    object-fit: contain;
+    display: block;
+    margin-top: 8px;
+}
 ');
 
         // Setup variables for display.

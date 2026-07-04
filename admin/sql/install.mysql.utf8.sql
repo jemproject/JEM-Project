@@ -168,6 +168,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `article_create_mode` tinyint(1) NOT NULL DEFAULT '0',
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
+    `image_as_default` tinyint(1) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `idx_article_category` (`article_category_id`),
     KEY `idx_parent` (`parent_id`),

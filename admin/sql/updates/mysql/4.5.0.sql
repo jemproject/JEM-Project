@@ -17,6 +17,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_custom_fi
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('global_venue_custom_fields_position', 'details');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('globalattribs', '{"loglevel":"2"}');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pdf_title_font_size', '18');
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',categories') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('categories', `value`) = 0;
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',typevenues') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('typevenues', `value`) = 0;
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',venues') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('venues', `value`) = 0;
@@ -91,3 +92,5 @@ ALTER TABLE #__jem_register ENGINE=InnoDB;
 ALTER TABLE #__jem_config ENGINE=InnoDB;
 ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
+
+ALTER TABLE `#__jem_categories` ADD COLUMN IF NOT EXISTS `image_as_default` tinyint(1) NOT NULL DEFAULT 0;

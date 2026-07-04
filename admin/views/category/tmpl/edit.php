@@ -140,6 +140,7 @@ $typeField = $this->form->getField('type_id');
                                 <ul class="adminformlist">
                                     <li><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
                                     </li>
+                                    <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
                                 </ul>
                             </fieldset>
                         </div>
