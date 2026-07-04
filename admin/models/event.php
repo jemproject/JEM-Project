@@ -688,6 +688,14 @@ class JemModelEvent extends JemModelAdmin
                 $data['publish_up'] = Factory::getDate()->toSql();
             }
 
+            // For new events with no event image, use the first category that
+            // provides a default event image. Shared category defaults remain in
+            // the root events folder; per-event defaults are copied into the
+            // configured image_path folder.
+            if (!$this->applyCategoryDefaultEventImage($data, $cats, $new)) {
+                return false;
+            }
+
             // Save the event
             $saved = parent::save($data);
 
@@ -1033,6 +1041,10 @@ class JemModelEvent extends JemModelAdmin
             return true;
         }
 
+        if ($this->usesSharedCategoryDefaultImage($eventData) && $currentFolder === '' && $sourceFolder === '') {
+            return true;
+        }
+
         $images = array_unique(array_filter(array(
             (string) ($eventData['datimage'] ?? ''),
             (string) ($eventData['fullimage'] ?? '')
@@ -1065,6 +1077,120 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return true;
+    }
+
+    protected function applyCategoryDefaultEventImage(array &$data, $categories, $new)
+    {
+        if (!$new || !empty($data['datimage']) || empty($categories) || !is_array($categories)) {
+            return true;
+        }
+
+        $catIds = array_values(array_filter(array_map('intval', $categories)));
+
+        if (empty($catIds)) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'image', 'event_image_default_storage')))
+            ->from($db->quoteName('#__jem_categories'))
+            ->whereIn($db->quoteName('id'), $catIds)
+            ->where($db->quoteName('image_as_default') . ' = 1')
+            ->where($db->quoteName('image') . ' != ' . $db->quote(''));
+
+        try {
+            $db->setQuery($query);
+            $catImageMap = $db->loadObjectList('id');
+        } catch (Throwable $e) {
+            // During schema repair/update the new columns may not exist yet.
+            return true;
+        }
+
+        if (empty($catImageMap)) {
+            return true;
+        }
+
+        foreach ($catIds as $catId) {
+            if (!isset($catImageMap[$catId])) {
+                continue;
+            }
+
+            $category = $catImageMap[$catId];
+            $sourceFilename = File::makeSafe((string) $category->image);
+
+            if ($sourceFilename === '') {
+                continue;
+            }
+
+            $targetFilename = 'category_' . $sourceFilename;
+            $storage = (string) ($category->event_image_default_storage ?? 'shared_root');
+            $targetFolder = $storage === 'event_folder'
+                ? JemEventImagePath::normaliseRelativeFolder($data['image_path'] ?? JemEventImagePath::configuredFolderFromEvent($data))
+                : '';
+
+            if (!$this->copyCategoryDefaultImage($sourceFilename, $targetFilename, $targetFolder)) {
+                return false;
+            }
+
+            $data['datimage'] = $targetFilename;
+            $data['image_path'] = $targetFolder;
+
+            return true;
+        }
+
+        return true;
+    }
+
+    protected function copyCategoryDefaultImage($sourceFilename, $targetFilename, $targetFolder)
+    {
+        $sourceFilename = File::makeSafe((string) $sourceFilename);
+        $targetFilename = File::makeSafe((string) $targetFilename);
+        $targetFolder = JemEventImagePath::normaliseRelativeFolder($targetFolder);
+
+        if ($sourceFilename === '' || $targetFilename === '') {
+            return true;
+        }
+
+        $source = Path::clean(JPATH_SITE . '/images/jem/categories/' . $sourceFilename);
+
+        if (!File::exists($source)) {
+            return true;
+        }
+
+        if (!JemEventImagePath::ensureEventFolders($targetFolder)) {
+            $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+            return false;
+        }
+
+        $target = Path::clean(JemEventImagePath::absoluteImageFolder($targetFolder) . $targetFilename);
+        $basePath = Path::clean(JPATH_SITE . '/' . JemEventImagePath::BASE);
+
+        if (!JemEventImagePath::isInsideBase($target, $basePath)) {
+            $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+            return false;
+        }
+
+        if (!File::exists($target) && !File::copy($source, $target)) {
+            $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+            return false;
+        }
+
+        JemEventImagePath::createThumbnail($targetFolder, $targetFilename, $target, JemHelper::config());
+
+        return true;
+    }
+
+    protected function usesSharedCategoryDefaultImage(array $eventData)
+    {
+        $datimage = File::makeSafe((string) ($eventData['datimage'] ?? ''));
+        $fullimage = File::makeSafe((string) ($eventData['fullimage'] ?? ''));
+        $folder = JemEventImagePath::normaliseRelativeFolder($eventData['image_path'] ?? '');
+
+        return $folder === '' && $fullimage === '' && strpos($datimage, 'category_') === 0;
     }
 
     protected function isEventImageUsedOutsideEvent($eventId, $folder, $filename)

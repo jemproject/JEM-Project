@@ -138,8 +138,9 @@ $typeField = $this->form->getField('type_id');
                         <div class="accordion-body">
                             <fieldset class="panelform">
                                 <ul class="adminformlist">
-                                    <li><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
-                                    </li>
+                                    <li><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div></li>
+                                    <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
+                                    <li><?php echo $this->form->renderfield('event_image_default_storage'); ?></li>
                                 </ul>
                             </fieldset>
                         </div>

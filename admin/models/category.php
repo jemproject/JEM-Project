@@ -19,6 +19,9 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\Date\Date;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
 
 /**
  * Category Model
@@ -299,6 +302,29 @@ class JemModelCategory extends AdminModel
 
             $this->setError($table->getError());
             return false;
+        }
+
+        // Copy category image to the shared events folder whenever it is used as
+        // a shared default event image. Per-event folder copies are handled when
+        // the new event is saved, because the target folder depends on event data.
+        $newImageAsDefault = (int) ($data['image_as_default'] ?? 0);
+        $defaultStorage = (string) ($data['event_image_default_storage'] ?? 'shared_root');
+        $catImage = File::makeSafe((string) ($data['image'] ?? ''));
+
+        if ($newImageAsDefault === 1 && $defaultStorage !== 'event_folder' && $catImage !== '') {
+            $srcPath = Path::clean(JPATH_ROOT . '/images/jem/categories/' . $catImage);
+            $dstDir  = Path::clean(JPATH_ROOT . '/images/jem/events');
+            $dstPath = Path::clean($dstDir . '/category_' . $catImage);
+
+            if (is_file($srcPath)) {
+                if (!Folder::exists($dstDir)) {
+                    Folder::create($dstDir);
+                }
+
+                if (Folder::exists($dstDir) && !File::exists($dstPath)) {
+                    File::copy($srcPath, $dstPath);
+                }
+            }
         }
 
         // Trigger the onContentAfterSave event.

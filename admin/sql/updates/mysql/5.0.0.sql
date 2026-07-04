@@ -69,6 +69,8 @@ UPDATE `#__jem_venues` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs`
 UPDATE `#__jem_events` SET `attribs` = '{}' WHERE `attribs` IS NULL OR `attribs` = '' OR `attribs` = '""' OR `attribs` = "''" OR NOT JSON_VALID(`attribs`);
 UPDATE `#__jem_categories` SET `metadata` = '{}' WHERE `metadata` IS NULL OR `metadata` = '' OR `metadata` = '""' OR `metadata` = "''" OR NOT JSON_VALID(`metadata`);
 UPDATE `#__jem_categories` SET `path` = NULL WHERE `id` = 1 AND `catname` = 'root' AND `path` IS NOT NULL;
+ALTER TABLE `#__jem_categories` ADD COLUMN `image_as_default` tinyint(1) NOT NULL DEFAULT 0;
+ALTER TABLE `#__jem_categories` ADD COLUMN `event_image_default_storage` varchar(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default`;
 UPDATE `#__jem_config` SET `value` = 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal' WHERE `keyname` = 'pdf_enabled_views' AND `value` = 'event,annualcalendar';
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',categories') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('categories', `value`) = 0;
 UPDATE `#__jem_config` SET `value` = CONCAT(`value`, ',typevenues') WHERE `keyname` = 'pdf_enabled_views' AND FIND_IN_SET('typevenues', `value`) = 0;
