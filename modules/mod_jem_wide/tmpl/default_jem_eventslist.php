@@ -46,7 +46,9 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 $css = '
   #jemmodulewide .jem-list-img {
     width: ' . $imagewidth . ';
@@ -120,7 +122,7 @@ $document->addStyleDeclaration($css);
                     </div>
                 <?php endif; ?>
 
-                <?php if (!empty($item->venue) && (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue'))) : ?>
+                <?php if ($showVenue && !empty($item->venue)) : ?>
                     <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                         <i class="fa fa-map-marker" aria-hidden="true"></i>
                         <?php if ($params->get('linkvenue') == 1) : ?>
@@ -152,10 +154,20 @@ $document->addStyleDeclaration($css);
                     </div>
                 <?php endif;?>
 
-                <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+                <?php if ($showCategory) : ?>
                     <div class="jem-event-info" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                         <i class="fa fa-tag" aria-hidden="true"></i>
                         <?php echo $item->catname; ?>
+                    </div>
+                <?php endif; ?>
+                <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                    <div class="jem-event-info jem-more-information">
+                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-wide', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                           href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                           class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-wide__more-information'); ?>">
+                            <?php echo Text::_('MOD_JEM_WIDE_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                        </a>
                     </div>
                 <?php endif; ?>
             </div>
@@ -166,7 +178,7 @@ $document->addStyleDeclaration($css);
                 <?php if ($params->get('use_modal')) : ?>
             <?php if ($item->eventimageorig) {
                 $image = $item->eventimageorig;
-                $document = Factory::getDocument();
+                $document = Factory::getApplication()->getDocument();
                 $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                 $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                 echo '<script>lightbox.option({

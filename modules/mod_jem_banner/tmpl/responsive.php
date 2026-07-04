@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -65,7 +64,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $additionalCSS = '';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
     $additionalCSS = 'order: -1;';
@@ -188,7 +187,7 @@ $wa->addInlineStyle($css);
                                 <?php endif; ?>
 
                                 <?php /*venue*/ ?>
-                                <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                                <?php if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && (!empty($item->venue))) :?>
                                     <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
                                         <?php if ($item->venuelink) : ?>
                                             <a href="<?php echo $item->venuelink; ?>"><?php echo $item->venue; ?></a>
@@ -199,7 +198,7 @@ $wa->addInlineStyle($css);
                                 <?php endif;
 
                                 // category
-                                if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                                if (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)) :?>
                                     <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
                                         <?php echo $item->catname; ?>
                                     </div>
@@ -233,12 +232,22 @@ $wa->addInlineStyle($css);
                                 <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
                                     <div class="jem-readmore-banner">
                                         <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
-                                           href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                           href="<?php echo $item->link ?>"
                                            title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>"
                                            class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>">
                                             <!--<button class="jem-btn btn">-->
                                             <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
                                             <!--</button>-->
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                                <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                    <div class="jem-more-information">
+                                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                           href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-banner__more-information'); ?>">
+                                            <?php echo Text::_('MOD_JEM_BANNER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
                                         </a>
                                     </div>
                                 <?php endif; ?>
