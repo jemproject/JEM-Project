@@ -2588,14 +2588,15 @@ class JemPdfView
             .jem-pdf-calendar { border-collapse: collapse; width: 100%; }
             .jem-pdf-calendar-title { background-color: #ffffff; color: #111827; border: 0.2mm solid #9ca3af; font-family: ' . $headerFontFamily . '; font-size: ' . ($headerFontSize + 4) . 'pt; font-weight: bold; text-align: center; height: 6mm; line-height: 6mm; padding: 0.8mm 1mm; }
             .jem-pdf-calendar th { font-family: ' . $headerFontFamily . '; background-color: #3f3f46; color: #ffffff; border: 0.2mm solid #9ca3af; font-size: ' . $headerFontSize . 'pt; font-weight: bold; text-align: center; }
-            .jem-pdf-calendar td { border: 0.2mm solid #cbd5e1; font-size: ' . $dayFontSize . 'pt; vertical-align: top; height: 23mm; padding: 0.8mm; }
+            .jem-pdf-calendar td { border: 0.2mm solid #cbd5e1; font-size: ' . $dayFontSize . 'pt; vertical-align: top; padding: 0.2mm 0.8mm; }
             .jem-pdf-calendar-week td { height: 70mm; }
+            .jem-pdf-calendar td.jem-pdf-calendar-title { height: 6mm; line-height: 6mm; }
             .jem-pdf-calendar-week td.jem-pdf-calendar-title { height: 6mm; line-height: 6mm; }
-            .jem-pdf-daybar { background-color: #e5e5e5; font-weight: bold; padding: 0.3mm 0.5mm; }
+            .jem-pdf-daybar { background-color: #e5e5e5; font-weight: bold; padding: 0.1mm 0.5mm; }
             .jem-pdf-special-days { margin-top: 0.6mm; }
             .jem-pdf-special-day-badge { border: 0.2mm solid #9ca3af; border-radius: 1mm; font-family: ' . $headerFontFamily . '; font-weight: bold; padding: 0.4mm 1mm; }
             .jem-pdf-outside { background-color: #eeeeee; color: #9ca3af; }
-            .jem-pdf-event-card { background-color: #fff8df; border: 0.15mm solid #f3e7bd; margin-top: 0.8mm; padding: 0.7mm; text-align: center; font-size: ' . $eventFontSize . 'pt; line-height: ' . ($eventFontSize + 2) . 'pt; }
+            .jem-pdf-event-card { background-color: #fff8df; border: 0.15mm solid #f3e7bd; margin-top: 0; padding: 0; text-align: center; font-size: ' . $eventFontSize . 'pt; line-height: ' . ($eventFontSize + 1) . 'pt; }
             .jem-pdf-event-card a { color: inherit; }
             .jem-pdf-event-time { color: #4b5563; }
             .jem-pdf-category-mark { font-size: ' . ($eventFontSize + 2) . 'pt; font-weight: bold; }
@@ -2608,19 +2609,24 @@ class JemPdfView
             $html[] = $intro;
         }
 
-        $html[] = '<table class="jem-pdf-calendar' . ($cellCount === 7 ? ' jem-pdf-calendar-week' : '') . '" cellpadding="1" cellspacing="0">';
+        $colWidths = array_fill(0, 7, $dayWidth);
+
+        $daybarStyle = 'background-color:#e5e5e5;font-family:' . $headerFontFamily . ';font-weight:bold;font-size:' . $dayFontSize . 'pt;padding-left:0.5mm;';
+        $daybarOutsideStyle = $daybarStyle . 'color:#9ca3af;';
+
+        $html[] = '<table class="jem-pdf-calendar' . ($cellCount === 7 ? ' jem-pdf-calendar-week' : '') . '" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;">';
 
         if ($gridTitle !== '') {
-            $html[] = '<tr><td class="jem-pdf-calendar-title" colspan="7">' . htmlspecialchars($gridTitle, ENT_COMPAT, 'UTF-8') . '</td></tr>';
+            $html[] = '<tr><td colspan="7" style="border:0.2mm solid #9ca3af;background-color:#ffffff;font-family:' . $headerFontFamily . ';font-size:' . ($headerFontSize + 4) . 'pt;font-weight:bold;text-align:center;padding:1mm;">' . htmlspecialchars($gridTitle, ENT_COMPAT, 'UTF-8') . '</td></tr>';
         }
 
         $html[] = '<tr>';
-
-        foreach ($weekdays as $weekday) {
-            $html[] = '<th width="' . $dayWidth . '">' . self::buildPdfHeaderLabel(Text::_($weekday)) . '</th>';
+        foreach ($weekdays as $i => $weekday) {
+            $html[] = '<th width="' . $colWidths[$i] . '" style="background-color:#3f3f46;color:#ffffff;border:0.2mm solid #9ca3af;font-family:' . $headerFontFamily . ';font-size:' . $headerFontSize . 'pt;font-weight:bold;text-align:center;padding:0.5mm;">' . self::buildPdfHeaderLabel(Text::_($weekday)) . '</th>';
         }
-
         $html[] = '</tr>';
+
+        $specialDayLegend = array();
 
         for ($cell = 0; $cell < $cellCount; $cell++) {
             if ($cell % 7 === 0) {
@@ -2630,15 +2636,36 @@ class JemPdfView
             $date = $gridStart->modify('+' . $cell . ' days');
             $dateKey = $date->format('Y-m-d');
             $outside = $shadeOutsideMonth && $date->format('m') !== $periodStart->format('m');
-            $classes = $outside ? ' class="jem-pdf-outside"' : '';
-            $html[] = '<td width="' . $dayWidth . '"' . $classes . '>';
-            $html[] = '<div class="jem-pdf-daybar">' . (int) $date->format('j') . '</div>';
-            $html[] = self::buildSpecialDayBadgesHtml($specialDaysByDate[$dateKey] ?? array());
+            $colIdx = $cell % 7;
 
-            foreach (($eventsByDate[$dateKey] ?? array()) as $event) {
-                $html[] = self::buildCalendarEventCard($event, $useCategoryBackground);
+            $cellBg = $outside ? '#eeeeee' : '';
+            if (!$outside) {
+                $daySpecialDays = $specialDaysByDate[$dateKey] ?? array();
+                foreach ($daySpecialDays as $sd) {
+                    $sdColor = trim((string) ($sd['color'] ?? ''));
+                    if (preg_match('/^#[0-9a-fA-F]{6}$/', $sdColor)) {
+                        $cellBg = $sdColor;
+                        $sdType = trim((string) ($sd['type'] ?? ($sd['title'] ?? '')));
+                        if ($sdType !== '' && !isset($specialDayLegend[$sdColor])) {
+                            $specialDayLegend[$sdColor] = $sdType;
+                        }
+                        break;
+                    }
+                }
             }
 
+            $tdStyle = 'border:0.2mm solid #9ca3af;vertical-align:top;' . ($cellBg !== '' ? 'background-color:' . $cellBg . ';' : '');
+            $html[] = '<td width="' . $colWidths[$colIdx] . '" style="' . $tdStyle . '">';
+
+            // Nested table: eliminates TCPDF inter-div spacing
+            $html[] = '<table width="100%" cellpadding="0" cellspacing="0">';
+            $html[] = '<tr><td style="' . ($outside ? $daybarOutsideStyle : $daybarStyle) . '">' . (int) $date->format('j') . '</td></tr>';
+
+            foreach (($eventsByDate[$dateKey] ?? array()) as $event) {
+                $html[] = self::buildCalendarEventCard($event, $useCategoryBackground, $eventFontSize);
+            }
+
+            $html[] = '</table>';
             $html[] = '</td>';
 
             if ($cell % 7 === 6) {
@@ -2648,8 +2675,21 @@ class JemPdfView
 
         $html[] = '</table>';
 
+        if ($legend || $specialDayLegend) {
+            $html[] = '<br/>';
+        }
+
         if ($legend) {
-            $html[] = '<div class="jem-pdf-legend"><strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> &nbsp; ' . self::buildCalendarPdfLegendItems($legend) . '</div>';
+            $html[] = '<div class="jem-pdf-legend" style="font-size:' . $eventFontSize . 'pt;"><strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> &nbsp; ' . self::buildCalendarPdfLegendItems($legend) . '</div>';
+        }
+
+        if ($specialDayLegend) {
+            $sdItems = array();
+            foreach ($specialDayLegend as $sdColor => $sdType) {
+                $sdItems[] = '<span style="background-color:' . htmlspecialchars($sdColor, ENT_COMPAT, 'UTF-8') . ';color:#111827;border:0.2mm solid #9ca3af;padding:0.3mm 1mm;">&nbsp;&nbsp;</span>&nbsp;'
+                    . htmlspecialchars($sdType, ENT_COMPAT, 'UTF-8');
+            }
+            $html[] = '<div class="jem-pdf-legend" style="font-size:' . $eventFontSize . 'pt;">' . implode(' &nbsp; ', $sdItems) . '</div>';
         }
 
         $footer = self::buildViewTextBlock('footer');
@@ -2804,7 +2844,7 @@ class JemPdfView
         return $legend;
     }
 
-    private static function buildCalendarEventCard($row, bool $useCategoryBackground = false): string
+    private static function buildCalendarEventCard($row, bool $useCategoryBackground = false, int $fontSize = 6): string
     {
         $title = htmlspecialchars((string) ($row->title ?? ''), ENT_COMPAT, 'UTF-8');
         $url = !empty($row->slug) ? self::absoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '';
@@ -2817,30 +2857,43 @@ class JemPdfView
             $color = '#6b7280';
         }
 
-        $cardStyle = '';
-        $timeStyle = '';
-        $linkStyle = '';
-        $markColor = htmlspecialchars($color, ENT_COMPAT, 'UTF-8');
-
         if ($useCategoryBackground) {
             $textColor = self::getContrastingTextColor($color);
-            $cardStyle = ' style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
-                . '; border-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
-                . '; color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $timeStyle = ' style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $linkStyle = ' style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $markColor = htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8');
+            $bgColor   = $color;
+            $timeColor = $textColor;
+            $linkColor = $textColor;
+            $markColor = $textColor;
+        } else {
+            $bgColor   = '#fff8df';
+            $timeColor = '#4b5563';
+            $linkColor = '#111827';
+            $markColor = $color;
         }
 
         if ($url !== '') {
-            $title = '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '"' . $linkStyle . '>' . $title . '</a>';
+            $title = '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '" style="color:' . htmlspecialchars($linkColor, ENT_COMPAT, 'UTF-8') . ';">' . $title . '</a>';
         }
 
-        return '<div class="jem-pdf-event-card"' . $cardStyle . '>'
-            . (!$useCategoryBackground ? '<div class="jem-pdf-category-mark" style="color:' . $markColor . ';">&#9632;</div>' : '')
-            . ($time !== '' ? '<div class="jem-pdf-event-time"' . $timeStyle . '>' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</div>' : '')
-            . '<div>' . $title . self::buildPdfEventIndicators($row) . '</div>'
-            . '</div>';
+        $timeFontSize = max(5, $fontSize - 1);
+        // Outer td: background + top separator only (no padding — cellpadding on inner table controls spacing)
+        $outerTdStyle = 'background-color:' . htmlspecialchars($bgColor, ENT_COMPAT, 'UTF-8')
+            . ';border-top:0.15mm solid #d1d5db;';
+        // Inner td: text styles
+        $innerTdStyle = 'text-align:center;font-size:' . $fontSize . 'pt'
+            . ';line-height:' . ($fontSize + 2) . 'pt'
+            . ';color:' . htmlspecialchars($linkColor, ENT_COMPAT, 'UTF-8') . ';';
+
+        $content = '';
+        if (!$useCategoryBackground) {
+            $content .= '<span style="color:' . htmlspecialchars($markColor, ENT_COMPAT, 'UTF-8') . ';">&#9632;</span> ';
+        }
+        if ($time !== '') {
+            $content .= '<span style="font-size:' . $timeFontSize . 'pt;font-style:italic;color:' . htmlspecialchars($timeColor, ENT_COMPAT, 'UTF-8') . ';">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</span><br/>';
+        }
+        $content .= '<span style="font-size:' . $fontSize . 'pt;font-weight:bold;">' . $title . '</span>' . self::buildPdfEventIndicators($row);
+
+        // cellpadding="6" ≈ 1.6mm top/bottom/left/right — the only reliable padding mechanism in TCPDF
+        return '<tr><td style="' . $outerTdStyle . '"><table width="100%" cellpadding="6" cellspacing="0"><tr><td style="' . $innerTdStyle . '">' . $content . '</td></tr></table></td></tr>';
     }
 
     private static function getCalendarEventTime($row): string

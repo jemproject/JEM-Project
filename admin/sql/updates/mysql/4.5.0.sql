@@ -92,3 +92,5 @@ ALTER TABLE #__jem_register ENGINE=InnoDB;
 ALTER TABLE #__jem_config ENGINE=InnoDB;
 ALTER TABLE #__jem_venues ENGINE=InnoDB;
 ALTER TABLE #__jem_countries ENGINE=InnoDB;
+
+ALTER TABLE `#__jem_categories` ADD COLUMN IF NOT EXISTS `image_as_default` tinyint(1) NOT NULL DEFAULT 0;
