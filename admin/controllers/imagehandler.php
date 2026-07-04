@@ -15,6 +15,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Path;
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 
 /**
  * JEM Component Imagehandler Controller
@@ -55,7 +56,8 @@ class JemControllerImagehandler extends BaseController
 
         $file = $app->input->files->get('userfile', array(), 'array');
         $task = $app->input->getCmd('task', '');
-
+        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
 
         $directories = array(
             'venueimgup'      => JPATH_SITE . '/images/jem/venues/',
@@ -69,19 +71,29 @@ class JemControllerImagehandler extends BaseController
             return;
         }
 
+        if ($task === 'eventimgup') {
+            if (!JemEventImagePath::ensureEventFolders($imagePath)) {
+                $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
+                $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
+                return;
+            }
+
+            $directories[$task] = JemEventImagePath::absoluteImageFolder($imagePath);
+        }
+
         $base_Dir = Path::clean($directories[$task]) . DIRECTORY_SEPARATOR;
         $baseCheck = rtrim(strtolower($base_Dir), '\\/') . DIRECTORY_SEPARATOR;
 
         //do we have an upload?
         if (empty($file['name'])) {
             $app->enqueueMessage(Text::_('COM_JEM_IMAGE_EMPTY'), 'warning');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
         if (!empty($file['error']) || !is_uploaded_file($file['tmp_name'])) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
@@ -90,7 +102,7 @@ class JemControllerImagehandler extends BaseController
 
         if ($check === false) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
@@ -100,21 +112,24 @@ class JemControllerImagehandler extends BaseController
 
         if (strpos(strtolower($filepath), $baseCheck) !== 0) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
         //upload the image
         if (!File::upload($file['tmp_name'], $filepath)) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
-        } else {
-            echo "<script> alert(" . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . "); window.parent.SelectImage(" . json_encode($filename) . ", " . json_encode($filename) . "); </script>\n";
-            $app->close();
         }
-    }
 
+        if ($task === 'eventimgup') {
+            JemEventImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
+        }
+
+        echo '<script> alert(' . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . '); window.parent.SelectImage(' . json_encode($filename) . ', ' . json_encode($filename) . ', null, ' . json_encode($task === 'eventimgup' ? $imagePath : '') . '); </script>' . "\n";
+        $app->close();
+    }
     /**
      * logic to mass delete images
      *

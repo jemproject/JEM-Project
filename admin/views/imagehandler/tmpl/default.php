@@ -283,12 +283,12 @@ use Joomla\CMS\Session\Session;
                     ?>
                     <tr>
                         <td>
-                            <button type="button" class="btn btn-link p-0" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>);'>
+                            <button type="button" class="btn btn-link p-0" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
                                 <img class="jem-imagehandler-thumb" src="<?php echo $imageUrl; ?>" alt="<?php echo $imageNameAttr; ?>" />
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-link p-0 text-start" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>);'>
+                            <button type="button" class="btn btn-link p-0 text-start" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
                                 <?php echo $imageNameAttr; ?>
                             </button>
                         </td>

@@ -2200,6 +2200,51 @@
                 step="10"
                 required="false"
             />
+            <field name="event_image_subfolder_enabled" type="radio"
+                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_ENABLED"
+                description="COM_JEM_EVENT_IMAGE_SUBFOLDER_ENABLED_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_image_subfolder_preset" type="list"
+                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET"
+                description="COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_DESC"
+                class="inputbox"
+                default="root"
+                required="false"
+                showon="event_image_subfolder_enabled:1"
+            >
+                <option value="root">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_ROOT</option>
+                <option value="year">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_YEAR</option>
+                <option value="year_category">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_YEAR_CATEGORY</option>
+                <option value="year_category_venue">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_YEAR_CATEGORY_VENUE</option>
+                <option value="category_venue">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_CATEGORY_VENUE</option>
+                <option value="venue_year">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_VENUE_YEAR</option>
+                <option value="custom">COM_JEM_EVENT_IMAGE_SUBFOLDER_PRESET_CUSTOM</option>
+            </field>
+            <field name="event_image_subfolder_pattern" type="text"
+                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_PATTERN"
+                description="COM_JEM_EVENT_IMAGE_SUBFOLDER_PATTERN_DESC"
+                class="inputbox"
+                default="{year}/{category_alias}"
+                required="false"
+                showon="event_image_subfolder_enabled:1[AND]event_image_subfolder_preset:custom"
+            />
+            <field name="event_image_subfolder_max_depth" type="number"
+                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH"
+                description="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH_DESC"
+                class="inputbox"
+                default="3"
+                min="1"
+                max="8"
+                step="1"
+                required="false"
+                showon="event_image_subfolder_enabled:1"
+            />
             <field name="event_show_detailstitle" type="radio"
                 label="COM_JEM_DISPLAY_EVENT_TITLE"
                 description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"

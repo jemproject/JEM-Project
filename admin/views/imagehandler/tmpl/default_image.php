@@ -22,7 +22,7 @@ $modified = !empty($this->_tmp_img->modified) ? HTMLHelper::_('date', $this->_tm
 ?>
 <div class="item-image">
     <div class="imgBorder center">
-        <a onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>);'>
+        <a onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
             <div class="image">
                 <img src="<?php echo $imageUrl; ?>" alt="<?php echo $imageNameAttr; ?> - <?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?>" />
             </div>

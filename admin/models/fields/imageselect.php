@@ -44,6 +44,10 @@ class JFormFieldImageselect extends ListField
         $imagePreviewId = $fieldId . '_imagelib';
         $uploadModalId = $fieldId . '_imageupload_modal';
         $selectModalId = $fieldId . '_imageselect_modal';
+        $imagePathValue = '';
+        if ((string) $imagetype === 'events' && $this->form) {
+            $imagePathValue = (string) $this->form->getValue('image_path', null, '');
+        }
 
         // Build the script.
         $script = array();
@@ -53,20 +57,27 @@ class JFormFieldImageselect extends ListField
         $script[] = '        image: ' . json_encode($imageInputId) . ',';
         $script[] = '        name: ' . json_encode($imageNameId) . ',';
         $script[] = '        preview: ' . json_encode($imagePreviewId) . ',';
+        $script[] = '        path: ' . json_encode((string) $imagetype === 'events' ? 'jform_image_path' : '') . ',';
         $script[] = '        base: ' . json_encode('../images/jem/' . $imagetype . '/') . ',';
         $script[] = '        blank: ' . json_encode('../media/com_jem/images/blank.webp');
         $script[] = '    };';
-        $script[] = '    function SelectImage(image, imagename, fieldId) {';
+        $script[] = '    function jemImagePreviewPath(field, image, imagePath) {';
+        $script[] = '        imagePath = (imagePath || "").replace(/^\\/+|\\/+$/g, "");';
+        $script[] = '        return image ? field.base + (imagePath ? imagePath + "/" : "") + image : field.blank;';
+        $script[] = '    }';
+        $script[] = '    function SelectImage(image, imagename, fieldId, imagePath) {';
         $script[] = '        var target = fieldId || window.jemActiveImageField || ' . json_encode($fieldId) . ';';
         $script[] = '        var field = window.jemImageFields[target];';
         $script[] = '        if (!field) { return; }';
+        $script[] = '        var pathInput = field.path ? document.getElementById(field.path) : null;';
+        $script[] = '        imagePath = typeof imagePath === "undefined" ? "" : imagePath;';
         $script[] = '        document.getElementById(field.image).value = image;';
         $script[] = '        document.getElementById(field.name).value = imagename;';
-        $script[] = '        document.getElementById(field.preview).src = image ? field.base + image : field.blank;';
+        $script[] = '        if (pathInput) { pathInput.value = image ? imagePath : ""; }';
+        $script[] = '        document.getElementById(field.preview).src = jemImagePreviewPath(field, image, imagePath);';
         // $script[] = '        window.parent.SqueezeBox.close()';
         $script[] = '        $(".btn-close").trigger("click");';
         $script[] = '    }';
-
         switch ($imagetype)
         {
             case 'categories':
@@ -113,7 +124,8 @@ class JFormFieldImageselect extends ListField
 
         // Setup variables for display.
         $html = array();
-        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component';
+        $imagePathQuery = ((string) $imagetype === 'events' && $imagePathValue !== '') ? '&amp;image_path=' . rawurlencode($imagePathValue) : '';
+        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $imagePathQuery;
         $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
 
         //
@@ -157,7 +169,8 @@ class JFormFieldImageselect extends ListField
         $html[] = "<script type=\"text/javascript\">";
         $html[] = "if (document.getElementById('" . $imageNameId . "').value!='') {";
         $html[] = "var imname = document.getElementById('" . $imageNameId . "').value;";
-        $html[] = "jsimg='../images/jem/$imagetype/' + imname;";
+        $html[] = "var imPath = document.getElementById('jform_image_path') ? document.getElementById('jform_image_path').value.replace(/^\\/+|\\/+$/g, '') : '';";
+        $html[] = "jsimg='../images/jem/$imagetype/' + (imPath ? imPath + '/' : '') + imname;";
         $html[] = "document.getElementById('" . $imagePreviewId . "').src= jsimg;";
         $html[] = "}";
         $html[] = "</script>";

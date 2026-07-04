@@ -17,6 +17,7 @@ use Joomla\Filesystem\File;
 use Joomla\CMS\User\User;
 
 use Joomla\Utilities\ArrayHelper;
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 /**
  * JEM Event Table
  */
@@ -263,7 +264,8 @@ class JemTableEvent extends Table
         }
 
         // Check if image was selected
-        $image_dir = JPATH_SITE.'/images/jem/events/';
+        $this->image_path = JemEventImagePath::normaliseRelativeFolder($this->image_path ?? '');
+        $image_dir = JemEventImagePath::absoluteImageFolder($this->image_path);
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
@@ -289,6 +291,18 @@ class JemTableEvent extends Table
                     }
                 }
 
+                if (!empty($file['name']) || !empty($fullFile['name'])) {
+                    $resolvedImagePath = JemEventImagePath::normaliseRelativeFolder($this->image_path ?? '');
+                    $this->image_path = $resolvedImagePath !== '' ? $resolvedImagePath : JemEventImagePath::configuredFolderFromEvent($this);
+
+                    if (!JemEventImagePath::ensureEventFolders($this->image_path)) {
+                        $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                        return false;
+                    }
+
+                    $image_dir = JemEventImagePath::absoluteImageFolder($this->image_path);
+                }
                 if (!empty($file['name'])) {
                     // only on first event, skip on recurrence events
                     //if (empty($this->recurrence_first_id)) {
@@ -301,6 +315,7 @@ class JemTableEvent extends Table
                             $filepath = $image_dir . $filename;
 
                             if (File::upload($file['tmp_name'], $filepath)) {
+                                JemEventImagePath::createThumbnail($this->image_path, $filename, $filepath, $jemsettings);
                                 $images_to_delete[] = $this->datimage; // delete previous image
                                 $this->datimage = $filename;
                             }
@@ -327,6 +342,7 @@ class JemTableEvent extends Table
                         $filepath = $image_dir . $filename;
 
                         if (File::upload($fullFile['tmp_name'], $filepath)) {
+                            JemEventImagePath::createThumbnail($this->image_path, $filename, $filepath, $jemsettings);
                             $images_to_delete[] = $this->fullimage;
                             $this->fullimage = $filename;
                         }
