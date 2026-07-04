@@ -149,6 +149,7 @@ class JemControllerImagehandler extends BaseController
         // Get some data from the request
         $images = Factory::getApplication()->input->get('rm', array(), 'array');
         $folder = Factory::getApplication()->input->getCmd('folder', '');
+        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
         $allowedFolders = array('events', 'venues', 'categories');
 
         if (!in_array($folder, $allowedFolders, true)) {
@@ -158,7 +159,18 @@ class JemControllerImagehandler extends BaseController
         }
 
         $basePath = Path::clean(JPATH_SITE . '/images/jem/' . $folder);
+        $thumbBasePath = Path::clean($basePath . '/small');
+
+        if ($folder === 'events' && $imagePath !== '') {
+            $basePath = Path::clean(JemEventImagePath::absoluteImageFolder($imagePath));
+            $thumbBasePath = Path::clean(JemEventImagePath::absoluteThumbFolder($imagePath));
+        } else {
+            $imagePath = '';
+        }
+
         $baseCheck = rtrim(strtolower($basePath), '\\/') . DIRECTORY_SEPARATOR;
+        $thumbBaseCheck = rtrim(strtolower($thumbBasePath), '\\/') . DIRECTORY_SEPARATOR;
+        $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
 
         if (count($images)) {
             foreach ($images as $image) {
@@ -168,9 +180,9 @@ class JemControllerImagehandler extends BaseController
                 }
 
                 $fullPath = Path::clean($basePath . '/' . $image);
-                $fullPaththumb = Path::clean($basePath . '/small/' . $image);
+                $fullPaththumb = Path::clean($thumbBasePath . '/' . $image);
 
-                if (strpos(strtolower($fullPath), $baseCheck) !== 0 || strpos(strtolower($fullPaththumb), $baseCheck) !== 0) {
+                if (strpos(strtolower($fullPath), $baseCheck) !== 0 || strpos(strtolower($fullPaththumb), $thumbBaseCheck) !== 0) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
                     continue;
                 }
@@ -192,7 +204,7 @@ class JemControllerImagehandler extends BaseController
             $task = 'selectcategoriesimg';
         }
 
-        $app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component');
+        $app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component' . $redirectPath);
     }
 
 }

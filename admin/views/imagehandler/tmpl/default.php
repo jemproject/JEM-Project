@@ -235,6 +235,12 @@ use Joomla\CMS\Session\Session;
     </style>
 
     <div class="jem-imagehandler-toolbar">
+        <?php if (!empty($this->imagePath)) : ?>
+            <div class="alert alert-info py-2 mb-0 w-100">
+                <?php echo Text::_('COM_JEM_EVENT_IMAGE_FOLDER'); ?>: <code><?php echo htmlspecialchars('images/jem/events/' . $this->imagePath, ENT_QUOTES, 'UTF-8'); ?></code>
+            </div>
+        <?php endif; ?>
+
         <div class="jem-imagehandler-search">
             <label for="filter_search" class="mb-0"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
             <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->search, ENT_QUOTES, 'UTF-8'); ?>" class="text_area form-control inputbox" onChange="document.adminForm.submit();" />
@@ -276,19 +282,21 @@ use Joomla\CMS\Session\Session;
                     $image = $this->images[$i];
                     $imageName = (string) $image->name;
                     $imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
-                    $folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
-                    $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
-                    $deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
+                    $baseFolder = !empty($this->baseFolder) ? (string) $this->baseFolder : (string) $this->folder;
+                    $folderAttr = htmlspecialchars($baseFolder, ENT_QUOTES, 'UTF-8');
+                    $imagePathParam = !empty($this->imagePath) ? '&image_path=' . rawurlencode((string) $this->imagePath) : '';
+                    $imageUrl = '../images/jem/' . str_replace('%2F', '/', rawurlencode((string) $this->folder)) . '/' . rawurlencode($imageName);
+                    $deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . $imagePathParam . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
                     $modified = !empty($image->modified) ? HTMLHelper::_('date', $image->modified, Text::_('DATE_FORMAT_LC4')) : '-';
                     ?>
                     <tr>
                         <td>
-                            <button type="button" class="btn btn-link p-0" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
+                            <button type="button" class="btn btn-link p-0" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode((string) $this->imagePath); ?>);'>
                                 <img class="jem-imagehandler-thumb" src="<?php echo $imageUrl; ?>" alt="<?php echo $imageNameAttr; ?>" />
                             </button>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-link p-0 text-start" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
+                            <button type="button" class="btn btn-link p-0 text-start" onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode((string) $this->imagePath); ?>);'>
                                 <?php echo $imageNameAttr; ?>
                             </button>
                         </td>
@@ -318,6 +326,7 @@ use Joomla\CMS\Session\Session;
     <input type="hidden" name="view" value="imagehandler" />
     <input type="hidden" name="tmpl" value="component" />
     <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+    <input type="hidden" name="image_path" value="<?php echo htmlspecialchars((string) $this->imagePath, ENT_QUOTES, 'UTF-8'); ?>" />
 </form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -15,14 +15,16 @@ use Joomla\CMS\Session\Session;
 <?php
 $imageName = (string) $this->_tmp_img->name;
 $imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
-$folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
-$imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
-$deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
+$baseFolder = !empty($this->baseFolder) ? (string) $this->baseFolder : (string) $this->folder;
+$folderAttr = htmlspecialchars($baseFolder, ENT_QUOTES, 'UTF-8');
+$imagePathParam = !empty($this->imagePath) ? '&image_path=' . rawurlencode((string) $this->imagePath) : '';
+$imageUrl = '../images/jem/' . str_replace('%2F', '/', rawurlencode((string) $this->folder)) . '/' . rawurlencode($imageName);
+$deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . $imagePathParam . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
 $modified = !empty($this->_tmp_img->modified) ? HTMLHelper::_('date', $this->_tmp_img->modified, Text::_('DATE_FORMAT_LC4')) : '-';
 ?>
 <div class="item-image">
     <div class="imgBorder center">
-        <a onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode(''); ?>);'>
+        <a onclick='window.parent.SelectImage(<?php echo json_encode($imageName); ?>, <?php echo json_encode($imageName); ?>, null, <?php echo json_encode((string) $this->imagePath); ?>);'>
             <div class="image">
                 <img src="<?php echo $imageUrl; ?>" alt="<?php echo $imageNameAttr; ?> - <?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?>" />
             </div>
