@@ -168,5 +168,9 @@ $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 
 // Render layout
+$moduleIntroText  = JemHelper::renderModuleText($params, 'intro');
+$moduleFooterText = JemHelper::renderModuleText($params, 'footer');
+echo $moduleIntroText;
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+echo $moduleFooterText;
 JemHelper::loadModuleUserCss();
