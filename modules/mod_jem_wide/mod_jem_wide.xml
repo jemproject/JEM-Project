@@ -212,6 +212,50 @@
                        description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
                        class="form-control w-auto"
                 />
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_WIDE_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_WIDE_SHOW_INTROTEXT"
+                       description="MOD_JEM_WIDE_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_WIDE_INTROTEXT"
+                       description="MOD_JEM_WIDE_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_WIDE_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_WIDE_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_WIDE_FOOTERTEXT"
+                       description="MOD_JEM_WIDE_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
+                />
             </fieldset>
             <fieldset name="advanced">
                 <field
