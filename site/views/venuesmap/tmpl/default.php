@@ -56,6 +56,17 @@ $showVenueDescription = (int) $this->params->get('showvenuedescription', 1) === 
     && (int) $settings->get('global_show_locdescription', 1) === 1;
 $venueImageWidth = max(1, (int) ($jemImageSettings->imagewidth ?? 200));
 $venueImageHeight = max(1, (int) ($jemImageSettings->imagehight ?? 200));
+$venueslistPage = $this->venueslistPage ?? ($this->venueslist ?? []);
+$paginationPagesTotal = 0;
+
+if (!empty($this->pagination)) {
+    if (isset($this->pagination->pagesTotal)) {
+        $paginationPagesTotal = (int) $this->pagination->pagesTotal;
+    } elseif (isset($this->pagination->total, $this->pagination->limit) && (int) $this->pagination->limit > 0) {
+        $paginationPagesTotal = (int) ceil((int) $this->pagination->total / (int) $this->pagination->limit);
+    }
+}
+
 
 if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
@@ -682,7 +693,7 @@ foreach (($this->venueslist ?? []) as $venue) {
 
     <?php if (!empty($this->venueslist)) : ?>
         <div class="jem-venuesmap-responsive-list">
-            <?php foreach ($this->venueslist as $venue) : ?>
+            <?php foreach ($venueslistPage as $venue) : ?>
                 <?php
                 $venueName = $this->escape($venue->venue);
                 $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
@@ -790,7 +801,7 @@ foreach (($this->venueslist ?? []) as $venue) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($this->venueslist as $venue) : ?>
+                    <?php foreach ($venueslistPage as $venue) : ?>
                         <?php
                         $venueName = $this->escape($venue->venue);
                         $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
@@ -875,10 +886,12 @@ foreach (($this->venueslist ?? []) as $venue) {
         echo JemOutput::footer(); ?>
     </div>
 
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
+    <?php if ($paginationPagesTotal > 1) : ?>
+        <div class="pagination">
+            <?php
+            echo $this->pagination->getPagesLinks(); ?>
+        </div>
+    <?php endif; ?>
 
     <?php echo JemOutput::lightbox(); ?>
 </div>

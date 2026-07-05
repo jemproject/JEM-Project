@@ -18,6 +18,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Router\Route;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
@@ -139,6 +140,21 @@ class JemViewVenuesMap extends JemView
         $categoryStartDate = $selectedCategoryId > 0 ? Factory::getDate()->format('Y-m-d') : null;
         $venueslist = JemMapHelper::getVenues($params, $categoryStartDate, null, $selectedCategoryId, $selectedCountry, $selectedCity, $venueOrder);
 
+        // Pagination over the filtered venueslist
+        $listLimit   = max(1, (int) $params->get('venues_list_limit', $app->get('list_limit', 20)));
+        $limitstart  = max(0, $jinput->getInt('limitstart', 0));
+        $totalVenues = count($venueslist);
+        if ($limitstart >= $totalVenues && $totalVenues > 0) {
+            $limitstart = 0;
+        }
+        $venueslistPage = array_slice($venueslist, $limitstart, $listLimit);
+        $pagination = new Pagination($totalVenues, $limitstart, $listLimit);
+        $pagination->setAdditionalUrlParam('jem_map_filter_country', $selectedCountry);
+        $pagination->setAdditionalUrlParam('jem_map_filter_city', $selectedCity);
+        if ($selectedCategoryId > 0) {
+            $pagination->setAdditionalUrlParam('jem_map_filter_catid', $selectedCategoryId);
+        }
+
         if ($params->get('map_auto_center', 1)) {
             [$centerLat, $centerLng] = JemMapHelper::getCenter($venueslist);
         } else {
@@ -215,9 +231,6 @@ class JemViewVenuesMap extends JemView
         $permissions->canAddVenue = $user->can('add', 'venue');
         $permissions->canEditPublishVenue = $user->can(array('edit', 'publish'), 'venue');
 
-        // Create the pagination object
-        // $pagination = $this->get('Pagination');
-
 
         $this->action = $uri->toString();
         $this->rows = $rows;
@@ -236,6 +249,7 @@ class JemViewVenuesMap extends JemView
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
         $this->venueslist = $venueslist;
+        $this->venueslistPage = $venueslistPage;
         $this->height = $height;
         $this->venueMarker = $venueMarker;
         $this->mylocMarker = $mylocMarker;
