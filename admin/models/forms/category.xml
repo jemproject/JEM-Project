@@ -175,6 +175,15 @@
             imagetype="categories"
             description="COM_JEM_IMAGESELECT"
         />
+        <field name="image_as_default" type="radio"
+            class="btn-group btn-group-yesno"
+            label="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT"
+            description="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT_DESC"
+            default="0"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
     </fieldset>
 
     <fieldset name="meta" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">

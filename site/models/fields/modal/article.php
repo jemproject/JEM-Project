@@ -40,12 +40,56 @@ class JFormFieldModal_Article extends FormField
         $value    = (int) $this->value;
         $modalId  = 'modal_' . $this->id;
 
+        $link = Route::_(
+            'index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component'
+            . '&function=jSelectArticle_' . $this->id
+            . '&selected=' . $value
+            . '&' . Session::getFormToken() . '=1',
+            false
+        );
+
         $script = array();
         $script[] = '    function jSelectArticle_' . $this->id . '(id, title) {';
-        $script[] = '        document.getElementById("' . $this->id . '_id").value = id;';
-        $script[] = '        document.getElementById("' . $this->id . '_name").value = title;';
-        $script[] = '        bootstrap.Modal.getInstance(document.getElementById("' . $modalId . '")).hide();';
+        $script[] = '        var idField = document.getElementById("' . $this->id . '_id");';
+        $script[] = '        var nameField = document.getElementById("' . $this->id . '_name");';
+        $script[] = '        if (idField) {';
+        $script[] = '            idField.value = id;';
+        $script[] = '            idField.dispatchEvent(new Event("change", { bubbles: true }));';
+        $script[] = '        }';
+        $script[] = '        if (nameField) {';
+        $script[] = '            nameField.value = title;';
+        $script[] = '            nameField.dispatchEvent(new Event("change", { bubbles: true }));';
+        $script[] = '        }';
+        $script[] = '        jemUpdateArticleButtons_' . $this->id . '();';
+        $script[] = '        var modalElement = document.getElementById("' . $modalId . '");';
+        $script[] = '        var modal = modalElement && window.bootstrap ? bootstrap.Modal.getInstance(modalElement) : null;';
+        $script[] = '        if (modal) { modal.hide(); }';
         $script[] = '    }';
+        $script[] = '    function jemUpdateArticleButtons_' . $this->id . '() {';
+        $script[] = '        var idField = document.getElementById("' . $this->id . '_id");';
+        $script[] = '        var createButton = document.getElementById("' . $this->id . '_create");';
+        $script[] = '        var clearButton = document.getElementById("' . $this->id . '_clear");';
+        $script[] = '        var hasArticle = idField && parseInt(idField.value, 10) > 0;';
+        $script[] = '        if (createButton) { createButton.hidden = hasArticle; }';
+        $script[] = '        if (clearButton) { clearButton.hidden = !hasArticle; }';
+        $script[] = '    }';
+        $script[] = '    function jemPrepareArticleModal_' . $this->id . '() {';
+        $script[] = '        var modalElement = document.getElementById("' . $modalId . '");';
+        $script[] = '        var iframe = modalElement ? modalElement.querySelector("iframe") : null;';
+        $script[] = '        if (!iframe) { return; }';
+        $script[] = '        var url = new URL("' . addslashes($link) . '", window.location.href);';
+        $script[] = '        var title = document.getElementById("jform_title");';
+        $script[] = '        var articleCategory = document.getElementById("jform_article_target_category_id");';
+        $script[] = '        var selectedCategories = [];';
+        $script[] = '        document.querySelectorAll("#jform_cats option:checked, select[name=\'jform[cats][]\'] option:checked, input[name=\'jform[cats][]\']:checked").forEach(function (field) {';
+        $script[] = '            if (field.value) { selectedCategories.push(field.value); }';
+        $script[] = '        });';
+        $script[] = '        if (title && title.value) { url.searchParams.set("article_title", title.value); }';
+        $script[] = '        if (articleCategory && articleCategory.value) { url.searchParams.set("article_catid", articleCategory.value); }';
+        $script[] = '        if (selectedCategories.length) { url.searchParams.set("jemcats", selectedCategories.join(",")); }';
+        $script[] = '        iframe.setAttribute("src", url.toString());';
+        $script[] = '    }';
+        $script[] = '    document.addEventListener("DOMContentLoaded", jemUpdateArticleButtons_' . $this->id . ');';
 
         $wa->addInlineScript(implode("\n", $script));
 
@@ -67,21 +111,16 @@ class JFormFieldModal_Article extends FormField
             }
         }
 
-        $link = Route::_(
-            'index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component'
-            . '&function=jSelectArticle_' . $this->id
-            . '&selected=' . $value
-            . '&' . Session::getFormToken() . '=1',
-            false
-        );
-
         $html = array();
         $html[] = '<div class="input-group" style="width: auto; flex-grow: 1;">';
         $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '" readonly size="35" />';
-        $html[] = '  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
+        $html[] = '  <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#' . $modalId . '" onclick="jemPrepareArticleModal_' . $this->id . '();">';
         $html[] = '    <i class="icon-file"></i> ' . Text::_('COM_JEM_SELECT');
         $html[] = '  </button>';
-        $html[] = '  <button type="button" class="btn btn-secondary" onclick="jSelectArticle_' . $this->id . '(0, \'' . htmlspecialchars(addslashes(Text::_('COM_JEM_SELECT_ARTICLE')), ENT_QUOTES, 'UTF-8') . '\');">';
+        $html[] = '  <button type="button" id="' . $this->id . '_create" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#' . $modalId . '" onclick="jemPrepareArticleModal_' . $this->id . '();" ' . ($value ? 'hidden' : '') . '>';
+        $html[] = '    <i class="icon-plus"></i> ' . Text::_('JACTION_CREATE');
+        $html[] = '  </button>';
+        $html[] = '  <button type="button" id="' . $this->id . '_clear" class="btn btn-secondary" onclick="jSelectArticle_' . $this->id . '(0, \'' . htmlspecialchars(addslashes(Text::_('COM_JEM_SELECT_ARTICLE')), ENT_QUOTES, 'UTF-8') . '\');" ' . ($value ? '' : 'hidden') . '>';
         $html[] = '    ' . Text::_('JSEARCH_FILTER_CLEAR');
         $html[] = '  </button>';
         $html[] = '</div>';

@@ -38,6 +38,9 @@ class JFormFieldImageselect extends ListField
     {
         // ImageType
         $imagetype = $this->element['imagetype'];
+        $jemsettings = JemHelper::config();
+        $previewWidth = max(1, (int) ($jemsettings->imagewidth ?? 100));
+        $previewHeight = max(1, (int) ($jemsettings->imagehight ?? $previewWidth));
         $fieldId = preg_replace('/[^A-Za-z0-9_-]/', '_', $this->id);
         $imageInputId = $fieldId . '_image';
         $imageNameId = $fieldId . '_imagename';
@@ -87,7 +90,9 @@ class JFormFieldImageselect extends ListField
         $document = Factory::getApplication()->getDocument();
         $document->getWebAssetManager()->addInlineScript(implode("\n", $script));
         $document->addStyleDeclaration('
-#' . $uploadModalId . ' .modal-dialog,
+#' . $uploadModalId . ' .modal-dialog {
+    max-width: min(78vw, 980px);
+}
 #' . $selectModalId . ' .modal-dialog {
     max-width: min(90vw, 1200px);
 }
@@ -106,6 +111,12 @@ class JFormFieldImageselect extends ListField
         margin-left: auto;
         margin-right: auto;
     }
+}
+img.venue-image {
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    margin-top: 8px;
 }
 ');
 
@@ -151,7 +162,7 @@ class JFormFieldImageselect extends ListField
         $html[] = "</div></div>";
         $html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".Text::_('COM_JEM_SELECTIMAGE')."', '" . $fieldId . "');\" value=\"".Text::_('COM_JEM_RESET')."\" />";
         $html[] = "\n<input type=\"hidden\" id=\"" . $imageInputId . "\" name=\"$this->name\" value=\"$this->value\" />";
-        $html[] = "<img src=\"../media/com_jem/images/blank.webp\" id=\"" . $imagePreviewId . "\" class=\"venue-image\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
+        $html[] = "<img src=\"../media/com_jem/images/blank.webp\" id=\"" . $imagePreviewId . "\" class=\"venue-image\" style=\"width:min(100%, " . $previewWidth . "px);height:" . $previewHeight . "px;max-width:100%;max-height:" . $previewHeight . "px;\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
         $html[] = "<script type=\"text/javascript\">";
         $html[] = "if (document.getElementById('" . $imageNameId . "').value!='') {";
         $html[] = "var imname = document.getElementById('" . $imageNameId . "').value;";

@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_banner</name>
     <author>JEM Community</author>
-    <creationDate>June 2026</creationDate>
+    <creationDate>4 July 2026 20:00</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0rc4</version>
+    <version>4.5.0rc5</version>
     <description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -310,6 +310,50 @@
                     <option value="0">MOD_JEM_BANNER_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_BANNER_STATE_MODE_CONTAINS</option>
                 </field>
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_BANNER_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_BANNER_SHOW_INTROTEXT"
+                       description="MOD_JEM_BANNER_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_BANNER_INTROTEXT"
+                       description="MOD_JEM_BANNER_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_BANNER_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_BANNER_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_BANNER_FOOTERTEXT"
+                       description="MOD_JEM_BANNER_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
+                />
             </fieldset>
             <fieldset name="advanced">
                 <field

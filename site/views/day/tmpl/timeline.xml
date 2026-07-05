@@ -48,7 +48,7 @@
             </field>
             <field name="timetable_hour_display" type="list"
                 default="event_hours"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMETABLE_HOUR_DISPLAY"
                 description="COM_JEM_TIMETABLE_HOUR_DISPLAY_DESC"
             >
@@ -91,7 +91,7 @@
             />
             <field name="timeline_side" type="list"
                 default="right"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_SIDE_LABEL"
                 description="COM_JEM_TIMELINE_SIDE_DESC"
             >
@@ -101,7 +101,7 @@
             </field>
             <field name="timeline_right_text_align" type="list"
                 default="left"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_RIGHT_TEXT_ALIGN_LABEL"
                 description="COM_JEM_TIMELINE_RIGHT_TEXT_ALIGN_DESC"
             >
@@ -111,7 +111,7 @@
             </field>
             <field name="timeline_left_text_align" type="list"
                 default="right"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_LEFT_TEXT_ALIGN_LABEL"
                 description="COM_JEM_TIMELINE_LEFT_TEXT_ALIGN_DESC"
             >
@@ -136,7 +136,7 @@
             />
             <field name="timeline_line_style" type="list"
                 default="solid"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_LINE_STYLE_LABEL"
                 description="COM_JEM_TIMELINE_LINE_STYLE_DESC"
             >
@@ -158,7 +158,7 @@
             </field>
             <field name="timeline_event_height_mode" type="list"
                 default="same"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_LABEL"
                 description="COM_JEM_TIMELINE_EVENT_HEIGHT_MODE_DESC"
             >
@@ -167,7 +167,7 @@
             </field>
             <field name="timeline_card_layout" type="list"
                 default="compact"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_CARD_LAYOUT_LABEL"
                 description="COM_JEM_TIMELINE_CARD_LAYOUT_DESC"
             >
@@ -176,7 +176,7 @@
             </field>
             <field name="timeline_day_background" type="list"
                 default="alternate"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_DAY_BACKGROUND_LABEL"
                 description="COM_JEM_TIMELINE_DAY_BACKGROUND_DESC"
             >
@@ -194,7 +194,7 @@
             />
             <field name="timetable_event_background" type="list"
                 default="category"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMETABLE_EVENT_BACKGROUND"
                 description="COM_JEM_TIMETABLE_EVENT_BACKGROUND_DESC"
             >
@@ -205,7 +205,7 @@
             </field>
             <field name="timeline_event_color_mode" type="list"
                 default="bar"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_EVENT_COLOR_MODE_LABEL"
                 description="COM_JEM_TIMELINE_EVENT_COLOR_MODE_DESC"
             >
@@ -233,7 +233,7 @@
             </field>
             <field name="timeline_category_display" type="list"
                 default="text"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_CATEGORY_DISPLAY_LABEL"
                 description="COM_JEM_TIMELINE_CATEGORY_DISPLAY_DESC"
                 showon="timeline_show_category:1"
@@ -299,7 +299,7 @@
             </field>
             <field name="timeline_readmore_style" type="list"
                 default="button"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 label="COM_JEM_TIMELINE_READMORE_STYLE_LABEL"
                 description="COM_JEM_TIMELINE_READMORE_STYLE_DESC"
                 showon="timeline_show_event_intro:1[AND]timeline_show_event_readmore:1"
@@ -320,7 +320,7 @@
                 default="left"
                 label="COM_JEM_TIMELINE_EVENT_IMAGE_POSITION_LABEL"
                 description="COM_JEM_TIMELINE_EVENT_IMAGE_POSITION_DESC"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 showon="timeline_show_event_image:1"
             >
                 <option value="left">JGLOBAL_LEFT</option>
@@ -339,7 +339,7 @@
                 default="right"
                 label="COM_JEM_TIMELINE_VENUE_IMAGE_POSITION_LABEL"
                 description="COM_JEM_TIMELINE_VENUE_IMAGE_POSITION_DESC"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
                 showon="timeline_show_venue_image:1"
             >
                 <option value="left">JGLOBAL_LEFT</option>
@@ -370,7 +370,7 @@
             <field name="categoryswitchcats" type="categoryedit"
                 multiple="true"
                 removeroot="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
@@ -392,7 +392,7 @@
             />
             <field name="timeline_filter_countries" type="countryoptions"
                 multiple="true"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
                 default=""
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"

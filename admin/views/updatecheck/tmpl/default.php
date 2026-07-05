@@ -12,6 +12,62 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+if (!function_exists('jemUpdatecheckFormatJoomlaSupport')) {
+    /**
+     * Convert Joomla update target platform regexes into readable version labels.
+     */
+    function jemUpdatecheckFormatJoomlaSupport($pattern)
+    {
+        $pattern = trim((string) $pattern);
+
+        if ($pattern === '') {
+            return '-';
+        }
+
+        $pattern = trim($pattern, '^$');
+        $pattern = preg_replace('/\s+/', ' ', $pattern);
+        $pattern = str_replace(array('(', ')'), '', $pattern);
+        $parts   = preg_split('/\s+or\s+|\|/i', $pattern);
+        $labels  = array();
+
+        foreach ($parts as $part) {
+            $part = trim($part);
+
+            if ($part === '') {
+                continue;
+            }
+
+            if (preg_match('/^(\d+)\\\\\.\[([0-9]+)\]$/', $part, $match)) {
+                $digits = str_split($match[2]);
+                $labels[] = 'Joomla ' . $match[1] . '.' . min($digits) . '-' . $match[1] . '.' . max($digits);
+                continue;
+            }
+
+            if (preg_match('/^(\d+)\\\\\.\[0-9\]\+$/', $part, $match)) {
+                $labels[] = 'Joomla ' . $match[1] . '.x';
+                continue;
+            }
+
+            if (preg_match('/^(\d+)\\\\\.(\d+)$/', $part, $match)) {
+                $labels[] = 'Joomla ' . $match[1] . '.' . $match[2] . '.x';
+                continue;
+            }
+
+            $labels[] = str_replace('\\.', '.', $part);
+        }
+
+        $labels = array_values(array_unique($labels));
+
+        if (count($labels) > 1) {
+            $last = array_pop($labels);
+
+            return implode(', ', $labels) . ' or ' . $last;
+        }
+
+        return $labels[0] ?? $pattern;
+    }
+}
+
 $update = $this->updatedata ?? null;
 
 // No update data at all -> treat as connection problem
@@ -41,6 +97,7 @@ $update->installeddate    = $update->installeddate ?? '';
 $update->manifestpath     = $update->manifestpath ?? (defined('JPATH_COMPONENT_ADMINISTRATOR') ? JPATH_COMPONENT_ADMINISTRATOR . '/jem.xml' : 'administrator/components/com_jem/jem.xml');
 $update->localnotes       = is_array($update->localnotes ?? null) ? $update->localnotes : [];
 $update->localdate        = $update->localdate ?? '';
+$joomlaSupportLabel       = jemUpdatecheckFormatJoomlaSupport($update->targetplatform);
 
 $statusClass = 'warning';
 $statusIcon  = 'com_jem/icon-48-unknown-version.svg';
@@ -170,6 +227,12 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             min-width: 0;
         }
 
+        .jem-updatecheck-long-value,
+        .jem-updatecheck-long-value a {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
         .jem-updatecheck-list ul {
             margin: 0;
             padding-left: 1.2rem;
@@ -242,7 +305,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
                         <dd><?php echo htmlspecialchars((string) $update->phpversion, ENT_QUOTES, 'UTF-8'); ?></dd>
 
                         <dt><?php echo Text::_('COM_JEM_UPDATECHECK_LOCAL_MANIFEST'); ?></dt>
-                        <dd><?php echo htmlspecialchars((string) $update->manifestpath, ENT_QUOTES, 'UTF-8'); ?></dd>
+                        <dd class="jem-updatecheck-long-value"><?php echo htmlspecialchars((string) $update->manifestpath, ENT_QUOTES, 'UTF-8'); ?></dd>
                     </dl>
                 </section>
 
@@ -257,13 +320,13 @@ if ((int) $update->failed === 0 && $update->current !== null) {
                             <dd><?php echo htmlspecialchars((string) $update->date, ENT_QUOTES, 'UTF-8'); ?></dd>
 
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_TARGET_PLATFORM'); ?></dt>
-                            <dd><?php echo htmlspecialchars((string) ($update->targetplatform ?: '-'), ENT_QUOTES, 'UTF-8'); ?></dd>
+                            <dd><?php echo htmlspecialchars((string) $joomlaSupportLabel, ENT_QUOTES, 'UTF-8'); ?></dd>
 
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_PHP_MINIMUM'); ?></dt>
                             <dd><?php echo htmlspecialchars((string) ($update->phpminimum ?: '-'), ENT_QUOTES, 'UTF-8'); ?></dd>
 
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE_SOURCE'); ?></dt>
-                            <dd><a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a></dd>
+                            <dd class="jem-updatecheck-long-value"><a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a></dd>
                         </dl>
                     <?php else : ?>
                         <div class="p-3">

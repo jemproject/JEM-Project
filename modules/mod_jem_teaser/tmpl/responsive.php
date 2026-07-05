@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 $showcalendar    = (int)$params->get('showcalendar', 1);
+$showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 
 if ($params->get('use_modal', 0)) {
     echo JemOutput::lightbox();
@@ -53,7 +54,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $css = '
     #jemmoduleteaser .jem-eventimg-teaser img {
         width: 100%;
@@ -147,16 +148,14 @@ $document->addStyleDeclaration($css);
                 <?php echo $item->time; ?>
               </div>
             <?php */endif; ?>
-                                <?php if ($item->user_has_access_venue) : ?>
+                                <?php if ($showVenue && $item->user_has_access_venue) : ?>
                                     <?php if (!empty($item->venue)) : ?>
-                                        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
-                                            <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
-                                                <?php echo $item->venuename; ?>
-                                            </div>
-                                        <?php endif; ?>
+                                        <div class="venue-title" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.strip_tags($item->venue); ?>">
+                                            <?php echo $item->venuename; ?>
+                                        </div>
                                     <?php endif; ?>
                                 <?php endif; ?>
-                                <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+                                <?php if ((int)$params->get('showcategory', 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
                                     <div class="category" title="<?php echo Text::_('COM_JEM_TABLE_CATEGORY').': '.strip_tags($item->catname); ?>">
                                         <?php echo $item->catname; ?>
                                     </div>
@@ -173,7 +172,7 @@ $document->addStyleDeclaration($css);
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->eventimageorig) {
                                                     $image = $item->eventimageorig;
-                                                    $document = Factory::getDocument();
+                                                    $document = Factory::getApplication()->getDocument();
                                                     $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                                                     $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                                                     echo '<script>lightbox.option({
@@ -220,19 +219,28 @@ $document->addStyleDeclaration($css);
 
                                 <?php if($item->showdescriptionevent): ?>
                                     <div class="jem-description-teaser" itemprop="description">
-                                        <?php
-                                        echo $item->eventdescription;
-                                        $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1));
-                                        if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
-                                            <div class="jem-readmore">
-                                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'readmore', $item->eventid, $module->id ?? 0); ?>"
-                                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
-                                                   title="<?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>"
-                                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-teaser__readmore'); ?>">
-                                                    <?php echo Text::_('COM_JEM_EVENT_READ_MORE_TITLE'); ?>
-                                                </a>
-                                            </div>
-                                        <?php endif; ?>
+                                        <?php echo $item->eventdescription; ?>
+                                    </div>
+                                    <?php
+                                    $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1));
+                                    if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                        <div class="jem-readmore">
+                                            <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                               href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                               class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-teaser__readmore'); ?>">
+                                                <?php echo $item->linkText; ?>
+                                            </a>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endif;
+                                $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link'));
+                                if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                    <div class="jem-more-information">
+                                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-teaser', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                           href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-teaser__more-information'); ?>">
+                                            <?php echo Text::_('MOD_JEM_TEASER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                        </a>
                                     </div>
                                 <?php endif;
                                 echo $item->dateschema; ?>

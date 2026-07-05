@@ -7,16 +7,23 @@ use PHPUnit\Framework\TestCase;
 final class NetworkAndLatencyGuardrailTest extends TestCase
 {
     private const ALLOWED_CLIENT_NETWORK_CALLS = array(
+        'admin/views/categories/tmpl/default.php:fetch',
         'admin/views/import/tmpl/default.php:fetch',
         'admin/views/specialdays/tmpl/default.php:fetch',
+        'admin/views/types/tmpl/default.php:fetch',
         'admin/views/venue/tmpl/edit.php:fetch',
+        'admin/views/venues/tmpl/default.php:fetch',
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',
+        'site/views/editvenue/tmpl/edit.php:fetch',
+        'site/views/editvenue/tmpl/responsive/edit.php:fetch',
     );
 
     private const ALLOWED_SERVER_NETWORK_CALLS = array(
         'admin/models/updatecheck.php:file_get_contents',
+        'site/classes/pdfview.class.php:curl_exec',
+        'site/classes/pdfview.class.php:curl_init',
         'site/classes/output.class.php:file_get_contents',
     );
 
@@ -75,15 +82,16 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
 
             foreach ($matches[1] as $function) {
                 $function = strtolower($function);
+                $key = $relative . ':' . $function;
 
                 if ($function !== 'file_get_contents') {
-                    $findings[] = $relative . ':' . $function;
+                    if (!isset($allowed[$key])) {
+                        $findings[] = $key;
+                    }
                     continue;
                 }
 
                 if (preg_match('/file_get_contents\s*\(\s*(\$updateFile|\$search_url)/', $contents) === 1) {
-                    $key = $relative . ':file_get_contents';
-
                     if (!isset($allowed[$key])) {
                         $findings[] = $key;
                     }

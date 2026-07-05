@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jem-import-catalog version="1.0" published="2026-07-03">
+    <entry id="es-aeat-tax-calendar-iva" country="ES" country_name="Spain" county="" city="" type="events" format="ics" profile="AEAT tax calendar - IVA">
+        <title>AEAT tax calendar - IVA</title>
+        <description>Official AEAT iCalendar feed for IVA due dates. Import as events and choose the destination category in JEM.</description>
+        <source provider="AEAT" url="https://www.google.com/calendar/ical/517mcuhcis0lldnp9b7c0nk2q8%40group.calendar.google.com/public/basic.ics" />
+        <category rule="admin-selects-destination-category" />
+        <defaults>
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-06-29</updated>
+        <license>Official public administration calendar</license>
+    </entry>
+    <entry id="es-madrid-venues-culture-rooms" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Madrid cultural rooms - JSON">
+        <title>Madrid cultural rooms</title>
+        <description>Madrid open-data venue list for cinemas, cultural rooms and similar locations. The mapping preloads JEM venue fields.</description>
+        <source provider="datos.madrid.es" url="https://datos.madrid.es/egob/catalogo/208862-7-ocio_salas-json.json" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="title" target="venue" />
+            <field source="relation" target="url" />
+            <field source="organization.organization-desc" target="locdescription" />
+            <field source="address.street-address" target="street" />
+            <field source="address.locality" target="city" />
+            <field source="address.postal-code" target="postalCode" />
+            <field source="location.latitude" target="latitude" />
+            <field source="location.longitude" target="longitude" />
+        </mapping>
+        <defaults>
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-06-29</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-specialdays-school" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="specialdays" format="csv" profile="Madrid school special days - CSV">
+        <title>Madrid school special days</title>
+        <description>Template entry for local school holidays or non-working days managed as JEM Special Days.</description>
+        <source provider="JEM catalog" url="imports/ES/Madrid/specialdays/school-special-days.csv" />
+        <category rule="special-days-types-from-file" />
+        <mapping>
+            <field source="title" target="title" />
+            <field source="date" target="date" />
+            <field source="day_type" target="day_type" />
+            <field source="description" target="description" />
+        </mapping>
+        <defaults>
+            <default name="replace" value="0" />
+        </defaults>
+        <updated>2026-06-29</updated>
+        <license>Local catalog template</license>
+    </entry>
+</jem-import-catalog>

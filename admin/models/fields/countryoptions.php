@@ -69,7 +69,10 @@ class JFormFieldCountryOptions extends ListField
             );
         }
 
-        $fancyAttr  = ' class="' . $class . '"';
+        $fancyClass = trim(preg_replace('/\b(form-select|inputbox|select_country)\b/', '', $class));
+        $fancyClass = $fancyClass !== '' ? 'jem-country-fancy ' . $fancyClass : 'jem-country-fancy';
+
+        $fancyAttr  = ' class="' . $fancyClass . '"';
         $fancyAttr .= ' style="width: min(100%, 36rem); max-width: 36rem;"';
         $fancyAttr .= $this->multiple ? ' multiple' : '';
         $fancyAttr .= $this->required ? ' required aria-required="true"' : '';

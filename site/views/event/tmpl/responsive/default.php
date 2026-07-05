@@ -119,14 +119,41 @@ if ($detailImageLayout === 'global' || $detailImageLayout === '') {
 if (!in_array($detailImageLayout, array('right', 'header', 'poster', 'hidden'), true)) {
     $detailImageLayout = 'right';
 }
-$renderEventDetailImage = function ($layoutClass = '') use ($eventImageRibbonText, $eventImageRibbonClass, $detailImageField) {
-    $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField);
+$detailImageHeaderDisplay = (string) $this->settings->get('event_detail_image_header_display', 'fill');
+if (!in_array($detailImageHeaderDisplay, array('fill', 'full'), true)) {
+    $detailImageHeaderDisplay = 'fill';
+}
+$detailImageHeaderMaxHeight = (int) $this->settings->get('event_detail_image_header_max_height', 420);
+if ($detailImageHeaderMaxHeight < 0 || $detailImageHeaderMaxHeight > 2000) {
+    $detailImageHeaderMaxHeight = 420;
+}
+$detailImageHeaderClass = 'jem-event-detail-image--header jem-event-detail-image--header-' . $detailImageHeaderDisplay
+    . ($detailImageHeaderMaxHeight === 0 ? ' jem-event-detail-image--header-no-max' : '');
+$detailImageHeaderStyle = $detailImageHeaderMaxHeight > 0
+    ? '--jem-event-header-image-max-height: ' . $detailImageHeaderMaxHeight . 'px;'
+    : '--jem-event-header-image-max-height: none; --jem-event-header-image-height: auto;';
+$renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginalImage = false) use ($eventImageRibbonText, $eventImageRibbonClass, $detailImageField) {
+    if ($useOriginalImage && !empty($this->dimage['original'])) {
+        $originalUrl = Uri::base() . ltrim((string) $this->dimage['original'], '/');
+        $imageTitle  = $this->escape($this->item->title);
+        $imageUrl    = $this->escape($originalUrl);
+        $lightboxId  = 'lightbox-event-header-' . (int) $this->item->id;
+        $image = '<div class="flyerimage">'
+            . '<a href="' . $imageUrl . '" rel="lightbox" class="flyermodal flyerimage" data-lightbox="' . $lightboxId . '" title="' . $imageTitle . '" data-title="' . $imageTitle . '">'
+            . '<img class="jem-event-header-fullimage" itemprop="image" src="' . $imageUrl . '" alt="' . $imageTitle . '" loading="lazy" />'
+            . '</a>'
+            . '</div>';
+    } else {
+        $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField);
+    }
+
     if (empty($image)) {
         return '';
     }
 
     $classes = trim('jem-img jem-event-overview-media ' . $layoutClass);
-    $html = '<div class="' . $this->escape($classes) . '">';
+    $styleAttribute = trim((string) $style) !== '' ? ' style="' . $this->escape(trim((string) $style)) . '"' : '';
+    $html = '<div class="' . $this->escape($classes) . '"' . $styleAttribute . '>';
     if ($eventImageRibbonText) {
         $html .= '<div class="jem-event-image-ribbon-wrap">'
             . $image
@@ -345,10 +372,47 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     .jem-event-detail-image--header .flyerimage img,
     .jem-event-detail-image--header img {
         display: block;
+        max-height: var(--jem-event-header-image-max-height, 420px);
+    }
+    .jem-event-detail-image--header-fill .flyerimage img,
+    .jem-event-detail-image--header-fill img {
         width: 100%;
         min-width: 100%;
-        max-height: 420px;
+        height: var(--jem-event-header-image-height, var(--jem-event-header-image-max-height, 420px));
         object-fit: cover;
+    }
+    .jem-event-detail-image--header-full {
+        text-align: center;
+    }
+    .jem-event-detail-image--header-full div.flyerimage,
+    .jem-event-detail-image--header-full div.flyerimage a,
+    .jem-event-detail-image--header-full .flyermodal {
+        display: inline-block;
+        width: auto;
+        max-width: 100%;
+    }
+    .jem-event-detail-image--header-full .flyerimage img,
+    .jem-event-detail-image--header-full img {
+        width: auto;
+        min-width: 0;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        margin: 0 auto;
+    }
+    @media (max-width: 767.98px) {
+        .jem-event-detail-image--header {
+            margin-bottom: 15px;
+        }
+        .jem-event-detail-image--header-fill:not(.jem-event-detail-image--header-no-max) .flyerimage img,
+        .jem-event-detail-image--header-fill:not(.jem-event-detail-image--header-no-max) img {
+            height: min(var(--jem-event-header-image-height, var(--jem-event-header-image-max-height, 420px)), 55vw);
+            max-height: min(var(--jem-event-header-image-max-height, 420px), 55vw);
+        }
+        .jem-event-detail-image--header-full:not(.jem-event-detail-image--header-no-max) .flyerimage img,
+        .jem-event-detail-image--header-full:not(.jem-event-detail-image--header-no-max) img {
+            max-height: min(var(--jem-event-header-image-max-height, 420px), 70vh);
+        }
     }
     .jem-event-detail-image--poster {
         max-width: 360px;
@@ -465,7 +529,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </h2>
         <?php endif; ?>
         <?php if ($detailImageLayout === 'header') : ?>
-            <?php echo $renderEventDetailImage('jem-event-detail-image--header'); ?>
+            <?php echo $renderEventDetailImage($detailImageHeaderClass, $detailImageHeaderStyle, true); ?>
         <?php endif; ?>
 
         <div class="jem-row jem-event-main-responsive jem-event-overview-panel">

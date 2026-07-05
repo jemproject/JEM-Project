@@ -29,7 +29,7 @@
                 default="label_name"
                 label="COM_JEM_EVENT_HEADING_DISPLAY"
                 description="COM_JEM_EVENT_HEADING_DISPLAY_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="label">COM_JEM_EVENT_HEADING_LABEL</option>
                 <option value="label_name">COM_JEM_EVENT_HEADING_LABEL_NAME</option>
@@ -39,7 +39,7 @@
                 default="label_name"
                 label="COM_JEM_EVENT_VENUE_HEADING_DISPLAY"
                 description="COM_JEM_EVENT_VENUE_HEADING_DISPLAY_DESC"
-                class="form-select w-auto"
+                class="form-select w-auto jem-options-width-auto"
             >
                 <option value="label">COM_JEM_VENUE_HEADING_LABEL</option>
                 <option value="label_name">COM_JEM_VENUE_HEADING_LABEL_NAME</option>

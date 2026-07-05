@@ -8,9 +8,122 @@
     margin-bottom: 4px;
 }
 
+#jem.jem_eventsmap .jem-date-filter .btn,
+#jem.jem_eventsmap .jem-date-filter .form-select,
+#jem.jem_eventsmap .jem-date-filter .form-control,
+#jem.jem_eventsmap .jem-date-filter input[type="date"] {
+    align-items: center;
+    box-sizing: border-box;
+    display: inline-flex;
+    height: 2.2rem;
+    min-height: 2.2rem;
+}
+
+#jem.jem_eventsmap .jem-date-filter .form-select,
+#jem.jem_eventsmap .jem-date-filter .form-control,
+#jem.jem_eventsmap .jem-date-filter input[type="date"] {
+    background-color: #ffffff;
+    border-color: #8aa0bd;
+    color: #102033;
+    line-height: 1.35;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-sm {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    line-height: 1.35;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-group-sm {
+    align-items: stretch;
+    display: inline-flex;
+    height: 2.2rem;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-group-sm > .btn,
+#jem.jem_eventsmap .jem-date-filter .btn-group-sm > .form-control,
+#jem.jem_eventsmap .jem-date-filter .btn-group-sm > input[type="date"] {
+    height: 2.2rem;
+    min-height: 2.2rem;
+}
+
+#jem.jem_eventsmap .jem-date-filter .form-select:focus,
+#jem.jem_eventsmap .jem-date-filter .form-control:focus,
+#jem.jem_eventsmap .jem-date-filter input[type="date"]:focus {
+    border-color: #3f6595;
+    box-shadow: 0 0 0 .15rem rgba(63, 101, 149, .22);
+    color: #102033;
+}
+
+#jem.jem_eventsmap .jem-date-filter .form-control::placeholder {
+    color: #53657a;
+    opacity: 1;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-outline-primary {
+    --bs-btn-color: #0b3d75;
+    --bs-btn-border-color: #0b3d75;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #0b3d75;
+    --bs-btn-hover-border-color: #0b3d75;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #061f3f;
+    --bs-btn-active-border-color: #061f3f;
+    background-color: #ffffff;
+    border-color: var(--bs-btn-border-color);
+    color: var(--bs-btn-color);
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-check:checked + .btn-outline-primary,
+#jem.jem_eventsmap .jem-date-filter .btn-outline-primary.active,
+#jem.jem_eventsmap .jem-date-filter .btn-outline-primary:hover,
+#jem.jem_eventsmap .jem-date-filter .btn-outline-primary:focus {
+    background-color: var(--bs-btn-active-bg) !important;
+    border-color: var(--bs-btn-active-border-color) !important;
+    color: var(--bs-btn-active-color) !important;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn-primary,
+#jem.jem_eventsmap .jem-date-filter .btn-info {
+    color: #ffffff !important;
+}
+
+#jem.jem_eventsmap .jem-date-filter .btn i,
+#jem.jem_eventsmap .jem-date-filter .btn .icon-location {
+    margin-right: 0.3rem;
+}
+
 #jem.jem_eventsmap .jem-eventsmap-popup-events {
     margin: 0.4rem 0;
     padding-left: 1.2rem;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-table-wrap {
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-table {
+    width: auto;
+    min-width: 100%;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-table th,
+#jem.jem_eventsmap .jem-eventsmap-table td {
+    white-space: nowrap;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-table th {
+    background-color: #e5e7eb;
+}
+
+#jem.jem_eventsmap .jem-eventsmap-table .jem-eventsmap-country {
+    text-align: center;
 }
 
 #jem.jem_eventsmap .copyright {

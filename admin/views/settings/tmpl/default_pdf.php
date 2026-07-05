@@ -26,6 +26,23 @@ use Joomla\CMS\Language\Text;
         min-height: calc(15 * 1.9em);
         overflow-y: visible;
     }
+
+    .jem-pdf-font-row {
+        display: grid;
+        grid-template-columns: minmax(16rem, max-content) minmax(8rem, 12rem);
+        gap: .75rem 1rem;
+        align-items: start;
+    }
+
+    .jem-pdf-font-row .control-group {
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 700px) {
+        .jem-pdf-font-row {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <div class="width-100" style="padding: 10px 1vw;">
@@ -43,9 +60,18 @@ use Joomla\CMS\Language\Text;
                         <li><div class="label-form"><?php echo $this->form->renderfield('pdf_margin_left'); ?></div></li>
                         <li><div class="label-form"><?php echo $this->form->renderfield('pdf_background_color'); ?></div></li>
                         <li><div class="label-form"><?php echo $this->form->renderfield('pdf_include_view_text'); ?></div></li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_title_font_family'); ?></div></li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_header_font_family'); ?></div></li>
-                        <li><div class="label-form"><?php echo $this->form->renderfield('pdf_body_font_family'); ?></div></li>
+                        <li><div class="label-form jem-pdf-font-row">
+                            <div><?php echo $this->form->renderfield('pdf_title_font_family'); ?></div>
+                            <div><?php echo $this->form->renderfield('pdf_title_font_size'); ?></div>
+                        </div></li>
+                        <li><div class="label-form jem-pdf-font-row">
+                            <div><?php echo $this->form->renderfield('pdf_header_font_family'); ?></div>
+                            <div><?php echo $this->form->renderfield('pdf_heading_font_size'); ?></div>
+                        </div></li>
+                        <li><div class="label-form jem-pdf-font-row">
+                            <div><?php echo $this->form->renderfield('pdf_body_font_family'); ?></div>
+                            <div><?php echo $this->form->renderfield('pdf_base_font_size'); ?></div>
+                        </div></li>
                         <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imageheight'); ?></div></li>
                         <li><div class="label-form"><?php echo $this->form->renderfield('pdf_imagewidth'); ?></div></li>
                     </ul>
@@ -98,8 +124,6 @@ use Joomla\CMS\Language\Text;
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_paper_size'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('pdf_list_orientation'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_base_font_size'); ?></div></li>
-                <li><div class="label-form"><?php echo $this->form->renderfield('pdf_heading_font_size'); ?></div></li>
             </ul>
         </fieldset>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>

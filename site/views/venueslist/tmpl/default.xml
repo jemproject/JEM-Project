@@ -83,7 +83,7 @@
                 description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC"
                 hint="image,venue,type,city,state,country,map,calendar"
                 size="56"
-                class="inputbox form-control w-auto"
+                class="inputbox form-control w-auto jem-options-width-auto"
             />
 
             <field name="filtercountries" type="countryoptions"
@@ -91,7 +91,7 @@
                 multiple="true"
                 label="COM_JEM_VENUESLIST_FILTER_COUNTRIES"
                 description="COM_JEM_VENUESLIST_FILTER_COUNTRIES_DESC"
-                class="inputbox form-select w-auto"
+                class="inputbox form-select w-auto jem-options-width-auto"
             />
 
             <field name="showcountryfilter" type="radio"

@@ -324,8 +324,21 @@ class JemPdfView
     /**
      * Renders an event-first Events Map PDF.
      */
-    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm'): void
+    public static function renderEventsMapList(string $title, array $rows, string $filename, string $mapProvider = 'osm', ?int $mapZoom = null): void
     {
+        $mapWidth = 260.0;
+
+        if (class_exists('JemPdf', false)) {
+            $settings = JemHelper::config();
+            $paper = self::getProfilePaperSettings($settings, 'map');
+            $margins = JemPdf::fitSinglePageMargins(self::getMargins($settings), $paper['size']);
+            $mapWidth = self::getPdfPaperWidth($paper['size'], $paper['orientation'])
+                - (float) ($margins['left'] ?? 0)
+                - (float) ($margins['right'] ?? 0);
+        }
+
+        $mapPreviewHtml = self::buildVenueMapPreviewHtml(self::buildEventsMapPreviewRows($rows), $mapProvider, $mapWidth, $mapZoom);
+
         self::renderTable(
             $title,
             array(
@@ -339,7 +352,9 @@ class JemPdfView
             ),
             self::buildEventsMapRows($rows, $mapProvider),
             $filename,
-            'map'
+            'map',
+            '',
+            $mapPreviewHtml
         );
     }
 
@@ -490,9 +505,9 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round((int) ($settings->pdf_base_font_size ?? 8) * $scale)));
-        $headingFontSize = max(10, min(24, (int) round((int) ($settings->pdf_heading_font_size ?? 12) * $scale)));
-        $titleFontSize = max(18, min(34, $headingFontSize + 10));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $headingFontSize = self::getPdfHeaderFontSize($settings, $scale, 10, 24);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 18, 34);
         $fallbackImageWidth = max(1, min(200, (int) ($settings->pdf_imagewidth ?? 40)));
         $fallbackImageHeight = max(1, min(200, (int) ($settings->pdf_imageheight ?? 40)));
         $venueImageWidth = max(1, min(200, (int) ($settings->pdf_venue_imagewidth ?? $fallbackImageWidth)));
@@ -687,8 +702,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(13, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $fallbackImageWidth = max(1, min(200, (int) ($settings->pdf_imagewidth ?? 40)));
         $fallbackImageHeight = max(1, min(200, (int) ($settings->pdf_imageheight ?? 40)));
         $eventImageWidth = max(1, min(200, (int) ($settings->pdf_event_imagewidth ?? $fallbackImageWidth)));
@@ -1342,8 +1357,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(13, (int) round((int) ($settings->pdf_base_font_size ?? 8) * $scale)));
-        $titleFontSize = max(18, min(34, (int) round(((int) ($settings->pdf_heading_font_size ?? 12) + 9) * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 18, 34);
         $html = array();
 
         $html[] = '<style>
@@ -1364,6 +1379,7 @@ class JemPdfView
             .jem-pdf-venuesmap-description-label { font-family: ' . $headerFontFamily . '; font-weight: bold; margin-top: 1.5mm; }
             .jem-pdf-venuesmap-description { color: #374151; line-height: ' . ($baseFontSize + 2) . 'pt; }
             .jem-pdf-venuesmap-coordinates { border: 0.2mm solid #d6dde8; background-color: #ffffff; color: #475569; line-height: ' . ($baseFontSize + 2) . 'pt; padding: 1.2mm; text-align: center; }
+            .jem-pdf-map-preview { text-align: center; margin-bottom: 4mm; }
             .jem-pdf-empty { color: #6b7280; text-align: center; margin-top: 8mm; }
         </style>';
         $html[] = '<h1>' . htmlspecialchars($title, ENT_COMPAT, 'UTF-8') . '</h1>';
@@ -1373,6 +1389,9 @@ class JemPdfView
 
             return implode("\n", array_filter($html));
         }
+
+        $mapWidth = self::getPdfPaperWidth($paperSize, $orientation) - (float) ($margins['left'] ?? 0) - (float) ($margins['right'] ?? 0);
+        $html[] = self::buildVenueMapPreviewHtml($rows, $mapProvider, $mapWidth);
 
         foreach ($rows as $row) {
             $html[] = self::buildVenueMapCardHtml($row, $mapProvider, $showVenueImage, $showVenueDescription);
@@ -1568,9 +1587,9 @@ class JemPdfView
         return $country;
     }
 
-    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider, float $widthMm = 260.0): string
+    private static function buildVenueMapPreviewHtml(array $rows, string $mapProvider, float $widthMm = 260.0, ?int $mapZoom = null): string
     {
-        $url = self::buildStaticMapImageUrl($rows, $mapProvider);
+        $url = self::buildStaticMapImageUrl($rows, $mapProvider, $mapZoom);
 
         if ($url === '') {
             return '';
@@ -1586,10 +1605,11 @@ class JemPdfView
             return '';
         }
 
-        $widthMm = max(120.0, min(280.0, $widthMm));
+        $widthMm = max(60.0, $widthMm);
+        $heightMm = $widthMm * 320.0 / 900.0;
 
-        return '<div class="jem-pdf-map-preview">'
-            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1; margin-bottom:4mm;" />'
+        return '<div class="jem-pdf-map-preview" style="text-align:left; margin-bottom:6mm; padding-bottom:3mm;">'
+            . '<img src="' . htmlspecialchars(str_replace('\\', '/', $imagePath), ENT_COMPAT, 'UTF-8') . '" alt="' . Text::_('COM_JEM_MAP') . '" width="' . htmlspecialchars(number_format($widthMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" height="' . htmlspecialchars(number_format($heightMm, 1, '.', ''), ENT_COMPAT, 'UTF-8') . 'mm" style="border:0.2mm solid #cbd5e1;" />'
             . '</div>';
     }
 
@@ -1713,7 +1733,7 @@ class JemPdfView
             return '';
         }
 
-        $hash = sha1(json_encode($points));
+        $hash = sha1('wide-900x320|' . json_encode($points));
         $pngPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.png';
         $svgPath = $cacheDir . '/pdf-map-fallback-' . $hash . '.svg';
 
@@ -1747,7 +1767,7 @@ class JemPdfView
         }
 
         $width = 1600;
-        $height = 700;
+        $height = 569;
         $zoom = max(2, min(13, self::estimateStaticMapZoom(array_map(static function (array $point): array {
             return array($point['lat'], $point['lng']);
         }, $points))));
@@ -1868,7 +1888,7 @@ class JemPdfView
     private static function buildFallbackVenueMapPng(array $points, string $path): string
     {
         $width = 1600;
-        $height = 620;
+        $height = 569;
         $padding = 18;
         $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
 
@@ -1953,7 +1973,7 @@ class JemPdfView
     private static function buildFallbackVenueMapSvg(array $points, string $path): string
     {
         $width = 1600;
-        $height = 620;
+        $height = 569;
         $padding = 18;
         $plot = self::projectVenueMapPoints($points, $width, $height, $padding);
         $svg = array();
@@ -2039,7 +2059,7 @@ class JemPdfView
         return strlen($label) > 38 ? substr($label, 0, 35) . '...' : $label;
     }
 
-    private static function buildStaticMapImageUrl(array $rows, string $mapProvider): string
+    private static function buildStaticMapImageUrl(array $rows, string $mapProvider, ?int $mapZoom = null): string
     {
         $points = array();
 
@@ -2061,13 +2081,14 @@ class JemPdfView
         $markerPoints = array_slice($points, 0, 40);
         $centerLat = array_sum(array_column($points, 0)) / count($points);
         $centerLng = array_sum(array_column($points, 1)) / count($points);
+        $zoom = $mapZoom === null ? self::estimateStaticMapZoom($points) : max(0, min(19, $mapZoom));
         $settings = JemHelper::globalattribs();
         $googleApiKey = trim((string) ($settings && method_exists($settings, 'get') ? $settings->get('global_googleapi', '') : ''));
 
         if ($mapProvider === 'google' && $googleApiKey !== '') {
-            $url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x320&scale=2&maptype=roadmap'
+            $url = 'https://maps.googleapis.com/maps/api/staticmap?size=640x228&scale=2&maptype=roadmap'
                 . '&center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
-                . '&zoom=' . self::estimateStaticMapZoom($points);
+                . '&zoom=' . $zoom;
 
             foreach ($markerPoints as $point) {
                 $url .= '&markers=' . rawurlencode(self::formatCoordinate($point[0]) . ',' . self::formatCoordinate($point[1]));
@@ -2082,7 +2103,7 @@ class JemPdfView
 
         return 'https://staticmap.openstreetmap.de/staticmap.php?'
             . 'center=' . rawurlencode(self::formatCoordinate($centerLat) . ',' . self::formatCoordinate($centerLng))
-            . '&zoom=' . self::estimateStaticMapZoom($points)
+            . '&zoom=' . $zoom
             . '&size=900x320'
             . '&markers=' . rawurlencode(implode('|', $markers));
     }
@@ -2165,12 +2186,45 @@ class JemPdfView
                 self::buildPdfVenueLink($row),
                 (string) ($row->city ?? ''),
                 (string) ($row->state ?? ''),
-                (string) ($row->country ?? ''),
+                array('html' => '<div class="jem-pdf-country-code">' . htmlspecialchars((string) ($row->country ?? ''), ENT_COMPAT, 'UTF-8') . '</div>'),
                 self::buildPdfMapLink($row, $mapProvider),
             );
         }
 
         return $tableRows;
+    }
+
+    private static function buildEventsMapPreviewRows(array $rows): array
+    {
+        $points = array();
+        $seen = array();
+
+        foreach ($rows as $row) {
+            $lat = self::normaliseCoordinate($row->latitude ?? null);
+            $lng = self::normaliseCoordinate($row->longitude ?? null);
+
+            if ($lat === null || $lng === null) {
+                continue;
+            }
+
+            $venueId = (int) ($row->venue_id ?? 0);
+            $key = $venueId > 0
+                ? 'venue:' . $venueId
+                : 'coords:' . self::formatCoordinate($lat) . ',' . self::formatCoordinate($lng);
+
+            if (isset($seen[$key])) {
+                continue;
+            }
+
+            $seen[$key] = true;
+            $point = new \stdClass();
+            $point->latitude = $lat;
+            $point->longitude = $lng;
+            $point->venue = (string) ($row->venue ?? $row->title ?? '');
+            $points[] = $point;
+        }
+
+        return $points;
     }
 
     private static function buildSpecialDayRows(array $rows): array
@@ -2204,6 +2258,11 @@ class JemPdfView
         return $tableRows;
     }
 
+    private static function buildPdfHeaderLabel($text): string
+    {
+        return '<nobr>' . htmlspecialchars((string) $text, ENT_COMPAT, 'UTF-8') . '</nobr>';
+    }
+
     private static function buildTableHtml(string $title, array $headers, array $rows, string $paperSize, string $filterSummary = '', string $preTableHtml = ''): string
     {
         $scale = JemPdf::getPosterScale($paperSize);
@@ -2211,8 +2270,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(12, min(28, (int) round(15 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 12, 28);
         $cellPadding = JemPdf::prefersSinglePage($paperSize) ? '1.2mm' : '1.6mm';
         $columnWidths = self::calculateTableColumnWidths($headers, $rows);
         $html = array();
@@ -2221,9 +2280,10 @@ class JemPdfView
             body { font-family: ' . $bodyFontFamily . '; }
             h1 { font-family: ' . $titleFontFamily . '; font-size: ' . $titleFontSize . 'pt; margin: 0 0 4mm 0; }
             table { border-collapse: collapse; width: 100%; }
-            th { font-family: ' . $headerFontFamily . '; background-color: #e5e7eb; border: 0.2mm solid #9ca3af; font-size: ' . $baseFontSize . 'pt; font-weight: bold; padding: ' . $cellPadding . '; }
+            th { font-family: ' . $headerFontFamily . '; background-color: #e5e7eb; border: 0.2mm solid #9ca3af; font-size: ' . $baseFontSize . 'pt; font-weight: bold; padding: ' . $cellPadding . '; white-space: nowrap; }
             td { font-family: ' . $bodyFontFamily . '; border: 0.2mm solid #cbd5e1; font-size: ' . $baseFontSize . 'pt; padding: ' . $cellPadding . '; vertical-align: top; }
             a { color: #1f5b99; text-decoration: underline; }
+            .jem-pdf-country-code { text-align: center; }
             .jem-pdf-view-intro, .jem-pdf-view-footer-text { font-size: ' . $baseFontSize . 'pt; line-height: ' . ($baseFontSize + 3) . 'pt; }
             .jem-pdf-view-intro { margin-bottom: 4mm; }
             .jem-pdf-view-footer-text { margin-top: 4mm; border-top: 0.2mm solid #d1d5db; padding-top: 2mm; }
@@ -2247,7 +2307,7 @@ class JemPdfView
 
         foreach ($headers as $index => $header) {
             $width = isset($columnWidths[$index]) ? ' width="' . $columnWidths[$index] . '%"' : '';
-            $html[] = '<th' . $width . '>' . htmlspecialchars((string) $header, ENT_COMPAT, 'UTF-8') . '</th>';
+            $html[] = '<th' . $width . '>' . self::buildPdfHeaderLabel($header) . '</th>';
         }
 
         $html[] = '</tr></thead><tbody>';
@@ -2404,8 +2464,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $titleFontSize = max(13, min(30, (int) round(18 * $scale)));
-        $baseFontSize = max(7, min(13, (int) round(8 * $scale)));
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 13, 30);
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 13);
         $smallFontSize = max(6, min(11, (int) round(7 * $scale)));
         $html = array();
 
@@ -2441,12 +2501,12 @@ class JemPdfView
 
         $html[] = '<table class="jem-pdf-agenda" cellpadding="2" cellspacing="0">';
         $html[] = '<tr>'
-            . '<th width="13%">' . Text::_('COM_JEM_DATE') . '</th>'
-            . '<th width="11%">' . Text::_('COM_JEM_TIME') . '</th>'
-            . '<th width="28%">' . Text::_('COM_JEM_EVENT') . '</th>'
-            . '<th width="18%">' . Text::_('COM_JEM_VENUE') . '</th>'
-            . '<th width="13%">' . Text::_('COM_JEM_TYPES') . '</th>'
-            . '<th width="17%">' . Text::_('COM_JEM_CATEGORY') . '</th>'
+            . '<th width="13%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_DATE')) . '</th>'
+            . '<th width="11%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_TIME')) . '</th>'
+            . '<th width="28%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_EVENT')) . '</th>'
+            . '<th width="18%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_VENUE')) . '</th>'
+            . '<th width="13%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_TYPES')) . '</th>'
+            . '<th width="17%">' . self::buildPdfHeaderLabel(Text::_('COM_JEM_CATEGORY')) . '</th>'
             . '</tr>';
         $hasEvents = false;
 
@@ -2514,8 +2574,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $titleFontSize = max(13, min(30, (int) round(18 * $scale)));
-        $headerFontSize = max(7, min(14, (int) round(8 * $scale)));
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 13, 30);
+        $headerFontSize = self::getPdfHeaderFontSize($settings, $scale, 7, 14);
         $dayFontSize = max(6, min(12, (int) round(7 * $scale)));
         $eventFontSize = max(5, min(11, (int) round(6 * $scale)));
         $dayWidth = number_format(100 / 7, 4, '.', '') . '%';
@@ -2528,14 +2588,15 @@ class JemPdfView
             .jem-pdf-calendar { border-collapse: collapse; width: 100%; }
             .jem-pdf-calendar-title { background-color: #ffffff; color: #111827; border: 0.2mm solid #9ca3af; font-family: ' . $headerFontFamily . '; font-size: ' . ($headerFontSize + 4) . 'pt; font-weight: bold; text-align: center; height: 6mm; line-height: 6mm; padding: 0.8mm 1mm; }
             .jem-pdf-calendar th { font-family: ' . $headerFontFamily . '; background-color: #3f3f46; color: #ffffff; border: 0.2mm solid #9ca3af; font-size: ' . $headerFontSize . 'pt; font-weight: bold; text-align: center; }
-            .jem-pdf-calendar td { border: 0.2mm solid #cbd5e1; font-size: ' . $dayFontSize . 'pt; vertical-align: top; height: 23mm; padding: 0.8mm; }
+            .jem-pdf-calendar td { border: 0.2mm solid #cbd5e1; font-size: ' . $dayFontSize . 'pt; vertical-align: top; padding: 0.2mm 0.8mm; }
             .jem-pdf-calendar-week td { height: 70mm; }
+            .jem-pdf-calendar td.jem-pdf-calendar-title { height: 6mm; line-height: 6mm; }
             .jem-pdf-calendar-week td.jem-pdf-calendar-title { height: 6mm; line-height: 6mm; }
-            .jem-pdf-daybar { background-color: #e5e5e5; font-weight: bold; padding: 0.3mm 0.5mm; }
+            .jem-pdf-daybar { background-color: #e5e5e5; font-weight: bold; padding: 0.1mm 0.5mm; }
             .jem-pdf-special-days { margin-top: 0.6mm; }
             .jem-pdf-special-day-badge { border: 0.2mm solid #9ca3af; border-radius: 1mm; font-family: ' . $headerFontFamily . '; font-weight: bold; padding: 0.4mm 1mm; }
             .jem-pdf-outside { background-color: #eeeeee; color: #9ca3af; }
-            .jem-pdf-event-card { background-color: #fff8df; border: 0.15mm solid #f3e7bd; margin-top: 0.8mm; padding: 0.7mm; text-align: center; font-size: ' . $eventFontSize . 'pt; line-height: ' . ($eventFontSize + 2) . 'pt; }
+            .jem-pdf-event-card { background-color: #fff8df; border: 0.15mm solid #f3e7bd; margin-top: 0; padding: 0; text-align: center; font-size: ' . $eventFontSize . 'pt; line-height: ' . ($eventFontSize + 1) . 'pt; }
             .jem-pdf-event-card a { color: inherit; }
             .jem-pdf-event-time { color: #4b5563; }
             .jem-pdf-category-mark { font-size: ' . ($eventFontSize + 2) . 'pt; font-weight: bold; }
@@ -2548,19 +2609,24 @@ class JemPdfView
             $html[] = $intro;
         }
 
-        $html[] = '<table class="jem-pdf-calendar' . ($cellCount === 7 ? ' jem-pdf-calendar-week' : '') . '" cellpadding="1" cellspacing="0">';
+        $colWidths = array_fill(0, 7, $dayWidth);
+
+        $daybarStyle = 'background-color:#e5e5e5;font-family:' . $headerFontFamily . ';font-weight:bold;font-size:' . $dayFontSize . 'pt;padding-left:0.5mm;';
+        $daybarOutsideStyle = $daybarStyle . 'color:#9ca3af;';
+
+        $html[] = '<table class="jem-pdf-calendar' . ($cellCount === 7 ? ' jem-pdf-calendar-week' : '') . '" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;">';
 
         if ($gridTitle !== '') {
-            $html[] = '<tr><td class="jem-pdf-calendar-title" colspan="7">' . htmlspecialchars($gridTitle, ENT_COMPAT, 'UTF-8') . '</td></tr>';
+            $html[] = '<tr><td colspan="7" style="border:0.2mm solid #9ca3af;background-color:#ffffff;font-family:' . $headerFontFamily . ';font-size:' . ($headerFontSize + 4) . 'pt;font-weight:bold;text-align:center;padding:1mm;">' . htmlspecialchars($gridTitle, ENT_COMPAT, 'UTF-8') . '</td></tr>';
         }
 
         $html[] = '<tr>';
-
-        foreach ($weekdays as $weekday) {
-            $html[] = '<th width="' . $dayWidth . '">' . Text::_($weekday) . '</th>';
+        foreach ($weekdays as $i => $weekday) {
+            $html[] = '<th width="' . $colWidths[$i] . '" style="background-color:#3f3f46;color:#ffffff;border:0.2mm solid #9ca3af;font-family:' . $headerFontFamily . ';font-size:' . $headerFontSize . 'pt;font-weight:bold;text-align:center;padding:0.5mm;">' . self::buildPdfHeaderLabel(Text::_($weekday)) . '</th>';
         }
-
         $html[] = '</tr>';
+
+        $specialDayLegend = array();
 
         for ($cell = 0; $cell < $cellCount; $cell++) {
             if ($cell % 7 === 0) {
@@ -2570,15 +2636,36 @@ class JemPdfView
             $date = $gridStart->modify('+' . $cell . ' days');
             $dateKey = $date->format('Y-m-d');
             $outside = $shadeOutsideMonth && $date->format('m') !== $periodStart->format('m');
-            $classes = $outside ? ' class="jem-pdf-outside"' : '';
-            $html[] = '<td width="' . $dayWidth . '"' . $classes . '>';
-            $html[] = '<div class="jem-pdf-daybar">' . (int) $date->format('j') . '</div>';
-            $html[] = self::buildSpecialDayBadgesHtml($specialDaysByDate[$dateKey] ?? array());
+            $colIdx = $cell % 7;
 
-            foreach (($eventsByDate[$dateKey] ?? array()) as $event) {
-                $html[] = self::buildCalendarEventCard($event, $useCategoryBackground);
+            $cellBg = $outside ? '#eeeeee' : '';
+            if (!$outside) {
+                $daySpecialDays = $specialDaysByDate[$dateKey] ?? array();
+                foreach ($daySpecialDays as $sd) {
+                    $sdColor = trim((string) ($sd['color'] ?? ''));
+                    if (preg_match('/^#[0-9a-fA-F]{6}$/', $sdColor)) {
+                        $cellBg = $sdColor;
+                        $sdType = trim((string) ($sd['type'] ?? ($sd['title'] ?? '')));
+                        if ($sdType !== '' && !isset($specialDayLegend[$sdColor])) {
+                            $specialDayLegend[$sdColor] = $sdType;
+                        }
+                        break;
+                    }
+                }
             }
 
+            $tdStyle = 'border:0.2mm solid #9ca3af;vertical-align:top;' . ($cellBg !== '' ? 'background-color:' . $cellBg . ';' : '');
+            $html[] = '<td width="' . $colWidths[$colIdx] . '" style="' . $tdStyle . '">';
+
+            // Nested table: eliminates TCPDF inter-div spacing
+            $html[] = '<table width="100%" cellpadding="0" cellspacing="0">';
+            $html[] = '<tr><td style="' . ($outside ? $daybarOutsideStyle : $daybarStyle) . '">' . (int) $date->format('j') . '</td></tr>';
+
+            foreach (($eventsByDate[$dateKey] ?? array()) as $event) {
+                $html[] = self::buildCalendarEventCard($event, $useCategoryBackground, $eventFontSize);
+            }
+
+            $html[] = '</table>';
             $html[] = '</td>';
 
             if ($cell % 7 === 6) {
@@ -2588,8 +2675,21 @@ class JemPdfView
 
         $html[] = '</table>';
 
+        if ($legend || $specialDayLegend) {
+            $html[] = '<br/>';
+        }
+
         if ($legend) {
-            $html[] = '<div class="jem-pdf-legend"><strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> &nbsp; ' . self::buildCalendarPdfLegendItems($legend) . '</div>';
+            $html[] = '<div class="jem-pdf-legend" style="font-size:' . $eventFontSize . 'pt;"><strong>' . Text::_('COM_JEM_CATEGORIES') . '</strong> &nbsp; ' . self::buildCalendarPdfLegendItems($legend) . '</div>';
+        }
+
+        if ($specialDayLegend) {
+            $sdItems = array();
+            foreach ($specialDayLegend as $sdColor => $sdType) {
+                $sdItems[] = '<span style="background-color:' . htmlspecialchars($sdColor, ENT_COMPAT, 'UTF-8') . ';color:#111827;border:0.2mm solid #9ca3af;padding:0.3mm 1mm;">&nbsp;&nbsp;</span>&nbsp;'
+                    . htmlspecialchars($sdType, ENT_COMPAT, 'UTF-8');
+            }
+            $html[] = '<div class="jem-pdf-legend" style="font-size:' . $eventFontSize . 'pt;">' . implode(' &nbsp; ', $sdItems) . '</div>';
         }
 
         $footer = self::buildViewTextBlock('footer');
@@ -2744,7 +2844,7 @@ class JemPdfView
         return $legend;
     }
 
-    private static function buildCalendarEventCard($row, bool $useCategoryBackground = false): string
+    private static function buildCalendarEventCard($row, bool $useCategoryBackground = false, int $fontSize = 6): string
     {
         $title = htmlspecialchars((string) ($row->title ?? ''), ENT_COMPAT, 'UTF-8');
         $url = !empty($row->slug) ? self::absoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '';
@@ -2757,30 +2857,43 @@ class JemPdfView
             $color = '#6b7280';
         }
 
-        $cardStyle = '';
-        $timeStyle = '';
-        $linkStyle = '';
-        $markColor = htmlspecialchars($color, ENT_COMPAT, 'UTF-8');
-
         if ($useCategoryBackground) {
             $textColor = self::getContrastingTextColor($color);
-            $cardStyle = ' style="background-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
-                . '; border-color:' . htmlspecialchars($color, ENT_COMPAT, 'UTF-8')
-                . '; color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $timeStyle = ' style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $linkStyle = ' style="color:' . htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8') . ';"';
-            $markColor = htmlspecialchars($textColor, ENT_COMPAT, 'UTF-8');
+            $bgColor   = $color;
+            $timeColor = $textColor;
+            $linkColor = $textColor;
+            $markColor = $textColor;
+        } else {
+            $bgColor   = '#fff8df';
+            $timeColor = '#4b5563';
+            $linkColor = '#111827';
+            $markColor = $color;
         }
 
         if ($url !== '') {
-            $title = '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '"' . $linkStyle . '>' . $title . '</a>';
+            $title = '<a href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '" style="color:' . htmlspecialchars($linkColor, ENT_COMPAT, 'UTF-8') . ';">' . $title . '</a>';
         }
 
-        return '<div class="jem-pdf-event-card"' . $cardStyle . '>'
-            . (!$useCategoryBackground ? '<div class="jem-pdf-category-mark" style="color:' . $markColor . ';">&#9632;</div>' : '')
-            . ($time !== '' ? '<div class="jem-pdf-event-time"' . $timeStyle . '>' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</div>' : '')
-            . '<div>' . $title . self::buildPdfEventIndicators($row) . '</div>'
-            . '</div>';
+        $timeFontSize = max(5, $fontSize - 1);
+        // Outer td: background + top separator only (no padding — cellpadding on inner table controls spacing)
+        $outerTdStyle = 'background-color:' . htmlspecialchars($bgColor, ENT_COMPAT, 'UTF-8')
+            . ';border-top:0.15mm solid #d1d5db;';
+        // Inner td: text styles
+        $innerTdStyle = 'text-align:center;font-size:' . $fontSize . 'pt'
+            . ';line-height:' . ($fontSize + 2) . 'pt'
+            . ';color:' . htmlspecialchars($linkColor, ENT_COMPAT, 'UTF-8') . ';';
+
+        $content = '';
+        if (!$useCategoryBackground) {
+            $content .= '<span style="color:' . htmlspecialchars($markColor, ENT_COMPAT, 'UTF-8') . ';">&#9632;</span> ';
+        }
+        if ($time !== '') {
+            $content .= '<span style="font-size:' . $timeFontSize . 'pt;font-style:italic;color:' . htmlspecialchars($timeColor, ENT_COMPAT, 'UTF-8') . ';">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</span><br/>';
+        }
+        $content .= '<span style="font-size:' . $fontSize . 'pt;font-weight:bold;">' . $title . '</span>' . self::buildPdfEventIndicators($row);
+
+        // cellpadding="6" ≈ 1.6mm top/bottom/left/right — the only reliable padding mechanism in TCPDF
+        return '<tr><td style="' . $outerTdStyle . '"><table width="100%" cellpadding="6" cellspacing="0"><tr><td style="' . $innerTdStyle . '">' . $content . '</td></tr></table></td></tr>';
     }
 
     private static function getCalendarEventTime($row): string
@@ -2873,8 +2986,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $categoryTitleSize = max(11, min(20, (int) round(14 * $scale)));
         $html = array();
 
@@ -3122,8 +3235,8 @@ class JemPdfView
         $titleFontFamily = self::getPdfFontFamily($settings, 'pdf_title_font_family');
         $headerFontFamily = self::getPdfFontFamily($settings, 'pdf_header_font_family');
         $bodyFontFamily = self::getPdfFontFamily($settings, 'pdf_body_font_family');
-        $baseFontSize = max(7, min(14, (int) round(8 * $scale)));
-        $titleFontSize = max(14, min(30, (int) round(18 * $scale)));
+        $baseFontSize = self::getPdfBodyFontSize($settings, $scale, 7, 14);
+        $titleFontSize = self::getPdfTitleFontSize($settings, $scale, 14, 30);
         $eventTitleFontSize = max(10, min(18, (int) round(12 * $scale)));
         $html = array();
 
@@ -3576,6 +3689,29 @@ class JemPdfView
         );
 
         return in_array($font, $fonts, true) ? $font : 'helvetica';
+    }
+
+    private static function getPdfTitleFontSize($settings, float $scale = 1.0, int $min = 8, int $max = 40): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_title_font_size ?? 18, $scale, $min, $max);
+    }
+
+    private static function getPdfHeaderFontSize($settings, float $scale = 1.0, int $min = 7, int $max = 30): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_heading_font_size ?? 12, $scale, $min, $max);
+    }
+
+    private static function getPdfBodyFontSize($settings, float $scale = 1.0, int $min = 6, int $max = 20): int
+    {
+        return self::getPdfScaledFontSize($settings->pdf_base_font_size ?? 8, $scale, $min, $max);
+    }
+
+    private static function getPdfScaledFontSize($value, float $scale, int $min, int $max): int
+    {
+        $fontSize = (int) $value;
+        $fontSize = $fontSize > 0 ? $fontSize : $min;
+
+        return max($min, min($max, (int) round($fontSize * $scale)));
     }
 
     private static function htmlToPlainText(string $value): string

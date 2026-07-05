@@ -18,6 +18,7 @@ $highlight_featured = $params->get('highlight_featured');
 $displayorder       = (int) $params->get('display_order', 0);
 $showtitle          = $params->get('showtitle');
 $showvenue          = $params->get('showvenue');
+$showcategory       = ((int) $params->get('showcategory', 0) === 1);
 $linkloc            = $params->get('linkloc');
 $linkdet            = $params->get('linkdet');
 $showiconcountry    = $params->get('showiconcountry');
@@ -57,6 +58,12 @@ $linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit
                     $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
                     $colVenue = '<td style="padding: 10px 5px; vertical-align: middle; font-size: 0.9em; font-style: italic;">' . $contentVenue . '</td>';
                 }
+
+                // Column: Category
+                $colCategory = '';
+                if ($showcategory) {
+                    $colCategory = '<td style="padding: 10px 5px; vertical-align: middle; font-size: 0.9em;">' . $item->catname . '</td>';
+                }
                 ?>
 
                 <tr class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="border-bottom: 1px solid #eee; <?php echo $boldStyle; ?>">
@@ -73,23 +80,23 @@ $linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit
                     <?php
                     switch ($displayorder) {
                         case 1:
-                            echo $colTitle . $colVenue . $colDate;
+                            echo $colTitle . $colVenue . $colDate . $colCategory;
                             break;
                         case 2:
-                            echo $colVenue . $colTitle . $colDate;
+                            echo $colVenue . $colTitle . $colDate . $colCategory;
                             break;
                         case 3:
-                            echo $colVenue . $colDate . $colTitle;
+                            echo $colVenue . $colDate . $colTitle . $colCategory;
                             break;
                         case 4:
-                            echo $colDate . $colTitle . $colVenue;
+                            echo $colDate . $colTitle . $colVenue . $colCategory;
                             break;
                         case 5:
-                            echo $colDate . $colVenue . $colTitle;
+                            echo $colDate . $colVenue . $colTitle . $colCategory;
                             break;
                         case 0:
                         default:
-                            echo $colTitle . $colDate . $colVenue;
+                            echo $colTitle . $colDate . $colVenue . $colCategory;
                             break;
                     }
                     ?>

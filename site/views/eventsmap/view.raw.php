@@ -48,7 +48,8 @@ class JemViewEventsMap extends HtmlView
             $title,
             (array) $rows,
             'jem-events-map.pdf',
-            (string) $params->get('map_provider', 'osm') === 'google' ? 'google' : 'osm'
+            (string) $params->get('map_provider', 'osm') === 'google' ? 'google' : 'osm',
+            max(0, min(19, (int) $params->get('map_zoom', 4)))
         );
     }
 
@@ -123,11 +124,17 @@ class JemViewEventsMap extends HtmlView
             }
         }
 
+        $selectedCountry = $defaultCountry;
+
+        if ($showCountryFilter && $app->input->exists('jem_map_filter_country')) {
+            $selectedCountry = trim($app->input->getString('jem_map_filter_country', ''));
+        }
+
         return array(
             'start' => $filterStartDate,
             'end' => $filterEndDate,
             'category' => $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0,
-            'country' => $showCountryFilter ? trim($app->input->getString('jem_map_filter_country', $defaultCountry)) : $defaultCountry,
+            'country' => $showCountryFilter ? $selectedCountry : $defaultCountry,
         );
     }
 

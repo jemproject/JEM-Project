@@ -131,6 +131,8 @@ if (!class_exists('JemHelperCountries')) {
     }
 </style>
 
+<input type="hidden" name="jem_country_selection" id="jem-country-selection" value="">
+
 <div class="jem-country-tree" id="jem-country-groups">
     <?php foreach ($countryGroups as $continent => $group) : ?>
         <?php
@@ -170,13 +172,12 @@ if (!class_exists('JemHelperCountries')) {
                         ?>
                         <div>
                             <div class="form-check">
-                                <input type="hidden" name="jem_country_published[<?php echo $this->escape($country->iso2); ?>]" value="0">
                                 <input
                                     type="checkbox"
                                     class="form-check-input jem-country-checkbox"
                                     id="<?php echo $fieldId; ?>"
-                                    name="jem_country_published[<?php echo $this->escape($country->iso2); ?>]"
                                     value="1"
+                                    data-country="<?php echo $this->escape($country->iso2); ?>"
                                     data-continent="<?php echo $this->escape($continent); ?>"
                                     <?php echo !empty($country->published) ? 'checked' : ''; ?>
                                 >
@@ -203,6 +204,70 @@ if (!class_exists('JemHelperCountries')) {
 
 <script>
 (function() {
+    function updateCountrySelection() {
+        var field = document.getElementById('jem-country-selection');
+        var countries = Array.prototype.slice.call(document.querySelectorAll('.jem-country-checkbox'));
+
+        if (!field || !countries.length) {
+            return;
+        }
+
+        var grouped = {};
+        var activeCount = 0;
+
+        countries.forEach(function(input) {
+            var continent = input.getAttribute('data-continent') || '';
+            var country = input.getAttribute('data-country') || '';
+
+            if (!continent || !country) {
+                return;
+            }
+
+            if (!grouped[continent]) {
+                grouped[continent] = [];
+            }
+
+            grouped[continent].push(input);
+
+            if (input.checked) {
+                activeCount++;
+            }
+        });
+
+        if (activeCount === countries.length) {
+            field.value = JSON.stringify({all: true, continents: [], include: []});
+            return;
+        }
+
+        var selection = {
+            all: false,
+            continents: [],
+            include: []
+        };
+
+        Object.keys(grouped).sort().forEach(function(continent) {
+            var group = grouped[continent];
+            var active = group.filter(function(input) {
+                return input.checked;
+            });
+
+            if (!active.length) {
+                return;
+            }
+
+            if (active.length === group.length) {
+                selection.continents.push(continent);
+                return;
+            }
+
+            active.forEach(function(input) {
+                selection.include.push(input.getAttribute('data-country'));
+            });
+        });
+
+        field.value = JSON.stringify(selection);
+    }
+
     function updateContinent(continent) {
         var countries = Array.prototype.slice.call(document.querySelectorAll('.jem-country-checkbox[data-continent="' + continent + '"]'));
         var continentInput = document.querySelector('.jem-continent-checkbox[data-continent="' + continent + '"]');
@@ -227,6 +292,8 @@ if (!class_exists('JemHelperCountries')) {
         if (count) {
             count.textContent = '(' + active + '/' + countries.length + ' active)';
         }
+
+        updateCountrySelection();
     }
 
     document.querySelectorAll('.jem-continent-checkbox').forEach(function(input) {
@@ -281,5 +348,7 @@ if (!class_exists('JemHelperCountries')) {
             updateContinent(target);
         }
     });
+
+    updateCountrySelection();
 })();
 </script>

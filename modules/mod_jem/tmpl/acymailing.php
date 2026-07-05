@@ -16,6 +16,7 @@ $highlight_featured = (int) $params->get('highlight_featured');
 $displayorder       = $params->get('display_order', 0);
 $showtitle          = (int) $params->get('showtitle');
 $showvenue          = (int) $params->get('showvenue');
+$showcategory       = (int) $params->get('showcategory', 0);
 $linkloc            = (int) $params->get('linkloc');
 $linkdet            = (int) $params->get('linkdet');
 $showiconcountry    = (int) $params->get('showiconcountry');
@@ -27,6 +28,7 @@ $showiconcountry    = (int) $params->get('showiconcountry');
             // Data Prep
             $title   = htmlspecialchars((string) ($item->title ?? ''), ENT_QUOTES, 'UTF-8');
             $venue   = htmlspecialchars((string) ($item->venue ?? ''), ENT_QUOTES, 'UTF-8');
+            $category = (string) ($item->catname ?? '');
             $country = htmlspecialchars((string) ($item->country ?? ''), ENT_QUOTES, 'UTF-8');
             $date    = (string) ($item->dateinfo ?? '');
 
@@ -54,29 +56,38 @@ $showiconcountry    = (int) $params->get('showiconcountry');
                 $venueContent = ($linkloc === 1 && $venueLink !== '') ? '<a href="'.$venueLink.'" style="color: #007bff; text-decoration: underline; font-weight: inherit;">'.$venue.'</a>' : $venue;
                 $blockVenue = '<p style="'.$textStyle.' margin: 2px 0 0 0; font-size: 13px; font-style: italic; color: #555;">' . $venueContent . '</p>';
             }
+
+            // Block Category
+            $blockCategory = '';
+            if ($showcategory && $category !== '') {
+                $blockCategory = '<p style="'.$textStyle.' margin: 2px 0 0 0; font-size: 13px; color: #555;">' . $category . '</p>';
+            }
+
+            // Date Link
+            $dateLink = ($linkdet === 1) ? $eventLink : '';
             ?>
 
             <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eeeeee;">
                 <?php
                 switch ($displayorder) {
                     case 1:
-                        echo $blockTitle . $blockVenue . $blockDate;
+                        echo $blockTitle . $blockVenue . $blockDate . $blockCategory;
                         break;
                     case 2:
-                        echo $blockVenue . $blockTitle . $blockDate;
+                        echo $blockVenue . $blockTitle . $blockDate . $blockCategory;
                         break;
                     case 3:
-                        echo $blockVenue . $blockDate . $blockTitle;
+                        echo $blockVenue . $blockDate . $blockTitle . $blockCategory;
                         break;
                     case 4:
-                        echo $blockDate . $blockTitle . $blockVenue;
+                        echo $blockDate . $blockTitle . $blockVenue . $blockCategory;
                         break;
                     case 5:
-                        echo $blockDate . $blockVenue . $blockTitle;
+                        echo $blockDate . $blockVenue . $blockTitle . $blockCategory;
                         break;
                     case 0:
                     default:
-                        echo $blockTitle . $blockDate . $blockVenue;
+                        echo $blockTitle . $blockDate . $blockVenue . $blockCategory;
                         break;
                 }
                 ?>

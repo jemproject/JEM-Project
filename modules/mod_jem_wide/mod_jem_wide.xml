@@ -1,13 +1,13 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_wide</name>
     <author>JEM Community</author>
-    <creationDate>June 2026</creationDate>
+    <creationDate>4 July 2026 20:00</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0rc4</version>
+    <version>4.5.0rc5</version>
     <description>MOD_JEM_WIDE_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -138,10 +138,29 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="showcategory" type="radio"
+                       default="1"
+                       label="MOD_JEM_WIDE_SHOW_CATEGORY"
+                       description="MOD_JEM_WIDE_SHOW_CATEGORY_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="linkcategory" type="radio"
                        default="1"
                        label="MOD_JEM_WIDE_LINK_TO_CATEGORY"
                        description="MOD_JEM_WIDE_LINK_TO_CATEGORY_DESC"
+                       class="btn-group btn-group-yesno"
+                       showon="showcategory:1"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showvenue" type="radio"
+                       default="1"
+                       label="MOD_JEM_WIDE_SHOW_VENUE"
+                       description="MOD_JEM_WIDE_SHOW_VENUE_DESC"
                        class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
@@ -152,6 +171,7 @@
                        label="MOD_JEM_WIDE_LINK_TO_VENUE"
                        description="MOD_JEM_WIDE_LINK_TO_VENUE_DESC"
                        class="btn-group btn-group-yesno"
+                       showon="showvenue:1"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -191,6 +211,50 @@
                        label="MOD_JEM_WIDE_TIME_FORMAT"
                        description="MOD_JEM_WIDE_TIME_FORMAT_DESC"
                        class="form-control w-auto"
+                />
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_WIDE_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_WIDE_SHOW_INTROTEXT"
+                       description="MOD_JEM_WIDE_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_WIDE_INTROTEXT"
+                       description="MOD_JEM_WIDE_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_WIDE_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_WIDE_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_WIDE_FOOTERTEXT"
+                       description="MOD_JEM_WIDE_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
                 />
             </fieldset>
             <fieldset name="advanced">

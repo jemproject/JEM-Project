@@ -728,7 +728,8 @@ div#jem .rowcolor {
     border-collapse: collapse;
     font-size: 0.9rem;
     min-width: 36rem;
-    width: 100%;
+    width: max-content;
+    max-width: 100%;
 }
 
 #jem .jem-annual-special-days-table th,
@@ -760,14 +761,14 @@ div#jem .rowcolor {
     color: #1d2733;
     font-weight: 700;
     white-space: nowrap;
-    width: 12rem;
+    width: max-content;
 }
 
 #jem .jem-annual-special-days-type {
     color: #1d2733;
     font-weight: 700;
     white-space: nowrap;
-    width: 15rem;
+    width: max-content;
 }
 
 #jem .jem-annual-special-days-filter {
@@ -777,13 +778,21 @@ div#jem .rowcolor {
     gap: 0.45rem;
     justify-content: flex-start;
     max-width: 100%;
+    padding-left: 0.65rem;
+    padding-right: 0.75rem;
     text-align: left;
 }
 
 #jem .jem-annual-special-days-filter:hover,
 #jem .jem-annual-special-days-filter:focus,
 #jem .jem-annual-special-days-filter:active {
-    color: #1d2733 !important;
+    color: #fff !important;
+}
+
+#jem .jem-annual-special-days-filter:hover .jem-annual-special-days-filter-color,
+#jem .jem-annual-special-days-filter:focus .jem-annual-special-days-filter-color,
+#jem .jem-annual-special-days-filter:active .jem-annual-special-days-filter-color {
+    border-right-color: rgba(255, 255, 255, 0.45);
 }
 
 #jem .jem-annual-special-days-filter-color {
@@ -791,7 +800,7 @@ div#jem .rowcolor {
     border-right: 1px solid #cbd3dd;
     display: inline-flex;
     flex: 0 0 auto;
-    margin-right: 0.15rem;
+    margin-right: 0.25rem;
     padding-right: 0.55rem;
 }
 

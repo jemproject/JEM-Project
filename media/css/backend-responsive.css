@@ -1177,6 +1177,63 @@ fieldset.adminform input#clear {
     width: auto;
 }
 
+fieldset.adminform .jem-options-width-auto,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto,
+fieldset.adminform .jem-options-width-auto + .choices,
+fieldset.adminform .choices:has(.jem-options-width-auto),
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices {
+    display: inline-block !important;
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto.form-select,
+fieldset.adminform .jem-options-width-auto select,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto select,
+fieldset.adminform .jem-options-width-auto + .choices .choices__inner,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__inner,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__inner {
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto + .choices .choices__list--single,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__list--single,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__list--single {
+    width: auto !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 24rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 14rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices__inner,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__inner {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item--selectable,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__placeholder {
+    background: transparent !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+}
+
 fieldset.adminform fieldset.radio label,
 fieldset.panelform fieldset.radio label {
     min-width: 85px;
@@ -1244,6 +1301,7 @@ select.inputbox, textarea.inputbox {
         min-width: 0;
     }
 }
+
 /* -- Help --------------------------- */
 .helpFrame {
     border-left: 0 solid #222;
@@ -1676,4 +1734,3 @@ fieldset.jem-specialdays-import #replace_specialdays {
         flex-basis: 100%;
     }
 }
-

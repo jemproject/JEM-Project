@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -70,7 +69,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $additionalCSS = '';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
     $additionalCSS = 'order: -1;';
@@ -122,7 +121,7 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <?php $showCategoryBadge = (($params->get('showcategory', 1) == 1) && !empty($item->catname)); ?>
+                <?php $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)); ?>
                 <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <?php if ($showflyer == 1) : ?>
                         <div class="event-media">
@@ -157,6 +156,7 @@ $wa->addInlineStyle($css);
                         <h3 class="event-title">
                             <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" style="text-decoration:none;color:inherit;">'.$item->title.'</a>' : $item->title; ?>
                         </h3>
+
                         <div class="event-date-container">
                             <div class="date-box" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;">
                                 <div class="date-day"><?php echo $item->startdate['day']; ?></div>
@@ -169,7 +169,7 @@ $wa->addInlineStyle($css);
                         </div>
 
                         <div class="event-meta">
-                            <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) : ?>
+                            <?php if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && !empty($item->venue)) : ?>
                                 <div class="meta-item">
                                     <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-map-marker-alt"></i></div>
                                     <div class="meta-text"><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></div>
@@ -197,6 +197,14 @@ $wa->addInlineStyle($css);
                                 <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
                                    href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
                                    class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php endif; ?>
+                            <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                            <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-banner__more-information'); ?>">
+                                    <?php echo Text::_('MOD_JEM_BANNER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>

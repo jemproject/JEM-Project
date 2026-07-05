@@ -179,11 +179,13 @@ class JemViewEvent extends HtmlView
         $venueDescriptionMode = $this->normalisePdfDescriptionMode((string) ($jemsettings->pdf_venue_description_mode ?? 'complete'));
         $baseFontSize = max(6, min(16, (int) ($jemsettings->pdf_base_font_size ?? 8)));
         $headingFontSize = max(8, min(24, (int) ($jemsettings->pdf_heading_font_size ?? 12)));
+        $titleFontSize = max(8, min(40, (int) ($jemsettings->pdf_title_font_size ?? 18)));
         if ($singlePageTarget) {
             $baseFontSize = max(6, min(18, (int) round($baseFontSize * $posterScale)));
             $headingFontSize = max(8, min(28, (int) round($headingFontSize * $posterScale)));
+            $titleFontSize = max(8, min(42, (int) round($titleFontSize * $posterScale)));
         }
-        $titleFontSize = min($singlePageTarget ? 42 : 28, $headingFontSize + ($singlePageTarget ? 10 : 8));
+        $titleFontSize = min($singlePageTarget ? 42 : 28, $titleFontSize);
         $titleMargin = $singlePageTarget ? 2 : 5;
         $headingMarginTop = $singlePageTarget ? 3 : 6;
         $sectionLineHeight = $baseFontSize + ($singlePageTarget ? 2 : 3);

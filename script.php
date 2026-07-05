@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version    4.2.3
  * @package    JEM
@@ -317,6 +317,7 @@ class com_jemInstallerScript
         }
 
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
         }
     }
@@ -615,6 +616,46 @@ class com_jemInstallerScript
     }
 
 
+
+    /**
+     * Remove the legacy Help entry from Joomla's administrator component menu.
+     *
+     * The Help view remains available from the JEM control panel, but it should
+     * no longer be shown as a separate item in the Joomla Components menu.
+     *
+     * @return void
+     */
+    private function removeObsoleteAdminHelpMenuItem()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__menu'))
+            ->where($db->quoteName('client_id') . ' = 1')
+            ->where(
+                '('
+                . $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' = ' . $db->quote('option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' LIKE ' . $db->quote('%option=com_jem%view=help%')
+                . ')'
+            );
+
+        if ($componentId > 0) {
+            $query->where($db->quoteName('component_id') . ' = ' . $componentId);
+        }
+
+        $db->setQuery($query);
+        $db->execute();
+    }
     /**
      * Repair generated frontend type menu items whose stored type id became stale.
      *
@@ -1061,9 +1102,7 @@ class com_jemInstallerScript
             ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
             ['table' => '#__jem_attachments','column' => 'description',   'definition' => "VARCHAR(255) DEFAULT NULL AFTER `name`"],
             ['table' => '#__jem_attachments','column' => 'frontend',      'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `icon`"],
-            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"],
-            ['table' => '#__jem_special_days','column' => 'show_dates',   'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `description`"],
-            ['table' => '#__jem_special_days','column' => 'access',       'definition' => "INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `published`"]
+            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"]
         ];
 
         // check if the each column exists
@@ -1086,13 +1125,6 @@ class com_jemInstallerScript
         }
 
         if (in_array(str_replace('#__', $db->getPrefix(), '#__jem_special_days'), $existingTables, true)) {
-            $db->setQuery('SHOW INDEX FROM ' . $db->quoteName('#__jem_special_days') . ' WHERE Key_name = ' . $db->quote('idx_access'));
-
-            if (!$db->loadResult()) {
-                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_special_days') . ' ADD KEY ' . $db->quoteName('idx_access') . ' (' . $db->quoteName('access') . ')');
-                $db->execute();
-            }
-
             $query = $db->getQuery(true)
                 ->update($db->quoteName('#__jem_special_days'))
                 ->set($db->quoteName('show_dates') . ' = 0')
@@ -1279,8 +1311,10 @@ class com_jemInstallerScript
             '#__jem_events',
             '#__jem_groupmembers',
             '#__jem_groups',
+            '#__jem_import_profiles',
             '#__jem_links',
             '#__jem_register',
+            '#__jem_special_days',
             '#__jem_settings',
             '#__jem_config',
             '#__jem_types',
@@ -1334,3 +1368,4 @@ class com_jemInstallerScript
     }
 
 }
+

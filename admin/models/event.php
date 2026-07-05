@@ -665,6 +665,32 @@ class JemModelEvent extends JemModelAdmin
                 $data['publish_up'] = Factory::getDate()->toSql();
             }
 
+            // For new events with no image, use the first category that has image_as_default enabled.
+            if ($new && empty($data['datimage']) && !empty($cats) && is_array($cats)) {
+                $catIds = array_values(array_filter(array_map('intval', $cats)));
+                if (!empty($catIds)) {
+                    try {
+                        $dbCat = Factory::getContainer()->get('DatabaseDriver');
+                        $catQuery = $dbCat->getQuery(true);
+                        $catQuery->select($dbCat->quoteName(['id', 'image']))
+                                 ->from($dbCat->quoteName('#__jem_categories'))
+                                 ->whereIn($dbCat->quoteName('id'), $catIds)
+                                 ->where($dbCat->quoteName('image_as_default') . ' = 1')
+                                 ->where($dbCat->quoteName('image') . ' != ' . $dbCat->quote(''));
+                        $dbCat->setQuery($catQuery);
+                        $catImageMap = $dbCat->loadObjectList('id');
+                        foreach ($catIds as $catId) {
+                            if (isset($catImageMap[$catId])) {
+                                $data['datimage'] = 'category_' . $catImageMap[$catId]->image;
+                                break;
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Column may not exist yet if DB migration hasn't run; skip silently.
+                    }
+                }
+            }
+
             // Save the event
             $saved = parent::save($data);
 
@@ -762,7 +788,13 @@ class JemModelEvent extends JemModelAdmin
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
-                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
+                if (!empty($data['article_id'])
+                    && $this->eventUsesAssociatedArticleAsContent($data)
+                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
+                    $this->updateAssociatedArticleFromEvent((int) $pk, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage'));
+                } else {
+                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
+                }
             }
         } else {
             // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
@@ -828,7 +860,13 @@ class JemModelEvent extends JemModelAdmin
 
             if ($saved) {
                 $this->createAssociatedArticleIfRequested((int) $table->id, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
-                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
+                if (!empty($data['article_id'])
+                    && $this->eventUsesAssociatedArticleAsContent($data)
+                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
+                    $this->updateAssociatedArticleFromEvent((int) $table->id, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage'));
+                } else {
+                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
+                }
             }
 
             // Update  and new attachment file
@@ -1103,7 +1141,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'language', 'introtext', 'fulltext', 'attribs', 'datimage', 'fullimage')))
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'publish_up', 'publish_down', 'language', 'introtext', 'fulltext', 'attribs', 'datimage', 'fullimage')))
             ->from($db->quoteName('#__jem_events'))
             ->where($db->quoteName('id') . ' = ' . $eventId);
 
@@ -1650,6 +1688,8 @@ class JemModelEvent extends JemModelAdmin
                 'metadata',
                 'datimage',
                 'fullimage',
+                'publish_up',
+                'publish_down',
                 'attribs',
                 'dates',
                 'times',
@@ -1847,7 +1887,16 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
-        $update = (object) array('id' => $articleId);
+        $update = (object) array(
+            'id'    => $articleId,
+            'state' => 1,
+        );
+        $nullDate = $db->getNullDate();
+        $publishUp = trim((string) ($eventData['publish_up'] ?? ''));
+        $publishDown = trim((string) ($eventData['publish_down'] ?? ''));
+
+        $update->publish_up = ($publishUp !== '' && $publishUp !== $nullDate) ? $publishUp : Factory::getDate()->toSql();
+        $update->publish_down = ($publishDown !== '' && $publishDown !== $nullDate) ? $publishDown : null;
 
         if (in_array('title', $fields, true)) {
             $update->title = $this->buildAssociatedArticleTitle($eventData, $eventId);

@@ -15,6 +15,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 $highlight_featured = $params->get('highlight_featured');
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 
 ?>
 
@@ -25,8 +27,12 @@ $highlight_featured = $params->get('highlight_featured');
 
             <colgroup>
                 <col style="width:30%" class="jemmodw_col_title" />
+                <?php if ($showCategory) : ?>
                 <col style="width:20%" class="jemmodw_col_category" />
+                <?php endif; ?>
+                <?php if ($showVenue) : ?>
                 <col style="width:20%" class="jemmodw_col_venue" />
+                <?php endif; ?>
                 <col style="width:15%" class="jemmodw_col_eventimage" />
                 <col style="width:15%" class="jemmodw_col_venueimage" />
             </colgroup>
@@ -47,14 +53,27 @@ $highlight_featured = $params->get('highlight_featured');
                             <span class="time" title="<?= strip_tags($item->dateinfo); ?>"><?= $item->time; ?></span>
                         <?php endif;
                         echo $item->dateschema; ?>
+                        <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                        <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                            <div class="jem-more-information">
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-wide', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-wide__more-information'); ?>">
+                                    <?php echo Text::_('MOD_JEM_WIDE_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </td>
 
+                    <?php if ($showCategory) : ?>
                     <td>
                         <?php if (!empty($item->catname)) : ?>
                             <span class="category"><?= $item->catname; ?></span>
                         <?php endif; ?>
                     </td>
+                    <?php endif; ?>
 
+                    <?php if ($showVenue) : ?>
                     <td itemprop="location" itemscope itemtype="https://schema.org/Place">
                         <?php if (!empty($item->venue)) : ?>
                             <?php if ($item->venuelink) : ?>
@@ -70,12 +89,13 @@ $highlight_featured = $params->get('highlight_featured');
                             </div>
                         <?php endif; ?>
                     </td>
+                    <?php endif; ?>
 
                     <td class="event-image-cell">
                         <?php if ($params->get('use_modal')) : ?>
                     <?php if ($item->eventimageorig) {
                         $image = $item->eventimageorig;
-                        $document = Factory::getDocument();
+                        $document = Factory::getApplication()->getDocument();
                         $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
                         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                         echo '<script>lightbox.option({

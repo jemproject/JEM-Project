@@ -1034,10 +1034,10 @@ static public function lightbox() {
         {
             case 1:
                 // google map link
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
+                if ($hasCoordinates) {
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?hl='.$paramGet($params, $lg, 'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
                 } else {
-                $url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')'; }
+                $url = 'https://www.google.'.$paramGet($params, $tld, 'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$paramGet($params, $lg, 'en').'+('.$data->venue.')'; }
 
                 $message = Text::_('COM_JEM_MAP').':';
                 $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
@@ -1046,11 +1046,11 @@ static public function lightbox() {
 
             case 2:
                 // include iframe
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+                if ($hasCoordinates) {
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?width=100%25&amp;height=600&amp;hl='.$paramGet($params, $lg, 'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
                 }
                 else {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?hl='.$paramGet($params, $lg, 'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
                 }
 
                 $output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
@@ -1060,8 +1060,8 @@ static public function lightbox() {
                 // include Google map with API3
                 // NOT WORKING YET 2023-05
                 # https://developers.google.com/maps/documentation/javascript/tutorial
-                $api = $params->get('global_googleapi');
-                $clientid = $params->get('global_googleclientid');
+                $api = $paramGet($params, 'global_googleapi');
+                $clientid = $paramGet($params, 'global_googleclientid');
                 $output = '';
 
                 if (empty($api) && empty($clientid)) {
@@ -1096,7 +1096,7 @@ static public function lightbox() {
 
             case 4:
                 // OpenStreetMap link
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+                if ($hasCoordinates) {
                     $lat = $data->latitude;
                     $lng = $data->longitude;
                 } else {
@@ -1133,7 +1133,7 @@ static public function lightbox() {
 
             case 5:
                 // embed OpenStreetMap
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+                if ($hasCoordinates) {
                     $lat = $data->latitude;
                     $lng = $data->longitude;
                 } else {

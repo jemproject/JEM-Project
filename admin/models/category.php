@@ -228,6 +228,7 @@ class JemModelCategory extends AdminModel
             $isNew = false;
         }
 
+
         // Set the new parent id if parent id not matched OR while New/Save as
         // Copy .
         if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {
@@ -299,6 +300,17 @@ class JemModelCategory extends AdminModel
 
             $this->setError($table->getError());
             return false;
+        }
+
+        // Copy category image to events folder whenever image_as_default is enabled.
+        $newImageAsDefault = (int) ($data['image_as_default'] ?? 0);
+        $catImage = trim((string) ($data['image'] ?? ''));
+        if ($newImageAsDefault === 1 && $catImage !== '') {
+            $srcPath = JPATH_ROOT . '/images/jem/categories/' . $catImage;
+            $dstPath = JPATH_ROOT . '/images/jem/events/category_' . $catImage;
+            if (is_file($srcPath)) {
+                @copy($srcPath, $dstPath);
+            }
         }
 
         // Trigger the onContentAfterSave event.
