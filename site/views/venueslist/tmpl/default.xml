@@ -67,6 +67,26 @@
                 <option value="0">JNO</option>
             </field>
 
+            <field name="venuemap_popup_width" type="number"
+                default="90"
+                min="25"
+                max="95"
+                step="5"
+                label="COM_JEM_VENUESLIST_MAP_POPUP_WIDTH"
+                description="COM_JEM_VENUESLIST_MAP_POPUP_WIDTH_DESC"
+                class="inputbox form-control w-auto jem-options-width-auto"
+            />
+
+            <field name="venuemap_popup_height" type="number"
+                default="70"
+                min="25"
+                max="95"
+                step="5"
+                label="COM_JEM_VENUESLIST_MAP_POPUP_HEIGHT"
+                description="COM_JEM_VENUESLIST_MAP_POPUP_HEIGHT_DESC"
+                class="inputbox form-control w-auto jem-options-width-auto"
+            />
+
             <field name="showvenuecalendar" type="radio"
                 default="1"
                 label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
