@@ -50,6 +50,22 @@ $uri = Uri::getInstance();
       flex: 1 <?php echo ($this->jemsettings->locationwidth); ?>;
   }
 
+  .modal[id^="jem-venueslist-map-"] .modal-dialog {
+      margin-left: auto;
+      margin-right: auto;
+  }
+
+  .modal[id^="jem-venueslist-map-"] .modal-body {
+      padding: 0;
+  }
+
+  .modal[id^="jem-venueslist-map-"] iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 22rem;
+      border: 0;
+  }
 
 </style>
 
@@ -175,12 +191,14 @@ if (!function_exists('jem_venueslist_responsive_type_badge')) {
 }
 
 if (!function_exists('jem_venueslist_responsive_venue_map')) {
-    function jem_venueslist_responsive_venue_map($row)
+    function jem_venueslist_responsive_venue_map($row, $params)
     {
         if (!is_numeric($row->latitude ?? null) || !is_numeric($row->longitude ?? null)) {
             return '';
         }
 
+        $modalWidth = max(25, min(95, (int) $params->get('venuemap_popup_width', 90)));
+        $modalHeight = max(25, min(95, (int) $params->get('venuemap_popup_height', 70)));
         $lat = (float) $row->latitude;
         $lon = (float) $row->longitude;
         $bbox = ($lon - 0.005) . ',' . ($lat - 0.003) . ',' . ($lon + 0.005) . ',' . ($lat + 0.003);
@@ -195,8 +213,10 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
             array(
                 'url'    => $src,
                 'title'  => Text::_('COM_JEM_MAP') . ': ' . $title,
-                'width'  => '900px',
-                'height' => '520px',
+                'width'  => $modalWidth . '%',
+                'height' => $modalHeight . 'vh',
+                'modalWidth' => $modalWidth,
+                'bodyHeight' => $modalHeight,
                 'footer' => '<a class="btn btn-primary" href="' . htmlspecialchars($external, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_MAP') . '</a>'
                     . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>',
             )
@@ -259,7 +279,6 @@ if (!function_exists('jem_venueslist_responsive_display_order')) {
 
         if (!(int) $params->get('showcity', 1)) {
             $displayOrder = array_values(array_diff($displayOrder, array('city')));
-            $displayOrder = array_values(array_diff($displayOrder, array('state')));
         }
 
         if (!(int) $params->get('showcountry', 0)) {
@@ -490,7 +509,7 @@ if ($showEditColumn) {
                         </div>
                     <?php elseif ($field === 'map') : ?>
                         <div class="jem-event-info-small jem-event-action jem-event-map-action" title="<?php echo Text::_('COM_JEM_MAP'); ?>">
-                            <?php echo jem_venueslist_responsive_venue_map($row) ?: '-'; ?>
+                            <?php echo jem_venueslist_responsive_venue_map($row, $this->params) ?: '-'; ?>
                         </div>
                     <?php elseif ($field === 'calendar') : ?>
                         <div class="jem-event-info-small jem-event-action jem-event-calendar-action" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
