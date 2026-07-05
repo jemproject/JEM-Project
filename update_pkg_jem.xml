@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <updates>
     <!-- JEM Package for Joomla! 5.4.x and Joomla! 6.x -->
     <update>
@@ -22,7 +22,7 @@
         <sha256>1339de57b02649490ccc878d150b3d4f9ee0e92f7e97773699ac69c2de526366</sha256>
         <sha384>9c36e35c69387354b98b691a1cd03547e2e5bab4a8733127fb42efe6626e892b59b167a16e72f3785caf74f81dfe399f</sha384>
         <sha512>420127ca06c615b110fb4322fa0422f0167eb3d2d7696b26dd9fb65cdb7facbab786505f8f5dc64c8fd02576c304baa72244f7aa16013c2e4af88f70dc3a8674</sha512>
-        <date>2026-07-05 08:00</date>
+        <date>2026-07-05 10:00</date>
         <notes>JEM 5.1.0 Alpha 1 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer.</notes>
         <changes>JEM 5.1.0 Alpha 1 introduces event image subfolder support and category default event image storage options, while keeping the JEM 5 RC feature baseline.</changes>
     </update>
