@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <updates>
     <!-- JEM Package for Joomla! 5.4.x and Joomla! 6.x -->
     <update>
@@ -22,7 +22,7 @@
         <sha256>a05651e5e2a9c77cee74654f6dc3df279cab4a2f0ea643e76780a0170bb51e19</sha256>
         <sha384>9a3d468c24cc029330aeb2fae482449d133f7b7387f53e1cceeb645bc4822f88bb5210e58f9181499f7550acdd57ee75</sha384>
         <sha512>2a12a3362b658e0a50f74326bad8254efbcd569b77c2a338a9c270f6daa788c2c1d7052a4f36429986496ce09ae824b1652992ab6f8daab02eff59f120c13ff1</sha512>
-        <date>2026-07-04 20:00</date>
+        <date>2026-07-05 08:00</date>
         <notes>JEM 5.0.0 RC 5 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer.</notes>
         <changes>JEM 5.0.0 RC 5 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
     </update>

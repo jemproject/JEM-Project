@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <extension type="component" method="upgrade">
     <name>com_jem</name>
-    <creationDate>4 July 2026 20:00</creationDate>
+    <creationDate>5 July 2026 08:00</creationDate>
     <author>JEM Community</author>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
