@@ -16,6 +16,8 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',
+        'site/views/editvenue/tmpl/edit.php:fetch',
+        'site/views/editvenue/tmpl/responsive/edit.php:fetch',
     );
 
     private const ALLOWED_SERVER_NETWORK_CALLS = array(

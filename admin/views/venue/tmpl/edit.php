@@ -55,6 +55,79 @@ Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
 ?>
+<style>
+    #image-event .jem-venue-image-fields {
+        margin: 0;
+        padding: 0;
+    }
+
+    #image-event .jem-venue-image-control .control-group,
+    #image-event .jem-venue-image-control .controls {
+        margin: 0;
+    }
+
+    #image-event .jem-venue-image-control .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.45rem;
+    }
+
+    #image-event .jem-venue-image-control .control-label,
+    #image-event .jem-venue-image-control label {
+        display: none;
+    }
+
+    #image-event .jem-venue-image-control .fltlft,
+    #image-event .jem-venue-image-control .button2-left,
+    #image-event .jem-venue-image-control .button2-left .blank {
+        float: none;
+        margin: 0;
+    }
+
+    #image-event .jem-venue-image-control input[type="text"] {
+        width: 13.5rem;
+    }
+
+    #image-event .jem-venue-image-control .btn-margin {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    #image-event .jem-venue-image-control .controls::after {
+        content: "";
+        flex: 0 0 100%;
+        order: 1;
+    }
+
+    #image-event .jem-venue-image-control img.venue-image {
+        flex: 0 0 auto;
+        order: 2;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0.1rem 0 0;
+    }
+
+    @media (max-width: 640px) {
+        #image-event .jem-venue-image-control .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        #image-event .jem-venue-image-control input[type="text"],
+        #image-event .jem-venue-image-control .btn-margin {
+            width: 100%;
+        }
+
+        #image-event .jem-venue-image-control .controls::after {
+            display: none;
+        }
+
+        #image-event .jem-venue-image-control img.venue-image {
+            justify-self: start;
+        }
+    }
+</style>
 
 <script>
     Joomla.submitbutton = function(task)
@@ -1087,10 +1160,8 @@ Text::script('JCANCEL');
                         <div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionVenueForm">
                             <div class="accordion-body">
                                 <fieldset class="panelform">
-                                    <ul class="adminformlist">
-                                        <li><?php echo $this->form->getLabel('locimage'); ?>
-                                            <?php echo $this->form->getInput('locimage'); ?>
-                                        </li>
+                                    <ul class="adminformlist jem-venue-image-fields">
+                                        <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div></li>
                                     </ul>
                                 </fieldset>
                             </div>
