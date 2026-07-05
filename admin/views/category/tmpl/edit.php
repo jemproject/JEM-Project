@@ -25,6 +25,83 @@ $wa = $this->document->getWebAssetManager();
 
 $typeField = $this->form->getField('type_id');
 ?>
+<style>
+    #category-image .jem-category-image-fields {
+        margin: 0;
+        padding: 0;
+    }
+
+    #category-image .jem-category-image-control .control-group,
+    #category-image .jem-category-image-control .controls {
+        margin: 0;
+    }
+
+    #category-image .jem-category-image-control .controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.45rem;
+    }
+
+    #category-image .jem-category-image-control .control-label,
+    #category-image .jem-category-image-control label {
+        display: none;
+    }
+
+    #category-image .jem-category-image-control .fltlft,
+    #category-image .jem-category-image-control .button2-left,
+    #category-image .jem-category-image-control .button2-left .blank {
+        float: none;
+        margin: 0;
+    }
+
+    #category-image .jem-category-image-control input[type="text"] {
+        width: 13.5rem;
+    }
+
+    #category-image .jem-category-image-control .btn-margin {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    #category-image .jem-category-image-control .controls::after {
+        content: "";
+        flex: 0 0 100%;
+        order: 1;
+    }
+
+    #category-image .jem-category-image-control img.venue-image {
+        flex: 0 0 auto;
+        order: 2;
+        max-width: 100%;
+        object-fit: contain;
+        margin: 0.1rem 0 0;
+    }
+
+    #category-image .jem-category-image-fields > li + li {
+        margin-top: 1.5rem;
+    }
+
+    @media (max-width: 640px) {
+        #category-image .jem-category-image-control .controls {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        #category-image .jem-category-image-control input[type="text"],
+        #category-image .jem-category-image-control .btn-margin {
+            width: 100%;
+        }
+
+                #category-image .jem-category-image-control .controls::after {
+            display: none;
+        }
+
+#category-image .jem-category-image-control img.venue-image {
+            justify-self: start;
+        }
+    }
+</style>
 
 <script>
     Joomla.submitbutton = function(task)
@@ -137,8 +214,8 @@ $typeField = $this->form->getField('type_id');
                     <div id="category-image" class="accordion-collapse collapse" aria-labelledby="category-image-header" data-bs-parent="#accordionCategoriesForm">
                         <div class="accordion-body">
                             <fieldset class="panelform">
-                                <ul class="adminformlist">
-                                    <li><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
+                                <ul class="adminformlist jem-category-image-fields">
+                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
                                     </li>
                                     <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
                                 </ul>
