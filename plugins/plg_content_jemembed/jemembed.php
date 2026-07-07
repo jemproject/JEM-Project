@@ -20,11 +20,20 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\User;
+use Joomla\CMS\Uri\Uri;
+
+$helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
+$output = JPATH_SITE . '/components/com_jem/classes/output.class.php';
+$route  = JPATH_SITE . '/components/com_jem/helpers/route.php';
+
+if (!is_file($helper) || !is_file($output) || !is_file($route)) {
+    return;
+}
 
 BaseDatabaseModel::addIncludePath(JPATH_SITE.'/components/com_jem/models', 'JemModel');
-require_once JPATH_SITE.'/components/com_jem/helpers/helper.php';
-require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
-require_once JPATH_SITE.'/components/com_jem/helpers/route.php';
+require_once $helper;
+require_once $output;
+require_once $route;
 
 /**
  * JEM List Events Plugin - JSON API Version
@@ -151,15 +160,19 @@ class PlgContentJemembed extends CMSPlugin
     }
 
     /**
-     * Get the site domain for absolute URLs
-     * 
+     * Get the site domain for absolute URLs.
+     *
+     * Uses Joomla's Uri::getInstance() instead of raw $_SERVER superglobals to
+     * prevent Host Header Injection attacks where an attacker could forge the
+     * HTTP_HOST header to redirect users to a malicious domain.
+     *
      * @return string The site domain with protocol
      */
     protected function getSiteDomain()
     {
-        $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-                      $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        return rtrim($protocol . $_SERVER['HTTP_HOST'], '/');
+        $uri = Uri::getInstance();
+
+        return rtrim($uri->toString(array('scheme', 'host')), '/');
     }
 
     /**

@@ -38,12 +38,18 @@ class JemViewMyevents extends JemView
         $pathway      = $app->getPathWay();
         $print        = $app->input->getBool('print', false);
         $task         = $app->input->getCmd('task', '');
+        $pageclass_sfx = $params->get('pageclass_sfx', '');
+
+        $this->params = $params;
+        $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
         // redirect if not logged in
         $this->needLoginFirst = 0;
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-            $this->needLoginFirst=1;
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $this->needLoginFirst = 1;
+            return;
         }else {
             // Decide which parameters should take priority
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -64,6 +70,24 @@ class JemViewMyevents extends JemView
 
             // are no events available?
             $noevents = (!$events) ? 1 : 0;
+
+            $columnParamDefaults = array(
+                'showtitle'  => '-1',
+                'showlocate' => '-1',
+                'showcity'   => '-1',
+                'showstate'  => '0',
+                'showcat'    => '-1',
+            );
+
+            foreach ($columnParamDefaults as $columnParam => $columnDefault) {
+                $columnValue = (string) $params->get($columnParam, $columnDefault);
+
+                if ($columnValue !== '-1') {
+                    $jemsettings->{$columnParam} = (int) $columnValue;
+                }
+            }
+
+            $showdate = (int) $params->get('showdate', 1);
 
             // get variables
             $filter_order = $app->getUserStateFromRequest('com_jem.myevents.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -124,11 +148,13 @@ class JemViewMyevents extends JemView
             if ($task == 'archive') {
                 $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive'));
                 $print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive&print=1&tmpl=component');
+                $pdf_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&task=archive&format=raw&layout=pdf');
                 $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $archive_link = Route::_('index.php?option=com_jem&view=myevents');
             } else {
                 $print_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&print=1&tmpl=component');
+                $pdf_link = Route::_(JemHelperRoute::getMyEventsRoute() . '&format=raw&layout=pdf');
                 $archive_link = $uri->toString();
             }
 
@@ -170,6 +196,7 @@ class JemViewMyevents extends JemView
             $this->task = $task;
             $this->print = $print;
             $this->params = $params;
+            $this->showdate = $showdate;
             $this->events_pagination = $events_pagination;
             $this->jemsettings = $jemsettings;
             $this->settings = $settings;
@@ -178,6 +205,7 @@ class JemViewMyevents extends JemView
             $this->lists = $lists;
             $this->noevents = $noevents;
             $this->print_link = $print_link;
+            $this->pdf_link = $pdf_link;
             $this->archive_link = $archive_link;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
             $this->itemid = $menuitem->id;

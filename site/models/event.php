@@ -13,7 +13,8 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\MVC\Model\ItemModel;
 use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
+use Joomla\Registry\Registry;
+use Joomla\Utilities\ArrayHelper;
 /**
  * Event-Model
  */
@@ -26,7 +27,11 @@ class JemModelEvent extends ItemModel
      */
     protected $_context = 'com_jem.event';
 
+    protected $_item = null;
+
     protected $_registers = null;
+
+    protected $_registerid = null;
 
     /**
      * Method to auto-populate the model state.
@@ -81,13 +86,13 @@ class JemModelEvent extends ItemModel
                 # Event
                 $query->select(
                     $this->getState('item.select',
-                        'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
+                        'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, a.contactid,' .
                         'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                         'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                        'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                        'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.recurrence_type, a.recurrence_first_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id, a.type_id'));
                 $query->from('#__jem_events AS a');
 
                 # Author
@@ -95,35 +100,46 @@ class JemModelEvent extends ItemModel
                 $query->select($name.' AS author');
                 $query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
-                # Contact
-                $query->select('con.id AS conid, con.name AS conname, con.catid AS concatid, con.telephone AS contelephone, con.email_to AS conemail');
-                $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
-
                 # Venue
                 $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
                     'l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
+                    'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
                 # Join over the category tables
                 $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
                 $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
-                # Get contact id
-                $subQuery = $db->getQuery(true);
-                $subQuery->select('MAX(contact.id) AS id');
-                $subQuery->from('#__contact_details AS contact');
-                $subQuery->where('contact.published = 1');
-                $subQuery->where('contact.user_id = a.created_by');
+                # Type
+                $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
+                $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+                $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+                $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
-                # Filter contact by language
-                if ($this->getState('filter.language')) {
-                    $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                # Venue Type
+                $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
+                $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
+
+                if (JemHelper::isContactComponentEnabled()) {
+                    # Get contact id
+                    $subQuery = $db->getQuery(true);
+                    $subQuery->select('MAX(contact.id) AS id');
+                    $subQuery->from('#__contact_details AS contact');
+                    $subQuery->where('contact.published = 1');
+                    $subQuery->where('contact.user_id = a.created_by');
+
+                    # Filter contact by language
+                    if ($this->getState('filter.language')) {
+                        $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                    }
+
+                    $query->select('(' . $subQuery . ') as contactid2');
+                } else {
+                    $query->select('0 AS contactid2');
                 }
-
-                $query->select('(' . $subQuery . ') as contactid2');
 
                 $case_when_a  = ' CASE WHEN ';
                 $case_when_a .= " a.access IN (" . implode(',',$levels) . ")";
@@ -176,6 +192,9 @@ class JemModelEvent extends ItemModel
                     $query->where('(l.id IS null OR l.access IN ('.implode(',', $levels).'))');
                 }
 
+                # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
+                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN ('.implode(',', $levels).'))');
+
                 # Filter by published state ==> later.
                 //  It would result in too complicated query.
                 //  It's easier to get data and check then e.g. for event owner etc.
@@ -217,6 +236,13 @@ class JemModelEvent extends ItemModel
                 $registry->loadString($data->metadata);
                 $data->metadata = $registry;
 
+                JemHelper::applyAssociatedArticleEventContent($data, $levels);
+
+                $registry = new Registry;
+                $registry->loadString($data->venue_attribs ?? '{}');
+                $data->venue_params = JemHelper::globalattribs();
+                $data->venue_params->merge($registry);
+
                 $data->categories = $this->getCategories($pk);
 
                 # Compute selected asset permissions.
@@ -256,11 +282,35 @@ class JemModelEvent extends ItemModel
         # Get event attachments
         $this->_item[$pk]->attachments = JemAttachment::getAttachments('event' . $this->_item[$pk]->did);
 
+        # Get event links
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $this->_item[$pk]->did)
+            ->order($db->quoteName('ordering') . ' ASC');
+        $db->setQuery($query);
+        $links = $db->loadObjectList();
+
+        if ($links) {
+            foreach ($links as &$link) {
+                // Flatten JSON params into link properties
+                if (!empty($link->params)) {
+                    $linkParams = json_decode($link->params, true);
+                    if (is_array($linkParams)) {
+                        foreach ($linkParams as $key => $value) {
+                            $link->$key = $value;
+                        }
+                    }
+                }
+            }
+        }
+        $this->_item[$pk]->event_links = $links ?: array();
+
         # Get venue attachments
         $this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
 
         // Define Booked
-        $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('SUM(places)');
         $query->from('#__jem_register');
@@ -277,6 +327,59 @@ class JemModelEvent extends ItemModel
         return $this->_item[$pk];
     }
 
+     /**
+     * Method to get contact data of event.
+     *
+     * @param  int  The id of the event.
+     * @return mixed  items data object on success, false on failure.
+     */
+    public function getContacts($id = null)
+    {
+        if (!JemHelper::isContactComponentEnabled()) {
+            return array();
+        }
+
+        $id = (!empty($id)) ? (int) $id : (int) $this->getState('event.id');
+
+        if (!$id){
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        // Get contacts of event
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('contactid'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $id);
+        $db->setQuery($query);
+        $contactIdsPath = $db->loadResult();
+
+        if (empty($contactIdsPath)) {
+            return array();
+        }
+
+        // Get data of contacts
+        $query = $db->getQuery(true);
+        $query->select('con.id AS conid, con.name AS conname, con.con_position AS conposition, con.catid AS concatid, con.telephone AS contelephone, con.mobile AS conmobile,con.email_to AS conemail, con.address AS conaddress, con.suburb AS concity, con.state AS constate, con.country AS concountry, con.webpage AS conwebsite, con.misc as condescription');
+        $query->select('cat.title AS category_name, cat.asset_id AS cat_ordering');
+        $query->from($db->quoteName('#__contact_details', 'con'));
+        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid'));
+        $query->where('FIND_IN_SET(con.id, ' . $db->quote($contactIdsPath) . ')');
+        $query->where($db->quoteName('cat.extension') . ' = ' . $db->quote('com_contact'));
+        $query->order('cat_ordering ASC');
+        $query->order('con.name ASC');
+        $db->setQuery($query);
+
+        try {
+            $res = $db->loadObjectList();
+        }
+        catch (Exception $e) {
+            $res = array();
+        }
+
+        return $res;
+    }
 
     /**
      * Method to get list recurrence events data.
@@ -310,9 +413,9 @@ class JemModelEvent extends ItemModel
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                    'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                    'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -321,31 +424,48 @@ class JemModelEvent extends ItemModel
             $query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
             # Contact
-            $query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
-            $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
+            if (JemHelper::isContactComponentEnabled()) {
+                $query->select('con.id AS conid, con.name AS conname, con.telephone AS contelephone, con.email_to AS conemail');
+                $query->join('LEFT', '#__contact_details AS con ON con.id = a.contactid');
+            } else {
+                $query->select('0 AS conid, NULL AS conname, NULL AS contelephone, NULL AS conemail');
+            }
 
             # Venue
             $query->select('l.custom1 AS venue1, l.custom2 AS venue2, l.custom3 AS venue3, l.custom4 AS venue4, l.custom5 AS venue5, ' .
                 'l.custom6 AS venue6, l.custom7 AS venue7, l.custom8 AS venue8, l.custom9 AS venue9, l.custom10 AS venue10, ' .
                 'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
+                'l.attribs AS venue_attribs, ' .
                 'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished');
+                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
             $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
             # Join over the category tables
             $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
-            # Get contact id
-            $subQuery = $db->getQuery(true);
-            $subQuery->select('MAX(contact.id) AS id');
-            $subQuery->from('#__contact_details AS contact');
-            $subQuery->where('contact.published = 1');
-            $subQuery->where('contact.user_id = a.created_by');
+            # Type
+            $query->select('jt.name AS type_name, jt.icon AS type_icon, jt.color AS type_color, jt.alias AS type_alias, jt.description AS type_description, jt.base_language AS type_base_language, jt.translation_languages AS type_translation_languages, jt.translations AS type_translations');
+            $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+            $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+            $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.published = 1 AND ' . $typeLanguageCondition);
 
-            # Filter contact by language
-            if ($this->getState('filter.language')) {
-                $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+            # Venue Type
+            $query->select('jtv.name AS venue_type_name, jtv.icon AS venue_type_icon, jtv.color AS venue_type_color, jtv.alias AS venue_type_alias, jtv.description AS venue_type_description, jtv.base_language AS venue_type_base_language, jtv.translation_languages AS venue_type_translation_languages, jtv.translations AS venue_type_translations');
+            $query->join('LEFT', '#__jem_types AS jtv ON jtv.id = l.type_id AND jtv.entity = 3 AND jtv.published = 1 AND ' . $typeLanguageCondition);
+
+            if (JemHelper::isContactComponentEnabled()) {
+                # Get contact id
+                $subQuery = $db->getQuery(true);
+                $subQuery->select('MAX(contact.id) AS id');
+                $subQuery->from('#__contact_details AS contact');
+                $subQuery->where('contact.published = 1');
+                $subQuery->where('contact.user_id = a.created_by');
+
+                # Filter contact by language
+                if ($this->getState('filter.language')) {
+                    $subQuery->where('(contact.language in (' . $db->quote(Factory::getApplication()->getLanguage()->getTag()) . ',' . $db->quote('*') . ') OR contact.language IS NULL)');
+                }
             }
 
             # If $iduser is defined, then the events list is filtered by registration of this user
@@ -357,7 +477,11 @@ class JemModelEvent extends ItemModel
             // Not include the delete event
             $query->where("a.published != -2");
 
-            $query->select('(' . $subQuery . ') as contactid2');
+            if (JemHelper::isContactComponentEnabled()) {
+                $query->select('(' . $subQuery . ') as contactid2');
+            } else {
+                $query->select('0 AS contactid2');
+            }
 
             $dateFrom = date('Y-m-d', $datetimeFrom);
             $timeFrom = date('H:i:s', $datetimeFrom);
@@ -393,6 +517,13 @@ class JemModelEvent extends ItemModel
             $registry = new Registry;
             $registry->loadString($data[0]->metadata);
             $data[0]->metadata = $registry;
+
+            JemHelper::applyAssociatedArticleEventContent($data[0], $levels);
+
+            $registry = new Registry;
+            $registry->loadString($data[0]->venue_attribs ?? '{}');
+            $data[0]->venue_params = JemHelper::globalattribs();
+            $data[0]->venue_params->merge($registry);
 
             $data[0]->categories = $this->getCategories($pk);
 
@@ -443,7 +574,7 @@ class JemModelEvent extends ItemModel
         $query->where(array('event = ' . $db->quote($this->_item[$id]->did), 'waiting = 0', 'status = 1'));
         $db->setQuery($query);
         try {
-            $res = (int)$db->loadObject();
+            $res = (int) $db->loadResult();
         }
         catch (Exception $e) {
             $res = 0;
@@ -580,7 +711,7 @@ class JemModelEvent extends ItemModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && count($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');
@@ -702,7 +833,7 @@ class JemModelEvent extends ItemModel
         $avatar = '';
         $join = '';
 
-        if ($settings->get('event_comunoption','0') == 1 && $settings->get('event_comunsolution','0') == 1) {
+        if ($settings->get('event_comunoption','0') == 1 && $settings->get('event_comunsolution','0') == 1 && JemHelper::isCommunityBuilderEnabled()) {
             $avatar = ', c.avatar';
             $join = ' LEFT JOIN #__comprofiler as c ON c.user_id = r.uid';
         }
@@ -910,6 +1041,11 @@ class JemModelEvent extends ItemModel
             $event = false;
         }
 
+        if (!$event) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
+            return false;
+        }
+
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
         if($event->recurrence_type){
 
@@ -925,9 +1061,10 @@ class JemModelEvent extends ItemModel
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
             $errMsg = '';
+            $eventStatus = $status;
 
 
-            if ($status > 0) {
+            if ($eventStatus > 0) {
                 if ($addplaces > 0) {
                     if ($reg) {
                         if ($reg->status > 0) {
@@ -940,14 +1077,14 @@ class JemModelEvent extends ItemModel
                     }
                     //Detect if the reserve go to waiting list
                     $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if ($reg->status != 0 || $reg == null) {
+                    if (!$reg || $reg->status != 0) {
                         if ($e->maxplaces) {
                             $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
                             if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $status = 2;
+                                $eventStatus = 2;
                             }
                         } else {
-                            $status = 1;
+                            $eventStatus = 1;
                         }
                     }
                 } else {
@@ -957,7 +1094,7 @@ class JemModelEvent extends ItemModel
                 if ($reg) {
                     $places = $reg->places - $cancelplaces;
                     if ($reg->status >= 0 && $places > 0) {
-                        $status = $reg->status;
+                        $eventStatus = $reg->status;
                     }
                 } else {
                     $places = 0;
@@ -978,13 +1115,14 @@ class JemModelEvent extends ItemModel
             }
 
             // IP
-            $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+            $uip = JemHelper::getStoredIP();
 
-            $result = $this->_doRegister($e->id, $uid, $uip, $status, $places, $comment, $errMsg, $reg->id);
+            $regid = $reg ? (int) $reg->id : 0;
+            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
             if (!$result) {
                 $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
             } else {
-                Factory::getApplication()->enqueueMessage(($status==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
+                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
             }
         }
         return $result;
@@ -1018,7 +1156,7 @@ class JemModelEvent extends ItemModel
         }
 
         // IP
-        $uip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $uip = JemHelper::getStoredIP();
 
         $result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces);
 

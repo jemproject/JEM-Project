@@ -25,6 +25,19 @@ use Joomla\CMS\HTML\HTMLHelper;
     </h1>
     <?php endif; ?>
 
+    <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
+    <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
+        <?php if ($showPageHeading) : ?>
+            <h2 class="jem-category-title">
+                <?php echo $this->escape($this->category->title); ?>
+            </h2>
+        <?php else : ?>
+            <h1 class="jem-category-title">
+                <?php echo $this->escape($this->category->title); ?>
+            </h1>
+        <?php endif; ?>
+    <?php endif; ?>
+
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
@@ -34,29 +47,31 @@ use Joomla\CMS\HTML\HTMLHelper;
 
     <div class="clr"></div>
 
-    <div class="floattext">
+    <div class="floattext jem-category-overview-panel">
+        <div class="jem-category-overview-details">
+            <div class="description">
+                <p><?php echo $this->description; ?></p>
+            </div>
+        </div>
         <?php if ($this->jemsettings->discatheader) : ?>
-        <div class="catimg">
-        <?php
-        // flyer
-        if (empty($this->category->image)) {
-            $jemsettings = JEMHelper::config();
-            $imgattribs['width'] = $jemsettings->imagewidth;
-            $imgattribs['height'] = $jemsettings->imagehight;
+            <div class="catimg jem-category-overview-media">
+            <?php
+            // flyer
+            if (empty($this->category->image)) {
+                $jemsettings = JEMHelper::config();
+                $imgattribs['width'] = $jemsettings->imagewidth;
+                $imgattribs['height'] = $jemsettings->imagehight;
 
-            echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
-        }
-        else {
-            echo JemOutput::flyer($this->category, $this->cimage, 'category');
-        }
-        ?>
-        </div>
+                echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
+            }
+            else {
+                echo JemOutput::flyer($this->category, $this->cimage, 'category');
+            }
+            ?>
+            </div>
         <?php endif; ?>
-
-        <div class="description">
-            <p><?php echo $this->description; ?></p>
-        </div>
     </div>
+    <div class="jem-category-section-separator"></div>
 
     <!--subcategories-->
     <?php
@@ -92,6 +107,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <input type="hidden" name="view" value="category" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!--pagination-->
@@ -99,12 +115,12 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
 
-    <!-- iCal -->
-    <div id="iCal" class="iCal">
-        <?php echo JemOutput::icalbutton($this->category->id, 'category'); ?>
-    </div>
-
     <!-- copyright -->
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer( ); ?>
     </div>

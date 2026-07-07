@@ -122,21 +122,21 @@ function jem_common_show_filter(&$obj) {
 ?>
 
 <?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-        <div class="jem-row jem-justify-start jem-nowrap">
+    <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
             <?php echo $this->lists['filter']; ?>
             <input type="text" name="filter_search" id="filter_search" class="inputbox form-control" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" onchange="document.adminForm.submit();" />
         </div>
-        <div class="jem-row jem-justify-start jem-nowrap">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-month">
             <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
             <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
         </div>
-        <div class="jem-row jem-justify-start jem-nowrap">
+        <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
             <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php if ($this->settings->get('global_display', 1)) : ?>
-            <div class="jem-limit-smallist">
+            <div class="jem-limit-smallest jem-events-filter-limit">
                 <?php
                 echo '<label for="limit" class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
                 //echo '<span class="jem-limit-text">'.Text::_('COM_JEM_DISPLAY_NUM').'</span>&nbsp;';
@@ -150,6 +150,7 @@ function jem_common_show_filter(&$obj) {
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
+<?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
 
 <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
@@ -185,10 +186,8 @@ function jem_common_show_filter(&$obj) {
         <?php
         // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
         // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
-        $isSafari = false;
-        if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-            $isSafari = true;
-        }
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+        $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
         ?>
         <?php
         $this->rows = $this->getRows();
@@ -264,6 +263,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>
@@ -280,6 +280,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
@@ -288,15 +289,16 @@ function jem_common_show_filter(&$obj) {
                     <div class="jem-event-info-small jem-event-title">
                         <h4    title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                             <?php if ($this->jemsettings->showdetails == 1) : ?>
-                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo $this->escape($row->title); ?></a>
                             <?php else : ?>
-                                <?php echo $this->escape($row->title); ?>
+                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
                             <?php endif; ?>
                             <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '') . JemOutput::publishstateicon($row); ?>
                             <?php if (!empty($row->featured)) :?>
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
+                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>
@@ -304,13 +306,20 @@ function jem_common_show_filter(&$obj) {
                 <?php if($row->user_has_access_venue) : ?>
                     <?php if ($this->jemsettings->showlocate == 1) : ?>
                         <?php if (!empty($row->locid)) : ?>
-                            <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
+                            <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                                 <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                                 <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-                                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
+                                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
                                 <?php else : ?>
-                                    <?php echo $this->escape($row->venue); ?>
+                                    <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
                                 <?php endif; ?>
+                                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
+                                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
+                                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
+                                </div>
                             </div>
                         <?php else : ?>
                             <div class="jem-event-info-small jem-event-venue">
@@ -383,32 +392,8 @@ function jem_common_show_filter(&$obj) {
                 }
                 ?>
             </div>
-            <meta itemprop="name" content="<?php echo $this->escape($row->title); ?>" />
             <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
             <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-            <div itemtype="https://schema.org/Place" itemscope itemprop="location" style="display: none;" >
-                <?php if (!empty($row->locid)) : ?>
-                    <meta itemprop="name" content="<?php echo $this->escape($row->venue); ?>" />
-                <?php else : ?>
-                    <meta itemprop="name" content="None" />
-                <?php endif; ?>
-                <?php
-                $microadress = '';
-                if (!empty($row->city)) {
-                    $microadress .= $this->escape($row->city);
-                }
-                if (!empty($microadress)) {
-                    $microadress .= ', ';
-                }
-                if (!empty($row->state)) {
-                    $microadress .= $this->escape($row->state);
-                }
-                if (empty($microadress)) {
-                    $microadress .= '-';
-                }
-                ?>
-                <meta itemprop="address" content="<?php echo $microadress; ?>" />
-            </div>
             </li>
         <?php endforeach; ?>
     <?php endif; ?>
@@ -417,12 +402,12 @@ function jem_common_show_filter(&$obj) {
 <div class="jem-row valign-baseline">
     <div style="margin:0; padding: 0;">
         <?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-            <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start">
-                <div class="jem-row jem-justify-start jem-nowrap">
+            <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
+                <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
                     <?php echo $this->lists['filter']; ?>
                     <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 </div>
-                <div class="jem-row jem-justify-start jem-nowrap">
+                <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
                     <button class="buttonfilter btn" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                     <button class="buttonfilter btn" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 </div>

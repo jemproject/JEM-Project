@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_teaser</name>
     <author>JEM Community</author>
-    <creationDate>March 2026</creationDate>
+    <creationDate>7 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.2</version>
+    <version>4.5.0</version>
     <description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -34,9 +34,10 @@
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
                 <field name="type" type="list"
-                       default="1"
+                       default="0"
                        label="MOD_JEM_TEASER_UPCOMING_ARCHIVED_OR_CURRENT"
                        description="MOD_JEM_TEASER_UPCOMING_ARCHIVED_OR_CURRENT_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_TEASER_UPCOMING_EVENTS</option>
                     <option value="1">MOD_JEM_TEASER_UNFINISHED_EVENTS</option>
@@ -48,6 +49,7 @@
                        default="5"
                        label="MOD_JEM_TEASER_EVENTS_IN_MODULE"
                        description="MOD_JEM_TEASER_EVENTS_IN_MODULE_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="show_no_events" type="radio"
                        default="1"
@@ -62,13 +64,128 @@
                        default=""
                        label="MOD_JEM_TEASER_OFFSET_HOURS"
                        description="MOD_JEM_TEASER_OFFSET_HOURS_DESC"
+                       class="form-control w-auto"
                 />
-
+                <field name="catid" type="categoryedit"
+                       default=""
+                       multiple="true"
+                       removeroot="true"
+                       label="MOD_JEM_TEASER_CATEGORY_ID"
+                       description="MOD_JEM_TEASER_CATEGORY_ID_DESC"
+                       class="form-select w-auto"
+                />
+                <field name="showcategory" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_CATEGORY"
+                       description="MOD_JEM_TEASER_SHOW_CATEGORY_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="linkcategory" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_LINK_TO_CATEGORY"
+                       description="MOD_JEM_TEASER_LINK_TO_CATEGORY_DESC"
+                       class="btn-group btn-group-yesno"
+                       showon="showcategory:1"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showvenue" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_VENUE"
+                       description="MOD_JEM_TEASER_SHOW_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="venid" type="venueoptions"
+                       default=""
+                       multiple="true"
+                       label="MOD_JEM_TEASER_VENUE_ID"
+                       description="MOD_JEM_TEASER_VENUE_ID_DESC"
+                       class="form-select w-auto"
+                />
+                <field name="linkvenue" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_LINK_TO_VENUE"
+                       description="MOD_JEM_TEASER_LINK_TO_VENUE_DESC"
+                       class="btn-group btn-group-yesno"
+                       showon="showvenue:1"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="eventid" type="text"
+                       default=""
+                       label="MOD_JEM_TEASER_EVENT_ID"
+                       description="MOD_JEM_TEASER_EVENT_ID_DESC"
+                       class="form-control w-auto"
+                />
+                <field name="stateloc" type="text"
+                       default=""
+                       label="MOD_JEM_TEASER_STATE"
+                       description="MOD_JEM_TEASER_STATE_DESC"
+                       class="form-control w-auto"
+                />
+                <field name="stateloc_mode" type="list"
+                       default="0"
+                       label="MOD_JEM_TEASER_STATE_MODE"
+                       description="MOD_JEM_TEASER_STATE_MODE_DESC"
+                       class="form-select w-auto"
+                       showon="stateloc!:"
+                >
+                    <option value="0">MOD_JEM_TEASER_STATE_MODE_EXACTMATCH</option>
+                    <option value="1">MOD_JEM_TEASER_STATE_MODE_CONTAINS</option>
+                </field>
+                <field name="couid" type="countrieslist"
+                       default=""
+                       multiple="true"
+                       label="MOD_JEM_TEASER_COUNTRIES"
+                       description="MOD_JEM_TEASER_COUNTRIES_DESC"
+                       class="form-select w-auto"
+                       addfieldpath="/modules/mod_jem_teaser/fields"
+                />
                 <field name="cuttitle" type="text"
                        default="25"
                        label="MOD_JEM_TEASER_MAX_TITLE_LENGTH"
                        description="MOD_JEM_TEASER_MAX_TITLE_LENGTH_DESC"
+                       class="form-control w-auto"
                 />
+                <field name="linkevent" type="radio"
+                       default="1"
+                       label="MOD_JEM_TEASER_LINK_TO_DETAILS"
+                       description="MOD_JEM_TEASER_LINK_TO_DETAILS_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="event_link_event_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TEASER_EVENT_LINK_EVENT_LAYOUT"
+                       description="MOD_JEM_TEASER_EVENT_LINK_EVENT_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="linkevent:1"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TEASER_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TEASER_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+                <field name="event_link_venue_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TEASER_EVENT_LINK_VENUE_LAYOUT"
+                       description="MOD_JEM_TEASER_EVENT_LINK_VENUE_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="linkevent:1"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TEASER_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TEASER_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
                 <field name="showdescriptionevent" type="radio"
                        default="1"
                        label="MOD_JEM_TEASER_SHOW_DESCRIPTION_EVENT"
@@ -82,26 +199,49 @@
                        default="300"
                        label="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH"
                        description="MOD_JEM_TEASER_MAX_DESCRIPTION_LENGTH_DESC"
+                       class="form-control w-auto"
+                       showon="showdescriptionevent:1"
                 />
                 <field name="br" type="radio"
                        default="0"
                        label="MOD_JEM_TEASER_ALLOW_LINEBREAK"
                        description="MOD_JEM_TEASER_ALLOW_LINEBREAK_DESC"
                        class="btn-group btn-group-yesno"
+                       showon="showdescriptionevent:1"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="readmore" type="radio"
+                <field name="readmore" type="list"
                        default="0"
                        label="MOD_JEM_TEASER_FIELD_READMORE_LABEL"
                        description="MOD_JEM_TEASER_FIELD_READMORE_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_TEASER_READMORE_LINK</option>
+                    <option value="2">MOD_JEM_TEASER_READMORE_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information" type="list"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_MORE_INFORMATION"
+                       description="MOD_JEM_TEASER_SHOW_MORE_INFORMATION_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_TEASER_MORE_INFORMATION_LINK</option>
+                    <option value="2">MOD_JEM_TEASER_MORE_INFORMATION_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_more_information_title" type="radio"
+                       default="0"
+                       label="MOD_JEM_TEASER_SHOW_MORE_INFORMATION_TITLE"
+                       description="MOD_JEM_TEASER_SHOW_MORE_INFORMATION_TITLE_DESC"
                        class="btn-group btn-group-yesno"
+                       showon="show_more_information:1,2,link,button"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
                 <field name="showimageevent" type="radio"
                        default="1"
                        label="MOD_JEM_TEASER_SHOW_IMAGE_EVENT"
@@ -120,52 +260,6 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
-                <field name="datemethod" type="list"
-                       default="1"
-                       label="MOD_JEM_TEASER_SHOW_DATE_OR_DAY_DIFFERENCE"
-                       description="MOD_JEM_TEASER_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
-                >
-                    <option value="1">MOD_JEM_TEASER_SHOW_DATE</option>
-                    <option value="2">MOD_JEM_TEASER_SHOW_DAY_DIFFERENCE</option>
-                </field>
-                <field name="formatdate" type="text"
-                       default=""
-                       label="MOD_JEM_TEASER_DATE_FORMAT"
-                       description="MOD_JEM_TEASER_DATE_FORMAT_DESC"
-                />
-                <field name="formattime" type="text"
-                       default=""
-                       label="MOD_JEM_TEASER_TIME_FORMAT"
-                       description="MOD_JEM_TEASER_TIME_FORMAT_DESC"
-                />
-                <field name="linkevent" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_LINK_TO_DETAILS"
-                       description="MOD_JEM_TEASER_LINK_TO_DETAILS_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="linkcategory" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_LINK_TO_CATEGORY"
-                       description="MOD_JEM_TEASER_LINK_TO_CATEGORY_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="linkvenue" type="radio"
-                       default="1"
-                       label="MOD_JEM_TEASER_LINK_TO_VENUE"
-                       description="MOD_JEM_TEASER_LINK_TO_VENUE_DESC"
-                       class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
                 <field name="use_modal" type="radio"
                        default="0"
                        label="MOD_JEM_TEASER_USE_MODAL"
@@ -175,11 +269,32 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-
+                <field name="datemethod" type="list"
+                       default="1"
+                       label="MOD_JEM_TEASER_SHOW_DATE_OR_DAY_DIFFERENCE"
+                       description="MOD_JEM_TEASER_SHOW_DATE_OR_DAY_DIFFERENCE_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="1">MOD_JEM_TEASER_SHOW_DATE</option>
+                    <option value="2">MOD_JEM_TEASER_SHOW_DAY_DIFFERENCE</option>
+                </field>
+                <field name="formatdate" type="text"
+                       default=""
+                       label="MOD_JEM_TEASER_DATE_FORMAT"
+                       description="MOD_JEM_TEASER_DATE_FORMAT_DESC"
+                       class="form-control w-auto"
+                />
+                <field name="formattime" type="text"
+                       default=""
+                       label="MOD_JEM_TEASER_TIME_FORMAT"
+                       description="MOD_JEM_TEASER_TIME_FORMAT_DESC"
+                       class="form-control w-auto"
+                />
                 <field name="color" type="list"
                        default="1"
                        label="MOD_JEM_TEASER_COLOR"
                        description="MOD_JEM_TEASER_COLOR_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="red">MOD_JEM_TEASER_RED</option>
                     <option value="blue">MOD_JEM_TEASER_BLUE</option>
@@ -190,7 +305,7 @@
                     <option value="alpha">MOD_JEM_TEASER_FALLBACK_COLOR</option>
                 </field>
                 <field name="fallbackcolor" type="color"
-                       class="inputbox"
+                       class="inputbox w-auto"
                        default="#EEEEEE"
                        size="8"
                        label="MOD_JEM_TEASER_FALLBACK_COLOR"
@@ -201,6 +316,7 @@
                        default="none"
                        label="MOD_JEM_TEASER_CATEGORY_COLOR_LABEL"
                        description="MOD_JEM_TEASER_CATEGORY_COLOR_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
                     <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
@@ -210,48 +326,55 @@
                        default="none"
                        label="MOD_JEM_TEASER_VENUE_COLOR_LABEL"
                        description="MOD_JEM_TEASER_VENUE_COLOR_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="none">MOD_JEM_TEASER_COLOR_NO</option>
                     <option value="text">MOD_JEM_TEASER_COLOR_TEXT</option>
                     <option value="background">MOD_JEM_TEASER_COLOR_BG</option>
                 </field>
-                <field name="catid" type="categoryedit"
-                       default=""
-                       multiple="true"
-                       removeroot="true"
-                       label="MOD_JEM_TEASER_CATEGORY_ID"
-                       description="MOD_JEM_TEASER_CATEGORY_ID_DESC"
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_TEASER_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
                 />
-                <field name="venid" type="venueoptions"
-                       default=""
-                       multiple="true"
-                       label="MOD_JEM_TEASER_VENUE_ID"
-                       description="MOD_JEM_TEASER_VENUE_ID_DESC"
-                />
-                <field name="eventid" type="text"
-                       default=""
-                       label="MOD_JEM_TEASER_EVENT_ID"
-                       description="MOD_JEM_TEASER_EVENT_ID_DESC"
-                />
-                <field name="stateloc" type="text"
-                       default=""
-                       label="MOD_JEM_TEASER_STATE"
-                       description="MOD_JEM_TEASER_STATE_DESC"
-                />
-                <field name="stateloc_mode" type="list"
+                <field name="showintrotext" type="radio"
                        default="0"
-                       label="MOD_JEM_TEASER_STATE_MODE"
-                       description="MOD_JEM_TEASER_STATE_MODE_DESC"
+                       label="MOD_JEM_TEASER_SHOW_INTROTEXT"
+                       description="MOD_JEM_TEASER_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
                 >
-                    <option value="0">MOD_JEM_TEASER_STATE_MODE_EXACTMATCH</option>
-                    <option value="1">MOD_JEM_TEASER_STATE_MODE_CONTAINS</option>
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
                 </field>
-                <field name="couid" type="countrieslist"
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
                        default=""
-                       multiple="true"
-                       label="MOD_JEM_TEASER_COUNTRIES"
-                       description="MOD_JEM_TEASER_COUNTRIES_DESC"
-                       addfieldpath="/modules/mod_jem_teaser/fields"
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_TEASER_INTROTEXT"
+                       description="MOD_JEM_TEASER_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_TEASER_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_TEASER_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_TEASER_FOOTERTEXT"
+                       description="MOD_JEM_TEASER_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
                 />
             </fieldset>
             <fieldset name="advanced">
@@ -259,7 +382,7 @@
                         name="layout"
                         type="modulelayout"
                         label="JFIELD_ALT_LAYOUT_LABEL"
-                        class="form-select"
+                        class="form-select w-auto"
                         validate="moduleLayout"
                         default="_:default"
                 />
@@ -278,6 +401,7 @@
                         default="1"
                         filter="integer"
                         validate="options"
+                        class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -289,6 +413,7 @@
                         description="MOD_JEM_TEASER_CACHE_TIME_DESC"
                         default="900"
                         filter="integer"
+                        class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -299,3 +424,5 @@
         </fields>
     </config>
 </extension>
+
+

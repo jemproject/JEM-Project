@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -28,6 +29,28 @@ class JemViewWeekcal extends HtmlView
 
         $year = (int)$jinput->getInt('yearID', date("Y"));
         $week = (int)$jinput->getInt('weekID', $this->get('Currentweek'));
+        $layout = $jinput->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $rows = $this->get('Items');
+            $params = $app->getParams();
+            $menuitem = $app->getMenu()->getActive();
+            $title = (string) $params->get('page_title', $menuitem ? $menuitem->title : Text::_('COM_JEM_WEEKCALENDAR'));
+
+            JemPdfView::renderWeeklyCalendar(
+                $title,
+                (array) $rows,
+                'jem-week-' . $year . str_pad((string) $week, 2, '0', STR_PAD_LEFT) . '.pdf',
+                $year,
+                $week,
+                $params
+            );
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model
@@ -37,9 +60,8 @@ class JemViewWeekcal extends HtmlView
             $rows = $this->get('Items');
 
             // initiate new CALENDAR
-            $vcal = JemHelper::getCalendarTool();
-
-            $vcal->setConfig("filename", "events_week_" . $year . str_pad($week, 2, '0', STR_PAD_LEFT) . ".ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events_week_" . $year . str_pad($week, 2, '0', STR_PAD_LEFT) . ".ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -48,7 +70,7 @@ class JemViewWeekcal extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }

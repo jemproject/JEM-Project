@@ -8,10 +8,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Client\ClientHelper;
 
@@ -21,10 +19,11 @@ use Joomla\CMS\Client\ClientHelper;
  */
 class JemViewSource extends JemAdminView
 {
-    protected $form;
+    public $form;
     protected $ftp;
     protected $source;
-    protected $state;
+    protected $details;
+    public $state;
     protected $template;
 
     /**
@@ -36,13 +35,14 @@ class JemViewSource extends JemAdminView
         $this->form     = $this->get('Form');
         $this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
         $this->source   = $this->get('Source');
+        $this->details  = $this->get('SourceDetails');
         $this->state    = $this->get('State');
         $this->template = $this->get('Template');
 
         // Check for errors.
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
-            \Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
+            Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
             return false;
         }
 
@@ -71,6 +71,6 @@ class JemViewSource extends JemAdminView
 
         ToolbarHelper::cancel('source.cancel', 'JTOOLBAR_CLOSE');
         ToolbarHelper::divider();
-        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/css-manager/edit-file');
+        ToolBarHelper::help('editcss', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/css-manager/edit-file');
     }
 }

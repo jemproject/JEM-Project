@@ -107,6 +107,111 @@ class jem_settings extends Table
     /** @var int */
     public $imagewidth = '100';
     /** @var int */
+    public $pdf_imagewidth = '40';
+    /** @var int */
+    public $pdf_imageheight = '40';
+    /** @var string */
+    public $pdf_enabled_views = 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
+    /** @var string */
+    public $pdf_paper_size = 'A4';
+    /** @var string */
+    public $pdf_orientation = 'L';
+    public $pdf_calendar_layout = 'calendar';
+    /** @var string */
+    public $pdf_margin_profile = 'medium';
+    /** @var int */
+    public $pdf_margin_top = '14';
+    /** @var int */
+    public $pdf_margin_right = '14';
+    /** @var int */
+    public $pdf_margin_bottom = '14';
+    /** @var int */
+    public $pdf_margin_left = '14';
+    /** @var string */
+    public $pdf_background_color = '#ffffff';
+    /** @var int */
+    public $pdf_include_view_text = '1';
+    /** @var int */
+    public $pdf_show_footer = '1';
+    /** @var int */
+    public $pdf_include_generated_stamp = '1';
+    /** @var string */
+    public $pdf_title_font_family = 'helvetica';
+    /** @var string */
+    public $pdf_header_font_family = 'helvetica';
+    /** @var string */
+    public $pdf_body_font_family = 'helvetica';
+    /** @var string */
+    public $pdf_accent_color = '#1d4ed8';
+    /** @var int */
+    public $pdf_title_font_size = '18';
+    /** @var int */
+    public $pdf_base_font_size = '8';
+    /** @var int */
+    public $pdf_heading_font_size = '12';
+    /** @var string */
+    public $pdf_event_layout = 'details';
+    /** @var string */
+    public $pdf_list_paper_size = 'A4';
+    /** @var string */
+    public $pdf_list_orientation = 'P';
+    /** @var string */
+    public $pdf_map_paper_size = 'A4';
+    /** @var string */
+    public $pdf_map_orientation = 'L';
+    /** @var string */
+    public $pdf_event_description_mode = 'complete';
+    /** @var string */
+    public $pdf_venue_description_mode = 'complete';
+    /** @var int */
+    public $pdf_event_imagewidth = '40';
+    /** @var int */
+    public $pdf_event_imageheight = '40';
+    /** @var string */
+    public $pdf_event_image_position = 'right';
+    /** @var int */
+    public $pdf_venue_imagewidth = '40';
+    /** @var int */
+    public $pdf_venue_imageheight = '40';
+    /** @var string */
+    public $pdf_venue_image_position = 'right';
+    /** @var int */
+    public $pdf_event_show_images = '1';
+    /** @var int */
+    public $pdf_event_include_links = '1';
+    /** @var int */
+    public $pdf_event_include_attachments = '1';
+    /** @var int */
+    public $pdf_event_include_registration = '1';
+    /** @var int */
+    public $pdf_event_include_contacts = '1';
+    /** @var int */
+    public $pdf_event_include_online_meeting = '1';
+    /** @var string */
+    public $pdf_event_venue_mode = 'full';
+    /** @var string */
+    public $pdf_event_include_venue_map = 'none';
+    /** @var string */
+    public $pdf_annual_paper_size = 'A4';
+    /** @var string */
+    public $pdf_annual_orientation = 'L';
+    /** @var string */
+    public $pdf_annual_month_matrix = 'auto';
+    /** @var string */
+    public $pdf_annual_vertical_align = 'top';
+    /** @var int */
+    public $pdf_annual_show_day_types_legend = '1';
+    /** @var int */
+    public $pdf_annual_show_categories_legend = '1';
+    /** @var string */
+    public $pdf_annual_event_titles = 'auto';
+    /** @var int */
+    public $pdf_annual_event_limit = '6';
+    /** @var string */
+    public $pdf_annual_column_gap = '1';
+    /** @var string */
+    public $pdf_annual_row_gap = '1';
+    /** @var int */
     public $gddisabled = '0';
     /** @var int */
     public $imageenabled = '1';
@@ -147,6 +252,8 @@ class jem_settings extends Table
     /** @var int */
     public $storeip = null;
     /** @var string */
+    public $storeipmode = 'full';
+    /** @var string */
     public $lastupdate = null;
     /** @var int */
     public $checked_out = null;
@@ -165,6 +272,10 @@ class jem_settings extends Table
     public $events_ical = 0;
     /** @var string */
     public $defaultCountry = null;
+    /** @var int */
+    public $attachments_layout = 'column';
+    /** @var string */
+    public $attachments_icon_size = 'normal';
 
 
     /**

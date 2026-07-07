@@ -13,8 +13,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Utilities\ArrayHelper;
 
-jimport('joomla.application.component.modellist');
+require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
 
 /**
  * JEM Component Export Model
@@ -22,10 +23,27 @@ jimport('joomla.application.component.modellist');
 class JemModelExport extends ListModel
 {
     /**
+     * Writes a CSV row using the current PHP-safe fputcsv signature.
+     *
+     * @param  resource $handle
+     * @param  array    $fields
+     * @param  string   $separator
+     * @param  string   $delimiter
+     *
+     * @return int|false
+     */
+    private function putCsv($handle, array $fields, $separator, $delimiter)
+    {
+        $fields = JemCsv::protectFormulaRow($fields);
+
+        return fputcsv($handle, $fields, $separator, $delimiter, '\\');
+    }
+
+    /**
      * Constructor.
      *
      * @param array An optional associative array of configuration settings.
-     * @see   JController
+     * @see   AdminController
      */
     public function __construct($config = array())
     {
@@ -99,7 +117,7 @@ class JemModelExport extends ListModel
 
         // check if specific category's have been selected
         if (! empty($cats)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($cats);
+            ArrayHelper::toInteger($cats);
             $query->where('  c.id IN (' . implode(',', $cats) . ')');
         }
 
@@ -138,7 +156,7 @@ class JemModelExport extends ListModel
             $categories[] = "categories";
             $header = array_merge($events, $categories);
 
-            fputcsv($csv, $header, $separator, $delimiter);
+            $this->putCsv($csv, $header, $separator, $delimiter);
 
             $query = $this->getListQuery();
             $items = $this->_getList($query);
@@ -148,13 +166,13 @@ class JemModelExport extends ListModel
             }
         } else {
             $header = array_keys($db->getTableColumns('#__jem_events'));
-            fputcsv($csv, $header, $separator, $delimiter);
+            $this->putCsv($csv, $header, $separator, $delimiter);
             $query = $this->getListQuery();
             $items = $this->_getList($query);
         }
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -174,6 +192,7 @@ class JemModelExport extends ListModel
         // Select the required fields from the table.
         $query->select('a.*');
         $query->from('#__jem_categories AS a');
+        $query->where('a.id <> 1');
 
         return $query;
     }
@@ -197,13 +216,13 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_categories'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycats());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -245,13 +264,13 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_venues'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQueryvenues());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -293,13 +312,99 @@ class JemModelExport extends ListModel
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
-        fputcsv($csv, $header, $separator, $delimiter);
+        $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycatsevents());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            fputcsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+        }
+
+        return fclose($csv);
+    }
+
+    /**
+     * Build an SQL query to load the Attachments data.
+     *
+     * @return JDatabaseQuery
+     */
+    protected function getListQueryattachments()
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('a.*');
+        $query->from('#__jem_attachments AS a');
+        return $query;
+    }
+
+    /**
+     * Returns a CSV file with Attachments data
+     * @return boolean
+     */
+    public function getCsvattachments()
+    {
+        $this->populateState();
+        $jemconfig = JemConfig::getInstance()->toRegistry();
+        $separator = $jemconfig->get('csv_separator', ';');
+        $delimiter = $jemconfig->get('csv_delimiter', '"');
+        $csv_bom   = $jemconfig->get('csv_bom', '1');
+        $csv = fopen('php://output', 'w');
+        if ($csv_bom == 1) {
+            fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $header = array_keys($db->getTableColumns('#__jem_attachments'));
+        $this->putCsv($csv, $header, $separator, $delimiter);
+
+        $db->setQuery($this->getListQueryattachments());
+        $items = $db->loadObjectList();
+
+        foreach ($items as $lines) {
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+        }
+
+        return fclose($csv);
+    }
+
+    /**
+     * Build an SQL query to load the Types data.
+     *
+     * @return JDatabaseQuery
+     */
+    protected function getListQuerytypes()
+    {
+        $db    = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('a.*');
+        $query->from('#__jem_types AS a');
+        return $query;
+    }
+
+    /**
+     * Returns a CSV file with Types data
+     * @return boolean
+     */
+    public function getCsvtypes()
+    {
+        $this->populateState();
+        $jemconfig = JemConfig::getInstance()->toRegistry();
+        $separator = $jemconfig->get('csv_separator', ';');
+        $delimiter = $jemconfig->get('csv_delimiter', '"');
+        $csv_bom   = $jemconfig->get('csv_bom', '1');
+        $csv = fopen('php://output', 'w');
+        if ($csv_bom == 1) {
+            fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $header = array_keys($db->getTableColumns('#__jem_types'));
+        $this->putCsv($csv, $header, $separator, $delimiter);
+
+        $db->setQuery($this->getListQuerytypes());
+        $items = $db->loadObjectList();
+
+        foreach ($items as $lines) {
+            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
         }
 
         return fclose($csv);

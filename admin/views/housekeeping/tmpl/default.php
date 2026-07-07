@@ -63,6 +63,20 @@ use Joomla\CMS\Session\Session;
                         <?php echo Text::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG_DESC'); ?>
                     </td>
                 </tr>
+            <!-- RESIZE THUMBNAILS -->
+                <tr>
+                    <td>
+                        <div class="linkicon">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.resizethumbs&amp;<?php echo Session::getFormToken(); ?>=1">
+                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-resizethumbs.svg', Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'), NULL, true); ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                    <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'); ?></h3>
+                        <?php echo Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS_DESC'); ?>
+                    </td>
+                </tr>
             <!-- CLEAN TRIGGER ARCHIVE -->
                 <tr>
                     <td>
@@ -92,11 +106,26 @@ use Joomla\CMS\Session\Session;
                         <?php echo Text::sprintf('COM_JEM_HOUSEKEEPING_TOTAL_CATSEVENT_RELS', $this->totalcats) ?>
                     </td>
                 </tr>
+            <!-- CLEAN UNUSED ATTACHMENT FILES -->
+                <tr>
+                    <td>
+                        <div class="linkicon">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleanupUnusedAttachmentFiles&amp;<?php echo Session::getFormToken(); ?>=1"
+                               onclick="return confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>);">
+                                <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanattachmentfiles.svg', Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES'), NULL, true); ?>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                    <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES'); ?></h3>
+                        <?php echo Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_DESC'); ?>
+                    </td>
+                </tr>
             <!-- TRUNCATE ALL DATA -->
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return confirm('<?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM'); ?>');">
+                            <a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return jemConfirmTruncateAllData(this);">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-truncatealldata.svg', Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'), NULL, true); ?>
                             </a>
                         </div>
@@ -104,6 +133,35 @@ use Joomla\CMS\Session\Session;
                     <td>
                     <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'); ?></h3>
                         <?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DESC'); ?>
+                        <fieldset class="options-form jem-housekeeping-file-options">
+                            <legend><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_FILES'); ?></legend>
+                            <div class="jem-housekeeping-file-option">
+                                <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_IMAGES_OPTION'); ?></span>
+                                <span class="jem-housekeeping-file-choices">
+                                    <label for="jem-delete-images-no">
+                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-no" value="0" checked>
+                                        <?php echo Text::_('JNO'); ?>
+                                    </label>
+                                    <label for="jem-delete-images-yes">
+                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-yes" value="1">
+                                        <?php echo Text::_('JYES'); ?>
+                                    </label>
+                                </span>
+                            </div>
+                            <div class="jem-housekeeping-file-option">
+                                <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_ATTACHMENTS_OPTION'); ?></span>
+                                <span class="jem-housekeeping-file-choices">
+                                    <label for="jem-delete-attachments-no">
+                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-no" value="0" checked>
+                                        <?php echo Text::_('JNO'); ?>
+                                    </label>
+                                    <label for="jem-delete-attachments-yes">
+                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-yes" value="1">
+                                        <?php echo Text::_('JYES'); ?>
+                                    </label>
+                                </span>
+                            </div>
+                        </fieldset>
                     </td>
                 </tr>
             </tbody>
@@ -112,3 +170,20 @@ use Joomla\CMS\Session\Session;
             </div>
         <?php endif; ?>
 </form>
+<script>
+    function jemConfirmTruncateAllData(link) {
+        if (!confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM')); ?>)) {
+            return false;
+        }
+
+        if (document.querySelector('input[name="jem_delete_images"]:checked').value === '1') {
+            link.href += '&deleteimages=1';
+        }
+
+        if (document.querySelector('input[name="jem_delete_attachments"]:checked').value === '1') {
+            link.href += '&deleteattachments=1';
+        }
+
+        return true;
+    }
+</script>

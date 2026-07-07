@@ -11,12 +11,33 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+
+if (!function_exists('jem_frontend_status_label')) {
+    function jem_frontend_status_label($state)
+    {
+        switch ((int) $state) {
+            case 1:
+                return Text::_('JPUBLISHED');
+            case 0:
+                return Text::_('JUNPUBLISHED');
+            case 2:
+                return Text::_('JARCHIVED');
+            case -2:
+                return Text::_('JTRASHED');
+        }
+
+        return Text::_('JSTATUS');
+    }
+}
+
+$showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 1);
 
 ?>
 
 <?php if (!$this->params->get('show_page_heading', 1)) :
            /* hide this if page heading is shown */     ?>
-<h2><?php echo Text::_('COM_JEM_MY_EVENTS'); ?></h2>
+<h1 class="componentheading"><?php echo Text::_('COM_JEM_MY_EVENTS'); ?></h1>
 <?php endif; ?>
 
 <script>
@@ -38,6 +59,93 @@ use Joomla\CMS\Router\Route;
     }
   <?php endif; ?>
 
+  #jem .jem-list-row.jem-small-list {
+    column-gap: 0;
+    row-gap: 0.35rem;
+  }
+
+  #jem .jem-list-row.jem-small-list > * {
+    box-sizing: border-box;
+    min-width: 0;
+    padding-right: 0.75rem;
+  }
+
+  #jem .jem-list-row.jem-small-list > *:last-child {
+    padding-right: 0;
+  }
+
+  #jem .jem-status-published .btn-micro span.icon-publish:before,
+  #jem .jem-status-published .btn-micro i.icon-publish,
+  #jem .jem-status-published .jgrid span.publish {
+    background-image: url(<?php echo Uri::root(true); ?>/media/com_jem/images/tick.webp) !important;
+    content: url(<?php echo Uri::root(true); ?>/media/com_jem/images/tick.webp) !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro span.icon-unpublish:before,
+  #jem .jem-status-unpublished .btn-micro i.icon-unpublish:before,
+  #jem .jem-status-unpublished .jgrid span.unpublish:before,
+  #jem .jem-status-unpublished .icon-unpublish:before {
+    background-image: none !important;
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro i.icon-unpublish,
+  #jem .jem-status-unpublished .jgrid span.unpublish,
+  #jem .jem-status-unpublished .btn-micro span.icon-unpublish {
+    background-image: none !important;
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .btn-micro,
+  #jem .jem-status-unpublished .btn-micro *,
+  #jem .jem-status-unpublished .jgrid,
+  #jem .jem-status-unpublished .jgrid * {
+    color: #b71c1c !important;
+    opacity: 1 !important;
+  }
+
+  #jem .jem-status-unpublished .jem-publishstateicon-unpublished,
+  #jem .jem-status-unpublished .jem-status-link {
+    color: #b71c1c !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+  }
+
+  #jem .jem-status-trashed .btn-micro span.icon-trash:before,
+  #jem .jem-status-trashed .btn-micro i.icon-trash,
+  #jem .jem-status-trashed .jgrid span.trash {
+    background-image: url(<?php echo Uri::root(true); ?>/media/com_jem/images/icon-16-trash.webp) !important;
+    content: url(<?php echo Uri::root(true); ?>/media/com_jem/images/icon-16-trash.webp) !important;
+    opacity: 0.55 !important;
+  }
+
+  #jem .jem-row-unpublished,
+  #jem .jem-row-unpublished a {
+    color: #6c757d !important;
+  }
+
+  .jem-sort .sectiontableheader {
+    position: relative;
+  }
+
+  .jem-sort .sectiontableheader .jem-column-icon {
+    position: absolute;
+    left: -1.1rem;
+    top: 50%;
+    width: 1rem;
+    text-align: center;
+    transform: translateY(-50%);
+  }
+
+  .jem-sort #jem_date .jem-column-icon {
+    position: static;
+    margin-right: 0.2rem;
+    transform: none;
+  }
+
   .jem-sort #jem_date,
   #jem .jem-event .jem-event-date {
     <?php if (!empty($this->jemsettings->datewidth)) : ?>
@@ -46,6 +154,9 @@ use Joomla\CMS\Router\Route;
       flex: 1;
     <?php endif; ?>
     <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
+      display: none;
+    <?php endif; ?>
+    <?php if ($this->showdate != 1) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -112,7 +223,7 @@ use Joomla\CMS\Router\Route;
 
   .jem-sort #jem_atte,
   #jem .jem-event .jem-event-attendees {
-    <?php if (($this->jemsettings->showatte == 1) && (!empty($this->jemsettings->attewidth))) : ?>
+    <?php if ($showAttendeeColumn && !empty($this->jemsettings->attewidth)) : ?>
       flex: 1 <?php echo ($this->jemsettings->attewidth); ?>;
     <?php else : ?>
       flex: 1;
@@ -122,12 +233,32 @@ use Joomla\CMS\Router\Route;
     <?php endif; ?>
   }
 
+  .jem-sort .jem-myevents-check,
   #jem .jem-event .jem-myevents-check {
-    flex: 0 1%;
+    display: flex;
+    flex: 0 0 auto;
+    flex-basis: auto !important;
+    width: max-content;
+    min-width: 1.5rem;
+    max-width: max-content;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
   }
 
+  .jem-sort .jem-myevents-status,
   #jem .jem-event .jem-myevents-status {
-    flex: 0 1%;
+    display: flex;
+    flex: 0 0 auto;
+    flex-basis: auto !important;
+    width: max-content;
+    min-width: max-content;
+    max-width: max-content;
+    margin-left: auto;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    overflow: visible;
   }
 </style>
 
@@ -161,29 +292,33 @@ use Joomla\CMS\Router\Route;
     <div class="jem-list-row jem-small-list">
       <?php if (empty($this->print) && !empty($this->permissions->canPublishEvent)) : ?>
                 <div class="sectiontableheader jem-myevents-check">
-          <input type="checkbox" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
+          <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
         </div>
       <?php endif; ?>
-      <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php if ($this->showdate == 1) : ?>
+        <div id="jem_date" class="sectiontableheader"><i class="jem-column-icon far fa-clock" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
       <?php if ($this->jemsettings->showtitle == 1) : ?>
-        <div id="jem_title" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_title" class="sectiontableheader"><i class="jem-column-icon fa fa-comment" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showlocate == 1) : ?>
-        <div id="jem_location" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_location" class="sectiontableheader"><i class="jem-column-icon fa fa-map-marker" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcity == 1) : ?>
-        <div id="jem_city" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_city" class="sectiontableheader"><i class="jem-column-icon fa fa-building" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showstate == 1) : ?>
-        <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_state" class="sectiontableheader"><i class="jem-column-icon fa fa-map" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
-        <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+        <div id="jem_category" class="sectiontableheader"><i class="jem-column-icon fa fa-tag" aria-hidden="true"></i><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <?php if ($this->jemsettings->showatte == 1) : ?>
+      <?php if ($showAttendeeColumn) : ?>
                 <div id="jem_atte" class="sectiontableheader">&nbsp;<?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
       <?php endif; ?>
-      <div class="jem-myevents-status" ><?php echo Text::_('JSTATUS'); ?></div>
+      <div class="jem-myevents-status" title="<?php echo Text::_('JSTATUS'); ?>" aria-label="<?php echo Text::_('JSTATUS'); ?>">
+        <span class="fa fa-check-circle" aria-hidden="true"></span>&nbsp;<?php echo Text::_('JSTATUS'); ?>
+      </div>
     </div>
   </div>
 
@@ -193,9 +328,9 @@ use Joomla\CMS\Router\Route;
         <?php else : ?>
             <?php foreach ($this->events as $i => $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+          <li class="jem-event jem-list-row jem-small-list jem-featured event-id<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?><?php echo ((int) $row->published === 0) ? ' jem-row-unpublished' : ''; ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php else : ?>
-          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+          <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?><?php echo ((int) $row->published === 0) ? ' jem-row-unpublished' : ''; ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php endif; ?>
             <?php /*<div><?php echo $this->events_pagination->getRowOffset( $i ); ?></div>*/ ?>
 
@@ -209,25 +344,25 @@ use Joomla\CMS\Router\Route;
             </div>
             <?php endif; ?>
 
+            <?php if ($this->showdate == 1) : ?>
             <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
-              <i class="far fa-clock" aria-hidden="true"></i>
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
               ?>
                <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <?php echo JemOutput::recurrenceicon($row); ?>
-                <?php echo JemOutput::publishstateicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                 <?php endif; ?>
                <?php endif; ?>
             </div>
+            <?php endif; ?>
 
             <?php if ($this->jemsettings->showtitle == 1) : ?>
               <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                 <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
-                <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                <?php echo JemOutput::recurrenceicon($row); ?>
                 <?php if (!empty($row->featured)) :?>
                   <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                 <?php endif; ?>
@@ -238,7 +373,6 @@ use Joomla\CMS\Router\Route;
             <?php if ($this->jemsettings->showlocate == 1) : ?>
               <?php if (!empty($row->venue)) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
-                  <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) : ?>
                     <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'>".$this->escape($row->venue)."</a>"; ?>
                   <?php else : ?>
@@ -247,7 +381,7 @@ use Joomla\CMS\Router\Route;
                 </div>
               <?php else : ?>
                 <div class="jem-event-info-small jem-event-venue">
-                  <i class="fa fa-map-marker" aria-hidden="true"></i> -
+                  -
                 </div>
               <?php endif; ?>
             <?php endif; ?>
@@ -255,33 +389,30 @@ use Joomla\CMS\Router\Route;
             <?php if ($this->jemsettings->showcity == 1) : ?>
               <?php if (!empty($row->city)) : ?>
                 <div class="jem-event-info-small jem-event-city" title="<?php echo Text::_('COM_JEM_TABLE_CITY').': '.$this->escape($row->city); ?>">
-                  <i class="fa fa-building" aria-hidden="true"></i>
                   <?php echo $this->escape($row->city); ?>
                 </div>
               <?php else : ?>
-                <div class="jem-event-info-small jem-event-city"><i class="fa fa-building" aria-hidden="true"></i> -</div>
+                <div class="jem-event-info-small jem-event-city">-</div>
               <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showstate == 1) : ?>
               <?php if (!empty($row->state)) : ?>
                 <div class="jem-event-info-small jem-event-state" title="<?php echo Text::_('COM_JEM_TABLE_STATE').': '.$this->escape($row->state); ?>">
-                  <i class="fa fa-map" aria-hidden="true"></i>
                   <?php echo $this->escape($row->state); ?>
                 </div>
               <?php else : ?>
-                <div class="jem-event-info-small jem-event-state"><i class="fa fa-map" aria-hidden="true"></i> -</div>
+                <div class="jem-event-info-small jem-event-state">-</div>
               <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($this->jemsettings->showcat == 1) : ?>
               <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
-                <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
               </div>
             <?php endif; ?>
 
-                    <?php if ($this->jemsettings->showatte == 1) : ?>
+                    <?php if ($showAttendeeColumn) : ?>
                     <div class="jem-event-info-small jem-event-attendees" title="<?php echo Text::_('COM_JEM_TABLE_ATTENDEES').': '.$this->escape($row->regCount); ?>">
             <i class="fa fa-user" aria-hidden="true"></i>
                         <?php
@@ -318,10 +449,19 @@ use Joomla\CMS\Router\Route;
                     </div>
                     <?php endif; ?>
 
-                    <div class="jem-event-info-small jem-myevents-status">
-                        <?php // Ensure icon is not clickable if user isn't allowed to change state!
+                    <div class="jem-event-info-small jem-myevents-status jem-status-<?php echo ((int) $row->published === 1) ? 'published' : (((int) $row->published === -2) ? 'trashed' : 'unpublished'); ?>" title="<?php echo Text::_('JSTATUS') . ': ' . jem_frontend_status_label($row->published); ?>" aria-label="<?php echo Text::_('JSTATUS') . ': ' . jem_frontend_status_label($row->published); ?>">
+                        <?php
                         $enabled = empty($this->print) && !empty($row->params) && $row->params->get('access-change', false);
-                        echo HTMLHelper::_('jgrid.published', $row->published, $i, 'myevents.', $enabled);
+                        $statusIcon = JemOutput::publishstateicon($row, array(), false, false);
+                        if ($enabled && ((int) $row->published >= 0)) :
+                            $statusTask = ((int) $row->published === 1) ? 'unpublish' : 'publish';
+                            ?>
+                            <a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i; ?>','myevents.<?php echo $statusTask; ?>')" class="jem-status-link">
+                                <?php echo $statusIcon; ?>
+                            </a>
+                        <?php else :
+                            echo $statusIcon;
+                        endif;
                         ?>
                     </div>
                 </li>

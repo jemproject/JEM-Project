@@ -7,7 +7,7 @@
  */
 
 
-defined('JPATH_PLATFORM') or die;
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\Rules\RulesInterface;
@@ -56,7 +56,6 @@ class JemNomenuRules implements RulesInterface
             $query['Itemid'] = is_array($itmid) ? $itmid[0] : $itmid;
         }
 
-        // echo "preprocess <pre/>";print_R($query);die;
         $test = 'Test';
     }
 
@@ -205,6 +204,12 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
 
+            case 'mytimeline':
+                {
+                    $vars['view'] = 'mytimeline';
+                }
+                break;
+
             case 'myvenues':
                 {
                     $vars['view'] = 'myvenues';
@@ -218,6 +223,26 @@ class JemNomenuRules implements RulesInterface
                         $vars['id'] = $id[0];
                     }
                     $vars['view'] = 'attendees';
+                }
+                break;
+
+            case 'typeevents':
+                {
+                    if (isset($segments[1])) {
+                        $id = explode(':', $segments[1]);
+                        $vars['id'] = $id[0];
+                    }
+                    $vars['view'] = 'typeevents';
+                }
+                break;
+
+            case 'typevenues':
+                {
+                    if (isset($segments[1])) {
+                        $id = explode(':', $segments[1]);
+                        $vars['id'] = $id[0];
+                    }
+                    $vars['view'] = 'typevenues';
                 }
                 break;
 

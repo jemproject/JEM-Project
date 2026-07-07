@@ -11,65 +11,191 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-$function = Factory::getApplication()->input->getCmd('function', 'jSelectContact');
+
+$app = Factory::getApplication();
+$function = $app->input->getCmd('function', 'jSelectContact');
+
+// Initialize the variable and prepare the array for the checkboxes
+$selectedIds = $this->selection ? explode(',', $this->selection) : [];
+$selectedIds = array_map('trim', $selectedIds);
 ?>
+
+<style>
+    .jem-contactelement-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: .5rem;
+        margin-bottom: 1rem;
+    }
+
+    .jem-contactelement-toolbar .form-select,
+    .jem-contactelement-toolbar .form-control {
+        width: auto;
+        min-width: 12rem;
+    }
+
+    .jem-contactelement-toolbar .jem-contactelement-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        margin-left: auto;
+    }
+
+    .jem-contactelement-table th,
+    .jem-contactelement-table td {
+        vertical-align: middle;
+    }
+
+    .jem-contactelement-table .center {
+        text-align: center;
+    }
+</style>
 
 <form action="index.php?option=com_jem&amp;view=contactelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
-<table class="adminform">
-    <tr>
-        <td style="width: 100%;">
-            <?php echo Text::_('COM_JEM_SEARCH').' '.$this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" onChange="document.adminForm.submit();" />
-            <button class="buttonfilter" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="buttonfilter" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            <button class="buttonfilter" type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECTCONTACT') ?>');"><?php echo Text::_('COM_JEM_NOCONTACT')?></button>
-        </td>
-    </tr>
-</table>
+    <div class="jem-contactelement-toolbar">
+        <label for="filter_search" class="visually-hidden"><?php echo Text::_('COM_JEM_SEARCH'); ?></label>
+        <?php echo $this->lists['filter']; ?>
+        <input type="text" name="filter_search" id="filter_search"
+               value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>"
+               class="form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" onChange="document.adminForm.submit();" />
+        <button class="btn btn-primary" type="submit">
+            <i class="icon-search" aria-hidden="true"></i> <?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>
+        </button>
+        <button class="btn btn-secondary" type="button"
+                onclick="document.getElementById('filter_search').value='';this.form.submit();">
+            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+        </button>
+        <div class="jem-contactelement-actions">
+            <button class="btn btn-success" type="button" onclick="jemGetSelectedContacts();">
+                <i class="icon-check" aria-hidden="true"></i> <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
+            </button>
+            <button class="btn btn-outline-secondary" type="button"
+                    onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>('', '<?php echo Text::_('COM_JEM_SELECTCONTACT') ?>');">
+                <?php echo Text::_('COM_JEM_NOCONTACT') ?>
+            </button>
+        </div>
+    </div>
 
-<table class="table table-striped" id="articleList">
-    <thead>
+    <table class="table table-striped table-hover jem-contactelement-table" id="articleList">
+        <thead>
         <tr>
+            <th style="width: 20px" class="center">
+                <input type="checkbox" name="checkall-toggle" value=""
+                       title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
+                       onclick="jemToggleAllContacts(this);"/>
+            </th>
             <th style="width: 7px" class="center"><?php echo Text::_('COM_JEM_NUM'); ?></th>
-            <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-            <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ADDRESS', 'con.address', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-            <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-            <th style="text-align: left;" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'con.state', $this->lists['order_Dir'], $this->lists['order'] ); ?></th>
-            <th style="text-align: left;" class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
-            <th style="text-align: left;" class="title"><?php echo Text::_('COM_JEM_TELEPHONE'); ?></th>
+            <th style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'con.name', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+            <th style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'con.suburb', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+            <th style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'con.country', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+            <th style="text-align: left;"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
         </tr>
-    </thead>
+        </thead>
 
-    <tfoot>
+        <tfoot>
         <tr>
-            <td colspan="12">
-                <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+            <td colspan="6">
+                <?php echo(method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
             </td>
         </tr>
-    </tfoot>
+        </tfoot>
 
-    <tbody>
-        <?php foreach ($this->rows as $i => $row) : ?>
-         <tr class="row<?php echo $i % 2; ?>">
-            <td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
-            <td style="text-align: left;">
-                <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->name, 'editlinktip'); ?>>
-                <a style="cursor:pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');"><?php echo $this->escape($row->name); ?></a>
-                </span>
-            </td>
-            <td style="text-align: left;"><?php echo $this->escape($row->address); ?></td>
-            <td style="text-align: left;"><?php echo $this->escape($row->suburb); ?></td>
-            <td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
-            <td style="text-align: left;"><?php echo $this->escape($row->email_to); ?></td>
-            <td style="text-align: left;"><?php echo $this->escape($row->telephone); ?></td>
-        </tr>
+        <tbody>
+        <?php foreach ($this->rows as $i => $row) :
+            $checked = in_array((string)$row->id, $selectedIds) ? 'checked="checked"' : '';
+            ?>
+            <tr class="row<?php echo $i % 2; ?>">
+                <td class="center">
+                    <input type="checkbox" id="cb<?php echo $i; ?>" name="cid[]" value="<?php echo $row->id; ?>"
+                           onclick="jemUpdateSelection(this);"
+                           data-name="<?php echo $this->escape(addslashes($row->name)); ?>" <?php echo $checked; ?> />
+                </td>
+                <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
+                <td style="text-align: left;">
+                    <a style="cursor:pointer;" onclick="if (window.parent) window.parent.<?php echo $this->escape($function); ?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->name)); ?>');">
+                        <?php echo $this->escape($row->name); ?>
+                    </a>
+                </td>
+                <td style="text-align: left;"><?php echo $this->escape($row->suburb); ?></td>
+                <td style="text-align: left;"><?php echo $this->escape($row->country); ?></td>
+                <td style="text-align: left;"><?php echo $this->escape($row->email_to); ?></td>
+            </tr>
         <?php endforeach; ?>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
-<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
-<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+    <input type="hidden" name="task" value=""/>
+    <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>"/>
+    <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
+    <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
+    <input type="hidden" id="selection_holder" name="selection" value="<?php echo htmlspecialchars($this->selection, ENT_QUOTES, 'UTF-8'); ?>"/>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+
+<script type="text/javascript">
+    /**
+     * Updates the hidden input whenever a checkbox is clicked.
+     * This ensures that searching or filtering doesn't reset the current session's choices.
+     */
+    function jemUpdateSelection(cb) {
+        var holder = document.getElementById('selection_holder');
+        var selected = holder.value ? holder.value.split(',') : [];
+        selected = selected.map(function (item) {
+            return item.trim();
+        }).filter(function (item) {
+            return item !== "";
+        });
+
+        if (cb.checked) {
+            if (selected.indexOf(cb.value) === -1) {
+                selected.push(cb.value);
+            }
+        } else {
+            var index = selected.indexOf(cb.value);
+            if (index > -1) {
+                selected.splice(index, 1);
+            }
+        }
+        holder.value = selected.join(',');
+    }
+
+    function jemToggleAllContacts(toggle) {
+        var checkboxes = document.getElementsByName('cid[]');
+
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = toggle.checked;
+            jemUpdateSelection(checkboxes[i]);
+        }
+    }
+
+    /**
+     * Sends the final list back to the parent form
+     */
+    function jemGetSelectedContacts() {
+        var holder = document.getElementById('selection_holder');
+        var ids = holder.value;
+
+        // We need names too, so we collect them from checked inputs in the CURRENT view
+        var checkboxes = document.getElementsByName('cid[]');
+        var names = [];
+
+        // Note: This only gets names of visible checked items. 
+        // For a perfect solution, the names should also be persisted, 
+        // but for IDs this is sufficient.
+        for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+                names.push(checkboxes[i].getAttribute('data-name'));
+            }
+        }
+
+        if (ids !== "") {
+            if (window.parent) {
+                window.parent.<?php echo $this->escape($function); ?>(ids, names.join(', '));
+            }
+        } else {
+            alert("<?php echo Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST'); ?>");
+        }
+    }
+</script>

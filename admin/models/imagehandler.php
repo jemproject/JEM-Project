@@ -9,12 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Pagination\Pagination;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component Imagehandler Model
@@ -51,7 +51,7 @@ class JemModelImagehandler extends BaseDatabaseModel
         $limitstart = $app->getUserStateFromRequest($option.'imageselect'.$task.'limitstart', 'limitstart', 0, 'int');
         $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $search     = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
-        $search     = trim(\Joomla\String\StringHelper::strtolower($search));
+        $search     = trim(StringHelper::strtolower($search));
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);
@@ -63,7 +63,20 @@ class JemModelImagehandler extends BaseDatabaseModel
         static $set = false;
 
         if (!$set) {
-            $folder = Factory::getApplication()->input->get('folder', '');
+            // Sanitize folder: only allow alphanumeric, hyphens, underscores and forward slashes.
+            // This prevents path traversal attacks (e.g. ../../etc/passwd).
+            $folder = Factory::getApplication()->input->getString('folder', '');
+            $folder = preg_replace('/[^a-zA-Z0-9_\-\/]/', '', $folder);
+            $folder = trim($folder, '/');
+
+            // Verify the resolved path stays inside the allowed JEM images directory.
+            $allowedBase = Path::clean(JPATH_SITE . '/images/jem');
+            $resolved    = Path::clean($allowedBase . '/' . $folder);
+
+            if ($folder !== '' && strpos($resolved . DIRECTORY_SEPARATOR, $allowedBase . DIRECTORY_SEPARATOR) !== 0) {
+                $folder = '';
+            }
+
             $this->setState('folder', $folder);
 
             $set = true;
@@ -102,6 +115,7 @@ class JemModelImagehandler extends BaseDatabaseModel
 
             $list[$i]->width  = $info[0];
             $list[$i]->height = $info[1];
+            $list[$i]->modified = filemtime($list[$i]->path) ?: null;
             //$list[$i]->type = $info[2];
             //$list[$i]->mime = $info['mime'];
 
@@ -146,7 +160,7 @@ class JemModelImagehandler extends BaseDatabaseModel
                 foreach ($fileList as $file) {
                     if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
                         if (empty($search) || stristr($file, $search)) {
-                            $tmp = new CMSObject();
+                            $tmp = new stdClass();
                             $tmp->name = $file;
                             $tmp->path = Path::clean($basePath.'/'.$file);
 

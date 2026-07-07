@@ -30,7 +30,12 @@ if ($flyer_link_type == 1) {
     $modal = '';
 }
 
-$document = Factory::getDocument();
+$banneralignment = 'jem-vertical-banner';
+if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-horizontal')) {
+    $banneralignment = 'jem-horizontal-banner';
+}
+
+$document = Factory::getApplication()->getDocument();
 $widthStyle = $imagewidthmax ? 'width:' . $imagewidthmax . 'px' : 'max-width: 100%';
 
 $css = '
@@ -109,9 +114,24 @@ $wa->addInlineStyle($css);
                         <?php if ($params->get('showdesc', 1) == 1) :?>
                             <div class="desc">
                                 <?php echo $item->eventdescription; ?>
-                                <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-                                    echo '</br><a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-                                endif;?>
+                                <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                                <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                    <div class="jem-readmore">
+                                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                           class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>"
+                                           href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $item->linkText; ?></a>
+                                    </div>
+                                <?php endif; ?>
+                                <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                                <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                    <div class="jem-more-information">
+                                        <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                           href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                           class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-banner__more-information'); ?>">
+                                            <?php echo Text::_('MOD_JEM_BANNER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -166,7 +186,7 @@ $wa->addInlineStyle($css);
 
                     <?php
                     // venue
-                    if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) :?>
+                    if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && (!empty($item->venue))) :?>
                         <div class="venue-title">
                             <?php if ($item->venuelink) : ?>
                                 <a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
@@ -177,7 +197,7 @@ $wa->addInlineStyle($css);
                     <?php endif;
 
                     // category
-                    if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                    if (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)) :?>
                         <div class="category">
                             <?php echo $item->catname; ?>
                         </div>

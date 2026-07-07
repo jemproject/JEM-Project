@@ -1,0 +1,53 @@
+{
+  "name": "jemproject/jem-project",
+  "description": "JEM Joomla extension development tools",
+  "type": "project",
+  "license": "GPL-3.0-or-later",
+  "require-dev": {
+    "phpunit/phpunit": "^11.5"
+  },
+  "scripts": {
+    "test": [
+      "@test:static",
+      "@test:unit"
+    ],
+    "test:static": "phpunit --testsuite static",
+    "test:static:syntax": "phpunit --testsuite static-syntax",
+    "test:static:xml": "phpunit --testsuite static-xml",
+    "test:static:xml:admin": "phpunit --testsuite static-xml-admin",
+    "test:static:xml:site": "phpunit --testsuite static-xml-site",
+    "test:static:xml:shared": "phpunit --testsuite static-xml-shared",
+    "test:static:language": "phpunit --testsuite static-language",
+    "test:static:language:admin": "phpunit --testsuite static-language --filter Admin",
+    "test:static:language:site": "phpunit --testsuite static-language --filter Site",
+    "test:static:code": "phpunit --testsuite static-code",
+    "test:static:code:admin": "phpunit --testsuite static-code-admin",
+    "test:static:code:site": "phpunit --testsuite static-code-site",
+    "test:static:code:shared": "phpunit --testsuite static-code-shared",
+    "test:static:views": "phpunit --testsuite static-views",
+    "test:static:views:admin": "phpunit --testsuite static-views-admin",
+    "test:static:views:site": "phpunit --testsuite static-views-site",
+    "test:static:views:shared": "phpunit --testsuite static-views-shared",
+    "test:static:assets": "phpunit --testsuite static-assets",
+    "test:static:security": "phpunit --testsuite static-security",
+    "test:static:integrity": "phpunit --testsuite static-integrity",
+    "test:static:sql": "phpunit --testsuite static-sql",
+    "test:static:sampledata": "phpunit --testsuite static-sampledata",
+    "test:static:package": "phpunit --testsuite static-package",
+    "test:joomla": "phpunit --testsuite joomla",
+    "test:joomla:bootstrap": "phpunit --testsuite joomla-bootstrap",
+    "test:joomla:schema": "phpunit --testsuite joomla-schema",
+    "test:joomla:config": "phpunit --testsuite joomla-config",
+    "test:joomla:models": "phpunit --testsuite joomla-models",
+    "test:joomla:environment": "phpunit --testsuite joomla-environment",
+    "test:unit": "phpunit --testsuite unit",
+    "test:unit:helpers": "phpunit --testsuite unit-helpers"
+  },
+  "config": {
+    "allow-plugins": false,
+    "sort-packages": true
+  },
+  "require": {
+    "tecnickcom/tcpdf": "6.11.3"
+  }
+}

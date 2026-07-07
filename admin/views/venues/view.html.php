@@ -73,6 +73,16 @@ use Joomla\CMS\Uri\Uri;
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_COUNTRY'));
         $filters[] = HTMLHelper::_('select.option', '5', Text::_('JALL'));
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select'), 'value', 'text', $this->state->get('filter_type'));
+        $lists['venue_type_filter'] = HTMLHelper::_(
+            'select.genericlist',
+            $this->getTypeFilterOptions(3, 'COM_JEM_TYPE_FILTER_VENUE'),
+            'filter_venue_type_id',
+            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
+            'value',
+            'text',
+            (int) $this->state->get('filter_venue_type_id'),
+            'filter_venue_type_id'
+        );
 
         //assign data to template
         $this->lists = $lists;
@@ -84,6 +94,30 @@ use Joomla\CMS\Uri\Uri;
         parent::display($tpl);
     }
 
+    /**
+     * Build type filter options for the requested JEM entity.
+     */
+    protected function getTypeFilterOptions($entity, $emptyText)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = ' . (int) $entity)
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+        $types = $db->loadObjectList() ?: array();
+        $options = array(HTMLHelper::_('select.option', '0', Text::_($emptyText)));
+
+        foreach ($types as $type) {
+            $options[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
+        }
+
+        return $options;
+    }
+
 
     /**
      * Add Toolbar
@@ -91,8 +125,11 @@ use Joomla\CMS\Uri\Uri;
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_VENUES'), 'venues');
+        $toolbar = $this->getToolbarInstance();
 
         $canDo = JemHelperBackend::getActions(0);
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete = $canDo->get('core.delete');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -106,24 +143,46 @@ use Joomla\CMS\Uri\Uri;
         }
 
         /* state */
-        if ($canDo->get('core.edit.state')) {
-            if ($this->state->get('filter.state') != 2) {
+        if (($canChangeState || $canDelete) && $this->supportsToolbarDropdown($toolbar)) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
+                $childBar->publish('venues.publish')->listCheck(true);
+                $childBar->unpublish('venues.unpublish')->listCheck(true);
+            }
+
+            if ($canChangeState) {
+                $childBar->checkin('venues.checkin')->listCheck(true);
+            }
+
+            /* delete-trash */
+            if ($canDelete) {
+                $childBar->delete('venues.remove', 'JACTION_DELETE')
+                    ->message('COM_JEM_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        } elseif ($canChangeState || $canDelete) {
+            if ($canChangeState && $this->state->get('filter.state') != 2) {
                 ToolbarHelper::publishList('venues.publish');
                 ToolbarHelper::unpublishList('venues.unpublish');
-                ToolbarHelper::divider();
+            }
+
+            if ($canChangeState) {
+                ToolbarHelper::checkin('venues.checkin');
+            }
+
+            if ($canDelete) {
+                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
             }
         }
 
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::checkin('venues.checkin');
-        }
-
-        /* delete-trash */
-        if ($canDo->get('core.delete')) {
-            ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
-        }
-
         ToolbarHelper::divider();
-        ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues');
+        ToolBarHelper::help('listvenues', true, 'https://www.joomlaeventmanager.net/documentation/backend/venues');
     }
 }

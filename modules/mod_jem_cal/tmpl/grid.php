@@ -42,10 +42,10 @@ if ($use_ajax && empty($module->in_ajax_call)) {
             const target = document.getElementById("eventcalq<?php echo $module->id; ?>");
             if (!target) return;
 
-            // Carga de contenido vía Fetch API (sustituye a jQuery.load)
+            // Load content through the Fetch API (replaces jQuery.load).
             fetch(url)
                 .then(response => {
-                    if (!response.ok) throw new Error("Error al cargar el contenido");
+                    if (!response.ok) throw new Error("Failed to load content");
                     return response.text();
                 })
                 .then(html => {
@@ -276,7 +276,7 @@ if (!$use_ajax || empty($module->in_ajax_call)) {
             }
         });
 
-        // Popovers für neue Elemente erstellen, für entfernte entsorgen
+        // Create popovers for new elements and dispose removed ones.
         const initPopovers = root => root.querySelectorAll(POPOVER_SELECTOR)
             .forEach(ensurePop);
         const disposePopovers = node => {

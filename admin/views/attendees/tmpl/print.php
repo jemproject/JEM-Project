@@ -48,9 +48,9 @@ use Joomla\CMS\HTML\HTMLHelper;
             foreach ($this->rows as $i => $row) :
             ?>
             <tr class="row<?php echo $i % 2; ?>">
-                <td><?php echo $row->name; ?></td>
-                <td><?php echo $row->username; ?></td>
-                <td><?php echo $row->email; ?></td>
+                <td><?php echo $this->escape($row->name); ?></td>
+                <td><?php echo $this->escape($row->username); ?></td>
+                <td><?php echo $this->escape($row->email); ?></td>
                 <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
                 <?php
                 switch ($row->status) {
@@ -69,9 +69,9 @@ use Joomla\CMS\HTML\HTMLHelper;
                 } ?>
                 <td><?php echo Text::_($text); ?></td>
                 <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                <td><?php echo $row->comment; ?></td>
+                <td><?php echo $this->escape($row->comment); ?></td>
                 <?php endif; ?>
-                <td class="center"><?php echo $row->uid; ?></td>
+                <td class="center"><?php echo (int) $row->uid; ?></td>
             </tr>
             <?php endforeach; ?>
         </tbody>

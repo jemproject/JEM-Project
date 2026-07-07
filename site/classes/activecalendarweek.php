@@ -28,6 +28,8 @@ class ActiveCalendarWeek extends JEMCalendar {
     */
     var $cssWeeksTable="week";
     var $cssMonthWeek="monthweek";
+    var $weekNavigation=false;
+    var $GMT="none";
     /*
     ----------------------
     @START PUBLIC METHODS
@@ -51,13 +53,27 @@ class ActiveCalendarWeek extends JEMCalendar {
     */
     function showWeeks($numberOfWeeks=1) {
         $out=$this->mkWeeksHead();
+        $out.=$this->mkWeekNavigation();
         $out.=$this->mkWeekDayz();
         $out.=$this->mkWeeksBody($numberOfWeeks);
         $out.=$this->mkWeeksFoot();
 
         return $out;
     }
-    /*
+
+    function setWeekNavigation($title, $previousLink, $nextLink, $previousIcon, $nextIcon, $previousYearLink = null, $nextYearLink = null, $previousYearIcon = null, $nextYearIcon = null) {
+        $this->weekNavigation = array(
+            'title' => $title,
+            'previous' => $previousLink,
+            'next' => $nextLink,
+            'previousIcon' => $previousIcon,
+            'nextIcon' => $nextIcon,
+            'previousYear' => $previousYearLink,
+            'nextYear' => $nextYearLink,
+            'previousYearIcon' => $previousYearIcon,
+            'nextYearIcon' => $nextYearIcon,
+        );
+    }    /*
     ********************************************************************************
     PUBLIC showWeeksByID() -> returns the week view as html table string
     The week calendar starts with the week row, that has the same week number of the year as set in the weekID
@@ -114,7 +130,46 @@ class ActiveCalendarWeek extends JEMCalendar {
     function mkWeeksHead() {
         return "<table class=\"".$this->cssWeeksTable."\">\n";
     }
-    /*
+
+    function mkWeekNavigation() {
+        if (!$this->weekNavigation) {
+            return '';
+        }
+
+        $showYearNavigation = !empty($this->weekNavigation['previousYear']) && !empty($this->weekNavigation['nextYear']);
+        $previousColspan = $this->weekNum ? 3 : 2;
+        $nextColspan = 2;
+        $titleColspan = 3;
+
+        if ($showYearNavigation) {
+            $previousColspan = $this->weekNum ? 2 : 1;
+            $nextColspan = $this->weekNum ? 2 : 1;
+            $titleColspan = $this->weekNum ? 2 : 3;
+        }
+
+        $out = '<tr>';
+        if ($showYearNavigation) {
+            $out .= '<td class="monthnavigation">';
+            $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['previousYear'] . '" rel="prev">';
+            $out .= $this->weekNavigation['previousYearIcon'] . '</a></td>';
+        }
+        $out .= '<td class="monthnavigation" colspan="' . $previousColspan . '">';
+        $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['previous'] . '" rel="prev">';
+        $out .= $this->weekNavigation['previousIcon'] . '</a></td>';
+        $out .= '<td class="monthname" colspan="' . $titleColspan . '">';
+        $out .= $this->weekNavigation['title'] . '</td>';
+        $out .= '<td class="monthnavigation" colspan="' . $nextColspan . '">';
+        $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['next'] . '" rel="next">';
+        $out .= $this->weekNavigation['nextIcon'] . '</a></td>';
+        if ($showYearNavigation) {
+            $out .= '<td class="monthnavigation">';
+            $out .= '<a class="jem-calendar-nav-link" href="' . $this->weekNavigation['nextYear'] . '" rel="next">';
+            $out .= $this->weekNavigation['nextYearIcon'] . '</a></td>';
+        }
+        $out .= "</tr>\n";
+
+        return $out;
+    }    /*
     ********************************************************************************
     PRIVATE mkWeekDayz() -> creates the tr tag of the week table for the weekdays
     ********************************************************************************

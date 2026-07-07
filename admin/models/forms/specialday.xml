@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form addfieldpath="/administrator/components/com_jem/models/fields">
+    <fieldset name="details">
+        <field name="id" type="hidden" />
+
+        <field name="title"
+               type="text"
+               label="COM_JEM_SPECIAL_DAY_FIELD_TITLE"
+               description="COM_JEM_SPECIAL_DAY_FIELD_TITLE_DESC"
+               required="true"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="alias"
+               type="text"
+               label="JFIELD_ALIAS_LABEL"
+               description="JFIELD_ALIAS_DESC"
+               hint="JFIELD_ALIAS_PLACEHOLDER"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="day_type_id"
+               type="specialdaytype"
+               label="COM_JEM_SPECIAL_DAY_FIELD_TYPE"
+               description="COM_JEM_SPECIAL_DAY_FIELD_TYPE_DESC"
+               required="true"
+               class="form-select w-auto"
+        />
+
+        <field name="day_type" type="hidden" />
+
+        <field name="start_date"
+               type="calendar"
+               label="COM_JEM_SPECIAL_DAY_FIELD_START_DATE"
+               description="COM_JEM_SPECIAL_DAY_FIELD_START_DATE_DESC"
+               required="true"
+               format="%Y-%m-%d"
+               filter="string"
+               showtime="false"
+               class="form-control"
+        />
+
+        <field name="end_date"
+               type="calendar"
+               label="COM_JEM_SPECIAL_DAY_FIELD_END_DATE"
+               description="COM_JEM_SPECIAL_DAY_FIELD_END_DATE_DESC"
+               required="true"
+               format="%Y-%m-%d"
+               filter="string"
+               showtime="false"
+               class="form-control"
+        />
+
+        <field name="weekdays"
+               type="list"
+               multiple="true"
+               label="COM_JEM_SPECIAL_DAY_FIELD_WEEKDAYS"
+               description="COM_JEM_SPECIAL_DAY_FIELD_WEEKDAYS_DESC"
+               class="form-select w-auto"
+        >
+            <option value="0">COM_JEM_SUNDAY</option>
+            <option value="1">COM_JEM_MONDAY</option>
+            <option value="2">COM_JEM_TUESDAY</option>
+            <option value="3">COM_JEM_WEDNESDAY</option>
+            <option value="4">COM_JEM_THURSDAY</option>
+            <option value="5">COM_JEM_FRIDAY</option>
+            <option value="6">COM_JEM_SATURDAY</option>
+        </field>
+
+        <field name="country"
+               type="countryoptions"
+               label="COM_JEM_COUNTRY"
+               description="COM_JEM_SPECIAL_DAY_FIELD_COUNTRY_DESC"
+               multiple="true"
+               class="form-select w-auto"
+               default=""
+        />
+
+        <field name="region"
+               type="text"
+               label="COM_JEM_STATE"
+               description="COM_JEM_SPECIAL_DAY_FIELD_REGION_DESC"
+               maxlength="100"
+               class="form-control"
+        />
+
+        <field name="city"
+               type="text"
+               label="COM_JEM_CITY"
+               description="COM_JEM_SPECIAL_DAY_FIELD_CITY_DESC"
+               maxlength="100"
+               class="form-control"
+        />
+
+        <field name="description"
+               type="text"
+               label="JGLOBAL_DESCRIPTION"
+               description="COM_JEM_SPECIAL_DAY_FIELD_DESCRIPTION_DESC"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="link"
+               type="specialdaylink"
+               label="COM_JEM_SPECIAL_DAY_FIELD_LINK"
+               description="COM_JEM_SPECIAL_DAY_FIELD_LINK_DESC"
+               maxlength="2048"
+               filter="string"
+        />
+
+        <field name="show_dates"
+               type="radio"
+               label="COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES"
+               description="COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES_DESC"
+               default="1"
+               class="btn-group btn-group-yesno"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+
+        <field name="published"
+               type="list"
+               label="JSTATUS"
+               default="1"
+               class="form-select w-auto"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+
+        <field name="access"
+               type="accesslevel"
+               label="JFIELD_ACCESS_LABEL"
+               description="JFIELD_ACCESS_DESC"
+               default="1"
+               class="form-select w-auto"
+        />
+
+        <field name="ordering" type="hidden" default="0" />
+    </fieldset>
+</form>

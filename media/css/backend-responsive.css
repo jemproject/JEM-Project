@@ -295,6 +295,37 @@ input#replace_catevents1.inputbox {
     display: inline-block;
 }
 
+.jem-import-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.jem-import-grid > hr {
+    display: none;
+}
+
+.jem-import-grid > div {
+    min-width: 0;
+}
+
+.jem-import-grid > div > fieldset.adminform {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.jem-import-grid input[type="file"] {
+    max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .jem-import-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 table#el-attachments td {
     padding: 4px 5px;
     vertical-align: top;
@@ -447,18 +478,55 @@ img#imagelib {
 }
 
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
-    background-color: #F9F9F9;
-}
-
 .table-striped tbody tr.row0:hover td,
 .table-striped tbody tr.row1:hover td {
     background-color: #e8f6fe;
 }
 
+.jem-housekeeping-file-options {
+    max-width: 760px;
+    margin: 12px 0 0;
+    padding: 14px 18px 16px;
+}
+
+.jem-housekeeping-file-options legend {
+    width: auto;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 1rem;
+}
+
+.jem-housekeeping-file-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px 0;
+}
+
+.jem-housekeeping-file-question {
+    flex: 0 1 28rem;
+}
+
+.jem-housekeeping-file-choices {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.jem-housekeeping-file-choices label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-attachment-file-name {
+    white-space: nowrap;
+}
+
 /* ---------- TABLE, J3 Isis template -------------------------- */
-table {
+.com_jem table {
     max-width: 100%;
     background-color: transparent;
     border-collapse: separate;
@@ -746,11 +814,6 @@ table.table tfoot tr {
     color: #333;
 }
 
-table.table tfoot tr {
-    text-align: center;
-    color: #333;
-}
-
 table.table tfoot td, table.table tfoot th {
     background-color: #F7F7F7;
     border-top: 1px solid #999;
@@ -861,7 +924,8 @@ input.selectcat {
     margin-bottom: 3px;
 }
 
-input#csvexport {
+input#csvexport,
+input.csvexport {
     background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
@@ -1113,6 +1177,63 @@ fieldset.adminform input#clear {
     width: auto;
 }
 
+fieldset.adminform .jem-options-width-auto,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto,
+fieldset.adminform .jem-options-width-auto + .choices,
+fieldset.adminform .choices:has(.jem-options-width-auto),
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices {
+    display: inline-block !important;
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto.form-select,
+fieldset.adminform .jem-options-width-auto select,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto select,
+fieldset.adminform .jem-options-width-auto + .choices .choices__inner,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__inner,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__inner {
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto + .choices .choices__list--single,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__list--single,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__list--single {
+    width: auto !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 24rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 14rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices__inner,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__inner {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item--selectable,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__placeholder {
+    background: transparent !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+}
+
 fieldset.adminform fieldset.radio label,
 fieldset.panelform fieldset.radio label {
     min-width: 85px;
@@ -1130,6 +1251,55 @@ fieldset.adminform .inputbox {
 
 select.inputbox, textarea.inputbox {
     padding: 0.5rem;
+}
+
+.jem-stylesheet-list .jem-stylesheet-row {
+    align-items: flex-start;
+    clear: both;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.jem-stylesheet-list .jem-stylesheet-toggle {
+    flex: 0 0 150px;
+}
+
+.jem-stylesheet-list .jem-stylesheet-file {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.jem-stylesheet-list .jem-stylesheet-toggle > label,
+.jem-stylesheet-list .jem-stylesheet-file label {
+    clear: none;
+    display: block;
+    float: none;
+    margin-bottom: 4px;
+    min-width: 0;
+    width: auto;
+}
+
+.jem-stylesheet-list .jem-stylesheet-file input {
+    box-sizing: border-box;
+    min-width: 180px;
+    width: 100%;
+}
+
+.jem-stylesheet-list .jem-stylesheet-separator {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 600px) {
+    .jem-stylesheet-list .jem-stylesheet-toggle,
+    .jem-stylesheet-list .jem-stylesheet-file {
+        flex-basis: 100%;
+    }
+
+    .jem-stylesheet-list .jem-stylesheet-file input {
+        min-width: 0;
+    }
 }
 
 /* -- Help --------------------------- */
@@ -1181,9 +1351,6 @@ table.adminlist.help-toc {
     white-space: nowrap;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #999;
-}
-
-.label {
     border-radius: 3px;
 }
 
@@ -1350,4 +1517,220 @@ a.label:focus {
 .wauto-minwmax {
     width: auto;
     min-width: max-content;
+}
+
+.jem-admin-filter-bar {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    max-width: 100%;
+}
+
+.jem-admin-filter-item {
+    flex: 1 1 12rem;
+    max-width: 100%;
+    min-width: 10rem;
+}
+
+.jem-admin-filter-search {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+    min-width: min(100%, 16rem);
+}
+
+.jem-admin-filter-date-range {
+    display: flex;
+    flex: 1 1 28rem;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    max-width: 36rem;
+    min-width: min(100%, 28rem);
+}
+
+.jem-admin-filter-calendar {
+    flex: 1 1 0;
+    max-width: min(100%, 17rem);
+    min-width: 13rem;
+}
+
+.jem-admin-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.jem-specialdays-admin-filter-bar .jem-admin-filter-search,
+.jem-specialdays-admin-filter-bar .jem-admin-filter-item {
+    flex: 0 0 auto;
+}
+
+.jem-specialdays-admin-filter-bar .jem-admin-filter-search {
+    width: min(100%, 25rem);
+}
+
+fieldset.jem-specialdays-import {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+fieldset.jem-specialdays-import legend {
+    float: none;
+    width: auto;
+    padding: 0 .5rem;
+    margin: 0 0 .75rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file,
+fieldset.jem-specialdays-import .jem-specialdays-import-replace,
+fieldset.jem-specialdays-import .jem-specialdays-import-action {
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+    width: auto;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 27rem;
+    min-width: 21rem;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-replace {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 auto;
+    min-width: 21rem;
+    margin-left: auto;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-action {
+    flex: 0 0 auto;
+    margin-left: 0;
+}
+
+fieldset.jem-specialdays-import .form-label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file .form-control {
+    flex: 1 1 auto;
+    min-width: 11rem;
+}
+
+fieldset.jem-specialdays-import #replace_specialdays {
+    width: auto;
+    min-width: 5.5rem;
+}
+
+.jem-admin-filter-bar .wauto-minwmax {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-bar .form-select,
+.jem-admin-filter-bar .form-control,
+.jem-admin-filter-bar .field-calendar,
+.jem-admin-filter-bar .input-group {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar {
+    align-items: stretch;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+.jem-specialdays-location-country {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    white-space: nowrap;
+}
+
+.jem-specialdays-location-flag {
+    display: inline-block;
+    font-size: .95rem;
+    line-height: 1;
+}
+
+#specialDayList thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #adb5bd;
+    color: #212529;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+#specialDayList thead th a {
+    color: inherit;
+    font-weight: 700;
+}
+
+#specialDayList .jem-specialdays-location-heading,
+#specialDayList .jem-specialdays-location-cell {
+    text-align: center;
+}
+
+.jem-admin-filter-calendar .field-calendar .input-group {
+    flex-wrap: nowrap;
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar button {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+    .jem-admin-filter-limit {
+        margin-left: 0;
+    }
+
+    .jem-admin-filter-item,
+    .jem-admin-filter-search,
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .jem-admin-filter-calendar {
+        flex-basis: 100%;
+    }
 }

@@ -12,23 +12,49 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields', -1); // default to All
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 ?>
 <!--START PUBLISHING FIELDSET -->
-<fieldset>
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'); ?></legend>
-    <ul class="adminformlist">
+<fieldset class="adminform">
+    <legend><?php echo Text::_('COM_JEM_ADVANCED'); ?></legend>
+    <dl class="jem-dl">
 
-        <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
-        <li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
-        <li><?php echo $this->form->getLabel('publish_up'); ?><?php echo $this->form->getInput('publish_up'); ?></li>
-        <li><?php echo $this->form->getLabel('publish_down'); ?><?php echo $this->form->getInput('publish_down'); ?></li>
-        <li><?php echo $this->form->getLabel('access'); ?><?php
+        <dt><?php echo $this->form->getLabel('access'); ?></dt>
+        <dd><?php
             echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]',
-                array('list.attr' => ' class="form-select inputbox valid form-control-success" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
+                array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access'));
             ?>
-        </li>
-    </ul>
+        </dd>
+        <dt><?php echo $this->form->getLabel('published'); ?></dt>
+        <dd><?php echo $this->form->getInput('published'); ?></dd>
+        <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+        <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+        <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+        <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
+    </dl>
 </fieldset>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var articleActionSelect = document.getElementById('jform_create_article');
+    var articleAutoInfo = document.getElementById('jem-article-auto-info');
+    if (!articleActionSelect || !articleAutoInfo) {
+        return;
+    }
+    var updateArticleAutoInfo = function () {
+        articleAutoInfo.hidden = articleActionSelect.value !== '2';
+    };
+    articleActionSelect.addEventListener('change', updateArticleAutoInfo);
+    updateArticleAutoInfo();
+});
+</script>
 
 
 <!-- START META FIELDSET -->

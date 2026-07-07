@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="plugin" group="jem" method="upgrade">
     <name>plg_jem_comments</name>
     <author>JEM Community</author>
-    <creationDate>March 2026</creationDate>
+    <creationDate>7 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.2</version>
+    <version>4.5.0</version>
     <description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
 
     <files>
@@ -34,3 +34,6 @@
         </fields>
     </config>
 </extension>
+
+
+

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <form>
     <config>
         <inlinehelp button="show"/>
@@ -106,6 +106,17 @@
             <option value="0">COM_JEM_SETTINGS_SUNDAY</option>
             <option value="1">COM_JEM_SETTINGS_MONDAY</option>
         </field>
+        <field name="flagicons_path" type="text"
+            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
+            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
+            class="inputbox"
+            default="media/com_jem/images/flags/w80-webp/"
+            size="40"
+            required="true"
+        />
+        <field name="spacer_attachments_start" type="spacer"
+            hr="true"
+        />
         <field name="attachments_path" type="text"
             label="COM_JEM_SETTINGS_ATTACHEMENT_PATH"
             description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC"
@@ -127,14 +138,32 @@
             size="40"
             required="true"
         />
-        <field name="flagicons_path" type="text"
-            label="COM_JEM_SETTINGS_FLAG_ICONS_PATH"
-            description="COM_JEM_SETTINGS_FLAG_ICONS_PATH_DESC"
-            class="inputbox"
-            default="media/com_jem/images/flags/w80-webp/"
-            size="40"
-            required="true"
-        />
+        <field name="attachments_layout" type="list"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_LAYOUT_DESC"
+            class="inputbox form-select"
+            default="column"
+            required="false"
+        >
+            <option value="row">COM_JEM_EVENT_LINKS_LAYOUT_ROW</option>
+            <option value="row_full">COM_JEM_EVENT_LINKS_LAYOUT_ROW_FULL</option>
+            <option value="row_uniform">COM_JEM_EVENT_LINKS_LAYOUT_ROW_UNIFORM</option>
+            <option value="column">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN</option>
+            <option value="column_full">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_FULL</option>
+            <option value="column_uniform">COM_JEM_EVENT_LINKS_LAYOUT_COLUMN_UNIFORM</option>
+        </field>
+        <field name="attachments_icon_size" type="list"
+            label="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE"
+            description="COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_DESC"
+            class="inputbox form-select"
+            default="normal"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="normal">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_NORMAL</option>
+            <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
+            <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
+        </field>
         <field name="spacer2" type="spacer"
             hr="true"
         />
@@ -156,7 +185,9 @@
         <field name="defaultCountry" type="countryoptions"
             label="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY"
             description="COM_JEM_SETTINGS_SELECT_DEFAULT_COUNTRY_DESC"
+            class="inputbox form-select w-auto"
             default="0"
+            fancy="false"
         />
         <field name="spacer3" type="spacer"
             hr="true"
@@ -268,6 +299,7 @@
             description="COM_JEM_SETTINGS_DATE_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formatShortDate" type="text"
@@ -275,6 +307,7 @@
             description="COM_JEM_SETTINGS_SHORT_DATE_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formattime" type="text"
@@ -282,6 +315,7 @@
             description="COM_JEM_TIME_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="formathour" type="text"
@@ -289,6 +323,7 @@
             description="COM_JEM_HOUR_FORMAT_DESC"
             class="inputbox"
             size="20"
+            filter="string"
             required="false"
         />
         <field name="timename" type="text"
@@ -366,6 +401,28 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="frontend_hide_empty_managed_fields" type="radio"
+            label="COM_JEM_SETTINGS_FIELD_FRONTEND_HIDE_EMPTY_MANAGED_FIELDS"
+            description="COM_JEM_SETTINGS_FIELD_FRONTEND_HIDE_EMPTY_MANAGED_FIELDS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="0"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="storeipmode" type="list"
+            label="COM_JEM_STORE_IP_MODE"
+            description="COM_JEM_STORE_IP_MODE_DESC"
+            class="inputbox form-select"
+            default="full"
+            required="false"
+            showon="storeip:1"
+        >
+            <option value="full">COM_JEM_STORE_IP_MODE_FULL</option>
+            <option value="anonymized">COM_JEM_STORE_IP_MODE_ANONYMIZED</option>
+            <option value="hash">COM_JEM_STORE_IP_MODE_HASH</option>
+        </field>
     </fieldset>
 
     <fieldset name="usercontrolregistration"
@@ -374,7 +431,7 @@
         <field name="showfroregistra" type="list"
             label="COM_JEM_SUBMIT_REGISTER"
             description="COM_JEM_SUBMIT_REGISTER_DESC"
-            class="inputbox"
+            class="inputbox w-auto"
             default="0"
             required="false"
         >
@@ -449,6 +506,609 @@
             class="inputbox"
             size="10"
             maxlength="10"
+            required="false"
+        />
+        <field name="pdf_imagewidth" type="number"
+            label="COM_JEM_PDF_IMAGE_WIDTH"
+            description="COM_JEM_PDF_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_imageheight" type="number"
+            label="COM_JEM_PDF_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_paper_size" type="list"
+            label="COM_JEM_PDF_PAPER_SIZE"
+            description="COM_JEM_PDF_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_enabled_views" type="list"
+            label="COM_JEM_PDF_ENABLED_VIEWS"
+            description="COM_JEM_PDF_ENABLED_VIEWS_DESC"
+            class="inputbox form-select"
+            default="annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal"
+            multiple="true"
+            size="15"
+            required="false"
+        >
+            <option value="event">COM_JEM_EVENT</option>
+            <option value="annualcalendar">COM_JEM_ANNUALCALENDAR_VIEW_DEFAULT_TITLE</option>
+            <option value="calendar">COM_JEM_CALENDAR</option>
+            <option value="weekcal">COM_JEM_WEEKCALENDAR</option>
+            <option value="day">COM_JEM_DAY_VIEW</option>
+            <option value="categories">COM_JEM_CATEGORIES</option>
+            <option value="category">COM_JEM_CATEGORY</option>
+            <option value="venue">COM_JEM_VENUE</option>
+            <option value="venues">COM_JEM_VENUES</option>
+            <option value="eventslist">COM_JEM_EVENTS</option>
+            <option value="venueslist">COM_JEM_VENUES</option>
+            <option value="typeevents">COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE</option>
+            <option value="typevenues">COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE</option>
+            <option value="specialdays">COM_JEM_SPECIAL_DAYS</option>
+            <option value="eventsmap">COM_JEM_EVENTS_MAP</option>
+            <option value="venuesmap">COM_JEM_VENUES_MAP</option>
+            <option value="myattendances">COM_JEM_MY_ATTENDANCES</option>
+            <option value="myevents">COM_JEM_MY_EVENTS</option>
+            <option value="mytimeline">COM_JEM_MY_TIMELINE</option>
+            <option value="myvenues">COM_JEM_MY_VENUES</option>
+            <option value="attendeeregistrations">COM_JEM_ATTENDEE_REGISTRATIONS</option>
+        </field>
+        <field name="pdf_orientation" type="list"
+            label="COM_JEM_PDF_ORIENTATION"
+            description="COM_JEM_PDF_ORIENTATION_DESC"
+            class="inputbox"
+            default="L"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_calendar_layout" type="list"
+            label="COM_JEM_PDF_CALENDAR_LAYOUT"
+            description="COM_JEM_PDF_CALENDAR_LAYOUT_DESC"
+            class="inputbox"
+            default="calendar"
+            required="false"
+        >
+            <option value="calendar">COM_JEM_PDF_CALENDAR_LAYOUT_CALENDAR</option>
+            <option value="agenda">COM_JEM_PDF_CALENDAR_LAYOUT_AGENDA</option>
+        </field>
+        <field name="pdf_margin_profile" type="list"
+            label="COM_JEM_PDF_MARGIN_PROFILE"
+            description="COM_JEM_PDF_MARGIN_PROFILE_DESC"
+            class="inputbox"
+            default="medium"
+            required="false"
+        >
+            <option value="none">COM_JEM_PDF_MARGIN_NONE</option>
+            <option value="small">COM_JEM_PDF_MARGIN_SMALL</option>
+            <option value="medium">COM_JEM_PDF_MARGIN_MEDIUM</option>
+            <option value="large">COM_JEM_PDF_MARGIN_LARGE</option>
+            <option value="custom">COM_JEM_PDF_MARGIN_CUSTOM</option>
+        </field>
+        <field name="pdf_margin_top" type="number"
+            label="COM_JEM_PDF_MARGIN_TOP"
+            description="COM_JEM_PDF_MARGIN_TOP_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+            showon="pdf_margin_profile:custom"
+        />
+        <field name="pdf_margin_right" type="number"
+            label="COM_JEM_PDF_MARGIN_RIGHT"
+            description="COM_JEM_PDF_MARGIN_RIGHT_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+            showon="pdf_margin_profile:custom"
+        />
+        <field name="pdf_margin_bottom" type="number"
+            label="COM_JEM_PDF_MARGIN_BOTTOM"
+            description="COM_JEM_PDF_MARGIN_BOTTOM_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+            showon="pdf_margin_profile:custom"
+        />
+        <field name="pdf_margin_left" type="number"
+            label="COM_JEM_PDF_MARGIN_LEFT"
+            description="COM_JEM_PDF_MARGIN_LEFT_DESC"
+            class="inputbox"
+            default="14"
+            min="0"
+            max="50"
+            step="1"
+            required="false"
+            showon="pdf_margin_profile:custom"
+        />
+        <field name="pdf_background_color" type="color"
+            label="COM_JEM_PDF_BACKGROUND_COLOR"
+            description="COM_JEM_PDF_BACKGROUND_COLOR_DESC"
+            class="inputbox form-control"
+            default="#ffffff"
+            size="10"
+            maxlength="7"
+            required="false"
+        />
+        <field name="pdf_include_view_text" type="radio"
+            label="COM_JEM_PDF_INCLUDE_VIEW_TEXT"
+            description="COM_JEM_PDF_INCLUDE_VIEW_TEXT_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_show_footer" type="radio"
+            label="COM_JEM_PDF_SHOW_FOOTER"
+            description="COM_JEM_PDF_SHOW_FOOTER_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_include_generated_stamp" type="radio"
+            label="COM_JEM_PDF_INCLUDE_GENERATED_STAMP"
+            description="COM_JEM_PDF_INCLUDE_GENERATED_STAMP_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_title_font_family" type="list"
+            label="COM_JEM_PDF_TITLE_FONT_FAMILY"
+            description="COM_JEM_PDF_TITLE_FONT_FAMILY_DESC"
+            class="inputbox"
+            default="helvetica"
+            required="false"
+        >
+            <option value="helvetica">Helvetica</option>
+            <option value="times">Times</option>
+            <option value="courier">Courier</option>
+            <option value="dejavusans">DejaVu Sans</option>
+            <option value="dejavuserif">DejaVu Serif</option>
+            <option value="dejavusansmono">DejaVu Sans Mono</option>
+            <option value="freesans">FreeSans</option>
+            <option value="freeserif">FreeSerif</option>
+            <option value="freemono">FreeMono</option>
+        </field>
+        <field name="pdf_title_font_size" type="number"
+            label="COM_JEM_PDF_TITLE_FONT_SIZE"
+            description="COM_JEM_PDF_TITLE_FONT_SIZE_DESC"
+            class="inputbox"
+            default="18"
+            min="8"
+            max="40"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_header_font_family" type="list"
+            label="COM_JEM_PDF_HEADER_FONT_FAMILY"
+            description="COM_JEM_PDF_HEADER_FONT_FAMILY_DESC"
+            class="inputbox"
+            default="helvetica"
+            required="false"
+        >
+            <option value="helvetica">Helvetica</option>
+            <option value="times">Times</option>
+            <option value="courier">Courier</option>
+            <option value="dejavusans">DejaVu Sans</option>
+            <option value="dejavuserif">DejaVu Serif</option>
+            <option value="dejavusansmono">DejaVu Sans Mono</option>
+            <option value="freesans">FreeSans</option>
+            <option value="freeserif">FreeSerif</option>
+            <option value="freemono">FreeMono</option>
+        </field>
+        <field name="pdf_heading_font_size" type="number"
+            label="COM_JEM_PDF_HEADING_FONT_SIZE"
+            description="COM_JEM_PDF_HEADING_FONT_SIZE_DESC"
+            class="inputbox"
+            default="12"
+            min="7"
+            max="30"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_body_font_family" type="list"
+            label="COM_JEM_PDF_BODY_FONT_FAMILY"
+            description="COM_JEM_PDF_BODY_FONT_FAMILY_DESC"
+            class="inputbox"
+            default="helvetica"
+            required="false"
+        >
+            <option value="helvetica">Helvetica</option>
+            <option value="times">Times</option>
+            <option value="courier">Courier</option>
+            <option value="dejavusans">DejaVu Sans</option>
+            <option value="dejavuserif">DejaVu Serif</option>
+            <option value="dejavusansmono">DejaVu Sans Mono</option>
+            <option value="freesans">FreeSans</option>
+            <option value="freeserif">FreeSerif</option>
+            <option value="freemono">FreeMono</option>
+        </field>
+        <field name="pdf_base_font_size" type="number"
+            label="COM_JEM_PDF_BASE_FONT_SIZE"
+            description="COM_JEM_PDF_BASE_FONT_SIZE_DESC"
+            class="inputbox"
+            default="8"
+            min="6"
+            max="20"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_accent_color" type="color"
+            label="COM_JEM_PDF_ACCENT_COLOR"
+            description="COM_JEM_PDF_ACCENT_COLOR_DESC"
+            class="inputbox form-control"
+            default="#1d4ed8"
+            size="10"
+            maxlength="7"
+            required="false"
+        />
+        <field name="pdf_event_layout" type="list"
+            label="COM_JEM_PDF_EVENT_LAYOUT"
+            description="COM_JEM_PDF_EVENT_LAYOUT_DESC"
+            class="inputbox"
+            default="details"
+            required="false"
+        >
+            <option value="details">COM_JEM_PDF_LAYOUT_DETAILS</option>
+            <option value="compact">COM_JEM_PDF_LAYOUT_COMPACT</option>
+        </field>
+        <field name="pdf_list_paper_size" type="list"
+            label="COM_JEM_PDF_LIST_PAPER_SIZE"
+            description="COM_JEM_PDF_LIST_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_list_orientation" type="list"
+            label="COM_JEM_PDF_LIST_ORIENTATION"
+            description="COM_JEM_PDF_LIST_ORIENTATION_DESC"
+            class="inputbox"
+            default="P"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_map_paper_size" type="list"
+            label="COM_JEM_PDF_MAP_PAPER_SIZE"
+            description="COM_JEM_PDF_MAP_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_map_orientation" type="list"
+            label="COM_JEM_PDF_MAP_ORIENTATION"
+            description="COM_JEM_PDF_MAP_ORIENTATION_DESC"
+            class="inputbox"
+            default="L"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_event_description_mode" type="list"
+            label="COM_JEM_PDF_EVENT_DESCRIPTION_MODE"
+            description="COM_JEM_PDF_EVENT_DESCRIPTION_MODE_DESC"
+            class="inputbox"
+            default="complete"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="intro">COM_JEM_PDF_DESCRIPTION_INTRO</option>
+            <option value="full">COM_JEM_PDF_DESCRIPTION_FULL</option>
+            <option value="complete">COM_JEM_PDF_DESCRIPTION_COMPLETE</option>
+        </field>
+        <field name="pdf_venue_description_mode" type="list"
+            label="COM_JEM_PDF_VENUE_DESCRIPTION_MODE"
+            description="COM_JEM_PDF_VENUE_DESCRIPTION_MODE_DESC"
+            class="inputbox"
+            default="complete"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="intro">COM_JEM_PDF_DESCRIPTION_INTRO</option>
+            <option value="full">COM_JEM_PDF_DESCRIPTION_FULL</option>
+            <option value="complete">COM_JEM_PDF_DESCRIPTION_COMPLETE</option>
+        </field>
+        <field name="pdf_event_imagewidth" type="number"
+            label="COM_JEM_PDF_EVENT_IMAGE_WIDTH"
+            description="COM_JEM_PDF_EVENT_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_event_imageheight" type="number"
+            label="COM_JEM_PDF_EVENT_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_EVENT_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_event_image_position" type="list"
+            label="COM_JEM_PDF_EVENT_IMAGE_POSITION"
+            description="COM_JEM_PDF_EVENT_IMAGE_POSITION_DESC"
+            class="inputbox"
+            default="right"
+            required="false"
+        >
+            <option value="right">COM_JEM_PDF_IMAGE_POSITION_RIGHT</option>
+            <option value="left">COM_JEM_PDF_IMAGE_POSITION_LEFT</option>
+            <option value="top">COM_JEM_PDF_IMAGE_POSITION_TOP</option>
+        </field>
+        <field name="pdf_venue_imagewidth" type="number"
+            label="COM_JEM_PDF_VENUE_IMAGE_WIDTH"
+            description="COM_JEM_PDF_VENUE_IMAGE_WIDTH_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_venue_imageheight" type="number"
+            label="COM_JEM_PDF_VENUE_IMAGE_HEIGHT"
+            description="COM_JEM_PDF_VENUE_IMAGE_HEIGHT_DESC"
+            class="inputbox"
+            default="40"
+            min="1"
+            max="200"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_venue_image_position" type="list"
+            label="COM_JEM_PDF_VENUE_IMAGE_POSITION"
+            description="COM_JEM_PDF_VENUE_IMAGE_POSITION_DESC"
+            class="inputbox"
+            default="right"
+            required="false"
+        >
+            <option value="right">COM_JEM_PDF_IMAGE_POSITION_RIGHT</option>
+            <option value="left">COM_JEM_PDF_IMAGE_POSITION_LEFT</option>
+            <option value="top">COM_JEM_PDF_IMAGE_POSITION_TOP</option>
+        </field>
+        <field name="pdf_event_show_images" type="radio"
+            label="COM_JEM_PDF_SHOW_IMAGES"
+            description="COM_JEM_PDF_SHOW_IMAGES_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_links" type="radio"
+            label="COM_JEM_PDF_INCLUDE_LINKS"
+            description="COM_JEM_PDF_INCLUDE_LINKS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_attachments" type="radio"
+            label="COM_JEM_PDF_INCLUDE_ATTACHMENTS"
+            description="COM_JEM_PDF_INCLUDE_ATTACHMENTS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_registration" type="radio"
+            label="COM_JEM_PDF_INCLUDE_REGISTRATION"
+            description="COM_JEM_PDF_INCLUDE_REGISTRATION_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_contacts" type="radio"
+            label="COM_JEM_PDF_INCLUDE_CONTACTS"
+            description="COM_JEM_PDF_INCLUDE_CONTACTS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_include_online_meeting" type="radio"
+            label="COM_JEM_PDF_INCLUDE_ONLINE_MEETING"
+            description="COM_JEM_PDF_INCLUDE_ONLINE_MEETING_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_event_venue_mode" type="list"
+            label="COM_JEM_PDF_VENUE_MODE"
+            description="COM_JEM_PDF_VENUE_MODE_DESC"
+            class="inputbox"
+            default="full"
+            required="false"
+        >
+            <option value="full">COM_JEM_PDF_VENUE_MODE_FULL</option>
+            <option value="summary">COM_JEM_PDF_VENUE_MODE_SUMMARY</option>
+            <option value="none">COM_JEM_PDF_VENUE_MODE_NONE</option>
+        </field>
+        <field name="pdf_event_include_venue_map" type="list"
+            label="COM_JEM_PDF_INCLUDE_VENUE_MAP"
+            description="COM_JEM_PDF_INCLUDE_VENUE_MAP_DESC"
+            class="inputbox"
+            default="none"
+            required="false"
+        >
+            <option value="none">JNO</option>
+            <option value="link">COM_JEM_PDF_MAP_LINK_ONLY</option>
+        </field>
+        <field name="pdf_annual_paper_size" type="list"
+            label="COM_JEM_PDF_ANNUAL_PAPER_SIZE"
+            description="COM_JEM_PDF_ANNUAL_PAPER_SIZE_DESC"
+            class="inputbox"
+            default="A4"
+            required="false"
+        >
+            <option value="A4">A4</option>
+            <option value="A3">A3</option>
+            <option value="A2">A2</option>
+            <option value="A1">A1</option>
+            <option value="LETTER">Letter</option>
+        </field>
+        <field name="pdf_annual_orientation" type="list"
+            label="COM_JEM_PDF_ANNUAL_ORIENTATION"
+            description="COM_JEM_PDF_ANNUAL_ORIENTATION_DESC"
+            class="inputbox"
+            default="L"
+            required="false"
+        >
+            <option value="P">COM_JEM_PDF_ORIENTATION_PORTRAIT</option>
+            <option value="L">COM_JEM_PDF_ORIENTATION_LANDSCAPE</option>
+        </field>
+        <field name="pdf_annual_month_matrix" type="list"
+            label="COM_JEM_PDF_ANNUAL_MONTH_MATRIX"
+            description="COM_JEM_PDF_ANNUAL_MONTH_MATRIX_DESC"
+            class="inputbox"
+            default="auto"
+            required="false"
+        >
+            <option value="auto">COM_JEM_PDF_AUTO</option>
+            <option value="1x12">1 x 12</option>
+            <option value="2x6">2 x 6</option>
+            <option value="3x4">3 x 4</option>
+            <option value="4x3">4 x 3</option>
+            <option value="6x2">6 x 2</option>
+            <option value="12x1">12 x 1</option>
+        </field>
+        <field name="pdf_annual_vertical_align" type="list"
+            label="COM_JEM_PDF_ANNUAL_VERTICAL_ALIGN"
+            description="COM_JEM_PDF_ANNUAL_VERTICAL_ALIGN_DESC"
+            class="inputbox"
+            default="top"
+            required="false"
+        >
+            <option value="top">COM_JEM_PDF_VERTICAL_ALIGN_TOP</option>
+            <option value="middle">COM_JEM_PDF_VERTICAL_ALIGN_CENTER</option>
+            <option value="bottom">COM_JEM_PDF_VERTICAL_ALIGN_BOTTOM</option>
+        </field>
+        <field name="pdf_annual_show_day_types_legend" type="radio"
+            label="COM_JEM_PDF_ANNUAL_SHOW_DAY_TYPES_LEGEND"
+            description="COM_JEM_PDF_ANNUAL_SHOW_DAY_TYPES_LEGEND_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_show_categories_legend" type="radio"
+            label="COM_JEM_PDF_ANNUAL_SHOW_CATEGORIES_LEGEND"
+            description="COM_JEM_PDF_ANNUAL_SHOW_CATEGORIES_LEGEND_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_event_titles" type="list"
+            label="COM_JEM_PDF_ANNUAL_EVENT_TITLES"
+            description="COM_JEM_PDF_ANNUAL_EVENT_TITLES_DESC"
+            class="inputbox"
+            default="auto"
+            required="false"
+        >
+            <option value="auto">COM_JEM_PDF_AUTO</option>
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="pdf_annual_event_limit" type="number"
+            label="COM_JEM_PDF_ANNUAL_EVENT_LIMIT"
+            description="COM_JEM_PDF_ANNUAL_EVENT_LIMIT_DESC"
+            class="inputbox"
+            default="6"
+            min="1"
+            max="12"
+            step="1"
+            required="false"
+        />
+        <field name="pdf_annual_column_gap" type="number"
+            label="COM_JEM_PDF_ANNUAL_COLUMN_GAP"
+            description="COM_JEM_PDF_ANNUAL_COLUMN_GAP_DESC"
+            class="inputbox"
+            default="1"
+            min="0"
+            max="10"
+            step="0.5"
+            required="false"
+        />
+        <field name="pdf_annual_row_gap" type="number"
+            label="COM_JEM_PDF_ANNUAL_ROW_GAP"
+            description="COM_JEM_PDF_ANNUAL_ROW_GAP_DESC"
+            class="inputbox"
+            default="1"
+            min="0"
+            max="10"
+            step="0.5"
             required="false"
         />
         <field name="gddisabled" type="radio"
@@ -840,6 +1500,25 @@
     </fieldset>
 
     <fields name="globalattribs">
+        <fieldset name="calendar_special_days"
+                  label="COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS"
+        >
+            <field name="calendar_special_days_enabled" type="radio"
+                label="COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS_ENABLE"
+                description="COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS_ENABLE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="calendar_special_day_types" type="hidden"
+                filter="raw"
+                default="Weekend | #d1d5db | 0&#10;Public holiday | #e5e7eb | 0"
+            />
+        </fieldset>
+
         <fieldset name="basic"
                   label="COM_JEM_EVENT_ATTRIBS_FIELDSET_LABEL"
         >
@@ -889,6 +1568,9 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="spacer3" type="spacer"
+                   hr="true"
+            />
             <field name="event_show_contact" type="radio"
                 label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESC"
@@ -907,6 +1589,55 @@
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
             </field>
+            <field name="event_show_contact_category" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_CATEGORY_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_CATEGORY_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option    value="1">JYES</option>
+                <option    value="0">JNO</option>
+            </field>
+
+            <field name="contact_fields" type="list"
+                   label="COM_JEM_CONTACT_FIELDS_LABEL"
+                   description="COM_JEM_CONTACT_FIELDS_DESC"
+                   default="position,website,country"
+                   multiple="true"
+                   size="6"
+            >
+                <option value="none">COM_JEM_CONTACT_NONE</option>
+                <option value="position">COM_JEM_CONTACT_FIELD_POSITION</option>
+                <option value="email">COM_JEM_CONTACT_FIELD_EMAIL</option>
+                <option value="address">COM_JEM_CONTACT_FIELD_ADDRESS</option>
+                <option value="phone">COM_JEM_CONTACT_FIELD_PHONE</option>
+                <option value="mobile">COM_JEM_CONTACT_FIELD_MOBILE</option>
+                <option value="website">COM_JEM_CONTACT_FIELD_WEB</option>
+                <option value="city">COM_JEM_CONTACT_FIELD_CITY</option>
+                <option value="state">COM_JEM_CONTACT_FIELD_STATE</option>
+                <option value="country">COM_JEM_CONTACT_FIELD_COUNTRY</option>
+            </field>
+            <field name="event_show_contact_description" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_DESCRIPTION_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option    value="1">JYES</option>
+                <option    value="0">JNO</option>
+            </field>
+            <field name="event_show_contact_link" type="radio"
+                   label="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LINK_LABEL"
+                   description="COM_JEM_EVENT_FIELD_SHOW_CONTACT_LINK_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+                   default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="spacer4" type="spacer"
+                   hr="true"
+            />
             <field name="event_show_hits" type="radio"
                 label="COM_JEM_EVENT_FIELD_SHOW_HITS_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_HITS_DESC"
@@ -915,6 +1646,15 @@
             >
                 <option    value="1">JYES</option>
                 <option    value="0">JNO</option>
+            </field>
+            <field name="event_show_availability" type="radio"
+                label="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_AVAILABILITY_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
             <field name="event_show_print_icon" type="radio"
                 label="JGLOBAL_SHOW_PRINT_ICON_LABEL"
@@ -960,6 +1700,191 @@
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
+            </field>
+        </fieldset>
+
+        <fieldset name="associatedarticles" label="COM_JEM_ASSOCIATED_ARTICLES">
+            <field name="event_use_associated_article" type="radio"
+                label="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_LABEL"
+                description="COM_JEM_EVENT_FIELD_USE_ASSOCIATED_ARTICLE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_associated_article_title_format" type="text"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_TITLE_FORMAT_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_TITLE_FORMAT_DESC"
+                class="inputbox form-control w-auto"
+                default="{title}"
+                showon="event_use_associated_article:1"
+            />
+            <field name="event_article_content_create_action" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_DESC"
+                class="inputbox form-select w-auto"
+                default="copy_description"
+                showon="event_use_associated_article:1"
+            >
+                <option value="copy_description">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_COPY_DESCRIPTION</option>
+                <option value="empty_notify">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_EMPTY_NOTIFY</option>
+                <option value="empty_edit">COM_JEM_EVENT_ARTICLE_CONTENT_CREATE_ACTION_EMPTY_EDIT</option>
+            </field>
+            <field name="event_associated_article_access" type="accesslevel"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_ACCESS_SOURCE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_ACCESS_SOURCE_DESC"
+                class="inputbox form-select"
+                default="0"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">COM_JEM_ARTICLE_ACCESS_SOURCE_CATEGORY</option>
+            </field>
+            <field name="event_associated_article_image_mode" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_IMAGE_MODE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_IMAGE_MODE_DESC"
+                class="inputbox form-select w-auto"
+                default="intro"
+                showon="event_use_associated_article:1"
+            >
+                <option value="none">COM_JEM_ARTICLE_IMAGE_MODE_NONE</option>
+                <option value="intro">COM_JEM_ARTICLE_IMAGE_MODE_INTRO</option>
+                <option value="full">COM_JEM_ARTICLE_IMAGE_MODE_FULL</option>
+                <option value="both">COM_JEM_ARTICLE_IMAGE_MODE_BOTH</option>
+            </field>
+            <field name="event_article_content_change_action" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_DESC"
+                class="inputbox form-select w-auto"
+                default="ask"
+                showon="event_use_associated_article:1"
+            >
+                <option value="none">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_NONE</option>
+                <option value="ask">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_ASK</option>
+                <option value="auto">COM_JEM_EVENT_ARTICLE_CONTENT_CHANGE_ACTION_AUTO</option>
+            </field>
+            <field name="event_show_more_information" type="list"
+                label="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_MORE_INFORMATION_DESC"
+                class="inputbox form-select w-auto"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">JNO</option>
+                <option value="1">COM_JEM_MORE_INFORMATION_LINK</option>
+                <option value="2">COM_JEM_MORE_INFORMATION_BUTTON</option>
+            </field>
+            <field name="event_more_information_text" type="text"
+                label="COM_JEM_EVENT_FIELD_MORE_INFORMATION_TEXT_LABEL"
+                description="COM_JEM_EVENT_FIELD_MORE_INFORMATION_TEXT_DESC"
+                class="inputbox form-control w-auto"
+                default=""
+                hint="COM_JEM_EVENT_MORE_INFORMATION"
+                showon="event_show_more_information:1,2"
+            />
+            <field name="event_associated_article_date_source" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_DATE_SOURCE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_DATE_SOURCE_DESC"
+                class="inputbox form-select w-auto"
+                default="0"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">COM_JEM_ARTICLE_DATE_SOURCE_CREATED</option>
+                <option value="1">COM_JEM_ARTICLE_DATE_SOURCE_EVENT_START</option>
+            </field>
+            <field name="event_associated_article_recurrence_mode" type="list"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_MODE_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_MODE_DESC"
+                class="inputbox form-select w-auto"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="0">COM_JEM_ARTICLE_RECURRENCE_FIRST_ONLY</option>
+                <option value="1">COM_JEM_ARTICLE_RECURRENCE_SHARE_SERIES</option>
+                <option value="2">COM_JEM_ARTICLE_RECURRENCE_EACH_OCCURRENCE</option>
+            </field>
+            <field name="event_associated_article_recurrence_title_format" type="text"
+                label="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_TITLE_FORMAT_LABEL"
+                description="COM_JEM_EVENT_FIELD_ARTICLE_RECURRENCE_TITLE_FORMAT_DESC"
+                class="inputbox form-control w-auto"
+                default="{title} {##}"
+                showon="event_use_associated_article:1[AND]event_associated_article_recurrence_mode:2"
+            />
+            <field name="event_article_content_fields_note" type="spacer"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_LABEL"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_FIELDS_DESC"
+                showon="event_use_associated_article:1"
+            />
+            <field name="event_article_content_use_title" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_TITLE"
+                description="COM_JEM_EVENT_ARTICLE_USE_TITLE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_alias" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_ALIAS"
+                description="COM_JEM_EVENT_ARTICLE_USE_ALIAS_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_introtext" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_INTROTEXT"
+                description="COM_JEM_EVENT_ARTICLE_USE_INTROTEXT_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_fulltext" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_FULLTEXT"
+                description="COM_JEM_EVENT_ARTICLE_USE_FULLTEXT_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_metadata" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_METADATA"
+                description="COM_JEM_EVENT_ARTICLE_USE_METADATA_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_use_image" type="radio"
+                label="COM_JEM_EVENT_ARTICLE_USE_IMAGE"
+                description="COM_JEM_EVENT_ARTICLE_USE_IMAGE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                showon="event_use_associated_article:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_article_content_language_fallback" type="list"
+                label="COM_JEM_EVENT_ARTICLE_CONTENT_LANGUAGE_FALLBACK"
+                description="COM_JEM_EVENT_ARTICLE_CONTENT_LANGUAGE_FALLBACK_DESC"
+                class="inputbox form-select w-auto"
+                default="article"
+                showon="event_use_associated_article:1"
+            >
+                <option value="blank">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_BLANK</option>
+                <option value="article">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_ARTICLE</option>
+                <option value="event">COM_JEM_EVENT_ARTICLE_CONTENT_FALLBACK_EVENT</option>
             </field>
         </fieldset>
 
@@ -1076,11 +2001,21 @@
                 maxlength="10"
                 required="false"
             />
+            <field name="backend_show_order_numbers" type="radio"
+                label="COM_JEM_SETTINGS_FIELD_SHOW_ORDER_NUMBERS"
+                description="COM_JEM_SETTINGS_FIELD_SHOW_ORDER_NUMBERS_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="loglevel" type="list"
                 label="COM_JEM_SETTINGS_FIELD_LOGLEVEL"
                 description="COM_JEM_SETTINGS_FIELD_LOGLEVEL_DESC"
                 class="inputbox"
-                default="0"
+                default="2"
                 required="false"
             >
                 <option value="0">COM_JEM_LOGLEVEL_OFF</option>
@@ -1089,6 +2024,15 @@
                 <option value="3">COM_JEM_LOGLEVEL_INFO</option>
                 <option value="4">COM_JEM_LOGLEVEL_DEBUG</option>
                 <option value="5">COM_JEM_LOGLEVEL_ALL</option>
+            </field>
+            <field name="actionlog_enabled" type="radio"
+                label="COM_JEM_SETTINGS_FIELD_ACTIONLOG_ENABLED"
+                description="COM_JEM_SETTINGS_FIELD_ACTIONLOG_ENABLED_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
             <field name="global_googleapi" type="text"
                 label="COM_JEM_SETTINGS_FIELD_GOOGLEAPIKEY"
@@ -1142,6 +2086,18 @@
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
+            </field>
+            <field name="global_venue_custom_fields_position" type="list"
+                label="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_VENUE_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
             </field>
 
             <field name="global_show_detlinkvenue" type="radio"
@@ -1202,6 +2158,48 @@
         <fieldset name="evevents"
                   label="COM_JEM_EVENTS"
         >
+            <field name="event_details_layout" type="list"
+                label="COM_JEM_EVENT_DETAILS_LAYOUT"
+                description="COM_JEM_EVENT_DETAILS_LAYOUT_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_EVENT_DETAILS_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_DETAILS_LAYOUT_COMPACT</option>
+            </field>
+            <field name="event_detail_image_layout" type="list"
+                label="COM_JEM_EVENT_DETAIL_IMAGE_LAYOUT"
+                description="COM_JEM_EVENT_DETAIL_IMAGE_LAYOUT_DESC"
+                class="inputbox"
+                default="right"
+                required="false"
+            >
+                <option value="right">COM_JEM_EVENT_FULLIMAGE_LAYOUT_RIGHT</option>
+                <option value="header">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HEADER</option>
+                <option value="poster">COM_JEM_EVENT_FULLIMAGE_LAYOUT_POSTER</option>
+                <option value="hidden">COM_JEM_EVENT_FULLIMAGE_LAYOUT_HIDDEN</option>
+            </field>
+            <field name="event_detail_image_header_display" type="list"
+                label="COM_JEM_EVENT_DETAIL_IMAGE_HEADER_DISPLAY"
+                description="COM_JEM_EVENT_DETAIL_IMAGE_HEADER_DISPLAY_DESC"
+                class="inputbox"
+                default="fill"
+                required="false"
+            >
+                <option value="fill">COM_JEM_EVENT_DETAIL_IMAGE_HEADER_DISPLAY_FILL</option>
+                <option value="full">COM_JEM_EVENT_DETAIL_IMAGE_HEADER_DISPLAY_FULL</option>
+            </field>
+            <field name="event_detail_image_header_max_height" type="number"
+                label="COM_JEM_EVENT_DETAIL_IMAGE_HEADER_MAX_HEIGHT"
+                description="COM_JEM_EVENT_DETAIL_IMAGE_HEADER_MAX_HEIGHT_DESC"
+                class="inputbox"
+                default="420"
+                min="0"
+                max="2000"
+                step="10"
+                required="false"
+            />
             <field name="event_show_detailstitle" type="radio"
                 label="COM_JEM_DISPLAY_EVENT_TITLE"
                 description="COM_JEM_DISPLAY_EVENT_TITLE_DESC"
@@ -1222,6 +2220,28 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_show_publish_state" type="radio"
+                label="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_PUBLISH_STATE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_custom_fields_position" type="list"
+                label="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION"
+                description="COM_JEM_EVENT_CUSTOM_FIELDS_POSITION_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_CUSTOM_FIELDS_POSITION_DETAILS</option>
+                <option value="before_description">COM_JEM_CUSTOM_FIELDS_POSITION_BEFORE_DESCRIPTION</option>
+                <option value="after_description">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_DESCRIPTION</option>
+                <option value="after_links">COM_JEM_CUSTOM_FIELDS_POSITION_AFTER_LINKS</option>
+            </field>
             <field name="show_date_in_title" type="radio"
                    class="btn-group btn-group-yesno"
                    default="0"
@@ -1236,6 +2256,17 @@
         <fieldset name="evvenues"
                   label="COM_JEM_VENUES"
         >
+            <field name="event_venue_layout" type="list"
+                label="COM_JEM_EVENT_VENUE_LAYOUT"
+                description="COM_JEM_EVENT_VENUE_LAYOUT_DESC"
+                class="inputbox"
+                default="details"
+                required="false"
+            >
+                <option value="details">COM_JEM_EVENT_VENUE_LAYOUT_DETAILS</option>
+                <option value="compact">COM_JEM_EVENT_VENUE_LAYOUT_COMPACT</option>
+            </field>
+
             <field name="event_show_venue" type="radio"
                 label="COM_JEM_EVENT_DISPLAY_VENUE"
                 description="COM_JEM_EVENT_DISPLAY_VENUE_DESC"
@@ -1400,6 +2431,55 @@
             </field>
         </fieldset>
 
+        <fieldset name="evregistration" label="COM_JEM_SETTINGS_EVENT_LINKS">
+            <field name="event_show_online_meeting" type="radio"
+                    label="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_LABEL"
+                    description="COM_JEM_EVENT_FIELD_SHOW_ONLINE_MEETING_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_ics_description" type="radio"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_ICS_DESCRIPTION_DESC"
+                    class="inputbox btn-group btn-group-yesno"
+                    default="1"
+                    showon="event_online_meeting_ics:1"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="event_online_meeting_default_label" type="text"
+                    label="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_LABEL"
+                    description="COM_JEM_EVENT_FIELD_ONLINE_MEETING_DEFAULT_LABEL_DESC"
+                    class="inputbox form-control w-auto"
+                    default=""
+                    hint="COM_JEM_JOIN_ONLINE"
+                    showon="event_show_online_meeting:1"
+            />
+            <field name="allowed_link_extensions" type="text"
+                    label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_LABEL"
+                    description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_EXT_DESC"
+                    default="jpg,jpeg,png,gif,webp,svg"
+            />
+            <field name="allowed_link_schemes" type="text"
+                    label="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_SCHEMES_LABEL"
+                    description="COM_JEM_SETTINGS_EVENT_LINKS_ALLOWED_SCHEMES_DESC"
+                    default="http,https,mailto,tel"
+            />
+        </fieldset>
+
         <field name="global_show_ownedvenuesonly" type="radio"
             label="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY"
             description="COM_JEM_SETTINGS_FIELD_SHOW_OWNEDVENUESONLY_DESC"
@@ -1546,7 +2626,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_backend_customfile" type="text"
+            <field name="css_backend_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE"
                 class="inputbox"
@@ -1554,6 +2634,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer1" hr="true" />
+            <field name="css_backend_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_backend_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer1b" hr="true" />
             <field name="css_calendar_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
@@ -1563,7 +2660,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_calendar_customfile" type="text"
+            <field name="css_calendar_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE"
                 class="inputbox"
@@ -1571,6 +2668,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer2" hr="true" />
+            <field name="css_calendar_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_calendar_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer2b" hr="true" />
             <field name="css_colorpicker_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
@@ -1580,7 +2694,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_colorpicker_customfile" type="text"
+            <field name="css_colorpicker_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
                 class="inputbox"
@@ -1588,6 +2702,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer3" hr="true" />
+            <field name="css_colorpicker_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_colorpicker_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer3b" hr="true" />
             <field name="css_geostyle_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM"
@@ -1597,7 +2728,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_geostyle_customfile" type="text"
+            <field name="css_geostyle_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE"
                 class="inputbox"
@@ -1605,6 +2736,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer4" hr="true" />
+            <field name="css_geostyle_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_geostyle_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer4b" hr="true" />
             <field name="css_googlemap_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_USECUSTOM"
@@ -1614,7 +2762,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_googlemap_customfile" type="text"
+            <field name="css_googlemap_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE"
                 class="inputbox"
@@ -1622,6 +2770,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer5" hr="true" />
+            <field name="css_googlemap_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_googlemap_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_GOOGLEMAP_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer5b" hr="true" />
             <field name="css_jem_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_JEM_USECUSTOM"
@@ -1631,7 +2796,7 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_jem_customfile" type="text"
+            <field name="css_jem_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE"
                 class="inputbox"
@@ -1639,6 +2804,23 @@
                 required="false"
             />
             <field type="spacer" name="spacer6" hr="true" />
+            <field name="css_jem_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_JEM_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_JEM_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_jem_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_JEM_RESPONSIVE_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_JEM_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer6b" hr="true" />
             <field name="css_print_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_USECUSTOM"
@@ -1648,8 +2830,25 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="css_print_customfile" type="text"
+            <field name="css_print_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE"
+                class="inputbox"
+                size="50"
+                required="false"
+            />
+            <field type="spacer" name="spacer7" hr="true" />
+            <field name="css_print_responsive_usecustom" type="radio"
+                description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_RESPONSIVE_USECUSTOM_DESC"
+                label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_RESPONSIVE_USECUSTOM"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="css_print_responsive_customfile" type="cssfile"
+                description="COM_JEM_SETTINGS_FIELD_CSS_PRINT_RESPONSIVE_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_PRINT_CUSTOMFILE"
                 class="inputbox"
                 size="50"
@@ -1660,7 +2859,7 @@
             <field
                     name="css_color_bg_filter"
                     type="color"
-                    default=""
+                    default="#ffa500"
                     size="8"
                     class="form-control"
                     label="COM_JEM_SETTINGS_FIELD_CSS_COLOR_BG_FILTER"

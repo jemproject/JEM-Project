@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -17,8 +19,12 @@ use Joomla\CMS\Factory;
 <div id="jem" class="jlcalendar jem_calendar<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
         <?php
-        $btn_params = array('print_link' => $this->print_link, 'ical_link' => $this->ical_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'ical_link' => $this->ical_link, 'archive_link' => $this->archive_link);
+        if (!$this->params->get('show_archived_events', 0)) {
+            $btn_params['show'] = array('archive');
+        }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        echo JemCalendarAgendaHelper::renderToggle();
         ?>
     </div>
 
@@ -36,13 +42,34 @@ use Joomla\CMS\Factory;
     <?php endif; ?>
 
     <?php
+    if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
+        $agendaStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
+        $agendaEndDate = date('Y-m-t', strtotime($agendaStartDate));
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, date('F Y', strtotime($agendaStartDate)));
+        if ($this->params->get('showfootertext')) :
+            echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
+        endif;
+        echo JemOutput::footer();
+        echo '</div>';
+        return;
+    endif;
+    ?>
+
+    <?php
     $countcatevents = array ();
+    $countvenueevents = array();
     $countperday = array();
     $limit = $this->params->get('daylimit', 10);
     $evbg_usecatcolor = $this->params->get('eventbg_usecatcolor', 0);
+    $eventbackgroundcolor = $this->params->get('eventbackgroundcolor', '#FFF8E1');
     $recurrenceIconRender = $this->params->get('recurrenceIconRender', 0);
     $showtime = $this->settings->get('global_show_timedetails', 1);
     $categoryColorMarker = $this->params->get('categoryColorMarker', 0);
+    $displayLegend = (int)$this->params->get('displayLegend', 1);
+    $calendarStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
+    $calendarEndDate = date('Y-m-t', strtotime($calendarStartDate));
+    $specialDaysLegendHtml = JemHelper::renderCalendarSpecialDayLegend($calendarStartDate, $calendarEndDate, $this->params);
+    JemHelper::applyCalendarSpecialDayAttributes($this->cal, $calendarStartDate, $calendarEndDate);
 
     foreach ($this->rows as $row) :
         if (!JemHelper::isValidDate($row->dates)) {
@@ -57,21 +84,46 @@ use Joomla\CMS\Factory;
         }
 
         //get event date
-        $year = date('Y', strtotime($row->dates));
-        $month = date('m', strtotime($row->dates));
-        $day = date('d', strtotime($row->dates));
+        $timestamp = strtotime($row->dates);
+        $year  = date('Y', $timestamp);
+        $month = date('m', $timestamp);
+        $day   = date('d', $timestamp);
+        $dateKey = $year.$month.$day;
+        $isLegendEvent = ((int) $year === (int) $this->calendarYear)
+            && ((int) $month === (int) $this->calendarMonth)
+            && !empty($row->user_has_access_event);
 
-        $countperday[$year.$month.$day]++;
-        if ($countperday[$year.$month.$day] == $limit+1) {
-            $var1a = Route::_('index.php?option=com_jem&view=day&id='.$year.$month.$day . $this->param_topcat);
-            $var1b = Text::_('COM_JEM_AND_MORE');
-            $var1c = "<a href=\"".$var1a."\">".$var1b."</a>";
-            $id = 'eventandmore';
+        if ($isLegendEvent && (!isset($row->multi) || ($row->multi == 'first'))) {
+            foreach ((array) $row->categories as $category) {
+                if (!array_key_exists($category->id, $countcatevents)) {
+                    $countcatevents[$category->id] = 1;
+                } else {
+                    $countcatevents[$category->id]++;
+                }
+            }
 
-            $this->cal->setEventContent($year, $month, $day, $var1c, null, $id);
-            continue;
-        } elseif ($countperday[$year.$month.$day] > $limit+1) {
-            continue;
+            $venueId = (int) $row->locid;
+            if ($venueId > 0) {
+                if (!array_key_exists($venueId, $countvenueevents)) {
+                    $countvenueevents[$venueId] = 1;
+                } else {
+                    $countvenueevents[$venueId]++;
+                }
+            }
+        }
+
+        $countperday[$dateKey] = ($countperday[$dateKey] ?? 0) + 1;
+
+        if ($countperday[$dateKey] === $limit + 1) {
+             $url  = Route::_('index.php?option=com_jem&view=day&id=' . $year.$month.$day . $this->param_topcat);
+             $text = Text::_('COM_JEM_AND_MORE');
+             $link = '<a href="' . $url . '">' . $text . '</a>';
+
+             $this->cal->setEventContent($year, $month, $day, $link, null, 'eventandmore');
+             continue;
+
+        } elseif ($countperday[$dateKey] > $limit + 1) {
+             continue;
         }
 
         //for time in tooltip
@@ -96,32 +148,36 @@ use Joomla\CMS\Factory;
         $eventid = $this->escape($row->id);
 
         //Contact
-        $contactname = '';
-        if($row->contactid) {
+        $contact = '';
+
+        if (JemHelper::isContactComponentEnabled() && $row->contactid) {
             $db = Factory::getContainer()->get('DatabaseDriver');
-            $query = $db->getQuery(true);
-            $query->select('name');
-            $query->from('#__contact_details');
-            $query->where(array('id='.(int)$row->contactid));
+            $ids = array_map('intval', explode(',', $row->contactid));
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('name'))
+                ->from($db->quoteName('#__contact_details'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+
             $db->setQuery($query);
-            $contactname = $db->loadResult();
-        }
-        if ($contactname) {
-            $contact  = '<div class="contact"><span class="text-label">'.Text::_('COM_JEM_CONTACT').': </span>';
-            $contact .=     !empty($contactname) ? $this->escape($contactname) : '-';
-            $contact .= '</div>';
-        } else {
-            $contact = '';
+            $contactNames = $db->loadColumn();
+
+            if ($contactNames) {
+                $contact  = '<div class="contact"><span class="text-label">' . Text::_('COM_JEM_CONTACTS') . ': </span>';
+                $contact .= $this->escape(implode(', ', $contactNames));
+                $contact .= '</div>';
+            }
         }
 
         //initialize variables
         $multicatname = '';
+        $color = '';
         $colorpic = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
         $content = '';
-        $contentend = '';
-        $catcolor = array();
+        $eventFilterClasses = array();
+        $venueId = (int) $row->locid;
 
         //walk through categories assigned to an event
         $catcolor = array();
@@ -130,9 +186,8 @@ use Joomla\CMS\Factory;
             // Currently only one id possible...so simply just pick one up...
             $detaillink = Route::_(JemHelperRoute::getEventRoute($row->slug));
 
-            // Wrap a div for each category around the event for show/hide toggler
-            $content    .= '<div id="catz" class="cat'.$category->id.'">';
-            $contentend .= '</div>';
+            // Collect category classes for the show/hide toggler.
+            $eventFilterClasses['cat' . (int) $category->id] = 'cat' . (int) $category->id;
 
             // Attach category color in front of the catname
             if ($category->color) {
@@ -151,14 +206,11 @@ use Joomla\CMS\Factory;
                 $catcolor[$category->color] = $category->color;
             }
 
-            // Count category occurrence
-            if (!isset($row->multi) || ($row->multi == 'first')) {
-                if (!array_key_exists($category->id, $countcatevents)) {
-                    $countcatevents[$category->id] = 1;
-                } else {
-                    $countcatevents[$category->id]++;
-                }
-            }
+        }
+
+        if ($venueId > 0) {
+            $eventFilterClasses['venue' . $venueId] = 'venue' . $venueId;
+
         }
 
         // Build color output depending on $categoryColorMarker
@@ -348,12 +400,31 @@ use Joomla\CMS\Factory;
             $featuredstyle="border-color:" . $featuredbordercolor;
         }
 
+        $venueColor = !empty($row->l_color) ? $row->l_color : (!empty($row->venuecolor) ? $row->venuecolor : '');
+        $venueColorBar = '';
+        if ($categoryColorMarker && $venueColor) {
+            $venueColorBar  = '<div class="eventcontentbottom">';
+            $venueColorBar .= '<div class="colorpicbarbottom" style="background:' . $this->escape($venueColor) . ';"></div>';
+            $venueColorBar .= '</div>';
+        }
+
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
+        $content .= '<div class="event-filter ' . implode(' ', $eventFilterClasses) . '" data-categories="' . $this->escape(implode(' ', array_filter($eventFilterClasses, static function ($class) { return strpos($class, 'cat') === 0; }))) . '" data-venue="' . ($venueId > 0 ? 'venue' . $venueId : '') . '">';
         $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 ps-0 pe-0 ' : '') . '" style="' . $featuredstyle;
         $style = '';
+        $eventBackgroundColor = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
-            $style = '; background-color:' . array_pop($catcolor);
+            $eventBackgroundColor = reset($catcolor);
+        } elseif ($eventbackgroundcolor) {
+            $eventBackgroundColor = $eventbackgroundcolor;
+        }
+        if ($eventBackgroundColor) {
+            $style = '; background-color:' . $eventBackgroundColor;
+            $contrastColor = JemHelper::getContrastTextColor($eventBackgroundColor);
+            if ($contrastColor) {
+                $style .= '; color:' . $contrastColor;
+            }
         }
         $content .= $style . '" onclick="location.href=\'' . $detaillink . '\'">';
         $divClass = $categoryColorMarker ? 'eventcontenttextbar' : 'eventcontenttextblock';
@@ -362,9 +433,10 @@ use Joomla\CMS\Factory;
             $content .= $color;
         }
 
+        $content .= '<div class="eventcontenttextbody">';
         $content .= $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $eventaccess . $contentend . '</div></div>';
+        $content .= $eventaccess . '</div>' . $venueColorBar . '</div></div></div>';
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;
@@ -375,8 +447,13 @@ use Joomla\CMS\Factory;
         $this->cal->enableNewEventLinks($html);
     }
 
-    $displayLegend = (int)$this->params->get('displayLegend', 1);
-    if ($displayLegend == 2) : ?>
+    $this->calendarLegendDisplayLegend = $displayLegend;
+    $this->calendarLegendCountCatEvents = $countcatevents;
+    $this->calendarLegendCountVenueEvents = $countvenueevents;
+    $this->calendarLegendCategoryColorMarker = $categoryColorMarker;
+    $this->calendarLegendEventUseCategoryBackground = !empty($evbg_usecatcolor);
+
+    if (in_array($displayLegend, array(2, 4, 6), true)) : ?>
     <!-- Calendar legend above -->
     <div id="jlcalendarlegend">
 
@@ -393,46 +470,8 @@ use Joomla\CMS\Factory;
         </div>
         <div class="clr"></div>
 
-    <!-- Calendar Legend -->
-        <div class="calendarLegends">
-            <?php
-            if ($this->params->get('displayLegend')) {
-
-                ##############
-                ## FOR EACH ##
-                ##############
-
-                $counter = array();
-
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
-
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
-
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <div class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-                                        echo $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                                    ?>
-                                </div>
-                            <?php
-                            }
-                        }
-                    }
-                }
-            }
-            ?>
-        </div>
+        <?php include __DIR__ . '/default_legend.php'; ?>
+        <?php echo $specialDaysLegendHtml; ?>
     </div>
     <?php endif; ?>
 
@@ -441,7 +480,7 @@ use Joomla\CMS\Factory;
     echo $this->cal->showMonth();
     ?>
 
-    <?php if (($displayLegend == 1) || ($displayLegend == 0)) : ?>
+    <?php if (in_array($displayLegend, array(0, 1, 3, 5), true)) : ?>
     <!-- Calendar legend below -->
     <div id="jlcalendarlegend">
 
@@ -458,54 +497,18 @@ use Joomla\CMS\Factory;
         </div>
         <div class="clr"></div>
 
-    <!-- Calendar Legend -->
-        <div class="calendarLegends mt-4">
-            <?php
-            if ($displayLegend == 1) {
-
-                ##############
-                ## FOR EACH ##
-                ##############
-
-                $counter = array();
-
-                # walk through events
-                foreach ($this->rows as $row) {
-                    foreach ($row->categories as $cat) {
-
-                        # sort out dupes for the counter (catid-legend)
-                        if (!in_array($cat->id, $counter)) {
-                            # add cat id to cat counter
-                            $counter[] = $cat->id;
-
-                            # build legend
-                            if (array_key_exists($cat->id, $countcatevents)) {
-                            ?>
-                                <div class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
-                                    <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-
-                                        $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                                        $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                                        echo '<span class="' . $textClass . '">' . $text . '</span>';
-                                        ?>
-                                </div>
-                            <?php
-                            }
-                        }
-                    }
-                }
-            }
-            ?>
-        </div>
+        <?php include __DIR__ . '/default_legend.php'; ?>
+        <?php echo $specialDaysLegendHtml; ?>
     </div>
     <?php endif; ?>
 
     <div class="clr"></div>
 
+    <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer(); ?>
     </div>

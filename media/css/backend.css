@@ -10,6 +10,10 @@
     background-image: url(../images/icon-48-archive.svg);
 }
 
+.icon-48-attachments {
+    background-image: url(../images/icon-48-attachments.svg);
+}
+
 .icon-48-elcategories {
     background-image: url(../images/icon-48-categories.svg);
 }
@@ -127,6 +131,302 @@ input#clear:focus {
     display: inline-block;
     margin-bottom: 6px;
     width: calc(100% - 140px);
+}
+
+.jem-stylesheet-table {
+    min-width: 760px;
+}
+
+.jem-cssmanager-table {
+    min-width: 1180px;
+    width: 100%;
+}
+
+.jem-stylesheet-table th,
+.jem-stylesheet-table td,
+.jem-cssmanager-table th,
+.jem-cssmanager-table td {
+    vertical-align: middle !important;
+}
+
+.jem-stylesheet-header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.jem-stylesheet-header p {
+    margin: 0;
+}
+
+.jem-stylesheet-table select {
+    min-width: 180px;
+    width: 100%;
+}
+
+.jem-stylesheet-table td:nth-child(4) {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 82%, var(--body-color, #1f2933) 6%);
+}
+
+.jem-stylesheet-table td:nth-child(4) select {
+    box-sizing: border-box;
+    min-height: 2.45rem;
+}
+
+.jem-stylesheet-table td:nth-child(4) select:disabled {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 76%, var(--body-color, #1f2933) 9%);
+    color: color-mix(in srgb, var(--body-color, #1f2933) 48%, var(--body-bg, #fff) 52%);
+    opacity: 1;
+}
+
+.jem-stylesheet-table .btn-group,
+.jem-stylesheet-table .controls,
+.jem-stylesheet-table .control-group {
+    margin-bottom: 0;
+}
+
+.jem-stylesheet-table .btn-group {
+    display: inline-flex;
+    vertical-align: middle;
+}
+
+.jem-stylesheet-table .btn,
+.jem-cssmanager-table .btn {
+    margin: 2px 4px 2px 0;
+    white-space: nowrap;
+}
+
+.jem-stylesheet-table .badge,
+.jem-cssmanager-table .badge {
+    white-space: nowrap;
+}
+
+.jem-copy-custom-btn {
+    align-items: center;
+    display: inline-flex !important;
+    gap: .55rem;
+    justify-content: space-between;
+}
+
+.jem-copy-custom-arrow {
+    border-right: 2px solid currentColor;
+    border-top: 2px solid currentColor;
+    display: inline-block;
+    flex: 0 0 auto;
+    height: .45rem;
+    transform: rotate(45deg);
+    width: .45rem;
+}
+
+.jem-stylesheet-table input[disabled] + label,
+.jem-stylesheet-table input[disabled] ~ label {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.jem-cssmanager-empty-row td {
+    height: 38px;
+}
+
+.jem-cssmanager-header {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.jem-cssmanager-header p {
+    margin: 0;
+}
+
+.jem-cssmanager-table th:nth-child(5),
+.jem-cssmanager-table td:nth-child(5) {
+    border-left: 3px solid color-mix(in srgb, var(--body-color, #1f2933) 28%, transparent);
+}
+
+.jem-cssmanager-table th:nth-child(1),
+.jem-cssmanager-table td:nth-child(1),
+.jem-cssmanager-table th:nth-child(5),
+.jem-cssmanager-table td:nth-child(5) {
+    width: auto;
+}
+
+.jem-cssmanager-table th:nth-child(2),
+.jem-cssmanager-table th:nth-child(3),
+.jem-cssmanager-table th:nth-child(4),
+.jem-cssmanager-table th:nth-child(6),
+.jem-cssmanager-table th:nth-child(7),
+.jem-cssmanager-table th:nth-child(8),
+.jem-cssmanager-table th:nth-child(9),
+.jem-cssmanager-table th:nth-child(10),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(2),
+.jem-cssmanager-table td:nth-child(3),
+.jem-cssmanager-table td:nth-child(4),
+.jem-cssmanager-table td:nth-child(6),
+.jem-cssmanager-table td:nth-child(7),
+.jem-cssmanager-table td:nth-child(8),
+.jem-cssmanager-table td:nth-child(9),
+.jem-cssmanager-table td:nth-child(10),
+.jem-cssmanager-table td:nth-child(11) {
+    width: 1%;
+}
+
+.jem-cssmanager-table tbody tr:hover > th,
+.jem-cssmanager-table tbody tr:hover > td {
+    background-color: color-mix(in srgb, var(--body-bg, #fff) 86%, var(--body-color, #1f2933) 10%) !important;
+}
+
+.jem-cssmanager-table th:nth-child(2),
+.jem-cssmanager-table th:nth-child(3),
+.jem-cssmanager-table th:nth-child(6),
+.jem-cssmanager-table th:nth-child(7),
+.jem-cssmanager-table th:nth-child(8),
+.jem-cssmanager-table th:nth-child(9),
+.jem-cssmanager-table th:nth-child(10),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(2),
+.jem-cssmanager-table td:nth-child(3),
+.jem-cssmanager-table td:nth-child(6),
+.jem-cssmanager-table td:nth-child(7),
+.jem-cssmanager-table td:nth-child(8),
+.jem-cssmanager-table td:nth-child(9),
+.jem-cssmanager-table td:nth-child(10),
+.jem-cssmanager-table td:nth-child(11) {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-table th:nth-child(4),
+.jem-cssmanager-table td:nth-child(4),
+.jem-cssmanager-table th:nth-child(11),
+.jem-cssmanager-table td:nth-child(11) {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-custom-column {
+    display: grid;
+    gap: 4px;
+}
+
+.jem-cssmanager-custom-line {
+    align-items: center;
+    display: flex;
+    min-height: 2rem;
+}
+
+.jem-cssmanager-actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-status-cell .jem-cssmanager-custom-line {
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.jem-cssmanager-actions-cell .jem-cssmanager-custom-line {
+    justify-content: center;
+}
+
+.jem-source-edit-header {
+    align-items: center;
+    display: grid !important;
+    gap: .35rem 1rem;
+    grid-template-areas:
+        "title title"
+        "meta actions";
+    grid-template-columns: minmax(0, 1fr) max-content;
+    margin: .75rem 0 1rem;
+}
+
+.jem-source-edit-title {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    grid-area: title;
+    margin: 0;
+    min-width: 0;
+}
+
+.jem-source-edit-actions {
+    align-self: center;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    grid-area: actions;
+    justify-content: flex-end;
+    justify-self: end;
+    white-space: nowrap;
+}
+
+.jem-source-edit-warning {
+    margin-bottom: 1rem;
+}
+
+.jem-source-meta-inline {
+    align-items: center;
+    color: color-mix(in srgb, var(--body-color, #1f2933) 74%, var(--body-bg, #fff) 26%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem .55rem;
+    grid-area: meta;
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.jem-source-meta-inline strong {
+    color: var(--body-color, #1f2933);
+}
+
+.jem-source-check-result {
+    margin: .5rem 0;
+}
+
+.jem-source-editor-wrap {
+    --jem-source-editor-height: max(34rem, calc(100vh - 15rem));
+    background-color: var(--body-bg, #fff);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 14%, transparent);
+    min-height: var(--jem-source-editor-height);
+    padding: 0;
+}
+
+.jem-source-editor-wrap textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    min-height: var(--jem-source-editor-height);
+    width: 100%;
+}
+
+.jem-source-editor-wrap .CodeMirror,
+.jem-source-editor-wrap .cm-editor,
+.jem-source-editor-wrap iframe {
+    height: var(--jem-source-editor-height) !important;
+    min-height: var(--jem-source-editor-height);
+    width: 100%;
+}
+
+@media (max-width: 700px) {
+    .jem-source-edit-header {
+        display: grid;
+        grid-template-areas:
+            "title"
+            "meta"
+            "actions";
+        grid-template-columns: 1fr;
+    }
+
+    .jem-source-edit-actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        justify-self: start;
+        margin-top: .75rem;
+        white-space: normal;
+    }
 }
 
 div.linkicon a {
@@ -298,7 +598,11 @@ label#replace_venues1-lbl,
 label#replace_categories0-lbl,
 label#replace_categories1-lbl,
 label#replace_catevents0-lbl,
-label#replace_catevents1-lbl {
+label#replace_catevents1-lbl,
+label#replace_types0-lbl,
+label#replace_types1-lbl,
+label#replace_attachments0-lbl,
+label#replace_attachments1-lbl {
     float: none;
     display: inline-block;
     min-width: 60px;
@@ -313,9 +617,637 @@ input#replace_venues1.inputbox,
 input#replace_categories0.inputbox,
 input#replace_categories1.inputbox,
 input#replace_catevents0.inputbox,
-input#replace_catevents1.inputbox {
+input#replace_catevents1.inputbox,
+input#replace_types0.inputbox,
+input#replace_types1.inputbox,
+input#replace_attachments0.inputbox,
+input#replace_attachments1.inputbox {
     float: none;
     display: inline-block;
+}
+
+.jem-import-page .jem-import-tab-intro {
+    margin: 0 0 1rem;
+}
+
+.jem-import-page .jem-import-tab-intro h2 {
+    margin: 0 0 .35rem;
+}
+
+.jem-import-page .jem-import-tab-intro p {
+    max-width: 65rem;
+}
+
+.jem-import-grid {
+    --jem-import-label-width: 13rem;
+    --jem-import-control-width: 16rem;
+    --jem-import-action-width: 10rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .65rem;
+    align-items: stretch;
+}
+
+.jem-import-card {
+    background: var(--body-bg, #fff);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
+    border-radius: .35rem;
+    box-sizing: border-box;
+    padding: .85rem;
+}
+
+.jem-import-grid > .jem-import-card:only-child {
+    grid-column: 1 / -1;
+}
+
+.jem-import-card h3 {
+    font-size: 1.15rem;
+    margin: 0 0 .3rem;
+}
+
+.jem-import-card p {
+    margin: 0 0 .75rem;
+}
+
+.jem-import-card-planned {
+    background: color-mix(in srgb, var(--body-bg, #fff) 94%, var(--template-bg-dark, #1f2933) 6%);
+}
+
+.jem-import-row {
+    align-items: stretch;
+    display: grid;
+    gap: .55rem;
+    grid-template-columns: 1fr;
+}
+
+.jem-import-row-compact {
+    grid-template-columns: 1fr;
+}
+
+.jem-import-field {
+    align-items: center;
+    display: grid;
+    gap: .65rem;
+    grid-template-columns: var(--jem-import-label-width) var(--jem-import-control-width) var(--jem-import-action-width);
+}
+
+.jem-import-field > input,
+.jem-import-field > textarea,
+.jem-import-field > .form-control,
+.jem-import-field > .btn-group,
+.jem-import-field > .field-calendar,
+.jem-import-field > .input-group,
+.jem-import-field > joomla-field-fancy-select,
+.jem-import-field > .choices {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-import-field > select,
+.jem-import-field > .form-select,
+.jem-import-field > joomla-field-fancy-select,
+.jem-import-field > .inputbox {
+    max-width: 100%;
+    min-width: 8rem;
+    width: var(--jem-import-control-width);
+}
+
+.jem-import-field > .field-calendar,
+.jem-import-field > .input-group {
+    max-width: 100%;
+    width: var(--jem-import-control-width);
+}
+
+.jem-import-select-actions {
+    display: contents;
+    min-width: 0;
+}
+
+.jem-import-select-actions > select,
+.jem-import-select-actions > .form-select,
+.jem-import-select-actions > joomla-field-fancy-select,
+.jem-import-select-actions > .inputbox {
+    max-width: 100%;
+    min-width: 8rem;
+    width: 100%;
+}
+
+.jem-import-select-actions > joomla-field-fancy-select .choices,
+.jem-import-field > joomla-field-fancy-select .choices {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.jem-import-fancy-select > select {
+    display: none;
+}
+
+.jem-import-preview-table-wrap {
+    overflow-x: auto;
+}
+
+.jem-import-dynamic-preview {
+    min-width: max-content;
+}
+
+.jem-import-dynamic-preview th,
+.jem-import-dynamic-preview td {
+    white-space: nowrap;
+}
+
+.jem-import-mapping-option-jem {
+    font-weight: 700;
+}
+
+.jem-import-mapping-option-custom {
+    font-style: italic;
+}
+
+.jem-import-mapping-table {
+    table-layout: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: .95em;
+    width: max-content !important;
+    max-width: none;
+}
+
+.jem-import-mapping-table th,
+.jem-import-mapping-table td {
+    border: 0 !important;
+    padding: .22rem .45rem;
+    width: auto;
+    white-space: nowrap;
+}
+
+.jem-import-mapping-table tbody tr:nth-child(odd) > * {
+    background-color: transparent !important;
+}
+
+.jem-import-mapping-table tbody tr:nth-child(even) > * {
+    background-color: rgba(0, 0, 0, .035) !important;
+}
+
+.jem-import-mapping-table thead th {
+    background-color: transparent !important;
+    padding-top: .35rem;
+    padding-bottom: .35rem;
+}
+
+.jem-import-mapping-table th:first-child,
+.jem-import-mapping-table td:first-child {
+    max-width: 22rem;
+    width: 1%;
+}
+
+.jem-import-mapping-table th:last-child,
+.jem-import-mapping-table td:last-child {
+    min-width: 13rem;
+    width: 17rem;
+}
+
+.jem-import-mapping-table .jem-import-mapping-select {
+    min-height: 1.85rem;
+    padding-top: .12rem;
+    padding-bottom: .12rem;
+    width: 16rem;
+}
+
+.jem-import-status {
+    align-items: center;
+    display: inline-flex;
+    gap: .35rem;
+    white-space: nowrap;
+}
+
+.jem-import-status::before {
+    content: "";
+    display: none;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.jem-import-status.is-ok::before {
+    color: #198754;
+    content: "\2713";
+    display: inline-block;
+}
+
+.jem-import-status.is-error::before {
+    color: #dc3545;
+    content: "\00d7";
+    display: inline-block;
+    font-size: 1.12em;
+}
+
+.jem-import-field-badge {
+    align-items: center;
+    border-radius: .2rem;
+    display: inline-flex;
+    font-weight: 600;
+    gap: .35rem;
+    padding: .15rem .45rem;
+}
+
+.jem-import-field-badge-ok {
+    background: #d8f3dc;
+    color: #155724;
+}
+
+.jem-import-field-badge-error {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.jem-import-field-fallback {
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.jem-import-profile-row {
+    align-items: center;
+    display: grid;
+    gap: .5rem 1.25rem;
+    grid-template-columns: max-content minmax(18rem, 34rem);
+    justify-content: start;
+    margin: .75rem 0 .5rem;
+}
+
+.jem-import-profile-row .jem-import-field {
+    align-items: center;
+    display: grid;
+    gap: .5rem;
+}
+
+.jem-import-profile-save label {
+    align-items: center;
+    display: inline-flex;
+    gap: .25rem;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-import-profile-name {
+    grid-template-columns: max-content minmax(14rem, 24rem);
+}
+
+.jem-import-profile-name label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-import-profile-name input {
+    width: min(100%, 24rem);
+}
+
+.jem-import-create-btn {
+    justify-content: center;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.jem-import-field-spacer {
+    display: block;
+    min-height: 1px;
+}
+
+.jem-import-field > label {
+    display: block;
+    font-weight: 600;
+    margin: 0;
+}
+
+.jem-import-field > label span {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 68%, var(--body-bg, #fff) 32%);
+    display: block;
+    font-size: .85rem;
+    font-weight: 400;
+    line-height: 1.25;
+}
+
+.jem-import-field-file input[type="file"] {
+    grid-column: 2 / -1;
+    max-width: 100%;
+    width: 100%;
+}
+
+.jem-import-source-note {
+    grid-column: 2 / -1;
+    margin-top: .25rem;
+}
+
+.jem-import-source-choice,
+.jem-import-source-url,
+.jem-import-source-file {
+    grid-column: 2 / -1;
+}
+
+.jem-import-source-choice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem;
+}
+
+.jem-import-source-choice label {
+    align-items: center;
+    display: inline-flex;
+    gap: .3rem;
+    margin: 0;
+}
+
+.jem-import-source-url {
+    align-items: center;
+    background: color-mix(in srgb, var(--body-bg, #fff) 88%, var(--template-bg-dark, #1f2933) 12%);
+    border: 1px solid var(--border-color, #d8dee4);
+    border-radius: 4px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    padding: .45rem .6rem;
+}
+
+.jem-import-source-url a {
+    overflow-wrap: anywhere;
+}
+
+.jem-import-source-file label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: .25rem;
+}
+
+.jem-import-source-file input[type="file"] {
+    width: 100%;
+}
+
+.jem-import-field-file .jem-import-field-spacer {
+    display: none;
+}
+
+.jem-import-specialdays-card .jem-import-field:not(.jem-import-field-file) {
+    grid-template-columns: var(--jem-import-label-width) max-content;
+    justify-content: start;
+}
+
+.jem-import-specialdays-card .jem-import-field-file {
+    grid-template-columns: var(--jem-import-label-width) minmax(16rem, 1fr);
+}
+
+.jem-import-specialdays-card .jem-import-field-file > input[type="file"] {
+    width: 100%;
+}
+
+.jem-import-actions .btn {
+    min-height: 2.35rem;
+    white-space: nowrap;
+}
+
+.jem-import-row > .jem-import-actions {
+    margin-left: calc(var(--jem-import-label-width) + .65rem);
+}
+
+.jem-import-actions-row {
+    margin-left: calc(var(--jem-import-label-width) + .65rem);
+    margin-top: .75rem;
+}
+
+.jem-import-actions-row .btn {
+    margin: 0 .35rem .35rem 0;
+}
+
+.jem-import-preview-actions {
+    border-top: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 14%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: .85rem;
+}
+
+.jem-import-preview-actions .btn {
+    margin: 0 0 .35rem .35rem;
+}
+
+.jem-import-columns {
+    margin: .75rem 0;
+}
+
+.jem-import-columns summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.jem-import-mapping-panel {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.jem-import-mapping-panel > summary {
+    margin-bottom: .35rem;
+}
+
+.jem-import-columns-list,
+.jem-import-example {
+    background: color-mix(in srgb, var(--body-bg, #fff) 88%, var(--body-color, #1f2933) 7%);
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
+    border-radius: .25rem;
+    box-sizing: border-box;
+    margin: 0 0 .5rem;
+    overflow: auto;
+    padding: .75rem;
+}
+
+.jem-import-help-note {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 78%, var(--body-bg, #fff) 22%);
+    font-size: .9rem;
+}
+
+.jem-import-feature-list {
+    margin: 0 0 1rem 1.2rem;
+}
+
+.jem-import-secondary-action {
+    margin-top: 1rem !important;
+}
+
+.jem-import-logs-table code {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.jem-import-catalog-controls {
+    grid-template-columns: 1fr;
+}
+
+.jem-import-catalog-source-field code {
+    overflow-wrap: anywhere;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.jem-import-catalog-source-line {
+    align-items: center;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.jem-import-catalog-source-status {
+    align-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: 0.8rem;
+    height: 1.25rem;
+    justify-content: center;
+    line-height: 1;
+    width: 1.25rem;
+}
+
+.jem-import-catalog-table code {
+    white-space: normal;
+    word-break: break-all;
+}
+
+.jem-import-catalog-table td,
+.jem-import-catalog-table th {
+    vertical-align: middle;
+}
+
+.jem-import-logs-table .btn {
+    margin: 0 .25rem .25rem 0;
+}
+
+@media (max-width: 900px) {
+    .jem-import-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-row {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field > select,
+    .jem-import-field > .form-select,
+    .jem-import-field > .inputbox {
+        width: 100%;
+    }
+
+    .jem-import-select-actions {
+        display: grid;
+        gap: .45rem;
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-field-spacer {
+        display: none;
+    }
+
+    .jem-import-specialdays-card .jem-import-field {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-actions-row {
+        margin-left: 0;
+    }
+
+    .jem-import-row > .jem-import-actions {
+        margin-left: 0;
+    }
+
+    .jem-import-catalog-controls {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .jem-import-columns {
+        padding: .45rem;
+    }
+
+    .jem-import-columns .table-responsive {
+        overflow-x: visible;
+    }
+
+    .jem-import-mapping-table {
+        display: block;
+        width: 100% !important;
+    }
+
+    .jem-import-mapping-table thead {
+        display: none;
+    }
+
+    .jem-import-mapping-table tbody {
+        display: grid;
+        gap: .45rem;
+    }
+
+    .jem-import-mapping-table tr {
+        display: grid;
+        gap: .2rem;
+        padding: .45rem;
+        background-color: rgba(0, 0, 0, .025);
+        border: 1px solid rgba(0, 0, 0, .08);
+    }
+
+    .jem-import-mapping-table tbody tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, .045);
+    }
+
+    .jem-import-mapping-table tbody tr > * {
+        background-color: transparent !important;
+    }
+
+    .jem-import-mapping-table td {
+        display: block;
+        max-width: none !important;
+        min-width: 0 !important;
+        padding: 0;
+        width: 100% !important;
+    }
+
+    .jem-import-mapping-table td:first-child::before,
+    .jem-import-mapping-table td:last-child::before {
+        display: block;
+        color: #5f6b7a;
+        font-size: .78rem;
+        font-weight: 600;
+        margin-bottom: .1rem;
+    }
+
+    .jem-import-mapping-table td:first-child::before {
+        content: "File field";
+    }
+
+    .jem-import-mapping-table td:last-child::before {
+        content: "JEM field";
+    }
+
+    .jem-import-mapping-table td:first-child code {
+        display: block;
+        overflow-wrap: anywhere;
+        white-space: normal;
+    }
+
+    .jem-import-mapping-table .jem-import-mapping-select {
+        width: 100%;
+    }
+
+    .jem-import-profile-row {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-profile-name input {
+        width: 100%;
+    }
 }
 
 a.import-fieldinfo {
@@ -482,11 +1414,6 @@ img#imagelib {
 }
 
 /* -----------ZEBRA STRIPES, J3+ Isis template -------------- */
-.table-striped tbody tr:nth-child(odd) td,
-.table-striped tbody tr:nth-child(odd) th {
-    background-color: #f9f9f9;
-}
-
 .table-striped tbody tr.row0:hover td,
 .table-striped tbody tr.row1:hover td {
     background-color: var(--table-bg);
@@ -494,8 +1421,161 @@ img#imagelib {
 
 .table-striped.housekeeping tbody tr td:nth-child(1) {padding: 6px 0 6px 6px; width: 60px;}
 
+.jem-housekeeping-file-options {
+    max-width: 760px;
+    margin: 12px 0 0;
+    padding: 14px 18px 16px;
+}
+
+.jem-housekeeping-file-options legend {
+    width: auto;
+    margin: 0;
+    padding: 0 8px;
+    font-size: 1rem;
+}
+
+.jem-housekeeping-file-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px 0;
+}
+
+.jem-housekeeping-file-question {
+    flex: 0 1 28rem;
+}
+
+.jem-housekeeping-file-choices {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.jem-housekeeping-file-choices label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.jem-attachment-file-name {
+    white-space: nowrap;
+}
+
+.jem-attachment-file-cell,
+.jem-attachment-file-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.jem-attachment-file-summary {
+    align-items: center;
+}
+
+.jem-attachment-file-summary-text,
+.jem-attachment-file-meta {
+    min-width: 0;
+}
+
+.jem-attachment-file-summary-text small {
+    display: block;
+    margin-top: 0.15rem;
+}
+
+.jem-attachment-file-panel .jem-attachment-file-summary {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border, #dfe3e7);
+}
+
+.jem-attachment-file-details {
+    display: grid;
+    grid-template-columns: minmax(7rem, auto) 1fr;
+    gap: 0.45rem 0.75rem;
+    margin: 0;
+}
+
+.jem-attachment-file-details dt {
+    color: var(--secondary-color, #5f6f7f);
+    font-weight: 600;
+}
+
+.jem-attachment-file-details dd {
+    margin: 0;
+    text-align: right;
+}
+
+.jem-attachment-linked-item-button,
+.jem-attachment-linked-item-button:link,
+.jem-attachment-linked-item-button:visited,
+.jem-attachment-linked-item-button:hover,
+.jem-attachment-linked-item-button:focus {
+    color: #fff;
+}
+
+.jem-attachment-extension-icon {
+    --jem-attachment-icon-color: #4f6f8f;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3.6rem;
+    padding-top: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--jem-attachment-icon-color) 36%, transparent);
+    border-radius: 0.35rem;
+    background:
+        linear-gradient(135deg, color-mix(in srgb, var(--jem-attachment-icon-color) 18%, transparent) 0 18%, transparent 18%),
+        color-mix(in srgb, var(--jem-attachment-icon-color) 8%, var(--body-bg, #fff));
+    color: var(--jem-attachment-icon-color);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    box-shadow: inset 0 -0.2rem 0 color-mix(in srgb, var(--jem-attachment-icon-color) 14%, transparent);
+}
+
+.jem-attachment-extension-icon-small {
+    width: 2.35rem;
+    height: 2.85rem;
+    padding-top: 0.45rem;
+    font-size: 0.62rem;
+}
+
+.jem-attachment-extension-icon-pdf {
+    --jem-attachment-icon-color: #b23a48;
+}
+
+.jem-attachment-extension-icon-image {
+    --jem-attachment-icon-color: #2f7d64;
+}
+
+.jem-attachment-extension-icon-document {
+    --jem-attachment-icon-color: #2f63a3;
+}
+
+.jem-attachment-extension-icon-spreadsheet {
+    --jem-attachment-icon-color: #2f7d46;
+}
+
+.jem-attachment-extension-icon-archive {
+    --jem-attachment-icon-color: #8a6334;
+}
+
+.jem-attachment-extension-icon-text {
+    --jem-attachment-icon-color: #5f6f7f;
+}
+
+[data-bs-theme="dark"] .jem-attachment-file-summary {
+    border-color: #7295B166;
+}
+
 /* ---------- TABLE, J3 Isis template -------------------------- */
-table {
+.com_jem table {
     max-width: 100%;
     background-color: transparent;
     border-collapse: separate;
@@ -788,18 +1868,14 @@ table.table tfoot tr {
     color: #333;
 }
 
-table.table tfoot tr {
-    text-align: center;
-    color: #333;
-}
-
 table.table tfoot td, table.table tfoot th {
     background-color: #f7f7f7;
     border-top: 1px solid #999;
     text-align: center;
 }
 
-[data-bs-theme="dark"] table.table tfoot td, table.table tfoot th {
+[data-bs-theme="dark"] table.table tfoot td,
+[data-bs-theme="dark"] table.table tfoot th {
     background-color: transparent;}
 
 table.table .pagination {
@@ -908,7 +1984,8 @@ input.selectcat {
     margin-bottom: 3px;
 }
 
-input#csvexport {
+input#csvexport,
+input.csvexport {
     background-image: url('../images/export_excel.webp');
     background-repeat: no-repeat;
     background-position: 8px;
@@ -1153,6 +2230,63 @@ fieldset.adminform input#clear {
     width: auto;
 }
 
+fieldset.adminform .jem-options-width-auto,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto,
+fieldset.adminform .jem-options-width-auto + .choices,
+fieldset.adminform .choices:has(.jem-options-width-auto),
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices {
+    display: inline-block !important;
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto.form-select,
+fieldset.adminform .jem-options-width-auto select,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto select,
+fieldset.adminform .jem-options-width-auto + .choices .choices__inner,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__inner,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__inner {
+    max-width: min(100%, 28rem) !important;
+    min-width: 12rem;
+    width: auto !important;
+}
+
+fieldset.adminform .jem-options-width-auto + .choices .choices__list--single,
+fieldset.adminform .choices:has(.jem-options-width-auto) .choices__list--single,
+fieldset.adminform joomla-field-fancy-select.jem-options-width-auto .choices__list--single {
+    width: auto !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 24rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country),
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices {
+    display: inline-block !important;
+    max-width: 100% !important;
+    width: 14rem !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_catid) .choices__inner,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__inner {
+    min-width: 0 !important;
+    width: 100% !important;
+}
+
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__item--selectable,
+fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) .choices__placeholder {
+    background: transparent !important;
+    border: 0 !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+}
+
 fieldset.adminform fieldset.radio label,
 fieldset.panelform fieldset.radio label {
     min-width: 85px;
@@ -1217,9 +2351,6 @@ table.adminlist.help-toc {
     white-space: nowrap;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
     background-color: #999;
-}
-
-.label {
     border-radius: 3px;
 }
 
@@ -1415,6 +2546,296 @@ input#places::-webkit-inner-spin-button {
 .wauto-minwmax {
     width: auto;
     min-width: max-content;
+}
+
+.jem-admin-filter-bar {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    max-width: 100%;
+}
+
+.jem-admin-filter-item {
+    flex: 1 1 12rem;
+    max-width: 100%;
+    min-width: 10rem;
+}
+
+.jem-admin-filter-search {
+    flex: 1 1 16rem;
+    max-width: 28rem;
+    min-width: min(100%, 16rem);
+}
+
+.jem-admin-filter-date-range {
+    display: flex;
+    flex: 1 1 28rem;
+    flex-wrap: nowrap;
+    gap: .5rem;
+    max-width: 36rem;
+    min-width: min(100%, 28rem);
+}
+
+.jem-admin-filter-calendar {
+    flex: 1 1 0;
+    max-width: min(100%, 17rem);
+    min-width: 13rem;
+}
+
+.jem-admin-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+.jem-specialdays-admin-filter-bar .jem-admin-filter-search,
+.jem-specialdays-admin-filter-bar .jem-admin-filter-item {
+    flex: 0 0 auto;
+}
+
+.jem-specialdays-admin-filter-bar .jem-admin-filter-search {
+    width: min(100%, 25rem);
+}
+
+fieldset.jem-specialdays-import {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+fieldset.jem-specialdays-import legend {
+    float: none;
+    width: auto;
+    padding: 0 .5rem;
+    margin: 0 0 .75rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file,
+fieldset.jem-specialdays-import .jem-specialdays-import-replace,
+fieldset.jem-specialdays-import .jem-specialdays-import-action {
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+    width: auto;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 27rem;
+    min-width: 21rem;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-replace {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 auto;
+    min-width: 21rem;
+    margin-left: auto;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-action {
+    flex: 0 0 auto;
+    margin-left: 0;
+}
+
+fieldset.jem-specialdays-import .form-label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+fieldset.jem-specialdays-import .jem-specialdays-import-file .form-control {
+    flex: 1 1 auto;
+    min-width: 11rem;
+}
+
+fieldset.jem-specialdays-import #replace_specialdays {
+    width: auto;
+    min-width: 5.5rem;
+}
+
+.jem-admin-filter-bar .wauto-minwmax {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-bar .form-select,
+.jem-admin-filter-bar .form-control,
+.jem-admin-filter-bar .field-calendar,
+.jem-admin-filter-bar .input-group {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar {
+    align-items: stretch;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar input {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+.jem-specialdays-location-country {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    white-space: nowrap;
+}
+
+.jem-specialdays-location-flag {
+    display: inline-block;
+    font-size: .95rem;
+    line-height: 1;
+}
+
+#specialDayList .jem-specialdays-location-heading,
+#specialDayList .jem-specialdays-location-cell {
+    text-align: center;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] {
+    align-items: center;
+    display: inline-flex;
+    gap: .25rem;
+    text-decoration: none;
+}
+
+table.itemList .jem-list-check,
+table.itemList .jem-list-order-heading,
+table.itemList .jem-list-featured,
+table.itemList .jem-list-status {
+    min-width: 3rem;
+    width: 3rem;
+}
+
+table.itemList .jem-list-order-heading {
+    max-width: 4rem;
+    min-width: 4rem;
+    text-align: center;
+    width: 4rem;
+}
+
+table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"] {
+    justify-content: center;
+    width: 100%;
+}
+
+table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"]::after {
+    font-size: .75rem;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] .icon-arrow-up-3,
+table.itemList thead th a[onclick*="Joomla.tableOrdering"] .icon-arrow-down-3 {
+    display: none;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]::after {
+    color: currentColor;
+    content: "\2195";
+    display: inline-block;
+    font-size: .9em;
+    font-weight: 700;
+    line-height: 1;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]:has(.icon-arrow-up-3)::after {
+    content: "\25B2";
+    font-size: .75em;
+}
+
+table.itemList thead th a[onclick*="Joomla.tableOrdering"]:has(.icon-arrow-down-3)::after {
+    content: "\25BC";
+    font-size: .75em;
+}
+
+table.itemList [class*="-drag"] {
+    color: #212529;
+    display: inline-block;
+    font-size: 0 !important;
+    font-weight: 700;
+    height: 1rem;
+    letter-spacing: 0 !important;
+    line-height: 1;
+    margin-right: .35rem;
+    position: relative;
+    transform: none !important;
+    vertical-align: middle;
+    width: .6rem;
+}
+
+table.itemList [class*="-drag"]::before {
+    background: currentColor;
+    border-radius: 1px;
+    box-shadow: 0 .32rem 0 currentColor, 0 .64rem 0 currentColor;
+    content: "";
+    height: 3px;
+    left: 50%;
+    position: absolute;
+    top: .12rem;
+    transform: translateX(-50%);
+    width: 3px;
+}
+
+table.itemList.jem-hide-order-numbers [class*="-position"] {
+    display: none !important;
+}
+
+.jem-admin-filter-calendar .field-calendar .input-group {
+    flex-wrap: nowrap;
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-admin-filter-calendar .field-calendar button {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+    .jem-admin-filter-limit {
+        margin-left: 0;
+    }
+
+    .jem-admin-filter-item,
+    .jem-admin-filter-search,
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .jem-admin-filter-date-range {
+        flex-basis: 100%;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+
+    .jem-admin-filter-calendar {
+        flex-basis: 100%;
+    }
 }
 
 #jform_defaultCategory option:checked {

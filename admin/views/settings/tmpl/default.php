@@ -13,7 +13,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Factory;
 
 $wa = $this->document->getWebAssetManager();
         $wa
@@ -393,10 +392,40 @@ function registraoff()
 
         updateLightboxVisibility();
 
-        $('input[name="jform[gddisabled]"]').on('change', function() {
-            updateLightboxVisibility();
-        });
+    $('input[name="jform[gddisabled]"]').on('change', function() {
+        updateLightboxVisibility();
     });
+
+    function activateSettingsHashTab() {
+        var requestedTab = (window.location.hash || '').replace('#', '').replace(/_/g, '-');
+
+        if (!requestedTab) {
+            return;
+        }
+
+        var tabTrigger = document.querySelector(
+            'button[data-bs-target="#' + requestedTab + '"], ' +
+            'a[href="#' + requestedTab + '"], ' +
+            '[aria-controls="' + requestedTab + '"], ' +
+            'button[data-bs-target="#settings-pane-' + requestedTab + '"], ' +
+            'a[href="#settings-pane-' + requestedTab + '"], ' +
+            '[aria-controls="settings-pane-' + requestedTab + '"]'
+        );
+
+        if (!tabTrigger) {
+            return;
+        }
+
+        if (window.bootstrap && bootstrap.Tab) {
+            bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+        } else {
+            $(tabTrigger).trigger('click');
+        }
+    }
+
+    activateSettingsHashTab();
+    $(window).on('hashchange', activateSettingsHashTab);
+});
 </script>
 
 <script>
@@ -442,6 +471,7 @@ function registraoff()
                             <div class="width-50 fltrt">
                                 <?php echo $this->loadTemplate('evvenues'); ?>
                                 <?php echo $this->loadTemplate('evregistration'); ?>
+                                <?php echo $this->loadTemplate('evlinks'); ?>
                             </div>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -475,6 +505,30 @@ function registraoff()
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
                         <fieldset class="adminform">
                            <?php echo $this->loadTemplate('usercontrol'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'custom-fields', Text::_('COM_JEM_CUSTOM_FIELDS_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('customfields'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'countries-settings', Text::_('COM_JEM_COUNTRIES')); ?>
+                    <fieldset class="adminform">
+                        <?php echo $this->loadTemplate('countries'); ?>
+                    </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'pdf-settings', Text::_('COM_JEM_PDF_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('pdf'); ?>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>

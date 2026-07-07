@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 $datemethod      = (int)$params->get('datemethod', 0);
 $showtime        = (int)$params->get('showtime', 0);
 $showcalendar    = (int)$params->get('showcalendar', 1);
+$showCategory    = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
 $introtext       = $params->get('introtext', '');
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
@@ -107,9 +109,24 @@ if ($flyer_link_type == 1) {
                                 <?php if ($params->get('showdesc', 1) == 1) :?>
                                     <div class="desc" itemprop="description">
                                         <?php echo $item->eventdescription; ?>
-                                        <?php if (isset($item->link) && $item->readmore != 0 && $params->get('readmore')) :
-                                            echo '</br><a class="readmore" href="'.$item->link.'">'.$item->linkText.'</a>';
-                                        endif;?>
+                                        <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                                        <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                            <div class="jem-readmore">
+                                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-jubilee', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-jubilee__readmore'); ?>"
+                                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $item->linkText; ?></a>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                                        <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                            <div class="jem-more-information">
+                                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-jubilee', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-jubilee__more-information'); ?>">
+                                                    <?php echo Text::_('MOD_JEM_JUBILEE_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                                </a>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                 <?php endif;
 
@@ -173,7 +190,7 @@ if ($flyer_link_type == 1) {
                             <div class="clr"></div>
 
                             <?php /*venue*/ ?>
-                            <?php if (($params->get('showvenue', 1) == 1) && !empty($item->venue)) :?>
+                            <?php if ($showVenue && !empty($item->venue)) :?>
                                 <div class="venue-title">
                                     <?php if ($item->venuelink) : ?>
                                         <a href="<?php echo $item->venuelink; ?>" title="<?php echo $item->venue; ?>"><?php echo $item->venue; ?></a>
@@ -184,7 +201,7 @@ if ($flyer_link_type == 1) {
                             <?php endif; ?>
 
                             <?php /*category*/ ?>
-                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) :?>
+                            <?php if ($showCategory && !empty($item->catname)) :?>
                                 <div class="category">
                                     <?php echo $item->catname; ?>
                                 </div>

@@ -76,10 +76,12 @@ class JemModelVenueCal extends JemModelEventslist
         $itemid       = $app->input->getInt('Itemid', 0);
         $task         = $app->input->getCmd('task', '');
         $startdayonly = $params->get('show_only_start', false);
-        $show_archived_events = $params->get('show_archived_events', 0);
+        $show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->show_archived_events = $show_archived_events;
 
         # params
         $this->setState('params', $params);
+        $this->applyMenuEventFilters($params);
 
         # publish state
         $this->_populatePublishState($task);
@@ -106,7 +108,7 @@ class JemModelVenueCal extends JemModelEventslist
         $this->setState('filter.calendar_multiday', true);
         $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
         $this->setState('filter.filter_locid', $this->_id);
-        $this->setState('filter.show_archived_events',(bool)$show_archived_events);
+        $this->setState('filter.show_archived_events', $show_archived_events);
 
         $app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
 

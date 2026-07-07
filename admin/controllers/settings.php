@@ -9,10 +9,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\Registry\Registry;
+
+require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 /**
  * JEM Component Settings Controller
@@ -20,8 +24,7 @@ use Joomla\CMS\Session\Session;
 class JemControllerSettings extends BaseController
 {
 
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
 
         // Map the apply task to the save method.
@@ -33,8 +36,7 @@ class JemControllerSettings extends BaseController
      *
      * @return boolean
      */
-    protected function allowEdit()
-    {
+    protected function allowEdit() {
         return JemFactory::getUser()->authorise('core.manage', 'com_jem');
     }
 
@@ -43,8 +45,7 @@ class JemControllerSettings extends BaseController
      *
      * @return boolean
      */
-    protected function allowSave()
-    {
+    protected function allowSave() {
         return $this->allowEdit();
     }
 
@@ -57,8 +58,7 @@ class JemControllerSettings extends BaseController
      *
      * @return object  The model.
      */
-    public function getModel($name = 'Settings', $prefix = 'JemModel', $config = array())
-    {
+    public function getModel($name = 'Settings', $prefix = 'JemModel', $config = array()) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }
@@ -70,8 +70,7 @@ class JemControllerSettings extends BaseController
      * @return bool   True on success, false on failure.
      * @since 1.6
      */
-    public function save()
-    {
+    public function save() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -86,6 +85,8 @@ class JemControllerSettings extends BaseController
         // Access check.
         if (!$this->allowSave()) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=main', false));
+            return false;
         }
 
         // Validate the posted data.
@@ -97,6 +98,7 @@ class JemControllerSettings extends BaseController
 
         // Validate the posted data.
         $form = $model->getForm();
+        $postedData = $data;
         $data = $model->validate($form, $data);
 
         // Check for validation errors.
@@ -108,8 +110,7 @@ class JemControllerSettings extends BaseController
             for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
                 if ($errors[$i] instanceof Exception) {
                     $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                }
-                else {
+                } else {
                     $app->enqueueMessage($errors[$i], 'warning');
                 }
             }
@@ -121,6 +122,8 @@ class JemControllerSettings extends BaseController
             $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
             return false;
         }
+
+        $this->preserveSpecialDaysGlobalSettings($data, $postedData);
 
         // Attempt to save the data.
         if (!$model->store($data)) {
@@ -136,8 +139,7 @@ class JemControllerSettings extends BaseController
         $this->setMessage(Text::_('COM_JEM_SETTINGS_SAVED'));
 
         // Redirect the user and adjust session state based on the chosen task.
-        switch ($task)
-        {
+        switch ($task) {
             case 'apply':
                 // Reset the record data in the session.
                 $app->setUserState($context . '.data', null);
@@ -158,10 +160,244 @@ class JemControllerSettings extends BaseController
     }
 
     /**
+     * Preserve Special Days settings from the submitted form.
+     *
+     * Joomla's form validation can drop newly moved nested globalattribs fields
+     * if a layout renders them outside their original fieldset. Keep the posted
+     * values explicit so the Yes/No toggle persists reliably.
+     *
+     * @param   array  &$data       Validated settings data.
+     * @param   array  $postedData  Raw jform data.
+     *
+     * @return  void
+     */
+    private function preserveSpecialDaysGlobalSettings(array &$data, array $postedData): void
+    {
+        if (!isset($postedData['globalattribs']) || !is_array($postedData['globalattribs'])) {
+            return;
+        }
+
+        $data['globalattribs'] = $data['globalattribs'] ?? array();
+
+        foreach (array('calendar_special_days_enabled', 'calendar_special_day_types') as $key) {
+            if (array_key_exists($key, $postedData['globalattribs'])) {
+                $data['globalattribs'][$key] = $postedData['globalattribs'][$key];
+            }
+        }
+    }
+
+    /**
+     * Rebuild the Types of Days textarea value from the visible table rows.
+     *
+     * The settings tab renders editable row controls for usability. Rebuilding the
+     * pipe-separated value server-side keeps the setting reliable even if a browser
+     * skips the helper JavaScript that mirrors rows into the hidden form field.
+     *
+     * @param   array  &$data  Posted jform data.
+     *
+     * @return  void
+     */
+    private function normaliseSpecialDayTypes(array &$data): void
+    {
+        $input = Factory::getApplication()->input;
+        $ids = $input->get('special_day_type_id', array(), 'array');
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $colors = $input->get('special_day_type_color', array(), 'array');
+        $blocks = $input->get('special_day_type_block_events', array(), 'array');
+
+        if (empty($names)) {
+            return;
+        }
+
+        $lines = array();
+
+        foreach ($names as $index => $name) {
+            $name = trim((string) $name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $id = (int) ($ids[$index] ?? 0);
+            $color = strtolower(trim((string) ($colors[$index] ?? '#d1d5db')));
+
+            if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
+                $color = '#d1d5db';
+            }
+
+            $blockEvents = !empty($blocks[$index]) ? '1' : '0';
+            $lines[] = $name . ' | ' . $color . ' | ' . $blockEvents;
+        }
+
+        $data['calendar_special_day_types'] = implode("\n", $lines);
+        $data['globalattribs'] = $data['globalattribs'] ?? array();
+        $data['globalattribs']['calendar_special_day_types'] = implode("\n", $lines);
+    }
+
+    /**
+     * Persist Day types in #__jem_types.
+     *
+     * @return  void
+     */
+    private function saveSpecialDayTypesToTable(): void
+    {
+        $input = Factory::getApplication()->input;
+        $ids = $input->get('special_day_type_id', array(), 'array');
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $colors = $input->get('special_day_type_color', array(), 'array');
+        $blocks = $input->get('special_day_type_block_events', array(), 'array');
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $userId = (int) Factory::getApplication()->getIdentity()->id;
+        $now = Factory::getDate()->toSql();
+        $keptIds = array();
+        $ordering = 0;
+
+        foreach ($names as $index => $name) {
+            $name = trim((string) $name);
+
+            if ($name === '') {
+                continue;
+            }
+
+            $id = (int) ($ids[$index] ?? 0);
+            $color = strtolower(trim((string) ($colors[$index] ?? '#d1d5db')));
+
+            if (!preg_match('/^#[0-9a-f]{6}$/i', $color)) {
+                $color = '#d1d5db';
+            }
+
+            $attribs = new Registry(array(
+                'block_events' => !empty($blocks[$index]) ? 1 : 0,
+            ));
+            $alias = OutputFilter::stringURLSafe($name);
+            $ordering++;
+
+            if ($id <= 0) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__jem_types'))
+                    ->where($db->quoteName('entity') . ' = 4')
+                    ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
+                $db->setQuery($query);
+                $id = (int) $db->loadResult();
+            }
+
+            if ($id > 0) {
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_types'))
+                    ->set($db->quoteName('name') . ' = ' . $db->quote($name))
+                    ->set($db->quoteName('alias') . ' = ' . $db->quote($alias))
+                    ->set($db->quoteName('color') . ' = ' . $db->quote($color))
+                    ->set($db->quoteName('entity') . ' = 4')
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('ordering') . ' = ' . (int) $ordering)
+                    ->set($db->quoteName('attribs') . ' = ' . $db->quote((string) $attribs))
+                    ->set($db->quoteName('modified') . ' = ' . $db->quote($now))
+                    ->set($db->quoteName('modified_by') . ' = ' . $userId)
+                    ->where($db->quoteName('id') . ' = ' . (int) $id)
+                    ->where($db->quoteName('entity') . ' = 4');
+                $db->setQuery($query)->execute();
+            } else {
+                $columns = array('name', 'alias', 'entity', 'color', 'published', 'ordering', 'access', 'language', 'created', 'created_by', 'attribs');
+                $values = array(
+                    $db->quote($name),
+                    $db->quote($alias),
+                    4,
+                    $db->quote($color),
+                    1,
+                    (int) $ordering,
+                    1,
+                    $db->quote('*'),
+                    $db->quote($now),
+                    $userId,
+                    $db->quote((string) $attribs),
+                );
+                $query = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jem_types'))
+                    ->columns($db->quoteName($columns))
+                    ->values(implode(',', $values));
+                $db->setQuery($query)->execute();
+                $id = (int) $db->insertid();
+            }
+
+            if ($id > 0) {
+                $keptIds[] = $id;
+            }
+        }
+
+        if ($keptIds) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_types'))
+                ->set($db->quoteName('published') . ' = 0')
+                ->where($db->quoteName('entity') . ' = 4')
+                ->where($db->quoteName('id') . ' NOT IN (' . implode(',', array_map('intval', $keptIds)) . ')');
+            $db->setQuery($query)->execute();
+        }
+    }
+
+    /**
+     * Build a rename map from the visible Types of Days editor rows.
+     *
+     * @return  array
+     */
+    private function getSpecialDayTypeRenameMap(): array
+    {
+        $input = Factory::getApplication()->input;
+        $originalNames = $input->get('special_day_type_original_name', array(), 'array');
+        $names = $input->get('special_day_type_name', array(), 'array');
+        $renames = array();
+
+        foreach ($names as $index => $name) {
+            $oldName = trim((string) ($originalNames[$index] ?? ''));
+            $newName = trim((string) $name);
+
+            if ($oldName === '' || $newName === '' || $oldName === $newName) {
+                continue;
+            }
+
+            $renames[$oldName] = $newName;
+        }
+
+        return $renames;
+    }
+
+    /**
+     * Rename already assigned Special Day records when a type name changes.
+     *
+     * @param   array  $renames  Old type name => new type name.
+     *
+     * @return  int
+     */
+    private function applySpecialDayTypeRenames(array $renames): int
+    {
+        if (!$renames) {
+            return 0;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $updated = 0;
+
+        foreach ($renames as $oldName => $newName) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_special_days'))
+                ->set($db->quoteName('day_type') . ' = ' . $db->quote($newName))
+                ->where($db->quoteName('day_type') . ' = ' . $db->quote($oldName));
+
+            try {
+                $db->setQuery($query)->execute();
+                $updated += (int) $db->getAffectedRows();
+            } catch (Exception $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+            }
+        }
+
+        return $updated;
+    }
+
+    /**
      * Cancel operation
      */
-    public function cancel()
-    {
+    public function cancel() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -172,6 +408,150 @@ class JemControllerSettings extends BaseController
         }
 
         $this->setRedirect('index.php?option=com_jem');
+    }
+
+    /**
+     * Load the built-in example custom field configuration.
+     */
+    public function loadExampleCustomFields() {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        if (!$this->allowSave()) {
+            $this->setMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+            return false;
+        }
+
+        $model = $this->getModel();
+
+        if (!$model->loadExampleCustomFields()) {
+            $this->setMessage(Text::sprintf('JERROR_SAVE_FAILED', $model->getError()), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+            return false;
+        }
+
+        $this->setMessage(Text::_('COM_JEM_CUSTOM_FIELDS_EXAMPLE_LOADED'));
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=settings', false));
+
+        return true;
+    }
+
+    /**
+     * Display a known JEM log file.
+     *
+     * @return bool
+     */
+    public function viewLog()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $log = $this->getKnownLogFile();
+        $content = $this->readLogTail($log['path']);
+
+        if ($content === '') {
+            $content = Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY');
+        }
+
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+
+        echo '<!doctype html><html><head><meta charset="utf-8"><title>'
+            . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
+            . '</title><style>body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:1rem;}h1{font-size:1.25rem;margin:0 0 1rem;}pre{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9rem;line-height:1.45;background:#f6f8fa;border:1px solid #d8dee4;padding:1rem;}</style></head><body><h1>'
+            . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
+            . '</h1><pre>'
+            . htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+            . '</pre></body></html>';
+
+        $app->close();
+
+        return true;
+    }
+
+    /**
+     * Download a known JEM log file.
+     *
+     * @return bool
+     */
+    public function downloadLog()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $log = $this->getKnownLogFile();
+        $app = Factory::getApplication();
+
+        if (!is_file($log['path']) || !is_readable($log['path'])) {
+            throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY'), 404);
+        }
+
+        $app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
+        $app->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true);
+        $app->setHeader('Content-Length', (string) filesize($log['path']), true);
+
+        readfile($log['path']);
+        $app->close();
+
+        return true;
+    }
+
+    /**
+     * Resolve a request key to a known JEM log file.
+     *
+     * @return array
+     */
+    protected function getKnownLogFile()
+    {
+        if (!$this->allowEdit()) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $app = Factory::getApplication();
+        $key = $app->input->getCmd('log', '');
+        $files = JemLog::getLogFiles();
+
+        if (!isset($files[$key])) {
+            throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_INVALID'), 400);
+        }
+
+        $logPath = rtrim($app->get('log_path', JPATH_ADMINISTRATOR . '/logs'), '/\\');
+
+        return array(
+            'name' => $files[$key],
+            'path' => $logPath . DIRECTORY_SEPARATOR . $files[$key],
+        );
+    }
+
+    /**
+     * Read the last part of a log file for backend preview.
+     *
+     * @param   string  $file  Absolute log file path.
+     *
+     * @return string
+     */
+    protected function readLogTail($file)
+    {
+        if (!is_file($file) || !is_readable($file)) {
+            return '';
+        }
+
+        $maxBytes = 250000;
+        $size = filesize($file);
+        $handle = fopen($file, 'rb');
+
+        if (!$handle) {
+            return '';
+        }
+
+        if ($size > $maxBytes) {
+            fseek($handle, -$maxBytes, SEEK_END);
+            fgets($handle);
+        }
+
+        $content = stream_get_contents($handle);
+        fclose($handle);
+
+        return $content ?: '';
     }
 
 }

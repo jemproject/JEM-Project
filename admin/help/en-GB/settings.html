@@ -7,6 +7,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>JEM Settings</h1>
         <h2>Description</h2>
         <div>
@@ -37,6 +44,7 @@
             <li><a href="#detailspage">Event Page</a></li>
             <li><a href="#layout">Layout</a></li>
             <li><a href="#params">Global Parameters</a></li>
+            <li><a href="#associatedarticles">Associated Articles</a></li>
             <li><a href="#access">User Control</a></li>
             <li><a href="#configinfo">Configinfo</a></li>
         </ul>
@@ -281,11 +289,85 @@
             If the file is accessable as "www.mysite.com/media/my/css/mystyle.css" type in here "/media/my/css/mystyle.css".
         </p>
         <h3>Background Color</h3>
-        <p>Choose a custom Background Color for various parts of JEM.</p>
+        <p>Choose a custom Background Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
         <h3>Border Color</h3>
-        <p>Choose a custom Border Color for various parts of JEM.</p>
+        <p>Choose a custom Border Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
         <h3>Font Color</h3>
-        <p>Choose a custom Font Color for various parts of JEM.</p>
+        <p>Choose a custom Font Color for various parts of JEM. Empty colour fields use the value provided by the active JEM stylesheet and, where no JEM colour is defined, by the Joomla template.</p>
+        <h3>Default stylesheet colour reference</h3>
+        <p>The values below are the main defaults currently defined in the bundled JEM stylesheets. They are used when no custom colour override is saved in Settings.</p>
+        <table class="help">
+            <thead>
+                <tr>
+                    <th>Setting</th>
+                    <th>Legacy table layout</th>
+                    <th>Responsive layout</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Filter background</td>
+                    <td>#FFA500</td>
+                    <td>#ffa500</td>
+                    <td>Registered as the visible default in Settings.</td>
+                </tr>
+                <tr>
+                    <td>Filter border</td>
+                    <td>#808080</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Some views may add their own filter styling.</td>
+                </tr>
+                <tr>
+                    <td>Table header background</td>
+                    <td>#809EA8</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Responsive layouts use list headers instead of table headers.</td>
+                </tr>
+                <tr>
+                    <td>Table header font</td>
+                    <td>#fff</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Links inside legacy table headers also use #fff.</td>
+                </tr>
+                <tr>
+                    <td>Table header border</td>
+                    <td>#000</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Responsive layouts use list rows and separators.</td>
+                </tr>
+                <tr>
+                    <td>Table row background</td>
+                    <td>#EAEBE1</td>
+                    <td>#f9f9f9 for odd list rows</td>
+                    <td>Responsive layouts do not use table cells.</td>
+                </tr>
+                <tr>
+                    <td>Alternate row background</td>
+                    <td>#F0F0EE</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Only the legacy layout has a direct alternate table-row colour.</td>
+                </tr>
+                <tr>
+                    <td>Row hover background</td>
+                    <td>#BACFBA</td>
+                    <td>#e0e0e0</td>
+                    <td>Applied when the row supports hover styling.</td>
+                </tr>
+                <tr>
+                    <td>Featured row background</td>
+                    <td>#B6B6B4</td>
+                    <td>Stylesheet or template default</td>
+                    <td>Featured styling can vary by view.</td>
+                </tr>
+                <tr>
+                    <td>Table cell border</td>
+                    <td>#000</td>
+                    <td>#ddd for list row separators</td>
+                    <td>Responsive layouts use list item borders.</td>
+                </tr>
+            </tbody>
+        </table>
         <h2>Global Parameters<a name="params" id="params"></a></h2>
         <h3>Global Parameters:</h3>
         <p>The Global Parameters are used to assign basic settings to the views.
@@ -329,9 +411,12 @@
             This allows our developers to look a bit deeper into JEM.
         </p>
         <p><strong>Google API-Key:</strong><br>
-            When you want to display a Google Maps based on the Google API3 key, enter your API key here.
-            Please note that for just displaying an event map, an API key is not mandatory, but if you want to use the
-            geotagging function in the venue edit screen, a Google APUI key is required
+            Enter the Google Maps Platform API key used by JEM when a Google map is displayed with the Maps JavaScript API.
+            The key is required for Google based map views, Google map modules and venue geotagging.
+            Create the key in Google Cloud / Google Maps Platform, enable the Maps JavaScript API for the project, configure billing as required by Google, and restrict the key to your site domains.
+            See the official Google guide:
+            <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener">Set up the Maps JavaScript API</a>.
+            If you do not want to use Google Maps, leave this field empty and keep map provider options set to OpenStreetMap / Leaflet.
         </p>
         <p><strong>Google ClientID:</strong><br>
             If you have a Google Client ID you can fill it in here. (Optional, only for businesses)
@@ -368,6 +453,116 @@
             You set the 'By the end of' date in the Repeating Events section of the Event edit screen,
             or when submitting an event from the Frontend.
         </p>
+        <h3>Associated Articles<a name="associatedarticles" id="associatedarticles"></a></h3>
+        <p><strong>Use Associated Articles:</strong><br>
+            Enable this option when JEM should create or link Joomla articles for events. Associated articles are useful when
+            an event needs a longer editorial page, Joomla content plugins, custom modules, or a stable article URL beside the
+            normal JEM event page.
+        </p>
+        <p><strong>Associated Article Title Format:</strong><br>
+            Defines the article title used for one-time events and for the parent event of a recurring series. You can combine
+            plain text with placeholders such as <code>{title}</code>, <code>{id}</code>, <code>{date}</code>, <code>{time}</code>,
+            and <code>{lang}</code>. The <code>{lang}</code> placeholder inserts the two-letter language code, for example
+            <code>en</code> or <code>es</code>. Events assigned to all languages leave <code>{lang}</code> empty.
+        </p>
+        <p><strong>New event content article:</strong><br>
+            Controls what JEM does when an event uses its associated article as the event content and JEM must create a new
+            Joomla article automatically. JEM can copy the current event description into the article, create an empty article
+            and show an edit notice, or create an empty article and open the Joomla article editor.
+        </p>
+        <p><strong>New Associated Article Access:</strong><br>
+            Defines the access level for new associated Joomla articles created by JEM. The default option,
+            <em>Use Joomla category access</em>, copies the access level from the Joomla category where the article is created.
+            You can also select any Joomla access level to force all newly-created associated articles to use that access level.
+        </p>
+        <p><strong>New Associated Article Image:</strong><br>
+            Defines whether the JEM event image is copied into the Joomla article image fields when JEM creates a new associated
+            article. The image can be copied as the Joomla article intro image, as the full article image, or into both fields.
+            This only affects newly-created articles; it does not overwrite images in an existing associated article.
+        </p>
+        <p><strong>When event content changes:</strong><br>
+            Defines what JEM does when an existing event uses its associated Joomla article as the event content source and an
+            editor later changes the event title, alias, description, metadata, or image in JEM. JEM can leave the article
+            untouched, ask the editor after saving, or update the associated article automatically. The recommended default is
+            to ask after saving, because the Joomla article may contain manual editorial changes or translated content.
+        </p>
+        <p><strong>Show More Information / More Information Text:</strong><br>
+            Controls whether the event detail page displays a link or button to the associated article, and defines the text
+            used for that link.
+        </p>
+        <p><strong>Associated Article Date:</strong><br>
+            Controls whether the generated Joomla article keeps the current article date or uses the JEM event date.
+        </p>
+        <p><strong>Recurring Event Articles:</strong><br>
+            Choose how articles are handled for recurring events. You can create only the first article, share the first article
+            with the complete recurring series, or create one separate article for each generated occurrence.
+        </p>
+        <p><strong>Recurring Article Title Format:</strong><br>
+            This field is shown when recurring events create one article per occurrence. It supports the same placeholders as
+            the normal article title format and also supports counters. Use <code>{#}</code> for a plain counter,
+            <code>{##}</code> for a two-digit counter, or <code>{###}</code> for a three-digit counter.
+        </p>
+        <p><strong>Event content article fields:</strong><br>
+            These options only apply when an individual event is configured to use its associated Joomla article as the event
+            content source. They define which article fields replace the JEM event fields on the frontend and in integrations:
+            title, alias, intro text, full text, metadata, and image.
+        </p>
+        <p><strong>Missing language fallback:</strong><br>
+            Defines what JEM shows when an event uses the associated Joomla article as event content, but there is no published
+            associated article for the current language. You can show no article content, use the Joomla default-language article,
+            or fall back to the content stored directly in the JEM event.
+        </p>
+        <table class="help">
+            <tr>
+                <th>Format</th>
+                <th>Example result</th>
+                <th>Typical use</th>
+            </tr>
+            <tr>
+                <td><code>{date} - {title}</code></td>
+                <td>2026-06-20 - Concert in Madrid</td>
+                <td>One-time event articles ordered by date.</td>
+            </tr>
+            <tr>
+                <td><code>{title} ({date} {time})</code></td>
+                <td>Concert in Madrid (2026-06-20 19:30:00)</td>
+                <td>Events where the time must be visible in the article title.</td>
+            </tr>
+            <tr>
+                <td><code>{title} {##}</code></td>
+                <td>Workshop 01, Workshop 02, Workshop 03</td>
+                <td>Recurring events with one article per occurrence.</td>
+            </tr>
+            <tr>
+                <td><code>{title} ({lang})</code></td>
+                <td>Concert in Madrid (es)</td>
+                <td>Multilingual article sets where generated titles should identify the article language.</td>
+            </tr>
+            <tr>
+                <td><code>{###} - {title} - {date}</code></td>
+                <td>001 - Workshop - 2026-06-20</td>
+                <td>Long recurring series that need stable sortable titles.</td>
+            </tr>
+        </table>
+        <div class="box">
+            <p class="hintheader">Recommended setups</p>
+            <p class="hint">
+                Use one shared article when the recurring series has the same editorial content for every date. Use one article
+                per occurrence when each occurrence needs its own text, date-specific information, modules, comments, or SEO title.
+                Add <code>{##}</code> or <code>{###}</code> to the recurring title format when generated titles must stay unique
+                and easy to sort.
+            </p>
+        </div>
+        <div class="box">
+            <p class="hintheader">Multilingual example</p>
+            <p class="hint">
+                Create a JEM event in the default language and set <em>Associated article usage</em> to <em>Event content</em>.
+                Link or create a Joomla article for the event description, then create Joomla article associations for the
+                translated article versions. When visitors switch language, JEM keeps the same event and resolves the associated
+                article for the current language. If no translation exists, the <em>Missing language fallback</em> setting decides
+                whether JEM uses the default-language article, the original JEM event content, or no article content.
+            </p>
+        </div>
         <p><strong>Timezone Handling:</strong><br>
             You can select how the dates will be exported. If you chose 'float', when imported,
             all dates will appear as being in the same timezone as the user
@@ -467,6 +662,13 @@
             the required access level for editing events.
         </p>
         <h3>Registration</h3>
+        <div class="box">
+            <p class="hintheader">Terminology</p>
+            <p class="hint">
+                In this section, registration means event booking or attendance registration in JEM. It does not control
+                Joomla user account registration.
+            </p>
+        </div>
         <p><strong>Allow Event Registration:</strong><br>
             Select here to always allow registration, always forbid registration,
             or allow event creator to decide if (s)he needs registration for the specific event.

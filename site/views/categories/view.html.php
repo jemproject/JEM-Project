@@ -8,11 +8,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\HTML\HTMLHelper;
 /**
  * Categories-View
  */
@@ -33,8 +33,14 @@ class JemViewCategories extends JemView
         $id          = $app->input->getInt('id', 1);
         $model       = $this->getModel();
         $uri         = Uri::getInstance();
+        $isTypeCategoryView = $model->isTypeFilterRequested();
+        $categoryType = $model->getType();
+        $missingTypeId = (!$categoryType && $model->getRequestedTypeId() > 0) ? $model->getRequestedTypeId() : 0;
+        $isGroupedTypeCategoryView = $isTypeCategoryView && !$categoryType && !$missingTypeId;
         $rows        = $this->get('Data');
         $pagination  = $this->get('Pagination');
+        $filterSearch = $app->input->getString('filter_search', '');
+        $filterTypeId = $model->getFilterTypeId();
 
         // Load css
         JemHelper::loadCss('jem');
@@ -76,6 +82,13 @@ class JemViewCategories extends JemView
             $archive_link = $uri->toString();
         }
 
+        if ($isTypeCategoryView && $categoryType) {
+            $typeName    = htmlspecialchars($categoryType->name, ENT_QUOTES, 'UTF-8');
+            $pagetitle   = Text::sprintf('COM_JEM_TYPECATEGORIES_TITLE', $typeName);
+            $pageheading = $pagetitle;
+            $params->set('page_heading', $pageheading);
+        }
+
         // Add site name to title if param is set
         if ($app->get('sitename_pagetitles', 0) == 1) {
             $pagetitle = Text::sprintf('JPAGETITLE', $app->get('sitename'), $pagetitle);
@@ -93,18 +106,71 @@ class JemViewCategories extends JemView
         $permissions->canAddEvent = $user->can('add', 'event');
         $permissions->canAddVenue = $user->can('add', 'venue');
 
+        $lists = array();
+        $lists['search'] = $filterSearch;
+        $typeOptions = array(HTMLHelper::_('select.option', 0, Text::_('JALL')));
+        foreach ($model->getTypes() as $type) {
+            $typeOptions[] = HTMLHelper::_('select.option', (int) $type->id, $type->name);
+        }
+        $lists['type'] = HTMLHelper::_(
+            'select.genericlist',
+            $typeOptions,
+            'filter_typeid',
+            array(
+                'size' => '1',
+                'class' => 'inputbox form-select',
+                'onchange' => 'this.form.submit();',
+                'title' => Text::_('COM_JEM_CATEGORIES_TYPE_FILTER_TOOLTIP'),
+            ),
+            'value',
+            'text',
+            $filterTypeId
+        );
+
         // Get events if requested
-        if (!empty($rows) && $params->get('detcat_nr', 0) > 0) {
+        $categoryPreviewLimit = (int) $params->get('detcat_nr', 3);
+
+        if (!empty($rows) && $params->get('show_category_events', 1) && $categoryPreviewLimit > 0) {
             foreach($rows as $row) {
-                $row->events = $model->getEventdata($row->id);
+                $row->events = $model->getEventdata($row->id, $categoryPreviewLimit);
             }
         }
 
+        $typeItems = $model->getTypeItems();
+
+        if ($isGroupedTypeCategoryView && !empty($rows)) {
+            $typeOrder = array();
+            $position = 0;
+            foreach ($typeItems as $typeId => $typeItem) {
+                $typeOrder[(int) $typeId] = $position++;
+            }
+
+            usort($rows, static function ($left, $right) use ($typeOrder) {
+                $leftType  = (int) ($left->type_id ?? 0);
+                $rightType = (int) ($right->type_id ?? 0);
+                $leftOrder = $leftType > 0 && isset($typeOrder[$leftType]) ? $typeOrder[$leftType] : PHP_INT_MAX;
+                $rightOrder = $rightType > 0 && isset($typeOrder[$rightType]) ? $typeOrder[$rightType] : PHP_INT_MAX;
+
+                if ($leftOrder !== $rightOrder) {
+                    return $leftOrder <=> $rightOrder;
+                }
+
+                return strcasecmp((string) ($left->catname ?? ''), (string) ($right->catname ?? ''));
+            });
+        }
+
         $this->rows          = $rows;
+        $this->isTypeCategoryView = $isTypeCategoryView;
+        $this->isGroupedTypeCategoryView = $isGroupedTypeCategoryView;
+        $this->categoryType  = $categoryType;
+        $this->typeNames     = $model->getTypeNames();
+        $this->typeItems     = $typeItems;
+        $this->missingTypeId = $missingTypeId;
         $this->task          = $task;
         $this->params        = $params;
         $this->dellink       = $permissions->canAddEvent; // deprecated
         $this->pagination    = $pagination;
+        $this->lists         = $lists;
         $this->item          = $menuitem;
         $this->jemsettings   = $jemsettings;
         $this->pagetitle     = $pagetitle;

@@ -1,0 +1,1193 @@
+/* JEM event links - Responsive layout */
+
+.jem-links-tab {
+    max-width: 100%;
+    container-type: inline-size;
+}
+
+.jem-links-tab .adminform-subform {
+    max-width: 100%;
+    overflow-x: visible;
+}
+
+/* Repeatable wrapper */
+.jem-links-tab .subform-repeatable-wrapper,
+.jem-links-tab .subform-repeatable {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+}
+
+/* Global add button */
+.jem-links-tab .subform-repeatable-wrapper > .btn-toolbar,
+.jem-links-tab .subform-repeatable > .btn-toolbar {
+    margin: 0 0 1rem 0 !important;
+    padding: 0 !important;
+}
+
+/* Main repeatable item card */
+.jem-links-tab .subform-repeatable-group {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr);
+    grid-auto-rows: auto;
+    gap: .65rem 1rem;
+
+    width: calc(100% - 3.5rem);
+    max-width: calc(100% - 3.5rem);
+    box-sizing: border-box;
+
+    margin: 0 3.5rem 1.35rem 0;
+    padding: .75rem 1rem;
+
+    border: 1px solid #d7dce1;
+    border-radius: .5rem;
+    background: #fff;
+
+    overflow: visible !important;
+}
+
+/* Inner action toolbar */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar {
+    position: absolute;
+    top: .45rem;
+    right: -3rem;
+    z-index: 20;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    gap: .35rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: 2.5rem !important;
+    max-width: 2.5rem !important;
+    height: calc(100% - .9rem);
+
+    overflow: visible !important;
+}
+
+/* Inner action button groups */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar > *,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-group {
+    position: static !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+
+    gap: .35rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: 2.5rem !important;
+    max-width: 2.5rem !important;
+
+    overflow: visible !important;
+}
+
+/* Hide the inner add, move up and move down buttons */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-add,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move-up,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move-down,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-add],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-move-up],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[data-subform-repeatable-group-move-down],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Add"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Subir"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Bajar"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Move up"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar button[aria-label*="Move down"],
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-success,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-chevron-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-chevron-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-arrow-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.icon-arrow-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-chevron-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-chevron-down),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-arrow-up),
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn:has(.fa-arrow-down) {
+    display: none !important;
+}
+
+/* Move button: top right outside the card */
+.jem-links-tab .subform-repeatable-group .group-move,
+.jem-links-tab .subform-repeatable-group .sortable-handler,
+.jem-links-tab .subform-repeatable-group .handle {
+    order: 1 !important;
+    align-self: center !important;
+}
+
+/* Remove button: bottom right outside the card */
+.jem-links-tab .subform-repeatable-group .group-remove,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-danger {
+    order: 10 !important;
+    margin-top: auto !important;
+    align-self: center !important;
+}
+
+/* Keep remove and drag buttons visible */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-remove,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .group-move,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .sortable-handler,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .handle,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-danger,
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn-primary {
+    display: inline-flex !important;
+    visibility: visible !important;
+}
+
+/* Normalize action buttons */
+.jem-links-tab .subform-repeatable-group > .btn-toolbar .btn,
+.jem-links-tab .subform-repeatable-group .group-remove,
+.jem-links-tab .subform-repeatable-group .group-move,
+.jem-links-tab .subform-repeatable-group .sortable-handler,
+.jem-links-tab .subform-repeatable-group .handle {
+    position: static !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 2.35rem !important;
+    min-width: 2.35rem !important;
+    max-width: 2.35rem !important;
+
+    height: 2.35rem !important;
+    min-height: 2.35rem !important;
+    max-height: 2.35rem !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    line-height: 1 !important;
+    flex: 0 0 2.35rem !important;
+    transform: none !important;
+
+    border-radius: .25rem !important;
+    overflow: visible !important;
+}
+
+/* Desktop field layout: label and field in the same row */
+.jem-links-tab .subform-repeatable-group .control-group {
+    display: grid !important;
+    grid-template-columns: 95px minmax(0, 1fr);
+    column-gap: .25rem;
+
+    align-items: center;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+
+    margin: 0;
+    padding: 0;
+}
+
+/* Field labels */
+.jem-links-tab .subform-repeatable-group .control-label {
+    display: flex !important;
+    align-items: center !important;
+
+    float: none !important;
+
+    width: auto !important;
+    max-width: 95px;
+    min-height: 42px;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    font-weight: 600;
+    color: #1d2733;
+    line-height: 1.15;
+}
+
+.jem-links-tab .subform-repeatable-group .control-label label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    margin: 0 !important;
+    line-height: 1.15;
+}
+
+/* Field controls */
+.jem-links-tab .subform-repeatable-group .controls {
+    display: flex !important;
+    align-items: center !important;
+
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0 !important;
+    min-height: 42px;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.jem-links-tab .subform-repeatable-group .controls > fieldset,
+.jem-links-tab .subform-repeatable-group .controls > .btn-group,
+.jem-links-tab .subform-repeatable-group .controls > .input-group,
+.jem-links-tab .subform-repeatable-group .controls > .field-media-wrapper,
+.jem-links-tab .subform-repeatable-group .controls > .jem-link-type-field {
+    width: 100%;
+    margin: 0 !important;
+}
+
+.jem-links-tab fieldset,
+.jem-links-tab .subform-repeatable-group fieldset,
+.jem-links-tab .jem-links-global-options fieldset,
+.jem-links-tab .controls > fieldset {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+#jem .jem-links-tab fieldset,
+#jem .jem-links-tab .subform-repeatable-group fieldset,
+#jem .jem-links-tab .jem-links-global-options fieldset,
+#jem .jem-links-tab .controls > fieldset,
+#jem .jem-links-tab .btn-group {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.jem-links-tab fieldset legend,
+.jem-links-tab .subform-repeatable-group fieldset legend,
+.jem-links-tab .jem-links-global-options fieldset legend,
+.jem-links-tab .controls > fieldset legend {
+    display: none !important;
+}
+
+.jem-links-tab .subform-repeatable-group .controls fieldset,
+.jem-links-tab .subform-repeatable-group .controls .btn-group,
+.jem-links-tab .subform-repeatable-group .controls .input-group,
+.jem-links-tab .subform-repeatable-group .controls .jem-link-type-field {
+    align-items: center;
+}
+
+/* Inputs and selects */
+.jem-links-tab .subform-repeatable-group input,
+.jem-links-tab .subform-repeatable-group select,
+.jem-links-tab .subform-repeatable-group textarea,
+.jem-links-tab .subform-repeatable-group .form-control,
+.jem-links-tab .subform-repeatable-group .form-select,
+.jem-links-tab .subform-repeatable-group .custom-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    box-sizing: border-box;
+}
+
+/* Hide the hidden icon field row */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="hidden"][name$="[icon]"]) {
+    display: none !important;
+}
+
+/* Compact action type field */
+.jem-links-tab .jem-link-type-field {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.jem-links-tab .jem-link-type-field .jem-link-type-select {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.jem-links-tab .jem-link-type-icon-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.35rem;
+    min-width: 2.35rem;
+    height: 42px;
+
+    border: 1px solid #d7dce1;
+    border-radius: .25rem;
+    background: #f8f9fa;
+
+    font-size: 1rem;
+}
+
+/* Compact color field layout */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) .controls {
+    display: grid !important;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: .35rem;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+
+    overflow: hidden;
+}
+
+/* Native color picker */
+.jem-links-tab .subform-repeatable-group input[type="color"] {
+    width: 3rem !important;
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+
+    height: 42px !important;
+    min-height: 42px !important;
+
+    padding: .1rem !important;
+}
+
+/* Color text value */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) input[type="text"],
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) input[type="color"] + input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+
+    height: 42px !important;
+}
+
+/* Numeric fields */
+.jem-links-tab .subform-repeatable-group input[type="number"] {
+    width: 100% !important;
+    max-width: 7rem !important;
+}
+
+/* Joomla switcher alignment */
+.jem-links-tab .subform-repeatable-group .switcher {
+    margin: 0 !important;
+}
+
+.jem-links-tab .subform-repeatable-group .switcher label {
+    margin-bottom: 0 !important;
+}
+
+/* Compact target/button groups for narrow legacy frontend edit forms. */
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group-yesno,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group-yesno {
+    display: inline-flex !important;
+    justify-content: flex-start !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    gap: 0 !important;
+}
+
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group > .btn,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group > .btn,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group > label,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group > label,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-check + .btn,
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-check + .btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 2.75rem !important;
+    max-width: 4rem !important;
+    padding-right: .35rem !important;
+    padding-left: .35rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Media field: hide preview and show only path plus buttons */
+.jem-links-tab .field-media-preview,
+.jem-links-tab .field-media-preview-container {
+    display: none !important;
+}
+
+.jem-links-tab .field-media-wrapper,
+.jem-links-tab .field-media-wrapper .input-group {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0 !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.jem-links-tab .field-media-wrapper .input-group input {
+    min-width: 0 !important;
+    height: 42px !important;
+}
+
+.jem-links-tab .field-media-wrapper .input-group .btn {
+    flex: 0 0 auto;
+    height: 42px !important;
+    min-height: 42px !important;
+}
+
+/* Help text */
+.jem-links-tab .form-text,
+.jem-links-tab .small,
+.jem-links-tab .text-muted {
+    display: block;
+
+    margin-top: .15rem;
+
+    font-size: .8rem;
+    line-height: 1.25;
+}
+
+/* Prevent child elements from forcing the grid width */
+.jem-links-tab .subform-repeatable-group,
+.jem-links-tab .subform-repeatable-group *,
+.jem-links-tab .subform-repeatable-group .control-group,
+.jem-links-tab .subform-repeatable-group .controls {
+    min-width: 0 !important;
+}
+
+/* Event links compact desktop layout
+   Row 1: Label | Action type | Color
+   Row 2: Description full width
+   Row 3: URL | Target | Frame
+   Row 4: Image | Max width | Max height
+*/
+
+.jem-links-tab .subform-repeatable-group {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: .7rem 1rem;
+}
+
+/* Label / title */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[title]"]) {
+    grid-column: 1 / 2;
+    grid-row: 1;
+}
+
+/* Action type */
+.jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[type]"]) {
+    grid-column: 2 / 3;
+    grid-row: 1;
+}
+
+/* Color */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]) {
+    grid-column: 3 / 4;
+    grid-row: 1;
+}
+
+/* Description: short text, max 255 chars */
+.jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-items: flex-start;
+}
+
+.jem-links-tab .subform-repeatable-group textarea[name$="[description]"] {
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 90px;
+    resize: vertical;
+    line-height: 1.35;
+}
+
+/* Align description label at the top */
+.jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) .control-label {
+    align-items: flex-start !important;
+    padding-top: .35rem !important;
+}
+
+/* URL + Target + Frame in one desktop row */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]) {
+    grid-column: 1 / 2;
+    grid-row: 3;
+}
+
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+.jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+.jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) {
+    grid-column: 2 / 3;
+    grid-row: 3;
+}
+
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+.jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+.jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) {
+    grid-column: 3 / 4;
+    grid-row: 3;
+}
+
+/* Image + dimensions */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+.jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+    grid-column: 1 / 2;
+    grid-row: 4;
+}
+
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_width]"]) {
+    grid-column: 2 / 3;
+    grid-row: 4;
+}
+
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_height]"]) {
+    grid-column: 3 / 4;
+    grid-row: 4;
+}
+
+/* Keep number fields aligned with the grid column */
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_width]"]) input[type="number"],
+.jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_height]"]) input[type="number"] {
+    max-width: 100% !important;
+}
+
+/* From this width, labels go above fields to avoid overlap */
+@media (max-width: 1399.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: .75rem 1rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr;
+        row-gap: .2rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-label {
+        max-width: 100%;
+        min-height: auto;
+    }
+}
+
+@media (max-width: 1399.98px) {
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[title]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[type]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_width]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_height]"]) {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Keep URL controls readable before the card becomes single-column. */
+@media (max-width: 1199.98px) and (min-width: 900px) {
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]) {
+        grid-column: 1 / -1 !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) {
+        grid-column: 1 / 2 !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) {
+        grid-column: 2 / 3 !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .controls,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .controls,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) fieldset,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) fieldset,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) label,
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) label {
+        flex: 1 1 0;
+        min-width: 0;
+        white-space: nowrap;
+    }
+}
+
+/* Container-based layout for forms inside narrow template columns. */
+@container (max-width: 820px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: .75rem 1rem !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr !important;
+        row-gap: .2rem !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[title]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[type]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[type="color"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_width]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[max_height]"]) {
+        grid-column: auto !important;
+        grid-row: auto !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@container (max-width: 640px) {
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]) {
+        grid-column: 1 / -1 !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[target]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(select[name$="[frame]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@container (max-width: 520px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr !important;
+        width: calc(100% - 3rem) !important;
+        max-width: calc(100% - 3rem) !important;
+        margin-right: 3rem !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@media (max-width: 899.98px) {
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-column: 1 / -1 !important;
+        grid-row: auto !important;
+    }
+}
+
+/* Single column before fields become too narrow */
+@media (max-width: 899.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr;
+
+        width: calc(100% - 3.25rem);
+        max-width: calc(100% - 3.25rem);
+        margin-right: 3.25rem;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 575.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr;
+
+        width: calc(100% - 3rem);
+        max-width: calc(100% - 3rem);
+        margin-right: 3rem;
+
+        padding: .75rem;
+    }
+    .jem-links-tab .subform-repeatable-group > .btn-toolbar {
+        top: .45rem;
+        right: -2.65rem;
+        height: calc(100% - .9rem);
+    }
+    .jem-links-tab .field-media-wrapper .input-group {
+        flex-wrap: wrap;
+    }
+    .jem-links-tab .field-media-wrapper .input-group input {
+        flex: 1 1 100%;
+    }
+    .jem-links-tab .field-media-wrapper .input-group .btn {
+        flex: 1 1 auto;
+    }
+}
+
+/* Global links options */
+.jem-links-tab .jem-links-global-options {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem 1.6rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 1rem 0;
+    padding: .75rem 1rem;
+    border: 1px solid #d7dce1;
+    border-radius: .5rem;
+    background: #fff;
+    align-items: center;
+}
+
+/* Keep global option compact */
+.jem-links-tab .jem-links-global-options .control-group {
+    display: flex !important;
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .6rem;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Global option label */
+.jem-links-tab .jem-links-global-options .control-label {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 2.625rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-weight: 600;
+    line-height: 2.625rem !important;
+    white-space: nowrap;
+}
+
+/* Global option controls */
+.jem-links-tab .jem-links-global-options .controls {
+    display: flex !important;
+    align-items: center !important;
+    flex: 0 1 auto;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100%;
+    height: 2.625rem !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.jem-links-tab .jem-links-global-options .control-label label {
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+.jem-links-tab .jem-links-global-options select,
+.jem-links-tab .jem-links-global-options .form-select {
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: min(18rem, 100%) !important;
+    height: 2.625rem !important;
+    line-height: 1.2 !important;
+}
+
+.jem-links-tab .jem-links-global-options .controls fieldset {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.jem-links-tab .jem-links-global-options fieldset,
+.jem-links-tab .subform-repeatable-group fieldset {
+    margin-bottom: 0 !important;
+}
+
+/* Global option switcher alignment */
+.jem-links-tab .jem-links-global-options .switcher {
+    margin: 0 !important;
+}
+
+
+#jem .subform-repeatable-group .btn-group {
+    margin-bottom: 0em;
+}
+
+@media (max-width: 575.98px) {
+    .jem-links-tab .jem-links-global-options .control-group {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-links-tab .jem-links-global-options .control-label,
+    .jem-links-tab .jem-links-global-options .controls,
+    .jem-links-tab .jem-links-global-options select,
+    .jem-links-tab .jem-links-global-options .form-select {
+        flex: 1 1 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+.jem-event-link-text {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: left;
+    line-height: 1.3;
+    min-width: 0;
+}
+
+.jem-event-link-label {
+    display: block;
+    font-weight: 700;
+    text-align: left;
+}
+
+.jem-event-link-description {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400;
+    text-align: left;
+    opacity: 0.85;
+}
+
+.jem-event-link {
+    text-align: left;
+}
+
+/* Container-aware links layout: adapt to the parent column width. */
+.jem-links-tab .jem-links-global-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.jem-links-tab .jem-links-global-options .control-group {
+    width: auto;
+    min-width: 0 !important;
+    max-width: 100%;
+}
+
+@container (max-width: 900px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: .75rem 1rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        row-gap: .25rem;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-label {
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@container (max-width: 520px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-column: 1 / -1 !important;
+        grid-row: auto !important;
+    }
+
+    .jem-links-tab .field-media-wrapper .input-group {
+        flex-wrap: wrap;
+    }
+
+    .jem-links-tab .field-media-wrapper .input-group input {
+        flex: 1 1 100%;
+    }
+
+    .jem-links-tab .field-media-wrapper .input-group .btn {
+        flex: 1 1 auto;
+    }
+}
+
+@media (max-width: 1499.98px) {
+    .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-label {
+        max-width: 100%;
+        min-height: auto;
+    }
+
+    .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+/* Link description field */
+.jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) {
+    grid-column: 1 / -1;
+    align-items: flex-start;
+}
+
+.jem-links-tab .subform-repeatable-group textarea[name$="[description]"] {
+    height: auto !important;
+    min-height: 64px !important;
+    resize: vertical;
+    line-height: 1.35;
+}
+
+.jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) .control-label {
+    align-items: flex-start !important;
+    padding-top: .45rem !important;
+}
+
+/* Event link text block: label + description */
+.jem-event-link .jem-event-link-text {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-width: 0;
+    text-align: left;
+    line-height: 1.25;
+}
+
+/* Event link label/title */
+.jem-event-link .jem-event-link-label {
+    display: block;
+    order: 1;
+    font-weight: 700;
+    text-align: left;
+    line-height: 1.25;
+}
+
+.jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block;
+    order: 1;
+    font-weight: 700;
+}
+
+/* Event link optional description */
+.jem-event-link .jem-event-link-description {
+    display: block;
+    order: 2;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400;
+    line-height: 1.25;
+    text-align: left;
+    opacity: 0.85;
+}
+
+.jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block;
+    order: 2;
+    font-weight: 400;
+}
+
+/* Final frontend fallback: narrow edit containers need two columns, even on wide pages. */
+@media (max-width: 1499.98px) {
+    #jem .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+        gap: .75rem 1rem !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .control-group {
+        grid-template-columns: 1fr !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        row-gap: .25rem !important;
+        min-width: 0 !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .control-label {
+        max-width: 100% !important;
+        min-height: auto !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .controls {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]),
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[url]"]),
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(input[name$="[image]"]),
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(.field-media-wrapper) {
+        grid-column: 1 / -1 !important;
+    }
+
+    #jem div.current .jem-links-tab fieldset,
+    #jem .jem-links-tab fieldset,
+    #jem .jem-links-tab fieldset.radio,
+    #jem .jem-links-tab fieldset.btn-group-yesno,
+    #jem .jem-links-tab .subform-repeatable-group fieldset,
+    #jem .jem-links-tab .jem-links-global-options fieldset,
+    #jem .jem-links-tab .btn-group,
+    #jem .jem-links-tab .btn-group-yesno,
+    #jem .jem-links-tab .radio {
+        border: 0 !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .btn-group,
+    #jem .jem-links-tab .subform-repeatable-group .btn-group-yesno {
+        display: flex !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .btn-group > .btn,
+    #jem .jem-links-tab .subform-repeatable-group .btn-group > label,
+    #jem .jem-links-tab .subform-repeatable-group .btn-check + .btn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        white-space: nowrap;
+        text-align: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #jem .jem-links-tab .subform-repeatable-group {
+        grid-template-columns: 1fr !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .control-group {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+/* Keep target/button switchers compact after the generic narrow-layout fallback. */
+@media (max-width: 1499.98px) {
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group-yesno,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group-yesno {
+        display: inline-flex !important;
+        justify-content: flex-start !important;
+        width: fit-content !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group > .btn,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group > .btn,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-group > label,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-group > label,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_target"]) .btn-check + .btn,
+    #jem .jem-links-tab .subform-repeatable-group .control-group:has(fieldset[id$="_frame"]) .btn-check + .btn {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 2.6rem !important;
+        max-width: 4rem !important;
+        padding-right: .3rem !important;
+        padding-left: .3rem !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* Final label/control vertical alignment for legacy and responsive edit forms. */
+#jem .jem-links-tab .subform-repeatable-group .control-group,
+#jem .jem-links-tab .jem-links-global-options .control-group {
+    align-items: center !important;
+}
+
+#jem .jem-links-tab .subform-repeatable-group .control-label,
+#jem .jem-links-tab .subform-repeatable-group .controls,
+#jem .jem-links-tab .jem-links-global-options .control-label,
+#jem .jem-links-tab .jem-links-global-options .controls {
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    min-height: 42px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+#jem .jem-links-tab .subform-repeatable-group .control-label label,
+#jem .jem-links-tab .jem-links-global-options .control-label label {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) {
+    align-items: center !important;
+}
+
+#jem .jem-links-tab .subform-repeatable-group .control-group:has(textarea[name$="[description]"]) .control-label {
+    align-items: center !important;
+    align-self: center !important;
+    padding-top: 0 !important;
+}
+
+#jem .jem-links-tab .btn-group,
+#jem .jem-links-tab .btn-group-yesno,
+#jem .jem-links-tab .subform-repeatable-group .btn-group,
+#jem .jem-links-tab .subform-repeatable-group .btn-group-yesno {
+    margin-bottom: 0 !important;
+}

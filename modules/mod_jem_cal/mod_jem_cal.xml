@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_cal</name>
     <author>Toni Smillie, JEM Community</author>
-    <creationDate>March 2026</creationDate>
+    <creationDate>7 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>toni@qivva.com, info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.2</version>
+    <version>4.5.0</version>
     <description>MOD_JEM_CAL_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -51,21 +51,25 @@
                        default="Event"
                        label="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR"
                        description="MOD_JEM_CAL_TOOLTIPS_TITLE_SINGULAR_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="cal15q_tooltipspl_title" type="text"
                        default="Events"
                        label="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL"
                        description="MOD_JEM_CAL_TOOLTIPS_TITLE_PLURAL_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="tooltips_max_events" type="text"
                        default=""
                        label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS"
                        description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENTS_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="event_cut_title" type="text"
                        default="25"
                        label="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH"
                        description="MOD_JEM_CAL_TOOLTIPS_MAX_EVENT_TITLE_LENGTH_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="DisplayLink" type="radio"
                        class="btn-group btn-group-yesno"
@@ -75,6 +79,28 @@
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
+                </field>
+                <field name="event_link_event_layout" type="list"
+                       default=""
+                       label="MOD_JEM_CAL_EVENT_LINK_EVENT_LAYOUT"
+                       description="MOD_JEM_CAL_EVENT_LINK_EVENT_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="DisplayLink:1"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_CAL_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_CAL_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+                <field name="event_link_venue_layout" type="list"
+                       default=""
+                       label="MOD_JEM_CAL_EVENT_LINK_VENUE_LAYOUT"
+                       description="MOD_JEM_CAL_EVENT_LINK_VENUE_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="DisplayLink:1"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_CAL_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_CAL_EVENT_LINK_LAYOUT_COMPACT</option>
                 </field>
                 <field name="DisplayTime" type="radio"
                        class="btn-group btn-group-yesno"
@@ -112,6 +138,7 @@
                        default="2"
                        label="MOD_JEM_CAL_DAYNAME_LENGTH"
                        description="MOD_JEM_CAL_DAYNAME_LENGTH_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_CAL_DAYNAME_DONT_DISPLAY</option>
                     <option value="1">MOD_JEM_CAL_DAYNAME_ONE_LETTER</option>
@@ -123,6 +150,7 @@
                        default="1"
                        label="MOD_JEM_CAL_FIRST_DAY_OF_WEEK"
                        description="MOD_JEM_CAL_FIRST_DAY_OF_WEEK_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">SUNDAY</option>
                     <option value="1">MONDAY</option>
@@ -136,6 +164,7 @@
                        default="1"
                        label="MOD_JEM_CAL_YEAR_LENGTH"
                        description="MOD_JEM_CAL_YEAR_LENGTH_DESC"
+                       class="form-select w-auto"
                 >
                     <option value="0">MOD_JEM_CAL_TWO_DIGITS</option>
                     <option value="1">MOD_JEM_CAL_FOUR_DIGITS</option>
@@ -153,11 +182,13 @@
                        default="0"
                        label="MOD_JEM_CAL_MONTH_OFFSET"
                        description="MOD_JEM_CAL_MONTH_OFFSET_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="Time_offset" type="text"
                        default="0"
                        label="MOD_JEM_CAL_TIME_OFFSET"
                        description="MOD_JEM_CAL_TIME_OFFSET_DESC"
+                       class="form-control w-auto"
                 />
                 <field name="spacer3" type="spacer"
                        label=""
@@ -206,12 +237,14 @@
                        removeroot="true"
                        label="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS"
                        description="MOD_JEM_CAL_LIMIT_TO_CATEGORY_IDS_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="venid" type="venueoptions"
                        default=""
                        multiple="true"
                        label="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS"
                        description="MOD_JEM_CAL_LIMIT_TO_VENUE_IDS_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="StraightToDetails" type="radio"
                        class="btn-group btn-group-yesno"
@@ -231,6 +264,51 @@
                        default=""
                        label="MOD_JEM_CAL_DEFAULT_ITEM_ID"
                        description="MOD_JEM_CAL_DEFAULT_ITEM_ID_DESC"
+                       class="form-control w-auto"
+                />
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_CAL_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_INTROTEXT"
+                       description="MOD_JEM_CAL_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_CAL_INTROTEXT"
+                       description="MOD_JEM_CAL_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_CAL_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_CAL_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_CAL_FOOTERTEXT"
+                       description="MOD_JEM_CAL_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
                 />
             </fieldset>
             <fieldset name="advanced">
@@ -238,7 +316,7 @@
                         name="layout"
                         type="modulelayout"
                         label="JFIELD_ALT_LAYOUT_LABEL"
-                        class="form-select"
+                        class="form-select w-auto"
                         validate="moduleLayout"
                         default="_:default"
                 />
@@ -257,6 +335,7 @@
                         default="1"
                         filter="integer"
                         validate="options"
+                        class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -268,6 +347,7 @@
                         description="MOD_JEM_CAL_CACHE_TIME_DESC"
                         default="900"
                         filter="integer"
+                        class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -278,3 +358,7 @@
         </fields>
     </config>
 </extension>
+
+
+
+

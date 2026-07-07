@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_EVENTSMAP_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_EVENTSMAP_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+<field name="map_center_lat" type="text"
+                   default="54.526"
+                   label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
+                   description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC" class="form-control w-auto"/>
+            <field name="map_center_lng" type="text"
+                   default="15.255"
+                   label="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE"
+                   description="COM_JEM_EVENTS_MAP_CENTER_LONGITUDE_DESC" class="form-control w-auto"/>
+            <field name="map_zoom" type="number"
+                   default="4"
+                   label="COM_JEM_EVENTS_MAP_ZOOM"
+                   description="COM_JEM_EVENTS_MAP_ZOOM_DESC"
+                   min="0"
+                   max="19" class="form-control w-auto"/>
+            <field name="map_provider" type="list"
+                   default="osm"
+                   label="COM_JEM_MAP_PROVIDER"
+                   description="COM_JEM_MAP_PROVIDER_DESC" class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="osm">COM_JEM_MAP_PROVIDER_OSM</option>
+                <option value="google">COM_JEM_MAP_PROVIDER_GOOGLE</option>
+            </field>
+            <field name="map_type" type="list"
+                   default="political"
+                   label="COM_JEM_EVENTS_MAP_TYPE"
+                   description="COM_JEM_EVENTS_MAP_TYPE_DESC" class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="political">COM_JEM_MAP_TYPE_POLITICAL</option>
+                <option value="physical">COM_JEM_MAP_TYPE_PHYSICAL</option>
+            </field>
+            <field name="show_my_location" type="radio"
+                   default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION"
+                   description="COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="full_screen_map" type="radio"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_FULL_SCREEN"
+                   description="COM_JEM_EVENTS_MAP_FULL_SCREEN_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_directions_link" type="radio"
+                   default="1"
+                   label="COM_JEM_MAP_SHOW_DIRECTIONS_LINK"
+                   description="COM_JEM_MAP_SHOW_DIRECTIONS_LINK_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="show_full_map_link" type="radio"
+                   default="1"
+                   label="COM_JEM_MAP_SHOW_FULL_MAP_LINK"
+                   description="COM_JEM_MAP_SHOW_FULL_MAP_LINK_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="heat_layer" type="radio"
+                   default="1"
+                   label="COM_JEM_EVENTS_MAP_HEAT_LAYER"
+                   description="COM_JEM_EVENTS_MAP_HEAT_LAYER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="venue_markerfile" type="text"
+                   default="media/com_jem/images/marker-red.webp"
+                   label="COM_JEM_EVENTS_MAP_VENUE_MARKER"
+                   description="COM_JEM_EVENTS_MAP_VENUE_MARKER_DESC" class="form-control w-auto" />
+            <field name="mylocation_markerfile" type="text"
+                   default="media/com_jem/images/marker-blue.webp"
+                   label="COM_JEM_EVENTS_MAP_MYLOC_MARKER"
+                   description="COM_JEM_EVENTS_MAP_MYLOC_MARKER_DESC" class="form-control w-auto" />
+            <field name="show_date_filter" type="radio" default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_DATE_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_DATE_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="date_filter_default" type="radio"
+                   default="all"
+                   label="COM_JEM_EVENTS_MAP_DATE_FILTER_DEFAULT"
+                   description="COM_JEM_EVENTS_MAP_DATE_FILTER_DEFAULT_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="all">COM_JEM_EVENTS_MAP_ALL</option>
+                <option value="today">COM_JEM_EVENTS_MAP_TODAY</option>
+                <option value="tomorrow">COM_JEM_EVENTS_MAP_TOMORROW</option>
+                <option value="week">COM_JEM_EVENTS_MAP_WEEK</option>
+                <option value="month">COM_JEM_EVENTS_MAP_MONTH</option>
+                <option value="year">COM_JEM_EVENTS_MAP_YEAR</option>
+                <option value="date">COM_JEM_EVENTS_MAP_DATE</option>
+            </field>
+            <field name="show_category_filter" type="radio"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_SHOW_CATEGORY_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_CATEGORY_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="catid" type="categoryedit"
+                   default=""
+                   multiple="true"
+                   removeroot="true"
+                   label="COM_JEM_EVENTS_MAP_CATEGORY_ID"
+                   description="COM_JEM_EVENTS_MAP_CATEGORY_ID_DESC" class="form-select w-auto jem-options-width-auto"
+            />
+            <field name="show_country_filter" type="radio"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_SHOW_COUNTRY_FILTER"
+                   description="COM_JEM_EVENTS_MAP_SHOW_COUNTRY_FILTER_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="default_country" type="countryoptions"
+                   default="0"
+                   label="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY"
+                   description="COM_JEM_EVENTS_MAP_DEFAULT_COUNTRY_DESC" class="form-select w-auto jem-options-width-auto"
+            />
+            <field name="jem_itemid" type="menuitem"
+                   label="COM_JEM_EVENTS_MAP_JEM_ITEMID"
+                   description="COM_JEM_EVENTS_MAP_JEM_ITEMID_DESC"
+                   class="form-select w-auto jem-options-width-auto" />
+            <field name="height" type="text" default="500px"
+                   label="COM_JEM_EVENTS_MAP_HEIGHT"
+                   description="COM_JEM_EVENTS_MAP_HEIGHT_DESC" class="form-control w-auto" />
+            <field name="show_events_table" type="radio"
+                   default="1"
+                   label="COM_JEM_EVENTS_MAP_SHOW_EVENTS_TABLE"
+                   description="COM_JEM_EVENTS_MAP_SHOW_EVENTS_TABLE_DESC"
+                   class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
+    </fields>
+</metadata>

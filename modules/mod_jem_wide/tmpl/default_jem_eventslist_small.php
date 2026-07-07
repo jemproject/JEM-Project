@@ -10,6 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
+$showCategory = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
+$showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
+
 ?>
 
 <div class="jem-sort jem-sort-small">
@@ -18,7 +21,7 @@ use Joomla\CMS\Language\Text;
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-notitle')) : ?>
             <div id="jem-title" class="sectiontableheader"><i class="fa fa-comment-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_TITLE'); ?></div>
         <?php endif; ?>
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+        <?php if ($showVenue) : ?>
             <div id="jem-location" class="sectiontableheader"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_LOCATION'); ?></div>
         <?php endif; ?>
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocity')) : ?>
@@ -27,7 +30,7 @@ use Joomla\CMS\Language\Text;
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nostate')) : ?>
             <div id="jem-state" class="sectiontableheader"><i class="fa fa-map-o" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_STATE'); ?></div>
         <?php endif; ?>
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+        <?php if ($showCategory) : ?>
             <div id="jem-category" class="sectiontableheader"><i class="fa fa-tag" aria-hidden="true"></i>&nbsp;<?php echo Text::_('COM_JEM_TABLE_CATEGORY'); ?></div>
         <?php endif; ?>
     </div>
@@ -37,10 +40,8 @@ use Joomla\CMS\Language\Text;
     <?php
     // Safari has problems with the "onclick" element in the <li>. It covers the links to location and category etc.
     // This detects the browser and just writes the onclick attribute if the broswer is not Safari.
-    $isSafari = false;
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'Safari') && !strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome')) {
-        $isSafari = true;
-    }
+    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) $_SERVER['HTTP_USER_AGENT'] : '';
+    $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
     ?>
     <?php foreach ($list as $item) : ?>
         <?php if (!empty($item->featured)) :   ?>
@@ -80,7 +81,7 @@ use Joomla\CMS\Language\Text;
             </div>
         <?php endif; ?>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue')) : ?>
+        <?php if ($showVenue) : ?>
             <?php if (!empty($item->venue)) : ?>
                 <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$item->venue; ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
                     <i class="fa fa-map-marker" aria-hidden="true"></i>
@@ -124,10 +125,20 @@ use Joomla\CMS\Language\Text;
             <?php endif; ?>
         <?php endif; ?>
 
-        <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats')) : ?>
+        <?php if ($showCategory) : ?>
             <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.$item->catname); ?>">
                 <i class="fa fa-tag" aria-hidden="true"></i>
                 <?php echo $item->catname; ?>
+            </div>
+        <?php endif; ?>
+        <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+        <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+            <div class="jem-event-info-small jem-more-information">
+                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-wide', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-wide__more-information'); ?>">
+                    <?php echo Text::_('MOD_JEM_WIDE_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                </a>
             </div>
         <?php endif; ?>
         </li>

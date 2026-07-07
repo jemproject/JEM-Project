@@ -14,6 +14,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\String\StringHelper;
 
 /**
  * Venue-View
@@ -73,20 +74,33 @@ class JemViewVenue extends JemView
                 return false;
             }
 
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
             $evlinkcolor = $params->get('eventlinkcolor');
             $evbackgroundcolor = $params->get('eventbackgroundcolor');
             $currentdaycolor = $params->get('currentdaycolor');
             $eventandmorecolor = $params->get('eventandmorecolor');
 
             $style = '
-            div#jem .eventcontentinner a, div#jem .eventandmore a {color:' . $evlinkcolor . ';}
+            div#jem .eventcontentinner a {color: inherit;}
+            div#jem .eventandmore a {color:' . $evlinkcolor . ';}
             .eventcontentinner {background-color:'.$evbackgroundcolor .';}
             .eventandmore {background-color:' . $eventandmorecolor . ';}
             .today .daynum {background-color:' . $currentdaycolor . ';}';
             $document->addStyleDeclaration ($style);
 
             // add javascript (using full path - see issue #590)
-            $document->addScript($url.'media/com_jem/js/calendar.js');
+            $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+            $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
             // Retrieve year/month variables
             $year = $jinput->get('yearID', date("Y"),'int');
             $month = $jinput->get('monthID', date("m"),'int');
@@ -136,9 +150,13 @@ class JemViewVenue extends JemView
             $url_base = 'index.php?option=com_jem&view=venue&layout=calendar' . $partVenid . $partItemid;
 
             $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
+            $pdf_link = Route::_($url_base . $partDate . '&layout=pdf&venue_calendar_pdf=1&format=raw');
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
+            if ($params->get('show_year_navigation', 0)) {
+                $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            }
             $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
             $cal->setFirstWeekDay($params->get('firstweekday',1));
             $cal->enableDayLinks('index.php?option=com_jem&view=day'.$partLocid);
@@ -151,8 +169,11 @@ class JemViewVenue extends JemView
             $this->settings      = $settings;
             $this->permissions   = $permissions;
             $this->cal           = $cal;
+            $this->calendarYear  = $year;
+            $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
             $this->print_link    = $print_link;
+            $this->pdf_link      = $pdf_link;
             $this->archive_link  = $archive_link;
             $this->print         = $print;
             $this->ical_link     = $partDate;
@@ -197,6 +218,17 @@ class JemViewVenue extends JemView
             if (empty($venue)) {
                 $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
                 return false;
+            }
+
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
 
             // are events available?
@@ -245,7 +277,6 @@ class JemViewVenue extends JemView
             } else {
                 $pagetitle   = $venue->venue;
                 $pageheading = $pagetitle;
-                $params->set('show_page_heading', 1); // ensure page heading is shown
                 $pathway->addItem($pagetitle, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
             }
             $pageclass_sfx = $params->get('pageclass_sfx');
@@ -261,6 +292,7 @@ class JemViewVenue extends JemView
                 $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
             }
             $archive_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug));
+            $pdf_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug) . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf');
 
             $params->set('page_heading', $pageheading);
 
@@ -303,8 +335,8 @@ class JemViewVenue extends JemView
             }
 
             // prepare the url for output
-            if (\Joomla\String\StringHelper::strlen($venue->url) > 35) {
-                $venue->urlclean = $this->escape(\Joomla\String\StringHelper::substr($venue->url, 0, 35)) . '...';
+            if (StringHelper::strlen($venue->url) > 35) {
+                $venue->urlclean = $this->escape(StringHelper::substr($venue->url, 0, 35)) . '...';
             } else {
                 $venue->urlclean = $this->escape($venue->url);
             }
@@ -356,6 +388,7 @@ class JemViewVenue extends JemView
             $this->noevents         = $noevents;
             $this->venue            = $venue;
             $this->print_link       = $print_link;
+            $this->pdf_link         = $pdf_link;
             $this->archive_link     = $archive_link;
             $this->print            = $print;
             $this->params           = $params;

@@ -1,0 +1,42 @@
+<?php
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+
+/**
+ * Raw: Typevenues
+ */
+class JemViewTypevenues extends HtmlView
+{
+    /**
+     * Creates the PDF output for the Type venues view.
+     */
+    public function display($tpl = null)
+    {
+        $app = Factory::getApplication();
+
+        if ($app->input->getCmd('layout', '') !== 'pdf') {
+            $app->close();
+
+            return;
+        }
+
+        $model = $this->getModel();
+        $model->setState('list.start', 0);
+        $model->setState('list.limit', 0);
+        $type = $model->getType();
+        $typeName = $type && trim((string) ($type->name ?? '')) !== ''
+            ? Text::sprintf('COM_JEM_TYPEVENUES_TITLE', (string) $type->name)
+            : Text::_('COM_JEM_VENUES');
+
+        JemPdfView::renderTypeVenueList($typeName, $type, (array) $model->getItems(), 'jem-type-venues.pdf');
+    }
+}

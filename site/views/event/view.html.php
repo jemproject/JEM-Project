@@ -8,24 +8,23 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\String\StringHelper;
 
 /**
  * Event-View
  */
 class JemViewEvent extends JemView
 {
-    protected $item;
-    protected $params;
-    protected $print;
-    protected $state;
-    protected $user;
+    public $item;
+    public $params;
+    public $print;
+    public $state;
+    public $user;
 
     public function __construct($config = array())
     {
@@ -55,6 +54,7 @@ class JemViewEvent extends JemView
         $edit_att            = new \stdClass();
         $this->params      = $app->getParams('com_jem');
         $this->item        = $this->get('Item');
+        $this->contacts    = $this->get('Contacts');
         $this->print       = $app->input->getBool('print', false);
         $this->state       = $this->get('State');
         $this->user        = $user;
@@ -156,7 +156,6 @@ class JemViewEvent extends JemView
             $pagetitle = $item->title;
             $params->set('page_title', $pagetitle);
             $params->set('page_heading', $pagetitle);
-            $params->set('show_page_heading', 1); // ensure page heading is shown
             $pathway->addItem($pagetitle, Route::_(JemHelperRoute::getEventRoute($item->slug)));
 
             // Check for alternative layouts (since we are not in a single-event menu item)
@@ -174,8 +173,14 @@ class JemViewEvent extends JemView
 
         // Check the view access to the event (the model has already computed the values).
         if (!$item->params->get('access-view')) { // && !$item->params->get('show_noauth') &&  $user->get('guest')) { - not supported yet
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            return;
+            if ($user->get('guest') || !$user->get('id')) {
+                $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode(Uri::getInstance()->toString()), false));
+
+                return;
+            }
+
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         if ($item->params->get('show_intro', '1') == '1') {
@@ -221,10 +226,21 @@ class JemViewEvent extends JemView
 
 
         $this->print_link = Route::_(JemHelperRoute::getRoute($item->slug).'&print=1&tmpl=component');
+        $this->pdf_link = Route::_(JemHelperRoute::getRoute($item->slug).'&format=raw&layout=pdf');
 
         // Get images
-        $this->dimage = JemImage::flyercreator($item->datimage, 'event');
+        $detailImage = !empty($item->fullimage) ? $item->fullimage : $item->datimage;
+        $this->dimage = JemImage::flyercreator($detailImage, 'event');
         $this->limage = JemImage::flyercreator($item->locimage, 'venue');
+
+        $articleUsage = (string) $item->params->get('article_usage', 'information');
+        $associatedArticles = empty($item->article_content_applied) && $articleUsage !== 'none' ? JemHelper::getAssociatedArticles(array($item), $user->getAuthorisedViewLevels()) : array();
+        $associatedArticle  = !empty($item->article_id) && isset($associatedArticles[$item->article_id]) ? $associatedArticles[$item->article_id] : null;
+        $articleLink        = JemHelper::getAssociatedArticleLink($associatedArticle);
+        $item->articlelink  = $articleLink['link'];
+        $item->articletitle = $articleLink['title'];
+        $item->articleeditlink = $articleLink['edit_link'] ?? '';
+        $item->caneditarticle = !empty($articleLink['can_edit']);
 
         // Check if the user has permission to add things
         $permissions = new stdClass();
@@ -340,11 +356,11 @@ class JemViewEvent extends JemView
             $description = explode("[", $this->item->meta_description);
             $description_content = "";
             foreach ($description as $desc) {
-                $endpos = \Joomla\String\StringHelper::strpos($desc, "]", 0);
+                $endpos = StringHelper::strpos($desc, "]", 0);
                 if ($endpos > 0) {
-                    $keyword = \Joomla\String\StringHelper::substr($desc, 0, $endpos);
+                    $keyword = StringHelper::substr($desc, 0, $endpos);
                     $description_content .= $this->keyword_switcher($keyword, $this->item, $categories, $jemsettings->formattime, $jemsettings->formatdate);
-                    $description_content .= \Joomla\String\StringHelper::substr($desc, $endpos + 1);
+                    $description_content .= StringHelper::substr($desc, $endpos + 1);
                 } else {
                     $description_content .= $desc;
                 }
@@ -385,6 +401,12 @@ class JemViewEvent extends JemView
         //Get itemRoot if item is a recurrence event
         $this->item_root = 0;
 
+        // Get event links from the item
+        $this->event_links = $this->item->event_links ?? array();
+
+        // Get itemRoot if item is a recurrence event
+        $this->item_root = 0;
+
         // Check if this is a recurring event
         if (!empty($this->item->recurrence_type) && !empty($this->item->recurrence_first_id)) {
 
@@ -397,6 +419,19 @@ class JemViewEvent extends JemView
                 // Ensure root item exists and has attachments to inherit
                 if ($this->item_root && !empty($this->item_root->attachments)) {
                     $this->item->attachments = $this->item_root->attachments;
+                }
+            }
+
+            // Inherit links if the current instance is empty
+            if (empty($this->event_links)) {
+
+                // Load root item if not already loaded by attachments logic
+                if (!$this->item_root) {
+                    $this->item_root = $model->getItem($this->item->recurrence_first_id);
+                }
+
+                if ($this->item_root && !empty($this->item_root->event_links)) {
+                    $this->event_links = $this->item_root->event_links;
                 }
             }
         }
@@ -518,20 +553,20 @@ class JemViewEvent extends JemView
         }
 
         $showDateInTitle = $this->item->params->get('show_date_in_title', $this->jemsettings->show_date_in_title ?? 0);
-            if ($showDateInTitle) {
-                // add date to browser title
-                if (!empty($this->item->dates)) {
-                    $startDate = JemOutput::formatdate($this->item->dates);
-                    $title .= ', ' . $startDate;
-                    // add end date to browser title, if availaböe
-                    if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
-                        $endDate = JemOutput::formatdate($this->item->enddates);
-                        $title .= ' - ' . $endDate;
-                    }
-                } else {
-                    $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
+        if ($showDateInTitle) {
+            // add date to browser title
+            if (!empty($this->item->dates)) {
+                $startDate = JemOutput::formatdate($this->item->dates);
+                $title .= ', ' . $startDate;
+                // add end date to browser title, if available
+                if (!empty($this->item->enddates) && $this->item->enddates != $this->item->dates) {
+                    $endDate = JemOutput::formatdate($this->item->enddates);
+                    $title .= ' - ' . $endDate;
                 }
+            } else {
+                $title .= ', ' . Text::_('COM_JEM_OPEN_DATE');
             }
+        }
         $this->document->setTitle($title);
 
         if ($this->params->get('robots')) {

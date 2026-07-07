@@ -12,11 +12,13 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
+use Joomla\String\StringHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -50,7 +52,7 @@ static public function lightbox() {
     $settings = JemHelper::config();
     $app = Factory::getApplication();
     if ($settings->lightbox == 1) {
-        $document = Factory::getDocument();
+        $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
         $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
@@ -78,6 +80,7 @@ static public function lightbox() {
      *                              slug: for '&id=', for Mail and iCal button,
      *                              task: e.g. 'archive', for Archive button,
      *                              print_link: for Print button
+     *                              today_link: for Today button
      *                              show, hide: to override button visibility; array of one or more of
      *                              'addEvent', 'addVenue', 'addUsers'
      *                              'archive' 'mail', 'print', 'ical', ('export', 'back',)
@@ -91,15 +94,15 @@ static public function lightbox() {
             ${$key} = isset($permissions->$key) ? $permissions->$key: null;
         }
         if (is_object($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'pdf_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = isset($params->$key) ? $params->$key : null;
             }
         } elseif (is_array($params)) {
-            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link','print_link', 'pdf_link', 'today_link', 'show', 'hide', 'ical_link', 'archive_link') as $key) {
                 ${$key} = key_exists($key, $params) ? $params[$key] : null;
             }
         } else {
-            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link') as $key) {
+            foreach (array('id', 'slug', 'task', 'archive_link', 'print_link', 'pdf_link', 'today_link') as $key) {
                 ${$key} = null;
             }
         }
@@ -128,16 +131,26 @@ static public function lightbox() {
 
         # Middle block ----------------
 
-        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
+        if (in_array('archive', $btns_show) || (!in_array('archive', $btns_hide) && in_array($view, array('annualcalendar', 'categories', 'category', 'eventslist', 'myattendances', 'myevents', 'venue')))) {
             $buttons[$idx][] = JemOutput::archivebutton($archive_link, $task , $id); // task: archive, id: for '&id='
         }
         if (in_array('mail', $btns_show) || (!in_array('mail', $btns_hide) && in_array($view, array('category', 'event', 'venue', 'venueslist')))) {
             $buttons[$idx][] = JemOutput::mailbutton($slug, $view, null); // slug: for '&id='
         }
-        if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
+        if (!empty($today_link) && !in_array('today', $btns_hide)) {
+            $buttons[$idx][] = JemOutput::todaybutton($today_link);
+        }
+        if (in_array('print', $btns_show) || (!in_array('print', $btns_hide) && in_array($view, array('annualcalendar', 'attendees', 'calendar', 'categories', 'category', 'category-cal', 'day', 'event', 'eventslist', 'myattendances', 'myevents', 'myvenues', 'venue', 'venue-cal', 'venues', 'venueslist', 'weekcal')))) {
             $buttons[$idx][] = JemOutput::printbutton($print_link, null);
         }
-        if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'venue', 'weekcal', 'category')))) {
+        if (empty($pdf_link) && JemOutput::isPdfViewEnabled($view)) {
+            $pdf_link = JemOutput::buildCurrentPdfLink();
+        }
+
+        if (!empty($pdf_link) && JemOutput::isPdfViewEnabled($view) && (in_array('pdf', $btns_show) || !in_array('pdf', $btns_hide))) {
+            $buttons[$idx][] = JemOutput::pdfbutton($pdf_link);
+        }
+        if (in_array('ical', $btns_show) || (!in_array('ical', $btns_hide) && in_array($view, array('event', 'eventslist', 'calendar', 'annualcalendar', 'venue', 'venue-cal', 'weekcal', 'category', 'category-cal')))) {
             $buttons[$idx][] = JemOutput::icalbutton(($ical_link? $ical_link: $slug), $view, $task); // slug: for '&id='
         }
         if (in_array('export', $btns_show) || (!in_array('export', $btns_hide) && in_array($view, array('attendees')))) {
@@ -334,6 +347,46 @@ static public function lightbox() {
     }
 
     /**
+     * Returns true when the current view is enabled for PDF output.
+     *
+     * @param   string  $view  View name.
+     *
+     * @return  boolean
+     */
+    static protected function isPdfViewEnabled($view)
+    {
+        $settings = JemHelper::config();
+        $enabled = isset($settings->pdf_enabled_views) ? (string) $settings->pdf_enabled_views : self::getDefaultPdfViews();
+        $views = array_filter(array_map('trim', explode(',', $enabled)));
+        $view = (string) $view;
+
+        return in_array($view, $views, true) && is_file(JPATH_COMPONENT_SITE . '/views/' . $view . '/view.raw.php');
+    }
+
+    /**
+     * Returns the frontend views with implemented PDF output.
+     */
+    static protected function getDefaultPdfViews()
+    {
+        return 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
+    }
+
+    /**
+     * Builds a PDF link from the current request.
+     */
+    static protected function buildCurrentPdfLink()
+    {
+        $uri = Uri::getInstance();
+        $query = $uri->getQuery(true);
+        $query['format'] = 'raw';
+        $query['layout'] = 'pdf';
+        unset($query['print'], $query['tmpl']);
+        $uri->setQuery($query);
+
+        return $uri->toString(array('path', 'query'));
+    }
+
+    /**
      * Writes Archivebutton
      *
      * @param string $archive_link The link archive button
@@ -436,13 +489,7 @@ static public function lightbox() {
             // On Joomla Edit icon is always used regardless if "Show icons" is set to Yes or No.
             $showIcon = $settings->get('global_show_icons', 1);
 
-            if (version_compare(JVERSION, '5.0.0', '>=')) {
-                // Joomla 5 with Font Awesome 6
-                $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
-            } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-                // Joomla 4 with Font Awesome 5
-                $iconEditEventRoot='fa fa-fw fa-edit jem-editbutton';
-            }
+            $iconEditEventRoot='fa-sharp fa-solid fa-pen-to-square jem-editbutton';
 
             switch ($view)
             {
@@ -637,6 +684,60 @@ static public function lightbox() {
             return $output;
         }
         return;
+    }
+
+    /**
+     * Creates the PDF download button.
+     *
+     * @param string $pdf_link
+     */
+    static public function pdfbutton($pdf_link)
+    {
+        $app      = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
+
+        if (empty($pdf_link) || $app->input->get('print', '', 'int')) {
+            return;
+        }
+
+        if (!class_exists('JemPdf', false) || !JemPdf::isAvailable()) {
+            return;
+        }
+
+        if ($settings->get('global_show_icons', 1)) {
+            $image = '<i class="fa fa-fw fa-lg fa-file-pdf jem-pdfbutton" aria-hidden="true"></i><span class="visually-hidden">'
+                . Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF')
+                . '</span>';
+        } else {
+            $image = Text::_('COM_JEM_ANNUALCALENDAR_PDF');
+        }
+
+        return HTMLHelper::_('link', Route::_($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
+    }
+
+    /**
+     * Creates the Today button.
+     *
+     * @param string $today_link
+     */
+    static public function todaybutton($today_link)
+    {
+        $app      = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
+
+        if (empty($today_link) || $app->input->get('print', '', 'int')) {
+            return;
+        }
+
+        if ($settings->get('global_show_icons', 1)) {
+            $image = jemhtml::icon('com_jem/el.webp', 'fa fa-fw fa-lg fa-calendar-day jem-todaybutton', Text::_('COM_JEM_TIMETABLE_TODAY'), null, !$app->isClient('site'));
+        } else {
+            $image = Text::_('COM_JEM_TIMETABLE_TODAY');
+        }
+
+        $text = Text::_('COM_JEM_TIMETABLE_TODAY');
+
+        return HTMLHelper::_('link', Route::_($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
     }
 
     /**
@@ -861,7 +962,7 @@ static public function lightbox() {
     }
 
     /**
-     * Creates attributes for a tooltip depending on Joomla version
+     * Creates tooltip attributes.
      *
      * @param  string  $title   translated title of the tooltip
      * @param  string  $text    translated text of the tooltip
@@ -873,8 +974,6 @@ static public function lightbox() {
     {
         $result = array();
 
-        // on Joomla! 3.3+ we must use the new tooltips
-        // HTMLHelper::_('bootstrap.tooltip');
         $result = 'class="'.$classes.' hasTooltip" data-bs-toggle="tooltip" title="'.HTMLHelper::tooltipText($title, $text, 0).'"';
         if (!empty($position) && (array_search($position, array('top', 'bottom', 'left', 'right')) !== false)) {
             $result .= ' data-placement="'.$position.'"';
@@ -919,7 +1018,7 @@ static public function lightbox() {
         $output = null;
         $attributes = null;
 
-        $data->country = \Joomla\String\StringHelper::strtoupper($data->country);
+        $data->country = StringHelper::strtoupper($data->country);
 
         if ($data->latitude == 0.000000) {
             $data->latitude = null;
@@ -935,23 +1034,23 @@ static public function lightbox() {
         {
             case 1:
                 // google map link
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
+                if ($hasCoordinates) {
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?hl='.$paramGet($params, $lg, 'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B';
                 } else {
-                $url = 'https://www.google.'.$params->get($tld,'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$params->get($lg,'en').'+('.$data->venue.')'; }
+                $url = 'https://www.google.'.$paramGet($params, $tld, 'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$paramGet($params, $lg, 'en').'+('.$data->venue.')'; }
 
                 $message = Text::_('COM_JEM_MAP').':';
                 $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
+                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
                 break;
 
             case 2:
                 // include iframe
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?width=100%25&amp;height=600&amp;hl='.$params->get($lg,'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
+                if ($hasCoordinates) {
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?width=100%25&amp;height=600&amp;hl='.$paramGet($params, $lg, 'en').'&q=loc:'.$data->latitude.',+'.$data->longitude.'&amp;ie=UTF8&amp;t=m&amp;z=14&amp;iwloc=B&amp;output=embed';
                 }
                 else {
-                    $url = 'https://maps.google.'.$params->get($tld,'com').'/maps?hl='.$params->get($lg,'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
+                    $url = 'https://maps.google.'.$paramGet($params, $tld, 'com').'/maps?hl='.$paramGet($params, $lg, 'en').'&q='.urlencode($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'&ie=UTF8&z=15&iwloc=B&output=embed';
                 }
 
                 $output = '<div class="venue_map"><iframe width="500" height="250" src="'.$url.'" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" ></iframe></div>';
@@ -961,12 +1060,11 @@ static public function lightbox() {
                 // include Google map with API3
                 // NOT WORKING YET 2023-05
                 # https://developers.google.com/maps/documentation/javascript/tutorial
-                $api = $params->get('global_googleapi');
-                $clientid = $params->get('global_googleclientid');
+                $api = $paramGet($params, 'global_googleapi');
+                $clientid = $paramGet($params, 'global_googleclientid');
                 $output = '';
 
-                if (empty($api) || empty($clientid)) {
-                    $output = Text::_('COM_JEM_GOOGLE_NO_API_KEY');
+                if (empty($api) && empty($clientid)) {
                     break;
                 } else {
                     $api = trim($api);
@@ -998,7 +1096,7 @@ static public function lightbox() {
 
             case 4:
                 // OpenStreetMap link
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+                if ($hasCoordinates) {
                     $lat = $data->latitude;
                     $lng = $data->longitude;
                 } else {
@@ -1028,13 +1126,14 @@ static public function lightbox() {
                 }
 
                 $message = Text::_('COM_JEM_MAP') . ':';
-                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '">' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
 
                 break;
 
             case 5:
                 // embed OpenStreetMap
-                if (!empty($data->latitude) && !empty($data->longitude) && $data->latitude !== 0 && $data->longitude !== 0) {
+                if ($hasCoordinates) {
                     $lat = $data->latitude;
                     $lng = $data->longitude;
                 } else {
@@ -1091,15 +1190,8 @@ static public function lightbox() {
             return null;
         }
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5 with Font Awesome 6
-            $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
-        } else {
-            // Joomla 4 with Font Awesome 5
-            $iconRecurrenceFirst = 'fa fa-fw fa-sync jem-recurrencefirsticon';
-            $iconRecurrence      = 'fa fa-fw fa-sync jem-recurrenceicon';
-        }
+        $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
+        $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
         $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
 
@@ -1199,6 +1291,248 @@ static public function lightbox() {
     }
 
     /**
+     * Creates public badges and microdata for event status and ticket availability.
+     *
+     * @param object $event            Event row
+     * @param bool   $includeMicrodata Whether to include Schema.org microdata
+     *
+     * @return string
+     */
+    static public function getEffectiveTicketAvailability($event)
+    {
+        $validAvailabilities = array('instock', 'preorder', 'soldout');
+        $ticketAvailability = !empty($event->ticket_availability) && in_array($event->ticket_availability, $validAvailabilities, true) ? $event->ticket_availability : 'instock';
+
+        if ($ticketAvailability !== 'instock') {
+            return $ticketAvailability;
+        }
+
+        $maxplaces = isset($event->maxplaces) ? (int) $event->maxplaces : 0;
+        if ($maxplaces <= 0) {
+            return 'instock';
+        }
+
+        $booked = isset($event->booked) ? (int) $event->booked : (isset($event->regCount) ? (int) $event->regCount : 0);
+        $reserved = isset($event->reservedplaces) ? (int) $event->reservedplaces : (isset($event->reserved) ? (int) $event->reserved : 0);
+
+        if (($booked + $reserved) >= $maxplaces) {
+            return !empty($event->waitinglist) ? 'waitinglist' : 'soldout';
+        }
+
+        return 'instock';
+    }
+
+    static public function eventStateBadges($event, $includeMicrodata = true, $showAvailabilityText = false)
+    {
+        if (empty($event)) {
+            return '';
+        }
+
+        $eventStatusOptions = array(
+            'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled', 'schema' => 'https://schema.org/EventScheduled'),
+            'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled', 'schema' => 'https://schema.org/EventCancelled'),
+            'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed', 'schema' => 'https://schema.org/EventPostponed'),
+            'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled', 'schema' => 'https://schema.org/EventRescheduled'),
+            'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online', 'schema' => 'https://schema.org/EventMovedOnline'),
+        );
+        $ticketAvailabilityOptions = array(
+            'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available', 'schema' => 'https://schema.org/InStock'),
+            'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder', 'schema' => 'https://schema.org/PreOrder'),
+            'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout', 'schema' => 'https://schema.org/SoldOut'),
+            'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist', 'schema' => 'https://schema.org/SoldOut'),
+        );
+
+        $eventStatus = !empty($event->event_status) && isset($eventStatusOptions[$event->event_status]) ? $event->event_status : 'scheduled';
+        $eventStatusOption = $eventStatusOptions[$eventStatus];
+        $ticketAvailability = self::getEffectiveTicketAvailability($event);
+        $ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
+
+        $output = '';
+        if ($includeMicrodata) {
+            $output .= '<meta itemprop="eventStatus" content="' . htmlspecialchars($eventStatusOption['schema'], ENT_QUOTES, 'UTF-8') . '" />';
+            $eventUrl = !empty($event->slug) ? Route::_(JemHelperRoute::getEventRoute($event->slug)) : '';
+            $output .= '<span itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>';
+            if ($eventUrl) {
+                $output .= '<link itemprop="url" href="' . htmlspecialchars($eventUrl, ENT_QUOTES, 'UTF-8') . '" />';
+            }
+            $output .= '<link itemprop="availability" href="' . htmlspecialchars($ticketAvailabilityOption['schema'], ENT_QUOTES, 'UTF-8') . '" />';
+            $output .= '</span>';
+        }
+
+        $badges = array();
+        if ($eventStatus !== 'scheduled') {
+            $badges[] = '<span class="jem-event-state-badge ' . $eventStatusOption['class'] . '">' . htmlspecialchars(Text::_($eventStatusOption['label']), ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+        if ($showAvailabilityText && $ticketAvailability !== 'instock') {
+            $badges[] = '<span class="jem-event-state-badge ' . $ticketAvailabilityOption['class'] . '">' . htmlspecialchars(Text::_($ticketAvailabilityOption['label']), ENT_QUOTES, 'UTF-8') . '</span>';
+        }
+
+        if ($badges) {
+            $output .= '<span class="jem-event-badges jem-event-badges--list">' . implode('', $badges) . '</span>';
+        }
+
+        return $output;
+    }
+
+    static public function typeBadge($event)
+    {
+        return self::typedEntityBadge($event, 'type_', 'event');
+    }
+
+    static public function typedEntityBadge($item, $prefix = 'type_', $entity = 'event')
+    {
+        self::translateType($item, $prefix);
+
+        $nameProperty = $prefix . 'name';
+        if (empty($item->{$nameProperty})) {
+            return '';
+        }
+
+        $descriptionProperty = $prefix . 'description';
+        $colorProperty       = $prefix . 'color';
+        $iconProperty        = $prefix . 'icon';
+        $idProperty          = $prefix . 'id';
+        $aliasProperty       = $prefix . 'alias';
+
+        $name       = htmlspecialchars($item->{$nameProperty}, ENT_QUOTES, 'UTF-8');
+        $tooltip    = self::typeDescriptionSummary(isset($item->{$descriptionProperty}) ? $item->{$descriptionProperty} : '');
+        $attributes = '';
+        $style      = '';
+
+        if ($tooltip !== '') {
+            $safeTooltip = htmlspecialchars($tooltip, ENT_QUOTES, 'UTF-8');
+            $attributes .= ' title="' . $safeTooltip . '" aria-label="' . $name . ': ' . $safeTooltip . '"';
+        }
+
+        if (!empty($item->{$colorProperty}) && preg_match('/^#[0-9a-fA-F]{6}$/', (string) $item->{$colorProperty})) {
+            $style = ' style="background-color:' . htmlspecialchars($item->{$colorProperty}, ENT_QUOTES, 'UTF-8') . '; color:' . self::contrastingTextColor((string) $item->{$colorProperty}) . ';"';
+        }
+
+        $inner = '';
+        if (!empty($item->{$iconProperty}) && self::isValidIconClass((string) $item->{$iconProperty})) {
+            $icon  = htmlspecialchars($item->{$iconProperty}, ENT_QUOTES, 'UTF-8');
+            $inner .= '<span class="' . $icon . '" aria-hidden="true"></span> ';
+        }
+        $inner .= $name;
+
+        $typeRouteId = (int) $item->{$idProperty};
+        if (!empty($item->{$aliasProperty})) {
+            $typeRouteId .= ':' . $item->{$aliasProperty};
+        }
+
+        $route = $entity === 'venue'
+            ? JemHelperRoute::getTypevenuesRoute($typeRouteId)
+            : JemHelperRoute::getTypeeventsRoute($typeRouteId);
+        $link = htmlspecialchars(Route::_($route), ENT_QUOTES, 'UTF-8');
+
+        return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
+    }
+
+    static protected function isValidIconClass($icon)
+    {
+        $icon = trim((string) $icon);
+
+        return $icon !== ''
+            && preg_match('/^[a-zA-Z0-9_ -]+$/', $icon)
+            && preg_match('/\b(fa|fa-[a-z0-9-]+|icon-[a-z0-9-]+)\b/i', $icon);
+    }
+
+    static protected function contrastingTextColor($background)
+    {
+        if (!preg_match('/^#?([0-9a-fA-F]{6})$/', (string) $background, $matches)) {
+            return '#ffffff';
+        }
+
+        $hex = $matches[1];
+        $red = hexdec(substr($hex, 0, 2));
+        $green = hexdec(substr($hex, 2, 2));
+        $blue = hexdec(substr($hex, 4, 2));
+        $luminance = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+
+        return $luminance > 145 ? '#111827' : '#ffffff';
+    }
+
+    static public function typeDescriptionSummary($description)
+    {
+        $text = trim(html_entity_decode(strip_tags((string) $description), ENT_QUOTES, 'UTF-8'));
+
+        if ($text === '') {
+            return '';
+        }
+
+        $text = preg_replace('/\s+/', ' ', $text);
+        $periodPosition = strpos($text, '.');
+
+        if ($periodPosition !== false) {
+            $text = substr($text, 0, $periodPosition + 1);
+        }
+
+        return trim($text);
+    }
+
+    static public function translateType($type, $prefix = '')
+    {
+        if (!is_object($type)) {
+            return $type;
+        }
+
+        $nameProperty = $prefix . 'name';
+        $descriptionProperty = $prefix . 'description';
+        $translatedName = self::getTypeTranslationValue($type, $prefix, 'name');
+        $translatedDescription = self::getTypeTranslationValue($type, $prefix, 'description');
+
+        if ($translatedName !== '') {
+            $type->{$nameProperty} = $translatedName;
+        }
+
+        if ($translatedDescription !== '') {
+            $type->{$descriptionProperty} = $translatedDescription;
+        }
+
+        return $type;
+    }
+
+    static public function getTypeTranslationValue($type, $prefix, $field)
+    {
+        $translationsProperty = $prefix . 'translations';
+        $languagesProperty = $prefix . 'translation_languages';
+        $baseLanguageProperty = $prefix . 'base_language';
+        $fallbackProperty = $prefix . $field;
+
+        $translations = json_decode((string) ($type->{$translationsProperty} ?? ''), true);
+        if (!is_array($translations)) {
+            $translations = array();
+        }
+
+        $currentLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $defaultLanguage = (string) ComponentHelper::getParams('com_languages')->get('site', '');
+        $baseLanguage = trim((string) ($type->{$baseLanguageProperty} ?? ''));
+        $savedLanguages = array_filter(array_map('trim', explode(',', (string) ($type->{$languagesProperty} ?? ''))));
+        $fallbackValue = trim((string) ($type->{$fallbackProperty} ?? ''));
+
+        $fallbackOrder = array($currentLanguage, $defaultLanguage, 'en-GB');
+        $fallbackOrder = array_merge($fallbackOrder, $savedLanguages, array_keys($translations));
+
+        foreach ($fallbackOrder as $language) {
+            $language = trim((string) $language);
+            if ($fallbackValue !== '' && $baseLanguage !== '' && $language === $baseLanguage) {
+                return $fallbackValue;
+            }
+
+            if ($language === '' || empty($translations[$language]) || !is_array($translations[$language])) {
+                continue;
+            }
+
+            $value = trim((string) ($translations[$language][$field] ?? ''));
+            if ($value !== '') {
+                return $value;
+            }
+        }
+
+        return $fallbackValue;
+    }
+
+    /**
      * Creates the flyer
      *
      * @param obj $data
@@ -1214,7 +1548,7 @@ static public function lightbox() {
         switch($type) {
             case 'event':
                 $folder = 'events';
-                $imagefile = $data->datimage;
+                $imagefile = $id && isset($data->$id) ? $data->$id : $data->datimage;
                 $info = $data->title;
                 if(!$settings->flyer){
                     $precaption = Text::_('COM_JEM_EVENT');
@@ -1251,14 +1585,13 @@ static public function lightbox() {
         if (empty($imagefile) || empty($image)) {
             return;
         } else if(!$settings->flyer){
-            list($imagewidth, $imageheight) = getimagesize($image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize($image['thumb']) ?? [50, 50];
+            list($imagewidth, $imageheight) = getimagesize(JPATH_SITE . '/' . $image['original']) ?? [100, 100];
+            list($thumbwidth, $thumbheight) = getimagesize(JPATH_SITE . '/' . $image['thumb']) ?? [50, 50];
         }
 
         // Does a thumbnail exist?
         if (!$settings->flyer){
-            if (File::exists(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
-
+            if (is_file(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
@@ -1636,7 +1969,10 @@ static public function lightbox() {
     {
         $output = array_map(
             function ($category) use ($doLink, $backend) {
-                if ($doLink) {
+                $hasAccess = !isset($category->user_has_access_category) || (bool) $category->user_has_access_category;
+                $lockIcon  = $hasAccess ? '' : ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+
+                if ($doLink && $hasAccess) {
                     if ($backend) {
                         $path = $category->path;
                         $path = str_replace('/', ' &#187; ', $path);
@@ -1651,7 +1987,7 @@ static public function lightbox() {
                 } else {
                     $value = $category->catname;
                 }
-                return $value;
+                return $value . $lockIcon;
             },
             $categories);
 

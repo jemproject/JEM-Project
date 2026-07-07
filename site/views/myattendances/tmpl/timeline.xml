@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_MYATTENDANCES_VIEW_TIMELINE_TITLE">
+        <message>
+            <![CDATA[COM_JEM_MYATTENDANCES_VIEW_TIMELINE_DESC]]>
+        </message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic">
+            <field
+                name="filtermyregs"
+                type="radio"
+                default="1"
+                label="COM_JEM_FILTER_MYREGISTRATIONS"
+                description="COM_JEM_FILTER_MYREGISTRATIONS_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field
+                name="myregspast"
+                type="text"
+                default="1"
+                label="COM_JEM_MYREGSPAST"
+                description="COM_JEM_MYREGSPAST_DESC" class="form-control w-auto"
+            />
+            <field
+                name="timeline_side"
+                type="list"
+                default="right"
+                label="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_LABEL"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_SIDE_DESC" class="form-select w-auto jem-options-width-auto"
+                >
+                <option value="right">COM_JEM_TIMELINE_SIDE_RIGHT</option>
+                <option value="left">COM_JEM_TIMELINE_SIDE_LEFT</option>
+                <option value="alternate">COM_JEM_TIMELINE_SIDE_ALTERNATE</option>
+            </field>
+            <field
+                name="timeline_show_axis_date"
+                type="radio"
+                default="1"
+                label="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_LABEL"
+                description="COM_JEM_MYATTENDANCES_TIMELINE_AXIS_DATE_DESC"
+                class="btn-group btn-group-yesno"
+                layout="joomla.form.field.radio.switcher"
+                >
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
+    </fields>
+</metadata>

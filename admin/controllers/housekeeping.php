@@ -19,10 +19,18 @@ use Joomla\CMS\Session\Session;
 class JemControllerHousekeeping extends BaseController
 {
     /**
+     * Check whether the current user can run housekeeping tasks.
+     */
+    protected function allowHousekeeping() {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
         // Register Extra task
@@ -38,13 +46,15 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function delete()
-    {
+    public function delete() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $task = Factory::getApplication()->input->get('task', '');
+        $task = strpos($task, '.') !== false ? substr($task, strrpos($task, '.') + 1) : $task;
         $model = $this->getModel('housekeeping');
+        $total = 0;
 
         if ($task == 'cleaneventimg') {
             $total = $model->delete($model::EVENTS);
@@ -67,10 +77,10 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function cleanupCatsEventRelations()
-    {
+    public function cleanupCatsEventRelations() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
         $model->cleanupCatsEventRelations();
@@ -82,18 +92,62 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
-     * Truncates JEM tables with exception of settings table
+     * Deletes physical attachment files that have no matching database record.
      */
-    public function truncateAllData()
-    {
+    public function cleanupUnusedAttachmentFiles() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
-        $model->truncateAllData();
+        $result = $model->cleanupUnusedAttachmentFiles();
 
         $link = 'index.php?option=com_jem&view=housekeeping';
-        $msg = Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');
+        $msg = Text::sprintf(
+            'COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_DONE',
+            (int) $result->files,
+            (int) $result->folders,
+            (int) $result->failed
+        );
+        $type = $result->failed ? 'warning' : 'message';
+
+        $this->setRedirect($link, $msg, $type);
+    }
+
+    /**
+     * Regenerates event, venue and category thumbnails using current image settings.
+     */
+    public function resizethumbs() {
+        // Check for request forgeries
+        Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $model = $this->getModel('housekeeping');
+        $total = $model->resizeThumbnails();
+
+        $link = 'index.php?option=com_jem&view=housekeeping';
+        $msg = Text::sprintf('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS_DONE', $total);
+
+        $this->setRedirect($link, $msg);
+    }
+
+    /**
+     * Truncates JEM tables with exception of settings table
+     */
+    public function truncateAllData() {
+        // Check for request forgeries
+        Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $model = $this->getModel('housekeeping');
+        $deleteAttachmentFiles = (bool) Factory::getApplication()->input->getInt('deleteattachments', 0);
+        $deleteImageFiles = (bool) Factory::getApplication()->input->getInt('deleteimages', 0);
+        $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
+
+        $link = 'index.php?option=com_jem&view=housekeeping';
+        $msg = ($deleteAttachmentFiles || $deleteImageFiles)
+            ? Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_AND_FILES_DONE')
+            : Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');
 
         $this->setRedirect($link, $msg);
     }
@@ -105,10 +159,10 @@ class JemControllerHousekeeping extends BaseController
      * @return void
      *
      */
-    public function triggerarchive()
-    {
+    public function triggerarchive() {
         // Check for request forgeries
         Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
 
         JemHelper::cleanup(1);
 

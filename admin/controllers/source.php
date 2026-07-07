@@ -25,8 +25,7 @@ class JemControllerSource extends BaseController
      * @param  array  An optional associative array of configuration settings.
      * @see    JController
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
 
         // Apply, Save & New, and Save As copy should be standard on forms.
@@ -38,8 +37,7 @@ class JemControllerSource extends BaseController
      *
      * @return boolean
      */
-    protected function allowEdit()
-    {
+    protected function allowEdit() {
         return JemFactory::getUser()->authorise('core.edit', 'com_jem');
     }
 
@@ -48,8 +46,7 @@ class JemControllerSource extends BaseController
      *
      * @return boolean
      */
-    protected function allowSave()
-    {
+    protected function allowSave() {
         return $this->allowEdit();
     }
 
@@ -62,8 +59,7 @@ class JemControllerSource extends BaseController
      *
      * @return object  The model.
      */
-    public function getModel($name = 'Source', $prefix = 'JemModel', $config = array())
-    {
+    public function getModel($name = 'Source', $prefix = 'JemModel', $config = array()) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
     }
@@ -72,13 +68,12 @@ class JemControllerSource extends BaseController
      * This controller does not have a display method. Redirect back to the list view of the component.
      *
      * @param  boolean  If true, the view output will be cached
-     * @param  array    An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+     * @param  array    An array of safe url parameters and their variable types, for valid values see {@link InputFilter::clean()}.
      *
      * @return JController  This object to support chaining.
      *
      */
-    public function display($cachable = false, $urlparams = array())
-    {
+    public function display($cachable = false, $urlparams = array()) {
         $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
     }
 
@@ -87,21 +82,25 @@ class JemControllerSource extends BaseController
      *
      * @return boolean  True on success.
      */
-    public function edit()
-    {
+    public function edit() {
         // Initialise variables.
         $app      = Factory::getApplication();
         $model    = $this->getModel();
         $recordId = $app->input->get('id', '');
         $context  = 'com_jem.edit.source';
+        $decodedId = base64_decode($recordId, true);
 
-        if (preg_match('#\.\.#', base64_decode($recordId))) {
+        if ($decodedId === false || preg_match('#(^|[\\\\/])\\.\\.([\\\\/]|$)#', $decodedId)) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Access check.
         if (!$this->allowEdit()) {
             Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Check-out succeeded, push the new record id into the session.
@@ -114,8 +113,7 @@ class JemControllerSource extends BaseController
     /**
      * Method to cancel an edit
      */
-    public function cancel()
-    {
+    public function cancel() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -135,8 +133,7 @@ class JemControllerSource extends BaseController
      *
      * @return boolean  True on success.
      */
-    public function save()
-    {
+    public function save() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
@@ -158,6 +155,8 @@ class JemControllerSource extends BaseController
         // Access check.
         if (!$this->allowSave()) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_SAVE_NOT_PERMITTED'), 'warning');
+            $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+            return false;
         }
 
         // Match the stored id's with the submitted.
@@ -167,8 +166,7 @@ class JemControllerSource extends BaseController
 
         // Validate the posted data.
         $form = $model->getForm();
-        if (!$form)
-        {
+        if (!$form) {
             Factory::getApplication()->enqueueMessage($model->getError(), 'error');
             return false;
         }
@@ -176,18 +174,15 @@ class JemControllerSource extends BaseController
         $data = $model->validate($form, $data);
 
         // Check for validation errors.
-        if ($data === false)
-        {
+        if ($data === false) {
             // Get the validation messages.
             $errors = $model->getErrors();
 
             // Push up to three validation messages out to the user.
-            for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++)
-            {
+            for ($i = 0, $n = count($errors); $i < $n && $i < 3; $i++) {
                 if ($errors[$i] instanceof Exception) {
                     $app->enqueueMessage($errors[$i]->getMessage(), 'warning');
-                }
-                else {
+                } else {
                     $app->enqueueMessage($errors[$i], 'warning');
                 }
             }
@@ -201,8 +196,7 @@ class JemControllerSource extends BaseController
         }
 
         // Attempt to save the data.
-        if (!$model->save($data))
-        {
+        if (!$model->save($data)) {
             // Save the data in the session.
             $app->setUserState($context.'.data', $data);
 
@@ -215,8 +209,7 @@ class JemControllerSource extends BaseController
         $this->setMessage(Text::_('COM_JEM_CSSMANAGER_FILE_SAVE_SUCCESS'));
 
         // Redirect the user and adjust session state based on the chosen task.
-        switch ($task)
-        {
+        switch ($task) {
             case 'apply':
                 // Reset the record data in the session.
                 $app->setUserState($context.'.data',    null);

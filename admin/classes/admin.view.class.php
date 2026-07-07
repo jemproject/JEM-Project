@@ -27,4 +27,22 @@ class JemAdminView extends HtmlView
 
         parent::display($tpl);
     }
+
+    protected function getToolbarInstance()
+    {
+        if (class_exists('\\Joomla\\CMS\\Toolbar\\Toolbar')) {
+            return \Joomla\CMS\Toolbar\Toolbar::getInstance('toolbar');
+        }
+
+        if (class_exists('\\JToolbar')) {
+            return \JToolbar::getInstance('toolbar');
+        }
+
+        return null;
+    }
+
+    protected function supportsToolbarDropdown($toolbar)
+    {
+        return is_object($toolbar) && method_exists($toolbar, 'dropdownButton');
+    }
 }

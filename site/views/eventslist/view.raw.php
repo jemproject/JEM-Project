@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -22,6 +24,39 @@ class JemViewEventslist extends HtmlView
     {
         $settings  = JemHelper::config();
         $settings2 = JemHelper::globalattribs();
+        $app = Factory::getApplication();
+        $layout = $app->input->getCmd('layout', '');
+
+        if ($layout === 'pdf') {
+            $model = $this->getModel();
+            $model->setState('list.start', 0);
+            $model->setState('list.limit', 0);
+            $rows = $model->getItems();
+            $params = $app->getParams();
+            $menu = $app->getMenu();
+            $menuActive = $menu ? $menu->getActive() : null;
+            $title = trim((string) $params->get('page_heading', ''));
+
+            if ($title === '') {
+                $title = trim((string) $params->get('page_title', ''));
+            }
+
+            if ($title === '' && $menuActive) {
+                $title = trim((string) $menuActive->title);
+            }
+
+            if ($title === '') {
+                $title = Text::_('COM_JEM_EVENTS');
+            }
+
+            if ($app->input->getCmd('task', '') === 'archive') {
+                $title .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            }
+
+            JemPdfView::renderLinkedEventList($title, (array) $rows, 'jem-events.pdf');
+
+            return;
+        }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model
@@ -31,8 +66,8 @@ class JemViewEventslist extends HtmlView
             $rows = $model->getItems();
 
             // initiate new CALENDAR
-            $vcal = JemHelper::getCalendarTool();
-            $vcal->setConfig("filename", "events.ics");
+            $vcal     = JemHelper::getCalendarTool();
+            $filename = "events.ics";
 
             if (!empty($rows)) {
                 foreach ($rows as $row) {
@@ -41,7 +76,7 @@ class JemViewEventslist extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar();
+            $vcal->returnCalendar(false, false, true, $filename);
         }
     }
 }

@@ -8,11 +8,12 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * View class for the JEM Settings screen
@@ -21,9 +22,10 @@ use Joomla\CMS\Factory;
  */
 class JemViewSettings extends JemAdminView
 {
-    protected $form;
+    public $form;
+    public $countryGroups;
     protected $data;
-    protected $state;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -33,6 +35,7 @@ class JemViewSettings extends JemAdminView
         $data        = $this->get('Data');
         $state       = $this->get('State');
         $config      = $this->get('ConfigInfo');
+        $countryGroups = $this->get('CountryGroups');
         $jemsettings = $this->get('Data');
         $settings    = JemHelper::globalattribs();
         $this->document = $document;
@@ -75,6 +78,7 @@ class JemViewSettings extends JemAdminView
         if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
             $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
             $app->redirect('index.php?option=com_jem&view=main');
+            return false;
         }
 
         // mapping variables
@@ -83,7 +87,10 @@ class JemViewSettings extends JemAdminView
         $this->state       = $state;
         $this->jemsettings = $jemsettings;
         $this->config      = $config;
+        $this->countryGroups = $countryGroups;
         $this->settings       = $settings;
+        $this->customFieldLanguages = JemCustomFields::getLanguageTags();
+        $this->customFieldsConfig   = JemCustomFields::getConfig();
 
         // add toolbar
         $this->addToolbar();
@@ -105,7 +112,7 @@ class JemViewSettings extends JemAdminView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/settings');
+        ToolBarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/backend/settings');
     }
 
     protected function WarningIcon()

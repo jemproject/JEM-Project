@@ -10,6 +10,7 @@ jem-copybutton
 jem-printbutton
 jem-mailbutton
 jem-icalbutton
+jem-layoutbutton
 jem-publishbutton
 jem-trashbutton
 jem-unpublishbutton
@@ -54,6 +55,7 @@ jem-featuredicon
 #jem .jem-printbutton,
 #jem .jem-mailbutton,
 #jem .jem-icalbutton,
+#jem .jem-layoutbutton,
 #jem .jem-exportbutton {
     color: initial;
 }

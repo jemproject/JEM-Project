@@ -24,10 +24,6 @@ class JemViewMyvenues extends JemView
      */
     public function display($tpl = null)
     {
-        // Get data from model
-        $venues       = $this->get('Venues');
-        $pagination   = $this->get('VenuesPagination');
-
         // initialize variables
         $app          = Factory::getApplication();
         $document     = $app->getDocument();
@@ -47,8 +43,10 @@ class JemViewMyvenues extends JemView
         // redirect if not logged in
         $this->needLoginFirst = 0;
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-            $this->needLoginFirst=1;
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $this->needLoginFirst = 1;
+            return;
         }else {
             // Decide which parameters should take priority
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -63,6 +61,10 @@ class JemViewMyvenues extends JemView
                 JemHelper::loadCss('print');
                 $document->setMetaData('robots', 'noindex, nofollow');
             }
+
+            // Get data from model
+            $venues       = $this->get('Venues');
+            $pagination   = $this->get('VenuesPagination');
 
             // are no venues available?
             $novenues = (!$venues) ? 1 : 0;
@@ -128,6 +130,7 @@ class JemViewMyvenues extends JemView
 
             // ($task == 'archive') useless
             $print_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&print=1&tmpl=component');
+            $pdf_link = Route::_(JemHelperRoute::getMyVenuesRoute() . '&format=raw&layout=pdf');
 
             $params->set('page_heading', $pageheading);
 
@@ -167,6 +170,7 @@ class JemViewMyvenues extends JemView
             $this->novenues     = $novenues;
             $this->permissions     = $permissions;
             $this->print_link = $print_link;
+            $this->pdf_link = $pdf_link;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         }
         parent::display($tpl);

@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
@@ -23,6 +24,95 @@ $namefield = $this->settings->get('global_regname', '1') ? 'name' : 'username';
 $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM_JEM_USERNAME';
 
 ?>
+<style>
+    <?php if (!empty($this->isModal)) : ?>
+    body {
+        background: #fff !important;
+        overflow: auto !important;
+    }
+
+    body > .container-header,
+    body > .container-footer,
+    .container-header,
+    .container-footer,
+    .site-grid > .container-sidebar-left,
+    .site-grid > .container-sidebar-right,
+    .container-sidebar-left,
+    .container-sidebar-right,
+    .sidebar-left,
+    .sidebar-right,
+    aside {
+        display: none !important;
+    }
+
+    .site-grid,
+    .grid-child,
+    .container-component,
+    main {
+        display: block !important;
+        max-width: none !important;
+        width: 100% !important;
+    }
+
+    .container-component {
+        padding: 0 !important;
+    }
+    <?php endif; ?>
+
+    #jem.jem_attendees #jem_filter {
+        display: grid;
+        grid-template-columns: auto minmax(7rem, auto) minmax(14rem, 1fr) auto auto auto minmax(7rem, auto) minmax(4.5rem, auto);
+        align-items: center;
+        gap: .5rem;
+        clear: both;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: .75rem;
+        box-sizing: border-box;
+    }
+
+    #jem.jem_attendees #jem_filter .jem-attendees-filter-group {
+        display: contents;
+    }
+
+    #jem.jem_attendees #jem_filter #filter_search {
+        min-width: 10rem;
+        width: 100%;
+    }
+
+    #jem.jem_attendees #jem_filter select {
+        min-width: 5.5rem;
+        width: auto;
+    }
+
+    #jem.jem_attendees #jem_filter button,
+    #jem.jem_attendees #jem_filter label {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: auto minmax(7rem, auto) minmax(12rem, 1fr) auto auto;
+        }
+
+        #jem.jem_attendees #jem_filter #filter_search {
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 640px) {
+        #jem.jem_attendees #jem_filter {
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+
+        #jem.jem_attendees #jem_filter select,
+        #jem.jem_attendees #jem_filter button {
+            width: 100%;
+        }
+    }
+</style>
 <script>
     function tableOrdering(order, dir, view)
     {
@@ -35,7 +125,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 </script>
 <script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+places+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
         SqueezeBox.close();
     }
 </script>
@@ -76,49 +166,23 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             </dd>
         </dl>
         <div id="jem_filter" class="jem-dl">
-            <div class="row jem-row">
-                <div class="col-md-2">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="input-group">
-                                <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
-                                <?php echo $this->lists['filter']; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-9">
-                    <div class="row mb-12">
-                        <div class="col-md-8">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
-                                <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                                <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="input-group" style="margin-top:6px;">
-                                <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
-                                <?php echo $this->lists['status']; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-1">
-                    <div class="row ">
-                        <div class="wauto-minwmax">
-                            <div class=" float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="jem-attendees-filter-group">
+                <?php echo '<label for="filter_search">'.Text::_('COM_JEM_SEARCH').'</label>'; ?>
+                <?php echo $this->lists['filter']; ?>
             </div>
-            <?php if (empty($this->rows)) : ?>
-                <div style="padding-bottom: 8px;">
-                    <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
-                </div>
-             <?php endif;?>
+            <div class="jem-attendees-filter-group jem-attendees-search">
+                <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="inputbox" onChange="document.adminForm.submit();" />
+                <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
+                <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            </div>
+            <div class="jem-attendees-filter-group">
+                <?php echo '<label for="filter_status">'.Text::_('COM_JEM_STATUS').'</label>'; ?>
+                <?php echo $this->lists['status']; ?>
+            </div>
+            <div class="jem-attendees-filter-group">
+                <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
+                <?php echo $this->pagination->getLimitBox(); ?>
+            </div>
         </div>
 
         <div class="jem-sort jem-sort-small" id="articleList">
@@ -141,6 +205,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         <ul class="eventlist eventtable">
             <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.Session::getFormToken().'=1';
             ?>
+            <?php if (empty($this->rows)) : ?>
+                <li class="jem-event jem-list-row jem-small-list row0">
+                    <div class="jem-event-info-small jem-attendees-empty">
+                        <strong><i><?php echo Text::_('COM_JEM_ATTENDEES_EMPTY_YET'); ?></i></strong>
+                    </div>
+                </li>
+            <?php endif; ?>
             <?php foreach ($this->rows as $i => $row) : ?>
                 <li class="jem-event jem-list-row jem-small-list row<?php echo $i % 2; ?>">
                     <div class="jem-event-info-small jem-attendee-number">
@@ -148,12 +219,12 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     </div>
 
                     <div class="jem-event-info-small jem-attendee-name">
-                        <?php echo $row->$namefield; ?>
+                        <?php echo $this->escape($row->$namefield); ?>
                     </div>
 
                     <?php if ($this->enableemailaddress == 1) :?>
                         <div class="jem-event-info-small jem-attendee-email">
-                            <a href="mailto:<?php echo $row->email; ?>"><?php echo $row->email; ?></a>
+                            <a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a>
                         </div>
                     <?php endif; ?>
 
@@ -173,19 +244,19 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         ?>
                     </div>
                     <div class="jem-event-info-small jem-attendee-places">
-                        <?php echo $row->places; ?>
+                        <?php echo (int) $row->places; ?>
                     </div>
 
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-                        <?php $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > 16) ? (\Joomla\String\StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
+                        <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (StringHelper::substr($row->comment, 0, 14).'&hellip;') : $row->comment; ?>
                         <div class="jem-event-info-small jem-attendee-comment">
-                            <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null); } ?>
+                            <?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?>
                         </div>
                     <?php endif;?>
 
                     <div class="jem-event-info-small jem-attendee-remove">
                         <div class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.$row->id); ?>">
+                            <a href="<?php echo Route::_($del_link.'&cid[]='.(int) $row->id); ?>">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
                             </a>
                         </div>

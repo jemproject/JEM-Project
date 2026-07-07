@@ -38,9 +38,11 @@ class JemViewCalendar extends JemView
         $top_category = (int)$params->get('top_category', 0);
         $jinput       = $app->input;
         $print        = $jinput->getBool('print', false);
+        $task         = $jinput->getCmd('task', '');
 
         $this->param_topcat = $top_category > 0 ? ('&topcat='.$top_category) : '';
         $url             = Uri::root();
+		$uri          = Uri::getInstance();
 
         // Load css
         JemHelper::loadCss('jem');
@@ -59,7 +61,9 @@ class JemViewCalendar extends JemView
         $eventandmorecolor = $params->get('eventandmorecolor');
 
         $style = '
-        div#jem .eventcontentinner a,
+        div#jem .eventcontentinner a {
+            color: inherit;
+        }
         div#jem .eventandmore a {
             color:' . $evlinkcolor . ';
         }
@@ -75,7 +79,8 @@ class JemViewCalendar extends JemView
         }';
 
         $document->addStyleDeclaration($style);
-        $document->addScript($url.'media/com_jem/js/calendar.js');
+        $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+        $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
         $year  = (int)$jinput->getInt('yearID', date("Y"));
         $month = (int)$jinput->getInt('monthID', date("m"));
@@ -86,10 +91,35 @@ class JemViewCalendar extends JemView
 
         $rows = $this->get('Items');
 
+        $itemid  = $jinput->getInt('Itemid', 0);
+        $partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
+        $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
+        $url_base = 'index.php?option=com_jem&view=calendar';
+        $ical_link = $partDate;
         // Set Page title
         $pagetitle = $params->def('page_title', $menuitem->title);
         $params->def('page_heading', $pagetitle);
+        $pageheading = $params->get('page_heading', $pagetitle);
         $pageclass_sfx = $params->get('pageclass_sfx');
+        // pathway
+        $pathway = $app->getPathWay();
+        if ($menuitem) {
+            $pathwayKeys = array_keys($pathway->getPathway());
+            $lastPathwayEntryIndex = end($pathwayKeys);
+            $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
+            //$pathway->setItemName(1, $menuitem->title);
+        }
+        if ($task == 'archive') {
+            $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_($url_base . $partItemid . $partDate . '&task=archive'));
+            $print_link = Route::_($url_base . $partItemid. $partDate . '&task=archive&print=1&tmpl=component');
+            $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
+            $archive_link = Route::_($url_base . $partItemid . $partDate);
+            $params->set('page_heading', $pageheading);
+        } else {
+            $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+            $archive_link = Route::_($url_base . $partItemid . $partDate);
+        }
 
         // Add site name to title if param is set
         if ($app->get('sitename_pagetitles', 0) == 1) {
@@ -114,12 +144,15 @@ class JemViewCalendar extends JemView
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($month ? ('&monthID=' . $month) : '');
         $url_base = 'index.php?option=com_jem&view=calendar';
 
-        $print_link = Route::_($url_base . $partItemid. $partDate . '&print=1&tmpl=component');
+        $print_link = Route::_($url_base . $partItemid . $partDate . ($task == 'archive' ? '&task=archive' : '') . '&print=1&tmpl=component');
         $ical_link = $partDate;
-        //http://localhost/jl500rc2/index.php/jem/calendar?format=raw&layout=ics
+        //http://localhost/jl500rc3/index.php/jem/calendar?format=raw&layout=ics
 
         // init calendar
         $cal = new JemCalendar($year, $month, 0);
+        if ($params->get('show_year_navigation', 0)) {
+            $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+        }
         $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
         $cal->setFirstWeekDay($params->get('firstweekday', 1));
         $cal->enableDayLinks('index.php?option=com_jem&view=day' . $this->param_topcat);
@@ -131,10 +164,14 @@ class JemViewCalendar extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->cal           = $cal;
+        $this->calendarYear  = $year;
+        $this->calendarMonth = $month;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->print_link    = $print_link;
         $this->print         = $print;
         $this->ical_link    = $ical_link;
+        $this->archive_link  = $archive_link;
+        $this->task          = $task;
 
         parent::display($tpl);
     }

@@ -23,9 +23,6 @@ class JemViewMain extends JemAdminView
 
     public function display($tpl = null)
     {
-        //Load pane behavior
-        jimport('joomla.html.pane');
-
         //initialise variables
         $app = Factory::getApplication();
         $document = $app->getDocument();
@@ -35,6 +32,22 @@ class JemViewMain extends JemAdminView
         $events   = $this->get('EventsData');
         $venue    = $this->get('VenuesData');
         $category = $this->get('CategoriesData');
+        $types    = $this->get('TypesData') ?: new stdClass();
+        $typeEntities = $this->get('TypeEntitiesData') ?: new stdClass();
+        $images   = $this->get('ImagesData') ?: new stdClass();
+        $attachments = $this->get('AttachmentsData') ?: new stdClass();
+        $registration = $this->get('RegistrationData') ?: new stdClass();
+
+        // Load updatecheck model manually
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/updatecheck.php';
+        $updateModel = new JemModelUpdatecheck(['ignore_request' => true]);
+        $updatedata  = $updateModel->getUpdatedata();
+
+        if ($updatedata === false) {
+            $updatedata = new stdClass();
+            $updatedata->failed  = 1;
+            $updatedata->current = null;
+        }
 
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
@@ -44,7 +57,13 @@ class JemViewMain extends JemAdminView
         $this->events   = $events;
         $this->venue    = $venue;
         $this->category = $category;
+        $this->types    = $types;
+        $this->typeEntities = $typeEntities;
+        $this->images   = $images;
+        $this->attachments = $attachments;
+        $this->registration = $registration;
         $this->user     = $user;
+        $this->updatedata = $updatedata;
 
         // add toolbar
         $this->addToolbar();
@@ -64,7 +83,7 @@ class JemViewMain extends JemAdminView
         }
 
         ToolBarHelper::divider();
-        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel');
+        ToolBarHelper::help('listevents', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel');
     }
 
     /**

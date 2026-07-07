@@ -23,7 +23,7 @@ use Joomla\CMS\Uri\Uri;
     <?php } else { ?>
         <div class="buttons">
             <?php
-            $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'archive_link' => $this->archive_link);
+            $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'pdf_link' => $this->pdf_link, 'archive_link' => $this->archive_link);
             echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
             ?>
         </div>
@@ -36,11 +36,23 @@ use Joomla\CMS\Uri\Uri;
 
         <div class="clr"></div>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
+
         <!--table-->
         <?php echo $this->loadTemplate('events');?>
 
         <!--footer-->
-        <div class="copyright">
+            <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
+    <div class="copyright">
             <?php echo JemOutput::footer( ); ?>
         </div>
     <?php } ?>

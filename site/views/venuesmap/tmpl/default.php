@@ -1,0 +1,1335 @@
+<?php
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2025 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Factory;
+
+$app      = Factory::getApplication();
+$document = $app->getDocument();
+$wa       = $document->getWebAssetManager();
+
+JemHelper::loadModuleStyleSheet('mod_jem_map', 'mod_jem_map');
+
+$map_id = 'leafletmap-' . uniqid();
+$youAreHere = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$height = $this->height;
+$zoom = (int) $this->zoom;
+$heatMapLayer = (int) $this->heatMapLayer;
+$venueMarker = $this->venueMarker;
+$mylocMarker = $this->mylocMarker;
+$jemItemid = (int) $this->jemItemid;
+$centerLat = (float) $this->centerLat;
+$centerLng = (float) $this->centerLng;
+$countries = $this->countries ?? [];
+$cities = $this->cities ?? [];
+$categories = $this->categories ?? [];
+$showCountryFilter = (int) ($this->showCountryFilter ?? 1);
+$showCategoryFilter = (int) ($this->showCategoryFilter ?? 1);
+$selectedCountry = (string) ($this->selectedCountry ?? '');
+$selectedCity = (string) ($this->selectedCity ?? '');
+$selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
+$startLat = (float) $this->params->get('map_center_lat', '54.526');
+$startLng = (float) $this->params->get('map_center_lng', '15.255');
+$startZoom = (int) $this->params->get('map_zoom', '4');
+$fullScreenMap = (int) $this->params->get('full_screen_map', '0');
+$showMyLocation = (int) $this->params->get('show_my_location', '0');
+$showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
+$showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
+$mapProvider = (string) $this->params->get('map_provider', 'osm');
+$mapProvider = $mapProvider === 'google' ? 'google' : 'osm';
+$mapType = (string) $this->params->get('map_type', 'political');
+$settings = JemHelper::globalattribs();
+$jemImageSettings = JemHelper::config();
+$googleApiKey = trim((string) $settings->get('global_googleapi', ''));
+$isResponsiveLayout = !empty($this->jemLayoutStyle) && $this->jemLayoutStyle === 'responsive';
+$showVenueImage = (int) $this->params->get('showvenueimage', 1);
+$showVenueDescription = (int) $this->params->get('showvenuedescription', 1) === 1
+    && (int) $settings->get('global_show_locdescription', 1) === 1;
+$venueImageWidth = max(1, (int) ($jemImageSettings->imagewidth ?? 200));
+$venueImageHeight = max(1, (int) ($jemImageSettings->imagehight ?? 200));
+$paginationPagesTotal = 0;
+
+if (!empty($this->pagination)) {
+    if (isset($this->pagination->pagesTotal)) {
+        $paginationPagesTotal = (int) $this->pagination->pagesTotal;
+    } elseif (isset($this->pagination->total, $this->pagination->limit) && (int) $this->pagination->limit > 0) {
+        $paginationPagesTotal = (int) ceil((int) $this->pagination->total / (int) $this->pagination->limit);
+    }
+}
+
+if ($mapProvider === 'google' && $googleApiKey !== '') {
+    $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
+} else {
+    $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
+    $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
+    $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
+    $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
+    $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
+}
+
+$tileLayers = [
+    'political' => [
+        'url' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'attribution' => '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        'maxZoom' => 19,
+    ],
+    'physical' => [
+        'url' => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        'attribution' => 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, SRTM | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+        'maxZoom' => 17,
+    ],
+];
+$tileLayer = $tileLayers[$mapType] ?? $tileLayers['political'];
+$mapLanguage = substr((string) Factory::getLanguage()->getTag(), 0, 2) ?: 'en';
+$buildDirectionsLink = static function ($lat, $lng) use ($mapProvider, $mapLanguage) {
+    $lat = (float) $lat;
+    $lng = (float) $lng;
+
+    if ($mapProvider === 'google') {
+        return 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($lat . ',' . $lng);
+    }
+
+    return 'https://routing.openstreetmap.de/?z=17&center=' . rawurlencode($lat . ',' . $lng)
+        . '&loc=' . rawurlencode($lat . ',' . $lng)
+        . '&hl=' . rawurlencode($mapLanguage)
+        . '&alt=0&srv=1';
+};
+$buildFullMapLink = static function ($lat, $lng) use ($mapProvider) {
+    $lat = (float) $lat;
+    $lng = (float) $lng;
+
+    if ($mapProvider === 'google') {
+        return 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($lat . ',' . $lng);
+    }
+
+    return 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat)
+        . '&mlon=' . rawurlencode((string) $lng)
+        . '&zoom=15#map=15/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lng);
+};
+$formatCoordinate = static function ($value) {
+    $value = trim((string) $value);
+
+    if ($value === '' || !is_numeric($value)) {
+        return '';
+    }
+
+    return rtrim(rtrim(number_format((float) $value, 6, '.', ''), '0'), '.');
+};
+$buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $showFullMapLink, $buildDirectionsLink, $buildFullMapLink) {
+    $links = [];
+
+    if ($showDirectionsLink) {
+        $links[] = '<a href="' . htmlspecialchars($buildDirectionsLink($lat, $lng), ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('MOD_JEM_MAP_NAVIGATE') . '</a>';
+    }
+
+    if ($showFullMapLink) {
+        $links[] = '<a href="' . htmlspecialchars($buildFullMapLink($lat, $lng), ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_FULL_MAP') . '</a>';
+    }
+
+    return $links ? implode(' | ', $links) : '';
+};
+$currentUri = Uri::getInstance()->toString();
+$user = JemFactory::getUser();
+$mediaRoot = rtrim(Uri::root(true), '/');
+$editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
+
+if (!function_exists('jem_venuesmap_venue_image')) {
+    function jem_venuesmap_venue_image($venue, $class = 'jem-venuesmap-venue-image')
+    {
+        $image = JemImage::flyercreator($venue->locimage ?? '', 'venue');
+
+        if (empty($image)) {
+            return '';
+        }
+
+        $src = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb']) ? $image['thumb'] : ($image['original'] ?? '');
+        $original = !empty($image['original']) ? $image['original'] : $src;
+
+        if (empty($src) || empty($original)) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) ($venue->venue ?? ''), ENT_QUOTES, 'UTF-8');
+        $img = '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" loading="lazy" title="' . htmlspecialchars(Text::_('COM_JEM_CLICK_TO_ENLARGE'), ENT_QUOTES, 'UTF-8') . '" />';
+
+        return '<a href="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($original, '/'), ENT_QUOTES, 'UTF-8') . '" rel="lightbox" class="flyermodal jem-venuesmap-image-link" data-lightbox="venuesmap-venue-images" data-title="' . $alt . '">' . $img . '</a>';
+    }
+}
+
+if (!function_exists('jem_venuesmap_country_html')) {
+    function jem_venuesmap_country_html($code, $name)
+    {
+        $code = trim((string) $code);
+        $name = trim((string) $name);
+
+        if ($code === '' && $name === '') {
+            return '-';
+        }
+
+        $html = '';
+
+        if ($code !== '') {
+            $flag = 'media/com_jem/images/flags/w20-png/' . strtolower($code) . '.png';
+
+            if (is_file(JPATH_SITE . '/' . $flag)) {
+                $html .= '<img class="jem-venuesmap-country-flag" src="' . htmlspecialchars(Uri::root(true) . '/' . $flag, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '" loading="lazy" /> ';
+            }
+        }
+
+        $html .= htmlspecialchars($name !== '' ? $name : $code, ENT_QUOTES, 'UTF-8');
+
+        return $html;
+    }
+}
+
+if (!function_exists('jem_venuesmap_link_url')) {
+    function jem_venuesmap_link_url($url)
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
+            return '';
+        }
+
+        if (!preg_match('#^[a-z][a-z0-9+.-]*:#i', $url)) {
+            $url = 'https://' . $url;
+        }
+
+        return $url;
+    }
+}
+
+if (!function_exists('jem_venuesmap_clean_text')) {
+    function jem_venuesmap_clean_text($text, $limit = 260)
+    {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags((string) $text)));
+
+        if ($text === '' || $text === '<br>') {
+            return '';
+        }
+
+        if (function_exists('mb_strlen') && mb_strlen($text) > $limit) {
+            return rtrim(mb_substr($text, 0, $limit - 1)) . '...';
+        }
+
+        if (!function_exists('mb_strlen') && strlen($text) > $limit) {
+            return rtrim(substr($text, 0, $limit - 1)) . '...';
+        }
+
+        return $text;
+    }
+}
+
+if (!function_exists('jem_venuesmap_normalise_color')) {
+    function jem_venuesmap_normalise_color($color, $fallback = '#d9ddb5')
+    {
+        $color = trim((string) $color);
+
+        return preg_match('/^#[0-9a-f]{6}$/i', $color) ? $color : $fallback;
+    }
+}
+
+if (!function_exists('jem_venuesmap_contrast_color')) {
+    function jem_venuesmap_contrast_color($color)
+    {
+        $color = ltrim((string) $color, '#');
+
+        if (!preg_match('/^[0-9a-f]{6}$/i', $color)) {
+            return '#1f2933';
+        }
+
+        $r = hexdec(substr($color, 0, 2));
+        $g = hexdec(substr($color, 2, 2));
+        $b = hexdec(substr($color, 4, 2));
+        $luminance = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        return $luminance < 145 ? '#ffffff' : '#1f2933';
+    }
+}
+
+$buildVenuePageLink = static function ($venue) use ($jemItemid) {
+    $slug = (int) $venue->id . ':' . $venue->alias;
+    $route = 'index.php?option=com_jem&view=venue&layout=default&id=' . $slug;
+
+    if (!empty($jemItemid)) {
+        $route .= '&Itemid=' . (int) $jemItemid;
+    }
+
+    return Route::_($route);
+};
+
+$buildVenueCalendarLink = static function ($venue) use ($jemItemid) {
+    $slug = (int) $venue->id . ':' . $venue->alias;
+    $route = 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $slug;
+
+    if (!empty($jemItemid)) {
+        $route .= '&Itemid=' . (int) $jemItemid;
+    }
+
+    return Route::_($route);
+};
+
+$buildVenueEditLink = static function ($venue) use ($currentUri) {
+    return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $venue->id . '&return=' . base64_encode($currentUri));
+};
+
+$editableVenues = [];
+$showEditColumn = false;
+
+foreach (($this->venueslist ?? []) as $venue) {
+    $venueId = (int) $venue->id;
+    $editableVenues[$venueId] = $user->can('edit', 'venue', $venueId, (int) ($venue->created_by ?? 0));
+    $showEditColumn = $showEditColumn || $editableVenues[$venueId];
+}
+
+?>
+
+    <style>
+        #jem.jem_venuesmap .jem-venuesmap-responsive-list {
+            display: grid;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 0.85rem;
+            align-items: start;
+            border: 1px solid #d6dde8;
+            background: #fff;
+            padding: 0.75rem;
+        }
+
+        #jem.jem_venuesmap {
+            --jem-venuesmap-image-width: <?php echo (int) $venueImageWidth; ?>px;
+            --jem-venuesmap-image-height: <?php echo (int) $venueImageHeight; ?>px;
+            --jem-venuesmap-table-image-width: <?php echo (int) min($venueImageWidth, 120); ?>px;
+            --jem-venuesmap-table-image-height: <?php echo (int) min($venueImageHeight, 90); ?>px;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-media {
+            display: flex;
+            justify-content: center;
+            width: var(--jem-venuesmap-image-width);
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty,
+        #jem.jem_venuesmap .jem-venuesmap-image-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            border: 1px dashed #cbd5e1;
+            background: #f8fafc;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty {
+            width: var(--jem-venuesmap-image-width);
+            height: var(--jem-venuesmap-image-height);
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-venue-image,
+        #jem.jem_venuesmap .jem-venuesmap-card-image {
+            width: var(--jem-venuesmap-image-width);
+            height: var(--jem-venuesmap-image-height);
+            object-fit: contain;
+            border: 1px solid #d6dde8;
+            background: #f5f7fa;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            font-size: 1.32rem;
+            font-weight: 700;
+            margin: 0;
+            outline: 0 !important;
+            padding: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            min-width: 0;
+            width: 100%;
+            border: 1px solid color-mix(in srgb, var(--jem-venuesmap-title-bg, #d9ddb5) 70%, #000000);
+            background: var(--jem-venuesmap-title-bg, #d9ddb5);
+            color: var(--jem-venuesmap-title-text, #1f2933);
+            padding: 0.25rem 0.55rem;
+            text-align: center;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:link,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:visited,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:hover,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:focus,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:focus-visible,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a:active {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            color: inherit !important;
+            outline: 0 !important;
+            outline-offset: 0;
+            padding: 0 !important;
+            text-decoration: none !important;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a::before,
+        #jem.jem_venuesmap .jem-venuesmap-card-title-row a::after {
+            border: 0 !important;
+            box-shadow: none !important;
+            content: none !important;
+            outline: 0 !important;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-venue-title-row {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            min-width: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-edit-link {
+            display: inline-flex;
+            align-items: center;
+            flex: 0 0 auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-content {
+            display: grid;
+            grid-template-columns: minmax(14rem, 0.95fr) minmax(14rem, 1.05fr);
+            gap: 0.85rem 1rem;
+            margin-top: 0.55rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-details,
+        #jem.jem_venuesmap .jem-venuesmap-card-description {
+            min-width: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta {
+            display: grid;
+            grid-template-columns: minmax(4rem, 25%) 1fr;
+            gap: 0 0.35rem;
+            margin: 0;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta dt {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-meta dd {
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-description-label {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-description-text {
+            color: #374151;
+            line-height: 1.35;
+            max-height: var(--jem-venuesmap-image-height);
+            overflow: hidden;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            min-width: 7.5rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-card-actions .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-coordinates {
+            border: 1px solid #d6dde8;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 0.9rem;
+            line-height: 1.35;
+            padding: 0.45rem 0.55rem;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-country-flag {
+            width: 20px;
+            height: auto;
+            vertical-align: -0.15em;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-link {
+            display: inline-flex;
+            justify-content: center;
+            max-width: 100%;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-col {
+            width: calc(var(--jem-venuesmap-table-image-width) + 1rem);
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-cell {
+            width: calc(var(--jem-venuesmap-table-image-width) + 1rem);
+            text-align: center;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-table-image {
+            width: var(--jem-venuesmap-table-image-width);
+            height: var(--jem-venuesmap-table-image-height);
+            object-fit: contain;
+            border: 1px solid #d6dde8;
+            background: #f5f7fa;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-image-placeholder {
+            width: var(--jem-venuesmap-table-image-width);
+            height: var(--jem-venuesmap-table-image-height);
+            margin: 0 auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-action-icon {
+            width: 1rem;
+            height: 1rem;
+            object-fit: contain;
+            margin-right: 0.25rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-list {
+            overflow-x: auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-list table {
+            width: auto;
+            min-width: 100%;
+            table-layout: auto;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-actions-cell {
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-actions-stack {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.35rem;
+        }
+
+        #jem.jem_venuesmap .jem-venuesmap-actions-stack .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 767.98px) {
+            #jem.jem_venuesmap .jem-venuesmap-card {
+                grid-template-columns: 1fr;
+            }
+
+            #jem.jem_venuesmap .jem-venuesmap-card-media,
+            #jem.jem_venuesmap .jem-venuesmap-card-media.is-empty {
+                width: 100%;
+            }
+
+            #jem.jem_venuesmap .jem-venuesmap-card-image {
+                width: auto;
+                height: auto;
+                max-width: min(100%, var(--jem-venuesmap-image-width));
+                max-height: var(--jem-venuesmap-image-height);
+            }
+
+            #jem.jem_venuesmap .jem-venuesmap-card-content {
+                grid-template-columns: 1fr;
+            }
+
+            #jem.jem_venuesmap .jem-venuesmap-card-actions {
+                width: 100%;
+            }
+        }
+    </style>
+
+
+<div id="jem" class="jem_venuesmap<?php echo $this->pageclass_sfx; ?>">
+    <div class="buttons">
+        <?php
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        ?>
+    </div>
+
+    <?php
+    if ($this->params->get('show_page_heading', 1)) : ?>
+        <h1 class="componentheading">
+            <?php
+            echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php
+    endif; ?>
+
+    <div class="clr"></div>
+
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <?php if ($showCountryFilter) : ?>
+            <label for="jem-map-filter-country-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_COUNTRY') ?>
+            </label>
+            <select name="jem_map_filter_country"
+                    id="jem-map-filter-country-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value=""><?= Text::_('COM_JEM_SELECT_COUNTRY') ?></option>
+                <?php foreach ($countries as $country): ?>
+                    <?php
+                    $countryValue = (string) $country->country;
+                    $countryName = !empty($country->country_name) ? (string) $country->country_name : $countryValue;
+                    ?>
+                    <option value="<?= htmlspecialchars($countryValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($countryValue === $selectedCountry) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <label for="jem-map-filter-city-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_CITY') ?>
+            </label>
+            <select name="jem_map_filter_city"
+                    id="jem-map-filter-city-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;"
+                    <?= ($selectedCountry === '') ? 'disabled' : '' ?>>
+                <option value=""><?= Text::_('COM_JEM_SELECT_CITY') ?></option>
+                <?php foreach ($cities as $city): ?>
+                    <?php $cityValue = (string) $city->city; ?>
+                    <option value="<?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>" <?= ($cityValue === $selectedCity) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($cityValue, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+
+        <?php if ($showCategoryFilter) : ?>
+            <label for="jem-map-filter-category-<?= $map_id ?>" class="form-label mb-0">
+                <?= Text::_('COM_JEM_CATEGORY') ?>
+            </label>
+            <select name="jem_map_filter_catid"
+                    id="jem-map-filter-category-<?= $map_id ?>"
+                    class="form-select form-select-sm auto-submit"
+                    style="width: auto;">
+                <option value="0"><?= Text::_('MOD_JEM_MAP_ALL_CATEGORIES') ?></option>
+                <?php foreach ($categories as $category): ?>
+                    <option value="<?= (int) $category->id ?>" <?= ((int) $category->id === $selectedCategoryId) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($category->catname, ENT_QUOTES, 'UTF-8') ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+    </form>
+
+    <?php if (!empty($showMyLocation)): ?>
+        <div class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+            <button type="button" class="btn btn-info btn-sm" id="locate-me-btn">
+                <i class="icon-location"></i> <?= Text::_('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>
+            </button>
+        </div>
+
+        <!-- Location help text -->
+        <div class="alert alert-info small mt-2" id="location-help">
+            <i class="icon-info"></i>
+            <?= Text::_('MOD_JEM_MAP_LOCATION_HELP') ?>
+        </div>
+
+        <!-- Permission instructions -->
+        <div class="alert alert-warning small mt-1" id="permission-instructions" style="display: none;">
+            <i class="icon-warning"></i>
+            <?= Text::_('MOD_JEM_MAP_PERMISSION_INSTRUCTIONS') ?>
+        </div>
+    <?php endif; ?>
+
+
+
+    <div id="<?= $map_id ?>" class="jem-venuesmap-canvas" style="width:100%; height:<?= htmlspecialchars($height, ENT_QUOTES) ?>; min-height:300px;"></div>
+
+    <?php if (empty($this->venueslist)) : ?>
+        <div class="alert alert-info small mt-2">
+            <?php echo Text::_('COM_JEM_NOVENUES'); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (!empty($this->venueslist)) : ?>
+        <div class="jem-venuesmap-responsive-list">
+            <?php foreach ($this->venueslistPage as $venue) : ?>
+                <?php
+                $venueName = $this->escape($venue->venue);
+                $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
+                $canEditVenue = $editableVenues[(int) $venue->id] ?? false;
+                $latitude = $formatCoordinate($venue->latitude ?? '');
+                $longitude = $formatCoordinate($venue->longitude ?? '');
+                $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
+                $venueImage = $showVenueImage ? jem_venuesmap_venue_image($venue, 'jem-venuesmap-card-image') : '';
+                $website = jem_venuesmap_link_url($venue->url ?? '');
+                $description = $showVenueDescription ? jem_venuesmap_clean_text($venue->locdescription ?? '') : '';
+                $cityLine = trim((string) ($venue->city ?? ''));
+                $postcode = trim((string) ($venue->postalCode ?? ''));
+                $cityLine = trim($cityLine . ($postcode !== '' ? ' ' . $postcode : ''));
+                $venueTitleColor = jem_venuesmap_normalise_color($venue->color ?? '');
+                $venueTitleTextColor = jem_venuesmap_contrast_color($venueTitleColor);
+                ?>
+                <article class="jem-venuesmap-card" style="--jem-venuesmap-title-bg: <?php echo htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8'); ?>; --jem-venuesmap-title-text: <?php echo htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8'); ?>;">
+                    <?php if ($showVenueImage) : ?>
+                        <?php if ($venueImage !== '') : ?>
+                            <div class="jem-venuesmap-card-media">
+                                <?php echo $venueImage; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="jem-venuesmap-card-media is-empty" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMAGE'), ENT_QUOTES, 'UTF-8'); ?>">-</div>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <div class="jem-venuesmap-card-main">
+                        <div class="jem-venuesmap-card-title-row">
+                            <h2 class="jem-venuesmap-card-title">
+                                <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                    <?php echo $venueName; ?>
+                                </a>
+                            </h2>
+                            <?php if ($showEditColumn && $canEditVenue) : ?>
+                                <a class="jem-venuesmap-edit-link" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                    <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                        <div class="jem-venuesmap-card-content">
+                            <div class="jem-venuesmap-card-details">
+                                <dl class="jem-venuesmap-card-meta">
+                                    <dt><?php echo Text::_('COM_JEM_STREET'); ?></dt>
+                                    <dd><?php echo trim((string) ($venue->street ?? '')) !== '' ? $this->escape($venue->street) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_CITY'); ?></dt>
+                                    <dd><?php echo $cityLine !== '' ? $this->escape($cityLine) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_STATE'); ?></dt>
+                                    <dd><?php echo trim((string) ($venue->state ?? '')) !== '' ? $this->escape($venue->state) : '-'; ?></dd>
+                                    <dt><?php echo Text::_('COM_JEM_COUNTRY'); ?></dt>
+                                    <dd><?php echo jem_venuesmap_country_html($venue->country ?? '', $countryName); ?></dd>
+                                    <?php if ($website !== '') : ?>
+                                        <dt><?php echo Text::_('COM_JEM_WEBSITE'); ?></dt>
+                                        <dd><a href="<?php echo htmlspecialchars($website, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo $this->escape($venue->url); ?></a></dd>
+                                    <?php endif; ?>
+                                </dl>
+                            </div>
+                            <?php if ($description !== '') : ?>
+                                <div class="jem-venuesmap-card-description">
+                                    <div class="jem-venuesmap-card-description-label"><?php echo Text::_('COM_JEM_DESCRIPTION'); ?></div>
+                                    <div class="jem-venuesmap-card-description-text"><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div class="jem-venuesmap-card-actions">
+                        <?php $btnStyle = 'background-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';'; ?>
+                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                            <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
+                        </a>
+                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                            <i class="fa fa-list" aria-hidden="true"></i>
+                            <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
+                        </a>
+                        <?php if ($mapLink !== '') : ?>
+                            <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
+                            </a>
+                        <?php endif; ?>
+                        <div class="jem-venuesmap-coordinates">
+                            <div>Lat: <?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                            <div>Lon: <?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                        </div>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php elseif (!empty($this->venueslist)) : ?>
+        <div class="table table-responsive table-striped table-hover table-sm jem-venuesmap-list">
+            <table class="eventtable table table-striped" summary="<?php echo Text::_('COM_JEM_VENUESMAP_PAGETITLE'); ?>">
+                <thead>
+                    <tr>
+                        <?php if ($showVenueImage) : ?>
+                            <th class="jem-venuesmap-image-col" style="text-align:left;"><?php echo Text::_('COM_JEM_IMAGE'); ?></th>
+                        <?php endif; ?>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_VENUE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_STREET'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_CITY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_STATE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_WEBSITE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_LATITUDE'); ?></th>
+                        <th style="text-align:left;"><?php echo Text::_('COM_JEM_LONGITUDE'); ?></th>
+                        <th class="center jem-venuesmap-actions-cell"><?php echo Text::_('COM_JEM_ACTIONS'); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($this->venueslistPage as $venue) : ?>
+                        <?php
+                        $venueName = $this->escape($venue->venue);
+                        $countryName = JemHelperCountries::getCountryName($venue->country) ?: $venue->country;
+                        $canEditVenue = $editableVenues[(int) $venue->id] ?? false;
+                        $latitude = $formatCoordinate($venue->latitude ?? '');
+                        $longitude = $formatCoordinate($venue->longitude ?? '');
+                        $mapLink = ($latitude !== '' && $longitude !== '') ? $buildFullMapLink($latitude, $longitude) : '';
+                        $venueImage = $showVenueImage ? jem_venuesmap_venue_image($venue, 'jem-venuesmap-table-image') : '';
+                        $website = jem_venuesmap_link_url($venue->url ?? '');
+                        $cityLine = trim((string) ($venue->city ?? ''));
+                        $postcode = trim((string) ($venue->postalCode ?? ''));
+                        $cityLine = trim($cityLine . ($postcode !== '' ? ' ' . $postcode : ''));
+                        ?>
+                        <tr>
+                            <?php if ($showVenueImage) : ?>
+                                <td class="jem-venuesmap-image-cell">
+                                    <?php echo $venueImage !== '' ? $venueImage : '<span class="jem-venuesmap-image-placeholder" aria-label="' . htmlspecialchars(Text::_('COM_JEM_IMAGE'), ENT_QUOTES, 'UTF-8') . '">-</span>'; ?>
+                                </td>
+                            <?php endif; ?>
+                            <td>
+                                <div class="jem-venuesmap-venue-title-row">
+                                    <a href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo $venueName; ?>
+                                    </a>
+                                    <?php if ($showEditColumn && $canEditVenue) : ?>
+                                        <a class="jem-venuesmap-edit-link" href="<?php echo htmlspecialchars($buildVenueEditLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>">
+                                            <img src="<?php echo htmlspecialchars($editIcon, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo Text::_('COM_JEM_EDIT_VENUE'); ?>" class="jem-venuesmap-action-icon" />
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+                            <td><?php echo trim((string) ($venue->street ?? '')) !== '' ? $this->escape($venue->street) : '-'; ?></td>
+                            <td><?php echo $cityLine !== '' ? $this->escape($cityLine) : '-'; ?></td>
+                            <td><?php echo trim((string) ($venue->state ?? '')) !== '' ? $this->escape($venue->state) : '-'; ?></td>
+                            <td><?php echo jem_venuesmap_country_html($venue->country ?? '', $countryName); ?></td>
+                            <td>
+                                <?php if ($website !== '') : ?>
+                                    <a href="<?php echo htmlspecialchars($website, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo $this->escape($venue->url); ?></a>
+                                <?php else : ?>
+                                    -
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+                            <td><?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></td>
+                            <td class="center jem-venuesmap-actions-cell">
+                                <?php
+                                $tblBtnColor     = jem_venuesmap_normalise_color($venue->color ?? '');
+                                $tblBtnTextColor = jem_venuesmap_contrast_color($tblBtnColor);
+                                $tblBtnStyle     = 'background-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($tblBtnTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';';
+                                ?>
+                                <div class="jem-venuesmap-actions-stack">
+                                <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                    <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
+                                </a>
+                                <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_EVENTS'); ?>">
+                                    <i class="fa fa-list" aria-hidden="true"></i>
+                                    <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
+                                </a>
+                                <?php if ($mapLink !== '') : ?>
+                                    <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                                        <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
+                                        <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
+                                    </a>
+                                <?php endif; ?>
+                                <div class="jem-venuesmap-coordinates">
+                                    <div>Lat: <?php echo $latitude !== '' ? htmlspecialchars($latitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                                    <div>Lon: <?php echo $longitude !== '' ? htmlspecialchars($longitude, ENT_QUOTES, 'UTF-8') : '-'; ?></div>
+                                </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($paginationPagesTotal > 1) : ?>
+        <div class="pagination">
+            <?php echo $this->pagination->getPagesLinks(); ?>
+        </div>
+    <?php endif; ?>
+
+    <!--footer-->
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
+    <div class="copyright">
+        <?php
+        echo JemOutput::footer(); ?>
+    </div>
+
+
+    <?php echo JemOutput::lightbox(); ?>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.auto-submit').forEach(function(control) {
+            control.addEventListener('change', function() {
+                if (control.name === 'jem_map_filter_country') {
+                    var city = document.getElementById('jem-map-filter-city-<?= $map_id ?>');
+                    if (city) {
+                        city.value = '';
+                        city.disabled = control.value === '';
+                    }
+                }
+
+                control.closest('form').submit();
+            });
+        });
+
+        var mapElement = document.getElementById('<?= $map_id ?>');
+        if (!mapElement) {
+            return;
+        }
+
+        <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
+        if (typeof google === 'undefined' || !google.maps) {
+            return;
+        }
+
+        var mapTypeId = <?= json_encode($mapType === 'physical' ? 'terrain' : 'roadmap') ?>;
+        var map = new google.maps.Map(mapElement, {
+            center: {lat: <?php echo (float) ($centerLat ? $centerLat : $startLat); ?>, lng: <?php echo (float) ($centerLng ? $centerLng : $startLng); ?>},
+            zoom: <?php echo (int) $startZoom; ?>,
+            mapTypeId: mapTypeId,
+            fullscreenControl: <?= $fullScreenMap ? 'true' : 'false' ?>
+        });
+        var infoWindow = new google.maps.InfoWindow();
+        var bounds = new google.maps.LatLngBounds();
+        var hasBounds = false;
+        var venueIcon = {
+            url: <?= json_encode($venueMarker) ?>,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 32)
+        };
+        var mylocIcon = {
+            url: <?= json_encode($mylocMarker) ?>,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 32)
+        };
+
+        var locationMarker = null;
+        var locationCircle = null;
+        var locationRequested = false;
+
+        function showLocationError(message) {
+            alert(message);
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (locateBtn) {
+                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.disabled = false;
+            }
+        }
+
+        function showPermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                help.style.display = 'none';
+                instructions.style.display = 'block';
+            }
+        }
+
+        function hidePermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                instructions.style.display = 'none';
+                help.style.display = 'block';
+            }
+        }
+
+        function locateUser() {
+            if (!navigator.geolocation) {
+                showLocationError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                return;
+            }
+
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (!locateBtn) {
+                return;
+            }
+
+            var originalText = locateBtn.innerHTML;
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.disabled = true;
+            locationRequested = true;
+            setTimeout(showPermissionInstructions, 1000);
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    hidePermissionInstructions();
+                    var latLng = {lat: position.coords.latitude, lng: position.coords.longitude};
+
+                    if (locationMarker) {
+                        locationMarker.setMap(null);
+                    }
+                    if (locationCircle) {
+                        locationCircle.setMap(null);
+                    }
+
+                    locationCircle = new google.maps.Circle({
+                        map: map,
+                        center: latLng,
+                        radius: position.coords.accuracy,
+                        strokeColor: 'red',
+                        fillColor: '#3399ff',
+                        fillOpacity: 0.2
+                    });
+
+                    locationMarker = new google.maps.Marker({
+                        position: latLng,
+                        map: map,
+                        icon: mylocIcon,
+                        title: <?= json_encode($youAreHere) ?>
+                    });
+                    infoWindow.setContent(<?= json_encode($youAreHere) ?>);
+                    infoWindow.open(map, locationMarker);
+                    map.setCenter(latLng);
+                    map.setZoom(Math.max(map.getZoom(), 15));
+                    locateBtn.innerHTML = originalText;
+                    locateBtn.disabled = false;
+                    locationRequested = false;
+                },
+                function(error) {
+                    hidePermissionInstructions();
+                    var errorMessage = '';
+
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            break;
+                        default:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                    }
+
+                    showLocationError(errorMessage);
+                    locationRequested = false;
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 20000,
+                    maximumAge: 300000
+                }
+            );
+        }
+
+        var locateBtn = document.getElementById('locate-me-btn');
+        if (locateBtn) {
+            locateBtn.addEventListener('click', function() {
+                if (!locationRequested) {
+                    locateUser();
+                }
+            });
+        }
+
+        <?php
+        $heatPoints = [];
+        $mapBounds = [];
+        foreach ($this->venueslist as $v):
+        $link = htmlspecialchars($buildVenuePageLink($v), ENT_QUOTES, 'UTF-8');
+        $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
+        $city = htmlspecialchars($v->city, ENT_QUOTES);
+        $country = htmlspecialchars($v->country, ENT_QUOTES);
+        $mapActionsHtml = $buildMapActionsHtml($v->latitude, $v->longitude);
+        $popupHtml =
+            '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            . $city . '<br>'
+            . '<img src="/media/com_jem/images/flags/w20-png/' . strtolower($country) . '.png" alt="' . $country . '"/><br>'
+            . $mapActionsHtml;
+        ?>
+        (function() {
+            var position = {lat: <?= (float)$v->latitude ?>, lng: <?= (float)$v->longitude ?>};
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                icon: venueIcon
+            });
+            marker.addListener('click', function() {
+                infoWindow.setContent(<?= json_encode($popupHtml) ?>);
+                infoWindow.open(map, marker);
+            });
+            bounds.extend(position);
+            hasBounds = true;
+        })();
+        <?php $heatPoints[] = ['lat' => (float) $v->latitude, 'lng' => (float) $v->longitude]; ?>
+        <?php $mapBounds[] = [(float) $v->latitude, (float) $v->longitude]; ?>
+        <?php endforeach; ?>
+
+        <?php if ($heatMapLayer) : ?>
+        if (google.maps.visualization && hasBounds) {
+            var heatPoints = <?php echo json_encode($heatPoints); ?>.map(function(point) {
+                return new google.maps.LatLng(point.lat, point.lng);
+            });
+            new google.maps.visualization.HeatmapLayer({
+                data: heatPoints,
+                radius: 25,
+                map: map
+            });
+        }
+        <?php endif; ?>
+
+        if (hasBounds && <?= ($selectedCountry !== '' || (int) $this->params->get('map_auto_center', 1)) ? 'true' : 'false' ?>) {
+            map.fitBounds(bounds);
+            if (<?= count($mapBounds) ?> === 1) {
+                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                    map.setZoom(Math.max(map.getZoom(), 10));
+                });
+            }
+        }
+        <?php else : ?>
+        if (typeof L === 'undefined') {
+            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_VENUESMAP_MAP_UNAVAILABLE') ?></div>';
+            return;
+        }
+
+        var map = L.map('<?= $map_id ?>').setView([<?php echo (float) ($centerLat? $centerLat : $startLat); ?>, <?php echo (float)($centerLng? $centerLng : $startLng); ?>], <?php echo (int) $startZoom; ?>);
+        L.tileLayer(<?= json_encode($tileLayer['url']) ?>, {
+            maxZoom: <?= (int) $tileLayer['maxZoom'] ?>,
+            attribution: <?= json_encode($tileLayer['attribution']) ?>
+        }).addTo(map);
+
+        setTimeout(function() {
+            map.invalidateSize();
+        }, 0);
+        window.addEventListener('load', function() {
+            map.invalidateSize();
+        });
+
+        <?php if ($fullScreenMap) : ?>
+        if (L.control && typeof L.control.fullscreen === 'function') {
+            L.control.fullscreen({
+                position: 'topleft',
+                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
+                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                content: null,
+                forceSeparateButton: true
+            }).addTo(map);
+        }
+        <?php endif; ?>
+
+        var locationMarker = null;
+        var locationCircle = null;
+        var locationRequested = false;
+
+        function showLocationError(message) {
+            alert(message);
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (locateBtn) {
+                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.disabled = false;
+            }
+        }
+
+        function showPermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                help.style.display = 'none';
+                instructions.style.display = 'block';
+            }
+        }
+
+        function hidePermissionInstructions() {
+            var instructions = document.getElementById('permission-instructions');
+            var help = document.getElementById('location-help');
+            if (instructions && help) {
+                instructions.style.display = 'none';
+                help.style.display = 'block';
+            }
+        }
+
+        function locateUser() {
+            if (!navigator.geolocation) {
+                showLocationError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                return;
+            }
+
+            var locateBtn = document.getElementById('locate-me-btn');
+            if (!locateBtn) {
+                return;
+            }
+
+            var originalText = locateBtn.innerHTML;
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.disabled = true;
+            locationRequested = true;
+            setTimeout(showPermissionInstructions, 1000);
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    hidePermissionInstructions();
+                    var latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+
+                    if (locationMarker) {
+                        map.removeLayer(locationMarker);
+                    }
+                    if (locationCircle) {
+                        map.removeLayer(locationCircle);
+                    }
+
+                    locationCircle = L.circle(latlng, {
+                        radius: position.coords.accuracy,
+                        color: 'red',
+                        fillColor: '#3399ff',
+                        fillOpacity: 0.2
+                    }).addTo(map);
+
+                    locationMarker = L.marker(latlng, {
+                        icon: L.icon({
+                            iconUrl: "<?= addslashes($mylocMarker) ?>",
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 32],
+                            popupAnchor: [0, -32],
+                            shadowUrl: "media/com_jem/images/marker-shadow.webp",
+                            shadowSize: [32, 32],
+                            shadowAnchor: [16, 32]
+                        })
+                    }).addTo(map).bindPopup(<?= json_encode($youAreHere) ?>).openPopup();
+
+                    map.setView(latlng, Math.max(map.getZoom(), 15));
+                    locateBtn.innerHTML = originalText;
+                    locateBtn.disabled = false;
+                    locationRequested = false;
+                },
+                function(error) {
+                    hidePermissionInstructions();
+                    var errorMessage = '';
+
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            break;
+                        default:
+                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                    }
+
+                    showLocationError(errorMessage);
+                    locationRequested = false;
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 20000,
+                    maximumAge: 300000
+                }
+            );
+        }
+
+        var locateBtn = document.getElementById('locate-me-btn');
+        if (locateBtn) {
+            locateBtn.addEventListener('click', function() {
+                if (!locationRequested) {
+                    locateUser();
+                }
+            });
+        }
+
+        <?php
+        $heatPoints = [];
+        $mapBounds = [];
+        foreach ($this->venueslist as $v):
+        $link = htmlspecialchars($buildVenuePageLink($v), ENT_QUOTES, 'UTF-8');
+
+        $venueName = htmlspecialchars($v->venue, ENT_QUOTES);
+        $city = htmlspecialchars($v->city, ENT_QUOTES);
+        $country = htmlspecialchars($v->country, ENT_QUOTES);
+
+        $mapActionsHtml = $buildMapActionsHtml($v->latitude, $v->longitude);
+        $popupHtml =
+            '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            . $city . '<br>'
+            . '<img src="/media/com_jem/images/flags/w20-png/' . strtolower(
+                $country
+            ) . '.png" alt="' . $country . '"/><br>'
+            . $mapActionsHtml;
+        ?>
+        L.marker([<?= (float)$v->latitude ?>, <?= (float)$v->longitude ?>], {
+            icon: L.icon({
+                iconUrl: "<?= addslashes($venueMarker) ?>",
+                iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]
+            })
+        }).addTo(map).bindPopup(<?= json_encode($popupHtml) ?>);
+        <?php $heatPoints[] = ['lat' => (float) $v->latitude, 'lng' => (float) $v->longitude]; ?>
+        <?php $mapBounds[] = [(float) $v->latitude, (float) $v->longitude]; ?>
+        <?php endforeach; ?>
+
+        <?php if ($heatMapLayer) : ?>
+        var coordinates = <?php echo json_encode($heatPoints); ?>;
+        var heatPoints = coordinates.map(function(p) {
+            return [p.lat, p.lng, 1];
+        });
+
+        if (typeof L.heatLayer === 'function' && heatPoints.length) {
+            L.heatLayer(heatPoints, {
+                radius: 25,
+                blur: 10,
+                maxZoom: 17
+            }).addTo(map);
+        }
+        <?php endif; ?>
+
+        <?php if ($selectedCountry !== '' && !empty($mapBounds)) : ?>
+        var venueBounds = <?php echo json_encode($mapBounds); ?>;
+        if (venueBounds.length > 1) {
+            map.fitBounds(venueBounds, {
+                padding: [30, 30],
+                maxZoom: 12
+            });
+        } else if (venueBounds.length === 1) {
+            map.setView(venueBounds[0], Math.max(map.getZoom(), 10));
+        }
+        <?php endif; ?>
+        <?php endif; ?>
+    });
+</script>

@@ -32,8 +32,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean True if the event can be added, false if not.
      */
-    public function add()
-    {
+    public function add() {
         if (!parent::add()) {
             // Redirect to the return page.
             $this->setRedirect($this->getReturnPage());
@@ -47,8 +46,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean
      */
-    protected function allowAdd($data = array())
-    {
+    protected function allowAdd($data = array()) {
         // Initialise variables.
         $user       = JemFactory::getUser();
         $inputCatId = Factory::getApplication()->input->getInt('catid', 0);
@@ -70,8 +68,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean
      */
-    protected function allowEdit($data = array(), $key = 'id')
-    {
+    protected function allowEdit($data = array(), $key = 'id') {
         // Initialise variables.
         $recordId = (int) ($data[$key] ?? 0);
         $user     = JemFactory::getUser();
@@ -109,8 +106,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean True if access level checks pass, false otherwise.
      */
-    public function cancel($key = 'a_id')
-    {
+    public function cancel($key = 'a_id') {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -128,8 +124,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean True if access level check and checkout passes, false otherwise.
      */
-    public function edit($key = null, $urlVar = 'a_id')
-    {
+    public function edit($key = null, $urlVar = 'a_id') {
         return parent::edit($key, $urlVar);
     }
 
@@ -138,8 +133,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean True if the event can be added, false if not.
      */
-    public function copy()
-    {
+    public function copy() {
         if (!parent::add()) {
             // Redirect to the return page.
             $this->setRedirect($this->getReturnPage());
@@ -155,8 +149,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return object The model.
      */
-    public function getModel($name = 'editevent', $prefix = '', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'editevent', $prefix = '', $config = array('ignore_request' => true)) {
         return parent::getModel($name, $prefix, $config);
     }
 
@@ -168,8 +161,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return string The arguments to append to the redirect URL.
      */
-    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id')
-    {
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'a_id') {
         // Need to override the parent method completely.
         $jinput = Factory::getApplication()->input;
         $tmpl   = $jinput->getCmd('tmpl', '');
@@ -226,18 +218,18 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return string The return URL.
      */
-    protected function getReturnPage()
-    {
+    protected function getReturnPage() {
         $uri    = Uri::getInstance();
         $return = Factory::getApplication()->input->get('return', null, 'base64');
+        $decodedReturn = $return ? base64_decode($return, true) : false;
 
-        if (empty($return) || !Uri::isInternal(base64_decode($return))) {
+        if (empty($decodedReturn) || !Uri::isInternal($decodedReturn)) {
             if (!empty($this->_id)) {
                 return Route::_(JemHelperRoute::getEventRoute($this->_id));
             }
             return $uri->base();
         } else {
-            return base64_decode($return);
+            return $decodedReturn;
         }
     }
 
@@ -246,13 +238,12 @@ class JemControllerEvent extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
-     * @param  JModel(Legacy)  $model      The data model object.
+     * @param  object          $model      The data model object.
      * @param  array           $validData  The validated data.
      *
      * @return void
      */
-    protected function _postSaveHook($model, $validData = array())
-    {
+    protected function _postSaveHook($model, $validData = array()) {
         $task = $this->getTask();
         if ($task == 'save') {
             $isNew     = $model->getState('editevent.new');
@@ -278,9 +269,7 @@ class JemControllerEvent extends JemControllerForm
      *
      * @return boolean True if successful, false otherwise.
      */
-    public function save($key = null, $urlVar = 'a_id')
-    {
-    // echo "<pre/>";print_R($_POST);die;
+    public function save($key = null, $urlVar = 'a_id') {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
@@ -288,6 +277,13 @@ class JemControllerEvent extends JemControllerForm
 
         // If ok, redirect to the return page.
         if ($result) {
+            $model = $this->getModel();
+
+            if ($this->handleCreatedArticleContentRedirect($model)) {
+                return $result;
+            }
+
+            $this->handleAssociatedArticleSyncNotice($model);
             $this->setRedirect($this->getReturnPage());
         }
 
@@ -295,15 +291,151 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Update the associated Joomla article from the current event data.
+     *
+     * @return  void
+     */
+    public function updateAssociatedArticle()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $id = $app->input->getInt('a_id', $app->input->getInt('id', 0));
+        $fields = $app->input->getString('fields', '');
+        $return = $app->input->getBase64('return', '');
+        $model = $this->getModel();
+        $redirect = $this->getReturnPage();
+
+        if ($return) {
+            $decodedReturn = base64_decode($return, true);
+
+            if ($decodedReturn && Uri::isInternal($decodedReturn)) {
+                $redirect = $decodedReturn;
+            }
+        }
+
+        if ($id && $model && $model->updateAssociatedArticleFromEvent($id, $fields)) {
+            $this->setRedirect($redirect, Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATED'), 'message');
+
+            return;
+        }
+
+        $this->setRedirect(
+            $redirect,
+            $model && $model->getError() ? $model->getError() : Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE_FAILED'),
+            'warning'
+        );
+    }
+
+    /**
+     * Create a Joomla article from the front-end selector modal and return it to
+     * the event form as the selected associated article.
+     *
+     * @return  void
+     */
+    public function createAssociatedArticle()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app      = Factory::getApplication();
+        $input    = $app->input;
+        $function = preg_replace('/[^A-Za-z0-9_]/', '', $input->getCmd('function', 'jSelectArticle'));
+        $title    = $input->getString('article_title', '');
+        $targetId = $input->getInt('article_catid', 0);
+        $jemcats  = array_values(array_filter(array_map('intval', explode(',', (string) $input->getString('jemcats', '')))));
+        $model    = $this->getModel();
+        $article  = $model ? $model->createAssociatedArticlePlaceholder($title, $targetId, $jemcats) : array();
+
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+
+        if (!empty($article['id']) && $function !== '') {
+            echo '<!doctype html><html><body><script>';
+            echo 'var fn = ' . json_encode($function) . ';';
+            echo 'if (window.parent && typeof window.parent[fn] === "function") {';
+            echo 'window.parent[fn](' . (int) $article['id'] . ', ' . json_encode((string) $article['title']) . ');';
+            echo '}';
+            echo '</script></body></html>';
+            $app->close();
+        }
+
+        $message = $model && $model->getError() ? $model->getError() : Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED');
+        echo '<!doctype html><html><body style="font-family: sans-serif; padding: 1rem;">';
+        echo '<div class="alert alert-danger" style="border:1px solid #c52827;color:#842029;background:#f8d7da;padding:.75rem 1rem;">' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</div>';
+        echo '<button type="button" onclick="history.back();" style="padding:.45rem .75rem;">' . Text::_('JPREVIOUS') . '</button>';
+        echo '</body></html>';
+        $app->close();
+    }
+
+    /**
+     * Notify or redirect after an empty event-content article is created.
+     *
+     * @param   object  $model  Event model.
+     *
+     * @return  boolean  True when a redirect was set.
+     */
+    protected function handleCreatedArticleContentRedirect($model)
+    {
+        $articleId = $model ? (int) $model->getState('event.article_content_article_id', 0) : 0;
+
+        if (!$articleId || !(bool) $model->getState('event.article_content_empty', false)) {
+            return false;
+        }
+
+        $return = base64_encode($this->getReturnPage());
+        $editUrl = Route::_('index.php?option=com_content&task=article.edit&a_id=' . $articleId . '&return=' . $return . '&' . Session::getFormToken() . '=1', false);
+        $action = (string) $model->getState('event.article_content_create_action', 'copy_description');
+
+        if ($action === 'empty_edit') {
+            $this->setRedirect($editUrl, Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT'), 'notice');
+
+            return true;
+        }
+
+        Factory::getApplication()->enqueueMessage(
+            Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EMPTY_EDIT') . ' <a href="' . $editUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_EDIT_LINK') . '</a>',
+            'notice'
+        );
+
+        return false;
+    }
+
+    /**
+     * Show article sync choices when event content changed after save.
+     *
+     * @param   object  $model  Event model.
+     *
+     * @return  void
+     */
+    protected function handleAssociatedArticleSyncNotice($model)
+    {
+        $eventId = $model ? (int) $model->getState('event.article_sync_event_id', 0) : 0;
+        $fields = $model ? (string) $model->getState('event.article_sync_fields', '') : '';
+        $labels = $model ? (string) $model->getState('event.article_sync_labels', '') : '';
+
+        if (!$eventId || $fields === '') {
+            return;
+        }
+
+        $return = base64_encode($this->getReturnPage());
+        $token = Session::getFormToken();
+        $updateUrl = Route::_('index.php?option=com_jem&task=event.updateAssociatedArticle&a_id=' . $eventId . '&fields=' . rawurlencode($fields) . '&return=' . $return . '&' . $token . '=1', false);
+        $dismissUrl = $this->getReturnPage();
+        $message = Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_NOTICE', htmlspecialchars($labels, ENT_QUOTES, 'UTF-8'))
+            . ' <a class="btn btn-sm btn-primary" href="' . $updateUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</a>'
+            . ' <a class="btn btn-sm btn-secondary" href="' . $dismissUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_DISMISS') . '</a>';
+
+        Factory::getApplication()->enqueueMessage($message, 'notice');
+    }
+
+    /**
      * Saves the registration to the database
      */
-    public function userregister()
-    {
+    public function userregister() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
         $app = Factory::getApplication();
-		$input = $app->getInput();
+        $input = $app->getInput();
         $id    = $input->getInt('rdid', 0);
         $rid   = $input->getInt('regid', 0);
 
@@ -321,8 +453,7 @@ class JemControllerEvent extends JemControllerForm
         $model->setId($id);
         $register_id = $model->userregister();
 
-        if (!$register_id)
-        {
+        if (!$register_id) {
             $msg = $model->getError();
             $this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
             $this->redirect();
@@ -347,8 +478,7 @@ class JemControllerEvent extends JemControllerForm
     /**
      * Deletes a registered user
      */
-    public function delreguser()
-    {
+    public function delreguser() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 

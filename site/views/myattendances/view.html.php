@@ -41,8 +41,10 @@ class JemViewMyattendances extends JemView
         // redirect if not logged in
         $this->needLoginFirst = 0;
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
-            $this->needLoginFirst=1;
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+            $this->needLoginFirst = 1;
+            return;
         }else {
             // Decide which parameters should take priority
             $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
@@ -63,6 +65,28 @@ class JemViewMyattendances extends JemView
 
             // are attendences available?
             $noattending = (!$attending) ? 1 : 0;
+
+            $columnParamDefaults = array(
+                'showtitle'  => '-1',
+                'showlocate' => '-1',
+                'showcity'   => '-1',
+                'showstate'  => '-1',
+                'showcat'    => '-1',
+            );
+
+            foreach ($columnParamDefaults as $columnParam => $columnDefault) {
+                $columnValue = (string) $params->get($columnParam, $columnDefault);
+
+                if ($columnValue !== '-1') {
+                    $jemsettings->{$columnParam} = (int) $columnValue;
+                }
+            }
+
+            $showdate    = (int) $params->get('showdate', 1);
+            $showplaces  = (int) $params->get('showplaces', 1);
+            $showstatus  = (int) $params->get('showstatus', 1);
+            $showcomment = (int) $params->get('showcomment', 1);
+            $showcountry = (int) $params->get('showcountry', 0);
 
             // get variables
             $filter_order = $app->getUserStateFromRequest('com_jem.myattendances.filter_order', 'filter_order', 'a.dates', 'cmd');
@@ -109,6 +133,7 @@ class JemViewMyattendances extends JemView
             // Set Page title
             $pagetitle = Text::_('COM_JEM_MY_ATTENDANCES');
             $pageheading = $pagetitle;
+            $pageclass_sfx = '';
 
             // Check to see which parameters should take priority
             if ($useMenuItemParams) {
@@ -160,6 +185,11 @@ class JemViewMyattendances extends JemView
             $this->print_link = $print_link;
             $this->archive_link = $archive_link;
             $this->print = $print;
+            $this->showdate = $showdate;
+            $this->showplaces = $showplaces;
+            $this->showstatus = $showstatus;
+            $this->showcomment = $showcomment;
+            $this->showcountry = $showcountry;
             $this->lists = $lists;
             $this->noattending = $noattending;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

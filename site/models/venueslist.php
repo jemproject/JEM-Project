@@ -10,7 +10,11 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\ListModel;
+
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
 
 /**
  * Model-Venueslist
@@ -44,7 +48,7 @@ class JemModelVenueslist extends ListModel
         $task        = $jinput->getCmd('task');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.venueslist.limitstart', 0);
         }
@@ -63,6 +67,9 @@ class JemModelVenueslist extends ListModel
         $filtertype  = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_type', 'filter_type', '', 'int');
         $this->setState('filter.filter_type', $filtertype);
 
+        $filterCountries = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_country', 'filter_country', array(), 'array');
+        $this->setState('filter.countries', $this->normaliseCountries($filterCountries));
+
         ###########
         ## ORDER ##
         ###########
@@ -71,6 +78,11 @@ class JemModelVenueslist extends ListModel
         $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_order        = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir    = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('a.city', 'a.venue', 'a.state', 'a.country', 'a.ordering', 'a.id');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.city';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $orderby = $filter_order . ' ' . $filter_order_Dir;
 
@@ -90,6 +102,8 @@ class JemModelVenueslist extends ListModel
         $id .= ':' . $this->getState('list.limit');
         $id .= ':' . $this->getState('filter.filter_search');
         $id .= ':' . $this->getState('filter.filter_type');
+        $id .= ':' . serialize($this->getState('filter.countries'));
+        $id .= ':' . (int) $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.orderby'));
 
         return parent::getStoreId($id);
@@ -141,6 +155,22 @@ class JemModelVenueslist extends ListModel
         );
         $query->from('#__jem_venues as a');
 
+        # Type
+        $levelsList = implode(',', array_map('intval', $levels));
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+        $query->select(array(
+            'jt.name AS type_name',
+            'jt.icon AS type_icon',
+            'jt.color AS type_color',
+            'jt.alias AS type_alias',
+            'jt.description AS type_description',
+            'jt.base_language AS type_base_language',
+            'jt.translation_languages AS type_translation_languages',
+            'jt.translations AS type_translations',
+        ));
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ') AND ' . $typeLanguageCondition);
+
         ###################
         ## FILTER-SEARCH ##
         ###################
@@ -148,6 +178,7 @@ class JemModelVenueslist extends ListModel
         # define variables
         $filter = $this->getState('filter.filter_type');
         $search = $this->getState('filter.filter_search'); // not escaped
+        $rawSearch = trim((string) $search);
 
         ###################
         ## FILTER-ACCESS ##
@@ -185,9 +216,47 @@ class JemModelVenueslist extends ListModel
                         case 5:
                             $query->where('a.state LIKE '.$search);
                             break;
+                        case 6:
+                            $countryCodes = array();
+
+                            foreach (JemHelperCountries::getCountries() as $iso3 => $country) {
+                                $countryName = explode(',', $country['name'])[0];
+
+                                if (stripos($countryName, $rawSearch) !== false || stripos($country['iso2'], $rawSearch) !== false || stripos($iso3, $rawSearch) !== false) {
+                                    $countryCodes[] = $db->quote($country['iso2']);
+                                    $countryCodes[] = $db->quote($iso3);
+                                }
+                            }
+
+                            $countryWhere = array('a.country LIKE ' . $search);
+
+                            if ($countryCodes) {
+                                $countryWhere[] = 'a.country IN (' . implode(',', array_unique($countryCodes)) . ')';
+                            }
+
+                            $query->where('(' . implode(' OR ', $countryWhere) . ')');
+                            break;
                     }
                 }
             }
+        }
+
+        $countries = $this->normaliseCountries((array) $params->get('filtercountries', array()));
+
+        if ($countries) {
+            $query->where('a.country IN (' . implode(',', array_map(array($db, 'quote'), array_unique($countries))) . ')');
+        }
+
+        $frontendCountries = (int) $params->get('showcountryfilter', 1) ? $this->normaliseCountries((array) $this->getState('filter.countries', array())) : array();
+
+        if ($frontendCountries) {
+            $query->where('a.country IN (' . implode(',', array_map(array($db, 'quote'), array_unique($frontendCountries))) . ')');
+        }
+
+        $typeId = (int) $this->getState('filter.type_id');
+
+        if ($typeId > 0) {
+            $query->where('a.type_id = ' . $typeId);
         }
 
         ####################
@@ -216,7 +285,48 @@ class JemModelVenueslist extends ListModel
         if ($orderby) {
             $query->order($orderby);
         }
-
         return $query;
+    }
+
+    /**
+     * Method to get active country options for the visible frontend filter.
+     */
+    public function getCountryOptions()
+    {
+        $params = Factory::getApplication()->getParams();
+        $configuredCountries = $this->normaliseCountries((array) $params->get('filtercountries', array()));
+        $options = array();
+
+        foreach (JemHelperCountries::getCountryOptions() as $option) {
+            $value = $this->normaliseCountry($option->value ?? '');
+
+            if ($value === '') {
+                continue;
+            }
+
+            if ($configuredCountries && !in_array($value, $configuredCountries, true)) {
+                continue;
+            }
+
+            $options[] = HTMLHelper::_('select.option', $value, Text::_($option->text));
+        }
+
+        return $options;
+    }
+
+    private function normaliseCountries($countries)
+    {
+        if (!is_array($countries)) {
+            $countries = array($countries);
+        }
+
+        $countries = array_filter(array_map(array($this, 'normaliseCountry'), $countries));
+
+        return array_values(array_unique($countries));
+    }
+
+    private function normaliseCountry($country)
+    {
+        return strtoupper(substr(preg_replace('/[^A-Z]/i', '', (string) $country), 0, 2));
     }
 }

@@ -118,6 +118,9 @@ abstract class ModJemWideHelper
 
         foreach ($events as $row)
         {
+            $hasEventAccess = !isset($row->user_has_access_event) || (bool) $row->user_has_access_event;
+            $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
+
             # create thumbnails if needed and receive imagedata
             $dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event') : null;
             $limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
@@ -147,8 +150,8 @@ abstract class ModJemWideHelper
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->eventlink   = $params->get('linkevent', 1) ? Route::_(JEMHelperRoute::getEventRoute($row->slug)) : '';
-            $lists[$i]->venuelink   = $params->get('linkvenue', 1) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JEMHelperRoute::getEventRoute($row->slug), $params)) : '';
+            $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->featured    = $row->featured;
 
             if ($dimage == null) {

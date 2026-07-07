@@ -31,8 +31,7 @@ class JemControllerVenue extends JemControllerForm
      * @param    array An optional associative array of configuration settings.
      * @see        JController
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
     }
 
@@ -46,8 +45,7 @@ class JemControllerVenue extends JemControllerForm
      *
      * @return  void
      */
-    protected function _postSaveHook($model, $validData = array())
-    {
+    protected function _postSaveHook($model, $validData = array()) {
         $isNew = $model->getState('venue.new');
         $id    = $model->getState('venue.id');
 

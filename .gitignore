@@ -12,6 +12,8 @@ tmp/
 *.bak
 *.swp
 *~.nib
+vendor/
+.phpunit.cache/
 local.properties
 .classpath
 .settings/
@@ -169,3 +171,9 @@ pip-log.txt
 /build.config
 /build.number
 
+/docs
+
+# Local scratch files generated while preparing docs or patches
+/.tmp/
+/.tmp-*
+/JEM 5.0/

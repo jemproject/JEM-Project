@@ -13,6 +13,7 @@ use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Categories Controller
@@ -31,10 +32,36 @@ class JemControllerCategories extends AdminController
      *
      * @return    object    The model.
      */
-    public function getModel($name = 'Category', $prefix = 'JemModel', $config = array('ignore_request' => true))
-    {
+    public function getModel($name = 'Category', $prefix = 'JemModel', $config = array('ignore_request' => true)) {
         $model = parent::getModel($name, $prefix, $config);
         return $model;
+    }
+
+    public function saveOrderAjax()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+
+        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+            echo '0';
+            $app->close();
+        }
+
+        $cid = $app->input->get('cid', array(), 'array');
+        $order = $app->input->get('order', array(), 'array');
+        ArrayHelper::toInteger($cid);
+        ArrayHelper::toInteger($order);
+
+        if (empty($cid) || count($cid) !== count($order)) {
+            echo '0';
+            $app->close();
+        }
+
+        $model = $this->getModel('category');
+        echo $model->saveorder($cid, $order) ? '1' : '0';
+        $app->close();
     }
 
     /**
@@ -42,8 +69,7 @@ class JemControllerCategories extends AdminController
      *
      * @return    bool    False on failure or error, true on success.
      */
-    public function rebuild()
-    {
+    public function rebuild() {
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $this->setRedirect(Route::_('index.php?option=com_jem&view=categories', false));
@@ -62,68 +88,6 @@ class JemControllerCategories extends AdminController
         }
     }
 
-    /**
-     * Save the manual order inputs from the categories list page.
-     *
-     * @return    void
-     */
-    public function saveorderDisabled()
-    {
-        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
-
-        // Get the arrays from the Request
-        $order = Factory::getApplication()->input->post->get('order', array(), 'array');
-        $originalOrder = explode(',', Factory::getApplication()->input->getString('original_order_values', ''));
-
-        // Make sure something has changed
-        if ($order !== $originalOrder) {
-            parent::saveorder();
-        } else {
-            // Nothing to reorder
-            $this->setRedirect(Route::_('index.php?option='.$this->option.'&view='.$this->view_list, false));
-            return true;
-        }
-    }
-
-    /** Deletes and returns correctly.
-      *
-      * @return    void
-      */
-     public function deleteDisabled()
-     {
-         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
-
-         // Get items to remove from the request.
-         $cid = Factory::getApplication()->input->get('cid', array(), 'array');
-         $extension = Factory::getApplication()->input->get('extension', '');
-
-         if (!is_array($cid) || count($cid) < 1)
-         {
-             Factory::getApplication()->enqueueMessage(Text::_($this->text_prefix . '_NO_ITEM_SELECTED'), 'warning');
-         }
-         else
-         {
-             // Get the model.
-             $model = $this->getModel();
-
-             // Make sure the item ids are integers
-             jimport('joomla.utilities.arrayhelper');
-             \Joomla\Utilities\ArrayHelper::toInteger($cid);
-
-             // Remove the items.
-             if ($model->delete($cid))
-             {
-                 $this->setMessage(Text::plural($this->text_prefix . '_N_ITEMS_DELETED', count($cid)));
-             }
-             else
-             {
-                 $this->setMessage($model->getError());
-             }
-         }
-
-         $this->setRedirect(Route::_('index.php?option=' . $this->option . '&extension=' . $extension, false));
-     }
-
      /**
       * Logic to delete categories
       *
@@ -131,15 +95,30 @@ class JemControllerCategories extends AdminController
       * @return void
       *
       */
-     public function remove()
-     {
+     public function remove() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
 
-         $cid= Factory::getApplication()->input->post->get('cid', array(), 'array');
+         $app = Factory::getApplication();
+         if (!$app->getIdentity()->authorise('core.delete', 'com_jem')) {
+             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+         }
+
+         $cid = $app->input->post->get('cid', array(), 'array');
 
          if (!is_array($cid) || count($cid) < 1) {
-             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
+             $app->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
+             $this->setRedirect('index.php?option=com_jem&view=categories');
+             return;
+         }
+
+         ArrayHelper::toInteger($cid);
+         $cid = array_filter($cid);
+
+         if (empty($cid)) {
+             $app->enqueueMessage(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 'warning');
+             $this->setRedirect('index.php?option=com_jem&view=categories');
+             return;
          }
 
          $model = $this->getModel('category');

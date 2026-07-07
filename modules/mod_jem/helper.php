@@ -110,6 +110,7 @@ abstract class ModJemHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         # Loop through the result rows and prepare data
         $i     = -1;
@@ -117,6 +118,9 @@ abstract class ModJemHelper
 
         foreach ($events as $row)
         {
+            $hasEventAccess = !isset($row->user_has_access_event) || (bool) $row->user_has_access_event;
+            $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
+
             # cut titel
             $length = mb_strlen($row->title);
 
@@ -129,7 +133,7 @@ abstract class ModJemHelper
 
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->title       = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->link        = Route::_(JemHelperRoute::getEventRoute($row->slug));
+            $lists[$i]->link        = $hasEventAccess ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params)) : Route::_('index.php?option=com_users&view=login');
             $lists[$i]->dates       = $row->dates;
             $lists[$i]->times       = $row->times;
             $lists[$i]->enddates    = $row->enddates;
@@ -138,14 +142,23 @@ abstract class ModJemHelper
             $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
+            $lists[$i]->catname     = implode(', ', JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
             $lists[$i]->text        = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->state       = htmlspecialchars($row->state ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->country     = htmlspecialchars($row->country ?? '', ENT_COMPAT, 'UTF-8');
-            $lists[$i]->venueurl    = !empty($row->venueslug) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
+            $lists[$i]->venueurl    = ($hasVenueAccess && !empty($row->venueslug)) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : null;
             $lists[$i]->featured    = $row->featured;
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
+
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
 
             # provide custom fields
             for ($n = 1; $n <= 10; ++$n) {

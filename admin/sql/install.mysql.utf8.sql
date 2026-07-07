@@ -13,14 +13,17 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `publish_up` datetime DEFAULT NULL,
     `publish_down` datetime DEFAULT NULL,
     `version` int(11) unsigned NOT NULL DEFAULT '0',
-    `author_ip` varchar(45) DEFAULT NULL,
+    `author_ip` varchar(80) DEFAULT NULL,
     `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `introtext` mediumtext NOT NULL,
     `fulltext` mediumtext NOT NULL,
+    `article_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `online_meeting_url` varchar(2048) NOT NULL DEFAULT '',
+    `online_meeting_label` varchar(255) NOT NULL DEFAULT '',
     `meta_keywords` varchar(200) DEFAULT NULL,
     `meta_description` varchar(255) DEFAULT NULL,
     `recurrence_first_id` int(11) NOT NULL DEFAULT '0',
-    `recurrence_number` int(2) NOT NULL DEFAULT '0',
+    `recurrence_number` int(11) NOT NULL DEFAULT '0',
     `recurrence_type` int(2) NOT NULL DEFAULT '0',
     `recurrence_counter` int(11) NOT NULL DEFAULT '0',
     `recurrence_limit` int(11) NOT NULL DEFAULT '0',
@@ -28,6 +31,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_byday` varchar(20) NULL DEFAULT NULL,
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
     `datimage` varchar(100) NOT NULL DEFAULT '',
+    `fullimage` varchar(100) NOT NULL DEFAULT '',
+    `fullimage_layout` varchar(20) NOT NULL DEFAULT 'global',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,
     `registra` tinyint(1) NOT NULL DEFAULT '0',
@@ -46,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `singlebooking` int(1) NOT NULL DEFAULT '0',
     `hits` int(11) unsigned NOT NULL DEFAULT '0',
     `published` tinyint(1) NOT NULL DEFAULT '0',
-    `contactid` int(10) NOT NULL DEFAULT '0',
+    `contactid` varchar(100) NOT NULL DEFAULT '',
     `custom1` varchar(200) NOT NULL DEFAULT '',
     `custom2` varchar(200) NOT NULL DEFAULT '',
     `custom3` varchar(100) NOT NULL DEFAULT '',
@@ -62,15 +67,20 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `metadata` text NOT NULL,
     `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
     `attribs` varchar(5120) NOT NULL DEFAULT '',
-    `language` char(7) NOT NULL DEFAULT '',
+    `language` char(7) NOT NULL DEFAULT '*',
+    `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
+    `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_venue` (`locid`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
-    KEY `idx_language` (`language`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+    KEY `idx_language` (`language`),
+    KEY `idx_article` (`article_id`),
+    KEY `idx_type` (`type_id`)
+    ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -83,15 +93,15 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `city` varchar(50) DEFAULT NULL,
     `state` varchar(50) DEFAULT NULL,
     `country` varchar(2) DEFAULT NULL,
-    `latitude` float(10,6) DEFAULT NULL,
-    `longitude` float(10,6) DEFAULT NULL,
+    `latitude` decimal(10,6) DEFAULT NULL,
+    `longitude` decimal(10,6) DEFAULT NULL,
     `locdescription` mediumtext DEFAULT NULL,
     `meta_keywords` text DEFAULT NULL,
     `meta_description` text DEFAULT NULL,
     `locimage` varchar(100) NOT NULL DEFAULT '',
     `map` tinyint(4) NOT NULL DEFAULT '0',
     `created_by` int(11) unsigned NOT NULL DEFAULT '0',
-    `author_ip` varchar(45) NOT NULL DEFAULT '',
+    `author_ip` varchar(80) NOT NULL DEFAULT '',
     `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `modified` datetime NULL DEFAULT NULL,
     `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
@@ -114,14 +124,16 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `custom9` varchar(100) NOT NULL DEFAULT '',
     `custom10` varchar(100) NOT NULL DEFAULT '',
     `attribs` varchar(5120) DEFAULT NULL,
-    `language` char(7) DEFAULT NULL,
+    `language` char(7) NOT NULL DEFAULT '*',
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
-    KEY `idx_language` (`language`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+    KEY `idx_language` (`language`),
+    KEY `idx_type` (`type_id`)
+    ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -144,17 +156,23 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `lft` int(11) NOT NULL DEFAULT '0',
     `rgt` int(11) NOT NULL DEFAULT '0',
     `level` int(10) unsigned NOT NULL DEFAULT '1',
-    `language` varchar(7) DEFAULT NULL,
+    `language` varchar(7) NOT NULL DEFAULT '*',
     `created_user_id` int(10) unsigned NOT NULL DEFAULT '0',
     `created_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `path` varchar(255) DEFAULT NULL,
     `metadata` varchar(2048) DEFAULT NULL,
     `modified_time` datetime NULL DEFAULT NULL,
     `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `article_category_id` int(10) unsigned NOT NULL DEFAULT '0',
+    `article_create_mode` tinyint(1) NOT NULL DEFAULT '0',
     `email` varchar(200) DEFAULT NULL,
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+    PRIMARY KEY (`id`),
+    KEY `idx_article_category` (`article_category_id`),
+    KEY `idx_parent` (`parent_id`),
+    KEY `idx_type` (`type_id`)
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -165,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_cats_event_relations` (
     UNIQUE KEY `category event relation` (`catid`,`itemid`),
     KEY `catid` (`catid`),
     KEY `itemid` (`itemid`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_register` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -182,12 +200,13 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
     KEY `idx_event` (`event`),
     KEY `idx_event_status` (`event`,`status`),
     KEY `idx_user` (`uid`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groups` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `name` varchar(150) NOT NULL DEFAULT '',
     `description` mediumtext DEFAULT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,
     `checked_out_time` datetime NULL DEFAULT NULL,
     `addvenue` int(11) NOT NULL,
@@ -197,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groups` (
     `publishevent` int(11) NOT NULL,
     `editevent` int(11) NOT NULL,
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -206,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
     PRIMARY KEY (`id`),
     KEY `idx_group` (`group_id`),
     KEY `idx_user` (`member`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_config` (
     `keyname` varchar(100) NOT NULL,
@@ -214,7 +233,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_config` (
     `access` int(10) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'rfu',
     PRIMARY KEY (`keyname`),
     KEY `idx_access` (`access`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -226,10 +245,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `frontend` tinyint(1) NOT NULL DEFAULT '1',
     `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `ordering` int(11) NOT NULL DEFAULT '0',
-    `added` datetime NULL DEFAULT NULL,
-    `added_by` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NULL DEFAULT NULL,
+    `created_by` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -238,9 +257,118 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `iso3` varchar(3) NOT NULL,
     `un` int(11) NOT NULL,
     `name` varchar(100) NOT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
-    KEY `iso2` (`iso2`)
-    ) ENGINE=InnoDB CHARACTER SET `utf8mb4` COLLATE `utf8mb4_unicode_ci`;
+    KEY `iso2` (`iso2`),
+    KEY `idx_continent` (`continent`),
+    KEY `idx_published` (`published`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `#__jem_links` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `event_id` INT(11) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` VARCHAR(255) NULL,
+    `url` TEXT NOT NULL,
+    `params` TEXT DEFAULT NULL,
+    `ordering` INT(11) DEFAULT 0,
+    `state` TINYINT(1) DEFAULT 1,
+    `created` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `created_by` INT(11) NOT NULL,
+    `modified` DATETIME DEFAULT NULL,
+    `modified_by` INT(11) DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_event_id` (`event_id`),
+    INDEX `idx_state` (`state`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_types` (
+    `id`                INT(11)          NOT NULL AUTO_INCREMENT,
+  `name`              VARCHAR(100)     NOT NULL DEFAULT '',
+  `alias`             VARCHAR(100)     NOT NULL DEFAULT '',
+  `description`       TEXT             DEFAULT NULL,
+  `base_language`     CHAR(7)          NOT NULL DEFAULT '',
+  `translation_languages` VARCHAR(255) DEFAULT NULL,
+  `translations`      MEDIUMTEXT       DEFAULT NULL,
+  `entity`            TINYINT(1)       NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day',
+    `icon`              VARCHAR(255)     DEFAULT NULL,
+    `color`             VARCHAR(7)       DEFAULT NULL,
+    `published`         TINYINT(1)       NOT NULL DEFAULT 1,
+    `ordering`          INT(11)          NOT NULL DEFAULT 0,
+    `access`            INT(10) UNSIGNED NOT NULL DEFAULT 1,
+    `language`          CHAR(7)          NOT NULL DEFAULT '*',
+    `checked_out`       INT(11) UNSIGNED NULL DEFAULT NULL,
+    `checked_out_time`  DATETIME         NULL DEFAULT NULL,
+    `created`           DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by`        INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    `modified`          DATETIME         NULL DEFAULT NULL,
+    `modified_by`       INT(11) UNSIGNED NOT NULL DEFAULT 0,
+    `attribs`           TEXT             DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_entity`    (`entity`),
+    KEY `idx_published` (`published`),
+    KEY `idx_access`    (`access`),
+    KEY `idx_checkout`  (`checked_out`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `alias` varchar(255) NOT NULL DEFAULT '',
+  `day_type_id` int(11) unsigned NOT NULL DEFAULT 0,
+  `day_type` varchar(100) NOT NULL DEFAULT '',
+  `start_date` date NULL DEFAULT NULL,
+  `end_date` date NULL DEFAULT NULL,
+  `weekdays` varchar(32) NOT NULL DEFAULT '',
+  `country` varchar(255) NOT NULL DEFAULT '',
+  `region` varchar(100) NOT NULL DEFAULT '',
+  `city` varchar(100) NOT NULL DEFAULT '',
+  `description` text DEFAULT NULL,
+  `article_id` int(10) unsigned NOT NULL DEFAULT 0,
+  `url` varchar(2048) NOT NULL DEFAULT '',
+  `show_dates` tinyint(1) NOT NULL DEFAULT 1,
+  `published` tinyint(1) NOT NULL DEFAULT 1,
+  `access` int(10) unsigned NOT NULL DEFAULT 1,
+  `ordering` int(11) NOT NULL DEFAULT 0,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `modified` datetime NULL DEFAULT NULL,
+  `modified_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `checked_out` int(11) unsigned NULL DEFAULT NULL,
+  `checked_out_time` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_published_dates` (`published`, `start_date`, `end_date`),
+  KEY `idx_weekdays` (`weekdays`),
+  KEY `idx_day_type_id` (`day_type_id`),
+  KEY `idx_day_type` (`day_type`),
+  KEY `idx_article_id` (`article_id`),
+  KEY `idx_access` (`access`),
+  KEY `idx_location` (`country`, `region`, `city`),
+  KEY `idx_checkout` (`checked_out`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_import_profiles` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `context` varchar(50) NOT NULL DEFAULT 'events',
+  `source_format` varchar(20) NOT NULL DEFAULT 'csv',
+  `source_signature` varchar(64) DEFAULT NULL,
+  `mapping` mediumtext NOT NULL,
+  `options` mediumtext DEFAULT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT 1,
+  `access` int(10) unsigned NOT NULL DEFAULT 1,
+  `ordering` int(11) NOT NULL DEFAULT 0,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+  `modified` datetime NULL DEFAULT NULL,
+  `modified_by` int(11) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_context_format` (`context`, `source_format`),
+  KEY `idx_published` (`published`),
+  KEY `idx_access` (`access`)
+) ENGINE=InnoDB;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('oldevent', '2'),
@@ -274,9 +402,62 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('sizelimit', '200'),
 ('imagehight', '200'),
 ('imagewidth', '200'),
+('pdf_imageheight', '40'),
+('pdf_imagewidth', '40'),
+('pdf_enabled_views', 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal'),
+('pdf_paper_size', 'A4'),
+('pdf_orientation', 'L'),
+('pdf_calendar_layout', 'calendar'),
+('pdf_margin_profile', 'medium'),
+('pdf_margin_top', '14'),
+('pdf_margin_right', '14'),
+('pdf_margin_bottom', '14'),
+('pdf_margin_left', '14'),
+('pdf_background_color', '#ffffff'),
+('pdf_include_view_text', '1'),
+('pdf_show_footer', '1'),
+('pdf_include_generated_stamp', '1'),
+('pdf_title_font_family', 'helvetica'),
+('pdf_header_font_family', 'helvetica'),
+('pdf_body_font_family', 'helvetica'),
+('pdf_accent_color', '#1d4ed8'),
+('pdf_title_font_size', '18'),
+('pdf_base_font_size', '8'),
+('pdf_heading_font_size', '12'),
+('pdf_event_layout', 'details'),
+('pdf_list_paper_size', 'A4'),
+('pdf_list_orientation', 'P'),
+('pdf_map_paper_size', 'A4'),
+('pdf_map_orientation', 'L'),
+('pdf_event_description_mode', 'complete'),
+('pdf_venue_description_mode', 'complete'),
+('pdf_event_imagewidth', '40'),
+('pdf_event_imageheight', '40'),
+('pdf_event_image_position', 'right'),
+('pdf_venue_imagewidth', '40'),
+('pdf_venue_imageheight', '40'),
+('pdf_venue_image_position', 'right'),
+('pdf_event_show_images', '1'),
+('pdf_event_include_links', '1'),
+('pdf_event_include_attachments', '1'),
+('pdf_event_include_registration', '1'),
+('pdf_event_include_contacts', '1'),
+('pdf_event_include_online_meeting', '1'),
+('pdf_event_venue_mode', 'full'),
+('pdf_event_include_venue_map', 'none'),
+('pdf_annual_paper_size', 'A4'),
+('pdf_annual_orientation', 'L'),
+('pdf_annual_month_matrix', 'auto'),
+('pdf_annual_vertical_align', 'top'),
+('pdf_annual_show_day_types_legend', '1'),
+('pdf_annual_show_categories_legend', '1'),
+('pdf_annual_event_titles', 'auto'),
+('pdf_annual_event_limit', '6'),
+('pdf_annual_column_gap', '1'),
+('pdf_annual_row_gap', '1'),
 ('gddisabled', '1'),
 ('imageenabled', '1'),
-('attachmentenabled', '0'),
+('attachmentenabled', '1'),
 ('frontendpublish','0'),
 ('catlinklist', '1'),
 ('showfroregistra', '2'),
@@ -292,9 +473,11 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('showeventimage', '0'),
 ('statewidth', '15%'),
 ('storeip', '0'),
+('storeipmode', 'full'),
 ('lastupdate', '0'),
 ('tableeventimagewidth', '10%'),
 ('display_num', '10'),
+('fancy_select_threshold', '10'),
 ('discatheader', '1'),
 ('showatte', '0'),
 ('attewidth', '10%'),
@@ -302,7 +485,9 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('ical_tz', '1'),
 ('attachments_path', 'media/com_jem/attachments'),
 ('attachments_maxsize', '1000'),
-('attachments_types', 'txt,pdf,jpg,jpeg,gif,png,zip,tar.gz'),
+('attachments_types', 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz'),
+('attachments_layout', 'column'),
+('attachments_icon_size', 'normal'),
 ('recurrence_anticipation_day', '3'),
 ('recurrence_anticipation_week', '12'),
 ('recurrence_anticipation_month', '60'),
@@ -314,8 +499,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
-('globalattribs', ''),
-('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
+('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_detail_image_layout":"right","event_detail_image_header_display":"fill","event_detail_image_header_max_height":"420","event_venue_layout":"details","event_show_publish_state":"0","calendar_special_days_enabled":"1","calendar_special_day_types":"Weekend | #d1d5db | 0\\nPublic holiday | #e5e7eb | 0"}'),
+('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
 ('layoutstyle', '1'),
@@ -328,6 +513,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('defaultCategory', '0'),
 ('defaultVenue', '0'),
 ('event_show_venue', '1'),
+('event_custom_fields_position', 'details'),
+('global_venue_custom_fields_position', 'details'),
 ('event_show_registration', '1'),
 ('event_show_registration_counters', '1');
 
@@ -584,6 +771,12 @@ INSERT IGNORE INTO `#__jem_countries` (`id`, `continent`, `iso2`, `iso3`, `un`, 
 (251, 'EU', 'XK', 'XKX', 688, 'Kosovo');
 
 INSERT IGNORE INTO `#__jem_categories` (`id`, `parent_id`, `lft`, `rgt`, `level`, `catname`, `alias`, `access`, `published`, `created_time`, `path` ) VALUES
-(1, 0, 0, 3, 0, 'root', 'root', 1, 1, now(), null),
+(1, 0, 0, 3, 0, 'root', 'root', 1, 1, NOW(), NULL),
 (2, 1, 1, 2, 1, 'Uncategorised', 'uncategorised', 1, 1, NOW(), 'uncategorised');
 
+INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`) VALUES
+('Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', NOW(), '{"block_events":0}'),
+('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', NOW(), '{"block_events":0}');
+
+INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type_id`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
+(1, 'Saturday and Sunday', 'weekend', (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1), 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());

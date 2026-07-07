@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Multilanguage;
 use Joomla\CMS\Log\Log;
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
@@ -108,7 +109,7 @@ abstract class JEMHelperRoute
         return $link;
     }
 
-    public static function getEventRoute($id, $catid = null)
+    public static function getEventRoute($id, $catid = null, $language = null)
     {
         $settings         = JEMHelper::globalattribs();
         $defaultItemid     = $settings->get('default_Itemid');
@@ -125,6 +126,10 @@ abstract class JEMHelperRoute
             // TODO
             //$needles['categories'] = $needles['category'];
             $link .= '&catid='.$catid;
+        }
+
+        if (!empty($language) && $language !== '*' && Multilanguage::isEnabled()) {
+            $link .= '&lang=' . $language;
         }
 
         if ($item = self::_findItem($needles)) {
@@ -208,6 +213,52 @@ abstract class JEMHelperRoute
     public static function getMyVenuesRoute()
     {
         return self::getRouteWithoutId('myvenues');
+    }
+
+    public static function getTypeeventsRoute($id)
+    {
+        $settings      = JEMHelper::globalattribs();
+        $defaultItemid = $settings->get('default_Itemid');
+        $typeId        = (int) $id;
+        $slug          = (string) $id;
+
+        if (strpos($slug, ':') === false) {
+            $slug = (string) $typeId;
+        }
+
+        $needles = array('typeevents' => array($typeId));
+        $link    = 'index.php?option=com_jem&view=typeevents&id=' . $slug;
+
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid=' . $item;
+        } elseif (isset($defaultItemid)) {
+            $link .= '&Itemid=' . $defaultItemid;
+        }
+
+        return $link;
+    }
+
+    public static function getTypevenuesRoute($id)
+    {
+        $settings      = JEMHelper::globalattribs();
+        $defaultItemid = $settings->get('default_Itemid');
+        $typeId        = (int) $id;
+        $slug          = (string) $id;
+
+        if (strpos($slug, ':') === false) {
+            $slug = (string) $typeId;
+        }
+
+        $needles = array('typevenues' => array($typeId));
+        $link    = 'index.php?option=com_jem&view=typevenues&id=' . $slug;
+
+        if ($item = self::_findItem($needles)) {
+            $link .= '&Itemid=' . $item;
+        } elseif (isset($defaultItemid)) {
+            $link .= '&Itemid=' . $defaultItemid;
+        }
+
+        return $link;
     }
 
 

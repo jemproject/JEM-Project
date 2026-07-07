@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <form>
     <config>
         <inlinehelp button="show"/>
@@ -79,6 +79,30 @@
             size="40"
             readonly="true"
         />
+        <field name="type_id" type="jemtype"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="2"
+            class="form-select"
+        />
+        <field name="article_category_id" type="contentcategory"
+            label="COM_JEM_CATEGORY_FIELD_ARTICLE_CATEGORY_LABEL"
+            description="COM_JEM_CATEGORY_FIELD_ARTICLE_CATEGORY_DESC"
+            class="inputbox form-select w-auto"
+            default="0"
+        >
+            <option value="0">COM_JEM_SELECT_JOOMLA_CATEGORY</option>
+        </field>
+        <field name="article_create_mode" type="list"
+            label="COM_JEM_CATEGORY_FIELD_ARTICLE_MODE_LABEL"
+            description="COM_JEM_CATEGORY_FIELD_ARTICLE_CREATE_MODE_DESC"
+            class="inputbox form-select w-auto"
+            default="0"
+        >
+            <option value="0">COM_JEM_ARTICLE_MODE_NONE</option>
+            <option value="2">COM_JEM_ARTICLE_MODE_MANUAL</option>
+            <option value="1">COM_JEM_ARTICLE_MODE_AUTO</option>
+        </field>
     </fieldset>
 
     <field name="access" type="accesslevel"
@@ -118,8 +142,8 @@
             required="false"
         />
         <field name="contactid"  type="modal_contact"
-            label="COM_JEM_CONTACT"
-            description="COM_JEM_CONTACT"
+            label="COM_JEM_CONTACTS"
+            description="COM_JEM_CONTACTS"
             size="40"
             required="false"
         />
@@ -151,6 +175,15 @@
             imagetype="categories"
             description="COM_JEM_IMAGESELECT"
         />
+        <field name="image_as_default" type="radio"
+            class="btn-group btn-group-yesno"
+            label="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT"
+            description="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT_DESC"
+            default="0"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
     </fieldset>
 
     <fieldset name="meta" label="JGLOBAL_FIELDSET_METADATA_OPTIONS">

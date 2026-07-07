@@ -21,7 +21,7 @@ class JemModelVenues extends ListModel
      * Constructor.
      *
      * @param  array An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array())
     {
@@ -38,6 +38,7 @@ class JemModelVenues extends ListModel
                     'city', 'a.city',
                     'ordering', 'a.ordering',
                     'created', 'a.created',
+                    'author', 'u.name',
                     'assignedevents'
             );
         }
@@ -61,6 +62,12 @@ class JemModelVenues extends ListModel
         $filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filter_type);
 
+        $venueTypeId = $this->getUserStateFromRequest($this->context.'.filter_venue_type_id', 'filter_venue_type_id', 0, 'int');
+        $this->setState('filter_venue_type_id', $venueTypeId);
+
+        $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter.access', $access);
+
         $params = ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
 
@@ -81,8 +88,10 @@ class JemModelVenues extends ListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
+        $id .= ':' . $this->getState('filter_state');
         $id .= ':' . $this->getState('filter_type');
+        $id .= ':' . $this->getState('filter_venue_type_id');
+        $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
     }
@@ -106,7 +115,7 @@ class JemModelVenues extends ListModel
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
-                        .'a.ordering, a.publish_up, a.publish_down, a.access'
+                        .'a.ordering, a.publish_up, a.publish_down, a.access, a.type_id'
                 )
         );
         $query->from($db->quoteName('#__jem_venues').' AS a');
@@ -123,8 +132,14 @@ class JemModelVenues extends ListModel
         $query->select('u.email, u.name AS author');
         $query->join('LEFT', '#__users AS u ON u.id = a.created_by');
 
-        // Join over the assigned events
-        $query->select('COUNT(e.locid) AS assignedevents');
+        // Join over the assigned events.
+        $query->select(array(
+            'COUNT(e.locid) AS assignedevents',
+            'SUM(CASE WHEN e.published = 1 THEN 1 ELSE 0 END) AS event_published',
+            'SUM(CASE WHEN e.published = 0 THEN 1 ELSE 0 END) AS event_unpublished',
+            'SUM(CASE WHEN e.published = 2 THEN 1 ELSE 0 END) AS event_archived',
+            'SUM(CASE WHEN e.published = -2 THEN 1 ELSE 0 END) AS event_trashed',
+        ));
         $query->join('LEFT OUTER', '#__jem_events AS e ON e.locid = a.id');
         $query->group('a.id');
 
@@ -138,6 +153,17 @@ class JemModelVenues extends ListModel
             $query->where('a.published = '.(int) $published);
         } elseif ($published === '') {
             $query->where('(a.published IN (0, 1))');
+        }
+
+        // Filter by venue type.
+        $venueTypeId = (int) $this->getState('filter_venue_type_id');
+        if ($venueTypeId > 0) {
+            $query->where('a.type_id = ' . $venueTypeId);
+        }
+
+        // Filter by access level.
+        if ($access = $this->getState('filter.access')) {
+            $query->where('a.access = ' . (int) $access);
         }
 
         // Filter by search in title

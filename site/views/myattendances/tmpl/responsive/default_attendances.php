@@ -11,8 +11,38 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
+
+if (!function_exists('jem_myattendances_country_name')) {
+    function jem_myattendances_country_name($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        return JemHelperCountries::getCountryName($country) ?: $country;
+    }
+}
+
+if (!function_exists('jem_myattendances_country_flag')) {
+    function jem_myattendances_country_flag($country, $countryName)
+    {
+        $flagSrc = JemHelperCountries::getIsoFlag((string) $country);
+
+        if (!$flagSrc) {
+            return '';
+        }
+
+        $alt = htmlspecialchars((string) $countryName, ENT_QUOTES, 'UTF-8');
+        $src = htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8');
+
+        return '<img src="' . $src . '" alt="' . $alt . '" title="' . $alt . '" class="venue_country_flag jem-myattendances-country-flag" style="width:20px;height:auto;margin-right:6px;vertical-align:middle;" />';
+    }
+}
 ?>
 
 <style>
@@ -29,7 +59,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php else : ?>
       flex: 1;
     <?php endif; ?>
-    <?php if (JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
+    <?php if (($this->showdate != 1) || JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nodate')) : ?>
       display: none;
     <?php endif; ?>
   }
@@ -82,6 +112,18 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <?php endif; ?>
   }
 
+  .jem-sort #jem_country,
+  #jem .jem-event .jem-event-country {
+    <?php if (($this->showcountry == 1) && (!empty($this->jemsettings->statewidth))) : ?>
+      flex: 1 <?php echo ($this->jemsettings->statewidth); ?>;
+    <?php else : ?>
+      flex: 1;
+    <?php endif; ?>
+    <?php if (($this->showcountry != 1) || JemHelper::jemStringContains($this->pageclass_sfx, 'jem-nocountry')) : ?>
+      display: none;
+    <?php endif; ?>
+  }
+
   .jem-sort #jem_category,
   #jem .jem-event .jem-event-category {
     <?php if (($this->jemsettings->showcat == 1) && (!empty($this->jemsettings->catfrowidth))) : ?>
@@ -110,16 +152,25 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     #jem .jem-event .jem-myattendances-places {
         flex: 0 5%;
         text-align: center;
+        <?php if ($this->showplaces != 1) : ?>
+          display: none;
+        <?php endif; ?>
     }
 
   .jem-sort #jem_status,
   #jem .jem-event .jem-myattendances-status {
         flex: 0 5%;
         text-align: center;
+        <?php if ($this->showstatus != 1) : ?>
+          display: none;
+        <?php endif; ?>
   }
     .jem-sort #jem_comment,
   #jem .jem-event .jem-myattendances-comments {
     flex: 0 5%;
+    <?php if ($this->showcomment != 1) : ?>
+      display: none;
+    <?php endif; ?>
   }
 </style>
 
@@ -163,7 +214,9 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
     <div class="jem-sort jem-sort-small">
     <div class="jem-list-row jem-small-list">
+      <?php if ($this->showdate == 1) : ?>
       <div id="jem_date" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DATE', 'a.dates', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
       <?php if ($this->jemsettings->showtitle == 1) : ?>
         <div id="jem_title" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
@@ -176,12 +229,19 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
       <?php if ($this->jemsettings->showstate == 1) : ?>
         <div id="jem_state" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
+      <?php if ($this->showcountry == 1) : ?>
+        <div id="jem_country" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'l.country', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
       <?php if ($this->jemsettings->showcat == 1) : ?>
         <div id="jem_category" class="sectiontableheader">&nbsp;<?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
       <?php endif; ?>
-      <div id="jem_places" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
-      <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+      <?php if ($this->showplaces == 1) : ?>
+        <div id="jem_places" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_PLACES', 'r.places', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
+      <?php if ($this->showstatus == 1) : ?>
+        <div id="jem_status" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATUS', 'r.status', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+      <?php endif; ?>
+      <?php if (!empty($this->jemsettings->regallowcomments) && $this->showcomment == 1) : ?>
         <div id="jem_comment" class="sectiontableheader"><?php echo Text::_('COM_JEM_COMMENT'); ?></div>
       <?php endif; ?>
     </div>
@@ -198,6 +258,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
           <li class="jem-event jem-list-row jem-small-list jem-odd<?php echo ($i % 2) . $this->params->get('pageclass_sfx'). ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
                 <?php endif; ?>
 
+                    <?php if ($this->showdate == 1) : ?>
                     <div class="jem-event-info-small jem-event-date" title="<?php echo Text::_('COM_JEM_TABLE_DATE').': '.strip_tags(JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime)); ?>">
             <i class="far fa-clock" aria-hidden="true"></i>
             <?php
@@ -210,10 +271,11 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
               <?php endif; ?>
              <?php endif; ?>
           </div>
+          <?php endif; ?>
 
                     <?php if ($this->jemsettings->showtitle == 1) : ?>
             <div class="jem-event-info-small jem-event-title" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->title); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
@@ -261,6 +323,13 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             <?php endif; ?>
           <?php endif; ?>
 
+                    <?php if ($this->showcountry == 1) : ?>
+            <div class="jem-event-info-small jem-event-country" title="<?php echo Text::_('COM_JEM_COUNTRY') . ': ' . $this->escape(jem_myattendances_country_name($row->country ?? '')); ?>">
+              <?php $countryName = jem_myattendances_country_name($row->country ?? ''); ?>
+              <?php echo $countryName !== '' ? jem_myattendances_country_flag($row->country ?? '', $countryName) . $this->escape($countryName) : '<i class="fa fa-globe" aria-hidden="true"></i> -'; ?>
+            </div>
+          <?php endif; ?>
+
                     <?php if ($this->jemsettings->showcat == 1) : ?>
             <div class="jem-event-info-small jem-event-category" title="<?php echo strip_tags(Text::_('COM_JEM_TABLE_CATEGORY').': '.implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist))); ?>">
               <i class="fa fa-tag" aria-hidden="true"></i>
@@ -268,10 +337,13 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
             </div>
           <?php endif; ?>
 
+          <?php if ($this->showplaces == 1) : ?>
             <div class="jem-event-info-small jem-myattendances-places" title="<?php echo Text::_('COM_JEM_TABLE_PLACES').': '.$this->escape($row->places); ?>">
                 <?php echo $this->escape($row->places); ?>
             </div>
+          <?php endif; ?>
 
+                    <?php if ($this->showstatus == 1) : ?>
                     <div class="jem-event-info-small jem-myattendances-status">
                         <?php
                         $status = (int)$row->status;
@@ -279,12 +351,13 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
                         echo jemhtml::toggleAttendanceStatus($row->id, $status, false, $this->print);
                         ?>
                     </div>
+                    <?php endif; ?>
 
-                    <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
+                    <?php if (!empty($this->jemsettings->regallowcomments) && $this->showcomment == 1) : ?>
             <div class="jem-event-info-small jem-myattendances-comments">
               <?php
               $len  = ($this->print) ? 256 : 16;
-              $cmnt = (\Joomla\String\StringHelper::strlen($row->comment) > $len) ? (\Joomla\String\StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
+              $cmnt = (StringHelper::strlen($row->comment) > $len) ? (StringHelper::substr($row->comment, 0, $len - 2).'&hellip;') : $row->comment;
               if (!empty($cmnt)) :
                 echo ($this->print) ? $cmnt : HTMLHelper::_('tooltip', $row->comment, null, null, $cmnt, null, null);
               endif;
@@ -301,6 +374,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
     <input type="hidden" name="boxchecked" value="0" />
     <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
     <input type="hidden" name="option" value="com_jem" />
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
 
 

@@ -8,14 +8,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Component\Router\RouterBase;
 use Joomla\CMS\Application\CMSApplication;
 
 use Joomla\CMS\Component\Router\RouterView;
 use Joomla\CMS\Component\Router\RouterViewConfiguration;
 use Joomla\CMS\Component\Router\Rules\MenuRules;
-// use Joomla\CMS\Component\Router\Rules\NomenuRules;
-// use Joomla\Component\Jem\Site\Service\JemNomenuRules as NomenuRules;
 use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Menu\AbstractMenu;
@@ -55,9 +52,11 @@ class JemRouter extends RouterView
 
        
         $viewsWithId = [
+            'annualcalendar',
             'calendar',
             'eventslist',
             'event',
+            'eventsmap',
             'categories',
             'category',
             'attendees',
@@ -66,11 +65,16 @@ class JemRouter extends RouterView
             'editvenue',
             'myattendances',
             'myevents',
+            'mytimeline',
             'myvenues',
             'search',
+            'specialday',
             'venue',
             'venueslist',
+            'venuesmap',
             'venues',
+            'typeevents',
+            'typevenues',
             'weekcal'
         ];
 
@@ -80,6 +84,9 @@ class JemRouter extends RouterView
             $viewConfig->setKey('id');
             $this->registerView($viewConfig);
         }
+
+        $this->registerView(new RouterViewConfiguration('specialdays'));
+        $this->registerView(new RouterViewConfiguration('attendeeregistrations'));
 
         parent::__construct($app, $menu);
 

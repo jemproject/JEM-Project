@@ -11,8 +11,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Uri\Uri;
 ?>
 
+<?php $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/'; ?>
 <script>
     function tableOrdering(order, dir, view)
     {
@@ -24,79 +26,105 @@ use Joomla\CMS\Router\Route;
     }
 </script>
 
-<div id="jem_filter" class="floattext">
-    <div class="jem_fleft">
-        <table>
-            <tr>
-                <td>
-                    <label for="filter_type"><?php echo Text::_('COM_JEM_FILTER');  ?></label>
-                </td>
-                <td>
-                    <?php echo $this->lists['filter_types']; ?>
-                    <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.getElementById('adminForm').submit();" />
-                    <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                    <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php echo '<label for="category">'.Text::_('COM_JEM_CATEGORY').'</label>&nbsp;'; ?>
-                </td>
-                <td>
-                    <?php echo $this->lists['categories']; ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php echo '<label for="date">'.Text::_('COM_JEM_SEARCH_DATE').'</label>&nbsp;'; ?>
-                </td>
-                <td>
-                    <div class="nowrap"><?php echo text::_('COM_JEM_SEARCH_FROM'); ?><?php echo $this->lists['date_from'];?></div>
-                    <div class="nowrap"><?php echo text::_('COM_JEM_SEARCH_TO'); ?><?php echo $this->lists['date_to'];?></div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php echo '<label for="continent">'.Text::_('COM_JEM_CONTINENT').'</label>&nbsp;'; ?>
-                </td>
-                <td>
-                    <?php echo $this->lists['continents'];?>
-                </td>
-            </tr>
-            <?php if ($this->filter_continent): ?>
-            <tr>
-                <td>
-                    <?php echo '<label for="country">'.Text::_('COM_JEM_COUNTRY').'</label>&nbsp;'; ?>
-                </td>
-                <td>
-                    <?php echo $this->lists['countries'];?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <?php if ($this->filter_continent && $this->filter_country): ?>
-            <tr>
-                <td>
-                    <?php echo '<label for="city">'.Text::_('COM_JEM_CITY').'</label>&nbsp;';?>
-                </td>
-                <td>
-                    <?php echo $this->lists['cities'];?>
-                </td>
-            </tr>
-            <?php endif; ?>
-            <tr>
-                <td colspan="2">
-                    <input class="btn btn-primary" type="submit" value="<?php echo Text::_('COM_JEM_SEARCH_SUBMIT'); ?>"/>
-                </td>
-            </tr>
-        </table>
-            <div class="jem_fright">
-        <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-        <?php echo $this->pagination->getLimitBox(); ?>
-    </div>
+<div id="jem_filter" class="jem-search-filter mb-3">
+    <h5 class="jem-search-filter-heading"><?php echo Text::_('COM_JEM_SEARCH_EVENTS_HEADING'); ?></h5>
+
+    <!-- KEYWORDS + EVENT TYPE -->
+    <div class="jem-search-filter-grid<?php echo $this->filter_show_eventtype ? ' jem-search-filter-grid-top' : ''; ?>">
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_KEYWORDS'); ?></div>
+            <div class="input-group">
+                <?php echo $this->lists['filter_types']; ?>
+                <input type="text" name="filter_search" id="filter_search"
+                       value="<?php echo htmlspecialchars($this->lists['filter'], ENT_QUOTES, 'UTF-8'); ?>"
+                       class="form-control"
+                       placeholder="<?php echo Text::_('COM_JEM_SEARCH_TYPE_TO_SEARCH'); ?>"
+                       onchange="document.getElementById('adminForm').submit();" />
+            </div>
+        </div>
+        <?php if ($this->filter_show_eventtype): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_EVENT_TYPE'); ?></div>
+            <?php echo $this->lists['event_types']; ?>
+        </div>
+        <?php endif; ?>
     </div>
 
+    <!-- CATEGORY / VENUES / CONTINENT / COUNTRY -->
+    <?php if ($this->filter_show_category || $this->filter_show_venue || $this->filter_show_continent || $this->filter_show_country): ?>
+    <div class="jem-search-filter-grid jem-search-filter-grid-four">
+        <?php if ($this->filter_show_category): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CATEGORY'); ?></div>
+            <?php echo $this->lists['categories']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_venue): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_VENUES'); ?></div>
+            <?php echo $this->lists['venues']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_continent): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_CONTINENT'); ?></div>
+            <?php echo $this->lists['continents']; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($this->filter_show_country): ?>
+        <div>
+            <div class="jem-filter-label"><?php echo Text::_('COM_JEM_COUNTRY'); ?></div>
+            <?php echo $this->lists['countries']; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
 
+    <!-- DATE RANGE -->
+    <?php if ($this->filter_show_dates): ?>
+    <div style="margin-bottom:1rem">
+        <div class="jem-filter-label"><?php echo Text::_('COM_JEM_SEARCH_DATE_RANGE'); ?></div>
+        <div class="jem-search-filter-grid jem-search-filter-grid-two">
+            <input type="date" name="filter_date_from" id="filter_date_from"
+                   class="form-control"
+                   value="<?php echo htmlspecialchars($this->filter_date_from, ENT_QUOTES, 'UTF-8'); ?>" />
+            <input type="date" name="filter_date_to" id="filter_date_to"
+                   class="form-control"
+                   value="<?php echo htmlspecialchars($this->filter_date_to, ENT_QUOTES, 'UTF-8'); ?>" />
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- LIMIT + buttons -->
+    <div class="jem-search-filter-footer">
+        <div class="jem-search-filter-limit">
+            <span class="jem-filter-label"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?>:</span>
+            <?php echo $this->pagination->getLimitBox(); ?>
+        </div>
+        <div class="jem-search-filter-actions">
+            <button class="btn btn-secondary" type="button" onclick="jem_search_clear();">
+                <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+            </button>
+            <button class="btn btn-primary" type="submit">
+                <?php echo Text::_('COM_JEM_SEARCH_SUBMIT'); ?>
+            </button>
+        </div>
+    </div>
 </div>
+
+<script>
+function jem_search_clear() {
+    var f = document.getElementById('adminForm');
+    f.filter_search.value = '';
+    f.filter_date_from.value = '';
+    f.filter_date_to.value = '';
+    ['filter_category', 'filter_type_id', 'filter_venue_id', 'filter_continent', 'filter_country'].forEach(function(n) {
+        var el = f.elements[n];
+        if (el && el.options) { el.selectedIndex = 0; }
+    });
+    f.submit();
+}
+</script>
 
 <div class="table-responsive">
     <table class="eventtable table table-striped" style="width:<?php echo $this->jemsettings->tablewidth; ?>;" summary="jem">
@@ -132,7 +160,7 @@ use Joomla\CMS\Router\Route;
                 <th id="jem_city" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                 <?php endif; ?>
                 <?php if ($this->jemsettings->showstate == 1) : ?>
-                <th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+                <th id="jem_state" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'c.name', $this->lists['order_Dir'], $this->lists['order']); ?></th>
                 <?php endif; ?>
                 <?php if ($this->jemsettings->showcat == 1) : ?>
                 <th id="jem_category" class="sectiontableheader" style="text-align: left;"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
@@ -198,7 +226,15 @@ use Joomla\CMS\Router\Route;
 
                         <?php if ($this->jemsettings->showstate == 1) : ?>
                         <td headers="jem_state" style="text-align: left; vertical-align: top;">
-                            <?php echo !empty($row->state) ? $this->escape($row->state) : '-'; ?>
+                            <?php
+                            if (!empty($row->country)) {
+                                $countryName = $this->escape($row->country_name ?: $row->country);
+                                echo '<img src="' . $flagBase . strtolower($row->country) . '.webp" style="height:1em;vertical-align:middle;margin-right:4px;" alt="' . $countryName . '">';
+                                echo $countryName;
+                            } else {
+                                echo '-';
+                            }
+                            ?>
                         </td>
                         <?php endif; ?>
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <layout title="COM_JEM_WEEKCAL_VIEW_DEFAULT_TITLE">
         <message>
@@ -8,26 +8,64 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-            <field name="introtext" type="editor"
-                   filter="safehtml"
-                   hide="readmore,pagebreak,module,menu,fields,contact,article"
-                   default=""
-                   rows="8"
-                   cols="30"
-                   height="300px"
-                   label="COM_JEM_INTROTEXT_FIELD"
-                   description="COM_JEM_INTROTEXT_FIELD_DESC"
-            />
-            <field name="showintrotext" type="radio"
+<field name="onlyfeatured" type="radio"
                 default="0"
-                label="COM_JEM_DISPLAY_INTROTEXT"
-                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                label="COM_JEM_DISPLAY_FEATUREDONLY"
+                description="COM_JEM_DISPLAY_FEATUREDONLY_DESC"
                 class="btn-group btn-group-yesno"
             >
-                <option value="1">COM_JEM_SHOW</option>
-                <option value="0">COM_JEM_HIDE</option>
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
-            <field type="spacer" name="myspacer2" hr="true" />
+            <field name="categoryswitch" type="radio"
+                default="0"
+                label="COM_JEM_TIMELINE_CATEGORY_FILTER_MODE_LABEL"
+                description="COM_JEM_CATEGORYSWITCH_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
+            </field>
+            <field name="categoryswitchcats" type="categoryedit"
+                multiple="true"
+                removeroot="true"
+                class="form-select w-auto jem-options-width-auto"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
+            />
+            <field name="timeline_filter_venues" type="venueoptions"
+                multiple="true"
+                class="form-select w-auto"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_VENUES_DESC"
+            />
+            <field name="timeline_filter_types" type="jemtype"
+                entity="1"
+                multiple="true"
+                class="form-select w-auto"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_TYPES_DESC"
+            />
+            <field name="timeline_filter_countries" type="countryoptions"
+                multiple="true"
+                class="form-select w-auto jem-options-width-auto"
+                default=""
+                label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
+                description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
+            />
+            <field name="nrweeks" type="text"
+                default="1"
+                label="COM_JEM_WKCAL_NRWEEKS"
+                description="COM_JEM_WKCAL_NRWEEKS_DESC" class="form-control w-auto"
+            />
+            <field name="top_category" type="categories"
+                default="0"
+                label="COM_JEM_SELECT_TOP_CATEGORY"
+                description="COM_JEM_SELECT_TOP_CATEGORY_DESC" class="form-select w-auto"
+            />
             <field name="show_archived_events" type="radio"
                 default="0"
                 label="COM_JEM_SHOW_ARCHIVED_EVENTS"
@@ -37,24 +75,47 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="nrweeks" type="text"
-                default="1"
-                label="COM_JEM_WKCAL_NRWEEKS"
-                description="COM_JEM_WKCAL_NRWEEKS_DESC"
-            />
-            <field name="top_category" type="categories"
-                default="0"
-                label="COM_JEM_SELECT_TOP_CATEGORY"
-                description="COM_JEM_SELECT_TOP_CATEGORY_DESC"
-            />
             <field name="displayLegend" type="list"
                 default="1"
                 label="COM_JEM_DISPLAY_LEGEND"
-                description="COM_JEM_DISPLAY_LEGEND_DESC"
+                description="COM_JEM_DISPLAY_LEGEND_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">JNO</option>
                 <option value="2">COM_JEM_ABOVE</option>
                 <option value="1">COM_JEM_BELOW</option>
+            </field>
+            <field name="calendar_display_mode" type="list"
+                default="calendar"
+                label="COM_JEM_CALENDAR_DISPLAY_MODE"
+                description="COM_JEM_CALENDAR_DISPLAY_MODE_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="calendar">COM_JEM_PDF_CALENDAR_LAYOUT_CALENDAR</option>
+                <option value="agenda">COM_JEM_PDF_CALENDAR_LAYOUT_AGENDA</option>
+            </field>
+            <field name="show_types_of_days_legend" type="radio"
+                default="1"
+                label="COM_JEM_CALENDAR_SHOW_TYPES_OF_DAYS_LEGEND"
+                description="COM_JEM_CALENDAR_SHOW_TYPES_OF_DAYS_LEGEND_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+            <field name="special_day_legend_order" type="list"
+                default="order_asc"
+                label="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER"
+                description="COM_JEM_CALENDAR_TYPES_OF_DAYS_LEGEND_ORDER_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="id_asc">COM_JEM_ORDER_ID_ASC</option>
+                <option value="id_desc">COM_JEM_ORDER_ID_DESC</option>
+                <option value="order_asc">COM_JEM_ORDER_ORDER_ASC</option>
+                <option value="order_desc">COM_JEM_ORDER_ORDER_DESC</option>
+                <option value="name_asc">COM_JEM_ORDER_NAME_ASC</option>
+                <option value="name_desc">COM_JEM_ORDER_NAME_DESC</option>
+                <option value="start_date">COM_JEM_ORDER_START_DATE</option>
+                <option value="end_date">COM_JEM_ORDER_END_DATE</option>
             </field>
             <field name="show_only_start" type="radio"
                 default="0"
@@ -68,15 +129,24 @@
             <field name="firstweekday" type="list"
                 default="1"
                 label="COM_JEM_SELECTFIRSTWEEKDAY"
-                description="COM_JEM_SELECTFIRSTWEEKDAYDESC"
+                description="COM_JEM_SELECTFIRSTWEEKDAYDESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">COM_JEM_SUNDAY</option>
                 <option value="1">COM_JEM_MONDAY</option>
             </field>
+            <field name="show_year_navigation" type="radio"
+                default="0"
+                label="COM_JEM_CALENDAR_SHOW_YEAR_NAVIGATION"
+                description="COM_JEM_CALENDAR_SHOW_YEAR_NAVIGATION_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="daylimit" type="text"
                 default="10"
                 label="COM_JEM_MAX_EVENTS_PER_DAY"
-                description="COM_JEM_MAX_EVENTS_PER_DAY_DESC"
+                description="COM_JEM_MAX_EVENTS_PER_DAY_DESC" class="form-control w-auto"
             />
             <field name="show_addevent_icon" type="radio"
                 default="0"
@@ -167,6 +237,47 @@
                 <option value="0">COM_JEM_MARKER_BLOCK</option>
                 <option value="1">COM_JEM_MARKER_TOP_BAR</option>
             </field>
-        </fieldset>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>

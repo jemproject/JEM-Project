@@ -12,8 +12,6 @@ use Joomla\CMS\Form\FormField;
 
 //JFormHelper::loadFieldClass('list');
 
-jimport('joomla.html.html');
-
 /**
  * CountryOptions Field class.
  *

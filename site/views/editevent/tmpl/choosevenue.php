@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_SITE . '/components/com_jem/helpers/countries.php';
+
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -15,9 +17,38 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
+
+if (!function_exists('jem_choosevenue_country')) {
+    function jem_choosevenue_country($country)
+    {
+        $country = trim((string) $country);
+
+        if ($country === '') {
+            return '';
+        }
+
+        $countryName = JemHelperCountries::getCountryName($country) ?: $country;
+        $flagSrc = JemHelperCountries::getIsoFlag($country);
+        $html = '';
+
+        if ($flagSrc) {
+            $html .= '<img src="' . htmlspecialchars($flagSrc, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') . '" title="' . htmlspecialchars($countryName, ENT_QUOTES, 'UTF-8') . '" class="venue_country_flag jem-choosevenue-country-flag" />';
+        }
+
+        return $html . '<span>' . htmlspecialchars($country, ENT_QUOTES, 'UTF-8') . '</span>';
+    }
+}
 ?>
 
 <script>
+    if (window.parent && window.parent.document) {
+        var modalTitle = window.parent.document.querySelector('.modal.show .modal-title, .joomla-modal.show .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = "<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>";
+        }
+    }
+
     function tableOrdering( order, dir, view )
     {
         var form = document.getElementById("adminForm");
@@ -28,19 +59,108 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
     }
 </script>
 
-<div id="jem" class="jem_select_venue">
-    <h1 class='componentheading'>
-        <?php echo Text::_('COM_JEM_SELECT_VENUE'); ?>
-    </h1>
+<style>
+    #jem.jem_select_venue {
+        padding: 1rem;
+    }
 
+    #jem.jem_select_venue #jem_filter {
+        display: grid;
+        grid-template-columns: auto auto minmax(7rem, 1fr) auto auto auto auto auto;
+        align-items: center;
+        gap: .5rem;
+        margin: 0 0 1rem;
+        padding: .75rem;
+        border: 1px solid var(--border-color, #dfe3e7);
+        border-radius: .25rem;
+    }
+
+    #jem.jem_select_venue #jem_filter .jem_fleft,
+    #jem.jem_select_venue #jem_filter .jem_fright {
+        display: contents;
+        float: none;
+    }
+
+    #jem.jem_select_venue #filter_search {
+        width: 100%;
+        min-width: 7rem;
+    }
+
+    #jem.jem_select_venue #jem_filter select {
+        width: auto;
+        min-width: 5.5rem;
+        max-width: 9rem;
+        padding-right: 2rem !important;
+        background-position: right .5rem center !important;
+        background-size: 1rem auto !important;
+    }
+
+    #jem.jem_select_venue #jem_filter select#limit {
+        min-width: 5rem;
+        max-width: 5.5rem;
+    }
+
+    #jem.jem_select_venue #jem_filter label {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        #jem.jem_select_venue #jem_filter {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #jem.jem_select_venue #jem_filter .jem_fleft,
+        #jem.jem_select_venue #jem_filter .jem_fright {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .5rem;
+            flex: 1 1 100%;
+        }
+
+        #jem.jem_select_venue #filter_search {
+            flex: 1 1 100%;
+        }
+    }
+
+    #jem.jem_select_venue .jem-venue-number {
+        width: 3rem;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_venue .jem-venue-country {
+        text-align: right;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-country {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .35rem;
+    }
+
+    #jem.jem_select_venue .jem-choosevenue-country-flag {
+        width: 20px;
+        height: auto;
+        vertical-align: middle;
+    }
+</style>
+
+<div id="jem" class="jem_select_venue">
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter" class="floattext">
             <div class="jem_fleft">
                 <?php
-                echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>&nbsp;';
-                echo $this->searchfilter.'&nbsp;';
+                echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>';
+                echo $this->searchfilter;
                 ?>
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->filter, ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
@@ -49,7 +169,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
             </div>
             <div class="jem_fright">
                 <?php
-                echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>&nbsp;';
+                echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>';
                 echo $this->pagination->getLimitBox();
                 ?>
             </div>
@@ -58,26 +178,26 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
         <table class="eventtable table table-striped" style="width:100%" summary="jem">
             <thead>
             <tr>
-                <th style="width: 7px; text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_NUM'); ?></th>
+                <th class="sectiontableheader jem-venue-number"><?php echo Text::_('COM_JEM_NUM'); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'l.venue', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order'], 'selectvenue' ); ?></th>
                 <th style="text-align: left;" class="sectiontableheader"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
-                <th style="text-align: left;" class="sectiontableheader"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
+                <th class="sectiontableheader jem-venue-country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></th>
             </tr>
             </thead>
             <tbody>
             <?php if (empty($this->rows)) : ?>
-                <tr style="text-align: center"><td colspan="0"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
+                <tr style="text-align: center"><td colspan="5"><?php echo Text::_('COM_JEM_NOVENUES'); ?></td></tr>
             <?php else :?>
                 <?php foreach ($this->rows as $i => $row) : ?>
                     <tr class="row<?php echo $i % 2; ?>">
-                        <td><?php echo $this->pagination->getRowOffset( $i ); ?></td>
+                        <td class="jem-venue-number"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
                         <td style="text-align: left;">
                             <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
                         </td>
                         <td style="text-align: left;"><?php echo $this->escape($row->city); ?></td>
                         <td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
-                        <td style="text-align: left;"><?php echo !empty($row->country) ? $this->escape($row->country) : ''; ?></td>
+                        <td class="jem-venue-country"><span class="jem-choosevenue-country"><?php echo jem_choosevenue_country($row->country ?? ''); ?></span></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

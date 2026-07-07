@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 ?>
 <div id="jem" class="jem_day<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -29,6 +30,7 @@ defined('_JEXEC') or die;
     <h2 class="jem">
         <?php echo $this->daydate; ?>
     </h2>
+    <?php echo JemHelper::renderCalendarSpecialDayBadges($this->day); ?>
     <?php endif; ?>
 
     <!--introtext-->
@@ -47,6 +49,7 @@ defined('_JEXEC') or die;
         <input type="hidden" name="filter_order_Dir" value="" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="view" value="day" />
+        <?php echo HTMLHelper::_('form.token'); ?>
         </p>
     </form>
     <?php if ($this->params->get('showfootertext')) : ?>

@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 ?>
 
@@ -25,10 +26,11 @@ use Joomla\CMS\Language\Text;
         <?php echo $this->params->get('introtext'); ?>
     </div>
     <?php endif; ?>
-
-  <h2>
-    <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
-  </h2>
+    <?php if ($this->params->get('show_search_title', 1)) : ?>
+    <h2>
+        <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>
+    </h2>
+    <?php endif; ?>
     <!--table-->
     <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" name="adminForm" id="adminForm">
         <?php
@@ -44,6 +46,7 @@ use Joomla\CMS\Language\Text;
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
             <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
             <input type="hidden" name="view" value="search" />
+            <?php echo HTMLHelper::_('form.token'); ?>
         </p>
     </form>
 
@@ -52,6 +55,11 @@ use Joomla\CMS\Language\Text;
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
 
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer( ); ?>
     </div>

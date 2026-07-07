@@ -11,6 +11,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 
 /**
@@ -20,6 +22,18 @@ use Joomla\CMS\Session\Session;
 class JemControllerExport extends AdminController
 {
     /**
+     * Check whether the current user can export JEM data.
+     *
+     * @return void
+     */
+    private function assertCanExport()
+    {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
     * Proxy for getModel.
     *
     */
@@ -28,53 +42,85 @@ class JemControllerExport extends AdminController
         return $model;
     }
 
-    public function export()
-    {
+    public function export() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
 
-        $this->sendHeaders("jem_export-" . date('Ymd-His') . ".csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportEvents')), "text/csv");
         $this->getModel()->getCsv();
         jexit();
     }
 
-    public function exportcats()
-    {
+    public function exportcats() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
 
-        $this->sendHeaders("categories.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportCategories')), "text/csv");
         $this->getModel()->getCsvcats();
         jexit();
     }
 
-    public function exportvenues()
-    {
+    public function exportvenues() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
 
-        $this->sendHeaders("venues.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportVenues')), "text/csv");
         $this->getModel()->getCsvvenues();
         jexit();
     }
 
-    public function exportcatevents()
-    {
+    public function exportcatevents() {
         // Check for request forgeries
         Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
 
-        $this->sendHeaders("catevents.csv", "text/csv");
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportCatEvents')), "text/csv");
         $this->getModel()->getCsvcatsevents();
         jexit();
     }
 
-    private function sendHeaders($filename = 'export.csv', $contentType = 'text/plain')
-    {
+    public function exportattachments() {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
+
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportAttachments')), "text/csv");
+        $this->getModel()->getCsvattachments();
+        jexit();
+    }
+
+    public function exporttypes() {
+        Session::checkToken() or jexit('Invalid Token');
+        $this->assertCanExport();
+
+        $this->sendHeaders($this->getRequestedFilename($this->buildExportFilename('JEM-exportTypes')), "text/csv");
+        $this->getModel()->getCsvtypes();
+        jexit();
+    }
+
+    private function getRequestedFilename($default = 'export.csv') {
+        $filename = Factory::getApplication()->input->post->getString('export_filename', $default);
+        $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', basename($filename));
+
+        if ($filename === '' || strtolower(pathinfo($filename, PATHINFO_EXTENSION)) !== 'csv') {
+            return $default;
+        }
+
+        return $filename;
+    }
+
+    private function buildExportFilename($name) {
+        return $name . '-' . date('Ymd-His') . '.csv';
+    }
+
+    private function sendHeaders($filename = 'export.csv', $contentType = 'text/plain') {
         // TODO: Use UTF-8
         // We have to fix the model->getCsv* methods too!
         // header("Content-type: text/csv; charset=UTF-8");
         header("Content-type: text/csv;");
-        header("Content-Disposition: attachment; filename=" . $filename);
+        header("Content-Disposition: attachment; filename=\"" . basename($filename) . "\"");
         header("Pragma: no-cache");
         header("Expires: 0");
     }

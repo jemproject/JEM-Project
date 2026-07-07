@@ -9,19 +9,97 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
+use Joomla\String\StringHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/event.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Editevent Model
  */
 class JemModelEditevent extends JemModelEvent
 {
+    /**
+     * Create a placeholder Joomla article from the front-end article selector and
+     * return it so the event form can store the associated article id.
+     *
+     * @param   string        $title       Article title.
+     * @param   integer       $targetId    Preferred Joomla article category id.
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  array  Article id and title.
+     */
+    public function createAssociatedArticlePlaceholder($title, $targetId = 0, $categories = array())
+    {
+        $title = trim((string) $title);
+
+        if ($title === '') {
+            $title = Text::_('COM_JEM_SELECT_ARTICLE');
+        }
+
+        $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, 2, true, (int) $targetId);
+
+        if (!$articleCategoryId && (int) $targetId > 0) {
+            $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, 1, true, (int) $targetId);
+        }
+
+        if (!$articleCategoryId) {
+            return array();
+        }
+
+        $user = Factory::getApplication()->getIdentity();
+
+        if (!$user->authorise('core.create', 'com_content.category.' . $articleCategoryId) && !$user->authorise('core.create', 'com_content')) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_PERMISSION'));
+
+            return array();
+        }
+
+        $articleId = $this->createAssociatedContentArticle(
+            array(
+                'title'     => $title,
+                'alias'     => '',
+                'introtext' => '',
+                'fulltext'  => '',
+                'language'  => '*',
+                'attribs'   => array('article_usage' => 'content'),
+            ),
+            $articleCategoryId,
+            0
+        );
+
+        if (!$articleId) {
+            if (!$this->getError()) {
+                $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED'));
+            }
+
+            return array();
+        }
+
+        return array(
+            'id'    => (int) $articleId,
+            'title' => $title,
+        );
+    }
+
+    public function getForm($data = array(), $loadData = true)
+    {
+        $form = parent::getForm($data, $loadData);
+
+        if ($form) {
+            JemCustomFields::applyFormLabels($form, 'event', 'frontend_edit');
+        }
+
+        return $form;
+    }
+
     /**
      * Method to auto-populate the model state.
      *
@@ -48,7 +126,8 @@ class JemModelEditevent extends JemModelEvent
         $this->setState('event.date', $date);
 
         $return = $app->input->get('return', '', 'base64');
-        $this->setState('return_page', base64_decode($return));
+        $decodedReturn = $return ? base64_decode($return, true) : false;
+        $this->setState('return_page', ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : '');
 
         // Load the parameters.
         $params = $app->getParams();
@@ -120,6 +199,8 @@ class JemModelEditevent extends JemModelEvent
         // Convert attrib field to Registry.
         $registry = new Registry();
         $registry->loadString($value->attribs ?? '{}');
+        $value->registration_intro = $registry->get('registration_intro', '');
+        $value->registration_footer = $registry->get('registration_footer', '');
 
         $globalregistry = JemHelper::globalattribs();
 
@@ -146,7 +227,7 @@ class JemModelEditevent extends JemModelEvent
         }
 
         // Get attachments - but not on copied events
-        $files = JemAttachment::getAttachments('event' . $value->id);
+        $files = JemAttachment::getAttachments('event' . $value->id, true);
         $value->attachments = $files;
 
         // Preset values on new events
@@ -155,7 +236,6 @@ class JemModelEditevent extends JemModelEvent
             $locid = (int) $this->getState('event.locid');
             $date  = $this->getState('event.date');
 
-            // ???
             if (empty($value->catid) && !empty($catid)) {
                 $value->catid = $catid;
             }
@@ -182,11 +262,64 @@ class JemModelEditevent extends JemModelEvent
         }
         $value->params->set('access-change', $user->can('publish', 'event', $value->id, $value->created_by, $cats));
 
-        $value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $value->author_ip = JemHelper::getStoredIP();
 
         $value->articletext = $value->introtext;
         if (!empty($value->fulltext)) {
             $value->articletext .= '<hr id="system-readmore" />' . $value->fulltext;
+        }
+
+        $value->event_links = array();
+
+        if (!empty($value->id) && !$doCopy) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
+            $query = $db->getQuery(true)
+                ->select(array(
+                    $db->quoteName('id'),
+                    $db->quoteName('event_id'),
+                    $db->quoteName('title'),
+                    $db->quoteName('description'),
+                    $db->quoteName('type'),
+                    $db->quoteName('url'),
+                    $db->quoteName('params'),
+                    $db->quoteName('ordering')
+                ))
+                ->from($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('event_id') . ' = ' . (int) $value->id)
+                ->order($db->quoteName('ordering') . ' ASC');
+
+            $db->setQuery($query);
+            $eventLinks = $db->loadAssocList();
+
+            foreach ($eventLinks as $eventLink) {
+                $params = array();
+
+                if (!empty($eventLink['params'])) {
+                    $decodedParams = json_decode($eventLink['params'], true);
+
+                    if (is_array($decodedParams)) {
+                        $params = $decodedParams;
+                    }
+                }
+
+                $value->event_links[] = array(
+                    'id'           => isset($eventLink['id']) ? (int) $eventLink['id'] : 0,
+                    'title'        => $eventLink['title'] ?? '',
+                    'description'  => $eventLink['description'] ?? '',
+                    'type'         => $eventLink['type'] ?? 'info',
+                    'url'          => $eventLink['url'] ?? '',
+                    'target'       => $params['target'] ?? '_blank',
+                    'icon'         => $params['icon'] ?? '',
+                    'image'        => $params['image'] ?? '',
+                    'color'        => $params['color'] ?? '#2f6f46',
+                    'frame'        => isset($params['frame']) ? (int) $params['frame'] : 1,
+                    'max_width'    => isset($params['max_width']) ? (int) $params['max_width'] : 120,
+                    'max_height'   => isset($params['max_height']) ? (int) $params['max_height'] : 60,
+                    'custom_class' => $params['custom_class'] ?? '',
+                    'ordering'     => isset($eventLink['ordering']) ? (int) $eventLink['ordering'] : 0,
+                );
+            }
         }
 
         return $value;
@@ -242,7 +375,7 @@ class JemModelEditevent extends JemModelEvent
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -265,6 +398,9 @@ class JemModelEditevent extends JemModelEvent
                     break;
                 case 3: // Search state
                     $where[] = 'LOWER(l.state) LIKE "%' . $search . '%"';
+                    break;
+                case 4: // Search country
+                    $where[] = 'LOWER(l.country) LIKE "%' . $search . '%"';
             }
         }
 
@@ -321,6 +457,10 @@ class JemModelEditevent extends JemModelEvent
      */
     public function getContacts()
     {
+        if (!JemHelper::isContactComponentEnabled()) {
+            return array();
+        }
+
         $query      = $this->buildQueryContacts();
         $pagination = $this->getContactsPagination();
 
@@ -340,6 +480,10 @@ class JemModelEditevent extends JemModelEvent
         $limitstart  = $app->input->getInt('limitstart', 0);
         // correct start value if required
         $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
+        if (!JemHelper::isContactComponentEnabled()) {
+            return new Pagination(0, $limitstart, $limit);
+        }
 
         $query = $this->buildQueryContacts();
         $total = $this->_getListCount($query);
@@ -366,13 +510,15 @@ class JemModelEditevent extends JemModelEvent
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select(array('con.*'));
-        $query->from('#__contact_details As con');
+        $query->select($db->quoteName('cat.title', 'category_title'));
+        $query->from('#__contact_details as con');
+        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid') . ' AND cat.extension = "com_contact"');
 
         // where
         $where = array();
@@ -392,6 +538,12 @@ class JemModelEditevent extends JemModelEvent
                     break;
                 case 4: // Search state
                     $where[] = ' LOWER(con.state) LIKE \'%' . $search . '%\' ';
+                    break;
+                case 5: // Search country
+                    $where[] = ' LOWER(con.country) LIKE \'%' . $search . '%\' ';
+                    break;
+                case 6: // Search category
+                    $where[] = ' LOWER(cat.title) LIKE \'%' . $search . '%\' ';
                     break;
             }
         }
@@ -413,6 +565,108 @@ class JemModelEditevent extends JemModelEvent
             $orderby = 'con.name';
         }
         $query->order($orderby);
+
+        return $query;
+    }
+
+    ##############
+    ## ARTICLES ##
+    ##############
+
+    /**
+     * Get article data.
+     */
+    public function getArticles()
+    {
+        $query      = $this->buildQueryArticles();
+        $pagination = $this->getArticlesPagination();
+
+        return $this->_getList($query, $pagination->limitstart, $pagination->limit);
+    }
+
+    /**
+     * Articles pagination.
+     */
+    public function getArticlesPagination()
+    {
+        $jemsettings = JemHelper::config();
+        $app         = Factory::getApplication();
+        $limit       = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
+        $limitstart  = $app->input->getInt('limitstart', 0);
+        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+
+        $query = $this->buildQueryArticles();
+        $total = $this->_getListCount($query);
+
+        return new Pagination($total, $limitstart, $limit);
+    }
+
+    /**
+     * Articles query.
+     */
+    protected function buildQueryArticles()
+    {
+        $app              = Factory::getApplication();
+        $user             = JemFactory::getUser();
+        $db               = Factory::getContainer()->get('DatabaseDriver');
+        $nullDate         = $db->quote($db->getNullDate());
+        $nowDate          = $db->quote(Factory::getDate()->toSql());
+        $levels           = array_map('intval', $user->getAuthorisedViewLevels());
+        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $search           = $db->escape(trim(StringHelper::strtolower($search)));
+
+        $filter_order     = InputFilter::getinstance()->clean($filter_order, 'cmd');
+        $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('a.id'),
+                $db->quoteName('a.title'),
+                $db->quoteName('a.alias'),
+                $db->quoteName('a.state'),
+                $db->quoteName('cat.title', 'category_title')
+            ))
+            ->from($db->quoteName('#__content', 'a'))
+            ->join(
+                'LEFT',
+                $db->quoteName('#__categories', 'cat')
+                . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('a.catid')
+                . ' AND ' . $db->quoteName('cat.extension') . ' = ' . $db->quote('com_content')
+            )
+            ->where($db->quoteName('a.state') . ' = 1')
+            ->where($db->quoteName('cat.published') . ' = 1')
+            ->where($db->quoteName('a.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where($db->quoteName('cat.access') . ' IN (' . implode(',', $levels) . ')')
+            ->where('(' . $db->quoteName('a.publish_up') . ' IS NULL OR ' . $db->quoteName('a.publish_up') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_up') . ' <= ' . $nowDate . ')')
+            ->where('(' . $db->quoteName('a.publish_down') . ' IS NULL OR ' . $db->quoteName('a.publish_down') . ' = ' . $nullDate . ' OR ' . $db->quoteName('a.publish_down') . ' >= ' . $nowDate . ')');
+
+        if ($search || ($search === '0')) {
+            switch ($filter_type) {
+                case 2:
+                    $query->where('LOWER(' . $db->quoteName('cat.title') . ') LIKE ' . $db->quote('%' . $search . '%'));
+                    break;
+
+                case 1:
+                default:
+                    $query->where('LOWER(' . $db->quoteName('a.title') . ') LIKE ' . $db->quote('%' . $search . '%'));
+                    break;
+            }
+        }
+
+        if (strtoupper($filter_order_Dir) !== 'DESC') {
+            $filter_order_Dir = 'ASC';
+        }
+
+        $allowedOrder = array('a.title', 'cat.title', 'a.id');
+
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.title';
+        }
+
+        $query->order($filter_order . ' ' . $filter_order_Dir);
 
         return $query;
     }

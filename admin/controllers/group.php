@@ -30,8 +30,7 @@ class JemControllerGroup extends FormController
      * @see    JController
      *
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
     }
 }

@@ -9,10 +9,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
 // Base this model on the backend version.
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/venue.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Editvenue Model
@@ -25,6 +28,16 @@ class JemModelEditvenue extends JemModelVenue
      */
     public $typeAlias = 'com_jem.venue';
 
+    public function getForm($data = array(), $loadData = true)
+    {
+        $form = parent::getForm($data, $loadData);
+
+        if ($form) {
+            JemCustomFields::applyFormLabels($form, 'venue', 'frontend_edit');
+        }
+
+        return $form;
+    }
 
     /**
      * Method to auto-populate the model state.
@@ -43,7 +56,8 @@ class JemModelEditvenue extends JemModelVenue
         $this->setState('venue.from_id', $fromId);
 
         $return = $app->input->get('return', '', 'base64');
-        $this->setState('return_page', base64_decode($return));
+        $decodedReturn = $return ? base64_decode($return, true) : false;
+        $this->setState('return_page', ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : '');
 
         // Load the parameters.
         $params = $app->getParams();
@@ -98,13 +112,14 @@ class JemModelEditvenue extends JemModelVenue
         }
 
         // Convert attrib field to Registry.
-        //$registry = new Registry();
-        //$registry->loadString($value->attribs);
+        $registry = new Registry();
+        $registry->loadString($value->attribs ?? '{}');
+        $value->attribs = $registry->toArray();
 
         $globalregistry = JemHelper::globalattribs();
 
         $value->params = clone $globalregistry;
-        //$value->params->merge($registry);
+        $value->params->merge($registry);
 
         // Compute selected asset permissions.
         //  Check edit permission.
@@ -112,10 +127,10 @@ class JemModelEditvenue extends JemModelVenue
         //  Check edit state permission.
         $value->params->set('access-change', $user->can('publish', 'venue', $value->id, $value->created_by));
 
-        $value->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $value->author_ip = JemHelper::getStoredIP();
 
         // Get attachments - but not on copied venues
-        $files = JemAttachment::getAttachments('venue' . $value->id);
+        $files = JemAttachment::getAttachments('venue' . $value->id, true);
         $value->attachments = $files;
 
         // Preset values on new venues

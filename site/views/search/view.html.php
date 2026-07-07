@@ -56,6 +56,8 @@ class JemViewSearch extends JemView
         $filter_date_from = $app->getUserStateFromRequest('com_jem.search.filter_date_from', 'filter_date_from', '', 'string');
         $filter_date_to   = $app->getUserStateFromRequest('com_jem.search.filter_date_to', 'filter_date_to', '', 'string');
         $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
+        $filter_type_id   = $app->getUserStateFromRequest('com_jem.search.filter_type_id', 'filter_type_id', 0, 'int');
+        $filter_venue_id  = $app->getUserStateFromRequest('com_jem.search.filter_venue_id', 'filter_venue_id', 0, 'int');
         $task             = $app->input->getCmd('task', '');
 
         if(empty($filter_continent) && empty($filter_country)){
@@ -170,6 +172,28 @@ class JemViewSearch extends JemView
             unset($cities);
         }
 
+        // event type filter
+        $eventtypes   = array();
+        $eventtypes[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_SELECT_EVENT_TYPE'));
+        $eventtypes   = array_merge($eventtypes, $this->get('EventTypeOptions'));
+        $lists['event_types'] = HTMLHelper::_('select.genericlist', $eventtypes, 'filter_type_id', array('class'=>'form-select'), 'value', 'text', $filter_type_id);
+        unset($eventtypes);
+
+        // venue filter
+        $venues   = array();
+        $venues[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_SELECT_VENUE'));
+        $venues   = array_merge($venues, $this->get('VenueOptions'));
+        $lists['venues'] = HTMLHelper::_('select.genericlist', $venues, 'filter_venue_id', array('class'=>'form-select'), 'value', 'text', $filter_venue_id);
+        unset($venues);
+
+        // Filter visibility params
+        $this->filter_show_eventtype = (int)$params->get('filter_show_eventtype', 1);
+        $this->filter_show_category  = (int)$params->get('filter_show_category', 1);
+        $this->filter_show_venue     = (int)$params->get('filter_show_venue', 1);
+        $this->filter_show_continent = (int)$params->get('filter_show_continent', 1);
+        $this->filter_show_country   = (int)$params->get('filter_show_country', 1);
+        $this->filter_show_dates     = (int)$params->get('filter_show_dates', 1);
+
         $this->lists            = $lists;
         $this->action           = $uri->toString();
         $this->rows             = $rows;
@@ -183,6 +207,10 @@ class JemViewSearch extends JemView
         $this->pagetitle        = $pagetitle;
         $this->filter_continent = $filter_continent;
         $this->filter_country   = $filter_country;
+        $this->filter_date_from = $filter_date_from;
+        $this->filter_date_to   = $filter_date_to;
+        $this->filter_type_id   = $filter_type_id;
+        $this->filter_venue_id  = $filter_venue_id;
         $this->document         = $document;
         $this->pageclass_sfx    =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 

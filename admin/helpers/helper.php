@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\Registry\Registry;
 
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
@@ -81,6 +81,24 @@ class JemHelperBackend
             $vName == 'groups'
         );
 
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_ATTACHMENTS'),
+            'index.php?option=com_jem&view=attachments',
+            $vName == 'attachments'
+        );
+
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_TYPES'),
+            'index.php?option=com_jem&view=types',
+            $vName == 'types'
+        );
+
+        JemSidebarHelper::addEntry(
+            Text::_('COM_JEM_SPECIAL_DAYS'),
+            'index.php?option=com_jem&view=specialdays',
+            $vName == 'specialdays'
+        );
+
         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),
@@ -104,6 +122,12 @@ class JemHelperBackend
                 Text::_('COM_JEM_IMPORT_DATA'),
                 'index.php?option=com_jem&amp;view=import',
                 $vName == 'import'
+            );
+
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_IMPORT_PROFILES'),
+                'index.php?option=com_jem&amp;view=importprofiles',
+                $vName == 'importprofiles'
             );
 
             JemSidebarHelper::addEntry(
@@ -131,12 +155,12 @@ class JemHelperBackend
      *
      * @param    int        The category ID.
      *
-     * @return    CMSObject
+     * @return    Registry
      */
     public static function getActions($categoryId = 0)
     {
         $user    = JemFactory::getUser();
-        $result    = new CMSObject;;
+        $result  = new Registry();
 
         if (empty($categoryId)) {
             $assetName = 'com_jem';
@@ -150,7 +174,7 @@ class JemHelperBackend
         $actions = Access::getActionsFromFile(JPATH_ADMINISTRATOR.'/components/com_jem/access.xml',"/access/section[@name='".$level."']/");
 
         foreach ($actions as $action) {
-            $result->set($action->name,    $user->authorise($action->name, $assetName));
+            $result->set($action->name, $user->authorise($action->name, $assetName));
         }
 
         return $result;

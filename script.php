@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @version    4.2.3
  * @package    JEM
@@ -36,6 +36,8 @@ class com_jemInstallerScript
      */
     public function install($parent)
     {
+        $this->loadInstallerLanguage();
+
         $error = array(
             'summary' => 0,
             'folders' => 0
@@ -59,6 +61,8 @@ class com_jemInstallerScript
             $imageDir . '/categories/small',
             $imageDir . '/events',
             $imageDir . '/events/small',
+            $imageDir . '/links',
+            $imageDir . '/links/small',
             $imageDir . '/venues',
             $imageDir . '/venues/small'
         );
@@ -143,6 +147,7 @@ class com_jemInstallerScript
             "event_show_detailstitle" => "1",
             "event_show_detlinkvenue" => "1",
             "event_show_hits" => "0",
+            "event_show_publish_state" => "0",
             "event_show_locdescription" => "1",
             "event_show_mapserv" => "0",
             "event_show_print_icon" => "1",
@@ -184,6 +189,8 @@ class com_jemInstallerScript
      */
     function uninstall($parent)
     {
+        $this->loadInstallerLanguage();
+
         $this->getHeader(); ?>
         <h2><?php echo Text::_('COM_JEM_UNINSTALL_STATUS'); ?>:</h2>
         <p><?php echo Text::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
@@ -213,6 +220,8 @@ class com_jemInstallerScript
      */
     function update($parent)
     {
+        $this->loadInstallerLanguage();
+
         $this->getHeader(); ?>
         <h2><?php echo Text::_('COM_JEM_UPDATE_STATUS'); ?>:</h2>
         <p><?php echo Text::sprintf('COM_JEM_UPDATE_TEXT', $parent->getManifest()->version); ?></p>;
@@ -227,18 +236,13 @@ class com_jemInstallerScript
      */
     public function preflight($type, $parent)
     {
+        $this->loadInstallerLanguage();
+
         $app = Factory::getApplication();
-        // Are we installing in J4.0?
-        $jversion = new Version();
-        $current_version = Version::MAJOR_VERSION . '.' . Version::MINOR_VERSION;
-        $devLevel = Version::PATCH_VERSION;
+        // JEM 4.5 supports Joomla 4.2.9+ and Joomla 5.x. Joomla 6 requires JEM 5.x.
         $this->newRelease = (string)$parent->manifest->version;
 
-        if (version_compare(JVERSION, '6.0.0', 'ge') || // J! 6.x NOT supported, but allow alpha/beta
-            !(($current_version >= '4.3' && $devLevel >= '0') ||
-                ($current_version >= '4.2' && $devLevel >= '9') ||
-                ($current_version == '4.1' && $devLevel >= '5') ||
-                ($current_version == '4.0' && $devLevel >= '6'))) {
+        if (version_compare(JVERSION, '4.2.9', 'lt') || version_compare(JVERSION, '6.0.0', 'ge')) {
             $app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
             return false;
         }
@@ -253,7 +257,9 @@ class com_jemInstallerScript
         }
 
         // abort if the release being installed is not newer than the currently installed version
-        if (strtolower($type) == 'update') {
+        $type = strtolower($type);
+
+        if ($type == 'update') {
             // Installed component version
             $this->oldRelease = $this->getParam('version');
             // Installing component version as per Manifest file
@@ -293,17 +299,26 @@ class com_jemInstallerScript
      */
     function postflight($type, $parent)
     {
+        $this->loadInstallerLanguage();
+
         // $type is the type of change (install, update or discover_install)
         echo '<p>' . Text::_('COM_JEM_POSTFLIGHT_' . strtoupper($type) . '_TEXT') . '</p>';
 
-        if (strtolower($type) == 'update') {
+        $type = strtolower($type);
+
+        if ($type == 'update') {
             // Changes between 2.3.5 -> 4.0
             if (version_compare($this->oldRelease, '4.0', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
                 // change categoriesdetailed view name in menu items
                 $this->updateJem2315();
             }
-        } elseif (strtolower($type) == 'install') {
+        } elseif ($type == 'install') {
             $this->fixJemMenuItems();
+        }
+
+        if (in_array($type, array('install', 'update', 'discover_install'), true)) {
+            $this->removeObsoleteAdminHelpMenuItem();
+            $this->repairGeneratedTypeMenuItems();
         }
     }
 
@@ -425,11 +440,79 @@ class com_jemInstallerScript
      */
     private function getHeader()
     {
+        $this->loadInstallerLanguage();
+
+        $logoDataUri = $this->getHeaderLogoDataUri();
         ?>
-        <img src="../media/com_jem/images/jemlogo.svg" alt="JEM - Joomla Event Manager" style="float:left; padding-right:20px;height: 160px;width: 396px;background-color:#fff;border-radius: 8px;" />
-        <h1><?php echo Text::_('COM_JEM'); ?></h1>
-        <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+        <div style="display:flex;align-items:center;column-gap:40px;row-gap:16px;margin-bottom:24px;flex-wrap:wrap;">
+            <div style="flex:0 0 300px;max-width:100%;">
+                <img src="<?php echo $logoDataUri; ?>" alt="JEM - Joomla Event Manager" style="display:block;width:100%;height:auto;background-color:#fff;border-radius:8px;" />
+            </div>
+            <div style="flex:1 1 260px;min-width:260px;">
+                <h1 style="margin-top:0;"><?php echo Text::_('COM_JEM'); ?></h1>
+                <p class="small"><?php echo Text::_('COM_JEM_INSTALLATION_HEADER'); ?></p>
+            </div>
+        </div>
         <?php
+    }
+
+    /**
+     * Loads JEM language strings before Joomla copies the component language files.
+     */
+    private function loadInstallerLanguage()
+    {
+        $language = Factory::getApplication()->getLanguage();
+        $paths = array(
+            JPATH_ADMINISTRATOR,
+            JPATH_ADMINISTRATOR . '/components/com_jem',
+            __DIR__,
+            __DIR__ . '/admin',
+        );
+
+        foreach ($paths as $path) {
+            if (is_dir($path)) {
+                $language->load('com_jem.sys', $path, null, true, true);
+                $language->load('com_jem', $path, null, true, true);
+            }
+        }
+    }
+
+    /**
+     * Returns the JEM logo as a data URI so uninstall messages do not depend on media files.
+     */
+    private function getHeaderLogoDataUri()
+    {
+        $logo = __DIR__ . '/media/images/jemlogo.svg';
+
+        if (!is_file($logo)) {
+            return $this->getFallbackHeaderLogoDataUri();
+        }
+
+        $data = file_get_contents($logo);
+
+        if ($data === false) {
+            return $this->getFallbackHeaderLogoDataUri();
+        }
+
+        return 'data:image/svg+xml;base64,' . base64_encode($data);
+    }
+
+    /**
+     * Returns a compact inline JEM mark used when package media is unavailable during uninstall.
+     */
+    private function getFallbackHeaderLogoDataUri()
+    {
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="280" height="110" viewBox="0 0 280 110">'
+            . '<rect width="280" height="110" rx="8" fill="#fff"/>'
+            . '<g fill="none" stroke="#f69d00" stroke-width="8" stroke-linecap="round">'
+            . '<path d="M28 34h48M28 55h48M28 76h48"/>'
+            . '</g>'
+            . '<circle cx="18" cy="34" r="5" fill="#5e7899"/><circle cx="18" cy="55" r="5" fill="#5e7899"/><circle cx="18" cy="76" r="5" fill="#5e7899"/>'
+            . '<text x="92" y="55" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#f69d00">JEM</text>'
+            . '<text x="92" y="78" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5e7899">Joomla Event Manager</text>'
+            . '</svg>';
+
+        return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
     /**
@@ -532,6 +615,114 @@ class com_jemInstallerScript
         }
     }
 
+
+
+    /**
+     * Remove the legacy Help entry from Joomla's administrator component menu.
+     *
+     * The Help view remains available from the JEM control panel, but it should
+     * no longer be shown as a separate item in the Joomla Components menu.
+     *
+     * @return void
+     */
+    private function removeObsoleteAdminHelpMenuItem()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__menu'))
+            ->where($db->quoteName('client_id') . ' = 1')
+            ->where(
+                '('
+                . $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' = ' . $db->quote('option=com_jem&view=help')
+                . ' OR ' . $db->quoteName('link') . ' LIKE ' . $db->quote('%option=com_jem%view=help%')
+                . ')'
+            );
+
+        if ($componentId > 0) {
+            $query->where($db->quoteName('component_id') . ' = ' . $componentId);
+        }
+
+        $db->setQuery($query);
+        $db->execute();
+    }
+    /**
+     * Repair generated frontend type menu items whose stored type id became stale.
+     *
+     * @return void
+     */
+    private function repairGeneratedTypeMenuItems()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        $items = array(
+            'events-by-type' => array(
+                'entity' => 1,
+                'link'   => 'index.php?option=com_jem&view=typeevents&id=%d',
+            ),
+            'venues-by-type' => array(
+                'entity' => 3,
+                'link'   => 'index.php?option=com_jem&view=typevenues&id=%d',
+            ),
+            'categories-by-type' => array(
+                'entity' => 2,
+                'link'   => 'index.php?option=com_jem&view=categories&id=1&typeid=0',
+            ),
+        );
+
+        foreach ($items as $alias => $item) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_types'))
+                ->where($db->quoteName('published') . ' = 1')
+                ->where($db->quoteName('entity') . ' = ' . (int) $item['entity'])
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+            $db->setQuery($query, 0, 1);
+            $typeId = (int) $db->loadResult();
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__menu'))
+                ->where($db->quoteName('client_id') . ' = 0')
+                ->where($db->quoteName('menutype') . ' = ' . $db->quote('jem-frontend-menu'))
+                ->where($db->quoteName('alias') . ' = ' . $db->quote($alias));
+
+            if ($typeId || $alias === 'categories-by-type') {
+                $link = (strpos($item['link'], '%d') !== false) ? sprintf($item['link'], $typeId) : $item['link'];
+
+                $query->set($db->quoteName('link') . ' = ' . $db->quote($link))
+                    ->set($db->quoteName('type') . ' = ' . $db->quote('component'))
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->set($db->quoteName('access') . ' = 1');
+
+                if ($componentId) {
+                    $query->set($db->quoteName('component_id') . ' = ' . $componentId);
+                }
+            } else {
+                $query->set($db->quoteName('published') . ' = 0');
+            }
+
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
     /**
      * Remove all obsolete files and folders of previous versions.
      *
@@ -543,6 +734,7 @@ class com_jemInstallerScript
     {
         // obsolete files
         $files = array(
+            '/components/com_jem/classes/iCalcreator.class.php',
             '/administrator/components/com_jem/help/images/administrator.gif',
             '/administrator/components/com_jem/help/images/checked_out.png',
             '/administrator/components/com_jem/help/images/icon-32-attention.png',
@@ -585,6 +777,13 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
             '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
             '/administrator/components/com_jem/sql/updates/2.3.1.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/2.3.13.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/2.3.14.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/2.3.15.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/2.3.16.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/2.3.17.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/4.0b2.sql',
+            '/administrator/components/com_jem/sql/updates/mysql/4.0b4.sql',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
@@ -894,25 +1093,46 @@ class com_jemInstallerScript
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
+        $existingTables = $db->getTableList();
 
         // Array the columns to check
         $columnsToCheck = [
             ['table' => '#__jem_categories', 'column' => 'emailacljl',    'definition' => "TINYINT NOT NULL DEFAULT '0' AFTER `email`"],
             ['table' => '#__jem_register',   'column' => 'places',        'definition' => "INT NOT NULL DEFAULT '1' AFTER `uid`"],
-            ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"]
+            ['table' => '#__jem_events',     'column' => 'requestanswer', 'definition' => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `waitinglist`"],
+            ['table' => '#__jem_attachments','column' => 'description',   'definition' => "VARCHAR(255) DEFAULT NULL AFTER `name`"],
+            ['table' => '#__jem_attachments','column' => 'frontend',      'definition' => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `icon`"],
+            ['table' => '#__jem_attachments','column' => 'ordering',      'definition' => "INT(11) NOT NULL DEFAULT '0' AFTER `access`"]
         ];
 
         // check if the each column exists
         foreach ($columnsToCheck as $data) {
-            $query = "SHOW COLUMNS FROM " . $data['table'] . " WHERE Field ='" . $data['column'] . "'";
+            $tableName = str_replace('#__', $db->getPrefix(), $data['table']);
+
+            if (!in_array($tableName, $existingTables, true)) {
+                continue;
+            }
+
+            $query = 'SHOW COLUMNS FROM ' . $db->quoteName($data['table']) . ' WHERE Field = ' . $db->quote($data['column']);
             $db->setQuery($query);
             $result = $db->loadResult();
             if (!$result) {
                 // The column does not exist, so add it
-                $alterQuery = "ALTER TABLE " . $data['table'] . " ADD COLUMN " . $data['column'] . " " . $data['definition'];
+                $alterQuery = 'ALTER TABLE ' . $db->quoteName($data['table']) . ' ADD COLUMN ' . $db->quoteName($data['column']) . ' ' . $data['definition'];
                 $db->setQuery($alterQuery);
                 $db->execute();
             }
+        }
+
+        if (in_array(str_replace('#__', $db->getPrefix(), '#__jem_special_days'), $existingTables, true)) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_special_days'))
+                ->set($db->quoteName('show_dates') . ' = 0')
+                ->where($db->quoteName('alias') . ' = ' . $db->quote('weekend'))
+                ->where($db->quoteName('day_type') . ' = ' . $db->quote('Weekend'))
+                ->where($db->quoteName('weekdays') . ' IN (' . $db->quote('0,6') . ', ' . $db->quote('6,0') . ')');
+            $db->setQuery($query);
+            $db->execute();
         }
     }
 
@@ -1091,9 +1311,13 @@ class com_jemInstallerScript
             '#__jem_events',
             '#__jem_groupmembers',
             '#__jem_groups',
+            '#__jem_import_profiles',
+            '#__jem_links',
             '#__jem_register',
+            '#__jem_special_days',
             '#__jem_settings',
             '#__jem_config',
+            '#__jem_types',
             '#__jem_venues'
         );
         foreach ($tables as $table) {
@@ -1144,3 +1368,4 @@ class com_jemInstallerScript
     }
 
 }
+

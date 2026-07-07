@@ -24,7 +24,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
-#[AllowDynamicProperties]
+require_once JPATH_SITE . '/administrator/components/com_jem/helpers/html/jemhtml.php';
+
 class JemCalendar
 {
     /*
@@ -120,6 +121,31 @@ class JemCalendar
     */
     var $startYear=1971;
     var $endYear=2037;
+    var $timetoday=false;
+    var $selectedday=-2;
+    var $selectedyear=false;
+    var $selectedmonth=false;
+    var $unixtime=false;
+    var $daytoday=false;
+    var $monthtoday=false;
+    var $yeartoday=false;
+    var $actday=false;
+    var $actmonth=false;
+    var $actyear=false;
+    var $has31days=false;
+    var $isSchalt=false;
+    var $maxdays=false;
+    var $firstday=false;
+    var $GMTDiff='none';
+    var $yearNavBack=false;
+    var $yearNavForw=false;
+    var $monthNavBack=false;
+    var $monthNavForw=false;
+    var $selBtn='Go';
+    var $monthYearDivider=' ';
+    var $weekNumTitle='';
+    var $showNoMonthDays=false;
+    var $eventID=false;
     /*
     ----------------------
     @START PUBLIC METHODS
@@ -173,21 +199,17 @@ class JemCalendar
         ********************************************************************************
         */
 
-        if (version_compare(JVERSION, '5.0.0', '>=')) {
-            // Joomla 5
-            $this->yearNavBack=" <i class='fa-solid fa-backward'></i> "; // Previous year
-            $this->yearNavForw=" <i class='fa-solid fa-forward'></i> "; // Next year
-            $this->monthNavBack=" <i class='fa-solid fa-backward-step'></i> "; // Previous month
-            $this->monthNavForw=" <i class='fa-solid fa-forward-step'></i> "; // Next month
-        } elseif (version_compare(JVERSION, '4.0.0', '>=')) {
-            // Joomla 4
-            $this->yearNavBack=" &lt;&lt; "; // Previous year, this could be an image link
-            $this->yearNavForw=" &gt;&gt; "; // Next year, this could be an image link
-            $this->monthNavBack=" &lt;&lt; "; // Previous month, this could be an image link
-            $this->monthNavForw=" &gt;&gt; "; // Next month, this could be an image link
-        }
+        $this->yearNavBack = $this->getNavigationIcon('prev.webp', 'fa-solid fa-angles-left', Text::_('JPREV'));
+        $this->yearNavForw = $this->getNavigationIcon('next.webp', 'fa-solid fa-angles-right', Text::_('JNEXT'));
+        $this->monthNavBack = $this->getNavigationIcon('prev.webp', 'fa-solid fa-angle-left', Text::_('JPREV'));
+        $this->monthNavForw = $this->getNavigationIcon('next.webp', 'fa-solid fa-angle-right', Text::_('JNEXT'));
         $this->selBtn="Go"; // value of the date picker button (if enabled)
         $this->monthYearDivider=" "; // the divider between month and year in the month`s title
+    }
+
+    private function getNavigationIcon($image, $icon, $alt)
+    {
+        return jemhtml::icon('com_jem/' . $image, $icon . ' jem-calendar-nav-icon', $alt, array('class' => 'jem-calendar-nav-icon'));
     }
     /*
     ********************************************************************************
@@ -320,6 +342,94 @@ class JemCalendar
         // add url
         if ($url) $this->calEventContentUrl[] = $url;
         else $this->calEventContentUrl[] = $this->calInit++;
+
+        $this->appendDayTitle($year, $month, $day, $content);
+    }
+
+    function appendDayTitle($year, $month, $day, $content)
+    {
+        $labels = is_array($content) ? $content : array($content);
+        $cleanLabels = array();
+
+        foreach ($labels as $label) {
+            $label = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $label), ENT_QUOTES, 'UTF-8')));
+
+            if ($label !== '' && !in_array($label, $cleanLabels, true)) {
+                $cleanLabels[] = $label;
+            }
+        }
+
+        if (!$cleanLabels) {
+            return;
+        }
+
+        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
+
+        if (!isset($this->calDayAttributes[$dayTime])) {
+            $this->calDayAttributes[$dayTime] = array(
+                'classes' => array(),
+                'style'   => '',
+                'title'   => '',
+                'data'    => array(),
+            );
+        }
+
+        $existingLabels = array_filter(array_map('trim', preg_split('/\r\n|\r|\n|, /', (string) $this->calDayAttributes[$dayTime]['title'])));
+
+        foreach ($cleanLabels as $label) {
+            if (!in_array($label, $existingLabels, true)) {
+                $existingLabels[] = $label;
+            }
+        }
+
+        $this->calDayAttributes[$dayTime]['title'] = implode("\n", $existingLabels);
+    }
+    /*
+    ********************************************************************************
+    PUBLIC setDayAttributes() -> sets extra class/style/title attributes on a day cell
+    ********************************************************************************
+    */
+    function setDayAttributes($year, $month, $day, $classes = array(), $style = '', $title = '', $data = array())
+    {
+        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
+
+        if (!is_array($classes)) {
+            $classes = preg_split('/\s+/', (string) $classes, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
+        if (!isset($this->calDayAttributes[$dayTime])) {
+            $this->calDayAttributes[$dayTime] = array(
+                'classes' => array(),
+                'style'   => '',
+                'title'   => '',
+                'data'    => array(),
+            );
+        }
+
+        foreach ($classes as $class) {
+            $class = trim((string) $class);
+            if ($class !== '') {
+                $this->calDayAttributes[$dayTime]['classes'][$class] = $class;
+            }
+        }
+
+        if ((string) $style !== '') {
+            $this->calDayAttributes[$dayTime]['style'] = (string) $style;
+        }
+
+        if ((string) $title !== '') {
+            $this->calDayAttributes[$dayTime]['title'] = (string) $title;
+        }
+
+        if (is_array($data)) {
+            foreach ($data as $name => $value) {
+                $name = strtolower(preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $name));
+
+                if ($name !== '') {
+                    $this->calDayAttributes[$dayTime]['data'][$name] = (string) $value;
+                }
+            }
+        }
     }
     /*
     ********************************************************************************
@@ -419,9 +529,10 @@ class JemCalendar
     var $calEventContent=[];
     var $calEventContentUrl=[];
     var $calEventContentId=[];
+    var $calDayAttributes=[];
     var $calInit=0;
     var $weekNum=false;
-    var $WeekUrl=false;
+    var $weekUrl=false;
     var $javaScriptWeek=false;
 
     /*
@@ -508,23 +619,39 @@ class JemCalendar
             $out.=$this->getMonthName().$this->monthYearDivider.$this->actyear;
             $out.="</td></tr>\n";
         } else {
-            $out = "<tr><td class=\"".$this->cssMonthNav."\" colspan=\"2\" style=\"text-align:right;\">";
+            $out = "<tr>";
+
+            if ($this->yearNav) {
+                $out .= "<td class=\"".$this->cssMonthNav."\">";
+                $out .= $this->mkUrl($this->actyear - 1, $this->actmonth);
+                $out .= $this->yearNavBack."</a></td>";
+            }
+
+            $out .= "<td class=\"".$this->cssMonthNav."\"".($this->yearNav ? '' : ' colspan="2"').">";
             if ($this->actmonth==1) { // january
                 $out.=$this->mkUrl($this->actyear-1,"12");
             } else {
                 $out.=$this->mkUrl($this->actyear,$this->actmonth-1);
             }
             $out .= $this->monthNavBack."</a></td>";
-            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-4)."\">";
+            $out .= "<td class=\"".$this->cssMonthTitle."\" colspan=\"".($this->monthSpan-($this->yearNav ? 4 : 4))."\">";
             $out .= $this->getMonthName().$this->monthYearDivider.$this->actyear."</td>";
-            $out .= "<td class=\"".$this->cssMonthNav."\" colspan=\"2\" style=\"text-align:left;\">";
+            $out .= "<td class=\"".$this->cssMonthNav."\"".($this->yearNav ? '' : ' colspan="2"').">";
             if ($this->actmonth==12) { //december
                 $out.=$this->mkUrl($this->actyear+1,"1");
             }
             else {
                 $out.=$this->mkUrl($this->actyear,$this->actmonth+1);
             }
-            $out.=$this->monthNavForw."</a></td></tr>\n";
+            $out.=$this->monthNavForw."</a></td>";
+
+            if ($this->yearNav) {
+                $out .= "<td class=\"".$this->cssMonthNav."\">";
+                $out .= $this->mkUrl($this->actyear + 1, $this->actmonth);
+                $out .= $this->yearNavForw."</a></td>";
+            }
+
+            $out .= "</tr>\n";
         }
         return $out;
     }
@@ -655,6 +782,8 @@ class JemCalendar
     */
     function mkDay($var) {
         $eventContent = $this->mkEventContent($var);
+        $dayAttributes = $this->getDayAttributes($var);
+        $dayAttributeHtml = $dayAttributes['html'];
         $linktext = $var;
         if ($this->dayLinks) {
             if ($eventContent) {
@@ -673,11 +802,13 @@ class JemCalendar
         }
 
         if ($this->isEvent($var)) {
+            $eventClasses = array_filter(array_merge(array($this->eventID), $dayAttributes['classes']));
+            $eventClassAttribute = implode(' ', array_unique($eventClasses));
             if ($this->eventUrl) {
-                $out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink."<a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
+                $out="<td class=\"".$eventClassAttribute."\"".$dayAttributeHtml."><div class=\"daynum\">".$htmlNewEventLink."<a href=\"".$this->eventUrl."\">".$var."</a></div>".$eventContent."</td>";
                 $this->eventUrl=false;
             } else {
-                $out="<td class=\"".$this->eventID."\"><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
+                $out="<td class=\"".$eventClassAttribute."\"".$dayAttributeHtml."><div class=\"daynum\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
             }
         } else {
             /* allow styling of multiple things like "today is Sunday" */
@@ -694,10 +825,37 @@ class JemCalendar
             if (($this->getWeekday($var) == 6) && $this->crSatClass) {
                 $cssClass[] = $this->cssSaturday;
             }
-            $out = "<td class=\"".implode(' ', $cssClass)."\"><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.$linktext.'</div>'.$eventContent."</td>";
+            if ($eventContent) {
+                $cssClass[] = 'busy';
+            }
+            $cssClass = array_merge($cssClass, $dayAttributes['classes']);
+            $out = "<td class=\"".implode(' ', array_unique($cssClass))."\"".$dayAttributeHtml."><div class=\"daynum\" jem-monthname=\"".$this->getMonthName()."\" jem-dayname=\"".$this->getDayName($this->getWeekday($var))."\">".$htmlNewEventLink.'<span>'.$linktext.'</span></div>'.$eventContent."</td>";
         }
 
         return $out;
+    }
+    function getDayAttributes($day) {
+        $dayTime = $this->mkActiveTime(0, 0, 1, $this->actmonth, $day, $this->actyear);
+        $attributes = $this->calDayAttributes[$dayTime] ?? array();
+        $classes = array_values($attributes['classes'] ?? array());
+        $html = '';
+
+        if (!empty($attributes['style'])) {
+            $html .= ' style="' . htmlspecialchars((string) $attributes['style'], ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        if (!empty($attributes['title'])) {
+            $html .= ' title="' . htmlspecialchars((string) $attributes['title'], ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        foreach (($attributes['data'] ?? array()) as $name => $value) {
+            $html .= ' data-' . htmlspecialchars((string) $name, ENT_COMPAT, 'UTF-8') . '="' . htmlspecialchars((string) $value, ENT_COMPAT, 'UTF-8') . '"';
+        }
+
+        return array(
+            'classes' => $classes,
+            'html'    => $html,
+        );
     }
     /*
     ********************************************************************************
@@ -723,8 +881,8 @@ class JemCalendar
         } else {
             $glueNav="&amp;";
         }
-        $yearNavLink  = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
-        $monthNavLink = empty($this->urlNav) ? '' : "<a href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
+        $yearNavLink  = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year)."\" rel=\"noindex, nofollow\">";
+        $monthNavLink = empty($this->urlNav) ? '' : "<a class=\"jem-calendar-nav-link\" href=\"".Route::_($this->urlNav.$glueNav.$this->yearID."=".$year."&amp;".$this->monthID."=".$month)."\" rel=\"noindex, nofollow\">";
         $dayLink      = empty($this->url)  ? $day : "<a href=\"".Route::_($this->url.$glue.$this->yearID."=".$year."&amp;".$this->monthID."=".$month."&amp;".$this->dayID."=".$day)."\">".$day."</a>";
         if ($year &&  $month &&  $day) return $dayLink;
         if ($year && !$month && !$day) return $yearNavLink;

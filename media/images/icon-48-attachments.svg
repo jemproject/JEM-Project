@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="CPanel-icons-v2" serif:id="CPanel icons v2">
+        <g id="Attachments-v2" serif:id="Attachments v2">
+            <g>
+                <path d="M28.919,24.046L28.919,16.107C28.919,13.346 31.157,11.107 33.919,11.107L68.919,11.107L82.92,25.107L82.92,75.885C82.92,78.646 80.681,80.885 77.92,80.885L33.919,80.885C31.157,80.885 28.919,78.646 28.919,75.885L28.919,50.198" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+                <path d="M68.919,13.253L68.919,25.107L80.679,25.107" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;stroke-linecap:square;"/>
+                <g>
+                    <path d="M40.162,69.872L72.162,69.961" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linejoin:miter;"/>
+                    <path d="M61.162,58.92L72.162,58.961" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linejoin:miter;"/>
+                    <path d="M66.162,48.04L72.162,48.006" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linejoin:miter;"/>
+                    <path d="M72.162,36.961L72.162,37.006" style="fill:none;stroke:rgb(246,157,0);stroke-width:4.5px;stroke-linejoin:miter;"/>
+                </g>
+            </g>
+            <path d="M40.344,24.132L51.099,35.997C53.373,38.408 54.65,41.678 54.65,45.088C54.65,48.498 53.373,51.768 51.099,54.179C48.825,56.59 45.74,57.945 42.524,57.945C39.308,57.945 36.224,56.59 33.95,54.179L15.387,34.498C13.871,32.89 13.02,30.71 13.02,28.437C13.02,26.164 13.871,23.983 15.387,22.376C16.904,20.769 18.96,19.866 21.104,19.866C23.248,19.866 25.304,20.769 26.82,22.376L45.382,42.079C46.141,42.883 46.566,43.973 46.566,45.109C46.566,46.246 46.141,47.336 45.382,48.14C44.624,48.943 43.596,49.395 42.524,49.395C41.452,49.395 40.424,48.943 39.666,48.14L22.538,29.958" style="fill:none;fill-rule:nonzero;stroke:rgb(69,161,43);stroke-width:4.5px;stroke-miterlimit:4;"/>
+        </g>
+    </g>
+</svg>

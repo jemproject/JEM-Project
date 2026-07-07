@@ -19,11 +19,12 @@ $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate');
 
-jimport('joomla.html.html.tabs');
-
 // Create shortcut to parameters.
 $params        = $this->item->params;
 //$settings = json_decode($this->item->attribs);
+$hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed_fields);
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 
 $options = array(
     'onActive' => 'function(title, description){
@@ -40,7 +41,44 @@ $options = array(
 
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
+
+Text::script('COM_JEM_GEOCODE_SEARCHING');
+Text::script('COM_JEM_GEOCODE_ADDRESS_REQUIRED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_REQUIRED');
+Text::script('COM_JEM_GEOCODE_NO_RESULTS');
+Text::script('COM_JEM_GEOCODE_REQUEST_FAILED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_NAME');
+Text::script('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_ADDRESS');
+Text::script('COM_JEM_GEOCODE_ADDRESS_UPDATED');
+Text::script('COM_JEM_GEOCODE_CHECK_SUGGESTIONS');
+Text::script('COM_JEM_GEOCODE_APPLY_ADDRESS_HINT');
+Text::script('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS');
+Text::script('COM_JEM_GEOCODE_NO_SUGGESTED_ADDRESS');
+Text::script('COM_JEM_GEOCODE_SELECT_RESULT');
+Text::script('COM_JEM_GEOCODE_USE_RESULT');
+Text::script('COM_JEM_GEOCODE_NO_CONFIDENT_RESULT');
+Text::script('COM_JEM_GEOCODE_INVALID_RESULT_SELECTION');
+Text::script('COM_JEM_STREET');
+Text::script('COM_JEM_ZIP');
+Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_STATE');
+Text::script('COM_JEM_COUNTRY');
+Text::script('JCANCEL');
 ?>
+
+<style>
+    #jem .jem-venue-geocode-actions .jem-geocode-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    #jem .jem-venue-geocode-actions .btn {
+        white-space: nowrap;
+    }
+</style>
 
 <script>
     Joomla.submitbutton = function(task)
@@ -49,6 +87,711 @@ $location = JemHelper::defineCenterMap($this->form);
             Joomla.submitform(task, document.getElementById('venue-form'));
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var addressToCoordsButton = document.getElementById('jem-geocode-address');
+        var coordsToAddressButton = document.getElementById('jem-reverse-geocode');
+        var applySuggestedAddressButton = document.getElementById('jem-apply-suggested-address');
+        var suggestedAddressNotice = document.getElementById('jem-suggested-address');
+        var suggestedAddressText = document.getElementById('jem-suggested-address-text');
+        var nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
+        var lastSuggestedAddress = null;
+
+        function getFieldValue(id) {
+            var field = document.getElementById(id);
+            return field ? field.value.trim() : '';
+        }
+
+        function getFieldText(id) {
+            var field = document.getElementById(id);
+            if (!field) {
+                return '';
+            }
+
+            if (field.options && field.selectedIndex >= 0) {
+                return field.options[field.selectedIndex].text.trim();
+            }
+
+            return field.value.trim();
+        }
+
+        function setFieldValue(id, value) {
+            var field = document.getElementById(id);
+            if (!field || value === undefined || value === null || value === '') {
+                return;
+            }
+
+            field.value = value;
+            field.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+
+        function updateCountryFieldDisplay(field, option) {
+            var wrapper = field.closest('joomla-field-fancy-select') || field.parentElement;
+            var choicesContainer = wrapper ? wrapper.querySelector('.choices') : null;
+            var selectedItems = choicesContainer
+                ? choicesContainer.querySelectorAll('.choices__list--single .choices__item, .choices__list--multiple .choices__item')
+                : [];
+
+            selectedItems.forEach(function (item) {
+                item.textContent = option.text;
+                item.dataset.value = option.value;
+                item.classList.remove('choices__placeholder');
+            });
+        }
+
+        function setCountryFieldValue(value, retryCount) {
+            var field = document.getElementById('jform_country');
+            var countryCode = String(value || '').trim().toUpperCase();
+            var attempts = retryCount || 0;
+            var fancySelect = field ? field.closest('joomla-field-fancy-select') : null;
+
+            if (!field || !countryCode) {
+                return;
+            }
+
+            var matchedOption = Array.prototype.slice.call(field.options || []).find(function (option) {
+                return normalizeGeocodeValue(option.value) === normalizeGeocodeValue(countryCode)
+                    || normalizeGeocodeValue(option.text) === normalizeGeocodeValue(countryCode);
+            });
+
+            if (!matchedOption && fancySelect) {
+                var matchedChoice = Array.prototype.slice.call(fancySelect.querySelectorAll('.choices__item--choice[data-value]')).find(function (choice) {
+                    return normalizeGeocodeValue(choice.dataset.value) === normalizeGeocodeValue(countryCode)
+                        || normalizeGeocodeValue(choice.textContent) === normalizeGeocodeValue(countryCode);
+                });
+
+                if (matchedChoice) {
+                    matchedOption = new Option(matchedChoice.textContent.trim(), matchedChoice.dataset.value, true, true);
+                    field.appendChild(matchedOption);
+                }
+            }
+
+            if (!matchedOption) {
+                return;
+            }
+
+            field.value = matchedOption.value;
+            matchedOption.selected = true;
+            matchedOption.setAttribute('selected', 'selected');
+            field.dispatchEvent(new Event('input', {bubbles: true}));
+            field.dispatchEvent(new Event('change', {bubbles: true}));
+
+            if (fancySelect) {
+                var choices = fancySelect.choicesInstance || fancySelect.choices || field.choicesInstance || field.choices;
+
+                if (choices) {
+                    try {
+                        if (typeof choices.removeActiveItems === 'function') {
+                            choices.removeActiveItems();
+                        }
+
+                        if (typeof choices.setChoiceByValue === 'function') {
+                            choices.setChoiceByValue(matchedOption.value);
+                        }
+
+                        if (typeof choices.setValue === 'function') {
+                            choices.setValue([{
+                                value: matchedOption.value,
+                                label: matchedOption.text
+                            }]);
+                        }
+
+                        if (typeof choices.getValue === 'function' && choices.getValue(true) !== matchedOption.value) {
+                            choices.setChoices([{
+                                value: matchedOption.value,
+                                label: matchedOption.text,
+                                selected: true
+                            }], 'value', 'label', false);
+                            choices.setChoiceByValue(matchedOption.value);
+                        }
+                    } catch (ignore) {
+                        // Fall back to the visible Choices markup below.
+                    }
+                } else {
+                    fancySelect.value = matchedOption.value;
+                }
+
+                updateCountryFieldDisplay(field, matchedOption);
+                fancySelect.dispatchEvent(new Event('input', {bubbles: true}));
+                fancySelect.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+
+            if (attempts < 3 && getFieldValue('jform_country') !== matchedOption.value) {
+                window.setTimeout(function () {
+                    setCountryFieldValue(matchedOption.value, attempts + 1);
+                }, 150 * (attempts + 1));
+            }
+        }
+
+        function setSuggestedAddress(address, suggestions) {
+            lastSuggestedAddress = address || null;
+
+            if (applySuggestedAddressButton) {
+                applySuggestedAddressButton.disabled = !lastSuggestedAddress;
+            }
+
+            if (suggestedAddressNotice) {
+                suggestedAddressNotice.classList.toggle('d-none', !lastSuggestedAddress);
+            }
+
+            if (suggestedAddressText) {
+                suggestedAddressText.textContent = lastSuggestedAddress && suggestions && suggestions.length
+                    ? (Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_CHECK_SUGGESTIONS') : 'OpenStreetMap suggests checking:') + ' ' + suggestions.join('; ')
+                    : '';
+            }
+        }
+
+        function showGeocodeMessage(message, type) {
+            if (window.Joomla && Joomla.removeMessages) {
+                Joomla.removeMessages();
+            } else {
+                document.querySelectorAll('#system-message-container .alert').forEach(function (alert) {
+                    alert.remove();
+                });
+            }
+
+            if (window.Joomla && Joomla.renderMessages) {
+                Joomla.renderMessages({[type || 'message']: [message]});
+            } else {
+                alert(message);
+            }
+        }
+
+        function buildVenueAddressParts() {
+            var countryCode = getFieldValue('jform_country');
+
+            return {
+                venue: getFieldValue('jform_venue'),
+                street: getFieldValue('jform_street'),
+                postalcode: getFieldValue('jform_postalCode'),
+                city: getFieldValue('jform_city'),
+                state: getFieldValue('jform_state'),
+                country: countryCode && countryCode !== '0' ? getFieldText('jform_country') : '',
+                countryCode: countryCode
+            };
+        }
+
+        function buildVenueAddress() {
+            var address = buildVenueAddressParts();
+
+            return [
+                address.street,
+                address.postalcode,
+                address.city,
+                address.state,
+                address.country
+            ].filter(Boolean).join(', ');
+        }
+
+        function buildVenueNamedAddress() {
+            var address = buildVenueAddressParts();
+
+            return [
+                address.venue,
+                address.street,
+                address.postalcode,
+                address.city,
+                address.state,
+                address.country
+            ].filter(Boolean).join(', ');
+        }
+
+        function hasEnoughAddressData() {
+            return getFieldValue('jform_venue')
+                || (getFieldValue('jform_street') && getFieldValue('jform_city') && getFieldValue('jform_country'));
+        }
+
+        function hasStructuredAddressData(address) {
+            return (address.street || address.postalcode)
+                && address.city
+                && address.countryCode
+                && address.countryCode !== '0';
+        }
+
+        function hasValidCoordinates(latitude, longitude) {
+            var lat = Number(latitude);
+            var lon = Number(longitude);
+
+            return Number.isFinite(lat)
+                && Number.isFinite(lon)
+                && lat >= -90
+                && lat <= 90
+                && lon >= -180
+                && lon <= 180;
+        }
+
+        function setMapEnabled() {
+            var map = document.getElementById('jform_map');
+            if (map && !map.checked) {
+                map.checked = true;
+                map.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+        }
+
+        function setButtonBusy(button, busy) {
+            if (!button) {
+                return;
+            }
+
+            button.disabled = busy;
+            if (busy) {
+                button.dataset.originalText = button.textContent;
+                button.textContent = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_SEARCHING') : 'Searching...';
+            } else if (button.dataset.originalText) {
+                button.textContent = button.dataset.originalText;
+            }
+        }
+
+        function getAddressPart(address, keys) {
+            for (var i = 0; i < keys.length; i++) {
+                if (address[keys[i]]) {
+                    return address[keys[i]];
+                }
+            }
+
+            return '';
+        }
+
+        function normalizeGeocodeValue(value) {
+            return String(value || '')
+                .trim()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/\s+/g, ' ');
+        }
+
+        function buildReverseAddress(address) {
+            var road = getAddressPart(address, ['road', 'pedestrian', 'footway', 'path', 'residential']);
+            var houseNumber = getAddressPart(address, ['house_number']);
+            var city = getAddressPart(address, ['city', 'town', 'village', 'municipality', 'hamlet', 'county']);
+
+            return {
+                street: [road, houseNumber].filter(Boolean).join(' '),
+                postalCode: getAddressPart(address, ['postcode']),
+                city: city,
+                state: getAddressPart(address, ['state', 'region']),
+                countryCode: address.country_code ? address.country_code.toUpperCase() : ''
+            };
+        }
+
+        function applyOsmAddress(osmAddress) {
+            setFieldValue('jform_street', osmAddress.street);
+            setFieldValue('jform_postalCode', osmAddress.postalCode);
+            setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_state', osmAddress.state);
+            setCountryFieldValue(osmAddress.countryCode);
+        }
+
+        function getAddressSuggestions(address, onlyDifferences) {
+            var suggestions = [];
+            var osmAddress = buildReverseAddress(address || {});
+            var checks = [
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street, relaxed: true},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state, relaxed: true},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode, relaxed: false}
+            ];
+
+            checks.forEach(function (check) {
+                if (!check.suggested) {
+                    return;
+                }
+
+                if (onlyDifferences && (!check.current || geocodeValuesMatch(check.current, check.suggested, check.relaxed))) {
+                    return;
+                }
+
+                suggestions.push(check.label + ': ' + check.suggested);
+            });
+
+            return suggestions;
+        }
+
+        function geocodeValuesMatch(current, suggested, relaxed) {
+            var currentValue = normalizeGeocodeValue(current);
+            var suggestedValue = normalizeGeocodeValue(suggested);
+
+            if (!currentValue || !suggestedValue) {
+                return false;
+            }
+
+            return currentValue === suggestedValue
+                || (relaxed && (currentValue.indexOf(suggestedValue) !== -1 || suggestedValue.indexOf(currentValue) !== -1));
+        }
+
+        function scoreGeocodeResult(result, expectedAddress) {
+            var resultAddress = buildReverseAddress((result && result.address) || {});
+            var score = 0;
+            var hardMismatch = false;
+            var matches = {
+                street: geocodeValuesMatch(expectedAddress.street, resultAddress.street, true),
+                postalCode: geocodeValuesMatch(expectedAddress.postalcode, resultAddress.postalCode, false),
+                city: geocodeValuesMatch(expectedAddress.city, resultAddress.city, false),
+                state: geocodeValuesMatch(expectedAddress.state, resultAddress.state, true),
+                country: geocodeValuesMatch(expectedAddress.countryCode, resultAddress.countryCode, false)
+            };
+
+            if (expectedAddress.countryCode && resultAddress.countryCode && !matches.country) {
+                hardMismatch = true;
+            }
+
+            if (expectedAddress.postalcode && resultAddress.postalCode && !matches.postalCode) {
+                hardMismatch = true;
+            }
+
+            if (expectedAddress.city && resultAddress.city && !matches.city) {
+                hardMismatch = true;
+            }
+
+            if (matches.country) {
+                score += 3;
+            }
+
+            if (matches.postalCode) {
+                score += 3;
+            }
+
+            if (matches.city) {
+                score += 4;
+            }
+
+            if (matches.street) {
+                score += 2;
+            }
+
+            if (matches.state) {
+                score += 1;
+            }
+
+            return {
+                result: result,
+                address: resultAddress,
+                score: score,
+                hardMismatch: hardMismatch,
+                confident: !hardMismatch
+                    && matches.city
+                    && matches.country
+                    && (!expectedAddress.postalcode || !resultAddress.postalCode || matches.postalCode)
+                    && (!expectedAddress.street || !resultAddress.street || matches.street)
+                    && score >= 8
+            };
+        }
+
+        function findBestGeocodeResult(results, expectedAddress) {
+            var scored = (results || []).map(function (result) {
+                return scoreGeocodeResult(result, expectedAddress);
+            }).sort(function (a, b) {
+                return b.score - a.score;
+            }).filter(function (scoredResult, index, scoredResults) {
+                var result = scoredResult.result || {};
+                var resultKey = [result.lat, result.lon, result.osm_type, result.osm_id].join(':');
+
+                return scoredResults.findIndex(function (otherResult) {
+                    var other = otherResult.result || {};
+                    return [other.lat, other.lon, other.osm_type, other.osm_id].join(':') === resultKey;
+                }) === index;
+            }).slice(0, 5);
+
+            return {
+                scored: scored,
+                best: scored.length && scored[0].confident ? scored[0] : null
+            };
+        }
+
+        function getSingleSafeGeocodeResult(scoredResults) {
+            return scoredResults.length === 1 && !scoredResults[0].hardMismatch
+                ? scoredResults[0]
+                : null;
+        }
+
+        function formatGeocodeChoice(scored, index) {
+            var address = scored.address || {};
+            var parts = [
+                address.street,
+                address.postalCode,
+                address.city,
+                address.state,
+                address.countryCode
+            ].filter(Boolean);
+
+            if (!parts.length && scored.result && scored.result.display_name) {
+                parts.push(scored.result.display_name);
+            }
+
+            return (index + 1) + '. ' + parts.join(', ');
+        }
+
+        function chooseGeocodeResult(scoredResults) {
+            if (!scoredResults.length) {
+                return Promise.resolve(null);
+            }
+
+            return new Promise(function (resolve) {
+                var message = Joomla.Text
+                    ? Joomla.Text._('COM_JEM_GEOCODE_SELECT_RESULT')
+                    : 'OpenStreetMap returned several possible matches. Select one to use, or cancel to keep current coordinates.';
+                var useLabel = Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_USE_RESULT') : 'Use this location';
+                var cancelLabel = Joomla.Text ? Joomla.Text._('JCANCEL') : 'Cancel';
+                var overlay = document.createElement('div');
+                var dialog = document.createElement('div');
+                var title = document.createElement('h3');
+                var list = document.createElement('div');
+                var footer = document.createElement('div');
+                var cancelButton = document.createElement('button');
+
+                function close(selectedResult) {
+                    document.removeEventListener('keydown', handleKeydown);
+                    overlay.remove();
+                    resolve(selectedResult || null);
+                }
+
+                function handleKeydown(event) {
+                    if (event.key === 'Escape') {
+                        close(null);
+                    }
+                }
+
+                overlay.className = 'jem-geocode-choice-overlay';
+                overlay.style.cssText = 'position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:1rem;';
+                dialog.className = 'jem-geocode-choice-dialog';
+                dialog.style.cssText = 'width:min(640px,100%);max-height:90vh;overflow:auto;background:#fff;color:#1f2933;border-radius:.5rem;box-shadow:0 1rem 3rem rgba(0,0,0,.25);padding:1rem;';
+                title.style.cssText = 'font-size:1.1rem;line-height:1.4;margin:0 0 1rem;';
+                title.textContent = message;
+                list.style.cssText = 'display:grid;gap:.5rem;';
+
+                scoredResults.forEach(function (scoredResult, index) {
+                    var option = document.createElement('button');
+                    var optionTitle = document.createElement('span');
+                    var optionAction = document.createElement('span');
+
+                    option.type = 'button';
+                    option.className = 'btn btn-light jem-geocode-choice-option';
+                    option.style.cssText = 'display:flex;gap:1rem;align-items:center;justify-content:space-between;width:100%;padding:.75rem 1rem;text-align:left;border:1px solid #ccd3dc;border-radius:.375rem;background:#fff;color:inherit;cursor:pointer;';
+                    optionTitle.textContent = formatGeocodeChoice(scoredResult, index);
+                    optionAction.textContent = useLabel;
+                    optionAction.style.cssText = 'white-space:nowrap;font-weight:600;color:#1d4ed8;';
+                    option.appendChild(optionTitle);
+                    option.appendChild(optionAction);
+                    option.addEventListener('click', function () {
+                        close(scoredResult);
+                    });
+                    list.appendChild(option);
+                });
+
+                footer.style.cssText = 'display:flex;justify-content:flex-end;margin-top:1rem;';
+                cancelButton.type = 'button';
+                cancelButton.className = 'btn btn-secondary';
+                cancelButton.textContent = cancelLabel;
+                cancelButton.addEventListener('click', function () {
+                    close(null);
+                });
+                footer.appendChild(cancelButton);
+                dialog.appendChild(title);
+                dialog.appendChild(list);
+                dialog.appendChild(footer);
+                overlay.appendChild(dialog);
+                overlay.addEventListener('click', function (event) {
+                    if (event.target === overlay) {
+                        close(null);
+                    }
+                });
+                document.addEventListener('keydown', handleKeydown);
+                document.body.appendChild(overlay);
+                var firstOption = list.querySelector('button');
+                if (firstOption) {
+                    firstOption.focus();
+                }
+            });
+        }
+
+        async function applyGeocodeResult(scoredResult, matchedBy, expectedAddress, selectedManually) {
+            var result = scoredResult.result;
+
+            setFieldValue('jform_latitude', Number(result.lat).toFixed(6));
+            setFieldValue('jform_longitude', Number(result.lon).toFixed(6));
+            setMapEnabled();
+            test();
+
+            var verifiedAddress = (result && result.address) || {};
+            try {
+                var reverseResult = await requestNominatim('/reverse', {
+                    format: 'jsonv2',
+                    lat: result.lat,
+                    lon: result.lon,
+                    addressdetails: '1',
+                    'accept-language': document.documentElement.lang || ''
+                });
+                verifiedAddress = reverseResult.address || verifiedAddress;
+            } catch (reverseError) {
+                // The coordinates are still useful even if reverse verification fails.
+            }
+
+            var reverseAddress = buildReverseAddress(verifiedAddress);
+            if (selectedManually || !hasStructuredAddressData(expectedAddress)) {
+                applyOsmAddress(reverseAddress);
+                setSuggestedAddress(null);
+            } else {
+                var suggestions = getAddressSuggestions(verifiedAddress, true);
+                setSuggestedAddress(suggestions.length ? reverseAddress : null, suggestions);
+            }
+
+            if (matchedBy === 'name') {
+                return Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_NAME') : 'Coordinates updated. Found by venue name and address.';
+            }
+
+            return Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_UPDATED_BY_ADDRESS') : 'Coordinates updated. Found by address only.';
+        }
+
+        async function requestNominatim(path, params) {
+            var url = new URL(nominatimBaseUrl + path);
+            Object.keys(params).forEach(function (key) {
+                if (params[key] !== '') {
+                    url.searchParams.set(key, params[key]);
+                }
+            });
+
+            var response = await fetch(url.toString(), {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Nominatim request failed (' + response.status + ')');
+            }
+
+            return response.json();
+        }
+
+        if (addressToCoordsButton) {
+            addressToCoordsButton.addEventListener('click', async function () {
+                setSuggestedAddress(null);
+
+                if (!hasEnoughAddressData()) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_REQUIRED') : 'Enter venue or street, city and country before searching for coordinates.', 'warning');
+                    return;
+                }
+
+                var address = buildVenueAddressParts();
+                var query = buildVenueAddress();
+                var namedQuery = buildVenueNamedAddress();
+                var matchedBy = '';
+                setButtonBusy(addressToCoordsButton, true);
+                try {
+                    var results = [];
+
+                    if (namedQuery) {
+                        results = await requestNominatim('/search', {
+                            format: 'jsonv2',
+                            limit: '5',
+                            q: namedQuery,
+                            addressdetails: '1',
+                            countrycodes: address.countryCode && address.countryCode !== '0' ? address.countryCode.toLowerCase() : '',
+                            'accept-language': document.documentElement.lang || ''
+                        });
+                        if (results.length) {
+                            matchedBy = 'name';
+                        }
+                    }
+
+                    if (!findBestGeocodeResult(results, address).best && hasStructuredAddressData(address)) {
+                        var addressResults = await requestNominatim('/search', {
+                            format: 'jsonv2',
+                            limit: '5',
+                            street: address.street,
+                            postalcode: address.postalcode,
+                            city: address.city,
+                            state: address.state,
+                            country: address.country,
+                            addressdetails: '1',
+                            countrycodes: address.countryCode && address.countryCode !== '0' ? address.countryCode.toLowerCase() : '',
+                            'accept-language': document.documentElement.lang || ''
+                        });
+                        if (addressResults.length) {
+                            results = results.concat(addressResults);
+                            matchedBy = 'address';
+                        }
+                    }
+
+                    if (!results.length) {
+                        showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_NO_RESULTS') : 'No matching place was found in OpenStreetMap.', 'warning');
+                        return;
+                    }
+
+                    var geocodeSelection = findBestGeocodeResult(results, address);
+                    var selectedManually = false;
+                    var selectedResult = geocodeSelection.best || getSingleSafeGeocodeResult(geocodeSelection.scored);
+
+                    if (!selectedResult) {
+                        selectedResult = await chooseGeocodeResult(geocodeSelection.scored);
+                        selectedManually = !!selectedResult;
+                    }
+
+                    if (!selectedResult) {
+                        showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_NO_CONFIDENT_RESULT') : 'OpenStreetMap did not return a confident match. No coordinates were changed.', 'warning');
+                        return;
+                    }
+
+                    var successMessage = await applyGeocodeResult(selectedResult, matchedBy, address, selectedManually);
+                    showGeocodeMessage(successMessage, 'message');
+                } catch (error) {
+                    showGeocodeMessage((Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_REQUEST_FAILED') : 'Could not contact OpenStreetMap.') + ' ' + error.message, 'error');
+                } finally {
+                    setButtonBusy(addressToCoordsButton, false);
+                }
+            });
+        }
+
+        if (coordsToAddressButton) {
+            coordsToAddressButton.addEventListener('click', async function () {
+                setSuggestedAddress(null);
+
+                var latitude = getFieldValue('jform_latitude');
+                var longitude = getFieldValue('jform_longitude');
+                if (!hasValidCoordinates(latitude, longitude)) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_COORDINATES_REQUIRED') : 'Enter valid latitude and longitude before searching for an address.', 'warning');
+                    return;
+                }
+
+                setButtonBusy(coordsToAddressButton, true);
+                try {
+                    var result = await requestNominatim('/reverse', {
+                        format: 'jsonv2',
+                        lat: latitude,
+                        lon: longitude,
+                        addressdetails: '1',
+                        'accept-language': document.documentElement.lang || ''
+                    });
+                    var address = result.address || {};
+                    var osmAddress = buildReverseAddress(address);
+
+                    applyOsmAddress(osmAddress);
+                    setSuggestedAddress(null);
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_UPDATED') : 'Address updated.', 'message');
+                } catch (error) {
+                    showGeocodeMessage((Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_REQUEST_FAILED') : 'Could not contact OpenStreetMap.') + ' ' + error.message, 'error');
+                } finally {
+                    setButtonBusy(coordsToAddressButton, false);
+                }
+            });
+        }
+
+        if (applySuggestedAddressButton) {
+            applySuggestedAddressButton.addEventListener('click', function () {
+                if (!lastSuggestedAddress) {
+                    showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_NO_SUGGESTED_ADDRESS') : 'There is no suggested address to apply.', 'warning');
+                    return;
+                }
+
+                applyOsmAddress(lastSuggestedAddress);
+                setSuggestedAddress(null);
+                showGeocodeMessage(Joomla.Text ? Joomla.Text._('COM_JEM_GEOCODE_ADDRESS_UPDATED') : 'Address updated.', 'message');
+            });
+        }
+    });
+
 </script>
 <script>
     // window.addEvent('domready', function(){
@@ -249,6 +992,17 @@ $location = JemHelper::defineCenterMap($this->form);
                     <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+                    <li class="jem-venue-geocode-actions">
+                        <label>&nbsp;</label>
+                        <div class="jem-geocode-toolbar">
+                            <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
+                            <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
+                        </div>
+                        <div class="alert alert-info d-none align-items-center gap-2 mt-2 mb-0" id="jem-suggested-address">
+                            <span id="jem-suggested-address-text"></span>
+                            <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
+                        </div>
+                    </li>
                     <li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
@@ -262,6 +1016,11 @@ $location = JemHelper::defineCenterMap($this->form);
                             </div>
                         </div>
                     </li>
+                    <?php if ($showTypeField) : ?>
+                        <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
                 </ul>
             </fieldset>
             <p>&nbsp;</p>
@@ -287,30 +1046,30 @@ $location = JemHelper::defineCenterMap($this->form);
 
                         <ul class="adminformlist label-button-line">
                             <li><label><?php echo Text::_('COM_JEM_STREET'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_street" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_street" />
                                 <input type="hidden" class="readonly" id="tmp_form_streetnumber" readonly="readonly" />
                                 <input type="hidden" class="readonly" id="tmp_form_route" readonly="readonly" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_ZIP'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_postalCode" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_postalCode" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_CITY'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_city" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_city" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_STATE'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_state" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_state" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_VENUE'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_venue" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_venue" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_country" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_country" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_LATITUDE'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_latitude" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_latitude" />
                             </li>
                             <li><label><?php echo Text::_('COM_JEM_LONGITUDE'); ?></label>
-                                <input type="text" disabled="disabled" class="readonly" id="tmp_form_longitude" readonly="readonly" />
+                                <input type="text" class="inputbox" id="tmp_form_longitude" />
                             </li>
                         </ul>
 
@@ -373,6 +1132,11 @@ $location = JemHelper::defineCenterMap($this->form);
         </form>
     </div>
 
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer(); ?>
     </div>

@@ -9,19 +9,38 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Path;
+use Joomla\String\StringHelper;
 
+use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Event model.
  */
 class JemModelEvent extends JemModelAdmin
 {
+    /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
     /**
      * Method to change the published state of one or more records.
      *
@@ -34,6 +53,10 @@ class JemModelEvent extends JemModelAdmin
      */
     public function publish(&$pks, $value = 1)
     {
+        if ((int) $value === 1 && !$this->validateSpecialDayPublishEvents($pks)) {
+            return false;
+        }
+
         // Additionally include the JEM plugins for the onContentChangeState event.
         PluginHelper::importPlugin('jem');
 
@@ -57,6 +80,36 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return $result;
+    }
+
+    /**
+     * Method to delete one or more event records.
+     *
+     * @param   array  &$pks  An array of event record primary keys.
+     *
+     * @return  boolean
+     */
+    public function delete(&$pks)
+    {
+        $pks = (array) $pks;
+
+        if (!parent::delete($pks)) {
+            return false;
+        }
+
+        $recurrenceCleaned = false;
+
+        foreach ($pks as $pk) {
+            if (JemHelper::dissolve_recurrence($pk)) {
+                $recurrenceCleaned = true;
+            }
+        }
+
+        if ($recurrenceCleaned) {
+            $this->cleanCache();
+        }
+
+        return true;
     }
 
     /**
@@ -104,6 +157,16 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
+        $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
+        JemCustomFields::applyFormLabels($form, 'event', $scope);
+
+        if ((int) JemHelper::globalattribs()->get('event_use_associated_article', 1) !== 1) {
+            $form->removeField('article_id');
+            $form->removeField('article_target_category_id');
+            $form->removeField('create_article');
+            $form->removeField('article_auto_info');
+        }
+
         return $form;
     }
 
@@ -118,12 +181,14 @@ class JemModelEvent extends JemModelAdmin
     {
         $jemsettings = JemAdmin::config();
 
-        if ($item = parent::getItem($pk)){
+        if ($item = parent::getItem($pk)) {
             // Convert the params field to an array.
             // (this may throw an exception - but there is nothings we can do)
             $registry = new Registry;
             $registry->loadString($item->attribs ?? '{}');
             $item->attribs = $registry->toArray();
+            $item->registration_intro = $item->attribs['registration_intro'] ?? '';
+            $item->registration_footer = $item->attribs['registration_footer'] ?? '';
 
             // Convert the metadata field to an array.
             $registry = new Registry;
@@ -137,16 +202,43 @@ class JemModelEvent extends JemModelAdmin
             $query = $db->getQuery(true);
             $query->select('SUM(places)');
             $query->from('#__jem_register');
-            $query->where(array('event= '.$db->quote($item->id), 'status=1', 'waiting=0'));
+            $query->where(array('event= ' . $db->quote($item->id), 'status=1', 'waiting=0'));
 
             $db->setQuery($query);
             $res = $db->loadResult();
             $item->booked = $res;
 
-            $files = JemAttachment::getAttachments('event'.$item->id);
+            $files = JemAttachment::getAttachments('event' . $item->id, true);
             $item->attachments = $files;
 
-            if ($item->id){
+            // Load links of events
+            if ($item->id) {
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__jem_links'))
+                    ->where($db->quoteName('event_id') . ' = ' . (int) $item->id)
+                    ->order($db->quoteName('ordering') . ' ASC');
+
+                $db->setQuery($query);
+                $links = $db->loadObjectList();
+
+                if ($links) {
+                    foreach ($links as &$link) {
+                        if (!empty($link->params)) {
+                            $linkParams = json_decode($link->params, true);
+                            if (is_array($linkParams)) {
+                                foreach ($linkParams as $key => $value) {
+                                    $link->$key = $value;
+                                }
+                            }
+                        }
+                    }
+                }
+                $item->event_links = $links;
+            }
+            
+
+            if ($item->id) {
                 // Store current recurrence values
                 $item->recurr_bak = new stdClass;
                 foreach (get_object_vars($item) as $k => $v) {
@@ -157,7 +249,7 @@ class JemModelEvent extends JemModelAdmin
 
             }
 
-            $item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+            $item->author_ip = JemHelper::getStoredIP();
 
             if (empty($item->id)){
                 $item->country = $jemsettings->defaultCountry;
@@ -246,6 +338,17 @@ class JemModelEvent extends JemModelAdmin
         // Check if we're in the front or back
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
+        $previousArticleContentEvent = !$new ? $this->getAssociatedArticleSyncEventData((int) $data['id']) : array();
+
+        if (!JemHelper::isContactComponentEnabled()) {
+            if ($new) {
+                $data['contactid'] = '';
+            } else {
+                unset($data['contactid']);
+            }
+        } elseif (empty($data['contactid'])) {
+            $data['contactid'] = '';
+        }
 
         // Variables
         $cats                 = $data['cats'];
@@ -259,6 +362,68 @@ class JemModelEvent extends JemModelAdmin
         $data['metadata']     = $data['metadata'] ?? '';
         $data['attribs']      = $data['attribs'] ?? '';
         $data['ordering']     = $data['ordering'] ?? '';
+        $registrationIntro    = $data['registration_intro'] ?? '';
+        $registrationFooter   = $data['registration_footer'] ?? '';
+
+        if (!is_array($data['attribs'])) {
+            $registrationAttribs = new Registry((string) $data['attribs']);
+            $data['attribs'] = $registrationAttribs->toArray();
+        }
+
+        $data['attribs']['registration_intro'] = $registrationIntro;
+        $data['attribs']['registration_footer'] = $registrationFooter;
+        unset($data['registration_intro'], $data['registration_footer']);
+
+        if (array_key_exists('type_id', $data) && $data['type_id'] === '') {
+            $data['type_id'] = null;
+        }
+        if (array_key_exists('article_id', $data)) {
+            $data['article_id'] = (int) $data['article_id'];
+        }
+        $customFieldErrors = array();
+        if (!JemCustomFields::validateAndSanitizeData('event', $data, $customFieldErrors)) {
+            $this->setError(implode('<br>', $customFieldErrors));
+            return false;
+        }
+        if (!$this->validateOnlineMeetingData($data)) {
+            return false;
+        }
+        $createArticleMode = isset($data['create_article']) ? (int) $data['create_article'] : 0;
+        $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;
+        unset($data['create_article']);
+        unset($data['article_target_category_id']);
+        $articleUsage = 'information';
+
+        if (is_array($data['attribs'] ?? null)) {
+            $articleUsage = (string) ($data['attribs']['article_usage'] ?? $articleUsage);
+        } elseif (is_string($data['attribs'] ?? null) && trim($data['attribs']) !== '') {
+            $articleAttribs = new Registry($data['attribs']);
+            $articleUsage = (string) $articleAttribs->get('article_usage', $articleUsage);
+        }
+
+        $associatedArticlesEnabled = (int) JemHelper::globalattribs()->get('event_use_associated_article', 1) === 1;
+
+        if ($associatedArticlesEnabled && $articleUsage === 'content' && empty($data['article_id']) && $createArticleMode === 0) {
+            foreach ($this->getAssociatedArticleCategoryOptions($cats) as $articleCategoryOption) {
+                if ((int) $articleCategoryOption->article_create_mode === 1) {
+                    $createArticleMode = 2;
+                    break;
+                }
+            }
+        }
+
+        if (!$associatedArticlesEnabled || $articleUsage === 'none') {
+            $data['article_id'] = 0;
+            $createArticleMode  = 0;
+        } elseif ($articleUsage === 'content' && empty($data['article_id']) && $createArticleMode === 0) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_REQUIRES_ARTICLE'));
+
+            return false;
+        } elseif ($articleUsage === 'content' && empty($data['article_id']) && !$this->resolveAssociatedArticleCategory($cats, $createArticleMode, $new, $articleTargetCategoryId)) {
+            return false;
+        } elseif (!empty($data['article_id']) && !$this->validateAssociatedArticleSelection((int) $data['article_id'], $cats)) {
+            return false;
+        }
 
         // convert international date formats...
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -273,6 +438,10 @@ class JemModelEvent extends JemModelAdmin
         if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
             $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
             $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
+        }
+
+        if (!$this->validateSpecialDayEventDates($data)) {
+            return false;
         }
 
         // Load the event from the database, check if the event is the initial event (new, root, and not a recurrence).
@@ -294,9 +463,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Times
-            if ($_REQUEST['starthours']){
-                $starthours    = $jinput->get('starthours', '', 'int');
-                $startminutes = $jinput->get('startminutes', '', 'int');
+            $starthours = $jinput->get('starthours', 0, 'int');
+            if ($starthours){
+                $startminutes = $jinput->get('startminutes', 0, 'int');
                 if ($startminutes){
                     $data['times'] = str_pad($starthours,2,'0', STR_PAD_LEFT) . ':' . str_pad($startminutes,2,'0', STR_PAD_LEFT) . ':00';
                 } else {
@@ -307,9 +476,9 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Endtimes
-            if ($_REQUEST['endhours']){
-                $endhours   = $jinput->get('endhours', '', 'int');
-                $endminutes = $jinput->get('endminutes', '', 'int');
+            $endhours = $jinput->get('endhours', 0, 'int');
+            if ($endhours){
+                $endminutes = $jinput->get('endminutes', 0, 'int');
 
                 if ($endminutes){
                     $data['endtimes'] = str_pad($endhours,2,'0', STR_PAD_LEFT) . ':' . str_pad($endminutes,2,'0', STR_PAD_LEFT) . ':00';
@@ -348,8 +517,8 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Contact
-            if($data['contactid'] == ''){
-                $data['contactid'] = 0;
+            if (JemHelper::isContactComponentEnabled() && empty($data['contactid'])) {
+                $data['contactid'] = '';
             }
 
             // Times <= Endtimes
@@ -431,16 +600,16 @@ class JemModelEvent extends JemModelAdmin
         }
 
         // set to null if registration is empty
-        if($data['registra_from'] == ''){
+        if (empty($data['registra_from'])) {
             $data['registra_from'] = null;
         }
-        if($data['registra_until'] == ''){
+        if (empty($data['registra_until'])) {
             $data['registra_until'] = null;
         }
-        if($data['unregistra_until'] == ''){
+        if (empty($data['unregistra_until'])) {
             $data['unregistra_until'] = null;
         }
-        if($data['reginvitedonly']== null){
+        if (empty($data['reginvitedonly'])) {
             $data['reginvitedonly'] = 0;
         }
 
@@ -493,6 +662,33 @@ class JemModelEvent extends JemModelAdmin
                 unset($data['modified_by']);
                 unset($data['version']);
                 unset($data['hits']);
+                $data['publish_up'] = Factory::getDate()->toSql();
+            }
+
+            // For new events with no image, use the first category that has image_as_default enabled.
+            if ($new && empty($data['datimage']) && !empty($cats) && is_array($cats)) {
+                $catIds = array_values(array_filter(array_map('intval', $cats)));
+                if (!empty($catIds)) {
+                    try {
+                        $dbCat = Factory::getContainer()->get('DatabaseDriver');
+                        $catQuery = $dbCat->getQuery(true);
+                        $catQuery->select($dbCat->quoteName(['id', 'image']))
+                                 ->from($dbCat->quoteName('#__jem_categories'))
+                                 ->whereIn($dbCat->quoteName('id'), $catIds)
+                                 ->where($dbCat->quoteName('image_as_default') . ' = 1')
+                                 ->where($dbCat->quoteName('image') . ' != ' . $dbCat->quote(''));
+                        $dbCat->setQuery($catQuery);
+                        $catImageMap = $dbCat->loadObjectList('id');
+                        foreach ($catIds as $catId) {
+                            if (isset($catImageMap[$catId])) {
+                                $data['datimage'] = 'category_' . $catImageMap[$catId]->image;
+                                break;
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Column may not exist yet if DB migration hasn't run; skip silently.
+                    }
+                }
             }
 
             // Save the event
@@ -516,12 +712,40 @@ class JemModelEvent extends JemModelAdmin
                     $attach_name = $jinput->post->get('attach-name', array(), 'array');
                     $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
                     $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                    $attach_order = $jinput->post->get('attach-order', array(), 'array');
+                    $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                     foreach ($attachments as $n => &$a) {
                         $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
                         $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
                         $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                        $a['ordering'] = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                        $a['frontend'] = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                     }
                     JemAttachment::postUpload($attachments, 'event' . $pk);
+                }
+
+                // Update existing attachments, but only when they belong to this event.
+                $old = array();
+                $old['id'] = $jinput->post->get('attached-id', array(), 'array');
+                $old['name'] = $jinput->post->get('attached-name', array(), 'array');
+                $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
+                $old['access'] = $jinput->post->get('attached-access', array(), 'array');
+                $old['ordering'] = $jinput->post->get('attached-order', array(), 'array');
+                $old['frontend'] = $jinput->post->get('attached-frontend', array(), 'array');
+
+                foreach ($old['id'] as $k => $id) {
+                    $attach = array();
+                    $attach['id'] = $id;
+                    $attach['name'] = $old['name'][$k] ?? '';
+                    $attach['description'] = $old['description'][$k] ?? '';
+                    $attach['ordering'] = $old['ordering'][$k] ?? 0;
+                    if (array_key_exists($k, $old['frontend'])) {
+                        $attach['frontend'] = $old['frontend'][$k];
+                    }
+                    if ($allowed && array_key_exists($k, $old['access'])) {
+                        $attach['access'] = $old['access'][$k];
+                    } // else don't touch this field
+                    JemAttachment::update($attach, 'event' . $pk);
                 }
 
                 // Store cats
@@ -545,6 +769,31 @@ class JemModelEvent extends JemModelAdmin
                 $table->load($pk);
                 if (($table->recurrence_number > 0) && ($table->dates != null)) {
                     JemHelper::cleanup(2); // 2 = force on save, needs special attention
+                }
+
+                // Store links event
+                if (isset($data['event_links']))
+                {
+                    if (!$this->validateLinkData($data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_VALIDATE_LINKS'));
+                        return false;
+                    }
+
+                    if (!$this->saveLinks($pk, $data['event_links']))
+                    {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+                        return false;
+                    }
+                }
+
+                $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
+                if (!empty($data['article_id'])
+                    && $this->eventUsesAssociatedArticleAsContent($data)
+                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
+                    $this->updateAssociatedArticleFromEvent((int) $pk, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage'));
+                } else {
+                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
                 }
             }
         } else {
@@ -572,12 +821,18 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
             foreach ($events as $event) {
                 $fieldsupdated = "";
+
+                if (!$this->validateSpecialDayEventDates($event)) {
+                    $saved = false;
+                    Factory::getApplication()->enqueueMessage($this->getError() . ' [ID:' . (int) ($event['id'] ?? 0) . ']', 'error');
+                    continue;
+                }
 
                 // save the event
                 $saved = parent::save($event);
@@ -603,7 +858,18 @@ class JemModelEvent extends JemModelAdmin
                 $this->setState($this->getName() . '.id', $table->id);
             }
 
-			// Update  and new attachment file
+            if ($saved) {
+                $this->createAssociatedArticleIfRequested((int) $table->id, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
+                if (!empty($data['article_id'])
+                    && $this->eventUsesAssociatedArticleAsContent($data)
+                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
+                    $this->updateAssociatedArticleFromEvent((int) $table->id, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage'));
+                } else {
+                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
+                }
+            }
+
+            // Update  and new attachment file
             $allowed = $backend || ($jemsettings->attachmentenabled > 0);
 
             if ($allowed) {
@@ -612,10 +878,14 @@ class JemModelEvent extends JemModelAdmin
                 $attach_name = $jinput->post->get('attach-name', array(), 'array');
                 $attach_descr = $jinput->post->get('attach-desc', array(), 'array');
                 $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                $attach_order = $jinput->post->get('attach-order', array(), 'array');
+                $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                 foreach ($attachments as $n => &$a) {
                     $a['customname'] = array_key_exists($n, $attach_access) ? $attach_name[$n] : '';
                     $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n] : '';
                     $a['access'] = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                    $a['ordering'] = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                    $a['frontend'] = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                 }
                 JemAttachment::postUpload($attachments, 'event' . $this->eventid);
             }
@@ -626,20 +896,1554 @@ class JemModelEvent extends JemModelAdmin
             $old['name'] = $jinput->post->get('attached-name', array(), 'array');
             $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
             $old['access'] = $jinput->post->get('attached-access', array(), 'array');
+            $old['ordering'] = $jinput->post->get('attached-order', array(), 'array');
+            $old['frontend'] = $jinput->post->get('attached-frontend', array(), 'array');
 
             foreach ($old['id'] as $k => $id) {
                 $attach = array();
                 $attach['id'] = $id;
-                $attach['name'] = $old['name'][$k];
-                $attach['description'] = $old['description'][$k];
-                if ($allowed) {
+                $attach['name'] = $old['name'][$k] ?? '';
+                $attach['description'] = $old['description'][$k] ?? '';
+                $attach['ordering'] = $old['ordering'][$k] ?? 0;
+                if (array_key_exists($k, $old['frontend'])) {
+                    $attach['frontend'] = $old['frontend'][$k];
+                }
+                if ($allowed && array_key_exists($k, $old['access'])) {
                     $attach['access'] = $old['access'][$k];
                 } // else don't touch this field
-                JemAttachment::update($attach);
+                JemAttachment::update($attach, 'event' . $this->eventid);
             }
         }
 
+        if ($saved) {
+            $stateName = $this->getName();
+            $savedId   = (int) $this->getState($stateName . '.id');
+
+            if (!$savedId && !empty($data['id'])) {
+                $savedId = (int) $data['id'];
+            }
+
+            if ($savedId) {
+                $this->setState('event.id', $savedId);
+                $this->setState($stateName . '.id', $savedId);
+            }
+
+            $this->setState('event.new', $new);
+            $this->setState($stateName . '.new', $new);
+        }
+
         return $saved;
+    }
+
+    /**
+     * Create and associate an unpublished Joomla article when requested.
+     *
+     * @param   integer       $eventId     Event id.
+     * @param   array         $eventData   Event data being saved.
+     * @param   array|string  $categories  Selected JEM category ids.
+     * @param   integer       $mode        0 disabled, 1 manual create, 2 category auto.
+     * @param   boolean       $new         True when saving a new event.
+     * @param   integer       $targetId    Selected Joomla category id.
+     *
+     * @return  boolean
+     */
+    protected function createAssociatedArticleIfRequested($eventId, array $eventData, $categories, $mode, $new, $targetId = 0)
+    {
+        $eventId = (int) $eventId;
+        $mode    = (int) $mode;
+        $targetId = (int) $targetId;
+
+        if ($eventId <= 0 || $mode === 0 || !empty($eventData['article_id'])) {
+            return true;
+        }
+
+        $articleCategoryId = $this->resolveAssociatedArticleCategory($categories, $mode, $new, $targetId);
+
+        if (!$articleCategoryId) {
+            return !$this->eventUsesAssociatedArticleAsContent($eventData);
+        }
+
+        $user = Factory::getApplication()->getIdentity();
+
+        if (!$user->authorise('core.create', 'com_content.category.' . $articleCategoryId) && !$user->authorise('core.create', 'com_content')) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_PERMISSION'), 'warning');
+
+            return true;
+        }
+
+        $eventData = $this->prepareAssociatedArticleEventData($eventData, $eventId);
+        $existingArticleId = $this->findAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
+
+        if ($existingArticleId) {
+            $article = (object) array(
+                'id'         => $eventId,
+                'article_id' => $existingArticleId
+            );
+
+            Factory::getContainer()->get('DatabaseDriver')->updateObject('#__jem_events', $article, 'id');
+
+            return true;
+        }
+
+        $articleId = $this->createAssociatedContentArticle($eventData, $articleCategoryId, $eventId);
+
+        if (!$articleId) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_FAILED'), 'warning');
+
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $article = (object) array(
+            'id'         => $eventId,
+            'article_id' => $articleId
+        );
+
+        $db->updateObject('#__jem_events', $article, 'id');
+        $this->applyRecurringAssociatedArticleMode($eventId, $articleId, $eventData, $articleCategoryId);
+        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
+        $this->setAssociatedArticleCreationState($articleId, $eventData);
+
+        return true;
+    }
+
+    /**
+     * Prevent event scheduling on configured blocking Special Days.
+     */
+    protected function validateSpecialDayEventDates(array $data)
+    {
+        if (array_key_exists('published', $data) && (int) $data['published'] !== 1) {
+            return true;
+        }
+
+        $start = trim((string) ($data['dates'] ?? ''));
+
+        if ($start === '' || $start === '0000-00-00') {
+            return true;
+        }
+
+        $end = trim((string) ($data['enddates'] ?? ''));
+        if ($end === '' || $end === '0000-00-00') {
+            $end = $start;
+        }
+
+        if ($end < $start) {
+            $end = $start;
+        }
+
+        $blockedDays = JemHelper::calendarBlockedSpecialDays($start, $end);
+
+        if (!$blockedDays) {
+            return true;
+        }
+
+        $messages = array();
+        foreach ($blockedDays as $date => $specialDays) {
+            $labels = array();
+            foreach ($specialDays as $specialDay) {
+                $labels[] = trim((string) ($specialDay['title'] ?: $specialDay['type']));
+            }
+            $labels = array_values(array_unique(array_filter($labels)));
+            $messages[] = $date . ($labels ? ' (' . implode(', ', $labels) . ')' : '');
+        }
+
+        $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_BLOCKED_SPECIAL_DAY', implode(', ', $messages)));
+
+        return false;
+    }
+
+    /**
+     * Prevent publishing existing events on configured blocking Special Days.
+     *
+     * @param   array  $pks  Event ids being published.
+     *
+     * @return  boolean
+     */
+    protected function validateSpecialDayPublishEvents($pks)
+    {
+        $pks = array_values(array_filter(array_map('intval', (array) $pks)));
+
+        if (!$pks) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'title', 'dates', 'enddates')))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $pks) . ')');
+
+        try {
+            $db->setQuery($query);
+            $events = $db->loadAssocList() ?: array();
+        } catch (RuntimeException $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        foreach ($events as $event) {
+            $event['published'] = 1;
+
+            if (!$this->validateSpecialDayEventDates($event)) {
+                $title = trim((string) ($event['title'] ?? ''));
+                $prefix = $title !== '' ? $title . ' [ID:' . (int) $event['id'] . ']: ' : '[ID:' . (int) $event['id'] . ']: ';
+                $this->setError($prefix . $this->getError());
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Store controller-facing state for a newly created associated article.
+     *
+     * @param   integer  $articleId  Created article id.
+     * @param   array    $eventData  Event data being saved.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleCreationState($articleId, array $eventData)
+    {
+        $articleId = (int) $articleId;
+
+        if ($articleId <= 0 || !$this->eventUsesAssociatedArticleAsContent($eventData)) {
+            return;
+        }
+
+        $globalAttribs = JemHelper::globalattribs();
+        $createAction = (string) $globalAttribs->get('event_article_content_create_action', 'copy_description');
+        $description = trim(strip_tags((string) ($eventData['introtext'] ?? '') . ' ' . (string) ($eventData['fulltext'] ?? '')));
+
+        $this->setState('event.article_content_article_id', $articleId);
+        $this->setState('event.article_content_create_action', $createAction);
+        $this->setState('event.article_content_empty', $description === '');
+        $this->setState('event.article_content_edit_url', 'index.php?option=com_content&task=article.edit&id=' . $articleId);
+    }
+
+    /**
+     * Complete article creation data with the event values saved in the database.
+     *
+     * @param   array    $eventData  Event form data.
+     * @param   integer  $eventId    Event id.
+     *
+     * @return  array
+     */
+    protected function prepareAssociatedArticleEventData(array $eventData, $eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return $eventData;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('title', 'dates', 'times', 'enddates', 'endtimes', 'publish_up', 'publish_down', 'language', 'introtext', 'fulltext', 'attribs', 'datimage', 'fullimage')))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+
+        try {
+            $db->setQuery($query);
+            $savedEvent = (array) $db->loadAssoc();
+        } catch (Throwable $e) {
+            return $eventData;
+        }
+
+        if (empty($savedEvent)) {
+            return $eventData;
+        }
+
+        foreach ($savedEvent as $field => $value) {
+            if (!array_key_exists($field, $eventData) || $eventData[$field] === '' || $eventData[$field] === null) {
+                $eventData[$field] = $value;
+            }
+        }
+
+        return $eventData;
+    }
+
+    /**
+     * Resolve the Joomla category that may receive the associated article.
+     *
+     * @param   array|string  $categories  Selected JEM category ids.
+     * @param   integer       $mode        1 manual create, 2 category auto.
+     * @param   boolean       $new         True when saving a new event.
+     * @param   integer       $targetId    Selected Joomla category id.
+     *
+     * @return  integer
+     */
+    protected function resolveAssociatedArticleCategory($categories, $mode, $new, $targetId = 0)
+    {
+        $mode = (int) $mode;
+        $targetId = (int) $targetId;
+        $associations = $this->getAssociatedArticleCategoryOptions($categories);
+
+        if ($mode === 2) {
+            $autoConfigured = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 1;
+            });
+            $auto = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 1 && (int) $category->article_category_id > 0;
+            });
+
+            if ($autoConfigured && !$auto) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            if (!$autoConfigured) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_NOT_ENABLED'), 'warning');
+
+                return 0;
+            }
+
+            return $this->resolveAssociatedArticleCategoryFromCandidates($auto, $targetId, true);
+        }
+
+        if ($mode === 1) {
+            $manualConfigured = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 2;
+            });
+            $manual = array_filter($associations, static function ($category) {
+                return (int) $category->article_create_mode === 2 && (int) $category->article_category_id > 0;
+            });
+
+            if ($manual) {
+                return $this->resolveAssociatedArticleCategoryFromCandidates($manual, $targetId, false);
+            }
+
+            if (!$targetId) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            if (!$this->contentCategoryExists($targetId)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_CATEGORY'), 'warning');
+
+                return 0;
+            }
+
+            return $targetId;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Resolve one Joomla category from the selected JEM category associations.
+     *
+     * @param   array    $candidates  Candidate JEM categories.
+     * @param   integer  $targetId    Selected Joomla category id.
+     * @param   boolean  $auto        True when resolving automatic creation.
+     *
+     * @return  integer
+     */
+    protected function resolveAssociatedArticleCategoryFromCandidates(array $candidates, $targetId, $auto)
+    {
+        $articleCategoryIds = array_values(array_unique(array_map('intval', array_column($candidates, 'article_category_id'))));
+
+        if (!$articleCategoryIds) {
+            if (!$auto) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_NO_CATEGORY'), 'warning');
+            }
+
+            return 0;
+        }
+
+        if (count($articleCategoryIds) === 1) {
+            return (int) $articleCategoryIds[0];
+        }
+
+        if ($targetId && in_array((int) $targetId, $articleCategoryIds, true)) {
+            return (int) $targetId;
+        }
+
+        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_SELECT_ASSOCIATION'), 'warning');
+
+        return 0;
+    }
+
+    /**
+     * Get selected JEM categories with their associated Joomla categories.
+     *
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleCategoryOptions($categories)
+    {
+        if (is_string($categories)) {
+            $categories = explode(',', $categories);
+        }
+
+        if (!is_array($categories)) {
+            return array();
+        }
+
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categories))));
+
+        if (!$categoryIds) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('id'),
+                $db->quoteName('article_category_id'),
+                $db->quoteName('article_create_mode')
+            ))
+            ->from($db->quoteName('#__jem_categories'))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $categoryIds) . ')');
+
+        try {
+            $db->setQuery($query);
+            $categoryMap = $db->loadObjectList('id') ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return array();
+        }
+
+        $categories = array();
+
+        foreach ($categoryIds as $categoryId) {
+            if (empty($categoryMap[$categoryId])) {
+                continue;
+            }
+
+            $categories[] = $categoryMap[$categoryId];
+        }
+
+        return $categories;
+    }
+
+    /**
+     * Check whether a selected existing article is valid for the selected JEM categories.
+     *
+     * @param   integer       $articleId   Joomla article id.
+     * @param   array|string  $categories  Selected JEM category ids.
+     *
+     * @return  boolean
+     */
+    protected function validateAssociatedArticleSelection($articleId, $categories)
+    {
+        $articleId = (int) $articleId;
+
+        if ($articleId <= 0) {
+            return true;
+        }
+
+        $articleCategoryId = $this->getContentArticleCategoryId($articleId);
+
+        if (!$articleCategoryId) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'));
+
+            return false;
+        }
+
+        $associations = $this->getAssociatedArticleCategoryOptions($categories);
+        $activeAssociations = array_filter($associations, static function ($category) {
+            return (int) $category->article_create_mode !== 0 && (int) $category->article_category_id > 0;
+        });
+        if (!$activeAssociations) {
+            return true;
+        }
+
+        $allowedCategoryIds = array_values(array_unique(array_map('intval', array_column($activeAssociations, 'article_category_id'))));
+
+        if (!in_array($articleCategoryId, $allowedCategoryIds, true)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_CREATE_CATEGORY_NOT_ALLOWED'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the category id of a Joomla article.
+     *
+     * @param   integer  $articleId  Joomla article id.
+     *
+     * @return  integer
+     */
+    protected function getContentArticleCategoryId($articleId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('id') . ' = ' . (int) $articleId);
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return 0;
+    }
+
+    /**
+     * Check whether a Joomla article category exists.
+     *
+     * @param   integer  $categoryId  Joomla category id.
+     *
+     * @return  boolean
+     */
+    protected function contentCategoryExists($categoryId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__categories'))
+            ->where($db->quoteName('id') . ' = ' . (int) $categoryId)
+            ->where($db->quoteName('extension') . ' = ' . $db->quote('com_content'))
+            ->where($db->quoteName('published') . ' IN (0,1)');
+
+        try {
+            $db->setQuery($query);
+
+            return (int) $db->loadResult() > 0;
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return false;
+    }
+
+    /**
+     * Find an existing Joomla article that matches the deterministic JEM alias.
+     *
+     * @param   array    $eventData          Event data.
+     * @param   integer  $articleCategoryId  Joomla article category id.
+     * @param   integer  $eventId            Event id.
+     *
+     * @return  integer
+     */
+    protected function findAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId)
+    {
+        $eventTitle = trim((string) ($eventData['title'] ?? ''));
+        $alias = $this->buildAssociatedArticleAlias($eventTitle, (int) $eventId);
+
+        if ($alias === '') {
+            return 0;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('catid') . ' = ' . (int) $articleCategoryId)
+            ->where($db->quoteName('alias') . ' = ' . $db->quote($alias))
+            ->where($db->quoteName('state') . ' != -2');
+
+        try {
+            $db->setQuery($query, 0, 1);
+
+            return (int) $db->loadResult();
+        } catch (Throwable $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Create an unpublished com_content article through Joomla's content model.
+     *
+     * @param   array    $eventData          Event data.
+     * @param   integer  $articleCategoryId  Joomla article category id.
+     * @param   integer  $eventId            Event id.
+     *
+     * @return  integer
+     */
+    protected function createAssociatedContentArticle(array $eventData, $articleCategoryId, $eventId = 0, $recurrenceCounter = null)
+    {
+        $app = Factory::getApplication();
+
+        try {
+            $component = $app->bootComponent('com_content');
+            $factory = $component->getMVCFactory();
+            $model = $factory->createModel('Article', 'Administrator', array('ignore_request' => true));
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return 0;
+        }
+
+        if (!$model) {
+            return 0;
+        }
+
+        $user = $app->getIdentity();
+        $eventTitle = trim((string) ($eventData['title'] ?? ''));
+        $title = $this->buildAssociatedArticleTitle($eventData, $eventId, $recurrenceCounter);
+        $categoryAccess = 1;
+        $eventId = (int) $eventId;
+        $articleText = $this->getAssociatedArticleInitialText($eventData);
+        $hasArticleText = trim(strip_tags((string) $articleText['introtext'] . ' ' . (string) $articleText['fulltext'])) !== '';
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('access'))
+                ->from($db->quoteName('#__categories'))
+                ->where($db->quoteName('id') . ' = ' . (int) $articleCategoryId)
+                ->where($db->quoteName('extension') . ' = ' . $db->quote('com_content'));
+            $db->setQuery($query);
+            $categoryAccess = (int) $db->loadResult() ?: 1;
+        } catch (Throwable $e) {
+            $categoryAccess = 1;
+        }
+
+        $articleAccess = $this->getAssociatedArticleAccess($eventData, $categoryAccess);
+
+        $article = array(
+            'id'          => 0,
+            'catid'       => (int) $articleCategoryId,
+            'title'       => $title,
+            'alias'       => $this->buildAssociatedArticleAlias($eventTitle, $eventId),
+            'introtext'   => $articleText['introtext'],
+            'fulltext'    => $articleText['fulltext'],
+            'state'       => $hasArticleText ? 1 : 0,
+            'access'      => $articleAccess,
+            'language'    => !empty($eventData['language']) ? $eventData['language'] : '*',
+            'created_by'  => (int) $user->id,
+            'metadata'    => array(),
+            'attribs'     => array()
+        );
+        $articleImages = $this->getAssociatedArticleInitialImages($eventData);
+
+        if ($articleImages) {
+            $article['images'] = $articleImages;
+        }
+
+        $created = $this->getAssociatedArticleCreatedDate($eventData);
+
+        if ($created !== '') {
+            $article['created'] = $created;
+        }
+
+        try {
+            if (!$model->save($article)) {
+                $this->setError($model->getError());
+
+                return 0;
+            }
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return 0;
+        }
+
+        return (int) $model->getState($model->getName() . '.id');
+    }
+
+    /**
+     * Resolve the access level used by newly-created associated Joomla articles.
+     *
+     * @param   array    $eventData       Event data.
+     * @param   integer  $categoryAccess  Joomla category access level.
+     *
+     * @return  integer
+     */
+    protected function getAssociatedArticleAccess(array $eventData, $categoryAccess)
+    {
+        $access = (int) JemHelper::globalattribs()->get('event_associated_article_access', 0);
+
+        if ($access <= 0) {
+            return (int) $categoryAccess ?: 1;
+        }
+
+        return $access;
+    }
+
+    /**
+     * Get initial Joomla article image fields for a newly-created associated article.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleInitialImages(array $eventData)
+    {
+        $mode = (string) JemHelper::globalattribs()->get('event_associated_article_image_mode', 'intro');
+
+        if (!in_array($mode, array('intro', 'full', 'both'), true)) {
+            return array();
+        }
+
+        $introImage = $this->getEventImagePathForArticle($eventData, 'datimage');
+        $fullImage  = $this->getEventImagePathForArticle($eventData, 'fullimage');
+
+        if ($introImage === '' && $fullImage === '') {
+            return array();
+        }
+
+        if ($fullImage === '') {
+            $fullImage = $introImage;
+        }
+        if ($introImage === '') {
+            $introImage = $fullImage;
+        }
+
+        $images = array();
+
+        if ($mode === 'intro' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'datimage') !== '') {
+            $images['image_intro'] = $introImage;
+        }
+
+        if ($mode === 'full' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'fullimage') !== '') {
+            $images['image_fulltext'] = $fullImage;
+        }
+
+        return $images;
+    }
+
+    /**
+     * Convert a JEM event image value into a Joomla article image path.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  string
+     */
+    protected function getEventImagePathForArticle(array $eventData, $field = 'datimage')
+    {
+        $image = trim((string) ($eventData[$field] ?? ''));
+
+        if ($image === '') {
+            return '';
+        }
+
+        $image = ltrim(str_replace('\\', '/', $image), '/');
+
+        if (strpos($image, '/') !== false) {
+            return $image;
+        }
+
+        return 'images/jem/events/' . $image;
+    }
+
+    /**
+     * Get initial Joomla article text for a newly-created associated article.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleInitialText(array $eventData)
+    {
+        $text = array(
+            'introtext' => '',
+            'fulltext'  => ''
+        );
+
+        if (!$this->eventUsesAssociatedArticleAsContent($eventData)) {
+            return $text;
+        }
+
+        if ((string) JemHelper::globalattribs()->get('event_article_content_create_action', 'copy_description') !== 'copy_description') {
+            return $text;
+        }
+
+        $text['introtext'] = (string) ($eventData['introtext'] ?? '');
+        $text['fulltext'] = (string) ($eventData['fulltext'] ?? '');
+
+        return $text;
+    }
+
+    /**
+     * Load an existing event only when it currently uses an associated article as event content.
+     *
+     * @param   integer  $eventId  Event id.
+     *
+     * @return  array
+     */
+    protected function getAssociatedArticleSyncEventData($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array(
+                'id',
+                'title',
+                'alias',
+                'introtext',
+                'fulltext',
+                'article_id',
+                'meta_keywords',
+                'meta_description',
+                'metadata',
+                'datimage',
+                'fullimage',
+                'publish_up',
+                'publish_down',
+                'attribs',
+                'dates',
+                'times',
+                'language'
+            )))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+
+        try {
+            $db->setQuery($query);
+            $event = (array) $db->loadAssoc();
+        } catch (Throwable $e) {
+            return array();
+        }
+
+        if (!$event || empty($event['article_id']) || !$this->eventUsesAssociatedArticleAsContent($event)) {
+            return array();
+        }
+
+        return $event;
+    }
+
+    /**
+     * Store controller-facing state when an event-content article may need updating.
+     *
+     * @param   array    $oldEventData  Event data before save.
+     * @param   array    $newEventData  Event data after save.
+     * @param   integer  $eventId       Event id.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleSyncState(array $oldEventData, array $newEventData, $eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId <= 0 || empty($oldEventData['article_id'])) {
+            return;
+        }
+
+        $newEventData = $this->prepareAssociatedArticleEventData($newEventData, $eventId);
+
+        if (empty($newEventData['article_id'])) {
+            $newEventData['article_id'] = $oldEventData['article_id'];
+        }
+
+        if (!$this->eventUsesAssociatedArticleAsContent($newEventData)) {
+            return;
+        }
+
+        $changes = $this->getAssociatedArticleSyncChanges($oldEventData, $newEventData);
+
+        if (!$changes) {
+            return;
+        }
+
+        $imageChanges = array_intersect_key($changes, array('datimage' => true, 'fullimage' => true));
+        if ($imageChanges && $this->updateAssociatedArticleFromEvent($eventId, array_keys($imageChanges))) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_AUTO_UPDATED', implode(', ', array_values($imageChanges))),
+                'message'
+            );
+            $changes = array_diff_key($changes, $imageChanges);
+        }
+
+        if (!$changes) {
+            return;
+        }
+
+        $action = (string) JemHelper::globalattribs()->get('event_article_content_change_action', 'ask');
+
+        if ($action === 'none') {
+            return;
+        }
+
+        if ($action === 'auto') {
+            if ($this->updateAssociatedArticleFromEvent($eventId, array_keys($changes))) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_AUTO_UPDATED', implode(', ', array_values($changes))),
+                    'message'
+                );
+            }
+
+            return;
+        }
+
+        $this->setState('event.article_sync_event_id', $eventId);
+        $this->setState('event.article_sync_article_id', (int) $oldEventData['article_id']);
+        $this->setState('event.article_sync_fields', implode(',', array_keys($changes)));
+        $this->setState('event.article_sync_labels', implode(', ', array_values($changes)));
+    }
+
+    /**
+     * Return event fields changed since the previous save and relevant for the associated article.
+     *
+     * @param   array  $oldEventData  Previous event data.
+     * @param   array  $newEventData  Current event data.
+     *
+     * @return  array  Field => label.
+     */
+    protected function getAssociatedArticleSyncChanges(array $oldEventData, array $newEventData)
+    {
+        $fields = array(
+            'title'            => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_TITLE'),
+            'alias'            => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_ALIAS'),
+            'introtext'        => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_INTROTEXT'),
+            'fulltext'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_FULLTEXT'),
+            'meta_keywords'    => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METAKEYWORDS'),
+            'meta_description' => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_METADESCRIPTION'),
+            'datimage'         => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_IMAGE'),
+            'fullimage'        => Text::_('COM_JEM_EVENT_ARTICLE_SYNC_FIELD_FULLIMAGE')
+        );
+        $changes = array();
+
+        foreach ($fields as $field => $label) {
+            $oldValue = $this->normaliseAssociatedArticleSyncValue($oldEventData[$field] ?? '');
+            $newValue = $this->normaliseAssociatedArticleSyncValue($newEventData[$field] ?? '');
+
+            if ($oldValue !== $newValue) {
+                $changes[$field] = $label;
+            }
+        }
+
+        return $changes;
+    }
+
+    /**
+     * Normalise a field value before comparing event/article sync changes.
+     *
+     * @param   mixed  $value  Value.
+     *
+     * @return  string
+     */
+    protected function normaliseAssociatedArticleSyncValue($value)
+    {
+        if (is_array($value) || is_object($value)) {
+            $value = json_encode($value);
+        }
+
+        return trim((string) $value);
+    }
+
+    /**
+     * Update the associated Joomla article from the current JEM event fields.
+     *
+     * @param   integer       $eventId  Event id.
+     * @param   array|string  $fields   Fields to update.
+     *
+     * @return  boolean
+     */
+    public function updateAssociatedArticleFromEvent($eventId, $fields)
+    {
+        $eventId = (int) $eventId;
+        $eventData = $this->getAssociatedArticleSyncEventData($eventId);
+
+        if ($eventId <= 0 || !$eventData) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        if (is_string($fields)) {
+            $fields = explode(',', $fields);
+        }
+
+        $fields = array_values(array_unique(array_filter(array_map('trim', (array) $fields))));
+        $allowed = array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage');
+        $fields = array_values(array_intersect($fields, $allowed));
+
+        if (!$fields) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        $articleId = (int) $eventData['article_id'];
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__content'))
+            ->where($db->quoteName('id') . ' = ' . $articleId)
+            ->where($db->quoteName('state') . ' != -2');
+
+        try {
+            $db->setQuery($query);
+            $article = (object) $db->loadAssoc();
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        if (empty($article->id)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
+
+            return false;
+        }
+
+        $update = (object) array(
+            'id'    => $articleId,
+            'state' => 1,
+        );
+        $nullDate = $db->getNullDate();
+        $publishUp = trim((string) ($eventData['publish_up'] ?? ''));
+        $publishDown = trim((string) ($eventData['publish_down'] ?? ''));
+
+        $update->publish_up = ($publishUp !== '' && $publishUp !== $nullDate) ? $publishUp : Factory::getDate()->toSql();
+        $update->publish_down = ($publishDown !== '' && $publishDown !== $nullDate) ? $publishDown : null;
+
+        if (in_array('title', $fields, true)) {
+            $update->title = $this->buildAssociatedArticleTitle($eventData, $eventId);
+        }
+
+        if (in_array('alias', $fields, true)) {
+            $update->alias = $this->buildAssociatedArticleAlias((string) ($eventData['title'] ?? ''), $eventId);
+        }
+
+        if (in_array('introtext', $fields, true)) {
+            $update->introtext = (string) ($eventData['introtext'] ?? '');
+        }
+
+        if (in_array('fulltext', $fields, true)) {
+            $update->fulltext = (string) ($eventData['fulltext'] ?? '');
+        }
+
+        if (in_array('meta_keywords', $fields, true)) {
+            $update->metakey = (string) ($eventData['meta_keywords'] ?? '');
+        }
+
+        if (in_array('meta_description', $fields, true)) {
+            $update->metadesc = (string) ($eventData['meta_description'] ?? '');
+        }
+
+        if (array_intersect(array('datimage', 'fullimage'), $fields)) {
+            $update->images = $this->mergeAssociatedArticleImagesFromEvent((string) ($article->images ?? ''), $eventData);
+        }
+
+        try {
+            $db->updateObject('#__content', $update, 'id');
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Merge the event image into the Joomla article image JSON.
+     *
+     * @param   string  $articleImages  Current article images JSON.
+     * @param   array   $eventData      Event data.
+     *
+     * @return  string
+     */
+    protected function mergeAssociatedArticleImagesFromEvent($articleImages, array $eventData)
+    {
+        $images = json_decode((string) $articleImages, true);
+
+        if (!is_array($images)) {
+            $images = array();
+        }
+
+        $mode = (string) JemHelper::globalattribs()->get('event_associated_article_image_mode', 'intro');
+        $introImage = $this->getEventImagePathForArticle($eventData, 'datimage');
+        $fullImage  = $this->getEventImagePathForArticle($eventData, 'fullimage');
+
+        if ($fullImage === '') {
+            $fullImage = $introImage;
+        }
+        if ($introImage === '') {
+            $introImage = $fullImage;
+        }
+
+        if ($mode === 'intro' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'datimage') !== '') {
+            $images['image_intro'] = $introImage;
+        }
+
+        if ($mode === 'full' || $mode === 'both' || $this->getEventImagePathForArticle($eventData, 'fullimage') !== '') {
+            $images['image_fulltext'] = $fullImage;
+        }
+
+        return json_encode($images);
+    }
+
+    /**
+     * Check whether this event opted in to use the associated article as event content.
+     *
+     * @param   array  $eventData  Event data being saved.
+     *
+     * @return  boolean
+     */
+    protected function eventUsesAssociatedArticleAsContent(array $eventData)
+    {
+        $attribs = $eventData['attribs'] ?? array();
+
+        if ($attribs instanceof Registry) {
+            return (string) $attribs->get('article_usage', 'information') === 'content';
+        }
+
+        if (is_string($attribs)) {
+            $registry = new Registry();
+            $registry->loadString($attribs);
+
+            return (string) $registry->get('article_usage', 'information') === 'content';
+        }
+
+        if (is_array($attribs)) {
+            return (string) ($attribs['article_usage'] ?? 'information') === 'content';
+        }
+
+        return false;
+    }
+
+    /**
+     * Build the visible title for an associated Joomla article.
+     *
+     * @param   array    $eventData  Event data.
+     * @param   integer  $eventId    Event id.
+     *
+     * @return  string
+     */
+    protected function buildAssociatedArticleTitle(array $eventData, $eventId, $recurrenceCounter = null)
+    {
+        $eventTitle = trim((string) ($eventData['title'] ?? ''));
+        $formatKey = $recurrenceCounter === null
+            ? 'event_associated_article_title_format'
+            : 'event_associated_article_recurrence_title_format';
+        $format = trim((string) JemHelper::globalattribs()->get($formatKey, '{title}'));
+
+        if ($format === '') {
+            $format = '{title}';
+        }
+
+        $date = trim((string) ($eventData['dates'] ?? ''));
+        $time = trim((string) ($eventData['times'] ?? ''));
+        $language = trim((string) ($eventData['language'] ?? ''));
+        $languageCode = $language === '*' || $language === ''
+            ? ''
+            : strtolower(substr($language, 0, 2));
+        $title = str_replace(
+            array('{title}', '{id}', '{date}', '{time}', '{lang}'),
+            array($eventTitle, (int) $eventId, $date, $time, $languageCode),
+            $format
+        );
+        if ($recurrenceCounter !== null) {
+            $title = preg_replace_callback('/\{(#+)\}/', static function ($matches) use ($recurrenceCounter) {
+                return str_pad((string) (int) $recurrenceCounter, strlen($matches[1]), '0', STR_PAD_LEFT);
+            }, $title);
+        }
+
+        $title = trim(preg_replace('/\s+/', ' ', $title));
+
+        return $title !== '' ? $title : $eventTitle;
+    }
+
+    /**
+     * Build a deterministic Joomla article alias for an associated event article.
+     *
+     * @param   string   $title    Event title.
+     * @param   integer  $eventId  Event id.
+     *
+     * @return  string
+     */
+    protected function buildAssociatedArticleAlias($title, $eventId)
+    {
+        $alias = OutputFilter::stringURLSafe(trim((string) $title));
+
+        if ($alias === '') {
+            $alias = 'event';
+        }
+
+        $eventId = (int) $eventId;
+
+        return $eventId > 0 ? $alias . '-' . $eventId : $alias;
+    }
+
+    /**
+     * Return the created date to use for automatically generated articles.
+     *
+     * @param   array  $eventData  Event data.
+     *
+     * @return  string
+     */
+    protected function getAssociatedArticleCreatedDate(array $eventData)
+    {
+        if ((int) JemHelper::globalattribs()->get('event_associated_article_date_source', 0) !== 1) {
+            return '';
+        }
+
+        $date = trim((string) ($eventData['dates'] ?? ''));
+
+        if ($date === '') {
+            return '';
+        }
+
+        $time = trim((string) ($eventData['times'] ?? ''));
+
+        if ($time === '') {
+            $time = '00:00:00';
+        } elseif (preg_match('/^\d{1,2}:\d{2}$/', $time)) {
+            $time .= ':00';
+        }
+
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || !preg_match('/^\d{1,2}:\d{2}:\d{2}$/', $time)) {
+            return '';
+        }
+
+        try {
+            return Factory::getDate($date . ' ' . $time, Factory::getApplication()->get('offset', 'UTC'))->toSql();
+        } catch (Throwable $e) {
+            return '';
+        }
+    }
+
+    /**
+     * Apply the configured associated article behavior to generated recurring events.
+     *
+     * @param   integer       $eventId            Root event id.
+     * @param   integer       $articleId          Root article id.
+     * @param   array         $eventData          Root event data.
+     * @param   integer       $articleCategoryId  Joomla article category id.
+     *
+     * @return  void
+     */
+    protected function applyRecurringAssociatedArticleMode($eventId, $articleId, array $eventData, $articleCategoryId)
+    {
+        $eventId = (int) $eventId;
+        $articleId = (int) $articleId;
+        $recurrenceMode = (int) JemHelper::globalattribs()->get('event_associated_article_recurrence_mode', 1);
+
+        if ($eventId <= 0 || $articleId <= 0 || $recurrenceMode === 0 || empty($eventData['recurrence_type'])) {
+            return;
+        }
+
+        $children = $this->getRecurringEventChildrenWithoutArticle($eventId);
+
+        if (!$children) {
+            return;
+        }
+
+        if ($recurrenceMode === 1) {
+            $childIds = array_map(static function ($child) {
+                return (int) $child->id;
+            }, $children);
+
+            $this->setAssociatedArticleForEvents($childIds, $articleId);
+
+            return;
+        }
+
+        if ($recurrenceMode !== 2) {
+            return;
+        }
+
+        $recurrenceCounter = 1;
+
+        foreach ($children as $child) {
+            $childData = array_merge($eventData, (array) $child);
+            $childArticleId = $this->createAssociatedContentArticle($childData, $articleCategoryId, (int) $child->id, $recurrenceCounter);
+
+            if ($childArticleId) {
+                $this->setAssociatedArticleForEvents(array((int) $child->id), $childArticleId);
+            }
+
+            $recurrenceCounter++;
+        }
+    }
+
+    /**
+     * Get generated recurrence children that do not yet have an associated article.
+     *
+     * @param   integer  $eventId  Root event id.
+     *
+     * @return  array
+     */
+    protected function getRecurringEventChildrenWithoutArticle($eventId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('recurrence_first_id') . ' = ' . (int) $eventId)
+            ->where('(' . $db->quoteName('article_id') . ' IS NULL OR ' . $db->quoteName('article_id') . ' = 0)')
+            ->order(array($db->quoteName('dates') . ' ASC', $db->quoteName('times') . ' ASC', $db->quoteName('id') . ' ASC'));
+
+        try {
+            $db->setQuery($query);
+
+            return $db->loadObjectList() ?: array();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+
+        return array();
+    }
+
+    /**
+     * Set the same associated article for a list of events.
+     *
+     * @param   array    $eventIds   Event ids.
+     * @param   integer  $articleId  Joomla article id.
+     *
+     * @return  void
+     */
+    protected function setAssociatedArticleForEvents(array $eventIds, $articleId)
+    {
+        $eventIds = array_values(array_unique(array_filter(array_map('intval', $eventIds))));
+        $articleId = (int) $articleId;
+
+        if (!$eventIds || $articleId <= 0) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_events'))
+            ->set($db->quoteName('article_id') . ' = ' . $articleId)
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $eventIds) . ')');
+
+        try {
+            $db->setQuery($query);
+            $db->execute();
+        } catch (RuntimeException $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+        }
+    }
+
+
+    /**
+     * Security validation for online meeting fields.
+     *
+     * @param   array  &$data  Event data
+     * @return  bool           True if valid
+     */
+    public function validateOnlineMeetingData(&$data)
+    {
+        $url = isset($data['online_meeting_url']) ? trim((string) $data['online_meeting_url']) : '';
+        $label = isset($data['online_meeting_label']) ? trim((string) $data['online_meeting_label']) : '';
+
+        $data['online_meeting_url'] = $url;
+        $data['online_meeting_label'] = $label;
+
+        if ($url === '') {
+            return true;
+        }
+
+        $urlScheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$urlScheme || !in_array(strtolower($urlScheme), array('http', 'https'), true)) {
+            $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+            return false;
+        }
+
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
+            return false;
+        }
+
+        if (StringHelper::strlen($label) > 255) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_ONLINE_MEETING_LABEL_TOO_LONG'));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Security validation for the link data.
+     *
+     * @param   array  $data  The links data
+     * @return  bool          True if valid
+     */
+    public function validateLinkData($data)
+    {
+        if (empty($data)) return true;
+
+        $jemsettings = JemHelper::config();
+
+        // Get allowed image extensions from global configuration (defaults: jpg,jpeg,png,gif,webp,svg)
+        $allowedExts = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_extensions ?? 'jpg,jpeg,png,gif,webp,svg'));
+
+        // Get allowed URL schemes from global configuration (defaults: http,https,mailto,tel)
+        $allowedSchemes = explode(',', str_replace(' ', '', $jemsettings->globalattribs->allowed_link_schemes ?? 'http,https,mailto,tel'));
+
+        // Iterate through each link in the data array
+        foreach ($data as $link) {
+            $url = trim($link['url'] ?? '');
+            $title = isset($link['title']) ? trim((string) $link['title']) : '';
+            $icon = isset($link['icon']) ? trim((string) $link['icon']) : '';
+            $image = isset($link['image']) ? trim((string) $link['image']) : '';
+
+            // Description size validation
+            $description = isset($link['description']) ? trim((string) $link['description']) : '';
+            if (StringHelper::strlen($description) > 255) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_LINK_DESCRIPTION_TOO_LONG'));
+                return false;
+            }
+
+            if ($url === '' && $title === '' && $description === '' && $icon === '' && $image === '') {
+                continue;
+            }
+
+            // Empty URL means "display without an active link".
+            if ($url === '') {
+                continue;
+            }
+
+            // URL scheme validation (check protocol is allowed)
+            $urlScheme = parse_url($url, PHP_URL_SCHEME);
+            if (!$urlScheme || !in_array(strtolower($urlScheme), $allowedSchemes)) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_UNSAFE_PROTOCOL', $urlScheme ?: 'none'));
+                return false;
+            }
+
+            // Validate URL format using PHP's filter_var
+            if (!filter_var($url, FILTER_VALIDATE_URL)) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_URL', htmlspecialchars($url)));
+                return false;
+            }
+
+            // Image validation (only for local images, not external URLs)
+            if (!empty($link['image'])) {
+                $img = $image;
+
+                // Extract only the path, removing Joomla media query strings (e.g., ?width=...)
+                $imgCleanPath = parse_url($img, PHP_URL_PATH);
+                $cleanPath = Path::clean($imgCleanPath);
+
+                // Security: Prevent directory traversal attacks (../)
+                if (strpos($cleanPath, '..') !== false) {
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_UNSAFE_PATH'));
+                    return false;
+                }
+
+                // Validate that the file extension is allowed
+                $ext = strtolower(File::getExt($cleanPath));
+                if (!in_array($ext, $allowedExts)) {
+                    $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_EXTENSION', $ext));
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.
+     * Ordering is forced to integer to avoid SQL Error 1366.
+     *
+     * @param   int    $pk    The event ID
+     * @param   array  $data  The links data from the subform
+     * @return  bool          True on success
+     */
+    public function saveLinks($pk, $data)
+    {
+        $db   = $this->getDbo();
+        $user = Factory::getUser();
+        $now  = Factory::getDate()->toSql();
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jem_links'))
+            ->where($db->quoteName('event_id') . ' = ' . (int) $pk)
+            ->order($db->quoteName('ordering') . ' ASC');
+
+        $db->setQuery($query);
+        $existingIds = $db->loadColumn() ?: [];
+        $keptIds = [];
+
+        if (!empty($data)) {
+            $rowOrder = 0;
+
+            foreach ($data as $item) {
+                $url = isset($item['url']) ? trim((string) $item['url']) : '';
+                $title = isset($item['title']) ? trim((string) $item['title']) : '';
+                $description = isset($item['description']) ? trim((string) $item['description']) : '';
+                $icon = trim((string) ($item['icon'] ?? ''));
+                $image = trim((string) ($item['image'] ?? ''));
+
+                if ($url === '' && $title === '' && $description === '' && $icon === '' && $image === '') {
+                    continue;
+                }
+
+                $link = new stdClass();
+
+                $link->event_id = (int) $pk;
+                $link->type     = $item['type'] ?? 'info';
+                $link->title    = $title;
+                $link->url      = $url;
+                $link->ordering = (int) $rowOrder++;
+                $link->state    = 1;
+                $link->description = StringHelper::substr($description, 0, 255);
+
+                // Normalize additional link configuration.
+                $target = $item['target'] ?? '_blank';
+                $target = in_array($target, ['_blank', '_self'], true) ? $target : '_blank';
+
+                $color = trim((string) ($item['color'] ?? ''));
+
+                if ($color !== '' && !preg_match('/^#[0-9a-f]{3,8}$/i', $color)) {
+                    $color = '';
+                }
+
+                $frame = isset($item['frame']) ? (int) $item['frame'] : 0;
+                $frame = $frame === 1 ? 1 : 0;
+
+                $maxWidth = isset($item['max_width']) ? (int) $item['max_width'] : 0;
+                $maxHeight = isset($item['max_height']) ? (int) $item['max_height'] : 0;
+
+                $maxWidth = max(0, min($maxWidth, 2000));
+                $maxHeight = max(0, min($maxHeight, 2000));
+
+                // Store additional link configuration in params.
+                $link->params = json_encode([
+                    'target'       => $target,
+                    'icon'         => $icon,
+                    'image'        => $image,
+                    'color'        => $color,
+                    'frame'        => $frame,
+                    'max_width'    => $maxWidth,
+                    'max_height'   => $maxHeight,
+                    'custom_class' => $item['custom_class'] ?? ''
+                ]);
+
+                if (!empty($item['id']) && in_array($item['id'], $existingIds)) {
+                    $link->id          = (int) $item['id'];
+                    $link->modified_by = $user->id;
+                    $link->modified    = $now;
+
+                    $db->updateObject('#__jem_links', $link, 'id');
+                    $keptIds[] = $link->id;
+                } else {
+                    $link->created_by  = $user->id;
+                    $link->created     = $now;
+                    $link->modified_by = null;
+                    $link->modified    = null;
+
+                    $db->insertObject('#__jem_links', $link);
+                }
+            }
+        }
+
+        $toDelete = array_diff($existingIds, $keptIds);
+        if (!empty($toDelete)) {
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_links'))
+                ->where($db->quoteName('id') . ' IN (' . implode(',', array_map('intval', $toDelete)) . ')');
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        return true;
     }
 
 
@@ -675,7 +2479,7 @@ class JemModelEvent extends JemModelAdmin
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                    'a.checked_out, a.checked_out_time, a.datimage,  a.version, a.featured, ' .
+                    'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                     'a.hits, a.language, a.recurrence_type, a.recurrence_first_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
@@ -917,7 +2721,7 @@ class JemModelEvent extends JemModelAdmin
     {
         // Sanitize the ids.
         $pks = (array)$pks;
-        \Joomla\Utilities\ArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
 
         if (empty($pks)) {
             $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
@@ -942,6 +2746,223 @@ class JemModelEvent extends JemModelAdmin
         $this->cleanCache();
 
         return true;
+    }
+
+    /**
+     * Move the selected events to one JEM category, replacing existing category assignments.
+     *
+     * @param   array  $pks         Event ids.
+     * @param   int    $categoryId  Target category id.
+     *
+     * @return  boolean
+     */
+    public function moveToCategory($pks, $categoryId)
+    {
+        $pks = (array) $pks;
+        ArrayHelper::toInteger($pks);
+        $pks = array_values(array_filter($pks));
+        $categoryId = (int) $categoryId;
+
+        if (empty($pks)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+            return false;
+        }
+
+        if ($categoryId <= 0 || !$this->categoryExists($categoryId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_CATEGORY_SELECT'));
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $userId = (int) JemFactory::getUser()->id;
+            $now = Factory::getDate()->toSql();
+            $ids = implode(',', $pks);
+
+            $db->transactionStart();
+
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_cats_event_relations'))
+                ->where($db->quoteName('itemid') . ' IN (' . $ids . ')');
+            $db->setQuery($query);
+            $db->execute();
+
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_cats_event_relations'))
+                ->columns($db->quoteName(array('catid', 'itemid', 'ordering')));
+
+            foreach ($pks as $pk) {
+                $query->values($categoryId . ',' . (int) $pk . ',0');
+            }
+
+            $db->setQuery($query);
+            $db->execute();
+
+            $this->touchEvents($pks, $now, $userId);
+
+            $db->transactionCommit();
+        } catch (Exception $e) {
+            if (isset($db)) {
+                $db->transactionRollback();
+            }
+
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->cleanCache();
+
+        return true;
+    }
+
+    /**
+     * Move the selected events to a venue.
+     *
+     * @param   array  $pks      Event ids.
+     * @param   int    $venueId  Target venue id.
+     *
+     * @return  boolean
+     */
+    public function moveToVenue($pks, $venueId)
+    {
+        $venueId = (int) $venueId;
+
+        if ($venueId <= 0 || !$this->venueExists($venueId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_VENUE_SELECT'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'locid', $venueId);
+    }
+
+    /**
+     * Change the selected events to a JEM event type.
+     *
+     * @param   array  $pks     Event ids.
+     * @param   int    $typeId  Target type id; 0 clears the type.
+     *
+     * @return  boolean
+     */
+    public function moveToType($pks, $typeId)
+    {
+        $typeId = (int) $typeId;
+
+        if ($typeId > 0 && !$this->typeExists($typeId)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_MOVE_TYPE_SELECT'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'type_id', $typeId > 0 ? $typeId : null);
+    }
+
+    /**
+     * Change the access level for the selected events.
+     *
+     * @param   array  $pks       Event ids.
+     * @param   int    $accessId  Target access level id.
+     *
+     * @return  boolean
+     */
+    public function changeAccess($pks, $accessId)
+    {
+        $accessId = (int) $accessId;
+
+        if ($accessId <= 0) {
+            $this->setError(Text::_('JLIB_HTML_BATCH_NOCHANGE'));
+            return false;
+        }
+
+        return $this->updateEventsField($pks, 'access', $accessId);
+    }
+
+    /**
+     * Update a field for multiple events and touch their modified metadata.
+     */
+    protected function updateEventsField($pks, $field, $value)
+    {
+        $pks = (array) $pks;
+        ArrayHelper::toInteger($pks);
+        $pks = array_values(array_filter($pks));
+
+        if (empty($pks)) {
+            $this->setError(Text::_('COM_JEM_EVENTS_NO_ITEM_SELECTED'));
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $userId = (int) JemFactory::getUser()->id;
+            $now = Factory::getDate()->toSql();
+
+            $fields = array(
+                $db->quoteName($field) . ' = ' . ($value !== null ? $db->quote($value) : 'NULL'),
+                $db->quoteName('modified') . ' = ' . $db->quote($now),
+                $db->quoteName('modified_by') . ' = ' . $userId,
+            );
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($fields)
+                ->where($db->quoteName('id') . ' IN (' . implode(',', $pks) . ')');
+            $db->setQuery($query);
+            $db->execute();
+        } catch (Exception $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->cleanCache();
+
+        return true;
+    }
+
+    /**
+     * Update modified metadata after relation-only changes.
+     */
+    protected function touchEvents($pks, $now, $userId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_events'))
+            ->set(array(
+                $db->quoteName('modified') . ' = ' . $db->quote($now),
+                $db->quoteName('modified_by') . ' = ' . (int) $userId,
+            ))
+            ->where($db->quoteName('id') . ' IN (' . implode(',', array_map('intval', $pks)) . ')');
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    protected function categoryExists($categoryId)
+    {
+        return $this->recordExists('#__jem_categories', $categoryId);
+    }
+
+    protected function venueExists($venueId)
+    {
+        return $this->recordExists('#__jem_venues', $venueId);
+    }
+
+    protected function typeExists($typeId)
+    {
+        return $this->recordExists('#__jem_types', $typeId, 'entity = 1');
+    }
+
+    protected function recordExists($table, $id, $extraWhere = null)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName($table))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+
+        if ($extraWhere) {
+            $query->where($extraWhere);
+        }
+
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
     }
 
     /**
@@ -974,7 +2995,7 @@ class JemModelEvent extends JemModelAdmin
 
                 // Insert new categories for id event
                 foreach($cats as $c){
-                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . $c . ',' . $db->quote($eventid) . ',0)');
+                    $db->setQuery('INSERT INTO #__jem_cats_event_relations (catid, itemid, ordering) VALUES  (' . (int) $c . ',' . $db->quote($eventid) . ',0)');
                     $db->execute();
                 }
             } else {

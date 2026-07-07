@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details">
+
+        <field name="id" type="hidden" />
+
+        <field name="name"
+               type="text"
+               label="COM_JEM_TYPE_FIELD_NAME"
+               description="COM_JEM_TYPE_FIELD_NAME_DESC"
+               required="true"
+               maxlength="100"
+               class="form-control"
+        />
+
+        <field name="alias"
+               type="text"
+               label="JFIELD_ALIAS_LABEL"
+               description="JFIELD_ALIAS_DESC"
+               hint="JFIELD_ALIAS_PLACEHOLDER"
+               maxlength="100"
+               class="form-control"
+        />
+
+        <field name="description"
+               type="textarea"
+               label="JGLOBAL_DESCRIPTION"
+               description="COM_JEM_TYPE_FIELD_DESCRIPTION_DESC"
+               rows="4"
+               class="form-control"
+        />
+
+        <field name="base_language"
+               type="hidden"
+        />
+
+        <field name="translation_languages"
+               type="hidden"
+        />
+
+        <field name="translations"
+               type="hidden"
+               filter="raw"
+        />
+
+        <field name="entity"
+               type="list"
+               label="COM_JEM_TYPE_FIELD_ENTITY"
+               description="COM_JEM_TYPE_FIELD_ENTITY_DESC"
+               default="1"
+               required="true"
+               class="form-select"
+        >
+            <option value="1">COM_JEM_TYPE_ENTITY_EVENT</option>
+            <option value="2">COM_JEM_TYPE_ENTITY_CATEGORY</option>
+            <option value="3">COM_JEM_TYPE_ENTITY_VENUE</option>
+            <option value="4">COM_JEM_TYPE_ENTITY_DAY</option>
+        </field>
+
+        <field name="icon"
+               type="text"
+               label="COM_JEM_TYPE_FIELD_ICON"
+               description="COM_JEM_TYPE_FIELD_ICON_DESC"
+               hint="fa-solid fa-calendar"
+               maxlength="255"
+               class="form-control"
+        />
+
+        <field name="color"
+               type="color"
+               label="COM_JEM_TYPE_FIELD_COLOR"
+               description="COM_JEM_TYPE_FIELD_COLOR_DESC"
+               default="none"
+               keywords="none"
+        />
+
+        <field name="published"
+               type="list"
+               label="JSTATUS"
+               default="1"
+               class="form-select"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+        </field>
+
+        <field name="access"
+               type="accesslevel"
+               label="JFIELD_ACCESS_LABEL"
+               description="JFIELD_ACCESS_DESC"
+               default="1"
+        />
+
+        <field name="language"
+               type="contentlanguage"
+               label="JFIELD_LANGUAGE_LABEL"
+               description="JFIELD_LANGUAGE_DESC"
+               default="*"
+        />
+
+        <field name="ordering"
+               type="hidden"
+               default="0"
+        />
+
+        <field name="attribs"
+               type="hidden"
+               filter="string"
+               default=""
+        />
+
+    </fieldset>
+</form>

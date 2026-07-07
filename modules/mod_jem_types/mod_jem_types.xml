@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>JEM - Types Module</name>
+    <author>JEM Community</author>
+    <creationDate>7 July 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>4.5.0</version>
+    <description>MOD_JEM_TYPES_XML_DESCRIPTION</description>
+    <files>
+        <filename module="mod_jem_types">mod_jem_types.php</filename>
+        <filename>helper.php</filename>
+        <filename>index.html</filename>
+
+        <folder>tmpl</folder>
+        <folder>language</folder>
+    </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jem_types.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_types.sys.ini</language>
+    </languages>
+    <help key="Modules" />
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="display_mode" type="list"
+                    label="MOD_JEM_TYPES_DISPLAY_MODE"
+                    description="MOD_JEM_TYPES_DISPLAY_MODE_DESC"
+                    default="summary"
+                    class="form-select w-auto"
+                >
+                    <option value="summary">MOD_JEM_TYPES_MODE_SUMMARY</option>
+                    <option value="topn">MOD_JEM_TYPES_MODE_TOPN</option>
+                </field>
+
+                <field name="top_n" type="number"
+                    label="MOD_JEM_TYPES_TOP_N"
+                    description="MOD_JEM_TYPES_TOP_N_DESC"
+                    default="3"
+                    min="1"
+                    max="20"
+                    class="form-control w-auto"
+                    showon="display_mode:topn"
+                />
+
+                <field name="show_more_information" type="list"
+                    label="MOD_JEM_TYPES_SHOW_MORE_INFORMATION"
+                    description="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_DESC"
+                    default="1"
+                    class="form-select w-auto"
+                    showon="display_mode:topn"
+                >
+                    <option value="1">MOD_JEM_TYPES_MORE_INFORMATION_LINK</option>
+                    <option value="2">MOD_JEM_TYPES_MORE_INFORMATION_BUTTON</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="event_link_event_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TYPES_EVENT_LINK_EVENT_LAYOUT"
+                       description="MOD_JEM_TYPES_EVENT_LINK_EVENT_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="display_mode:topn"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+                <field name="event_link_venue_layout" type="list"
+                       default=""
+                       label="MOD_JEM_TYPES_EVENT_LINK_VENUE_LAYOUT"
+                       description="MOD_JEM_TYPES_EVENT_LINK_VENUE_LAYOUT_DESC"
+                       class="form-select w-auto"
+                       showon="display_mode:topn"
+                >
+                    <option value="">JDEFAULT</option>
+                    <option value="details">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_DETAILS</option>
+                    <option value="compact">MOD_JEM_TYPES_EVENT_LINK_LAYOUT_COMPACT</option>
+                </field>
+
+                <field name="show_more_information_title" type="radio"
+                    label="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_TITLE"
+                    description="MOD_JEM_TYPES_SHOW_MORE_INFORMATION_TITLE_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                    showon="display_mode:topn[AND]show_more_information:1,2,link,button"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+
+                <field name="hide_empty" type="radio"
+                    label="MOD_JEM_TYPES_HIDE_EMPTY"
+                    description="MOD_JEM_TYPES_HIDE_EMPTY_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="show_when_empty" type="radio"
+                    label="MOD_JEM_TYPES_SHOW_WHEN_EMPTY"
+                    description="MOD_JEM_TYPES_SHOW_WHEN_EMPTY_DESC"
+                    default="0"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_TYPES_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_TYPES_SHOW_INTROTEXT"
+                       description="MOD_JEM_TYPES_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_TYPES_INTROTEXT"
+                       description="MOD_JEM_TYPES_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_TYPES_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_TYPES_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_TYPES_FOOTERTEXT"
+                       description="MOD_JEM_TYPES_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
+                />
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    description="JFIELD_ALT_LAYOUT_DESC"
+                    class="form-select w-auto"
+                    validate="moduleLayout"
+                />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"
+                    rows="3"
+                    filter="string"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    description="COM_MODULES_FIELD_CACHING_DESC"
+                    default="1"
+                    filter="integer"
+                    class="form-select w-auto"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    description="COM_MODULES_FIELD_CACHE_TIME_DESC"
+                    default="900"
+                    filter="integer"
+                    class="form-control w-auto"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
+
+

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -16,6 +17,8 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Date\Date;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Category Model
@@ -134,7 +137,6 @@ class JemModelCategory extends AdminModel
 
             // Convert the created and modified dates to local user time for
             // display in the form.
-            jimport('joomla.utilities.date');
             $tz = new DateTimeZone(Factory::getApplication()->getCfg('offset'));
 
             if (intval($result->created_time)) {
@@ -182,20 +184,6 @@ class JemModelCategory extends AdminModel
     }
 
     /**
-     * A protected method to get the where clause for the reorder
-     * This ensures that the row will be moved relative to a row with the same
-     * extension
-     *
-     * @param  JCategoryTable $table Current table instance
-     *
-     * @return array An array of conditions to add to add to ordering queries.
-     */
-    protected function getReorderConditionsDISABLED($table)
-    {
-        return 'extension = ' . $this->_db->Quote($table->extension);
-    }
-
-    /**
      * Method to get the data that should be injected in the form.
      *
      * @return mixed The data for the form.
@@ -240,6 +228,7 @@ class JemModelCategory extends AdminModel
             $isNew = false;
         }
 
+
         // Set the new parent id if parent id not matched OR while New/Save as
         // Copy .
         if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {
@@ -250,6 +239,12 @@ class JemModelCategory extends AdminModel
         $data['language'] = $data['language'] ?? '';
         $data['path'] = $data['path'] ?? '';
         $data['metadata'] = $data['metadata'] ?? '';
+
+        if ((int) ($data['article_create_mode'] ?? 0) === 1 && empty($data['article_category_id'])) {
+            $this->setError(Text::_('COM_JEM_CATEGORY_ARTICLE_AUTO_REQUIRES_CATEGORY'));
+
+            return false;
+        }
 
         // Alter the title for save as copy
         if ($jinput->get('task', '') == 'save2copy') {
@@ -281,7 +276,7 @@ class JemModelCategory extends AdminModel
 
         // Bind the rules.
         if (isset($data['rules'])) {
-            $rules = new JAccessRules($data['rules']);
+            $rules = new Rules($data['rules']);
             $table->setRules($rules);
         }
 
@@ -305,6 +300,17 @@ class JemModelCategory extends AdminModel
 
             $this->setError($table->getError());
             return false;
+        }
+
+        // Copy category image to events folder whenever image_as_default is enabled.
+        $newImageAsDefault = (int) ($data['image_as_default'] ?? 0);
+        $catImage = trim((string) ($data['image'] ?? ''));
+        if ($newImageAsDefault === 1 && $catImage !== '') {
+            $srcPath = JPATH_ROOT . '/images/jem/categories/' . $catImage;
+            $dstPath = JPATH_ROOT . '/images/jem/events/category_' . $catImage;
+            if (is_file($srcPath)) {
+                @copy($srcPath, $dstPath);
+            }
         }
 
         // Trigger the onContentAfterSave event.
@@ -416,7 +422,7 @@ class JemModelCategory extends AdminModel
     {
         // $value comes as {parent_id}.{extension}
         $parts = explode('.', $value);
-        $parentId = (int) \Joomla\Utilities\ArrayHelper::getValue($parts, 0, 1);
+        $parentId = (int) ArrayHelper::getValue($parts, 0, 1);
 
         $table = $this->getTable();
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -680,7 +686,7 @@ class JemModelCategory extends AdminModel
         if (!empty($children)) {
             // Remove any duplicates and sanitize ids.
             $children = array_unique($children);
-            \Joomla\Utilities\ArrayHelper::toInteger($children);
+            ArrayHelper::toInteger($children);
 
             // Check for a database error.
             // if ($db->getErrorNum()) {
@@ -731,8 +737,8 @@ class JemModelCategory extends AdminModel
         // Alter the title & alias
         $table = $this->getTable();
         while ($table->load(array('alias' => $alias, 'parent_id' => $parent_id))) {
-            $title = \Joomla\String\StringHelper::increment($title);
-            $alias = \Joomla\String\StringHelper::increment($alias, 'dash');
+            $title = StringHelper::increment($title);
+            $alias = StringHelper::increment($alias, 'dash');
         }
 
         return array($title, $alias);
@@ -768,7 +774,7 @@ class JemModelCategory extends AdminModel
      */
     public function delete(&$cids)
     {
-        \Joomla\Utilities\ArrayHelper::toInteger($cids);
+        ArrayHelper::toInteger($cids);
 
         // Add all children to the list
         foreach ($cids as $id) {

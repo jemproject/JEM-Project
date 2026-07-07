@@ -23,9 +23,6 @@ class JemViewExport extends JemAdminView
 {
 
     public function display($tpl = null) {
-        //Load pane behavior
-        jimport('joomla.html.pane');
-
         //initialise variables
         $app = Factory::getApplication();
         $document = $app->getDocument();
@@ -57,7 +54,7 @@ class JemViewExport extends JemAdminView
         ToolbarHelper::back();
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('export', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/export-data');
+        ToolBarHelper::help('export', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/export-data');
     }
 }
 ?>

@@ -8,7 +8,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
@@ -30,6 +29,7 @@ class JemViewHousekeeping extends JemAdminView
         if (!$user->authorise('core.manage', 'com_jem')) {
             $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
             $app->redirect('index.php?option=com_jem&view=main');
+            return false;
         }
 
         // Load css
@@ -50,9 +50,9 @@ class JemViewHousekeeping extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_HOUSEKEEPING'), 'housekeeping');
 
-        ToolbarHelper::back();
+        ToolbarHelper::back('JTOOLBAR_BACK', 'index.php?option=com_jem&view=main');
         ToolbarHelper::divider();
-        ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/control-panel/housekeeping');
+        ToolBarHelper::help('housekeeping', true, 'https://www.joomlaeventmanager.net/documentation/backend/control-panel/housekeeping');
     }
 }
 ?>

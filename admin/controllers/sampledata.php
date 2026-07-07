@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Sampledata Controller
@@ -20,16 +22,20 @@ class JemControllerSampledata extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
     /**
      * Process sampledata
      */
-    public function load()
-    {
+    public function load() {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $model = $this->getModel('sampledata');
 
         if (!$model->loadData()) {

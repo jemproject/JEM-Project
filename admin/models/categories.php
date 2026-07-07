@@ -21,7 +21,7 @@ class JemModelCategories extends ListModel
      * Constructor.
      *
      * @param  array  An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array())
     {
@@ -37,6 +37,9 @@ class JemModelCategories extends ListModel
                 'checked_out_time', 'a.checked_out_time',
                 'created_time', 'a.created_time',
                 'created_user_id', 'a.created_user_id',
+                'author_name', 'ua.name',
+                'article_category_id', 'a.article_category_id',
+                'article_create_mode', 'a.article_create_mode',
                 'lft', 'a.lft',
                 'rgt', 'a.rgt',
                 'level', 'a.level',
@@ -86,6 +89,9 @@ class JemModelCategories extends ListModel
         $published = $this->getUserStateFromRequest($context.'.filter.published', 'filter_published', '');
         $this->setState('filter.published', $published);
 
+        $categoryTypeId = $this->getUserStateFromRequest($context.'.filter.category_type_id', 'filter_category_type_id', 0, 'int');
+        $this->setState('filter.category_type_id', $categoryTypeId);
+
         $language = $this->getUserStateFromRequest($context.'.filter.language', 'filter_language', '');
         $this->setState('filter.language', $language);
 
@@ -110,6 +116,7 @@ class JemModelCategories extends ListModel
         $id .= ':'.$this->getState('filter.search');
         $id .= ':'.$this->getState('filter.extension');
         $id .= ':'.$this->getState('filter.published');
+        $id .= ':'.$this->getState('filter.category_type_id');
         $id .= ':'.$this->getState('filter.language');
 
         return parent::getStoreId($id);
@@ -130,8 +137,10 @@ class JemModelCategories extends ListModel
             $this->getState(
                 'list.select',
                 'a.id, a.catname, a.color, a.alias, a.note, a.published, a.access' .
-                ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id' .
+                ', a.checked_out, a.groupid, a.checked_out_time, a.created_user_id, a.created_time' .
                 ', a.path, a.parent_id, a.level, a.lft, a.rgt' .
+                ', a.article_category_id, a.article_create_mode' .
+                ', a.type_id' .
                 ', a.language'
             )
         );
@@ -157,6 +166,10 @@ class JemModelCategories extends ListModel
         $query->select('gr.name AS catgroup');
         $query->join('LEFT', '#__jem_groups AS gr ON gr.id = a.groupid');
 
+        // Join over Joomla content categories for associated article creation.
+        $query->select('jc.title AS article_category_title');
+        $query->join('LEFT', '#__categories AS jc ON jc.id = a.article_category_id');
+
         // Filter on the level.
         if ($level = $this->getState('filter.level')) {
             $query->where('a.level <= '.(int) $level);
@@ -181,6 +194,12 @@ class JemModelCategories extends ListModel
         }
         elseif ($published === '') {
             $query->where('(a.published IN (0, 1))');
+        }
+
+        // Filter by category type.
+        $categoryTypeId = (int) $this->getState('filter.category_type_id');
+        if ($categoryTypeId > 0) {
+            $query->where('a.type_id = ' . $categoryTypeId);
         }
 
         $query->where('(a.alias NOT LIKE "root")');
@@ -225,30 +244,72 @@ class JemModelCategories extends ListModel
     public function getItems()
     {
         $items = parent::getItems();
-        $app   = Factory::getApplication();
+        $counts = $this->getCategoryEventStateCounts($items);
 
         foreach ($items as $item) {
-            $item->assignedevents = $this->countCatEvents($item->id);
+            $item->event_state_counts = $counts[(int) $item->id] ?? (object) array(
+                'published' => 0,
+                'unpublished' => 0,
+                'archived' => 0,
+                'trashed' => 0,
+            );
+            $item->assignedevents = $item->event_state_counts->published
+                + $item->event_state_counts->unpublished
+                + $item->event_state_counts->archived
+                + $item->event_state_counts->trashed;
         }
 
         return $items;
     }
 
-    private function countCatEvents($id)
+    /**
+     * Count directly assigned events by state for the listed categories.
+     *
+     * @param  array  $items  Category rows.
+     *
+     * @return array
+     */
+    private function getCategoryEventStateCounts($items)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
+        if (empty($items)) {
+            return array();
+        }
 
-        $query = 'SELECT COUNT(catid) as num'
-                .' FROM #__jem_cats_event_relations'
-                .' WHERE catid = '.(int)$id
-                .' GROUP BY catid'
-                ;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $ids = array_map('intval', array_column($items, 'id'));
+        $ids = array_values(array_unique(array_filter($ids)));
+
+        if (empty($ids)) {
+            return array();
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('rel.catid'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 1 THEN 1 ELSE 0 END) AS ' . $db->quoteName('published'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 0 THEN 1 ELSE 0 END) AS ' . $db->quoteName('unpublished'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = 2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('archived'),
+                'SUM(CASE WHEN ' . $db->quoteName('e.published') . ' = -2 THEN 1 ELSE 0 END) AS ' . $db->quoteName('trashed'),
+            ))
+            ->from($db->quoteName('#__jem_cats_event_relations', 'rel'))
+            ->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('rel.itemid'))
+            ->where($db->quoteName('rel.catid') . ' IN (' . implode(',', $ids) . ')')
+            ->group($db->quoteName('rel.catid'));
 
         $db->setQuery($query);
-        $result = $db->loadResult('catid');
+        $rows = $db->loadObjectList('catid');
+        $counts = array();
 
-        return $result;
+        foreach ($rows as $catid => $row) {
+            $counts[(int) $catid] = (object) array(
+                'published' => (int) $row->published,
+                'unpublished' => (int) $row->unpublished,
+                'archived' => (int) $row->archived,
+                'trashed' => (int) $row->trashed,
+            );
+        }
+
+        return $counts;
     }
 
 }

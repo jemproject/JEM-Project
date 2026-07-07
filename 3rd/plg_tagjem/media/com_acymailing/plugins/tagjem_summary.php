@@ -51,7 +51,7 @@ $result .= '<h2><span itemprop="name">'.$event->title.'</span></h2></a>';
 //$result .= '<p>';
 //$contact = $event->conname;
 //$needle = 'index.php?option=com_contact&view=contact&id=' . $event->conid;
-//$menu = JFactory::getApplication()->getMenu();
+//$menu = Factory::getApplication()->getMenu();
 //$item = $menu->getItems('link', $needle, true);
 //$cntlink2 = !empty($item) ? $needle . '&Itemid=' . $item->id : $needle;
 //

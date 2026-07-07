@@ -57,6 +57,7 @@ class JemViewEvent extends JemAdminView
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
 
         // Load scripts
         $wa->useScript('jquery');
@@ -116,7 +117,7 @@ class JemViewEvent extends JemAdminView
 
         ToolBarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('editevents', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/events/add-event');
+        ToolBarHelper::help('editevents', true, 'https://www.joomlaeventmanager.net/documentation/backend/events/add-event');
     }
 }
 ?>

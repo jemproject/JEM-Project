@@ -5,16 +5,6 @@
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
- *
- * @todo: change onEventUserRegistered
- * there is a check for the waitinglist and that one is looking
- * at the option "reg_email_to". The onEventUnregistered function
- * has no check for the waitinglist.
- *
- * @todo: check output time/date
- * it's possible that there is no time or date for an event.
- * add check for global time/date format. At the moment the output
- * format is not respecting the global-setting
  */
 
 defined('_JEXEC') or die;
@@ -27,12 +17,11 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
-// Import library dependencies
-jimport('joomla.utilities.mail');
 
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 
 
 class plgJemMailer extends CMSPlugin
@@ -73,19 +62,27 @@ class plgJemMailer extends CMSPlugin
      * @return  boolean
      *
      */
-    public function onEventUserRegistered($register_id, $registration = false)
+    public function onEventUserRegistered($register_id, $registration = false, $userOnly = false)
     {
         ####################
         ## DEFINING ARRAY ##
         ####################
 
-        $send_to = array(
-            'user'     => $this->params->get('reg_mail_user', '1'),
-            'admin'    => $this->params->get('reg_mail_admin', '0'),
-            'creator'  => $this->params->get('reg_mail_creator', '0'),
-            'category' => $this->params->get('reg_mail_category', '0'),
-            'group'    => $this->params->get('reg_mail_group', '0'),
-        );
+        $send_to = $userOnly
+            ? array(
+                'user'     => 1,
+                'admin'    => 0,
+                'creator'  => 0,
+                'category' => 0,
+                'group'    => 0,
+            )
+            : array(
+                'user'     => $this->params->get('reg_mail_user', '1'),
+                'admin'    => $this->params->get('reg_mail_admin', '1'),
+                'creator'  => $this->params->get('reg_mail_creator', '0'),
+                'category' => $this->params->get('reg_mail_category', '0'),
+                'group'    => $this->params->get('reg_mail_group', '0'),
+            );
 
         // skip if processing not needed
         if (!array_filter($send_to)) {
@@ -109,19 +106,22 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+            'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('r.id= '.$db->quote($register_id)));
+        $query->where(array('r.id = '.(int) $register_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
+        $this->_formatEventMailDateTime($event);
 
         // check if currrent user handles on behalf of
         $attendeeid = $event->uid;
@@ -134,7 +134,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         //create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description and comment
         $text_description = OutputFilter::cleanText($event->text);
@@ -265,7 +265,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'     => $this->params->get('reg_mail_user_onoff', '1'),
-            'admin'    => $this->params->get('reg_mail_admin_onoff', '0'),
+            'admin'    => $this->params->get('reg_mail_admin_onoff', '1'),
             'creator'  => $this->params->get('reg_mail_creator_onoff', '0'),
             'category' => $this->params->get('reg_mail_category_onoff', '0'),
             'group'    => $this->params->get('reg_mail_group_onoff', '0'),
@@ -290,25 +290,28 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+            'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('r.id= '.$db->quote($register_id)));
+        $query->where(array('r.id = '.(int) $register_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
+        $this->_formatEventMailDateTime($event);
 
         $attendee     = JemFactory::getUser($event->uid);
         $attendeename = empty($this->_UseLoginName) ? $attendee->name : $attendee->username;
 
         // create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -364,7 +367,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'     => $this->params->get('unreg_mail_user', '1'),
-            'admin'    => $this->params->get('unreg_mail_admin', '0'),
+            'admin'    => $this->params->get('unreg_mail_admin', '1'),
             'creator'  => $this->params->get('unreg_mail_creator', '0'),
             'category' => $this->params->get('unreg_mail_category', '0'),
             'group'    => $this->params->get('unreg_mail_group', '0'),
@@ -393,7 +396,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         if (empty($registration) && ((int)$register_id > 0)) {
@@ -401,20 +404,26 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_register').' AS r');
             $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
             $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-            $query->where(array('r.id= '.$db->quote($register_id)));
+            $query->where(array('r.id = '.(int) $register_id));
         } else {
             $query->from($db->quoteName('#__jem_events').' AS a');
             $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-            $query->where(array('a.id = '.$db->quote($event_id)));
+            $query->where(array('a.id = '.(int) $event_id));
         }
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
+        $this->_formatEventMailDateTime($event);
 
         if (empty($registration)) {
             $registration = $event;
+        }
+
+        if (!empty($registration->waiting)) {
+            return true;
         }
 
         // check if currrent user handles on behalf of
@@ -428,7 +437,7 @@ class plgJemMailer extends CMSPlugin
         }
 
         // create link to event
-        $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
+        $link = $this->_appendOnlineMeetingInfo(Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false), $event);
 
         // Strip tags/scripts, etc. from description
         $text_description = OutputFilter::cleanText($event->text);
@@ -532,7 +541,7 @@ class plgJemMailer extends CMSPlugin
 
         $send_to = array(
             'user'       => $is_new ? $this->params->get('newevent_mail_user', '1') : $this->params->get('editevent_mail_user', '1'),
-            'admin'      => $is_new ? $this->params->get('newevent_mail_admin', '0') : $this->params->get('editevent_mail_admin', '0'),
+            'admin'      => $is_new ? $this->params->get('newevent_mail_admin', '1') : $this->params->get('editevent_mail_admin', '1'),
             'creator'    => !$is_new && $this->params->get('editevent_mail_creator', '0'),
             'registered' => !$is_new && $this->params->get('editevent_mail_registered', '0'),
             'category'   => $is_new ? $this->params->get('newevent_mail_category', '0') : $this->params->get('editevent_mail_category', '0'),
@@ -563,18 +572,20 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by'));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->select($case_when);
         $query->from($db->quoteName('#__jem_events').' AS a');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
-        $query->where(array('a.id = '.$db->quote($event_id)));
+        $query->where(array('a.id = '.(int) $event_id));
 
         $db->setQuery($query);
         if (is_null($event = $db->loadObject())) {
             return false;
         }
+        $this->_applyAssociatedArticleContent($event);
+        $this->_formatEventMailDateTime($event);
 
         // Link for event
         $link = Route::_($uri->root() . JEMHelperRoute::getEventRoute($event->slug), false);
@@ -600,11 +611,14 @@ class plgJemMailer extends CMSPlugin
                 $adminstate = Text::_('PLG_JEM_MAILER_EVENT_ARCHIVED');
                 $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_ARCHIVED');
                 break;
-            default: /* TODO: fallback unknown / undefined */
+            default:
                 $adminstate = Text::_('PLG_JEM_MAILER_EVENT_UNKNOWN');
                 $userstate = Text::_('PLG_JEM_MAILER_USER_MAIL_EVENT_UNKNOWN');
                 break;
         }
+
+        $adminstate = $this->_appendOnlineMeetingInfo($adminstate, $event);
+        $userstate  = $this->_appendOnlineMeetingInfo($userstate, $event);
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, ($event->created_by != $userid) ? $event->created_by : 0, $userid);
 
@@ -619,11 +633,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
             } else {
-                $modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $userstate);
             }
@@ -640,11 +654,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($event->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $event->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_EVENT_9', $username, $created, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
             } else {
-                $modified = HtmlHelper::Date($event->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $event->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_MAIL', $this->_SiteName, $event->title);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_EVENT_9', $username, $modified, $event->title, $event->dates, $event->times, $event->venue, $event->city, $text_description, $adminstate);
             }
@@ -669,8 +683,8 @@ class plgJemMailer extends CMSPlugin
     {
         // Sendto
         $send_to = array(
-            'user'       => $is_new ? $this->params->get('newvenue_mail_user', '1') : $this->params->get('editvenue_mail_user', '0'),
-            'admin'      => $is_new ? $this->params->get('newvenue_mail_admin', '1') : $this->params->get('editvenue_mail_admin', '0'),
+            'user'       => $is_new ? $this->params->get('newvenue_mail_user', '1') : $this->params->get('editvenue_mail_user', '1'),
+            'admin'      => $is_new ? $this->params->get('newvenue_mail_admin', '1') : $this->params->get('editvenue_mail_admin', '1'),
             'creator'    => !$is_new && $this->params->get('editvenue_mail_creator', '0'),
             'ev-creator' => !$is_new && $this->params->get('editvenue_mail_ev-creator', '0'),
             'registered' => !$is_new && $this->params->get('editvenue_mail_registered', '0'),
@@ -703,7 +717,7 @@ class plgJemMailer extends CMSPlugin
 
         $query->select(array('id', 'published', 'venue', 'city', 'street', 'postalCode', 'url', 'country', 'locdescription', 'created', 'created_by', 'modified' ,$case_when));
         $query->from('#__jem_venues');
-        $query->where(array('id = '.$db->quote($venue_id)));
+        $query->where(array('id = '.(int) $venue_id));
 
         $db->setQuery($query);
         if (is_null($venue = $db->loadObject())) {
@@ -737,11 +751,11 @@ class plgJemMailer extends CMSPlugin
             $data = new stdClass();
 
             if ($is_new) {
-                $created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
             } else {
-                $modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_USER_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_USER_MAIL_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $userstate);
             }
@@ -760,12 +774,12 @@ class plgJemMailer extends CMSPlugin
             # is the venue new or edited?
             if ($is_new) {
                 # the venue is new and we send a mail to adminDBList
-                $created = HtmlHelper::Date($venue->created, Text::_('DATE_FORMAT_LC2'));
+                $created = HTMLHelper::_('date', $venue->created, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_NEW_VENUE_A', $username, $created, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
             } else {
                 # the venue is edited and we send a mail to adminDBList
-                $modified = HtmlHelper::Date($venue->modified, Text::_('DATE_FORMAT_LC2'));
+                $modified = HTMLHelper::_('date', $venue->modified, Text::_('DATE_FORMAT_LC2'));
                 $data->subject = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_MAIL', $this->_SiteName, $venue->venue);
                 $data->body = Text::sprintf('PLG_JEM_MAILER_EDIT_VENUE_A', $username, $modified, $venue->venue, $venue->url, $venue->street, $venue->postalCode, $venue->city, $venue->country, $text_description, $adminstate);
             }
@@ -778,11 +792,138 @@ class plgJemMailer extends CMSPlugin
     }
 
     /**
+     * Append online meeting details to an event mail link block.
+     *
+     * @param   string  $text   Existing mail text.
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _appendOnlineMeetingInfo($text, $event)
+    {
+        $settings = JemHelper::globalattribs();
+
+        if ((int) $settings->get('event_show_online_meeting', '1') !== 1) {
+            return $text;
+        }
+
+        $onlineMeetingUrl = $this->_getOnlineMeetingUrl($event);
+
+        if ($onlineMeetingUrl === '') {
+            return $text;
+        }
+
+        return $text . "\n" . Text::sprintf(
+            'PLG_JEM_MAILER_ONLINE_MEETING_LINK',
+            $this->_getOnlineMeetingLabel($event),
+            $onlineMeetingUrl
+        );
+    }
+
+    /**
+     * Apply associated Joomla article content to event data used by mail templates.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  void
+     */
+    private function _applyAssociatedArticleContent($event)
+    {
+        if (empty($event) || empty($event->id)) {
+            return;
+        }
+
+        $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+
+        JemHelper::applyAssociatedArticleEventContent($event, $levels);
+
+        $event->slug = !empty($event->alias) ? ((int) $event->id . ':' . $event->alias) : (int) $event->id;
+        $event->text = (string) ($event->introtext ?? '') . (string) ($event->fulltext ?? '');
+    }
+
+    /**
+     * Return a sanitized online meeting URL without depending on the loaded JEM helper variant.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _getOnlineMeetingUrl($event)
+    {
+        if (method_exists('JemHelper', 'getOnlineMeetingUrl')) {
+            return JemHelper::getOnlineMeetingUrl($event);
+        }
+
+        $url = isset($event->online_meeting_url) ? trim((string) $event->online_meeting_url) : '';
+
+        if ($url === '') {
+            return '';
+        }
+
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        if (!$scheme || !in_array(strtolower($scheme), array('http', 'https'), true)) {
+            return '';
+        }
+
+        return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
+    }
+
+    /**
+     * Return the online meeting label without depending on the loaded JEM helper variant.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  string
+     */
+    private function _getOnlineMeetingLabel($event)
+    {
+        if (method_exists('JemHelper', 'getOnlineMeetingLabel')) {
+            return JemHelper::getOnlineMeetingLabel($event);
+        }
+
+        $label = isset($event->online_meeting_label) ? trim((string) $event->online_meeting_label) : '';
+
+        if ($label === '' && method_exists('JemHelper', 'globalattribs')) {
+            $settings = JemHelper::globalattribs();
+            $label = trim((string) $settings->get('event_online_meeting_default_label', ''));
+        }
+
+        if ($label === '') {
+            $label = Text::_('COM_JEM_JOIN_ONLINE');
+        } elseif (strtoupper($label) === $label) {
+            $label = Text::_($label);
+        }
+
+        return $label;
+    }
+
+    /**
+     * Format event date/time fields for mail output using JEM display settings.
+     *
+     * @param   object  $event  Event data object.
+     *
+     * @return  void
+     */
+    private function _formatEventMailDateTime($event)
+    {
+        $date = JemOutput::formatdate($event->dates ?? '');
+        $time = JemOutput::formattime($event->times ?? '');
+
+        $event->dates = $date ?: '';
+        $event->times = $time ?: '';
+    }
+
+    /**
      * Returns array of all the different email recipients.
      */
     private function _getRecipients(array $send_to, array $skip, $eventid, $creatorid, $userid, $venueid = 0)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $recipients = array('all' => array());
+        $eventid = (int) $eventid;
+        $creatorid = (int) $creatorid;
+        $userid = (int) $userid;
+        $venueid = (int) $venueid;
 
         ######################
         ## RECEIVERS - USER ##
@@ -809,13 +950,11 @@ class plgJemMailer extends CMSPlugin
             $query->select(array('u.email'));
             $query->from($db->quoteName('#__users').' AS u');
             $query->where('u.block = 0');
-            $query->where(array('u.id = '.$db->quote($creatorid)));
+            $query->where(array('u.id = '.$creatorid));
 
-            $db->setQuery($query);
-            if (is_null($recipients['creator'] = $db->loadColumn(0))) {
+            $recipients['creator'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['creator']) {
                 $recipients['creator'] = false;
-            } else {
-                $recipients['creator'] = array_unique($recipients['creator']);
             }
         } else {
             $recipients['creator'] = false;
@@ -834,16 +973,14 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__users').' AS u');
             $query->where('u.block = 0');
             if (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND a.created_by = u.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND a.created_by = u.id');
             } else {
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($recipients['ev-creator'] = $db->loadColumn(0))) {
+            $recipients['ev-creator'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['ev-creator']) {
                 $recipients['ev-creator'] = false;
-            } else {
-                $recipients['ev-creator'] = array_unique($recipients['ev-creator']);
             }
         } else {
             $recipients['ev-creator'] = false;
@@ -866,8 +1003,7 @@ class plgJemMailer extends CMSPlugin
         ## RECEIVERS - REGISTERED ##
         ############################
 
-        # in here we selected the option to send an email to all people registered to the event.
-        # there is no check for the waitinglist
+        # in here we selected the option to send an email to confirmed attendees of the event.
 
         if (!empty($send_to['registered'])) {
             # get data
@@ -878,10 +1014,10 @@ class plgJemMailer extends CMSPlugin
             $query->join('INNER', '#__jem_register AS reg ON reg.uid = u.id');
             if (!empty($eventid)) {
                 $query->join('INNER', '#__jem_events AS a ON reg.event = a.id');
-                $query->where('reg.event= '.$db->quote($eventid));
+                $query->where('reg.event = '.$eventid);
                 $query->where('a.published = 1');
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND reg.event = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND reg.event = a.id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
                 $query->where('a.published = 1');
                 $query->where('l.published = 1');
@@ -889,17 +1025,16 @@ class plgJemMailer extends CMSPlugin
                 $query->where('0');
             }
 
-            # since 2.1.6/7 there is a registration status but we will ignore it here
-            #  because it maybe usefull for "non-attendees" too to get information about changes, maybe they will attend now...
+            # inform confirmed attendees only
+            $query->where('reg.waiting = 0');
+            $query->where('reg.status = 1');
 
             # inform attendees only if event had not finished since one or more hours
             $query->where('((a.dates IS NULL) OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), " ", IFNULL(a.endtimes, "23:59:59"))) > -60))');
 
-            $db->setQuery($query);
-            if (is_null($recipients['registered'] = $db->loadColumn(0))) {
-                return array();
-            } else {
-                $recipients['registered'] = array_unique($recipients['registered']);
+            $recipients['registered'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['registered']) {
+                $recipients['registered'] = false;
             }
         } else {
             $recipients['registered'] = false;
@@ -922,16 +1057,16 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_categories').' AS c');
             $query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
             if (!empty($eventid)) {
-                $query->where('rel.itemid = '.$db->quote($eventid));
+                $query->where('rel.itemid = '.$eventid);
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND rel.itemid = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND rel.itemid = a.id');
             } else {
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($category_receivers = $db->loadColumn(0))) {
-                return array();
+            $category_receivers = $this->_loadColumn($query);
+            if (!$category_receivers) {
+                $recipients['category'] = false;
             } else {
                 $recipients['category'] = array_unique($this->categoryDBList($category_receivers));
             }
@@ -956,27 +1091,27 @@ class plgJemMailer extends CMSPlugin
             $query->from($db->quoteName('#__jem_cats_event_relations').' AS cer');
             $query->join('INNER', '#__jem_categories AS cat ON cat.id = cer.catid');
             $query->join('INNER', '#__viewlevels AS vl ON vl.id = cat.access');
-            $query->where('cer.itemid = '.$db->quote($eventid));
+            $query->where('cer.itemid = '.$eventid);
             $query->where('cat.emailacljl = 1');
             $db->setQuery($query);
             $list_groups_jl = $db->loadResult();
 
             //List user emails of groups list
-            if($list_groups_jl) {
-            $list_groups_jl = substr ($list_groups_jl, 1, -1);
-            $query = $db->getQuery(true);
-            $query->select(array('u.email'));
-            $query->from($db->quoteName('#__user_usergroup_map').' AS um');
-            $query->join('INNER', '#__users AS u ON u.id = um.user_id');
-            $query->where('um.group_id IN ('.$list_groups_jl.')');
-            $query->where('u.block = 0');
-            $db->setQuery($query);
-            if (is_null($category_acl_receivers = $db->loadColumn(0))) {
-                return array();
+            $groupIds = $this->_normaliseIntegerList(json_decode((string) $list_groups_jl, true) ?: array());
+            if ($groupIds) {
+                $query = $db->getQuery(true);
+                $query->select(array('u.email'));
+                $query->from($db->quoteName('#__user_usergroup_map').' AS um');
+                $query->join('INNER', '#__users AS u ON u.id = um.user_id');
+                $query->where('um.group_id IN ('.implode(',', $groupIds).')');
+                $query->where('u.block = 0');
+                $category_acl_receivers = array_unique($this->_loadColumn($query));
+                if (!$category_acl_receivers) {
+                    $recipients['category_acl'] = false;
+                } else {
+                    $recipients['category_acl'] = $category_acl_receivers;
+                }
             } else {
-                $recipients['category_acl'] = array_unique($category_acl_receivers);
-            }
-            }else{
                 $recipients['category_acl'] = false;
             }
         } else {
@@ -1001,18 +1136,16 @@ class plgJemMailer extends CMSPlugin
             $query->join('INNER', '#__jem_categories AS c ON c.groupid = gm.group_id');
             $query->join('INNER', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
             if (!empty($eventid)) {
-                $query->where('rel.itemid = '.$db->quote($eventid));
+                $query->where('rel.itemid = '.$eventid);
             } elseif (!empty($venueid)) {
-                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $db->quote($venueid) . ' AND rel.itemid = a.id');
+                $query->join('INNER', '#__jem_events AS a ON a.locid = ' . $venueid . ' AND rel.itemid = a.id');
             } else {
                 $query->where('0');
             }
 
-            $db->setQuery($query);
-            if (is_null($recipients['group'] = $db->loadColumn(0))) {
-                return array();
-            } else {
-                $recipients['group'] = array_unique($recipients['group']);
+            $recipients['group'] = array_unique($this->_loadColumn($query));
+            if (!$recipients['group']) {
+                $recipients['group'] = false;
             }
         } else {
             $recipients['group'] = false;
@@ -1045,9 +1178,8 @@ class plgJemMailer extends CMSPlugin
         if (isset($data->receivers)) {
             $receivers = is_array($data->receivers) ? $data->receivers : array($data->receivers);
 
-            # remove empty fields and duplicates
-            $receivers    = array_filter($receivers);
-            $receivers    = array_unique($receivers);
+            # remove empty/invalid fields and duplicates
+            $receivers = $this->_normaliseEmailList($receivers);
 
             if ($receivers) {
                 foreach ($receivers as $receiver)
@@ -1071,8 +1203,9 @@ class plgJemMailer extends CMSPlugin
                 'creator'    => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ITEM_CREATOR'),
                 'ev-creator' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_EVENT_CREATOR'),
                 'group'      => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_GROUP_MEMBER'),
-                'category'   => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
-                'registered' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE')
+                'category'     => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED'),
+                'registered'   => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE'),
+                'category_acl' => Text::_('PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_ACL')
             );
 
             # for all recipients...
@@ -1080,6 +1213,11 @@ class plgJemMailer extends CMSPlugin
             #  value is an array of roles which cause this user to get this email
             foreach ($data->recipients as $receiver => $causes)
             {
+                $receiver = filter_var(trim((string) $receiver), FILTER_VALIDATE_EMAIL);
+                if (!$receiver) {
+                    continue;
+                }
+
                 # collect why tis user gets this email
                 $why = array();
                 foreach ($causes as $cause) {
@@ -1122,6 +1260,11 @@ class plgJemMailer extends CMSPlugin
     private function _send($recipient, $subject, $body)
     {
         $result = false;
+        $recipient = filter_var(trim((string) $recipient), FILTER_VALIDATE_EMAIL);
+
+        if (!$recipient) {
+            return false;
+        }
 
         try {
             $mail = Factory::getMailer();
@@ -1164,12 +1307,7 @@ class plgJemMailer extends CMSPlugin
     private function Adminlist()
     {
         $admin_receiver = $this->params->get('admin_receivers');
-        $additional_mails    =(!empty($admin_receiver) ? (array_filter(explode(',', ($admin_receiver  ? trim($admin_receiver) : $admin_receiver)))) :array()) ;
-        // remove whitespaces around each entry, then check if valid email address
-        foreach ($additional_mails as $k => $v) {
-            $additional_mails[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
-        }
-        $additional_mails    = array_filter($additional_mails);
+        $additional_mails = $this->_normaliseEmailList(!empty($admin_receiver) ? explode(',', trim($admin_receiver)) : array());
 
         if ($this->params->get('fetch_admin_mails', '0')) {
 
@@ -1180,19 +1318,19 @@ class plgJemMailer extends CMSPlugin
             $query->select(array('u.id','u.email','u.name'));
             $query->from($db->quoteName('#__users').' AS u');
             $query->where(array('u.sendEmail = 1'));
+            $query->where(array('u.block = 0'));
 
-            $db->setQuery($query);
-
-            if ($db->execute() === false) {
-                Factory::getApplication()->enqueueMessage($db->stderr(true), 'error');
-                return;
+            try {
+                $db->setQuery($query);
+                $admin_mails = $db->loadColumn(1);
+            } catch (RuntimeException $e) {
+                JemHelper::addLogEntry($e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
+                $admin_mails = array();
             }
 
-            $admin_mails = $db->loadColumn(1);
-            $AdminList   = array_merge($admin_mails, $additional_mails);
-            $AdminList   = array_unique($AdminList);
+            $AdminList   = $this->_normaliseEmailList(array_merge($admin_mails, $additional_mails));
         } else {
-            $AdminList    = array_unique($additional_mails);
+            $AdminList   = $additional_mails;
         }
 
         return $AdminList;
@@ -1208,18 +1346,77 @@ class plgJemMailer extends CMSPlugin
             if (is_array($list)) {
                 $list = implode(',', $list);
             }
-            $CategoryDBList    = array_filter(explode(',', trim($list)));
-            // remove whitespaces around each entry, then check if valid email address
-            foreach ($CategoryDBList as $k => $v) {
-                $CategoryDBList[$k] = filter_var(trim($v), FILTER_VALIDATE_EMAIL);
-            }
-            $CategoryDBList = array_unique($CategoryDBList);
-            $CategoryDBList = array_filter($CategoryDBList);
+            $CategoryDBList = $this->_normaliseEmailList(explode(',', trim($list)));
         } else {
             $CategoryDBList = array();
         }
 
         return $CategoryDBList;
+    }
+
+    /**
+     * Load a database column while keeping recipient lookup failures local.
+     *
+     * @param   object   $query   Query object to execute.
+     * @param   integer  $column  Column offset to load.
+     *
+     * @return  array
+     */
+    private function _loadColumn($query, $column = 0)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $db->setQuery($query);
+            $values = $db->loadColumn($column);
+        } catch (RuntimeException $e) {
+            JemHelper::addLogEntry($e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
+            $values = array();
+        }
+
+        return is_array($values) ? $values : array();
+    }
+
+    /**
+     * Normalise a mixed list of email values.
+     *
+     * @param   array  $emails  Raw email values.
+     *
+     * @return  array
+     */
+    private function _normaliseEmailList(array $emails)
+    {
+        $normalised = array();
+
+        foreach ($emails as $email) {
+            $email = filter_var(trim((string) $email), FILTER_VALIDATE_EMAIL);
+            if ($email) {
+                $normalised[] = $email;
+            }
+        }
+
+        return array_values(array_unique($normalised));
+    }
+
+    /**
+     * Normalise a mixed list of integer values.
+     *
+     * @param   array  $values  Raw integer values.
+     *
+     * @return  array
+     */
+    private function _normaliseIntegerList(array $values)
+    {
+        $normalised = array();
+
+        foreach ($values as $value) {
+            $value = (int) $value;
+            if ($value > 0) {
+                $normalised[] = $value;
+            }
+        }
+
+        return array_values(array_unique($normalised));
     }
 }
 ?>

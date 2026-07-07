@@ -12,8 +12,10 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 /**
  * Model: Venue
@@ -68,13 +70,14 @@ class JemModelVenue extends JemModelAdmin
             $db = Factory::getContainer()->get('DatabaseDriver');
             foreach ($pks as $pk)
             {
+                $pk = (int) $pk;
                 $result = array();
 
                 $query = $db->getQuery(true);
                 $query->select(array('COUNT(e.locid) as AssignedEvents'));
                 $query->from($db->quoteName('#__jem_venues').' AS v');
                 $query->join('LEFT', '#__jem_events AS e ON e.locid = v.id');
-                $query->where(array('v.id = '.$pk));
+                $query->where(array('v.id = ' . $pk));
                 $query->group('v.id');
                 $db->setQuery($query);
                 $assignedEvents = $db->loadResult();
@@ -172,6 +175,9 @@ class JemModelVenue extends JemModelAdmin
             return false;
         }
 
+        $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
+        JemCustomFields::applyFormLabels($form, 'venue', $scope);
+
         return $form;
     }
 
@@ -187,15 +193,28 @@ class JemModelVenue extends JemModelAdmin
         $jemsettings = JemAdmin::config();
 
         if ($item = parent::getItem($pk)) {
-            $files = JemAttachment::getAttachments('venue'.$item->id);
+            $registry = new Registry;
+            $registry->loadString($item->attribs ?? '{}');
+            $item->attribs = $registry->toArray();
+
+            $registry = new Registry;
+            $registry->loadString($item->metadata ?? '{}');
+            $item->metadata = $registry->toArray();
+
+            $files = JemAttachment::getAttachments('venue'.$item->id, true);
             $item->attachments = $files;
         }
 
-        $item->author_ip = $jemsettings->storeip ? JemHelper::retrieveIP() : false;
+        $item->author_ip = JemHelper::getStoredIP();
 
         if (empty($item->id)) {
             $item->country = $jemsettings->defaultCountry;
         }
+
+        list($item->latitude, $item->longitude) = $this->normaliseCoordinates(
+            $item->latitude ?? null,
+            $item->longitude ?? null
+        );
 
         return $item;
     }
@@ -224,6 +243,11 @@ class JemModelVenue extends JemModelAdmin
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
+
+        list($table->latitude, $table->longitude) = $this->normaliseCoordinates(
+            $table->latitude ?? null,
+            $table->longitude ?? null
+        );
 
         // Increment version number.
         $table->version ++;
@@ -258,9 +282,21 @@ class JemModelVenue extends JemModelAdmin
         $data['publish_down'] = (isset($data['publish_down']) && !empty($data['publish_down'])) ? $data['publish_down'] : null;
         $data['attribs'] = (isset($data['attribs'])) ? $data['attribs'] : '';
         $data['language'] = (isset($data['language'])) ? $data['language'] : '';
-        $data['latitude'] = (isset($data['latitude']) && !empty($data['latitude'])) ? $data['latitude'] : 0;
-        $data['longitude'] = (isset($data['longitude']) && !empty($data['longitude'])) ? $data['longitude'] : 0;
+        list($data['latitude'], $data['longitude']) = $this->normaliseCoordinates(
+            $data['latitude'] ?? null,
+            $data['longitude'] ?? null
+        );
+        $data['map'] = $this->isMapEnabled($data['map'] ?? 0) ? 1 : 0;
+        if ($data['map'] && !$this->hasMappableLocation($data)) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
+            return false;
+        }
 
+        $customFieldErrors = array();
+        if (!JemCustomFields::validateAndSanitizeData('venue', $data, $customFieldErrors)) {
+            $this->setError(implode('<br>', $customFieldErrors));
+            return false;
+        }
         // Store as copy - reset creation date, modification fields, hit counter, version
         if ($task == 'save2copy') {
             unset($data['created']);
@@ -292,10 +328,14 @@ class JemModelVenue extends JemModelAdmin
                 $attach_name   = $jinput->post->get('attach-name', array(), 'array');
                 $attach_descr  = $jinput->post->get('attach-desc', array(), 'array');
                 $attach_access = $jinput->post->get('attach-access', array(), 'array');
+                $attach_order  = $jinput->post->get('attach-order', array(), 'array');
+                $attach_frontend = $jinput->post->get('attach-frontend', array(), 'array');
                 foreach($attachments as $n => &$a) {
                     $a['customname']  = array_key_exists($n, $attach_access) ? $attach_name[$n]   : '';
                     $a['description'] = array_key_exists($n, $attach_access) ? $attach_descr[$n]  : '';
                     $a['access']      = array_key_exists($n, $attach_access) ? $attach_access[$n] : '';
+                    $a['ordering']    = array_key_exists($n, $attach_order) ? $attach_order[$n] : 0;
+                    $a['frontend']    = array_key_exists($n, $attach_frontend) ? $attach_frontend[$n] : 1;
                 }
                 JemAttachment::postUpload($attachments, 'venue' . $pk);
             }
@@ -306,19 +346,84 @@ class JemModelVenue extends JemModelAdmin
             $old['name']        = $jinput->post->get('attached-name', array(), 'array');
             $old['description'] = $jinput->post->get('attached-desc', array(), 'array');
             $old['access']      = $jinput->post->get('attached-access', array(), 'array');
+            $old['ordering']    = $jinput->post->get('attached-order', array(), 'array');
+            $old['frontend']    = $jinput->post->get('attached-frontend', array(), 'array');
 
             foreach ($old['id'] as $k => $id){
                 $attach = array();
                 $attach['id']          = $id;
-                $attach['name']        = $old['name'][$k];
-                $attach['description'] = $old['description'][$k];
-                if ($allowed) {
+                $attach['name']        = $old['name'][$k] ?? '';
+                $attach['description'] = $old['description'][$k] ?? '';
+                $attach['ordering']    = $old['ordering'][$k] ?? 0;
+                if (array_key_exists($k, $old['frontend'])) {
+                    $attach['frontend'] = $old['frontend'][$k];
+                }
+                if ($allowed && array_key_exists($k, $old['access'])) {
                     $attach['access']  = $old['access'][$k];
                 } // else don't touch this field
-                JemAttachment::update($attach);
+                JemAttachment::update($attach, 'venue' . $pk);
             }
         }
 
         return $saved;
+    }
+
+    /**
+     * A venue can expose a map link only when it has a full address or valid coordinates.
+     */
+    protected function hasMappableLocation(array $data): bool
+    {
+        $hasAddress = trim((string) ($data['street'] ?? '')) !== ''
+            && trim((string) ($data['city'] ?? '')) !== ''
+            && trim((string) ($data['country'] ?? '')) !== ''
+            && trim((string) ($data['postalCode'] ?? '')) !== '';
+
+        if ($hasAddress) {
+            return true;
+        }
+
+        $latitude = trim((string) ($data['latitude'] ?? ''));
+        $longitude = trim((string) ($data['longitude'] ?? ''));
+
+        if ($latitude === '' || $longitude === '' || !is_numeric($latitude) || !is_numeric($longitude)) {
+            return false;
+        }
+
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        return $latitude >= -90.0 && $latitude <= 90.0
+            && $longitude >= -180.0 && $longitude <= 180.0
+            && $latitude !== 0.0
+            && $longitude !== 0.0;
+    }
+    /**
+     * Store incomplete, empty and Null Island coordinates as NULL.
+     */
+    protected function normaliseCoordinates($latitude, $longitude): array
+    {
+        $latitude = trim((string) $latitude);
+        $longitude = trim((string) $longitude);
+
+        if (
+            $latitude === ''
+            || $longitude === ''
+            || !is_numeric($latitude)
+            || !is_numeric($longitude)
+            || (float) $latitude === 0.0
+            || (float) $longitude === 0.0
+        ) {
+            return array(null, null);
+        }
+
+        return array($latitude, $longitude);
+    }
+
+    /**
+     * Normalise map checkbox values before validation and storage.
+     */
+    protected function isMapEnabled($value): bool
+    {
+        return in_array($value, array(1, '1', true, 'true', 'on', 'yes'), true);
     }
 }

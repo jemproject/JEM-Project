@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\Utilities\ArrayHelper; 
+use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\DatabaseDriver;
-use Joomla\CMS\Date\Date; // Añadido para mejor práctica en Joomla 5
+use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
@@ -23,6 +23,8 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  **/
 class JemModelEventslist extends ListModel
 {
+    protected $show_archived_events = 0;
+
     /**
      * Constructor.
      */
@@ -45,6 +47,8 @@ class JemModelEventslist extends ListModel
                 'access', 'a.access', 'access_level',
                 'created', 'a.created',
                 'created_by', 'a.created_by',
+                'event_status', 'a.event_status',
+                'ticket_availability', 'a.ticket_availability',
                 'ordering', 'a.ordering',
                 'featured', 'a.featured',
                 'language', 'a.language',
@@ -55,6 +59,94 @@ class JemModelEventslist extends ListModel
         }
 
         parent::__construct($config);
+    }
+
+    /**
+     * Convert menu parameter values from fancy fields, arrays, or comma-separated text into integer ids.
+     */
+    protected function normaliseParamIds($value)
+    {
+        if (is_array($value)) {
+            $ids = $value;
+        } else {
+            $value = trim((string) $value);
+            $ids   = $value === '' ? array() : explode(',', $value);
+        }
+
+        $ids = array_map('intval', $ids);
+
+        return array_values(array_filter($ids));
+    }
+
+    /**
+     * Convert menu parameter values from fancy fields, arrays, or comma-separated text into strings.
+     */
+    protected function normaliseParamStrings($value)
+    {
+        if (is_array($value)) {
+            $values = $value;
+        } else {
+            $value  = trim((string) $value);
+            $values = $value === '' ? array() : explode(',', $value);
+        }
+
+        $values = array_map('trim', $values);
+
+        return array_values(array_filter($values, static function ($entry) {
+            return $entry !== '';
+        }));
+    }
+
+    /**
+     * Apply menu-level event filters shared by calendar-style views.
+     */
+    protected function applyMenuEventFilters($params)
+    {
+        if ((int) $params->get('onlyfeatured', 0) === 1) {
+            $this->setState('filter.featured', 1);
+        }
+
+        $catswitch = $params->get('categoryswitch', '');
+        $cats      = $this->normaliseParamIds($params->get('categoryswitchcats', array()));
+
+        if ($cats) {
+            if ($params->get('includesubcategories', 0)) {
+                $listCats = array();
+
+                foreach ($cats as $idcat) {
+                    if (!in_array($idcat, $listCats, true)) {
+                        $listCats[] = $idcat;
+                        $childCat   = $this->getListChildCat($idcat, false);
+
+                        if ($childCat) {
+                            $listCats = array_unique(array_merge($listCats, $childCat));
+                        }
+                    }
+                }
+            } else {
+                $listCats = $cats;
+            }
+
+            $this->setState('filter.category_id', $listCats);
+            $this->setState('filter.category_id.include', (bool) $catswitch);
+        }
+
+        $venues = $this->normaliseParamIds($params->get('timeline_filter_venues', array()));
+        if ($venues) {
+            $this->setState('filter.venue_id', $venues);
+            $this->setState('filter.venue_id.include', true);
+        }
+
+        $types = $this->normaliseParamIds($params->get('timeline_filter_types', array()));
+        if ($types) {
+            $this->setState('filter.type_id', $types);
+        }
+
+        $countries = $this->normaliseParamStrings($params->get('timeline_filter_countries', array()));
+        if ($countries) {
+            $this->setState('filter.country_id', $countries);
+            $this->setState('filter.country_id.include', true);
+        }
     }
 
     /**
@@ -95,15 +187,17 @@ class JemModelEventslist extends ListModel
         $task        = $app->input->getCmd('task', '');
         $format      = $app->input->getCmd('format', false);
         $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
-        $params      = $app->getParams();
+        $activeMenu = $app->getMenu()->getActive();
+        $params = $activeMenu ? $activeMenu->getParams() : $app->getParams();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $currentItemid = $activeMenu ? $activeMenu->id : $app->input->getInt('Itemid', 0);
+        $itemid        = $app->input->getInt('id', 0) . ':' . $currentItemid;
 
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
+        $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->setState('filter.show_archived_events', $this->show_archived_events);
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
-            /* in J! 3.3.6 limitstart is removed from request - but we need it! */
             if ($app->input->get('limitstart', null, 'int') === null) {
                 $app->setUserState('com_jem.eventslist.' . $itemid . '.limitstart', 0);
             }
@@ -111,14 +205,13 @@ class JemModelEventslist extends ListModel
             $limit      = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limit', 'limit', $jemsettings->display_num, 'int');
             $this->setState('list.limit', $limit);
             $limitstart = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limitstart', 'limitstart', 0, 'int');
-            // correct start value if required
             $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
             $this->setState('list.start', $limitstart);
         }
 
         # Search - variables
         $search     = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_search', 'filter_search', '', 'string');
-        $this->setState('filter.filter_search', $search); // must be escaped later
+        $this->setState('filter.filter_search', $search);
 
         $filtertype = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter.filter_type', $filtertype);
@@ -129,26 +222,34 @@ class JemModelEventslist extends ListModel
         # Search - Filter by setting menu
         $today = new Date('now', $app->get('offset'));
 
-        $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-        $dateFromValue = null;
-        $whereFrom = null;
-        if ($filterDaysBefore > 0) {
-            $dateFromValue = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-            $whereFrom = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), "' . $dateFromValue . '") >= 0';
-        }
-        if (!empty($whereFrom)) {
-            $this->setState('filter.calendar_from', $whereFrom);
-        } else {
-            $this->setState('filter.calendar_from', null);
-        }
+        // Use 'all' as a fallback if the parameter is missing or empty
+        $filterDaysBefore = $params->get('tablefiltereventfrom', 'all');
+        if ($filterDaysBefore === '') { $filterDaysBefore = 'all'; }
 
-        $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
-        $whereTo = null;
-        $dateToValue = null;
-        if ($filterDaysAfter > 0) {
-            $dateToValue = (clone $today)->modify('+' . $filterDaysAfter . ' days')->format('Y-m-d');
-            $whereTo = ' DATEDIFF(a.dates, "' . $dateToValue . '") <= 0';
+        $filterDaysAfter = $params->get('tablefiltereventuntil', 'all');
+        if ($filterDaysAfter === '') { $filterDaysAfter = 'all'; }
+
+        // Persist these values in the User State for pagination
+        $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventfrom', $filterDaysBefore);
+        $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventuntil', $filterDaysAfter);
+
+        // Define From logic
+        $where_from = '';
+        if ($filterDaysBefore !== 'all') {
+            $daysBefore = (int)$filterDaysBefore;
+            $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
+            $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ')';
         }
+        $this->setState('filter.calendar_from', $where_from);
+
+        $whereTo = '';
+        if ($filterDaysAfter !== 'all') {
+            $daysAfter = (int)$filterDaysAfter;
+            $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
+            $whereTo = '(a.dates <= ' . $db->quote($dateTo) . ')';
+        }
+        $this->setState('filter.calendar_to', (!empty($whereTo) ? $whereTo : null));
+
         if (!empty($whereTo)) {
             $this->setState('filter.calendar_to', $whereTo);
         } else {
@@ -214,6 +315,15 @@ class JemModelEventslist extends ListModel
 
         // Finalize order direction from request/session, falling back to determined default
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
+        $filter_order_Dir = strtoupper($filter_order_Dir);
+
+        if (!in_array($filter_order, $this->filter_fields, true)) {
+            $filter_order = 'a.dates';
+        }
+
+        if (!in_array($filter_order_Dir, array('ASC', 'DESC'), true)) {
+            $filter_order_Dir = $filter_order_DirDefault;
+        }
 
         $default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
 
@@ -226,16 +336,13 @@ class JemModelEventslist extends ListModel
         ################################
 
         $catswitch = $params->get('categoryswitch', '');
-        $cats      = trim($params->get('categoryswitchcats', ''));
+        $cats      = $this->normaliseParamIds($params->get('categoryswitchcats', array()));
         $list_cats = [];
 
         if ($cats) {
-            $ids_cats = explode(",", $cats);
-            $ids_cats = ArrayHelper::toInteger($ids_cats);
-
             if ($params->get('includesubcategories', 0)) {
                 // Get subcategories
-                foreach ($ids_cats as $idcat) {
+                foreach ($cats as $idcat) {
                     if (!in_array($idcat, $list_cats, true)) {
                         $list_cats[] = $idcat;
                         $child_cat   = $this->getListChildCat($idcat, false);
@@ -246,7 +353,7 @@ class JemModelEventslist extends ListModel
                     }
                 }
             } else {
-                $list_cats = $ids_cats;
+                $list_cats = $cats;
             }
 
             if ($catswitch) {
@@ -261,6 +368,8 @@ class JemModelEventslist extends ListModel
         }
         $this->setState('filter.groupby', array('a.id'));
     }
+
+
 
     /**
      * Method to get a all list of children categories (subtree) by $id category.
@@ -341,10 +450,13 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.featured');
         $id .= ':' . serialize($this->getState('filter.event_id'));
         $id .= ':' . $this->getState('filter.event_id.include');
+        $id .= ':' . serialize($this->getState('filter.type_id'));
         $id .= ':' . serialize($this->getState('filter.category_id'));
         $id .= ':' . $this->getState('filter.category_id.include');
         $id .= ':' . serialize($this->getState('filter.venue_id'));
         $id .= ':' . $this->getState('filter.venue_id.include');
+        $id .= ':' . serialize($this->getState('filter.country_id'));
+        $id .= ':' . $this->getState('filter.country_id.include');
         $id .= ':' . $this->getState('filter.venue_state');
         $id .= ':' . $this->getState('filter.venue_state.mode');
         $id .= ':' . $this->getState('filter.filter_search');
@@ -380,6 +492,7 @@ class JemModelEventslist extends ListModel
         $jemsettings = JemHelper::config();
         $user        = JemFactory::getUser();
         $levels      = $user->getAuthorisedViewLevels();
+        $levelsList  = implode(',', array_map('intval', $levels));
 
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -389,11 +502,13 @@ class JemModelEventslist extends ListModel
         $query->select(
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-                'a.fulltext,a.hits,a.id,a.introtext,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
-                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version'
+                'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.online_meeting_url,a.online_meeting_label,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version,a.type_id'
             )
         );
         $query->from('#__jem_events as a');
+        $query->join('LEFT', '#__jem_events AS parent ON parent.id = a.recurrence_first_id');
+        $effectiveTypeId = 'COALESCE(NULLIF(a.type_id, 0), parent.type_id)';
 
         # Author
         $name = $settings->get('global_regname', '1') ? 'u.name' : 'u.username';
@@ -406,10 +521,27 @@ class JemModelEventslist extends ListModel
         $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
         $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.version AS l_version'));
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+        
+        
 
         # Country
         $query->select(array('ct.name AS countryname'));
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
+
+        # Type
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+        $query->select(array(
+            'jt.name AS type_name',
+            'jt.icon AS type_icon',
+            'jt.color AS type_color',
+            'jt.alias AS type_alias',
+            'jt.description AS type_description',
+            'jt.base_language AS type_base_language',
+            'jt.translation_languages AS type_translation_languages',
+            'jt.translations AS type_translations',
+        ));
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = ' . $effectiveTypeId . ' AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
         # the rest
         $case_when_e = ' CASE WHEN ';
@@ -429,24 +561,30 @@ class JemModelEventslist extends ListModel
         $case_when_l .= $id_l . ' END as venueslug';
 
         $case_when_a = ' CASE WHEN ';
-        $case_when_a .= " a.access IN (" . implode(',', $levels) . ")";
+        $case_when_a .= " a.access IN (" . $levelsList . ")";
         $case_when_a .= ' THEN 1 ';
         $case_when_a .= ' ELSE 0 ';
         $case_when_a .= ' END as user_has_access_event';
 
         $case_when_v = ' CASE WHEN ';
-        $case_when_v .= " l.access IN (" . implode(',', $levels) . ")";
+        $case_when_v .= " (l.id IS NULL OR l.access IN (" . $levelsList . "))";
         $case_when_v .= ' THEN 1 ';
         $case_when_v .= ' ELSE 0 ';
         $case_when_v .= ' END as user_has_access_venue';
 
         $case_when_c  = ' CASE WHEN ';
-        $case_when_c .= " c.access IN (" . implode(',',$levels) . ")";
+        $case_when_c .= " c.access IN (" . $levelsList . ")";
         $case_when_c .= ' THEN 1 ';
         $case_when_c .= ' ELSE 0 ';
         $case_when_c .= ' END as user_has_access_category';
 
-        $query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c));
+        $case_when_t  = ' CASE WHEN ';
+        $case_when_t .= " (a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (" . $levelsList . "))";
+        $case_when_t .= ' THEN 1 ';
+        $case_when_t .= ' ELSE 0 ';
+        $case_when_t .= ' END as user_has_access_type';
+
+        $query->select(array($case_when_e, $case_when_l, $case_when_a, $case_when_v, $case_when_c, $case_when_t));
 
         # join over the category-tables
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -459,10 +597,6 @@ class JemModelEventslist extends ListModel
         ###################
         ## FILTER - TASK ##
         ###################
-
-        if (!$task) {
-            $task = ($params->get('show_archived_events') ? 'archive' : '');
-        }
 
         #####################
         ## FILTER - EVENTS ##
@@ -491,7 +625,34 @@ class JemModelEventslist extends ListModel
             $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('a.access IN (' . implode(',', $newlevels) . ')');
         } else {
-            $query->where('a.access IN (' . implode(',', $levels) . ')');
+            $query->where('a.access IN (' . $levelsList . ')');
+        }
+
+        # Filter by venue access level - public or with access_level_locked_venues active.
+        if ($jemsettings->access_level_locked_venues != "[\"1\"]") {
+            $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
+            $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
+            $query->where('(l.id IS NULL OR l.access IN (' . implode(',', array_map('intval', $newlevels)) . '))');
+        } else {
+            $query->where('(l.id IS NULL OR l.access IN (' . $levelsList . '))');
+        }
+
+        # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
+        $query->where('(' . $effectiveTypeId . ' IS NULL OR ' . $effectiveTypeId . ' = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
+
+        ####################
+        ## FILTER-TYPE_ID ##
+        ####################
+
+        $filterTypeId = $this->getState('filter.type_id');
+        if (is_array($filterTypeId)) {
+            ArrayHelper::toInteger($filterTypeId);
+            $filterTypeId = array_filter($filterTypeId);
+            if ($filterTypeId) {
+                $query->where($effectiveTypeId . ' IN (' . implode(',', $filterTypeId) . ')');
+            }
+        } elseif (!empty($filterTypeId)) {
+            $query->where($effectiveTypeId . ' = ' . (int) $filterTypeId);
         }
 
         ####################
@@ -499,14 +660,14 @@ class JemModelEventslist extends ListModel
         ####################
 
         # Filter by published state.
-        $where_pub    = $this->_getPublishWhere();   
+        $where_pub    = $this->_getPublishWhere();
         $currentDate  = (new Date('now', $app->get('offset')))->format($db->getDateFormat(), true);
 
         if (!empty($where_pub)) {
             if ($this->getState('filter.published') == 2) {
                 $ispublished = implode(' OR ', $where_pub);
             } else {
-                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND a.publish_up <= ' . $db->quote($currentDate) . ' AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
+                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND (a.publish_up <= ' . $db->quote($currentDate) . ' OR a.publish_up IS null) AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
             }
             $query->where($ispublished);
         } else {
@@ -538,13 +699,13 @@ class JemModelEventslist extends ListModel
         switch ($opendates) {
             case 0: // don't show events without start date
             default:
-                $opendates_query = " AND a.dates IS NOT NULL)";
+                $opendates_query = "a.dates IS NOT NULL";
                 break;
             case 1: // show all events, with or without start date
-                $opendates_query = " OR a.dates IS NULL)";
+                $opendates_query = "";
                 break;
             case 2: // show only events without startdate
-                $opendates_query = " a.dates IS NULL";
+                $opendates_query = "a.dates IS NULL";
                 break;
         }
 
@@ -557,21 +718,22 @@ class JemModelEventslist extends ListModel
         $today     = new Date('now', $app->get('offset'));
         $jubilee_filter = $this->getState('filter.jubilee_date_match');
         $jubilee_show_past = $this->getState('filter.jubilee_show_past', 0);
-        $published = $this->getState('filter.published', 1);        
+        $published = $this->getState('filter.published', 1);
 
-        if($opendates != 2 && $ispublished <2) {
-            // Skip calendar date filtering if: Jubilee filter is active AND show_past_events is enabled
-            // - Published is 2 (archived)
-            // - The Jubilee module handles its own date matching logic
-            if ($calendar_from != '') {
-                $query->where($calendar_from);
+        $applyCalendarDateFilters = !is_numeric($published) || (int) $published < 2 || (bool) $this->getState('filter.show_archived_events', false);
 
-                # Si también hay un calendar_to, lo añadimos
+        if($opendates != 2 && $applyCalendarDateFilters) {
+
+            // Check if calendar_from or calendar_to is set
+            if ($calendar_from != '' || $calendar_to != '') {
+                if ($calendar_from != '') {
+                    $query->where($calendar_from);
+                }
                 if ($calendar_to != '') {
                     $query->where($calendar_to);
                 }
             } else {
-                if($published<2) {
+                if($applyCalendarDateFilters) {
                     if (empty($jubilee_filter) || !$jubilee_show_past) {
                         if ($cal_month) {
                             // Apply Month filter
@@ -579,30 +741,75 @@ class JemModelEventslist extends ListModel
                             $filter_date_to = date("Y-m-t", strtotime($filter_date_from));
 
                             // Check if event ENDS after or on the start date
-                            $where_from = ' (DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0 ' . $opendates_query;
+                            $where_from = 'DATEDIFF(IF(a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($filter_date_from) . ') >= 0';
+                            if (!empty($opendates_query)) {
+                                $where_from = '(' . $where_from . ' AND ' . $opendates_query . ')';
+                            } else {
+                                $where_from = '(' . $where_from . ')';
+                            }
                             $query->where($where_from);
                             $this->setState('filter.calendar_from', $where_from);
 
                             // Check if event STARTS before or on the end date
-                            $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0' . $opendates_query;
+                            $where_to = 'DATEDIFF(a.dates, ' . $db->quote($filter_date_to) . ') <= 0';
+                            if (!empty($opendates_query)) {
+                                $where_to = '(' . $where_to . ' AND ' . $opendates_query . ')';
+                            } else {
+                                $where_to = '(' . $where_to . ')';
+                            }
                             $query->where($where_to);
                             $this->setState('filter.calendar_to', $where_to);
                         } else {
-                            // Apply menu date filters
-                            $filterDaysBefore = $params->get('tablefiltereventfrom', 0);
-                            $filterDaysAfter = $params->get('tablefiltereventuntil', 0);
-                            if (empty($task) || ($task == 'archive' && $filterDaysBefore > 0)) {
-                                $dateFrom = (clone $today)->modify('-' . $filterDaysBefore . ' days')->format('Y-m-d');
-                                $where_from = '( (a.dates >= ' . $db->quote($dateFrom);
-                                $where_from .= ' AND COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ' )' . $opendates_query;
-                                $query->where($where_from);
-                                $this->setState('filter.calendar_from', $where_from);
+                            // Apply menu parameters date filters
+                            // Retrieve from State to maintain consistency during pagination
+                            $filterDaysBefore = $this->getState('filter.tablefiltereventfrom');
+                            if ($filterDaysBefore === null) {
+                                $filterDaysBefore = isset($params) ? $params->get('tablefiltereventfrom', '') : '';
                             }
-                            if ($filterDaysAfter) {
-                                $dateTo = (clone $today)->modify($filterDaysAfter . ' days')->format('Y-m-d');
-                                $where_to = ' (DATEDIFF(a.dates, ' . $db->quote($dateTo) . ') <= 0' . $opendates_query;
+
+                            $filterDaysAfter = $this->getState('filter.tablefiltereventuntil');
+                            if ($filterDaysAfter === null) {
+                                $filterDaysAfter = isset($params) ? $params->get('tablefiltereventuntil', '') : '';
+                            }
+
+                            $taskValue = isset($task) ? $task : '';
+
+                            // Apply from filter
+                            if ($filterDaysBefore !== '') {
+                                if (empty($taskValue) || ($taskValue == 'archive' && (int)$filterDaysBefore > 0)) {
+                                    $daysBefore = (int)$filterDaysBefore;
+                                    // Handle 0 explicitly to avoid modify() issues
+                                    $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
+
+                                    $where_from = 'COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom);
+                                    if (!empty($opendates_query)) {
+                                        $where_from = '(' . $where_from . ' AND ' . $opendates_query . ')';
+                                    } else {
+                                        $where_from = '(' . $where_from . ')';
+                                    }
+
+                                    $query->where($where_from);
+                                    $this->setState('filter.calendar_from', $where_from);
+                                    $this->setState('filter.tablefiltereventfrom', $filterDaysBefore);
+                                }
+                            }
+
+                            // Apply until filter
+                            if ($filterDaysAfter !== '') {
+                                $daysAfter = (int)$filterDaysAfter;
+                                // Handle 0 explicitly to avoid modify() issues
+                                $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
+
+                                $where_to = 'a.dates <= ' . $db->quote($dateTo);
+                                if (!empty($openDatesCondition)) {
+                                    $where_to = '(' . $where_to . ' AND ' . $openDatesCondition . ')';
+                                } else {
+                                    $where_to = '(' . $where_to . ')';
+                                }
+
                                 $query->where($where_to);
                                 $this->setState('filter.calendar_to', $where_to);
+                                $this->setState('filter.tablefiltereventuntil', $filterDaysAfter);
                             }
                         }
                     }
@@ -610,7 +817,9 @@ class JemModelEventslist extends ListModel
             }
         } else {
             // Only open day events
-            $query->where($opendates_query);
+            if (!empty($opendates_query)) {
+                $query->where($opendates_query);
+            }
         }
 
         #############################
@@ -691,6 +900,10 @@ class JemModelEventslist extends ListModel
 
         $venueCountry = $this->getState('filter.country_id');
 
+        if (!empty($venueCountry) && !is_array($venueCountry)) {
+            $venueCountry = array($venueCountry);
+        }
+
         if (!empty($venueCountry) && array_filter($venueCountry)) {
             $venueCountry = array_map([$db, 'quote'], $venueCountry);
             $operator = $this->getState('filter.country_id.include', 0) ? 'IN' : 'NOT IN';
@@ -758,6 +971,7 @@ class JemModelEventslist extends ListModel
         }
 
         $user = JemFactory::getUser();
+        $levels = $user->getAuthorisedViewLevels();
         $calendarMultiday = $this->getState('filter.calendar_multiday');
         $stateParams = $this->getState('params');
 
@@ -774,6 +988,8 @@ class JemModelEventslist extends ListModel
                 $item->params = clone $stateParams;
                 $item->params->merge($eventParams);
             }
+
+            JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
 
             # adding categories
             $item->categories = $this->getCategories($item->id);
@@ -807,10 +1023,14 @@ class JemModelEventslist extends ListModel
      */
     public function getCategories($id)
     {
-        $user     = JemFactory::getUser();
-        $levels   = $user->getAuthorisedViewLevels();
-        $settings = JemHelper::globalattribs();
+        $app         = Factory::getApplication();
+        $user        = JemFactory::getUser();
+        $levels      = $user->getAuthorisedViewLevels();
+        $settings    = JemHelper::globalattribs();
         $jemsettings = JemHelper::config();
+        $params      = $app->getParams();
+
+        $includechildevents = (bool)$params->get('includechildevents', 0);
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -901,7 +1121,7 @@ class JemModelEventslist extends ListModel
             $query->where('c.id '.$type.(int) $categoryId);
         }
         elseif (is_array($categoryId) && !empty($categoryId)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($categoryId);
+            ArrayHelper::toInteger($categoryId);
             $categoryId = implode(',', $categoryId);
             $type = $this->getState('filter.category_id.include', true) ? 'IN' : 'NOT IN';
             $query->where('c.id '.$type.' ('.$categoryId.')');
@@ -910,8 +1130,24 @@ class JemModelEventslist extends ListModel
         # filter set by day-view
         $requestCategoryId = $this->getState('filter.req_catid');
 
-        if ($requestCategoryId) {
-            $query->where('c.id = '.(int)$requestCategoryId);
+        if (!empty($requestCategoryId)) {
+            $idsCat = array_map('intval', explode(',', $requestCategoryId));
+
+            if ($includechildevents) {
+                foreach ($idsCat as $idCat) {
+                    $children = JemCategories::getChilds($idCat);
+                    if (!empty($children)) {
+                        $idsCat = array_merge($idsCat, array_map('intval', $children));
+                    }
+                }
+                $idsCat = array_unique($idsCat);
+            }
+
+            if (count($idsCat) > 1) {
+                $query->where('c.id IN (' . implode(',', $idsCat) . ')');
+            } else {
+                $query->where('c.id = ' . (int)reset($idsCat));
+            }
         }
 
         ###################
@@ -963,7 +1199,17 @@ class JemModelEventslist extends ListModel
             foreach ($items as $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
-                    $day = $item->start_day;
+                    $startTimestamp = strtotime((string) $item->dates);
+                    $endTimestamp   = strtotime((string) $item->enddates);
+
+                    if (!$startTimestamp || !$endTimestamp || $endTimestamp <= $startTimestamp) {
+                        continue;
+                    }
+
+                    $day        = isset($item->start_day) ? (int) $item->start_day : (int) date('j', $startTimestamp);
+                    $startMonth = isset($item->start_month) ? (int) $item->start_month : (int) date('n', $startTimestamp);
+                    $startYear  = isset($item->start_year) ? (int) $item->start_year : (int) date('Y', $startTimestamp);
+                    $datesdiff  = isset($item->datesdiff) ? (int) $item->datesdiff : (int) floor(($endTimestamp - $startTimestamp) / 86400);
                     $multi = array();
 
                     # it's multiday regardless if other days are on next month
@@ -972,11 +1218,11 @@ class JemModelEventslist extends ListModel
                     $item->multiname = $item->title;
                     $item->sort = 'zlast';
 
-                    for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
+                    for ($counter = 0; $counter <= $datesdiff - 1; $counter++)
                     {
                         # next day:
                         $day++;
-                        $nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+                        $nextday = mktime(0, 0, 0, $startMonth, $day, $startYear);
 
                         # ensure we only generate days of current month in this loop
                         if (date('m', $this->_date) == date('m', $nextday)) {
@@ -1091,7 +1337,7 @@ class JemModelEventslist extends ListModel
             $where_pub[] = '(' . $tbl . 'published ' . ($show_archived_events? '>=':'=') . (int)$published . ')';
         }
         elseif (is_array($published) && !empty($published)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($published);
+            ArrayHelper::toInteger($published);
             $published = implode(',', $published);
             $where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
         }

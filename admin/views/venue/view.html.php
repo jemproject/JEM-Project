@@ -46,6 +46,7 @@ class JemViewVenue extends JemAdminView
 
         // Load css
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
+        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
         $wa->registerStyle('jem.geostyle', 'com_jem/geostyle.css')->useStyle('jem.geostyle');
 
         // Load Scripts
@@ -116,6 +117,6 @@ class JemViewVenue extends JemAdminView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolBarHelper::help('editvenues', true, 'https://www.joomlaeventmanager.net/documentation/manual/backend/venues/add-venue');
+        ToolBarHelper::help('editvenues', true, 'https://www.joomlaeventmanager.net/documentation/backend/venues/add-venue');
     }
 }

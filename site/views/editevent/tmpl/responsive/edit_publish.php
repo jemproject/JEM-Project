@@ -10,20 +10,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 ?>
 
 <fieldset class="adminform">
-    <legend><?php echo Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'); ?></legend>
+    <legend><?php echo Text::_('COM_JEM_ADVANCED'); ?></legend>
     <dl class="jem-dl">
 
-        <dt><?php echo $this->form->getLabel('published'); ?></dt>
-        <dd><?php echo $this->form->getInput('published'); ?></dd>
-        <dt><?php echo $this->form->getLabel('featured'); ?></dt>
-        <dd><?php echo $this->form->getInput('featured'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
-        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
-        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
         <dt><?php echo $this->form->getLabel('access'); ?></dt>
         <dd><?php
             echo HTMLHelper::_(
@@ -34,9 +28,36 @@ use Joomla\CMS\HTML\HTMLHelper;
             );
             ?>
         </dd>
-
-        <p>&nbsp;</p>
+        <dt><?php echo $this->form->getLabel('published'); ?></dt>
+        <dd><?php echo $this->form->getInput('published'); ?></dd>
+        <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
+        <dd><?php echo $this->form->getInput('event_status'); ?></dd>
+        <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
+        <dd><?php echo $this->form->getInput('ticket_availability'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_url'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_url'); ?></dd>
+        <dt><?php echo $this->form->getLabel('online_meeting_label'); ?></dt>
+        <dd><?php echo $this->form->getInput('online_meeting_label'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_up'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_up'); ?></dd>
+        <dt><?php echo $this->form->getLabel('publish_down'); ?></dt>
+        <dd><?php echo $this->form->getInput('publish_down'); ?></dd>
+    </dl>
 </fieldset>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var articleActionSelect = document.getElementById('jform_create_article');
+    var articleAutoInfo = document.getElementById('jem-article-auto-info');
+    if (!articleActionSelect || !articleAutoInfo) {
+        return;
+    }
+    var updateArticleAutoInfo = function () {
+        articleAutoInfo.hidden = articleActionSelect.value !== '2';
+    };
+    articleActionSelect.addEventListener('change', updateArticleAutoInfo);
+    updateArticleAutoInfo();
+});
+</script>
 <!-- START META FIELDSET -->
 <fieldset class="adminform">
     <legend><?php echo Text::_('COM_JEM_METADATA'); ?></legend>

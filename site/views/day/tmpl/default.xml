@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <layout title="COM_JEM_DAY_VIEW_DEFAULT_TITLE">
         <message>
@@ -7,12 +7,12 @@
     </layout>
 
     <fields name="params">
-        <fieldset name="basic">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
             <field name="days" type="text"
                 default="0"
                 size="2"
                 label="COM_JEM_DAYS_FIELD"
-                description="COM_JEM_DAYS_FIELD_DESC"
+                description="COM_JEM_DAYS_FIELD_DESC" class="form-control w-auto"
             />
 
 <field name="onlyfeatured" type="radio"
@@ -25,61 +25,79 @@
                 <option value="0">JNO</option>
             </field>
           <field type="spacer" name="spacer1" hr="true" />
-          <field name="introtext" type="editor"
-                    filter="safehtml"
-                    hide="readmore,pagebreak,module,menu,fields,contact,article"
+<field name="categoryswitchcats" type="categoryedit"
+                    multiple="true"
+                    removeroot="true"
+                    class="form-select w-auto jem-options-width-auto"
                     default=""
-                    rows="8"
-                    cols="30"
-                    height="300px"
-                    label="COM_JEM_INTROTEXT_FIELD"
-                    description="COM_JEM_INTROTEXT_FIELD_DESC"
+                    label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL"
+                    description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC"
                 />
-                <field name="showintrotext" type="radio"
-                    default="0"
-                    label="COM_JEM_DISPLAY_INTROTEXT"
-                    description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-                    class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field type="spacer" name="spacer2" hr="true" />
-                <field name="categoryswitch" type="radio"
-                    default="0"
-                    label="COM_JEM_CATEGORYSWITCH"
-                    description="COM_JEM_CATEGORYSWITCH_DESC"
-                    class="btn-group btn-group-yesno"
-                >
-                    <option value="1">COM_JEM_INCLUDE</option>
-                    <option value="0">COM_JEM_EXCLUDE</option>
-                </field>
-                <field name="categoryswitchcats" type="text"
+                <field name="timeline_filter_venues" type="venueoptions"
+                    multiple="true"
+                    class="form-select w-auto"
                     default=""
-                    label="COM_JEM_CATEGORYSWITCHCATS"
-                    description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                    label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL"
+                    description="COM_JEM_TIMELINE_FILTER_VENUES_DESC"
+                />
+                <field name="timeline_filter_types" type="jemtype"
+                    entity="1"
+                    multiple="true"
+                    class="form-select w-auto"
+                    default=""
+                    label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL"
+                    description="COM_JEM_TIMELINE_FILTER_TYPES_DESC"
+                />
+                <field name="timeline_filter_countries" type="countryoptions"
+                    multiple="true"
+                    class="form-select w-auto jem-options-width-auto"
+                    default=""
+                    label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
+                    description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
                 />
 
                 <field type="spacer" name="spacer3" hr="true" />
-                <field name="footertext" type="editor"
-                    filter="safehtml"
-                    hide="readmore,pagebreak,module,menu,fields,contact,article"
-                    default=""
-                    rows="8"
-                    cols="30"
-                    height="300px"
-                    label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
-                    description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
-                />
-                <field name="showfootertext" type="radio"
-                    default="0"
-                    label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
-                    description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
-                    class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-        </fieldset>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>

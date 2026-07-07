@@ -9,12 +9,13 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\String\StringHelper;
 
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx; ?>">
     <div class="buttons">
         <?php
-        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link);
+        $btn_params = array('task' => $this->task, 'print_link' => $this->print_link, 'pdf_link' => $this->pdf_link);
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
         ?>
     </div>
@@ -59,8 +60,8 @@ use Joomla\CMS\Language\Text;
             <dd class="venue_website">
               <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
               <?php
-                if (\Joomla\String\StringHelper::strlen($row->url) > 35) {
-                  $urlclean = htmlspecialchars(\Joomla\String\StringHelper::substr($row->url, 0 , 35)) . '...';
+                if (StringHelper::strlen($row->url) > 35) {
+                  $urlclean = htmlspecialchars(StringHelper::substr($row->url, 0 , 35)) . '...';
                 } else {
                   $urlclean = htmlspecialchars($row->url);
                 }
@@ -95,9 +96,9 @@ use Joomla\CMS\Language\Text;
             <dd class="venue_country">
               <?php if ($row->country) :
                 $countryimg = JemHelperCountries::getCountryFlag($row->country);
-                echo $countryimg ? $countryimg : $row->country;
+                echo $countryimg ? $countryimg : $this->escape($row->country);
               endif; ?>
-              <meta itemprop="addressCountry" content="<?php echo $row->country; ?>" />
+              <meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" />
             </dd>
             <?php endif; ?>
           </dl>
@@ -142,6 +143,11 @@ use Joomla\CMS\Language\Text;
     </div>
 
     <!--copyright-->
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer( ); ?>
     </div>

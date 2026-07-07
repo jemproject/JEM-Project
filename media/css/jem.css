@@ -23,8 +23,12 @@
 }
 
 #jem .jem-event-info {
-    margin-right: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28rem;
+    margin-right: 0;
     float: left;
+    line-height: 1.35;
 }
 
 #jem .jem-event-info:last-child {
@@ -33,6 +37,66 @@
 
 #jem .jem-event-info-small {
     word-break: keep-all;
+}
+
+#jem .jem-registration-text {
+    background: rgba(248, 250, 252, .82);
+    border-left: 3px solid rgba(47, 95, 145, .45);
+    margin: 0 0 1rem;
+    padding: .75rem .95rem;
+}
+
+#jem .jem-registration-text-footer {
+    margin: 1rem 0 0;
+}
+
+#jem .jem-list-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.28rem 0.85rem;
+    width: 100%;
+}
+
+#jem .jem-event-details h3,
+#jem .jem-event-info-small h3,
+#jem .jem-event-details h4,
+#jem .jem-event-info-small h4 {
+    margin-top: 0;
+    margin-bottom: 0.45rem;
+    line-height: 1.22;
+    font-size: 1.45rem;
+}
+
+#jem .jem-event-details h3 a,
+#jem .jem-event-details h4 a {
+    font-weight: bold;
+}
+
+#jem .jem-event-details h3 .jem-type-badge,
+#jem .jem-event-info-small h3 .jem-type-badge,
+#jem .jem-event-details h4 .jem-type-badge,
+#jem .jem-event-info-small h4 .jem-type-badge {
+    margin-left: 0.35rem;
+    transform: translateY(-0.08em);
+}
+
+#jem .jem-event {
+    padding: 0.95rem 1rem;
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#jem .eventlist li {
+    padding: 0.95rem 1rem;
+    list-style: none;
+}
+
+#jem .eventlist li:not(.jem-nohover):hover {
+    background-color: #f0f4f8;
+    border-color: #c7d2df;
+    box-shadow: inset 3px 0 0 rgba(47, 95, 145, 0.45);
 }
 
 #jem .jem-event-info-small:last-child {
@@ -50,6 +114,423 @@ div#jem h1.componentheading {
 #jem h1.componentheading i.fa,
 #jem h1.componentheading i.fas {
     font-size: 1.332rem;
+}
+
+#jem .jem-event-badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-left: 0.45rem;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge {
+    display: inline-block;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-size: 0.78em;
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 0.18rem 0.42rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+#jem .jem-event-state-badge--cancelled,
+#jem .jem-event-state-badge--soldout {
+    background: #b3261e;
+}
+
+#jem .jem-event-state-badge--postponed,
+#jem .jem-event-state-badge--preorder,
+#jem .jem-event-state-badge--waitinglist {
+    background: #b55b00;
+}
+
+#jem .jem-event-state-badge--rescheduled {
+    background: #2456a5;
+}
+
+#jem .jem-event-state-badge--moved-online {
+    background: #247a3d;
+}
+
+#jem .jem-type-badge,
+.jem-type-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 999px;
+    background: #6c757d;
+    color: #fff;
+    font-size: 0.66em;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 0.18rem 0.58rem;
+    text-decoration: none;
+    vertical-align: middle;
+    white-space: nowrap;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+#jem .jem-event-badges + .jem-type-badge {
+    margin-left: 0.35rem;
+}
+
+/* ── Search Filter ── */
+#jem .jem-type-section-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.16);
+    clear: both;
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.35rem;
+}
+
+#jem .jem-type-section-title {
+    margin: 0;
+}
+
+#jem .jem-type-section-title .jem-type-badge {
+    font-size: 0.9rem;
+}
+
+div#jem .jem-search-filter {
+    container-type: inline-size;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    background: #fff;
+    margin-bottom: 1.25rem;
+}
+
+div#jem .jem-search-filter-heading {
+    font-weight: 700;
+    margin: 0 0 1rem;
+}
+
+div#jem .jem-filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+/* Grid rows */
+div#jem .jem-search-filter-grid {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+/* Default (narrow): stack / auto cols */
+div#jem .jem-search-filter-grid-top  { grid-template-columns: 1fr; }
+div#jem .jem-search-filter-grid-four { grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+div#jem .jem-search-filter-grid-two  { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+
+/* Container ≥ 480px: top row splits keywords / event-type */
+@container (min-width: 480px) {
+    div#jem .jem-search-filter-grid-top {
+        grid-template-columns: minmax(0, 3fr) minmax(10rem, 1fr);
+    }
+}
+
+/* Container ≥ 640px: four-grid expands with auto-fit (adapts to visible items) */
+@container (min-width: 640px) {
+    div#jem .jem-search-filter-grid-four {
+        grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+}
+
+/* Controls fill their grid cell */
+div#jem .jem-search-filter select,
+div#jem .jem-search-filter input[type="date"],
+div#jem .jem-search-filter .form-select,
+div#jem .jem-search-filter .form-control {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keywords input-group: type-selector + text field inline */
+div#jem .jem-search-filter .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+div#jem .jem-search-filter .input-group > .form-select {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 6rem;
+    max-width: 10rem;
+}
+div#jem .jem-search-filter .input-group > .form-control {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+}
+
+/* Footer: limit left, buttons right */
+div#jem .jem-search-filter-footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+div#jem .jem-search-filter-limit {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-limit .jem-filter-label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+div#jem .jem-search-filter-limit select {
+    width: auto;
+    min-width: 5rem;
+    flex: 0 0 auto;
+}
+div#jem .jem-search-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+div#jem .jem-search-filter-actions .btn {
+    width: auto;
+    min-width: 4rem;
+}
+
+#jem .jem-type-badge:hover,
+.jem-type-badge:hover {
+    filter: brightness(0.93);
+    color: #fff;
+    text-decoration: none;
+}
+
+#jem .jem-event-image-ribbon-wrap {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    position: relative;
+    vertical-align: top;
+}
+
+#jem .jem-event-image-ribbon-wrap--legacy {
+    float: right;
+    margin: 0 0 15px 15px;
+}
+
+#jem .jem-event-image-ribbon-wrap .flyerimage {
+    float: none !important;
+    display: block;
+}
+
+#jem .jem-event-image-ribbon-wrap img {
+    display: block;
+    max-width: 100%;
+}
+
+#jem.jem_event .jem-event-main {
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+}
+
+#jem.jem_event .jem-event-main > .event_info {
+    flex: 1 1 20rem;
+    min-width: 0;
+    order: 1;
+}
+
+#jem.jem_event .jem-event-main > .jem-img {
+    flex: 0 0 auto;
+    max-width: 100%;
+    order: 2;
+    text-align: right;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .flyerimage {
+    display: inline-block;
+    float: none !important;
+}
+
+#jem.jem_event .jem-event-main > .jem-img .jem-event-image-ribbon-wrap--legacy {
+    float: none;
+    margin: 0;
+}
+
+#jem.jem_event .jem-event-main > .jem-img img {
+    height: auto;
+    max-width: 100%;
+}
+
+div#jem.jem_event .jem-event-overview-panel,
+div#jem.jem_category .jem-category-overview-panel {
+    align-items: center;
+    background: rgba(248, 250, 252, .82);
+    border: 1px solid rgba(148, 163, 184, .35);
+    border-radius: 6px;
+    box-sizing: border-box;
+    gap: 1.5rem;
+    margin: 0 0 1.35rem;
+    padding: 1rem 1.1rem;
+}
+
+div#jem.jem_category .jem-category-overview-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, max-content);
+}
+
+div#jem.jem_event .jem-event-overview-details,
+div#jem.jem_category .jem-category-overview-details {
+    min-width: 0;
+}
+
+div#jem.jem_event .jem-event-overview-details {
+    flex: 1 1 20rem;
+}
+
+div#jem.jem_event dl.jem-event-overview-details,
+div#jem.jem_event .jem-event-overview-details dl,
+div#jem.jem_event .jem-event-overview-details dl.event_info,
+div#jem.jem_event .jem-event-overview-details dl.jem-dl {
+    display: grid;
+    gap: .6rem .9rem;
+    grid-template-columns: minmax(6.5rem, max-content) minmax(0, 1fr);
+    margin: 0;
+}
+
+div#jem.jem_event .jem-event-overview-details dt,
+div#jem.jem_event .jem-event-overview-details dd {
+    margin: 0;
+}
+
+div#jem.jem_event .jem-event-overview-details dt {
+    font-weight: 700;
+}
+
+div#jem.jem_event .jem-event-overview-media,
+div#jem.jem_category .jem-category-overview-media {
+    align-self: center;
+    justify-self: end;
+}
+
+div#jem.jem_event .jem-event-overview-media .flyerimage,
+div#jem.jem_category .jem-category-overview-media .flyerimage {
+    margin: 0;
+}
+
+div#jem.jem_event .jem-event-venue-overview-panel {
+    align-items: center;
+    background: rgba(248, 250, 252, .82);
+    border: 1px solid rgba(148, 163, 184, .35);
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: flow-root;
+    gap: 1.5rem;
+    margin: 0 0 1.35rem;
+    padding: 1rem 1.1rem;
+}
+
+div#jem.jem_category .jem-category-section-separator {
+    border-top: 1px solid rgba(148, 163, 184, .3);
+    margin: 1.25rem 0 1.35rem;
+}
+
+#jem.jem_event .jem-event-more-information {
+    clear: both;
+    margin-top: 0.75rem;
+}
+
+@media (max-width: 47.938rem) {
+    #jem.jem_event .jem-event-main {
+        display: block;
+    }
+
+    #jem.jem_event .jem-event-main > .jem-img {
+        margin-bottom: 1rem;
+        text-align: left;
+    }
+
+    div#jem.jem_event .jem-event-overview-panel,
+    div#jem.jem_category .jem-category-overview-panel {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    div#jem.jem_event .jem-event-overview-media,
+    div#jem.jem_category .jem-category-overview-media {
+        justify-self: start;
+    }
+
+    div#jem.jem_event dl.jem-event-overview-details,
+    div#jem.jem_event .jem-event-overview-details dl,
+    div#jem.jem_event .jem-event-overview-details dl.event_info,
+    div#jem.jem_event .jem-event-overview-details dl.jem-dl {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    #jem.jem_event .jem-event-main-responsive,
+    #jem.jem_event div[class^="venue_id"] .jem-row,
+    #jem.jem_event .jem-venue-compact-row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #jem.jem_event .jem-event-main-responsive > .jem-img,
+    #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img,
+    #jem.jem_event .jem-venue-compact-row > .jem-img {
+        flex-basis: 100%;
+        order: -1;
+        text-align: left;
+        width: 100%;
+    }
+
+    #jem.jem_event .jem-event-main > .jem-img .flyerimage,
+    #jem.jem_event .jem-event-main-responsive > .jem-img .flyerimage,
+    #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img .flyerimage,
+    #jem.jem_event .jem-venue-compact-row > .jem-img .flyerimage,
+    #jem.jem_event .jem-event-main > .jem-img .flyermodal,
+    #jem.jem_event .jem-event-main-responsive > .jem-img .flyermodal,
+    #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img .flyermodal,
+    #jem.jem_event .jem-venue-compact-row > .jem-img .flyermodal,
+    #jem.jem_event .jem-event-main > .jem-img img,
+    #jem.jem_event .jem-event-main-responsive > .jem-img img,
+    #jem.jem_event div[class^="venue_id"] .jem-row > .jem-img img,
+    #jem.jem_event .jem-venue-compact-row > .jem-img img {
+        display: block;
+        height: auto;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    #jem.jem_event div[class^="venue_id"] .jem-row > .jem-grow-2,
+    #jem.jem_event .jem-venue-compact-row > .jem-grow-2 {
+        flex-basis: 100%;
+        order: 0;
+        width: 100%;
+    }
+
+}
+
+#jem .jem-event-image-ribbon {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.24);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    left: -2.6rem;
+    line-height: 1.2;
+    min-width: 9.6rem;
+    opacity: 0.88;
+    padding: 0.32rem 1rem;
+    position: absolute;
+    text-align: center;
+    text-transform: uppercase;
+    top: 1.2rem;
+    transform: rotate(-45deg);
+    z-index: 2;
 }
 
 div#jem .formelm-buttons {
@@ -77,7 +558,7 @@ div#jem .hr {
     background-color: #E19832;
 }
 
-input .required {
+input.required {
     background-color: #D5EEFF !important;
 }
 
@@ -132,13 +613,77 @@ div#jem .buttons {
     float: right;
 }
 
+div#jem.jem_event .buttons {
+    clear: both;
+    display: flex !important;
+    float: none !important;
+    justify-content: flex-end;
+    margin-bottom: 0.65rem;
+    width: 100%;
+}
+
+div#jem.jem_event .jem-event-toolbar {
+    clear: both !important;
+    float: none !important;
+    width: 100% !important;
+}
+
+div#jem.jem_event .jem-event-toolbar a,
+div#jem.jem_event .jem-event-toolbar button {
+    float: none !important;
+}
+
 div#jem .buttons a {
     border: 1px solid #808080;
+}
+
+div#jem .buttons a.jem-layout-toggle {
+    align-items: center;
+    display: inline-flex;
+    padding: 0.12rem 0.35rem;
+    text-decoration: none;
+}
+
+div#jem .buttons a.jem-layout-toggle:visited {
+    color: currentColor;
 }
 
 div#jem .buttons span.gap {
     float: left;
     margin: 0 0 0 7px;
+}
+
+@media (max-width: 48rem) {
+    div#jem .buttons {
+        align-items: center;
+        clear: both;
+        display: flex !important;
+        flex-wrap: nowrap;
+        float: none !important;
+        gap: 0.35rem;
+        justify-content: flex-end;
+        margin-bottom: 0.65rem;
+        overflow-x: auto;
+        width: 100%;
+    }
+
+    div#jem .buttons a,
+    div#jem .buttons button {
+        flex: 0 0 auto;
+        float: none !important;
+        margin-left: 0;
+    }
+
+    div#jem .buttons span.gap {
+        display: none;
+    }
+
+    div#jem h1.componentheading,
+    div#jem .jemcomponentheading,
+    div#jem .jem-type-title {
+        clear: both;
+        width: 100%;
+    }
 }
 
 /* Edit-event view */
@@ -213,7 +758,7 @@ div#jem div.clr {
     clear: both;
 }
 
-/* ie fix in coditional comments (html source) */
+/* IE fix in conditional comments (HTML source) */
 div#jem .floattext:after {
     content: ".";
     display: block;
@@ -253,6 +798,15 @@ div#jem h2 img {
     margin-left: 0.3em;
 }
 
+div#jem h2.description,
+div#jem h2.location_desc,
+div#jem div.files > h2.description {
+    font-size: 1.5rem !important;
+    line-height: 1.25 !important;
+    margin-top: 1.15rem !important;
+    margin-bottom: .65rem !important;
+}
+
 div#jem .jemcomponentheading {
     border-bottom: 0px !important;
 }
@@ -287,15 +841,113 @@ div#jem dd { /* definition description */
 
 div#jem .jcomments dd {
     grid-column: 2;
-}
-
-div#jem .jcomments dd {
     margin-left: 0px;
 }
 
 div#jem dd .venue_country_flag {
     width: 20px;
     height: auto;
+}
+
+div#jem .jem-venue-compact {
+    margin: 0.35rem 0 1rem;
+    line-height: 1.45;
+}
+
+div#jem .jem-venue-compact-name {
+    font-weight: 600;
+}
+
+div#jem .jem-venue-compact-name a {
+    font-size: 1.22rem;
+}
+
+div#jem .jem-venue-compact-address {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+div#jem .jem-venue-compact-locality {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+div#jem .jem-venue-compact-address > span:not(:first-child)::before {
+    content: ", ";
+}
+
+div#jem .jem-venue-compact-locality > span:not(:first-child)::before {
+    content: " ";
+}
+
+div#jem .jem-venue-compact-country img.venue_country_flag {
+    height: 1em;
+    margin-left: 0.25rem;
+    vertical-align: -0.1em;
+    width: auto;
+}
+
+div#jem .jem-venue-compact-links {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.45rem;
+    margin: 0.2rem 0 0;
+}
+
+div#jem .jem-venue-compact-link-separator {
+    color: currentColor;
+    opacity: 0.55;
+}
+
+div#jem .jem-event-compact {
+    margin: 0.15rem 0 1rem;
+    line-height: 1.55;
+}
+
+div#jem .jem-event-compact-meta {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.55rem;
+}
+
+div#jem .jem-event-compact-when {
+    margin: 0.25rem 0 0.9rem;
+}
+
+div#jem .jem-event-compact .jem-custom-fields {
+    margin-top: 0.65rem;
+}
+
+div#jem.jem_event dl.event_info,
+div#jem.jem_event dl.jem-event-info-list,
+div#jem.jem_event div[class^="venue_id"] dl.location,
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.45rem;
+}
+
+div#jem.jem_event dl.event_info > dt,
+div#jem.jem_event dl.event_info > dd,
+div#jem.jem_event dl.jem-event-info-list > dt,
+div#jem.jem_event dl.jem-event-info-list > dd,
+div#jem.jem_event div[class^="venue_id"] dl.location > dt,
+div#jem.jem_event div[class^="venue_id"] dl.location > dd,
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt,
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd {
+    float: none;
+    margin: 0;
+    min-width: 0;
+    padding: 0;
+    width: auto;
 }
 
 div#jem div.description {
@@ -328,6 +980,345 @@ div#jem .flyerimage {
     position: static !important;
     background: transparent;
     box-shadow: none;
+}
+
+div#jem .jem-image-upload-panel {
+    margin: 0 0 1em;
+    padding: 0;
+    border: 0;
+    background: transparent;
+}
+
+div#jem .jem-image-upload-list {
+    margin: 0;
+}
+
+div#jem .jem-image-upload-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1em;
+    margin: 0 0 1em;
+}
+
+div#jem .jem-image-upload-row > label {
+    min-width: 14em;
+    font-weight: 700;
+}
+
+div#jem .jem-image-upload-control {
+    min-width: 0;
+    flex: 1;
+}
+
+div#jem .jem-image-panel-title {
+    margin: 0 0 0.35em;
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+div#jem .jem-image-current,
+div#jem .jem-image-selected-preview {
+    margin: 0 0 0.85em;
+}
+
+div#jem .jem-image-current .flyerimage {
+    float: none !important;
+    margin: 0;
+}
+
+div#jem .jem-image-current img,
+div#jem .jem-image-selected-preview img {
+    max-width: 100%;
+    max-height: 180px;
+    height: auto;
+    border: 1px solid #d6dbe1;
+    padding: 3px;
+    background: #fff;
+    cursor: default;
+}
+
+div#jem .jem-image-file-control input[type="file"] {
+    width: 100%;
+    max-width: 100%;
+}
+
+div#jem .jem-image-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.75em;
+}
+
+div#jem .jem-image-actions #userfile-remove {
+    float: none;
+}
+
+div#jem .jem-venuesmap-action-icon {
+    width: 18px;
+    height: 18px;
+    max-width: 18px;
+    vertical-align: middle;
+    border: 0;
+}
+
+div#jem.jem_venue > .jem-row {
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+div#jem.jem_venue .jem-info {
+    flex: 1 1 20rem;
+    min-width: 0;
+}
+
+div#jem.jem_venue .jem-img {
+    flex: 0 0 auto;
+    max-width: 100%;
+}
+
+div#jem.jem_venue .jem-img .flyerimage {
+    float: none !important;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+}
+
+div#jem.jem_venue .jem-venue-overview-panel {
+    align-items: center;
+    background: rgba(248, 250, 252, .82);
+    border: 1px solid rgba(148, 163, 184, .35);
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, max-content);
+    margin: 0 0 1.35rem;
+    padding: 1rem 1.1rem;
+}
+
+div#jem.jem_venue .jem-venue-overview-details {
+    min-width: 0;
+}
+
+div#jem.jem_venue .jem-venue-overview-details dl,
+div#jem.jem_venue .jem-venue-overview-details dl.location,
+div#jem.jem_venue .jem-venue-overview-details dl.jem-dl {
+    display: grid;
+    gap: .6rem .9rem;
+    grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr);
+    margin: 0 0 .65rem;
+}
+
+div#jem.jem_venue .jem-venue-overview-details dt,
+div#jem.jem_venue .jem-venue-overview-details dd {
+    margin: 0;
+}
+
+div#jem.jem_venue .jem-venue-overview-details dt {
+    font-weight: 700;
+}
+
+div#jem.jem_venue .jem-venue-overview-details dd {
+    min-width: 0;
+}
+
+div#jem.jem_venue .jem-venue-overview-media {
+    align-self: center;
+    justify-self: end;
+}
+
+div#jem.jem_venue .jem-venue-overview-media .flyerimage {
+    margin: 0;
+}
+
+div#jem.jem_venue .jem-venue-section-separator {
+    border-top: 1px solid rgba(148, 163, 184, .3);
+    margin: 1.25rem 0 1.35rem;
+}
+
+div#jem.jem_venue .jem-venue-map-section {
+    margin: 1.25rem 0 1.5rem;
+    text-align: center;
+}
+
+div#jem.jem_venue .jem-venue-map-link-list {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+
+div#jem.jem_venue .jem-venue-map-link-list dt {
+    display: none;
+}
+
+div#jem.jem_venue .jem-venue-map-link-list dd {
+    margin: 0;
+}
+
+div#jem .jem-map-button {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #2f5f91;
+    border-radius: 4px;
+    color: #2f5f91;
+    display: inline-flex;
+    font-weight: 600;
+    gap: 0.35rem;
+    line-height: 1.2;
+    padding: 0.5rem 0.85rem;
+    text-decoration: none;
+}
+
+div#jem .jem-map-button:hover,
+div#jem .jem-map-button:focus {
+    background: #2f5f91;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+@media (max-width: 640px) {
+    div#jem.jem_venue .jem-venue-overview-panel {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    div#jem.jem_venue .jem-venue-overview-media {
+        justify-self: start;
+    }
+
+    div#jem.jem_venue .jem-venue-overview-details dl,
+    div#jem.jem_venue .jem-venue-overview-details dl.location,
+    div#jem.jem_venue .jem-venue-overview-details dl.jem-dl {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+div#jem.jem_venue #jem_filter.jem-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem.jem_venue #jem_filter.jem-row > .jem-row,
+div#jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+}
+
+div#jem.jem_venue #jem_filter.jem-row input[name="filter_search"] {
+    width: auto;
+    min-width: 12rem;
+}
+
+div#jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+    margin-left: auto;
+}
+
+@media (max-width: 48rem) {
+    div#jem.jem_venue #jem_filter.jem-row {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem.jem_venue #jem_filter.jem-row > .jem-row,
+    div#jem.jem_venue #jem_filter.jem-row > .jem-limit-smallest {
+        flex: 1 1 100%;
+    }
+
+    div#jem.jem_venue #jem_filter.jem-row input[name="filter_search"] {
+        flex: 1 1 12rem;
+        min-width: 0;
+    }
+
+    div#jem.jem_venue #jem_filter.jem-row .jem-limit-smallest {
+        margin-left: 0;
+    }
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75em 1em;
+    padding: 0.75em;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem_fleft,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem_fright {
+    float: none;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-search,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-actions,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-limit {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.4em;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-search {
+    flex: 1 1 28em;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-limit {
+    margin-left: auto;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter select,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter input[type="text"],
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .inputbox,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .form-select,
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .form-control {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+}
+
+div#jem.jem_venueslist #jem_filter.jem-venueslist-filter input[name="filter_search"] {
+    flex: 1 1 12em;
+    min-width: 10em;
+}
+
+@media (max-width: 700px) {
+    div#jem .jem-image-upload-row {
+        display: block;
+    }
+
+    div#jem .jem-image-upload-row > label {
+        display: block;
+        min-width: 0;
+        margin-bottom: 0.5em;
+    }
+
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter,
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-search,
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-actions,
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-limit {
+        align-items: stretch;
+        width: 100%;
+    }
+
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-search,
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-limit {
+        flex-wrap: wrap;
+        flex-basis: 100%;
+        margin-left: 0;
+    }
+
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter .jem-venueslist-filter-actions {
+        justify-content: flex-start;
+    }
+
+    div#jem.jem_venueslist #jem_filter.jem-venueslist-filter input[name="filter_search"] {
+        flex-basis: 100%;
+    }
 }
 
 div#jem .googlemap {
@@ -370,6 +1361,86 @@ div#jem div.register {
     padding: 0 5px;
 }
 
+div#jem div.register > hr {
+    display: none;
+}
+
+div#jem div.register dl.jem-registration-summary {
+    display: grid !important;
+    grid-template-columns: minmax(8.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.35rem;
+}
+
+div#jem div.register dl.jem-registration-summary > dt,
+div#jem div.register dl.jem-registration-summary > dd {
+    float: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+div#jem div.register dl.jem-registration-action {
+    display: block !important;
+}
+
+div#jem div.register .jem-registration-action-label {
+    display: none !important;
+}
+
+div#jem div.register dd.registration {
+    margin-left: 0;
+    margin-top: 0.75rem;
+    padding-left: 0 !important;
+    text-align: center;
+    width: auto;
+}
+
+div#jem div.register.jem-registration-compact dl.jem-registration-summary,
+div#jem div.register.jem-registration-compact dl.jem-registration-action {
+    display: grid !important;
+    grid-template-columns: minmax(8.5rem, max-content) minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: 0.35rem;
+}
+
+div#jem div.register.jem-registration-compact dl.jem-registration-summary > dt,
+div#jem div.register.jem-registration-compact dl.jem-registration-summary > dd,
+div#jem div.register.jem-registration-compact dl.jem-registration-action > dt,
+div#jem div.register.jem-registration-compact dl.jem-registration-action > dd {
+    float: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+
+div#jem div.register.jem-registration-compact .jem-registration-action-label {
+    display: none !important;
+}
+
+div#jem div.register.jem-registration-compact dd.registration {
+    grid-column: 1 / -1;
+    margin-top: 0.75rem;
+    padding-left: 0 !important;
+    text-align: center;
+}
+
+div#jem .jem-registration-login-prompt {
+    text-align: center;
+}
+
+div#jem .jem-registration-message {
+    margin: 0 0 0.65rem;
+}
+
+div#jem .jem-registration-buttons {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
 div#jem ul.user {
     margin: 5px;
     padding: 0;
@@ -401,6 +1472,420 @@ div#jem span.username {
 div#jem span.username a {
     color: #000;
     text-decoration: underline;
+}
+
+div#jem.jem_specialdays .jem-specialdays-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .65rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-header .componentheading {
+    margin: 0;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: nowrap;
+    padding: .65rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+div#jem.jem_specialdays .jem-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: .35rem;
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-buttons {
+    margin-bottom: .35rem;
+}
+
+div#jem.jem_specialdays form#adminForm {
+    width: 100%;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 1rem;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import legend {
+    float: none;
+    width: auto;
+    padding: 0 .5rem;
+    margin: 0 0 .75rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import .jem-specialdays-import-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: .75rem 1rem;
+    width: 100%;
+    margin-right: 0;
+    margin-left: 0;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file,
+div#jem.jem_specialdays .jem-specialdays-import-replace,
+div#jem.jem_specialdays .jem-specialdays-import-action {
+    max-width: none;
+    padding-right: 0;
+    padding-left: 0;
+    width: auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 27rem;
+    min-width: 21rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-replace {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex: 0 1 auto;
+    min-width: 21rem;
+    margin-left: auto;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-action {
+    flex: 0 0 auto;
+    margin-left: 0;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import .form-label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import-file .form-control {
+    flex: 1 1 auto;
+    min-width: 11rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-import #replace_specialdays {
+    width: auto;
+    min-width: 5.5rem;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    padding: .15rem;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--cassiopeia-color-primary, #0d6efd);
+    text-decoration: none;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button:hover,
+div#jem.jem_specialdays .jem-specialdays-action-button:focus {
+    background: #f1f3f5;
+    color: var(--cassiopeia-color-hover, #0a58ca);
+    text-decoration: none;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button i {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+div#jem.jem_specialdays .jem-specialdays-action-button img {
+    display: block;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search {
+    flex: 1 1 22rem;
+    min-width: 8rem;
+    max-width: 23rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group .form-control {
+    flex: 1 1 auto;
+    min-width: 6rem;
+    width: 1%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-search .input-group .btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-actions {
+    display: flex;
+    gap: .35rem;
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-year,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .jem-specialdays-filter-limit {
+    flex: 0 0 auto;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter #filter_year {
+    width: 5.5rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="filter_state"] {
+    width: 12rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="filter_day_type"] {
+    width: 14rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select[name="limit"] {
+    width: 5rem;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter .form-select,
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter input.form-control {
+    width: auto;
+    max-width: 100%;
+}
+
+div#jem.jem_specialdays #jem_filter.jem-specialdays-filter input.form-control {
+    width: 100%;
+}
+
+div#jem.jem_specialdays .jem-specialdays-country-heading,
+div#jem.jem_specialdays .jem-specialdays-country-cell {
+    text-align: center;
+}
+
+div#jem.jem_specialdays .jem-specialdays-country {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays .jem-specialdays-country-flag {
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+div#jem.jem_specialdays .jem-specialdays-location-country {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    white-space: nowrap;
+}
+
+div#jem.jem_specialdays .jem-specialdays-location-flag {
+    display: inline-block;
+    font-size: .95rem;
+    line-height: 1;
+}
+
+div#jem.jem_specialdays #specialDayList thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #adb5bd;
+    color: #212529;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+div#jem.jem_specialdays #specialDayList thead th a {
+    color: inherit;
+    font-weight: 700;
+}
+
+div#jem.jem_specialdays #specialDayList .jem-specialdays-location-heading,
+div#jem.jem_specialdays #specialDayList .jem-specialdays-location-cell {
+    text-align: center;
+}
+
+div#jem.jem_specialdays .jem-specialdays-country-code {
+    line-height: 1.2;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-toolbar h2 {
+    margin: 0;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-toolbar .jem-buttons {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: .5rem;
+    margin: 0;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: .5rem;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-card {
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-card .card-header {
+    background: #f1f3f5;
+    border-bottom: 1px solid #ced4da;
+    font-weight: 700;
+}
+
+div#jem.jem_specialday_edit .jem-field-short {
+    max-width: 14rem;
+}
+
+div#jem.jem_specialday_edit .jem-field-medium {
+    max-width: 28rem;
+}
+
+div#jem.jem_specialday_edit .jem-field-long {
+    max-width: 44rem;
+}
+
+div#jem.jem_specialday_edit .jem-field-textarea {
+    max-width: 54rem;
+}
+
+div#jem.jem_specialday_edit .jem-field-date {
+    max-width: 22rem;
+}
+
+div#jem.jem_specialday_edit .jem-field-fluid {
+    max-width: none;
+}
+
+div#jem.jem_specialday_edit .jem-field-auto select,
+div#jem.jem_specialday_edit .jem-field-auto .form-select,
+div#jem.jem_specialday_edit .jem-field-auto joomla-field-fancy-select {
+    width: auto;
+    max-width: min(100%, 36rem);
+}
+
+div#jem.jem_specialday_edit .jem-field-fluid input,
+div#jem.jem_specialday_edit .jem-field-fluid textarea,
+div#jem.jem_specialday_edit .jem-field-long input,
+div#jem.jem_specialday_edit .jem-field-medium input,
+div#jem.jem_specialday_edit .jem-field-date input,
+div#jem.jem_specialday_edit .jem-field-textarea input,
+div#jem.jem_specialday_edit .jem-field-textarea textarea {
+    width: 100%;
+}
+
+div#jem.jem_specialday_edit .jem-field-date .field-calendar,
+div#jem.jem_specialday_edit .jem-field-date .input-group {
+    width: 100%;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-rule-row .jem-weekdays-field {
+    align-self: flex-start;
+}
+
+div#jem.jem_specialday_edit .jem-weekdays-field > label,
+div#jem.jem_specialday_edit .jem-weekdays-field > .control-label {
+    margin-bottom: .25rem;
+}
+
+div#jem.jem_specialday_edit .jem-weekdays-field .jem-weekday-toggle-group {
+    min-height: 2.75rem;
+    align-items: center;
+}
+
+div#jem.jem_specialday_edit .jem-weekday-toggle-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+}
+
+div#jem.jem_specialday_edit .jem-weekday-toggle-group input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+div#jem.jem_specialday_edit .jem-weekday-toggle-group label {
+    min-width: 3.2rem;
+    padding: .45rem .65rem;
+    border: 1px solid #adb5bd;
+    border-radius: .25rem;
+    background: #fff;
+    color: #1d2b36;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+div#jem.jem_specialday_edit .jem-weekday-toggle-group input:focus + label {
+    box-shadow: 0 0 0 .2rem rgba(13, 110, 253, .25);
+}
+
+div#jem.jem_specialday_edit .jem-weekday-toggle-group input:checked + label {
+    border-color: #2f5f9c;
+    background: #2f5f9c;
+    color: #fff;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-type-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: .75rem;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-type-preview {
+    min-width: 12rem;
+    min-height: 2.55rem;
+    padding: .45rem .75rem;
+    border: 1px solid #adb5bd;
+    border-radius: .25rem;
+    color: #1d2b36;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 
@@ -510,13 +1995,13 @@ div#jem table.eventtable td.jem_eventimage {
     vertical-align: top;
 }
 
-div#jem table.eventtable td.jem_eventimage
+div#jem table.eventtable td.jem_eventimage,
 div#jem table.eventtable td.header-td {
     text-align: left;
     vertical-align: top;
 }
 
-/* activate this rule to show date in event lists bold (when two-line mode is choosen) * /
+/* Activate this rule to show date in event lists bold (when two-line mode is chosen) * /
 div#jem table.eventtable tr td span.jem_date-2 {
     font-weight: bold;
 }
@@ -549,6 +2034,38 @@ div#jem #jem_filter {
     padding: 0.5em;
     border: solid 1px #808080;
     background: #FFA500;
+}
+
+div#jem #jem_filter.floattext {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright {
+    float: none;
+}
+
+div#jem #jem_filter.floattext .jem_fleft,
+div#jem #jem_filter.floattext .jem_fright,
+div#jem #jem_filter.floattext > div {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fleft {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.floattext .jem_fright {
+    flex: 0 0 auto;
+    margin-left: auto;
 }
 
 div#jem .jem_fleft {
@@ -589,6 +2106,159 @@ div#jem .jem_fright {
 #jem .jem_fright label,
 #jem .jem_fleft label {
     display: inline-block;
+}
+
+#jem #jem_filter.jem-row {
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter select,
+div#jem #jem_filter .form-select,
+div#jem #jem_filter input[type="text"],
+div#jem #jem_filter .form-control,
+div#jem #jem_filter button,
+div#jem #jem_filter .btn {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+div#jem #jem_filter.floattext input#filter_search,
+div#jem #jem_filter.floattext input[name="filter_search"] {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.floattext {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.floattext .jem_fleft,
+    div#jem #jem_filter.floattext .jem_fright,
+    div#jem #jem_filter.floattext > div {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.floattext .jem_fright {
+        margin-left: 0;
+    }
+
+    div#jem #jem_filter.floattext input#filter_search,
+    div#jem #jem_filter.floattext input[name="filter_search"] {
+        flex: 1 1 12rem;
+        min-width: 0;
+    }
+}
+
+div#jem #jem_filter.jem-events-filter {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+div#jem #jem_filter.jem-events-filter .jem_fleft,
+div#jem #jem_filter.jem-events-filter .jem_fright {
+    float: none;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin-bottom: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-search {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+    flex: 0 0 auto;
+    margin-left: auto;
+}
+
+div#jem #jem_filter.jem-events-filter label {
+    margin: 0;
+    white-space: nowrap;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter input,
+div#jem #jem_filter.jem-events-filter .inputbox,
+div#jem #jem_filter.jem-events-filter .form-control,
+div#jem #jem_filter.jem-events-filter .form-select,
+div#jem #jem_filter.jem-events-filter button,
+div#jem #jem_filter.jem-events-filter .btn {
+    box-sizing: border-box;
+    min-height: 2.6rem;
+    margin: 0;
+}
+
+div#jem #jem_filter.jem-events-filter select,
+div#jem #jem_filter.jem-events-filter .form-select {
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_search {
+    flex: 1 1 12rem;
+    min-width: 10rem;
+    width: auto;
+}
+
+div#jem #jem_filter.jem-events-filter input#filter_month {
+    flex: 0 0 13rem;
+    width: 13rem;
+}
+
+@media (max-width: 60rem) {
+    div#jem #jem_filter.jem-events-filter {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-search,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-month,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-actions,
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        flex: 1 1 100%;
+    }
+
+    div#jem #jem_filter.jem-events-filter input#filter_search,
+    div#jem #jem_filter.jem-events-filter input#filter_month {
+        flex: 1 1 12rem;
+        width: auto;
+    }
+
+    div#jem #jem_filter.jem-events-filter .jem-events-filter-limit {
+        margin-left: 0;
+    }
+}
+
+#jem .jem-nowrap {
+    flex-wrap: nowrap;
+}
+
+#jem .jem-justify-start {
+    justify-content: flex-start;
+}
+
+#jem .jem-limit-smallest {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 #jem .nowrap {
@@ -640,7 +2310,8 @@ div.jem_select_users ul.adminformlist legend {
 div.jem_editevent form label,
 div.jem_editvenue form label,
 div.jem_select_users ul.adminformlist label {
-    width: 9em;
+    width: auto;
+    min-width: 0;
     margin: 0;
     padding: 0;
     float: left;
@@ -758,6 +2429,38 @@ div.jem_editevent form label#recurrence_output {
     width: auto;
     float: none;
     margin: 5px 0;
+}
+
+div.jem_editevent .jem-inline-info-control {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5em;
+    vertical-align: middle;
+}
+
+div.jem_editevent .jem-inline-info-control > * {
+    flex: 0 0 auto;
+}
+
+div.jem_editevent .jem-info-tooltip {
+    color: #1f5d8c;
+    cursor: help;
+    display: block;
+    height: 1.25em;
+    margin-top: 0.35em;
+    vertical-align: middle;
+    width: 1.25em;
+}
+
+div.jem_editevent .jem-info-tooltip svg {
+    display: block;
+    fill: none;
+    height: 100%;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+    width: 100%;
 }
 
 /** registration */
@@ -1229,6 +2932,175 @@ div#jem .file td {
     padding: 3px;
 }
 
+div#jem .jem-attachment-description {
+    margin-top: .2rem;
+    color: #555;
+    font-size: .95em;
+    line-height: 1.35;
+}
+
+div#jem .jem-attachment-file-icon {
+    margin-right: .25rem;
+}
+
+div#jem .jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    padding-right: .35rem !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div#jem .jem-attachment-icon-cell .jem-attachment-file-icon {
+    display: inline-block;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+div#jem .jem-attachments-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .7rem;
+}
+
+div#jem .jem-attachments-layout-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    column-gap: 1.25rem;
+    row-gap: .8rem;
+}
+
+div#jem .jem-attachments-layout-row .jem-attachment-row {
+    box-sizing: border-box;
+}
+
+div#jem .jem-attachments-layout-row_full {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+}
+
+div#jem .jem-attachments-layout-row_full .jem-attachment-row {
+    flex: 1 1 min(18rem, 100%);
+    box-sizing: border-box;
+}
+
+div#jem .jem-attachments-layout-row_uniform {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(18rem, 100%), 1fr));
+    align-items: stretch;
+    width: 100%;
+}
+
+div#jem .jem-attachments-layout-row_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+div#jem .jem-attachments-layout-column {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+div#jem .jem-attachments-layout-column_full {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+div#jem .jem-attachments-layout-column_full .jem-attachment-row {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+div#jem .jem-attachments-layout-column_uniform {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+}
+
+div#jem .jem-attachments-layout-column_uniform .jem-attachment-row {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+div#jem .jem-attachment-row {
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    column-gap: .35rem;
+    align-items: center;
+}
+
+div#jem .jem-attachment-content {
+    min-width: 0;
+}
+
+div#jem .jem-attachment-content a.file-name {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .25rem;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+div#jem .jem-attachment-content .file-name,
+div#jem .jem-attachment-content .jem-file-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+div#jem .jem-attachment-content a.file-name > .fa {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+div#jem .jem-attachments-frame .jem-attachment-row {
+    padding: .45rem .65rem;
+    border: 1px solid #9fb4d4;
+    border-radius: .25rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+
+div#jem .jem-attachments-frame .jem-attachment-row:hover,
+div#jem .jem-attachments-frame .jem-attachment-row:focus-within {
+    border-color: #5f82b7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .16);
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-row {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+div#jem .jem-attachments-icons-none .jem-attachment-icon-cell {
+    display: none;
+}
+
+div#jem .jem-attachment-file-icon-normal {
+    font-size: 1.25rem !important;
+}
+
+div#jem .jem-attachment-file-icon-medium {
+    font-size: 1.6rem !important;
+}
+
+div#jem .jem-attachment-file-icon-large {
+    font-size: 2rem !important;
+}
+
+div#jem dl.jem-dl > dt.jem-attachment-icon-cell {
+    width: 1.75rem;
+    min-width: 1.75rem;
+    margin-right: .35rem;
+}
+
 
 div#jem .inline-button-right {
     float: right;
@@ -1276,12 +3148,89 @@ div#jem .inline-button-right {
     flex-wrap: wrap;
 }
 
+#jem .jem-customfields-edit {
+    margin: 0;
+    padding: 0;
+}
+
+#jem .jem-customfields-edit li {
+    display: grid;
+    grid-template-columns: minmax(12rem, 12rem) minmax(0, 1fr);
+    gap: .45rem 1rem;
+    align-items: start;
+    margin: 0 0 .55rem 0;
+}
+
+#jem.jem_editevent .edit form ul.adminformlist.jem-customfields-edit li,
+#jem.jem_editvenue .edit form ul.adminformlist.jem-customfields-edit li {
+    display: grid;
+    grid-template-columns: minmax(12rem, 12rem) minmax(0, 1fr);
+    flex-wrap: nowrap;
+}
+
+#jem .jem-customfields-edit .jem-customfield-label {
+    padding-top: .25rem;
+}
+
+#jem .jem-customfields-edit .jem-customfield-label label {
+    float: none;
+    display: inline;
+    min-width: 0;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]),
+#jem .jem-customfields-edit .jem-customfield-input select,
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]) {
+    min-width: 16rem;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input select {
+    min-width: 14rem;
+    width: auto;
+    padding-right: 2.75rem;
+    text-overflow: ellipsis;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    width: 100%;
+}
+
+#jem .jem-customfields-edit .jem-customfield-input textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+@media (max-width: 640px) {
+    #jem .jem-customfields-edit li {
+        grid-template-columns: 1fr;
+    }
+
+    #jem .jem-customfields-edit .jem-customfield-input select,
+    #jem .jem-customfields-edit .jem-customfield-input input:not([type="checkbox"]):not([type="radio"]),
+    #jem .jem-customfields-edit .jem-customfield-input textarea {
+        width: 100%;
+    }
+}
+
 #jem.jem_editevent .edit form select[id^="filter_"], #jem.jem_editevent .edit form select, #jem.jem_editevent .edit form input[id^="filter_"] {
-    min-width: 15%;
+    min-width: 70px;
 }
 
 #jem.jem_editevent .edit form input:not([type="checkbox"]):not([type="file"]) {
     width: auto;
+}
+
+#jem.jem_editevent .edit form .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem.jem_editevent .edit form .jem-customfields-edit .jem-customfield-input textarea,
+#jem.jem_editvenue .edit form .jem-customfields-edit .jem-customfield-input input[type="url"],
+#jem.jem_editvenue .edit form .jem-customfields-edit .jem-customfield-input textarea {
+    width: 100%;
 }
 
 #jem.jem_editevent .edit form .form-check .form-check-input {
@@ -1317,5 +3266,584 @@ div#jem .inline-button-right {
 }
 
 #table-series tr:nth-child(odd){
-    background-color: #fff;
+    background-color: #ffffff;
 }
+
+#jem .jem-event-intro {
+    width: 100%;
+}
+
+/* Event links container */
+.jem-event-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    max-width: 100%;
+
+    margin: 1rem 0;
+}
+
+/* Row — natural width, wraps */
+.jem-event-links.jem-event-links-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* Row full — each item grows to fill the row equally */
+.jem-event-links.jem-event-links-row_full,
+#jem .jem-event-links.jem-event-links-row_full {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.jem-event-links.jem-event-links-row_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_full .jem-event-link {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+}
+
+/* Row same size — CSS grid, all items equal width */
+.jem-event-links.jem-event-links-row_uniform,
+#jem .jem-event-links.jem-event-links-row_uniform {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr)) !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-row_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-row_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: center !important;
+    box-sizing: border-box;
+}
+
+/* Column — natural width */
+.jem-event-links.jem-event-links-column {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+/* Column full — buttons stretch to full container width */
+.jem-event-links.jem-event-links-column_full,
+#jem .jem-event-links.jem-event-links-column_full {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+}
+
+.jem-event-links.jem-event-links-column_full .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_full .jem-event-link {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
+}
+
+/* Column same size — all buttons same width as the widest one */
+.jem-event-links.jem-event-links-column_uniform,
+#jem .jem-event-links.jem-event-links-column_uniform {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+}
+
+.jem-event-links.jem-event-links-column_uniform .jem-event-link,
+#jem .jem-event-links.jem-event-links-column_uniform .jem-event-link {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    box-sizing: border-box;
+}
+
+/* Event link item */
+.jem-event-link {
+    display: inline-flex !important;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: center;
+    gap: .45rem;
+
+    width: auto;
+    max-width: 100%;
+    min-height: 42px;
+
+    line-height: 1 !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+
+    box-sizing: border-box;
+    vertical-align: middle;
+
+    transition:
+        background-color .15s ease,
+        color .15s ease,
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .12s ease;
+}
+
+/* Remove underline from event links without touching the frame border */
+.jem-event-links a,
+.jem-event-links a:link,
+.jem-event-links a:visited,
+.jem-event-links a:hover,
+.jem-event-links a:focus,
+.jem-event-links a:active,
+.jem-event-link,
+.jem-event-link:hover,
+.jem-event-link:focus,
+.jem-event-link:active {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove underline from inner elements without touching borders */
+.jem-event-link *,
+.jem-event-link:hover *,
+.jem-event-link:focus *,
+.jem-event-link:active * {
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* Framed link */
+.jem-event-link.jem-event-link-has-frame {
+    border: 1px solid currentColor !important;
+    border-radius: .45rem !important;
+    padding: .45rem .75rem !important;
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+    cursor: pointer;
+}
+
+/* Framed link hover */
+.jem-event-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-has-frame:focus {
+    background-color: color-mix(in srgb, currentColor 16%, transparent);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12) !important;
+    transform: translateY(-1px);
+}
+
+.jem-event-link.jem-event-link-no-link,
+.jem-event-link.jem-event-link-no-link:hover,
+.jem-event-link.jem-event-link-no-link:focus,
+.jem-event-link.jem-event-link-no-link:active {
+    cursor: default !important;
+    box-shadow: none !important;
+    text-decoration: none !important;
+    transform: none !important;
+}
+
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:hover,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:focus,
+.jem-event-link.jem-event-link-no-link.jem-event-link-has-frame:active {
+    background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-text,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):hover .jem-event-link-icon,
+.jem-event-link:not(.jem-event-link-has-frame):not(.jem-event-link-no-link):focus .jem-event-link-icon {
+    color: var(--jem-event-link-hover-color, currentColor) !important;
+}
+
+/* Event link icon */
+.jem-event-link-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: 1.1rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+
+    line-height: 1 !important;
+}
+
+/* Event link label */
+.jem-event-link-label {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    min-height: 1.1rem;
+
+    line-height: 1.1 !important;
+    white-space: nowrap;
+}
+
+/* Event link image */
+.jem-event-link-image {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.jem-event-link-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+
+
+/* Prevent template image rules from enlarging link images */
+.jem-event-links .jem-event-link .jem-event-link-image img {
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+/* Link with image: keep the image inside the frame and aligned */
+.jem-event-link-has-image {
+    align-items: center;
+}
+
+/* Add a little extra internal spacing when image exists */
+.jem-event-link-has-image.jem-event-link-has-frame {
+    padding: .55rem .75rem !important;
+}
+
+/* Responsive event links */
+@media (max-width: 575.98px) {
+    .jem-event-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-links-column {
+        flex-direction: column;
+    }
+
+    .jem-event-link {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .jem-event-link-label {
+        white-space: normal;
+    }
+
+    .jem-event-link-image {
+        max-width: 100%;
+    }
+}
+
+
+/* Event links: keep label and description as one vertical text block */
+#jem .jem-event-links .jem-event-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    text-decoration: none !important;
+}
+
+/* This is the important part */
+#jem .jem-event-links .jem-event-link .jem-event-link-text {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    min-width: 0;
+    text-align: left !important;
+    line-height: 1.25;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+}
+
+#jem .jem-event-links .jem-event-link .jem-event-link-text > .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    font-weight: 400 !important;
+}
+
+/* Label/title */
+#jem .jem-event-links .jem-event-link .jem-event-link-label {
+    display: block !important;
+    order: 1 !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    text-align: left !important;
+}
+
+/* Description */
+#jem .jem-event-links .jem-event-link .jem-event-link-description {
+    display: block !important;
+    order: 2 !important;
+    margin-top: 2px;
+    font-size: 0.92em;
+    font-weight: 400 !important;
+    line-height: 1.25;
+    text-align: left !important;
+    opacity: 0.85;
+}
+
+
+/* Image + Icon + Text */
+#jem .jem-links-order-image-icon-text .jem-event-link-image {
+    order: 1;
+}
+
+#jem .jem-links-order-image-icon-text .jem-event-link-icon {
+    order: 2;
+}
+
+#jem .jem-links-order-image-icon-text .jem-event-link-text {
+    order: 3;
+}
+
+/* Icon + Text + Image */
+#jem .jem-links-order-icon-text-image .jem-event-link-icon {
+    order: 1;
+}
+
+#jem .jem-links-order-icon-text-image .jem-event-link-text {
+    order: 2;
+}
+
+#jem .jem-links-order-icon-text-image .jem-event-link-image {
+    order: 3;
+}
+
+/* Icon + Image + Text */
+#jem .jem-links-order-icon-image-text .jem-event-link-icon {
+    order: 1;
+}
+
+#jem .jem-links-order-icon-image-text .jem-event-link-image {
+    order: 2;
+}
+
+#jem .jem-links-order-icon-image-text .jem-event-link-text {
+    order: 3;
+}
+
+#jem .jem-online-meeting {
+    display: block;
+    width: 100%;
+    margin: 1.25rem 0;
+    padding: 1rem;
+    border: 1px solid currentColor;
+}
+
+#jem .jem-online-meeting-title {
+    margin-top: 0 !important;
+}
+
+#jem .jem-online-meeting-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    max-width: 100%;
+    white-space: normal;
+    text-decoration: none;
+}
+
+#jem .btn,
+#jem a.btn,
+#jem a.btn:link,
+#jem a.btn:visited {
+    color: var(--bs-btn-color, #fff) !important;
+}
+
+#jem .btn:hover,
+#jem .btn:focus,
+#jem a.btn:hover,
+#jem a.btn:focus {
+    color: var(--bs-btn-hover-color, var(--bs-btn-color, #fff)) !important;
+}
+
+#jem .btn:active,
+#jem a.btn:active {
+    color: var(--bs-btn-active-color, var(--bs-btn-hover-color, var(--bs-btn-color, #fff))) !important;
+}
+
+#jem .btn-primary,
+#jem a.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--cassiopeia-color-primary, #0d6efd);
+    --bs-btn-border-color: var(--cassiopeia-color-primary, #0d6efd);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-hover-border-color: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--cassiopeia-color-hover, #0a58ca);
+    --bs-btn-active-border-color: var(--cassiopeia-color-hover, #0a58ca);
+}
+
+#jem .btn-secondary,
+#jem a.btn-secondary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #6c757d;
+    --bs-btn-border-color: #6c757d;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #5c636a;
+    --bs-btn-hover-border-color: #565e64;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #565e64;
+    --bs-btn-active-border-color: #51585e;
+}
+
+#jem .btn-outline-dark,
+#jem a.btn-outline-dark {
+    --bs-btn-color: #212529;
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: #212529;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #212529;
+    --bs-btn-hover-border-color: #212529;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #212529;
+    --bs-btn-active-border-color: #212529;
+}
+
+#jem .btn-primary,
+#jem a.btn-primary,
+#jem .btn-secondary,
+#jem a.btn-secondary {
+    background-color: var(--bs-btn-bg, #6c757d) !important;
+    border-color: var(--bs-btn-border-color, var(--bs-btn-bg, #6c757d)) !important;
+}
+
+div#jem.jem_venueslist .jem-venueslist-map-button {
+    --bs-btn-color: #0b3d75;
+    --bs-btn-bg: #ffffff;
+    --bs-btn-border-color: #0b3d75;
+    --bs-btn-hover-color: #ffffff;
+    --bs-btn-hover-bg: #0b3d75;
+    --bs-btn-hover-border-color: #0b3d75;
+    --bs-btn-focus-shadow-rgb: 11, 61, 117;
+    --bs-btn-active-color: #ffffff;
+    --bs-btn-active-bg: #082f5f;
+    --bs-btn-active-border-color: #082f5f;
+    background-color: var(--bs-btn-bg);
+    border-color: var(--bs-btn-border-color);
+    color: var(--bs-btn-color);
+}
+
+div#jem.jem_venueslist .jem-venueslist-map-button:hover,
+div#jem.jem_venueslist .jem-venueslist-map-button:focus,
+div#jem.jem_venueslist .jem-venueslist-map-button:active {
+    background-color: var(--bs-btn-hover-bg);
+    border-color: var(--bs-btn-hover-border-color);
+    color: var(--bs-btn-hover-color);
+}
+
+div#jem.jem_venueslist .jem-venueslist-map-button:disabled,
+div#jem.jem_venueslist .jem-venueslist-map-button.disabled {
+    background-color: transparent;
+    border-color: currentColor;
+    color: #5f6f82;
+    opacity: 1;
+}
+
+#jem .btn-primary:hover,
+#jem .btn-primary:focus,
+#jem a.btn-primary:hover,
+#jem a.btn-primary:focus,
+#jem .btn-secondary:hover,
+#jem .btn-secondary:focus,
+#jem a.btn-secondary:hover,
+#jem a.btn-secondary:focus {
+    background-color: var(--bs-btn-hover-bg, var(--bs-btn-bg, #6c757d)) !important;
+    border-color: var(--bs-btn-hover-border-color, var(--bs-btn-border-color, var(--bs-btn-bg, #6c757d))) !important;
+}
+
+#jem .btn-primary:active,
+#jem a.btn-primary:active,
+#jem .btn-secondary:active,
+#jem a.btn-secondary:active {
+    background-color: var(--bs-btn-active-bg, var(--bs-btn-hover-bg, var(--bs-btn-bg, #6c757d))) !important;
+    border-color: var(--bs-btn-active-border-color, var(--bs-btn-hover-border-color, var(--bs-btn-border-color, #6c757d))) !important;
+}
+
+#jem .jem-online-meeting-icon {
+    line-height: 1;
+}
+
+div#jem.jem_specialday_edit .jem-field-fluid > input,
+div#jem.jem_specialday_edit .jem-field-fluid > textarea,
+div#jem.jem_specialday_edit .jem-field-fluid > .form-control,
+div#jem.jem_specialday_edit .jem-field-fluid > .inputbox {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+div#jem.jem_specialday_edit #jform_description,
+div#jem.jem_specialday_edit #jform_region,
+div#jem.jem_specialday_edit #jform_city {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-type-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-type-row.has-success {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    width: auto !important;
+}
+
+div#jem.jem_specialday_edit .jem-specialday-type-preview {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: max-content !important;
+    white-space: nowrap !important;
+    padding: .45rem .75rem !important;
+    align-items: center !important;
+    line-height: 1 !important;
+}
+
+@media (max-width: 22rem) {
+    div#jem.jem_event dl.event_info,
+    div#jem.jem_event dl.jem-event-info-list,
+    div#jem.jem_event div[class^="venue_id"] dl.location,
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"],
+    div#jem div.register dl.jem-registration-summary {
+        grid-template-columns: 1fr;
+        row-gap: 0.15rem;
+    }
+
+    div#jem.jem_event dl.event_info > dt:not(:first-child),
+    div#jem.jem_event dl.jem-event-info-list > dt:not(:first-child),
+    div#jem.jem_event div[class^="venue_id"] dl.location > dt:not(:first-child),
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt:not(:first-child),
+    div#jem div.register dl.jem-registration-summary > dt:not(:first-child) {
+        margin-top: 0.45rem;
+    }
+
+    div#jem.jem_event dl.event_info > dd,
+    div#jem.jem_event dl.jem-event-info-list > dd,
+    div#jem.jem_event div[class^="venue_id"] dl.location > dd,
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd,
+    div#jem div.register dl.jem-registration-summary > dd {
+        padding-left: 0.35rem;
+    }
+}
+
+

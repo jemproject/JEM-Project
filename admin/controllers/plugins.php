@@ -8,8 +8,6 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.controller');
-
 /**
  * JEM Component Plugins Controller
  *
@@ -25,8 +23,7 @@ class JemControllerPlugins extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
     }
 
@@ -36,21 +33,21 @@ class JemControllerPlugins extends BaseController
      * @access public
      * @return void
      */
-    public function plugins()
-    {
+    public function plugins() {
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         $query = $db->getQuery(true);
         $query->select(array('count(*)'));
         $query->from('#__extensions AS p');
-        $query->where(array('p.name LIKE '.$db->quote("%jem%"), 'p.type = '.$db->quote("plugin")));
+        $query->where($db->quoteName('p.name') . ' LIKE ' . $db->quote('%jem%'))
+              ->where($db->quoteName('p.type') . ' = ' . $db->quote('plugin'));
 
         $db->setQuery($query);
 
         $total = $db->loadResult();
 
         //any plugins installed? if not redirect to installation screen
-        if ($total > 0){
+        if ($total > 0) {
             // $link = 'index.php?option=com_plugins&filter_search=jem';
             $link = 'index.php?option=com_plugins&filter[search]=jem';
             $msg = "";

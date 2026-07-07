@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <layout title="COM_JEM_EVENTSLIST_VIEW_DEFAULT_TITLE">
         <message>
@@ -84,24 +84,19 @@
             <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
             <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
         </field>
-            <field name="tablefiltereventfrom" type="number"
-                default="0"
-                filter="integer"
-                min="0"
-                step="1"
-                validate="number"
-                label="COM_JEM_FILTER_EVENT_FROM"
-                description="COM_JEM_FILTER_EVENT_FROM_DESC"
-             class="w-auto" />
-            <field name="tablefiltereventuntil" type="number"
-                default="0"
-                filter="integer"
-                min="0"
-                step="1"
-                validate="number"
-                label="COM_JEM_FILTER_EVENT_UNTIL"
-                description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
-              class="w-auto" />
+            <field name="tablefiltereventfrom" type="text"
+                   default=""
+                   filter="integer"
+                   label="COM_JEM_FILTER_EVENT_FROM"
+                   description="COM_JEM_FILTER_EVENT_FROM_DESC"
+                   class="w-auto" />
+
+            <field name="tablefiltereventuntil" type="text"
+                   default=""
+                   filter="integer"
+                   label="COM_JEM_FILTER_EVENT_UNTIL"
+                   description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
+                   class="w-auto" />
             <field name="showmonthrow" type="radio"
                 default="0"
                 label="COM_JEM_DISPLAY_MONTH_ROW"
@@ -131,39 +126,10 @@
                 <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
             </field>
       <field type="spacer" name="spacer1" hr="true" />
-      <field name="introtext" type="editor"
-                filter="safehtml"
-                hide="readmore,pagebreak,module,menu,fields,contact,article"
-                default=""
-                rows="8"
-                cols="30"
-                height="300px"
-                label="COM_JEM_INTROTEXT_FIELD"
-                description="COM_JEM_INTROTEXT_FIELD_DESC"
-            />
-            <field name="showintrotext" type="radio"
-                default="0"
-                label="COM_JEM_DISPLAY_INTROTEXT"
-                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field type="spacer" name="spacer2" hr="true" />
-            <field name="categoryswitch" type="radio"
-                default="0"
-                label="COM_JEM_CATEGORYSWITCH"
-                description="COM_JEM_CATEGORYSWITCH_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">COM_JEM_INCLUDE</option>
-                <option value="0">COM_JEM_EXCLUDE</option>
-            </field>
-            <field name="categoryswitchcats" type="text"
+<field name="categoryswitchcats" type="text"
                 default=""
                 label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC" class="form-control w-auto"
             />
             <field name="includesubcategories" type="radio"
                 default="0"
@@ -177,22 +143,35 @@
             <field name="showopendates" type="list"
                 default="0"
                 label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
-                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC" class="form-select w-auto jem-options-width-auto"
             >
                 <option value="0">JNO</option>
                 <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
                 <option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
             </field>
             <field type="spacer" name="spacer3" hr="true" />
-            <field name="footertext" type="editor"
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
                 filter="safehtml"
                 hide="readmore,pagebreak,module,menu,fields,contact,article"
                 default=""
                 rows="8"
                 cols="30"
                 height="300px"
-                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
-                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
             />
             <field name="showfootertext" type="radio"
                 default="0"
@@ -203,6 +182,15 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-        </fieldset>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>

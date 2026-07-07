@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extension type="module" version="4.0" client="site" method="upgrade">
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="module" version="4.4" client="site" method="upgrade">
     <name>mod_jem_map</name>
     <author>JEM Community</author>
-    <creationDate>March 2026</creationDate>
+    <creationDate>7 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.4.2</version>
+    <version>4.5.0</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -39,19 +39,31 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="map_center_lat" type="text"
-                       default="48.750"
+                       default="54.526"
                        label="MOD_JEM_MAP_CENTER_LATITUDE"
-                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"/>
+                       description="MOD_JEM_MAP_CENTER_LATITUDE_DESC"
+                       class="form-control w-auto"/>
                 <field name="map_center_lng" type="text"
-                       default="18.917"
+                       default="15.255"
                        label="MOD_JEM_MAP_CENTER_LONGITUDE"
-                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"/>
+                       description="MOD_JEM_MAP_CENTER_LONGITUDE_DESC"
+                       class="form-control w-auto"/>
                 <field name="map_zoom" type="number"
                        default="4"
                        label="MOD_JEM_MAP_ZOOM"
                        description="MOD_JEM_MAP_ZOOM_DESC"
                        min="0"
-                       max="19"/>
+                       max="19"
+                       class="form-control w-auto"/>
+                <field name="map_provider" type="list"
+                       default="osm"
+                       label="MOD_JEM_MAP_PROVIDER"
+                       description="MOD_JEM_MAP_PROVIDER_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="osm">MOD_JEM_MAP_PROVIDER_OSM</option>
+                    <option value="google">MOD_JEM_MAP_PROVIDER_GOOGLE</option>
+                </field>
                 <field name="show_my_location" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_SHOW_MY_LOCATION"
@@ -71,7 +83,7 @@
                     <option value="0">JNO</option>
                 </field>
                 <field name="date_filter_default" type="radio"
-                       default="today"
+                       default="all"
                        label="MOD_JEM_MAP_DATE_FILTER_DEFAULT"
                        description="MOD_JEM_MAP_DATE_FILTER_DEFAULT_DESC"
                        class="inputbox btn-group btn-group-yesno"
@@ -93,6 +105,24 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="show_directions_link" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_DIRECTIONS_LINK"
+                       description="MOD_JEM_MAP_SHOW_DIRECTIONS_LINK_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="show_full_map_link" type="radio"
+                       default="1"
+                       label="MOD_JEM_MAP_SHOW_FULL_MAP_LINK"
+                       description="MOD_JEM_MAP_SHOW_FULL_MAP_LINK_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
                 <field name="heat_layer" type="radio"
                        default="1"
                        label="MOD_JEM_MAP_HEAT_LAYER"
@@ -105,15 +135,17 @@
                 <field name="venue_markerfile" type="text"
                        default="media/com_jem/images/marker-red.webp"
                        label="MOD_JEM_MAP_VENUE_MARKER"
-                       description="MOD_JEM_MAP_VENUE_MARKER_DESC" />
+                       description="MOD_JEM_MAP_VENUE_MARKER_DESC"
+                       class="form-control w-auto" />
                 <field name="mylocation_markerfile" type="text"
                        default="media/com_jem/images/marker-blue.webp"
                        label="MOD_JEM_MAP_MYLOC_MARKER"
-                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC"/>
-                <field name="show_date_filter" type="radio"
-                       default="1"
-                       label="MOD_JEM_MAP_SHOW_DATE_FILTER"
-                       description="MOD_JEM_MAP_SHOW_DATE_FILTER_DESC"
+                       description="MOD_JEM_MAP_MYLOC_MARKER_DESC"
+                       class="form-control w-auto"/>
+                <field name="show_category_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_CATEGORY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_CATEGORY_FILTER_DESC"
                        class="inputbox btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
@@ -125,16 +157,77 @@
                        removeroot="true"
                        label="MOD_JEM_MAP_CATEGORY_ID"
                        description="MOD_JEM_MAP_CATEGORY_ID_DESC"
+                       class="form-select w-auto"
+                />
+                <field name="show_country_filter" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_COUNTRY_FILTER"
+                       description="MOD_JEM_MAP_SHOW_COUNTRY_FILTER_DESC"
+                       class="inputbox btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="default_country" type="countryoptions"
+                       default="0"
+                       label="MOD_JEM_MAP_DEFAULT_COUNTRY"
+                       description="MOD_JEM_MAP_DEFAULT_COUNTRY_DESC"
+                       class="form-select w-auto"
                 />
                 <field name="height" type="text" default="500px"
                        label="MOD_JEM_MAP_HEIGHT"
                        description="MOD_JEM_MAP_HEIGHT_DESC"
+                       class="form-control w-auto"
+                />
+                <field type="spacer" name="module_text_spacer"
+                       label="MOD_JEM_MAP_MODULE_TEXT_BLOCK"
+                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
+                />
+                <field name="showintrotext" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_INTROTEXT"
+                       description="MOD_JEM_MAP_SHOW_INTROTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="introtext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_MAP_INTROTEXT"
+                       description="MOD_JEM_MAP_INTROTEXT_DESC"
+                       showon="showintrotext:1"
+                />
+                <field name="showfootertext" type="radio"
+                       default="0"
+                       label="MOD_JEM_MAP_SHOW_FOOTERTEXT"
+                       description="MOD_JEM_MAP_SHOW_FOOTERTEXT_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="footertext" type="editor"
+                       filter="safehtml"
+                       hide="readmore,pagebreak,module,menu,fields,contact,article"
+                       default=""
+                       rows="8"
+                       cols="30"
+                       height="300px"
+                       label="MOD_JEM_MAP_FOOTERTEXT"
+                       description="MOD_JEM_MAP_FOOTERTEXT_DESC"
+                       showon="showfootertext:1"
                 />
             </fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
                        label="JFIELD_ALT_LAYOUT_LABEL"
-                       class="form-select"
+                       class="form-select w-auto"
                        validate="moduleLayout"
                        default="_:default"
                 />
@@ -149,6 +242,7 @@
                        default="1"
                        filter="integer"
                        validate="options"
+                       class="form-select w-auto"
                 >
                     <option value="1">JGLOBAL_USE_GLOBAL</option>
                     <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
@@ -158,6 +252,7 @@
                        description="MOD_JEM_CACHE_TIME_DESC"
                        default="900"
                        filter="integer"
+                       class="form-control w-auto"
                 />
                 <field name="cachemode" type="hidden"
                        default="static"
@@ -168,3 +263,7 @@
         </fields>
     </config>
 </extension>
+
+
+
+

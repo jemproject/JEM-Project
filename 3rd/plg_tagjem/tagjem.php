@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\String\StringHelper;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -93,18 +94,18 @@ class plgAcymailingTagjem extends CMSPlugin
         $pageInfo->limit->start = $app->getUserStateFromRequest($paramBase.'.limitstart', 'limitstart', 0, 'int');
 
         $picts = array();
-        $picts[] = JHtml::_('select.option', '1', Text::_('JOOMEXT_YES'));
-        $picts[] = JHtml::_('select.option', 'resized', Text::_('PLG_TAGJEM_RESIZE'));
-        $picts[] = JHtml::_('select.option', '0', Text::_('JOOMEXT_NO'));
+        $picts[] = HTMLHelper::_('select.option', '1', Text::_('JOOMEXT_YES'));
+        $picts[] = HTMLHelper::_('select.option', 'resized', Text::_('PLG_TAGJEM_RESIZE'));
+        $picts[] = HTMLHelper::_('select.option', '0', Text::_('JOOMEXT_NO'));
 
         $yesno = array();
-        $yesno[] = JHtml::_('select.option', '1', Text::_('JOOMEXT_YES'));
-        $yesno[] = JHtml::_('select.option', '0', Text::_('JOOMEXT_NO'));
+        $yesno[] = HTMLHelper::_('select.option', '1', Text::_('JOOMEXT_YES'));
+        $yesno[] = HTMLHelper::_('select.option', '0', Text::_('JOOMEXT_NO'));
 
         $opendates = array();
-        $opendates[] = JHtml::_('select.option', 'also', Text::_('COM_JEM_SHOW_OPENDATES_TOO'));
-        $opendates[] = JHtml::_('select.option', 'only', Text::_('COM_JEM_SHOW_OPENDATES_ONLY'));
-        $opendates[] = JHtml::_('select.option', '0', Text::_('JOOMEXT_NO'));
+        $opendates[] = HTMLHelper::_('select.option', 'also', Text::_('COM_JEM_SHOW_OPENDATES_TOO'));
+        $opendates[] = HTMLHelper::_('select.option', 'only', Text::_('COM_JEM_SHOW_OPENDATES_ONLY'));
+        $opendates[] = HTMLHelper::_('select.option', '0', Text::_('JOOMEXT_NO'));
 
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -163,9 +164,9 @@ class plgAcymailingTagjem extends CMSPlugin
         $db->setQuery('SELECT c.* FROM `#__jem_categories` as c WHERE c.published IN (0, 1) AND c.alias NOT LIKE "root" ORDER BY c.lft ASC');
         $categories = $db->loadObjectList('id');
         $categoriesValues = array();
-        $categoriesValues[] = JHtml::_('select.option', '', Text::_('ACY_ALL'));
+        $categoriesValues[] = HTMLHelper::_('select.option', '', Text::_('ACY_ALL'));
         foreach ($categories as $oneCat) {
-            $categoriesValues[] = JHtml::_('select.option', $oneCat->id, str_repeat('-&nbsp;', $oneCat->level) . $oneCat->catname, ($oneCat->published != 1) ? array('disable' => true) : array());
+            $categoriesValues[] = HTMLHelper::_('select.option', $oneCat->id, str_repeat('-&nbsp;', $oneCat->level) . $oneCat->catname, ($oneCat->published != 1) ? array('disable' => true) : array());
         }
 
         // Before AcyMailing 5.0 we have to use Joomla's css classes.
@@ -239,7 +240,7 @@ class plgAcymailingTagjem extends CMSPlugin
             <table class="<?php echo $class_options;?>" style="width:100%;">
                 <tr id="format" class="acyplugformat">
                     <td style="vertical-align: baseline; width:25%;"><?php echo Text::_('PLG_TAGJEM_SHOW_IMAGES'); ?></td>
-                    <td style="vertical-align: baseline; width:25%;"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pict', 'size="1" onclick="updateTag();"', 'value', 'text', $pageInfo->pict); ?>
+                    <td style="vertical-align: baseline; width:25%;"><?php echo HTMLHelper::_('acyselect.radiolist', $picts, 'pict', 'size="1" onclick="updateTag();"', 'value', 'text', $pageInfo->pict); ?>
                     </td>
                     <td style="vertical-align: baseline; width:50%;" colspan="2">
                         <span id="pictsize" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><!--br/--><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
@@ -271,7 +272,7 @@ class plgAcymailingTagjem extends CMSPlugin
                         <?php acymailing_listingsearch($pageInfo->search); ?>
                     </td>
                     <td nowrap="nowrap">
-                        <?php echo JHtml::_('select.genericlist', $categoriesValues, 'filter_cat', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', (int)$pageInfo->filter_cat); ?>
+                        <?php echo HTMLHelper::_('select.genericlist', $categoriesValues, 'filter_cat', 'class="inputbox" size="1" onchange="document.adminForm.submit( );"', 'value', 'text', (int)$pageInfo->filter_cat); ?>
                     </td>
                 </tr>
             </table>
@@ -282,19 +283,19 @@ class plgAcymailingTagjem extends CMSPlugin
                     <th class="title">
                     </th>
                     <th class="title">
-                        <?php echo JHTML::_('grid.sort', Text::_('PLG_TAGJEM_TITLE'), 'a.title', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+                        <?php echo HTMLHelper::_('grid.sort', Text::_('PLG_TAGJEM_TITLE'), 'a.title', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
                     </th>
                     <th class="title">
-                        <?php echo JHTML::_('grid.sort', Text::_('PLG_TAGJEM_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+                        <?php echo HTMLHelper::_('grid.sort', Text::_('PLG_TAGJEM_DESCRIPTION'), 'a.introtext', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
                     </th>
                     <th class="title">
-                        <?php echo JHTML::_('grid.sort', Text::_('PLG_TAGJEM_DATE'), 'a.dates', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+                        <?php echo HTMLHelper::_('grid.sort', Text::_('PLG_TAGJEM_DATE'), 'a.dates', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
                     </th>
                     <th class="title">
-                        <?php echo JHTML::_('grid.sort', Text::_('PLG_TAGJEM_VENUE'), 'l.venue', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+                        <?php echo HTMLHelper::_('grid.sort', Text::_('PLG_TAGJEM_VENUE'), 'l.venue', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
                     </th>
                     <th class="title titleid">
-                        <?php echo JHTML::_('grid.sort', Text::_('PLG_TAGJEM_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
+                        <?php echo HTMLHelper::_('grid.sort', Text::_('PLG_TAGJEM_ID'), 'a.id', $pageInfo->filter->order->dir, $pageInfo->filter->order->value); ?>
                     </th>
                 </tr>
                 </thead>
@@ -312,23 +313,23 @@ class plgAcymailingTagjem extends CMSPlugin
                 for ($i = 0, $a = count($rows); $i < $a; $i++) {
                     $row =& $rows[$i];
                     ?>
-                    <tr id="content<?php echo $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
-                        onclick="applyContent(<?php echo $row->id.",'row$k'" ?>);" eventid="<?php echo $row->id ?>" >
+                    <tr id="content<?php echo (int) $row->id?>" class="<?php echo "row$k"; ?>" style="cursor:pointer;"
+                        onclick="applyContent(<?php echo (int) $row->id.",'row$k'" ?>);" eventid="<?php echo (int) $row->id ?>" >
                         <td class="acytdcheckbox"></td>
                         <td>
-                            <?php echo $row->title; ?>
+                            <?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td>
-                            <?php echo strip_tags($row->introtext); ?>
+                            <?php echo htmlspecialchars(strip_tags($row->introtext), ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td align="center">
                             <?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
                         </td>
                         <td>
-                            <?php echo $row->venue; ?>
+                            <?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>
                         </td>
                         <td align="center">
-                            <?php echo $row->id; ?>
+                            <?php echo (int) $row->id; ?>
                         </td>
                     </tr>
                     <?php
@@ -415,7 +416,7 @@ class plgAcymailingTagjem extends CMSPlugin
             <table width="100%" class="jem_auto <?php echo $class_options; ?>">
                 <tr id="format" class="acyplugformat">
                     <td style="vertical-align: baseline; width:25%;"><?php echo Text::_('PLG_TAGJEM_SHOW_IMAGES'); ?></td>
-                    <td style="vertical-align: baseline; width:25%;"><?php echo JHtml::_('acyselect.radiolist', $picts, 'pictauto', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->pict); ?>
+                    <td style="vertical-align: baseline; width:25%;"><?php echo HTMLHelper::_('acyselect.radiolist', $picts, 'pictauto', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->pict); ?>
                     </td>
                     <td style="vertical-align: baseline; width:50%;" colspan="2">
                         <span id="pictsizeauto" <?php if($pageInfo->pict != 'resized') echo 'style="display:none;"'; ?>><?php echo Text::_('PLG_TAGJEM_IMAGE_WIDTH') ?>
@@ -432,7 +433,7 @@ class plgAcymailingTagjem extends CMSPlugin
                         </span>
                     </td>
                     <td style="vertical-align: baseline; width:25%;">
-                        <?php echo JHtml::_('acyselect.radiolist', $opendates, 'opendates', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->opendates); ?>
+                        <?php echo HTMLHelper::_('acyselect.radiolist', $opendates, 'opendates', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->opendates); ?>
                         <!--select name="opendates" size="1" onchange="updateAutoTag();">
                             <option value="no"><?php echo Text::_('JNo');?></option>
                             <option value="also"><?php echo Text::_('COM_JEM_SHOW_OPENDATES_TOO');?></option>
@@ -441,7 +442,7 @@ class plgAcymailingTagjem extends CMSPlugin
                     </td>
                     <td style="vertical-align: baseline; width:25%;"><?php echo Text::_('PLG_TAGJEM_FEATURED_EVENTS'); ?></td>
                     <td style="vertical-align: baseline; width:25%;">
-                        <?php echo JHtml::_('acyselect.radiolist', $yesno, 'featured', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->featured); ?>
+                        <?php echo HTMLHelper::_('acyselect.radiolist', $yesno, 'featured', 'size="1" onclick="updateAutoTag();"', 'value', 'text', $pageInfo->featured); ?>
                         <!--select name="featured" size="1" onchange="updateAutoTag();">
                             <option value="0"><?php echo Text::_('JNo');?></option>
                             <option value="1"><?php echo Text::_('JYes');?></option>

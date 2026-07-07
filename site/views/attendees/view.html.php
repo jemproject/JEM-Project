@@ -10,10 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
 
 /**
  * Attendees-view
@@ -28,7 +27,8 @@ class JemViewAttendees extends JemView
 
         //redirect if not logged in
         if (!$user->get('id')) {
-            $app->enqueueMessage(Text::_('COM_JEM_NEED_LOGGED_IN'), 'error');
+            $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode(Uri::getInstance()->toString()), false));
             return false;
         }
 
@@ -41,7 +41,9 @@ class JemViewAttendees extends JemView
         }
 
         if ($this->getLayout() == 'addusers') {
-            $this->returnto = base64_decode($app->input->get('return', '', 'base64'));
+            $return = $app->input->get('return', '', 'base64');
+            $decodedReturn = $return ? base64_decode($return, true) : false;
+            $this->returnto = ($decodedReturn && Uri::isInternal($decodedReturn)) ? $decodedReturn : Uri::base();
             $this->_displayaddusers($tpl);
             return;
         }
@@ -53,6 +55,7 @@ class JemViewAttendees extends JemView
         $menu        = $app->getMenu();
         $menuitem    = $menu->getActive();
         $uri        = Uri::getInstance();
+        $isModal    = $app->input->getCmd('tmpl', '') === 'component';
 
         // Load css
         JemHelper::loadCss('jem');
@@ -75,7 +78,6 @@ class JemViewAttendees extends JemView
         // Because this view is not useable for menu item we always overwrite $params.
         $pagetitle = Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') . ' - ' . $event->title;
         $params->set('page_heading', Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES')); // event title is shown separate
-        //$params->set('show_page_heading', 1); // always show?
         $params->set('introtext', ''); // there can't be an introtext
         $params->set('showintrotext', 0);
         $pageclass_sfx = $params->get('pageclass_sfx');
@@ -138,6 +140,7 @@ class JemViewAttendees extends JemView
         $this->rows         = $rows;
         $this->pagination     = $pagination;
         $this->event         = $event;
+        $this->isModal       = $isModal;
         $this->pagetitle    = $pagetitle;
         $this->backlink        = $backlink;
         $this->print_link    = $print_link;
@@ -205,6 +208,7 @@ class JemViewAttendees extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_USERS_AND_STATUS'));
 

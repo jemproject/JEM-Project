@@ -23,8 +23,7 @@ class JemControllerAttendee extends BaseController
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct();
 
         // Register Extra task
@@ -35,10 +34,21 @@ class JemControllerAttendee extends BaseController
     }
 
     /**
+     * Check whether the current user can manage attendees in the backend.
+     *
+     * @return void
+     */
+    private function assertCanManageAttendees()
+    {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
      * redirect to events page
      */
-    public function back()
-    {
+    public function back() {
         $this->setRedirect('index.php?option=com_jem&view=attendees&eventid='. Factory::getApplication()->input->getInt('event', 0));
     }
 
@@ -48,10 +58,10 @@ class JemControllerAttendee extends BaseController
      * @access public
      * @return void
      */
-    public function cancel()
-    {
+    public function cancel() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         $attendee = Table::getInstance('jem_register', '');
         $attendee->bind(Factory::getApplication()->input->post->getArray(/*get them all*/));
@@ -66,10 +76,10 @@ class JemControllerAttendee extends BaseController
      * @access public
      * @return void
      */
-    public function save()
-    {
+    public function save() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         // Defining JInput
         $jinput = Factory::getApplication()->input;
@@ -125,8 +135,11 @@ class JemControllerAttendee extends BaseController
                 }
             }
 
-            switch ($task)
-            {
+
+            PluginHelper::importPlugin('actionlog', 'jem');
+            JemFactory::getDispatcher()->triggerEvent('onJemAfterAttendeeSave', array($row, empty($id)));
+
+            switch ($task) {
             case 'apply':
                 // Redirect back to the edit screen.
                 $link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&eventid='.$row->event;
@@ -153,8 +166,7 @@ class JemControllerAttendee extends BaseController
         $this->setRedirect($link, $msg);
     }
 
-    public function selectUser()
-    {
+    public function selectUser() {
         $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'userelement');
         parent::display();

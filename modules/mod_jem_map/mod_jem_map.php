@@ -12,26 +12,32 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Date\Date;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
+use Joomla\Module\JemMap\Site\Helper\ModJemMapHelper;
 
 $mod_name = 'mod_jem_map';
 
 require_once __DIR__ . '/helper.php';
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/countries.php');
 
 $app = Factory::getApplication();
 
 
 # Parameters
-$venueMarker = $params->get('venue_markerfile', 'media/com_jem/images/marker.webp');
-$mylocMarker = $params->get('mylocation_markerfile', 'media/com_jem/images/marker-red.webp');
-
-$venueMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $venueMarker, '/');
-$mylocMarker = rtrim(Uri::root(), '/') . '/' . ltrim((string) $mylocMarker, '/');
+$venueMarker = JemMapHelper::resolveMarkerUrl($params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp'), 'media/com_jem/images/marker-red.webp');
+$mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
 
 $height = $params->get('height', '500px');
-$zoom = (int) $params->get('zoom', 8);
 $showDateFilter = (int) $params->get('show_date_filter', 0);
-$dateFilterDefault = $params->get('date_filter_default', 'today');
+$showCategoryFilter = (int) $params->get('show_category_filter', 0);
+$showCountryFilter = (int) $params->get('show_country_filter', 0);
+$dateFilterDefault = $params->get('date_filter_default', 'all');
+$defaultCountry = trim((string) $params->get('default_country', ''));
+
+if ($defaultCountry === '0') {
+    $defaultCountry = '';
+}
 
 // Filter from request (only if backend option is enabled)
 $filterMode = 'all';
@@ -40,6 +46,10 @@ $selectedDate = '';
 
 $filterStartDate = null;
 $filterEndDate   = null;
+$selectedCategoryId = $showCategoryFilter ? $app->input->getInt('jem_map_filter_catid', 0) : 0;
+$selectedCountry = $showCountryFilter
+    ? trim($app->input->getString('jem_map_filter_country', $defaultCountry))
+    : $defaultCountry;
 
 if ($showDateFilter) {
     $filterMode = $app->input->get('jem_map_filter_mode', $dateFilterDefault, 'string');
@@ -106,25 +116,52 @@ if ($showDateFilter) {
 }
 
 // Fetch venues (JOIN + date filter only if $filterDate is not null)
-$venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate);
+$categories = $showCategoryFilter ? ModJemMapHelper::getCategories($params) : array();
+$countries = $showCountryFilter ? ModJemMapHelper::getVenueCountries() : array();
+
+if ($countries) {
+    foreach ($countries as $country) {
+        $countryCode = (string) $country->country;
+        $countryName = JemHelperCountries::getCountryName($countryCode);
+        $country->country_name = $countryName ?: $countryCode;
+    }
+
+    usort(
+        $countries,
+        static function ($a, $b) {
+            return strcasecmp((string) $a->country_name, (string) $b->country_name);
+        }
+    );
+}
+
+if ($selectedCategoryId > 0) {
+    $validCategoryIds = array_map('intval', array_column($categories, 'id'));
+
+    if (!in_array($selectedCategoryId, $validCategoryIds, true)) {
+        $selectedCategoryId = 0;
+    }
+}
+
+if ($selectedCountry !== '') {
+    $validCountries = array_map(
+        static function ($country) {
+            return (string) $country->country;
+        },
+        $countries
+    );
+
+    if ($showCountryFilter && !in_array($selectedCountry, $validCountries, true)) {
+        $selectedCountry = '';
+    }
+}
+
+$venues = ModJemMapHelper::getVenues($params, $filterStartDate, $filterEndDate, $selectedCategoryId, $selectedCountry);
 
 // Get auto center map
-$centerLat = $centerLng = 0;
-$totalLat = $totalLng= 0;
-$countVenues = 0;
 if($params->get('map_auto_center',1)){
-    foreach ($venues as $venue) {
-        if (!empty($venue->latitude) && !empty($venue->longitude)) {
-            $totalLat += (float)$venue->latitude;
-            $totalLng += (float)$venue->longitude;
-            $countVenues++;
-        }
-    }
-
-    if ($countVenues > 0) {
-        $centerLat = $totalLat / $countVenues;
-        $centerLng = $totalLng / $countVenues   ;
-    }
+    [$centerLat, $centerLng] = JemMapHelper::getCenter($venues);
+} else {
+    $centerLat = $centerLng = 0;
 }
 
 $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
@@ -132,4 +169,10 @@ $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 
 // Render layout
+$moduleIntroText  = JemHelper::renderModuleText($params, 'intro');
+$moduleFooterText = JemHelper::renderModuleText($params, 'footer');
+
+echo $moduleIntroText;
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+echo $moduleFooterText;
+JemHelper::loadModuleUserCss();

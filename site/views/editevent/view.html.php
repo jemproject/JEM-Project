@@ -17,10 +17,10 @@ use Joomla\CMS\Factory;
  */
 class JemViewEditevent extends JemView
 {
-    protected $form;
-    protected $item;
+    public $form;
+    public $item;
     protected $return_page;
-    protected $state;
+    public $state;
 
     /**
      * Editevent-View
@@ -34,6 +34,11 @@ class JemViewEditevent extends JemView
 
         if ($this->getLayout() == 'choosecontact') {
             $this->_displaychoosecontact($tpl);
+            return;
+        }
+
+        if ($this->getLayout() == 'choosearticle') {
+            $this->_displaychoosearticle($tpl);
             return;
         }
 
@@ -126,7 +131,6 @@ class JemViewEditevent extends JemView
 
             $params->set('page_title', $pagetitle);
             $params->set('page_heading', $pagetitle);
-            $params->set('show_page_heading', 1); // ensure page heading is shown
             $params->set('introtext', ''); // there is definitely no introtext.
             $params->set('showintrotext', 0);
             $pathway->addItem($pagetitle, ''); // link not required here so '' is ok
@@ -183,9 +187,10 @@ class JemViewEditevent extends JemView
         // Load css
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
 
         // Load scripts
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
         $wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
         $wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
@@ -196,6 +201,7 @@ class JemViewEditevent extends JemView
         $pageclass_sfx          = $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
         $this->dimage        = JemImage::flyercreator($this->item->datimage, 'event');
+        $this->dfullimage    = JemImage::flyercreator($this->item->fullimage ?? '', 'event');
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
         $this->infoimage     = HTMLHelper::_('image', 'com_jem/icon-16-hint.webp', Text::_('COM_JEM_NOTES'), NULL, true);
@@ -222,6 +228,7 @@ class JemViewEditevent extends JemView
             $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
         $this->form->setFieldAttribute('userfile', 'description', $tip);
+        $this->form->setFieldAttribute('fulluserfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {
             $this->form->setFieldAttribute('userfile', 'required', 'true');
         }
@@ -230,6 +237,22 @@ class JemViewEditevent extends JemView
         if ($jemsettings->regallowinvitation == 1) {
             $this->form->setValue('invited', null, implode(',', $this->invited));
             $this->form->setFieldAttribute('invited', 'eventid', (int)$this->item->id);
+        }
+
+        if (!empty($this->item->event_links)) {
+            $this->form->bind(array(
+                'event_links' => $this->item->event_links,
+            ));
+        }
+
+        if (!empty($this->item->attribs)) {
+            $attribs = json_decode($this->item->attribs, true);
+
+            if (is_array($attribs)) {
+                $this->form->bind(array(
+                    'attribs' => $attribs,
+                ));
+            }
         }
 
         $this->_prepareDocument();
@@ -301,11 +324,13 @@ class JemViewEditevent extends JemView
 
         $document->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $filters = array();
         $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
         $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_STATE'));
+        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_COUNTRY'));
         $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
         $this->rows         = $rows;
@@ -338,6 +363,7 @@ class JemViewEditevent extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
 
@@ -355,12 +381,57 @@ class JemViewEditevent extends JemView
         /*    $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_ADDRESS')); */ // data security
         $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_STATE'));
+        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_COUNTRY'));
+        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_CATEGORY'));
         $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
 
         // search filter
         $lists['search']= $search;
 
         //assign data to template
+        $this->searchfilter = $searchfilter;
+        $this->lists        = $lists;
+        $this->rows         = $rows;
+        $this->pagination   = $pagination;
+
+        parent::display($tpl);
+    }
+
+
+    /**
+     * Creates the output for the article select listing
+     */
+    protected function _displaychoosearticle($tpl)
+    {
+        $app         = Factory::getApplication();
+        $jinput      = $app->input;
+        $jemsettings = JemHelper::config();
+        $document    = $app->getDocument();
+
+        $filter_order     = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order', 'filter_order', 'a.title', 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
+        $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
+        $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
+        $limitstart       = $jinput->get('limitstart', '0', 'int');
+        $limit            = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
+
+        JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
+
+        $document->setTitle(Text::_('COM_JEM_SELECT_ARTICLE'));
+
+        $rows       = $this->get('Articles');
+        $pagination = $this->get('ArticlesPagination');
+
+        $lists['order_Dir'] = $filter_order_Dir;
+        $lists['order']     = $filter_order;
+        $lists['search']    = $search;
+
+        $filters = array();
+        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_TITLE'));
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('JCATEGORY'));
+        $searchfilter = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox'), 'value', 'text', $filter_type);
+
         $this->searchfilter = $searchfilter;
         $this->lists        = $lists;
         $this->rows         = $rows;
@@ -393,6 +464,7 @@ class JemViewEditevent extends JemView
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCustomCss();
 
         $document->setTitle(Text::_('COM_JEM_SELECT_USERS_TO_INVITE'));
 

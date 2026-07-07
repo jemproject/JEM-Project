@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE">
+        <message>
+            <![CDATA[COM_JEM_TYPEVENUES_VIEW_DEFAULT_DESC]]>
+        </message>
+    </layout>
+
+    <fields name="request">
+        <fieldset name="request">
+            <field
+                name="id"
+                type="sql"
+                label="COM_JEM_TYPE_FIELD_TYPE"
+                description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+                query="SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 3 ORDER BY ordering ASC, name ASC"
+                key_field="value"
+                value_field="text"
+                required="true" class="form-select w-auto jem-options-width-auto"
+            />
+        </fieldset>
+    </fields>
+
+    <fields name="params">
+        <fieldset name="basic">
+            <field name="showstate" type="radio"
+                default="0"
+                label="COM_JEM_SHOWSTATE"
+                description="COM_JEM_SHOWSTATE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenuecalendar" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
+                description="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="display_order" type="list"
+                default="venue_city_country"
+                label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
+                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC" class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="venue_city_country">COM_JEM_VENUESLIST_ORDER_VENUE_CITY_COUNTRY</option>
+                <option value="venue_country_city">COM_JEM_VENUESLIST_ORDER_VENUE_COUNTRY_CITY</option>
+                <option value="city_venue_country">COM_JEM_VENUESLIST_ORDER_CITY_VENUE_COUNTRY</option>
+                <option value="city_country_venue">COM_JEM_VENUESLIST_ORDER_CITY_COUNTRY_VENUE</option>
+                <option value="country_venue_city">COM_JEM_VENUESLIST_ORDER_COUNTRY_VENUE_CITY</option>
+                <option value="country_city_venue">COM_JEM_VENUESLIST_ORDER_COUNTRY_CITY_VENUE</option>
+            </field>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="showintrotext" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_INTROTEXT"
+                description="COM_JEM_DISPLAY_INTROTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
+    </fields>
+</metadata>

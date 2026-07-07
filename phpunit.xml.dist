@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         cacheDirectory=".phpunit.cache">
+    <testsuites>
+        <testsuite name="static">
+            <directory>tests/Static</directory>
+        </testsuite>
+        <testsuite name="static-syntax">
+            <directory>tests/Static/Syntax</directory>
+        </testsuite>
+        <testsuite name="static-xml">
+            <directory>tests/Static/Xml</directory>
+        </testsuite>
+        <testsuite name="static-xml-admin">
+            <directory>tests/Static/Xml/Admin</directory>
+        </testsuite>
+        <testsuite name="static-xml-site">
+            <directory>tests/Static/Xml/Site</directory>
+        </testsuite>
+        <testsuite name="static-xml-shared">
+            <directory>tests/Static/Xml/Shared</directory>
+        </testsuite>
+        <testsuite name="static-language">
+            <directory>tests/Static/Language</directory>
+        </testsuite>
+        <testsuite name="static-code">
+            <directory>tests/Static/Code</directory>
+        </testsuite>
+        <testsuite name="static-code-admin">
+            <directory>tests/Static/Code/Admin</directory>
+        </testsuite>
+        <testsuite name="static-code-site">
+            <directory>tests/Static/Code/Site</directory>
+        </testsuite>
+        <testsuite name="static-code-shared">
+            <directory>tests/Static/Code/Shared</directory>
+        </testsuite>
+        <testsuite name="static-views">
+            <directory>tests/Static/Views</directory>
+        </testsuite>
+        <testsuite name="static-views-admin">
+            <directory>tests/Static/Views/Admin</directory>
+        </testsuite>
+        <testsuite name="static-views-site">
+            <directory>tests/Static/Views/Site</directory>
+        </testsuite>
+        <testsuite name="static-views-shared">
+            <directory>tests/Static/Views/Shared</directory>
+        </testsuite>
+        <testsuite name="static-assets">
+            <directory>tests/Static/Assets</directory>
+        </testsuite>
+        <testsuite name="static-security">
+            <directory>tests/Static/Security</directory>
+        </testsuite>
+        <testsuite name="static-integrity">
+            <directory>tests/Static/Integrity</directory>
+        </testsuite>
+        <testsuite name="static-sql">
+            <directory>tests/Static/Sql</directory>
+        </testsuite>
+        <testsuite name="static-sampledata">
+            <directory>tests/Static/SampleData</directory>
+        </testsuite>
+        <testsuite name="static-package">
+            <directory>tests/Static/Package</directory>
+        </testsuite>
+        <testsuite name="joomla">
+            <directory>tests/Joomla</directory>
+        </testsuite>
+        <testsuite name="joomla-bootstrap">
+            <directory>tests/Joomla/Bootstrap</directory>
+        </testsuite>
+        <testsuite name="joomla-schema">
+            <directory>tests/Joomla/Schema</directory>
+        </testsuite>
+        <testsuite name="joomla-config">
+            <directory>tests/Joomla/Config</directory>
+        </testsuite>
+        <testsuite name="joomla-models">
+            <directory>tests/Joomla/Models</directory>
+        </testsuite>
+        <testsuite name="joomla-environment">
+            <directory>tests/Joomla/Environment</directory>
+        </testsuite>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="unit-helpers">
+            <directory>tests/Unit/Helpers</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

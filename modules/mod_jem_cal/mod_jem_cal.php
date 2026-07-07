@@ -166,5 +166,11 @@ $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript(
 JemHelper::loadIconFont();
 
 # Render
+$moduleIntroText  = empty($module->in_ajax_call) ? JemHelper::renderModuleText($params, 'intro') : '';
+$moduleFooterText = empty($module->in_ajax_call) ? JemHelper::renderModuleText($params, 'footer') : '';
+
+echo $moduleIntroText;
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
+echo $moduleFooterText;
+JemHelper::loadModuleUserCss();
 ?>

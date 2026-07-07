@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 
 $group = 'globalattribs';
 
@@ -42,6 +43,21 @@ $group = 'globalattribs';
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('global_editvenue_maxnumcustomfields',$group); ?></div></li>
             </ul>
+        </fieldset>
+    </div>
+    <div class="width-100" style="padding: 10px 1vw;">
+        <fieldset class="options-form">
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS'); ?></legend>
+            <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('calendar_special_days_enabled', $group); ?></div></li>
+            </ul>
+            <?php echo $this->form->getInput('calendar_special_day_types', $group); ?>
+            <div class="clr"></div>
+            <p class="form-text"><?php echo Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS_MANAGE_DESC'); ?></p>
+            <a class="btn btn-primary" href="<?php echo Route::_('index.php?option=com_jem&view=types&filter_entity=4'); ?>">
+                <span class="icon-tags" aria-hidden="true"></span>
+                <?php echo Text::_('COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS_MANAGE'); ?>
+            </a>
         </fieldset>
     </div>
 </div>

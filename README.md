@@ -1,11 +1,12 @@
-# JEM 4.4.2 (the Joomla Event Manager)
-released 2026-03-17
+# JEM 4.5.0 (the Joomla Event Manager)
+released 2026-07-07
 
 Based on
 - jemproject/JEM-Project
 - Egnarts94/JEM-Project Responsive JEM
 
-JEM 4.4.2 is compatible with Joomla 5 (and 4)
+JEM 4.5.0 supports Joomla 4.x and Joomla 5.x.
+JEM 4.5.0 is a transitional version. JEM 5 is recommended for Joomla 5 and 6.
 
 ## To install
 Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla via the web installer.
@@ -13,15 +14,22 @@ Download the installation package from https://www.joomlaeventmanager.net/downlo
 ## Documentation
 https://www.joomlaeventmanager.net/documentation/basics
 
+## Sample Data
+The sample data included with JEM is fictional and provided only for demonstration
+purposes. Event names, descriptions, venues, attachments, links and images are
+not intended to represent real programme content. Some text and images may be
+AI-generated to help demonstrate JEM features, flexibility and configuration
+combinations such as registrations, waiting lists, recurring events, event
+links, attachments, maps, categories, venues and event types.
+
 ## Community Support
 https://www.joomlaeventmanager.net/forum
 
-## Translation:
+## Translation
 https://app.transifex.com/jemproject/
 
 ## Changelog
 https://www.joomlaeventmanager.net/project/changelog-jem-4
 
 ## Errors
-Please report errors here: [https://github.com/jemproject/JEM-Project/issues](https://github.com/jemproject/JEM-Project/issues).
-
+Please report errors here: https://github.com/jemproject/JEM-Project/issues.

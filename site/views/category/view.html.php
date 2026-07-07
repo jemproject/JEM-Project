@@ -20,11 +20,11 @@ use Joomla\CMS\Plugin\PluginHelper;
  */
 class JemViewCategory extends JemView
 {
-    protected $state;
-    protected $items;
-    protected $category;
+    public $state;
+    public $items;
+    public $category;
     protected $children;
-    protected $pagination;
+    public $pagination;
 
 
     public function __construct($config = array())
@@ -74,7 +74,8 @@ class JemViewCategory extends JemView
             $eventandmorecolor = $params->get('eventandmorecolor');
 
             $style = '
-            div#jem .eventcontentinner a, div#jem .eventandmore a {color:' . $evlinkcolor . ';}
+            div#jem .eventcontentinner a {color: inherit;}
+            div#jem .eventandmore a {color:' . $evlinkcolor . ';}
             .eventcontentinner {background-color:'.$evbackgroundcolor .';}
             .eventandmore {background-color:'.$eventandmorecolor .';}
             .today .daynum {background-color:'.$currentdaycolor.';}';
@@ -82,7 +83,8 @@ class JemViewCategory extends JemView
 
             // add javascript (using full path - see issue #590)
             // HTMLHelper::_('script', 'media/com_jem/js/calendar.js');
-            $document->addScript($url.'media/com_jem/js/calendar.js');
+            $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+            $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
             // Retrieve date variables
             $year  = (int)$app->input->getInt('yearID', date("Y"));
@@ -92,13 +94,29 @@ class JemViewCategory extends JemView
             if (empty($catid)) {
                 $catid = $params->get('id');
             }
+            $catid = (int) $catid;
 
             // get data from model and set the month
             $model = $this->getModel('CategoryCal');
+            $model->setId($catid);
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
 
             $category = $this->get('Category', 'CategoryCal');
             $rows     = $this->get('Items', 'CategoryCal');
+
+            if (empty($category)) {
+                $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
+                return false;
+            } elseif (!$category->user_has_access_category) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
 
             // Set Page title
             $pagetitle = $params->def('page_title', $menuitem->title);
@@ -129,10 +147,13 @@ class JemViewCategory extends JemView
 
             $print_link = Route::_($url_base . $partDate . '&print=1&tmpl=component');
             $archive_link = Route::_('index.php?option=com_jem&view=category');
-            $archive_link = Route::_(JemHelperRoute::getVenueRoute($catid));
+            $archive_link = Route::_(JemHelperRoute::getCategoryRoute($catid));
 
             // init calendar
             $cal = new JemCalendar($year, $month, 0);
+            if ($params->get('show_year_navigation', 0)) {
+                $cal->enableYearNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
+            }
             $cal->enableMonthNav($url_base . ($print ? '&print=1&tmpl=component' : ''));
             $cal->setFirstWeekDay($params->get('firstweekday', 1));
             $cal->enableDayLinks('index.php?option=com_jem&view=day&catid='.$catid);
@@ -144,6 +165,8 @@ class JemViewCategory extends JemView
             $this->settings      = $settings;
             $this->permissions   = $permissions;
             $this->cal           = $cal;
+            $this->calendarYear  = $year;
+            $this->calendarMonth = $month;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 
             $this->print_link    = $print_link;
@@ -192,8 +215,14 @@ class JemViewCategory extends JemView
                 $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
                 return false;
             } else if(!$category->user_has_access_category) {
-                $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-                return false;
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($uri->toString()), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
             }
 
             // are events available?
@@ -210,6 +239,7 @@ class JemViewCategory extends JemView
 
             $this->showsubcats      = (bool)$params->get('usecat', 1);
             $this->showemptysubcats = (bool)$params->get('showemptychilds', 1);
+            $this->includechildevents = (bool)$params->get('includechildevents', 0);
 
             $filter_order     = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order', 'filter_order',     'a.dates', 'cmd');
             $filter_order_Dir = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.filter_order_Dir', 'filter_order_Dir',    '', 'word');
@@ -280,7 +310,6 @@ class JemViewCategory extends JemView
             } else {
                 $pagetitle   = $category->catname;
                 $pageheading = $pagetitle;
-                $params->set('show_page_heading', 1); // ensure page heading is shown
                 $pathway->addItem($category->catname, Route::_(JemHelperRoute::getCategoryRoute($category->slug)) );
             }
             $pageclass_sfx = $params->get('pageclass_sfx');
@@ -308,8 +337,8 @@ class JemViewCategory extends JemView
             // Set Page title & Meta data
             $this->document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
-            $document->setMetadata('keywords', $category->meta_keywords);
-            $document->setDescription(strip_tags($category->meta_description));
+            $document->setMetadata('keywords', (string) $category->meta_keywords);
+            $document->setDescription(strip_tags($category->meta_description ?? ''));
 
             // Check if the user has permission to add things
             $permissions = new stdClass();
@@ -319,19 +348,20 @@ class JemViewCategory extends JemView
             // Create the pagination object
             $pagination = $this->get('Pagination');
 
+            $category->title = $category->catname;
+
             // Generate Categorydescription
             if (empty ($category->description)) {
                 $description = Text::_('COM_JEM_NO_DESCRIPTION');
             } else {
                 // execute plugins
                 $category->text  = $category->description;
-                $category->title = $category->catname;
                 PluginHelper::importPlugin('content');
                 $app->triggerEvent('onContentPrepare', array('com_jem.category', &$category, &$params, 0));
                 $description = $category->text;
             }
 
-            $cimage = JemImage::flyercreator($category->image,'category');
+            $cimage = JemImage::flyercreator((string) $category->image,'category');
 
             $this->lists         = $lists;
             $this->action        = $uri->toString();

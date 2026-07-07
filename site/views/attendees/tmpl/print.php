@@ -84,7 +84,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             <td><?php echo Text::_($text); ?></td>
             <td><?php echo $row->places; ?></td>
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-            <td><?php echo $row->comment; ?></td>
+            <td><?php echo htmlspecialchars($row->comment, ENT_QUOTES, 'UTF-8'); ?></td>
             <?php endif; ?>
         </tr>
         <?php $k = 1 - $k;

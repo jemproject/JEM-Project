@@ -28,10 +28,17 @@ require_once (JPATH_COMPONENT_SITE.'/classes/attachment.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/categories.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/calendar.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/activecalendarweek.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/pdf.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/pdfview.class.php');
 require_once (JPATH_COMPONENT_SITE.'/helpers/category.php');
 
 // Set the table directory
 Table::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/tables');
+$language = Factory::getApplication()->getLanguage();
+$language->load('com_jem', JPATH_ADMINISTRATOR);
+$language->load('com_jem', JPATH_SITE, null, true);
+$language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem', null, true, false);
+$language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true, false);
 $document = Factory::getApplication()->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('jquery');
@@ -47,6 +54,7 @@ $controller = BaseController::getInstance('Jem');
 // Perform the Request task
 $input = Factory::getApplication()->input;
 $controller->execute($input->getCmd('task'));
+JemHelper::loadFrontendUserCss();
 
 // Redirect if set by the controller
 $controller->redirect();

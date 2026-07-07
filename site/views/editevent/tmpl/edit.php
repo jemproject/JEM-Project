@@ -21,7 +21,498 @@ $wa->useScript('keepalive')
 // Create shortcut to parameters.
 $params        = $this->params;
 // $settings    = json_decode($this->item->attribs);
+$hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed_fields);
+$typeField = $this->form->getField('type_id');
+$showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+$contactField = $this->form->getField('contactid');
+$showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+$articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
+$articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
+$articleCategoryRules = array();
+
+try {
+    $db = Factory::getContainer()->get('DatabaseDriver');
+    $query = $db->getQuery(true)
+        ->select(array(
+            $db->quoteName('jc.id'),
+            $db->quoteName('jc.article_category_id'),
+            $db->quoteName('jc.article_create_mode'),
+            $db->quoteName('cc.title', 'article_category_title'),
+        ))
+        ->from($db->quoteName('#__jem_categories', 'jc'))
+        ->join('LEFT', $db->quoteName('#__categories', 'cc') . ' ON ' . $db->quoteName('cc.id') . ' = ' . $db->quoteName('jc.article_category_id') . ' AND ' . $db->quoteName('cc.extension') . ' = ' . $db->quote('com_content'));
+    $db->setQuery($query);
+
+    foreach ($db->loadObjectList() ?: array() as $categoryRule) {
+        $articleCategoryRules[(int) $categoryRule->id] = array(
+            'categoryId'    => (int) $categoryRule->article_category_id,
+            'categoryTitle' => (string) $categoryRule->article_category_title,
+            'mode'          => (int) $categoryRule->article_create_mode,
+        );
+    }
+} catch (Throwable $e) {
+    $articleCategoryRules = array();
+}
+
+$uploadSizeToBytes = static function ($value) {
+    $value = trim((string) $value);
+    $unit  = strtolower(substr($value, -1));
+    $size  = (float) $value;
+
+    if ($unit === 'g') {
+        $size *= 1024 * 1024 * 1024;
+    } elseif ($unit === 'm') {
+        $size *= 1024 * 1024;
+    } elseif ($unit === 'k') {
+        $size *= 1024;
+    }
+
+    return $size;
+};
+$formatUploadSize = static function ($bytes) {
+    $bytes = (float) $bytes;
+
+    if ($bytes >= 1024 * 1024) {
+        return number_format($bytes / (1024 * 1024), 2) . ' MB';
+    }
+
+    if ($bytes >= 1024) {
+        return number_format($bytes / 1024, 2) . ' KB';
+    }
+
+    return number_format($bytes, 0) . ' B';
+};
+$uploadMaxBytes = $uploadSizeToBytes(ini_get('upload_max_filesize'));
+$postMaxBytes   = $uploadSizeToBytes(ini_get('post_max_size'));
+$uploadLimit    = $formatUploadSize($postMaxBytes > 0 ? min($uploadMaxBytes, $postMaxBytes) : $uploadMaxBytes);
+
+$document->addStyleDeclaration('
+    .jem-associated-article-options {
+        border: 0;
+        margin: -0.75rem 0 0 !important;
+        padding: 0 !important;
+    }
+    #jem.jem_editevent .jem-editevent-details-fieldset {
+        margin-bottom: 0;
+    }
+    #jem.jem_editevent .jem-editevent-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        margin: 0 0 1rem;
+    }
+    #jem.jem_editevent .nav-tabs,
+    #jem.jem_editevent joomla-tab > div[role="tablist"] {
+        border-bottom: 1px solid #c8d0da;
+        margin-bottom: 1rem;
+    }
+    #jem.jem_editevent .nav-tabs .nav-link,
+    #jem.jem_editevent joomla-tab button[role="tab"],
+    #jem.jem_editevent joomla-tab a[role="tab"] {
+        background: #f4f6f8;
+        border: 1px solid #d6dce5;
+        border-bottom: 0;
+        color: #1f2d3d;
+        margin-right: .15rem;
+        padding: .65rem 1rem;
+    }
+    #jem.jem_editevent .nav-tabs .nav-link.active,
+    #jem.jem_editevent joomla-tab button[role="tab"][aria-selected="true"],
+    #jem.jem_editevent joomla-tab a[role="tab"][aria-selected="true"] {
+        background: #fff;
+        border-color: #c8d0da;
+        color: #0f172a;
+        font-weight: 600;
+    }
+    .jem-associated-article-options .jem-dl {
+        display: grid;
+        grid-template-columns: minmax(160px, 276px) minmax(14rem, 36rem);
+        align-items: center;
+        column-gap: 0;
+        margin-bottom: 0;
+    }
+    .jem-associated-article-options .jem-dl dt,
+    .jem-associated-article-options .jem-dl dd {
+        margin: 0 0 .35rem !important;
+        padding: 0;
+    }
+    .jem-associated-article-options .jem-dl dt {
+        grid-column: 1;
+    }
+    .jem-associated-article-options .jem-dl dd {
+        grid-column: 2;
+    }
+    .jem-associated-article-options .js-jem-article-usage select,
+    .jem-associated-article-options .js-jem-article-usage .choices,
+    .jem-associated-article-options .js-jem-article-usage joomla-field-fancy-select {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: start;
+        min-width: 14rem;
+        width: auto !important;
+        max-width: 36rem;
+    }
+    .jem-associated-article-options .js-jem-article-usage .choices__list--dropdown,
+    .jem-associated-article-options .js-jem-article-usage .choices__list[aria-expanded] {
+        left: 0;
+        min-width: 100%;
+        text-align: left;
+    }
+    .jem-associated-article-options .alert {
+        grid-column: 2;
+        width: min(100%, 36rem);
+    }
+    .jem-associated-article-picker {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: stretch;
+        grid-column: 2;
+        max-width: 100%;
+        width: min(100%, 36rem);
+    }
+    .jem-associated-article-picker > * {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .jem-associated-article-picker .input-group {
+        flex-wrap: nowrap;
+    }
+    .jem-associated-article-picker .btn {
+        white-space: nowrap;
+    }
+    .jem_editevent .button-select {
+        background-color: #4c7f3f !important;
+        border-color: #4c7f3f !important;
+        color: #fff !important;
+    }
+    .jem_editevent .button-select:hover,
+    .jem_editevent .button-select:focus {
+        background-color: #3f6d34 !important;
+        border-color: #3f6d34 !important;
+        color: #fff !important;
+    }
+    .jem-editevent-field-date .field-calendar,
+    .jem-editevent-field-date .input-group,
+    .jem-editevent-field-date .input-append {
+        display: inline-flex;
+        width: min(100%, 28rem);
+        max-width: 28rem;
+    }
+    .jem-editevent-field-date input[type="text"],
+    .jem-editevent-field-date input[type="date"] {
+        width: 14rem !important;
+        max-width: 14rem;
+        flex: 0 0 14rem;
+    }
+    .jem-editevent-field-cats joomla-field-fancy-select,
+    .jem-editevent-field-cats joomla-field-fancy-select .choices,
+    .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
+    .jem-editevent-field-cats .choices,
+    .jem-editevent-field-cats select {
+        width: min(100%, 36rem) !important;
+        max-width: 36rem !important;
+    }
+    .jem-editevent-field-cats .choices__list--dropdown,
+    .jem-editevent-field-cats .choices__list[aria-expanded] {
+        width: 100%;
+        min-width: 100%;
+        max-width: 36rem;
+        overflow-x: hidden;
+    }
+    .jem-editevent-field-cats .choices__item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .jem-editevent-image-fields {
+        display: grid;
+        gap: .9rem;
+        max-width: 100%;
+    }
+    .jem_fldst_image {
+        margin-top: 1.5rem;
+    }
+    .jem_fldst_image > legend {
+        padding-top: .25rem;
+    }
+    .jem-editevent-image-field {
+        display: grid;
+        grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        gap: .75rem 1rem;
+        align-items: center;
+        min-width: 0;
+        border: 1px solid #b8bec8;
+        border-radius: .55rem;
+        padding: .75rem 1rem;
+        background: #fff;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-copy strong,
+    .jem-editevent-image-copy span {
+        display: block;
+    }
+    .jem-editevent-image-copy span {
+        color: #6c757d;
+        font-size: .9rem;
+        line-height: 1.3;
+        margin-top: .15rem;
+    }
+    .jem-editevent-image-maxsize {
+        color: #495057;
+        display: block;
+        font-size: .82rem;
+        line-height: 1.25;
+        margin-top: .75rem;
+        white-space: nowrap;
+    }
+    .jem-editevent-image-maxsize strong {
+        display: inline;
+        font-weight: 400;
+        white-space: nowrap;
+    }
+    .jem-editevent-image-control {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: .65rem .75rem;
+        align-items: center;
+        min-width: 0;
+    }
+    .jem-editevent-image-choice {
+        display: grid;
+        grid-column: 1;
+        grid-template-columns: minmax(9rem, 10rem) minmax(18rem, 1fr);
+        gap: .4rem .75rem;
+        align-items: center;
+        min-width: 0;
+    }
+    .jem-editevent-image-choice span {
+        align-self: center;
+        color: #6c757d;
+        font-size: .82rem;
+        font-weight: 600;
+        line-height: 1.2;
+        grid-column: 1;
+    }
+    .jem-editevent-image-choice select,
+    .jem-editevent-image-choice input[type="file"],
+    .jem-editevent-image-choice joomla-field-fancy-select,
+    .jem-editevent-image-choice .choices {
+        grid-column: 2;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-choice joomla-field-fancy-select,
+    .jem-editevent-image-choice joomla-field-fancy-select .choices,
+    .jem-editevent-image-choice joomla-field-fancy-select .choices__inner {
+        width: min(100%, 24rem) !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box;
+    }
+    .jem-editevent-image-upload {
+        align-items: start;
+    }
+    .jem-editevent-image-upload,
+    .jem-editevent-image-upload > :not(span) {
+        white-space: nowrap;
+    }
+    .jem-editevent-image-upload br {
+        display: none;
+    }
+    .jem-editevent-image-upload .form-text,
+    .jem-editevent-image-upload small,
+    .jem-editevent-image-upload > div:not(:first-child) {
+        display: none;
+    }
+    .jem-editevent-image-control input[type="file"] {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+    .jem-editevent-image-clear {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        align-self: start;
+        white-space: nowrap;
+    }
+    .jem-editevent-image-remove {
+        grid-column: 1 / 4;
+        justify-self: start;
+    }
+    .jem-editevent-image-preview {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        max-width: 140px;
+    }
+    .jem-editevent-image-preview img {
+        max-width: 140px;
+        max-height: 110px;
+        object-fit: contain;
+    }
+    .jem-editevent-image-field--layout select {
+        width: min(420px, 100%);
+    }
+    .jem-editevent-image-layout-choice {
+        grid-column: 1 / 4;
+        border-top: 1px solid #d9dee7;
+        margin-top: .25rem;
+        padding-top: .75rem;
+    }
+    .jem-editevent-image-layout-choice span {
+        align-self: start;
+    }
+    .jem-editevent-image-layout-copy {
+        display: block;
+    }
+    .jem-editevent-image-layout-copy small {
+        display: block;
+        color: #6c757d;
+        font-weight: 400;
+        line-height: 1.3;
+        margin-top: .15rem;
+    }
+    .jem-editevent-image-layout-choice {
+        grid-template-columns: minmax(9rem, 10rem) max-content;
+    }
+    .jem-editevent-image-layout-choice select {
+        width: auto;
+        min-width: 12rem;
+        max-width: 100%;
+    }
+    @media (max-width: 767.98px) {
+        .jem-associated-article-options .jem-dl {
+            display: grid !important;
+            grid-template-columns: 1fr;
+            row-gap: .25rem;
+        }
+        .jem-associated-article-options .jem-dl dt,
+        .jem-associated-article-options .jem-dl dd {
+            grid-column: 1;
+        }
+        .jem-associated-article-options .js-jem-article-usage select,
+        .jem-associated-article-options .js-jem-article-usage .choices,
+        .jem-associated-article-options .js-jem-article-usage joomla-field-fancy-select {
+            grid-column: 1;
+            grid-row: auto;
+            min-width: 0;
+            width: 100% !important;
+        }
+        .jem-associated-article-options .alert {
+            grid-column: 1;
+        }
+        .jem-editevent-field-date .field-calendar,
+        .jem-editevent-field-date .input-group,
+        .jem-editevent-field-date .input-append,
+        .jem-editevent-field-date input[type="text"],
+        .jem-editevent-field-date input[type="date"],
+        .jem-editevent-field-cats joomla-field-fancy-select,
+        .jem-editevent-field-cats joomla-field-fancy-select .choices,
+        .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
+        .jem-editevent-field-cats .choices,
+        .jem-editevent-field-cats select {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        .jem-editevent-image-field {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-control {
+            display: grid;
+            grid-template-columns: 1fr;
+            align-items: stretch;
+        }
+        .jem-editevent-image-choice,
+        .jem-editevent-image-choice span,
+        .jem-editevent-image-choice select,
+        .jem-editevent-image-choice input[type="file"],
+        .jem-editevent-image-choice joomla-field-fancy-select,
+        .jem-editevent-image-choice .choices,
+        .jem-editevent-image-layout-choice,
+        .jem-editevent-image-clear,
+        .jem-editevent-image-remove,
+        .jem-editevent-image-preview {
+            grid-column: 1;
+            grid-row: auto;
+        }
+        .jem-editevent-image-choice,
+        .jem-editevent-image-layout-choice,
+        .jem-editevent-image-control .btn,
+        .jem-editevent-image-control .button3 {
+            width: 100%;
+        }
+        .jem-editevent-image-choice {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-layout-choice {
+            grid-template-columns: 1fr;
+        }
+        .jem-editevent-image-choice joomla-field-fancy-select,
+        .jem-editevent-image-choice joomla-field-fancy-select .choices,
+        .jem-editevent-image-choice joomla-field-fancy-select .choices__inner {
+            width: 100% !important;
+        }
+        .jem-editevent-image-upload,
+        .jem-editevent-image-upload > :not(span) {
+            white-space: normal;
+        }
+    }
+');
 ?>
+
+<script>
+    jQuery(document).ready(function($) {
+        var imageConflictMessage = <?php echo json_encode(Text::_('COM_JEM_IMAGE_UPLOAD_CONFLICT')); ?>;
+
+        function resetSelect($select) {
+            if (!$select.length) {
+                return;
+            }
+
+            $select.val('').trigger('change');
+            var fancy = $select.closest('joomla-field-fancy-select').get(0);
+
+            if (fancy) {
+                fancy.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+        }
+
+        function showImageConflictMessage() {
+            if (window.Joomla && typeof Joomla.renderMessages === 'function') {
+                Joomla.renderMessages({error: [imageConflictMessage]});
+                return;
+            }
+
+            window.alert(imageConflictMessage);
+        }
+
+        $('.jem-editevent-image-clear').on('click', function() {
+            var $button = $(this);
+            resetSelect($('#' + $button.data('jemImageSelect')));
+            $('#' + $button.data('jemImageFile')).val('').trigger('change');
+        });
+
+        $('.jem-editevent-image-upload').each(function() {
+            $(this).contents().filter(function() {
+                return this.nodeType === 3 && /maximum upload size|upload size|max\.?\s*(image\s*)?filesize|file\s*size|tama[ñn]o m[aá]ximo|subida/i.test(this.nodeValue);
+            }).remove();
+
+            $(this).find('strong').filter(function() {
+                return /^\s*\d+([.,]\d+)?\s*(KB|MB|GB)\s*$/i.test($(this).text());
+            }).remove();
+        });
+
+        $('#jform_userfile, #jform_fulluserfile').on('change', function() {
+            var $file = $(this);
+            var selectId = this.id === 'jform_fulluserfile' ? 'jform_fullimage' : 'jform_datimage';
+
+            if ($file.val() && $('#' + selectId).val()) {
+                $file.val('');
+                showImageConflictMessage();
+            }
+        });
+    });
+</script>
 
 <script>
     jQuery(document).ready(function($){
@@ -95,6 +586,162 @@ $params        = $this->params;
         // Trigger the change event on page load to initialize the state
         $registraCheckbox.change();
         $minBookedUserInput.change();
+
+        var articleCategoryRules = <?php echo json_encode($articleCategoryRules); ?>;
+        var articleAutoInfoText = <?php echo json_encode($articleAutoInfo); ?>;
+        var articleAutoInfoCategoryText = <?php echo json_encode($articleAutoInfoCategory); ?>;
+        var $articleBlock = $('.jem-associated-article-options');
+        var $articleAction = $('#jform_create_article');
+        var $articleUsage = $('#jform_attribs_article_usage');
+        var $articleAutoInfo = $('#jem-article-auto-info');
+        var $articleTargetCategory = $('#jform_article_target_category_id');
+
+        function getSelectedCategoryIds() {
+            var values = $('#jform_cats').val() || $('select[name="jform[cats][]"]').val() || $('input[name="jform[cats][]"]:checked').map(function () {
+                return this.value;
+            }).get() || [];
+
+            if (!Array.isArray(values)) {
+                values = [values];
+            }
+
+            return values.map(function (value) {
+                return parseInt(value, 10) || 0;
+            }).filter(Boolean);
+        }
+
+        function hasAssociatedArticle() {
+            return $articleBlock.data('hasArticle') === 1 || parseInt($('#jform_article_id_id, #jform_article_id').first().val(), 10) > 0;
+        }
+
+        function setArticleRowVisibility(selector, visible) {
+            $articleBlock.find(selector).toggle(!!visible);
+        }
+
+        function updateArticleTargetCategoryOptions(categories) {
+            if (!$articleTargetCategory.length) {
+                return;
+            }
+
+            if (!$articleTargetCategory.data('originalOptions')) {
+                $articleTargetCategory.data('originalOptions', $articleTargetCategory.find('option').map(function () {
+                    return {
+                        value: this.value,
+                        text: $(this).text()
+                    };
+                }).get());
+            }
+
+            var currentValue = parseInt($articleTargetCategory.val(), 10) || 0;
+            $articleTargetCategory.empty();
+
+            if (!categories.length) {
+                ($articleTargetCategory.data('originalOptions') || []).forEach(function (option) {
+                    $('<option>')
+                        .val(option.value)
+                        .text(option.text)
+                        .appendTo($articleTargetCategory);
+                });
+                $articleTargetCategory.val(currentValue);
+                $articleTargetCategory.trigger('change');
+                return;
+            }
+
+            categories.forEach(function (category) {
+                $('<option>')
+                    .val(category.id)
+                    .text(category.title || ('#' + category.id))
+                    .appendTo($articleTargetCategory);
+            });
+
+            if (categories.length && categories.some(function (category) { return category.id === currentValue; })) {
+                $articleTargetCategory.val(currentValue);
+            } else if (categories.length) {
+                $articleTargetCategory.val(categories[0].id);
+            }
+
+            $articleTargetCategory.trigger('change');
+        }
+
+        function updateAssociatedArticleOptions() {
+            if (!$articleBlock.length || !$articleAction.length) {
+                return;
+            }
+
+            var selected = getSelectedCategoryIds();
+            var rules = selected.map(function (categoryId) {
+                return articleCategoryRules[categoryId] || {categoryId: 0, mode: 0};
+            });
+            var hasAuto = rules.some(function (rule) {
+                return parseInt(rule.mode, 10) === 1;
+            });
+            var hasConfigured = rules.some(function (rule) {
+                return parseInt(rule.mode, 10) !== 0;
+            });
+            var autoArticleCategoryIds = [];
+            var autoArticleCategoryTitles = [];
+            var autoArticleCategories = [];
+            rules.forEach(function (rule) {
+                var categoryId = parseInt(rule.categoryId, 10) || 0;
+                var mode = parseInt(rule.mode, 10);
+
+                if (!categoryId) {
+                    return;
+                }
+
+                if (mode === 1 && autoArticleCategoryIds.indexOf(categoryId) === -1) {
+                    autoArticleCategoryIds.push(categoryId);
+                    autoArticleCategoryTitles.push(rule.categoryTitle || ('#' + categoryId));
+                    autoArticleCategories.push({
+                        id: categoryId,
+                        title: rule.categoryTitle || ('#' + categoryId)
+                    });
+                }
+            });
+            var articleSelected = hasAssociatedArticle();
+            var actionValue = $articleAction.val();
+
+            if (!$articleBlock.data('articleUsageInitialized') && !articleSelected && actionValue === '0' && $articleUsage.val() === 'information' && !hasConfigured) {
+                $articleUsage.val('none');
+            }
+            $articleBlock.data('articleUsageInitialized', 1);
+
+            var usageValue = $articleUsage.val() || 'none';
+            var usesArticle = usageValue !== 'none';
+
+            $articleAction.find('option[value="2"]').prop('disabled', !hasAuto).toggle(hasAuto);
+
+            if (!usesArticle) {
+                $articleAction.val('0');
+                actionValue = '0';
+            } else if (hasAuto) {
+                $articleAction.val('2');
+                actionValue = '2';
+            } else {
+                $articleAction.val('0');
+                actionValue = '0';
+            }
+
+            setArticleRowVisibility('.js-jem-article-selector', usesArticle);
+            setArticleRowVisibility('.js-jem-article-target', usesArticle && hasAuto && autoArticleCategoryIds.length > 1);
+            setArticleRowVisibility('.js-jem-article-usage', true);
+            updateArticleTargetCategoryOptions((usesArticle && hasAuto) ? autoArticleCategories : []);
+            if (hasAuto && autoArticleCategoryTitles.length) {
+                $articleAutoInfo.html(articleAutoInfoCategoryText.replace('%s', $('<div>').text(autoArticleCategoryTitles.join(', ')).html()));
+            } else {
+                $articleAutoInfo.html(articleAutoInfoText);
+            }
+            $articleAutoInfo.prop('hidden', actionValue !== '2');
+        }
+
+        $articleUsage.on('change', updateAssociatedArticleOptions);
+        $articleAction.on('change', updateAssociatedArticleOptions);
+        $('#jform_cats, select[name="jform[cats][]"], input[name="jform[cats][]"]').on('change', updateAssociatedArticleOptions);
+        $('#jform_article_id_id, #jform_article_id').on('change', updateAssociatedArticleOptions);
+        $articleBlock.on('click', '.button-clear, .btn', function () {
+            window.setTimeout(updateAssociatedArticleOptions, 100);
+        });
+        updateAssociatedArticleOptions();
     });
 </script>
 
@@ -170,9 +817,10 @@ $params        = $this->params;
 
         <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
 
-            <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
-            <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-            <br>
+            <div class="jem-editevent-toolbar">
+                <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
+                <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+            </div>
             <?php if ($this->item->recurrence_type > 0) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
@@ -205,66 +853,138 @@ $params        = $this->params;
             <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'editevent-infotab', 'recall' => true, 'breakpoint' => 768]); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-infotab', Text::_('COM_JEM_EDITEVENT_INFO_TAB')); ?>
 
-            <fieldset>
+            <fieldset class="jem-editevent-details-fieldset">
                 <legend><?php echo Text::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('title'); ?><?php echo $this->form->getInput('title'); ?></li>
                     <?php if (is_null($this->item->id)):?>
                         <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('dates'); ?><?php echo $this->form->getInput('dates'); ?></li>
-                    <li><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
+                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('dates'); ?><?php echo $this->form->getInput('dates'); ?></li>
+                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
                     <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
-                    <li><?php echo $this->form->getLabel('cats'); ?><?php echo $this->form->getInput('cats'); ?></li>
+                    <li class="jem-editevent-field-cats"><?php echo $this->form->getLabel('cats'); ?><?php echo $this->form->getInput('cats'); ?></li>
                     <?php if($this->jemsettings->defaultVenue && empty($this->item->id)) {
                         $this->form->setFieldAttribute('locid', 'default', $this->jemsettings->defaultVenue);
                     } ?>
                     <li><?php echo $this->form->getLabel('locid'); ?> <?php echo $this->form->getInput('locid'); ?></li>
-                    <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+                    <?php if ($showTypeField) : ?>
+                        <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('type_id'); ?>
+                    <?php endif; ?>
+                    <?php if ($showContactField) : ?>
+                        <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
+                    <?php else : ?>
+                        <?php echo $this->form->getInput('contactid'); ?>
+                    <?php endif; ?>
+                    <li><?php echo $this->form->getLabel('featured'); ?><?php echo $this->form->getInput('featured'); ?></li>
                 </ul>
             </fieldset>
+            <?php if ($this->form->getField('article_id')) : ?>
+                <fieldset class="adminform jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>">
+                    <dl class="jem-dl">
+                        <dt class="js-jem-article-usage"><?php echo $this->form->getLabel('article_usage', 'attribs'); ?></dt>
+                        <dd class="js-jem-article-usage"><?php echo $this->form->getInput('article_usage', 'attribs'); ?></dd>
+                        <dt class="js-jem-article-selector">
+                            <?php echo $this->form->getLabel('article_id'); ?>
+                        </dt>
+                        <dd class="js-jem-article-selector">
+                            <div class="jem-associated-article-picker">
+                                <?php echo $this->form->getInput('article_id'); ?>
+                            </div>
+                            <input type="hidden" name="jform[create_article]" id="jform_create_article" value="<?php echo (int) $this->form->getValue('create_article'); ?>">
+                            <div id="jem-article-auto-info" class="alert alert-info small mt-2 mb-0" hidden>
+                                <?php echo $articleAutoInfo; ?>
+                            </div>
+                        </dd>
+                        <dt class="js-jem-article-target"><?php echo $this->form->getLabel('article_target_category_id'); ?></dt>
+                        <dd class="js-jem-article-target"><?php echo $this->form->getInput('article_target_category_id'); ?></dd>
+                    </dl>
+                </fieldset>
+            <?php endif; ?>
             <!-- EVENTDESCRIPTION -->
-            <fieldset>
-                <legend><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></legend>
-
+            <fieldset class="jem-editevent-description-fieldset">
+                <legend><?php echo Text::_('COM_JEM_EDITEVENT_DESCRIPTION_LEGEND'); ?></legend>
                 <div class="clr"></div>
-                <?php echo $this->form->getLabel('articletext'); ?>
-                <div class="clr"><br></div>
                 <?php echo $this->form->getInput('articletext'); ?>
             </fieldset>
 
             <!-- IMAGE -->
-            <?php if ($this->item->datimage || $this->jemsettings->imageenabled != 0) : ?>
+            <?php if ($this->item->datimage || !empty($this->item->fullimage) || $this->jemsettings->imageenabled != 0) : ?>
                 <fieldset class="jem_fldst_image">
                     <legend><?php echo Text::_('COM_JEM_IMAGE'); ?></legend>
-                    <?php
-                    if ($this->item->datimage) :
-                        echo JemOutput::flyer($this->item, $this->dimage, 'event', 'datimage');
-                        ?><input type="hidden" name="datimage" id="datimage" value="<?php echo $this->item->datimage; ?>" /><?php
-                    endif;
-                    ?>
                     <?php if ($this->jemsettings->imageenabled != 0) : ?>
-                        <ul class="adminformlist">
-                            <li>
-                                <?php /* We get field with id 'jform_userfile' and name 'jform[userfile]' */ ?>
-                                <?php echo $this->form->getLabel('userfile'); ?> <?php echo $this->form->getInput('userfile'); ?>
-                            </li>
-                            <li>
-                                <button type="button" class="button3" onclick="document.getElementById('jform_userfile').val() = ''"><?php echo Text::_('JSEARCH_FILTER_CLEAR') ?></button>
-                            </li>
-                            <?php
-                            if ($this->item->datimage) :
-                                echo HTMLHelper::image('media/com_jem/images/publish_r.webp', null, array('id' => 'userfile-remove', 'data-id' => $this->item->id, 'data-type' => 'events', 'title' => Text::_('COM_JEM_REMOVE_IMAGE')));
-
-                            endif;
-                            ?>
-                            <input type="hidden" name="removeimage" id="removeimage" value="0" />
-
-                        </ul>
+                        <div class="jem-editevent-image-fields">
+                            <div class="jem-editevent-image-field">
+                                <div class="jem-editevent-image-copy">
+                                    <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
+                                    <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
+                                    <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                </div>
+                                <div class="jem-editevent-image-control">
+                                    <?php if ($this->item->datimage) : ?>
+                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--intro">
+                                            <?php echo JemOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="jem-editevent-image-choice">
+                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
+                                        <?php echo $this->form->getInput('datimage'); ?>
+                                    </div>
+                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
+                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
+                                    <?php echo $this->form->getInput('userfile'); ?>
+                                    </div>
+                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                    <?php if ($this->item->datimage) : ?>
+                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removeimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
+                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                    <input type="hidden" name="removeimage" id="removeimage" value="0" />
+                                </div>
+                            </div>
+                            <div class="jem-editevent-image-field">
+                                <div class="jem-editevent-image-copy">
+                                    <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
+                                    <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_FE_DESC'); ?></span>
+                                    <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                </div>
+                                <div class="jem-editevent-image-control">
+                                    <?php if (!empty($this->item->fullimage)) : ?>
+                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--detail">
+                                            <?php echo JemOutput::flyer($this->item, $this->dfullimage, 'event', 'fullimage'); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="jem-editevent-image-choice">
+                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
+                                        <?php echo $this->form->getInput('fullimage'); ?>
+                                    </div>
+                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
+                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
+                                    <?php echo $this->form->getInput('fulluserfile'); ?>
+                                    </div>
+                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                    <?php if (!empty($this->item->fullimage)) : ?>
+                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removefullimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
+                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
+                                        </button>
+                                    <?php endif; ?>
+                                    <input type="hidden" name="removefullimage" id="removefullimage" value="0" />
+                                    <div class="jem-editevent-image-choice jem-editevent-image-layout-choice">
+                                        <span class="jem-editevent-image-layout-copy">
+                                            <?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?>
+                                        </span>
+                                        <?php echo $this->form->getInput('fullimage_layout'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <?php endif; ?>
                 </fieldset>
             <?php endif; ?>
@@ -275,10 +995,10 @@ $params        = $this->params;
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-            <!-- PUBLISH TAB -->
+            <!-- ADVANCED TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-publishtab', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_PUBLISH_TAB'), 'editevent-publishtab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED')); ?>
+            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_ADVANCED'), 'editevent-advancedtab'); ?>
             <?php echo $this->loadTemplate('publish'); ?>
 
             <!-- ATTACHMENTS TAB -->
@@ -289,6 +1009,11 @@ $params        = $this->params;
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
+
+            <!-- LINKS TAB -->
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
             <!-- OTHER TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
@@ -307,6 +1032,11 @@ $params        = $this->params;
         </form>
     </div>
 
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer(); ?>
     </div>

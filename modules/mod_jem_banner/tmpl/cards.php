@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -22,6 +21,9 @@ $showcalendar    = (int)$params->get('showcalendar', 1);
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 $imagewidthmax   = (int)$params->get('imagewidthmax', 0);
+$imageRatio      = preg_match('#^\d+\s*/\s*\d+$#', (string) $params->get('imageratio', '1 / 1')) ? (string) $params->get('imageratio', '1 / 1') : '1 / 1';
+$noImageText     = Text::_('MOD_JEM_BANNER_NO_IMAGE');
+$noImageText     = ($noImageText === 'MOD_JEM_BANNER_NO_IMAGE') ? 'No image' : $noImageText;
 
 if ($flyer_link_type == 1) {
     echo JemOutput::lightbox();
@@ -67,7 +69,7 @@ if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), $imageheigthst
     $imageheight = substr($pageclass_sfx, $startpos, $endpos);
 }
 
-$document = Factory::getDocument();
+$document = Factory::getApplication()->getDocument();
 $additionalCSS = '';
 if (JemHelper::jemStringContains($params->get('moduleclass_sfx'), "jem-imagetop")) {
     $additionalCSS = 'order: -1;';
@@ -107,6 +109,10 @@ $css = '
             gap: 0.8rem;
         }
     }
+
+    #jemmodulebanner_cards .event-media {
+        aspect-ratio: ' . $imageRatio . ';
+    }
 ';
 $wa->addInlineStyle($css);
 ?>
@@ -115,11 +121,34 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <div class="event-card event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-                    <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
+                <?php $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)); ?>
+                <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                    <?php if ($showflyer == 1) : ?>
                         <div class="event-media">
-                            <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>">
-                            <div class="event-badge"><?php echo $item->catname; ?></div>
+                            <?php if (!empty($item->eventlink)) : ?>
+                                <a class="event-media-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
+                            <?php else : ?>
+                                <div class="event-media-link">
+                            <?php endif; ?>
+
+                                <?php if (!empty($item->eventimage)) : ?>
+                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>">
+                                <?php else : ?>
+                                    <span class="event-media-placeholder">
+                                        <i class="far fa-image" aria-hidden="true"></i>
+                                        <span><?php echo $noImageText; ?></span>
+                                    </span>
+                                <?php endif; ?>
+
+                            <?php if (!empty($item->eventlink)) : ?>
+                                </a>
+                            <?php else : ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($showCategoryBadge) : ?>
+                                <div class="event-badge"><span class="event-badge-content"><?php echo $item->catname; ?></span></div>
+                            <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
@@ -140,19 +169,20 @@ $wa->addInlineStyle($css);
                         </div>
 
                         <div class="event-meta">
-                            <?php if (($params->get('showvenue', 1) == 1) && (!empty($item->venue))) : ?>
+                            <?php if (((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue') && !empty($item->venue)) : ?>
                                 <div class="meta-item">
                                     <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-map-marker-alt"></i></div>
-                                    <div class="meta-text"><?php echo $item->venue; ?></div>
+                                    <div class="meta-text"><?php echo $item->venuelink ? '<a href="'.$item->venuelink.'">'.$item->venue.'</a>' : $item->venue; ?></div>
                                 </div>
                             <?php endif; ?>
 
-                            <?php if (($params->get('showcategory', 1) == 1) && !empty($item->catname)) : ?>
+                            <?php if (($params->get('showtype', 1) == 1) && !empty($item->typename)) : ?>
                                 <div class="meta-item">
                                     <div class="meta-icon" style="--event-specific-color: <?php echo (isset($item->color) ? $item->color : $item->colorclass); ?>;"><i class="fas fa-tag"></i></div>
-                                    <div class="meta-text"><?php echo $item->catname; ?></div>
+                                    <div class="meta-text"><?php echo $item->typelink ? '<a href="'.$item->typelink.'">'.$item->typename.'</a>' : $item->typename; ?></div>
                                 </div>
                             <?php endif; ?>
+
                         </div>
 
                         <?php if ($params->get('showdesc', 1) == 1) : ?>
@@ -162,8 +192,19 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
 
                         <div class="event-actions">
-                            <?php if (isset($item->link) && ($item->readmore != 0 || $params->get('readmore'))) : ?>
-                                <a href="<?php echo $item->link; ?>" class="btn btn-primary"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
+                            <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'readmore', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->link, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($readmoreDisplay, 'jem-readmore-link mod-jem-banner__readmore'); ?>"><i class="far fa-calendar-plus"></i><?php echo Text::_('MOD_JEM_BANNER_READMORE'); ?></a>
+                            <?php endif; ?>
+                            <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                            <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
+                                <a id="<?php echo JemHelper::getModuleActionId('mod-jem-banner', 'more-information', $item->eventid, $module->id ?? 0); ?>"
+                                   href="<?php echo htmlspecialchars($item->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                   class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-banner__more-information'); ?>">
+                                    <?php echo Text::_('MOD_JEM_BANNER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
+                                </a>
                             <?php endif; ?>
                         </div>
                     </div>

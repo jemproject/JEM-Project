@@ -27,6 +27,13 @@ class JemModelCategoryCal extends JemModelEventslist
     protected $_id = null;
 
     /**
+     * Category data.
+     *
+     * @var object|null
+     */
+    protected $_item = null;
+
+    /**
      * Date as timestamp useable for strftime()
      *
      * @var int
@@ -67,7 +74,20 @@ class JemModelCategoryCal extends JemModelEventslist
     {
         // Set new category ID and wipe data
         $this->_id   = $id;
-        //$this->_data = null;
+        $this->_item = null;
+    }
+
+    /**
+     * Method to get category data for the current category calendar.
+     */
+    public function getCategory()
+    {
+        if (!is_object($this->_item)) {
+            $categories  = new JemCategories($this->_id, array('countItems' => 0));
+            $this->_item = $categories->get($this->_id);
+        }
+
+        return $this->_item;
     }
 
     /**
@@ -80,10 +100,12 @@ class JemModelCategoryCal extends JemModelEventslist
         $itemid       = $app->input->getInt('Itemid', 0);
         $task         = $app->input->getCmd('task', '');
         $startdayonly = $params->get('show_only_start', false);
-        $show_archived_events = $params->get('show_archived_events', 0);
+        $show_archived_events = (bool) $params->get('show_archived_events', 0);
+        $this->show_archived_events = $show_archived_events;
 
         # params
         $this->setState('params', $params);
+        $this->applyMenuEventFilters($params);
 
         # publish state
         $this->_populatePublishState($task);
@@ -110,7 +132,7 @@ class JemModelCategoryCal extends JemModelEventslist
         $this->setState('filter.calendar_multiday', true);
         $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
         $this->setState('filter.filter_catid', $this->_id);
-        $this->setState('filter.show_archived_events',(bool)$show_archived_events);
+        $this->setState('filter.show_archived_events', $show_archived_events);
 
         $app->setUserState('com_jem.categorycal.catid'.$itemid, $this->_id);
 
@@ -143,9 +165,13 @@ class JemModelCategoryCal extends JemModelEventslist
         // Let parent create a new query object.
         $query = parent::getListQuery();
 
-       // If no contact exists, cn.name will be NULL
-       $query->select('cn.name AS contact_name')
-             ->leftJoin('#__contact_details AS cn ON cn.id = a.contactid');
+       if (JemHelper::isContactComponentEnabled()) {
+           // If no contact exists, cn.name will be NULL
+           $query->select('cn.name AS contact_name')
+                 ->leftJoin('#__contact_details AS cn ON cn.id = a.contactid');
+       } else {
+           $query->select('NULL AS contact_name');
+       }
 
         // here we can extend the query of the Eventslist model
         $query->select('DATEDIFF(a.enddates, a.dates) AS datesdiff, DAYOFMONTH(a.dates) AS start_day, YEAR(a.dates) AS start_year, MONTH(a.dates) AS start_month');

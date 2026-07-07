@@ -80,24 +80,54 @@ class JemViewVenueslist extends JemView
 //         $filter_state     = $app->getUserStateFromRequest('com_jem.venueslist.filter_state', 'filter_state',     '*', 'word');
         $filter           = $app->getUserStateFromRequest('com_jem.venueslist.filter_type', 'filter_type', '', 'int');
         $search           = $app->getUserStateFromRequest('com_jem.venueslist.filter_search', 'filter_search', '', 'string');
+        $state            = $this->get('State');
+        $filterCountries  = (array) $state->get('filter.countries', array());
 
         // search filter
         $filters = array();
+        $showCity = (int) $params->get('showcity', 1);
+        $showState = (int) $params->get('showstate', 1);
+        $showCountry = (int) $params->get('showcountry', 0);
 
         // Workaround issue #557: Show venue name always.
         $jemsettings->showlocate = 1;
 
         //$filters[] = HTMLHelper::_('select.option', '0', Text::_('COM_JEM_CHOOSE'));
 
-        if ($jemsettings->showlocate == 1) {
+        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
+        if ($jemsettings->showlocate == 1 && $showCity) {
             $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
         }
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
-        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
+        if ($showCountry) {
+            $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
+        }
+        if ($showState) {
+            $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
+        }
         $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'form-select'), 'value', 'text', $filter);
 
         // search filter
         $lists['search'] = $search;
+
+        if ((int) $params->get('showcountryfilter', 1)) {
+            $countries = array_merge(
+                array(HTMLHelper::_('select.option', '', Text::_('JALL'))),
+                $this->get('CountryOptions')
+            );
+
+            $lists['country_filter'] = HTMLHelper::_(
+                'select.genericlist',
+                $countries,
+                'filter_country[]',
+                array('class' => 'form-select', 'onchange' => 'document.adminForm.submit();'),
+                'value',
+                'text',
+                reset($filterCountries) ?: '',
+                'filter_country'
+            );
+        } else {
+            $lists['country_filter'] = '';
+        }
 
         // table ordering
         $lists['order_Dir'] = $filter_order_Dir;

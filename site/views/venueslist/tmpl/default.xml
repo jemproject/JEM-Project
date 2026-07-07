@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
     <layout title="COM_JEM_VENUESLIST_VIEW_DEFAULT_TITLE">
         <message>
@@ -7,15 +7,125 @@
     </layout>
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-            <field name="introtext" type="editor"
-                   filter="safehtml"
-                   hide="readmore,pagebreak,module,menu,fields,contact,article"
-                   default=""
-                   rows="8"
-                   cols="30"
-                   height="300px"
-                   label="COM_JEM_INTROTEXT_FIELD"
-                   description="COM_JEM_INTROTEXT_FIELD_DESC"
+            <field name="showcity" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CITY"
+                description="COM_JEM_VENUESLIST_SHOW_CITY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showstate" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_STATE"
+                description="COM_JEM_VENUESLIST_SHOW_STATE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showcountry" type="radio"
+                default="0"
+                label="COM_JEM_VENUESLIST_SHOW_COUNTRY"
+                description="COM_JEM_VENUESLIST_SHOW_COUNTRY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenueimage" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_VENUE_IMAGE"
+                description="COM_JEM_VENUESLIST_SHOW_VENUE_IMAGE_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showtypes" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_TYPES"
+                description="COM_JEM_VENUESLIST_SHOW_TYPES_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="showvenuemap" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_VENUE_MAP"
+                description="COM_JEM_VENUESLIST_SHOW_VENUE_MAP_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="venuemap_popup_width" type="number"
+                default="90"
+                min="25"
+                max="95"
+                step="5"
+                label="COM_JEM_VENUESLIST_MAP_POPUP_WIDTH"
+                description="COM_JEM_VENUESLIST_MAP_POPUP_WIDTH_DESC"
+                class="inputbox form-control w-auto jem-options-width-auto"
+            />
+
+            <field name="venuemap_popup_height" type="number"
+                default="70"
+                min="25"
+                max="95"
+                step="5"
+                label="COM_JEM_VENUESLIST_MAP_POPUP_HEIGHT"
+                description="COM_JEM_VENUESLIST_MAP_POPUP_HEIGHT_DESC"
+                class="inputbox form-control w-auto jem-options-width-auto"
+            />
+
+            <field name="showvenuecalendar" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK"
+                description="COM_JEM_VENUESLIST_SHOW_CALENDAR_LINK_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="display_order" type="venueslistorder"
+                default="image,venue,type,city,state,country,map,calendar"
+                label="COM_JEM_VENUESLIST_DISPLAY_ORDER"
+                description="COM_JEM_VENUESLIST_DISPLAY_ORDER_DESC"
+                hint="image,venue,type,city,state,country,map,calendar"
+                size="56"
+                class="inputbox form-control w-auto jem-options-width-auto"
+            />
+
+            <field name="filtercountries" type="countryoptions"
+                default=""
+                multiple="true"
+                label="COM_JEM_VENUESLIST_FILTER_COUNTRIES"
+                description="COM_JEM_VENUESLIST_FILTER_COUNTRIES_DESC"
+                class="inputbox form-select w-auto jem-options-width-auto"
+            />
+
+            <field name="showcountryfilter" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER"
+                description="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="spacer" name="page_text_spacer"
+                label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
             <field name="showintrotext" type="radio"
                 default="0"
@@ -26,17 +136,34 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-
-            <field name="showstate" type="radio"
+            <field name="introtext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_INTROTEXT_FIELD"
+                description="COM_JEM_INTROTEXT_FIELD_DESC"
+            />
+            <field name="showfootertext" type="radio"
                 default="0"
-                label="COM_JEM_SHOWSTATE"
-                description="COM_JEM_SHOWSTATE_DESC"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-
-        </fieldset>
+            <field name="footertext" type="editor"
+                filter="safehtml"
+                hide="readmore,pagebreak,module,menu,fields,contact,article"
+                default=""
+                rows="8"
+                cols="30"
+                height="300px"
+                label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
+                description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
+            /></fieldset>
     </fields>
 </metadata>

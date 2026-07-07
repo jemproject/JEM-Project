@@ -9,12 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Registry\Registry;
-
-jimport('joomla.database.tablenested');
 
 /**
  * Category Table
@@ -172,6 +172,10 @@ class JemTableCategory extends Nested
      */
     public function bind($array, $ignore = '')
     {
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
         if (isset($array['params']) && is_array($array['params'])) {
             $registry = new Registry;
             $registry->loadArray($array['params']);
@@ -185,7 +189,7 @@ class JemTableCategory extends Nested
         }
 
         if (isset($array['rules']) && is_array($array['rules'])) {
-            $rules = new JAccessRules($array['rules']);
+            $rules = new Rules($array['rules']);
             $this->setRules($rules);
         }
 
@@ -230,6 +234,11 @@ class JemTableCategory extends Nested
      */
     public function checkCsvImport()
     {
+        $currentUser = Factory::getApplication()->getIdentity();
+        $currentUserId = (int) $currentUser->id;
+
+        $userFactory = Factory::getContainer()->get(UserFactoryInterface::class);
+
         foreach (get_object_vars($this) as $k => $v) {
             if (is_array($v) or is_object($v) or $v === NULL) {
                 continue;
@@ -240,6 +249,22 @@ class JemTableCategory extends Nested
             //Change datetime to null when its value is '000-00-00' (support J4 & J5)
             if(strpos($v, "0000-00-00")!== FALSE){
                 $this->$k = null;
+            }
+
+            //Check if creaded_by exist and it is admin
+            if ($k === 'created_by') {
+                $createdBy = (int) $v;
+
+                try {
+                    $creator = $createdBy > 0 ? $userFactory->loadUserById($createdBy) : null;
+                    $isAdmin = $creator && !$creator->guest && $creator->authorise('core.admin');
+                } catch (\Throwable $e) {
+                    $isAdmin = false;
+                }
+
+                if (!$isAdmin) {
+                    $this->$k = $currentUserId;
+                }
             }
         }
         return true;

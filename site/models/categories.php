@@ -80,6 +80,48 @@ class JemModelCategories extends BaseDatabaseModel
     protected $_showemptysubcats = false;
 
     /**
+     * Category type filter.
+     *
+     * @var int
+     */
+    protected $_typeid = 0;
+
+    /**
+     * Whether the category type filter was explicitly requested.
+     *
+     * @var bool
+     */
+    protected $_typeFilterRequested = false;
+
+    /**
+     * Category type data.
+     *
+     * @var object|null
+     */
+    protected $_type = null;
+
+    /**
+     * Category type list filter.
+     *
+     * @var int
+     */
+    protected $_filterTypeid = 0;
+
+    /**
+     * Category type filter options.
+     *
+     * @var array|null
+     */
+    protected $_types = null;
+
+    /**
+     * Category search filter.
+     *
+     * @var string
+     */
+    protected $_search = '';
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,10 +139,16 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
+        $typeParam = $params->get('typeid', null);
+        $this->_typeFilterRequested = $app->input->exists('typeid') || (int) $typeParam > 0;
+        $requestedTypeId = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
+        $this->_typeid = ($this->_typeFilterRequested && $requestedTypeId > 0) ? $requestedTypeId : 0;
+        $this->_filterTypeid = $this->_typeFilterRequested ? 0 : $app->input->getInt('filter_typeid', 0);
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
         $this->_showsubcats      = (bool)$params->get('usecat', 1);
         $this->_showemptysubcats = (bool)$params->get('showemptychilds', 1);
+        $this->_search           = trim($app->input->getString('filter_search', ''));
 
         //get the number of events from database
         $limit      = $app->input->getInt('limit', $params->get('cat_num'));
@@ -175,6 +223,128 @@ class JemModelCategories extends BaseDatabaseModel
         return $this->_categories;
     }
 
+    public function getType()
+    {
+        if (!$this->_typeFilterRequested) {
+            return null;
+        }
+
+        if ($this->_type !== null) {
+            return $this->_type;
+        }
+
+        if ($this->_typeid <= 0) {
+            return null;
+        }
+
+        $app      = Factory::getApplication();
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
+        $language = $app->getLanguage()->getTag();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $query    = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
+            ->select('CASE WHEN ' . $db->quoteName('access') . ' IN (' . $levelsList . ') THEN 1 ELSE 0 END AS ' . $db->quoteName('user_has_access_type'))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 2')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')');
+
+        $query->where($db->quoteName('id') . ' = ' . (int) $this->_typeid);
+
+        $query->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+        $db->setQuery($query, 0, 1);
+        $this->_type = $db->loadObject();
+
+        if ($this->_type) {
+            $this->_typeid = (int) $this->_type->id;
+            require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+            JemOutput::translateType($this->_type);
+        }
+
+        return $this->_type;
+    }
+
+    public function getRequestedTypeId()
+    {
+        return (int) $this->_typeid;
+    }
+
+    public function getFilterTypeId()
+    {
+        return (int) $this->_filterTypeid;
+    }
+
+    public function getTypes()
+    {
+        if ($this->_types !== null) {
+            return $this->_types;
+        }
+
+        $app      = Factory::getApplication();
+        $user     = JemFactory::getUser();
+        $levels   = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
+        $language = $app->getLanguage()->getTag();
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $query    = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'name', 'alias', 'icon', 'color', 'description', 'base_language', 'translation_languages', 'translations', 'language', 'access')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 2')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
+            ->where('('
+                . $db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+                . ' OR ' . $db->quoteName('base_language') . ' = ' . $db->quote($language)
+                . ' OR ' . $db->quoteName('translation_languages') . ' LIKE ' . $db->quote('%' . $language . '%')
+                . ')')
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+
+        $db->setQuery($query);
+        $this->_types = $db->loadObjectList();
+
+        if ($this->_types) {
+            require_once JPATH_SITE . '/components/com_jem/classes/output.class.php';
+            foreach ($this->_types as $type) {
+                JemOutput::translateType($type);
+            }
+        }
+
+        return $this->_types;
+    }
+
+    public function getTypeNames()
+    {
+        $typeNames = array();
+
+        foreach ($this->getTypes() as $type) {
+            $typeNames[(int) $type->id] = $type->name;
+        }
+
+        return $typeNames;
+    }
+
+    public function getTypeItems()
+    {
+        $typeItems = array();
+
+        foreach ($this->getTypes() as $type) {
+            $typeItems[(int) $type->id] = $type;
+        }
+
+        return $typeItems;
+    }
+
+    public function isTypeFilterRequested()
+    {
+        return $this->_typeFilterRequested;
+    }
+
     /**
      * Total nr of Categories
      *
@@ -199,27 +369,29 @@ class JemModelCategories extends BaseDatabaseModel
      * @access public
      * @return array
      */
-    public function getEventdata($id)
+    public function getEventdata($id, ?int $limit = null)
     {
         $app = Factory::getApplication();
         $params = $app->getParams('com_jem');
+        $limit = $limit !== null ? max(0, $limit) : (int) $params->get('detcat_nr', 3);
+        $cacheKey = (int) $id . ':' . (int) $limit;
 
-        if (empty($this->_data[$id])) {
+        if (empty($this->_data[$cacheKey])) {
             // Lets load the content
             $query = $this->_buildDataQuery($id);
-            $this->_data[$id] = $this->_getList($query, 0, $params->get('detcat_nr'));
+            $this->_data[$cacheKey] = $this->_getList($query, 0, $limit);
 
-            foreach ($this->_data[$id] as $i => &$item) {
+            foreach ($this->_data[$cacheKey] as $i => &$item) {
                 $item->categories = $this->getCategories($item->id);
 
                 //remove events without categories (users have no access to them)
                 if (empty($item->categories)) {
-                    unset ($this->_data[$id][$i]);
+                    unset ($this->_data[$cacheKey][$i]);
                 }
             }
         }
 
-        return $this->_data[$id];
+        return $this->_data[$cacheKey];
     }
 
     /**
@@ -242,7 +414,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2 AND rel.catid = '.$id;
         } else {
-            $ispublished = 'a.published = 1 AND a.publish_up >= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' || a.publish_down IS null)';
+            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' OR a.publish_down IS null)';
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 
@@ -254,7 +426,7 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_events active.
         if($jemsettings->access_level_locked_events != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_events, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND a.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND a.access IN (' . implode(',', $levels) . ')';
@@ -263,7 +435,7 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_categories active.
         if($jemsettings->access_level_locked_categories != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND c.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND c.access IN (' . implode(',', $levels) . ')';
@@ -272,17 +444,13 @@ class JemModelCategories extends BaseDatabaseModel
         # Filter by access level - public or with access_level_locked_venues active.
         if($jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where .= ' AND l.access IN (' . implode(',', $newlevels) . ')';
         } else {
             $where .= ' AND l.access IN (' . implode(',', $levels) . ')';
         }
 
-        $query = 'SELECT DISTINCT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.locid, a.created, a.published, a.access,'
-               . ' a.recurrence_type, a.recurrence_first_id,'
-               . ' a.access, a.checked_out, a.checked_out_time, a.contactid, a.created, a.created_by, a.created_by_alias, a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, a.datimage, a.featured,'
-               . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra, a.waitinglist,'
-               . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
+        $query = 'SELECT a.*,'
                . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
@@ -296,7 +464,7 @@ class JemModelCategories extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
-               . ' LEFT JOIN #__jem_categories AS c ON c.id = '.$id
+               . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
                . $where
                . ' ORDER BY a.dates, a.times, a.created DESC'
                ;
@@ -427,6 +595,11 @@ class JemModelCategories extends BaseDatabaseModel
         }
         $where_sub .= ' AND c.id = cc.id';
 
+        $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
+        if ($effectiveTypeId > 0) {
+            $where_sub .= ' AND cc.type_id = ' . (int) $effectiveTypeId;
+        }
+
         // show/hide empty categories
         $empty = $emptycat ? '' : ' HAVING assignedevents > 0';
 
@@ -440,13 +613,19 @@ class JemModelCategories extends BaseDatabaseModel
         ## FILTER-ACCESS ##
         ###################
 
-        # Filter by access level - public or with access_level_locked_venues active.
+        # Filter by access level - public or with access_level_locked_categories active.
         if($jemsettings->access_level_locked_categories != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
-            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
+            $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $where_access = ' AND c.access IN ('.implode(',', $newlevels).')';
         } else {
             $where_access = ' AND c.access IN ('.implode(',', $levels).')';
+        }
+
+        $where_search = '';
+        if ($this->_search !== '') {
+            $search = $this->_db->quote('%' . $this->_db->escape($this->_search, true) . '%', false);
+            $where_search = ' AND c.catname LIKE ' . $search;
         }
 
         $query = 'SELECT c.*,'
@@ -464,6 +643,8 @@ class JemModelCategories extends BaseDatabaseModel
                . ' WHERE c.published = 1'
                . ' AND '.$parentCategoryQuery
                . $where_access
+               . $where_search
+               . ($effectiveTypeId > 0 ? ' AND c.type_id = ' . (int) $effectiveTypeId : '')
                . ' GROUP BY c.id '.$empty
                . ' ORDER BY '.$ordering
                ;
@@ -496,6 +677,16 @@ class JemModelCategories extends BaseDatabaseModel
                 . ' AND c.parent_id = ' . (int) $this->_id
                 . ' AND c.access IN (' . implode(',', $levels) . ')'
                 ;
+
+        $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
+        if ($effectiveTypeId > 0) {
+            $query .= ' AND c.type_id = ' . (int) $effectiveTypeId;
+        }
+
+        if ($this->_search !== '') {
+            $search = $this->_db->quote('%' . $this->_db->escape($this->_search, true) . '%', false);
+            $query .= ' AND c.catname LIKE ' . $search;
+        }
 
         if (!$this->_showemptycats) {
             $query .= ' AND e.access IN (' . implode(',', $levels) . ')';

@@ -31,10 +31,16 @@ class JemModelEvents extends ListModel
                     'venue','loc.venue',
                     'city','loc.city',
                     'dates', 'a.dates',
+                    'created', 'a.created',
                     'hits', 'a.hits',
+                    'event_status', 'a.event_status',
+                    'ticket_availability', 'a.ticket_availability',
+                    'type_name', 'jt.name',
+                    'article_id', 'a.article_id',
                     'id', 'a.id',
                     'catname', 'c.catname',
                     'featured', 'a.featured',
+                    'author', 'u.name',
                     'access', 'a.access', 'access_level',
             );
         }
@@ -57,6 +63,15 @@ class JemModelEvents extends ListModel
 
         $filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filterfield);
+
+        $categoryId = $this->getUserStateFromRequest($this->context.'.filter_category_id', 'filter_category_id', 0, 'int');
+        $this->setState('filter_category_id', $categoryId);
+
+        $eventTypeId = $this->getUserStateFromRequest($this->context.'.filter_event_type_id', 'filter_event_type_id', 0, 'int');
+        $this->setState('filter_event_type_id', $eventTypeId);
+
+        $venueId = $this->getUserStateFromRequest($this->context.'.filter_venue_id', 'filter_venue_id', 0, 'int');
+        $this->setState('filter_venue_id', $venueId);
 
         $begin = $this->getUserStateFromRequest($this->context.'.filter_begin', 'filter_begin', '', 'string');
         $this->setState('filter_begin', $begin);
@@ -89,8 +104,14 @@ class JemModelEvents extends ListModel
     {
         // Compile the store id.
         $id .= ':' . $this->getState('filter_search');
-        $id .= ':' . $this->getState('filter_published');
+        $id .= ':' . $this->getState('filter_state');
         $id .= ':' . $this->getState('filter_type');
+        $id .= ':' . $this->getState('filter_category_id');
+        $id .= ':' . $this->getState('filter_event_type_id');
+        $id .= ':' . $this->getState('filter_venue_id');
+        $id .= ':' . $this->getState('filter_begin');
+        $id .= ':' . $this->getState('filter_end');
+        $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
     }
@@ -135,6 +156,10 @@ class JemModelEvents extends ListModel
         $query->select('co.name AS country');
         $query->join('LEFT', '#__jem_countries AS co ON co.iso2 = loc.country');
 
+        // Join over the event type.
+        $query->select('jt.name AS type_name');
+        $query->join('LEFT', '#__jem_types AS jt ON jt.id = a.type_id AND jt.entity = 1');
+
         // Filter by published state
         $published = $this->getState('filter_state');
         if (is_numeric($published)) {
@@ -146,6 +171,25 @@ class JemModelEvents extends ListModel
         // Filter by access level.
         if ($access = $this->getState('filter.access')) {
             $query->where('a.access = ' . (int) $access);
+        }
+
+        // Filter by exact JEM category.
+        $categoryId = (int) $this->getState('filter_category_id');
+        if ($categoryId > 0) {
+            $query->join('INNER', '#__jem_cats_event_relations AS filter_rel ON filter_rel.itemid = a.id');
+            $query->where('filter_rel.catid = ' . $categoryId);
+        }
+
+        // Filter by exact event type.
+        $eventTypeId = (int) $this->getState('filter_event_type_id');
+        if ($eventTypeId > 0) {
+            $query->where('a.type_id = ' . $eventTypeId);
+        }
+
+        // Filter by exact venue.
+        $venueId = (int) $this->getState('filter_venue_id');
+        if ($venueId > 0) {
+            $query->where('a.locid = ' . $venueId);
         }
 
         // Filter by Date
@@ -203,10 +247,14 @@ class JemModelEvents extends ListModel
                             $query->where('co.name LIKE '.$search);
                             break;
                         case 7:
+                            /* search author */
+                            $query->where('u.name LIKE '.$search);
+                            break;
+                        case 8:
                             /* search all */
                             $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
                             $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
-                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.')');
+                            $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR loc.city LIKE '.$search.' OR loc.state LIKE '.$search.' OR co.name LIKE '.$search.' OR loc.venue LIKE '.$search.' OR c.catname LIKE '.$search.' OR u.name LIKE '.$search.')');
                             break;
                         default:
                             /* search event and location (city, state, country)*/
@@ -219,7 +267,15 @@ class JemModelEvents extends ListModel
 
         // Add the list ordering clause.
         $orderCol  = $this->state->get('list.ordering');
-        $orderDirn = $this->state->get('list.direction');
+        $orderDirn = strtoupper($this->state->get('list.direction'));
+
+        if (!in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = 'a.dates';
+        }
+
+        if (!in_array($orderDirn, array('ASC', 'DESC'), true)) {
+            $orderDirn = 'ASC';
+        }
 
         $query->order($db->escape($orderCol.' '.$orderDirn));
 

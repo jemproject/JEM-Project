@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\File;
+use Joomla\Registry\Registry;
 
 /**
  * JEM Venue Table
@@ -32,6 +33,22 @@ class JemTableVenue extends Table
 
         if (!isset($array['map'])) {
             $array['map'] = 0 ;
+        }
+
+        if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
+            $array['type_id'] = null;
+        }
+
+        if (isset($array['attribs']) && is_array($array['attribs'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['attribs']);
+            $array['attribs'] = (string) $registry;
+        }
+
+        if (isset($array['metadata']) && is_array($array['metadata'])) {
+            $registry = new Registry;
+            $registry->loadArray($array['metadata']);
+            $array['metadata'] = (string) $registry;
         }
 
         //don't override without calling base class
@@ -59,13 +76,9 @@ class JemTableVenue extends Table
             }
         }
 
-        if ($this->map) {
-            if (!trim($this->street) || !trim($this->city) || !trim($this->country) || !trim($this->postalCode)) {
-                if ((!trim($this->latitude) && !trim($this->longitude))) {
-                    $this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
-                    return false;
-                }
-            }
+        if ($this->map && !$this->hasMappableLocation()) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
+            return false;
         }
 
         if (trim($this->url)) {
@@ -170,7 +183,6 @@ class JemTableVenue extends Table
         }
 
         // Check if image was selected
-        jimport('joomla.filesystem.file');
         $image_dir = JPATH_SITE.'/images/jem/venues/';
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));
@@ -383,6 +395,36 @@ class JemTableVenue extends Table
         $this->setError('');
 
         return true;
+    }
+
+    /**
+     * A venue can expose a map link only when it has a full address or valid coordinates.
+     */
+    protected function hasMappableLocation(): bool
+    {
+        $hasAddress = trim((string) $this->street) !== ''
+            && trim((string) $this->city) !== ''
+            && trim((string) $this->country) !== ''
+            && trim((string) $this->postalCode) !== '';
+
+        if ($hasAddress) {
+            return true;
+        }
+
+        $latitude = trim((string) $this->latitude);
+        $longitude = trim((string) $this->longitude);
+
+        if ($latitude === '' || $longitude === '' || !is_numeric($latitude) || !is_numeric($longitude)) {
+            return false;
+        }
+
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        return $latitude >= -90.0 && $latitude <= 90.0
+            && $longitude >= -180.0 && $longitude <= 180.0
+            && $latitude !== 0.0
+            && $longitude !== 0.0;
     }
 }
 ?>

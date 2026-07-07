@@ -33,8 +33,9 @@ use Joomla\CMS\HTML\HTMLHelper;
         <p> </p>
     <?php endif; ?>
 
-  <?php if ($this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
-    <?php if ($this->params->get('show_page_heading', 1)) : ?>
+  <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
+  <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
+    <?php if ($showPageHeading) : ?>
       <h2 class="jem-category-title">
         <?php echo $this->escape($this->category->title);?>
       </h2>
@@ -51,15 +52,19 @@ use Joomla\CMS\HTML\HTMLHelper;
     }
   </style>
 
-  <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
-  <div class="jem-catimg">
-    <?php    echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
+  <div class="jem-category-overview-panel">
+    <div class="jem-category-overview-details">
+      <div class="description">
+        <p><?php echo $this->description; ?></p>
+      </div>
+    </div>
+    <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
+    <div class="jem-catimg jem-category-overview-media">
+      <?php echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
+    </div>
+    <?php endif; ?>
   </div>
-  <?php endif; ?>
-
-  <div class="description">
-    <p><?php echo $this->description; ?></p>
-  </div>
+  <div class="jem-category-section-separator"></div>
 
   <div class="jem-clear">
   </div>
@@ -100,6 +105,7 @@ use Joomla\CMS\HTML\HTMLHelper;
         <input type="hidden" name="view" value="category" />
         <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
         <input type="hidden" name="id" value="<?php echo $this->category->id; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <!--pagination-->
@@ -107,12 +113,12 @@ use Joomla\CMS\HTML\HTMLHelper;
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
 
-    <!-- iCal -->
-    <div id="iCal" class="iCal">
-        <?php echo JemOutput::icalbutton($this->category->id, 'category'); ?>
-    </div>
-
     <!-- copyright -->
+        <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
     <div class="copyright">
         <?php echo JemOutput::footer(); ?>
     </div>

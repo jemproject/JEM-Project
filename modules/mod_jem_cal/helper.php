@@ -168,6 +168,9 @@ abstract class ModJemCalHelper extends ModuleHelper
         $days = array();
 
         foreach ($events as $index => $event) {
+            $hasEventAccess = !isset($event->user_has_access_event) || (bool) $event->user_has_access_event;
+            $eventRoute     = $hasEventAccess ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params)) : Route::_('index.php?option=com_users&view=login');
+
             # Adding categories
             $nr      = is_array($event->categories) ? count($event->categories) : 0;
             $catname = '';
@@ -229,7 +232,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                         $cut   = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
                         $title = '';
                         if ($DisplayLink == 1) {
-                            $title .= '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">';
+                            $title .= '<a href="' . $eventRoute . '">';
                         }
                         if ($DisplayTime == 1) {
                             $title .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
@@ -251,7 +254,7 @@ abstract class ModJemCalHelper extends ModuleHelper
                         $cut      = ($max_title_len > 0) && (($l = mb_strlen($event->title)) > $max_title_len);
                         $newTitle = '';
                         if ($DisplayLink == 1) {
-                            $newTitle .= '<a href="' . Route::_(JemHelperRoute::getEventRoute($event->slug)) . '">';
+                            $newTitle .= '<a href="' . $eventRoute . '">';
                         }
                         if ($DisplayTime == 1) {
                             $newTitle .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
@@ -272,11 +275,13 @@ abstract class ModJemCalHelper extends ModuleHelper
                     }
 
                     if (($StraightToDetails == 1) and ($stod == 1)) {
-                        if ($FixItemID == 0) {
-                            $link = Route::_(JemHelperRoute::getEventRoute($event->slug));
+                        if (!$hasEventAccess) {
+                            $link = Route::_('index.php?option=com_users&view=login');
+                        } elseif ($FixItemID == 0) {
+                            $link = $eventRoute;
                         } else {
                             # Create the link - copied from Route
-                            $evlink = JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID;
+                            $evlink = JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug).'&Itemid='.$FixItemID, $params);
                             $link = Route::_($evlink);
                         }
                     } else {

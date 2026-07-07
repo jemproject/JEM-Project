@@ -8,6 +8,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
 /**
@@ -36,13 +39,13 @@ class jem_attachments extends Table
     /** @var int */
     public $frontend = 1;
     /** @var int */
-    public $access = 0;
+    public $access = 1;
     /** @var int */
     public $ordering = 0;
     /** @var string */
-    public $added = '';
+    public $created = '';
     /** @var int */
-    public $added_by = 0;
+    public $created_by = 0;
 
 
     public function __construct(& $db)
@@ -53,6 +56,32 @@ class jem_attachments extends Table
     // overloaded check function
     public function check()
     {
+        $this->object = trim((string) $this->object);
+        $this->file   = trim((string) $this->file);
+
+        if ($this->object === '' || !preg_match('/^[a-z]+[0-9]+$/i', $this->object)) {
+            $this->setError(Text::_('COM_JEM_ATTACHMENT_ERROR_INVALID_OBJECT'));
+            return false;
+        }
+
+        if ($this->file === '' || basename($this->file) !== $this->file || strpos($this->file, '..') !== false) {
+            $this->setError(Text::_('COM_JEM_ATTACHMENT_ERROR_INVALID_FILE'));
+            return false;
+        }
+
+        $filter = InputFilter::getInstance();
+        $this->name        = $filter->clean((string) $this->name, 'string');
+        $this->description = $filter->clean((string) $this->description, 'string');
+        $this->icon        = $filter->clean((string) $this->icon, 'string');
+        $this->frontend    = (int) (bool) $this->frontend;
+        $this->access      = max(1, (int) $this->access);
+        $this->ordering    = (int) $this->ordering;
+        $this->created_by  = (int) $this->created_by;
+
+        if (empty($this->created)) {
+            $this->created = Factory::getDate()->toSql();
+        }
+
         return true;
     }
 }

@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\Registry\Registry;
 
 require_once __DIR__ . '/eventslist.php';
 
@@ -60,7 +61,7 @@ class JemModelVenue extends JemModelEventslist
         // List state information
 
         if (empty($format) || ($format == 'html')) {
-            /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+            /* Preserve limitstart when it is missing from the request. */
             if ($app->input->getInt('limitstart', null) === null) {
                 $app->setUserState('com_jem.venue.'.$itemid.'.limitstart', 0);
             }
@@ -183,19 +184,36 @@ class JemModelVenue extends JemModelEventslist
     {
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
+        $levelsList = implode(',', array_map('intval', $levels)) ?: '0';
         $jemsettings = JemHelper::config();
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query  = $db->getQuery(true);
 
-        $query->select('id, venue, published, city, state, url, street, custom1, custom2, custom3, custom4, custom5, '.
-                       ' custom6, custom7, custom8, custom9, custom10, locimage, meta_keywords, meta_description, access, '.
-                       ' created, created_by, locdescription, country, map, latitude, longitude, postalCode, checked_out AS vChecked_out, checked_out_time AS vChecked_out_time, '.
-                       ' CASE WHEN CHAR_LENGTH(alias) THEN CONCAT_WS(\':\', id, alias) ELSE id END as slug');
-        $query->from($db->quoteName('#__jem_venues'));
+        $query->select('v.id, v.venue, v.published, v.city, v.state, v.url, v.street, v.custom1, v.custom2, v.custom3, v.custom4, v.custom5, '.
+                       ' v.custom6, v.custom7, v.custom8, v.custom9, v.custom10, v.locimage, v.meta_keywords, v.meta_description, v.access, '.
+                       ' v.created, v.created_by, v.locdescription, v.country, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
+                       ' v.attribs, '.
+                       ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug');
+        $query->from($db->quoteName('#__jem_venues', 'v'));
+
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
+        $query->select(array(
+            'jt.id AS type_id',
+            'jt.name AS type_name',
+            'jt.icon AS type_icon',
+            'jt.color AS type_color',
+            'jt.alias AS type_alias',
+            'jt.description AS type_description',
+            'jt.base_language AS type_base_language',
+            'jt.translation_languages AS type_translation_languages',
+            'jt.translations AS type_translations',
+        ));
+        $query->join('LEFT', $db->quoteName('#__jem_types', 'jt') . ' ON jt.id = v.type_id AND jt.entity = 3 AND jt.published = 1 AND jt.access IN (' . $levelsList . ') AND ' . $typeLanguageCondition);
 
         $case_when_a  = ' CASE WHEN ';
-        $case_when_a .= " access IN (" . implode(',',$levels) . ")";
+        $case_when_a .= " v.access IN (" . $levelsList . ")";
         $case_when_a .= ' THEN 1 ';
         $case_when_a .= ' ELSE 0 ';
         $case_when_a .= ' END as user_has_access_venue';
@@ -206,24 +224,24 @@ class JemModelVenue extends JemModelEventslist
         if($jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
             $newlevels = array_values(array_unique(array_merge($levels, $accessLevels)));
-            $query->where('access IN ('.implode(',', $newlevels).')');
+            $query->where('v.access IN ('.implode(',', array_map('intval', $newlevels)).')');
         } else {
-            $query->where('access IN ('.implode(',', $levels).')');
+            $query->where('v.access IN ('.$levelsList.')');
         }
 
-        $query->where('id = '.(int)$this->_id);
+        $query->where('v.id = '.(int)$this->_id);
 
         // all together: if published or the user is creator of the venue or allowed to edit or publish venues
         if (empty($user->id)) {
-            $query->where('published = 1');
+            $query->where('v.published = 1');
         }
         // no limit if user can publish or edit foreign venues
         elseif ($user->can(array('edit', 'publish'), 'venue')) {
-            $query->where('published IN (0,1)');
+            $query->where('v.published IN (0,1)');
         }
         // user maybe creator
         else {
-            $query->where('(published = 1 OR (published = 0 AND created_by = ' . $this->_db->Quote($user->id) . '))');
+            $query->where('(v.published = 1 OR (v.published = 0 AND v.created_by = ' . $this->_db->Quote($user->id) . '))');
         }
 
         $db->setQuery($query);
@@ -232,10 +250,12 @@ class JemModelVenue extends JemModelEventslist
         if (empty($_venue)) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
             return false;
-        }else if(!$_venue->user_has_access_venue) {
-            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            return false;
         }
+
+        $registry = new Registry;
+        $registry->loadString($_venue->attribs ?? '{}');
+        $_venue->params = JemHelper::globalattribs();
+        $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 

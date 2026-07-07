@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\String\StringHelper;
 
 /**
  * JEM Component search Model
@@ -103,7 +104,11 @@ class JemModelSearch extends BaseDatabaseModel
                 $this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
+            $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+
             foreach ($this->_data as $i => $item) {
+                JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+
                 $item->categories = $this->getCategories($item->id);
 
                 //remove events without categories (users have no access to them)
@@ -148,7 +153,7 @@ class JemModelSearch extends BaseDatabaseModel
             # Get Events from Database
             $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
                           . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-                          . ' a.alias, a.attribs, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
+                          . ' a.alias, a.attribs, a.article_id, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
                           . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
                           . ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
                           . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
@@ -156,6 +161,7 @@ class JemModelSearch extends BaseDatabaseModel
                           . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                           . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
                           . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+                          . ' c.name AS country_name,'
                           . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
                           . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
                           . ' FROM #__jem_events AS a'
@@ -188,6 +194,12 @@ class JemModelSearch extends BaseDatabaseModel
 
         $filter_order      = InputFilter::getInstance()->clean($filter_order, 'cmd');
         $filter_order_Dir  = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $allowedOrder = array('a.dates', 'a.title', 'l.venue', 'l.city', 'l.state', 'c.name', 'a.created');
+        if (!in_array($filter_order, $allowedOrder, true)) {
+            $filter_order = 'a.dates';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
+        $default_order_Dir = strtoupper($default_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         if ($filter_order == 'a.dates') {
             $orderby = ' ORDER BY a.dates ' . $filter_order_Dir .', a.times ' . $filter_order_Dir
@@ -239,17 +251,19 @@ class JemModelSearch extends BaseDatabaseModel
         $filter_category   = $app->getUserStateFromRequest('com_jem.search.filter_category', 'filter_category', 0, 'int');
         // "Please select..." entry has number 1 which must be interpreted as "not set" and replaced by top category (which maybe 1 ;-)
         $filter_category   = (($filter_category > 1) ? $filter_category : $top_category);
+        $filter_type_id    = $app->getUserStateFromRequest('com_jem.search.filter_type_id', 'filter_type_id', 0, 'int');
+        $filter_venue_id   = $app->getUserStateFromRequest('com_jem.search.filter_venue_id', 'filter_venue_id', 0, 'int');
 
         // no result if no filter:
-        if (!($filter || $filter_continent || $filter_country || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category)) {
+        if (!($filter || $filter_continent || $filter_country || $filter_city || $filter_date_from || $filter_date_to || $filter_category != $top_category || $filter_type_id || $filter_venue_id)) {
             return ' WHERE 0 ';
         }
 
         if ($filter) {
             // clean filter variables
-            $filter      = \Joomla\String\StringHelper::strtolower($filter);
+            $filter      = StringHelper::strtolower($filter);
             $filter      = $this->_db->Quote('%'.$this->_db->escape($filter, true).'%', false);
-            $filter_type = \Joomla\String\StringHelper::strtolower($filter_type);
+            $filter_type = StringHelper::strtolower($filter_type);
 
             switch ($filter_type) {
                 case 'title' :
@@ -291,10 +305,12 @@ class JemModelSearch extends BaseDatabaseModel
         // filter continent
         if ($filter_continent) {
             $where .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
+            $where .= ' AND c.published = 1';
         }
         // filter country
         if ($filter_country) {
             $where .= ' AND l.country = ' . $this->_db->Quote($filter_country);
+            $where .= ' AND c.published = 1';
         }
         // filter city
         if ($filter_country && $filter_city) {
@@ -304,6 +320,14 @@ class JemModelSearch extends BaseDatabaseModel
         if ($filter_category) {
             $cats = JemCategories::getChilds((int) $filter_category);
             $where .= ' AND rel.catid IN (' . implode(', ', $cats) .')';
+        }
+        // filter event type
+        if ($filter_type_id) {
+            $where .= ' AND a.type_id = ' . (int) $filter_type_id;
+        }
+        // filter venue
+        if ($filter_venue_id) {
+            $where .= ' AND a.locid = ' . (int) $filter_venue_id;
         }
 
         return $where;
@@ -352,8 +376,10 @@ class JemModelSearch extends BaseDatabaseModel
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
                ;
 
+        $query .= ' WHERE c.published = 1';
+
         if ($filter_continent) {
-            $query .= ' WHERE c.continent = ' . $this->_db->Quote($filter_continent);
+            $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
         }
         $query .= ' GROUP BY c.iso2 ';
         $query .= ' ORDER BY c.name ';
@@ -366,10 +392,60 @@ class JemModelSearch extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
 
-        $query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.iso2 = ' . $this->_db->Quote($country);
+        $query = ' SELECT c.continent as value FROM #__jem_countries as c WHERE c.published = 1 AND c.iso2 = ' . $this->_db->Quote($country);
         $this->_db->setQuery($query);
 
         return $this->_db->loadResult();
+    }
+
+    public function getEventTypeOptions()
+    {
+        $app    = Factory::getApplication();
+        $user   = JemFactory::getUser();
+        $levels = $user->getAuthorisedViewLevels();
+        $params = $app->getParams();
+        $top_category = $params->get('top_category', 1);
+
+        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+        $filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country',   'filter_country',   '', 'string');
+        $filter_category  = $app->getUserStateFromRequest('com_jem.search.filter_category',  'filter_category',  0,  'int');
+        $filter_category  = ($filter_category > 1) ? $filter_category : $top_category;
+
+        $needsLocation = $filter_continent || $filter_country;
+        $needsCategory = $filter_category > 1;
+
+        $query = $this->_db->getQuery(true)
+            ->select('DISTINCT t.id AS value, t.name AS text')
+            ->from($this->_db->quoteName('#__jem_types') . ' AS t')
+            ->where('t.entity = 1')
+            ->where('t.published = 1')
+            ->where('t.access IN (' . implode(',', $levels) . ')');
+
+        if ($needsLocation || $needsCategory) {
+            $query->join('INNER', $this->_db->quoteName('#__jem_events') . ' AS a ON a.type_id = t.id AND a.published = 1 AND a.access IN (' . implode(',', $levels) . ')');
+        }
+
+        if ($needsLocation) {
+            $query->join('LEFT', $this->_db->quoteName('#__jem_venues') . ' AS lv ON lv.id = a.locid');
+            $query->join('LEFT', $this->_db->quoteName('#__jem_countries') . ' AS co ON co.iso2 = lv.country');
+            $query->where('co.published = 1');
+            if ($filter_continent) {
+                $query->where('co.continent = ' . $this->_db->Quote($filter_continent));
+            }
+            if ($filter_country) {
+                $query->where('lv.country = ' . $this->_db->Quote($filter_country));
+            }
+        }
+
+        if ($needsCategory) {
+            $cats = JemCategories::getChilds((int) $filter_category);
+            $query->join('INNER', $this->_db->quoteName('#__jem_cats_event_relations') . ' AS rel ON rel.itemid = a.id');
+            $query->where('rel.catid IN (' . implode(', ', $cats) . ')');
+        }
+
+        $query->order('t.ordering ASC, t.name ASC');
+        $this->_db->setQuery($query);
+        return $this->_db->loadObjectList();
     }
 
     public function getCityOptions()
@@ -381,9 +457,33 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-               . ' WHERE l.country = ' . $this->_db->Quote($country)
+               . ' WHERE c.published = 1 AND l.country = ' . $this->_db->Quote($country)
                . ' ORDER BY l.city ';
 
+        $this->_db->setQuery($query);
+        return $this->_db->loadObjectList();
+    }
+
+    public function getVenueOptions()
+    {
+        $app = Factory::getApplication();
+        $filter_continent = $app->getUserStateFromRequest('com_jem.search.filter_continent', 'filter_continent', '', 'string');
+        $filter_country   = $app->getUserStateFromRequest('com_jem.search.filter_country', 'filter_country', '', 'string');
+
+        $query = ' SELECT DISTINCT l.id AS value, l.venue AS text'
+               . ' FROM #__jem_events AS a'
+               . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
+               . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
+               . ' WHERE a.published = 1 AND l.published = 1 AND c.published = 1';
+
+        if ($filter_continent) {
+            $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);
+        }
+        if ($filter_country) {
+            $query .= ' AND l.country = ' . $this->_db->Quote($filter_country);
+        }
+
+        $query .= ' ORDER BY l.venue';
         $this->_db->setQuery($query);
         return $this->_db->loadObjectList();
     }
@@ -425,13 +525,13 @@ class JemModelSearch extends BaseDatabaseModel
         }
         catch (RuntimeException $e)
         {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
         // Check for a database error.
         // if ($db->getErrorNum())
         // {
-        //     \Joomla\CMS\Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
+        //     Factory::getApplication()->enqueueMessage($db->getErrorMsg(), 'notice');
         // }
 
         if (!$mitems) {

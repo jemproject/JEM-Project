@@ -39,6 +39,7 @@ class JFormFieldCalendarJem extends CalendarField
     protected function getLayoutData()
     {
         $data = parent::getLayoutData();
+        $data['firstday'] = $this->getJemFirstWeekday((int) ($data['firstday'] ?? 0));
 
         if (!empty($this->hint)) {
             return $data;
@@ -54,5 +55,27 @@ class JFormFieldCalendarJem extends CalendarField
         );
 
         return array_merge($data, $extraData);
+    }
+
+    /**
+     * Return JEM's configured first day of week for Joomla's calendar field.
+     *
+     * @param   integer  $fallback  Joomla language fallback value.
+     *
+     * @return  integer  0 for Sunday, 1 for Monday.
+     */
+    private function getJemFirstWeekday($fallback = 0)
+    {
+        try {
+            if (!class_exists('JemHelper')) {
+                require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+            }
+
+            $settings = JemHelper::config();
+
+            return ((int) ($settings->weekdaystart ?? $fallback) === 1) ? 1 : 0;
+        } catch (Throwable $e) {
+            return ((int) $fallback === 1) ? 1 : 0;
+        }
     }
 }

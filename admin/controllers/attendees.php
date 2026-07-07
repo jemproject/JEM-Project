@@ -15,6 +15,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Controller: Attendees
@@ -24,8 +25,7 @@ class JemControllerAttendees extends BaseController
     /**
      * Constructor
      */
-    public function __construct($config = array())
-    {
+    public function __construct($config = array()) {
         parent::__construct($config);
 
         // Register Extra task
@@ -41,15 +41,27 @@ class JemControllerAttendees extends BaseController
     }
 
     /**
+     * Check whether the current user can manage attendees in the backend.
+     *
+     * @return void
+     */
+    private function assertCanManageAttendees()
+    {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
      * Delete attendees
      *
      * @return true on sucess
      * @access private
      */
-    public function remove()
-    {
+    public function remove() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         $jinput = Factory::getApplication()->input;
         $cid = $jinput->get('cid',  0, 'array');
@@ -59,9 +71,17 @@ class JemControllerAttendees extends BaseController
             throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
         }
 
+        ArrayHelper::toInteger($cid);
+        $cid = array_filter($cid);
+
+        if (empty($cid) || $eventid < 1) {
+            throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
+        }
+
         $total = count($cid);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
 
         $modelAttendeeList = $this->getModel('attendees');
@@ -72,14 +92,19 @@ class JemControllerAttendees extends BaseController
         foreach ($cid as $reg_id) {
             $modelAttendeeItem->setId($reg_id);
             $entry = $modelAttendeeItem->getData();
-            if ($modelAttendeeList->remove(array($reg_id))) {
+            if (empty($entry->event) || (int)$entry->event !== (int)$eventid) {
+                $error = true;
+                continue;
+            }
+            if ($modelAttendeeList->remove(array($reg_id), $eventid)) {
                 $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
+                $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($entry));
             } else {
                 $error = true;
             }
         }
         if (!empty($error)) {
-            echo "<script> alert('" . $modelAttendeeList->getError() . "'); window.history.go(-1); </script>\n";
+            Factory::getApplication()->enqueueMessage($modelAttendeeList->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'warning');
         }
 
         $cache = Factory::getCache('com_jem');
@@ -93,10 +118,10 @@ class JemControllerAttendees extends BaseController
     /**
      * Function to export
      */
-    public function export()
-    {
+    public function export() {
         // Check for request forgeries
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         header('Content-Description: File Transfer');
         header('Content-Type: text/csv; charset=utf-8');
@@ -115,39 +140,46 @@ class JemControllerAttendees extends BaseController
     /**
      * redirect to events page
      */
-    public function back()
-    {
+    public function back() {
         $this->setRedirect('index.php?option=com_jem&view=events');
     }
 
     /**
      * Function to change status
      */
-    public function toggleStatus()
-    {
+    public function toggleStatus() {
         // Check for request forgeries
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         $app  = Factory::getApplication();
         $pks  = $app->input->get('cid', array(), 'array');
         $task = $this->getTask();
+        $redirectEvent = $app->input->getInt('eventid', 0);
 
         if (empty($pks)) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
         } else {
-            \Joomla\Utilities\ArrayHelper::toInteger($pks);
+            ArrayHelper::toInteger($pks);
+            $pks = array_filter($pks);
             $model = $this->getModel('attendee');
 
             PluginHelper::importPlugin('jem');
+            PluginHelper::importPlugin('actionlog', 'jem');
             $dispatcher = JemFactory::getDispatcher();
 
             foreach ($pks AS $pk) {
                 $model->setId($pk);
                 $attendee = $model->getData();
+                if (empty($attendee->event)) {
+                    continue;
+                }
+                $redirectEvent = (int)$attendee->event;
                 $res = $model->toggle();
 
                 if ($res) {
                     $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
+                    $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array(array($pk), $attendee->waiting ? 1 : 2, (int) $attendee->event));
 
                     if ($attendee->waiting) {
                         $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
@@ -173,7 +205,7 @@ class JemControllerAttendees extends BaseController
             $app->enqueueMessage($msg, $type);
         }
 
-        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid=' . $attendee->event);
+        $this->setRedirect('index.php?option=com_jem&view=attendees&eventid=' . $redirectEvent);
         $this->redirect();
     }
 
@@ -184,10 +216,10 @@ class JemControllerAttendees extends BaseController
      * @return void
      *
      */
-    public function edit()
-    {
+    public function edit() {
         // Check for request forgeries.
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'attendee');
@@ -204,10 +236,10 @@ class JemControllerAttendees extends BaseController
      *
      * @return  void
      */
-    public function setStatus()
-    {
+    public function setStatus() {
         // Check for request forgeries
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
 
         $app = Factory::getApplication();
         $user = $app->getIdentity();
@@ -218,26 +250,24 @@ class JemControllerAttendees extends BaseController
         $task    = $this->getTask();
         $value   = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
 
-        if (empty($ids))
-        {
+        if (empty($ids)) {
             $message = Text::_('JERROR_NO_ITEMS_SELECTED');
             Factory::getApplication()->enqueueMessage($message, 'warning');
-        }
-        else
-        {
+        } else {
+            ArrayHelper::toInteger($ids);
+            $ids = array_filter($ids);
+
             // Get the model.
             $model = $this->getModel('attendee');
 
             // Publish the items.
-            if (!$model->setStatus($ids, $value))
-            {
+            if (!$model->setStatus($ids, $value, $eventid)) {
                 $message = $model->getError();
                 JemHelper::addLogEntry($message, __METHOD__, Log::ERROR);
                 Factory::getApplication()->enqueueMessage($message, 'warning');
-            }
-            else
-            {
+            } else {
                 PluginHelper::importPlugin('jem');
+                PluginHelper::importPlugin('actionlog', 'jem');
                 $dispatcher = JemFactory::getDispatcher();
 
                 switch ($value) {
@@ -271,10 +301,57 @@ class JemControllerAttendees extends BaseController
                         break;
                 }
 
+
+                $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array($ids, $value, $eventid));
+
                 JemHelper::addLogEntry($message, __METHOD__, Log::DEBUG);
             }
         }
 
         $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message);
+    }
+
+    public function renotify()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
+
+        $app = Factory::getApplication();
+        $eventid = $app->input->getInt('eventid', 0);
+        $ids = $app->input->get('cid', array(), 'array');
+
+        if (empty($ids)) {
+            $message = Text::_('JERROR_NO_ITEMS_SELECTED');
+            $type = 'warning';
+        } else {
+            ArrayHelper::toInteger($ids);
+            $ids = array_filter($ids);
+
+            PluginHelper::importPlugin('jem');
+            $dispatcher = JemFactory::getDispatcher();
+            $model = $this->getModel('attendee');
+            $sent = 0;
+
+            foreach ($ids as $id) {
+                $model->setId($id);
+                $attendee = $model->getData();
+
+                if (empty($attendee->id) || (int) $attendee->event !== (int) $eventid) {
+                    continue;
+                }
+
+                $dispatcher->triggerEvent('onEventUserRegistered', array($id, $attendee->places, true));
+                ++$sent;
+            }
+
+            if (!PluginHelper::isEnabled('jem', 'mailer')) {
+                $app->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');
+            }
+
+            $message = Text::plural('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFIED_N', $sent);
+            $type = 'message';
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message, $type);
     }
 }
