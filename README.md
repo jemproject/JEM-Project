@@ -1,11 +1,12 @@
-# JEM 4.5.0 RC5 (the Joomla Event Manager)
-released 2026-07-03
+# JEM 4.5.0 (the Joomla Event Manager)
+released 2026-07-07
 
 Based on
 - jemproject/JEM-Project
 - Egnarts94/JEM-Project Responsive JEM
 
-JEM 4.5.0 RC5 supports Joomla 4.x and Joomla 5.x.
+JEM 4.5.0 supports Joomla 4.x and Joomla 5.x.
+JEM 4.5.0 is a transitional version. JEM 5 is recommended for Joomla 5 and 6.
 
 ## To install
 Download the installation package from https://www.joomlaeventmanager.net/download or install it in Joomla via the web installer.
