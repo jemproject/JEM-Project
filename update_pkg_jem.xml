@@ -7,7 +7,7 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>4.5.0rc5</version>
+        <version>4.5.0</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem-4</infourl>
         <downloads>
             <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=136:jem-4-5-0-rc5</downloadurl>
