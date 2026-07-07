@@ -8,7 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\ListModel;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 
 require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
 

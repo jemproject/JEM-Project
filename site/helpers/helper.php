@@ -86,6 +86,56 @@ class JemHelper
     }
 
     /**
+     * Renders optional module intro or footer text.
+     *
+     * @param   Registry|object  $params    Module parameters.
+     * @param   string           $position  intro or footer.
+     *
+     * @return  string
+     */
+    static public function renderModuleText($params, $position = 'intro')
+    {
+        $position = $position === 'footer' ? 'footer' : 'intro';
+        $showKey  = $position === 'footer' ? 'showfootertext' : 'showintrotext';
+        $textKey  = $position === 'footer' ? 'footertext' : 'introtext';
+
+        if ((int) $params->get($showKey, 0) !== 1) {
+            return '';
+        }
+
+        $text = trim((string) $params->get($textKey, ''));
+
+        if ($text === '') {
+            return '';
+        }
+
+        $class = $position === 'footer'
+            ? 'jem-module-footertext description no_space floattext'
+            : 'jem-module-introtext description no_space floattext';
+
+        return '<div class="' . $class . '">' . $text . '</div>';
+    }
+
+    /**
+     * Builds a stable CSS token for calendar special day type filters.
+     *
+     * @param   string  $type  Special day type name.
+     *
+     * @return  string
+     */
+    static public function calendarSpecialDayTypeClass($type)
+    {
+        $type = trim((string) $type);
+        $slug = $type !== '' ? ApplicationHelper::stringURLSafe($type) : '';
+
+        if ($slug === '') {
+            $slug = 'unknown';
+        }
+
+        return 'special-day-type-' . $slug;
+    }
+
+    /**
      * Pulls settings from database and stores in an static object
      *
      * @return object

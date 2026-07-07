@@ -188,6 +188,7 @@ abstract class ModJemJubileeHelper
         # Retrieve the available Events
         ####
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $color = $params->get('color');
         $user_color = $params->get('usercolor', '#EEEEEE');
@@ -255,6 +256,14 @@ abstract class ModJemJubileeHelper
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
+
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
 
             # time/date
             /* depending on settongs we need:

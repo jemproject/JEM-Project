@@ -13,6 +13,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
@@ -22,6 +23,19 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelVenue extends JemModelAdmin
 {
+    /**
+     * Constructor
+     */
+    public function __construct($config = array(), $factory = null)
+    {
+        parent::__construct($config, $factory);
+        
+        // Set the dispatcher for Joomla 6 compatibility
+        if (method_exists($this, 'setDispatcher')) {
+            $this->setDispatcher(Factory::getApplication()->getDispatcher());
+        }
+    }
+
     /**
      * Method to change the published state of one or more records.
      *
@@ -243,7 +257,6 @@ class JemModelVenue extends JemModelAdmin
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $table->venue = htmlspecialchars_decode($table->venue, ENT_QUOTES);
-
         list($table->latitude, $table->longitude) = $this->normaliseCoordinates(
             $table->latitude ?? null,
             $table->longitude ?? null
@@ -297,6 +310,7 @@ class JemModelVenue extends JemModelAdmin
             $this->setError(implode('<br>', $customFieldErrors));
             return false;
         }
+
         // Store as copy - reset creation date, modification fields, hit counter, version
         if ($task == 'save2copy') {
             unset($data['created']);
@@ -308,7 +322,7 @@ class JemModelVenue extends JemModelAdmin
 
         //uppercase needed by mapservices
         if ($data['country']) {
-            $data['country'] = \Joomla\String\StringHelper::strtoupper($data['country']);
+            $data['country'] = StringHelper::strtoupper($data['country']);
         }
 
         // Save the venue
@@ -397,6 +411,7 @@ class JemModelVenue extends JemModelAdmin
             && $latitude !== 0.0
             && $longitude !== 0.0;
     }
+
     /**
      * Store incomplete, empty and Null Island coordinates as NULL.
      */

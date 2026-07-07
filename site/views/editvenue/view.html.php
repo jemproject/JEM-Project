@@ -10,18 +10,16 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Router\Route;
 /**
  * Editvenue-View
  */
 class JemViewEditvenue extends JemView
 {
-    protected $form;
-    protected $item;
+    public $form;
+    public $item;
     protected $return_page;
-    protected $state;
+    public $state;
 
     /**
      * Editvenue-View
@@ -38,7 +36,6 @@ class JemViewEditvenue extends JemView
         $menu        = $app->getMenu();
         $menuitem    = $menu->getActive();
         $pathway     = $app->getPathway();
-        $url         = Uri::root();
 
         $language    = Factory::getApplication()->getLanguage();
         $language    = $language->getTag();
@@ -160,16 +157,11 @@ class JemViewEditvenue extends JemView
         $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
 
         // Load script
-        $document->addScript($url.'media/com_jem/js/attachments.js');
-        $document->addScript($url.'media/com_jem/js/other.js');
+        $wa->useScript('jquery');
+        $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+        $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
         $key = trim($settings->get('global_googleapi', ''));
 
-        // Noconflict
-        $document->addCustomTag( '<script>jQuery.noConflict();</script>' );
-
-        // JQuery scripts
-        $document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
-        $wa->registerScript('jem.jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')->useScript('jem.jquery');
         $wa->registerScript('jem.jquery_map', 'https://maps.googleapis.com/maps/api/js?'.(!empty($key) ? 'key='.$key.'&amp;' : '').'sensor=false&libraries=places&language='.$language)->useScript('jem.jquery_map');
         $wa->registerScript('jem.geocomplete', 'com_jem/jquery.geocomplete.js')->useScript('jem.geocomplete');
         // No permissions required/useful on this view

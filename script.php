@@ -1,6 +1,6 @@
-﻿<?php
+<?php
 /**
- * @version    4.2.3
+ * @version    5.0.0
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @copyright  (C) 2005-2009 Christoph Lukes
@@ -10,15 +10,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Log\Log;
 use Joomla\CMS\Table\Table;
-use Joomla\CMS\Installer\InstallerScript;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Version;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\Path;
+
 
 /**
  * Script file of JEM component
@@ -68,7 +67,7 @@ class com_jemInstallerScript
         );
 
         // Check for existance of /images/jem directory
-        if (Folder::exists(JPATH_SITE . $createDirs[0])) {
+        if (is_dir(JPATH_SITE . $createDirs[0])) {
             echo "<p><span style='color:green;'>" . Text::_('COM_JEM_INSTALL_SUCCESS') . ":</span> " .
                 Text::sprintf('COM_JEM_INSTALL_DIRECTORY_EXISTS_SKIP', $createDirs[0]) . "</p>";
         } else {
@@ -196,7 +195,7 @@ class com_jemInstallerScript
         <p><?php echo Text::_('COM_JEM_UNINSTALL_TEXT'); ?></p>
         <?php
 
-        $this->useJemConfig = true; // since 2.1.6
+        $this->useJemConfig = true; 
         $globalParams = $this->getGlobalParams();
         $cleanup = $globalParams->get('global_cleanup_db_on_uninstall', 0);
         if (!empty($cleanup)) {
@@ -204,7 +203,7 @@ class com_jemInstallerScript
             $this->removeJemMenuItems();
             $this->removeAllJemTables();
             $imageDir = JPATH_SITE . '/images/jem';
-            if (Folder::exists($imageDir)) {
+            if (is_dir($imageDir)) {
                 Folder::delete($imageDir);
             }
         } else {
@@ -239,52 +238,55 @@ class com_jemInstallerScript
         $this->loadInstallerLanguage();
 
         $app = Factory::getApplication();
-        // JEM 4.5 supports Joomla 4.2.9+ and Joomla 5.x. Joomla 6 requires JEM 5.x.
-        $this->newRelease = (string)$parent->manifest->version;
-
-        if (version_compare(JVERSION, '4.2.9', 'lt') || version_compare(JVERSION, '6.0.0', 'ge')) {
-            $app->enqueueMessage(Text::_('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION'), 'warning');
+        
+        // Verify that we are in Joomla 5.4 or Joomla 6.
+        if (version_compare(JVERSION, '5.4.0', 'lt') || version_compare(JVERSION, '7.0.0', 'ge')) {
+            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_JOOMLA_VERSION', '5.4.0 / 6.x', JVERSION), 'error');
             return false;
         }
 
         // Minimum required PHP version
-        $minPhpVersion = "8.0.0";
+        $minPhpVersion = "8.3.0";
 
         // Abort if PHP release is older than required version
         if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
-            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'warning');
+            $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_WRONG_PHP_VERSION', $minPhpVersion, PHP_VERSION), 'error');
             return false;
         }
 
-        // abort if the release being installed is not newer than the currently installed version
-        $type = strtolower($type);
+        $this->newRelease = (string)$parent->getManifest()->version;
 
-        if ($type == 'update') {
+        // abort if the release being installed is not newer than the currently installed version
+        if (strtolower($type) == 'update') {
             // Installed component version
             $this->oldRelease = $this->getParam('version');
-            // Installing component version as per Manifest file
-            // $this->newRelease = $parent->get('manifest')->version;
-            if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
-                $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'warning');
+
+            $minUpgradeVersion = '4.4.2';
+
+            if ($this->oldRelease !== '' && version_compare($this->oldRelease, $minUpgradeVersion, 'lt')) {
+                $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $minUpgradeVersion, $this->oldRelease), 'error');
+                return false;
+            }
+            
+            if ($this->oldRelease !== '' && version_compare($this->newRelease, $this->oldRelease, 'lt')) {
+                $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_INCORRECT_VERSION_SEQUENCE', $this->oldRelease, $this->newRelease), 'error');
                 return false;
             }
 
-            // Check and remove obsolete files and folder
-            $this->deleteObsoleteFiles();
+            if ($this->oldRelease !== '') {
+                // Check and remove obsolete files and folder
+                $this->deleteObsoleteFiles();
+                $this->deleteObsoleteUpdateSqlFiles();
 
-            // Check columns in database
-            $this->checkColumnsIntoDatabase();
+                // Check columns in database
+                $this->checkColumnsIntoDatabase();
 
-            // Verify the data type of 'unregistra_until' in the database
-            if ($this->oldRelease < '4.3.1') {
-                $this->checkUnregistraUntil();
+                // Ensure css files are (over)writable
+                $this->makeFilesWritable();
+
+                // Initialize schema table if necessary
+                $this->initializeSchema($this->oldRelease);
             }
-
-            // Ensure css files are (over)writable
-            $this->makeFilesWritable();
-
-            // Initialize schema table if necessary
-            $this->initializeSchema($this->oldRelease);
         }
 
         // $type is the type of change (install, update or discover_install)
@@ -306,13 +308,7 @@ class com_jemInstallerScript
 
         $type = strtolower($type);
 
-        if ($type == 'update') {
-            // Changes between 2.3.5 -> 4.0
-            if (version_compare($this->oldRelease, '4.0', 'lt') && version_compare($this->newRelease, '2.3.5', 'gt')) {
-                // change categoriesdetailed view name in menu items
-                $this->updateJem2315();
-            }
-        } elseif ($type == 'install') {
+        if ($type == 'install') {
             $this->fixJemMenuItems();
         }
 
@@ -333,10 +329,13 @@ class com_jemInstallerScript
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
+        $query->select('manifest_cache')
+              ->from('#__extensions')
+              ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+              ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
+        return $manifest[$name] ?? '';
     }
 
     /**
@@ -350,7 +349,10 @@ class com_jemInstallerScript
             // read the existing component value(s)
             $db = Factory::getContainer()->get('DatabaseDriver');
             $query = $db->getQuery(true);
-            $query->select('params')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
+            $query->select('params')
+                  ->from('#__extensions')
+                  ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+                  ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
             $db->setQuery($query);
             $params = json_decode($db->loadResult(), true);
 
@@ -364,7 +366,8 @@ class com_jemInstallerScript
             $query = $db->getQuery(true);
             $query->update('#__extensions')
                 ->set('params = ' . $db->quote($paramsString))
-                ->where(array("type = 'component'", "element = 'com_jem'"));
+                ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+                ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
             $db->setQuery($query);
             $db->execute();
         }
@@ -373,7 +376,7 @@ class com_jemInstallerScript
     /**
      * Gets globalattrib values from the settings table
      *
-     * @return JRegistry object
+     * @return Registry
      */
     private function getGlobalParams()
     {
@@ -526,7 +529,10 @@ class com_jemInstallerScript
 
         // Get extension ID of JEM
         $query = $db->getQuery(true);
-        $query->select('extension_id')->from('#__extensions')->where(array("type='component'", "element='com_jem'"));
+        $query->select('extension_id')
+              ->from('#__extensions')
+              ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+              ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
         $db->setQuery($query);
         $extensionId = $db->loadResult();
 
@@ -537,7 +543,9 @@ class com_jemInstallerScript
 
         // Check if an entry already exists in schemas table
         $query = $db->getQuery(true);
-        $query->select('version_id')->from('#__schemas')->where('extension_id = ' . $extensionId);
+        $query->select('version_id')
+              ->from('#__schemas')
+              ->where('extension_id = ' . (int)$extensionId);
         $db->setQuery($query);
 
         if ($db->loadResult()) {
@@ -549,7 +557,7 @@ class com_jemInstallerScript
         $query = $db->getQuery(true);
         $query->insert('#__schemas')
             ->columns($db->quoteName(array('extension_id', 'version_id')))
-            ->values(implode(',', array($extensionId, $db->quote($versionId))));
+            ->values(implode(',', array((int)$extensionId, $db->quote($versionId))));
 
         $db->setQuery($query);
         $db->execute();
@@ -566,7 +574,8 @@ class com_jemInstallerScript
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->delete('#__menu');
-        $query->where(array('client_id = 0', 'link LIKE "index.php?option=com_jem%"'));
+        $query->where('client_id = 0')
+              ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
         $db->setQuery($query);
         $db->execute();
     }
@@ -584,7 +593,9 @@ class com_jemInstallerScript
         $query = $db->getQuery(true);
         $query->update('#__menu');
         $query->set('published = 0');
-        $query->where(array('client_id = 0', 'published > 0', 'link LIKE "index.php?option=com_jem%"'));
+        $query->where('client_id = 0')
+              ->where('published > 0')
+              ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
         $db->setQuery($query);
         $db->execute();
     }
@@ -600,22 +611,24 @@ class com_jemInstallerScript
         // Get (new) extension ID of JEM
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select('extension_id')->from('#__extensions')->where(array("type='component'", "element='com_jem'"));
+        $query->select('extension_id')
+              ->from('#__extensions')
+              ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+              ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
         $db->setQuery($query);
         $newId = $db->loadResult();
 
         if ($newId) {
-            // set compponent id on all "com_jem..." frontend entries
+            // set component id on all "com_jem..." frontend entries
             $query = $db->getQuery(true);
             $query->update('#__menu');
-            $query->set('component_id = ' . $db->quote($newId));
-            $query->where(array('client_id = 0', 'link LIKE "index.php?option=com_jem%"'));
+            $query->set('component_id = ' . (int)$newId);
+            $query->where('client_id = 0')
+                  ->where('link LIKE ' . $db->quote('index.php?option=com_jem%'));
             $db->setQuery($query);
             $db->execute();
         }
     }
-
-
 
     /**
      * Remove the legacy Help entry from Joomla's administrator component menu.
@@ -656,6 +669,7 @@ class com_jemInstallerScript
         $db->setQuery($query);
         $db->execute();
     }
+
     /**
      * Repair generated frontend type menu items whose stored type id became stale.
      *
@@ -723,6 +737,7 @@ class com_jemInstallerScript
             $db->execute();
         }
     }
+
     /**
      * Remove all obsolete files and folders of previous versions.
      *
@@ -734,7 +749,6 @@ class com_jemInstallerScript
     {
         // obsolete files
         $files = array(
-            '/components/com_jem/classes/iCalcreator.class.php',
             '/administrator/components/com_jem/help/images/administrator.gif',
             '/administrator/components/com_jem/help/images/checked_out.png',
             '/administrator/components/com_jem/help/images/icon-32-attention.png',
@@ -755,35 +769,6 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/1.9.6.sql',
             '/administrator/components/com_jem/sql/updates/1.9.7.sql',
             '/administrator/components/com_jem/sql/updates/1.9.8.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.0.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.0.3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.0.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.4.2.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.5.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.6-dev3.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.6-dev5.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.7-dev1.sql',
-            '/administrator/components/com_jem/sql/updates/2.1.7-dev5.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.0-p1.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.1-dev2.sql',
-            '/administrator/components/com_jem/sql/updates/2.2.3-dev3.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
-            '/administrator/components/com_jem/sql/updates/2.3.1.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.13.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.14.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.15.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.16.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.17.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/4.0b2.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/4.0b4.sql',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',
@@ -1053,6 +1038,7 @@ class com_jemInstallerScript
         $folders = array(
             '/media/com_jem/FontAwesome',
             '/plugins/quickicon/jemquickicon',
+            '/plugins/search/jem',
             '/media/com_jem/images/flags/w20-png',
             '/components/com_jem/common/views/tmpl/alternative',
             '/components/com_jem/views/attendees/tmpl/alternative',
@@ -1071,15 +1057,48 @@ class com_jemInstallerScript
 
         // delete files
         foreach ($files as $file) {
-            if (File::exists(JPATH_ROOT . $file) && !File::delete(JPATH_ROOT . $file)) {
+            if (is_file(JPATH_ROOT . $file) && !File::delete(JPATH_ROOT . $file)) {
                 echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $file).'<br>';
             }
         }
 
         // delete folders
         foreach ($folders as $folder) {
-            if (Folder::exists(JPATH_ROOT . $folder) && !Folder::delete(JPATH_ROOT . $folder)) {
+            if (is_dir(JPATH_ROOT . $folder) && !Folder::delete(JPATH_ROOT . $folder)) {
                 echo Text::sprintf('FILES_JOOMLA_ERROR_FILE_FOLDER', $folder).'<br>';
+            }
+        }
+    }
+
+    /**
+     * Remove old SQL update files that no longer describe the current schema.
+     *
+     * Joomla's Database Check compares installed update files with the current
+     * database structure, so leftovers from old JEM branches can report false
+     * problems after a long upgrade path.
+     *
+     * @return void
+     */
+    private function deleteObsoleteUpdateSqlFiles()
+    {
+        $dirs = array(
+            JPATH_ADMINISTRATOR . '/components/com_jem/sql/updates',
+            JPATH_ADMINISTRATOR . '/components/com_jem/sql/updates/mysql',
+        );
+
+        foreach ($dirs as $dir) {
+            if (!is_dir($dir)) {
+                continue;
+            }
+
+            $files = Folder::files($dir, '\.sql$', false, true);
+
+            foreach ($files as $file) {
+                $version = basename($file, '.sql');
+
+                if (preg_match('/^\d+(?:\.\d+)+$/', $version) && version_compare($version, '4.5.0', 'lt')) {
+                    File::delete($file);
+                }
             }
         }
     }
@@ -1092,7 +1111,6 @@ class com_jemInstallerScript
     private function checkColumnsIntoDatabase()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
         $existingTables = $db->getTableList();
 
         // Array the columns to check
@@ -1154,148 +1172,6 @@ class com_jemInstallerScript
     }
 
     /**
-     * Update data items related to datetime format into JEM.
-     * (required when updating/migrating from 2.3.3/5/6 to new version 4.0.0 with support Joomla 4.x or newer)
-     *
-     * @return void
-     */
-    private function updateJem2315()
-    {
-        // write changed datetime entry '0000-00-00 ...' to null into DB
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-
-        //Categories table
-        $query = $db->getQuery(true);
-        $query->update('#__jem_categories');
-        $query->set("modified_time = null");
-        $query->where(array("modified_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_categories');
-        $query->set("checked_out_time = null");
-        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_categories');
-        $query->set("created_time = now()");
-        $query->where(array("created_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        //Events table
-        $query = $db->getQuery(true);
-        $query->update('#__jem_events');
-        $query->set("created = now()");
-        $query->where(array("created LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_events');
-        $query->set("modified = null");
-        $query->where(array("modified LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_events');
-        $query->set("checked_out_time = null");
-        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        //Groups table
-        $query = $db->getQuery(true);
-        $query->update('#__jem_groups');
-        $query->set("checked_out_time = null");
-        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        //Venues table
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set("created = now()");
-        $query->where(array("created LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set("modified = null");
-        $query->where(array("modified LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set("checked_out_time = null");
-        $query->where(array("checked_out_time LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set("publish_up = null");
-        $query->where(array("publish_up LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        $query = $db->getQuery(true);
-        $query->update('#__jem_venues');
-        $query->set("publish_down = null");
-        $query->where(array("publish_down LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-
-        //Attachments table
-        $query = $db->getQuery(true);
-        $query->update('#__jem_attachments');
-        $query->set("added = null");
-        $query->where(array("added LIKE '%0000-00-00%'"));
-        $db->setQuery($query);
-        $db->execute();
-    }
-
-    /**
-     * Delete JEM update server entry from #__update_sites table.
-     *
-     * @return void
-     */
-    private function removeUpdateServerEntry()
-    {
-        // Find entry and get id
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('update_site_id');
-        $query->from('#__update_sites');
-        $query->where(array("location LIKE '%joomlaeventmanager.invalid%'"));
-        $db->setQuery($query);
-        $id = $db->loadResult();
-
-        if (!empty($id)) {
-            // remove entry
-            $query = $db->getQuery(true);
-            $query->delete('#__update_sites');
-            $query->where(array('update_site_id = ' . $db->quote($id)));
-            $db->setQuery($query);
-            $db->execute();
-
-            // but also from this table
-            $query = $db->getQuery(true);
-            $query->delete('#__update_sites_extensions');
-            $query->where(array('update_site_id = ' . $db->quote($id)));
-            $db->setQuery($query);
-            $db->execute();
-        }
-    }
-
-    /**
      * Deletes all JEM tables on database if option says so.
      *
      * @return void
@@ -1328,44 +1204,4 @@ class com_jemInstallerScript
             }
         }
     }
-
-    /**
-     * Verify the data type of 'unregistra_until' in the database when JEM version < 4.3.1
-     *
-     * @return void
-     */
-    private function checkUnregistraUntil()
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
-        try {
-            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` INT(11) NULL DEFAULT '0'";
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` = 0";
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = "UPDATE `#__jem_events` SET `unregistra_until` = NULL WHERE `unregistra_until` != 0 AND (times IS NULL OR dates IS NULL)";
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` VARCHAR(20) NULL";
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = "UPDATE `#__jem_events` SET `unregistra_until` = DATE_FORMAT(DATE_SUB(CONCAT(`dates`, ' ', `times`), INTERVAL `unregistra_until` HOUR),'%Y-%m-%d %H:%i:%s') WHERE `unregistra_until` != 0 AND `times` IS NOT NULL AND `dates` IS NOT NULL";
-            $db->setQuery($query);
-            $db->execute();
-
-            $query = "ALTER TABLE `#__jem_events` CHANGE `unregistra_until` `unregistra_until` DATETIME DEFAULT NULL";
-            $db->setQuery($query);
-            $db->execute();
-        } catch (\Exception $e) {
-            echo "Error updating `unregistra_until`: " . $e->getMessage();
-        }
-    }
-
 }
-

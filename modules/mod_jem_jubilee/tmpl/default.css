@@ -95,6 +95,17 @@ div#jemmodulejubilee .desc {
     font-size: small;
 }
 
+div#jemmodulejubilee .jem-readmore,
+div#jemmodulejubilee .jem-more-information {
+    clear: both;
+    margin-top: 0.35rem;
+}
+
+div#jemmodulejubilee .jem-readmore .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
+}
+
 div#jemmodulejubilee .time {
     padding-top: 2px;
     font-weight: normal;

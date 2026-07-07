@@ -29,18 +29,12 @@ class Pkg_JemInstallerScript
      */
     protected $versions = array(
         'PHP' => array (
-            '8.0' => '8.0',
-            '0' => '8.0' // Preferred version
+            '8.3.0' => '8.3.0',
+            '0' => '8.4' // Preferred version
             ),
         'MySQL' => array (
-            '8.0' => '8.0',
-            '5.6' => '5.6',
-            '0' => '5.6' // Preferred version
-            ),
-        'Joomla!' => array (
-            '4.2' => '4.2',
-            '4.0' => '',
-            '0' => '4.2' // Preferred version
+            '8.0.13' => '8.0.13',
+            '0' => '8.4' // Preferred version
             )
         );
 
@@ -80,7 +74,6 @@ class Pkg_JemInstallerScript
 
     public function postflight($type, $parent) {
         // Clear Joomla system cache.
-        /** @var JCache|JCacheController $cache */
         $cache = Factory::getCache();
         $cache->clean('_system');
 
@@ -95,13 +88,8 @@ class Pkg_JemInstallerScript
         $this->enablePlugin('quickicon', 'jem');
         $this->uninstallPlugin('content', 'jem');
         $this->uninstallPlugin('search', 'jem');
-    //    $this->enablePlugin('finder', 'jem');
-    //    $this->enablePlugin('jem', 'mailer');
-
-        # ajax calendar module doesn't fully work on Joomla! 2.5
-        if (version_compare(JVERSION, '3', '<')) {
-            $this->disableModule('mod_jem_calajax');
-        }
+        $this->uninstallModule('mod_jem_calajax');
+        $this->normaliseJemModuleParams();
 
         return true;
     }
@@ -121,22 +109,43 @@ class Pkg_JemInstallerScript
             return false;
         }
 
+        if (!is_dir(JPATH_ROOT . '/plugins/' . $group . '/' . $element)) {
+            return $plugin->delete((int) $plugin->extension_id);
+        }
+
         return Installer::getInstance()->uninstall('plugin', (int) $plugin->extension_id);
     }
 
-    function disableModule($element) {
+    function uninstallModule($element) {
         $module = Table::getInstance('extension');
         if (!$module->load(array('type'=>'module', 'element'=>$element))) {
             return false;
         }
-        $module->enabled = 0;
-        return $module->store();
+
+        return Installer::getInstance()->uninstall('module', (int) $module->extension_id);
+    }
+
+    /**
+     * Joomla's module editor expects module instance params to contain valid JSON.
+     */
+    function normaliseJemModuleParams() {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__modules'))
+            ->set($db->quoteName('params') . ' = ' . $db->quote('{}'))
+            ->where($db->quoteName('client_id') . ' = 0')
+            ->where($db->quoteName('module') . ' LIKE ' . $db->quote('mod_jem%'))
+            ->where('(' . $db->quoteName('params') . ' IS NULL OR ' . $db->quoteName('params') . ' = ' . $db->quote('') . ')');
+
+        $db->setQuery($query);
+        $db->execute();
     }
 
     public function checkRequirements() {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $pass  = $this->checkVersion('PHP', phpversion());
-        $pass &= $this->checkVersion('Joomla!', JVERSION);
+        $pass &= $this->checkJoomlaVersion();
         $pass &= $this->checkVersion('MySQL', $db->getVersion ());
         $pass &= $this->checkDbo($db->name, array('mysql', 'mysqli'));
         $pass &= $this->checkExtensions($this->extensions);
@@ -167,6 +176,17 @@ class Pkg_JemInstallerScript
         } else {
             $app->enqueueMessage(sprintf("%s %s is not supported. It is highly recommended to use %s %s or later.", $name, $version, $name, $recommended), 'notice');
         }
+        return false;
+    }
+
+    protected function checkJoomlaVersion() {
+        $app = Factory::getApplication();
+
+        if (version_compare(JVERSION, '5.4.0', '>=') && version_compare(JVERSION, '7.0.0', '<')) {
+            return true;
+        }
+
+        $app->enqueueMessage(sprintf("Joomla! %s is not supported. This package requires Joomla! 5.4.x or Joomla! 6.x.", JVERSION), 'notice');
         return false;
     }
 

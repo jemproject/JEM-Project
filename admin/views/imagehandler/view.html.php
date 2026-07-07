@@ -9,13 +9,10 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\String\StringHelper;
 
 /**
@@ -106,7 +103,7 @@ class JemViewImagehandler extends HtmlView
         if (isset($this->images[$index])) {
             $this->_tmp_img = $this->images[$index];
         } else {
-            $this->_tmp_img = new CMSObject;
+            $this->_tmp_img = new stdClass();
         }
     }
 

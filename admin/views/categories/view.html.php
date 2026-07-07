@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -18,9 +19,9 @@ use Joomla\CMS\Factory;
  */
 class JemViewCategories extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     /**
      * Display the view
@@ -108,30 +109,28 @@ class JemViewCategories extends JemAdminView
      */
     protected function addToolbar()
     {
-
-        // Initialise variables.
-        $canDo        = null;
-        $user        = JemFactory::getUser();
-
-        // Get the results for each action.
         $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
-        $showActionDropdown = $canChangeState || ($this->state->get('filter.published') == -2 && $canDelete);
+        $user  = JemFactory::getUser();
 
         ToolbarHelper::title(Text::_('COM_JEM_CATEGORIES'), 'elcategories');
-        $toolbar = $this->getToolbarInstance();
 
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $filterState = $this->state->get('filter.published');
+
+        /* create */
         if ($canDo->get('core.create')) {
-             ToolbarHelper::addNew('category.add');
+            ToolbarHelper::addNew('category.add');
         }
 
-        if ($canDo->get('core.edit' ) || $canDo->get('core.edit.own')) {
+        /* edit */
+        if ($canDo->get('core.edit') || $canDo->get('core.edit.own')) {
             ToolbarHelper::editList('category.edit');
             ToolbarHelper::divider();
         }
 
-        if ($showActionDropdown && $this->supportsToolbarDropdown($toolbar)) {
+        /* action dropdown */
+        if ($canChangeState) {
+            $toolbar  = Toolbar::getInstance('toolbar');
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -141,40 +140,34 @@ class JemViewCategories extends JemAdminView
             $childBar = $dropdown->getChildToolbar();
 
             if ($canChangeState) {
-                $childBar->publish('categories.publish')->listCheck(true);
-                $childBar->unpublish('categories.unpublish')->listCheck(true);
-                $childBar->archive('categories.archive')->listCheck(true);
-            }
-
-            if ($canChangeState && $user->authorise('core.admin')) { // todo: is that correct?
+                if ($filterState != 2) {
+                    $childBar->publish('categories.publish')->listCheck(true);
+                    $childBar->unpublish('categories.unpublish')->listCheck(true);
+                }
+                if ($filterState != 2) {
+                    $childBar->archive('categories.archive')->listCheck(true);
+                } else {
+                    $childBar->publish('categories.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+                }
                 $childBar->checkin('categories.checkin')->listCheck(true);
-            }
 
-            if ($this->state->get('filter.published') == -2 && $canDelete) {
-                $childBar->delete('categories.remove', 'JTOOLBAR_EMPTY_TRASH')
-                    ->message('COM_JEM_CONFIRM_DELETE')
-                    ->listCheck(true);
-            } elseif ($canChangeState) {
-                $childBar->trash('categories.trash')->listCheck(true);
-            }
-        } elseif ($showActionDropdown) {
-            if ($canChangeState) {
-                ToolbarHelper::publishList('categories.publish');
-                ToolbarHelper::unpublishList('categories.unpublish');
-                ToolbarHelper::archiveList('categories.archive');
-            }
-
-            if ($canChangeState && $user->authorise('core.admin')) { // todo: is that correct?
-                ToolbarHelper::checkin('categories.checkin');
-            }
-
-            if ($this->state->get('filter.published') == -2 && $canDelete) {
-                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'categories.remove', 'JTOOLBAR_EMPTY_TRASH');
-            } elseif ($canChangeState) {
-                ToolbarHelper::trash('categories.trash');
+                /* "Trash" only visible if not in Trash view */
+                if ($filterState != -2) {
+                    $childBar->trash('categories.trash')->listCheck(true);
+                }
             }
         }
 
+        /* "Delete" as separate button – only in Trash-view (like in Joomla Categories or Articles)*/
+        if ($filterState == -2 && $canDo->get('core.delete')) {
+            ToolbarHelper::divider();
+            $toolbar = Toolbar::getInstance('toolbar');
+            $toolbar->delete('categories.remove', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
+        }
+
+        /* rebuild */
         if ($canDo->get('core.admin')) {
             ToolbarHelper::divider();
             ToolbarHelper::custom('categories.rebuild', 'refresh.webp', 'refresh_f2.webp', 'JTOOLBAR_REBUILD', false);

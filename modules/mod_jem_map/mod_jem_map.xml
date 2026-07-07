@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="module" version="4.4" client="site" method="upgrade">
+<extension type="module" version="5.0" client="site" method="upgrade">
     <name>mod_jem_map</name>
     <author>JEM Community</author>
     <creationDate>7 July 2026</creationDate>
@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0</version>
+    <version>5.0.0</version>
     <description>MOD_JEM_MAP_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -223,7 +223,7 @@
                        description="MOD_JEM_MAP_FOOTERTEXT_DESC"
                        showon="showfootertext:1"
                 />
-            </fieldset>
+</fieldset>
             <fieldset name="advanced">
                 <field name="layout" type="modulelayout"
                        label="JFIELD_ALT_LAYOUT_LABEL"
@@ -259,7 +259,7 @@
                 >
                     <option value="static"></option>
                 </field>
-            </fieldset>
+</fieldset>
         </fields>
     </config>
 </extension>

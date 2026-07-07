@@ -2,8 +2,6 @@
 namespace Joomla\Plugin\Quickicon\Jem\Extension;
 
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
 
 defined('_JEXEC') or die;
 

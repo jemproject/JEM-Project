@@ -9,8 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\Path;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\Path;
+use Joomla\Filesystem\File;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\AdminModel;
@@ -189,6 +189,11 @@ class JemModelSource extends AdminModel
         return '';
     }
 
+    protected function removeLegacyCustomUserHeader($contents)
+    {
+        return preg_replace('/^\s*\*\s*JEM custom created by:\s*[^\r\n]*(\r\n|\r|\n)/m', '', (string) $contents);
+    }
+
     public function getSourceDetails()
     {
         $fileName = $this->getState('filename');
@@ -328,6 +333,10 @@ class JemModelSource extends AdminModel
                 $item->custom   = $source->custom;
                 $item->filename = $source->file;
                 $item->source   = file_get_contents($source->path);
+
+                if ($source->custom) {
+                    $item->source = $this->removeLegacyCustomUserHeader($item->source);
+                }
             } else {
                 $item->custom   = false;
                 $item->filename = false;
@@ -378,6 +387,10 @@ class JemModelSource extends AdminModel
         if (!$ftp['enabled'] && Path::isOwner($filePath) && !Path::setPermissions($filePath, '0644')) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_WRITABLE'));
             return false;
+        }
+
+        if ($source->custom) {
+            $data['source'] = $this->removeLegacyCustomUserHeader($data['source']);
         }
 
         $return = File::write($filePath, $data['source']);

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 
@@ -19,9 +20,9 @@ use Joomla\CMS\Uri\Uri;
  */
 class JemViewCategory extends JemAdminView
 {
-    protected $form;
-    protected $item;
-    protected $state;
+    public $form;
+    public $item;
+    public $state;
 
     /**
      * Display the view
@@ -84,37 +85,40 @@ class JemViewCategory extends JemAdminView
 
         // Get the results for each action.
         $canDo = JemHelperBackend::getActions();
+        $canCreateCategory = $canDo->get('core.create') || count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0;
+        $canEditCategory   = !$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId));
+        $canSave           = ($isNew && $canCreateCategory) || (!$isNew && $canEditCategory);
+        $canSave2New       = ($isNew && $canCreateCategory) || (!$isNew && $canEditCategory && $canDo->get('core.create'));
+        $canSave2Copy      = !$isNew && $canDo->get('core.create');
+        $cancelText        = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         $title = Text::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
         // Prepare the toolbar.
         ToolbarHelper::title($title, 'category-'.($isNew?'add':'edit').' -category-'.($isNew?'add':'edit'));
 
-        // For new records, check the create permission.
-        if ($isNew && (count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0)) {
+        if ($canSave) {
             ToolbarHelper::apply('category.apply');
-            ToolbarHelper::save('category.save');
-            ToolbarHelper::save2new('category.save2new');
-        }
 
-        // If not checked out, can save the item.
-        elseif (!$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId))) {
-            ToolbarHelper::apply('category.apply');
-            ToolbarHelper::save('category.save');
-            if ($canDo->get('core.create')) {
-                ToolbarHelper::save2new('category.save2new');
+            $toolbar = Toolbar::getInstance('toolbar');
+            $saveGroup = $toolbar->dropdownButton('save-group')
+                ->toggleSplit(true)
+                ->icon('icon-save')
+                ->buttonClass('btn btn-success')
+                ->listCheck(false);
+
+            $childBar = $saveGroup->getChildToolbar();
+            $childBar->save('category.save');
+
+            if ($canSave2New) {
+                $childBar->save2new('category.save2new');
+            }
+
+            if ($canSave2Copy) {
+                $childBar->save2copy('category.save2copy');
             }
         }
 
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::save2copy('category.save2copy');
-        }
-
-        if (empty($this->item->id))  {
-            ToolbarHelper::cancel('category.cancel');
-        } else {
-            ToolbarHelper::cancel('category.cancel', 'JTOOLBAR_CLOSE');
-        }
+        ToolbarHelper::cancel('category.cancel', $cancelText);
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();

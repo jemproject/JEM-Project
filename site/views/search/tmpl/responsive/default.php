@@ -26,6 +26,7 @@ use Joomla\CMS\Language\Text;
         <?php echo $this->params->get('introtext'); ?>
     </div>
     <?php endif; ?>
+
     <?php if ($this->params->get('show_search_title', 1)) : ?>
     <h2>
         <?php echo Text::_('COM_JEM_SEARCH_SUBMIT');?>

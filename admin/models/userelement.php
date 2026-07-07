@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\String\StringHelper;
 
 /**
  * Userelement-Model
@@ -93,7 +94,7 @@ class JemModelUserelement extends BaseDatabaseModel
         $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
 
         $search           = $app->getUserStateFromRequest('com_jem.userelement.filter_search', 'filter_search', '', 'string' );
-        $search           = $this->_db->escape( trim(\Joomla\String\StringHelper::strtolower( $search ) ) );
+        $search           = $this->_db->escape( trim(StringHelper::strtolower( $search ) ) );
 
         // start query
         $db = Factory::getContainer()->get('DatabaseDriver');

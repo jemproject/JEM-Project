@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/" lang="en-GB" xml:lang="en-GB">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><span>30</span>Frontend Views Reference</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
+        <h1>Frontend Views Reference</h1>
+        <p>
+            This page summarises the JEM frontend menu views and the most important options exposed by their menu XML files.
+            It is intended as a local reference and as starter material for the online frontend manual.
+        </p>
+
+        <h2>Event Views</h2>
+        <table class="help">
+            <tr><th>View</th><th>Purpose</th><th>Main options and defaults</th></tr>
+            <tr>
+                <td>Events list</td>
+                <td>Lists events with category, venue, date and table controls.</td>
+                <td>Show archived events: No. Featured only: No. Show intro text for events: No. Show icons in order/title/data: Yes. Default ordering: Date, ascending. Date filters support from/until limits. Category filter can include or exclude category IDs and can include subcategories. Open dates can be hidden, shown too, or shown only.</td>
+            </tr>
+            <tr>
+                <td>Event detail</td>
+                <td>Displays one selected event.</td>
+                <td>Requires an event selection. Event output then follows the event record, global JEM settings and event-specific display overrides.</td>
+            </tr>
+            <tr>
+                <td>Day</td>
+                <td>Shows events for one day or a day offset.</td>
+                <td>Day offset field selects the target day. Featured only: No. Intro text can be shown or hidden. Category switch can include or exclude category IDs. Footer text can be shown or hidden.</td>
+            </tr>
+            <tr>
+                <td>Calendar</td>
+                <td>Month calendar view.</td>
+                <td>Intro text can be shown or hidden. Archived events: No. Top category can restrict the tree. Legend positions include no legend, above, below and venue variants. First weekday: Sunday or Monday. Day limit controls visible event items per day. Add, edit and copy event icons can be enabled. Calendar colors include link, background, current day, more-link and featured border colors.</td>
+            </tr>
+            <tr>
+                <td>Week calendar</td>
+                <td>Calendar grouped by weeks.</td>
+                <td>Shares calendar options for intro text, archived events, top category, legend, first weekday, day limit, action icons and colors. Number of weeks controls how many weeks are displayed.</td>
+            </tr>
+            <tr>
+                <td>Type events</td>
+                <td>Lists events assigned to a selected Event type.</td>
+                <td>Requires a type selection. Show event intro text: No. Show month row: Yes.</td>
+            </tr>
+        </table>
+
+        <h2>Category Views</h2>
+        <table class="help">
+            <tr><th>View</th><th>Purpose</th><th>Main options and defaults</th></tr>
+            <tr>
+                <td>Categories</td>
+                <td>Lists categories below a selected root category.</td>
+                <td>Root category selection is optional. Show empty categories: Yes. Category count and detail count control how many categories and events are shown. Use category description: Yes. Show empty child categories: No.</td>
+            </tr>
+            <tr>
+                <td>Category</td>
+                <td>Shows one category and its events.</td>
+                <td>Requires a category selection. Intro text can be shown or hidden. Use category description: Yes. Show empty child categories: No. Include child events: Yes.</td>
+            </tr>
+        </table>
+
+        <h2>Venue Views</h2>
+        <table class="help">
+            <tr><th>View</th><th>Purpose</th><th>Main options and defaults</th></tr>
+            <tr>
+                <td>Venue</td>
+                <td>Displays one selected venue and its events.</td>
+                <td>Requires a venue selection. Intro text can be shown or hidden.</td>
+            </tr>
+            <tr>
+                <td>Venues</td>
+                <td>Displays grouped venues with event lists.</td>
+                <td>Number of venues controls how many venue groups are shown.</td>
+            </tr>
+            <tr>
+                <td>Venues list</td>
+                <td>Lists venues in a table/list layout.</td>
+                <td>Intro text can be shown or hidden. Show state: Yes. Show venue calendar link: Yes. Display order can be venue/city/country, venue/country/city, city/venue/country, city/country/venue, country/venue/city or country/city/venue.</td>
+            </tr>
+            <tr>
+                <td>Type venues</td>
+                <td>Lists venues assigned to a selected Venue type.</td>
+                <td>Requires a type selection. Show state: Yes. Show venue calendar link: Yes. Uses the same display-order options as Venues list.</td>
+            </tr>
+        </table>
+
+        <h2>Map Views</h2>
+        <table class="help">
+            <tr><th>View</th><th>Purpose</th><th>Main options and defaults</th></tr>
+            <tr>
+                <td>Events map</td>
+                <td>Displays event locations on a map.</td>
+                <td>Intro text can be shown or hidden. Auto centre: Yes. Zoom default: 13. Map type: political or physical. My location, full screen and heat layer can be enabled. Date filter is shown by default and can default to all, today, tomorrow, week, month, year or date. Category and country filters can be shown. Height default: 500px.</td>
+            </tr>
+            <tr>
+                <td>Venues map</td>
+                <td>Displays venue locations on a map.</td>
+                <td>Intro text can be shown or hidden. Show state: Yes. Auto centre: Yes. Zoom default: 13. Map type: political or physical. My location, full screen, heat layer, category filter and country filter can be enabled. Height can be configured.</td>
+            </tr>
+        </table>
+
+        <h2>User And Search Views</h2>
+        <table class="help">
+            <tr><th>View</th><th>Purpose</th><th>Main options and defaults</th></tr>
+            <tr>
+                <td>Search</td>
+                <td>Searches JEM events and venues.</td>
+                <td>Intro text can be shown or hidden. Top category can restrict results. Date filter type can use event start date or all event dates. Template suffix can be set. Filter fields can show event type, category, venue, continent, country and dates.</td>
+            </tr>
+            <tr>
+                <td>My events</td>
+                <td>Shows events created or editable by the current user.</td>
+                <td>Attendee column: No. Email address display: No.</td>
+            </tr>
+            <tr>
+                <td>My venues</td>
+                <td>Shows venues created or editable by the current user.</td>
+                <td>Uses the frontend venue list layout for the current user context.</td>
+            </tr>
+            <tr>
+                <td>My attendances</td>
+                <td>Shows registrations for the current user.</td>
+                <td>Registration filter: Yes. Past-registration period controls how far back registrations remain visible.</td>
+            </tr>
+        </table>
+    </body>
+</html>

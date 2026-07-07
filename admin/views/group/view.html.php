@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -24,9 +25,9 @@ use Joomla\CMS\Filter\OutputFilter;
  */
 class JemViewGroup extends JemAdminView
 {
-    protected $form;
-    protected $item;
-    protected $state;
+    public $form;
+    public $item;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -82,35 +83,43 @@ class JemViewGroup extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user        = JemFactory::getUser();
+        $user         = JemFactory::getUser();
         $isNew        = ($this->item->id == 0);
-        $checkedOut    = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
+        $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
         $canDo        = JemHelperBackend::getActions();
+        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
+        $canSave2New  = !$checkedOut && $canDo->get('core.create');
+        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_GROUP_ADD') : Text::_('COM_JEM_GROUP_EDIT'), 'groupedit');
 
-        // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+        if ($canSave) {
             ToolbarHelper::apply('group.apply');
-            ToolbarHelper::save('group.save');
-        }
-        if (!$checkedOut && $canDo->get('core.create')) {
-            ToolbarHelper::save2new('group.save2new');
-        }
-        // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
-            ToolbarHelper::save2copy('group.save2copy');
+
+            $toolbar = Toolbar::getInstance('toolbar');
+            $saveGroup = $toolbar->dropdownButton('save-group')
+                ->toggleSplit(true)
+                ->icon('icon-save')
+                ->buttonClass('btn btn-success')
+                ->listCheck(false);
+
+            $childBar = $saveGroup->getChildToolbar();
+            $childBar->save('group.save');
+
+            if ($canSave2New) {
+                $childBar->save2new('group.save2new');
+            }
+
+            if ($canSave2Copy) {
+                $childBar->save2copy('group.save2copy');
+            }
         }
 
-        if (empty($this->item->id))  {
-            ToolbarHelper::cancel('group.cancel');
-        } else {
-            ToolbarHelper::cancel('group.cancel', 'JTOOLBAR_CLOSE');
-        }
+        ToolbarHelper::cancel('group.cancel', $cancelText);
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
         ToolBarHelper::help('editgroup', true, 'https://www.joomlaeventmanager.net/documentation/backend/groups/add-group');
     }
 }
-?>

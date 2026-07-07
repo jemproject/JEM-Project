@@ -8,6 +8,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 
 /**
@@ -235,7 +237,7 @@ class JemCustomFields
                 }
             }
         } catch (Exception $e) {
-            $languages = \Joomla\CMS\Language\LanguageHelper::getContentLanguages(array(1), false);
+            $languages = LanguageHelper::getContentLanguages(array(1), false);
 
             foreach ($languages as $language) {
                 if (!empty($language->lang_code) && self::hasLegacyLanguageIni($language->lang_code)) {
@@ -573,7 +575,7 @@ class JemCustomFields
                 break;
 
             case self::TYPE_SAFEHTML:
-                $value = \Joomla\CMS\Filter\InputFilter::getInstance(array(), array(), 1, 1)->clean($value, 'html');
+                $value = InputFilter::getInstance(array(), array(), 1, 1)->clean($value, 'html');
                 break;
 
             case self::TYPE_LIST:
@@ -627,7 +629,7 @@ class JemCustomFields
         }
 
         if ($type === self::TYPE_SAFEHTML) {
-            return \Joomla\CMS\Filter\InputFilter::getInstance(array(), array(), 1, 1)->clean($value, 'html');
+            return InputFilter::getInstance(array(), array(), 1, 1)->clean($value, 'html');
         }
 
         if ($type === self::TYPE_LIST) {

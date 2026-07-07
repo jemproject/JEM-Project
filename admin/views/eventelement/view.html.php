@@ -12,6 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\String\StringHelper;
 
 /**
  * Eventelement-View
@@ -35,7 +36,7 @@ class JemViewEventelement extends Htmlview {
         $filter_type      = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_type',   'filter_type', 0, 'int');
         $filter_state     = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_state',  'filter_state', '', 'string');
         $filter_search    = $app->getUserStateFromRequest('com_jem.eventelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-        $filter_search    = $db->escape(trim(\Joomla\String\StringHelper::strtolower($filter_search)));
+        $filter_search    = $db->escape(trim(StringHelper::strtolower($filter_search)));
 
         //prepare the document
         $document->setTitle(Text::_('COM_JEM_SELECTEVENT'));

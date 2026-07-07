@@ -13,6 +13,7 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\String\StringHelper;
 
 /**
  * JEM venues Model class
@@ -154,35 +155,35 @@ class jem_venues extends Table
         }
 
         $this->street = strip_tags($this->street);
-        if (\Joomla\String\StringHelper::strlen($this->street) > 50) {
+        if (StringHelper::strlen($this->street) > 50) {
             $this->_error = Text::_('COM_JEM_ERROR_STREET_LONG');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;
         }
 
         $this->postalCode = strip_tags($this->postalCode);
-        if (\Joomla\String\StringHelper::strlen($this->postalCode) > 10) {
+        if (StringHelper::strlen($this->postalCode) > 10) {
             $this->_error = Text::_('COM_JEM_ERROR_ZIP_LONG');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;
         }
 
         $this->city = strip_tags($this->city);
-        if (\Joomla\String\StringHelper::strlen($this->city) > 50) {
+        if (StringHelper::strlen($this->city) > 50) {
             $this->_error = Text::_('COM_JEM_ERROR_CITY_LONG');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;
         }
 
         $this->state = strip_tags($this->state);
-        if (\Joomla\String\StringHelper::strlen($this->state) > 50) {
+        if (StringHelper::strlen($this->state) > 50) {
             $this->_error = Text::_('COM_JEM_ERROR_STATE_LONG');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;
         }
 
         $this->country = strip_tags($this->country);
-        if (\Joomla\String\StringHelper::strlen($this->country) > 2) {
+        if (StringHelper::strlen($this->country) > 2) {
             $this->_error = Text::_('COM_JEM_ERROR_COUNTRY_LONG');
             Factory::getApplication()->enqueueMessage($this->_error, 'warning');
             return false;

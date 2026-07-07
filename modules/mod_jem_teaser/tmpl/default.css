@@ -8,6 +8,7 @@
 
 div#jemmoduleteaser {
     width: 100%;
+    container-type: inline-size;
 }
 
 div#jemmoduleteaser [class^="event_id"]:not(:last-of-type) {
@@ -90,10 +91,18 @@ div#jemmoduleteaser .eventset {
     text-align: left;
 }
 
+div#jemmoduleteaser [class^="event_id"] > table {
+    width: auto;
+    max-width: 100%;
+    border-collapse: collapse;
+}
+
 div#jemmoduleteaser .event-datetime {vertical-align: top;}
 
 div#jemmoduleteaser .event-title {
     font-size: medium;
+    margin: 0 0 0.35rem;
+    line-height: 1.25;
 }
 
 div#jemmoduleteaser .time {
@@ -102,6 +111,33 @@ div#jemmoduleteaser .time {
 
 div#jemmoduleteaser div.date {
     padding-top: 2px;
+}
+
+div#jemmoduleteaser .teaser-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    align-items: center;
+    margin-bottom: 0.35rem;
+    font-size: smaller;
+}
+
+div#jemmoduleteaser .teaser-meta .time,
+div#jemmoduleteaser .teaser-meta .date,
+div#jemmoduleteaser .teaser-meta .category,
+div#jemmoduleteaser .teaser-meta .venue-title {
+    padding-top: 0;
+}
+
+div#jemmoduleteaser .jem-readmore,
+div#jemmoduleteaser .jem-more-information {
+    clear: both;
+    margin-top: 0.35rem;
+}
+
+div#jemmoduleteaser .jem-readmore .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
 }
 
 div#jemmoduleteaser .category {
@@ -171,6 +207,70 @@ div#jemmoduleteaser .image-preview {
     padding: 3px;
     background-color: white;
     margin: 3px;
+    max-width: 100%;
+}
+
+#jemmoduleteaser .teaser-flyerimage,
+#jemmoduleteaser .image-preview {
+    float: none !important;
+}
+
+#jemmoduleteaser .image-preview {
+    display: block;
+}
+
+@container (max-width: 420px) {
+    #jemmoduleteaser [class^="event_id"] > table,
+    #jemmoduleteaser [class^="event_id"] > table > tbody,
+    #jemmoduleteaser [class^="event_id"] > table > tbody > tr,
+    #jemmoduleteaser [class^="event_id"] > table > tbody > tr > td {
+        display: block;
+        width: 100%;
+    }
+
+    #jemmoduleteaser td.event-calendar {
+        padding-top: 0;
+    }
+
+    #jemmoduleteaser [class|="calendar"] {
+        float: left;
+        margin: 0 0.75rem 0.5rem 0;
+    }
+
+    #jemmoduleteaser td.event-info {
+        display: flow-root;
+    }
+
+    #jemmoduleteaser .image-preview {
+        margin: 0.25rem auto 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #jemmoduleteaser [class^="event_id"] > table,
+    #jemmoduleteaser [class^="event_id"] > table > tbody,
+    #jemmoduleteaser [class^="event_id"] > table > tbody > tr,
+    #jemmoduleteaser [class^="event_id"] > table > tbody > tr > td {
+        display: block;
+        width: 100%;
+    }
+
+    #jemmoduleteaser td.event-calendar {
+        padding-top: 0;
+    }
+
+    #jemmoduleteaser [class|="calendar"] {
+        float: left;
+        margin: 0 0.75rem 0.5rem 0;
+    }
+
+    #jemmoduleteaser td.event-info {
+        display: flow-root;
+    }
+
+    #jemmoduleteaser .image-preview {
+        margin: 0.25rem auto 0.5rem;
+    }
 }
 
 @media (max-width: 480px) {

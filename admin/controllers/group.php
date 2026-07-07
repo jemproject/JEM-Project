@@ -27,7 +27,7 @@ class JemControllerGroup extends FormController
      * Constructor.
      *
      * @param  array  An optional associative array of configuration settings.
-     * @see    JController
+     * @see    FormController
      *
      */
     public function __construct($config = array()) {

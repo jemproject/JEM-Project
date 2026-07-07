@@ -9,14 +9,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\HTML\HTMLHelper;
 
 class JemViewTypes extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -41,20 +41,26 @@ class JemViewTypes extends JemAdminView
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_TYPES'), 'tag');
-        $toolbar = $this->getToolbarInstance();
+        $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
         $canDelete = $canDo->get('core.delete');
+        $filterState = $this->state->get('filter_state');
 
-        if ($canDo->get('core.create')) {
+        /* create */
+        if (($canDo->get('core.create'))) {
             ToolbarHelper::addNew('type.add');
         }
-        if ($canDo->get('core.edit')) {
+
+        /* edit */
+        if (($canDo->get('core.edit'))) {
             ToolbarHelper::editList('type.edit');
             ToolbarHelper::divider();
         }
-        if (($canChangeState || $canDelete) && $this->supportsToolbarDropdown($toolbar)) {
+
+        /* actions */
+        if ($canChangeState) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -63,27 +69,33 @@ class JemViewTypes extends JemAdminView
                 ->listCheck(true);
             $childBar = $dropdown->getChildToolbar();
 
-            if ($canChangeState) {
+            if ($canChangeState && $filterState != 2) {
                 $childBar->publish('types.publish')->listCheck(true);
                 $childBar->unpublish('types.unpublish')->listCheck(true);
+            }
+
+            if ($canChangeState) {
+                if ($filterState != 2) {
+                    $childBar->archive('types.archive')->listCheck(true);
+                } else {
+                    $childBar->publish('types.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+                }
+            }
+
+            if ($canChangeState) {
                 $childBar->checkin('types.checkin')->listCheck(true);
             }
 
-            if ($canDelete) {
-                $childBar->delete('types.remove', 'JACTION_DELETE')
-                    ->message('COM_JEM_CONFIRM_DELETE')
-                    ->listCheck(true);
+            if ($canChangeState && $filterState != -2) {
+                $childBar->trash('types.trash')->listCheck(true);
             }
-        } elseif ($canChangeState || $canDelete) {
-            if ($canChangeState) {
-                ToolbarHelper::publishList('types.publish');
-                ToolbarHelper::unpublishList('types.unpublish');
-                ToolbarHelper::checkin('types.checkin');
-            }
+        }
 
-            if ($canDelete) {
-                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'types.remove', 'JACTION_DELETE');
-            }
+        if ($filterState == -2 && $canDelete) {
+            ToolbarHelper::divider();
+            $toolbar->delete('types.remove', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
         }
 
         ToolbarHelper::divider();

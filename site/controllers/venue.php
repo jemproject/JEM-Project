@@ -47,7 +47,6 @@ class JemControllerVenue extends JemControllerForm
         // Initialise variables.
         $user = JemFactory::getUser();
         // venues don't have a category yet
-        //$categoryId = \Joomla\Utilities\ArrayHelper::getValue($data, 'catid', Factory::getApplication()->input->getInt('catid', 0), 'int');
 
         if ($user->can('add', 'venue')) {
             return true;
@@ -217,7 +216,7 @@ class JemControllerVenue extends JemControllerForm
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.
      *
-     * @param  JModel(Legacy)  $model      The data model object.
+     * @param  object          $model      The data model object.
      * @param  array           $validData  The validated data.
      *
      * @return void

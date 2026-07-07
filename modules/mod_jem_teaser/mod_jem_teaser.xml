@@ -7,7 +7,7 @@
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>4.5.0</version>
+    <version>5.0.0</version>
     <description>MOD_JEM_TEASER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -376,7 +376,7 @@
                        description="MOD_JEM_TEASER_FOOTERTEXT_DESC"
                        showon="showfootertext:1"
                 />
-            </fieldset>
+</fieldset>
             <fieldset name="advanced">
                 <field
                         name="layout"
@@ -420,7 +420,7 @@
                 >
                     <option value="static"></option>
                 </field>
-            </fieldset>
+</fieldset>
         </fields>
     </config>
 </extension>

@@ -18,6 +18,18 @@ use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
+$cssSettings = JemHelper::retrieveCss();
+$filterBackground = $cssSettings->get('css_color_bg_filter');
+$filterBorder = $cssSettings->get('css_color_border_filter');
+$filterStyle = array();
+
+if (!empty($filterBackground)) {
+    $filterStyle[] = 'background-color: ' . htmlspecialchars($filterBackground, ENT_QUOTES, 'UTF-8') . ' !important';
+}
+
+if (!empty($filterBorder)) {
+    $filterStyle[] = 'border-color: ' . htmlspecialchars($filterBorder, ENT_QUOTES, 'UTF-8') . ' !important';
+}
 
 if (!function_exists('jem_choosevenue_country')) {
     function jem_choosevenue_country($country)
@@ -66,22 +78,21 @@ if (!function_exists('jem_choosevenue_country')) {
 
     #jem.jem_select_venue #jem_filter {
         display: grid !important;
-        grid-template-columns: auto auto minmax(7rem, 1fr) auto auto auto auto auto;
+        grid-template-columns: auto auto minmax(3rem, 1fr) auto auto auto auto auto;
         align-items: center;
-        gap: .5rem;
+        gap: .4rem;
         margin: 0;
-        padding: .75rem;
+        padding: .65rem;
         border: 1px solid var(--border-color, #dfe3e7);
         border-radius: .25rem;
         width: 100%;
         box-sizing: border-box;
+        white-space: nowrap;
     }
 
     #jem.jem_select_venue #jem_filter > div {
-        display: flex !important;
-        flex-flow: row nowrap !important;
+        display: contents !important;
         align-items: center;
-        gap: .5rem;
         width: auto !important;
         margin: 0 !important;
         min-width: 0;
@@ -93,28 +104,31 @@ if (!function_exists('jem_choosevenue_country')) {
 
     #jem.jem_select_venue #filter_search {
         width: 100%;
-        min-width: 7rem;
+        min-width: 3rem;
         max-width: none;
     }
 
     #jem.jem_select_venue #jem_filter select {
         width: auto;
-        min-width: 5.5rem;
-        max-width: 9rem;
-        padding-right: 2rem !important;
+        min-width: 4.75rem;
+        max-width: 7rem;
+        padding-left: .4rem;
+        padding-right: 1.75rem !important;
         background-position: right .5rem center !important;
         background-size: 1rem auto !important;
     }
 
     #jem.jem_select_venue #jem_filter select#limit {
-        min-width: 5rem;
-        max-width: 5.5rem;
+        min-width: 4.25rem;
+        max-width: 4.75rem;
     }
 
     #jem.jem_select_venue #jem_filter .btn,
     #jem.jem_select_venue #jem_filter button {
         width: auto !important;
         white-space: nowrap;
+        padding-left: .55rem;
+        padding-right: .55rem;
     }
 
     #jem.jem_select_venue .jem-choosevenue-search {
@@ -131,9 +145,10 @@ if (!function_exists('jem_choosevenue_country')) {
         white-space: nowrap;
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 560px) {
         #jem.jem_select_venue #jem_filter {
             grid-template-columns: 1fr;
+            white-space: normal;
         }
 
         #jem.jem_select_venue #jem_filter > div {
@@ -181,7 +196,7 @@ if (!function_exists('jem_choosevenue_country')) {
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div class="jem-row valign-baseline">
-            <div id="jem_filter" class="jem-form jem-row jem-justify-start">
+            <div id="jem_filter" class="jem-form jem-row jem-justify-start"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
                 <div class="jem-choosevenue-label">
                     <?php
                     echo '<label for="filter_type">'.Text::_('COM_JEM_FILTER').'</label>';

@@ -93,11 +93,11 @@ $typeField = $this->form->getField('type_id');
             width: 100%;
         }
 
-                #category-image .jem-category-image-control .controls::after {
+        #category-image .jem-category-image-control .controls::after {
             display: none;
         }
 
-#category-image .jem-category-image-control img.venue-image {
+        #category-image .jem-category-image-control img.venue-image {
             justify-self: start;
         }
     }
@@ -238,8 +238,6 @@ $typeField = $this->form->getField('type_id');
                     </div>
                 </div>
             </div>
-
-
 
             <?php  $fieldSets = $this->form->getFieldsets('attribs'); ?>
             <?php foreach ($fieldSets as $name => $fieldSet) : ?>

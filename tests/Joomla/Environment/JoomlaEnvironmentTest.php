@@ -20,6 +20,6 @@ final class JoomlaEnvironmentTest extends TestCase
         self::assertFileExists($root . '/configuration.php', 'Joomla configuration.php is required.');
         self::assertDirectoryExists($root . '/administrator/components/com_jem', 'Backend com_jem must be installed.');
         self::assertDirectoryExists($root . '/components/com_jem', 'Site com_jem must be installed.');
-        self::assertFileExists($root . '/libraries/src/Version.php', 'Joomla 5 libraries should be available.');
+        self::assertFileExists($root . '/libraries/src/Version.php', 'Joomla 6 libraries should be available.');
     }
 }

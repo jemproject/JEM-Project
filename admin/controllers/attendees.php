@@ -248,7 +248,7 @@ class JemControllerAttendees extends BaseController
         $ids     = $app->input->get('cid', array(), 'array');
         $values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
         $task    = $this->getTask();
-        $value   = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
+        $value   = ArrayHelper::getValue($values, $task, 0, 'int');
 
         if (empty($ids)) {
             $message = Text::_('JERROR_NO_ITEMS_SELECTED');
@@ -300,7 +300,6 @@ class JemControllerAttendees extends BaseController
                         }
                         break;
                 }
-
 
                 $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array($ids, $value, $eventid));
 

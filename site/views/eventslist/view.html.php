@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -50,6 +49,21 @@ class JemViewEventslist extends JemView
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
         $model = $this->getModel();
         $model->setState('Itemid', $menuactive->id);
+
+        if (method_exists($document, 'getWebAssetManager')) {
+            $wa = $document->getWebAssetManager();
+
+            if (!$wa->assetExists('script', 'com_jem.monthpicker')) {
+                $wa->registerScript(
+                'com_jem.monthpicker',
+                'media/com_jem/js/monthpicker-fallback.js',
+                    [],
+                    ['defer' => true],
+                );
+            }
+
+            $wa->useScript('com_jem.monthpicker');
+        }
 
         if (method_exists($document, 'getWebAssetManager')) {
             $wa = $document->getWebAssetManager();

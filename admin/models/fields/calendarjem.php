@@ -5,14 +5,11 @@
  * @copyright  (C) 2005-2009 Christoph Lukes
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-
-defined('JPATH_PLATFORM') or die;
+ 
+defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\Form\Field\CalendarField;
-
-FormHelper::loadFieldClass('calendar');
 
 /**
  * Form Field class for JEM needs.
@@ -50,11 +47,29 @@ class JFormFieldCalendarJem extends CalendarField
         $date_format = str_replace("%","",$this->format);
         $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
-        $extraData = array(
-            'hint' => $hint,
-        );
+        return array_merge($data, ['hint' => $hint]);
+    }
 
-        return array_merge($data, $extraData);
+    /**
+     * Return JEM's configured first day of week for Joomla's calendar field.
+     *
+     * @param   integer  $fallback  Joomla language fallback value.
+     *
+     * @return  integer  0 for Sunday, 1 for Monday.
+     */
+    private function getJemFirstWeekday($fallback = 0)
+    {
+        try {
+            if (!class_exists('JemHelper')) {
+                require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+            }
+
+            $settings = JemHelper::config();
+
+            return ((int) ($settings->weekdaystart ?? $fallback) === 1) ? 1 : 0;
+        } catch (Throwable $e) {
+            return ((int) $fallback === 1) ? 1 : 0;
+        }
     }
 
     /**

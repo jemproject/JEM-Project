@@ -10,12 +10,11 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Client\ClientHelper;
+use Joomla\Filesystem\File;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Filesystem\Path;
+use Joomla\Filesystem\Path;
 
 /**
  * JEM Component Imagehandler Controller
@@ -57,9 +56,6 @@ class JemControllerImagehandler extends BaseController
         $file = $app->input->files->get('userfile', array(), 'array');
         $task = $app->input->getCmd('task', '');
 
-        // Set FTP credentials, if given
-
-        ClientHelper::setCredentialsFromRequest('ftp');
 
         $directories = array(
             'venueimgup'      => JPATH_SITE . '/images/jem/venues/',
@@ -134,8 +130,6 @@ class JemControllerImagehandler extends BaseController
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        // Set FTP credentials, if given
-        ClientHelper::setCredentialsFromRequest('ftp');
 
         // Get some data from the request
         $images = Factory::getApplication()->input->get('rm', array(), 'array');
@@ -168,7 +162,7 @@ class JemControllerImagehandler extends BaseController
 
                 if (is_file($fullPath)) {
                     File::delete($fullPath);
-                    if (File::exists($fullPaththumb)) {
+                    if (is_file($fullPaththumb)) {
                         File::delete($fullPaththumb);
                     }
                 }

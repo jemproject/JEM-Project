@@ -375,7 +375,7 @@ function registraon()
 }
 
 function registraoff()
-{Route
+{
     document.getElementById('froreg1').style.display = 'none';
     document.getElementById('froreg2').style.display = 'none';
 }

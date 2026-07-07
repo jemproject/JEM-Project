@@ -125,9 +125,11 @@ UpgradeLog*.XML
 
 # Windows image file caches
 Thumbs.db
+thumbs.db
 
 # Folder config file
 Desktop.ini
+desktop.ini
 
 
 #############
@@ -170,10 +172,7 @@ pip-log.txt
 #############
 /build.config
 /build.number
+/*.code-workspace
 
+CODEX_PENDING_DIARY.md
 /docs
-
-# Local scratch files generated while preparing docs or patches
-/.tmp/
-/.tmp-*
-/JEM 5.0/

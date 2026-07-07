@@ -12,7 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * Model: Attendees
  */
@@ -191,7 +192,7 @@ class JemModelAttendees extends ListModel
     {
         if (is_array($cid) && count($cid))
         {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $cid = array_filter($cid);
 
             if (empty($cid)) {
@@ -250,7 +251,7 @@ class JemModelAttendees extends ListModel
         }
         $header[] = Text::_('COM_JEM_ATTENDEES_REGID');
 
-        fputcsv($csv, $header, $separator, $delimiter);
+        fputcsv($csv, $header, $separator, $delimiter, '', "\n");
 
         foreach ($items as $item)
         {
@@ -277,7 +278,7 @@ class JemModelAttendees extends ListModel
             }
             $data[] = $item->uid;
 
-            fputcsv($csv, $data, $separator, $delimiter);
+            fputcsv($csv, $data, $separator, $delimiter, '', "\n"); 
         }
 
         return fclose($csv);

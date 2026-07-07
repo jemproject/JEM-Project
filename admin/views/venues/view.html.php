@@ -10,9 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
 
 
 /**
@@ -21,17 +21,15 @@ use Joomla\CMS\Uri\Uri;
 
  class JemViewVenues extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {
         $user     = JemFactory::getUser();
         $app      = Factory::getApplication();
         $document = $app->getDocument();
-        $uri      = Uri::getInstance();
-        $url      = $uri->root();
         $settings = JemHelper::globalattribs();
 
         // Initialise variables.
@@ -57,10 +55,10 @@ use Joomla\CMS\Uri\Uri;
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Add Scripts
-        $document->addScript('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+        $wa->useScript('jquery');
 
         if ($highlighter) {
-            $document->addScript($url.'media/com_jem/js/highlighter.js');
+            $wa->registerScript('jem.highlighter', 'com_jem/highlighter.js')->useScript('jem.highlighter');
             $style = '.red, .red a { color:red; }';
             $document->addStyleDeclaration($style);
         }
@@ -125,11 +123,12 @@ use Joomla\CMS\Uri\Uri;
     protected function addToolbar()
     {
         ToolbarHelper::title(Text::_('COM_JEM_VENUES'), 'venues');
-        $toolbar = $this->getToolbarInstance();
+        $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
         $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
         $canDelete = $canDo->get('core.delete');
+        $filterState = $this->state->get('filter_state');
 
         /* create */
         if (($canDo->get('core.create'))) {
@@ -142,8 +141,8 @@ use Joomla\CMS\Uri\Uri;
             ToolbarHelper::divider();
         }
 
-        /* state */
-        if (($canChangeState || $canDelete) && $this->supportsToolbarDropdown($toolbar)) {
+        /* actions */
+        if ($canChangeState) {
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
                 ->toggleSplit(false)
@@ -152,34 +151,33 @@ use Joomla\CMS\Uri\Uri;
                 ->listCheck(true);
             $childBar = $dropdown->getChildToolbar();
 
-            if ($canChangeState && $this->state->get('filter.state') != 2) {
+            if ($canChangeState && $filterState != 2) {
                 $childBar->publish('venues.publish')->listCheck(true);
                 $childBar->unpublish('venues.unpublish')->listCheck(true);
+            }
+
+            if ($canChangeState) {
+                if ($filterState != 2) {
+                    $childBar->archive('venues.archive')->listCheck(true);
+                } else {
+                    $childBar->publish('venues.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+                }
             }
 
             if ($canChangeState) {
                 $childBar->checkin('venues.checkin')->listCheck(true);
             }
 
-            /* delete-trash */
-            if ($canDelete) {
-                $childBar->delete('venues.remove', 'JACTION_DELETE')
-                    ->message('COM_JEM_CONFIRM_DELETE')
-                    ->listCheck(true);
+            if ($canChangeState && $filterState != -2) {
+                $childBar->trash('venues.trash')->listCheck(true);
             }
-        } elseif ($canChangeState || $canDelete) {
-            if ($canChangeState && $this->state->get('filter.state') != 2) {
-                ToolbarHelper::publishList('venues.publish');
-                ToolbarHelper::unpublishList('venues.unpublish');
-            }
+        }
 
-            if ($canChangeState) {
-                ToolbarHelper::checkin('venues.checkin');
-            }
-
-            if ($canDelete) {
-                ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'venues.remove', 'JACTION_DELETE');
-            }
+        if ($filterState == -2 && $canDelete) {
+            ToolbarHelper::divider();
+            $toolbar->delete('venues.remove', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
         }
 
         ToolbarHelper::divider();

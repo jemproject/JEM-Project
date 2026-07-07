@@ -199,14 +199,6 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                     $tipTitle = '';
                 }
 
-                if (version_compare(JVERSION, '3.2.7', 'lt')) {
-                    # There is a bug in Joomla which will format complete tip text as title
-                    #  if $tipTitle is empty (because then no '::' will be added).
-                    #  So add it manually and let title param empty.
-                    $tip = $tipTitle . '::';
-                    $tipTitle = '';
-                }
-
                 # If user hadn't explicitely typed in a 0 list limited number or all events
                 if ($tooltips_max_events !== '0') {
                     $count = 0;
@@ -219,9 +211,6 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                     }
                 }
 
-                # J! version < 3.2.7: title already within $tip to ensure always '::' is present
-                # But with J! 3.3+ is a bug in script so we need to use the bad 'hasTooltip'
-                # which is default of class parameter.
                 // $calendar .= HTMLHelper::tooltip($tip, $tipTitle, 'tooltip.png', '<span class="day">' . $day . '</span><span class="badge">•</span>', $link);
 
                 $calendar .= '<div class="hasTip" data-bs-content="' . htmlspecialchars($tipTitle . $tip, ENT_QUOTES) . '">';
@@ -229,7 +218,7 @@ for ($day = 1; $day <= $days_in_month; $day++, $weekday++) {
                 $calendar .= '</div>';
 
                 // https://docs-next.joomla.org/docs/extensions/using-bootstrap-components-in-joomla-4/
-                $calendar .= \Joomla\CMS\HTML\HTMLHelper::_('bootstrap.popover', '.hasTip', ['trigger' => 'manual', 'placement' => 'top']);
+                $calendar .= HTMLHelper::_('bootstrap.popover', '.hasTip', ['trigger' => 'manual', 'placement' => 'top']);
             }
 
             $calendar .= '</li>';

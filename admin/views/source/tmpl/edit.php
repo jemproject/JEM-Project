@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -235,53 +235,8 @@ $formatBytes = function ($bytes) {
             return true;
         }
 
-        function updateFullscreenButton() {
-            var shell = document.querySelector('.jem-source-editor-shell');
-            var fullscreen = document.getElementById('jem-css-source-fullscreen');
-
-            if (!shell || !fullscreen) {
-                return;
-            }
-
-            fullscreen.textContent = shell.classList.contains('jem-source-editor-fullscreen')
-                ? '<?php echo $this->escape(Text::_('COM_JEM_CSSMANAGER_EXIT_FULLSCREEN')); ?>'
-                : '<?php echo $this->escape(Text::_('COM_JEM_CSSMANAGER_TOGGLE_FULLSCREEN')); ?>';
-        }
-
-        function toggleFullscreen() {
-            var shell = document.querySelector('.jem-source-editor-shell');
-
-            if (!shell) {
-                return;
-            }
-
-            shell.classList.toggle('jem-source-editor-fullscreen');
-            document.body.classList.toggle('jem-source-editor-fullscreen-active', shell.classList.contains('jem-source-editor-fullscreen'));
-            updateFullscreenButton();
-
-            var cm = getCodeMirror();
-            if (cm && typeof cm.refresh === 'function') {
-                window.setTimeout(function () {
-                    cm.refresh();
-                    cm.focus();
-                }, 50);
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function () {
-            var fullscreen = document.getElementById('jem-css-source-fullscreen');
             var check = document.getElementById('jem-css-source-check');
-            var shell = document.querySelector('.jem-source-editor-shell');
-
-            if (shell) {
-                shell.classList.add('jem-source-editor-fullscreen');
-                document.body.classList.add('jem-source-editor-fullscreen-active');
-                updateFullscreenButton();
-            }
-
-            if (fullscreen) {
-                fullscreen.addEventListener('click', toggleFullscreen);
-            }
 
             if (check) {
                 check.addEventListener('click', checkCss);
@@ -290,8 +245,7 @@ $formatBytes = function ($bytes) {
 
         return {
             check: checkCss,
-            sync: sync,
-            toggleFullscreen: toggleFullscreen
+            sync: sync
         };
     }());
 </script>
@@ -301,23 +255,38 @@ $formatBytes = function ($bytes) {
         <?php echo $this->loadTemplate('ftp'); ?>
     <?php endif; ?>
     <fieldset class="adminform jem-source-edit">
-        <legend><?php echo $this->source->custom ? Text::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', $this->source->filename) : Text::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename); ?></legend>
+        <legend class="visually-hidden"><?php echo $this->source->custom ? Text::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', $this->source->filename) : Text::sprintf('COM_JEM_CSSMANAGER_FILENAME', $this->source->filename); ?></legend>
 
-        <div class="jem-source-edit-header">
-            <div>
-                <p class="jem-source-edit-title"><code><?php echo htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8'); ?></code></p>
+        <div class="jem-source-edit-header" style="display: grid; grid-template-areas: 'title actions' 'meta actions'; grid-template-columns: minmax(0, 1fr) max-content; align-items: center; gap: .35rem 1rem;">
+            <div class="jem-source-edit-title" style="grid-area: title;">
+                <?php echo $this->source->custom ? Text::sprintf('COM_JEM_CSSMANAGER_FILENAME_CUSTOM', '<code>' . htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8') . '</code>') : Text::sprintf('COM_JEM_CSSMANAGER_FILENAME', '<code>' . htmlspecialchars($this->source->filename, ENT_COMPAT, 'UTF-8') . '</code>'); ?>
                 <?php if ($isUserOverride) : ?>
                     <span class="badge bg-primary"><?php echo Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_USER_OVERRIDE'); ?></span>
                 <?php else : ?>
-                    <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>">
-                        <?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?>
-                    </span>
+                    <span class="badge <?php echo $this->source->custom ? 'bg-info' : 'bg-secondary'; ?>"><?php echo $this->source->custom ? Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_CUSTOM') : Text::_('COM_JEM_CSSMANAGER_FILE_TYPE_STANDARD'); ?></span>
                 <?php endif; ?>
                 <?php if ($details && $details->custom && ($details->active || $isUserOverride)) : ?>
                     <span class="badge bg-success"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS_ACTIVE'); ?></span>
                 <?php endif; ?>
             </div>
-            <div class="jem-source-edit-actions">
+            <?php if ($details) : ?>
+                <div class="jem-source-meta-inline" style="grid-area: meta;">
+                    <strong><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></strong> <?php echo $formatBytes($details->size); ?>
+                    <strong><?php echo Text::_('COM_JEM_CSSMANAGER_MODIFIED'); ?></strong> <?php echo $details->modified ? HTMLHelper::_('date', $details->modified, 'Y-m-d H:i') : '-'; ?>
+                    <?php if ($isUserOverride) : ?>
+                        <strong><?php echo Text::_('COM_JEM_SETTINGS_CSS_SCOPE'); ?></strong> <?php echo htmlspecialchars($details->scope, ENT_COMPAT, 'UTF-8'); ?>
+                    <?php elseif ($details->custom) : ?>
+                        <strong><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></strong> <?php echo $details->sourceVersion ? htmlspecialchars($details->sourceVersion, ENT_COMPAT, 'UTF-8') : Text::_('COM_JEM_CSSMANAGER_VERSION_UNKNOWN_SHORT'); ?>
+                        <?php if ($details->sourceFile) : ?>
+                            <strong><?php echo Text::_('COM_JEM_CSSMANAGER_SOURCE_FILE'); ?></strong> <code><?php echo htmlspecialchars($details->sourceFile, ENT_COMPAT, 'UTF-8'); ?></code>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <strong><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></strong> <?php echo $details->version ? htmlspecialchars($details->version, ENT_COMPAT, 'UTF-8') : '-'; ?>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+            <div class="jem-source-edit-actions" style="grid-area: actions; justify-self: end; align-self: center; display: flex; flex-wrap: nowrap; justify-content: flex-end; gap: .5rem; white-space: nowrap;">
+                <button type="button" class="btn btn-secondary" id="jem-css-source-check"><?php echo Text::_('COM_JEM_CSSMANAGER_CHECK_CSS'); ?></button>
                 <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=cssmanager'); ?>"><?php echo Text::_('COM_JEM_CSSMANAGER_TITLE'); ?></a>
                 <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=settings#layout'); ?>"><?php echo Text::_('COM_JEM_SETTINGS_TITLE'); ?></a>
                 <?php if (!$this->source->custom) : ?>
@@ -342,63 +311,7 @@ $formatBytes = function ($bytes) {
             </div>
         <?php endif; ?>
 
-        <?php if ($details) : ?>
-            <dl class="jem-source-meta">
-                <div>
-                    <dt><?php echo Text::_('COM_JEM_CSSMANAGER_SIZE'); ?></dt>
-                    <dd><?php echo $formatBytes($details->size); ?></dd>
-                </div>
-                <div>
-                    <dt><?php echo Text::_('COM_JEM_CSSMANAGER_MODIFIED'); ?></dt>
-                    <dd><?php echo $details->modified ? HTMLHelper::_('date', $details->modified, 'Y-m-d H:i') : '-'; ?></dd>
-                </div>
-                <?php if ($isUserOverride) : ?>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_SETTINGS_CSS_SCOPE'); ?></dt>
-                        <dd><?php echo htmlspecialchars($details->scope, ENT_COMPAT, 'UTF-8'); ?></dd>
-                    </div>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_CREATED'); ?></dt>
-                        <dd><?php echo $details->created ? HTMLHelper::_('date', $details->created, 'Y-m-d H:i') : '-'; ?></dd>
-                    </div>
-                <?php elseif ($details->custom) : ?>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_SOURCE_FILE'); ?></dt>
-                        <dd><?php echo $details->sourceFile ? '<code>' . htmlspecialchars($details->sourceFile, ENT_COMPAT, 'UTF-8') . '</code>' : Text::_('COM_JEM_CSSMANAGER_VERSION_UNKNOWN_SHORT'); ?></dd>
-                    </div>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_SOURCE_VERSION'); ?></dt>
-                        <dd><?php echo $details->sourceVersion ? htmlspecialchars($details->sourceVersion, ENT_COMPAT, 'UTF-8') : Text::_('COM_JEM_CSSMANAGER_VERSION_UNKNOWN_SHORT'); ?></dd>
-                    </div>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_CREATED'); ?></dt>
-                        <dd><?php echo $details->created ? HTMLHelper::_('date', $details->created, 'Y-m-d H:i') : '-'; ?></dd>
-                    </div>
-                    <?php if (!empty($details->usedBy)) : ?>
-                        <div>
-                            <dt><?php echo Text::_('COM_JEM_CSSMANAGER_USED_BY'); ?></dt>
-                            <dd><?php echo htmlspecialchars(implode(', ', $details->usedBy), ENT_COMPAT, 'UTF-8'); ?></dd>
-                        </div>
-                    <?php endif; ?>
-                <?php else : ?>
-                    <div>
-                        <dt><?php echo Text::_('COM_JEM_CSSMANAGER_VERSION'); ?></dt>
-                        <dd><?php echo $details->version ? htmlspecialchars($details->version, ENT_COMPAT, 'UTF-8') : '-'; ?></dd>
-                    </div>
-                <?php endif; ?>
-            </dl>
-        <?php endif; ?>
-
         <div class="jem-source-editor-shell">
-            <div class="jem-source-editor-toolbar">
-                <button type="button" class="btn btn-secondary" id="jem-css-source-check"><?php echo Text::_('COM_JEM_CSSMANAGER_CHECK_CSS'); ?></button>
-                <?php if ($canDo->get('core.edit')) : ?>
-                    <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('source.apply');"><?php echo Text::_('JTOOLBAR_APPLY'); ?></button>
-                    <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('source.save');"><?php echo Text::_('JTOOLBAR_SAVE'); ?></button>
-                <?php endif; ?>
-                <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('source.cancel');"><?php echo Text::_('JTOOLBAR_CLOSE'); ?></button>
-                <button type="button" class="btn btn-secondary" id="jem-css-source-fullscreen"><?php echo Text::_('COM_JEM_CSSMANAGER_TOGGLE_FULLSCREEN'); ?></button>
-            </div>
             <div id="jem-css-source-check-result" hidden></div>
 
             <div class="jem-source-editor-wrap editor-border">

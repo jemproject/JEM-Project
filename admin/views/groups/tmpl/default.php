@@ -11,44 +11,62 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
-$user        = JemFactory::getUser();
-$userId        = $user->get('id');
-$listOrder    = $this->escape($this->state->get('list.ordering'));
-$listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
-$saveOrder    = $listOrder=='ordering';
-
-$params        = (isset($this->state->params)) ? $this->state->params : new CMSObject();
+$user      = JemFactory::getUser();
+$userId    = $user->get('id');
+$listOrder = $this->escape($this->state->get('list.ordering'));
+$listDirn  = $this->escape($this->state->get('list.direction'));
+$canOrder  = $user->authorise('core.edit.state', 'com_jem');
+$saveOrder = $listOrder == 'a.ordering';
+$params        = (isset($this->state->params)) ? $this->state->params : new Registry();
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('table.columns');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-10">
                     <div class="row mb-12">
                         <div class="col-md-4">
                             <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-
-                                <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                                    <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                                </button>
-                                <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                            </div>
-                        </div>
+                                <input type="text" name="filter_search" id="filter_search" class="form-control"
+                            		placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" 
+                            		value="<?php echo $this->escape($this->state->get('filter_search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
+                        		<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
+                            		<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+                        		</button>
+                        		<button type="button" class="btn btn-primary" 
+                            		onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';this.form.submit();">
+                            		<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+                        		</button>
+                    		</div>
+                		</div>
+                		<div class="col-md-1">
+                    		<div class="row">
+                        		<div class="wauto-minwmax">
+                            		<div class="float-end">
+                    					<select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
+                        					<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
+                        					<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true); ?>
+                    					</select>
+                					</div>
+                				</div>
+                			</div>
+                		</div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="row">
                         <div class="wauto-minwmax">
                             <div class="float-end">
                                 <?php echo $this->pagination->getLimitBox(); ?>
                             </div>
-                        </div>
-                    </div>
+                		</div>
+                	</div>
                 </div>
             </div>
         </fieldset>
@@ -57,22 +75,34 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
         <table class="table table-striped" id="articleList">
             <thead>
             <tr>
-                <th style="width: 5px" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
-                <th style="width: 30%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'name', $listDirn, $listOrder ); ?></th>
-                <th><?php echo Text::_( 'COM_JEM_DESCRIPTION' ); ?></th>
-                <th style="width: 1%" class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder ); ?></th>
+                    <th style="width: 5px" class="center">
+                        <input type="checkbox" name="checkall-toggle" value=""
+                            title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>"
+                            onclick="Joomla.checkAll(this)" />
+                    </th>
+                    <th style="width: 30%" class="title">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'a.name', $listDirn, $listOrder); ?>
+                    </th>
+                    <th>
+                        <?php echo Text::_('COM_JEM_DESCRIPTION'); ?>
+                    </th>
+                    <th style="width: 8%" class="center">
+                        <?php echo Text::_('JSTATUS'); ?>
+                    </th>
+                    <th style="width: 1%" class="title">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder); ?>
+                    </th>
                 </tr>
             </thead>
-
             <tbody>
                 <?php foreach ($this->items as $i => $row) :
-                    $ordering    = ($listOrder == 'ordering');
-                    $canCreate    = $user->authorise('core.create');
+                    $ordering   = ($listOrder == 'ordering');
+                    $canCreate  = $user->authorise('core.create');
                     $canEdit    = $user->authorise('core.edit');
-                    $canCheckin    = $user->authorise('core.manage',        'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
-                    $canChange    = $user->authorise('core.edit.state') && $canCheckin;
-
-                    $link         = 'index.php?option=com_jem&amp;task=group.edit&amp;id='.$row->id;
+                    $canCheckin = $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
+                    $canChange  = $user->authorise('core.edit.state') && $canCheckin;
+                    $link       = 'index.php?option=com_jem&amp;task=group.edit&amp;id='.$row->id;
+                    $published  = HTMLHelper::_('jgrid.published', $row->published, $i, 'groups.', $canChange, 'cb');
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
                     <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td>
@@ -95,6 +125,7 @@ $params        = (isset($this->state->params)) ? $this->state->params : new CMSO
                             echo $this->escape($descoutput);
                         ?>
                     </td>
+                    <td class="center"><?php echo $published; ?></td>
                     <td class="center"><?php echo $row->id; ?></td>
                 </tr>
             <?php endforeach; ?>

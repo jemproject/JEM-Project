@@ -29,7 +29,7 @@ class JemControllerEvents extends AdminController
      * Constructor.
      *
      * @param  array  $config  An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array()) {
         parent::__construct($config);
@@ -54,7 +54,7 @@ class JemControllerEvents extends AdminController
         $ids = array_filter($ids);
         $values = array('featured' => 1, 'unfeatured' => 0);
         $task   = $this->getTask();
-        $value  = \Joomla\Utilities\ArrayHelper::getValue($values, $task, 0, 'int');
+        $value  = ArrayHelper::getValue($values, $task, 0, 'int');
 
         $glob_auth = $user->can('publish', 'event'); // general permission for all events
 

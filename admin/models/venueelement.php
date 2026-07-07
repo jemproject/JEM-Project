@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\String\StringHelper;
 
 /**
  * Venueelement-Model
@@ -104,7 +105,7 @@ class JemModelVenueelement extends BaseDatabaseModel
 
         $filter_type      = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_type', 'filter_type', 0, 'int' );
         $search           = $app->getUserStateFromRequest('com_jem.venueelement.'.$itemid.'.filter_search', 'filter_search', '', 'string' );
-        $search           = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search           = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');

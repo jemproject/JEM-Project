@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
-use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Date\Date;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 use Joomla\Module\JemMap\Site\Helper\ModJemMapHelper;
@@ -171,7 +170,6 @@ JemHelper::loadModuleStyleSheet($mod_name, $layout);
 // Render layout
 $moduleIntroText  = JemHelper::renderModuleText($params, 'intro');
 $moduleFooterText = JemHelper::renderModuleText($params, 'footer');
-
 echo $moduleIntroText;
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
 echo $moduleFooterText;

@@ -12,10 +12,10 @@ final class ZipArtifactContentsTest extends TestCase
             self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
         }
 
-        $zipFiles = $this->packageZipFiles();
+        $zipFiles = $this->currentPackageZipFiles();
 
         if ($zipFiles === array()) {
-            self::markTestSkipped('No package ZIP artifacts found. Run the Ant build before inspecting artifact contents.');
+            self::markTestSkipped('No current package ZIP artifacts found. Run the build before inspecting artifact contents.');
         }
 
         $findings = array();
@@ -46,25 +46,147 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
-    public function testComponentPackageContainsOnlySupportedSqlUpdates(): void
+    public function testExistingPackageArtifactsContainComponentSqlInstallerFiles(): void
     {
         if (!class_exists(ZipArchive::class)) {
             self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
         }
 
-        $zipFiles = $this->packageZipFiles();
+        $zipFiles = $this->currentPackageZipFiles();
 
         if ($zipFiles === array()) {
-            self::markTestSkipped('No package ZIP artifacts found. Run the Ant build before inspecting artifact contents.');
+            self::markTestSkipped('No package ZIP artifacts found. Run the build before inspecting artifact contents.');
         }
 
+        $missing = array();
+
         foreach ($zipFiles as $zipFile) {
-            if (!$this->isCurrentPackageArtifact($zipFile)) {
+            $zip = new ZipArchive();
+            self::assertTrue($zip->open($zipFile), $this->relativePath($zipFile) . ' should be readable as a ZIP file.');
+
+            $componentZip = $zip->getFromName('packages/com_jem.zip');
+            $zip->close();
+
+            if ($componentZip === false) {
+                $missing[] = $this->relativePath($zipFile) . ':packages/com_jem.zip';
                 continue;
             }
 
-            $this->assertSqlPackageContents($zipFile);
+            $temporary = tempnam(sys_get_temp_dir(), 'jem_component_');
+            self::assertIsString($temporary);
+            file_put_contents($temporary, $componentZip);
+
+            $component = new ZipArchive();
+            self::assertTrue($component->open($temporary), $this->relativePath($zipFile) . ':packages/com_jem.zip should be readable.');
+
+            foreach (array(
+                'admin/sql/install.mysql.utf8.sql',
+                'admin/sql/uninstall.mysql.utf8.sql',
+                'admin/sql/updates/mysql/4.5.0.sql',
+                'admin/sql/updates/mysql/5.0.0.sql',
+            ) as $entry) {
+                if ($component->locateName($entry) === false) {
+                    $missing[] = $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry;
+                }
+            }
+
+            $component->close();
+            unlink($temporary);
         }
+
+        self::assertSame(array(), $missing, "Package artifacts must include component SQL installer/update files:\n" . implode("\n", $missing));
+    }
+
+    public function testExistingPackageArtifactsContainRecentJoomla6Fixes(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $zipFiles = $this->currentPackageZipFiles();
+
+        if ($zipFiles === array()) {
+            self::markTestSkipped('No package ZIP artifacts found. Run the build before inspecting artifact contents.');
+        }
+
+        foreach ($zipFiles as $zipFile) {
+            $source = $this->relativePath($zipFile) . ':packages/com_jem.zip';
+
+            self::assertStringContainsString(
+                'class="jem-import-grid"',
+                $this->componentEntryContents($zipFile, 'admin/views/import/tmpl/default.php'),
+                $source . ':admin/views/import/tmpl/default.php should include the responsive import grid wrapper.'
+            );
+
+            self::assertStringContainsString(
+                '.jem-import-grid',
+                $this->componentEntryContents($zipFile, 'media/css/backend.css'),
+                $source . ':media/css/backend.css should include import grid styles.'
+            );
+
+            self::assertStringContainsString(
+                'https://www.joomlaeventmanager.net/documentation/backend',
+                $this->componentEntryContents($zipFile, 'admin/help/en-GB/documentation.html'),
+                $source . ':admin/help/en-GB/documentation.html should include the online documentation map.'
+            );
+
+            self::assertDoesNotMatchRegularExpression(
+                '/INSERT\s+INTO\s+`#__jem_categories`\s+VALUES\s*\(/i',
+                $this->componentEntryContents($zipFile, 'admin/assets/sampledata.sql'),
+                $source . ':admin/assets/sampledata.sql should use explicit columns for category sample data.'
+            );
+
+            $sampleDataSql = $this->componentEntryContents($zipFile, 'admin/assets/sampledata.sql');
+
+            foreach (array('INSERT INTO `#__jem_types`', 'Museum Technology Talk at the Prado', 'INSERT INTO `#__jem_links`', 'INSERT INTO `#__jem_attachments`') as $expected) {
+                self::assertStringContainsString(
+                    $expected,
+                    $sampleDataSql,
+                    $source . ':admin/assets/sampledata.sql should contain the JEM 5 sample data from the 4.5 new-features branch.'
+                );
+            }
+
+            foreach (array('event-prado-museum-technology-talk.webp', 'venue-museo-del-prado.webp', 'attachment-event1-dj-night-lineup.txt') as $entry) {
+                self::assertTrue(
+                    $this->componentNestedZipContains($zipFile, 'admin/assets/sampledata.zip', $entry),
+                    $source . ':admin/assets/sampledata.zip should contain ' . $entry . '.'
+                );
+            }
+
+            self::assertStringContainsString(
+                'public $app;',
+                $this->componentEntryContents($zipFile, 'admin/views/updatecheck/view.html.php'),
+                $source . ':admin/views/updatecheck/view.html.php should not narrow JemAdminView::$app visibility.'
+            );
+
+            self::assertStringContainsString(
+                '$selectedUpdate = $selectedUpdate ?: $highestPlatformUpdate;',
+                $this->componentEntryContents($zipFile, 'admin/models/updatecheck.php'),
+                $source . ':admin/models/updatecheck.php should fall back to the highest compatible platform XML update entry.'
+            );
+
+            self::assertStringContainsString(
+                '$this->ensureTypeAssignmentSchema();',
+                $this->componentEntryContents($zipFile, 'admin/models/sampledata.php'),
+                $source . ':admin/models/sampledata.php should prepare type_id columns before loading sample data.'
+            );
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function currentPackageZipFiles(): array
+    {
+        $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
+        self::assertNotFalse($manifest);
+
+        $version = (string) $manifest->version;
+
+        return array_values(array_filter(
+            $this->packageZipFiles(),
+            static fn (string $path): bool => str_starts_with(basename($path), 'pkg_jem_v' . $version)
+        ));
     }
 
     /**
@@ -91,7 +213,7 @@ final class ZipArtifactContentsTest extends TestCase
                         continue;
                     }
 
-                    if (str_starts_with($relative, '_old packages/')) {
+                    if (str_starts_with($relative, '_old builds/') || str_starts_with($relative, '_old packages/')) {
                         continue;
                     }
 
@@ -171,77 +293,50 @@ final class ZipArtifactContentsTest extends TestCase
         return $findings;
     }
 
-    private function assertSqlPackageContents(string $zipFile): void
+    private function componentEntryContents(string $packageZipFile, string $entryName): string
     {
         $zip = new ZipArchive();
-        self::assertTrue($zip->open($zipFile), $this->relativePath($zipFile) . ' should be readable as a ZIP file.');
+        self::assertTrue($zip->open($packageZipFile), $this->relativePath($packageZipFile) . ' should be readable as a ZIP file.');
 
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $entry = (string) $zip->getNameIndex($i);
-
-            if (preg_match('#(^|/)com_jem\.zip$#i', $entry) !== 1) {
-                continue;
-            }
-
-            $contents = $zip->getFromName($entry);
-            self::assertNotFalse($contents, $this->relativePath($zipFile) . ':' . $entry . ' should be readable.');
-            $zip->close();
-            $this->assertComponentSqlPackageContents((string) $contents, $this->relativePath($zipFile) . ':' . $entry);
-            return;
-        }
-
+        $componentZip = $zip->getFromName('packages/com_jem.zip');
         $zip->close();
 
-        if (preg_match('/com_jem.*\.zip$/i', basename($zipFile)) === 1) {
-            $this->assertComponentSqlPackageContents((string) file_get_contents($zipFile), $this->relativePath($zipFile));
-        }
+        self::assertNotFalse($componentZip, $this->relativePath($packageZipFile) . ':packages/com_jem.zip should exist.');
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem_component_');
+        self::assertIsString($temporary);
+        file_put_contents($temporary, $componentZip);
+
+        $component = new ZipArchive();
+        self::assertTrue($component->open($temporary), $this->relativePath($packageZipFile) . ':packages/com_jem.zip should be readable.');
+
+        $contents = $component->getFromName($entryName);
+
+        $component->close();
+        unlink($temporary);
+
+        self::assertNotFalse($contents, $this->relativePath($packageZipFile) . ':packages/com_jem.zip:' . $entryName . ' should exist.');
+
+        return $contents;
     }
 
-    private function assertComponentSqlPackageContents(string $contents, string $label): void
+    private function componentNestedZipContains(string $packageZipFile, string $outerEntryName, string $innerEntryName): bool
     {
-        $temporary = tempnam(sys_get_temp_dir(), 'jem_sql_zip_');
+        $contents = $this->componentEntryContents($packageZipFile, $outerEntryName);
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem_nested_');
         self::assertIsString($temporary);
         file_put_contents($temporary, $contents);
 
         $zip = new ZipArchive();
-        self::assertTrue($zip->open($temporary), $label . ' should be a readable component ZIP file.');
+        self::assertTrue($zip->open($temporary), $this->relativePath($packageZipFile) . ':packages/com_jem.zip:' . $outerEntryName . ' should be readable.');
 
-        $entries = array();
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            $entries[] = trim(str_replace('\\', '/', (string) $zip->getNameIndex($i)), '/');
-        }
+        $exists = $zip->locateName($innerEntryName) !== false;
 
         $zip->close();
         unlink($temporary);
 
-        $entries = array_map(array($this, 'componentRelativeEntry'), $entries);
-
-        self::assertContains('admin/sql/install.mysql.utf8.sql', $entries, $label . ' must include the install SQL schema.');
-
-        $updates = array_values(array_filter($entries, static function (string $entry): bool {
-            return preg_match('#^admin/sql/updates/mysql/.+\.sql$#', $entry) === 1;
-        }));
-        sort($updates);
-
-        self::assertSame(
-            array(
-                'admin/sql/updates/mysql/4.1.0.sql',
-                'admin/sql/updates/mysql/4.2.0.sql',
-                'admin/sql/updates/mysql/4.2.1.sql',
-                'admin/sql/updates/mysql/4.2.2.sql',
-                'admin/sql/updates/mysql/4.3.0.sql',
-                'admin/sql/updates/mysql/4.3.1.sql',
-                'admin/sql/updates/mysql/4.3.2.sql',
-                'admin/sql/updates/mysql/4.3.3.sql',
-                'admin/sql/updates/mysql/4.3.4.sql',
-                'admin/sql/updates/mysql/4.4.0.sql',
-                'admin/sql/updates/mysql/4.4.1.sql',
-                'admin/sql/updates/mysql/4.4.2.sql',
-                'admin/sql/updates/mysql/4.5.0.sql',
-            ),
-            $updates,
-            $label . ' must include SQL updates from 4.1.0 onward only.'
-        );
+        return $exists;
     }
 
     private function isDevelopmentEntry(string $entry): bool
@@ -257,22 +352,9 @@ final class ZipArtifactContentsTest extends TestCase
         }
 
         return preg_match(
-            '#(^|/)(tests|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log))$#i',
+            '#(^|/)(tests|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
             $entry
         ) === 1;
-    }
-
-    private function componentRelativeEntry(string $entry): string
-    {
-        return preg_replace('#^com_jem/#', '', $entry) ?? $entry;
-    }
-
-    private function isCurrentPackageArtifact(string $zipFile): bool
-    {
-        $relative = $this->relativePath($zipFile);
-
-        return str_contains(basename($zipFile), '4.5.0beta5')
-            || str_starts_with($relative, 'build/pkg_stage/');
     }
 
     private function relativePath(string $path): string

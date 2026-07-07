@@ -8,8 +8,8 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
@@ -23,9 +23,9 @@ use Joomla\CMS\Factory;
 
 class JemViewGroups extends JemAdminView
 {
-    protected $items;
-    protected $pagination;
-    protected $state;
+    public $items;
+    public $pagination;
+    public $state;
 
     public function display($tpl = null)
     {
@@ -42,14 +42,13 @@ class JemViewGroups extends JemAdminView
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // assign data to template
-        $this->user            = $user;
+        $this->user         = $user;
         $this->jemsettings  = $jemsettings;
 
         // add toolbar
         $this->addToolbar();
-
         parent::display($tpl);
-        }
+    }
 
 
     /**
@@ -60,27 +59,56 @@ class JemViewGroups extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_GROUPS'), 'groups');
 
         /* retrieving the allowed actions for the user */
-        $canDo = JEMHelperBackend::getActions(0);
+        $canDo          = JemHelperBackend::getActions(0);
+        $toolbar        = Toolbar::getInstance('toolbar');
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canDelete      = $canDo->get('core.delete');
+        $filterState    = $this->state->get('filter_state');
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canDo->get('core.create')) {
             ToolbarHelper::addNew('group.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canDo->get('core.edit')) {
             ToolbarHelper::editList('group.edit');
             ToolbarHelper::divider();
         }
 
-        if ($canDo->get('core.edit.state')) {
-            ToolbarHelper::checkin('groups.checkin');
+        if ($canChangeState) {
+            $dropdown = $toolbar->dropdownButton('status-group')
+                ->text('JTOOLBAR_CHANGE_STATUS')
+                ->toggleSplit(false)
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $childBar = $dropdown->getChildToolbar();
+
+            if ($filterState != 2) {
+                $childBar->publish('groups.publish')->listCheck(true);
+                $childBar->unpublish('groups.unpublish')->listCheck(true);
+            }
+
+            if ($filterState != 2) {
+                $childBar->archive('groups.archive')->listCheck(true);
+            } else {
+                $childBar->publish('groups.publish', 'JTOOLBAR_UNARCHIVE')->listCheck(true);
+            }
+
+            if ($filterState != -2) {
+                $childBar->trash('groups.trash')->listCheck(true);
+            }
         }
 
-        ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'groups.remove', 'JACTION_DELETE');
+        if ($filterState == -2 && $canDelete) {
+            ToolbarHelper::divider();
+            $toolbar->delete('groups.remove', 'JTOOLBAR_EMPTY_TRASH')
+                ->message('COM_JEM_CONFIRM_DELETE')
+                ->listCheck(true);
+        }
 
         ToolbarHelper::divider();
         ToolBarHelper::help('listgroups', true, 'https://www.joomlaeventmanager.net/documentation/backend/groups');
     }
 }
-?>

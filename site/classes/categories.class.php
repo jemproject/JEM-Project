@@ -11,14 +11,12 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\Registry\Registry;
 use Joomla\CMS\HTML\HTMLHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-#[AllowDynamicProperties]
 class JemCategories
 {
     /**
@@ -44,6 +42,13 @@ class JemCategories
      * @since  11.1
      */
     protected $_checkedCategories;
+
+    /**
+     * Category loader options.
+     *
+     * @var mixed
+     */
+    protected $_options;
 
     /**
      * id
@@ -642,7 +647,7 @@ class JemCategories
         }
         catch (RuntimeException $e)
         {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
         }
 
         if (!$mitems)
@@ -676,7 +681,7 @@ class JemCategories
 
     /**
      * Get the categorie tree
-     * based on the joomla 1.0 treerecurse
+     * Builds a nested category tree.
      *
      * @access public
      * @return array
@@ -808,7 +813,7 @@ class JemCategories
 /**
  * Helper class to load Categorytree
  */
-class JemCategoryNode extends CMSObject
+class JemCategoryNode
 {
 
     /**
@@ -852,6 +857,11 @@ class JemCategoryNode extends CMSObject
     public $title = null;
 
     /**
+     * JEM category name.
+     */
+    public $catname = null;
+
+    /**
      * The the alias for the category
      */
     public $alias = null;
@@ -860,6 +870,26 @@ class JemCategoryNode extends CMSObject
      * Description of the category.
      */
     public $description = null;
+
+    /**
+     * Content text passed through content plugins.
+     */
+    public $text = null;
+
+    /**
+     * Joomla custom fields attached by the fields plugin.
+     */
+    public $jcfields = array();
+
+    /**
+     * Category image file.
+     */
+    public $image = null;
+
+    /**
+     * Category display color.
+     */
+    public $color = null;
 
     /**
      * The publication status of the category
@@ -882,6 +912,11 @@ class JemCategoryNode extends CMSObject
     public $access = null;
 
     /**
+     * Whether the current user can view the category access level.
+     */
+    public $user_has_access_category = null;
+
+    /**
      * JSON string of parameters
      */
     public $params = null;
@@ -897,9 +932,27 @@ class JemCategoryNode extends CMSObject
     public $metakey = null;
 
     /**
+     * JEM category meta keywords.
+     */
+    public $meta_keywords = null;
+
+    /**
+     * JEM category meta description.
+     */
+    public $meta_description = null;
+
+    /**
      * JSON string of other meta data
      */
     public $metadata = null;
+
+    public $groupid = null;
+
+    public $ordering = null;
+
+    public $note = null;
+
+    public $path = null;
 
     public $created_user_id = null;
 
@@ -924,6 +977,14 @@ class JemCategoryNode extends CMSObject
      * The language for the category in xx-XX format
      */
     public $language = null;
+
+    public $modified = null;
+
+    public $type_id = null;
+
+    public $email = null;
+
+    public $emailacljl = null;
 
     /**
      * Number of items in this category or descendants of this category
@@ -990,7 +1051,12 @@ class JemCategoryNode extends CMSObject
     {
         if ($category)
         {
-            $this->setProperties($category);
+            foreach ((array) $category as $name => $value) {
+                if (property_exists($this, $name)) {
+                    $this->$name = $value;
+                }
+            }
+
             if ($constructor)
             {
                 $this->_constructor = &$constructor;
@@ -1039,7 +1105,7 @@ class JemCategoryNode extends CMSObject
             {
                 end($parent->_children);
                 $this->_leftSibling = prev($parent->_children);
-                $this->_leftSibling->_rightsibling = &$this;
+                $this->_leftSibling->_rightSibling = &$this;
             }
         }
     }

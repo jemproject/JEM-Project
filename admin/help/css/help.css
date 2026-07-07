@@ -148,6 +148,22 @@ table.help td {
     vertical-align: top;
 }
 
+.doclinks {
+    margin: 0 0 1rem;
+    padding: .6rem .75rem;
+    border: 1px solid #d6dce6;
+    background: #f7f9fc;
+}
+
+.doclinks strong {
+    margin-right: .35rem;
+}
+
+.doclinks a {
+    display: inline-block;
+    margin: 0 .45rem .2rem 0;
+}
+
 .close {
     text-align: center;
     margin: 30px 0;

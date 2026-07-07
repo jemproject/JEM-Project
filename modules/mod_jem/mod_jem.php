@@ -40,7 +40,6 @@ JemHelper::loadIconFont();
 
 $moduleIntroText  = JemHelper::renderModuleText($params, 'intro');
 $moduleFooterText = JemHelper::renderModuleText($params, 'footer');
-
 echo $moduleIntroText;
 require ModuleHelper::getLayoutPath($mod_name, $params->get('layout', 'default'));
 echo $moduleFooterText;

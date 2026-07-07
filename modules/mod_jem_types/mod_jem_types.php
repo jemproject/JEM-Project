@@ -38,7 +38,6 @@ if (empty($data) && !$params->get('show_when_empty', 0)) {
 
 $moduleIntroText  = JemHelper::renderModuleText($params, 'intro');
 $moduleFooterText = JemHelper::renderModuleText($params, 'footer');
-
 echo $moduleIntroText;
 require ModuleHelper::getLayoutPath('mod_jem_types', $params->get('layout', 'default'));
 echo $moduleFooterText;

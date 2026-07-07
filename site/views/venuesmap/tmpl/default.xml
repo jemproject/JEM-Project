@@ -166,7 +166,7 @@
                    description="COM_JEM_VENUESMAP_CATEGORY_ID_DESC" class="form-select w-auto jem-options-width-auto"
             />
 
-            <field class="form-select w-auto jem-options-width-auto" name="jem_itemid" type="menuitem"
+            <field class="jem-options-width-auto w-auto" name="jem_itemid" type="menuitem"
                    label="COM_JEM_VENUESMAP_JEM_ITEMID_LABEL"
                    description="COM_JEM_VENUESMAP_JEM_ITEMID_DESC"/>
 

@@ -80,6 +80,14 @@ $mode = $params->get('display_mode', 'summary');
                                 <small class="mod-jem-types__date text-muted ms-1">
                                     <?php echo JemOutput::formatShortDateTime($event->dates, $event->times, $event->enddates, $event->endtimes, 0); ?>
                                 </small>
+                                <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
+                                <?php if ($moreInformationDisplay !== '' && !empty($event->articlelink)) : ?>
+                                    <a id="<?php echo JemHelper::getModuleActionId('mod-jem-types', 'more-information', $event->id, $module->id ?? 0); ?>"
+                                       href="<?php echo htmlspecialchars($event->articlelink, ENT_QUOTES, 'UTF-8'); ?>"
+                                       class="<?php echo JemHelper::getMoreInformationClass($moreInformationDisplay, 'jem-more-information-link mod-jem-types__more-information'); ?>">
+                                        <?php echo Text::_('MOD_JEM_TYPES_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($event->articletitle)) ? ': ' . $event->articletitle : ''; ?>
+                                    </a>
+                                <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
                     </ul>

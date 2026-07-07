@@ -135,7 +135,6 @@ class JemControllerAttendee extends BaseController
                 }
             }
 
-
             PluginHelper::importPlugin('actionlog', 'jem');
             JemFactory::getDispatcher()->triggerEvent('onJemAfterAttendeeSave', array($row, empty($id)));
 

@@ -12,6 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\String\StringHelper;
 
 /**
  * View class for the JEM Contactelement screen
@@ -34,7 +35,7 @@ class JEMViewContactelement extends HtmlView
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.contactelement.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $filter_type = $app->getUserStateFromRequest('com_jem.contactelement.filter_type', 'filter_type', 0, 'int');
         $search = $app->getUserStateFromRequest('com_jem.contactelement.filter_search', 'filter_search', '', 'string');
-        $search = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search = $db->escape(trim(StringHelper::strtolower($search)));
 
         //prepare document
         $document->setTitle(Text::_('COM_JEM_SELECTVENUE'));

@@ -24,17 +24,17 @@ class JemViewMain extends JemAdminView
     public function display($tpl = null)
     {
         //initialise variables
-        $app = Factory::getApplication();
+        $app      = Factory::getApplication();
         $document = $app->getDocument();
         $user     = JemFactory::getUser();
 
-        // Get data from the model
-        $events   = $this->get('EventsData');
-        $venue    = $this->get('VenuesData');
-        $category = $this->get('CategoriesData');
-        $types    = $this->get('TypesData') ?: new stdClass();
+        // Get main model data
+        $events   = $this->get('EventsData')   ?: new stdClass();
+        $venue    = $this->get('VenuesData')   ?: new stdClass();
+        $category = $this->get('CategoriesData') ?: new stdClass();
+        $types    = $this->get('TypesData')    ?: new stdClass();
         $typeEntities = $this->get('TypeEntitiesData') ?: new stdClass();
-        $images   = $this->get('ImagesData') ?: new stdClass();
+        $images   = $this->get('ImagesData')   ?: new stdClass();
         $attachments = $this->get('AttachmentsData') ?: new stdClass();
         $registration = $this->get('RegistrationData') ?: new stdClass();
 
@@ -65,9 +65,29 @@ class JemViewMain extends JemAdminView
         $this->user     = $user;
         $this->updatedata = $updatedata;
 
-        // add toolbar
+        // Load CSS
+        $wa = $document->getWebAssetManager();
+        if (!$wa->assetExists('style', 'jem.backend')) {
+           $wa->registerStyle('jem.backend', 'com_jem/backend.css');
+        }
+        $wa->useStyle('jem.backend');
+
+        // Assign variables to template
+        $this->events     = $events;
+        $this->venue      = $venue;
+        $this->category   = $category;
+        $this->types      = $types;
+        $this->typeEntities = $typeEntities;
+        $this->images     = $images;
+        $this->attachments = $attachments;
+        $this->registration = $registration;
+        $this->user       = $user;
+        $this->updatedata = $updatedata;
+
+        // Add toolbar
         $this->addToolbar();
 
+        // Render template
         parent::display($tpl);
     }
 

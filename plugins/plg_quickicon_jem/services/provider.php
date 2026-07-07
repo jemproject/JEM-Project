@@ -2,6 +2,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Extension\PluginInterface;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
@@ -19,7 +20,7 @@ return new class implements ServiceProviderInterface
                 $pluginParams = (array) PluginHelper::getPlugin('quickicon', 'jem');
 
                 $plugin = new Jem($dispatcher, $pluginParams);
-                $plugin->setApplication(\Joomla\CMS\Factory::getApplication());
+                $plugin->setApplication(Factory::getApplication());
 
                 return $plugin;
             }

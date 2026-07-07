@@ -222,9 +222,17 @@
     margin-bottom: 1rem;
 }
 
-.read-more {
+.jem-readmore {
     display: inline-block;
     margin-top: 0.5rem;
+}
+
+.jem-readmore .jem-readmore-link {
+    display: inline-flex;
+    width: auto;
+}
+
+.jem-readmore .jem-readmore-link:not(.btn) {
     color: #1a73e8;
     text-decoration: none;
     font-weight: 500;

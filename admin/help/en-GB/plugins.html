@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml/" lang="en-GB" xml:lang="en-GB">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title><span>32</span>Plugins Reference</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
+        <h1>Plugins Reference</h1>
+        <p>
+            This page summarises the JEM plugins included with the package and the main options exposed by their XML files.
+            It is intended as a local reference and as starter material for the online plugins manual.
+        </p>
+
+        <h2>Content Plugins</h2>
+        <table class="help">
+            <tr><th>Plugin</th><th>Purpose</th><th>Main options</th></tr>
+            <tr>
+                <td>Content - JEM</td>
+                <td>Provides JEM content integration helpers.</td>
+                <td>No component-specific configuration fields are exposed in the current XML.</td>
+            </tr>
+            <tr>
+                <td>Content - JEM Embed</td>
+                <td>Embeds JEM output in content through plugin syntax or controlled embed calls.</td>
+                <td>Require token: Yes by default. API tokens stores the accepted tokens when token protection is enabled.</td>
+            </tr>
+            <tr>
+                <td>Content - JEM List Events</td>
+                <td>Lists JEM events inside articles or content areas.</td>
+                <td>Event set: today, unfinished, upcoming, ongoing, archived, newest, open or all. Featured filter: No, Yes or Only. Title, date, category and venue can be hidden, shown or linked. Title length, date/time formats, end date/time display, category IDs, venue IDs, maximum events and no-events message are configurable.</td>
+            </tr>
+        </table>
+
+        <h2>JEM System Plugins</h2>
+        <table class="help">
+            <tr><th>Plugin</th><th>Purpose</th><th>Main options</th></tr>
+            <tr>
+                <td>JEM Mailer</td>
+                <td>Sends notification emails for registrations, waiting-list changes, unregistrations, event changes and venue changes.</td>
+                <td>Registration, waiting-list and unregistration notifications can be sent to users, event creators, admins, category recipients and JEM groups. Event notifications cover new events and edited events, including registered users and category ACL recipients. Venue notifications cover new and edited venues. Admin options control automatic admin receiver lookup, explicit admin receiver addresses and HTML email.</td>
+            </tr>
+            <tr>
+                <td>JEM Comments</td>
+                <td>Connects JEM with a comments system where available.</td>
+                <td>Comment system: None or JComments.</td>
+            </tr>
+        </table>
+
+        <h2>Search And Dashboard Plugins</h2>
+        <table class="help">
+            <tr><th>Plugin</th><th>Purpose</th><th>Main options</th></tr>
+            <tr>
+                <td>Finder - JEM</td>
+                <td>Indexes JEM content for Joomla Smart Search.</td>
+                <td>No component-specific configuration fields are exposed in the current XML.</td>
+            </tr>
+            <tr>
+                <td>Quick Icon - JEM</td>
+                <td>Adds JEM quick access to the Joomla dashboard.</td>
+                <td>No component-specific configuration fields are exposed in the current XML.</td>
+            </tr>
+        </table>
+
+        <h2>Optional / Third-party Integrations</h2>
+        <table class="help">
+            <tr><th>Integration</th><th>Purpose</th><th>Main options</th></tr>
+            <tr>
+                <td>AcyMailing Tag JEM</td>
+                <td>Provides JEM event tags for AcyMailing newsletters.</td>
+                <td>Hide past events, show featured only, image display mode, resized image width/height and fixed Itemid.</td>
+            </tr>
+            <tr>
+                <td>Community Builder integrations</td>
+                <td>Displays JEM events and attendances in Community Builder contexts.</td>
+                <td>Configuration depends on the installed Community Builder plugin and profile layout.</td>
+            </tr>
+        </table>
+    </body>
+</html>

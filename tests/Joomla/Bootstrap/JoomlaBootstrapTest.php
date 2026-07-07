@@ -20,8 +20,8 @@ final class JoomlaBootstrapTest extends JoomlaTestCase
     {
         $version = new Version();
 
-        self::assertSame(5, Version::MAJOR_VERSION);
-        self::assertMatchesRegularExpression('/^5\./', $version->getShortVersion());
+        self::assertSame(6, Version::MAJOR_VERSION);
+        self::assertMatchesRegularExpression('/^6\./', $version->getShortVersion());
     }
 
     public function testJoomlaSiteApplicationIsBootstrappedWithoutExecutingRequest(): void

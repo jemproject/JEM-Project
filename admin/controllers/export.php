@@ -17,7 +17,6 @@ use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Export Controller
- *
  */
 class JemControllerExport extends AdminController
 {

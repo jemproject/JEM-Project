@@ -7,6 +7,13 @@
         <link href="../css/help.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
         <h1>Edit Category</h1>
         <h2>Description</h2>
         <div>
@@ -63,8 +70,44 @@
         <p><strong>Color:</strong>
             Select a display color Category, used in the Calendar.
         </p>
+        <p><strong>Parent:</strong>
+            Select the parent category. The root category is used only as the top of the tree; normal categories should usually be placed below it or below another visible category.
+        </p>
+        <p><strong>Type:</strong>
+            Assign an optional Category type. Only types configured for Categories are shown. Default: no type.
+        </p>
+        <p><strong>Path:</strong>
+            Read-only category path generated from the category alias and its parents.
+        </p>
+        <h3>Category emails</h3>
+        <p><strong>Email(s):</strong>
+            Optional comma-separated email addresses that can receive notifications when an event is created or edited in this category.
+        </p>
+        <p><strong>Send email to user of this Access Level:</strong>
+            Sends category notification email to users belonging to the configured ACL groups when an event is created or modified. Default: No.
+        </p>
         <p><strong>Metadata information:</strong>
             Enter or edit (if needed) the Meta Description and the Meta Keywords of the category here.
+        </p>
+        <h3>Publishing details</h3>
+        <p><strong>ID:</strong>
+            Read-only database identifier. New categories use 0 until they are saved.
+        </p>
+        <p><strong>Created by / Created date:</strong>
+            Stores the user and date for the first creation of the category.
+        </p>
+        <p><strong>Modified by / Modified date:</strong>
+            Read-only information updated after later edits.
+        </p>
+        <p><strong>Language:</strong>
+            Optional content language. Default: All.
+        </p>
+        <h3>Metadata fields</h3>
+        <p><strong>Meta Keywords:</strong>
+            Optional comma-separated words or phrases for metadata output.
+        </p>
+        <p><strong>Meta Description:</strong>
+            Optional short summary for metadata output.
         </p>
         <h2>Related Help Screens &amp; Other Resources</h2>
         <p><strong>Group Manager:</strong> <a href="listgroups.html">Add/Edit Groups</a></p>

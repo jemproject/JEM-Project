@@ -184,6 +184,7 @@ abstract class ModJemBannerHelper
         # Retrieve the available Events
         ####
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
         $registrationTotals = self::getRegistrationTotals($events);
 
         $color = $params->get('color');
@@ -253,6 +254,8 @@ abstract class ModJemBannerHelper
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JemHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->typelink    = (!empty($row->type_id) && $params->get('linktype', 1)) ? Route::_(JemHelperRoute::getTypeeventsRoute((int) $row->type_id)) : '';
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
             $lists[$i]->registra    = (int) ($row->registra ?? 0);
             $lists[$i]->maxplaces   = (int) ($row->maxplaces ?? 0);
             $lists[$i]->reservedplaces = (int) ($row->reservedplaces ?? 0);
@@ -264,6 +267,12 @@ abstract class ModJemBannerHelper
             $lists[$i]->placespercent = $lists[$i]->maxplaces > 0
                 ? min(100, max(0, round(($lists[$i]->bookedplaces + $lists[$i]->reservedplaces) / $lists[$i]->maxplaces * 100)))
                 : 0;
+
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
 
             # time/date
             /* depending on settongs we need:

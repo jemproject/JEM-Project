@@ -21,7 +21,6 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Date\Date;
 use Joomla\Component\Jem\Site\Helper\JemMapHelper;
-use Joomla\CMS\Router\Route;
 
 
 
@@ -52,7 +51,6 @@ class JemViewEventsMap extends JemView
 
         // Initialize variables
         $app         = Factory::getApplication();
-        $app->getLanguage()->load('mod_jem_map', JPATH_SITE . '/modules/mod_jem_map');
         $document    = $app->getDocument();
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
@@ -89,7 +87,7 @@ class JemViewEventsMap extends JemView
         $mylocMarker = JemMapHelper::resolveMarkerUrl($params->get('mylocation_markerfile', 'media/com_jem/images/marker-blue.webp'), 'media/com_jem/images/marker-blue.webp');
 
         $height             = $params->get('height', '500px');
-        $zoom               = (int) $params->get('map_zoom', 8);
+        $zoom               = (int) $params->get('map_zoom', 4);
         $showDateFilter     = (int) $params->get('show_date_filter', 0);
         $showCategoryFilter = (int) $params->get('show_category_filter', 0);
         $showCountryFilter  = (int) $params->get('show_country_filter', 0);
@@ -177,10 +175,6 @@ class JemViewEventsMap extends JemView
                     break;
             }
         }
-        if (!$filterStartDate) {
-            $filterStartDate = Factory::getDate()->format('Y-m-d');
-        }
-
 
         $categories = $showCategoryFilter ? JemMapHelper::getCategories($params) : [];
         $countries = $showCountryFilter ? JemMapHelper::getVenueCountries() : [];
@@ -343,7 +337,6 @@ class JemViewEventsMap extends JemView
 
         ToolbarHelper::divider();
         ToolbarHelper::inlinehelp();
-        ToolbarHelper::help('settings', true, 'https://www.joomlaeventmanager.net/documentation/views/eventsmap');
     }
 
     /**

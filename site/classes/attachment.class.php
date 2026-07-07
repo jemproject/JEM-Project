@@ -9,13 +9,12 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
-use Joomla\CMS\Filesystem\Path;
 use Joomla\CMS\Plugin\PluginHelper;
+use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
@@ -26,7 +25,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
  *
  * @package JEM
  */
-class JemAttachment extends CMSObject
+class JemAttachment
 {
     /**
      * Attachment identifiers are stored as type + numeric id, e.g. event12 or venue7.
@@ -251,7 +250,7 @@ class JemAttachment extends CMSObject
                 continue;
             }
 
-            if (!Folder::exists($path)) {
+            if (!is_dir($path)) {
                 // try to create it
                 $res = Folder::create($path);
                 if (!$res) {
@@ -353,7 +352,7 @@ class JemAttachment extends CMSObject
         $table->bind($attach);
 
         if (!($table->check() && $table->store())) {
-            \Joomla\CMS\Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_UPDATING_RECORD').': '.$table->getError(), 'warning');
             return false;
         }
 

@@ -111,6 +111,7 @@ abstract class ModJemWideHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         # Loop through the result rows and prepare data
         $i     = -1;
@@ -153,6 +154,14 @@ abstract class ModJemWideHelper
             $lists[$i]->eventlink   = ($hasEventAccess && $params->get('linkevent', 1)) ? Route::_(JemHelper::applyEventRouteLayout(JEMHelperRoute::getEventRoute($row->slug), $params)) : '';
             $lists[$i]->venuelink   = ($hasVenueAccess && $params->get('linkvenue', 1)) ? Route::_(JEMHelperRoute::getVenueRoute($row->venueslug)) : '';
             $lists[$i]->featured    = $row->featured;
+            $lists[$i]->articlelink = '';
+            $lists[$i]->articletitle = '';
+
+            if (!empty($row->article_id) && isset($associatedArticles[(int) $row->article_id])) {
+                $articleLink = JemHelper::getAssociatedArticleLink($associatedArticles[(int) $row->article_id]);
+                $lists[$i]->articlelink = $articleLink['link'];
+                $lists[$i]->articletitle = $articleLink['title'];
+            }
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true).'/media/com_jem/images/blank.webp';

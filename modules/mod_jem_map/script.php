@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
+use Joomla\CMS\Version;
 
 /**
  * Script file of JEM component
@@ -31,6 +31,10 @@ class mod_jem_mapInstallerScript
     public function preflight($type, $parent)
     {
         $type = strtolower($type);
+
+        if (version_compare(JVERSION, '5.4.0', 'lt') || Version::MAJOR_VERSION > 6) {
+            return false;
+        }
 
         // abort if the release being installed is not newer than the currently installed version
         if ($type === 'update') {

@@ -10,7 +10,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
+use Joomla\CMS\Version;
 
 /**
  * Script file of JEM component
@@ -32,8 +32,11 @@ class mod_jem_wideInstallerScript
     {
         $type = strtolower($type);
 
-        if ($type === 'update') {
+        if (version_compare(JVERSION, '5.4.0', 'lt') || Version::MAJOR_VERSION > 6) {
+            return false;
+        }
 
+        if ($type === 'update') {
             // Installed module version (from manifest cache)
             $this->oldRelease = (string) $this->getParam('version');
 

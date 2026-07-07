@@ -11,8 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\String\StringHelper;
 
 /**
  * Categoryelement-View
@@ -32,7 +32,7 @@ class JemViewCategoryelement extends HtmlView {
         $filter_order_Dir    = $app->getUserStateFromRequest('com_jem.categoryelement.filter_order_Dir',    'filter_order_Dir',    '', 'word');
         $filter_state         = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_state', 'filter_state', '', 'string');
         $search             = $app->getUserStateFromRequest('com_jem.categoryelement.'.$itemid.'.filter_search', 'filter_search', '', 'string');
-        $search             = $db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search             = $db->escape(trim(StringHelper::strtolower($search)));
 
         //prepare document
         $document->setTitle(Text::_('COM_JEM_SELECT_CATEGORY'));

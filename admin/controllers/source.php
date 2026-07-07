@@ -23,7 +23,7 @@ class JemControllerSource extends BaseController
      * Constructor.
      *
      * @param  array  An optional associative array of configuration settings.
-     * @see    JController
+     * @see    AdminController
      */
     public function __construct($config = array()) {
         parent::__construct($config);
@@ -70,7 +70,7 @@ class JemControllerSource extends BaseController
      * @param  boolean  If true, the view output will be cached
      * @param  array    An array of safe url parameters and their variable types, for valid values see {@link InputFilter::clean()}.
      *
-     * @return JController  This object to support chaining.
+     * @return void
      *
      */
     public function display($cachable = false, $urlparams = array()) {

@@ -38,7 +38,6 @@ class JemTableCategory extends Nested
      *
      * @return boolean  True on success.
      *
-     * @link   https://docs.joomla.org/JTableNested/delete
      */
     public function delete($pk = null, $children = false)
     {
@@ -107,18 +106,23 @@ class JemTableCategory extends Nested
     protected function _insertIgnoreObject($table, &$object, $keyName = NULL)
     {
         $fmtsql = 'INSERT IGNORE INTO '.$this->_db->quoteName($table).' (%s) VALUES (%s) ';
-        $fields = array();
-        foreach (get_object_vars($object) as $k => $v) {
-            if (is_array($v) or is_object($v) or $v === NULL) {
+        $fields = [];
+        $values = [];
+
+        foreach (get_object_vars($object) as $k => $v) {            
+            if ($k[0] === '_' || is_array($v) || is_object($v) || $v === null || $v === '') {
                 continue;
             }
-            if ($k[0] == '_') { // internal field
-                continue;
-            }
+
             $fields[] = $this->_db->quoteName($k);
             $values[] = $this->_db->quote($v);
         }
-        $this->_db->setQuery(sprintf($fmtsql, implode(",", $fields), implode(",", $values)));
+
+        if (empty($fields)) {
+            return 0;
+        }
+
+        $this->_db->setQuery(sprintf($fmtsql, implode(',', $fields), implode(',', $values)));
         $results = $this->_db->execute();
         if ($results === false){
             return -1;
@@ -240,14 +244,11 @@ class JemTableCategory extends Nested
         $userFactory = Factory::getContainer()->get(UserFactoryInterface::class);
 
         foreach (get_object_vars($this) as $k => $v) {
-            if (is_array($v) or is_object($v) or $v === NULL) {
-                continue;
-            }
-            if ($k[0] == '_') { // internal field
+            if (is_array($v) || is_object($v) || $v === null || $k[0] === '_') {
                 continue;
             }
             //Change datetime to null when its value is '000-00-00' (support J4 & J5)
-            if(strpos($v, "0000-00-00")!== FALSE){
+            if (strpos($v, '0000-00-00') !== false) {
                 $this->$k = null;
             }
 
@@ -267,6 +268,7 @@ class JemTableCategory extends Nested
                 }
             }
         }
+
         return true;
     }
 

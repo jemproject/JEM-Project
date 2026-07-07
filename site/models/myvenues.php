@@ -13,7 +13,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
-
+use Joomla\String\StringHelper;
+
+use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Component JEM Model
  *
@@ -22,6 +24,8 @@ use Joomla\CMS\Filter\InputFilter;
  */
 class JemModelMyvenues extends BaseDatabaseModel
 {
+    protected $_pagination_venues = null;
+
     /**
      * Venues data array
      *
@@ -48,7 +52,7 @@ class JemModelMyvenues extends BaseDatabaseModel
 
         //get the number of events
 
-        /* in J! 3.3.6 limitstart is removed from request - but we need it! */
+        /* Preserve limitstart when it is missing from the request. */
         if ($app->input->getInt('limitstart', null) === null) {
             $app->setUserState('com_jem.myvenues.limitstart', 0);
         }
@@ -158,7 +162,7 @@ class JemModelMyvenues extends BaseDatabaseModel
         }
         // simple checks, good enough here
         if (is_array($cid) && count($cid) && ($publish >= -2) && ($publish <= 2)) {
-            \Joomla\Utilities\ArrayHelper::toInteger($cid);
+            ArrayHelper::toInteger($cid);
             $cid = array_filter(array_unique($cid));
 
             if (empty($cid)) {
@@ -268,7 +272,7 @@ class JemModelMyvenues extends BaseDatabaseModel
 
         $filter   = $app->getUserStateFromRequest('com_jem.myvenues.filter', 'filter', 0, 'int');
         $search   = $app->getUserStateFromRequest('com_jem.myvenues.filter_search', 'filter_search', '', 'string');
-        $search   = $this->_db->escape(trim(\Joomla\String\StringHelper::strtolower($search)));
+        $search   = $this->_db->escape(trim(StringHelper::strtolower($search)));
 
         $where = array();
 

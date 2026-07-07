@@ -27,11 +27,23 @@ if (!empty($selectedParam)) {
 // Get the current search field to keep it selected in the dropdown
 $filter_type = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
+$cssSettings = JemHelper::retrieveCss();
+$filterBackground = $cssSettings->get('css_color_bg_filter');
+$filterBorder = $cssSettings->get('css_color_border_filter');
+$filterStyle = array();
+
+if (!empty($filterBackground)) {
+    $filterStyle[] = 'background-color: ' . htmlspecialchars($filterBackground, ENT_QUOTES, 'UTF-8') . ' !important';
+}
+
+if (!empty($filterBorder)) {
+    $filterStyle[] = 'border-color: ' . htmlspecialchars($filterBorder, ENT_QUOTES, 'UTF-8') . ' !important';
+}
 ?>
 
 <style>
     #jem_filter {
-        display: grid;
+        display: grid !important;
         grid-template-columns: minmax(0, 1fr);
         align-items: center;
         gap: 6px;
@@ -40,6 +52,7 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
+        white-space: nowrap;
     }
 
     .jem_fleft {
@@ -139,9 +152,10 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
         background-size: 1rem auto !important;
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 560px) {
         #jem_filter {
             grid-template-columns: 1fr;
+            white-space: normal;
         }
 
         .jem_fleft {
@@ -164,7 +178,7 @@ Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_CONTACT'));
     <div class="clr"></div>
 
     <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
-        <div id="jem_filter">
+        <div id="jem_filter"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <select name="filter_type" id="filter_type" class="inputbox" onchange="this.form.submit()">
                     <option value="1" <?php echo ($filter_type == '1' ? 'selected' : ''); ?>><?php echo Text::_('COM_JEM_NAME'); ?></option>

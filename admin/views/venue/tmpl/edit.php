@@ -119,11 +119,11 @@ Text::script('JCANCEL');
             width: 100%;
         }
 
-                #image-event .jem-venue-image-control .controls::after {
+        #image-event .jem-venue-image-control .controls::after {
             display: none;
         }
 
-#image-event .jem-venue-image-control img.venue-image {
+        #image-event .jem-venue-image-control img.venue-image {
             justify-self: start;
         }
     }

@@ -18,7 +18,13 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
-use Joomla\Database\DatabaseInterface;
+
+$helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
+$output = JPATH_SITE . '/components/com_jem/classes/output.class.php';
+
+if (!is_file($helper) || !is_file($output)) {
+    return;
+}
 
 $helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
 $output = JPATH_SITE . '/components/com_jem/classes/output.class.php';

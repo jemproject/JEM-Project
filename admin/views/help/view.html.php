@@ -8,13 +8,12 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
-use Joomla\CMS\Filesystem\Folder;
-
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\String\StringHelper;
 
 /**
  * View class for the JEM Help screen
@@ -41,7 +40,7 @@ class JemViewHelp extends JemAdminView
         // Check for files in the actual language
         $langTag = $lang->getTag();
 
-        if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+        if (!is_dir(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
             $langTag = 'en-GB';        // use english as fallback
         }
 
@@ -72,7 +71,7 @@ class JemViewHelp extends JemAdminView
         // Check for files in the actual language
         $langTag = $lang->getTag();
 
-        if (!Folder::exists(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
+        if (!is_dir(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag)) {
             $langTag = 'en-GB';        // use english as fallback
         }
         $files = Folder::files(JPATH_SITE .'/administrator/components/com_jem/help/'.$langTag, '\.xml$|\.html$');
@@ -84,7 +83,7 @@ class JemViewHelp extends JemAdminView
                 $title = trim($m[1]);
                 if ($title) {
                     if ($helpsearch) {
-                        if (\Joomla\String\StringHelper::strpos(strip_tags($buffer), $helpsearch) !== false) {
+                        if (StringHelper::strpos(strip_tags($buffer), $helpsearch) !== false) {
                             $toc[$file] = $title;
                         }
                     } else {
