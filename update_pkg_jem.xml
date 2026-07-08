@@ -8,9 +8,9 @@
         <type>package</type>
         <client>0</client>
         <version>5.0.0</version>
-        <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem-5</infourl>
+        <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-0-rc5</downloadurl>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=139:jem-5-0-0-stable</downloadurl>
         </downloads>
         <tags>
             <tag>beta</tag>
@@ -19,12 +19,13 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
         <php_minimum>8.3</php_minimum>
-        <sha256>a05651e5e2a9c77cee74654f6dc3df279cab4a2f0ea643e76780a0170bb51e19</sha256>
-        <sha384>9a3d468c24cc029330aeb2fae482449d133f7b7387f53e1cceeb645bc4822f88bb5210e58f9181499f7550acdd57ee75</sha384>
-        <sha512>2a12a3362b658e0a50f74326bad8254efbcd569b77c2a338a9c270f6daa788c2c1d7052a4f36429986496ce09ae824b1652992ab6f8daab02eff59f120c13ff1</sha512>
+        <sha256>bc2086f924ebcf0e9d2d8cf586b85ecac38cc9e7fa4a9b8d06f733a3018a2105</sha256>
+        <sha384>5c31b687debaf60cdec840a8d623094cbf8cfdd648f557518984be949def446a208105cb0016bc30436b62136bc068a8</sha384>
+        <sha512>01e5ba0238eb9339f61bcbf81c2b93c87da245a20e1686da85cdcbfcdcdbce62814f7f1a7f8ed2de6bb9b0d39c749a31a3dcab01f5bdfa44effc0ddbac196981</sha512>
         <date>2026-07-05 10:00</date>
-        <notes>JEM 5.0.0 RC 5 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer.</notes>
-        <changes>JEM 5.0.0 RC 5 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
+        <notes>JEM 5.0.0 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer.</notes>
+        <changes>JEM 5.0.0 adds native Joomla 6 compatibility and keeps Joomla 5 support.
+        A lot af new features and improvements *import, workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
     </update>
 </updates>
 
