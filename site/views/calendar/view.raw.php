@@ -72,7 +72,7 @@ class JemViewCalendar extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar(false, false, true, $filename);
+            JemHelper::sendCalendar($vcal, $filename);
         }
     }
 }

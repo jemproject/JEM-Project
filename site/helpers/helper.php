@@ -2618,6 +2618,45 @@ class JemHelper
         return $vcal;
     }
 
+    /**
+     * Send an iCalendar response and stop Joomla from appending template/plugin output.
+     *
+     * @param   \Kigkonsult\Icalcreator\Vcalendar  $calendartool  Calendar instance.
+     * @param   string                             $filename      Download filename.
+     *
+     * @return  void
+     */
+    static public function sendCalendar($calendartool, $filename)
+    {
+        $filename = basename(str_replace(array("\r", "\n", '"'), '', (string) $filename));
+        if ($filename === '') {
+            $filename = 'events.ics';
+        }
+
+        $output = $calendartool->createCalendar();
+        $output = preg_replace("/\r\n|\r|\n/", "\r\n", $output);
+
+        if (substr($output, -2) !== "\r\n") {
+            $output .= "\r\n";
+        }
+
+        while (ob_get_level() > 0) {
+            if (!@ob_end_clean()) {
+                break;
+            }
+        }
+
+        header('Content-Type: text/calendar; charset=utf-8', true);
+        header('Content-Disposition: attachment; filename="' . $filename . '"', true);
+        header('Cache-Control: no-cache, no-store, must-revalidate', true);
+        header('Pragma: no-cache', true);
+        header('Expires: 0', true);
+        header('Content-Length: ' . strlen($output), true);
+
+        echo $output;
+        Factory::getApplication()->close();
+    }
+
     static public function icalAddEvent(&$calendartool, $event)
     {
         $language = Factory::getApplication()->getLanguage();
