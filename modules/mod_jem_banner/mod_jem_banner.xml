@@ -2,12 +2,12 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_banner</name>
     <author>JEM Community</author>
-    <creationDate>7 July 2026</creationDate>
+    <creationDate>9 July 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0</version>
+    <version>5.0.1beta1</version>
     <description>MOD_JEM_BANNER_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
