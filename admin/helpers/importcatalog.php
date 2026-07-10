@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Http\HttpFactory;
+
 /**
  * Helper for the remote JEM import catalog XML.
  */
@@ -84,8 +86,8 @@ class JemImportCatalogHelper
         }
 
         try {
-            if (class_exists('\\Joomla\\CMS\\Http\\HttpFactory')) {
-                $http = \Joomla\CMS\Http\HttpFactory::getHttp();
+            if (class_exists(HttpFactory::class)) {
+                $http = HttpFactory::getHttp();
                 $response = $http->get($url, array(), 10);
 
                 if ((int) $response->code >= 200 && (int) $response->code < 300) {

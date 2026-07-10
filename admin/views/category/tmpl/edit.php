@@ -93,11 +93,11 @@ $typeField = $this->form->getField('type_id');
             width: 100%;
         }
 
-                #category-image .jem-category-image-control .controls::after {
+        #category-image .jem-category-image-control .controls::after {
             display: none;
         }
 
-#category-image .jem-category-image-control img.venue-image {
+        #category-image .jem-category-image-control img.venue-image {
             justify-self: start;
         }
     }
@@ -215,9 +215,9 @@ $typeField = $this->form->getField('type_id');
                         <div class="accordion-body">
                             <fieldset class="panelform">
                                 <ul class="adminformlist jem-category-image-fields">
-                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div></li>
+                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
+                                    </li>
                                     <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
-                                    <li><?php echo $this->form->renderfield('event_image_default_storage'); ?></li>
                                 </ul>
                             </fieldset>
                         </div>

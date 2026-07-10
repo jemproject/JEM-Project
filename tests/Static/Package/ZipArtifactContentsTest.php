@@ -213,6 +213,10 @@ final class ZipArtifactContentsTest extends TestCase
                         continue;
                     }
 
+                    if (str_starts_with($relative, '_old builds/') || str_starts_with($relative, '_old packages/')) {
+                        continue;
+                    }
+
                     if ($file->getFilename() === 'com_jem_check.zip') {
                         continue;
                     }

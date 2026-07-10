@@ -231,6 +231,7 @@ class JemModelCategory extends AdminModel
             $isNew = false;
         }
 
+
         // Set the new parent id if parent id not matched OR while New/Save as
         // Copy .
         if ($table->parent_id != $data['parent_id'] || $data['id'] == 0) {

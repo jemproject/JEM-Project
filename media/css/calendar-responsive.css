@@ -1114,6 +1114,7 @@ div#jem .rowcolor {
 #jlcalendarlegend .btn-outline-dark,
 #jlcalendarlegend .btn-outline-dark:visited {
     color: #212529;
+    padding: 0 10px;
 }
 
 #jlcalendarlegend .btn-outline-dark:hover,

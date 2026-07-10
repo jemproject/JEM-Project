@@ -688,12 +688,30 @@ class JemModelEvent extends JemModelAdmin
                 $data['publish_up'] = Factory::getDate()->toSql();
             }
 
-            // For new events with no event image, use the first category that
-            // provides a default event image. Shared category defaults remain in
-            // the root events folder; per-event defaults are copied into the
-            // configured image_path folder.
-            if (!$this->applyCategoryDefaultEventImage($data, $cats, $new)) {
-                return false;
+            // For new events with no image, use the first category that has image_as_default enabled.
+            if ($new && empty($data['datimage']) && !empty($cats) && is_array($cats)) {
+                $catIds = array_values(array_filter(array_map('intval', $cats)));
+                if (!empty($catIds)) {
+                    try {
+                        $dbCat = Factory::getContainer()->get('DatabaseDriver');
+                        $catQuery = $dbCat->getQuery(true);
+                        $catQuery->select($dbCat->quoteName(['id', 'image']))
+                                 ->from($dbCat->quoteName('#__jem_categories'))
+                                 ->whereIn($dbCat->quoteName('id'), $catIds)
+                                 ->where($dbCat->quoteName('image_as_default') . ' = 1')
+                                 ->where($dbCat->quoteName('image') . ' != ' . $dbCat->quote(''));
+                        $dbCat->setQuery($catQuery);
+                        $catImageMap = $dbCat->loadObjectList('id');
+                        foreach ($catIds as $catId) {
+                            if (isset($catImageMap[$catId])) {
+                                $data['datimage'] = 'category_' . $catImageMap[$catId]->image;
+                                break;
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        // Column may not exist yet if DB migration hasn't run; skip silently.
+                    }
+                }
             }
 
             // Save the event
