@@ -26,6 +26,13 @@ if (!is_file($helper) || !is_file($output)) {
     return;
 }
 
+$helper = JPATH_SITE . '/components/com_jem/helpers/helper.php';
+$output = JPATH_SITE . '/components/com_jem/classes/output.class.php';
+
+if (!is_file($helper) || !is_file($output)) {
+    return;
+}
+
 BaseDatabaseModel::addIncludePath(JPATH_SITE . '/components/com_jem/models', 'JemModel');
 require_once $helper;
 require_once $output;

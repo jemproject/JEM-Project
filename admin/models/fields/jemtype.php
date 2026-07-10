@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
@@ -135,3 +135,4 @@ class JFormFieldJemtype extends FormField
         return max(1, $threshold ?: 10);
     }
 }
+

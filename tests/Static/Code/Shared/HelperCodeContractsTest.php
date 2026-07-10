@@ -26,6 +26,28 @@ final class HelperCodeContractsTest extends TestCase
         );
     }
 
+    #[DataProvider('helperProvider')]
+    public function testHelperClassesDoNotDeclareDuplicateMethods(string $path): void
+    {
+        $duplicates = array();
+
+        foreach (self::classMethods(self::read($path)) as $class => $methods) {
+            $counts = array_count_values(array_map('strtolower', $methods));
+
+            foreach ($counts as $method => $count) {
+                if ($count > 1) {
+                    $duplicates[] = $class . '::' . $method . '()';
+                }
+            }
+        }
+
+        self::assertSame(
+            array(),
+            $duplicates,
+            self::relativePath($path) . ' must not redeclare helper methods.'
+        );
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -51,6 +73,76 @@ final class HelperCodeContractsTest extends TestCase
         self::assertFileExists($path);
 
         return (string) file_get_contents($path);
+    }
+
+    /**
+     * @return array<string, list<string>>
+     */
+    private static function classMethods(string $code): array
+    {
+        $tokens = token_get_all($code);
+        $classes = array();
+        $currentClass = null;
+        $pendingClass = null;
+        $classBraceLevel = null;
+        $braceLevel = 0;
+        $count = count($tokens);
+
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            if (is_array($token) && $token[0] === T_CLASS) {
+                for ($j = $i + 1; $j < $count; $j++) {
+                    if (is_array($tokens[$j]) && $tokens[$j][0] === T_STRING) {
+                        $pendingClass = $tokens[$j][1];
+                        $classes[$pendingClass] = $classes[$pendingClass] ?? array();
+                        break;
+                    }
+                }
+                continue;
+            }
+
+            if ($token === '{') {
+                $braceLevel++;
+
+                if ($pendingClass !== null) {
+                    $currentClass = $pendingClass;
+                    $pendingClass = null;
+                    $classBraceLevel = $braceLevel;
+                }
+                continue;
+            }
+
+            if ($token === '}') {
+                if ($classBraceLevel !== null && $braceLevel === $classBraceLevel) {
+                    $currentClass = null;
+                    $classBraceLevel = null;
+                }
+
+                $braceLevel--;
+                continue;
+            }
+
+            if ($currentClass !== null && is_array($token) && $token[0] === T_FUNCTION) {
+                for ($j = $i + 1; $j < $count; $j++) {
+                    if (is_array($tokens[$j]) && $tokens[$j][0] === T_WHITESPACE) {
+                        continue;
+                    }
+
+                    if ($tokens[$j] === '&') {
+                        continue;
+                    }
+
+                    if (is_array($tokens[$j]) && $tokens[$j][0] === T_STRING) {
+                        $classes[$currentClass][] = $tokens[$j][1];
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return $classes;
     }
 
     private static function relativePath(string $path): string

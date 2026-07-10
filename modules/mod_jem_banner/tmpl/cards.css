@@ -246,6 +246,9 @@
     font-size: 0.9rem;
     color: var(--joomla-text-muted-color, #4a5568);
 }
+.jemmodulebanner .meta-text a {
+    color: inherit;
+}
 
 .jemmodulebanner .meta-text a {
     color: inherit;

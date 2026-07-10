@@ -273,6 +273,29 @@ div#jemmoduleteaser .image-preview {
     }
 }
 
+@media (max-width: 480px) {
+    #jemmoduleteaser table,
+    #jemmoduleteaser tbody,
+    #jemmoduleteaser tr,
+    #jemmoduleteaser td {
+        display: block;
+        width: 100%;
+    }
+
+    #jemmoduleteaser td.event-calendar {
+        padding-top: 0;
+    }
+
+    #jemmoduleteaser [class|="calendar"] {
+        float: left;
+        margin: 0 0.75rem 0.5rem 0;
+    }
+
+    #jemmoduleteaser td.event-info {
+        display: flow-root;
+    }
+}
+
 div#jemmoduleteaser .block-event-vencat {
     display: flex;
     gap: 5px;

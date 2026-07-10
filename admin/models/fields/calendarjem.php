@@ -71,4 +71,5 @@ class JFormFieldCalendarJem extends CalendarField
             return ((int) $fallback === 1) ? 1 : 0;
         }
     }
+
 }

@@ -73,8 +73,7 @@ class ActiveCalendarWeek extends JEMCalendar {
             'previousYearIcon' => $previousYearIcon,
             'nextYearIcon' => $nextYearIcon,
         );
-    }
-    /*
+    }    /*
     ********************************************************************************
     PUBLIC showWeeksByID() -> returns the week view as html table string
     The week calendar starts with the week row, that has the same week number of the year as set in the weekID
@@ -170,8 +169,7 @@ class ActiveCalendarWeek extends JEMCalendar {
         $out .= "</tr>\n";
 
         return $out;
-    }
-    /*
+    }    /*
     ********************************************************************************
     PRIVATE mkWeekDayz() -> creates the tr tag of the week table for the weekdays
     ********************************************************************************

@@ -238,6 +238,19 @@ final class JemPackageBuilder
             }
         }
 
+        $helper = $component->getFromName('site/helpers/helper.php');
+        if ($helper === false) {
+            $component->close();
+            @unlink($tmpComponent);
+            throw new RuntimeException($package . ':packages/com_jem.zip is missing site/helpers/helper.php');
+        }
+
+        if (preg_match_all('/\bfunction\s+renderModuleText\s*\(/i', $helper) !== 1) {
+            $component->close();
+            @unlink($tmpComponent);
+            throw new RuntimeException($package . ':packages/com_jem.zip must contain exactly one JemHelper::renderModuleText() declaration');
+        }
+
         for ($i = 0; $i < $component->numFiles; $i++) {
             $name = $component->getNameIndex($i);
             if (basename($name) !== '' && str_starts_with(basename($name), '.')) {

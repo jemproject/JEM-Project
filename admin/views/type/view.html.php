@@ -36,7 +36,10 @@ class JemViewType extends JemAdminView
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-        $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');
+
+        if (version_compare(JVERSION, '5.0.0', '>=')) {
+            $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');
+        }
 
         $this->addToolbar();
         parent::display($tpl);
