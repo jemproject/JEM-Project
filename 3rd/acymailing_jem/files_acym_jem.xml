@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="file" method="upgrade">
+    <name>JEM Events for AcyMailing 10</name>
+    <element>files_acym_jem</element>
+    <author>JEM Community</author>
+    <creationDate>14 July 2026</creationDate>
+    <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
+    <license>https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+    <authorEmail>info@joomlaeventmanager.net</authorEmail>
+    <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
+    <version>5.0.1</version>
+    <description>Installs the JEM Events dynamic-content add-on for AcyMailing 10.</description>
+    <scriptfile>script.php</scriptfile>
+
+    <fileset>
+        <files folder="jem" target="administrator/components/com_acym/dynamics/jem">
+            <filename>plugin.php</filename>
+            <filename>icon.svg</filename>
+        </files>
+    </fileset>
+</extension>
