@@ -261,7 +261,7 @@ class com_jemInstallerScript
             // Installed component version
             $this->oldRelease = $this->getParam('version');
 
-            $minUpgradeVersion = '4.4.2';
+            $minUpgradeVersion = '4.4.0';
 
             if ($this->oldRelease !== '' && version_compare($this->oldRelease, $minUpgradeVersion, 'lt')) {
                 $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $minUpgradeVersion, $this->oldRelease), 'error');
@@ -1096,7 +1096,7 @@ class com_jemInstallerScript
             foreach ($files as $file) {
                 $version = basename($file, '.sql');
 
-                if (preg_match('/^\d+(?:\.\d+)+$/', $version) && version_compare($version, '4.5.0', 'lt')) {
+                if (preg_match('/^\d+(?:\.\d+)+$/', $version) && version_compare($version, '4.4.1', 'lt')) {
                     File::delete($file);
                 }
             }
