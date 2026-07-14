@@ -24,4 +24,15 @@ final class VenuesMapViewTest extends TestCase
 
         self::assertStringContainsString('COM_JEM_VENUESMAP_MAP_UNAVAILABLE=', $language);
     }
+
+    public function testVenueButtonsUseSharedContrastColorForAllBootstrapStates(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
+
+        self::assertStringContainsString('JemHelper::getContrastTextColor($color)', $template);
+        self::assertStringContainsString('--bs-btn-color:', $template);
+        self::assertStringContainsString('--bs-btn-hover-color:', $template);
+        self::assertStringContainsString('--bs-btn-active-color:', $template);
+        self::assertStringNotContainsString('function jem_venuesmap_contrast_color', $template);
+    }
 }
