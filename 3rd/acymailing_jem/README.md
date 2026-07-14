@@ -6,7 +6,7 @@ events into emails created with AcyMailing 10.
 ## Compatibility
 
 - Joomla 5.4 or Joomla 6
-- JEM 5.0.1 Beta 1
+- JEM 5.0.1
 - AcyMailing 10 (verified against 10.11.1)
 - PHP 8.3 or newer
 

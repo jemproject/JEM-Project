@@ -36,7 +36,7 @@ class plgAcymJem extends AcymPlugin
         $this->pluginDescription->title = 'Insert JEM events';
         $this->pluginDescription->category = 'Events management';
         $this->pluginDescription->description = $this->addonDefinition['description'];
-        $this->pluginDescription->icon = ACYM_DYNAMICS_URL.basename(__DIR__).'/icon.svg';
+        $this->pluginDescription->icon = ACYM_DYNAMICS_URL.basename(__DIR__).'/icon.png';
 
         if (!$this->installed) {
             $this->settings = ['not_installed' => '1'];
@@ -448,7 +448,16 @@ class plgAcymJem extends AcymPlugin
         }
 
         if (class_exists('JemOutput')) {
-            return (string) JemOutput::formatLongDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
+            $formattedDate = (string) JemOutput::formatLongDateTime(
+                $event->dates,
+                $event->times,
+                $event->enddates,
+                $event->endtimes
+            );
+
+            // JemOutput returns presentation markup, while the AcyMailing
+            // template escapes this value as text before inserting it.
+            return trim(strip_tags($formattedDate));
         }
 
         return trim(trim((string) $event->dates).' '.trim((string) $event->times));

@@ -59,7 +59,8 @@ final class AcyMailingJemAddonTest extends TestCase
         $readme = (string) file_get_contents(JEM_TEST_ROOT . '/3rd/acymailing_jem/README.md');
 
         self::assertStringContainsString('Joomla 5.4 or Joomla 6', $readme);
-        self::assertStringContainsString('JEM 5.0.1 Beta 1', $readme);
+        self::assertStringContainsString('JEM 5.0.1', $readme);
+        self::assertStringNotContainsString('Beta 1', $readme);
         self::assertStringContainsString('AcyMailing 10 (verified against 10.11.1)', $readme);
         self::assertStringContainsString('administrator/components/com_acym/dynamics/jem/plugin.php', $readme);
     }
@@ -79,9 +80,21 @@ final class AcyMailingJemAddonTest extends TestCase
             'administrator/components/com_acym/dynamics/jem',
             (string) $manifest->fileset->files['target']
         );
-        self::assertSame(['plugin.php', 'icon.svg'], array_map(
+        $installedFiles = array_map(
             static fn (SimpleXMLElement $file): string => (string) $file,
             iterator_to_array($manifest->fileset->files->filename, false)
+        );
+
+        self::assertSame(['plugin.php', 'icon.png', 'banner.png'], $installedFiles);
+
+        foreach ($installedFiles as $installedFile) {
+            self::assertFileExists(JEM_TEST_ROOT . '/3rd/acymailing_jem/jem/' . $installedFile);
+        }
+
+        self::assertSame([600, 348], array_slice(
+            getimagesize(JEM_TEST_ROOT . '/3rd/acymailing_jem/jem/banner.png'),
+            0,
+            2
         ));
     }
 

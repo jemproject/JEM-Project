@@ -15,7 +15,8 @@
     <fileset>
         <files folder="jem" target="administrator/components/com_acym/dynamics/jem">
             <filename>plugin.php</filename>
-            <filename>icon.svg</filename>
+            <filename>icon.png</filename>
+            <filename>banner.png</filename>
         </files>
     </fileset>
 </extension>

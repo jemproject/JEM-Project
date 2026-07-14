@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="JEM">
-  <rect width="128" height="128" rx="18" fill="#f69d00"/>
-  <path d="M29 31v49c0 12-6 18-18 18" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
-  <path d="M48 31v67m0-61h29M48 64h24M48 92h29" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
-  <path d="M88 98V31l14 30 14-30v67" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>

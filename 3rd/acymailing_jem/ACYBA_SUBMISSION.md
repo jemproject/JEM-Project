@@ -14,7 +14,7 @@ Joomla extension installer.
 - Category: Events management
 - Level: Starter
 - CMS: Joomla
-- Compatibility: Joomla 5.4/6, JEM 5.0.1 Beta 1, AcyMailing 10
+- Compatibility: Joomla 5.4/6, JEM 5.0.1, AcyMailing 10
 - Documentation: https://www.joomlaeventmanager.net/
 - Description: Insert individual JEM events in emails and automatically insert
   upcoming events by category.
@@ -40,8 +40,8 @@ Joomla installer. It registers the add-on in **My add-ons**. Publication in
 
 ## Validation before submission
 
-1. Install `acym_jem_v5.0.1.zip` on Joomla 5.4 and Joomla 6 with JEM 5.0.1 Beta
-   1 and AcyMailing 10.
+1. Install `acym_jem_v5.0.1.zip` on Joomla 5.4 and Joomla 6 with JEM 5.0.1
+   and AcyMailing 10.
 2. Confirm **JEM Events** is active in **AcyMailing > Add-ons > My add-ons**.
 3. Confirm **JEM Events** appears in the email editor under **Dynamic text
    type** and in the dynamic content blocks.

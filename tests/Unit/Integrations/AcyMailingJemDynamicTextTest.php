@@ -83,6 +83,19 @@ namespace {
         return (bool) ($GLOBALS['acymJemTestIsAdmin'] ?? true);
     }
 
+    final class JemOutput
+    {
+        public static function formatLongDateTime(
+            mixed $dateStart,
+            mixed $timeStart,
+            mixed $dateEnd,
+            mixed $timeEnd
+        ): string {
+            return '<span class="jem_date-1">Sa, 19. Dezember 2026</span>'
+                .'<span class="jem_time-1">, 18:00 h</span>';
+        }
+    }
+
     final class AcyMailingJemDynamicTextTest extends TestCase
     {
         public static function setUpBeforeClass(): void
@@ -106,7 +119,7 @@ namespace {
             self::assertSame('JEM Events', $descriptor->name);
             self::assertSame('Insert JEM events', $descriptor->title);
             self::assertSame(
-                '/administrator/components/com_acym/dynamics/jem/icon.svg',
+            '/administrator/components/com_acym/dynamics/jem/icon.png',
                 $descriptor->icon
             );
         }
@@ -119,6 +132,23 @@ namespace {
             $addon = new \plgAcymJem();
 
             self::assertNull($addon->getPossibleIntegrations());
+        }
+
+        public function testEventDateIsConvertedFromJemMarkupToPlainText(): void
+        {
+            $addon = new \plgAcymJem();
+            $method = new \ReflectionMethod($addon, 'formatEventDate');
+            $event = (object) [
+                'dates' => '2026-12-19',
+                'times' => '18:00:00',
+                'enddates' => null,
+                'endtimes' => null,
+            ];
+
+            self::assertSame(
+                'Sa, 19. Dezember 2026, 18:00 h',
+                $method->invoke($addon, $event)
+            );
         }
     }
 }
