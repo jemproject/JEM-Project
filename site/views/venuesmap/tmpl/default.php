@@ -238,24 +238,6 @@ if (!function_exists('jem_venuesmap_normalise_color')) {
     }
 }
 
-if (!function_exists('jem_venuesmap_contrast_color')) {
-    function jem_venuesmap_contrast_color($color)
-    {
-        $color = ltrim((string) $color, '#');
-
-        if (!preg_match('/^[0-9a-f]{6}$/i', $color)) {
-            return '#1f2933';
-        }
-
-        $r = hexdec(substr($color, 0, 2));
-        $g = hexdec(substr($color, 2, 2));
-        $b = hexdec(substr($color, 4, 2));
-        $luminance = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
-
-        return $luminance < 145 ? '#ffffff' : '#1f2933';
-    }
-}
-
 $buildVenuePageLink = static function ($venue) use ($jemItemid) {
     $slug = (int) $venue->id . ':' . $venue->alias;
     $route = 'index.php?option=com_jem&view=venue&layout=default&id=' . $slug;
@@ -265,6 +247,25 @@ $buildVenuePageLink = static function ($venue) use ($jemItemid) {
     }
 
     return Route::_($route);
+};
+
+$buildVenueButtonStyle = static function ($color) {
+    $textColor = JemHelper::getContrastTextColor($color) ?: '#000';
+    $color = htmlspecialchars($color, ENT_QUOTES, 'UTF-8');
+    $textColor = htmlspecialchars($textColor, ENT_QUOTES, 'UTF-8');
+
+    return '--bs-btn-color:' . $textColor . ';'
+        . '--bs-btn-bg:' . $color . ';'
+        . '--bs-btn-border-color:' . $color . ';'
+        . '--bs-btn-hover-color:' . $textColor . ';'
+        . '--bs-btn-hover-bg:' . $color . ';'
+        . '--bs-btn-hover-border-color:' . $color . ';'
+        . '--bs-btn-active-color:' . $textColor . ';'
+        . '--bs-btn-active-bg:' . $color . ';'
+        . '--bs-btn-active-border-color:' . $color . ';'
+        . 'background-color:' . $color . ';'
+        . 'border-color:' . $color . ';'
+        . 'color:' . $textColor . ';';
 };
 
 $buildVenueCalendarLink = static function ($venue) use ($jemItemid) {
@@ -706,7 +707,8 @@ foreach (($this->venueslist ?? []) as $venue) {
                 $postcode = trim((string) ($venue->postalCode ?? ''));
                 $cityLine = trim($cityLine . ($postcode !== '' ? ' ' . $postcode : ''));
                 $venueTitleColor = jem_venuesmap_normalise_color($venue->color ?? '');
-                $venueTitleTextColor = jem_venuesmap_contrast_color($venueTitleColor);
+                $venueTitleTextColor = JemHelper::getContrastTextColor($venueTitleColor) ?: '#000';
+                $venueButtonStyle = $buildVenueButtonStyle($venueTitleColor);
                 ?>
                 <article class="jem-venuesmap-card" style="--jem-venuesmap-title-bg: <?php echo htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8'); ?>; --jem-venuesmap-title-text: <?php echo htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8'); ?>;">
                     <?php if ($showVenueImage) : ?>
@@ -757,17 +759,16 @@ foreach (($this->venueslist ?? []) as $venue) {
                         </div>
                     </div>
                     <div class="jem-venuesmap-card-actions">
-                        <?php $btnStyle = 'background-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($venueTitleTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($venueTitleColor, ENT_QUOTES, 'UTF-8') . ';'; ?>
-                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                        <a class="btn btn-sm" style="<?php echo $venueButtonStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
                             <i class="fa fa-calendar" aria-hidden="true"></i>
                             <span><?php echo Text::_('COM_JEM_CALENDAR'); ?></span>
                         </a>
-                        <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
+                        <a class="btn btn-sm" style="<?php echo $venueButtonStyle; ?>" href="<?php echo htmlspecialchars($buildVenuePageLink($venue), ENT_QUOTES, 'UTF-8'); ?>">
                             <i class="fa fa-list" aria-hidden="true"></i>
                             <span><?php echo Text::_('COM_JEM_EVENTS'); ?></span>
                         </a>
                         <?php if ($mapLink !== '') : ?>
-                            <a class="btn btn-sm" style="<?php echo $btnStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
+                            <a class="btn btn-sm" style="<?php echo $venueButtonStyle; ?>" href="<?php echo htmlspecialchars($mapLink, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener">
                                 <i class="fa fa-map-marker-alt" aria-hidden="true"></i>
                                 <span><?php echo Text::_('COM_JEM_MAP_LINK'); ?></span>
                             </a>
@@ -848,8 +849,7 @@ foreach (($this->venueslist ?? []) as $venue) {
                             <td class="center jem-venuesmap-actions-cell">
                                 <?php
                                 $tblBtnColor     = jem_venuesmap_normalise_color($venue->color ?? '');
-                                $tblBtnTextColor = jem_venuesmap_contrast_color($tblBtnColor);
-                                $tblBtnStyle     = 'background-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';color:' . htmlspecialchars($tblBtnTextColor, ENT_QUOTES, 'UTF-8') . ';border-color:' . htmlspecialchars($tblBtnColor, ENT_QUOTES, 'UTF-8') . ';';
+                                $tblBtnStyle     = $buildVenueButtonStyle($tblBtnColor);
                                 ?>
                                 <div class="jem-venuesmap-actions-stack">
                                 <a class="btn btn-sm" style="<?php echo $tblBtnStyle; ?>" href="<?php echo htmlspecialchars($buildVenueCalendarLink($venue), ENT_QUOTES, 'UTF-8'); ?>" title="<?php echo Text::_('COM_JEM_CALENDAR'); ?>">
