@@ -21,7 +21,7 @@ final class SqlMigrationBaselineTest extends TestCase
 
         self::assertSame(array(), $relative, "JEM 5 supports upgrades from JEM 4.4.0 and ships the required SQL steps starting at 4.4.1; older SQL scripts must not be shipped:\n" . implode("\n", $relative));
 
-        foreach (array('4.4.1.sql', '4.4.2.sql', '4.5.0.sql', '5.0.0.sql') as $file) {
+        foreach (array('4.4.1.sql', '4.4.2.sql', '4.5.0.sql', '5.0.0.sql', '5.0.1.sql') as $file) {
             self::assertFileExists(JEM_TEST_ROOT . '/admin/sql/updates/mysql/' . $file);
         }
 

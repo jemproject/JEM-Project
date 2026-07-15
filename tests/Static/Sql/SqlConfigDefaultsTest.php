@@ -6,6 +6,17 @@ use PHPUnit\Framework\TestCase;
 
 final class SqlConfigDefaultsTest extends TestCase
 {
+    public function testImportSecurityDefaultsAreMigratedWithoutOverwritingSavedValues(): void
+    {
+        $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
+
+        self::assertStringContainsString("JSON_INSERT(", $sql);
+        self::assertStringContainsString("'$.import_additional_blocked_tags', ''", $sql);
+        self::assertStringContainsString("'$.import_allow_trusted_iframes', '0'", $sql);
+        self::assertStringContainsString("'$.import_trusted_iframe_hosts', ''", $sql);
+        self::assertStringNotContainsString('JSON_SET(', $sql);
+    }
+
     public function testInstallSqlContainsAttachmentConfigDefaults(): void
     {
         $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');

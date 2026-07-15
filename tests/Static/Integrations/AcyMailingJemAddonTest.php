@@ -72,6 +72,7 @@ final class AcyMailingJemAddonTest extends TestCase
         self::assertNotFalse($manifest);
         self::assertSame('file', (string) $manifest['type']);
         self::assertSame('upgrade', (string) $manifest['method']);
+        self::assertSame('JEM - Events for AcyMailing', (string) $manifest->name);
         self::assertSame('files_acym_jem', (string) $manifest->element);
         self::assertSame('5.0.1', (string) $manifest->version);
         self::assertSame('script.php', (string) $manifest->scriptfile);
@@ -96,6 +97,21 @@ final class AcyMailingJemAddonTest extends TestCase
             0,
             2
         ));
+    }
+
+    public function testConfigInfoDetectsAddonByStableExtensionElement(): void
+    {
+        $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/settings.php');
+        $view = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_configinfo.php');
+        $language = (string) file_get_contents(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini');
+
+        self::assertStringContainsString("element = ' . \$db->quote('files_acym_jem')", $model);
+        self::assertStringContainsString("\$extension->element === 'files_acym_jem'", $model);
+        self::assertStringContainsString("'files_acym_jem'     => 'COM_JEM_MAIN_CONFIG_VS_ACYMAILING_JEM'", $view);
+        self::assertStringContainsString(
+            'COM_JEM_MAIN_CONFIG_VS_ACYMAILING_JEM="JEM - Events for AcyMailing"',
+            $language
+        );
     }
 
 
