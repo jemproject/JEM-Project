@@ -143,7 +143,7 @@ abstract class ModJemHelper
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(', ', JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-            $lists[$i]->text        = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
+            $lists[$i]->text        = $params->get('showtitle', $params->get('showtitloc', 1)) ? $lists[$i]->title : $lists[$i]->venue;
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');

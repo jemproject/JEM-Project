@@ -17,6 +17,19 @@ $mod_name = 'mod_jem';
 // get module helper
 require_once __DIR__ . '/helper.php';
 
+// JEM 4.4 stored a single title/venue selector. Normalise legacy or incomplete
+// module instances at runtime as a safety net for copied or manually upgraded sites.
+$hasLegacyTitleVenueParam = $params->exists('showtitloc');
+$legacyShowsTitle = (int) $params->get('showtitloc', 1) === 1;
+
+if (!$params->exists('showtitle')) {
+    $params->set('showtitle', $hasLegacyTitleVenueParam ? ($legacyShowsTitle ? '1' : '0') : '1');
+}
+
+if (!$params->exists('showvenue')) {
+    $params->set('showvenue', $hasLegacyTitleVenueParam ? ($legacyShowsTitle ? '0' : '1') : '1');
+}
+
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
