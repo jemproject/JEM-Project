@@ -49,9 +49,9 @@ $renderMigrationCsvBlock = function ($id, $title, $description, $showColumnsText
     <?php
 };
 
-$renderCreateModalButton = function ($id, $task, $buttonText, $titleText, $targetSelectId, $nameFieldId, $saveTask) {
+$renderCreateModalButton = function ($id, $task, $buttonText, $titleText, $targetSelectId, $nameFieldId, $saveTask, $entity = 0) {
     $modalId = 'jem-import-create-' . preg_replace('/[^a-z0-9_-]/i', '-', $id);
-    $url = Route::_('index.php?option=com_jem&task=' . $task . '&tmpl=component', false);
+    $url = Route::_('index.php?option=com_jem&task=' . $task . '&tmpl=component' . ($entity ? '&entity=' . (int) $entity : ''), false);
     $footer = '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
         . '<button type="button" class="btn btn-primary" onclick="JemImportModalSaveAndSelect(\''
         . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '\', \''
@@ -299,7 +299,7 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
         <h4><?php echo Text::_('COM_JEM_IMPORT_MAPPED_DATA_TITLE'); ?></h4>
     </div>
     <div class="table-responsive jem-import-preview-table-wrap">
-        <table class="adminlist table jem-import-paged-table jem-import-dynamic-preview" data-page-size="50" data-source-records="<?php echo htmlspecialchars(json_encode($preview['source_records'] ?? array()), ENT_QUOTES, 'UTF-8'); ?>">
+        <table class="adminlist table jem-import-paged-table jem-import-dynamic-preview" data-page-size="100" data-server-paginated="<?php echo !empty($preview['server_paginated']) ? '1' : '0'; ?>" data-preview-offset="<?php echo (int) ($preview['preview_offset'] ?? 0); ?>" data-source-records="<?php echo htmlspecialchars(json_encode($preview['source_records'] ?? array()), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
                 <tr>
                     <th class="center">#</th>
@@ -317,7 +317,7 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
                     $statusText = (string) ($row['status'] ?? '');
                     ?>
                     <tr>
-                        <td class="center" data-fixed="row-number"><?php echo (int) $index + 1; ?></td>
+                        <td class="center" data-fixed="row-number"><?php echo (int) ($preview['preview_offset'] ?? 0) + (int) $index + 1; ?></td>
                         <td data-fixed="status"><?php echo $renderImportStatus($statusText); ?></td>
                         <td data-fixed="notes"><?php echo htmlspecialchars(implode('; ', (array) ($row['notes'] ?? array())), ENT_QUOTES, 'UTF-8'); ?></td>
                         <?php foreach ($recordFields as $field) : ?>
@@ -328,6 +328,26 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
             </tbody>
         </table>
     </div>
+    <?php if (!empty($preview['server_paginated'])) : ?>
+        <?php
+        $page = (int) ($preview['preview_page'] ?? 1);
+        $pages = (int) ($preview['preview_pages'] ?? 1);
+        $total = (int) ($preview['total_count'] ?? 0);
+        $first = (int) ($preview['preview_offset'] ?? 0) + 1;
+        $last = min($total, $first + max(0, (int) ($preview['displayed_count'] ?? 0) - 1));
+        $pageUrl = function ($targetPage) {
+            return 'index.php?option=com_jem&amp;view=import&amp;preview=venues&amp;venue_preview_page=' . (int) $targetPage . '#venue-import';
+        };
+        ?>
+        <nav class="jem-import-pagination d-flex flex-wrap align-items-center gap-2 mt-2" aria-label="<?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGINATION'); ?>">
+            <a class="btn btn-secondary btn-sm<?php echo $page <= 1 ? ' disabled' : ''; ?>" href="<?php echo $page <= 1 ? '#' : $pageUrl($page - 1); ?>"<?php echo $page <= 1 ? ' aria-disabled="true"' : ''; ?>><?php echo Text::_('JPREV'); ?></a>
+            <?php for ($number = max(1, $page - 2); $number <= min($pages, $page + 2); $number++) : ?>
+                <a class="btn btn-sm <?php echo $number === $page ? 'btn-primary' : 'btn-outline-secondary'; ?>" href="<?php echo $pageUrl($number); ?>"<?php echo $number === $page ? ' aria-current="page"' : ''; ?>><?php echo $number; ?></a>
+            <?php endfor; ?>
+            <a class="btn btn-secondary btn-sm<?php echo $page >= $pages ? ' disabled' : ''; ?>" href="<?php echo $page >= $pages ? '#' : $pageUrl($page + 1); ?>"<?php echo $page >= $pages ? ' aria-disabled="true"' : ''; ?>><?php echo Text::_('JNEXT'); ?></a>
+            <span><?php echo Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGE_STATUS', $page, $pages, $first, $last, $total); ?></span>
+        </nav>
+    <?php endif; ?>
     <?php
 };
 
@@ -390,6 +410,7 @@ $venueMappingFields = $buildImportMappingFields(array(
     'country',
     'latitude',
     'longitude',
+    'coordinates',
     'locdescription',
     'meta_keywords',
     'meta_description',
@@ -403,6 +424,7 @@ $venueMappingFields = $buildImportMappingFields(array(
     'language',
     'type_id',
 ), 'venue');
+$venueMappingFields['coordinates']['label'] = Text::_('COM_JEM_IMPORT_COORDINATES_SPLIT_FIELD');
 $specialDaysMappingFields = array();
 foreach (array(
     'id',
@@ -597,12 +619,14 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     </div>
                                 <?php endif; ?>
                                 <?php if (!empty($this->externalImportPreview['source_name'])) : ?>
-                                    <div class="form-text">
+                                    <div class="form-text jem-import-source-note">
                                         <?php echo htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_PREVIEW_SOURCE_FILE', $this->externalImportPreview['source_name']), ENT_QUOTES, 'UTF-8'); ?>
                                     </div>
                                 <?php endif; ?>
-                                <label for="external_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text', $eventSelectedProfileId); ?>
+                                <div class="jem-import-profile-control">
+                                    <label for="external_import_profile_id"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
+                                    <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text', $eventSelectedProfileId); ?>
+                                </div>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
@@ -626,7 +650,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <label for="external_import_type_id"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DEFAULT_TYPE'); ?></label>
                                 <div class="jem-import-select-actions">
                                     <?php echo $renderFancySelect($this->externalTypeOptions, 'external_import_type_id', 'external_import_type_id', $this->externalImportPreview['type_id'] ?? 0); ?>
-                                    <?php $renderCreateModalButton('external-type', 'type.add', 'COM_JEM_IMPORT_CREATE_TYPE', 'COM_JEM_IMPORT_CREATE_TYPE_TITLE', 'external_import_type_id', 'jform_name', 'type.save'); ?>
+                                    <?php $renderCreateModalButton('external-type', 'type.add', 'COM_JEM_IMPORT_CREATE_TYPE', 'COM_JEM_IMPORT_CREATE_TYPE_TITLE', 'external_import_type_id', 'jform_name', 'type.save', 1); ?>
                                 </div>
                             </div>
                             <div class="jem-import-field">
@@ -766,14 +790,14 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                         </a>
                                     </div>
                                     <div class="jem-import-source-file" data-source-panel="external-venue-import-file" hidden>
-                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_OR_XML'); ?></label>
-                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_XLSX'); ?></label>
+                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,.xlsx,text/csv,application/json,text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" name="FileExternalVenueImport" class="form-control" />
                                     </div>
                                 <?php else : ?>
                                     <input type="hidden" name="external_venue_import_source_mode" value="file">
                                     <div class="jem-import-source-file">
-                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_OR_XML'); ?></label>
-                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,text/csv,application/json,text/xml,application/xml,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_XLSX'); ?></label>
+                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,.xlsx,text/csv,application/json,text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" name="FileExternalVenueImport" class="form-control" />
                                     </div>
                                 <?php endif; ?>
                                 <label for="external_venue_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
@@ -783,8 +807,8 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                             <div class="jem-import-field">
                                 <label for="external_venue_import_type_id"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DEFAULT_TYPE'); ?></label>
                                 <div class="jem-import-select-actions">
-                                    <?php echo $renderFancySelect($this->externalTypeOptions, 'external_venue_import_type_id', 'external_venue_import_type_id', $this->externalVenueImportPreview['type_id'] ?? 0); ?>
-                                    <?php $renderCreateModalButton('external-venue-type', 'type.add', 'COM_JEM_IMPORT_CREATE_TYPE', 'COM_JEM_IMPORT_CREATE_TYPE_TITLE', 'external_venue_import_type_id', 'jform_name', 'type.save'); ?>
+                                    <?php echo $renderFancySelect($this->externalVenueTypeOptions, 'external_venue_import_type_id', 'external_venue_import_type_id', $this->externalVenueImportPreview['type_id'] ?? 0); ?>
+                                    <?php $renderCreateModalButton('external-venue-type', 'type.add', 'COM_JEM_IMPORT_CREATE_TYPE', 'COM_JEM_IMPORT_CREATE_TYPE_TITLE', 'external_venue_import_type_id', 'jform_name', 'type.save', 3); ?>
                                 </div>
                             </div>
                             <div class="jem-import-field">
@@ -826,6 +850,9 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     <section class="jem-import-card jem-import-preview-card">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_PREVIEW_TITLE'); ?></h3>
                         <p><?php echo htmlspecialchars($this->externalVenueImportPreview['summary'] ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
+                        <?php if (($this->externalVenueImportPreview['displayed_count'] ?? 0) < ($this->externalVenueImportPreview['valid_count'] ?? 0) + ($this->externalVenueImportPreview['error_count'] ?? 0)) : ?>
+                            <p class="alert alert-info"><?php echo Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGED_SAMPLE', (int) ($this->externalVenueImportPreview['preview_page_size'] ?? 100), (int) (($this->externalVenueImportPreview['valid_count'] ?? 0) + ($this->externalVenueImportPreview['error_count'] ?? 0))); ?></p>
+                        <?php endif; ?>
                         <p><?php echo Text::sprintf('COM_JEM_IMPORT_DETECTED_FORMAT', strtoupper($this->externalVenueImportPreview['format'] ?? 'csv')); ?></p>
                         <?php if (!empty($this->externalVenueImportPreview['profile_title'])) : ?>
                             <p><?php echo Text::sprintf('COM_JEM_IMPORT_PROFILE_APPLIED', htmlspecialchars($this->externalVenueImportPreview['profile_title'], ENT_QUOTES, 'UTF-8')); ?></p>
@@ -1068,7 +1095,8 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     <p><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_DESC'); ?></p>
                 </div>
                 <section class="jem-import-card jem-import-card-planned">
-                    <div class="jem-import-row jem-import-catalog-controls">
+                    <div class="jem-import-catalog-controls">
+                        <div class="jem-import-catalog-filters">
                         <div class="jem-import-field">
                             <label for="jem-import-catalog-country"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_COUNTRY'); ?></label>
                             <select id="jem-import-catalog-country" class="form-select">
@@ -1096,6 +1124,30 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="jem-import-field">
+                            <label for="jem-import-catalog-type"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_TYPE'); ?></label>
+                            <select id="jem-import-catalog-type" class="form-select">
+                                <option value=""><?php echo Text::_('JALL'); ?></option>
+                                <?php foreach (($this->importCatalogTypes ?? array()) as $value) : ?>
+                                    <?php
+                                    $typeKey = $value === 'venues'
+                                        ? 'COM_JEM_IMPORT_CATALOG_TYPE_VENUES'
+                                        : ($value === 'specialdays' ? 'COM_JEM_IMPORT_CATALOG_TYPE_SPECIAL_DAYS' : 'COM_JEM_IMPORT_CATALOG_TYPE_EVENTS');
+                                    ?>
+                                    <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_($typeKey); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="jem-import-field">
+                            <label for="jem-import-catalog-format"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_FORMAT'); ?></label>
+                            <select id="jem-import-catalog-format" class="form-select">
+                                <option value=""><?php echo Text::_('JALL'); ?></option>
+                                <?php foreach (($this->importCatalogFormats ?? array()) as $value => $label) : ?>
+                                    <option value="<?php echo htmlspecialchars($value, ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        </div>
                         <?php
                         $catalogStatus = (array) ($this->importCatalogStatus ?? array());
                         $catalogAvailable = !empty($catalogStatus['available']);
@@ -1103,6 +1155,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         $catalogStatusIcon = $catalogAvailable ? 'icon-check' : 'icon-times';
                         $catalogStatusText = $catalogAvailable ? Text::_('COM_JEM_IMPORT_CATALOG_AVAILABLE') : Text::_('COM_JEM_IMPORT_CATALOG_UNAVAILABLE');
                         ?>
+                        <div class="jem-import-catalog-meta">
                         <div class="jem-import-field jem-import-catalog-source-field">
                             <label><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SOURCE'); ?></label>
                             <span class="jem-import-catalog-source-line">
@@ -1121,9 +1174,10 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                             <?php endif; ?>
                         </div>
                         <div class="jem-import-actions">
-                            <button type="button" class="btn btn-secondary" onclick="window.location.reload();">
+                            <button type="button" class="btn btn-secondary" onclick="JemImportRefreshCatalog();">
                                 <?php echo Text::_('COM_JEM_IMPORT_CATALOG_REFRESH'); ?>
                             </button>
+                        </div>
                         </div>
                     </div>
                 </section>
@@ -1139,6 +1193,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_LIST'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_TYPE'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_FORMAT'); ?></th>
+                                    <th class="text-end"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_ITEMS'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_CATEGORY'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_SOURCE'); ?></th>
                                     <th><?php echo Text::_('COM_JEM_IMPORT_CATALOG_TABLE_ACTION'); ?></th>
@@ -1152,7 +1207,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                         ? 'COM_JEM_IMPORT_CATALOG_TYPE_VENUES'
                                         : ($context === 'specialdays' ? 'COM_JEM_IMPORT_CATALOG_TYPE_SPECIAL_DAYS' : 'COM_JEM_IMPORT_CATALOG_TYPE_EVENTS');
                                     ?>
-                                    <tr data-country="<?php echo htmlspecialchars($entry['country'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-county="<?php echo htmlspecialchars($entry['county'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-city="<?php echo htmlspecialchars($entry['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                    <tr data-country="<?php echo htmlspecialchars($entry['country'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-county="<?php echo htmlspecialchars($entry['county'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-city="<?php echo htmlspecialchars($entry['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" data-type="<?php echo htmlspecialchars($context, ENT_QUOTES, 'UTF-8'); ?>" data-format="<?php echo htmlspecialchars(strtolower((string) ($entry['format'] ?? '')), ENT_QUOTES, 'UTF-8'); ?>">
                                         <td><?php echo htmlspecialchars($entry['country'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo htmlspecialchars($entry['county'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo htmlspecialchars($entry['city'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
@@ -1167,6 +1222,13 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                         </td>
                                         <td><?php echo Text::_($typeKey); ?></td>
                                         <td><?php echo strtoupper(htmlspecialchars($entry['format'] ?? '', ENT_QUOTES, 'UTF-8')); ?></td>
+                                        <td class="text-end">
+                                            <?php if (($entry['item_count'] ?? null) !== null) : ?>
+                                                <span<?php echo !empty($entry['item_count_checked']) ? ' title="' . htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_CATALOG_ITEMS_CHECKED', $entry['item_count_checked']), ENT_QUOTES, 'UTF-8') . '"' : ''; ?>><?php echo number_format((int) $entry['item_count'], 0, '.', ','); ?></span>
+                                            <?php else : ?>
+                                                <span aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_ITEMS_UNKNOWN'), ENT_QUOTES, 'UTF-8'); ?>">—</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?php echo htmlspecialchars($entry['category_rule'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td>
                                             <?php if (!empty($entry['source'])) : ?>
@@ -1183,7 +1245,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     </tr>
                                 <?php endforeach; ?>
                                 <tr class="jem-import-catalog-empty"<?php echo !empty($this->importCatalogEntries) ? ' hidden' : ''; ?>>
-                                    <td colspan="9"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_EMPTY'); ?></td>
+                                    <td colspan="10"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_EMPTY'); ?></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1193,15 +1255,40 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     <section class="jem-import-card jem-import-card-planned">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CATALOG_TITLE'); ?></h3>
                         <p><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CATALOG_DESC'); ?></p>
+                        <?php if (!empty($catalogStatus['is_custom'])) : ?>
+                            <div class="alert alert-info d-flex align-items-center justify-content-between gap-2">
+                                <span>
+                                    <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE'); ?></strong>
+                                    <span class="d-block"><code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code></span>
+                                </span>
+                                <?php if (!empty($this->canManageImportCatalog)) : ?>
+                                    <button type="button" class="btn btn-sm btn-danger" title="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" onclick="if (confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) { JemImportSubmit('import.removeCustomCatalog', 'download-lists'); }">
+                                        <span class="icon-times" aria-hidden="true"></span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="alert alert-light">
+                                <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_OFFICIAL_ACTIVE'); ?></strong>
+                                <span class="d-block"><code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code></span>
+                            </div>
+                        <?php endif; ?>
                         <ul class="jem-import-feature-list">
-                            <li><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_XML_SOURCE'); ?></li>
+                            <li><?php echo !empty($catalogStatus['is_custom']) ? Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CUSTOM_XML_SOURCE') : Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_XML_SOURCE'); ?></li>
                             <li><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_COUNTRY_FILTER'); ?></li>
                             <li><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_YEAR_FILTER'); ?></li>
-                            <li><?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_STATUS_DESC', '1.0', '2026-06-28'); ?></li>
+                            <?php if ($catalogAvailable) : ?>
+                                <li><?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_STATUS_DESC', htmlspecialchars((string) ($catalogStatus['version'] ?? ''), ENT_QUOTES, 'UTF-8'), htmlspecialchars((string) ($catalogStatus['published'] ?? ''), ENT_QUOTES, 'UTF-8')); ?></li>
+                            <?php endif; ?>
                         </ul>
-                        <button type="button" class="btn btn-secondary" disabled>
-                            <?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_NEXT_PHASE'); ?>
-                        </button>
+                        <?php if (!empty($this->canManageImportCatalog)) : ?>
+                            <input type="file" class="visually-hidden" id="jem-import-catalog-file" name="FileImportCatalog" accept=".xml,application/xml,text/xml" />
+                            <button type="button" class="btn btn-primary" onclick="document.getElementById('jem-import-catalog-file').click();">
+                                <span class="icon-upload" aria-hidden="true"></span>
+                                <?php echo Text::_('COM_JEM_IMPORT_CATALOG_LOAD_XML'); ?>
+                            </button>
+                            <div class="form-text mt-2"><?php echo Text::_('COM_JEM_IMPORT_CATALOG_LOAD_XML_DESC'); ?></div>
+                        <?php endif; ?>
                     </section>
                     <section class="jem-import-card jem-import-card-planned">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_TYPES_TITLE'); ?></h3>
@@ -1215,10 +1302,6 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     <section class="jem-import-card jem-import-card-planned">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_COMMUNITY_TITLE'); ?></h3>
                         <p><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_COMMUNITY_DESC'); ?></p>
-                    </section>
-                    <section class="jem-import-card jem-import-card-planned">
-                        <h3><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_EXPORT_TITLE'); ?></h3>
-                        <p><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_EXPORT_DESC'); ?></p>
                     </section>
                 </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -1317,6 +1400,14 @@ function JemImportSubmit(task, tab) {
     form.submit();
 }
 
+function JemImportRefreshCatalog() {
+    var url = new URL(window.location.href);
+    sessionStorage.setItem('jemImportResetCatalogFilters', '1');
+    url.searchParams.set('catalog_refresh', Date.now().toString());
+    url.hash = 'download-lists';
+    window.location.assign(url.toString());
+}
+
 function JemImportToggleSecurityHosts() {
     var enabled = document.getElementById('jem-import-security-iframes-yes');
     var group = document.getElementById('jem-import-security-hosts-group');
@@ -1344,6 +1435,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     JemImportToggleSecurityHosts();
+
+    var catalogFile = document.getElementById('jem-import-catalog-file');
+    if (catalogFile) {
+        catalogFile.addEventListener('change', function () {
+            if (catalogFile.files && catalogFile.files.length) {
+                JemImportSubmit('import.uploadCatalog', 'download-lists');
+            }
+        });
+    }
 });
 
 function JemImportLoadCatalogItem(id) {
@@ -1397,6 +1497,7 @@ function JemImportUpdateDynamicPreview(select) {
     }
 
     var sourceRecords = [];
+    var previewOffset = parseInt(table.getAttribute('data-preview-offset'), 10) || 0;
 
     try {
         sourceRecords = JSON.parse(table.getAttribute('data-source-records') || '[]');
@@ -1489,7 +1590,7 @@ function JemImportUpdateDynamicPreview(select) {
         var notes = document.createElement('td');
         rowNumber.className = 'center';
         rowNumber.setAttribute('data-fixed', 'row-number');
-        rowNumber.textContent = String(index + 1);
+        rowNumber.textContent = String(previewOffset + index + 1);
         status.setAttribute('data-fixed', 'status');
         notes.setAttribute('data-fixed', 'notes');
         status.appendChild(JemImportRenderStatus(fixedRows[index] ? fixedRows[index].status : ''));
@@ -1654,9 +1755,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var rows = Array.prototype.slice.call(tbody.rows);
+        var serverPaginated = table.getAttribute('data-server-paginated') === '1';
         var pageSize = parseInt(table.getAttribute('data-page-size'), 10) || 50;
 
-        if (!rows.length) {
+        if (!rows.length || serverPaginated) {
             return;
         }
 
@@ -1779,6 +1881,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var filter = document.getElementById('jem-import-catalog-country');
     var countyFilter = document.getElementById('jem-import-catalog-county');
     var cityFilter = document.getElementById('jem-import-catalog-city');
+    var typeFilter = document.getElementById('jem-import-catalog-type');
+    var formatFilter = document.getElementById('jem-import-catalog-format');
     var table = document.getElementById('jem-import-catalog-table');
 
     if (!filter || !table) {
@@ -1789,13 +1893,17 @@ document.addEventListener('DOMContentLoaded', function () {
         var selected = filter.value;
         var county = countyFilter ? countyFilter.value : '';
         var city = cityFilter ? cityFilter.value : '';
+        var type = typeFilter ? typeFilter.value : '';
+        var format = formatFilter ? formatFilter.value : '';
         var visible = 0;
         var rows = table.querySelectorAll('tbody tr[data-country]');
 
         rows.forEach(function (row) {
             var show = (!selected || row.getAttribute('data-country') === selected)
                 && (!county || row.getAttribute('data-county') === county)
-                && (!city || row.getAttribute('data-city') === city);
+                && (!city || row.getAttribute('data-city') === city)
+                && (!type || row.getAttribute('data-type') === type)
+                && (!format || row.getAttribute('data-format') === format);
             row.hidden = !show;
             if (show) {
                 visible++;
@@ -1808,6 +1916,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    if (sessionStorage.getItem('jemImportResetCatalogFilters') === '1') {
+        sessionStorage.removeItem('jemImportResetCatalogFilters');
+        [filter, countyFilter, cityFilter, typeFilter, formatFilter].forEach(function (catalogFilter) {
+            if (catalogFilter) {
+                catalogFilter.value = '';
+            }
+        });
+    }
+
+    filterCatalog();
+
     filter.addEventListener('change', filterCatalog);
 
     if (countyFilter) {
@@ -1816,6 +1935,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (cityFilter) {
         cityFilter.addEventListener('change', filterCatalog);
+    }
+
+    if (typeFilter) {
+        typeFilter.addEventListener('change', filterCatalog);
+    }
+
+    if (formatFilter) {
+        formatFilter.addEventListener('change', filterCatalog);
     }
 });
 

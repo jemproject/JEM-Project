@@ -165,7 +165,10 @@ if($params->get('map_auto_center',1)){
 
 $layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
 
-JemHelper::loadModuleStyleSheet($mod_name, $layout);
+JemHelper::loadModuleStyleSheet($mod_name, 'mod_jem_map');
+if ($layout !== '') {
+    JemHelper::loadModuleStyleSheet($mod_name, $layout);
+}
 
 // Render layout
 $moduleIntroText  = JemHelper::renderModuleText($params, 'intro');

@@ -802,15 +802,18 @@ input#replace_attachments1.inputbox {
 
 .jem-import-mapping-table th:last-child,
 .jem-import-mapping-table td:last-child {
-    min-width: 13rem;
-    width: 17rem;
+    min-width: 28rem;
+    width: max-content;
 }
 
 .jem-import-mapping-table .jem-import-mapping-select {
+    field-sizing: content;
     min-height: 1.85rem;
+    min-width: 28rem;
+    max-width: none;
     padding-top: .12rem;
     padding-bottom: .12rem;
-    width: 16rem;
+    width: max-content;
 }
 
 .jem-import-status {
@@ -938,8 +941,20 @@ input#replace_attachments1.inputbox {
 
 .jem-import-source-choice,
 .jem-import-source-url,
-.jem-import-source-file {
+.jem-import-source-file,
+.jem-import-profile-control {
     grid-column: 2 / -1;
+}
+
+.jem-import-profile-control {
+    display: grid;
+    gap: .35rem;
+    min-width: 0;
+}
+
+.jem-import-profile-control .form-select {
+    max-width: 100%;
+    width: 100%;
 }
 
 .jem-import-source-choice {
@@ -1078,7 +1093,39 @@ input#replace_attachments1.inputbox {
 }
 
 .jem-import-catalog-controls {
-    grid-template-columns: 1fr;
+    display: grid;
+    gap: .75rem;
+}
+
+.jem-import-catalog-filters {
+    align-items: end;
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.jem-import-catalog-filters .jem-import-field {
+    align-items: stretch;
+    display: grid;
+    gap: .3rem;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+}
+
+.jem-import-catalog-filters .form-select {
+    max-width: none;
+    width: 100%;
+}
+
+.jem-import-catalog-meta {
+    align-items: end;
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.jem-import-catalog-meta > .jem-import-actions {
+    margin-left: 0;
 }
 
 .jem-import-catalog-source-field code {
@@ -1134,6 +1181,14 @@ input#replace_attachments1.inputbox {
         grid-template-columns: 1fr;
     }
 
+    .jem-import-source-choice,
+    .jem-import-source-url,
+    .jem-import-source-file,
+    .jem-import-source-note,
+    .jem-import-profile-control {
+        grid-column: 1 / -1;
+    }
+
     .jem-import-field > select,
     .jem-import-field > .form-select,
     .jem-import-field > .inputbox {
@@ -1165,9 +1220,21 @@ input#replace_attachments1.inputbox {
     .jem-import-catalog-controls {
         grid-template-columns: 1fr;
     }
+
+    .jem-import-catalog-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .jem-import-catalog-meta {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
+    .jem-import-catalog-filters {
+        grid-template-columns: 1fr;
+    }
+
     .jem-import-columns {
         padding: .45rem;
     }
@@ -1238,6 +1305,8 @@ input#replace_attachments1.inputbox {
     }
 
     .jem-import-mapping-table .jem-import-mapping-select {
+        min-width: 0;
+        max-width: 100%;
         width: 100%;
     }
 

@@ -29,3 +29,25 @@
     margin: 1em 0;
     text-align: center;
 }
+
+.jem-map-type-marker {
+    --jem-marker-color: #d9ddb5;
+    box-sizing: border-box;
+    position: relative;
+    width: 34px;
+    height: 34px;
+    border: 2px solid #fff;
+    border-radius: 50% 50% 50% 0;
+    background: var(--jem-marker-color);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+    color: #fff;
+    font-size: 16px;
+    line-height: 30px;
+    text-align: center;
+    transform: rotate(-45deg);
+}
+
+.jem-map-type-marker__icon {
+    display: inline-block;
+    transform: rotate(45deg);
+}

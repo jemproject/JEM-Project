@@ -15,6 +15,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpreview.php';
 
 /**
  * View class for the JEM import screen
@@ -77,7 +78,10 @@ class JemViewImport extends JemAdminView
             array('key' => 'jem_types', 'label' => Text::_('COM_JEM_IMPORT_TYPES'), 'file' => 'jem-import-types.log.php'),
             array('key' => 'special_days', 'label' => Text::_('COM_JEM_SPECIAL_DAYS'), 'file' => 'jem-import-specialdays.log.php'),
         );
-        $activeImportPreview = (string) $app->getUserState('com_jem.import.active_preview', '');
+        $requestedImportPreview = $jinput->getCmd('preview', '');
+        $activeImportPreview = in_array($requestedImportPreview, array('events', 'venues', 'specialdays'), true)
+            ? $requestedImportPreview
+            : (string) $app->getUserState('com_jem.import.active_preview', '');
         $app->setUserState('com_jem.import.active_preview', null);
         $this->selectedExternalImportProfileId = (int) $app->getUserState('com_jem.import.external_import.selected_profile_id', 0);
         $this->selectedExternalVenueImportProfileId = (int) $app->getUserState('com_jem.import.external_venue_import.selected_profile_id', 0);
@@ -88,10 +92,26 @@ class JemViewImport extends JemAdminView
         $this->externalCsvPreview = $this->externalImportPreview;
         $this->externalIcsPreview = null;
         $this->externalCategoryOptions = $this->getExternalCategoryOptions();
-        $this->externalTypeOptions = $this->getExternalTypeOptions();
+        $this->externalTypeOptions = $this->getExternalTypeOptions(1);
+        $this->externalVenueTypeOptions = $this->getExternalTypeOptions(3);
         $this->externalVenueOptions = $this->getExternalVenueOptions();
         $this->externalImportProfileOptions = $this->getExternalImportProfileOptions('events');
         $this->externalVenueImportPreview = $activeImportPreview === 'venues' ? $this->normaliseImportPreviewState('com_jem.import.external_venue_import.preview') : null;
+        if (!empty($this->externalVenueImportPreview['payload_token'])) {
+            try {
+                $this->externalVenueImportPreview = JemImportPreviewHelper::loadVenuePreviewPage(
+                    $this->externalVenueImportPreview,
+                    (int) $app->getIdentity()->id,
+                    $jinput->getInt('venue_preview_page', 1),
+                    JemImportPreviewHelper::PAGE_SIZE
+                );
+            } catch (RuntimeException $e) {
+                JemImportPreviewHelper::deleteVenuePreview($this->externalVenueImportPreview['payload_token'], (int) $app->getIdentity()->id);
+                $app->setUserState('com_jem.import.external_venue_import.preview', null);
+                $app->enqueueMessage(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAYLOAD_MISSING'), 'error');
+                $this->externalVenueImportPreview = null;
+            }
+        }
         $this->externalVenueImportProfileOptions = $this->getExternalImportProfileOptions('venues');
         $this->externalLanguageOptions = HTMLHelper::_('contentlanguage.existing', true, true);
         $this->externalPublishUpDefault = Factory::getDate()->toSql();
@@ -100,12 +120,15 @@ class JemViewImport extends JemAdminView
         $this->specialDaysIcsPreview = null;
         $this->specialDaysImportProfileOptions = $this->getExternalImportProfileOptions('specialdays');
         $this->specialDayTypeOptions = $this->getSpecialDayTypeOptions();
-        $this->importCatalogSource = JemImportCatalogHelper::getCatalogSource();
         $this->importCatalogStatus = JemImportCatalogHelper::getStatus();
+        $this->importCatalogSource = (string) ($this->importCatalogStatus['source'] ?? JemImportCatalogHelper::getCatalogSource());
+        $this->canManageImportCatalog = $app->getIdentity()->authorise('core.admin');
         $this->importCatalogEntries = JemImportCatalogHelper::getEntries();
         $this->importCatalogCountries = JemImportCatalogHelper::getCountries($this->importCatalogEntries);
         $this->importCatalogCounties = JemImportCatalogHelper::getCounties($this->importCatalogEntries);
         $this->importCatalogCities = JemImportCatalogHelper::getCities($this->importCatalogEntries);
+        $this->importCatalogTypes = JemImportCatalogHelper::getTypes($this->importCatalogEntries);
+        $this->importCatalogFormats = JemImportCatalogHelper::getFormats($this->importCatalogEntries);
         $importSecurity = JemHelper::globalattribs();
         $this->canConfigureImportSecurity = $app->getIdentity()->authorise('core.admin');
         $this->importSecuritySettings = array(
@@ -219,14 +242,15 @@ class JemViewImport extends JemAdminView
      *
      * @return array
      */
-    protected function getExternalTypeOptions()
+    protected function getExternalTypeOptions($entity = 1)
     {
+        $entity = in_array((int) $entity, array(1, 3), true) ? (int) $entity : 1;
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select(array($db->quoteName('id', 'value'), $db->quoteName('name', 'text')))
             ->from($db->quoteName('#__jem_types'))
             ->where($db->quoteName('published') . ' = 1')
-            ->where($db->quoteName('entity') . ' = 1')
+            ->where($db->quoteName('entity') . ' = ' . $entity)
             ->order($db->quoteName('name') . ' ASC');
         $db->setQuery($query);
 

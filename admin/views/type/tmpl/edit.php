@@ -108,8 +108,8 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
                         </div>
                     <?php endif; ?>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                    <div class="jem-type-visual-fields">
+                        <div class="mb-3 jem-type-icon-field">
                             <?php echo $this->form->getLabel('icon'); ?>
                             <div class="input-group">
                                 <select id="jem-icon-style" class="form-select flex-grow-0" style="width:auto" title="<?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY'); ?>">
@@ -120,13 +120,25 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
                                     <option value="media"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_MEDIA'); ?></option>
                                     <option value="commerce"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_COMMERCE'); ?></option>
                                     <option value="transport"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_TRANSPORT'); ?></option>
+                                    <option value="nature"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_NATURE'); ?></option>
+                                    <option value="food"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_FOOD'); ?></option>
+                                    <option value="health"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_HEALTH'); ?></option>
+                                    <option value="education"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_EDUCATION'); ?></option>
+                                    <option value="sports"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_SPORTS'); ?></option>
+                                    <option value="technology"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_TECHNOLOGY'); ?></option>
+                                    <option value="animals"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_ANIMALS'); ?></option>
                                     <option value="interface"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_INTERFACE'); ?></option>
                                     <option value="social"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_SOCIAL'); ?></option>
+                                    <option value="other"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_CATEGORY_OTHER'); ?></option>
                                     <option value="fa-solid"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_STYLE_SOLID'); ?></option>
                                     <option value="fa-regular"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_STYLE_REGULAR'); ?></option>
                                     <option value="fa-brands"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_STYLE_BRANDS'); ?></option>
                                 </select>
                                 <?php echo $this->form->getInput('icon'); ?>
+                                <button type="button" id="jem-icon-search" class="btn btn-primary" title="<?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_SEARCH'); ?>">
+                                    <span class="icon-search" aria-hidden="true"></span>
+                                    <span class="visually-hidden"><?php echo Text::_('COM_JEM_TYPE_FIELD_ICON_SEARCH'); ?></span>
+                                </button>
                             </div>
                             <datalist id="jem-icon-list-all"></datalist>
                             <datalist id="jem-icon-list-fa-solid">
@@ -299,15 +311,15 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
                                 <?php if ($this->item->icon) : ?>
                                     <span id="jem-icon-glyph"
                                           class="<?php echo htmlspecialchars($this->item->icon, ENT_QUOTES, 'UTF-8'); ?>"
-                                          style="font-size:1.5rem"></span>
+                                          ></span>
                                     <small id="jem-icon-label" class="text-muted ms-2"><?php echo htmlspecialchars($this->item->icon, ENT_QUOTES, 'UTF-8'); ?></small>
                                 <?php else : ?>
-                                    <span id="jem-icon-glyph" style="font-size:1.5rem"></span>
+                                    <span id="jem-icon-glyph"></span>
                                     <small id="jem-icon-label" class="text-muted ms-2"></small>
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="mb-3 jem-type-color-field">
                             <?php echo $this->form->getLabel('color'); ?>
                             <?php echo $this->form->getInput('color'); ?>
                         </div>
@@ -385,9 +397,9 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
 <style>
     .jem-icon-picker {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
-        gap: .35rem;
-        max-height: 14rem;
+        grid-template-columns: repeat(auto-fill, minmax(3.75rem, 1fr));
+        gap: .5rem;
+        max-height: 21rem;
         overflow: auto;
         padding: .5rem;
         border: 1px solid var(--border-color, #dfe3e7);
@@ -399,13 +411,35 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 2.5rem;
-        height: 2.5rem;
+        min-width: 3.75rem;
+        height: 3.75rem;
         padding: 0;
         border: 1px solid var(--border-color, #dfe3e7);
         border-radius: .25rem;
         background: var(--body-bg, #fff);
         color: inherit;
+    }
+
+    .jem-icon-option > span {
+        font-size: 1.5rem;
+    }
+
+    #jem-icon-preview {
+        display: flex;
+        align-items: center;
+        min-height: 3rem !important;
+    }
+
+    #jem-icon-glyph {
+        font-size: 2.25rem;
+        min-width: 2.25rem;
+        text-align: center;
+    }
+
+    .jem-type-color-field .field-media-wrapper,
+    .jem-type-color-field .minicolors,
+    .jem-type-color-field .minicolors-input {
+        width: 100%;
     }
 
     .jem-icon-option:hover,
@@ -516,6 +550,7 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
     var input   = document.querySelector('input[name="jform[icon]"]');
     var select  = document.getElementById('jem-icon-style');
     var picker  = document.getElementById('jem-icon-picker');
+    var search  = document.getElementById('jem-icon-search');
     var allList = document.getElementById('jem-icon-list-all');
     var glyph   = document.getElementById('jem-icon-glyph');
     var label   = document.getElementById('jem-icon-label');
@@ -543,7 +578,8 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
             'fa-solid fa-church', 'fa-solid fa-mosque', 'fa-solid fa-synagogue', 'fa-solid fa-place-of-worship',
             'fa-solid fa-hospital', 'fa-solid fa-store', 'fa-solid fa-shop', 'fa-solid fa-warehouse',
             'fa-solid fa-tree', 'fa-solid fa-mountain-sun', 'fa-solid fa-umbrella-beach', 'fa-solid fa-campground',
-            'fa-solid fa-road', 'fa-solid fa-bridge', 'fa-solid fa-door-open', 'fa-solid fa-signs-post'
+            'fa-solid fa-road', 'fa-solid fa-bridge', 'fa-solid fa-door-open', 'fa-solid fa-signs-post',
+            'fa-solid fa-faucet', 'fa-solid fa-faucet-drip', 'fa-solid fa-droplet', 'fa-solid fa-water'
         ],
         people: [
             'fa-solid fa-user', 'fa-solid fa-user-group', 'fa-solid fa-users', 'fa-solid fa-user-plus',
@@ -582,6 +618,48 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
             'fa-solid fa-road', 'fa-solid fa-road-circle-check', 'fa-solid fa-traffic-light', 'fa-solid fa-gas-pump',
             'fa-solid fa-charging-station'
         ],
+        nature: [
+            'fa-solid fa-leaf', 'fa-solid fa-seedling', 'fa-solid fa-tree', 'fa-solid fa-tree-city',
+            'fa-solid fa-mountain', 'fa-solid fa-mountain-sun', 'fa-solid fa-sun', 'fa-solid fa-moon',
+            'fa-solid fa-cloud', 'fa-solid fa-cloud-rain', 'fa-solid fa-cloud-sun', 'fa-solid fa-snowflake',
+            'fa-solid fa-water', 'fa-solid fa-droplet', 'fa-solid fa-fire', 'fa-solid fa-wind',
+            'fa-solid fa-earth-europe', 'fa-solid fa-rainbow', 'fa-solid fa-umbrella-beach'
+        ],
+        food: [
+            'fa-solid fa-utensils', 'fa-solid fa-burger', 'fa-solid fa-pizza-slice', 'fa-solid fa-hotdog',
+            'fa-solid fa-ice-cream', 'fa-solid fa-cookie', 'fa-solid fa-cake-candles', 'fa-solid fa-apple-whole',
+            'fa-solid fa-carrot', 'fa-solid fa-fish', 'fa-solid fa-mug-saucer', 'fa-solid fa-wine-glass',
+            'fa-solid fa-wine-bottle', 'fa-solid fa-beer-mug-empty', 'fa-solid fa-champagne-glasses'
+        ],
+        health: [
+            'fa-solid fa-hospital', 'fa-solid fa-house-medical', 'fa-solid fa-stethoscope', 'fa-solid fa-kit-medical',
+            'fa-solid fa-user-doctor', 'fa-solid fa-user-nurse', 'fa-solid fa-pills', 'fa-solid fa-capsules',
+            'fa-solid fa-syringe', 'fa-solid fa-heart-pulse', 'fa-solid fa-notes-medical', 'fa-solid fa-wheelchair',
+            'fa-solid fa-prescription-bottle-medical', 'fa-solid fa-star-of-life'
+        ],
+        education: [
+            'fa-solid fa-school', 'fa-solid fa-graduation-cap', 'fa-solid fa-book', 'fa-solid fa-book-open',
+            'fa-solid fa-book-open-reader', 'fa-solid fa-building-columns', 'fa-solid fa-chalkboard-user',
+            'fa-solid fa-person-chalkboard', 'fa-solid fa-pen', 'fa-solid fa-pencil', 'fa-solid fa-language',
+            'fa-solid fa-flask', 'fa-solid fa-microscope'
+        ],
+        sports: [
+            'fa-solid fa-futbol', 'fa-solid fa-basketball', 'fa-solid fa-volleyball', 'fa-solid fa-football',
+            'fa-solid fa-baseball', 'fa-solid fa-bowling-ball', 'fa-solid fa-table-tennis-paddle-ball',
+            'fa-solid fa-person-running', 'fa-solid fa-person-swimming', 'fa-solid fa-person-biking',
+            'fa-solid fa-person-hiking', 'fa-solid fa-dumbbell', 'fa-solid fa-medal', 'fa-solid fa-trophy'
+        ],
+        technology: [
+            'fa-solid fa-laptop', 'fa-solid fa-computer', 'fa-solid fa-display', 'fa-solid fa-mobile-screen',
+            'fa-solid fa-tablet-screen-button', 'fa-solid fa-server', 'fa-solid fa-database', 'fa-solid fa-code',
+            'fa-solid fa-terminal', 'fa-solid fa-wifi', 'fa-solid fa-microchip', 'fa-solid fa-robot',
+            'fa-solid fa-satellite-dish', 'fa-solid fa-plug', 'fa-solid fa-power-off'
+        ],
+        animals: [
+            'fa-solid fa-paw', 'fa-solid fa-dog', 'fa-solid fa-cat', 'fa-solid fa-horse',
+            'fa-solid fa-fish', 'fa-solid fa-dove', 'fa-solid fa-kiwi-bird', 'fa-solid fa-hippo',
+            'fa-solid fa-dragon', 'fa-solid fa-bug', 'fa-solid fa-worm'
+        ],
         interface: [
             'fa-solid fa-check', 'fa-solid fa-xmark', 'fa-solid fa-plus', 'fa-solid fa-minus',
             'fa-solid fa-circle-check', 'fa-solid fa-circle-xmark', 'fa-solid fa-circle-info', 'fa-solid fa-circle-question',
@@ -604,7 +682,14 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
         ]
     };
 
-    if (!input || !select || !picker) { return; }
+    var searchKeywords = {
+        'fa-solid fa-faucet': 'fountain fuente water agua tap grifo',
+        'fa-solid fa-faucet-drip': 'fountain fuente water agua tap grifo drip',
+        'fa-solid fa-droplet': 'fountain fuente water agua drop gota',
+        'fa-solid fa-water': 'fountain fuente water agua'
+    };
+
+    if (!input || !select || !picker || !search) { return; }
 
     function activeDatalist() {
         return 'jem-icon-list-' + (styles.indexOf(select.value) !== -1 ? select.value : 'all');
@@ -631,6 +716,19 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
     }
 
     function getIconValues() {
+        if (select.value === 'other') {
+            var categorised = unique(Object.keys(catalog).reduce(function (values, category) {
+                return values.concat(catalog[category]);
+            }, []));
+            var available = unique(styles.reduce(function (values, style) {
+                return values.concat(getListValues(style));
+            }, []));
+
+            return available.filter(function (value) {
+                return categorised.indexOf(value) === -1;
+            });
+        }
+
         if (catalog[select.value]) {
             return unique(catalog[select.value]);
         }
@@ -676,11 +774,28 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
         input.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    function renderPicker() {
+    function normaliseSearch(value) {
+        return String(value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/fa-(solid|regular|brands)|fa-/g, ' ')
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    }
+
+    function renderPicker(searchTerm) {
         var current = input.value.trim();
+        var query = normaliseSearch(searchTerm);
         picker.innerHTML = '';
 
-        getIconValues().forEach(function (value) {
+        getIconValues().filter(function (value) {
+            if (!query) {
+                return true;
+            }
+
+            return normaliseSearch(value + ' ' + (searchKeywords[value] || '')).indexOf(query) !== -1;
+        }).forEach(function (value) {
             var button = document.createElement('button');
             var icon = document.createElement('span');
 
@@ -712,6 +827,17 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
     select.addEventListener('change', function () {
         input.setAttribute('list', activeDatalist());
         renderPicker();
+    });
+
+    search.addEventListener('click', function () {
+        renderPicker(input.value.trim());
+    });
+
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            renderPicker(input.value.trim());
+        }
     });
 
     input.addEventListener('input', function () {

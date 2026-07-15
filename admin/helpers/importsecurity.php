@@ -148,7 +148,10 @@ class JemImportSecurityHelper
         }
 
         $trimmed = trim($text);
-        if (preg_match('/^[\s]*[=+@]/', $text) || (strpos($trimmed, '-') === 0 && !is_numeric($trimmed))) {
+        $isMissingValuePlaceholder = preg_match('/^-+$/', $trimmed) === 1;
+        $isMinusFormula = strpos($trimmed, '-') === 0 && !$isMissingValuePlaceholder && !is_numeric($trimmed);
+        $isInternationalPhone = preg_match('/^\+\d[\d\s().-]{2,}$/', $trimmed) === 1;
+        if ((preg_match('/^[\s]*[=+@]/', $text) && !$isInternationalPhone) || $isMinusFormula) {
             $findings[] = $field . ' looks like a spreadsheet formula';
         }
 
@@ -160,6 +163,34 @@ class JemImportSecurityHelper
         self::assertRecordSafe($record, $context, $sourceLine);
 
         foreach ($record as $field => $value) {
+            $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context);
+        }
+
+        return $record;
+    }
+
+    /**
+     * Sanitise an external source record while discarding spreadsheet formula
+     * values field by field. Other security findings remain fatal.
+     */
+    public static function sanitiseSourceRecord(array $record, $context = '', $sourceLine = null, array &$warnings = array())
+    {
+        foreach ($record as $field => $value) {
+            $findings = self::findValueThreats((string) $field, $value, (string) $context);
+            $formulaFindings = array_values(array_filter($findings, static function ($finding) {
+                return str_ends_with((string) $finding, ' looks like a spreadsheet formula');
+            }));
+
+            if ($findings && count($formulaFindings) === count($findings)) {
+                $record[$field] = '';
+                $warnings[] = self::formatIgnoredSourceFormula((string) $field, (string) $context, $sourceLine, $record);
+                continue;
+            }
+
+            if ($findings) {
+                throw new RuntimeException(self::formatBlockedMessage($findings, $context, $sourceLine, $record));
+            }
+
             $record[$field] = self::sanitiseValue((string) $field, $value, (string) $context);
         }
 
@@ -191,6 +222,10 @@ class JemImportSecurityHelper
 
         if ($value === null) {
             return null;
+        }
+
+        if (preg_match('/^-+$/', trim((string) $value))) {
+            return '';
         }
 
         $field = (string) $field;
@@ -331,17 +366,31 @@ class JemImportSecurityHelper
         }
 
         if ($sourceLine !== null && (int) $sourceLine > 0) {
-            $details[] = 'line=' . (int) $sourceLine;
+            $details[] = ($context === 'source_json' ? 'record=' : 'line=') . (int) $sourceLine;
         }
 
-        foreach (array('id', 'eventid', 'itemid', 'object', 'locid', 'catid') as $identifier) {
-            if (!isset($record[$identifier]) || !is_scalar($record[$identifier])) {
-                continue;
-            }
+        $identifiers = array(
+            'id' => array('id', 'ID'),
+            'codigo' => array('codigo', 'CODIGO', 'Código', 'CÓDIGO'),
+            'uid' => array('uid', 'UID'),
+            'eventid' => array('eventid'),
+            'itemid' => array('itemid'),
+            'object' => array('object'),
+            'locid' => array('locid'),
+            'catid' => array('catid'),
+        );
 
-            $value = trim((string) $record[$identifier]);
-            if ($value !== '' && preg_match('/^-?\d+$/', $value)) {
-                $details[] = $identifier . '=' . (int) $value;
+        foreach ($identifiers as $label => $keys) {
+            foreach ($keys as $identifier) {
+                if (!isset($record[$identifier]) || !is_scalar($record[$identifier])) {
+                    continue;
+                }
+
+                $value = trim((string) $record[$identifier]);
+                if ($value !== '' && preg_match('/^-?\d+$/', $value)) {
+                    $details[] = $label . '=' . (int) $value;
+                    break;
+                }
             }
         }
 
@@ -351,6 +400,35 @@ class JemImportSecurityHelper
         }
 
         return $prefix . ': ' . implode('; ', array_slice($findings, 0, 5));
+    }
+
+    protected static function formatIgnoredSourceFormula($field, $context, $sourceLine, array $record)
+    {
+        $details = array();
+        $context = preg_replace('/[^a-zA-Z0-9_#.-]/', '', trim((string) $context));
+
+        if ($context !== '') {
+            $details[] = 'entity=' . $context;
+        }
+
+        if ((int) $sourceLine > 0) {
+            $details[] = str_contains($context, 'json') ? 'record=' . (int) $sourceLine : 'line=' . (int) $sourceLine;
+        }
+
+        foreach (array('CODIGO', 'codigo', 'ID', 'id') as $identifier) {
+            $value = trim((string) ($record[$identifier] ?? ''));
+
+            if ($value !== '' && preg_match('/^-?\d+$/', $value)) {
+                $details[] = strtolower($identifier) . '=' . (int) $value;
+                break;
+            }
+        }
+
+        $field = preg_replace('/[^a-zA-Z0-9_.-]/', '', (string) $field);
+
+        return 'Spreadsheet-like source value ignored'
+            . ($details ? ' (' . implode(', ', $details) . ')' : '')
+            . ': field=' . ($field !== '' ? $field : 'unknown');
     }
 
     protected static function isIntegerField($field)
@@ -471,7 +549,10 @@ class JemImportSecurityHelper
         $text = strip_tags($text);
         $text = trim($text);
 
-        if ($neutraliseFormula && preg_match('/^[\s]*[=+\-@]/', $text)) {
+        $isInternationalPhone = preg_match('/^\+\d[\d\s().-]{2,}$/', $text) === 1;
+        $isFormulaPrefix = (preg_match('/^[\s]*[=+@]/', $text) && !$isInternationalPhone)
+            || (strpos($text, '-') === 0 && !preg_match('/^-+$/', $text) && !is_numeric($text));
+        if ($neutraliseFormula && $isFormulaPrefix) {
             $text = "'" . $text;
         }
 
