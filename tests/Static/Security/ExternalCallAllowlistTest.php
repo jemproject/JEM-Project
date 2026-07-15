@@ -45,6 +45,7 @@ final class ExternalCallAllowlistTest extends TestCase
         'php.watch',
         'routing.openstreetmap.de',
         'schema.org',
+        'schemas.openxmlformats.org',
         'staticmap.openstreetmap.de',
         'stackoverflow.com',
         'tile.openstreetmap.org',

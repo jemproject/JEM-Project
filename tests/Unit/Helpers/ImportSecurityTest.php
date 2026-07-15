@@ -62,9 +62,45 @@ final class ImportSecurityTest extends TestCase
         JemImportSecurityHelper::sanitiseValue('venue', '=IMPORTXML("https://example.invalid")');
     }
 
+    public function testNormalisesHyphenOnlyMissingValuePlaceholders(): void
+    {
+        self::assertSame('', JemImportSecurityHelper::sanitiseValue('TITULAR', '-', 'source'));
+        self::assertSame('', JemImportSecurityHelper::sanitiseValue('DOMICILIO', '---', 'source'));
+    }
+
+    public function testStillBlocksMinusPrefixedSpreadsheetFormulaText(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        JemImportSecurityHelper::sanitiseValue('TITULAR', '-SUM(1,2)', 'source');
+    }
+
     public function testAllowsNegativeCoordinates(): void
     {
         self::assertSame('-3.703790', JemImportSecurityHelper::sanitiseValue('longitude', '-3.70379'));
+    }
+
+    public function testPreservesInternationalTelephoneNumbersBeginningWithPlus(): void
+    {
+        self::assertSame('+34918539', JemImportSecurityHelper::sanitiseValue('TELEFONO3', '+34918539', 'source_json'));
+    }
+
+    public function testExternalFormulaIsIgnoredWithARecordDiagnostic(): void
+    {
+        $warnings = array();
+        $record = JemImportSecurityHelper::sanitiseSourceRecord(
+            array('CODIGO' => '28047368', 'CENTRO' => 'Los Abetos', 'TELEFONO3' => '=1+1'),
+            'source_json',
+            4495,
+            $warnings
+        );
+
+        self::assertSame('', $record['TELEFONO3']);
+        self::assertSame('Los Abetos', $record['CENTRO']);
+        self::assertCount(1, $warnings);
+        self::assertStringContainsString('record=4495', $warnings[0]);
+        self::assertStringContainsString('codigo=28047368', $warnings[0]);
+        self::assertStringContainsString('field=TELEFONO3', $warnings[0]);
     }
 
     public function testPlainTextIsStrippedOfBenignMarkup(): void
@@ -115,6 +151,26 @@ final class ImportSecurityTest extends TestCase
                 $exception->getMessage()
             );
             self::assertStringNotContainsString('example.invalid', $exception->getMessage());
+        }
+    }
+
+    public function testBlockedJsonRecordIncludesRecordNumberAndSourceIdentifier(): void
+    {
+        try {
+            JemImportSecurityHelper::sanitiseRecord(
+                array(
+                    'CODIGO' => '28000029',
+                    'CENTRO' => '<script>alert(1)</script>',
+                ),
+                'source_json',
+                2
+            );
+            self::fail('The unsafe JSON record should have been rejected.');
+        } catch (RuntimeException $exception) {
+            self::assertSame(
+                'Unsafe import data blocked (entity=source_json, record=2, codigo=28000029): CENTRO contains blocked HTML tags [script]',
+                $exception->getMessage()
+            );
         }
     }
 
