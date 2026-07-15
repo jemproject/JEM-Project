@@ -73,6 +73,7 @@ $logFiles = array(
                                          ,'plg_quickicon_jemquickicon' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
                                          ,'AcyMailing Tag : insert events from JEM 2.1+'
                                                               => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
+                                         ,'files_acym_jem'     => 'COM_JEM_MAIN_CONFIG_VS_ACYMAILING_JEM'
                                          );
                 ?>
                 <tr>

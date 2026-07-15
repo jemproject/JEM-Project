@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 
 /**
  * View class for the JEM import screen
@@ -105,6 +106,13 @@ class JemViewImport extends JemAdminView
         $this->importCatalogCountries = JemImportCatalogHelper::getCountries($this->importCatalogEntries);
         $this->importCatalogCounties = JemImportCatalogHelper::getCounties($this->importCatalogEntries);
         $this->importCatalogCities = JemImportCatalogHelper::getCities($this->importCatalogEntries);
+        $importSecurity = JemHelper::globalattribs();
+        $this->canConfigureImportSecurity = $app->getIdentity()->authorise('core.admin');
+        $this->importSecuritySettings = array(
+            'additional_blocked_tags' => (string) $importSecurity->get('import_additional_blocked_tags', ''),
+            'allow_trusted_iframes' => (int) $importSecurity->get('import_allow_trusted_iframes', 0),
+            'trusted_iframe_hosts' => (string) $importSecurity->get('import_trusted_iframe_hosts', ''),
+        );
 
         // Do not show default prefix #__ but its replacement value
         $this->prefixToShow = $progress->prefix;

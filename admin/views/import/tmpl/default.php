@@ -1223,6 +1223,58 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                 </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'import-security', Text::_('COM_JEM_SETTINGS_SECURITY')); ?>
+                <div class="jem-import-tab-intro">
+                    <h2><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_IMPORT'); ?></h2>
+                    <p><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_IMPORT_DESC'); ?></p>
+                </div>
+                <section class="jem-import-card">
+                    <div class="mb-4">
+                        <label class="form-label"><strong><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_CORE_BLOCKED_TAGS'); ?></strong></label>
+                        <div><code><?php echo htmlspecialchars(implode(', ', JemImportSecurityHelper::getCoreBlockedTags()), ENT_QUOTES, 'UTF-8'); ?></code></div>
+                        <div class="form-text"><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_CORE_BLOCKED_TAGS_DESC'); ?></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label" for="jem-import-security-additional-tags"><strong><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_ADDITIONAL_BLOCKED_TAGS'); ?></strong></label>
+                        <textarea class="form-control" id="jem-import-security-additional-tags" name="import_security[additional_blocked_tags]" rows="4"<?php echo empty($this->canConfigureImportSecurity) ? ' disabled' : ''; ?>><?php echo htmlspecialchars($this->importSecuritySettings['additional_blocked_tags'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        <div class="form-text"><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_ADDITIONAL_BLOCKED_TAGS_DESC'); ?></div>
+                    </div>
+
+                    <fieldset class="mb-4">
+                        <legend class="form-label fs-6"><strong><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_ALLOW_TRUSTED_IFRAMES'); ?></strong></legend>
+                        <div class="btn-group" role="group" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_SETTINGS_SECURITY_ALLOW_TRUSTED_IFRAMES'), ENT_QUOTES, 'UTF-8'); ?>">
+                            <input type="radio" class="btn-check" name="import_security[allow_trusted_iframes]" id="jem-import-security-iframes-yes" value="1"<?php echo !empty($this->importSecuritySettings['allow_trusted_iframes']) ? ' checked' : ''; ?><?php echo empty($this->canConfigureImportSecurity) ? ' disabled' : ''; ?>>
+                            <label class="btn btn-outline-success" for="jem-import-security-iframes-yes"><?php echo Text::_('JYES'); ?></label>
+                            <input type="radio" class="btn-check" name="import_security[allow_trusted_iframes]" id="jem-import-security-iframes-no" value="0"<?php echo empty($this->importSecuritySettings['allow_trusted_iframes']) ? ' checked' : ''; ?><?php echo empty($this->canConfigureImportSecurity) ? ' disabled' : ''; ?>>
+                            <label class="btn btn-outline-danger" for="jem-import-security-iframes-no"><?php echo Text::_('JNO'); ?></label>
+                        </div>
+                        <div class="form-text"><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_ALLOW_TRUSTED_IFRAMES_DESC'); ?></div>
+                    </fieldset>
+
+                    <div class="mb-4" id="jem-import-security-hosts-group">
+                        <label class="form-label" for="jem-import-security-hosts"><strong><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_TRUSTED_IFRAME_HOSTS'); ?></strong></label>
+                        <textarea class="form-control" id="jem-import-security-hosts" name="import_security[trusted_iframe_hosts]" rows="5"<?php echo empty($this->canConfigureImportSecurity) ? ' disabled' : ''; ?>><?php echo htmlspecialchars($this->importSecuritySettings['trusted_iframe_hosts'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        <div class="form-text"><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_TRUSTED_IFRAME_HOSTS_DESC'); ?></div>
+                    </div>
+
+                    <?php if (!empty($this->canConfigureImportSecurity)) : ?>
+                        <div class="jem-import-actions">
+                            <button type="button" class="btn btn-primary" onclick="JemImportSubmit('import.saveSecuritySettings', 'import-security');">
+                                <span class="icon-save" aria-hidden="true"></span>
+                                <?php echo Text::_('JSAVE'); ?>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="jem-import-security-restore-defaults">
+                                <span class="icon-refresh" aria-hidden="true"></span>
+                                <?php echo Text::_('COM_JEM_SETTINGS_SECURITY_RESTORE_DEFAULTS'); ?>
+                            </button>
+                        </div>
+                    <?php else : ?>
+                        <div class="alert alert-warning"><?php echo Text::_('COM_JEM_SETTINGS_SECURITY_ADMIN_ONLY'); ?></div>
+                    <?php endif; ?>
+                </section>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
             <?php echo HTMLHelper::_('form.token'); ?>
@@ -1264,6 +1316,35 @@ function JemImportSubmit(task, tab) {
 
     form.submit();
 }
+
+function JemImportToggleSecurityHosts() {
+    var enabled = document.getElementById('jem-import-security-iframes-yes');
+    var group = document.getElementById('jem-import-security-hosts-group');
+
+    if (enabled && group) {
+        group.hidden = !enabled.checked;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    var iframeOptions = document.querySelectorAll('input[name="import_security[allow_trusted_iframes]"]');
+    var restore = document.getElementById('jem-import-security-restore-defaults');
+
+    iframeOptions.forEach(function (option) {
+        option.addEventListener('change', JemImportToggleSecurityHosts);
+    });
+
+    if (restore) {
+        restore.addEventListener('click', function () {
+            document.getElementById('jem-import-security-additional-tags').value = '';
+            document.getElementById('jem-import-security-hosts').value = '';
+            document.getElementById('jem-import-security-iframes-no').checked = true;
+            JemImportToggleSecurityHosts();
+        });
+    }
+
+    JemImportToggleSecurityHosts();
+});
 
 function JemImportLoadCatalogItem(id) {
     var field = document.getElementById('jem-import-catalog-id');

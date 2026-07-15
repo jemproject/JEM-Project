@@ -17,11 +17,14 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Utilities\ArrayHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/csvmetadata.php';
 /**
  * JEM Component Export Model
  */
 class JemModelExport extends ListModel
 {
+    protected $jemVersion = null;
+
     /**
      * Writes a CSV row using the current PHP-safe fputcsv signature.
      *
@@ -37,6 +40,40 @@ class JemModelExport extends ListModel
         $fields = JemCsv::protectFormulaRow($fields);
 
         return fputcsv($handle, $fields, $separator, $delimiter, '\\');
+    }
+
+    /**
+     * Read the installed component version for JEM-to-JEM CSV diagnostics.
+     */
+    private function getInstalledJemVersion()
+    {
+        if ($this->jemVersion !== null) {
+            return $this->jemVersion;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $manifest = json_decode((string) $db->loadResult(), true);
+        $this->jemVersion = JemCsvMetadataHelper::normaliseVersion($manifest['version'] ?? '');
+
+        return $this->jemVersion;
+    }
+
+    private function addVersionHeader(array $header)
+    {
+        $header[] = JemCsvMetadataHelper::VERSION_FIELD;
+
+        return $header;
+    }
+
+    private function addVersionValue($row)
+    {
+        return JemCsvMetadataHelper::addVersion((array) $row, $this->getInstalledJemVersion());
     }
 
     /**
@@ -154,7 +191,7 @@ class JemModelExport extends ListModel
             $events = array_keys($db->getTableColumns('#__jem_events'));
             $categories = array();
             $categories[] = "categories";
-            $header = array_merge($events, $categories);
+            $header = $this->addVersionHeader(array_merge($events, $categories));
 
             $this->putCsv($csv, $header, $separator, $delimiter);
 
@@ -165,14 +202,14 @@ class JemModelExport extends ListModel
                 $item->categories = $this->getCatEvent($item->id);
             }
         } else {
-            $header = array_keys($db->getTableColumns('#__jem_events'));
+            $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_events')));
             $this->putCsv($csv, $header, $separator, $delimiter);
             $query = $this->getListQuery();
             $items = $this->_getList($query);
         }
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -215,14 +252,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_categories'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_categories')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycats());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -263,14 +300,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_venues'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_venues')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQueryvenues());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -311,14 +348,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_cats_event_relations')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycatsevents());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -354,14 +391,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_attachments'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_attachments')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQueryattachments());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -397,14 +434,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_types'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_types')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerytypes());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);

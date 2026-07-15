@@ -14,10 +14,12 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
+use Joomla\Registry\Registry;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/csvmetadata.php';
 
 /**
  * JEM Component Import Controller
@@ -127,6 +129,122 @@ class JemControllerImport extends BaseController
 
     public function csvtypesimport() {
         $this->CsvImport('types', 'types');
+    }
+
+    /**
+     * Validate and save the policy shared by all JEM import operations.
+     *
+     * @return void
+     */
+    public function saveSecuritySettings()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $posted = $app->input->post->get('import_security', array(), 'array');
+        $invalidTags = array();
+        $normalisedTags = JemImportSecurityHelper::normaliseTagList(
+            $posted['additional_blocked_tags'] ?? '',
+            $invalidTags
+        );
+
+        if ($invalidTags) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::sprintf('COM_JEM_SETTINGS_SECURITY_INVALID_TAGS', implode(', ', $invalidTags)),
+                'error'
+            );
+            return;
+        }
+
+        $additionalTags = $normalisedTags === '' ? array() : preg_split('/,\s*/', $normalisedTags);
+        $additionalTags = array_values(array_diff($additionalTags, JemImportSecurityHelper::getCoreBlockedTags()));
+
+        if (in_array('iframe', $additionalTags, true)) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_SETTINGS_SECURITY_IFRAME_POLICY_ERROR'),
+                'error'
+            );
+            return;
+        }
+
+        $invalidHosts = array();
+        $trustedHosts = JemImportSecurityHelper::normaliseHostList(
+            $posted['trusted_iframe_hosts'] ?? '',
+            $invalidHosts
+        );
+
+        if ($invalidHosts) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::sprintf('COM_JEM_SETTINGS_SECURITY_INVALID_HOSTS', implode(', ', $invalidHosts)),
+                'error'
+            );
+            return;
+        }
+
+        $allowTrustedIframes = !empty($posted['allow_trusted_iframes']) ? 1 : 0;
+
+        if ($allowTrustedIframes && $trustedHosts === '') {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_SETTINGS_SECURITY_TRUSTED_HOSTS_REQUIRED'),
+                'error'
+            );
+            return;
+        }
+
+        $config = JemConfig::getInstance();
+        $configRegistry = $config->toRegistry();
+        $global = new Registry($configRegistry->get('globalattribs', array()));
+        $previous = array(
+            'additional_blocked_tags' => (string) $global->get('import_additional_blocked_tags', ''),
+            'allow_trusted_iframes' => (int) $global->get('import_allow_trusted_iframes', 0),
+            'trusted_iframe_hosts' => (string) $global->get('import_trusted_iframe_hosts', ''),
+        );
+        $current = array(
+            'additional_blocked_tags' => implode(', ', $additionalTags),
+            'allow_trusted_iframes' => $allowTrustedIframes,
+            'trusted_iframe_hosts' => $trustedHosts,
+        );
+
+        $global->set('import_additional_blocked_tags', $current['additional_blocked_tags']);
+        $global->set('import_allow_trusted_iframes', $current['allow_trusted_iframes']);
+        $global->set('import_trusted_iframe_hosts', $current['trusted_iframe_hosts']);
+        $configRegistry->set('globalattribs', $global->toArray());
+
+        if (!$config->store()) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_IMPORT_SECURITY_SETTINGS_SAVE_ERROR'),
+                'error'
+            );
+            return;
+        }
+
+        JemImportSecurityHelper::resetPolicyCache();
+
+        if ($previous !== $current) {
+            JemHelper::addLogEntry(
+                'Import security settings updated: additional_tags=[' . $current['additional_blocked_tags']
+                . '], trusted_iframes=' . ($current['allow_trusted_iframes'] ? 'enabled' : 'disabled')
+                . ', trusted_hosts=[' . str_replace(array("\r", "\n"), ',', $current['trusted_iframe_hosts']) . ']',
+                __METHOD__,
+                Log::INFO
+            );
+        }
+
+        $this->setRedirect(
+            'index.php?option=com_jem&view=import#import-security',
+            Text::_('COM_JEM_IMPORT_SECURITY_SETTINGS_SAVED')
+        );
     }
 
     /**
@@ -1462,6 +1580,8 @@ class JemControllerImport extends BaseController
         }
 
         $msg = '';
+        $sourceJemVersion = '';
+        $sourceVersionConflict = false;
         $file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
         if (empty($file['name'])) {
@@ -1505,6 +1625,7 @@ class JemControllerImport extends BaseController
 
             // get fields, on first row of the file
             $fields = array();
+            $versionColumn = null;
             if (($data = fgetcsv($handle, 1000, $separator, $delimiter)) !== false) {
                 $numfields = count($data);
 
@@ -1513,6 +1634,7 @@ class JemControllerImport extends BaseController
                     $msg .= "<p>".Text::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
                 }
                 array_walk($data, 'jem_normalise_csv_utf8');
+                $versionColumn = JemCsvMetadataHelper::findVersionColumn($data);
 
                 for ($c = 0; $c < $numfields; $c++) {
                     // here, we make sure that the field match one of the fields of jem_venues table or special fields,
@@ -1548,18 +1670,41 @@ class JemControllerImport extends BaseController
                 } else {
                     // normalise to utf-8; UTF-8 without BOM must not be converted again
                     array_walk($data, 'jem_normalise_csv_utf8');
+                    $rowJemVersion = JemCsvMetadataHelper::extractVersion($data, $versionColumn);
+                    if ($rowJemVersion !== '') {
+                        if ($sourceJemVersion === '') {
+                            $sourceJemVersion = $rowJemVersion;
+                        } elseif ($sourceJemVersion !== $rowJemVersion) {
+                            $sourceVersionConflict = true;
+                        }
+                    }
 
                     $r = array();
                     // only extract columns with validated header, from previous step.
                     foreach ($fields as $k => $v) {
                         $r[$k] = $this->_formatcsvfield($v, $data[$k]);
                     }
+                    $r['_jem_source_line'] = $row + 1;
                     $records[] = $r;
                 }
                 $row++;
             }
 
             fclose($handle);
+            $localJemVersion = $this->getInstalledJemVersion();
+            $versionMessage = $this->buildJemVersionImportMessage(
+                $sourceJemVersion,
+                $localJemVersion,
+                $sourceVersionConflict
+            );
+            $msg .= '<p>' . htmlspecialchars($versionMessage, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            $this->addImportLogEntry(
+                $logKey,
+                $versionMessage . ' File: ' . $file['name'],
+                ($sourceVersionConflict || ($sourceJemVersion !== '' && $localJemVersion !== '' && $sourceJemVersion !== $localJemVersion))
+                    ? Log::WARNING
+                    : Log::INFO
+            );
             $msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
 
             // database update
@@ -1630,6 +1775,44 @@ class JemControllerImport extends BaseController
         );
 
         return $map[$type] ?? 'jem_events';
+    }
+
+    /**
+     * Read the installed JEM component version from Joomla's manifest cache.
+     */
+    protected function getInstalledJemVersion()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $manifest = json_decode((string) $db->loadResult(), true);
+
+        return JemCsvMetadataHelper::normaliseVersion($manifest['version'] ?? '');
+    }
+
+    /**
+     * Describe JEM-to-JEM version context without treating a difference as incompatible.
+     */
+    protected function buildJemVersionImportMessage($sourceVersion, $localVersion, $conflict = false)
+    {
+        $hasSourceVersion = $sourceVersion !== '';
+        $hasLocalVersion = $localVersion !== '';
+        $sourceVersion = $sourceVersion !== '' ? $sourceVersion : Text::_('COM_JEM_IMPORT_JEM_VERSION_UNKNOWN');
+        $localVersion = $localVersion !== '' ? $localVersion : Text::_('COM_JEM_IMPORT_JEM_VERSION_UNKNOWN');
+
+        if ($conflict) {
+            return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_CONFLICT', $sourceVersion, $localVersion);
+        }
+
+        if ($hasSourceVersion && $hasLocalVersion && $sourceVersion !== $localVersion) {
+            return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_DIFFERENT', $sourceVersion, $localVersion);
+        }
+
+        return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_INFO', $sourceVersion, $localVersion);
     }
 
     /**
@@ -1892,13 +2075,13 @@ class JemControllerImport extends BaseController
             $data = array();
             $sourceRecord = array();
             foreach ($header as $index => $sourceField) {
-                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source');
+                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source', $line);
                 $field = $fields[$sourceField] ?? null;
 
                 if ($field === null) {
                     continue;
                 }
-                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
             $sourceRecords[] = $sourceRecord;
@@ -2035,7 +2218,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2145,7 +2328,9 @@ class JemControllerImport extends BaseController
         array_walk($header, 'jem_normalise_csv_utf8');
         $sourceRecords = array();
 
+        $line = 1;
         while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+            $line++;
             array_walk($raw, 'jem_normalise_csv_utf8');
 
             if (count(array_filter($raw, 'strlen')) === 0) {
@@ -2154,7 +2339,7 @@ class JemControllerImport extends BaseController
 
             $record = array();
             foreach ($header as $index => $field) {
-                $record[$field] = JemImportSecurityHelper::sanitiseValue($field, $raw[$index] ?? '', 'source');
+                $record[$field] = JemImportSecurityHelper::sanitiseValue($field, $raw[$index] ?? '', 'source', $line);
             }
             $sourceRecords[] = $record;
         }
@@ -2235,7 +2420,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2473,13 +2658,13 @@ class JemControllerImport extends BaseController
             $sourceRecord = array();
             foreach ($fields as $index => $field) {
                 $sourceField = $header[$index] ?? (string) $index;
-                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source');
+                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source', $line);
 
                 if ($field === null) {
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
             $sourceRecords[] = $sourceRecord;
@@ -2555,7 +2740,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$sourceField] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$sourceField] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2888,10 +3073,10 @@ class JemControllerImport extends BaseController
         $description = trim((string) $this->getExternalIcsValue($event, 'DESCRIPTION'));
         $location = trim((string) $this->getExternalIcsValue($event, 'LOCATION'));
         $uid = trim((string) $this->getExternalIcsValue($event, 'UID'));
-        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'events');
-        $description = JemImportSecurityHelper::sanitiseValue('introtext', $description, 'events');
-        $location = JemImportSecurityHelper::sanitiseValue('location', $location, 'events');
-        $uid = JemImportSecurityHelper::sanitiseValue('uid', $uid, 'events');
+        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'events', $line);
+        $description = JemImportSecurityHelper::sanitiseValue('introtext', $description, 'events', $line);
+        $location = JemImportSecurityHelper::sanitiseValue('location', $location, 'events', $line);
+        $uid = JemImportSecurityHelper::sanitiseValue('uid', $uid, 'events', $line);
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
@@ -3205,10 +3390,10 @@ class JemControllerImport extends BaseController
         return $effective;
     }
 
-    protected function addExternalMappedValue(array &$data, $field, $value)
+    protected function addExternalMappedValue(array &$data, $field, $value, $sourceLine = null)
     {
         $field = trim((string) $field);
-        $value = JemImportSecurityHelper::sanitiseValue($field, $value, 'external');
+        $value = JemImportSecurityHelper::sanitiseValue($field, $value, 'external', $sourceLine);
         $value = trim((string) $value);
 
         if ($field === '' || $value === '') {
@@ -3865,7 +4050,7 @@ class JemControllerImport extends BaseController
                 $recordData[$field] = $value;
             }
         }
-        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'events');
+        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'events', $line);
 
         return array(
             'valid' => $valid,
@@ -3937,7 +4122,7 @@ class JemControllerImport extends BaseController
                 $recordData[$field] = $value;
             }
         }
-        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'venues');
+        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'venues', $line);
 
         return array(
             'valid' => $valid,
@@ -4208,7 +4393,7 @@ class JemControllerImport extends BaseController
             'access' => isset($data['access']) && trim((string) $data['access']) !== '' ? max(1, (int) $data['access']) : 1,
             'ordering' => isset($data['ordering']) ? (int) $data['ordering'] : 0,
         );
-        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays');
+        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays', $line);
 
         return array(
             'valid' => $valid,
@@ -4263,8 +4448,8 @@ class JemControllerImport extends BaseController
         $notes = array();
         $title = trim((string) $this->getExternalIcsValue($event, 'SUMMARY'));
         $description = trim((string) $this->getExternalIcsValue($event, 'DESCRIPTION'));
-        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'specialdays');
-        $description = JemImportSecurityHelper::sanitiseValue('description', $description, 'specialdays');
+        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'specialdays', $line);
+        $description = JemImportSecurityHelper::sanitiseValue('description', $description, 'specialdays', $line);
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
@@ -4322,7 +4507,7 @@ class JemControllerImport extends BaseController
             'access' => 1,
             'ordering' => 0,
         );
-        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays');
+        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays', $line);
 
         return array(
             'valid' => $valid,
