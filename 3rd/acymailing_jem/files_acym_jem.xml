@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="file" method="upgrade">
-    <name>JEM Events for AcyMailing 10</name>
+    <name>JEM - Events for AcyMailing</name>
     <element>files_acym_jem</element>
     <author>JEM Community</author>
     <creationDate>14 July 2026</creationDate>
