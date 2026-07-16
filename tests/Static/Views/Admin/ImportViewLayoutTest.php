@@ -44,7 +44,21 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString('venue_preview_page=', $template);
         self::assertStringContainsString('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGE_STATUS', $template);
         self::assertStringContainsString('JemImportCatalogHelper::getContext', $template);
-        self::assertStringContainsString('jem-import-profile-control', $template);
+        self::assertStringContainsString('jem-import-profile-first', $template);
+        self::assertStringContainsString('jem-import-profile-summary', $template);
+        self::assertStringContainsString('applyImportProfile', $template);
+        self::assertStringContainsString('external_import_source_url', $template);
+        self::assertStringContainsString('external_venue_import_source_url', $template);
+        self::assertStringContainsString('COM_JEM_IMPORT_PROFILE_SOURCE_TYPE', $template);
+        self::assertStringContainsString('COM_JEM_IMPORT_PROFILE_IMPORT_FIELDS', $template);
+        self::assertStringContainsString("target = target || 'event-import'", $template);
+        self::assertStringContainsString('60 * 60 * 1000', $template);
+        self::assertStringContainsString("localStorage.setItem(storageKey", $template);
+
+        $view = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/view.html.php');
+        self::assertStringContainsString("setUserState('com_jem.import.external_import.selected_profile_id', null)", $view);
+        self::assertStringContainsString("setUserState('com_jem.import.external_venue_import.selected_profile_id', null)", $view);
+        self::assertStringContainsString("getBool('profile_selection', false)", $view);
         self::assertStringContainsString("JemImportSubmit('import.uploadCatalog', 'download-lists')", $template);
         self::assertStringContainsString("JemImportSubmit('import.removeCustomCatalog', 'download-lists')", $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE', $template);
@@ -144,5 +158,43 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString('JemImportPreviewHelper::loadVenuePreviewPage', $view);
         self::assertStringContainsString('public const PAGE_SIZE = 100', $helper);
         self::assertStringContainsString('$preview[\'records\'] = array();', $helper);
+    }
+
+    public function testVenueMappingCanReloadAndRevalidateThePreview(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/tmpl/default.php');
+
+        self::assertStringContainsString('$inputName === \'external_venue_import_mapping\'', $template);
+        self::assertStringContainsString("JemImportSubmit('import.previewExternalVenueImport', 'venue-import')", $template);
+        self::assertStringContainsString('COM_JEM_IMPORT_EXTERNAL_RELOAD_PREVIEW', $template);
+        self::assertStringContainsString('data-venue-preview-dirty', $template);
+        self::assertStringContainsString('data-import-task=', $template);
+        self::assertStringContainsString('[data-import-task="import.commitExternalVenueImport"]', $template);
+        self::assertStringContainsString("importButton.disabled = true", $template);
+    }
+
+    public function testProfilesAreSavedOnlyAfterExplicitConfirmation(): void
+    {
+        $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
+
+        self::assertStringContainsString("getInt('external_import_profile_save', 0))", $controller);
+        self::assertStringContainsString("getInt('external_venue_import_profile_save', 0))", $controller);
+        self::assertStringNotContainsString("profile_save', 0) || trim", $controller);
+    }
+
+    public function testVenueMappingOffersEveryNativeContactAndClassificationField(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/tmpl/default.php');
+        $venueMappingStart = strpos($template, '$venueMappingFields = $buildImportMappingFields(array(');
+        $venueMappingEnd = strpos($template, "), 'venue');", $venueMappingStart);
+
+        self::assertNotFalse($venueMappingStart);
+        self::assertNotFalse($venueMappingEnd);
+
+        $venueMapping = substr($template, $venueMappingStart, $venueMappingEnd - $venueMappingStart);
+
+        foreach (array('district', 'level', 'capacity', 'email', 'phone', 'mobile') as $field) {
+            self::assertStringContainsString("'" . $field . "'", $venueMapping);
+        }
     }
 }

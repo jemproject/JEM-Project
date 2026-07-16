@@ -53,6 +53,23 @@ final class VenuesMapViewTest extends TestCase
         self::assertStringContainsString("jem_map_normalise_marker_color(\$v->color ?? '', \$venueTypeColor)", $moduleTemplate);
     }
 
+    public function testVenueTypeMarkerIconUsesReadableContrastOnEveryMapProvider(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
+        $moduleTemplate = (string) file_get_contents(JEM_TEST_ROOT . '/modules/mod_jem_map/tmpl/default.php');
+        $moduleCss = (string) file_get_contents(JEM_TEST_ROOT . '/modules/mod_jem_map/tmpl/mod_jem_map.css');
+
+        foreach ([$template, $moduleTemplate] as $mapTemplate) {
+            self::assertStringContainsString('JemHelper::getContrastTextColor($venueMarkerColor)', $mapTemplate);
+            self::assertStringContainsString('function getGoogleVenueTypeMarker(iconClass, color, iconColor)', $mapTemplate);
+            self::assertStringContainsString('color: iconColor', $mapTemplate);
+            self::assertStringContainsString('function getLeafletVenueTypeMarker(iconClass, color, iconColor)', $mapTemplate);
+            self::assertStringContainsString('--jem-marker-icon-color:', $mapTemplate);
+        }
+
+        self::assertStringContainsString('color: var(--jem-marker-icon-color);', $moduleCss);
+    }
+
     public function testCountryFlagsUseTheConfiguredExistingAsset(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
@@ -62,5 +79,26 @@ final class VenuesMapViewTest extends TestCase
         self::assertStringContainsString("is_file(JPATH_SITE . '/' . \$flag)", $template);
         self::assertStringContainsString('$countryLine', $template);
         self::assertStringNotContainsString('flags/w20-png', $template);
+    }
+
+    public function testFullscreenControlIsEnabledByDefault(): void
+    {
+        $xml = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.xml');
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
+
+        self::assertMatchesRegularExpression('/name="full_screen_map"[^>]*default="1"/s', $xml);
+        self::assertStringContainsString("get('full_screen_map', '1')", $template);
+    }
+
+    public function testVenueTypeBadgeStartsEachMapPopupWithReadableColors(): void
+    {
+        $helper = (string) file_get_contents(JEM_TEST_ROOT . '/site/helpers/map.php');
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
+
+        self::assertStringContainsString('public static function typeBadgeHtml(', $helper);
+        self::assertStringContainsString('JemHelper::getContrastTextColor($color)', $helper);
+        self::assertStringContainsString('jem-map-type-badge', $helper);
+        self::assertSame(2, substr_count($template, 'JemMapHelper::typeBadgeHtml('));
+        self::assertStringContainsString('$venueTypeBadge . ($venueTypeBadge !== \'\' ? \'<br>\' : \'\')', $template);
     }
 }

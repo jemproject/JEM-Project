@@ -17,19 +17,23 @@ final class Joomla6CompatibilityTest extends TestCase
     public function testUpdateFeedTargetsJoomla54AndJoomla6WithPhp83(): void
     {
         $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        $manifest = simplexml_load_file(JEM_TEST_ROOT . '/jem.xml');
 
         self::assertNotFalse($updates);
+        self::assertNotFalse($manifest);
+
+        $expectedVersion = (string) $manifest->version;
 
         $current = null;
 
         foreach ($updates->update as $update) {
-            if ((string) $update->version === '5.0.0') {
+            if ((string) $update->version === $expectedVersion) {
                 $current = $update;
                 break;
             }
         }
 
-        self::assertNotNull($current, 'The Joomla 5.4/6 package release must be present in update_pkg_jem.xml.');
+        self::assertNotNull($current, "JEM $expectedVersion must be present in update_pkg_jem.xml.");
         self::assertSame('^(5\.[4-9].*|6\..*)$', (string) $current->targetplatform['version']);
         self::assertSame('8.3', (string) $current->php_minimum);
     }
@@ -61,7 +65,10 @@ final class Joomla6CompatibilityTest extends TestCase
 
     public function testReleaseManifestsUseCurrentJemVersion(): void
     {
-        $expectedVersion = '5.0.0';
+        $rootManifest = simplexml_load_file(JEM_TEST_ROOT . '/jem.xml');
+        self::assertNotFalse($rootManifest);
+
+        $expectedVersion = (string) $rootManifest->version;
         $manifestPaths = array_merge(
             array(JEM_TEST_ROOT . '/jem.xml', JEM_TEST_ROOT . '/package/pkg_jem.xml'),
             glob(JEM_TEST_ROOT . '/modules/*/*.xml') ?: array(),

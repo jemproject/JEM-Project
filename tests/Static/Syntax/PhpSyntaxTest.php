@@ -11,11 +11,10 @@ final class PhpSyntaxTest extends TestCase
         $failures = array();
 
         foreach ($this->phpFiles() as $path) {
-            $command = escapeshellarg(PHP_BINARY) . ' -l ' . escapeshellarg($path);
-            exec($command, $output, $exitCode);
-
-            if ($exitCode !== 0) {
-                $failures[] = self::relativePath($path) . ":\n" . implode("\n", $output);
+            try {
+                token_get_all((string) file_get_contents($path), TOKEN_PARSE);
+            } catch (ParseError $error) {
+                $failures[] = self::relativePath($path) . ':' . $error->getMessage();
             }
         }
 
