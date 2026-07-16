@@ -59,9 +59,15 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString("setUserState('com_jem.import.external_import.selected_profile_id', null)", $view);
         self::assertStringContainsString("setUserState('com_jem.import.external_venue_import.selected_profile_id', null)", $view);
         self::assertStringContainsString("getBool('profile_selection', false)", $view);
+        self::assertStringContainsString("? (array) \$app->getUserState('com_jem.import.catalog.selected', array())", $view);
+        self::assertStringContainsString("setUserState('com_jem.import.catalog.selected', null)", $view);
+        self::assertStringContainsString('strnatcasecmp((string) $left->text, (string) $right->text)', $view);
+        self::assertStringContainsString('$appendChildren($id, $depth + 1)', $view);
         self::assertStringContainsString("JemImportSubmit('import.uploadCatalog', 'download-lists')", $template);
         self::assertStringContainsString("JemImportSubmit('import.removeCustomCatalog', 'download-lists')", $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE', $template);
+        self::assertStringContainsString("<strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SELECTED_SOURCE'); ?>:</strong>", $template);
+        self::assertStringNotContainsString("Text::sprintf('COM_JEM_IMPORT_CATALOG_SELECTED_PROFILE'", $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_OFFICIAL_ACTIVE', $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_TABLE_ITEMS', $template);
         self::assertStringContainsString("entry['item_count']", $template);

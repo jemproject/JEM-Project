@@ -45,6 +45,43 @@ final class AcyMailingJemAddonTest extends TestCase
         self::assertStringContainsString("in_array('image', \$display, true)", $this->addon);
     }
 
+    public function testAddonProvidesAnExplicitDynamicNextEventPreset(): void
+    {
+        self::assertStringContainsString("'next'.\$this->name", $this->addon);
+        self::assertStringContainsString("\$parameter->jem_next_event = true", $this->addon);
+        self::assertStringContainsString("\$parameter->max = 1", $this->addon);
+        self::assertStringContainsString('ORDER BY event.dates ASC', $this->addon);
+        self::assertStringContainsString('event.times ASC, event.id ASC', $this->addon);
+        self::assertStringContainsString("COALESCE(event.endtimes, event.times)", $this->addon);
+        self::assertStringContainsString("= '00:00:00'", $this->addon);
+    }
+
+    public function testAddonUsesValidatedJemMenuSelectorsAndShowsLinkPreview(): void
+    {
+        self::assertStringContainsString('private function loadJemMenuItems()', $this->addon);
+        self::assertStringContainsString("published = 1 AND type = '.acym_escapeDB('component')", $this->addon);
+        self::assertStringContainsString("'%option=com_jem%'", $this->addon);
+        self::assertStringContainsString('private function validateJemMenuItemId(', $this->addon);
+        self::assertStringContainsString("'label' => 'JEM menu item'", $this->addon);
+        self::assertStringContainsString("'type' => 'select'", $this->addon);
+        self::assertStringContainsString('does not render a JEM module', $this->addon);
+        self::assertStringContainsString("'title' => 'Generated event link'", $this->addon);
+        self::assertStringContainsString('jem-event-link-preview-', $this->addon);
+        self::assertStringContainsString('before Joomla applies SEF routing', $this->addon);
+        self::assertStringNotContainsString("'text' => 'Itemid'", $this->addon);
+    }
+
+    public function testAddonFiltersEventsAndCategoriesForEmailAudienceAndLanguage(): void
+    {
+        self::assertStringContainsString('loadUserById(0)', $this->addon);
+        self::assertStringContainsString("event.access IN (", $this->addon);
+        self::assertStringContainsString('audience_category.access IN (', $this->addon);
+        self::assertStringContainsString('audience_category.published = 1', $this->addon);
+        self::assertStringContainsString('event.language IN (', $this->addon);
+        self::assertStringContainsString('audience_category.language IN (', $this->addon);
+        self::assertStringContainsString("'type' => 'language'", $this->addon);
+    }
+
     public function testAddonUsesNativeOptionsForFrontendAccessAndReadMore(): void
     {
         self::assertStringContainsString("'label' => 'ACYM_FRONT_ACCESS'", $this->addon);
@@ -121,6 +158,7 @@ final class AcyMailingJemAddonTest extends TestCase
 
         self::assertStringContainsString("private const FOLDER_NAME = 'jem';", $script);
         self::assertStringContainsString("private const ADDON_VERSION = '5.0.1';", $script);
+        self::assertStringContainsString("'title' => 'JEM - Events for AcyMailing'", $script);
         self::assertStringContainsString("'type' => 'ADDON'", $script);
         self::assertStringContainsString("'active'", $script);
         self::assertStringContainsString("if (\$existingId > 0)", $script);

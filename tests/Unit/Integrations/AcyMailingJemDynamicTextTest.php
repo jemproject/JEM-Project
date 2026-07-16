@@ -78,6 +78,21 @@ namespace {
         return null;
     }
 
+    function acym_loadObjectList(string $query, string $key = ''): array
+    {
+        return $GLOBALS['acymJemTestObjectLists'][$key] ?? [];
+    }
+
+    function acym_escapeDB(mixed $value): string
+    {
+        return "'".addslashes((string) $value)."'";
+    }
+
+    function acym_selectOption(mixed $value, string $text): object
+    {
+        return (object) ['value' => $value, 'text' => $text];
+    }
+
     function acym_isAdmin(): bool
     {
         return (bool) ($GLOBALS['acymJemTestIsAdmin'] ?? true);
@@ -106,6 +121,7 @@ namespace {
         protected function tearDown(): void
         {
             $GLOBALS['acymJemTestParams'] = [];
+            $GLOBALS['acymJemTestObjectLists'] = [];
             $GLOBALS['acymJemTestIsAdmin'] = true;
         }
 
@@ -116,7 +132,7 @@ namespace {
 
             self::assertNotNull($descriptor);
             self::assertSame('plgAcymJem', $descriptor->plugin);
-            self::assertSame('JEM Events', $descriptor->name);
+            self::assertSame('JEM - Events for AcyMailing', $descriptor->name);
             self::assertSame('Insert JEM events', $descriptor->title);
             self::assertSame(
             '/administrator/components/com_acym/dynamics/jem/icon.png',
@@ -149,6 +165,28 @@ namespace {
                 'Sa, 19. Dezember 2026, 18:00 h',
                 $method->invoke($addon, $event)
             );
+        }
+
+        public function testMenuSelectorAcceptsOnlyLoadedPublishedJemItems(): void
+        {
+            $GLOBALS['acymJemTestObjectLists'] = [
+                'id' => [
+                    42 => (object) [
+                        'id' => 42,
+                        'title' => 'Events',
+                        'menutype' => 'mainmenu',
+                        'link' => 'index.php?option=com_jem&view=eventslist',
+                        'language' => '*',
+                    ],
+                ],
+            ];
+            $addon = new \plgAcymJem();
+            $validate = new \ReflectionMethod($addon, 'validateJemMenuItemId');
+
+            self::assertSame(42, $validate->invoke($addon, 42));
+            self::assertSame(0, $validate->invoke($addon, 99));
+            self::assertSame('select', $addon->settings['itemid']['type']);
+            self::assertStringContainsString('does not render a JEM module', $addon->settings['itemid']['info']);
         }
     }
 }
