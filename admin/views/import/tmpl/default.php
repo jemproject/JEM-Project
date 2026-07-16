@@ -306,16 +306,8 @@ $renderCatalogSelectionNotice = function ($context) {
     }
     ?>
     <div class="alert alert-info jem-import-catalog-selected">
-        <strong><?php echo htmlspecialchars($entry['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong>
-        <?php if (!empty($entry['source'])) : ?>
-            <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SELECTED_SOURCE'); ?>:</span>
-            <a href="<?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                <?php echo htmlspecialchars($entry['source'], ENT_QUOTES, 'UTF-8'); ?>
-            </a>
-        <?php endif; ?>
-        <?php if (!empty($entry['profile'])) : ?>
-            <span><?php echo Text::sprintf('COM_JEM_IMPORT_CATALOG_SELECTED_PROFILE', htmlspecialchars($entry['profile'], ENT_QUOTES, 'UTF-8')); ?></span>
-        <?php endif; ?>
+        <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SELECTED_SOURCE'); ?>:</strong>
+        <span><?php echo htmlspecialchars($entry['title'] ?? '', ENT_QUOTES, 'UTF-8'); ?></span>
     </div>
     <?php
 };

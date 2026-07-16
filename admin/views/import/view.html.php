@@ -91,7 +91,10 @@ class JemViewImport extends JemAdminView
         $app->setUserState('com_jem.import.external_venue_import.selected_profile_id', null);
         $app->setUserState('com_jem.import.specialdays_import.selected_profile_id', null);
         $this->specialDaysImportFormState = (array) $app->getUserState('com_jem.import.specialdays_import.form', array());
-        $this->selectedImportCatalogEntry = (array) $app->getUserState('com_jem.import.catalog.selected', array());
+        $this->selectedImportCatalogEntry = $applyProfileSelection
+            ? (array) $app->getUserState('com_jem.import.catalog.selected', array())
+            : array();
+        $app->setUserState('com_jem.import.catalog.selected', null);
         $this->externalImportPreview = $activeImportPreview === 'events' ? $this->normaliseImportPreviewState('com_jem.import.external_import.preview') : null;
         $this->externalCsvPreview = $this->externalImportPreview;
         $this->externalIcsPreview = null;
@@ -190,19 +193,60 @@ class JemViewImport extends JemAdminView
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(array($db->quoteName('id', 'value'), $db->quoteName('catname', 'text'), $db->quoteName('level')))
+            ->select(array($db->quoteName('id', 'value'), $db->quoteName('parent_id'), $db->quoteName('catname', 'text')))
             ->from($db->quoteName('#__jem_categories'))
             ->where($db->quoteName('published') . ' IN (0,1)')
             ->where($db->quoteName('catname') . ' <> ' . $db->quote('root'))
-            ->order($db->quoteName('lft') . ' ASC');
+            ->order($db->quoteName('catname') . ' ASC');
         $db->setQuery($query);
         $rows = $db->loadObjectList() ?: array();
 
+        $rowIds = array_fill_keys(array_map(static fn ($row) => (int) $row->value, $rows), true);
+        $children = array();
+        $rootParents = array();
+
         foreach ($rows as $row) {
-            $row->text = str_repeat('- ', max(0, (int) $row->level - 1)) . $row->text;
+            $parentId = (int) $row->parent_id;
+            $children[$parentId][] = $row;
+
+            if (!isset($rowIds[$parentId])) {
+                $rootParents[$parentId] = true;
+            }
         }
 
-        return array_merge(array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_EXTERNAL_SELECT_CATEGORY'))), $rows);
+        foreach ($children as &$siblings) {
+            usort($siblings, static fn ($left, $right) => strnatcasecmp((string) $left->text, (string) $right->text));
+        }
+        unset($siblings);
+
+        $sorted = array();
+        $visited = array();
+        $appendChildren = function ($parentId, $depth) use (&$appendChildren, &$children, &$sorted, &$visited) {
+            foreach ($children[(int) $parentId] ?? array() as $row) {
+                $id = (int) $row->value;
+
+                if (isset($visited[$id])) {
+                    continue;
+                }
+
+                $visited[$id] = true;
+                $row->text = str_repeat('- ', max(0, (int) $depth)) . $row->text;
+                $sorted[] = $row;
+                $appendChildren($id, $depth + 1);
+            }
+        };
+
+        foreach (array_keys($rootParents) as $rootParentId) {
+            $appendChildren($rootParentId, 0);
+        }
+
+        foreach ($rows as $row) {
+            if (!isset($visited[(int) $row->value])) {
+                $appendChildren((int) $row->parent_id, 0);
+            }
+        }
+
+        return array_merge(array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_EXTERNAL_SELECT_CATEGORY'))), $sorted);
     }
 
     /**
