@@ -58,6 +58,30 @@ final class SqlConfigDefaultsTest extends TestCase
         self::assertStringContainsString('ALTER TABLE `#__jem_attachments` CHANGE `added_by` `created_by` INT(11) NOT NULL DEFAULT 0', $sql);
     }
 
+    public function testAttachmentsSchemaTracksSuccessfulDownloads(): void
+    {
+        $installSql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+        $updateSql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
+
+        foreach (array($installSql, $updateSql) as $sql) {
+            self::assertStringContainsString('`downloads`', $sql);
+            self::assertStringContainsString('`last_download`', $sql);
+        }
+
+        self::assertStringContainsString('ALTER TABLE `#__jem_attachments`', $updateSql);
+    }
+
+    public function testEventsSchemaTracksLastVisitWithoutResettingHits(): void
+    {
+        $installSql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+        $updateSql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
+
+        self::assertStringContainsString('`hits` int(11) unsigned NOT NULL DEFAULT', $installSql);
+        self::assertStringContainsString('`last_visit` datetime NULL DEFAULT NULL', $installSql);
+        self::assertStringContainsString('ALTER TABLE `#__jem_events` ADD `last_visit`', $updateSql);
+        self::assertStringNotContainsString('UPDATE `#__jem_events` SET `hits`', $updateSql);
+    }
+
     public function testFreshInstallSchemaMatchesCurrentUpdateSchema(): void
     {
         $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');

@@ -428,9 +428,16 @@ class JemController extends BaseController
         Session::checkToken('request') or jexit('Invalid Token');
 
         $id = Factory::getApplication()->input->getInt('file', 0);
-        $path = JemAttachment::getAttachmentPath($id);
+
+        try {
+            $path = JemAttachment::getAttachmentPath($id);
+        } catch (\Exception $e) {
+            JemAttachment::logDownloadError($id, 'frontend', $e->getMessage());
+            throw $e;
+        }
 
         if (!$path || !file_exists($path)) {
+             JemAttachment::logDownloadError($id, 'frontend', 'File not found');
              throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
@@ -439,7 +446,13 @@ class JemController extends BaseController
         header('Content-Length: ' . filesize($path));
         ob_clean();
         ob_end_flush();
-        readfile($path);
+        $delivered = readfile($path);
+
+        if ($delivered !== false) {
+            JemAttachment::recordDownload($id);
+        } else {
+            JemAttachment::logDownloadError($id, 'frontend', 'File delivery failed');
+        }
         
         $this->app->close();
     }

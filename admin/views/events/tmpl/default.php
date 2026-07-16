@@ -127,6 +127,7 @@ $ticketAvailabilityOptions = array(
                     <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
                     <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?></th>
                     <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder); ?></th>
+                    <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_LAST_VISIT', 'a.last_visit', $listDirn, $listOrder); ?></th>
                     <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?></th>
                 </tr>
@@ -307,6 +308,7 @@ $ticketAvailabilityOptions = array(
                             </span>
                         </td>
                         <td class="center"><?php echo (int) $row->hits; ?></td>
+                        <td class="center nowrap"><?php echo $row->last_visit ? HTMLHelper::_('date', $row->last_visit, Text::_('DATE_FORMAT_LC5')) : '-'; ?></td>
                         <td class="center"><?php echo $created; ?></td>
                         <td class="center">
                             <?php echo (int) $row->id; ?>

@@ -180,6 +180,11 @@ final class AdminCodeContractsTest extends TestCase
             $code
         );
         self::assertStringContainsString('<?php echo (int) $row->hits; ?>', $code);
+        self::assertStringContainsString(
+            "HTMLHelper::_('grid.sort', 'COM_JEM_LAST_VISIT', 'a.last_visit', \$listDirn, \$listOrder)",
+            $code
+        );
+        self::assertStringContainsString('$row->last_visit', $code);
     }
 
     /**

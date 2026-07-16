@@ -121,6 +121,8 @@ class jem_events extends Table
     public $waitinglist = 0;
     /** @var int */
     public $hits = 0;
+    /** @var string|null */
+    public $last_visit = null;
     /** @var int */
     public $checked_out = null;
     /** @var date */

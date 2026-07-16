@@ -13,6 +13,7 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
@@ -465,6 +466,67 @@ class JemAttachment
         }
 
         return $path;
+    }
+
+    /**
+     * Record a successfully delivered attachment download.
+     *
+     * The counter update is atomic so concurrent downloads are not lost. A
+     * statistics failure must not invalidate a file that was already sent.
+     *
+     * @param  int $id Attachment id
+     * @return boolean
+     */
+    static public function recordDownload($id)
+    {
+        $id = (int) $id;
+
+        if ($id < 1) {
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_attachments'))
+                ->set($db->quoteName('downloads') . ' = ' . $db->quoteName('downloads') . ' + 1')
+                ->set($db->quoteName('last_download') . ' = ' . $db->quote(Factory::getDate()->toSql()))
+                ->where($db->quoteName('id') . ' = ' . $id);
+            $db->setQuery($query);
+
+            return (bool) $db->execute();
+        } catch (\RuntimeException $e) {
+            JemHelper::addLogEntry(
+                'Unable to record attachment download for id ' . $id . ': ' . $e->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+
+            return false;
+        }
+    }
+
+    /**
+     * Write a failed attachment delivery to JEM's log without exposing paths.
+     *
+     * @param int    $id      Attachment id
+     * @param string $channel Download channel (frontend or backend)
+     * @param string $reason  Failure reason
+     * @return void
+     */
+    static public function logDownloadError($id, $channel, $reason)
+    {
+        $userId = (int) JemFactory::getUser()->get('id');
+        $reason = trim(preg_replace('/\s+/', ' ', (string) $reason));
+
+        JemHelper::addLogEntry(
+            'Attachment download failed; id=' . (int) $id
+            . '; user=' . $userId
+            . '; channel=' . preg_replace('/[^a-z]/i', '', (string) $channel)
+            . '; reason=' . $reason,
+            __METHOD__,
+            Log::WARNING
+        );
     }
 
     /**

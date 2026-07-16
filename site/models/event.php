@@ -599,7 +599,11 @@ class JemModelEvent extends ItemModel
             $pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
             $db = Factory::getContainer()->get('DatabaseDriver');
 
-            $db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
+            $db->setQuery(
+                'UPDATE #__jem_events'
+                . ' SET hits = hits + 1, last_visit = ' . $db->quote(Factory::getDate()->toSql())
+                . ' WHERE id = ' . (int) $pk
+            );
 
             try {
                 if ($db->execute() === false) {

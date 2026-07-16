@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `seriesbooking` int(1) NOT NULL DEFAULT '0',
     `singlebooking` int(1) NOT NULL DEFAULT '0',
     `hits` int(11) unsigned NOT NULL DEFAULT '0',
+    `last_visit` datetime NULL DEFAULT NULL,
     `published` tinyint(1) NOT NULL DEFAULT '0',
     `contactid` varchar(100) NOT NULL DEFAULT '',
     `custom1` varchar(200) NOT NULL DEFAULT '',
@@ -254,6 +255,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `ordering` int(11) NOT NULL DEFAULT '0',
     `created` datetime NULL DEFAULT NULL,
     `created_by` int(11) NOT NULL DEFAULT '0',
+    `downloads` int(11) unsigned NOT NULL DEFAULT '0',
+    `last_download` datetime NULL DEFAULT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 

@@ -69,6 +69,7 @@ class JemControllerAttachments extends AdminController
         $path = $model->getAttachmentPath($id);
 
         if (!$path || !is_file($path)) {
+            JemAttachment::logDownloadError($id, 'backend', 'File not found');
             throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
@@ -78,7 +79,14 @@ class JemControllerAttachments extends AdminController
         while (ob_get_level()) {
             ob_end_clean();
         }
-        readfile($path);
+        $delivered = readfile($path);
+
+        if ($delivered !== false) {
+            JemAttachment::recordDownload($id);
+        } else {
+            JemAttachment::logDownloadError($id, 'backend', 'File delivery failed');
+        }
+
         Factory::getApplication()->close();
     }
 
