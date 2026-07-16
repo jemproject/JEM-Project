@@ -19,9 +19,9 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
         <php_minimum>8.3</php_minimum>
-        <sha256>49d5a5e5fa65890e5853ef00258c260ff3595e96243047538c2f5ead7eddc207</sha256>
-        <sha384>6f526004034f2f63de1c3a47d23a1c99209c4b73e6d32d85eb3cabb13727d0b18125f2b75d6862b4c4505df2533f21e6</sha384>
-        <sha512>0344d8b22b5ecb4fd12bc0ccf2bd7aa4a2a3e5bf7ce3e1a579b65690ce2bfd2851e4f163d5bc125b7a3c1924b60fd81f254dae68e982278a306643bb5ea0c1e7</sha512>
+        <sha256>42208635ecf02cce6c4aea9f71e389383668ac692655173ccda8da57925d7a63</sha256>
+        <sha384>3b0848ed22d8bfacb9e895a237c94cdacd4391425421fff7cfd6f3983480acd0bdbe442a4219cd5897d4241b381ce03a</sha384>
+        <sha512>d542d069124da40805065c057d1fb79c514f1c754e514313654b80da23a3afd70aecd4cd9ca033232a3dba22a6fc7460ebfb004cc51fa3cebc99ec6a8875fc8e</sha512>
         <date>2026-07-09 10:00</date>
         <notes>JEM 5.0.1 beta 1 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer.</notes>
         <changes>JEM 5.0.1 beta 1 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
