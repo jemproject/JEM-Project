@@ -132,7 +132,7 @@ namespace {
 
             self::assertNotNull($descriptor);
             self::assertSame('plgAcymJem', $descriptor->plugin);
-            self::assertSame('JEM - Events for AcyMailing', $descriptor->name);
+            self::assertSame('JEM Events', $descriptor->name);
             self::assertSame('Insert JEM events', $descriptor->title);
             self::assertSame(
             '/administrator/components/com_acym/dynamics/jem/icon.png',
