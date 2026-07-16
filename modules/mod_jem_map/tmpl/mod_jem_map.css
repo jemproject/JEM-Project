@@ -32,6 +32,7 @@
 
 .jem-map-type-marker {
     --jem-marker-color: #d9ddb5;
+    --jem-marker-icon-color: #000;
     box-sizing: border-box;
     position: relative;
     width: 34px;
@@ -40,7 +41,7 @@
     border-radius: 50% 50% 50% 0;
     background: var(--jem-marker-color);
     box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
-    color: #fff;
+    color: var(--jem-marker-icon-color);
     font-size: 16px;
     line-height: 30px;
     text-align: center;

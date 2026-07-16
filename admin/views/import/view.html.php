@@ -83,9 +83,13 @@ class JemViewImport extends JemAdminView
             ? $requestedImportPreview
             : (string) $app->getUserState('com_jem.import.active_preview', '');
         $app->setUserState('com_jem.import.active_preview', null);
-        $this->selectedExternalImportProfileId = (int) $app->getUserState('com_jem.import.external_import.selected_profile_id', 0);
-        $this->selectedExternalVenueImportProfileId = (int) $app->getUserState('com_jem.import.external_venue_import.selected_profile_id', 0);
-        $this->selectedSpecialDaysImportProfileId = (int) $app->getUserState('com_jem.import.specialdays_import.selected_profile_id', 0);
+        $applyProfileSelection = $jinput->getBool('profile_selection', false);
+        $this->selectedExternalImportProfileId = $applyProfileSelection ? (int) $app->getUserState('com_jem.import.external_import.selected_profile_id', 0) : 0;
+        $this->selectedExternalVenueImportProfileId = $applyProfileSelection ? (int) $app->getUserState('com_jem.import.external_venue_import.selected_profile_id', 0) : 0;
+        $this->selectedSpecialDaysImportProfileId = $applyProfileSelection ? (int) $app->getUserState('com_jem.import.specialdays_import.selected_profile_id', 0) : 0;
+        $app->setUserState('com_jem.import.external_import.selected_profile_id', null);
+        $app->setUserState('com_jem.import.external_venue_import.selected_profile_id', null);
+        $app->setUserState('com_jem.import.specialdays_import.selected_profile_id', null);
         $this->specialDaysImportFormState = (array) $app->getUserState('com_jem.import.specialdays_import.form', array());
         $this->selectedImportCatalogEntry = (array) $app->getUserState('com_jem.import.catalog.selected', array());
         $this->externalImportPreview = $activeImportPreview === 'events' ? $this->normaliseImportPreviewState('com_jem.import.external_import.preview') : null;
@@ -217,7 +221,7 @@ class JemViewImport extends JemAdminView
             }
 
             $query = $db->getQuery(true)
-                ->select(array($db->quoteName('id', 'value'), $db->quoteName('title', 'text'), $db->quoteName('source_format')))
+                ->select(array($db->quoteName('id', 'value'), $db->quoteName('title', 'text'), $db->quoteName('source_format'), $db->quoteName('mapping'), $db->quoteName('options')))
                 ->from($db->quoteName('#__jem_import_profiles'))
                 ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context))
                 ->where($db->quoteName('published') . ' = 1')
@@ -232,6 +236,21 @@ class JemViewImport extends JemAdminView
         foreach ($rows as $row) {
             $format = strtoupper((string) $row->source_format);
             $row->text = $format ? $row->text . ' (' . $format . ')' : $row->text;
+            $config = json_decode((string) ($row->options ?? ''), true);
+            $config = is_array($config) ? $config : array();
+
+            foreach ((array) ($config['static_values'] ?? array()) as $staticValue) {
+                $field = (string) ($staticValue['field'] ?? '');
+
+                if (in_array($field, array('catid', 'mode', 'type_id', 'locid', 'published', 'publish_up', 'language'), true)
+                    && !array_key_exists($field, $config)) {
+                    $config[$field] = $staticValue['value'] ?? '';
+                }
+            }
+
+            $row->profile_config = $config;
+            $mapping = json_decode((string) ($row->mapping ?? ''), true);
+            $row->profile_mapping = is_array($mapping) ? $mapping : array();
         }
 
         return array_merge(array(HTMLHelper::_('select.option', 0, Text::_('COM_JEM_IMPORT_PROFILE_NONE'))), $rows);

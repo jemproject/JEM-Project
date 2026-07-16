@@ -62,6 +62,7 @@ Text::script('COM_JEM_GEOCODE_INVALID_RESULT_SELECTION');
 Text::script('COM_JEM_STREET');
 Text::script('COM_JEM_ZIP');
 Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_DISTRICT');
 Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
@@ -264,6 +265,7 @@ Text::script('JCANCEL');
                 street: getFieldValue('jform_street'),
                 postalcode: getFieldValue('jform_postalCode'),
                 city: getFieldValue('jform_city'),
+                district: getFieldValue('jform_district'),
                 state: getFieldValue('jform_state'),
                 country: countryCode && countryCode !== '0' ? getFieldText('jform_country') : '',
                 countryCode: countryCode
@@ -277,6 +279,7 @@ Text::script('JCANCEL');
                 address.street,
                 address.postalcode,
                 address.city,
+                address.district,
                 address.state,
                 address.country
             ].filter(Boolean).join(', ');
@@ -369,6 +372,7 @@ Text::script('JCANCEL');
                 street: [road, houseNumber].filter(Boolean).join(' '),
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
+                district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
                 state: getAddressPart(address, ['state', 'region']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
@@ -378,6 +382,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_street', osmAddress.street);
             setFieldValue('jform_postalCode', osmAddress.postalCode);
             setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
             setCountryFieldValue(osmAddress.countryCode);
         }
@@ -389,6 +394,7 @@ Text::script('JCANCEL');
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode, relaxed: false},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_DISTRICT') : 'District', current: getFieldValue('jform_district'), suggested: osmAddress.district, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode, relaxed: false}
             ];
@@ -992,6 +998,12 @@ Text::script('JCANCEL');
                     <dd><?php echo $this->form->getInput('postalCode'); ?></dd>
                     <dt><?php echo $this->form->getLabel('city'); ?></dt>
                     <dd><?php echo $this->form->getInput('city'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('district'); ?></dt>
+                    <dd><?php echo $this->form->getInput('district'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('level'); ?></dt>
+                    <dd><?php echo $this->form->getInput('level'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('capacity'); ?></dt>
+                    <dd><?php echo $this->form->getInput('capacity'); ?></dd>
                     <dt><?php echo $this->form->getLabel('state'); ?></dt>
                     <dd><?php echo $this->form->getInput('state'); ?></dd>
                     <dt><?php echo $this->form->getLabel('country'); ?></dt>
@@ -1013,6 +1025,12 @@ Text::script('JCANCEL');
                     <dd><?php echo $this->form->getInput('longitude'); ?></dd>
                     <dt><?php echo $this->form->getLabel('url'); ?></dt>
                     <dd><?php echo $this->form->getInput('url'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('email'); ?></dt>
+                    <dd><?php echo $this->form->getInput('email'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('phone'); ?></dt>
+                    <dd><?php echo $this->form->getInput('phone'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('mobile'); ?></dt>
+                    <dd><?php echo $this->form->getInput('mobile'); ?></dd>
                     <dt><?php echo $this->form->getLabel('color'); ?></dt>
                     <dd><?php echo $this->form->getInput('color'); ?></dd>
                     <?php if ($showTypeField) : ?>

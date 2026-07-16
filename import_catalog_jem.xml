@@ -182,7 +182,7 @@
             <default name="state" value="Comunidad de Madrid" />
             <default name="country" value="ES" />
             <default name="language" value="es-ES" />
-            <default name="published" value="0" />
+            <default name="published" value="1" />
         </defaults>
         <updated>2026-07-15</updated>
         <license>Open data source</license>

@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 $app      = Factory::getApplication();
 $document = $app->getDocument();
@@ -41,7 +42,7 @@ $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
 $startLat = (float) $this->params->get('map_center_lat', '54.526');
 $startLng = (float) $this->params->get('map_center_lng', '15.255');
 $startZoom = (int) $this->params->get('map_zoom', '4');
-$fullScreenMap = (int) $this->params->get('full_screen_map', '0');
+$fullScreenMap = (int) $this->params->get('full_screen_map', '1');
 $showMyLocation = (int) $this->params->get('show_my_location', '0');
 $showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
 $showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
@@ -982,7 +983,7 @@ foreach (($this->venueslist ?? []) as $venue) {
             return details.glyph && details.glyph !== 'none' && details.glyph !== 'normal' ? details : null;
         }
 
-        function getGoogleVenueTypeMarker(iconClass, color) {
+        function getGoogleVenueTypeMarker(iconClass, color, iconColor) {
             var iconDetails = getVenueTypeIconDetails(iconClass);
 
             return {
@@ -998,7 +999,7 @@ foreach (($this->venueslist ?? []) as $venue) {
                 },
                 label: iconDetails ? {
                     text: iconDetails.glyph,
-                    color: '#ffffff',
+                    color: iconColor,
                     fontFamily: iconDetails.fontFamily,
                     fontSize: '15px',
                     fontWeight: iconDetails.fontWeight
@@ -1006,10 +1007,11 @@ foreach (($this->venueslist ?? []) as $venue) {
             };
         }
 
-        function getLeafletVenueTypeMarker(iconClass, color) {
+        function getLeafletVenueTypeMarker(iconClass, color, iconColor) {
             return L.divIcon({
                 className: '',
-                html: '<div class="jem-map-type-marker" style="--jem-marker-color:' + color + '">' +
+                html: '<div class="jem-map-type-marker" style="--jem-marker-color:' + color +
+                    ';--jem-marker-icon-color:' + iconColor + '">' +
                     '<span class="jem-map-type-marker__icon ' + iconClass + '" aria-hidden="true"></span></div>',
                 iconSize: [34, 44],
                 iconAnchor: [17, 44],
@@ -1178,8 +1180,11 @@ foreach (($this->venueslist ?? []) as $venue) {
         $venueTypeIcon = jem_venuesmap_normalise_icon_class($v->venue_type_icon ?? '');
         $venueTypeColor = jem_venuesmap_normalise_color($v->venue_type_color ?? '');
         $venueMarkerColor = jem_venuesmap_normalise_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($v->venue_type_name ?? '', $venueTypeColor);
         $popupHtml =
-            '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . $countryLine . '<br>'
             . $mapActionsHtml;
@@ -1187,7 +1192,7 @@ foreach (($this->venueslist ?? []) as $venue) {
         (function() {
             var position = {lat: <?= (float)$v->latitude ?>, lng: <?= (float)$v->longitude ?>};
             var typeMarker = <?= json_encode($venueTypeIcon) ?>
-                ? getGoogleVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>)
+                ? getGoogleVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
                 : null;
             var marker = new google.maps.Marker({
                 position: position,
@@ -1396,15 +1401,18 @@ foreach (($this->venueslist ?? []) as $venue) {
         $venueTypeIcon = jem_venuesmap_normalise_icon_class($v->venue_type_icon ?? '');
         $venueTypeColor = jem_venuesmap_normalise_color($v->venue_type_color ?? '');
         $venueMarkerColor = jem_venuesmap_normalise_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($v->venue_type_name ?? '', $venueTypeColor);
         $popupHtml =
-            '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
+            $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . $countryLine . '<br>'
             . $mapActionsHtml;
         ?>
         L.marker([<?= (float)$v->latitude ?>, <?= (float)$v->longitude ?>], {
             icon: <?= json_encode($venueTypeIcon) ?>
-                ? getLeafletVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>)
+                ? getLeafletVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
                 : L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32, 32], iconAnchor: [16, 32], popupAnchor: [0, -32]

@@ -279,7 +279,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             return details.glyph && details.glyph !== 'none' && details.glyph !== 'normal' ? details : null;
         }
 
-        function getGoogleVenueTypeMarker(iconClass, color) {
+        function getGoogleVenueTypeMarker(iconClass, color, iconColor) {
             var iconDetails = getVenueTypeIconDetails(iconClass);
 
             return {
@@ -295,7 +295,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
                 },
                 label: iconDetails ? {
                     text: iconDetails.glyph,
-                    color: '#ffffff',
+                    color: iconColor,
                     fontFamily: iconDetails.fontFamily,
                     fontSize: '15px',
                     fontWeight: iconDetails.fontWeight
@@ -303,10 +303,11 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             };
         }
 
-        function getLeafletVenueTypeMarker(iconClass, color) {
+        function getLeafletVenueTypeMarker(iconClass, color, iconColor) {
             return L.divIcon({
                 className: '',
-                html: '<div class="jem-map-type-marker" style="--jem-marker-color:' + color + '">' +
+                html: '<div class="jem-map-type-marker" style="--jem-marker-color:' + color +
+                    ';--jem-marker-icon-color:' + iconColor + '">' +
                     '<span class="jem-map-type-marker__icon ' + iconClass + '" aria-hidden="true"></span></div>',
                 iconSize: [34, 44],
                 iconAnchor: [17, 44],
@@ -490,6 +491,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         $venueTypeIcon = jem_map_normalise_icon_class($v->venue_type_icon ?? '');
         $venueTypeColor = jem_map_normalise_marker_color($v->venue_type_color ?? '');
         $venueMarkerColor = jem_map_normalise_marker_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
         $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
@@ -498,7 +500,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         (function() {
             var position = {lat: <?= (float) $v->latitude ?>, lng: <?= (float) $v->longitude ?>};
             var typeMarker = <?= json_encode($venueTypeIcon) ?>
-                ? getGoogleVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>)
+                ? getGoogleVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
                 : null;
             var marker = new google.maps.Marker({
                 position: position,
@@ -722,6 +724,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         $venueTypeIcon = jem_map_normalise_icon_class($v->venue_type_icon ?? '');
         $venueTypeColor = jem_map_normalise_marker_color($v->venue_type_color ?? '');
         $venueMarkerColor = jem_map_normalise_marker_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
         $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
@@ -729,7 +732,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         ?>
         L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
             icon: <?= json_encode($venueTypeIcon) ?>
-                ? getLeafletVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>)
+                ? getLeafletVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
                 : L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]

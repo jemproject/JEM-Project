@@ -13,6 +13,27 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
+$buildProfilePayloads = function (array $options) {
+    $payloads = array();
+
+    foreach ($options as $option) {
+        $id = (int) ($option->value ?? 0);
+
+        if ($id <= 0) {
+            continue;
+        }
+
+        $payloads[$id] = array(
+            'title' => (string) ($option->text ?? ''),
+            'format' => strtoupper((string) ($option->source_format ?? '')),
+            'mapping' => (array) ($option->profile_mapping ?? array()),
+            'config' => (array) ($option->profile_config ?? array()),
+        );
+    }
+
+    return $payloads;
+};
+
 $renderMigrationCsvBlock = function ($id, $title, $description, $showColumnsText, array $fields, $replaceName, $fileName, $task) {
     ?>
     <section class="jem-import-card">
@@ -101,7 +122,7 @@ $renderFancySelect = function (array $options, $name, $id, $selected = null) {
 $renderPreviewActions = function ($commitTask, $clearTask, $tabId, $validCount) {
     ?>
     <div class="jem-import-actions jem-import-preview-actions">
-        <button type="button" class="btn btn-primary"<?php echo empty($validCount) ? ' disabled' : ''; ?> onclick="JemImportSubmit('<?php echo $commitTask; ?>', '<?php echo $tabId; ?>');">
+        <button type="button" class="btn btn-primary" data-import-task="<?php echo htmlspecialchars($commitTask, ENT_QUOTES, 'UTF-8'); ?>"<?php echo empty($validCount) ? ' disabled' : ''; ?> onclick="JemImportSubmit('<?php echo $commitTask; ?>', '<?php echo $tabId; ?>');">
             <span class="icon-upload" aria-hidden="true"></span>
             <?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_IMPORT_VALID_ROWS'); ?>
         </button>
@@ -173,6 +194,15 @@ $renderImportMappingBlock = function (array $preview, $inputName, array $jemFiel
                     </tbody>
                 </table>
             </div>
+            <?php if ($inputName === 'external_venue_import_mapping') : ?>
+                <div class="jem-import-actions jem-import-actions-row mt-3">
+                    <button type="button" class="btn btn-secondary" onclick="JemImportSubmit('import.previewExternalVenueImport', 'venue-import');">
+                        <span class="icon-refresh" aria-hidden="true"></span>
+                        <?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_RELOAD_PREVIEW'); ?>
+                    </button>
+                    <span class="small text-muted"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW_DESC'); ?></span>
+                </div>
+            <?php endif; ?>
         </details>
         <details class="jem-import-columns jem-import-static-panel" open>
             <summary><?php echo Text::_('COM_JEM_IMPORT_STATIC_VALUES_TITLE'); ?></summary>
@@ -406,8 +436,14 @@ $venueMappingFields = $buildImportMappingFields(array(
     'street',
     'postalCode',
     'city',
+    'district',
+    'level',
+    'capacity',
     'state',
     'country',
+    'email',
+    'phone',
+    'mobile',
     'latitude',
     'longitude',
     'coordinates',
@@ -568,7 +604,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
 
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'event-import', Text::_('COM_JEM_IMPORT_TAB_EVENT_IMPORT')); ?>
                 <?php
-                $eventSelectedProfileId = (int) (($this->externalImportPreview['profile_id'] ?? 0) ?: ($this->selectedExternalImportProfileId ?? 0));
+                $eventSelectedProfileId = (int) ($this->selectedExternalImportProfileId ?? 0);
                 $eventSelectedMode = (string) ($this->externalImportPreview['mode'] ?? 'standard');
                 $eventSelectedPublished = (int) ($this->externalImportPreview['published'] ?? 1);
                 $eventSelectedPublishUp = (string) ($this->externalImportPreview['publish_up'] ?? $this->externalPublishUpDefault);
@@ -587,46 +623,42 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <p><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_EVENTS_DESC'); ?></p>
                             </div>
                         </div>
+                        <div class="jem-import-profile-first">
+                            <label for="external_import_profile_id"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
+                            <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text', $eventSelectedProfileId); ?>
+                        </div>
+                        <div class="jem-import-profile-summary" data-profile-summary="events" hidden>
+                            <strong><?php echo Text::_('COM_JEM_IMPORT_PROFILE_CONFIGURATION'); ?></strong>
+                            <div class="jem-import-profile-summary-content"></div>
+                        </div>
+                        <hr class="jem-import-profile-separator">
                         <div class="jem-import-row">
                             <div class="jem-import-field jem-import-field-file">
                                 <label><?php echo Text::_('COM_JEM_IMPORT_SOURCE'); ?></label>
-                                <?php if (!empty($eventCatalogEntry['source'])) : ?>
-                                    <div class="jem-import-source-choice" data-source-choice="external-import">
-                                        <label>
-                                            <input type="radio" name="external_import_source_mode" value="url" checked>
-                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="external_import_source_mode" value="file">
-                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
-                                        </label>
-                                    </div>
-                                    <div class="jem-import-source-url" data-source-panel="external-import-url">
-                                        <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_URL_READY'); ?></span>
-                                        <a href="<?php echo htmlspecialchars($eventCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                                            <?php echo htmlspecialchars($eventCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </a>
-                                    </div>
-                                    <div class="jem-import-source-file" data-source-panel="external-import-file" hidden>
-                                        <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
-                                        <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
-                                    </div>
-                                <?php else : ?>
-                                    <input type="hidden" name="external_import_source_mode" value="file">
-                                    <div class="jem-import-source-file">
-                                        <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
-                                        <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
-                                    </div>
-                                <?php endif; ?>
+                                <?php $eventSourceUrl = (string) ($eventCatalogEntry['source'] ?? ($this->externalImportPreview['source_url'] ?? '')); ?>
+                                <div class="jem-import-source-choice" data-source-choice="external-import">
+                                    <label>
+                                        <input type="radio" name="external_import_source_mode" value="url"<?php echo $eventSourceUrl !== '' ? ' checked' : ''; ?>>
+                                        <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="external_import_source_mode" value="file"<?php echo $eventSourceUrl === '' ? ' checked' : ''; ?>>
+                                        <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
+                                    </label>
+                                </div>
+                                <div class="jem-import-source-url" data-source-panel="external-import-url"<?php echo $eventSourceUrl === '' ? ' hidden' : ''; ?>>
+                                    <label for="external-import-source-url"><?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?></label>
+                                    <input type="url" id="external-import-source-url" name="external_import_source_url" class="form-control" value="<?php echo htmlspecialchars($eventSourceUrl, ENT_QUOTES, 'UTF-8'); ?>" placeholder="Event source URL">
+                                </div>
+                                <div class="jem-import-source-file" data-source-panel="external-import-file"<?php echo $eventSourceUrl !== '' ? ' hidden' : ''; ?>>
+                                    <label for="external-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_ICS'); ?></label>
+                                    <input type="file" id="external-import-file-upload" accept=".csv,.json,.xml,.ics,text/csv,application/json,text/xml,application/xml,text/calendar,text/plain" name="FileExternalImport" class="form-control" />
+                                </div>
                                 <?php if (!empty($this->externalImportPreview['source_name'])) : ?>
                                     <div class="form-text jem-import-source-note">
                                         <?php echo htmlspecialchars(Text::sprintf('COM_JEM_IMPORT_PREVIEW_SOURCE_FILE', $this->externalImportPreview['source_name']), ENT_QUOTES, 'UTF-8'); ?>
                                     </div>
                                 <?php endif; ?>
-                                <div class="jem-import-profile-control">
-                                    <label for="external_import_profile_id"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                    <?php echo HTMLHelper::_('select.genericlist', $this->externalImportProfileOptions, 'external_import_profile_id', 'class="form-select" id="external_import_profile_id"', 'value', 'text', $eventSelectedProfileId); ?>
-                                </div>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
@@ -756,6 +788,12 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'venue-import', Text::_('COM_JEM_IMPORT_TAB_VENUE_IMPORT')); ?>
+                <?php
+                $venueSelectedProfileId = (int) ($this->selectedExternalVenueImportProfileId ?? 0);
+                $venueSelectedTypeId = (int) ($this->externalVenueImportPreview['type_id'] ?? 0);
+                $venueSelectedPublished = (int) ($this->externalVenueImportPreview['published'] ?? 1);
+                $venueSelectedLanguage = (string) ($this->externalVenueImportPreview['language'] ?? '*');
+                ?>
                 <div class="jem-import-tab-intro">
                     <h2><?php echo Text::_('COM_JEM_IMPORT_VENUE_IMPORT_TITLE'); ?></h2>
                     <p><?php echo Text::_('COM_JEM_IMPORT_VENUE_IMPORT_DESC'); ?></p>
@@ -769,59 +807,57 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <p><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_DESC'); ?></p>
                             </div>
                         </div>
+                        <div class="jem-import-profile-first">
+                            <label for="external_venue_import_profile_id"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
+                            <?php echo HTMLHelper::_('select.genericlist', $this->externalVenueImportProfileOptions, 'external_venue_import_profile_id', 'class="form-select" id="external_venue_import_profile_id"', 'value', 'text', $venueSelectedProfileId); ?>
+                        </div>
+                        <div class="jem-import-profile-summary" data-profile-summary="venues" hidden>
+                            <strong><?php echo Text::_('COM_JEM_IMPORT_PROFILE_CONFIGURATION'); ?></strong>
+                            <div class="jem-import-profile-summary-content"></div>
+                        </div>
+                        <hr class="jem-import-profile-separator">
                         <div class="jem-import-row">
                             <div class="jem-import-field jem-import-field-file">
                                 <label><?php echo Text::_('COM_JEM_IMPORT_SOURCE'); ?></label>
-                                <?php if (!empty($venueCatalogEntry['source'])) : ?>
-                                    <div class="jem-import-source-choice" data-source-choice="external-venue-import">
-                                        <label>
-                                            <input type="radio" name="external_venue_import_source_mode" value="url" checked>
-                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="external_venue_import_source_mode" value="file">
-                                            <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
-                                        </label>
-                                    </div>
-                                    <div class="jem-import-source-url" data-source-panel="external-venue-import-url">
-                                        <span><?php echo Text::_('COM_JEM_IMPORT_CATALOG_URL_READY'); ?></span>
-                                        <a href="<?php echo htmlspecialchars($venueCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer">
-                                            <?php echo htmlspecialchars($venueCatalogEntry['source'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </a>
-                                    </div>
-                                    <div class="jem-import-source-file" data-source-panel="external-venue-import-file" hidden>
-                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_XLSX'); ?></label>
-                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,.xlsx,text/csv,application/json,text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" name="FileExternalVenueImport" class="form-control" />
-                                    </div>
-                                <?php else : ?>
-                                    <input type="hidden" name="external_venue_import_source_mode" value="file">
-                                    <div class="jem-import-source-file">
-                                        <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_XLSX'); ?></label>
-                                        <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,.xlsx,text/csv,application/json,text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" name="FileExternalVenueImport" class="form-control" />
-                                    </div>
-                                <?php endif; ?>
-                                <label for="external_venue_import_profile_id" class="mt-2"><?php echo Text::_('COM_JEM_IMPORT_PROFILE_LABEL'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalVenueImportProfileOptions, 'external_venue_import_profile_id', 'class="form-select" id="external_venue_import_profile_id"', 'value', 'text', $this->selectedExternalVenueImportProfileId ?? 0); ?>
+                                <?php $venueSourceUrl = (string) ($venueCatalogEntry['source'] ?? ($this->externalVenueImportPreview['source_url'] ?? '')); ?>
+                                <div class="jem-import-source-choice" data-source-choice="external-venue-import">
+                                    <label>
+                                        <input type="radio" name="external_venue_import_source_mode" value="url"<?php echo $venueSourceUrl !== '' ? ' checked' : ''; ?>>
+                                        <?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?>
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="external_venue_import_source_mode" value="file"<?php echo $venueSourceUrl === '' ? ' checked' : ''; ?>>
+                                        <?php echo Text::_('COM_JEM_IMPORT_SOURCE_FILE'); ?>
+                                    </label>
+                                </div>
+                                <div class="jem-import-source-url" data-source-panel="external-venue-import-url"<?php echo $venueSourceUrl === '' ? ' hidden' : ''; ?>>
+                                    <label for="external-venue-import-source-url"><?php echo Text::_('COM_JEM_IMPORT_SOURCE_URL'); ?></label>
+                                    <input type="url" id="external-venue-import-source-url" name="external_venue_import_source_url" class="form-control" value="<?php echo htmlspecialchars($venueSourceUrl, ENT_QUOTES, 'UTF-8'); ?>" placeholder="Venue source URL">
+                                </div>
+                                <div class="jem-import-source-file" data-source-panel="external-venue-import-file"<?php echo $venueSourceUrl !== '' ? ' hidden' : ''; ?>>
+                                    <label for="external-venue-import-file-upload"><?php echo Text::_('COM_JEM_IMPORT_SELECT_CSV_JSON_XML_OR_XLSX'); ?></label>
+                                    <input type="file" id="external-venue-import-file-upload" accept=".csv,.json,.xml,.xlsx,text/csv,application/json,text/xml,application/xml,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/plain" name="FileExternalVenueImport" class="form-control" />
+                                </div>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
                                 <label for="external_venue_import_type_id"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_DEFAULT_TYPE'); ?></label>
                                 <div class="jem-import-select-actions">
-                                    <?php echo $renderFancySelect($this->externalVenueTypeOptions, 'external_venue_import_type_id', 'external_venue_import_type_id', $this->externalVenueImportPreview['type_id'] ?? 0); ?>
+                                    <?php echo $renderFancySelect($this->externalVenueTypeOptions, 'external_venue_import_type_id', 'external_venue_import_type_id', $venueSelectedTypeId); ?>
                                     <?php $renderCreateModalButton('external-venue-type', 'type.add', 'COM_JEM_IMPORT_CREATE_TYPE', 'COM_JEM_IMPORT_CREATE_TYPE_TITLE', 'external_venue_import_type_id', 'jform_name', 'type.save', 3); ?>
                                 </div>
                             </div>
                             <div class="jem-import-field">
                                 <label for="external_venue_import_published"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PUBLISHED_STATE'); ?></label>
                                 <select name="external_venue_import_published" id="external_venue_import_published" class="form-select">
-                                    <option value="1"><?php echo Text::_('JPUBLISHED'); ?></option>
-                                    <option value="0"><?php echo Text::_('JUNPUBLISHED'); ?></option>
+                                    <option value="1"<?php echo $venueSelectedPublished === 1 ? ' selected' : ''; ?>><?php echo Text::_('JPUBLISHED'); ?></option>
+                                    <option value="0"<?php echo $venueSelectedPublished === 0 ? ' selected' : ''; ?>><?php echo Text::_('JUNPUBLISHED'); ?></option>
                                 </select>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                             <div class="jem-import-field">
                                 <label for="external_venue_import_language"><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_LANGUAGE'); ?></label>
-                                <?php echo HTMLHelper::_('select.genericlist', $this->externalLanguageOptions, 'external_venue_import_language', 'class="form-select" id="external_venue_import_language"', 'value', 'text', '*'); ?>
+                                <?php echo HTMLHelper::_('select.genericlist', $this->externalLanguageOptions, 'external_venue_import_language', 'class="form-select" id="external_venue_import_language"', 'value', 'text', $venueSelectedLanguage); ?>
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                         </div>
@@ -847,7 +883,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     </section>
                 </div>
                 <?php if (!empty($this->externalVenueImportPreview)) : ?>
-                    <section class="jem-import-card jem-import-preview-card">
+                    <section class="jem-import-card jem-import-preview-card" data-import-preview-context="venues">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_PREVIEW_TITLE'); ?></h3>
                         <p><?php echo htmlspecialchars($this->externalVenueImportPreview['summary'] ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
                         <?php if (($this->externalVenueImportPreview['displayed_count'] ?? 0) < ($this->externalVenueImportPreview['valid_count'] ?? 0) + ($this->externalVenueImportPreview['error_count'] ?? 0)) : ?>
@@ -858,6 +894,9 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                             <p><?php echo Text::sprintf('COM_JEM_IMPORT_PROFILE_APPLIED', htmlspecialchars($this->externalVenueImportPreview['profile_title'], ENT_QUOTES, 'UTF-8')); ?></p>
                         <?php endif; ?>
                         <?php $renderImportMappingBlock((array) $this->externalVenueImportPreview, 'external_venue_import_mapping', $venueMappingFields, 'external_venue_import_profile'); ?>
+                        <div class="alert alert-warning d-none mt-3" data-venue-preview-dirty role="status">
+                            <?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_MAPPING_CHANGED'); ?>
+                        </div>
                         <?php $renderDynamicPreviewTable((array) $this->externalVenueImportPreview); ?>
                         <?php $renderPreviewActions('import.commitExternalVenueImport', 'import.clearExternalVenueImportPreview', 'venue-import', $this->externalVenueImportPreview['valid_count'] ?? 0); ?>
                     </section>
@@ -1458,19 +1497,49 @@ function JemImportLoadCatalogItem(id) {
 }
 
 function JemImportShowHashTab() {
+    var storageKey = 'jemImportActiveTab';
+    var maxAge = 60 * 60 * 1000;
+    var validTabs = ['event-import', 'venue-import', 'jem-migration', 'special-days', 'advanced-tools', 'download-lists', 'import-security'];
     var hash = window.location.hash ? window.location.hash.substring(1) : '';
+    var target = validTabs.indexOf(hash) !== -1 ? hash : '';
 
-    if (!hash) {
-        return;
+    if (!target) {
+        try {
+            var stored = JSON.parse(localStorage.getItem(storageKey) || 'null');
+            if (stored && validTabs.indexOf(stored.tab) !== -1 && Date.now() - Number(stored.saved || 0) <= maxAge) {
+                target = stored.tab;
+            } else {
+                localStorage.removeItem(storageKey);
+            }
+        } catch (error) {
+            localStorage.removeItem(storageKey);
+        }
     }
 
-    var trigger = document.querySelector('[data-bs-target="#' + hash + '"], [href="#' + hash + '"], [aria-controls="' + hash + '"]');
+    target = target || 'event-import';
+    var trigger = document.querySelector('[data-bs-target="#' + target + '"], [href="#' + target + '"], [aria-controls="' + target + '"]');
 
     if (trigger && window.bootstrap && window.bootstrap.Tab) {
         window.bootstrap.Tab.getOrCreateInstance(trigger).show();
     } else if (trigger) {
         trigger.click();
     }
+
+    document.querySelectorAll('[data-bs-toggle="tab"], [role="tab"]').forEach(function (tabTrigger) {
+        var tab = (tabTrigger.getAttribute('data-bs-target') || tabTrigger.getAttribute('href') || '').replace(/^#/, '')
+            || tabTrigger.getAttribute('aria-controls') || '';
+
+        if (validTabs.indexOf(tab) === -1) {
+            return;
+        }
+
+        tabTrigger.addEventListener('click', function () {
+            localStorage.setItem(storageKey, JSON.stringify({ tab: tab, saved: Date.now() }));
+            var url = new URL(window.location.href);
+            url.hash = tab;
+            window.history.replaceState(null, '', url.toString());
+        });
+    });
 }
 
 function JemImportRenderStatus(statusText) {
@@ -1494,6 +1563,20 @@ function JemImportUpdateDynamicPreview(select) {
 
     if (!table) {
         return;
+    }
+
+    if (card.getAttribute('data-import-preview-context') === 'venues') {
+        var dirtyNotice = card.querySelector('[data-venue-preview-dirty]');
+        var importButton = card.querySelector('[data-import-task="import.commitExternalVenueImport"]');
+
+        if (dirtyNotice) {
+            dirtyNotice.classList.remove('d-none');
+        }
+
+        if (importButton) {
+            importButton.disabled = true;
+            importButton.setAttribute('aria-disabled', 'true');
+        }
     }
 
     var sourceRecords = [];
@@ -1718,6 +1801,145 @@ function JemImportModalSaveAndSelect(modalId, selectId, nameFieldId, saveTask) {
 
 document.addEventListener('DOMContentLoaded', function () {
     JemImportShowHashTab();
+
+    var importProfiles = {
+        events: <?php echo json_encode($buildProfilePayloads($this->externalImportProfileOptions), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>,
+        venues: <?php echo json_encode($buildProfilePayloads($this->externalVenueImportProfileOptions), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE); ?>
+    };
+    var profileControlIds = {
+        events: {
+            catid: 'external_import_catid',
+            mode: 'external_import_mode',
+            type_id: 'external_import_type_id',
+            locid: 'external_import_locid',
+            published: 'external_import_published',
+            publish_up: 'external_import_publish_up',
+            language: 'external_import_language'
+        },
+        venues: {
+            type_id: 'external_venue_import_type_id',
+            published: 'external_venue_import_published',
+            language: 'external_venue_import_language'
+        }
+    };
+
+    var addProfileSummaryLine = function (container, label, values) {
+        if (!values.length) {
+            return;
+        }
+
+        var line = document.createElement('div');
+        var strong = document.createElement('strong');
+        var code = document.createElement('code');
+        strong.textContent = label + ': ';
+        code.textContent = values.join(', ');
+        line.appendChild(strong);
+        line.appendChild(code);
+        container.appendChild(line);
+    };
+
+    var applyImportProfile = function (context, select, updateControls) {
+        var profile = importProfiles[context] ? importProfiles[context][select.value] : null;
+        var summary = document.querySelector('[data-profile-summary="' + context + '"]');
+        var content = summary ? summary.querySelector('.jem-import-profile-summary-content') : null;
+
+        if (!profile) {
+            if (summary) {
+                summary.hidden = true;
+            }
+            return;
+        }
+
+        var config = profile.config || {};
+        var staticValues = Array.isArray(config.static_values) ? config.static_values : [];
+        var mappingValues = Object.keys(profile.mapping || {}).map(function (source) {
+            return source + ' → ' + profile.mapping[source];
+        });
+        var importFieldValues = [];
+        var configuredImportFields = {};
+        var sourceType = config.source_mode || (config.source_url ? 'url' : 'file');
+        var sourceValue = config.source_url || config.source_name || <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_SOURCE_FILE_REQUIRED')); ?>;
+
+        Object.keys(profileControlIds[context] || {}).forEach(function (key) {
+            if (!Object.prototype.hasOwnProperty.call(config, key) || config[key] === '' || config[key] === null) {
+                return;
+            }
+
+            var control = document.getElementById(profileControlIds[context][key]);
+            var label = control ? document.querySelector('label[for="' + control.id + '"]') : null;
+            var value = String(config[key]);
+
+            if (control && control.tagName === 'SELECT' && control.options[control.selectedIndex]) {
+                var matchingOption = Array.prototype.find.call(control.options, function (option) {
+                    return String(option.value) === value;
+                });
+                value = matchingOption ? matchingOption.text.trim() : value;
+            }
+
+            importFieldValues.push((label ? label.textContent.trim() : key) + '=' + value);
+            configuredImportFields[key] = true;
+        });
+        staticValues.forEach(function (item) {
+            if (item && item.field && !configuredImportFields[item.field]) {
+                importFieldValues.push(item.field + '=' + (item.value === undefined ? '' : item.value));
+            }
+        });
+
+        if (content) {
+            content.textContent = '';
+            addProfileSummaryLine(content, <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_SOURCE_TYPE')); ?>, [sourceType === 'url' ? <?php echo json_encode(Text::_('COM_JEM_IMPORT_SOURCE_URL')); ?> : <?php echo json_encode(Text::_('COM_JEM_IMPORT_SOURCE_FILE')); ?>]);
+            addProfileSummaryLine(content, <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_SOURCE')); ?>, [sourceValue]);
+            addProfileSummaryLine(content, <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_FORMAT')); ?>.replace(': %s', ''), profile.format ? [profile.format] : []);
+            addProfileSummaryLine(content, <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_IMPORT_FIELDS')); ?>, importFieldValues);
+            addProfileSummaryLine(content, <?php echo json_encode(Text::_('COM_JEM_IMPORT_PROFILE_MAPPING_SUMMARY')); ?>.replace(': %s', ''), mappingValues);
+            summary.hidden = false;
+        }
+
+        if (!updateControls) {
+            return;
+        }
+
+        Object.keys(profileControlIds[context] || {}).forEach(function (key) {
+            if (!Object.prototype.hasOwnProperty.call(config, key)) {
+                return;
+            }
+
+            var control = document.getElementById(profileControlIds[context][key]);
+            if (control) {
+                control.value = String(config[key]);
+                control.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+
+        var prefix = context === 'venues' ? 'external_venue_import' : 'external_import';
+        if (config.source_mode) {
+            var sourceRadio = document.querySelector('input[name="' + prefix + '_source_mode"][value="' + config.source_mode + '"]');
+            if (sourceRadio) {
+                sourceRadio.checked = true;
+                sourceRadio.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+        if (config.source_url) {
+            var sourceInput = document.querySelector('input[name="' + prefix + '_source_url"]');
+            if (sourceInput) {
+                sourceInput.value = config.source_url;
+            }
+        }
+    };
+
+    [
+        ['events', document.getElementById('external_import_profile_id')],
+        ['venues', document.getElementById('external_venue_import_profile_id')]
+    ].forEach(function (item) {
+        if (!item[1]) {
+            return;
+        }
+
+        item[1].addEventListener('change', function () {
+            applyImportProfile(item[0], item[1], true);
+        });
+        applyImportProfile(item[0], item[1], true);
+    });
 
     var createdOption = sessionStorage.getItem('jemImportCreatedOption');
 

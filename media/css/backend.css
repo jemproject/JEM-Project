@@ -957,6 +957,49 @@ input#replace_attachments1.inputbox {
     width: 100%;
 }
 
+.jem-import-profile-first {
+    align-items: center;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(10rem, 13rem) minmax(0, 36rem);
+    margin-bottom: 1rem;
+}
+
+.jem-import-profile-first label {
+    font-weight: 600;
+    margin: 0;
+}
+
+.jem-import-profile-first .form-select {
+    max-width: 36rem;
+    width: 100%;
+}
+
+.jem-import-profile-summary {
+    background: #f4f7fb;
+    border-left: .25rem solid #2f5f9f;
+    margin: -.35rem 0 1rem;
+    padding: .75rem 1rem;
+}
+
+.jem-import-profile-summary-content {
+    display: grid;
+    gap: .35rem;
+    margin-top: .35rem;
+}
+
+.jem-import-profile-summary-content code {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.jem-import-profile-separator {
+    border: 0;
+    border-top: 1px solid #c9d2dd;
+    margin: 0 0 1rem;
+    opacity: 1;
+}
+
 .jem-import-source-choice {
     display: flex;
     flex-wrap: wrap;
@@ -1170,6 +1213,11 @@ input#replace_attachments1.inputbox {
 
 @media (max-width: 900px) {
     .jem-import-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-import-profile-first {
+        align-items: stretch;
         grid-template-columns: 1fr;
     }
 
