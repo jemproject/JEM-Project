@@ -38,7 +38,7 @@ class plgAcymJem extends AcymPlugin
         // JEM category ID 1 is the technical tree root; show its children.
         $this->rootCategoryId = 1;
 
-        $this->pluginDescription->name = 'JEM - Events for AcyMailing';
+        $this->pluginDescription->name = 'JEM Events';
         $this->pluginDescription->title = 'Insert JEM events';
         $this->pluginDescription->category = 'Events management';
         $this->pluginDescription->description = $this->addonDefinition['description'];

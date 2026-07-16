@@ -24,6 +24,12 @@ final class AcyMailingJemAddonTest extends TestCase
         self::assertStringContainsString('function generateByCategory(', $this->addon);
     }
 
+    public function testEditorTileUsesTheShortJemEventsLabel(): void
+    {
+        self::assertStringContainsString("\$this->pluginDescription->name = 'JEM Events';", $this->addon);
+        self::assertStringContainsString("'name' => 'JEM - Events for AcyMailing'", $this->addon);
+    }
+
     public function testAddonDoesNotUseAcyMailing5Api(): void
     {
         self::assertStringNotContainsString('acymailing_config(', $this->addon);
