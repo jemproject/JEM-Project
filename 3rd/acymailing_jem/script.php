@@ -73,7 +73,7 @@ final class AcymJemInstallerScript implements InstallerScriptInterface
             $existingId = (int) $db->setQuery($query)->loadResult();
 
             $metadata = [
-                'title' => 'JEM Events',
+                'title' => 'JEM - Events for AcyMailing',
                 'folder_name' => self::FOLDER_NAME,
                 'version' => self::ADDON_VERSION,
                 'category' => 'Events management',

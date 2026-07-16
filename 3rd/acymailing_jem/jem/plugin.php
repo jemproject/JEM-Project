@@ -10,19 +10,25 @@ defined('_JEXEC') or die;
 
 use AcyMailing\Core\AcymPlugin;
 use AcyMailing\Helpers\TabHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\User\UserFactoryInterface;
 
 /**
  * AcyMailing 10 dynamic-content add-on for JEM.
  */
 class plgAcymJem extends AcymPlugin
 {
+    private array $jemMenuItems = [];
+    private array $guestViewLevels = [1];
+
     public function __construct()
     {
         parent::__construct();
 
         $this->cms = 'Joomla';
         $this->addonDefinition = [
-            'name' => 'JEM Events',
+            'name' => 'JEM - Events for AcyMailing',
             'description' => '- Insert JEM events in emails<br>- Insert upcoming JEM events automatically by category',
             'documentation' => 'https://www.joomlaeventmanager.net/',
             'category' => 'Events management',
@@ -32,7 +38,7 @@ class plgAcymJem extends AcymPlugin
         // JEM category ID 1 is the technical tree root; show its children.
         $this->rootCategoryId = 1;
 
-        $this->pluginDescription->name = 'JEM Events';
+        $this->pluginDescription->name = 'JEM - Events for AcyMailing';
         $this->pluginDescription->title = 'Insert JEM events';
         $this->pluginDescription->category = 'Events management';
         $this->pluginDescription->description = $this->addonDefinition['description'];
@@ -46,6 +52,10 @@ class plgAcymJem extends AcymPlugin
 
         acym_loadLanguageFile('com_jem', JPATH_SITE);
         acym_loadLanguageFile('com_jem', JPATH_ADMINISTRATOR);
+
+        $this->jemMenuItems = $this->loadJemMenuItems();
+        $this->guestViewLevels = $this->loadGuestViewLevels();
+        $savedMenuItemId = $this->validateJemMenuItemId((int) $this->getParam('itemid', 0));
 
         $this->displayOptions = [
             'title' => ['ACYM_TITLE', true],
@@ -75,9 +85,11 @@ class plgAcymJem extends AcymPlugin
                 ],
             ],
             'itemid' => [
-                'type' => 'text',
-                'label' => 'JEM menu item ID',
-                'value' => '',
+                'type' => 'select',
+                'label' => 'JEM menu item',
+                'info' => 'Selects the Joomla menu context used by event links. It does not render a JEM module or use module settings.',
+                'value' => $savedMenuItemId,
+                'data' => $this->getJemMenuSettingOptions(),
             ],
         ];
     }
@@ -131,18 +143,22 @@ class plgAcymJem extends AcymPlugin
     public function insertionOptions(?object $defaultValues = null): void
     {
         $this->defaultValues = $defaultValues;
+        $categoryFilters = [
+            'published = 1',
+            'access IN ('.implode(',', $this->guestViewLevels).')',
+        ];
         $this->categories = acym_loadObjectList(
             'SELECT id, parent_id, catname AS title'
             .' FROM #__jem_categories'
-            .' WHERE published = 1'
+            .' WHERE '.implode(' AND ', $categoryFilters)
             .' ORDER BY parent_id, ordering, catname',
             'id'
         );
 
         $tabHelper = new TabHelper();
-        $displayOptions = $this->getDisplayOptions();
 
         $identifier = $this->name;
+        $displayOptions = $this->getDisplayOptions($identifier, 'individual');
         $tabHelper->startTab(
             acym_translation('ACYM_ONE_BY_ONE'),
             !empty($this->defaultValues->defaultPluginTab) && $identifier === $this->defaultValues->defaultPluginTab
@@ -152,12 +168,18 @@ class plgAcymJem extends AcymPlugin
         $tabHelper->endTab();
 
         $identifier = 'auto'.$this->name;
+        $displayOptions = $this->getDisplayOptions($identifier, 'grouped');
         $tabHelper->startTab(
             acym_translation('ACYM_BY_CATEGORY'),
             !empty($this->defaultValues->defaultPluginTab) && $identifier === $this->defaultValues->defaultPluginTab
         );
 
         $categoryOptions = [
+            [
+                'title' => 'ACYM_LANGUAGE',
+                'type' => 'language',
+                'name' => 'language',
+            ],
             [
                 'title' => 'ACYM_ORDER_BY',
                 'type' => 'select',
@@ -200,6 +222,37 @@ class plgAcymJem extends AcymPlugin
             $this->defaultValues
         );
         $tabHelper->endTab();
+
+        $identifier = 'next'.$this->name;
+        $displayOptions = $this->getDisplayOptions($identifier, 'grouped');
+        $tabHelper->startTab(
+            'Next event',
+            !empty($this->defaultValues->defaultPluginTab) && $identifier === $this->defaultValues->defaultPluginTab
+        );
+
+        $nextEventOptions = [
+            [
+                'title' => 'ACYM_LANGUAGE',
+                'type' => 'language',
+                'name' => 'language',
+            ],
+            [
+                'title' => 'Featured events only',
+                'type' => 'boolean',
+                'name' => 'featured',
+                'default' => false,
+            ],
+        ];
+        $this->autoCampaignOptions($nextEventOptions);
+
+        $this->displaySelectionZone($this->getCategoryListing());
+        $this->pluginHelper->displayOptions(
+            array_merge($displayOptions, $nextEventOptions),
+            $identifier,
+            'grouped',
+            $this->defaultValues
+        );
+        $tabHelper->endTab();
         $tabHelper->display('plugin');
     }
 
@@ -209,6 +262,7 @@ class plgAcymJem extends AcymPlugin
         $this->query = 'FROM #__jem_events AS event '
             .'LEFT JOIN #__jem_venues AS venue ON venue.id = event.locid ';
         $this->filters = ['event.published = 1'];
+        $this->addAudienceFilters($this->filters);
         $this->searchFields = ['event.id', 'event.title', 'event.alias', 'event.introtext', 'venue.venue'];
         $this->pageInfo->order = 'event.dates';
         $this->elementIdTable = 'event';
@@ -249,6 +303,13 @@ class plgAcymJem extends AcymPlugin
     public function generateByCategory(object &$email): object
     {
         $tags = $this->pluginHelper->extractTags($email, 'auto'.$this->name);
+        $nextEventTags = $this->pluginHelper->extractTags($email, 'next'.$this->name);
+
+        foreach ($nextEventTags as $oneTag => $parameter) {
+            $parameter->jem_next_event = true;
+            $tags[$oneTag] = $parameter;
+        }
+
         $this->tags = [];
 
         if (empty($tags)) {
@@ -262,6 +323,7 @@ class plgAcymJem extends AcymPlugin
 
             $query = 'SELECT DISTINCT event.id FROM #__jem_events AS event';
             $where = ['event.published = 1'];
+            $this->addAudienceFilters($where, $parameter);
             $selectedCategories = $this->getSelectedArea($parameter);
 
             if (!empty($selectedCategories)) {
@@ -273,7 +335,10 @@ class plgAcymJem extends AcymPlugin
             $where[] = '(event.publish_up IS NULL OR event.publish_up <= '.acym_escapeDB($nowSql).')';
             $where[] = '(event.publish_down IS NULL OR event.publish_down >= '.acym_escapeDB($nowSql).')';
 
-            $openDates = empty($parameter->opendates) ? 'exclude' : (string) $parameter->opendates;
+            $nextEvent = !empty($parameter->jem_next_event);
+            unset($parameter->jem_next_event);
+
+            $openDates = $nextEvent || empty($parameter->opendates) ? 'exclude' : (string) $parameter->opendates;
             $fromDate = empty($parameter->from)
                 ? date('Y-m-d')
                 : acym_date(acym_replaceDate($parameter->from), 'Y-m-d');
@@ -288,6 +353,17 @@ class plgAcymJem extends AcymPlugin
             } else {
                 $where[] = 'event.dates IS NOT NULL';
                 $where[] = $dateFilter;
+            }
+
+            if ($nextEvent) {
+                $today = acym_escapeDB(date('Y-m-d'));
+                $nowTime = acym_escapeDB(date('H:i:s'));
+                $effectiveEndDate = 'COALESCE(event.enddates, event.dates)';
+                $effectiveEndTime = 'COALESCE(event.endtimes, event.times)';
+                $where[] = '('.$effectiveEndDate.' > '.$today
+                    .' OR ('.$effectiveEndDate.' = '.$today
+                    .' AND ('.$effectiveEndTime.' IS NULL OR '.$effectiveEndTime." = '00:00:00'"
+                    .' OR '.$effectiveEndTime.' >= '.$nowTime.')))';
             }
 
             if ($openDates !== 'only' && !empty($parameter->to)) {
@@ -308,6 +384,20 @@ class plgAcymJem extends AcymPlugin
             }
 
             $query .= ' WHERE ('.implode(') AND (', $where).')';
+
+            if ($nextEvent) {
+                $parameter->max = 1;
+                $parameter->order = '';
+                $query .= ' ORDER BY event.dates ASC,'
+                    .' CASE WHEN event.times IS NULL OR event.times = \'00:00:00\' THEN 1 ELSE 0 END ASC,'
+                    .' event.times ASC, event.id ASC';
+            } elseif (!empty($parameter->order) && str_starts_with((string) $parameter->order, 'dates,')) {
+                $orderParts = explode(',', (string) $parameter->order, 2);
+                $direction = isset($orderParts[1]) && strtolower($orderParts[1]) === 'desc' ? 'DESC' : 'ASC';
+                $parameter->order = '';
+                $query .= ' ORDER BY event.dates '.$direction.', event.times '.$direction.', event.id '.$direction;
+            }
+
             $this->tags[$oneTag] = $this->finalizeCategoryFormat($query, $parameter, 'event');
         }
 
@@ -318,10 +408,16 @@ class plgAcymJem extends AcymPlugin
     {
         acym_loadLanguageFile('com_jem', JPATH_SITE, $this->emailLanguage);
 
+        $where = [
+            'event.published = 1',
+            'event.id = '.intval($tag->id),
+        ];
+        $this->addAudienceFilters($where, $tag);
+
         $query = 'SELECT event.*, venue.venue, venue.city, venue.state, venue.country'
             .' FROM #__jem_events AS event'
             .' LEFT JOIN #__jem_venues AS venue ON venue.id = event.locid'
-            .' WHERE event.published = 1 AND event.id = '.intval($tag->id);
+            .' WHERE ('.implode(') AND (', $where).')';
         $event = $this->initIndividualContent($tag, $query);
 
         if (empty($event)) {
@@ -329,7 +425,8 @@ class plgAcymJem extends AcymPlugin
         }
 
         $display = $tag->display;
-        $itemId = !empty($tag->itemid) ? intval($tag->itemid) : intval($this->getParam('itemid', 0));
+        $requestedItemId = !empty($tag->itemid) ? intval($tag->itemid) : intval($this->getParam('itemid', 0));
+        $itemId = $this->validateJemMenuItemId($requestedItemId);
         $link = $this->finalizeLink($this->getEventLink($event, $itemId), $tag);
         $title = in_array('title', $display, true) ? (string) $event->title : '';
         $date = in_array('date', $display, true) ? $this->formatEventDate($event) : '';
@@ -383,9 +480,9 @@ class plgAcymJem extends AcymPlugin
         return $this->finalizeElementFormat($result, $tag, $variables);
     }
 
-    private function getDisplayOptions(): array
+    private function getDisplayOptions(string $identifier, string $selectionType): array
     {
-        return [
+        $options = [
             [
                 'title' => 'ACYM_DISPLAY',
                 'type' => 'checkbox',
@@ -411,13 +508,130 @@ class plgAcymJem extends AcymPlugin
             ],
             ['title' => 'ACYM_DISPLAY_PICTURES', 'type' => 'pictures', 'name' => 'pictures'],
             [
-                'title' => 'JEM menu item ID',
-                'type' => 'intextfield',
-                'isNumber' => 1,
+                'title' => 'JEM menu item',
+                'tooltip' => 'Selects the published JEM menu item used to route event links. This does not load a JEM module or apply module parameters.',
+                'type' => 'select',
                 'name' => 'itemid',
-                'text' => 'Itemid',
-                'default' => intval($this->getParam('itemid', 0)),
+                'options' => $this->getJemMenuEditorOptions(),
+                'default' => $this->validateJemMenuItemId((int) $this->getParam('itemid', 0)),
             ],
+        ];
+
+        $options[] = $this->getLinkPreviewOption($identifier, $selectionType);
+
+        return $options;
+    }
+
+    private function loadJemMenuItems(): array
+    {
+        $items = acym_loadObjectList(
+            'SELECT id, title, menutype, link, language'
+            .' FROM #__menu'
+            .' WHERE client_id = 0 AND published = 1 AND type = '.acym_escapeDB('component')
+            .' AND link LIKE '.acym_escapeDB('%option=com_jem%')
+            .' ORDER BY menutype, lft, title',
+            'id'
+        );
+
+        return is_array($items) ? $items : [];
+    }
+
+    private function loadGuestViewLevels(): array
+    {
+        try {
+            $guest = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById(0);
+            $levels = array_values(array_unique(array_map('intval', $guest->getAuthorisedViewLevels())));
+        } catch (Throwable $exception) {
+            $levels = [1];
+        }
+
+        $levels = array_values(array_filter($levels, static fn ($level) => $level > 0));
+
+        return $levels ?: [1];
+    }
+
+    private function getJemMenuSettingOptions(): array
+    {
+        $options = [acym_selectOption(0, 'Automatic JEM routing')];
+
+        foreach ($this->jemMenuItems as $item) {
+            $options[] = acym_selectOption((int) $item->id, $this->formatJemMenuLabel($item));
+        }
+
+        return $options;
+    }
+
+    private function getJemMenuEditorOptions(): array
+    {
+        $options = [0 => 'Automatic JEM routing'];
+
+        foreach ($this->jemMenuItems as $item) {
+            $options[(int) $item->id] = $this->formatJemMenuLabel($item);
+        }
+
+        return $options;
+    }
+
+    private function formatJemMenuLabel(object $item): string
+    {
+        return (string) $item->title.' ['.(string) $item->menutype.' #'.(int) $item->id.']';
+    }
+
+    private function validateJemMenuItemId(int $itemId): int
+    {
+        return $itemId > 0 && isset($this->jemMenuItems[$itemId]) ? $itemId : 0;
+    }
+
+    private function addAudienceFilters(array &$where, ?object $parameter = null): void
+    {
+        $levels = implode(',', array_map('intval', $this->guestViewLevels));
+        $where[] = 'event.access IN ('.$levels.')';
+
+        $categoryFilters = [
+            'audience_category.published = 1',
+            'audience_category.access IN ('.$levels.')',
+        ];
+
+        $hasRequestedLanguage = $parameter !== null && isset($parameter->language);
+        $language = $hasRequestedLanguage ? (string) $parameter->language : (string) $this->emailLanguage;
+
+        if ($language !== '' && $language !== '*' && $language !== 'any' && preg_match('/^[a-z]{2,3}-[A-Z]{2}$/', $language)) {
+            $escapedLanguage = acym_escapeDB($language);
+            $where[] = 'event.language IN ('.acym_escapeDB('*').', '.$escapedLanguage.')';
+            $categoryFilters[] = 'audience_category.language IN ('.acym_escapeDB('*').', '.$escapedLanguage.')';
+        }
+
+        $where[] = 'EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS audience_relation'
+            .' INNER JOIN #__jem_categories AS audience_category ON audience_category.id = audience_relation.catid'
+            .' WHERE audience_relation.itemid = event.id AND '.implode(' AND ', $categoryFilters).')';
+    }
+
+    private function getLinkPreviewOption(string $identifier, string $selectionType): array
+    {
+        $suffix = preg_replace('/[^a-zA-Z0-9]/', '_', $identifier);
+        $previewId = 'jem-event-link-preview-'.$suffix;
+        $routeBase = rtrim(Uri::root(), '/').'/index.php?option=com_jem&view=event&id=';
+        $eventPlaceholder = $selectionType === 'individual' ? '{event-id}' : '{generated-event-id}';
+        $defaultItemId = $this->validateJemMenuItemId((int) $this->getParam('itemid', 0));
+        $initialUrl = $routeBase.$eventPlaceholder.($defaultItemId > 0 ? '&Itemid='.$defaultItemId : '');
+        $eventExpression = $selectionType === 'individual'
+            ? '(Object.keys(_selectedRows'.$suffix.')[0] || "{event-id}")'
+            : '"{generated-event-id}"';
+
+        $js = 'var jemPreviewEvent'.$suffix.' = '.$eventExpression.';'
+            .' var jemPreviewItem'.$suffix.' = parseInt(jQuery(\'[name="itemid'.$suffix.'"]\').val(), 10) || 0;'
+            .' var jemPreviewUrl'.$suffix.' = '.json_encode($routeBase).'+jemPreviewEvent'.$suffix.';'
+            .' if (jemPreviewItem'.$suffix.' > 0) jemPreviewUrl'.$suffix.' += "&Itemid="+jemPreviewItem'.$suffix.';'
+            .' var jemPreviewNode'.$suffix.' = document.getElementById('.json_encode($previewId).');'
+            .' if (jemPreviewNode'.$suffix.') jemPreviewNode'.$suffix.'.textContent = jemPreviewUrl'.$suffix.';';
+
+        return [
+            'title' => 'Generated event link',
+            'tooltip' => 'Shows the absolute event URL before Joomla applies SEF routing. The selected JEM menu item controls its Itemid.',
+            'type' => 'custom',
+            'name' => 'linkpreview',
+            'output' => '<code id="'.acym_escape($previewId).'">'.acym_escape($initialUrl).'</code>',
+            'js' => $js,
         ];
     }
 

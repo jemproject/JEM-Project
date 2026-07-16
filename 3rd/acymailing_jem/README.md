@@ -1,4 +1,4 @@
-# JEM Events add-on for AcyMailing 10
+# JEM - Events for AcyMailing
 
 This add-on replaces the former AcyMailing 5.x Joomla plugin and inserts JEM
 events into emails created with AcyMailing 10.
@@ -24,7 +24,7 @@ Alternatively, extract the archive and copy its `jem` directory manually into
 Remove or uninstall the old `AcyMailing - JEM` / `tagjem` Joomla plugin first.
 Its AcyMailing 5.x events are not used by this version.
 
-After installation, **JEM Events** is registered in **AcyMailing > Add-ons > My
+After installation, **JEM - Events for AcyMailing** is registered in **AcyMailing > Add-ons > My
 add-ons**. Open the AcyMailing email editor to use it in the dynamic-content
 integrations when JEM is installed and enabled.
 
@@ -39,9 +39,13 @@ The editable source of the catalog banner is stored in `assets/banner.svg`.
 - Insert published events one by one.
 - Search and filter the event picker by JEM category.
 - Insert upcoming events automatically by category and date range.
+- Insert the next upcoming event with a dedicated dynamic preset.
 - Include or exclude events without a date.
 - Restrict automatic content to featured events.
 - Display the title, date, venue, description, image, and read-more link.
 - Control whether the integration is available from the frontend email editor.
-- Use a JEM menu item ID when building event links.
+- Select a published JEM menu item when building event links.
+- Preview the generated event URL before Joomla applies SEF routing.
+- Exclude events and categories that are not available to public email readers.
+- Respect the selected email language when resolving dynamic events.
 - Support automatic campaigns, the "only new" option, and custom layouts.

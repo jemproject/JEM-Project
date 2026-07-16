@@ -8,7 +8,7 @@ Joomla extension installer.
 
 ## Catalog metadata
 
-- Name: JEM Events
+- Name: JEM - Events for AcyMailing
 - Folder name: `jem`
 - Version: 5.0.1
 - Category: Events management
@@ -23,9 +23,11 @@ Joomla extension installer.
 
 - Individual event selection with search and category filtering.
 - Automatic insertion by category, date range, featured state, and open dates.
+- Dedicated next-event insertion ordered by date and time.
 - Automatic campaigns and "only new" filtering.
 - Title, date, venue, image, description, and read-more output controls.
-- Clickable titles and images, truncation, custom layouts, and JEM Itemid.
+- Clickable titles and images, truncation, custom layouts, and a validated JEM menu selector.
+- Public-access and language-aware event selection with a generated-link preview.
 - Configurable availability in the frontend email editor.
 
 ## Review notes
