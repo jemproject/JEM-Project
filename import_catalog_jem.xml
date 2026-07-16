@@ -13,25 +13,6 @@
         <updated>2026-07-15</updated>
         <license>Open data source</license>
     </entry>
-    <entry id="es-madrid-duty-pharmacies-2026" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="events" format="csv" profile="Farmacias de guardia 2026">
-        <title>Farmacias de guardia 2026</title>
-        <description>Official 2026 duty-pharmacy schedule for Madrid. Pharmacy numbers become event titles, with the address and service duration preloaded into the event content.</description>
-        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/214440-0-farmacias-guardia/resource/214440-3-farmacias-guardia-csv/download/214440-3-farmacias-guardia-csv.csv" />
-        <items count="6440" checked="2026-07-15" />
-        <category rule="admin-selects-destination-category" />
-        <mapping>
-            <field source="Farmacia" target="title" />
-            <field source="Fecha" target="dates" />
-            <field source="Dirección" target="introtext" />
-            <field source="Duración" target="fulltext" />
-        </mapping>
-        <defaults>
-            <default name="language" value="es-ES" />
-            <default name="published" value="1" />
-        </defaults>
-        <updated>2026-07-15</updated>
-        <license>Open data source</license>
-    </entry>
     <entry id="es-madrid-public-activities-events" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="events" format="json" profile="Actividades y eventos públicos">
         <title>Actividades y eventos públicos</title>
         <description>Official public agenda for Madrid. The JSON mapping preloads event titles, dates, times and descriptions; choose the destination category and fallback venue in JEM.</description>
@@ -115,30 +96,6 @@
         <updated>2026-07-15</updated>
         <license>Open data source</license>
     </entry>
-    <entry id="es-madrid-cinemas" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Cines">
-        <title>Cines</title>
-        <description>Official open-data list of cinemas and film libraries in Madrid. The JSON mapping preloads the corresponding JEM venue fields.</description>
-        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/208862-7650046-ocio_salas/resource/208862-13-ocio_salas-json/download/208862-13-ocio_salas-json.json" />
-        <items count="2" checked="2026-07-15" />
-        <category rule="venue-types-from-default-or-file" />
-        <mapping>
-            <field source="title" target="venue" />
-            <field source="relation" target="url" />
-            <field source="organization.organization-desc" target="locdescription" />
-            <field source="address.street-address" target="street" />
-            <field source="address.locality" target="city" />
-            <field source="address.postal-code" target="postalCode" />
-            <field source="location.latitude" target="latitude" />
-            <field source="location.longitude" target="longitude" />
-        </mapping>
-        <defaults>
-            <default name="country" value="ES" />
-            <default name="language" value="es-ES" />
-            <default name="published" value="1" />
-        </defaults>
-        <updated>2026-07-15</updated>
-        <license>Open data source</license>
-    </entry>
     <entry id="es-madrid-theatres" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="xml" profile="Teatros">
         <title>Teatros</title>
         <description>Official open-data list of theatres in Madrid. The XML mapping preloads the corresponding JEM venue fields.</description>
@@ -157,29 +114,6 @@
             <field source="LONGITUD" target="longitude" />
         </mapping>
         <defaults>
-            <default name="country" value="ES" />
-            <default name="language" value="es-ES" />
-            <default name="published" value="1" />
-        </defaults>
-        <updated>2026-07-15</updated>
-        <license>Open data source</license>
-    </entry>
-    <entry id="es-madrid-educational-centres" country="ES" country_name="Spain" county="Comunidad de Madrid" city="" type="venues" format="json" profile="Centros educativos">
-        <title>Centros educativos</title>
-        <description>Official register of educational centres throughout the Community of Madrid. The source includes current and historical records; review the SITUACIÓN field in the preview before importing.</description>
-        <source provider="Datos Abiertos Comunidad de Madrid" url="https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/be2264df-c720-4619-ab79-aebad9b248e0/download/centros_educativos.json" />
-        <items count="7757" checked="2026-07-15" />
-        <category rule="venue-types-from-default-or-file" />
-        <mapping>
-            <field source="CENTRO" target="venue" />
-            <field source="WEB" target="url" />
-            <field source="TIPO_EXT" target="locdescription" />
-            <field source="DOMICILIO" target="street" />
-            <field source="MUNICIPIO" target="city" />
-            <field source="CDPOSTAL" target="postalCode" />
-        </mapping>
-        <defaults>
-            <default name="state" value="Comunidad de Madrid" />
             <default name="country" value="ES" />
             <default name="language" value="es-ES" />
             <default name="published" value="1" />
