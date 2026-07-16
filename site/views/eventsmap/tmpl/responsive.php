@@ -16,6 +16,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
@@ -51,7 +52,7 @@ $mapProvider   = (string) $this->params->get('map_provider', 'osm');
 $mapProvider   = $mapProvider === 'google' ? 'google' : 'osm';
 $autoCenter    = (int)   $this->params->get('map_auto_center', '1');
 $heatMapLayer  = (int)  $this->params->get('heat_layer', '1');
-$fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
+$fullScreenMap = (int)  $this->params->get('full_screen_map', '1');
 $showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
 $showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
 $showEventsTable = (int) $this->params->get('show_events_table', '1');
@@ -160,6 +161,8 @@ foreach ((array) $events as $event) {
             'city' => htmlspecialchars((string) $event->city, ENT_QUOTES, 'UTF-8'),
             'country' => $country,
             'countryFlag' => $countryFlagFile,
+            'venue_type_name' => (string) ($event->venue_type_name ?? ''),
+            'venue_type_color' => (string) ($event->venue_type_color ?? ''),
             'events' => [],
         ];
     }
@@ -588,7 +591,9 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
-        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
+        $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<strong>' . $marker['venue'] . '</strong>'
             . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
@@ -824,7 +829,9 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
-        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
+        $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<strong>' . $marker['venue'] . '</strong>'
             . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'

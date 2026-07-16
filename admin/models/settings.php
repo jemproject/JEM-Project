@@ -578,11 +578,11 @@ class JemModelSettings extends AdminModel
         // Get info about all JEM parts
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(['name', 'type', 'enabled', 'manifest_cache'])
+            ->select(['name', 'element', 'type', 'enabled', 'manifest_cache'])
             ->from('#__extensions')
-            ->where('name LIKE "%jem%"');
+            ->where('(name LIKE "%jem%" OR element = ' . $db->quote('files_acym_jem') . ')');
         $db->setQuery($query);
-        $extensions = $db->loadObjectList('name');
+        $extensions = $db->loadObjectList();
 
         $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal',
                                   'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map', 'mod_jem_types',
@@ -590,10 +590,15 @@ class JemModelSettings extends AdminModel
                                   'plg_finder_jem',
                                   'plg_quickicon_jem', 'Quick Icon - JEM',
                                   'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
-                                  'AcyMailing Tag : insert events from JEM 2.1+');
+                                  'AcyMailing Tag : insert events from JEM 2.1+',
+                                  'files_acym_jem');
 
-        foreach ($extensions as $name => $extension) {
-            if (in_array($name, $known_extensions)) {
+        foreach ($extensions as $extension) {
+            $name = $extension->element === 'files_acym_jem'
+                ? 'files_acym_jem'
+                : $extension->name;
+
+            if (in_array($name, $known_extensions, true)) {
                 $manifest = json_decode($extension->manifest_cache, true);
                 $extension->version      = (!empty($manifest) && array_key_exists('version',      $manifest)) ? $manifest['version']      : '?';
                 $extension->creationDate = (!empty($manifest) && array_key_exists('creationDate', $manifest)) ? $manifest['creationDate'] : '?';

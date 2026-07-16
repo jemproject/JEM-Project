@@ -54,7 +54,7 @@ final class JemSchemaTest extends JoomlaTestCase
     public static function criticalColumnProvider(): iterable
     {
         yield 'events' => array('jem_events', array('id', 'title', 'dates', 'enddates', 'published', 'created_by', 'access', 'event_status', 'ticket_availability', 'type_id', 'attribs'));
-        yield 'venues' => array('jem_venues', array('id', 'venue', 'alias', 'url', 'latitude', 'longitude', 'published', 'created_by', 'access', 'type_id', 'attribs'));
+        yield 'venues' => array('jem_venues', array('id', 'venue', 'alias', 'url', 'district', 'level', 'capacity', 'email', 'phone', 'mobile', 'latitude', 'longitude', 'published', 'created_by', 'access', 'type_id', 'attribs'));
         yield 'categories' => array('jem_categories', array('id', 'catname', 'alias', 'parent_id', 'published', 'access', 'type_id'));
         yield 'attachments' => array('jem_attachments', array('id', 'object', 'file', 'name', 'description', 'frontend', 'access', 'created_by'));
         yield 'links' => array('jem_links', array('id', 'event_id', 'type', 'title', 'description', 'url', 'params', 'state', 'created_by'));

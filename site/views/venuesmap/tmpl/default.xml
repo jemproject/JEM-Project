@@ -71,7 +71,7 @@
                    description="COM_JEM_VENUESMAP_MYLOC_MARKER_DESC" class="form-control w-auto"/>
 
             <field name="full_screen_map" type="radio"
-                   default="0"
+                   default="1"
                    label="COM_JEM_VENUESMAP_FULL_SCREEN_LABEL"
                    description="COM_JEM_VENUESMAP_FULL_SCREEN_DESC"
                    class="inputbox btn-group btn-group-yesno"

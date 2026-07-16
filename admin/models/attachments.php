@@ -32,6 +32,8 @@ class JemModelAttachments extends ListModel
                 'frontend', 'a.frontend',
                 'created', 'a.created',
                 'created_by_name',
+                'downloads', 'a.downloads',
+                'last_download', 'a.last_download',
             );
         }
 
@@ -189,6 +191,8 @@ class JemModelAttachments extends ListModel
             'created',
             'created_by',
             'created_by_name',
+            'downloads',
+            'last_download',
             'file_status',
             'file_size',
         )), ';', '"', '\\');
@@ -212,6 +216,8 @@ class JemModelAttachments extends ListModel
                 $item->created,
                 $item->created_by,
                 $item->created_by_name,
+                $item->downloads,
+                $item->last_download,
                 $fileStatus,
                 $item->file_size,
             )), ';', '"', '\\');

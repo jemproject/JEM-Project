@@ -43,8 +43,18 @@ class JemMapHelper
         $country  = trim((string) $country);
         $city     = trim((string) $city);
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time')
+        $typeAccess = self::accessList($levels);
+        $venueTypeJoin = $db->quoteName('vt.id') . ' = ' . $db->quoteName('v.type_id')
+            . ' AND ' . $db->quoteName('vt.entity') . ' = 3'
+            . ' AND ' . $db->quoteName('vt.published') . ' = 1';
+
+        if ($typeAccess !== '') {
+            $venueTypeJoin .= ' AND ' . $db->quoteName('vt.access') . ' IN (' . $typeAccess . ')';
+        }
+
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.type_id, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, vt.name AS venue_type_name, vt.icon AS venue_type_icon, vt.color AS venue_type_color')
             ->from($db->quoteName('#__jem_venues', 'v'))
+            ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('v.published') . ' = 1')
             ->where([
                 'v.latitude IS NOT NULL',
@@ -82,7 +92,6 @@ class JemMapHelper
                 $query->where($db->quoteName('c.access') . ' IN (' . $categoryAccess . ')');
             }
 
-            $typeAccess = self::accessList($levels);
             if ($typeAccess !== '') {
                 $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . '))');
             }
@@ -224,6 +233,14 @@ class JemMapHelper
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
         $country  = trim((string) $country);
+        $typeAccess = self::accessList($levels);
+        $venueTypeJoin = $db->quoteName('vt.id') . ' = ' . $db->quoteName('v.type_id')
+            . ' AND ' . $db->quoteName('vt.entity') . ' = 3'
+            . ' AND ' . $db->quoteName('vt.published') . ' = 1';
+
+        if ($typeAccess !== '') {
+            $venueTypeJoin .= ' AND ' . $db->quoteName('vt.access') . ' IN (' . $typeAccess . ')';
+        }
 
         $query->select([
                 'DISTINCT e.id',
@@ -244,12 +261,15 @@ class JemMapHelper
                 'v.country',
                 'v.latitude',
                 'v.longitude',
+                'vt.name AS venue_type_name',
+                'vt.color AS venue_type_color',
             ])
             ->from($db->quoteName('#__jem_events', 'e'))
             ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
             ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'))
             ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'))
             ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1')
+            ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
             ->where($db->quoteName('c.published') . ' = 1')
@@ -274,7 +294,6 @@ class JemMapHelper
             $query->where($db->quoteName('c.access') . ' IN (' . $categoryAccess . ')');
         }
 
-        $typeAccess = self::accessList($levels);
         if ($typeAccess !== '') {
             $query->where('(' . $db->quoteName('e.type_id') . ' IS NULL OR ' . $db->quoteName('e.type_id') . ' = 0 OR ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . '))');
         }
@@ -456,6 +475,30 @@ class JemMapHelper
         }
 
         return rtrim(Uri::root(), '/') . '/' . $fallback;
+    }
+
+    /**
+     * Render a compact map popup badge with an accessible contrasting text color.
+     */
+    public static function typeBadgeHtml($name, $color = '')
+    {
+        $name = trim((string) $name);
+
+        if ($name === '') {
+            return '';
+        }
+
+        $color = trim((string) $color);
+        $style = '';
+
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            $textColor = \JemHelper::getContrastTextColor($color) ?: '#ffffff';
+            $style = ' style="background-color:' . htmlspecialchars($color, ENT_QUOTES, 'UTF-8')
+                . '; color:' . htmlspecialchars($textColor, ENT_QUOTES, 'UTF-8') . ';"';
+        }
+
+        return '<span class="jem-type-badge jem-map-type-badge"' . $style . '>'
+            . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</span>';
     }
 
     private static function getFilterCategoryIds($params, $selectedCategoryId = 0)

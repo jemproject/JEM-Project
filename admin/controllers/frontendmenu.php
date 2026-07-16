@@ -49,13 +49,13 @@ class JemControllerFrontendmenu extends BaseController
         $rootId = $this->createMenuItem($menutype, 'JEM', 'jem-frontend', '#', 1, 'heading', 0, array('jem'));
 
         $groups = array(
-            'events'     => $this->createMenuItem($menutype, 'Events', 'events', '#', $rootId, 'heading', 0),
-            'calendars'  => $this->createMenuItem($menutype, 'Calendars', 'calendars', '#', $rootId, 'heading', 0),
-            'venues'     => $this->createMenuItem($menutype, 'Venues', 'venues', '#', $rootId, 'heading', 0),
-            'categories' => $this->createMenuItem($menutype, 'Categories', 'categories', '#', $rootId, 'heading', 0),
-            'types'      => $this->createMenuItem($menutype, 'Types', 'types', '#', $rootId, 'heading', 0),
-            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'heading', 0, array(), $specialAccessId),
-            'user'       => $this->createMenuItem($menutype, 'User Area', 'user-area', '#', $rootId, 'heading', 0),
+            'events'     => $this->createMenuItem($menutype, 'Events', 'events', '#', $rootId, 'url', 0),
+            'calendars'  => $this->createMenuItem($menutype, 'Calendars', 'calendars', '#', $rootId, 'url', 0),
+            'venues'     => $this->createMenuItem($menutype, 'Venues', 'venues', '#', $rootId, 'url', 0),
+            'categories' => $this->createMenuItem($menutype, 'Categories', 'categories', '#', $rootId, 'url', 0),
+            'types'      => $this->createMenuItem($menutype, 'Types', 'types', '#', $rootId, 'url', 0),
+            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'url', 0, array(), $specialAccessId),
+            'user'       => $this->createMenuItem($menutype, 'User Area', 'user-area', '#', $rootId, 'url', 0),
         );
 
         $items = array(

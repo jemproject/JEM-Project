@@ -33,6 +33,7 @@ class JemModelEvents extends ListModel
                     'dates', 'a.dates',
                     'created', 'a.created',
                     'hits', 'a.hits',
+                    'last_visit', 'a.last_visit',
                     'event_status', 'a.event_status',
                     'ticket_availability', 'a.ticket_availability',
                     'type_name', 'jt.name',

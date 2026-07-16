@@ -24,6 +24,27 @@ $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
 
 $jemsettings = JemHelper::config();
+JemHelper::loadIconFont();
+
+if (!function_exists('jem_map_normalise_marker_color')) {
+    function jem_map_normalise_marker_color($color, $fallback = '#d9ddb5')
+    {
+        $color = trim((string) $color);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : $fallback;
+    }
+}
+
+if (!function_exists('jem_map_normalise_icon_class')) {
+    function jem_map_normalise_icon_class($icon)
+    {
+        $icon = trim((string) $icon);
+
+        return $icon !== '' && preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $icon)
+            ? $icon
+            : '';
+    }
+}
 
 $map_id       = 'leafletmap-' . uniqid();
 $isDateMode  = isset($filterDate) && $filterDate !== null;
@@ -236,6 +257,64 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             return;
         }
 
+        function getVenueTypeIconDetails(iconClass) {
+            if (!iconClass) {
+                return null;
+            }
+
+            var probe = document.createElement('span');
+            probe.className = iconClass;
+            probe.style.position = 'absolute';
+            probe.style.visibility = 'hidden';
+            document.body.appendChild(probe);
+            var pseudoStyle = window.getComputedStyle(probe, '::before');
+            var content = pseudoStyle.content || '';
+            var details = {
+                glyph: content.replace(/^['"]|['"]$/g, ''),
+                fontFamily: pseudoStyle.fontFamily,
+                fontWeight: pseudoStyle.fontWeight
+            };
+            probe.remove();
+
+            return details.glyph && details.glyph !== 'none' && details.glyph !== 'normal' ? details : null;
+        }
+
+        function getGoogleVenueTypeMarker(iconClass, color, iconColor) {
+            var iconDetails = getVenueTypeIconDetails(iconClass);
+
+            return {
+                icon: {
+                    path: 'M16 0C7.16 0 0 7.16 0 16c0 12 16 28 16 28s16-16 16-28C32 7.16 24.84 0 16 0z',
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeOpacity: 1,
+                    strokeWeight: 2,
+                    anchor: new google.maps.Point(16, 44),
+                    labelOrigin: new google.maps.Point(16, 16)
+                },
+                label: iconDetails ? {
+                    text: iconDetails.glyph,
+                    color: iconColor,
+                    fontFamily: iconDetails.fontFamily,
+                    fontSize: '15px',
+                    fontWeight: iconDetails.fontWeight
+                } : null
+            };
+        }
+
+        function getLeafletVenueTypeMarker(iconClass, color, iconColor) {
+            return L.divIcon({
+                className: '',
+                html: '<div class="jem-map-type-marker" style="--jem-marker-color:' + color +
+                    ';--jem-marker-icon-color:' + iconColor + '">' +
+                    '<span class="jem-map-type-marker__icon ' + iconClass + '" aria-hidden="true"></span></div>',
+                iconSize: [34, 44],
+                iconAnchor: [17, 44],
+                popupAnchor: [0, -44]
+            });
+        }
+
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
             return;
@@ -409,6 +488,10 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
 
         $mapActionsHtml = $buildMapActionsHtml($v->latitude, $v->longitude);
+        $venueTypeIcon = jem_map_normalise_icon_class($v->venue_type_icon ?? '');
+        $venueTypeColor = jem_map_normalise_marker_color($v->venue_type_color ?? '');
+        $venueMarkerColor = jem_map_normalise_marker_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
         $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
@@ -416,10 +499,14 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         ?>
         (function() {
             var position = {lat: <?= (float) $v->latitude ?>, lng: <?= (float) $v->longitude ?>};
+            var typeMarker = <?= json_encode($venueTypeIcon) ?>
+                ? getGoogleVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
+                : null;
             var marker = new google.maps.Marker({
                 position: position,
                 map: map,
-                icon: venueIcon
+                icon: typeMarker ? typeMarker.icon : venueIcon,
+                label: typeMarker ? typeMarker.label : null
             });
             marker.addListener('click', function() {
                 infoWindow.setContent(<?= json_encode($popupHtml) ?>);
@@ -634,13 +721,19 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         $countryFlagFile = rtrim(Uri::root(), '/') . '/' . $countryFlagPath . '/' . strtolower($country) . '.' . $countryFlagExtension;
 
         $mapActionsHtml = $buildMapActionsHtml($v->latitude, $v->longitude);
+        $venueTypeIcon = jem_map_normalise_icon_class($v->venue_type_icon ?? '');
+        $venueTypeColor = jem_map_normalise_marker_color($v->venue_type_color ?? '');
+        $venueMarkerColor = jem_map_normalise_marker_color($v->color ?? '', $venueTypeColor);
+        $venueMarkerIconColor = JemHelper::getContrastTextColor($venueMarkerColor) ?: '#ffffff';
         $popupHtml = '<a href="' . $link . '"><strong>' . $venueName . '</strong></a><br>'
             . $city . '<br>'
             . '<img src="' . $countryFlagFile . '" style="width:40px" alt="' . $country . '"/><br>'
             . $mapActionsHtml;
         ?>
         L.marker([<?= (float) $v->latitude ?>, <?= (float) $v->longitude ?>], {
-            icon: L.icon({
+            icon: <?= json_encode($venueTypeIcon) ?>
+                ? getLeafletVenueTypeMarker(<?= json_encode($venueTypeIcon) ?>, <?= json_encode($venueMarkerColor) ?>, <?= json_encode($venueMarkerIconColor) ?>)
+                : L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
             })

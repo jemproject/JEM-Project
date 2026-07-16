@@ -51,6 +51,7 @@ Text::script('COM_JEM_GEOCODE_INVALID_RESULT_SELECTION');
 Text::script('COM_JEM_STREET');
 Text::script('COM_JEM_ZIP');
 Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_DISTRICT');
 Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
@@ -322,6 +323,7 @@ Text::script('JCANCEL');
                 street: getFieldValue('jform_street'),
                 postalcode: getFieldValue('jform_postalCode'),
                 city: getFieldValue('jform_city'),
+                district: getFieldValue('jform_district'),
                 state: getFieldValue('jform_state'),
                 country: countryCode && countryCode !== '0' ? getFieldText('jform_country') : '',
                 countryCode: countryCode
@@ -335,6 +337,7 @@ Text::script('JCANCEL');
                 address.street,
                 address.postalcode,
                 address.city,
+                address.district,
                 address.state,
                 address.country
             ].filter(Boolean).join(', ');
@@ -427,6 +430,7 @@ Text::script('JCANCEL');
                 street: [road, houseNumber].filter(Boolean).join(' '),
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
+                district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
                 state: getAddressPart(address, ['state', 'region']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
@@ -436,6 +440,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_street', osmAddress.street);
             setFieldValue('jform_postalCode', osmAddress.postalCode);
             setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
             setCountryFieldValue(osmAddress.countryCode);
         }
@@ -447,6 +452,7 @@ Text::script('JCANCEL');
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode, relaxed: false},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_DISTRICT') : 'District', current: getFieldValue('jform_district'), suggested: osmAddress.district, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode, relaxed: false}
             ];
@@ -1046,6 +1052,9 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
                             <li>
@@ -1068,6 +1077,9 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('email'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('phone'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('mobile'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
                             <?php if ($typeField) : ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>

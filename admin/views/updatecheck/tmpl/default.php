@@ -145,9 +145,17 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 <form action="<?php echo Route::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
     <style>
         .jem-updatecheck {
+            --jem-updatecheck-bg: var(--bs-body-bg, #fff);
+            --jem-updatecheck-color: var(--bs-body-color, #212529);
+            --jem-updatecheck-border: var(--bs-border-color, #d6dde8);
+            --jem-updatecheck-soft-border: var(--bs-border-color-translucent, var(--bs-border-color, #edf0f5));
+            --jem-updatecheck-header-bg: var(--bs-tertiary-bg, #f8fafc);
+            --jem-updatecheck-muted: var(--bs-secondary-color, #6b7280);
+
             display: grid;
             gap: 1rem;
             width: 100%;
+            color: var(--jem-updatecheck-color);
         }
 
         .jem-updatecheck-status {
@@ -156,8 +164,8 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             align-items: center;
             gap: 1rem;
             padding: 1rem;
-            border: 1px solid #d6dde8;
-            background: #fff;
+            border: 1px solid var(--jem-updatecheck-border);
+            background: var(--jem-updatecheck-bg);
         }
 
         .jem-updatecheck-status img {
@@ -175,15 +183,15 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         }
 
         .jem-updatecheck-status--success h2 {
-            color: #2f7d32;
+            color: var(--bs-success-text-emphasis, var(--bs-success, #2f7d32));
         }
 
         .jem-updatecheck-status--danger h2 {
-            color: #b02a37;
+            color: var(--bs-danger-text-emphasis, var(--bs-danger, #b02a37));
         }
 
         .jem-updatecheck-status--warning h2 {
-            color: #b26b00;
+            color: var(--bs-warning-text-emphasis, var(--bs-warning, #b26b00));
         }
 
         .jem-updatecheck-grid {
@@ -193,15 +201,17 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         }
 
         .jem-updatecheck-card {
-            border: 1px solid #d6dde8;
-            background: #fff;
+            border: 1px solid var(--jem-updatecheck-border);
+            background: var(--jem-updatecheck-bg);
+            color: var(--jem-updatecheck-color);
         }
 
         .jem-updatecheck-card h3 {
             margin: 0;
             padding: .75rem 1rem;
-            border-bottom: 1px solid #d6dde8;
-            background: #f8fafc;
+            border-bottom: 1px solid var(--jem-updatecheck-border);
+            background: var(--jem-updatecheck-header-bg);
+            color: var(--jem-updatecheck-color);
             font-size: 1.05rem;
         }
 
@@ -215,12 +225,12 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         .jem-updatecheck-list dd {
             margin: 0;
             padding: .7rem 1rem;
-            border-bottom: 1px solid #edf0f5;
+            border-bottom: 1px solid var(--jem-updatecheck-soft-border);
         }
 
         .jem-updatecheck-list dt {
             font-weight: 700;
-            color: #1f2937;
+            color: var(--jem-updatecheck-color);
         }
 
         .jem-updatecheck-list dd {
@@ -246,7 +256,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         }
 
         .jem-updatecheck-muted {
-            color: #6b7280;
+            color: var(--jem-updatecheck-muted);
         }
 
         @media (max-width: 900px) {

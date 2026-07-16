@@ -327,6 +327,27 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapEmbedUrl, $venue
             </dd>
             <?php endif; ?>
 
+            <?php if ($this->venue->district) : ?>
+            <dt class="venue_district"><?php echo Text::_('COM_JEM_DISTRICT'); ?>:</dt>
+            <dd class="venue_district">
+                <?php echo $this->escape($this->venue->district); ?>
+            </dd>
+            <?php endif; ?>
+
+            <?php if ($this->venue->level) : ?>
+            <dt class="venue_level"><?php echo Text::_('COM_JEM_VENUE_LEVEL'); ?>:</dt>
+            <dd class="venue_level">
+                <?php echo $this->escape($this->venue->level); ?>
+            </dd>
+            <?php endif; ?>
+
+            <?php if ((int) $this->venue->capacity > 0) : ?>
+            <dt class="venue_capacity"><?php echo Text::_('COM_JEM_VENUE_CAPACITY'); ?>:</dt>
+            <dd class="venue_capacity">
+                <?php echo number_format((int) $this->venue->capacity, 0, Text::_('DECIMALS_SEPARATOR'), Text::_('THOUSANDS_SEPARATOR')); ?>
+            </dd>
+            <?php endif; ?>
+
             <?php if ($this->venue->state) : ?>
             <dt class="venue_state"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
             <dd class="venue_state" itemprop="addressRegion">
@@ -339,6 +360,27 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapEmbedUrl, $venue
             <dd class="venue_country">
                 <?php echo $this->venue->countryimg ? $this->venue->countryimg : $this->escape($this->venue->country); ?>
                 <meta itemprop="addressCountry" content="<?php echo $this->escape($this->venue->country); ?>" />
+            </dd>
+            <?php endif; ?>
+
+            <?php if ($this->venue->email) : ?>
+            <dt class="venue_email"><?php echo Text::_('COM_JEM_VENUE_EMAIL'); ?>:</dt>
+            <dd class="venue_email" itemprop="email">
+                <a href="mailto:<?php echo $this->escape($this->venue->email); ?>"><?php echo $this->escape($this->venue->email); ?></a>
+            </dd>
+            <?php endif; ?>
+
+            <?php if ($this->venue->phone) : ?>
+            <dt class="venue_phone"><?php echo Text::_('COM_JEM_VENUE_PHONE'); ?>:</dt>
+            <dd class="venue_phone" itemprop="telephone">
+                <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+*#,;(). -]/', '', $this->venue->phone)); ?>"><?php echo $this->escape($this->venue->phone); ?></a>
+            </dd>
+            <?php endif; ?>
+
+            <?php if ($this->venue->mobile) : ?>
+            <dt class="venue_mobile"><?php echo Text::_('COM_JEM_VENUE_MOBILE'); ?>:</dt>
+            <dd class="venue_mobile">
+                <a href="tel:<?php echo $this->escape(preg_replace('/[^0-9+*#,;(). -]/', '', $this->venue->mobile)); ?>"><?php echo $this->escape($this->venue->mobile); ?></a>
             </dd>
             <?php endif; ?>
 

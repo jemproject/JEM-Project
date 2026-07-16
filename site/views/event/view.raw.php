@@ -56,7 +56,7 @@ class JemViewEvent extends HtmlView
                 $filename = "event" . $row->did . ".ics";
                 JemHelper::icalAddEvent($vcal, $row);
                 // generate and redirect output to user browser
-                $vcal->returnCalendar(false, false, true, $filename);
+                JemHelper::sendCalendar($vcal, $filename);
             }
         }
     }

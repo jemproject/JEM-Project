@@ -178,6 +178,12 @@ $fileExtension = function ($filename) {
                     <th style="width:5%" class="center">
                         <?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?>
                     </th>
+                    <th style="width:7%" class="center">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTACHMENT_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
+                    </th>
+                    <th style="width:11%" class="nowrap">
+                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTACHMENT_LAST_DOWNLOAD', 'a.last_download', $listDirn, $listOrder); ?>
+                    </th>
                     <th style="width:12%">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CREATION', 'a.created', $listDirn, $listOrder); ?>
                     </th>
@@ -266,6 +272,12 @@ $fileExtension = function ($filename) {
                             -
                         <?php endif; ?>
                     </td>
+                    <td class="center">
+                        <?php echo (int) $item->downloads; ?>
+                    </td>
+                    <td class="nowrap">
+                        <?php echo $item->last_download ? HTMLHelper::_('date', $item->last_download, Text::_('DATE_FORMAT_LC5')) : '-'; ?>
+                    </td>
                     <td>
                         <?php echo $item->created ? HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5')) : '-'; ?>
                         <?php if ($item->created_by_name) : ?>
@@ -278,7 +290,7 @@ $fileExtension = function ($filename) {
                 </tr>
             <?php endforeach; ?>
             <?php if (empty($this->items)) : ?>
-                <tr><td colspan="12" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
+                <tr><td colspan="14" class="center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr>
             <?php endif; ?>
             </tbody>
         </table>

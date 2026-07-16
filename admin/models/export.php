@@ -13,15 +13,269 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 use Joomla\Utilities\ArrayHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/csvmetadata.php';
 /**
  * JEM Component Export Model
  */
 class JemModelExport extends ListModel
 {
+    protected $jemVersion = null;
+
+    /**
+     * Return portable event records for catalog-ready CSV, JSON and XML exports.
+     *
+     * @param   array    $filters            Export filters.
+     * @param   boolean  $includeCategories  Include category names and IDs.
+     * @param   integer  $limit              Maximum rows, 0 for all.
+     *
+     * @return array
+     */
+    public function getCatalogExportEvents(array $filters, $includeCategories = true, $limit = 0, array $selectedFields = array())
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'a.id', 'a.title', 'a.alias', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes',
+                'a.introtext', 'a.fulltext', 'a.datimage', 'a.online_meeting_url', 'a.online_meeting_label',
+                'a.published', 'a.language',
+                'a.created', 'a.modified', 'a.locid',
+                $db->quoteName('v.venue', 'venue'), $db->quoteName('v.street', 'street'),
+                $db->quoteName('v.postalCode', 'postalCode'), $db->quoteName('v.city', 'city'),
+                $db->quoteName('v.state', 'state'), $db->quoteName('v.country', 'country'),
+                $db->quoteName('v.latitude', 'latitude'), $db->quoteName('v.longitude', 'longitude'),
+            ))
+            ->select("(SELECT GROUP_CONCAT(DISTINCT c2.catname ORDER BY c2.catname SEPARATOR ', ') FROM #__jem_cats_event_relations AS r2 INNER JOIN #__jem_categories AS c2 ON c2.id = r2.catid WHERE r2.itemid = a.id) AS categories")
+            ->select("(SELECT GROUP_CONCAT(DISTINCT r3.catid ORDER BY r3.catid SEPARATOR ',') FROM #__jem_cats_event_relations AS r3 WHERE r3.itemid = a.id) AS category_ids")
+            ->select("(SELECT l.url FROM #__jem_links AS l WHERE l.event_id = a.id AND l.state = 1 AND l.url <> '' ORDER BY l.ordering ASC, l.id ASC LIMIT 1) AS event_url")
+            ->from($db->quoteName('#__jem_events', 'a'))
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = a.locid');
+
+        foreach ($this->getActiveCatalogCustomFields() as $outputField => $sourceField) {
+            $query->select($sourceField . ' AS ' . $db->quoteName($outputField));
+        }
+
+        $this->applyCatalogEventFilters($query, $filters, $db);
+
+        $query->order('CASE WHEN a.dates IS NULL THEN 1 ELSE 0 END ASC, a.dates ASC, a.times ASC, a.title ASC');
+        $db->setQuery($query, 0, max(0, (int) $limit));
+        $rows = $db->loadAssocList() ?: array();
+        $version = $this->getInstalledJemVersion();
+
+        $selectedFields = $this->normaliseCatalogExportFields($selectedFields, $includeCategories);
+
+        foreach ($rows as &$row) {
+            $filtered = array();
+
+            foreach ($selectedFields as $field) {
+                $filtered[$field] = $row[$field] ?? '';
+            }
+
+            $filtered['jem_export_version'] = $version;
+            $row = $filtered;
+        }
+        unset($row);
+
+        return $rows;
+    }
+
+    public function getCatalogExportCount(array $filters)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(DISTINCT a.id)')
+            ->from($db->quoteName('#__jem_events', 'a'));
+        $this->applyCatalogEventFilters($query, $filters, $db);
+        $db->setQuery($query);
+
+        return (int) $db->loadResult();
+    }
+
+    protected function applyCatalogEventFilters($query, array $filters, $db)
+    {
+        $startDate = trim((string) ($filters['dates'] ?? ''));
+        $endDate = trim((string) ($filters['enddates'] ?? ''));
+        $search = trim((string) ($filters['search'] ?? ''));
+        $published = (string) ($filters['published'] ?? '');
+        $categories = array_values(array_filter(array_map('intval', (array) ($filters['cid'] ?? array()))));
+        $venues = array_values(array_filter(array_map('intval', (array) ($filters['venue_ids'] ?? array()))));
+        $types = array_values(array_filter(array_map('intval', (array) ($filters['type_ids'] ?? array()))));
+
+        if ($startDate !== '') {
+            $query->where('((a.dates IS NULL) OR DATEDIFF(IF(a.enddates IS NOT NULL, a.enddates, a.dates), ' . $db->quote($startDate) . ') >= 0)');
+        }
+
+        if ($endDate !== '') {
+            $query->where('((a.dates IS NULL AND DATEDIFF(CURDATE(), ' . $db->quote($endDate) . ') <= 0) OR DATEDIFF(a.dates, ' . $db->quote($endDate) . ') <= 0)');
+        }
+
+        if ($search !== '') {
+            $query->where('a.title LIKE ' . $db->quote('%' . $db->escape($search, true) . '%', false));
+        }
+
+        if ($published !== '' && in_array((int) $published, array(-2, 0, 1, 2), true)) {
+            $query->where('a.published = ' . (int) $published);
+        }
+
+        if ($categories) {
+            $query->where('EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS rf WHERE rf.itemid = a.id AND rf.catid IN (' . implode(',', $categories) . '))');
+        }
+
+        if ($venues) {
+            $query->where('a.locid IN (' . implode(',', $venues) . ')');
+        }
+
+        if ($types) {
+            $query->where('a.type_id IN (' . implode(',', $types) . ')');
+        }
+    }
+
+    public function getCatalogExportVenues()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('id', 'value'), $db->quoteName('venue', 'text')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('published') . ' IN (0,1)')
+            ->order($db->quoteName('venue') . ' ASC');
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: array();
+    }
+
+    public function getCatalogExportTypes()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('id', 'value'), $db->quoteName('name', 'text')))
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('entity') . ' = 1')
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('name') . ' ASC');
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: array();
+    }
+
+    public function getCatalogExportPreview()
+    {
+        $state = (array) Factory::getApplication()->getUserState('com_jem.export.catalog', array());
+
+        if (empty($state['requested'])) {
+            return array('requested' => false, 'items' => array(), 'total' => 0);
+        }
+
+        $filters = (array) ($state['filters'] ?? array());
+        $includeCategories = !empty($state['include_categories']);
+        $fields = $this->normaliseCatalogExportFields((array) ($state['fields'] ?? array()), $includeCategories);
+        $items = $this->getCatalogExportEvents($filters, $includeCategories, 100, $fields);
+        $definitions = $this->getCatalogExportFieldDefinitions();
+        $labels = array();
+
+        foreach ($fields as $field) {
+            $labels[$field] = $definitions[$field] ?? $field;
+        }
+
+        return array(
+            'requested' => true,
+            'items' => $items,
+            'total' => $this->getCatalogExportCount($filters),
+            'fields' => $fields,
+            'labels' => $labels,
+        );
+    }
+
+    public function getCatalogExportFieldDefinitions()
+    {
+        $fields = array(
+            'id' => 'ID',
+            'title' => Text::_('COM_JEM_TITLE'),
+            'alias' => Text::_('JFIELD_ALIAS_LABEL'),
+            'dates' => Text::_('COM_JEM_EXPORT_CATALOG_START_DATE'),
+            'enddates' => Text::_('COM_JEM_EXPORT_CATALOG_END_DATE'),
+            'times' => Text::_('COM_JEM_EXPORT_CATALOG_FIELD_TIME'),
+            'endtimes' => Text::_('COM_JEM_ENDTIME'),
+            'introtext' => Text::_('COM_JEM_INTROTEXT'),
+            'fulltext' => Text::_('COM_JEM_EXPORT_CATALOG_FIELD_FULLTEXT'),
+            'datimage' => Text::_('COM_JEM_IMAGE'),
+            'event_url' => Text::_('COM_JEM_EVENT_LINK_URL'),
+            'online_meeting_url' => Text::_('COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_LABEL'),
+            'online_meeting_label' => Text::_('COM_JEM_EVENT_FIELD_ONLINE_MEETING_LABEL_LABEL'),
+            'published' => Text::_('JSTATUS'),
+            'language' => Text::_('JFIELD_LANGUAGE_LABEL'),
+            'created' => Text::_('JGLOBAL_CREATED_DATE'),
+            'modified' => Text::_('JGLOBAL_FIELD_MODIFIED_LABEL'),
+            'locid' => Text::_('COM_JEM_VENUE') . ' ID',
+            'venue' => Text::_('COM_JEM_VENUE'),
+            'street' => Text::_('COM_JEM_STREET'),
+            'postalCode' => Text::_('COM_JEM_ZIP'),
+            'city' => Text::_('COM_JEM_CITY'),
+            'state' => Text::_('COM_JEM_STATE'),
+            'country' => Text::_('COM_JEM_COUNTRY'),
+            'latitude' => Text::_('COM_JEM_LATITUDE'),
+            'longitude' => Text::_('COM_JEM_LONGITUDE'),
+            'categories' => Text::_('COM_JEM_CATEGORIES'),
+            'category_ids' => Text::_('COM_JEM_CATEGORIES') . ' IDs',
+        );
+
+        foreach (array('event', 'venue') as $context) {
+            foreach (JemCustomFields::getOrderedFields($context, 'backend') as $field) {
+                $prefix = $context === 'event' ? 'COM_JEM_EVENT_CUSTOM_FIELD' : 'COM_JEM_VENUE_CUSTOM_FIELD';
+                $fallback = Text::_($prefix . (int) substr($field, 6));
+                $fields[$context . '_' . $field] = ucfirst($context) . ': ' . JemCustomFields::getLabel($context, $field, $fallback);
+            }
+        }
+
+        return $fields;
+    }
+
+    public function getCatalogExportFieldOptions()
+    {
+        $options = array();
+
+        foreach ($this->getCatalogExportFieldDefinitions() as $value => $label) {
+            $options[] = HTMLHelper::_('select.option', $value, $label);
+        }
+
+        return $options;
+    }
+
+    public function getDefaultCatalogExportFields()
+    {
+        return array('id', 'title', 'dates', 'enddates', 'times', 'endtimes', 'venue', 'city', 'country', 'categories', 'event_url');
+    }
+
+    protected function normaliseCatalogExportFields(array $fields, $includeCategories = true)
+    {
+        $allowed = array_keys($this->getCatalogExportFieldDefinitions());
+        $fields = array_values(array_unique(array_intersect($fields ?: $this->getDefaultCatalogExportFields(), $allowed)));
+
+        if (!$includeCategories) {
+            $fields = array_values(array_diff($fields, array('categories', 'category_ids')));
+        }
+
+        return $fields ?: array('id', 'title', 'dates');
+    }
+
+    protected function getActiveCatalogCustomFields()
+    {
+        $fields = array();
+
+        foreach (array('event' => 'a', 'venue' => 'v') as $context => $alias) {
+            foreach (JemCustomFields::getOrderedFields($context, 'backend') as $field) {
+                $fields[$context . '_' . $field] = $alias . '.' . $field;
+            }
+        }
+
+        return $fields;
+    }
+
     /**
      * Writes a CSV row using the current PHP-safe fputcsv signature.
      *
@@ -37,6 +291,40 @@ class JemModelExport extends ListModel
         $fields = JemCsv::protectFormulaRow($fields);
 
         return fputcsv($handle, $fields, $separator, $delimiter, '\\');
+    }
+
+    /**
+     * Read the installed component version for JEM-to-JEM CSV diagnostics.
+     */
+    private function getInstalledJemVersion()
+    {
+        if ($this->jemVersion !== null) {
+            return $this->jemVersion;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $manifest = json_decode((string) $db->loadResult(), true);
+        $this->jemVersion = JemCsvMetadataHelper::normaliseVersion($manifest['version'] ?? '');
+
+        return $this->jemVersion;
+    }
+
+    private function addVersionHeader(array $header)
+    {
+        $header[] = JemCsvMetadataHelper::VERSION_FIELD;
+
+        return $header;
+    }
+
+    private function addVersionValue($row)
+    {
+        return JemCsvMetadataHelper::addVersion((array) $row, $this->getInstalledJemVersion());
     }
 
     /**
@@ -154,7 +442,7 @@ class JemModelExport extends ListModel
             $events = array_keys($db->getTableColumns('#__jem_events'));
             $categories = array();
             $categories[] = "categories";
-            $header = array_merge($events, $categories);
+            $header = $this->addVersionHeader(array_merge($events, $categories));
 
             $this->putCsv($csv, $header, $separator, $delimiter);
 
@@ -165,14 +453,14 @@ class JemModelExport extends ListModel
                 $item->categories = $this->getCatEvent($item->id);
             }
         } else {
-            $header = array_keys($db->getTableColumns('#__jem_events'));
+            $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_events')));
             $this->putCsv($csv, $header, $separator, $delimiter);
             $query = $this->getListQuery();
             $items = $this->_getList($query);
         }
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -215,14 +503,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_categories'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_categories')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycats());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -263,14 +551,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_venues'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_venues')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQueryvenues());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -311,14 +599,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_cats_event_relations'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_cats_event_relations')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerycatsevents());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -354,14 +642,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_attachments'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_attachments')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQueryattachments());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);
@@ -397,14 +685,14 @@ class JemModelExport extends ListModel
             fputs($csv, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
         }
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $header = array_keys($db->getTableColumns('#__jem_types'));
+        $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_types')));
         $this->putCsv($csv, $header, $separator, $delimiter);
 
         $db->setQuery($this->getListQuerytypes());
         $items = $db->loadObjectList();
 
         foreach ($items as $lines) {
-            $this->putCsv($csv, (array) $lines, $separator, $delimiter);
+            $this->putCsv($csv, $this->addVersionValue($lines), $separator, $delimiter);
         }
 
         return fclose($csv);

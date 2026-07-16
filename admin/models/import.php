@@ -251,6 +251,7 @@ class JemModelImport extends BaseDatabaseModel
         $pk = $replace ? false : 'id';
 
         foreach ($data as $row) {
+            $sourceLine = $this->getImportSourceLine($row);
             $values = array();
             if (!$hasIdField) {
                 $values['id'] = 0;
@@ -259,7 +260,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0;
             }
 
-            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
             $this->normaliseImportedManagerUserIds($values);
 
             $object = Table::getInstance($tableclass, '');
@@ -359,6 +360,22 @@ class JemModelImport extends BaseDatabaseModel
     }
 
     /**
+     * Return source position metadata added by the import controller.
+     *
+     * @param   array|object  $row  Imported row.
+     *
+     * @return integer|null
+     */
+    private function getImportSourceLine($row)
+    {
+        $line = is_array($row)
+            ? ($row['_jem_source_line'] ?? null)
+            : ($row->_jem_source_line ?? null);
+
+        return is_numeric($line) && (int) $line > 0 ? (int) $line : null;
+    }
+
+    /**
      * Import data corresponding to fieldsname into events table
      *
      * @param  string  $tablename  Name of the table where to add the data
@@ -392,8 +409,19 @@ class JemModelImport extends BaseDatabaseModel
 
             // parse each row
             foreach ($data as $row) {
+                $values = array(
+                    'itemid' => $row[$itemidx],
+                    'catid' => $row[$catidx],
+                    'ordering' => ($orderidx !== false) ? $row[$orderidx] : 0,
+                );
+                $values = JemImportSecurityHelper::sanitiseRecord(
+                    $values,
+                    $tablename,
+                    $this->getImportSourceLine($row)
+                );
+
                 // collect categories for each event; we get array( itemid => array( catid => ordering ) )
-                $events[$row[$itemidx]][$row[$catidx]] = ($orderidx !== false) ? $row[$orderidx] : 0;
+                $events[$values['itemid']][$values['catid']] = $values['ordering'];
             }
 
             // store data
@@ -420,6 +448,7 @@ class JemModelImport extends BaseDatabaseModel
 
         // parse each row
         foreach ($data as $row) {
+            $sourceLine = $this->getImportSourceLine($row);
             $values = [];
 
             if ($presetkey) {
@@ -431,7 +460,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
             }
 
-            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename);
+            $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
                 if ((int) ($values['id'] ?? 0) === 1 || strtolower(trim($values['catname'] ?? '')) === 'root') {
@@ -1069,7 +1098,9 @@ class JemModelImport extends BaseDatabaseModel
 
         foreach ($data as $row) {
             $object = Table::getInstance($tablename, ''); // don't optimise this, you get trouble with 'id'...
-            $row = (object) JemImportSecurityHelper::sanitiseRecord(get_object_vars($row), $tablename);
+            $sourceLine = $this->getImportSourceLine($row);
+            $row = (object) JemImportSecurityHelper::sanitiseRecord(get_object_vars($row), $tablename, $sourceLine);
+            unset($row->_jem_source_line);
             $object->bind($row, $ignore);
 
             // Make sure the data is valid

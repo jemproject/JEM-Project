@@ -62,7 +62,7 @@ class JemCustomFields
         );
 
         $venue = array(
-            'custom1' => array(self::TYPE_TEXT, '', 'Room capacity', 'Short venue capacity note.'),
+            'custom1' => array(self::TYPE_TEXT, '', 'Opening hours', 'Public opening or access hours for the venue.'),
             'custom2' => array(self::TYPE_LINK, '', 'Venue guide', 'External venue information link.'),
             'custom3' => array(self::TYPE_LIST, 'Indoor;Outdoor;Hybrid', 'Venue format', 'Indoor, outdoor or mixed venue format.'),
             'custom4' => array(self::TYPE_LIST, 'None;Street parking;Paid parking;Free parking', 'Parking', 'Parking availability.'),

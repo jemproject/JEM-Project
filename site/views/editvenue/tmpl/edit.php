@@ -62,6 +62,7 @@ Text::script('COM_JEM_GEOCODE_INVALID_RESULT_SELECTION');
 Text::script('COM_JEM_STREET');
 Text::script('COM_JEM_ZIP');
 Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_DISTRICT');
 Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
@@ -265,6 +266,7 @@ Text::script('JCANCEL');
                 street: getFieldValue('jform_street'),
                 postalcode: getFieldValue('jform_postalCode'),
                 city: getFieldValue('jform_city'),
+                district: getFieldValue('jform_district'),
                 state: getFieldValue('jform_state'),
                 country: countryCode && countryCode !== '0' ? getFieldText('jform_country') : '',
                 countryCode: countryCode
@@ -278,6 +280,7 @@ Text::script('JCANCEL');
                 address.street,
                 address.postalcode,
                 address.city,
+                address.district,
                 address.state,
                 address.country
             ].filter(Boolean).join(', ');
@@ -370,6 +373,7 @@ Text::script('JCANCEL');
                 street: [road, houseNumber].filter(Boolean).join(' '),
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
+                district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
                 state: getAddressPart(address, ['state', 'region']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
@@ -379,6 +383,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_street', osmAddress.street);
             setFieldValue('jform_postalCode', osmAddress.postalCode);
             setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
             setCountryFieldValue(osmAddress.countryCode);
         }
@@ -390,6 +395,7 @@ Text::script('JCANCEL');
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode, relaxed: false},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_DISTRICT') : 'District', current: getFieldValue('jform_district'), suggested: osmAddress.district, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode, relaxed: false}
             ];
@@ -990,6 +996,9 @@ Text::script('JCANCEL');
                     <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
                     <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
                     <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
+                    <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
+                    <li><?php echo $this->form->getLabel('level'); ?><?php echo $this->form->getInput('level'); ?></li>
+                    <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
                     <li class="jem-venue-geocode-actions">
@@ -1006,6 +1015,9 @@ Text::script('JCANCEL');
                     <li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
                     <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
                     <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
+                    <li><?php echo $this->form->getLabel('email'); ?><?php echo $this->form->getInput('email'); ?></li>
+                    <li><?php echo $this->form->getLabel('phone'); ?><?php echo $this->form->getInput('phone'); ?></li>
+                    <li><?php echo $this->form->getLabel('mobile'); ?><?php echo $this->form->getInput('mobile'); ?></li>
                     <li>
                         <div class="row mb-3">
                             <div class="col-md-2">

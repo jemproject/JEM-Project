@@ -59,7 +59,7 @@ class JemViewAnnualcalendar extends HtmlView
                 }
             }
 
-            $vcal->returnCalendar(false, false, true, $filename);
+            JemHelper::sendCalendar($vcal, $filename);
         }
     }
 

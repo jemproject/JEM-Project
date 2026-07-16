@@ -51,9 +51,7 @@
   },
   "config": {
     "allow-plugins": false,
+    "process-timeout": 600,
     "sort-packages": true
-  },
-  "require": {
-    "tecnickcom/tcpdf": "6.11.3"
   }
 }

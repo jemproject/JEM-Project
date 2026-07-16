@@ -84,6 +84,7 @@ final class ZipArtifactContentsTest extends TestCase
                 'admin/sql/uninstall.mysql.utf8.sql',
                 'admin/sql/updates/mysql/4.5.0.sql',
                 'admin/sql/updates/mysql/5.0.0.sql',
+                'admin/sql/updates/mysql/5.0.1.sql',
             ) as $entry) {
                 if ($component->locateName($entry) === false) {
                     $missing[] = $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry;
