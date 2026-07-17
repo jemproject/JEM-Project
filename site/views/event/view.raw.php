@@ -379,10 +379,11 @@ class JemViewEvent extends HtmlView
             && (int) $menuitem->query['id'] === (int) $row->id);
 
         if (empty($row->params) || !is_object($row->params) || !method_exists($row->params, 'merge')) {
-            $row->params = JemHelper::globalattribs();
+            $row->params = clone JemHelper::globalattribs();
         }
 
         if ($useMenuItemParams) {
+            $row->params = clone $row->params;
             $row->params->merge($params);
 
             return;

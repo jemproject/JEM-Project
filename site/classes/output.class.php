@@ -983,6 +983,16 @@ static public function lightbox() {
     }
 
     /**
+     * Build an identifying User-Agent for Nominatim requests.
+     *
+     * @return string
+     */
+    static protected function nominatimUserAgent()
+    {
+        return 'JEM (+https://www.joomlaeventmanager.net; site=' . Uri::root() . ')';
+    }
+
+    /**
      * Creates the map button
      *
      * @param obj $data
@@ -1135,12 +1145,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in Seconds
                     ]
                 ];
@@ -1173,12 +1181,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5.0.0') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in seconds
                     ]
                 ];

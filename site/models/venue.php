@@ -254,7 +254,7 @@ class JemModelVenue extends JemModelEventslist
 
         $registry = new Registry;
         $registry->loadString($_venue->attribs ?? '{}');
-        $_venue->params = JemHelper::globalattribs();
+        $_venue->params = clone JemHelper::globalattribs();
         $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);

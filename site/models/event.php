@@ -229,7 +229,7 @@ class JemModelEvent extends ItemModel
                 # Convert parameter fields to objects.
                 $registry = new Registry;
                 $registry->loadString($data->attribs);
-                $data->params = JemHelper::globalattribs(); // returns Registry object
+                $data->params = clone JemHelper::globalattribs(); // returns Registry object
                 $data->params->merge($registry);
 
                 $registry = new Registry;
@@ -240,7 +240,7 @@ class JemModelEvent extends ItemModel
 
                 $registry = new Registry;
                 $registry->loadString($data->venue_attribs ?? '{}');
-                $data->venue_params = JemHelper::globalattribs();
+                $data->venue_params = clone JemHelper::globalattribs();
                 $data->venue_params->merge($registry);
 
                 $data->categories = $this->getCategories($pk);
@@ -511,7 +511,7 @@ class JemModelEvent extends ItemModel
             # Convert parameter fields to objects.
             $registry = new Registry;
             $registry->loadString($data[0]->attribs);
-            $data[0]->params = JemHelper::globalattribs(); // returns Registry object
+            $data[0]->params = clone JemHelper::globalattribs(); // returns Registry object
             $data[0]->params->merge($registry);
 
             $registry = new Registry;
@@ -522,7 +522,7 @@ class JemModelEvent extends ItemModel
 
             $registry = new Registry;
             $registry->loadString($data[0]->venue_attribs ?? '{}');
-            $data[0]->venue_params = JemHelper::globalattribs();
+            $data[0]->venue_params = clone JemHelper::globalattribs();
             $data[0]->venue_params->merge($registry);
 
             $data[0]->categories = $this->getCategories($pk);
