@@ -25,6 +25,27 @@ final class AttachmentAssetsTest extends TestCase
         }
     }
 
+    public function testAttachmentJavascriptUsesEncapsulatedNativeApis(): void
+    {
+        $script = $this->read(JEM_TEST_ROOT . '/media/js/attachments.js');
+
+        self::assertStringContainsString('(() => {', $script);
+        self::assertStringContainsString("document.addEventListener('click'", $script);
+        self::assertStringContainsString('fetch(url', $script);
+        self::assertStringNotContainsString('jQuery', $script);
+        self::assertStringNotContainsString('$.', $script);
+    }
+
+    public function testStoredAttachmentRemovalKeepsRequestSafeguards(): void
+    {
+        $script = $this->read(JEM_TEST_ROOT . '/media/js/attachments.js');
+
+        self::assertStringContainsString('button.id.match(/^attach-remove(\d+)', $script);
+        self::assertStringContainsString("method: 'POST'", $script);
+        self::assertStringContainsString("credentials: 'same-origin'", $script);
+        self::assertStringContainsString("result.trim() === '1'", $script);
+    }
+
     public function testAttachmentCssKeepsResponsiveGridAndActions(): void
     {
         $css = $this->read(JEM_TEST_ROOT . '/media/css/jem-attachments.css');
