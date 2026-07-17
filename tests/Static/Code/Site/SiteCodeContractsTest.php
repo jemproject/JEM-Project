@@ -146,6 +146,41 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringNotContainsString('use Joomla\Filter\InputFilter;', $code);
     }
 
+    public function testNominatimRequestsUseAStableIdentifyingUserAgent(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/output.class.php');
+
+        self::assertStringNotContainsString('JemHelper::config()->get(', $code);
+        self::assertSame(2, substr_count($code, '"header" => "User-Agent: " . self::nominatimUserAgent()'));
+        self::assertStringContainsString(
+            "return 'JEM (+https://www.joomlaeventmanager.net; site=' . Uri::root() . ')';",
+            $code
+        );
+    }
+
+    public function testMergedGlobalAttributesAreClonedPerItem(): void
+    {
+        $expectedCloneCounts = array(
+            '/site/helpers/association.php' => 1,
+            '/site/models/event.php' => 4,
+            '/site/models/venue.php' => 1,
+            '/site/views/event/view.raw.php' => 1,
+        );
+
+        foreach ($expectedCloneCounts as $path => $expectedCount) {
+            $code = self::read(JEM_TEST_ROOT . $path);
+
+            self::assertSame(
+                $expectedCount,
+                substr_count($code, 'clone JemHelper::globalattribs()'),
+                $path . ' must clone the shared Registry before merging item-specific parameters.'
+            );
+        }
+
+        $rawView = self::read(JEM_TEST_ROOT . '/site/views/event/view.raw.php');
+        self::assertStringContainsString('$row->params = clone $row->params;', $rawView);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
