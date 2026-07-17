@@ -6,154 +6,190 @@
  */
 
 /**
- * this file manages the js script for adding/removing attachements in event
+ * Manages adding, removing, clearing, and ordering event attachments.
  */
-// window.addEvent('domready', function() {
-jQuery(document).ready(function ($) {
+(() => {
+    'use strict';
 
-    $(document).on('change', '.attach-field', addattach);
-    $(document).on('click', '.clear-attach-field', clearattach);
-    $(document).on('click', '.attachment-add', addAttachmentRow);
-    $(document).on('click', '.attachment-remove-row', removeAttachmentRow);
-    $(document).on('click', '.attachment-move-up', function (event) {
-        moveAttachmentRow(event, -1);
-    });
-    $(document).on('click', '.attachment-move-down', function (event) {
-        moveAttachmentRow(event, 1);
+    document.addEventListener('change', (event) => {
+        if (isElement(event.target) && event.target.matches('.attach-field')) {
+            updateAttachmentOrdering(getAttachmentsContainer(event.target));
+        }
     });
 
-    $(document).on('click', '.attach-remove', function (event) {
-        var event = event || window.event;
-        // $(event.target).style.cursor = 'wait'; /* indicate server request */
-        // $(event.target).style.cursor = 'wait'; /* indicate server request */
-        $(this).css({'cursor': 'wait'})
-        var clickednode = event.target;
-        if (!clickednode.hasAttribute('id')) {
-            clickednode = $(this).parent();
-        }
-        var url = '';
-        // var pos = clickednode.id.indexOf(':');
-        var pos = $(this).attr('id').indexOf(':');
-        if (pos >= 0) {
-            // var id = clickednode.id.substring(13, pos);
-            // var token = clickednode.id.substr(pos+1);
-            var id = $(this).attr('id').substring(13, pos);
-            var token = $(this).attr('id').substr(pos + 1);
-            url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id=' + id + '&' + token + '=1';
-        } else {
-            // var id = clickednode.id.substr(13);
-            var id = $(this).attr('id').substr(13);
-            url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw&id=' + id;
+    document.addEventListener('click', (event) => {
+        if (!isElement(event.target)) {
+            return;
         }
 
-        // var theAjax = new Request( {
-        // url : url,
-        // method: 'post',
-        // postBody : ''
-        // });
+        const addButton = event.target.closest('.attachment-add');
+        if (addButton) {
+            event.preventDefault();
+            appendAttachmentRow(getAttachmentsContainer(addButton));
+            return;
+        }
 
-        // theAjax.addEventListener('onSuccess', function(response) {
-        // /* server sends 1 on success, 0 on error */
-        // if (response.indexOf('1') > -1) {
-        // $(clickednode).getParent().getParent().dispose();
-        // } else {
-        // $(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
-        // }
-        // }.bind(this));
-        // theAjax.send();
+        const clearButton = event.target.closest('.clear-attach-field');
+        if (clearButton) {
+            event.preventDefault();
+            clearAttachmentRow(clearButton.closest('tr, .jem-attachment-card'));
+            return;
+        }
 
-        $.ajax({
-            url: url,
-            method: 'post',
-            data: '',
-            success: function (response) {
+        const removeRowButton = event.target.closest('.attachment-remove-row');
+        if (removeRowButton) {
+            event.preventDefault();
+            removeAttachmentRow(removeRowButton);
+            return;
+        }
 
-                if (response.indexOf('1') > -1) {
-                    $(clickednode).closest('tr, .jem-attachment-card').remove();
-                    updateAttachmentOrdering();
-                } else {
-                    // $(clickednode).style.cursor = 'not-allowed'; /* remove failed - how to show? */
-                    $(clickednode).css({'cursor': 'not-allowed'})
-                }
+        const moveUpButton = event.target.closest('.attachment-move-up');
+        if (moveUpButton) {
+            event.preventDefault();
+            moveAttachmentRow(moveUpButton, -1);
+            return;
+        }
+
+        const moveDownButton = event.target.closest('.attachment-move-down');
+        if (moveDownButton) {
+            event.preventDefault();
+            moveAttachmentRow(moveDownButton, 1);
+            return;
+        }
+
+        const removeAttachmentButton = event.target.closest('.attach-remove');
+        if (removeAttachmentButton) {
+            event.preventDefault();
+            removeStoredAttachment(removeAttachmentButton);
+        }
+    });
+
+    function isElement(target) {
+        return target instanceof Element;
+    }
+
+    function getAttachmentsContainer(element) {
+        return element?.closest('.jem-attachments-tab')?.querySelector('#el-attachments tbody') ?? null;
+    }
+
+    function appendAttachmentRow(container) {
+        const templates = container?.querySelectorAll('tr.jem-attachment-template-row');
+        const template = templates?.length ? templates[templates.length - 1] : null;
+
+        if (!template) {
+            return;
+        }
+
+        const row = template.cloneNode(true);
+        row.classList.remove('jem-attachment-template-row', 'd-none', 'hidden');
+        row.hidden = false;
+        row.setAttribute('aria-hidden', 'false');
+
+        row.querySelectorAll('input, select, textarea, button').forEach((field) => {
+            field.disabled = false;
+        });
+
+        row.querySelectorAll('.attach-field, .attach-name, .attach-desc, .attachment-order').forEach((field) => {
+            field.value = '';
+        });
+
+        const published = row.querySelector('.attachment-published');
+        if (published) {
+            published.value = '1';
+        }
+
+        container.insertBefore(row, template);
+        updateAttachmentOrdering(container);
+    }
+
+    function removeAttachmentRow(button) {
+        const row = button.closest('tr, .jem-attachment-card');
+        const container = getAttachmentsContainer(button);
+
+        row?.remove();
+        updateAttachmentOrdering(container);
+    }
+
+    function moveAttachmentRow(button, direction) {
+        const row = button.closest('tr, .jem-attachment-card');
+        const container = getAttachmentsContainer(button);
+
+        if (!row || !container) {
+            return;
+        }
+
+        const rows = getAttachmentRows(container);
+        const index = rows.indexOf(row);
+
+        if (direction < 0 && index > 0) {
+            container.insertBefore(row, rows[index - 1]);
+        } else if (direction > 0 && index >= 0 && index < rows.length - 1) {
+            container.insertBefore(rows[index + 1], row);
+        }
+
+        updateAttachmentOrdering(container);
+    }
+
+    function getAttachmentRows(container) {
+        if (!container) {
+            return [];
+        }
+
+        return Array.from(container.querySelectorAll(
+            'tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)'
+        ));
+    }
+
+    function updateAttachmentOrdering(container) {
+        getAttachmentRows(container).forEach((row, index) => {
+            const ordering = row.querySelector('.attachment-order');
+            if (ordering) {
+                ordering.value = index;
             }
-        })
-    });
-});
-
-function addattach() {
-    updateAttachmentOrdering();
-}
-
-function addAttachmentRow(event) {
-    var tbody = $('#el-attachments tbody');
-    appendAttachmentRow(tbody);
-    updateAttachmentOrdering();
-}
-
-function appendAttachmentRow(tbody) {
-    var template = tbody.find('tr.jem-attachment-template-row').last();
-
-    if (!template.length) {
-        return;
+        });
     }
 
-    var row = template.clone();
-    row.removeClass('jem-attachment-template-row d-none hidden');
-    row.removeAttr('hidden');
-    row.attr('aria-hidden', 'false');
-    row.find(':input').prop('disabled', false);
-    row.find('.attach-field').val('');
-    row.find('.attach-name').val('');
-    row.find('.attach-desc').val('');
-    row.find('.attachment-order').val('');
-    row.find('.attachment-published').val('1');
-    row.insertBefore(template);
-}
-
-function removeAttachmentRow(event) {
-    var row = $(event.target).closest('tr, .jem-attachment-card');
-    row.remove();
-
-    updateAttachmentOrdering();
-}
-
-function moveAttachmentRow(event, direction) {
-    var row = $(event.target).closest('tr, .jem-attachment-card');
-
-    if (direction < 0) {
-        var previous = row.prevAll('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').first();
-        if (previous.length) {
-            row.insertBefore(previous);
+    function clearAttachmentRow(row) {
+        if (!row) {
+            return;
         }
-    } else {
-        var next = row.nextAll('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').first();
-        if (next.length) {
-            row.insertAfter(next);
-        }
+
+        row.querySelectorAll('.attach-field, .attach-name, .attach-desc').forEach((field) => {
+            field.value = '';
+        });
     }
 
-    updateAttachmentOrdering();
-}
+    async function removeStoredAttachment(button) {
+        const match = button.id.match(/^attach-remove(\d+)(?::(.+))?$/);
 
-function updateAttachmentOrdering() {
-    $('#el-attachments tbody').find('tr:not(.jem-attachment-template-row), .jem-attachment-card:not(.jem-attachment-template-row)').each(function (index) {
-        $(this).find('.attachment-order').val(index);
-    });
-}
+        if (!match) {
+            button.style.cursor = 'not-allowed';
+            return;
+        }
 
-function clearattach(event) {
-    var event = event || window.event;
+        const [, id, token] = match;
+        const tokenQuery = token ? `&${encodeURIComponent(token)}=1` : '';
+        const url = `index.php?option=com_jem&task=ajaxattachremove&format=raw&id=${encodeURIComponent(id)}${tokenQuery}`;
 
-    // var grandpa = $(event.target).getParent().getParent();
-    var grandpa = $(event.target).closest('tr, .jem-attachment-card');
-    clearAttachmentRow(grandpa);
-}
+        button.style.cursor = 'wait';
 
-function clearAttachmentRow(grandpa) {
-    var af = grandpa.find('.attach-field')[0];
-    if (af) af.value = '';
-    var an = grandpa.find('.attach-name')[0];
-    if (an) an.value = '';
-    var ad = grandpa.find('.attach-desc')[0];
-    if (ad) ad.value = '';
-}
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            const result = await response.text();
+
+            if (response.ok && result.trim() === '1') {
+                const container = getAttachmentsContainer(button);
+                button.closest('tr, .jem-attachment-card')?.remove();
+                updateAttachmentOrdering(container);
+                return;
+            }
+        } catch (error) {
+            // The cursor below communicates that the server request failed.
+        }
+
+        button.style.cursor = 'not-allowed';
+    }
+})();
