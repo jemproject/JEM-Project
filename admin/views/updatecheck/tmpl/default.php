@@ -145,12 +145,13 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 <form action="<?php echo Route::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
     <style>
         .jem-updatecheck {
-            --jem-updatecheck-bg: var(--bs-body-bg, #fff);
-            --jem-updatecheck-color: var(--bs-body-color, #212529);
-            --jem-updatecheck-border: var(--bs-border-color, #d6dde8);
-            --jem-updatecheck-soft-border: var(--bs-border-color-translucent, var(--bs-border-color, #edf0f5));
-            --jem-updatecheck-header-bg: var(--bs-tertiary-bg, #f8fafc);
-            --jem-updatecheck-muted: var(--bs-secondary-color, #6b7280);
+            --jem-updatecheck-bg: var(--card-body-bg, var(--card-bg, var(--body-bg, var(--bs-body-bg, #fff))));
+            --jem-updatecheck-color: var(--body-color, var(--bs-body-color, #212529));
+            --jem-updatecheck-border: var(--border-color, var(--bs-border-color, #d6dde8));
+            --jem-updatecheck-soft-border: var(--atum-list-group-border-color, var(--border-color, var(--bs-border-color-translucent, #edf0f5)));
+            --jem-updatecheck-header-bg: var(--card-header-bg, var(--card-bg, var(--body-bg, var(--bs-tertiary-bg, #f8fafc))));
+            --jem-updatecheck-header-color: var(--card-header-color, var(--body-color, var(--bs-body-color, #212529)));
+            --jem-updatecheck-muted: var(--secondary-color, var(--bs-secondary-color, #6b7280));
 
             display: grid;
             gap: 1rem;
@@ -211,7 +212,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             padding: .75rem 1rem;
             border-bottom: 1px solid var(--jem-updatecheck-border);
             background: var(--jem-updatecheck-header-bg);
-            color: var(--jem-updatecheck-color);
+            color: var(--jem-updatecheck-header-color);
             font-size: 1.05rem;
         }
 
