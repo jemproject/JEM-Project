@@ -68,6 +68,25 @@ if (!function_exists('jemUpdatecheckFormatJoomlaSupport')) {
     }
 }
 
+if (!function_exists('jemUpdatecheckRenderNote')) {
+    /**
+     * Render an escaped release note with an optional trailing Markdown link.
+     */
+    function jemUpdatecheckRenderNote($note)
+    {
+        $note = trim((string) $note);
+
+        if (preg_match('/^(.*?)\s*\[([^\]]+)\]\((https:\/\/[^)\s]+)\)$/', $note, $match) === 1) {
+            return htmlspecialchars(trim($match[1]), ENT_QUOTES, 'UTF-8')
+                . ' <a href="' . htmlspecialchars($match[3], ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener noreferrer">'
+                . htmlspecialchars($match[2], ENT_QUOTES, 'UTF-8')
+                . '</a>';
+        }
+
+        return htmlspecialchars($note, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 $update = $this->updatedata ?? null;
 
 // No update data at all -> treat as connection problem
@@ -87,6 +106,8 @@ $update->date             = $update->date ?? '';
 $update->changes          = is_array($update->changes ?? null) ? $update->changes : [];
 $update->notes            = is_array($update->notes ?? null) ? $update->notes : [];
 $update->info             = $update->info ?? '';
+$update->stablechangelog  = $update->stablechangelog ?? 'https://www.joomlaeventmanager.net/project/changelog-jem-5';
+$update->betachangelog    = $update->betachangelog ?? 'https://www.joomlaeventmanager.net/project/changelog-jem/betas';
 $update->download         = $update->download ?? '';
 $update->updateurl        = $update->updateurl ?? 'https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml';
 $update->joomlaversion    = $update->joomlaversion ?? JVERSION;
@@ -126,8 +147,8 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 }
 
 $notesTitle = Text::_('COM_JEM_UPDATECHECK_VERSION_NOTES');
-$notesDate  = $update->date;
 $notes      = $update->notes;
+$notesVersion = $update->versiondetail;
 
 if ((int) $update->failed === 0 && $update->current !== null) {
     if ((int) $update->current === -1) {
@@ -136,10 +157,20 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         $notesTitle = Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION_NOTES');
     } elseif ((int) $update->current > 0) {
         $notesTitle = Text::_('COM_JEM_UPDATECHECK_LOCAL_NEWER_VERSION_NOTES');
-        $notesDate  = $update->localdate ?: $update->date;
         $notes      = !empty($update->localnotes) ? $update->localnotes : $update->notes;
+        $notesVersion = $update->installedversion;
     }
+} elseif (!empty($update->localnotes)) {
+    $notesTitle   = Text::_('COM_JEM_UPDATECHECK_INSTALLED_VERSION_NOTES');
+    $notes        = $update->localnotes;
+    $notesVersion = $update->installedversion;
 }
+
+$isPrerelease   = preg_match('/(?:alpha|beta|rc)/i', (string) $notesVersion) === 1;
+$changelogUrl   = $isPrerelease ? $update->betachangelog : $update->stablechangelog;
+$changelogLabel = $isPrerelease
+    ? Text::_('COM_JEM_UPDATECHECK_BETA_CHANGELOG')
+    : Text::_('COM_JEM_UPDATECHECK_STABLE_CHANGELOG');
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=updatecheck'); ?>" method="post" name="adminForm" id="adminForm">
@@ -250,6 +281,15 @@ if ((int) $update->failed === 0 && $update->current !== null) {
         }
 
         .jem-updatecheck-list ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+
+        .jem-updatecheck-notes {
+            padding: .7rem 1rem;
+        }
+
+        .jem-updatecheck-notes ul {
             margin: 0;
             padding-left: 1.2rem;
         }
@@ -365,31 +405,23 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 
             <section class="jem-updatecheck-card">
                 <h3><?php echo htmlspecialchars($notesTitle, ENT_QUOTES, 'UTF-8'); ?></h3>
-                <dl class="jem-updatecheck-list">
-                    <dt><?php echo Text::_('COM_JEM_UPDATECHECK_RELEASE_DATE'); ?></dt>
-                    <dd><?php echo htmlspecialchars((string) ($notesDate ?: '-'), ENT_QUOTES, 'UTF-8'); ?></dd>
-
-                    <dt><?php echo Text::_('COM_JEM_UPDATECHECK_NOTES'); ?></dt>
-                    <dd>
-                        <?php if (!empty($notes)) : ?>
-                            <ul>
-                                <?php foreach ($notes as $note) : ?>
-                                    <?php $note = trim((string) $note); ?>
-                                    <?php if ($note !== '') : ?>
-                                        <li><?php echo htmlspecialchars($note, ENT_QUOTES, 'UTF-8'); ?></li>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </ul>
-                        <?php else : ?>
-                            <span class="jem-updatecheck-muted">-</span>
-                        <?php endif; ?>
-                        <?php if ($update->info !== '') : ?>
-                            <div class="mt-2">
-                                <a href="<?php echo htmlspecialchars((string) $update->info, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_CHANGELOG'); ?></a>
-                            </div>
-                        <?php endif; ?>
-                    </dd>
-                </dl>
+                <div class="jem-updatecheck-notes">
+                    <?php if (!empty($notes)) : ?>
+                        <ul>
+                            <?php foreach ($notes as $note) : ?>
+                                <?php $note = trim((string) $note); ?>
+                                <?php if ($note !== '') : ?>
+                                    <li><?php echo jemUpdatecheckRenderNote($note); ?></li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <span class="jem-updatecheck-muted">-</span>
+                    <?php endif; ?>
+                    <div class="mt-2">
+                        <a href="<?php echo htmlspecialchars((string) $changelogUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars($changelogLabel, ENT_QUOTES, 'UTF-8'); ?></a>
+                    </div>
+                </div>
             </section>
 
             <section class="jem-updatecheck-card">

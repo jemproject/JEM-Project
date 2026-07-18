@@ -2,7 +2,7 @@
 <extension type="package" version="5.0" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>9 July 2026</creationDate>
+    <creationDate>18 July 2026</creationDate>
     <packagename>jem</packagename>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
@@ -13,6 +13,7 @@
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>
     <description>PKG_JEM_INSTALLATION_DESCRIPTION</description>
+    <notes>Fixed duplicate JemHelper declarations that could cause fatal errors during upgrades. [Issue #2242](https://github.com/jemproject/JEM-Project/issues/2242);Updated Update Check to follow the Joomla administrator template colors. [Issue #2243](https://github.com/jemproject/JEM-Project/issues/2243);Restored upgrade support from JEM 4.4.x. [Issue #2247](https://github.com/jemproject/JEM-Project/issues/2247);Added validation for associated article title formats. [Issue #2248](https://github.com/jemproject/JEM-Project/issues/2248);Improved import security configuration and diagnostics. [Issue #2249](https://github.com/jemproject/JEM-Project/issues/2249);Expanded import and export workflows, profiles, venue data and map markers. [Issue #2250](https://github.com/jemproject/JEM-Project/issues/2250);Restored the hits column in the backend events list. [Issue #2251](https://github.com/jemproject/JEM-Project/issues/2251);Added attachment download statistics and event visit dates. [Issue #2252](https://github.com/jemproject/JEM-Project/issues/2252);Fixed Nominatim requests and isolated event and venue parameters. [Commit f199043](https://github.com/jemproject/JEM-Project/commit/f199043cd226d70f95b502d5778af4e3b20a3a16);Corrected the "Show my location" wording. [Commit 0a26eef](https://github.com/jemproject/JEM-Project/commit/0a26eef790b7f1b32007cc1da02752b0212ee10f)</notes>
 
     <scriptfile>pkg_install.php</scriptfile>
 

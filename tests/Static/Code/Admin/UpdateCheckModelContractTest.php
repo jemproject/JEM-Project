@@ -36,4 +36,24 @@ final class UpdateCheckModelContractTest extends TestCase
         self::assertStringContainsString('$updateXml = self::fetchUpdateXml($updateFile);', $code);
         self::assertStringNotContainsString('file_get_contents($updateFile)', $code);
     }
+
+    public function testUpdatecheckProvidesStableAndBetaChangelogLinks(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/updatecheck.php');
+
+        self::assertStringContainsString("\$updatedata->stablechangelog  = 'https://www.joomlaeventmanager.net/project/changelog-jem-5';", $code);
+        self::assertStringContainsString("\$updatedata->betachangelog    = 'https://www.joomlaeventmanager.net/project/changelog-jem/betas';", $code);
+        self::assertStringContainsString('isset($updatexml->stablechangelog)', $code);
+        self::assertStringContainsString('isset($updatexml->betachangelog)', $code);
+    }
+
+    public function testInstalledVersionNotesComeFromTheLocalManifest(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/updatecheck.php');
+
+        self::assertStringContainsString('$updatedata->localnotes       = $this->getInstalledNotes();', $code);
+        self::assertStringContainsString('private function getInstalledNotes()', $code);
+        self::assertStringContainsString("explode(';', (string) \$manifest->notes)", $code);
+        self::assertStringNotContainsString('$updatedata->localnotes = $updatedata->notes;', $code);
+    }
 }
