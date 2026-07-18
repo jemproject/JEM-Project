@@ -161,7 +161,7 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 
         .jem-updatecheck-status {
             display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: center;
             gap: 1rem;
             padding: 1rem;
@@ -181,6 +181,11 @@ if ((int) $update->failed === 0 && $update->current !== null) {
 
         .jem-updatecheck-status p {
             margin: 0;
+        }
+
+        .jem-updatecheck-status-action {
+            justify-self: end;
+            white-space: nowrap;
         }
 
         .jem-updatecheck-status--success h2 {
@@ -280,6 +285,10 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             .jem-updatecheck-list dd {
                 padding-top: .2rem;
             }
+
+            .jem-updatecheck-status-action {
+                justify-self: start;
+            }
         }
     </style>
 
@@ -297,6 +306,13 @@ if ((int) $update->failed === 0 && $update->current !== null) {
                     <h2><?php echo htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p class="jem-updatecheck-muted"><?php echo htmlspecialchars($statusDesc, ENT_QUOTES, 'UTF-8'); ?></p>
                 </div>
+                <?php if ((int) $update->current === -1) : ?>
+                    <div class="jem-updatecheck-status-action">
+                        <a class="btn btn-success" href="<?php echo Route::_('index.php?option=com_installer&view=update&filter[search]=JEM', false); ?>">
+                            <?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE'); ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="jem-updatecheck-grid">
@@ -379,15 +395,12 @@ if ((int) $update->failed === 0 && $update->current !== null) {
             <section class="jem-updatecheck-card">
                 <h3><?php echo Text::_('COM_JEM_UPDATECHECK_INFORMATION'); ?></h3>
                 <div class="jem-updatecheck-actions">
-                    <a class="btn btn-primary" href="https://www.joomlaeventmanager.net/" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_VISIT_WEBSITE'); ?></a>
+                    <a class="btn btn-secondary" href="https://www.joomlaeventmanager.net/" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_VISIT_WEBSITE'); ?></a>
                     <a class="btn btn-secondary" href="https://www.joomlaeventmanager.net/forum" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_VISIT_FORUM'); ?></a>
                     <a class="btn btn-secondary" href="https://www.joomlaeventmanager.net/documentation" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_VISIT_DOCUMENTATION'); ?></a>
                     <a class="btn btn-secondary" href="https://github.com/jemproject/JEM-Project/issues" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_REPORT_GITHUB'); ?></a>
                     <?php if ($update->download !== '') : ?>
                         <a class="btn btn-secondary" href="<?php echo htmlspecialchars((string) $update->download, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_DOWNLOAD'); ?></a>
-                    <?php endif; ?>
-                    <?php if ((int) $update->current === -1) : ?>
-                        <a class="btn btn-success" href="<?php echo Route::_('index.php?option=com_installer&view=update&filter[search]=JEM', false); ?>" target="_blank" rel="noopener noreferrer"><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE'); ?></a>
                     <?php endif; ?>
                 </div>
             </section>
