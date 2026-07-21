@@ -6,6 +6,17 @@ use PHPUnit\Framework\TestCase;
 
 final class VenuesListMapPopupTest extends TestCase
 {
+    public function testEachVenuesListLayoutRendersPaginationOnce(): void
+    {
+        $classic = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venueslist/tmpl/default.php')
+            . (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venueslist/tmpl/default_venues.php');
+        $responsive = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venueslist/tmpl/responsive/default.php')
+            . (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venueslist/tmpl/responsive/default_venues.php');
+
+        self::assertSame(1, substr_count($classic, 'getPagesLinks()'));
+        self::assertSame(1, substr_count($responsive, 'getPagesLinks()'));
+    }
+
     public function testMapFillsConfiguredPopupHeightInBothLayouts(): void
     {
         $templates = [

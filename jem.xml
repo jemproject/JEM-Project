@@ -34,6 +34,7 @@
         <filename>index.html</filename>
         <folder>images</folder>
         <folder>css</folder>
+        <folder>import</folder>
         <folder>js</folder>
         <folder>vendor</folder>
     </media>
