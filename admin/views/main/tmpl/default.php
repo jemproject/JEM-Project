@@ -154,19 +154,18 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                         $addLink = 'index.php?option=com_jem&amp;task=type.add';
                                         $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'), 0, $addLink, Text::_('COM_JEM_ADD_TYPE'));
 
+                                        $link = 'index.php?option=com_jem&amp;view=specialdays';
+                                        $addLink = 'index.php?option=com_jem&amp;task=specialday.add';
+                                        $this->quickiconButton($link, 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'), 0, $addLink, Text::_('COM_JEM_ADD_SPECIAL_DAYS'));
+
                                         $link = 'index.php?option=com_jem&amp;view=attachments';
                                         $this->quickiconButton($link, 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
-
-                                        $link = 'index.php?option=com_jem&amp;view=specialdays';
-                                        $this->quickiconButton($link, 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'));
                                     ?>
                                     </div>
 
                                     <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_SYSTEM'); ?></h3>
                                     <div class="jem-wei-group">
                                     <?php
-                                        $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
-                                        $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
 
                                         //only admins should be able to see these items
                                         if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
@@ -176,6 +175,9 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                             $link = 'index.php?option=com_jem&amp;view=cssmanager';
                                             $this->quickiconButton( $link, 'icon-48-cssmanager.svg', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
                                         }
+
+                                        $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
+                                        $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
                                     ?>
                                     </div>
 
