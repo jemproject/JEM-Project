@@ -120,6 +120,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
         padding-right: 0.75rem;
     }
 </style>
+<?php // Group titles, tile groups, and the “Add” badge are now defined in media/com_jem/css/backend.css (.jem-wei-group-title, .jem-wei-group, .jem-wei-add) ?>
 <form action="<?php echo Route::_('index.php?option=com_jem');?>" id="application-form" method="post" name="adminForm" class="form-validate">
     <div id="j-main-container" class="j-main-container">
         <table style="width:100%">
@@ -129,43 +130,41 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                         <tr>
                             <td>
                                 <div class="cpanel jem-wei-menus">
+
+                                    <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_CONTENT'); ?></h3>
+                                    <div class="jem-wei-group">
                                     <?php
                                         $link = 'index.php?option=com_jem&amp;view=events';
-                                        $this->quickiconButton($link, 'icon-48-events.svg', Text::_('COM_JEM_EVENTS'));
-
-                                        $link = 'index.php?option=com_jem&amp;task=event.add';
-                                        $this->quickiconButton($link, 'icon-48-eventedit.svg', Text::_('COM_JEM_ADD_EVENT'));
+                                        $addLink = 'index.php?option=com_jem&amp;task=event.add';
+                                        $this->quickiconButton($link, 'icon-48-events.svg', Text::_('COM_JEM_EVENTS'), 0, $addLink, Text::_('COM_JEM_ADD_EVENT'));
 
                                         $link = 'index.php?option=com_jem&amp;view=venues';
-                                        $this->quickiconButton($link, 'icon-48-venues.svg', Text::_('COM_JEM_VENUES'));
-
-                                        $link = 'index.php?option=com_jem&task=venue.add';
-                                        $this->quickiconButton($link, 'icon-48-venuesedit.svg', Text::_('COM_JEM_ADD_VENUE'));
+                                        $addLink = 'index.php?option=com_jem&task=venue.add';
+                                        $this->quickiconButton($link, 'icon-48-venues.svg', Text::_('COM_JEM_VENUES'), 0, $addLink, Text::_('COM_JEM_ADD_VENUE'));
 
                                         $link = 'index.php?option=com_jem&amp;view=categories';
-                                        $this->quickiconButton($link, 'icon-48-categories.svg', Text::_('COM_JEM_CATEGORIES'));
-
-                                        $link = 'index.php?option=com_jem&amp;task=category.add';
-                                        $this->quickiconButton($link, 'icon-48-categoriesedit.svg', Text::_('COM_JEM_ADD_CATEGORY'));
+                                        $addLink = 'index.php?option=com_jem&amp;task=category.add';
+                                        $this->quickiconButton($link, 'icon-48-categories.svg', Text::_('COM_JEM_CATEGORIES'), 0, $addLink, Text::_('COM_JEM_ADD_CATEGORY'));
 
                                         $link = 'index.php?option=com_jem&amp;view=groups';
-                                        $this->quickiconButton($link, 'icon-48-groups.svg', Text::_('COM_JEM_GROUPS'));
+                                        $addLink = 'index.php?option=com_jem&amp;task=group.add';
+                                        $this->quickiconButton($link, 'icon-48-groups.svg', Text::_('COM_JEM_GROUPS'), 0, $addLink, Text::_('COM_JEM_GROUP_ADD'));
 
-                                        $link = 'index.php?option=com_jem&amp;task=group.add';
-                                        $this->quickiconButton($link, 'icon-48-groupedit.svg', Text::_('COM_JEM_GROUP_ADD'));
+                                        $link = 'index.php?option=com_jem&amp;view=types';
+                                        $addLink = 'index.php?option=com_jem&amp;task=type.add';
+                                        $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'), 0, $addLink, Text::_('COM_JEM_ADD_TYPE'));
 
                                         $link = 'index.php?option=com_jem&amp;view=attachments';
                                         $this->quickiconButton($link, 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
 
-                                        $link = 'index.php?option=com_jem&amp;view=types';
-                                        $this->quickiconButton($link, 'icon-48-types.svg', Text::_('COM_JEM_TYPES'));
-
-                                        $link = 'index.php?option=com_jem&amp;task=type.add';
-                                        $this->quickiconButton($link, 'icon-48-typesedit.svg', Text::_('COM_JEM_ADD_TYPE'));
-
                                         $link = 'index.php?option=com_jem&amp;view=specialdays';
                                         $this->quickiconButton($link, 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'));
+                                    ?>
+                                    </div>
 
+                                    <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_SYSTEM'); ?></h3>
+                                    <div class="jem-wei-group">
+                                    <?php
                                         $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
                                         $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
 
@@ -174,41 +173,64 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                             $link = 'index.php?option=com_jem&amp;view=settings';
                                             $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
 
-                                            $link = 'index.php?option=com_jem&amp;view=housekeeping';
-                                            $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
-
-                                            $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
-                                            $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
-
-                                            $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
-                                            $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
-
-                                            $link = 'index.php?option=com_jem&amp;view=updatecheck';
-                                            $icon = 'icon-48-update.svg';
-
-                                            // If an update is available, use a different icon
-                                            if (
-                                                !empty($this->updatedata)
-                                                && isset($this->updatedata->current)
-                                                && (int) $this->updatedata->current === -1
-                                            ) {
-                                                $icon = 'icon-48-update-y.svg';
-                                            }
-                                            $this->quickiconButton($link, $icon, Text::_('COM_JEM_UPDATECHECK_TITLE'));
-
-                                            $link = 'index.php?option=com_jem&amp;view=import';
-                                            $this->quickiconButton($link, 'icon-48-tableimport.svg', Text::_('COM_JEM_IMPORT_DATA'));
-
-                                            $link = 'index.php?option=com_jem&amp;view=export';
-                                            $this->quickiconButton($link, 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));
-
                                             $link = 'index.php?option=com_jem&amp;view=cssmanager';
                                             $this->quickiconButton( $link, 'icon-48-cssmanager.svg', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
                                         }
+                                    ?>
+                                    </div>
+
+                                    <?php if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) : ?>
+                                    <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_DATA'); ?></h3>
+                                    <div class="jem-wei-group">
+                                    <?php
+                                        $link = 'index.php?option=com_jem&amp;view=import';
+                                        $this->quickiconButton($link, 'icon-48-tableimport.svg', Text::_('COM_JEM_IMPORT_DATA'));
+
+                                        $link = 'index.php?option=com_jem&amp;view=export';
+                                        $this->quickiconButton($link, 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));
+
+                                        $link = 'index.php?option=com_jem&amp;view=housekeeping';
+                                        $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
+
+                                        $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
+                                        $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
+                                    ?>
+                                    </div>
+                                    <?php endif; ?>
+
+                                    <?php if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) : ?>
+                                    <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_MISC'); ?></h3>
+                                    <div class="jem-wei-group">
+                                    <?php
+                                        $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
+                                        $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
+
+                                        $link = 'index.php?option=com_jem&amp;view=updatecheck';
+                                        $icon = 'icon-48-update.svg';
+
+                                        // If an update is available, use a different icon
+                                        if (
+                                            !empty($this->updatedata)
+                                            && isset($this->updatedata->current)
+                                            && (int) $this->updatedata->current === -1
+                                        ) {
+                                            $icon = 'icon-48-update-y.svg';
+                                        }
+                                        $this->quickiconButton($link, $icon, Text::_('COM_JEM_UPDATECHECK_TITLE'));
 
                                         $link = 'index.php?option=com_jem&amp;view=help';
                                         $this->quickiconButton($link, 'icon-48-help.svg', Text::_('COM_JEM_HELP'));
                                     ?>
+                                    </div>
+                                    <?php else : ?>
+                                    <div class="jem-wei-group">
+                                    <?php
+                                        $link = 'index.php?option=com_jem&amp;view=help';
+                                        $this->quickiconButton($link, 'icon-48-help.svg', Text::_('COM_JEM_HELP'));
+                                    ?>
+                                    </div>
+                                    <?php endif; ?>
+
                                 </div>
                             </td>
                         </tr>
