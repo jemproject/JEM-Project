@@ -261,5 +261,50 @@ class JemModelVenue extends JemModelEventslist
 
         return $_venue;
     }
+
+    /**
+     * Get the published venues available to the current user.
+     *
+     * @return  array<int, object>
+     */
+    public function getVenueOptions()
+    {
+        $user       = JemFactory::getUser();
+        $levels     = array_map('intval', $user->getAuthorisedViewLevels());
+        $levelsList = implode(',', $levels) ?: '0';
+        $db         = Factory::getContainer()->get('DatabaseDriver');
+        $query      = $db->getQuery(true);
+        $params     = Factory::getApplication()->getParams();
+        $allowedIds = $this->normaliseParamIds($params->get('timeline_filter_venues', array()));
+
+        $query->select(array(
+                $db->quoteName('v.id', 'value'),
+                $db->quoteName('v.venue', 'text'),
+                $db->quoteName('v.city'),
+            ))
+            ->from($db->quoteName('#__jem_venues', 'v'))
+            ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.access') . ' IN (' . $levelsList . ')')
+            ->order(array($db->quoteName('v.venue') . ' ASC', $db->quoteName('v.city') . ' ASC'));
+
+        if ($allowedIds) {
+            $query->where($db->quoteName('v.id') . ' IN (' . implode(',', $allowedIds) . ')');
+        }
+
+        $db->setQuery($query);
+        $options = $db->loadObjectList();
+
+        foreach ($options as $option) {
+            $city = trim((string) $option->city);
+
+            if ($city !== '') {
+                $option->text .= ' - ' . $city;
+            }
+
+            unset($option->city);
+        }
+
+        return $options;
+    }
 }
 ?>

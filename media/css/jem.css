@@ -648,6 +648,10 @@ div#jem .buttons a.jem-layout-toggle:visited {
     color: currentColor;
 }
 
+div#jem .buttons .jem-layout-toggle-label {
+    display: none;
+}
+
 div#jem .buttons span.gap {
     float: left;
     margin: 0 0 0 7px;

@@ -35,6 +35,26 @@ class JemViewVenue extends HtmlView
         $layout = $jinput->getCmd('layout', '');
 
         if ($layout === 'pdf' && $jinput->getBool('venue_calendar_pdf', false)) {
+            $venue = $this->get('Venue');
+
+            if (empty($venue)) {
+                $app->close();
+
+                return;
+            }
+
+            $user = JemFactory::getUser();
+            if (empty($venue->user_has_access_venue)) {
+                if ($user->get('guest') || !$user->get('id')) {
+                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
+                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($app->input->server->getString('REQUEST_URI')), false));
+
+                    return;
+                }
+
+                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
             $model = $this->getModel('VenueCal');
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
@@ -42,7 +62,7 @@ class JemViewVenue extends HtmlView
             $venueid = $jinput->getInt('id');
 
             JemPdfView::renderMonthlyCalendar(
-                Text::_('COM_JEM_VENUE') . ' ' . $venueid . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+                (string) $venue->venue . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
                 (array) $model->getItems(),
                 'jem-venue-' . $venueid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
                 $year,

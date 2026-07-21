@@ -50,7 +50,7 @@ class JemCalendarAgendaHelper
         return '<span class="jem-calendar-layout-toggle">'
             . '<a class="jem-layout-toggle" href="' . htmlspecialchars($link, ENT_COMPAT, 'UTF-8') . '" title="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '" aria-label="' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '">'
             . '<i class="fa fa-fw fa-lg ' . $icon . '" aria-hidden="true"></i>'
-            . '<span>' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</span>'
+            . '<span class="jem-layout-toggle-label">' . htmlspecialchars($label, ENT_COMPAT, 'UTF-8') . '</span>'
             . '</a>'
             . '</span>';
     }

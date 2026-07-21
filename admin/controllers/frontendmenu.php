@@ -89,10 +89,19 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Sample Event', 'sample-event', 'index.php?option=com_jem&view=event&id=' . $this->slug($event), $groups['events']);
         }
 
+        $venueCalendarItem = null;
         $venue = $this->getRandomRecord('#__jem_venues', 'published = 1', array('id', 'alias'));
         if ($venue) {
             $items[] = array('Sample Venue', 'sample-venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
-            $items[] = array('Venue Calendar', 'venue-calendar', 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue), $groups['calendars']);
+            $venueCalendarItem = array(
+                'Venue Calendar',
+                'venue-calendar',
+                'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue),
+                $groups['calendars'],
+                'component',
+                $componentId,
+                array('show_venue_selector' => '1'),
+            );
         } else {
             $this->keepExistingGeneratedMenuItems($menutype, array('sample-venue', 'venue-calendar'));
         }
@@ -103,6 +112,11 @@ class JemControllerFrontendmenu extends BaseController
             $items[] = array('Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
         } else {
             $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
+        }
+
+        // Keep Venue Calendar as the final entry in the Calendars group.
+        if ($venueCalendarItem) {
+            $items[] = $venueCalendarItem;
         }
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
@@ -123,8 +137,14 @@ class JemControllerFrontendmenu extends BaseController
             $itemParams      = array_merge($this->getMenuItemDefaultParams($item[2]), $item[6] ?? array());
             $itemAccess      = ((int) $item[3] === (int) $groups['management']) ? $specialAccessId : 1;
 
-            if ($this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess, $itemParams)) {
+            $menuItemId = $this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess, $itemParams);
+
+            if ($menuItemId) {
                 $created++;
+
+                if ($item[1] === 'venue-calendar') {
+                    $this->moveMenuItemToLastChild($menuItemId, $groups['calendars']);
+                }
             }
         }
 
@@ -354,6 +374,21 @@ class JemControllerFrontendmenu extends BaseController
         }
 
         if (!$table->bind($data) || !$table->check() || !$table->store()) {
+            throw new \RuntimeException($table->getError());
+        }
+    }
+
+    protected function moveMenuItemToLastChild($id, $parentId)
+    {
+        $table = Table::getInstance('Menu');
+
+        if (!$table->load((int) $id)) {
+            throw new \RuntimeException($table->getError());
+        }
+
+        $table->setLocation((int) $parentId, 'last-child');
+
+        if (!$table->store()) {
             throw new \RuntimeException($table->getError());
         }
     }

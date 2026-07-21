@@ -1325,3 +1325,35 @@ div#jem td {
 
 .calendarButton:active {
 }
+
+/* Venue calendar context and selector */
+#jem .jem-venue-calendar-context {
+    margin: 0 0 1.25rem;
+}
+
+#jem .jem-venue-calendar-selector {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem);
+    align-items: center;
+    gap: .75rem;
+    justify-content: start;
+    width: 100%;
+}
+
+#jem .jem-venue-calendar-selector label {
+    margin: 0;
+    font-weight: 600;
+}
+
+#jem .jem-venue-calendar-selector .form-select,
+#jem .jem-venue-calendar-fancy-select {
+    display: block;
+    min-width: 0;
+    width: 100%;
+}
+
+@media (max-width: 36rem) {
+    #jem .jem-venue-calendar-selector {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

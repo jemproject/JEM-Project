@@ -26,12 +26,17 @@ use Joomla\CMS\Factory;
             $btn_params['hide'] = array('archive');
         }
         echo JemOutput::createButtonBar($this->getName(), $this->permissions, $btn_params);
+        echo JemCalendarAgendaHelper::renderToggle();
         ?>
     </div>
 
     <?php if ($this->params->get('show_page_heading', 1)): ?>
         <h1 class="componentheading">
             <?php echo $this->escape($this->params->get('page_heading')); ?>
+        </h1>
+    <?php elseif ($this->params->get('show_venue_title', 1)): ?>
+        <h1 class="componentheading jem-venue-calendar-title">
+            <?php echo Text::_('COM_JEM_VENUE') . ': ' . $this->escape($this->venue->venue); ?>
         </h1>
     <?php endif; ?>
 
@@ -42,8 +47,51 @@ use Joomla\CMS\Factory;
         <p> </p>
     <?php endif; ?>
 
+    <?php if ($this->showVenueSelector && !$this->print) : ?>
+        <div class="jem-venue-calendar-context">
+            <form class="jem-venue-calendar-selector" action="<?php echo Route::_('index.php'); ?>" method="get">
+                <label class="visually-hidden" for="jem-venue-calendar-select"><?php echo Text::_('COM_JEM_VENUE'); ?></label>
+                <?php
+                $venueSelect = HTMLHelper::_(
+                    'select.genericlist',
+                    $this->venueOptions,
+                    'id',
+                    array(
+                        'class' => 'form-select',
+                        'id' => 'jem-venue-calendar-select',
+                        'aria-label' => Text::_('COM_JEM_VENUE'),
+                        'onchange' => 'this.form.submit();',
+                    ),
+                    'value',
+                    'text',
+                    (int) $this->venue->id
+                );
+
+                if ($this->useFancyVenueSelector) {
+                    echo '<joomla-field-fancy-select class="jem-venue-calendar-fancy-select" placeholder="'
+                        . $this->escape(Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS')) . '">'
+                        . $venueSelect
+                        . '</joomla-field-fancy-select>';
+                } else {
+                    echo $venueSelect;
+                }
+                ?>
+                <input type="hidden" name="option" value="com_jem" />
+                <input type="hidden" name="view" value="venue" />
+                <input type="hidden" name="layout" value="calendar" />
+                <input type="hidden" name="yearID" value="<?php echo (int) $this->calendarYear; ?>" />
+                <input type="hidden" name="monthID" value="<?php echo (int) $this->calendarMonth; ?>" />
+                <?php if (Factory::getApplication()->input->getInt('Itemid', 0) > 0) : ?>
+                    <input type="hidden" name="Itemid" value="<?php echo Factory::getApplication()->input->getInt('Itemid'); ?>" />
+                <?php endif; ?>
+                <?php if ($this->task !== '') : ?>
+                    <input type="hidden" name="task" value="<?php echo $this->escape($this->task); ?>" />
+                <?php endif; ?>
+            </form>
+        </div>
+    <?php endif; ?>
+
     <?php
-    echo JemCalendarAgendaHelper::renderToggle();
     if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
         echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows);
         if ($this->params->get('showfootertext')) :

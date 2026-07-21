@@ -116,6 +116,26 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("array('My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', \$groups['user'])", $code);
     }
 
+    public function testFrontendMenuGeneratorAddsVenueCalendarLastWithSelectorEnabled(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString("'Venue Calendar',", $code);
+        self::assertStringContainsString("'venue-calendar',", $code);
+        self::assertStringContainsString("'index.php?option=com_jem&view=venue&layout=calendar&id=' . \$this->slug(\$venue)", $code);
+        self::assertStringContainsString("array('show_venue_selector' => '1')", $code);
+        self::assertStringContainsString('// Keep Venue Calendar as the final entry in the Calendars group.', $code);
+        self::assertStringContainsString('$items[] = $venueCalendarItem;', $code);
+        self::assertStringContainsString("if (\$item[1] === 'venue-calendar')", $code);
+        self::assertStringContainsString("\$this->moveMenuItemToLastChild(\$menuItemId, \$groups['calendars']);", $code);
+        self::assertStringContainsString('protected function moveMenuItemToLastChild($id, $parentId)', $code);
+
+        self::assertGreaterThan(
+            strpos($code, "array('Category Calendar', 'category-calendar'"),
+            strpos($code, '$items[] = $venueCalendarItem;')
+        );
+    }
+
     public function testFrontendMenuGeneratorRepairsExistingGeneratedAliasesAcrossTheMenuType(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');

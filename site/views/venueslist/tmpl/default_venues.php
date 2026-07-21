@@ -80,14 +80,18 @@ use Joomla\CMS\Uri\Uri;
     }
 
     .modal[id^="jem-venueslist-map-"] .modal-body {
+        position: relative;
+        height: var(--jem-venueslist-map-height, 70vh);
+        min-height: 0;
         padding: 0;
+        overflow: hidden;
     }
 
     .modal[id^="jem-venueslist-map-"] iframe {
         display: block;
         width: 100%;
         height: 100%;
-        min-height: 22rem;
+        min-height: 0;
         border: 0;
     }
 </style>
@@ -237,13 +241,20 @@ if (!function_exists('jem_venueslist_default_venue_map')) {
             array(
                 'url'    => $src,
                 'title'  => Text::_('COM_JEM_MAP') . ': ' . $title,
-                'width'  => $modalWidth . '%',
-                'height' => $modalHeight . 'vh',
+                'width'  => '100%',
+                'height' => '100%',
                 'modalWidth' => $modalWidth,
                 'bodyHeight' => $modalHeight,
                 'footer' => '<a class="btn btn-primary" href="' . htmlspecialchars($external, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_MAP') . '</a>'
                     . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>',
             )
+        );
+
+        $modalRoot = 'id="' . $modalId . '"';
+        $output = str_replace(
+            $modalRoot,
+            $modalRoot . ' style="--jem-venueslist-map-height:' . $modalHeight . 'vh"',
+            $output
         );
 
         $output .= '<button type="button" class="btn btn-sm btn-outline-primary jem-venueslist-map-button" data-bs-toggle="modal" data-bs-target="#' . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '" title="' . $title . '">'
