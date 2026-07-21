@@ -140,6 +140,20 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString("'source_records' => \$sourceRecords", $controller);
     }
 
+    public function testCustomCatalogUploadImportsJoomlaFilesystemClasses(): void
+    {
+        $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
+        $manifest = (string) file_get_contents(JEM_TEST_ROOT . '/jem.xml');
+
+        self::assertStringContainsString('use Joomla\\CMS\\Filesystem\\File;', $controller);
+        self::assertStringContainsString('use Joomla\\CMS\\Filesystem\\Folder;', $controller);
+        self::assertStringContainsString('Folder::create($directory)', $controller);
+        self::assertStringContainsString('File::write($path, $xmlSource)', $controller);
+        self::assertStringContainsString('File::delete($path)', $controller);
+        self::assertStringContainsString('<folder>import</folder>', $manifest);
+        self::assertFileExists(JEM_TEST_ROOT . '/media/import/index.html');
+    }
+
     public function testEventAndVenueImportsUseEntitySpecificTypeLists(): void
     {
         $view = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/view.html.php');
