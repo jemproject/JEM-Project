@@ -21,10 +21,10 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
         <php_minimum>8.3</php_minimum>
-        <sha256>bd27ad82421d77aac4254f21d7836e819d337c3048cf514a3fabe7ca33b76dd0</sha256>
-        <sha384>0c2ef70da2721254fbc9b612b5422a77dd48a81eec1f4d611e96ffc6bfa27d7cd0a495212a787fecd0187cbefa120a1b</sha384>
-        <sha512>b210cb90525633c29a346359a89ee4d92f1b3326e5f28f62b9063bd1093979a1f5fb344dd3a80b8cd630105ab31c364ee3c5b1e692580b3930c7912ab3bfabac</sha512>
-        <date>2026-07-18 07:00</date>
+        <sha256>21d86c3708d8b1f27d0e17ef1249fa6746e7c33f83c78f7ab2a81ad570b7f7ae</sha256>
+        <sha384>24294422b13d1b920b893adae354732dbf146f6a6848f72ea4903ba6ba899c3a086ca3fd65d787031815b451f6efb8eb</sha384>
+        <sha512>34815c4517571a8abae84704439c5658534a6c18f501b9cdfb3a33e2459278da2d28a408d5c0daf7ca6579829037b205152cc95f7c1086edf7efb9a1b85b3d4a</sha512>
+        <date>2026-07-21 10:00</date>
         <notes>Fixed duplicate JemHelper declarations that could cause fatal errors during upgrades. [Issue #2242](https://github.com/jemproject/JEM-Project/issues/2242);Updated Update Check to follow the Joomla administrator template colors. [Issue #2243](https://github.com/jemproject/JEM-Project/issues/2243);Restored upgrade support from JEM 4.4.x. [Issue #2247](https://github.com/jemproject/JEM-Project/issues/2247);Added validation for associated article title formats. [Issue #2248](https://github.com/jemproject/JEM-Project/issues/2248);Improved import security configuration and diagnostics. [Issue #2249](https://github.com/jemproject/JEM-Project/issues/2249);Expanded import and export workflows, profiles, venue data and map markers. [Issue #2250](https://github.com/jemproject/JEM-Project/issues/2250);Restored the hits column in the backend events list. [Issue #2251](https://github.com/jemproject/JEM-Project/issues/2251);Added attachment download statistics and event visit dates. [Issue #2252](https://github.com/jemproject/JEM-Project/issues/2252);Fixed Nominatim requests and isolated event and venue parameters. [Commit f199043](https://github.com/jemproject/JEM-Project/commit/f199043cd226d70f95b502d5778af4e3b20a3a16);Corrected the "Show my location" wording. [Commit 0a26eef](https://github.com/jemproject/JEM-Project/commit/0a26eef790b7f1b32007cc1da02752b0212ee10f)</notes>
         <changes>JEM 5.0.1 beta 1 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
     </update>
