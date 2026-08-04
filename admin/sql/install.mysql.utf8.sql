@@ -5,6 +5,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `enddates` date NULL DEFAULT NULL,
     `times` time NULL DEFAULT NULL,
     `endtimes` time NULL DEFAULT NULL,
+    `timezone_mode` varchar(10) NOT NULL DEFAULT 'joomla',
+    `timezone` varchar(64) NOT NULL DEFAULT '',
+    `start_utc` datetime NULL DEFAULT NULL,
+    `end_utc` datetime NULL DEFAULT NULL,
     `title` varchar(255) NOT NULL DEFAULT '',
     `alias` varchar(255) NOT NULL DEFAULT '',
     `created_by` int(11) unsigned NOT NULL DEFAULT '0',
@@ -80,7 +84,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
     KEY `idx_article` (`article_id`),
-    KEY `idx_type` (`type_id`)
+    KEY `idx_type` (`type_id`),
+    KEY `idx_start_utc` (`start_utc`),
+    KEY `idx_end_utc` (`end_utc`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
@@ -97,6 +103,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `capacity` int(10) unsigned NOT NULL DEFAULT '0',
     `state` varchar(50) DEFAULT NULL,
     `country` varchar(2) DEFAULT NULL,
+    `timezone` varchar(64) NOT NULL DEFAULT '',
     `email` varchar(254) NOT NULL DEFAULT '',
     `phone` varchar(50) NOT NULL DEFAULT '',
     `mobile` varchar(50) NOT NULL DEFAULT '',
@@ -493,6 +500,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('attewidth', '10%'),
 ('weekdaystart', '1'),
 ('ical_tz', '1'),
+('event_timezone_default', 'joomla'),
 ('attachments_path', 'media/com_jem/attachments'),
 ('attachments_maxsize', '1000'),
 ('attachments_types', 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz'),

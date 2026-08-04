@@ -875,6 +875,10 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

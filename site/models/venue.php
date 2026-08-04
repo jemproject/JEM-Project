@@ -192,7 +192,7 @@ class JemModelVenue extends JemModelEventslist
 
         $query->select('v.id, v.venue, v.published, v.city, v.district, v.level, v.capacity, v.state, v.url, v.email, v.phone, v.mobile, v.street, v.custom1, v.custom2, v.custom3, v.custom4, v.custom5, '.
                        ' v.custom6, v.custom7, v.custom8, v.custom9, v.custom10, v.locimage, v.meta_keywords, v.meta_description, v.access, '.
-                       ' v.created, v.created_by, v.locdescription, v.country, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
+                       ' v.created, v.created_by, v.locdescription, v.country, v.timezone, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
                        ' v.attribs, '.
                        ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug');
         $query->from($db->quoteName('#__jem_venues', 'v'));

@@ -1057,6 +1057,7 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                             <li>
                                 <div class="label-form">
                                     <div class="control-group">

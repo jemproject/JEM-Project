@@ -278,7 +278,7 @@ class JemController extends BaseController
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                             <?php
                             echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                             ?>
                         </a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
@@ -294,8 +294,7 @@ class JemController extends BaseController
                         <?php
                         echo JemOutput::formatShortDateTime($row->dates, $row->times,
                             $row->enddates, $row->endtimes, $jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                            $row->enddates, $row->endtimes);
+                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                         ?>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
@@ -313,7 +312,7 @@ class JemController extends BaseController
                             <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                             <?php
                             echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                             ?>
                         </div>
                     <?php endif; ?>

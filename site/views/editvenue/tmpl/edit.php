@@ -1001,6 +1001,7 @@ Text::script('JCANCEL');
                     <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <li class="jem-venue-geocode-actions">
                         <label>&nbsp;</label>
                         <div class="jem-geocode-toolbar">

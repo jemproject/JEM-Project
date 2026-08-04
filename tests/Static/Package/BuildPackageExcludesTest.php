@@ -46,12 +46,24 @@ final class BuildPackageExcludesTest extends TestCase
             'old*/**',
             'composer.json',
             'composer.lock',
+            'documentation/**',
             'phpunit.xml',
             'phpunit.xml.dist',
             'phpunit.progress.xml.dist',
         ) as $pattern) {
             self::assertContains($pattern, $excluded, $pattern . ' must not be packaged in com_jem.zip.');
         }
+    }
+
+    public function testPhpPackageBuilderExcludesDocumentationDirectory(): void
+    {
+        $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');
+
+        self::assertStringContainsString(
+            '|documentation|',
+            $builder,
+            'The PHP package builder must not include source documentation in com_jem.zip.'
+        );
     }
 
     public function testBuildConfigIsLocalOnlyAndNotCommitted(): void

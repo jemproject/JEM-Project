@@ -77,13 +77,14 @@ if ($Remember == 1) {
     }
 }
 
-# Set today
-$config      = Factory::getConfig();
-$tzoffset    = $config->get('config.offset');
-$time        = time() + (($tzoffset + $Time_offset) * 60 * 60);
-$today_month = date('m', $time);
-$today_year  = date('Y', $time);
-$today       = date('j', $time);
+# Set today in Joomla's timezone, then apply the module's optional hour offset.
+$calendarNow = new DateTimeImmutable('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
+if ((int) $Time_offset !== 0) {
+    $calendarNow = $calendarNow->modify(sprintf('%+d hours', (int) $Time_offset));
+}
+$today_month = $calendarNow->format('m');
+$today_year  = $calendarNow->format('Y');
+$today       = $calendarNow->format('j');
 
 if ($req_month == 0) { $req_month = $today_month; }
 if ($req_year  == 0) { $req_year  = $today_year;  }

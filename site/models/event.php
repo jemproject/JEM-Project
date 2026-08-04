@@ -88,11 +88,11 @@ class JemModelEvent extends ItemModel
                     $this->getState('item.select',
                         'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, a.contactid,' .
                         'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
-                        'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
+                        'a.created, a.created_by, a.published, a.publish_up, a.publish_down, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id, a.type_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.type_id'));
                 $query->from('#__jem_events AS a');
 
                 # Author
@@ -106,7 +106,7 @@ class JemModelEvent extends ItemModel
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                     'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
                 # Join over the category tables
@@ -247,8 +247,8 @@ class JemModelEvent extends ItemModel
 
                 # Compute selected asset permissions.
                 $access_edit = $user->can('edit', 'event', $data->id, $data->created_by);
-                $access_view = (($data->published == 1) || ($data->published == 2) ||          // published and archived event
-                    (($data->published == 0) && $access_edit) ||                   // unpublished for editors,
+                $access_view = (JemHelper::isEventPublishedNow($data) || ($data->published == 2) || // active and archived event
+                    ((in_array((int) $data->published, array(0, 1), true)) && $access_edit) || // unpublished/scheduled for editors,
                     $user->can('publish', 'event', $data->id, $data->created_by)); // all for publishers
 
                 $data->params->set('access-edit', $access_edit);
@@ -411,11 +411,11 @@ class JemModelEvent extends ItemModel
                 $this->getState('item.select',
                     'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
-                    'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
+                    'a.created, a.created_by, a.published, a.publish_up, a.publish_down, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -437,7 +437,7 @@ class JemModelEvent extends ItemModel
                 'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                 'l.attribs AS venue_attribs, ' .
                 'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
+                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id');
             $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
             # Join over the category tables
@@ -529,8 +529,8 @@ class JemModelEvent extends ItemModel
 
             # Compute selected asset permissions.
             $access_edit = $user->can('edit', 'event', $data[0]->id, $data[0]->created_by);
-            $access_view = (($data[0]->published == 1) || ($data[0]->published == 2) ||          // published and archived event
-                (($data[0]->published == 0) && $access_edit) ||                   // unpublished for editors,
+            $access_view = (JemHelper::isEventPublishedNow($data[0]) || ($data[0]->published == 2) || // active and archived event
+                ((in_array((int) $data[0]->published, array(0, 1), true)) && $access_edit) || // unpublished/scheduled for editors,
                 $user->can('publish', 'event', $data[0]->id, $data[0]->created_by)); // all for publishers
 
             $data[0]->params->set('access-edit', $access_edit);

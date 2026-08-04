@@ -17,7 +17,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Factory;
 
 JemHelper::loadModuleStyleSheet('mod_jem_cal', 'mod_jem_cal_grid');
 
@@ -153,13 +152,9 @@ if ($day_name_length) {
 
 $calendar .= '</ul><ul class="mod_jemcalq_grid days">';
 
-# Today
-$config    = Factory::getConfig();
-$tzoffset  = $config->get('config.offset');
-$time      = time() + (($tzoffset + $Time_offset) * 60 * 60); //25/2/08 Change for v 0.6 to incorporate server offset into time;
-$today     = date('j', $time);
-$currmonth = date('m', $time);
-$curryear  = date('Y', $time);
+# Today was calculated by the module in Joomla's timezone.
+$currmonth = $today_month;
+$curryear  = $today_year;
 
 # Switch off tooltips if neighter title nor text should be shown
 if (($Show_Tooltips_Title == 0) && ($tooltips_max_events === '0')) {

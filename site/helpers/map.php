@@ -537,11 +537,7 @@ class JemMapHelper
 
     private static function applyPublishWindow($query, $eventAlias)
     {
-        $db = Factory::getDbo();
-        $now = Factory::getDate()->toSql();
-
-        $query->where($db->quoteName($eventAlias . '.publish_up') . ' <= ' . $db->quote($now));
-        $query->where('(' . $db->quoteName($eventAlias . '.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName($eventAlias . '.publish_down') . ' IS NULL)');
+        $query->where(\JemHelper::getEventPublicationWhere($eventAlias, false));
     }
 
     private static function accessList(array $levels, $lockedLevels = '["1"]')

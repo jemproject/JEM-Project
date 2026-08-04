@@ -1008,6 +1008,8 @@ Text::script('JCANCEL');
                     <dd><?php echo $this->form->getInput('state'); ?></dd>
                     <dt><?php echo $this->form->getLabel('country'); ?></dt>
                     <dd><?php echo $this->form->getInput('country'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone'); ?></dd>
                     <dt><span aria-hidden="true">&nbsp;</span></dt>
                     <dd class="jem-venue-geocode-actions">
                         <div class="jem-geocode-toolbar">

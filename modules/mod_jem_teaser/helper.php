@@ -82,10 +82,12 @@ abstract class ModJemTeaserHelper
             $offset_minutes = $offset_hours * 60;
 
             $model->setState('filter.published', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = "(a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
+            $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes, 'a', true);
+            $cal_from .= ($type == 1)
+                ? ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')'
+                : ')';
         }
 
         # archived events only
@@ -100,9 +102,10 @@ abstract class ModJemTeaserHelper
             $offset_days = (int)round($offset_hours / 24);
 
             $model->setState('filter.published', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
+            $targetDate = $db->quote(JemHelper::getJoomlaDate($offset_days));
+            $cal_from = ' (a.dates <= ' . $targetDate . ' AND IFNULL(a.enddates,a.dates) >= ' . $targetDate . ')';
         }
 
         # featured
@@ -110,10 +113,10 @@ abstract class ModJemTeaserHelper
             $offset_minutes = $offset_hours * 60;
 
             $model->setState('filter.featured', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from  = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
+            $cal_from  = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+            $cal_from .= ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')';
         }
 
         $model->setState('filter.calendar_from', $cal_from);
@@ -331,7 +334,7 @@ abstract class ModJemTeaserHelper
             list($lists[$i]->date,
                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';

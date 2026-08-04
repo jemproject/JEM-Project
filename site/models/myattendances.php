@@ -242,7 +242,8 @@ class JemModelMyattendances extends BaseDatabaseModel
         //limit output so only future events the user attends will be shown
         // but also allow events without start date because they will be normally in the future too
         if ($params->get('filtermyregs')) {
-            $where[] = ' (a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL '.(int)$params->get('myregspast').' DAY) < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))';
+            $pastDate = $this->_db->Quote(JemHelper::getJoomlaDate(-(int) $params->get('myregspast')));
+            $where[] = ' (a.dates IS NULL OR ' . $pastDate . ' < (IF (a.enddates IS NOT NULL, a.enddates, a.dates)))';
         }
 
         // then if the user is attending the event

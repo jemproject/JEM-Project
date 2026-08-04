@@ -285,24 +285,25 @@ class JemViewEvent extends JemView
         $this->e_reg = $e_reg;
 
         $timeNow = time();
-        $this->dateRegistationFrom    = strtotime(($item->registra_from ?? ''));
-        $this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
-        $this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
+        $this->dateRegistationFrom    = JemHelper::getUtcTimestamp($item->registra_from ?? '');
+        $this->dateRegistationUntil   = JemHelper::getUtcTimestamp($item->registra_until ?? '');
+        $this->dateUnregistationUntil = JemHelper::getUtcTimestamp($item->unregistra_until ?? '');
         $this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && ($this->dateRegistationUntil? $timeNow < $this->dateRegistationUntil : 1))));
-        $this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_unreg_until ?? '') > strtotime('now'))));
+        $this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
 
         // Timecheck for registration
-        $now       = strtotime(date("Y-m-d"));
-        $date      = empty($item->dates) ? $now : strtotime($item->dates);
-        $enddate   = empty($item->enddates) ? $date : strtotime($item->enddates);
-        $timecheck = $now - $date; // on open date $timecheck is 0
+        $eventStart = JemHelper::getUtcTimestamp($item->start_utc ?? '');
+        $eventEnd   = JemHelper::getUtcTimestamp($item->end_utc ?? '');
+        $date       = empty($item->dates) || !$eventStart ? $timeNow : $eventStart;
+        $enddate    = !$eventEnd ? $date : $eventEnd;
+        $timecheck  = $timeNow - $date; // on open date $timecheck is 0
 
         // let's build the registration handling
         $formhandler = 0; // too late to unregister
 
         if (is_object($registration)){
             if($registration->status != 0) { // is the user already registered at the event
-                if ($now <= $enddate) { // allows registration changes on unfinished events
+                if ($timeNow <= $enddate) { // allows registration changes on unfinished events
                     $formhandler = 4;
                 }
             } else {

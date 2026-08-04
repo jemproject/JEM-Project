@@ -97,8 +97,8 @@ abstract class ModJemBannerHelper
         # create type dependent filter rules
         switch ($type) {
             case 1: # unfinished events
-                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), ' ', IFNULL(a.endtimes, '23:59:59'))) > $offset_minutes) ";
-                $cal_to   = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates, ' ', IFNULL(a.times, '00:00:00'))) < $max_minutes) " : '';
+                $cal_from = JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes);
+                $cal_to   = $max_minutes ? JemHelper::getEventDateTimeWhere('start', '<', $max_minutes) : '';
                 break;
 
             case 2: # archived events
@@ -107,7 +107,7 @@ abstract class ModJemBannerHelper
                 break;
 
             case 3: # running events (one day)
-                $target_date = "DATE_ADD(CURDATE(), INTERVAL $offset_days DAY)";
+                $target_date = $db->quote(JemHelper::getJoomlaDate($offset_days));
                 $cal_from = " (a.dates <= $target_date AND IFNULL(a.enddates, a.dates) >= $target_date) ";
                 $cal_to = "";
                 break;
@@ -121,13 +121,13 @@ abstract class ModJemBannerHelper
             //        # fall through
             case 0: # upcoming events
             default:
-                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-                $cal_to = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes) " : '';
+                $cal_from = JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+                $cal_to = $max_minutes ? JemHelper::getEventDateTimeWhere('start', '<', $max_minutes) : '';
                 break;
         }
 
         $model->setState('filter.published', $published);
-        $model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
+        $model->setState('filter.orderby', array('a.start_utc '.$orderdir, 'a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
         if (!empty($cal_from)) {
             $model->setState('filter.calendar_from', $cal_from);
         }
@@ -286,7 +286,7 @@ abstract class ModJemBannerHelper
             list($lists[$i]->date,
                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = '';

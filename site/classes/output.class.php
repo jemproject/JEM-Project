@@ -1913,10 +1913,10 @@ static public function lightbox() {
         }
     }
 
-    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true, $event = null)
     {
         if (is_array($dateStart)) {
-            foreach (array('timeStart','dateEnd','timeEnd','showTime') as $param) {
+            foreach (array('timeStart','dateEnd','timeEnd','showTime','event') as $param) {
                 if (isset($dateStart[$param])) {
                     $$param = $dateStart[$param];
                 }
@@ -1927,12 +1927,18 @@ static public function lightbox() {
         $output  = '';
         $formatD = 'Y-m-d';
         $formatT = 'H:i';
+        $timeZoneName = JemHelper::getEventTimeZoneName($event ?: (object) array('timezone_mode' => 'joomla'));
+        $timeZone = new \DateTimeZone($timeZoneName);
 
         if (JemHelper::isValidDate($dateStart)) {
             $content = self::formatdate($dateStart, $formatD);
 
             if ($showTime && $timeStart) {
-                $content .= 'T'.self::formattime($timeStart, $formatT, false);
+                try {
+                    $content = (new \DateTimeImmutable($dateStart . ' ' . $timeStart, $timeZone))->format('Y-m-d\TH:iP');
+                } catch (\Exception $e) {
+                    $content .= 'T'.self::formattime($timeStart, $formatT, false);
+                }
             }
             $output .= '<meta itemprop="startDate" content="'.$content.'" />';
 
@@ -1940,7 +1946,11 @@ static public function lightbox() {
                 $content = self::formatdate($dateEnd, $formatD);
 
                 if ($showTime && $timeEnd) {
-                    $content .= 'T'.self::formattime($timeEnd, $formatT, false);
+                    try {
+                        $content = (new \DateTimeImmutable($dateEnd . ' ' . $timeEnd, $timeZone))->format('Y-m-d\TH:iP');
+                    } catch (\Exception $e) {
+                        $content .= 'T'.self::formattime($timeEnd, $formatT, false);
+                    }
                 }
                 $output .= '<meta itemprop="endDate" content="'.$content.'" />';
             }

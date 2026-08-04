@@ -96,6 +96,16 @@
             <option value="0">COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
             <option value="1">COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
         </field>
+        <field name="event_timezone_default" type="list"
+            label="COM_JEM_SETTINGS_EVENT_TIMEZONE_DEFAULT"
+            description="COM_JEM_SETTINGS_EVENT_TIMEZONE_DEFAULT_DESC"
+            class="inputbox form-select"
+            default="joomla"
+            required="true"
+        >
+            <option value="joomla">COM_JEM_EVENT_TIMEZONE_MODE_JOOMLA</option>
+            <option value="venue">COM_JEM_EVENT_TIMEZONE_MODE_VENUE</option>
+        </field>
         <field name="weekdaystart" type="list"
             label="COM_JEM_SETTINGS_SELECTFIRSTWEEKDAY"
             description="COM_JEM_SETTINGS_SELECTFIRSTWEEKDAY_DESC"

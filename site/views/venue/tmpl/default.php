@@ -363,6 +363,11 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapEmbedUrl, $venue
             </dd>
             <?php endif; ?>
 
+            <?php if ($this->venue->timezone) : ?>
+            <dt class="venue_timezone"><?php echo Text::_('COM_JEM_VENUE_TIMEZONE'); ?>:</dt>
+            <dd class="venue_timezone"><?php echo $this->escape($this->venue->timezone); ?></dd>
+            <?php endif; ?>
+
             <?php if ($this->venue->email) : ?>
             <dt class="venue_email"><?php echo Text::_('COM_JEM_VENUE_EMAIL'); ?>:</dt>
             <dd class="venue_email" itemprop="email">

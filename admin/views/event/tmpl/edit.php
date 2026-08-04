@@ -505,6 +505,8 @@ $this->document->addStyleDeclaration('
                     <li><div class="label-form"><?php echo $this->form->renderfield('enddates'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('times'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('timezone_mode'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                     <?php if($this->jemsettings->defaultCategory && empty($item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

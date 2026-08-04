@@ -235,6 +235,9 @@ class JemModelEditevent extends JemModelEvent
             $catid = (int) $this->getState('event.catid');
             $locid = (int) $this->getState('event.locid');
             $date  = $this->getState('event.date');
+            $value->timezone_mode = in_array(($jemsettings->event_timezone_default ?? 'joomla'), array('joomla', 'venue'), true)
+                ? $jemsettings->event_timezone_default
+                : 'joomla';
 
             if (empty($value->catid) && !empty($catid)) {
                 $value->catid = $catid;

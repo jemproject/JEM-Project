@@ -117,6 +117,25 @@
             description="COM_JEM_ENDTIME_DESC"
             required="false"
         />
+        <field name="timezone_mode" type="list"
+            class="inputbox form-select"
+            label="COM_JEM_EVENT_TIMEZONE_MODE"
+            description="COM_JEM_EVENT_TIMEZONE_MODE_DESC"
+            default="joomla"
+            filter="cmd"
+        >
+            <option value="joomla">COM_JEM_EVENT_TIMEZONE_MODE_JOOMLA</option>
+            <option value="venue">COM_JEM_EVENT_TIMEZONE_MODE_VENUE</option>
+            <option value="custom">COM_JEM_EVENT_TIMEZONE_MODE_CUSTOM</option>
+        </field>
+        <field name="timezone" type="eventtimezone"
+            class="inputbox form-select"
+            label="COM_JEM_EVENT_TIMEZONE"
+            description="COM_JEM_EVENT_TIMEZONE_DESC"
+            default=""
+            filter="string"
+            showon="timezone_mode:custom"
+        />
         <field name="cats" type="catoptions"
             multiple="true"
             class="inputbox required form-select"

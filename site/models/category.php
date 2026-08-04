@@ -215,10 +215,10 @@ class JemModelCategory extends JemModelEventslist
 
             $where_pub = $this->_getPublishWhere('i');
             if (!empty($where_pub)) {
-                $options['published_where'] = '(' . implode(' OR ', $where_pub) . ')';
+                $options['published_where'] = '(' . implode(' OR ', $where_pub) . ') AND (' . JemHelper::getEventPublicationWhere('i', false) . ')';
             } else {
                 // something wrong - fallback to published events
-                $options['published_where'] = 'i.published = 1';
+                $options['published_where'] = JemHelper::getEventPublicationWhere('i');
             }
 
             $catId = $this->getState('category.id', 'root');

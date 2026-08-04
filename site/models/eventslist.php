@@ -502,7 +502,7 @@ class JemModelEventslist extends ListModel
         $query->select(
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
-                'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.online_meeting_url,a.online_meeting_label,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
+                'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.online_meeting_url,a.online_meeting_label,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.times,a.title,a.event_status,a.ticket_availability,a.timezone_mode,a.timezone,a.start_utc,a.end_utc,a.unregistra,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
                 'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.version,a.type_id'
             )
         );
@@ -519,7 +519,7 @@ class JemModelEventslist extends ListModel
         $query->select(array('l.alias AS l_alias', 'l.color AS venuecolor', 'l.checked_out AS l_checked_out', 'l.checked_out_time AS l_checked_out_time', 'l.city', 'l.country', 'l.created AS l_created', 'l.created_by AS l_createdby'));
         $query->select(array('l.custom1 AS l_custom1', 'l.custom2 AS l_custom2', 'l.custom3 AS l_custom3', 'l.custom4 AS l_custom4', 'l.custom5 AS l_custom5', 'l.custom6 AS l_custom6', 'l.custom7 AS l_custom7', 'l.custom8 AS l_custom8', 'l.custom9 AS l_custom9', 'l.custom10 AS l_custom10'));
         $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
-        $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.version AS l_version'));
+        $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.timezone AS venue_timezone', 'l.version AS l_version'));
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
         
         
@@ -660,19 +660,18 @@ class JemModelEventslist extends ListModel
         ####################
 
         # Filter by published state.
-        $where_pub    = $this->_getPublishWhere();
-        $currentDate  = (new Date('now', $app->get('offset')))->format($db->getDateFormat(), true);
+        $where_pub = $this->_getPublishWhere();
 
         if (!empty($where_pub)) {
             if ($this->getState('filter.published') == 2) {
                 $ispublished = implode(' OR ', $where_pub);
             } else {
-                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND (a.publish_up <= ' . $db->quote($currentDate) . ' OR a.publish_up IS null) AND (a.publish_down > ' . $db->quote($currentDate) . ' OR a.publish_down IS null)';
+                $ispublished = '(' . implode(' OR ', $where_pub) . ') AND (' . JemHelper::getEventPublicationWhere('a', false) . ')';
             }
             $query->where($ispublished);
         } else {
             // something wrong - fallback to published events
-            $query->where('a.published = 1');
+            $query->where(JemHelper::getEventPublicationWhere('a'));
         }
 
         #####################
@@ -1194,22 +1193,27 @@ class JemModelEventslist extends ListModel
         }
 
         $startdayonly = $this->getState('filter.calendar_startdayonly');
+        $rangeStart   = (string) $this->getState('filter.date.from', '');
+        $rangeEnd     = (string) $this->getState('filter.date.to', '');
 
         if (!$startdayonly) {
             foreach ($items as $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
-                    $startTimestamp = strtotime((string) $item->dates);
-                    $endTimestamp   = strtotime((string) $item->enddates);
-
-                    if (!$startTimestamp || !$endTimestamp || $endTimestamp <= $startTimestamp) {
+                    try {
+                        $startDate = new DateTimeImmutable((string) $item->dates);
+                        $endDate   = new DateTimeImmutable((string) $item->enddates);
+                    } catch (Exception $e) {
                         continue;
                     }
 
-                    $day        = isset($item->start_day) ? (int) $item->start_day : (int) date('j', $startTimestamp);
-                    $startMonth = isset($item->start_month) ? (int) $item->start_month : (int) date('n', $startTimestamp);
-                    $startYear  = isset($item->start_year) ? (int) $item->start_year : (int) date('Y', $startTimestamp);
-                    $datesdiff  = isset($item->datesdiff) ? (int) $item->datesdiff : (int) floor(($endTimestamp - $startTimestamp) / 86400);
+                    if ($endDate <= $startDate) {
+                        continue;
+                    }
+
+                    $datesdiff = isset($item->datesdiff)
+                        ? (int) $item->datesdiff
+                        : (int) $startDate->diff($endDate)->days;
                     $multi = array();
 
                     # it's multiday regardless if other days are on next month
@@ -1221,13 +1225,13 @@ class JemModelEventslist extends ListModel
                     for ($counter = 0; $counter <= $datesdiff - 1; $counter++)
                     {
                         # next day:
-                        $day++;
-                        $nextday = mktime(0, 0, 0, $startMonth, $day, $startYear);
+                        $nextday = $startDate->modify('+' . ($counter + 1) . ' days')->format('Y-m-d');
 
-                        # ensure we only generate days of current month in this loop
-                        if (date('m', $this->_date) == date('m', $nextday)) {
+                        // Generate only days inside the calendar's selected range.
+                        if (($rangeStart === '' || $nextday >= $rangeStart)
+                            && ($rangeEnd === '' || $nextday <= $rangeEnd)) {
                             $multi[$counter] = clone $item;
-                            $multi[$counter]->dates = date('Y-m-d', $nextday);
+                            $multi[$counter]->dates = $nextday;
 
                             if ($multi[$counter]->dates < $item->enddates) {
                                 $multi[$counter]->multi = 'middle';

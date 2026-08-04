@@ -251,8 +251,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                  $row->enddates, $row->endtimes);
+                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
               ?>
               </a>
               <?php echo JemOutput::recurrenceicon($row); ?>
@@ -267,8 +266,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                  $row->enddates, $row->endtimes);
+                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
               ?>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
@@ -286,8 +284,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
                   <?php
                     echo JemOutput::formatShortDateTime($row->dates, $row->times,
                       $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                      $row->enddates, $row->endtimes);
+                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                   ?>
                 </div>
               <?php endif; ?>

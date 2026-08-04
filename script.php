@@ -315,6 +315,200 @@ class com_jemInstallerScript
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
             $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
+            $this->repair501SchemaFallback();
+            $this->rebuildEventUtcDates();
+        }
+    }
+
+    /**
+     * Secondary repair for a partially restored JEM 5.0.1 schema.
+     *
+     * Joomla owns the normal schema lifecycle through jem.xml,
+     * install.mysql.utf8.sql and the versioned update SQL files. This fallback
+     * only restores missing 5.0.1 fields when Joomla already has that schema
+     * version recorded and therefore does not execute 5.0.1.sql again.
+     *
+     * @return void
+     */
+    private function repair501SchemaFallback()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $existingTables = $db->getTableList();
+        $definitionsByTable = array(
+            '#__jem_events' => array(
+                'timezone_mode' => "VARCHAR(10) NOT NULL DEFAULT 'joomla' AFTER `endtimes`",
+                'timezone'      => "VARCHAR(64) NOT NULL DEFAULT '' AFTER `timezone_mode`",
+                'start_utc'     => "DATETIME NULL DEFAULT NULL AFTER `timezone`",
+                'end_utc'       => "DATETIME NULL DEFAULT NULL AFTER `start_utc`",
+                'last_visit'    => "DATETIME NULL DEFAULT NULL AFTER `hits`",
+            ),
+            '#__jem_venues' => array(
+                'district' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `city`",
+                'level'    => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `district`",
+                'capacity' => "INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `level`",
+                'timezone' => "VARCHAR(64) NOT NULL DEFAULT '' AFTER `country`",
+                'email'    => "VARCHAR(254) NOT NULL DEFAULT '' AFTER `timezone`",
+                'phone'    => "VARCHAR(50) NOT NULL DEFAULT '' AFTER `email`",
+                'mobile'   => "VARCHAR(50) NOT NULL DEFAULT '' AFTER `phone`",
+            ),
+            '#__jem_attachments' => array(
+                'downloads'     => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `created_by`",
+                'last_download' => "DATETIME NULL DEFAULT NULL AFTER `downloads`",
+            ),
+        );
+
+        foreach ($definitionsByTable as $table => $definitions) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $existingTables, true)) {
+                continue;
+            }
+
+            $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+            foreach ($definitions as $column => $definition) {
+                if (!isset($columns[$column])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName($table)
+                        . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                    );
+                    $db->execute();
+                }
+            }
+        }
+
+        $eventTable = $db->replacePrefix('#__jem_events');
+        if (in_array($eventTable, $existingTables, true)) {
+            $keys = $db->getTableKeys($eventTable);
+            $keyNames = array();
+            foreach ((array) $keys as $name => $key) {
+                if (is_string($name)) {
+                    $keyNames[] = $name;
+                }
+                if (is_object($key)) {
+                    foreach (array('Key_name', 'key_name', 'name') as $property) {
+                        if (isset($key->$property)) {
+                            $keyNames[] = (string) $key->$property;
+                        }
+                    }
+                }
+            }
+            if (!in_array('idx_start_utc', $keyNames, true)) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events') . ' ADD INDEX ' . $db->quoteName('idx_start_utc') . ' (' . $db->quoteName('start_utc') . ')');
+                $db->execute();
+            }
+            if (!in_array('idx_end_utc', $keyNames, true)) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events') . ' ADD INDEX ' . $db->quoteName('idx_end_utc') . ' (' . $db->quoteName('end_utc') . ')');
+                $db->execute();
+            }
+        }
+
+        if (in_array($db->replacePrefix('#__jem_config'), $existingTables, true)) {
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_config'))
+                ->columns(array($db->quoteName('keyname'), $db->quoteName('value')))
+                ->values($db->quote('event_timezone_default') . ', ' . $db->quote('joomla'));
+            $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Backfill canonical UTC event boundaries after install or update.
+     *
+     * @return void
+     */
+    private function rebuildEventUtcDates()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $tables = $db->getTableList();
+
+        if (!in_array($db->replacePrefix('#__jem_events'), $tables, true)
+            || !in_array($db->replacePrefix('#__jem_venues'), $tables, true)) {
+            return;
+        }
+
+        $joomlaTimeZone = trim((string) Factory::getConfig()->get('offset', 'UTC'));
+        try {
+            new \DateTimeZone($joomlaTimeZone);
+        } catch (\Exception $e) {
+            $joomlaTimeZone = 'UTC';
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                'a.id', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes',
+                'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone',
+            ))
+            ->from($db->quoteName('#__jem_events', 'a'))
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'l') . ' ON ' . $db->quoteName('l.id') . ' = ' . $db->quoteName('a.locid'));
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $event) {
+            $startUtc = null;
+            $endUtc = null;
+
+            if (!empty($event->dates) && $event->dates !== '0000-00-00') {
+                $timeZoneName = $joomlaTimeZone;
+                if ($event->timezone_mode === 'custom' && $this->isValidTimeZone($event->timezone)) {
+                    $timeZoneName = $event->timezone;
+                } elseif ($event->timezone_mode === 'venue' && $this->isValidTimeZone($event->venue_timezone)) {
+                    $timeZoneName = $event->venue_timezone;
+                }
+
+                try {
+                    $timeZone = new \DateTimeZone($timeZoneName);
+                    $utc = new \DateTimeZone('UTC');
+                    $start = new \DateTimeImmutable(
+                        $event->dates . ' ' . ($event->times ?: '00:00:00'),
+                        $timeZone
+                    );
+                    $end = new \DateTimeImmutable(
+                        ($event->enddates ?: $event->dates) . ' ' . ($event->endtimes ?: '23:59:59'),
+                        $timeZone
+                    );
+                    $startUtc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
+                    $endUtc = $end->setTimezone($utc)->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    $startUtc = null;
+                    $endUtc = null;
+                }
+            }
+
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('start_utc') . ' = ' . ($startUtc === null ? 'NULL' : $db->quote($startUtc)))
+                ->set($db->quoteName('end_utc') . ' = ' . ($endUtc === null ? 'NULL' : $db->quote($endUtc)))
+                ->where($db->quoteName('id') . ' = ' . (int) $event->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Validate a timezone identifier during installation.
+     *
+     * @param   string  $timeZone  Timezone identifier.
+     *
+     * @return boolean
+     */
+    private function isValidTimeZone($timeZone)
+    {
+        $timeZone = trim((string) $timeZone);
+
+        if ($timeZone === '') {
+            return false;
+        }
+
+        if (!in_array($timeZone, \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC), true)) {
+            return false;
+        }
+
+        try {
+            new \DateTimeZone($timeZone);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 

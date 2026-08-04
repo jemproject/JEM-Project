@@ -73,6 +73,8 @@ class JemModelSampledata extends BaseDatabaseModel
             return false;
         }
 
+        $buffer = $this->prepareDateExpressions($buffer);
+
         // extract queries out of sql file
         $queries = $this->splitSql($buffer);
 
@@ -84,6 +86,9 @@ class JemModelSampledata extends BaseDatabaseModel
                 $this->_db->execute();
             }
         }
+
+        // Populate the derived UTC boundaries after venues and timezone modes exist.
+        $this->rebuildEventUtcDates();
 
         // Assign the current manager as creator for all sample records.
         $this->assignCurrentUserId();
@@ -116,6 +121,109 @@ class JemModelSampledata extends BaseDatabaseModel
         $this->ensureTypesSchema();
         $this->ensureAttachmentsSchema();
         $this->ensureLinksSchema();
+        $this->ensureTimezoneSchema();
+    }
+
+    /**
+     * Ensure the timezone columns used by the sample data exist on upgraded sites.
+     *
+     * @return void
+     */
+    private function ensureTimezoneSchema()
+    {
+        $eventColumns = $this->getTableColumns('#__jem_events');
+
+        if (!empty($eventColumns)) {
+            $eventDefinitions = array(
+                'timezone_mode' => "`timezone_mode` VARCHAR(10) NOT NULL DEFAULT 'joomla' AFTER `endtimes`",
+                'timezone'      => "`timezone` VARCHAR(64) NOT NULL DEFAULT '' AFTER `timezone_mode`",
+                'start_utc'     => "`start_utc` DATETIME NULL DEFAULT NULL AFTER `timezone`",
+                'end_utc'       => "`end_utc` DATETIME NULL DEFAULT NULL AFTER `start_utc`",
+            );
+
+            foreach ($eventDefinitions as $name => $definition) {
+                if (!isset($eventColumns[$name])) {
+                    $this->executeSchemaQuery("ALTER TABLE `#__jem_events` ADD COLUMN " . $definition);
+                    $eventColumns[$name] = true;
+                }
+            }
+        }
+
+        $venueColumns = $this->getTableColumns('#__jem_venues');
+
+        if (!empty($venueColumns) && !isset($venueColumns['timezone'])) {
+            $this->executeSchemaQuery(
+                "ALTER TABLE `#__jem_venues` ADD COLUMN `timezone` VARCHAR(64) NOT NULL DEFAULT '' AFTER `country`"
+            );
+        }
+    }
+
+    /**
+     * Resolve dynamic SQL dates without depending on the database server timezone.
+     *
+     * CURDATE() represents the Joomla calendar date used for local event dates.
+     * NOW() represents a UTC control timestamp used for publication, creation,
+     * registration and attachment metadata.
+     *
+     * @param  string  $sql
+     * @return string
+     */
+    private function prepareDateExpressions($sql)
+    {
+        return str_replace(
+            array('CURDATE()', 'NOW()'),
+            array(
+                $this->_db->quote(JemHelper::getJoomlaDate()),
+                $this->_db->quote(Factory::getDate()->toSql()),
+            ),
+            $sql
+        );
+    }
+
+    /**
+     * Calculate canonical UTC start and end values for every sample event.
+     *
+     * @return void
+     */
+    private function rebuildEventUtcDates()
+    {
+        $query = $this->_db->getQuery(true)
+            ->select(array(
+                'a.id',
+                'a.locid',
+                'a.dates',
+                'a.enddates',
+                'a.times',
+                'a.endtimes',
+                'a.timezone_mode',
+                'a.timezone',
+                'v.timezone AS venue_timezone',
+            ))
+            ->from($this->_db->quoteName('#__jem_events', 'a'))
+            ->join(
+                'LEFT',
+                $this->_db->quoteName('#__jem_venues', 'v')
+                . ' ON ' . $this->_db->quoteName('v.id') . ' = ' . $this->_db->quoteName('a.locid')
+            );
+        $this->_db->setQuery($query);
+
+        foreach ((array) $this->_db->loadObjectList() as $event) {
+            JemHelper::setEventUtcDates($event, $event->venue_timezone);
+
+            $update = $this->_db->getQuery(true)
+                ->update($this->_db->quoteName('#__jem_events'))
+                ->set(
+                    $this->_db->quoteName('start_utc') . ' = '
+                    . ($event->start_utc === null ? 'NULL' : $this->_db->quote($event->start_utc))
+                )
+                ->set(
+                    $this->_db->quoteName('end_utc') . ' = '
+                    . ($event->end_utc === null ? 'NULL' : $this->_db->quote($event->end_utc))
+                )
+                ->where($this->_db->quoteName('id') . ' = ' . (int) $event->id);
+            $this->_db->setQuery($update);
+            $this->_db->execute();
+        }
     }
 
     /**

@@ -456,6 +456,31 @@ class JemAttachment
             throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
+        // A direct frontend download must not bypass the event's publication
+        // window. Event editors and publishers retain preview access.
+        if (!Factory::getApplication()->isClient('administrator')
+            && preg_match('/^event(\d+)$/i', (string) $res->object, $matches)) {
+            $eventId = (int) $matches[1];
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'created_by', 'published', 'publish_up', 'publish_down')))
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('id') . ' = ' . $eventId);
+            $db->setQuery($query);
+            $event = $db->loadObject();
+
+            if (!$event) {
+                throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+            }
+
+            $canPreview = $user->can('edit', 'event', $eventId, (int) $event->created_by)
+                || $user->can('publish', 'event', $eventId, (int) $event->created_by);
+            $isVisible = JemHelper::isEventPublishedNow($event) || (int) $event->published === 2;
+
+            if (!$isVisible && !$canPreview) {
+                throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+            }
+        }
+
         $path = self::getSafeAttachmentPath($res->object, $res->file);
         if (!$path) {
             throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);

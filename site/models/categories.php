@@ -405,7 +405,6 @@ class JemModelCategories extends BaseDatabaseModel
         $user   = JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
         $task   = Factory::getApplication()->input->getCmd('task', '');
-        $currentDate = Factory::getDate()->format('Y-m-d H:i:s');
         $jemsettings = JemHelper::config();
 
         $id = (int)$id;
@@ -414,7 +413,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2 AND rel.catid = '.$id;
         } else {
-            $ispublished = 'a.published = 1 AND a.publish_up <= \'' . $currentDate . '\' AND (a.publish_down > \'' . $currentDate . '\' OR a.publish_down IS null)';
+            $ispublished = JemHelper::getEventPublicationWhere('a');
             $where = ' WHERE ' . $ispublished . ' AND rel.catid = '.$id;
         }
 
@@ -451,7 +450,7 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $query = 'SELECT a.*,'
-               . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.published AS l_published,'
+               . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.timezone AS venue_timezone, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
@@ -593,6 +592,9 @@ class JemModelCategories extends BaseDatabaseModel
                 $where_sub .= ' AND (' . implode(' OR ', $where_sub_or) . ')';
             }
         }
+        if ($task !== 'archive') {
+            $where_sub .= ' AND (' . JemHelper::getEventPublicationWhere('i', false) . ')';
+        }
         $where_sub .= ' AND c.id = cc.id';
 
         $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
@@ -695,7 +697,7 @@ class JemModelCategories extends BaseDatabaseModel
             if($task == 'archive') {
                 $query .= ' AND e.published = 2';
             } else {
-                $query .= ' AND e.published = 1';
+                $query .= ' AND ' . JemHelper::getEventPublicationWhere('e');
             }
         }
 

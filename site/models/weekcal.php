@@ -41,8 +41,9 @@ class JemModelWeekcal extends JemModelEventslist
         $startdayonly  = $params->get('show_only_start', false);
         $numberOfWeeks = $params->get('nrweeks', '1');
         $firstweekday  = $params->get('firstweekday', 1);
-        $year          = (int) $app->input->getInt('yearID', date('o'));
-        $week          = (int) $app->input->getInt('weekID', date('W'));
+        $now           = new DateTimeImmutable('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
+        $year          = (int) $app->input->getInt('yearID', (int) $now->format('o'));
+        $week          = (int) $app->input->getInt('weekID', (int) $now->format('W'));
 
         # params
         $this->setState('params', $params);
@@ -57,10 +58,7 @@ class JemModelWeekcal extends JemModelEventslist
 
         #only select events within specified dates. (chosen weeknrs)
 
-        $config = Factory::getConfig();
-        $offset = $config->get('offset');
-        date_default_timezone_set($offset);
-        $datetime = new DateTime();
+        $datetime = new DateTime('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
         $datetime->setISODate($year, $week, 1);
         if ((int) $firstweekday === 0) {
             $datetime->modify('-1 day');
@@ -141,7 +139,6 @@ class JemModelWeekcal extends JemModelEventslist
             foreach ($items as $i => $item)
             {
                 if (!is_null($item->enddates) && ($item->enddates != $item->dates)) {
-                    $day = $item->start_day;
                     $multi = array();
 
                     $item->multi = 'first';
@@ -152,12 +149,11 @@ class JemModelWeekcal extends JemModelEventslist
                     for ($counter = 0; $counter <= $item->datesdiff-1; $counter++)
                     {
                         # next day:
-                        $day++;
-                        $nextday = mktime(0, 0, 0, $item->start_month, $day, $item->start_year);
+                        $nextday = (new DateTimeImmutable($item->dates))->modify('+' . ($counter + 1) . ' days');
 
                         # generate days of current multi-day selection
                         $multi[$counter] = clone $item;
-                        $multi[$counter]->dates = date('Y-m-d', $nextday);
+                        $multi[$counter]->dates = $nextday->format('Y-m-d');
 
                         if ($multi[$counter]->dates < $item->enddates) {
                             $multi[$counter]->multi = 'middle';
@@ -192,15 +188,13 @@ class JemModelWeekcal extends JemModelEventslist
         $startdate = $this->getState('filter.date.from');
         $enddate   = $this->getState('filter.date.to');
         if (empty($startdate) || empty($enddate)) {
-            $config = Factory::getConfig();
-            $offset = $config->get('offset');
             $firstweekday  = $params->get('firstweekday', 1); // 1 = Monday, 0 = Sunday
             $numberOfWeeks = $params->get('nrweeks', '1');
-            $year          = (int) $app->input->getInt('yearID', date('o'));
-            $week          = (int) $app->input->getInt('weekID', date('W'));
+            $now           = new DateTimeImmutable('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
+            $year          = (int) $app->input->getInt('yearID', (int) $now->format('o'));
+            $week          = (int) $app->input->getInt('weekID', (int) $now->format('W'));
 
-            date_default_timezone_set($offset);
-            $datetime = new DateTime();
+            $datetime = new DateTime('now', new DateTimeZone(JemHelper::getJoomlaTimeZoneName()));
             $datetime->setISODate($year, $week, 1);
             if ((int) $firstweekday === 0) {
                 $datetime->modify('-1 day');
@@ -210,16 +204,12 @@ class JemModelWeekcal extends JemModelEventslist
             $enddate   = $datetime->format('Y-m-d');
         }
 
-        $check_startdate = strtotime($startdate);
-        $check_enddate   = strtotime($enddate);
-
         foreach ($items as $index => $item) {
             $date = $item->dates;
-            $date_timestamp = strtotime($date);
 
-            if ($date_timestamp > $check_enddate) {
+            if ($date > $enddate) {
                 unset ($items[$index]);
-            } elseif ($date_timestamp < $check_startdate) {
+            } elseif ($date < $startdate) {
                 unset ($items[$index]);
             }
         }

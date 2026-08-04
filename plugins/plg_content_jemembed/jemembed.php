@@ -401,12 +401,10 @@ class PlgContentJemembed extends CMSPlugin
         // Set type filters
         $type = isset($parameters['type']) ? $parameters['type'] : 'unfinished';
         $db = Factory::getDbo();
-        $timestamp = time();
-
         try {
             switch ($type) {
                 case 'today': // All events starting today.
-                    $to_date = date('Y-m-d', $timestamp);
+                    $to_date = JemHelper::getJoomlaDate();
                     $model->setState('filter.published', 1);
                     $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
                     $where = ' DATEDIFF (a.dates, "'. $to_date .'") = 0';
@@ -414,28 +412,21 @@ class PlgContentJemembed extends CMSPlugin
                     break;
                 default:
                 case 'unfinished': // All upcoming events, incl. today. (Default filter)
-                    $to_date = date('Y-m-d H:i:s', $timestamp);
                     $model->setState('filter.published', 1);
-                    $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
-                    $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
-                    $where = '(' . $full_end_datetime . ' > "' . $to_date . '")';
+                    $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC'));
+                    $where = JemHelper::getEventDateTimeWhere('end', '>');
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'upcoming': // All upcoming events, excl. today.
-                    $to_date = date('Y-m-d H:i:s', $timestamp);
                     $model->setState('filter.published', 1);
-                    $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
-                    $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
-                    $where = '(' . $full_start_datetime . ' > "' . $to_date . '")';
+                    $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC'));
+                    $where = JemHelper::getEventDateTimeWhere('start', '>');
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'ongoing': // All now ongoing events.
-                    $to_date = date('Y-m-d H:i:s', $timestamp);
                     $model->setState('filter.published', 1);
-                    $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC'));
-                    $full_start_datetime = 'CONCAT(a.dates, " ", COALESCE(a.times, "00:00:00"))';
-                    $full_end_datetime = 'CONCAT(COALESCE(a.enddates, a.dates), " ", COALESCE(a.endtimes, "23:59:59"))';
-                    $where = '(' . $full_start_datetime . ' <= "' . $to_date . '" AND ' . $full_end_datetime . ' >= "' . $to_date . '")';
+                    $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC'));
+                    $where = '(' . JemHelper::getEventDateTimeWhere('start', '<=') . ' AND ' . JemHelper::getEventDateTimeWhere('end', '>=') . ')';
                     $model->setState('filter.calendar_to', $where);
                     break;
                 case 'archived': // Archived events only.

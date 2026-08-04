@@ -137,6 +137,21 @@ class JemTableEvent extends Table
             $this->endtimes = null;
         }
 
+        $this->timezone_mode = isset($this->timezone_mode) ? trim((string) $this->timezone_mode) : 'joomla';
+        if (!in_array($this->timezone_mode, array('joomla', 'venue', 'custom'), true)) {
+            $this->timezone_mode = 'joomla';
+        }
+
+        $this->timezone = isset($this->timezone) ? trim(strip_tags((string) $this->timezone)) : '';
+        if ($this->timezone_mode === 'custom' && !JemHelper::isValidTimeZone($this->timezone)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_TIMEZONE'));
+            return false;
+        }
+
+        if ($this->timezone_mode !== 'custom') {
+            $this->timezone = '';
+        }
+
         $validEventStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
         if (empty($this->event_status) || !in_array($this->event_status, $validEventStatuses, true)) {
             $this->event_status = 'scheduled';
@@ -194,6 +209,8 @@ class JemTableEvent extends Table
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_END_BEFORE_START_DATES'));
             return false;
         }
+
+        JemHelper::setEventUtcDates($this);
 
         // Check created_by user
         $currentUser = Factory::getApplication()->getIdentity();

@@ -146,6 +146,15 @@
             description="COM_JEM_GLOBAL_FIELD_COUNTRY_DESC"
             class="select_country m-0"
         />
+        <field name="timezone" type="timezone"
+            label="COM_JEM_VENUE_TIMEZONE"
+            description="COM_JEM_VENUE_TIMEZONE_DESC"
+            class="inputbox form-select"
+            default=""
+            filter="string"
+        >
+            <option value="">COM_JEM_VENUE_TIMEZONE_JOOMLA</option>
+        </field>
         <field name="email" type="email"
             class="inputbox"
             size="40"

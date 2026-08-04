@@ -106,6 +106,315 @@ class JemHelper
     }
 
     /**
+     * Return Joomla's configured timezone as a valid PHP timezone identifier.
+     *
+     * @return string
+     */
+    static public function getJoomlaTimeZoneName()
+    {
+        $timeZone = trim((string) Factory::getConfig()->get('offset', 'UTC'));
+
+        try {
+            new \DateTimeZone($timeZone);
+        } catch (\Exception $e) {
+            $timeZone = 'UTC';
+        }
+
+        return $timeZone;
+    }
+
+    /**
+     * Return a Joomla-timezone calendar date.
+     *
+     * @param   integer  $offsetDays  Number of days relative to today.
+     *
+     * @return string
+     */
+    static public function getJoomlaDate($offsetDays = 0)
+    {
+        $date = new \DateTimeImmutable('now', new \DateTimeZone(self::getJoomlaTimeZoneName()));
+
+        if ((int) $offsetDays !== 0) {
+            $date = $date->modify(((int) $offsetDays > 0 ? '+' : '') . (int) $offsetDays . ' days');
+        }
+
+        return $date->format('Y-m-d');
+    }
+
+    /**
+     * Check whether a timezone can be used for event date calculations.
+     *
+     * @param   string  $timeZone  Timezone identifier.
+     *
+     * @return boolean
+     */
+    static public function isValidTimeZone($timeZone)
+    {
+        $timeZone = trim((string) $timeZone);
+
+        if ($timeZone === '') {
+            return false;
+        }
+
+        if (!in_array($timeZone, \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC), true)) {
+            return false;
+        }
+
+        try {
+            new \DateTimeZone($timeZone);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Resolve the authoritative timezone of an event.
+     *
+     * Existing events default to Joomla's timezone. Venue mode falls back to
+     * Joomla when no valid timezone is assigned to the selected venue.
+     *
+     * @param   object|array  $event          Event data.
+     * @param   string|null   $venueTimeZone  Known venue timezone, if available.
+     *
+     * @return string
+     */
+    static public function getEventTimeZoneName($event, $venueTimeZone = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            $event = new \stdClass();
+        }
+        $mode  = isset($event->timezone_mode) ? trim((string) $event->timezone_mode) : 'joomla';
+
+        if ($mode === 'custom') {
+            $customTimeZone = isset($event->timezone) ? trim((string) $event->timezone) : '';
+
+            if (self::isValidTimeZone($customTimeZone)) {
+                return $customTimeZone;
+            }
+        }
+
+        if ($mode === 'venue') {
+            if ($venueTimeZone === null && !empty($event->venue_timezone)) {
+                $venueTimeZone = $event->venue_timezone;
+            }
+
+            if ($venueTimeZone === null && !empty($event->locid)) {
+                $db = Factory::getContainer()->get('DatabaseDriver');
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('timezone'))
+                    ->from($db->quoteName('#__jem_venues'))
+                    ->where($db->quoteName('id') . ' = ' . (int) $event->locid);
+                $db->setQuery($query);
+                $venueTimeZone = $db->loadResult();
+            }
+
+            if (self::isValidTimeZone($venueTimeZone)) {
+                return trim((string) $venueTimeZone);
+            }
+        }
+
+        return self::getJoomlaTimeZoneName();
+    }
+
+    /**
+     * Calculate the canonical UTC start and end values for an event.
+     *
+     * The dates and times stored in the event remain local wall-clock values.
+     * These UTC columns are derived values used for reliable comparisons.
+     *
+     * @param   object  $event          Event table or data object.
+     * @param   string  $venueTimeZone  Known venue timezone, if available.
+     *
+     * @return void
+     */
+    static public function setEventUtcDates(&$event, $venueTimeZone = null)
+    {
+        $event->start_utc = null;
+        $event->end_utc   = null;
+
+        if (empty($event->dates) || !self::isValidDate($event->dates)) {
+            return;
+        }
+
+        $timeZoneName = self::getEventTimeZoneName($event, $venueTimeZone);
+        $timeZone     = new \DateTimeZone($timeZoneName);
+        $utc          = new \DateTimeZone('UTC');
+        $startTime    = empty($event->times) ? '00:00:00' : (string) $event->times;
+        $endDate      = !empty($event->enddates) ? (string) $event->enddates : (string) $event->dates;
+        $endTime      = empty($event->endtimes) ? '23:59:59' : (string) $event->endtimes;
+
+        try {
+            $start = new \DateTimeImmutable((string) $event->dates . ' ' . $startTime, $timeZone);
+            $end   = new \DateTimeImmutable($endDate . ' ' . $endTime, $timeZone);
+
+            $event->start_utc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
+            $event->end_utc   = $end->setTimezone($utc)->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            $event->start_utc = null;
+            $event->end_utc   = null;
+        }
+    }
+
+    /**
+     * Rebuild UTC values of all events that inherit a venue timezone.
+     *
+     * @param   integer  $venueId       Venue id.
+     * @param   string   $venueTimeZone Venue timezone.
+     *
+     * @return void
+     */
+    static public function refreshVenueEventUtcDates($venueId, $venueTimeZone = '')
+    {
+        $venueId = (int) $venueId;
+
+        if ($venueId <= 0) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('locid') . ' = ' . $venueId)
+            ->where($db->quoteName('timezone_mode') . ' = ' . $db->quote('venue'));
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $event) {
+            self::setEventUtcDates($event, $venueTimeZone);
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('start_utc') . ' = ' . ($event->start_utc === null ? 'NULL' : $db->quote($event->start_utc)))
+                ->set($db->quoteName('end_utc') . ' = ' . ($event->end_utc === null ? 'NULL' : $db->quote($event->end_utc)))
+                ->where($db->quoteName('id') . ' = ' . (int) $event->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Build the UTC publication-window condition for an event query.
+     *
+     * @param   string       $alias         Event table alias.
+     * @param   boolean      $includeState  Include the published state check.
+     * @param   string|null  $now           UTC SQL datetime, mainly for tests.
+     *
+     * @return string
+     */
+    static public function getEventPublicationWhere($alias = 'a', $includeState = true, $now = null)
+    {
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $now      = $now ?: Factory::getDate()->toSql();
+        $nullDate = $db->quote($db->getNullDate());
+        $prefix   = $includeState ? $alias . '.published = 1 AND ' : '';
+
+        return $prefix
+            . '(' . $alias . '.publish_up IS NULL OR ' . $alias . '.publish_up = ' . $nullDate . ' OR ' . $alias . '.publish_up <= ' . $db->quote($now) . ')'
+            . ' AND (' . $alias . '.publish_down IS NULL OR ' . $alias . '.publish_down = ' . $nullDate . ' OR ' . $alias . '.publish_down > ' . $db->quote($now) . ')';
+    }
+
+    /**
+     * Test an event's publication state and UTC publication window.
+     *
+     * @param   object   $event         Event data.
+     * @param   boolean  $includeState  Require published=1.
+     *
+     * @return boolean
+     */
+    static public function isEventPublishedNow($event, $includeState = true)
+    {
+        if ($includeState && (int) ($event->published ?? 0) !== 1) {
+            return false;
+        }
+
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        foreach (array('publish_up' => 'up', 'publish_down' => 'down') as $field => $direction) {
+            $value = trim((string) ($event->$field ?? ''));
+            if ($value === '' || $value === '0000-00-00 00:00:00') {
+                continue;
+            }
+
+            try {
+                $boundary = new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            if (($direction === 'up' && $boundary > $now) || ($direction === 'down' && $boundary <= $now)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Convert a UTC database datetime to a Unix timestamp.
+     *
+     * @param   string  $value  SQL datetime value.
+     *
+     * @return integer
+     */
+    static public function getUtcTimestamp($value)
+    {
+        $value = trim((string) $value);
+
+        if ($value === '' || $value === '0000-00-00 00:00:00') {
+            return 0;
+        }
+
+        try {
+            return (new \DateTimeImmutable($value, new \DateTimeZone('UTC')))->getTimestamp();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Build an event start/end comparison against the current instant.
+     *
+     * Cached UTC values are preferred. The fallback preserves the legacy
+     * Joomla-timezone interpretation for records not backfilled yet.
+     *
+     * @param   string   $boundary       start or end.
+     * @param   string   $operator       SQL comparison operator.
+     * @param   integer  $offsetMinutes  Offset applied to the current instant.
+     * @param   string   $alias          Event table alias.
+     * @param   boolean  $includeOpen    Include events without a start date.
+     *
+     * @return string
+     */
+    static public function getEventDateTimeWhere($boundary, $operator, $offsetMinutes = 0, $alias = 'a', $includeOpen = false)
+    {
+        $boundary = $boundary === 'end' ? 'end' : 'start';
+        $operator = in_array($operator, array('>', '>=', '<', '<='), true) ? $operator : '>';
+        $instant  = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        if ((int) $offsetMinutes !== 0) {
+            $instant = $instant->modify(((int) $offsetMinutes > 0 ? '+' : '') . (int) $offsetMinutes . ' minutes');
+        }
+
+        $utcNow   = $instant->format('Y-m-d H:i:s');
+        $localNow = $instant->setTimezone(new \DateTimeZone(self::getJoomlaTimeZoneName()))->format('Y-m-d H:i:s');
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $utcField = $alias . '.' . ($boundary === 'end' ? 'end_utc' : 'start_utc');
+        $local    = $boundary === 'end'
+            ? 'CONCAT(IFNULL(' . $alias . '.enddates,' . $alias . '.dates), \' \', IFNULL(' . $alias . '.endtimes,\'23:59:59\'))'
+            : 'CONCAT(' . $alias . '.dates, \' \', IFNULL(' . $alias . '.times,\'00:00:00\'))';
+        $condition = '((COALESCE(' . $alias . '.timezone_mode, \'joomla\') <> \'joomla\' AND ' . $utcField . ' IS NOT NULL AND ' . $utcField . ' ' . $operator . ' ' . $db->quote($utcNow) . ')'
+            . ' OR ((COALESCE(' . $alias . '.timezone_mode, \'joomla\') = \'joomla\' OR ' . $utcField . ' IS NULL) AND ' . $alias . '.dates IS NOT NULL AND ' . $local . ' ' . $operator . ' ' . $db->quote($localNow) . '))';
+
+        if ($includeOpen) {
+            $condition = '(' . $alias . '.dates IS NULL OR ' . $condition . ')';
+        }
+
+        return $condition;
+    }
+
+    /**
      * Returns true when Joomla's core Contacts component is available.
      *
      * @return boolean
@@ -1695,7 +2004,7 @@ class JemHelper
                     ))
                     ->from('#__jem_events')
                     ->where('recurrence_type <> ' . $db->quote('0'))
-                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE NOW() < recurrence_limit_date END')
+                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE ' . $db->quote(self::getJoomlaDate()) . ' < recurrence_limit_date END')
                     ->where('recurrence_number <> ' . $db->quote('0'))
                     ->group('first_id')
                     ->order('dates DESC');
@@ -1798,7 +2107,7 @@ class JemHelper
                 // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
                 // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
                 $minusDays    = (int) $jemsettings->minus;
-                $outdatedWhere = 'dates > 0 AND DATE_SUB(NOW(), INTERVAL ' . $minusDays . ' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+                $outdatedWhere = 'dates > 0 AND ' . $db->quote(self::getJoomlaDate(-$minusDays)) . ' > (IF (enddates IS NOT NULL, enddates, dates))';
 
                 //delete outdated events
                 if ($jemsettings->oldevent == 1) {
@@ -2585,16 +2894,7 @@ class JemHelper
      */
     static public function getTimeZoneName()
     {
-        $user     = JemFactory::getUser();
-        $userTz   = $user->getParam('timezone');
-        $timeZone = Factory::getConfig()->get('offset');
-
-        /* disabled for now
-        if($userTz) {
-            $timeZone = $userTz;
-        }
-        */
-        return $timeZone;
+        return self::getJoomlaTimeZoneName();
     }
 
     /**
@@ -2665,7 +2965,7 @@ class JemHelper
         $language->load('com_jem', JPATH_SITE, null, false);
 
         $jemsettings   = JemHelper::config();
-        $timezone_name = JemHelper::getTimeZoneName();
+        $timezone_name = JemHelper::getEventTimeZoneName($event);
         $config        = Factory::getConfig();
         $sitename      = $config->get('sitename');
         $uri           = Uri::getInstance();

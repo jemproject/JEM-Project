@@ -42,13 +42,14 @@ class JemModelExport extends ListModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select(array(
-                'a.id', 'a.title', 'a.alias', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes',
+                'a.id', 'a.title', 'a.alias', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes', 'a.timezone_mode', 'a.timezone',
                 'a.introtext', 'a.fulltext', 'a.datimage', 'a.online_meeting_url', 'a.online_meeting_label',
                 'a.published', 'a.language',
                 'a.created', 'a.modified', 'a.locid',
                 $db->quoteName('v.venue', 'venue'), $db->quoteName('v.street', 'street'),
                 $db->quoteName('v.postalCode', 'postalCode'), $db->quoteName('v.city', 'city'),
                 $db->quoteName('v.state', 'state'), $db->quoteName('v.country', 'country'),
+                $db->quoteName('v.timezone', 'venue_timezone'),
                 $db->quoteName('v.latitude', 'latitude'), $db->quoteName('v.longitude', 'longitude'),
             ))
             ->select("(SELECT GROUP_CONCAT(DISTINCT c2.catname ORDER BY c2.catname SEPARATOR ', ') FROM #__jem_cats_event_relations AS r2 INNER JOIN #__jem_categories AS c2 ON c2.id = r2.catid WHERE r2.itemid = a.id) AS categories")
@@ -201,6 +202,8 @@ class JemModelExport extends ListModel
             'enddates' => Text::_('COM_JEM_EXPORT_CATALOG_END_DATE'),
             'times' => Text::_('COM_JEM_EXPORT_CATALOG_FIELD_TIME'),
             'endtimes' => Text::_('COM_JEM_ENDTIME'),
+            'timezone_mode' => Text::_('COM_JEM_EVENT_TIMEZONE_MODE'),
+            'timezone' => Text::_('COM_JEM_EVENT_TIMEZONE'),
             'introtext' => Text::_('COM_JEM_INTROTEXT'),
             'fulltext' => Text::_('COM_JEM_EXPORT_CATALOG_FIELD_FULLTEXT'),
             'datimage' => Text::_('COM_JEM_IMAGE'),
@@ -218,6 +221,7 @@ class JemModelExport extends ListModel
             'city' => Text::_('COM_JEM_CITY'),
             'state' => Text::_('COM_JEM_STATE'),
             'country' => Text::_('COM_JEM_COUNTRY'),
+            'venue_timezone' => Text::_('COM_JEM_VENUE_TIMEZONE'),
             'latitude' => Text::_('COM_JEM_LATITUDE'),
             'longitude' => Text::_('COM_JEM_LONGITUDE'),
             'categories' => Text::_('COM_JEM_CATEGORIES'),

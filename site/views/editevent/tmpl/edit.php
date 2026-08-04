@@ -864,6 +864,8 @@ $document->addStyleDeclaration('
                     <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
                     <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

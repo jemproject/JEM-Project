@@ -268,7 +268,7 @@ class JemModelAttendees extends BaseDatabaseModel
 
         // First thing we need to do is to select only needed events
         if (!$canEdit) {
-            $where[] = ' a.published = 1';
+            $where[] = ' ' . JemHelper::getEventPublicationWhere('a');
         }
         $where[] = ' c.published = 1';
         $where[] = ' a.access  IN (' . implode(',', $levels) . ')';
