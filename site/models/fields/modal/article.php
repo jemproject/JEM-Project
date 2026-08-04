@@ -99,10 +99,13 @@ class JFormFieldModal_Article extends FormField
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             try {
+                $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
                 $query = $db->getQuery(true)
                     ->select($db->quoteName('title'))
                     ->from($db->quoteName('#__content'))
-                    ->where($db->quoteName('id') . ' = ' . (int) $value);
+                    ->where($db->quoteName('id') . ' = ' . (int) $value)
+                    ->where($db->quoteName('state') . ' = 1')
+                    ->where($db->quoteName('access') . ' IN (' . implode(',', $levels) . ')');
 
                 $db->setQuery($query);
                 $title = $db->loadResult() ?: $title;

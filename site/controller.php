@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
@@ -49,15 +48,79 @@ class JemController extends BaseController
 
         // Set the default view name and format from the Request.
         $jinput     = $app->input;
-        $id         = $jinput->getInt('a_id', 0);
         $viewName   = $jinput->getCmd('view', 'eventslist');
         $viewFormat = $document->getType();
         $layoutName = $jinput->getCmd('layout', 'edit');
 
-        // Check for edit form.
-        if ($viewName == 'editevent' && !$this->checkEditId('com_jem.edit.event', $id)) {
-            // Somehow the person just went to the form - we don't allow that.
-            throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+        // Apply one access policy before any frontend editor or selector can load data.
+        if (($viewName === 'editevent') || ($viewName === 'editvenue')) {
+            if (JemFrontendAccess::redirectGuestToLogin($app)) {
+                return false;
+            }
+
+            $id    = JemFrontendAccess::normaliseRecordId($jinput);
+            $type  = ($viewName === 'editevent') ? 'event' : 'venue';
+            $model = $this->getModel($viewName);
+
+            if (!$model) {
+                throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 500);
+            }
+
+            // Copy routes expose source data, so the source requires edit permission too.
+            if ($jinput->exists('from_id')) {
+                $sourceId = JemFrontendAccess::readId($jinput, array('from_id'), true);
+                $source = $model->getItem($sourceId);
+
+                if (!$source || ((int) $source->id !== $sourceId)) {
+                    $key = ($type === 'event')
+                        ? 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'
+                        : 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND';
+                    throw new Exception(Text::_($key), 404);
+                }
+
+                if (!JemFrontendAccess::canEdit($user, $type, $source)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+            }
+
+            $isEventSelector = ($viewName === 'editevent') && in_array(
+                $layoutName,
+                array('choosevenue', 'choosecontact', 'choosearticle', 'chooseusers'),
+                true
+            );
+
+            if ($isEventSelector) {
+                $this->checkToken('request');
+            }
+
+            if ($id > 0) {
+                $item = $model->getItem($id);
+
+                if (!$item || ((int) $item->id !== $id)) {
+                    $key = ($type === 'event')
+                        ? 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'
+                        : 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND';
+                    throw new Exception(Text::_($key), 404);
+                }
+
+                if (!JemFrontendAccess::canEdit($user, $type, $item)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+
+                if (!$this->checkEditId('com_jem.edit.' . $type, $id)) {
+                    throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+                }
+            } elseif ($isEventSelector) {
+                if (!JemFrontendAccess::canUseEventSelectors($app, $user, $model)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+            } else {
+                $categoryId = ($type === 'event') ? $jinput->getInt('catid', 0) : 0;
+
+                if (!JemFrontendAccess::canAdd($user, $type, $categoryId)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+            }
         }
 
         $view = $this->getView($viewName, $viewFormat);
@@ -423,8 +486,7 @@ class JemController extends BaseController
      */
     public function getfile()
     {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        $this->checkToken('request');
 
         $id = Factory::getApplication()->input->getInt('file', 0);
 
@@ -464,8 +526,7 @@ class JemController extends BaseController
      */
     public function ajaxattachremove()
     {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        $this->checkToken('request');
 
         $jemsettings = JemHelper::config();
         $res = 0;

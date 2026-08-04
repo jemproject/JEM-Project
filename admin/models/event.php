@@ -1890,6 +1890,18 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
+        $user = Factory::getApplication()->getIdentity();
+        $articleAsset = 'com_content.article.' . (int) $article->id;
+        $canEditArticle = $user->authorise('core.edit', $articleAsset)
+            || ($user->authorise('core.edit.own', $articleAsset)
+                && (int) $article->created_by === (int) $user->id);
+
+        if (!$canEditArticle) {
+            $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NO_PERMISSION'));
+
+            return false;
+        }
+
         $update = (object) array(
             'id'    => $articleId,
             'state' => 1,

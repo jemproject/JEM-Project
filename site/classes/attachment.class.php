@@ -456,28 +456,47 @@ class JemAttachment
             throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
-        // A direct frontend download must not bypass the event's publication
-        // window. Event editors and publishers retain preview access.
-        if (!Factory::getApplication()->isClient('administrator')
-            && preg_match('/^event(\d+)$/i', (string) $res->object, $matches)) {
-            $eventId = (int) $matches[1];
-            $query = $db->getQuery(true)
-                ->select($db->quoteName(array('id', 'created_by', 'published', 'publish_up', 'publish_down')))
-                ->from($db->quoteName('#__jem_events'))
-                ->where($db->quoteName('id') . ' = ' . $eventId);
-            $db->setQuery($query);
-            $event = $db->loadObject();
-
-            if (!$event) {
-                throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+        // A direct frontend download must not bypass the parent event/venue ACL.
+        if (!Factory::getApplication()->isClient('administrator')) {
+            if (preg_match('/^event(\d+)$/i', (string) $res->object, $matches)) {
+                $type = 'event';
+                $itemId = (int) $matches[1];
+                $table = '#__jem_events';
+                $fields = array('id', 'created_by', 'access', 'published', 'publish_up', 'publish_down');
+            } elseif (preg_match('/^venue(\d+)$/i', (string) $res->object, $matches)) {
+                $type = 'venue';
+                $itemId = (int) $matches[1];
+                $table = '#__jem_venues';
+                $fields = array('id', 'created_by', 'access', 'published');
+            } else {
+                $type = '';
             }
 
-            $canPreview = $user->can('edit', 'event', $eventId, (int) $event->created_by)
-                || $user->can('publish', 'event', $eventId, (int) $event->created_by);
-            $isVisible = JemHelper::isEventPublishedNow($event) || (int) $event->published === 2;
+            if ($type !== '') {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName($fields))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('id') . ' = ' . $itemId);
+                $db->setQuery($query);
+                $item = $db->loadObject();
 
-            if (!$isVisible && !$canPreview) {
-                throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+                if (!$item) {
+                    throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+                }
+
+                if (!in_array((int) $item->access, array_map('intval', $levels), true)) {
+                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+                }
+
+                $canPreview = $user->can('edit', $type, $itemId, (int) $item->created_by)
+                    || $user->can('publish', $type, $itemId, (int) $item->created_by);
+                $isVisible = ($type === 'event')
+                    ? (JemHelper::isEventPublishedNow($item) || (int) $item->published === 2)
+                    : ((int) $item->published === 1);
+
+                if (!$isVisible && !$canPreview) {
+                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+                }
             }
         }
 
@@ -584,29 +603,36 @@ class JemAttachment
 
         $attachment = $res;
 
-        // check permission
-        if (empty($userid) || ($userid != $res->created_by)) {
-            if (strncasecmp($res->object, 'event', 5) == 0) {
-                $type = 'event';
-                $itemid = (int)substr($res->object, 5);
-                $table = '#__jem_events';
-            } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
-                $type = 'venue';
-                $itemid = (int)substr($res->object, 5);
-                $table = '#__jem_venues';
-            } else {
-                return false;
-            }
+        // Event and venue attachments always follow the current record ACL. Being
+        // the attachment uploader must not bypass permissions removed later.
+        if (strncasecmp($res->object, 'event', 5) == 0) {
+            $type = 'event';
+            $itemid = (int)substr($res->object, 5);
+            $table = '#__jem_events';
+        } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
+            $type = 'venue';
+            $itemid = (int)substr($res->object, 5);
+            $table = '#__jem_venues';
+        } else {
+            $type = '';
+        }
 
-            // get item owner
-            $query = 'SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+        if ($type !== '') {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('created_by', 'access')))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . $itemid);
             $db->setQuery($query);
-            $created_by = $db->loadResult();
+            $item = $db->loadObject();
 
-            if (!$user->can('edit', $type, $itemid, $created_by)) {
+            if (!$item
+                || !in_array((int) $item->access, array_map('intval', $levels), true)
+                || !$user->can('edit', $type, $itemid, (int) $item->created_by)) {
                 JemHelper::addLogEntry("User {$userid} is not permitted to remove attachment " . $res->object, __METHOD__);
                 return false;
             }
+        } elseif (empty($userid) || ($userid != $res->created_by)) {
+            return false;
         }
 
         JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);

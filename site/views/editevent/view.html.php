@@ -27,6 +27,14 @@ class JemViewEditevent extends JemView
      */
     public function display($tpl = null)
     {
+        $app  = Factory::getApplication();
+        $user = JemFactory::getUser();
+
+        // Fail closed before selector layouts can query venues, contacts, articles or users.
+        if (JemFrontendAccess::redirectGuestToLogin($app)) {
+            return false;
+        }
+
         if ($this->getLayout() == 'choosevenue') {
             $this->_displaychoosevenue($tpl);
             return;
@@ -50,9 +58,6 @@ class JemViewEditevent extends JemView
         // Initialise variables.
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
-        $app         = Factory::getApplication();
-        $user        = JemFactory::getUser();
-        $userId      = $user->get('id');
         $document    = $app->getDocument();
         $model       = $this->getModel();
         $menu        = $app->getMenu();
@@ -75,14 +80,7 @@ class JemViewEditevent extends JemView
 
         // check for data error
         if (empty($item)) {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-            return false;
-        }
-
-        // check for guest
-        if ($userId == 0) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 500);
         }
 
         if (empty($item->id)) {
@@ -97,8 +95,7 @@ class JemViewEditevent extends JemView
         $authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
         if ($authorised !== true) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         // Decide which parameters should take priority

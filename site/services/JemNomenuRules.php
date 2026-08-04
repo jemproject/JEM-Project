@@ -131,7 +131,16 @@ class JemNomenuRules implements RulesInterface
                 {
                     $vars['view'] = 'editvenue';
                     if ($count == 2) {
-                        $vars['id'] = $segments[1];
+                        $vars['a_id'] = $segments[1];
+                    }
+                }
+                break;
+
+            case 'editevent':
+                {
+                    $vars['view'] = 'editevent';
+                    if ($count == 2) {
+                        $vars['a_id'] = $segments[1];
                     }
                 }
                 break;
@@ -272,6 +281,15 @@ class JemNomenuRules implements RulesInterface
         // $itmid = is_array($query['Itemid']) ? array_values($query['Itemid']) : $query['Itemid'] ;
 
         // $query['Itemid']= is_array($itmid) ?  $itmid[0] : $itmid;
+        if (isset($query['view'], $query['a_id'])
+            && in_array($query['view'], array('editevent', 'editvenue'), true)) {
+            $segments[] = $query['view'];
+            $segments[] = $query['a_id'];
+            unset($query['view'], $query['tmpl'], $query['a_id'], $query['Itemid']);
+
+            return;
+        }
+
         if(isset($query['view'],$query['id'])){
             $segments[] =$query['view'];
             $segments[] =$query['id'];

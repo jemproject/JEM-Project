@@ -93,8 +93,11 @@ class JemModelEditvenue extends JemModelVenue
         $return = $table->load($itemId);
 
         // Check for a table object error.
-        if ($return === false && $table->getError()) {
-            $this->setError($table->getError());
+        if ($return === false) {
+            if ($table->getError()) {
+                $this->setError($table->getError());
+            }
+
             return false;
         }
 

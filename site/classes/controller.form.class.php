@@ -10,9 +10,62 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\FormController;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Language\Text;
 
 abstract class JemControllerForm extends FormController
 {
+    /**
+     * Require an authenticated frontend identity.
+     *
+     * @return boolean True for an authenticated user, false when login redirect was issued.
+     */
+    protected function requireFrontendUser()
+    {
+        return !JemFrontendAccess::redirectGuestToLogin($this->app);
+    }
+
+    /**
+     * Normalise canonical and legacy frontend record ids.
+     */
+    protected function getFrontendRecordId($required = false)
+    {
+        return JemFrontendAccess::normaliseRecordId($this->input, $required);
+    }
+
+    /**
+     * Load an existing editor item or return a real 404.
+     */
+    protected function getFrontendItemOrFail($recordId, $notFoundKey)
+    {
+        $item = $this->getModel()->getItem((int) $recordId);
+
+        if (!$item || ((int) $item->id !== (int) $recordId)) {
+            throw new Exception(Text::_($notFoundKey), 404);
+        }
+
+        return $item;
+    }
+
+    /**
+     * Require create permission for an event or venue.
+     */
+    protected function assertFrontendCanAdd($type, $categoryIds = false)
+    {
+        if (!JemFrontendAccess::canAdd(JemFactory::getUser(), $type, $categoryIds)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
+    /**
+     * Require edit permission based only on the stored record values.
+     */
+    protected function assertFrontendCanEdit($type, $item)
+    {
+        if (!JemFrontendAccess::canEdit(JemFactory::getUser(), $type, $item)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+    }
+
     /**
      * Function that allows child controller access to model data
      * after the data has been saved.
