@@ -107,42 +107,83 @@
             If you have taken these steps you are ready to input your events.
             If you want to assign your events to venues you first have to create the venue information.
         </p>
-        <h2><strong>ACL - Access Control List</strong></h2>
-        <p>    Some special attention is required for ACL. If you want to use it, you need to know that Joomla ACL is partially integrated in version 2.x of JEM.
-            At this moment ACL works on Categories and Events, not yet on Venues.
+        <h2><strong>ACL and effective JEM permissions</strong></h2>
+        <p>
+            JEM combines Joomla component permissions, Joomla viewing access levels, frontend User Control settings,
+            record ownership and JEM Groups. Event categories can additionally connect a JEM Group to delegated
+            frontend event actions. Venues do not currently use JEM categories.
         </p>
-        <p>    Viewing rights are set in Joomla under:
-            <strong>Users</strong> &rarr; <strong>Access Levels</strong> &rarr; <strong>Viewing Access Levels</strong>
+        <p>
+            Joomla viewing levels are configured under <strong>Users</strong> &rarr; <strong>Access Levels</strong>.
+            Joomla component permissions are configured under <strong>Components</strong> &rarr; <strong>JEM</strong>
+            &rarr; <strong>Options</strong> &rarr; <strong>Permissions</strong>. JEM frontend delegation is configured
+            under <strong>Settings</strong> &rarr; <strong>User Control</strong> and <strong>JEM Groups</strong>.
         </p>
-        <p>    Edit rights are set in JEM under:
-            <strong>Control Panel</strong> &rarr; <strong>Options (icon)</strong> &rarr; <strong>Permissions</strong>
+        <p>
+            The permission API keeps the boolean <code>JemUser::can()</code> result used by existing layouts,
+            modules and plugins. Extension developers who need to explain a result can call
+            <code>JemUser::getAccessDecision()</code>. It returns the final result, a stable code, the evaluation
+            stage, the source, the requested action and resource, a safe HTTP status and a public language key.
+            Internal reasons, record ID and diagnostic details are available separately and must not be exposed
+            to a visitor who cannot view the record.
         </p>
-        Here you can set global permissions per user group.
-        So for example if you only want publisher to create/edit stuff you can:
-        <ul>
-            <li>create user</li>
-            <li>assign that user only to the group "publisher"</li>
-            <li>create access-view level in the back called "publisher"</li>
-            <li>click the config button (jem main view), set rights for publisher</li>
-        </ul>
-        <p>    Now you can create a menu-link to submit-event and set access to publisher. But when viewing the eventslist the
-            user will see the submitbutton and when viewing an event he can edit it.
-            Be aware that someone with the access/edit rights will see all the categories! <br>
-            Further restricted access is organised via JEM Groups. Here you can specify an unlimited number of groups that contain users.
-            If a group is assigned to a Category also the specified users in the group have write access to that category.
-            With this you could allow registered users not havong general author permission to create events in a specific category.
-        </p>
-        <p>    In Events there are 2 ACL settings: The first one is an indirect one. Via the category (or categories) to which an event belongs,
-            edit access can be restricted to the users in the JEM group that is linked to the Category. Also the read access level of cateories is respected.
-            The second ACL setting is the read access. This is derived from the category/ies access level but can also be set using Access field of the event.
-            Please note that a user needs view access level of event AND one of the categories event is assigned to to see and edit event. Edit permission is not enough.
-        </p>
-        <p>    Please note that general permissions for Joomla default groups like Author, Editor, Publisher will automatically
-            give those users such permissions on JEM items too.
-            If you need to give users different permissions for e.g. events or articles you should create new user groups and
-            give permissions for the relevant component, e.g. different groups Event Authors and Article Authors.
-            Denying permissions may give surprising results and is not recommended.
-        </p>
+
+        <h3>Practical permission examples</h3>
+        <table class="help-list">
+            <thead>
+                <tr>
+                    <th>Situation</th>
+                    <th>Expected result</th>
+                    <th>Decision information</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A guest requests an event or venue editor.</td>
+                    <td>Login is required before record details are evaluated.</td>
+                    <td><code>AUTHENTICATION_REQUIRED</code>, stage <code>authentication</code>.</td>
+                </tr>
+                <tr>
+                    <td>A backend user has <code>core.manage</code> for JEM.</td>
+                    <td>The common JEM permission API allows the operation.</td>
+                    <td><code>ALLOWED</code>, source <code>joomla_core_manage</code>.</td>
+                </tr>
+                <tr>
+                    <td>A frontend user has Edit Own Events and owns the stored event.</td>
+                    <td>Editing is allowed after the event viewing level is checked.</td>
+                    <td><code>ALLOWED</code>, stage <code>ownership</code>.</td>
+                </tr>
+                <tr>
+                    <td>The same user tries to edit an event owned by another user.</td>
+                    <td>Editing is denied unless another Joomla or JEM rule grants it.</td>
+                    <td><code>NOT_RECORD_OWNER</code> or the later blocking group/category code.</td>
+                </tr>
+                <tr>
+                    <td>The record viewing level is not available to the user.</td>
+                    <td>The editor is not shown and the public response does not reveal the record.</td>
+                    <td><code>VIEW_LEVEL_DENIED</code> with a safe not-found response.</td>
+                </tr>
+                <tr>
+                    <td>An event category requires a JEM Group that does not contain the user.</td>
+                    <td>The delegated event action is denied.</td>
+                    <td><code>JEM_GROUP_REQUIRED</code>, stage <code>category_group</code>.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Developer example</h3>
+        <pre><code>$decision = JemFactory::getUser()-&gt;getAccessDecision(
+    'edit', 'event', $event-&gt;id, $event-&gt;created_by, $categoryIds
+);
+
+if (!$decision-&gt;isAllowed()) {
+    // Safe for the public response:
+    $status = $decision-&gt;getHttpStatus();
+    $messageKey = $decision-&gt;getMessageKey();
+
+    // Administrator diagnostics only:
+    $internal = $decision-&gt;toArray(true);
+}</code></pre>
         <h2></h2>
         <p><strong>If you like JEM and find it useful, please consider a donation to cover for the hosting expenses of the community.</strong></p>
         <h2>Notes</h2>

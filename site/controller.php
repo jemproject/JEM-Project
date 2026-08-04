@@ -78,9 +78,7 @@ class JemController extends BaseController
                     throw new Exception(Text::_($key), 404);
                 }
 
-                if (!JemFrontendAccess::canEdit($user, $type, $source)) {
-                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-                }
+                JemFrontendAccess::enforce(JemFrontendAccess::decideEdit($user, $type, $source));
             }
 
             $isEventSelector = ($viewName === 'editevent') && in_array(
@@ -103,9 +101,7 @@ class JemController extends BaseController
                     throw new Exception(Text::_($key), 404);
                 }
 
-                if (!JemFrontendAccess::canEdit($user, $type, $item)) {
-                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-                }
+                JemFrontendAccess::enforce(JemFrontendAccess::decideEdit($user, $type, $item));
 
                 if (!$this->checkEditId('com_jem.edit.' . $type, $id)) {
                     throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
@@ -117,9 +113,7 @@ class JemController extends BaseController
             } else {
                 $categoryId = ($type === 'event') ? $jinput->getInt('catid', 0) : 0;
 
-                if (!JemFrontendAccess::canAdd($user, $type, $categoryId)) {
-                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-                }
+                JemFrontendAccess::enforce(JemFrontendAccess::decideAdd($user, $type, $categoryId));
             }
         }
 

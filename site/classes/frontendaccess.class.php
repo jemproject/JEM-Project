@@ -11,6 +11,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 
+require_once __DIR__ . '/accessdecision.class.php';
+
 /**
  * Shared access policy for frontend event and venue editors.
  */
@@ -112,9 +114,11 @@ abstract class JemFrontendAccess
     }
 
     /**
-     * Check create permission using the common JEM/Joomla policy.
+     * Explain a create permission decision using the common JEM/Joomla policy.
+     *
+     * @return JemAccessDecision
      */
-    public static function canAdd($user, $type, $categoryIds = false)
+    public static function decideAdd($user, $type, $categoryIds = false)
     {
         if ($type !== 'event') {
             $categoryIds = false;
@@ -124,31 +128,97 @@ abstract class JemFrontendAccess
             $categoryIds = false;
         }
 
-        return (bool) $user->can('add', $type, false, false, $categoryIds);
+        if (method_exists($user, 'getAccessDecision')) {
+            return $user->getAccessDecision('add', $type, false, false, $categoryIds);
+        }
+
+        // Compatibility for third-party user decorators which only implement can().
+        return self::fromLegacyBoolean(
+            (bool) $user->can('add', $type, false, false, $categoryIds),
+            'add',
+            $type
+        );
     }
 
     /**
-     * Check edit permission and the record's Joomla view level.
+     * Backwards-compatible boolean create check.
      */
-    public static function canEdit($user, $type, $item)
+    public static function canAdd($user, $type, $categoryIds = false)
+    {
+        return self::decideAdd($user, $type, $categoryIds)->isAllowed();
+    }
+
+    /**
+     * Explain an edit permission decision, including the record view level.
+     *
+     * @return JemAccessDecision
+     */
+    public static function decideEdit($user, $type, $item)
     {
         if (!is_object($item) || empty($item->id)) {
-            return false;
+            return JemAccessDecision::deny(
+                JemAccessDecision::RECORD_NOT_FOUND,
+                'record',
+                'jem_record',
+                'edit',
+                $type
+            );
         }
 
         $access = isset($item->access) ? (int) $item->access : 0;
         $levels = array_map('intval', $user->getAuthorisedViewLevels());
 
         if (!in_array($access, $levels, true)) {
-            return false;
+            return JemAccessDecision::deny(
+                JemAccessDecision::VIEW_LEVEL_DENIED,
+                'record_view_level',
+                'joomla_view_level',
+                'edit',
+                $type,
+                (int) $item->id,
+                array(array(
+                    'code' => JemAccessDecision::VIEW_LEVEL_DENIED,
+                    'stage' => 'record_view_level',
+                    'source' => 'joomla_view_level',
+                    'action' => 'edit',
+                )),
+                array('requiredViewLevel' => $access)
+            );
         }
 
-        return (bool) $user->can(
+        $arguments = array(
             'edit',
             $type,
             (int) $item->id,
-            isset($item->created_by) ? (int) $item->created_by : 0
+            isset($item->created_by) ? (int) $item->created_by : 0,
         );
+
+        if (method_exists($user, 'getAccessDecision')) {
+            return $user->getAccessDecision(...$arguments);
+        }
+
+        return self::fromLegacyBoolean((bool) $user->can(...$arguments), 'edit', $type, (int) $item->id);
+    }
+
+    /**
+     * Backwards-compatible boolean edit check.
+     */
+    public static function canEdit($user, $type, $item)
+    {
+        return self::decideEdit($user, $type, $item)->isAllowed();
+    }
+
+    /**
+     * Enforce a detailed decision using its deliberately safe public response.
+     * Internal reasons and details are not included in the exception message.
+     */
+    public static function enforce(JemAccessDecision $decision)
+    {
+        if (!$decision->isAllowed()) {
+            throw new Exception(Text::_($decision->getMessageKey()), $decision->getHttpStatus());
+        }
+
+        return $decision;
     }
 
     /**
@@ -177,5 +247,30 @@ abstract class JemFrontendAccess
         }
 
         return false;
+    }
+
+    /**
+     * Adapt legacy third-party boolean policies to the detailed contract.
+     */
+    protected static function fromLegacyBoolean($allowed, $action, $type, $recordId = 0)
+    {
+        if ($allowed) {
+            return JemAccessDecision::allow(
+                'legacy_policy',
+                'legacy_boolean',
+                $action,
+                $type,
+                $recordId
+            );
+        }
+
+        return JemAccessDecision::deny(
+            JemAccessDecision::ACTION_NOT_ALLOWED,
+            'legacy_policy',
+            'legacy_boolean',
+            $action,
+            $type,
+            $recordId
+        );
     }
 }

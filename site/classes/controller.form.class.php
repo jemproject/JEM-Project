@@ -51,9 +51,9 @@ abstract class JemControllerForm extends FormController
      */
     protected function assertFrontendCanAdd($type, $categoryIds = false)
     {
-        if (!JemFrontendAccess::canAdd(JemFactory::getUser(), $type, $categoryIds)) {
-            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
+        JemFrontendAccess::enforce(
+            JemFrontendAccess::decideAdd(JemFactory::getUser(), $type, $categoryIds)
+        );
     }
 
     /**
@@ -61,9 +61,9 @@ abstract class JemControllerForm extends FormController
      */
     protected function assertFrontendCanEdit($type, $item)
     {
-        if (!JemFrontendAccess::canEdit(JemFactory::getUser(), $type, $item)) {
-            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
+        JemFrontendAccess::enforce(
+            JemFrontendAccess::decideEdit(JemFactory::getUser(), $type, $item)
+        );
     }
 
     /**
