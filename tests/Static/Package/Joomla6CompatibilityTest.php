@@ -44,9 +44,11 @@ final class Joomla6CompatibilityTest extends TestCase
             $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
 
             self::assertNotFalse($manifest);
-            self::assertSame('5.0.1beta1', (string) $manifest->version);
-            self::assertCount(10, explode(';', (string) $manifest->notes));
+            self::assertSame('5.0.1beta2', (string) $manifest->version);
+            self::assertCount(12, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2257', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2263', (string) $manifest->notes);
             self::assertStringContainsString('Commit f199043', (string) $manifest->notes);
         }
     }

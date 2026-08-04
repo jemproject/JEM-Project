@@ -7,12 +7,12 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>5.0.1beta1</version>
+        <version>5.0.1beta2</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem/betas</infourl>
         <stablechangelog>https://www.joomlaeventmanager.net/project/changelog-jem-5</stablechangelog>
         <betachangelog>https://www.joomlaeventmanager.net/project/changelog-jem/betas</betachangelog>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-1-beta1</downloadurl>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=137:jem-5-0-1-beta2</downloadurl>
         </downloads>
         <tags>
             <tag>beta</tag>
@@ -21,11 +21,11 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
         <php_minimum>8.3</php_minimum>
-        <sha256>1547196d1c6f79ea3bf54790e920a7cad7b518565fec7603c0524cfd24785a94</sha256>
-        <sha384>6e85206574bf503075ff39fe86a45867905e2a88f978f1954e720e0d9cc3f63ef3d98d65e021908912d8f58c94b50893</sha384>
-        <sha512>6d7645a10bec08514f462465cb4ae5fecc21f592defa897ceb0c7a70778bf2bbc885c4109c0bec4aeb44eb1ae8fc5d0069f3a1e0eedeca742cd6553e509df62a</sha512>
-        <date>2026-07-21 10:00</date>
-        <notes>Fixed duplicate JemHelper declarations that could cause fatal errors during upgrades. [Issue #2242](https://github.com/jemproject/JEM-Project/issues/2242);Updated Update Check to follow the Joomla administrator template colors. [Issue #2243](https://github.com/jemproject/JEM-Project/issues/2243);Restored upgrade support from JEM 4.4.x. [Issue #2247](https://github.com/jemproject/JEM-Project/issues/2247);Added validation for associated article title formats. [Issue #2248](https://github.com/jemproject/JEM-Project/issues/2248);Improved import security configuration and diagnostics. [Issue #2249](https://github.com/jemproject/JEM-Project/issues/2249);Expanded import and export workflows, profiles, venue data and map markers. [Issue #2250](https://github.com/jemproject/JEM-Project/issues/2250);Restored the hits column in the backend events list. [Issue #2251](https://github.com/jemproject/JEM-Project/issues/2251);Added attachment download statistics and event visit dates. [Issue #2252](https://github.com/jemproject/JEM-Project/issues/2252);Fixed Nominatim requests and isolated event and venue parameters. [Commit f199043](https://github.com/jemproject/JEM-Project/commit/f199043cd226d70f95b502d5778af4e3b20a3a16);Corrected the "Show my location" wording. [Commit 0a26eef](https://github.com/jemproject/JEM-Project/commit/0a26eef790b7f1b32007cc1da02752b0212ee10f)</notes>
-        <changes>JEM 5.0.1 beta 1 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
+        <sha256>e18d11a0a45d42dd2890679ab67971845ee5f73f12f12e7b526f3f8c8302f564</sha256>
+        <sha384>0169a2a41d1ea502143293813c147a7660383ac6018dfe505108337b53efccee54927c9992da8376c9459f6d16bcd24d</sha384>
+        <sha512>2183aa85ab7a7cdf998d8827bda3299cdccf0aedb2a5231c9dded965f49c21901723b140133bb03ba0b1951e983dd1f278554cfb2f4c175ec538b1e72c503ee8</sha512>
+        <date>2026-08-04 19:56</date>
+        <notes>Fixed duplicate JemHelper declarations that could cause fatal errors during upgrades. [Issue #2242](https://github.com/jemproject/JEM-Project/issues/2242);Updated Update Check to follow the Joomla administrator template colors. [Issue #2243](https://github.com/jemproject/JEM-Project/issues/2243);Restored upgrade support from JEM 4.4.x. [Issue #2247](https://github.com/jemproject/JEM-Project/issues/2247);Added validation for associated article title formats. [Issue #2248](https://github.com/jemproject/JEM-Project/issues/2248);Improved import security configuration and diagnostics. [Issue #2249](https://github.com/jemproject/JEM-Project/issues/2249);Expanded import and export workflows, profiles, venue data and map markers. [Issue #2250](https://github.com/jemproject/JEM-Project/issues/2250);Restored the hits column in the backend events list. [Issue #2251](https://github.com/jemproject/JEM-Project/issues/2251);Added attachment download statistics and event visit dates. [Issue #2252](https://github.com/jemproject/JEM-Project/issues/2252);Improved the administrator control panel and Special Days actions. [Issue #2257](https://github.com/jemproject/JEM-Project/issues/2257);Fixed event publication timing and added timezone-aware scheduling. [Issue #2263](https://github.com/jemproject/JEM-Project/issues/2263);Fixed Nominatim requests and isolated event and venue parameters. [Commit f199043](https://github.com/jemproject/JEM-Project/commit/f199043cd226d70f95b502d5778af4e3b20a3a16);Corrected the "Show my location" wording. [Commit 0a26eef](https://github.com/jemproject/JEM-Project/commit/0a26eef790b7f1b32007cc1da02752b0212ee10f)</notes>
+        <changes>JEM 5.0.1 beta 2 adds timezone-aware event scheduling, consistent UTC publication windows across views and modules, and improved administrator and Special Days workflows while retaining Joomla 5.4 and Joomla 6 compatibility.</changes>
     </update>
 </updates>

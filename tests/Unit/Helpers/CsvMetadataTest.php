@@ -11,10 +11,10 @@ final class CsvMetadataTest extends TestCase
     public function testAddsVersionAsABackwardsCompatibleExtraColumn(): void
     {
         self::assertSame(
-            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1beta1'),
+            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1beta2'),
             JemCsvMetadataHelper::addVersion(
                 array('id' => 791, 'title' => 'Test event'),
-                '5.0.1beta1'
+                '5.0.1beta2'
             )
         );
     }
