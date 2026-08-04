@@ -1927,48 +1927,50 @@ static public function lightbox() {
         $output  = '';
         $formatD = 'Y-m-d';
         $formatT = 'H:i';
+
+        // Schema.org Event startDate/endDate only accept Date or DateTime.
+        // An open-date event may retain its visible times in JEM, but those
+        // times cannot be emitted as standalone temporal metadata.
+        if (!JemHelper::isValidDate($dateStart)) {
+            return $output;
+        }
+
         $timeZoneName = JemHelper::getEventTimeZoneName($event ?: (object) array('timezone_mode' => 'joomla'));
         $timeZone = new \DateTimeZone($timeZoneName);
 
-        if (JemHelper::isValidDate($dateStart)) {
-            $content = self::formatdate($dateStart, $formatD);
+        $content = self::formatdate($dateStart, $formatD);
 
-            if ($showTime && $timeStart) {
-                try {
-                    $content = (new \DateTimeImmutable($dateStart . ' ' . $timeStart, $timeZone))->format('Y-m-d\TH:iP');
-                } catch (\Exception $e) {
-                    $content .= 'T'.self::formattime($timeStart, $formatT, false);
-                }
-            }
-            $output .= '<meta itemprop="startDate" content="'.$content.'" />';
-
-            if (JemHelper::isValidDate($dateEnd)) {
-                $content = self::formatdate($dateEnd, $formatD);
-
-                if ($showTime && $timeEnd) {
-                    try {
-                        $content = (new \DateTimeImmutable($dateEnd . ' ' . $timeEnd, $timeZone))->format('Y-m-d\TH:iP');
-                    } catch (\Exception $e) {
-                        $content .= 'T'.self::formattime($timeEnd, $formatT, false);
-                    }
-                }
-                $output .= '<meta itemprop="endDate" content="'.$content.'" />';
-            }
-        } else {
-            // Open date
-
-            if ($showTime) {
-                if ($timeStart) {
-                    $content = self::formattime($timeStart, $formatT, false);
-                    $output .= '<meta itemprop="startDate" content="'.$content.'" />';
-                }
-                // Display end time only when both times are set
-                if ($timeStart && $timeEnd) {
-                    $content .= self::formattime($timeEnd, $formatT, false);
-                    $output .= '<meta itemprop="endDate" content="'.$content.'" />';
-                }
+        if ($showTime && JemHelper::isValidTime($timeStart)) {
+            try {
+                $content = (new \DateTimeImmutable($dateStart . ' ' . $timeStart, $timeZone))->format('Y-m-d\TH:iP');
+            } catch (\Exception $e) {
+                $content .= 'T'.self::formattime($timeStart, $formatT, false);
             }
         }
+        $output .= '<meta itemprop="startDate" content="'.$content.'" />';
+
+        $effectiveEndDate = JemHelper::isValidDate($dateEnd) ? $dateEnd : '';
+
+        // JEM treats an end time without an explicit end date as ending on
+        // the start date. Preserve that meaning in the structured metadata.
+        if ($effectiveEndDate === '' && $showTime
+            && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd)) {
+            $effectiveEndDate = $dateStart;
+        }
+
+        if ($effectiveEndDate !== '') {
+            $content = self::formatdate($effectiveEndDate, $formatD);
+
+            if ($showTime && JemHelper::isValidTime($timeEnd)) {
+                try {
+                    $content = (new \DateTimeImmutable($effectiveEndDate . ' ' . $timeEnd, $timeZone))->format('Y-m-d\TH:iP');
+                } catch (\Exception $e) {
+                    $content .= 'T'.self::formattime($timeEnd, $formatT, false);
+                }
+            }
+            $output .= '<meta itemprop="endDate" content="'.$content.'" />';
+        }
+
         return $output;
     }
 
