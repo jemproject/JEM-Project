@@ -11,10 +11,10 @@ final class AuthorizationGuardTest extends TestCase
         $event = (string) file_get_contents(JEM_TEST_ROOT . '/site/controllers/event.php');
         $venue = (string) file_get_contents(JEM_TEST_ROOT . '/site/controllers/venue.php');
 
-        self::assertStringContainsString("\$user->can('add', 'event'", $event);
-        self::assertStringContainsString("\$user->can('edit', 'event', \$recordId, \$created_by)", $event);
-        self::assertStringContainsString("\$user->can('add', 'venue')", $venue);
-        self::assertStringContainsString("\$user->can('edit', 'venue', \$recordId, \$created_by)", $venue);
+        self::assertStringContainsString("JemFrontendAccess::canAdd(\$user, 'event'", $event);
+        self::assertStringContainsString("JemFrontendAccess::canEdit(\$user, 'event', \$record)", $event);
+        self::assertStringContainsString("JemFrontendAccess::canAdd(\$user, 'venue'", $venue);
+        self::assertStringContainsString("JemFrontendAccess::canEdit(\$user, 'venue', \$record)", $venue);
     }
 
     public function testAdminDeleteControllersCheckDeleteOrManagePermission(): void

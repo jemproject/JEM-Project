@@ -73,7 +73,7 @@ final class ControllerTokenGuardTest extends TestCase
                     continue;
                 }
 
-                if (!preg_match('/(?:Session|JSession)::checkToken\s*\(/', $body)) {
+                if (!preg_match('/(?:(?:Session|JSession)::checkToken|\$this->checkToken)\s*\(/', $body)) {
                     $findings[] = $key;
                 }
             }
