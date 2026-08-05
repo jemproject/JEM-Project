@@ -314,6 +314,11 @@ class JemModelVenue extends JemModelAdmin
 
         // Store as copy - reset creation date, modification fields, hit counter, version
         if ($task == 'save2copy') {
+            list($data['venue'], $data['alias']) = $this->generateCopyTitleAndAlias(
+                $data['venue'] ?? '',
+                $data['alias'] ?? '',
+                'venue'
+            );
             unset($data['created']);
             unset($data['modified']);
             unset($data['modified_by']);
