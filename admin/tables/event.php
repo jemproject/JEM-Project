@@ -175,6 +175,24 @@ class JemTableEvent extends Table
             $this->dates = null;
         }
 
+        if (empty($this->recurrence_limit_date) || ($this->recurrence_limit_date == $nullDate)) {
+            $this->recurrence_limit_date = null;
+        }
+
+        $dateFields = array(
+            'dates'                 => 'COM_JEM_STARTDATE',
+            'enddates'              => 'COM_JEM_ENDDATE',
+            'recurrence_limit_date' => 'COM_JEM_RECURRENCE_COUNTER',
+        );
+
+        foreach ($dateFields as $field => $labelKey) {
+            if ($this->$field !== null && !JemHelper::isValidCalendarDate((string) $this->$field)) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', Text::_($labelKey)));
+
+                return false;
+            }
+        }
+
         // check startDate - don't delete other fields; it's ok to know a time but not the day
         //if ($this->dates == NULL) {
         //    $this->times = NULL;

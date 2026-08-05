@@ -428,19 +428,8 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
-        // convert international date formats...
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        if (!empty($data['dates']) && ($data['dates'] != null)) {
-            $d = Factory::getDate($data['dates'], 'UTC');
-            $data['dates'] = $d->format('Y-m-d', true, false);
-        }
-        if (!empty($data['enddates']) && ($data['enddates'] != null)) {
-            $d = Factory::getDate($data['enddates'], 'UTC');
-            $data['enddates'] = $d->format('Y-m-d', true, false);
-        }
-        if (!empty($data['recurrence_limit_date']) && ($data['recurrence_limit_date'] != null)) {
-            $d = Factory::getDate($data['recurrence_limit_date'], 'UTC');
-            $data['recurrence_limit_date'] = $d->format('Y-m-d', true, false);
+        if (!$this->normaliseEventDates($data)) {
+            return false;
         }
 
         if (!$this->validateSpecialDayEventDates($data)) {
@@ -1006,6 +995,45 @@ class JemModelEvent extends JemModelAdmin
         $this->applyRecurringAssociatedArticleMode($eventId, $articleId, $eventData, $articleCategoryId);
         Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_EVENT_ARTICLE_CREATED'), 'message');
         $this->setAssociatedArticleCreationState($articleId, $eventData);
+
+        return true;
+    }
+
+    /**
+     * Validate and normalise event dates without accepting PHP date rollover.
+     *
+     * Joomla's calendar field returns a canonical date with an optional time
+     * part after applying the local display format. JEM stores only the date.
+     * Empty values remain empty because JEM supports open-date events.
+     *
+     * @param   array  &$data  Event data to validate and normalise.
+     *
+     * @return  boolean
+     */
+    protected function normaliseEventDates(array &$data)
+    {
+        $fields = array(
+            'dates'                 => 'COM_JEM_STARTDATE',
+            'enddates'              => 'COM_JEM_ENDDATE',
+            'recurrence_limit_date' => 'COM_JEM_RECURRENCE_COUNTER',
+        );
+
+        foreach ($fields as $field => $labelKey) {
+            if (!array_key_exists($field, $data) || $data[$field] === null || trim((string) $data[$field]) === '') {
+                continue;
+            }
+
+            $value = trim((string) $data[$field]);
+            $format = strlen($value) === 19 ? 'Y-m-d H:i:s' : 'Y-m-d';
+
+            if (!JemHelper::isValidCalendarDate($value, $format)) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', Text::_($labelKey)));
+
+                return false;
+            }
+
+            $data[$field] = substr($value, 0, 10);
+        }
 
         return true;
     }

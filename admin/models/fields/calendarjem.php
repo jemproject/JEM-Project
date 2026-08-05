@@ -10,6 +10,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Form\Field\CalendarField;
+use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Registry\Registry;
 
 /**
  * Form Field class for JEM needs.
@@ -37,6 +40,23 @@ class JFormFieldCalendarJem extends CalendarField
     {
         $data = parent::getLayoutData();
         $data['firstday'] = $this->getJemFirstWeekday((int) ($data['firstday'] ?? 0));
+        $data['class'] = trim(($data['class'] ?? '') . ' validate-jemdate');
+        $data['dataAttribute'] = ($data['dataAttribute'] ?? '')
+            . ' data-validation-text="'
+            . htmlspecialchars(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', $this->title), ENT_COMPAT, 'UTF-8')
+            . '"';
+
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        if (!$wa->assetExists('script', 'jem.datevalidation')) {
+            $wa->registerScript(
+                'jem.datevalidation',
+                'com_jem/date-validation.js',
+                array(),
+                array('defer' => true),
+                array('form.validate')
+            );
+        }
+        $wa->useScript('jem.datevalidation');
 
         if (!empty($this->hint)) {
             return $data;
@@ -48,6 +68,38 @@ class JFormFieldCalendarJem extends CalendarField
         $hint = Text::sprintf('COM_JEM_DATEFIELD_HINT', date($date_format, $exampleTimestamp));
 
         return array_merge($data, ['hint' => $hint]);
+    }
+
+    /**
+     * Validate the submitted localised date before Joomla normalises it.
+     *
+     * Empty values remain valid because JEM supports open-date events.
+     *
+     * @param   mixed     $value  Submitted field value.
+     * @param   string    $group  Optional field group.
+     * @param   Registry  $input  Complete form data.
+     *
+     * @return  mixed
+     *
+     * @throws  Exception  If a non-empty value is not a real calendar date.
+     */
+    public function filter($value, $group = null, ?Registry $input = null)
+    {
+        $value = is_string($value) ? trim($value) : $value;
+
+        if ($value !== '' && $value !== null) {
+            $format = $this->filterFormat ?: HTMLHelper::strftimeFormatToDateFormat($this->format);
+            $date = \DateTimeImmutable::createFromFormat('!' . $format, (string) $value);
+            $errors = \DateTimeImmutable::getLastErrors();
+            $hasErrors = $errors !== false
+                && ((int) $errors['warning_count'] > 0 || (int) $errors['error_count'] > 0);
+
+            if ($date === false || $hasErrors || $date->format($format) !== (string) $value) {
+                throw new \Exception(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', $this->title));
+            }
+        }
+
+        return parent::filter($value, $group, $input);
     }
 
     /**

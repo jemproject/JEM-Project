@@ -3287,6 +3287,37 @@ class JemHelper
     }
 
     /**
+     * Test a date against an exact calendar format without normalising invalid values.
+     *
+     * Unlike strtotime(), this rejects impossible dates such as 2027-02-29 and
+     * 2027-04-31. Empty values are not dates; callers can allow them explicitly.
+     *
+     * @param   mixed   $date    Date value to validate.
+     * @param   string  $format  Expected PHP date format.
+     *
+     * @return  boolean
+     */
+    static public function isValidCalendarDate($date, $format = 'Y-m-d')
+    {
+        if (!is_string($date) || $date === '') {
+            return false;
+        }
+
+        $parsed = \DateTimeImmutable::createFromFormat('!' . $format, $date);
+        $errors = \DateTimeImmutable::getLastErrors();
+
+        if ($parsed === false) {
+            return false;
+        }
+
+        if ($errors !== false && ((int) $errors['warning_count'] > 0 || (int) $errors['error_count'] > 0)) {
+            return false;
+        }
+
+        return $parsed->format($format) === $date;
+    }
+
+    /**
      * return true is a time is valid (not null, or 00:00:00...)
      *
      * @param  string $time
