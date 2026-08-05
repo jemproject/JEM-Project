@@ -216,7 +216,7 @@ class JemModelCategories extends ListModel
             }
             else {
                 $search = $db->Quote('%'.$db->escape($search, true).'%');
-                $query->where('(a.title LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.note LIKE '.$search.')');
+                $query->where('(a.catname LIKE '.$search.' OR a.alias LIKE '.$search.' OR a.note LIKE '.$search.')');
             }
         }
 
