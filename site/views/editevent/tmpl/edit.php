@@ -756,7 +756,6 @@ $document->addStyleDeclaration('
     }
 </script>
 <script>
-    // window.addEvent('domready', function(){
     jQuery(document).ready(function($){
 
         var showUnregistraUntil = function(){

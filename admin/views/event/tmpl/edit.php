@@ -20,20 +20,6 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
 
-$options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
-    'opacityTransition' => true,
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
-);
-
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
     ->useScript('form.validate')

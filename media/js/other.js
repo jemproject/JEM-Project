@@ -8,7 +8,6 @@
 /**
  * this file manages the js script for adding/removing attachements in event
  */
-//  window.addEvent('domready', function() {
 jQuery(document).ready(function ($) {
     $('#userfile-remove').on('click', function (event) {
         var di = document.getElementById('datimage');

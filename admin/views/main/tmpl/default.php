@@ -13,19 +13,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
-$options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
-);
-
 $stateLinks = array(
     'events' => array(
         'published' => Route::_('index.php?option=com_jem&view=events&filter_state=1'),

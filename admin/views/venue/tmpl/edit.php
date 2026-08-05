@@ -855,7 +855,6 @@ Text::script('JCANCEL');
         }
     });
 
-    // window.addEvent('domready', function() {
     window.onload = function() {
         setAttribute();
         test();
