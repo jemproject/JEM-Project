@@ -136,9 +136,13 @@ class JemModelEditvenue extends JemModelVenue
         $files = JemAttachment::getAttachments('venue' . $value->id, true);
         $value->attachments = $files;
 
-        // Preset values on new venues
-        if (isset($jemsettings->defaultCountry) && empty($itemId)) {
-            $value->country = $jemsettings->defaultCountry;
+        // Preset values on new venues.
+        if (empty($itemId)) {
+            if (isset($jemsettings->defaultCountry)) {
+                $value->country = $jemsettings->defaultCountry;
+            }
+
+            $value->map = (int) JemHelper::globalattribs()->get('global_show_mapserv', 0) > 0 ? 1 : 0;
         }
 
         return $value;

@@ -223,6 +223,7 @@ class JemModelVenue extends JemModelAdmin
 
         if (empty($item->id)) {
             $item->country = $jemsettings->defaultCountry;
+            $item->map = (int) JemHelper::globalattribs()->get('global_show_mapserv', 0) > 0 ? 1 : 0;
         }
 
         list($item->latitude, $item->longitude) = $this->normaliseCoordinates(
