@@ -993,6 +993,68 @@ static public function lightbox() {
     }
 
     /**
+     * Render an OpenStreetMap canvas using JEM's local Leaflet assets.
+     *
+     * The map is initialised by osm-map.js when it is visible. This also supports
+     * maps inside Bootstrap modals, whose dimensions are not available until the
+     * modal has been opened.
+     *
+     * @param float  $latitude  Marker latitude
+     * @param float  $longitude Marker longitude
+     * @param string $height    CSS height including its unit
+     * @param int    $zoom      Initial Leaflet zoom level
+     * @param string $id        Optional unique element id
+     * @param string $class     Optional additional CSS classes
+     *
+     * @return string
+     */
+    static public function osmMapCanvas($latitude, $longitude, $height = '250px', $zoom = 15, $id = '', $class = '')
+    {
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        if ($latitude < -90.0 || $latitude > 90.0 || $longitude < -180.0 || $longitude > 180.0) {
+            return '';
+        }
+
+        $height = preg_match('/^\d+(?:\.\d+)?(?:px|vh|vw|rem|%)$/', (string) $height)
+            ? (string) $height
+            : '250px';
+        $zoom = max(1, min(19, (int) $zoom));
+        $id = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $id);
+        $class = trim(preg_replace('/[^A-Za-z0-9 _-]/', '', (string) $class));
+
+        if ($id === '') {
+            static $mapNumber = 0;
+            $id = 'jem-osm-map-' . ++$mapNumber;
+        }
+
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+        if (!$wa->assetExists('style', 'leaflet.css')) {
+            $wa->registerStyle('leaflet.css', 'media/com_jem/css/leaflet.css');
+        }
+        if (!$wa->assetExists('script', 'leaflet')) {
+            $wa->registerScript('leaflet', 'media/com_jem/js/leaflet.js');
+        }
+        if (!$wa->assetExists('script', 'jem.osm-map')) {
+            $wa->registerScript('jem.osm-map', 'media/com_jem/js/osm-map.js', array(), array('defer' => true), array('leaflet'));
+        }
+
+        $wa->useStyle('leaflet.css');
+        $wa->useScript('leaflet');
+        $wa->useScript('jem.osm-map');
+
+        return '<div id="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '"'
+            . ' class="jem-osm-map' . ($class !== '' ? ' ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') : '') . '"'
+            . ' style="width:100%;height:' . htmlspecialchars($height, ENT_QUOTES, 'UTF-8') . ';min-height:1px"'
+            . ' data-latitude="' . htmlspecialchars((string) $latitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-longitude="' . htmlspecialchars((string) $longitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-zoom="' . $zoom . '"'
+            . ' role="region" aria-label="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8') . '"></div>';
+    }
+
+    /**
      * Creates the map button
      *
      * @param obj $data
@@ -1197,12 +1259,8 @@ static public function lightbox() {
                 $lng = $decoded[0]["lon"] ?? null;
                 }
 
-                $wa = $app->getDocument()->getWebAssetManager();
-                $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
-
                 if ($lat && $lng) {
-                    $zoom = 15; // Adjust the zoom level as per your requirement
-                    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+                    $output = self::osmMapCanvas($lat, $lng, '250px', 15);
                 } else {
                     $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
                     $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
