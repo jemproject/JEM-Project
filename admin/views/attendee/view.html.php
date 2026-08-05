@@ -64,12 +64,12 @@ class JemViewAttendee extends HtmlView {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         //get vars
-        $cid        = Factory::getApplication()->input->get('cid', array(), 'array');
         $user       = JemFactory::getUser();
         $checkedOut = false; // don't know, table hasn't such a field
         $canDo      = JemHelperBackend::getActions();
+        $isNew      = empty($this->row->id);
 
-        if (empty($cid[0])) {
+        if ($isNew) {
             ToolbarHelper::title(Text::_('COM_JEM_ADD_ATTENDEE'), 'users');
         } else {
             ToolbarHelper::title(Text::_('COM_JEM_EDIT_ATTENDEE'), 'users');
@@ -86,11 +86,11 @@ class JemViewAttendee extends HtmlView {
         }
 
         // If an existing item, can save to a copy.
-        if (!empty($cid[0]) && $canDo->get('core.create')) {
+        if (!$isNew && $canDo->get('core.create')) {
             ToolbarHelper::save2copy('attendee.save2copy');
         }
 
-        if (empty($cid[0])) {
+        if ($isNew) {
             ToolbarHelper::cancel('attendee.cancel');
         } else {
             ToolbarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');

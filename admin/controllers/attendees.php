@@ -225,7 +225,8 @@ class JemControllerAttendees extends BaseController
         $jinput->set('view', 'attendee');
         // 'attendee' expects event id as 'event' not 'id'
         $jinput->set('event', $jinput->getInt('eventid'));
-        $jinput->set('id', null);
+        $cid = $jinput->get('cid', array(), 'array');
+        $jinput->set('id', (int) ($cid[0] ?? 0));
         $jinput->set('hidemainmenu', '1');
 
         parent::display();

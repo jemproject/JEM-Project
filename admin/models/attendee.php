@@ -43,12 +43,7 @@ class JemModelAttendee extends BaseDatabaseModel
         parent::__construct();
 
         $jinput = Factory::getApplication()->input;
-        $array = $jinput->get('id',  0, 'array');
-
-        if(is_array($array))
-        {
-            $this->setId((int)$array[0]);
-        }
+        $this->setId($jinput->getInt('id', 0));
     }
 
     /**
@@ -187,7 +182,8 @@ class JemModelAttendee extends BaseDatabaseModel
             if ($status == 2) {
                 $data['status'] = 1;
                 $data['waiting'] = 1;
-            } elseif ($status == 1) {
+            } else {
+                $data['status'] = (int) $status;
                 $data['waiting'] = 0;
             }
         }
@@ -196,8 +192,10 @@ class JemModelAttendee extends BaseDatabaseModel
         $row = Table::getInstance('jem_register', '');
 
         if ($id > 0) {
-            $row->load($id);
-            $old_data = clone $row;
+            if (!$row->load($id)) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
         }
 
         // bind it to the table
@@ -229,7 +227,17 @@ class JemModelAttendee extends BaseDatabaseModel
 
         // Are we saving from an item edit?
         if ($row->id) {
+            if (!$row->check()) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
 
+            if (!$row->store()) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
+
+            return $row;
         } else {
             if ($row->status === 0) {
                 // todo: add "invited" field to store such timestamps?
@@ -274,6 +282,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 $events [] = clone $event;
             }
 
+            $storedRow = null;
             foreach ($events as $e) {
 
                 // Check if user is registered to each series event
@@ -341,8 +350,13 @@ class JemModelAttendee extends BaseDatabaseModel
                     Factory::getApplication()->enqueueMessage($row->getError(), 'error');
                     return false;
                 }
+
+                if ($storedRow === null || (int) $e->id === $eventid) {
+                    $storedRow = $row_aux;
+                }
             }
-            return $row;
+
+            return $storedRow ?: false;
         }
     }
 

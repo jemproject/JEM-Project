@@ -110,23 +110,40 @@ class JemControllerAttendee extends BaseController
 
         // handle changing the user - must also trigger onEventUserUnregistered
         $uid = (!empty($post['uid']) ? $post['uid'] : 0);
+        $old_data = null;
         if ($uid && $id) {
             $model->setId($id);
             $old_data = $model->getData();
         }
-        $old_uid    = (!empty($old_data->uid)    ? $old_data->uid    : 0);
-        $old_status = (!empty($old_data->status) ? $old_data->status : 0);
+        $old_uid = !empty($old_data->uid) ? (int) $old_data->uid : 0;
+        $effectiveStatus = static function ($registration) {
+            if (!$registration) {
+                return null;
+            }
+
+            return (int) $registration->status === 1 && !empty($registration->waiting)
+                ? 2
+                : (int) $registration->status;
+        };
 
         if ($row = $model->store($post)) {
             if ($sendemail == 1) {
                 PluginHelper::importPlugin('jem');
                 $dispatcher = JemFactory::getDispatcher();
+                $eventChanged = $old_data && (int) $old_data->event !== (int) $row->event;
+                $registrationChanged = !$old_data
+                    || $eventChanged
+                    || $old_uid !== (int) $row->uid
+                    || $effectiveStatus($old_data) !== $effectiveStatus($row)
+                    || (int) ($old_data->places ?? 0) !== (int) ($row->places ?? 0)
+                    || (string) ($old_data->comment ?? '') !== (string) ($row->comment ?? '');
+
                 // there was a user and it's overwritten by a new user -> send unregister mails
-                if ($old_uid && ($old_uid != $uid)) {
+                if ($old_uid && (($old_uid != $uid) || $eventChanged)) {
                     $dispatcher->triggerEvent('onEventUserUnregistered', array($old_data->event, $old_data));
                 }
-                // there is a new user which wasn't before -> send register mails
-                if ($uid && (($old_uid != $uid) || ($row->status != $old_status))) {
+                // Notify a new user or an existing user whose registration data changed.
+                if ($uid && $registrationChanged) {
                     $dispatcher->triggerEvent('onEventUserRegistered', array($row->id));
                 }
                 // but show warning if mailer is disabled
@@ -141,7 +158,7 @@ class JemControllerAttendee extends BaseController
             switch ($task) {
             case 'apply':
                 // Redirect back to the edit screen.
-                $link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&cid[]='.$row->id.'&eventid='.$row->event;
+                $link = 'index.php?option=com_jem&view=attendee&hidemainmenu=1&id='.$row->id.'&eventid='.$row->event;
                 break;
 
             case 'save2new':
