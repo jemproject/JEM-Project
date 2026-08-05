@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
         <legend><?php echo Text::_( 'COM_JEM_EVENT_HANDLING' ); ?></legend>
         <ul class="adminformlist">
             <li><div class="label-form"><?php echo $this->form->renderfield('oldevent'); ?></div></li>
-            <li id="evhandler1"><div class="label-form"><?php echo $this->form->renderfield('minus'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('minus'); ?></div></li>
         </ul>
     </fieldset>
 </div>

@@ -44,7 +44,6 @@ class JemViewSettings extends JemAdminView
         $wa = $document->getWebAssetManager();
 
         $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-        $wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
         $style = '
             div.current fieldset.radio input {
@@ -73,7 +72,6 @@ class JemViewSettings extends JemAdminView
         // Load Script
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->useScript('jquery');
-        $wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
 
         if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
             $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');

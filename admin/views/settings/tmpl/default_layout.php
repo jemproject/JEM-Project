@@ -26,7 +26,7 @@ $renderInlineHelp = function ($field) {
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_GENERAL_LAYOUT_SETTINGS'); ?></legend>
             <ul class="adminformlist">
-                <li id="loc1" style="display:none"><div class="label-form"><?php echo $this->form->renderfield('tablewidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('tablewidth'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -46,7 +46,7 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_TITLE_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showtitle'); ?></div></li>
-                <li id="title1" style="<?php echo ($this->form->getValue('showtitle')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('titlewidth'); ?></div>
+                <li><div class="label-form"><?php echo $this->form->renderfield('titlewidth'); ?></div>
                 </li>
             </ul>
         </fieldset>
@@ -56,8 +56,8 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_VENUE_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showlocate'); ?></div></li>
-                <li id="loc1" style="<?php echo ($this->form->getValue('showlocate')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('locationwidth'); ?></div></li>
-                <li id="loc2" style="<?php echo ($this->form->getValue('showlocate')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('showlinkvenue'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('locationwidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('showlinkvenue'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -66,7 +66,7 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_CITY_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showcity'); ?></div></li>
-                <li id="city1" style="<?php echo ($this->form->getValue('showcity')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('citywidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('citywidth'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -75,7 +75,7 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_STATE_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showstate'); ?></div></li>
-                <li id="state1" style="<?php echo ($this->form->getValue('showstate')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('statewidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('statewidth'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -84,8 +84,8 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_CATEGORY_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showcat'); ?></div></li>
-                <li id="cat1" style="<?php echo ($this->form->getValue('showcat')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('catfrowidth'); ?></div></li>
-                <li id="cat2" style="<?php echo ($this->form->getValue('showcat')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('catlinklist'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('catfrowidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('catlinklist'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -94,7 +94,7 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_ATTENDEE_COLUMN'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showatte'); ?></div></li>
-                <li id="atte1" style="<?php echo ($this->form->getValue('showatte')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('attewidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('attewidth'); ?></div></li>
             </ul>
         </fieldset>
     </div>
@@ -103,7 +103,7 @@ $renderInlineHelp = function ($field) {
             <legend><?php echo Text::_('COM_JEM_LAYOUT_TABLE_EVENTIMAGE'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showeventimage'); ?></div></li>
-                <li id="evimage1" style="<?php echo ($this->form->getValue('showeventimage')? '':'display:none');?>"><div class="label-form"><?php echo $this->form->renderfield('tableeventimagewidth'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('tableeventimagewidth'); ?></div></li>
             </ul>
         </fieldset>
     </div>
