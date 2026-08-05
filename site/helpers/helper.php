@@ -374,6 +374,112 @@ class JemHelper
     }
 
     /**
+     * Return the current state of an event registration window.
+     *
+     * Registration boundary values are stored in UTC. Open-date events keep
+     * the legacy behaviour where a limited window does not restrict access.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return string disabled, not_started, open or closed.
+     */
+    static public function getEventRegistrationWindowState($event, $now = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            return 'disabled';
+        }
+
+        $mode = (int) ($event->registra ?? 0);
+        if ($mode === 1) {
+            return 'open';
+        }
+
+        if ($mode !== 2) {
+            return 'disabled';
+        }
+
+        if (empty($event->dates)) {
+            return 'open';
+        }
+
+        $now   = $now === null ? time() : (int) $now;
+        $from  = self::getUtcTimestamp($event->registra_from ?? '');
+        $until = self::getUtcTimestamp($event->registra_until ?? '');
+
+        if ($from && $now < $from) {
+            return 'not_started';
+        }
+
+        if ($until && $now >= $until) {
+            return 'closed';
+        }
+
+        return 'open';
+    }
+
+    /**
+     * Return whether an event currently accepts registrations.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return boolean
+     */
+    static public function isEventRegistrationOpen($event, $now = null)
+    {
+        return self::getEventRegistrationWindowState($event, $now) === 'open';
+    }
+
+    /**
+     * Return the current state of an event cancellation window.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return string disabled, open or closed.
+     */
+    static public function getEventUnregistrationWindowState($event, $now = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            return 'disabled';
+        }
+
+        $mode = (int) ($event->unregistra ?? 0);
+        if ($mode === 1) {
+            return 'open';
+        }
+
+        if ($mode !== 2) {
+            return 'disabled';
+        }
+
+        if (empty($event->dates)) {
+            return 'open';
+        }
+
+        $now   = $now === null ? time() : (int) $now;
+        $until = self::getUtcTimestamp($event->unregistra_until ?? '');
+
+        return $until && $now < $until ? 'open' : 'closed';
+    }
+
+    /**
+     * Return whether an existing registration can currently be cancelled.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return boolean
+     */
+    static public function isEventUnregistrationOpen($event, $now = null)
+    {
+        return self::getEventUnregistrationWindowState($event, $now) === 'open';
+    }
+
+    /**
      * Build an event start/end comparison against the current instant.
      *
      * Cached UTC values are preferred. The fallback preserves the legacy

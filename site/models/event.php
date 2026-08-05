@@ -1062,8 +1062,27 @@ class JemModelEvent extends ItemModel
             $events [] = clone $event;
         }
 
+        // Validate every selected event before writing any series registration.
+        // This avoids partially updating a series when one event is outside its window.
+        $registrations = array();
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
+            $registrations[(int) $e->id] = $reg;
+            $hasActiveRegistration = is_object($reg) && in_array((int) $reg->status, array(1, 2), true);
+
+            if ($status > 0 && !JemHelper::isEventRegistrationOpen($e)) {
+                $this->setError(Text::_('COM_JEM_EVENT_REGISTRATION_CLOSED') . ' [id: ' . (int) $e->id . ']');
+                return false;
+            }
+
+            if ($status <= 0 && $hasActiveRegistration && !JemHelper::isEventUnregistrationOpen($e)) {
+                $this->setError(Text::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED') . ' [id: ' . (int) $e->id . ']');
+                return false;
+            }
+        }
+
+        foreach ($events as $e) {
+            $reg = $registrations[(int) $e->id];
             $errMsg = '';
             $eventStatus = $status;
 

@@ -288,8 +288,10 @@ class JemViewEvent extends JemView
         $this->dateRegistationFrom    = JemHelper::getUtcTimestamp($item->registra_from ?? '');
         $this->dateRegistationUntil   = JemHelper::getUtcTimestamp($item->registra_until ?? '');
         $this->dateUnregistationUntil = JemHelper::getUtcTimestamp($item->unregistra_until ?? '');
-        $this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && ($this->dateRegistationUntil? $timeNow < $this->dateRegistationUntil : 1))));
-        $this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || ($this->dateUnregistationUntil > $timeNow)));
+        $this->registrationWindowState   = JemHelper::getEventRegistrationWindowState($item, $timeNow);
+        $this->unregistrationWindowState = JemHelper::getEventUnregistrationWindowState($item, $timeNow);
+        $this->allowRegistration         = $this->registrationWindowState === 'open';
+        $this->allowAnnulation           = $this->unregistrationWindowState === 'open';
 
         // Timecheck for registration
         $eventStart = JemHelper::getUtcTimestamp($item->start_utc ?? '');
@@ -300,6 +302,8 @@ class JemViewEvent extends JemView
 
         // let's build the registration handling
         $formhandler = 0; // too late to unregister
+        $hasActiveRegistration = is_object($registration) && in_array((int) $registration->status, array(1, 2), true);
+        $this->showRegistrationAction = $this->allowRegistration || $hasActiveRegistration;
 
         if (is_object($registration)){
             if($registration->status != 0) { // is the user already registered at the event
@@ -315,6 +319,8 @@ class JemViewEvent extends JemView
             }
         } elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
             $formhandler = 1;
+        } elseif (!$this->allowRegistration) {
+            $formhandler = 1; // registration is not currently available
         } elseif (!$userId) { // user doesn't have an ID (mostly guest)
             $formhandler = 2;
         } else {
