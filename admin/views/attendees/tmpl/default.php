@@ -103,7 +103,7 @@ $wa->addInlineScript('
 
             <tbody>
                 <?php
-                $canChange = $user->authorise('core.edit.state');
+                $canChange = JemHelperBackend::canManage('jem.attendees.manage');
 
                 foreach ($this->items as $i => $row) :
                 ?>

@@ -122,7 +122,9 @@ img.venue-image {
 
         // Setup variables for display.
         $html = array();
-        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component';
+        $recordId = (int) $this->form->getValue('id');
+        $recordQuery = '&amp;record_id=' . $recordId;
+        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $recordQuery;
         $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
 
         //

@@ -78,6 +78,14 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
     return '<tr class="' . $class . '"><td>' . $label . '</td><td class="text-end">' . $valueHtml . '</td></tr>';
 };
 
+$canAccessEvents = JemHelperBackend::can('event', 'access');
+$canCreateEvents = JemHelperBackend::can('event', 'create');
+$canAccessVenues = JemHelperBackend::can('venue', 'access');
+$canCreateVenues = JemHelperBackend::can('venue', 'create');
+$canManageTools = JemHelperBackend::canManage('jem.tools.manage');
+$canManageAttendees = JemHelperBackend::canManage('jem.attendees.manage');
+$canConfigure = JemHelperBackend::canManage('core.options');
+
 ?>
 <style>
     .jem-wei-menus .card{
@@ -121,13 +129,17 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                     <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_CONTENT'); ?></h3>
                                     <div class="jem-wei-group">
                                     <?php
-                                        $link = 'index.php?option=com_jem&amp;view=events';
-                                        $addLink = 'index.php?option=com_jem&amp;task=event.add';
-                                        $this->quickiconButton($link, 'icon-48-events.svg', Text::_('COM_JEM_EVENTS'), 0, $addLink, Text::_('COM_JEM_ADD_EVENT'));
+                                        if ($canAccessEvents) {
+                                            $link = 'index.php?option=com_jem&amp;view=events';
+                                            $addLink = $canCreateEvents ? 'index.php?option=com_jem&amp;task=event.add' : null;
+                                            $this->quickiconButton($link, 'icon-48-events.svg', Text::_('COM_JEM_EVENTS'), 0, $addLink, Text::_('COM_JEM_ADD_EVENT'));
+                                        }
 
-                                        $link = 'index.php?option=com_jem&amp;view=venues';
-                                        $addLink = 'index.php?option=com_jem&task=venue.add';
-                                        $this->quickiconButton($link, 'icon-48-venues.svg', Text::_('COM_JEM_VENUES'), 0, $addLink, Text::_('COM_JEM_ADD_VENUE'));
+                                        if ($canAccessVenues) {
+                                            $link = 'index.php?option=com_jem&amp;view=venues';
+                                            $addLink = $canCreateVenues ? 'index.php?option=com_jem&task=venue.add' : null;
+                                            $this->quickiconButton($link, 'icon-48-venues.svg', Text::_('COM_JEM_VENUES'), 0, $addLink, Text::_('COM_JEM_ADD_VENUE'));
+                                        }
 
                                         $link = 'index.php?option=com_jem&amp;view=categories';
                                         $addLink = 'index.php?option=com_jem&amp;task=category.add';
@@ -154,21 +166,22 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                     <div class="jem-wei-group">
                                     <?php
 
-                                        //only admins should be able to see these items
-                                        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+                                        if ($canConfigure) {
                                             $link = 'index.php?option=com_jem&amp;view=settings';
                                             $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
-
-                                            $link = 'index.php?option=com_jem&amp;view=cssmanager';
-                                            $this->quickiconButton( $link, 'icon-48-cssmanager.svg', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
                                         }
 
-                                        $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
-                                        $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
+                                        if ($canManageTools) {
+                                            $link = 'index.php?option=com_jem&amp;view=cssmanager';
+                                            $this->quickiconButton( $link, 'icon-48-cssmanager.svg', Text::_( 'COM_JEM_CSSMANAGER_TITLE' ) );
+
+                                            $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
+                                            $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
+                                        }
                                     ?>
                                     </div>
 
-                                    <?php if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) : ?>
+                                    <?php if ($canManageTools) : ?>
                                     <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_DATA'); ?></h3>
                                     <div class="jem-wei-group">
                                     <?php
@@ -187,7 +200,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                     </div>
                                     <?php endif; ?>
 
-                                    <?php if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) : ?>
+                                    <?php if ($canManageTools) : ?>
                                     <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_MISC'); ?></h3>
                                     <div class="jem-wei-group">
                                     <?php
@@ -230,6 +243,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                     <div class="accordion" id="accordion_jem">
                         <?php //echo HTMLHelper::_('sliders.start','stat-pane',$options); ?>
                         <?php //echo HTMLHelper::_('sliders.panel', Text::_('COM_JEM_MAIN_EVENT_STATS'),'events'); ?>
+                        <?php if ($canAccessEvents) : ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="clsp_events_header">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#clsp_events" aria-expanded="true" aria-controls="clsp_events">
@@ -248,6 +262,8 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
+                        <?php if ($canAccessVenues) : ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="clsp_venues_header">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#clsp_venues" aria-expanded="true" aria-controls="clsp_venues">
@@ -266,6 +282,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="clsp_categories_header">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#clsp_categories" aria-expanded="true" aria-controls="clsp_categories">
@@ -314,11 +331,11 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                             <div id="clsp_images" class="accordion-collapse collapse" aria-labelledby="clsp_images_header" data-bs-parent="#accordion_jem">
                                 <div class="accordion-body">
                                     <table class="jem-main-stats">
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_EVENTS'), $this->images->events ?? 0, $imageLinks['events']); ?>
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_VENUES'), $this->images->venues ?? 0, $imageLinks['venues']); ?>
+                                        <?php if ($canAccessEvents) echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_EVENTS'), $this->images->events ?? 0, $imageLinks['events']); ?>
+                                        <?php if ($canAccessVenues) echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_VENUES'), $this->images->venues ?? 0, $imageLinks['venues']); ?>
                                         <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_CATEGORIES'), $this->images->categories ?? 0, $imageLinks['categories']); ?>
                                         <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_TYPES'), $this->images->types ?? 0, $imageLinks['types']); ?>
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_TOTAL'), $this->images->total ?? 0, null, true); ?>
+                                        <?php if ($canAccessEvents && $canAccessVenues) echo $renderStatRow(Text::_('COM_JEM_MAIN_IMAGES_TOTAL'), $this->images->total ?? 0, null, true); ?>
                                     </table>
                                 </div>
                             </div>
@@ -332,15 +349,16 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                             <div id="clsp_attachments" class="accordion-collapse collapse" aria-labelledby="clsp_attachments_header" data-bs-parent="#accordion_jem">
                                 <div class="accordion-body">
                                     <table class="jem-main-stats">
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_EVENTS'), $this->attachments->events ?? 0, $attachmentLinks['events']); ?>
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_VENUES'), $this->attachments->venues ?? 0, $attachmentLinks['venues']); ?>
+                                        <?php if ($canAccessEvents) echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_EVENTS'), $this->attachments->events ?? 0, $attachmentLinks['events']); ?>
+                                        <?php if ($canAccessVenues) echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_VENUES'), $this->attachments->venues ?? 0, $attachmentLinks['venues']); ?>
                                         <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_CATEGORIES'), $this->attachments->categories ?? 0, $attachmentLinks['categories']); ?>
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_OTHER'), $this->attachments->other ?? 0, null); ?>
-                                        <?php echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_TOTAL'), $this->attachments->total ?? 0, $attachmentLinks['total'], true); ?>
+                                        <?php if ($canManageTools) echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_OTHER'), $this->attachments->other ?? 0, null); ?>
+                                        <?php if ($canAccessEvents && $canAccessVenues && $canManageTools) echo $renderStatRow(Text::_('COM_JEM_MAIN_ATTACHMENTS_TOTAL'), $this->attachments->total ?? 0, $attachmentLinks['total'], true); ?>
                                     </table>
                                 </div>
                             </div>
                         </div>
+                        <?php if ($canManageAttendees) : ?>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="clsp_registration_header">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#clsp_registration" aria-expanded="true" aria-controls="clsp_registration">
@@ -361,6 +379,7 @@ $renderStatRow = static function ($label, $value, $link = null, $isTotal = false
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
                     </div>
 
                     <?php //echo HTMLHelper::_('sliders.end'); ?>

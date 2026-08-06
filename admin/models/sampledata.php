@@ -630,7 +630,7 @@ class JemModelSampledata extends BaseDatabaseModel
         $user = JemFactory::getUser();
         $userId = (int) $user->get('id');
 
-        if (!$userId || !$user->authorise('core.manage', 'com_jem')) {
+        if (!$userId || !JemHelperBackend::canManage('jem.tools.manage')) {
             return false;
         }
 

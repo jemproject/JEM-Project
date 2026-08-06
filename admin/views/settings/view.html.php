@@ -29,6 +29,10 @@ class JemViewSettings extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('core.options')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app         = Factory::getApplication();
         $document    = $app->getDocument();
         $form        = $this->get('Form');
@@ -72,12 +76,6 @@ class JemViewSettings extends JemAdminView
         // Load Script
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->useScript('jquery');
-
-        if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            $app->redirect('index.php?option=com_jem&view=main');
-            return false;
-        }
 
         // mapping variables
         $this->form        = $form;

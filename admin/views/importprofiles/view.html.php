@@ -22,6 +22,10 @@ class JemViewImportprofiles extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
@@ -47,9 +51,7 @@ class JemViewImportprofiles extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_IMPORT_PROFILES'), 'upload');
         $toolbar = Toolbar::getInstance('toolbar');
 
-        $canDo = JemHelperBackend::getActions(0);
-
-        if ($canDo->get('core.delete')) {
+        if (JemHelperBackend::canManage('jem.tools.manage')) {
             $toolbar->delete('importprofiles.remove')
                 ->message('COM_JEM_CONFIRM_DELETE')
                 ->listCheck(true);

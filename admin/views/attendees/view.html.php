@@ -22,6 +22,10 @@ class JemViewAttendees extends JemAdminView
 {
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
         $db = Factory::getContainer()->get('DatabaseDriver');
 

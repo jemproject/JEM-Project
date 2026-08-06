@@ -19,12 +19,18 @@ class JemViewAttachments extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $canModifyAny = false;
 
     public function display($tpl = null)
     {
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+
+        foreach ($this->items as $item) {
+            $item->canEdit = JemHelperBackend::canAccessAttachment($item->object, 'edit');
+            $this->canModifyAny = $this->canModifyAny || $item->canEdit;
+        }
 
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
@@ -45,16 +51,16 @@ class JemViewAttachments extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_ATTACHMENTS'), 'attachment');
         $toolbar = $this->getToolbarInstance();
 
-        $canDo = JemHelperBackend::getActions(0);
-        $canEdit = $canDo->get('core.edit');
-        $canDelete = $canDo->get('core.delete');
+        $canEdit = $this->canModifyAny;
+        $canDelete = $this->canModifyAny;
+        $canExport = JemHelperBackend::canManage('jem.tools.manage');
 
         if ($canEdit) {
             ToolbarHelper::editList('attachment.edit');
             ToolbarHelper::divider();
         }
 
-        if (($canDelete || $canDo->get('core.manage')) && $this->supportsToolbarDropdown($toolbar)) {
+        if (($canDelete || $canExport) && $this->supportsToolbarDropdown($toolbar)) {
             $dropdown = $toolbar->dropdownButton('attachment-actions')
                 ->text('JTOOLBAR_ACTIONS')
                 ->toggleSplit(false)
@@ -72,7 +78,7 @@ class JemViewAttachments extends JemAdminView
                     ->listCheck(true);
             }
 
-            if ($canDo->get('core.manage')) {
+            if ($canExport) {
                 $childBar->standardButton('export')
                     ->text('COM_JEM_EXPORT')
                     ->task('attachments.export')
@@ -85,7 +91,7 @@ class JemViewAttachments extends JemAdminView
                 ToolbarHelper::custom('attachments.deleteFiles', 'delete', 'delete', 'COM_JEM_ATTACHMENTS_DELETE_RECORDS_AND_FILES', true);
             }
 
-            if ($canDo->get('core.manage')) {
+            if ($canExport) {
                 ToolbarHelper::custom('attachments.export', 'download', 'download', 'COM_JEM_EXPORT', true);
             }
         }

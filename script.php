@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -317,7 +319,103 @@ class com_jemInstallerScript
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
             $this->rebuildEventUtcDates();
+            $this->migrateBackendAcl($type === 'update');
         }
+    }
+
+    /**
+     * Initialise the granular backend ACL without removing existing rules.
+     *
+     * Updates preserve JEM's historical behaviour by granting the new backend
+     * actions to groups which could previously manage the component. Fresh
+     * installations map the matching Joomla core action instead. Existing
+     * explicit allow or deny rules for a new action are never overwritten, so
+     * the operation is safe to repeat after an interrupted installation.
+     *
+     * @param   boolean  $preserveLegacyManage  True for an update.
+     *
+     * @return void
+     */
+    private function migrateBackendAcl($preserveLegacyManage)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $asset = Table::getInstance('Asset');
+
+        if (!$asset->loadByName('com_jem')) {
+            return;
+        }
+
+        $rules = new Rules((string) $asset->rules);
+        $rulesData = $rules->getData();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__usergroups'));
+        $db->setQuery($query);
+        $groupIds = array_map('intval', (array) $db->loadColumn());
+
+        $sourceActions = array(
+            'core.options'          => 'core.options',
+            'jem.events.access'     => 'core.manage',
+            'jem.events.create'     => 'core.create',
+            'jem.events.delete'     => 'core.delete',
+            'jem.events.edit'       => 'core.edit',
+            'jem.events.edit.state' => 'core.edit.state',
+            'jem.events.edit.own'   => 'core.edit.own',
+            'jem.venues.access'     => 'core.manage',
+            'jem.venues.create'     => 'core.create',
+            'jem.venues.delete'     => 'core.delete',
+            'jem.venues.edit'       => 'core.edit',
+            'jem.venues.edit.state' => 'core.edit.state',
+            'jem.venues.edit.own'   => 'core.edit.own',
+            'jem.attendees.manage'  => 'core.edit',
+            'jem.tools.manage'      => 'core.admin',
+        );
+        $changed = false;
+
+        foreach ($groupIds as $groupId) {
+            $legacyManager = $preserveLegacyManage
+                && Access::checkGroup($groupId, 'core.manage', 'com_jem');
+
+            foreach ($sourceActions as $targetAction => $sourceAction) {
+                $existing = isset($rulesData[$targetAction])
+                    ? $rulesData[$targetAction]->allow($groupId)
+                    : null;
+
+                if ($existing !== null) {
+                    continue;
+                }
+
+                if (!$legacyManager && !Access::checkGroup($groupId, $sourceAction, 'com_jem')) {
+                    continue;
+                }
+
+                $rules->mergeAction($targetAction, array($groupId => true));
+                $changed = true;
+            }
+        }
+
+        if (!$changed) {
+            return;
+        }
+
+        $asset->rules = (string) $rules;
+
+        if (!$asset->check() || !$asset->store()) {
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_INSTALL_BACKEND_ACL_MIGRATION_FAILED'),
+                'warning'
+            );
+
+            return;
+        }
+
+        Access::clearStatics();
+        Factory::getApplication()->enqueueMessage(
+            Text::_($preserveLegacyManage
+                ? 'COM_JEM_INSTALL_BACKEND_ACL_MIGRATED'
+                : 'COM_JEM_INSTALL_BACKEND_ACL_INITIALISED'),
+            'notice'
+        );
     }
 
     /**

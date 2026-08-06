@@ -71,15 +71,11 @@ class JemModelEvent extends JemModelAdmin
      */
     protected function canDelete($record)
     {
-        $result = false;
-
         if (!empty($record->id) && ($record->published == -2)) {
-            $user = JemFactory::getUser();
-
-            $result = $user->can('delete', 'event', $record->id, $record->created_by, !empty($record->catid) ? $record->catid : false);
+            return JemHelperBackend::can('event', 'delete', $record);
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -120,13 +116,7 @@ class JemModelEvent extends JemModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = JemFactory::getUser();
-
-        $id    = $record->id ?? false; // isset ensures 0 !== false
-        $owner = !empty($record->created_by) ? $record->created_by : false;
-        $cats  = !empty($record->catid) ? array($record->catid) : false;
-
-        return $user->can('publish', 'event', $id, $owner, $cats);
+        return JemHelperBackend::can('event', 'edit.state', $record);
     }
 
     /**
@@ -165,6 +155,20 @@ class JemModelEvent extends JemModelAdmin
             $form->removeField('article_target_category_id');
             $form->removeField('create_article');
             $form->removeField('article_auto_info');
+        }
+
+        if ($scope === 'backend') {
+            if (!JemHelperBackend::can('event', 'edit.state')) {
+                foreach (array('featured', 'ordering', 'publish_up', 'publish_down', 'published') as $fieldName) {
+                    $form->setFieldAttribute($fieldName, 'disabled', 'true');
+                    $form->setFieldAttribute($fieldName, 'filter', 'unset');
+                }
+            }
+
+            if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_users')) {
+                $form->setFieldAttribute('created_by', 'disabled', 'true');
+                $form->setFieldAttribute('created_by', 'filter', 'unset');
+            }
         }
 
         return $form;
@@ -1937,7 +1941,9 @@ class JemModelEvent extends JemModelAdmin
 
         $update = (object) array(
             'id'    => $articleId,
-            'state' => 1,
+            'state' => $user->authorise('core.edit.state', $articleAsset)
+                ? 1
+                : (int) $article->state,
         );
         $nullDate = $db->getNullDate();
         $publishUp = trim((string) ($eventData['publish_up'] ?? ''));

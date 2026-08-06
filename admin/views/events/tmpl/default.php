@@ -21,7 +21,7 @@ $user        = JemFactory::getUser();
 $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem.category');
+$canOrder    = JemHelperBackend::can('event', 'edit.state');
 $saveOrder    = $listOrder=='a.ordering';
 
 $params        = (isset($this->state->params)) ? $this->state->params : new Registry();
@@ -149,10 +149,12 @@ $ticketAvailabilityOptions = array(
                     }
 
                     $ordering    = ($listOrder == 'ordering');
-                    $canCreate    = $user->authorise('core.create');
-                    $canEdit    = $user->authorise('core.edit');
+                    $canCreate    = JemHelperBackend::can('event', 'create');
+                    $canEdit      = JemHelperBackend::can('event', 'edit', $row);
+                    $venueRecord  = (object) array('created_by' => (int) ($row->venue_created_by ?? 0));
+                    $canEditVenue = !empty($row->locid) && JemHelperBackend::can('venue', 'edit', $venueRecord);
                     $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $row->checked_out == $userId || $row->checked_out == 0;
-                    $canChange    = $user->authorise('core.edit.state') && $canCheckin;
+                    $canChange     = JemHelperBackend::can('event', 'edit.state', $row) && $canCheckin;
 
                     $venuelink         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='.$row->locid;
                     $published         = HTMLHelper::_('jgrid.published', $row->published, $i, 'events.');
@@ -236,7 +238,7 @@ $ticketAvailabilityOptions = array(
                         </td>
                         <td class="venue">
                             <?php if ($row->venue) : ?>
-                                <?php if ( $row->vchecked_out && ( $row->vchecked_out != $this->user->get('id') ) ) : ?>
+                                <?php if (!$canEditVenue || ($row->vchecked_out && ($row->vchecked_out != $this->user->get('id')))) : ?>
                                     <?php echo $this->escape($row->venue); ?>
                                 <?php else : ?>
                                     <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_EDIT_VENUE'), $row->venue, 'editlinktip'); ?>>
@@ -271,9 +273,13 @@ $ticketAvailabilityOptions = array(
                                     $count .= ','.(int)$row->invited .'?';
                                 }
                                 ?>
-                                <a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
+                                <?php if (JemHelperBackend::canManage('jem.attendees.manage')) : ?>
+                                    <a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_EVENTS_MANAGEATTENDEES'); ?>">
+                                        <?php echo $count; ?>
+                                    </a>
+                                <?php else : ?>
                                     <?php echo $count; ?>
-                                </a>
+                                <?php endif; ?>
                             <?php } else { ?>
                                 <?php echo HTMLHelper::_('image', 'com_jem/publish_r.webp', NULL, NULL, true); ?>
                             <?php } ?>
@@ -322,7 +328,7 @@ $ticketAvailabilityOptions = array(
                 <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
             </div>
 
-            <?php if ($user->authorise('core.edit', 'com_jem')) : ?>
+            <?php if (JemHelperBackend::can('event', 'edit') || $user->authorise('jem.events.edit.own', 'com_jem')) : ?>
                 <template id="joomla-dialog-batch"><?php echo $this->loadTemplate('batch_body'); ?></template>
             <?php endif; ?>
         </div>

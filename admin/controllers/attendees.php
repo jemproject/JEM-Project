@@ -47,7 +47,7 @@ class JemControllerAttendees extends BaseController
      */
     private function assertCanManageAttendees()
     {
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }

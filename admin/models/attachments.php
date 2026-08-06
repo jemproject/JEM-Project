@@ -104,6 +104,26 @@ class JemModelAttachments extends ListModel
             ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'))
             ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
+        $allowedObjects = array($db->quoteName('a.object') . ' LIKE ' . $db->quote('category%'));
+
+        if (JemHelperBackend::can('event', 'access')) {
+            $allowedObjects[] = $db->quoteName('a.object') . ' LIKE ' . $db->quote('event%');
+        }
+
+        if (JemHelperBackend::can('venue', 'access')) {
+            $allowedObjects[] = $db->quoteName('a.object') . ' LIKE ' . $db->quote('venue%');
+        }
+
+        if (JemHelperBackend::canManage('jem.tools.manage')) {
+            $allowedObjects[] = '('
+                . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('event%')
+                . ' AND ' . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('venue%')
+                . ' AND ' . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('category%')
+                . ')';
+        }
+
+        $query->where('(' . implode(' OR ', $allowedObjects) . ')');
+
         if ($applyFilters) {
             $search = $this->getState('filter_search');
             if (!empty($search)) {

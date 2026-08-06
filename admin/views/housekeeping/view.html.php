@@ -21,16 +21,12 @@ class JemViewHousekeeping extends JemAdminView
     public function display($tpl = null) {
 
         $app = Factory::getApplication();
-        $user = $app->getIdentity();
+
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
 
         $this->totalcats = $this->get('Countcats');
-
-        //only admins have access to this view
-        if (!$user->authorise('core.manage', 'com_jem')) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            $app->redirect('index.php?option=com_jem&view=main');
-            return false;
-        }
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();

@@ -23,6 +23,10 @@ class JEMViewUserElement extends HtmlView {
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
 
         // initialise variables

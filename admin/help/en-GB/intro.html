@@ -107,28 +107,52 @@
             If you have taken these steps you are ready to input your events.
             If you want to assign your events to venues you first have to create the venue information.
         </p>
-        <h2><strong>ACL and effective JEM permissions</strong></h2>
+        <h2><strong>Backend and frontend permissions</strong></h2>
         <p>
-            JEM combines Joomla component permissions, Joomla viewing access levels, frontend User Control settings,
-            record ownership and JEM Groups. Event categories can additionally connect a JEM Group to delegated
-            frontend event actions. Venues do not currently use JEM categories.
-        </p>
-        <p>
-            Joomla viewing levels are configured under <strong>Users</strong> &rarr; <strong>Access Levels</strong>.
-            Joomla component permissions are configured under <strong>Components</strong> &rarr; <strong>JEM</strong>
-            &rarr; <strong>Options</strong> &rarr; <strong>Permissions</strong>. JEM frontend delegation is configured
-            under <strong>Settings</strong> &rarr; <strong>User Control</strong> and <strong>JEM Groups</strong>.
-        </p>
-        <p>
-            The permission API keeps the boolean <code>JemUser::can()</code> result used by existing layouts,
-            modules and plugins. Extension developers who need to explain a result can call
-            <code>JemUser::getAccessDecision()</code>. It returns the final result, a stable code, the evaluation
-            stage, the source, the requested action and resource, a safe HTTP status and a public language key.
-            Internal reasons, record ID and diagnostic details are available separately and must not be exposed
-            to a visitor who cannot view the record.
+            Configure Joomla component permissions under <strong>Components</strong> &rarr; <strong>JEM</strong>
+            &rarr; <strong>Options</strong> &rarr; <strong>Permissions</strong>. Backend permissions and frontend
+            delegation are intentionally evaluated separately. Backend controllers use Joomla ACL only; frontend
+            User Control settings, record ownership, viewing levels, categories and JEM Groups continue to be
+            evaluated by <code>JemUser::can()</code>.
         </p>
 
-        <h3>Practical permission examples</h3>
+        <h3>Backend permission combinations</h3>
+        <table class="help-list">
+            <thead>
+                <tr><th>Permission</th><th>Backend effect</th><th>Required combination</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Access Administration Interface (<code>core.manage</code>)</td><td>Opens JEM.</td><td>Does not grant event or venue operations by itself.</td></tr>
+                <tr><td>Access Events / Access Venues</td><td>Opens the corresponding list, selectors and related information.</td><td>Required together with every create, edit, edit-own, state or delete permission for that resource.</td></tr>
+                <tr><td>Create Events / Create Venues</td><td>Creates records of that resource type.</td><td>The matching access permission is also required.</td></tr>
+                <tr><td>Edit Events / Edit Venues</td><td>Edits any stored record of that resource type.</td><td>The matching access permission is also required.</td></tr>
+                <tr><td>Edit Own Events / Edit Own Venues</td><td>Edits only records whose stored <code>created_by</code> value is the current user.</td><td>The matching access permission is also required. Submitted owner values are never trusted.</td></tr>
+                <tr><td>Edit Event State / Edit Venue State</td><td>Changes publication state and ordering; the event permission also controls featured state and publication dates.</td><td>Independent from content editing and requires the matching access permission.</td></tr>
+                <tr><td>Delete Events / Delete Venues</td><td>Deletes records of that resource type according to the normal JEM workflow.</td><td>Independent for events and venues and requires the matching access permission.</td></tr>
+                <tr><td>Manage Attendees</td><td>Displays and changes registration and attendee information.</td><td>Access Events is also required.</td></tr>
+                <tr><td>Manage JEM Tools</td><td>Allows maintenance, import, export, update checks, CSS tools, sample data and related administrative tools.</td><td>Independent from event and venue editing.</td></tr>
+                <tr><td>Configure Options (<code>core.options</code>)</td><td>Changes JEM settings and opens Joomla component options.</td><td>Independent from content management.</td></tr>
+                <tr><td>Configure ACL &amp; Options (<code>core.admin</code>)</td><td>Full JEM control, including all dedicated backend permissions.</td><td>Joomla standard administrator override.</td></tr>
+            </tbody>
+        </table>
+        <p>
+            During an update, JEM grants the new dedicated permissions to groups that already had effective
+            <code>core.manage</code> access, preserving the previous backend behaviour. Existing explicit values for
+            any new permission are not overwritten. Administrators can then narrow each group safely. Categories,
+            groups, types and special days continue to use their existing Joomla core permissions.
+        </p>
+
+        <h3>Frontend permission decisions</h3>
+        <p>
+            Joomla viewing levels are configured under <strong>Users</strong> &rarr; <strong>Access Levels</strong>.
+            JEM frontend delegation is configured under <strong>Settings</strong> &rarr; <strong>User Control</strong>
+            and <strong>JEM Groups</strong>. The boolean <code>JemUser::can()</code> API remains compatible for layouts,
+            modules and plugins. Extension developers can call <code>JemUser::getAccessDecision()</code> to obtain a
+            stable decision code, stage, source, safe HTTP status and public language key. Internal diagnostics must
+            not be exposed to visitors who cannot view the record.
+        </p>
+
+        <h3>Frontend examples</h3>
         <table class="help-list">
             <thead>
                 <tr>
@@ -142,11 +166,6 @@
                     <td>A guest requests an event or venue editor.</td>
                     <td>Login is required before record details are evaluated.</td>
                     <td><code>AUTHENTICATION_REQUIRED</code>, stage <code>authentication</code>.</td>
-                </tr>
-                <tr>
-                    <td>A backend user has <code>core.manage</code> for JEM.</td>
-                    <td>The common JEM permission API allows the operation.</td>
-                    <td><code>ALLOWED</code>, source <code>joomla_core_manage</code>.</td>
                 </tr>
                 <tr>
                     <td>A frontend user has Edit Own Events and owns the stored event.</td>

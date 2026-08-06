@@ -21,9 +21,15 @@ class JemViewAttachment extends JemAdminView
 
     public function display($tpl = null)
     {
+        $this->item  = $this->get('Item');
+
+        if (empty($this->item->id)
+            || !JemHelperBackend::canAccessAttachment($this->item->object, 'edit')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->form  = $this->get('Form');
         $this->fileInfo = $this->get('FileInfo');
-        $this->item  = $this->get('Item');
         $this->linkedItem = $this->get('LinkedItem');
         $this->state = $this->get('State');
 
@@ -45,11 +51,11 @@ class JemViewAttachment extends JemAdminView
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         $isNew = empty($this->item->id);
-        $canDo = JemHelperBackend::getActions();
+        $canEdit = !$isNew && JemHelperBackend::canAccessAttachment($this->item->object, 'edit');
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_ATTACHMENT_ADD') : Text::_('COM_JEM_ATTACHMENT_EDIT'), 'attachment');
 
-        if ($canDo->get('core.edit') || $canDo->get('core.create')) {
+        if ($canEdit) {
             ToolbarHelper::apply('attachment.apply');
             ToolbarHelper::save('attachment.save');
         }

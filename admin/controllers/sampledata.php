@@ -32,7 +32,7 @@ class JemControllerSampledata extends BaseController
     public function load() {
         Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
 
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

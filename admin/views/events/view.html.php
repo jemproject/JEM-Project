@@ -27,6 +27,10 @@ class JemViewEvents extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('event', 'access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app            = Factory::getApplication();
         $document       = $app->getDocument();
         $user             = JemFactory::getUser();
@@ -247,17 +251,20 @@ class JemViewEvents extends JemAdminView
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
+        $canCreate = JemHelperBackend::can('event', 'create');
+        $canEdit = JemHelperBackend::can('event', 'edit')
+            || ($canDo->get('jem.events.access') && $canDo->get('jem.events.edit.own'));
+        $canChangeState = JemHelperBackend::can('event', 'edit.state');
+        $canDelete = JemHelperBackend::can('event', 'delete');
         $showActionDropdown = $canChangeState;
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canCreate) {
             ToolBarHelper::addNew('event.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canEdit) {
             ToolBarHelper::editList('event.edit');
             ToolBarHelper::divider();
         }
@@ -292,7 +299,7 @@ class JemViewEvents extends JemAdminView
                 $childBar->checkin('events.checkin')->listCheck(true);
             }
 
-            if ($canDo->get('core.edit')) {
+            if ($canEdit) {
                 $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
                     ->popupType('inline')
                     ->textHeader(Text::_('COM_JEM_EVENTS_BATCH_OPTIONS'))

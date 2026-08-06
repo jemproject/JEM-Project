@@ -64,10 +64,10 @@ class JemModelVenue extends JemModelAdmin
     {
         if (!empty($record->id))
         {
-            $user = JemFactory::getUser();
-
-            return $user->authorise('core.delete', 'com_jem');
+            return JemHelperBackend::can('venue', 'delete', $record);
         }
+
+        return false;
     }
 
     /**
@@ -151,13 +151,7 @@ class JemModelVenue extends JemModelAdmin
      */
     protected function canEditState($record)
     {
-        $user = JemFactory::getUser();
-
-        if (!empty($record->catid)) {
-            return $user->authorise('core.edit.state', 'com_jem.category.'.(int) $record->catid);
-        } else {
-            return $user->authorise('core.edit.state', 'com_jem');
-        }
+        return JemHelperBackend::can('venue', 'edit.state', $record);
     }
 
     /**
@@ -191,6 +185,20 @@ class JemModelVenue extends JemModelAdmin
 
         $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
         JemCustomFields::applyFormLabels($form, 'venue', $scope);
+
+        if ($scope === 'backend') {
+            if (!JemHelperBackend::can('venue', 'edit.state')) {
+                foreach (array('ordering', 'published') as $fieldName) {
+                    $form->setFieldAttribute($fieldName, 'disabled', 'true');
+                    $form->setFieldAttribute($fieldName, 'filter', 'unset');
+                }
+            }
+
+            if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_users')) {
+                $form->setFieldAttribute('created_by', 'disabled', 'true');
+                $form->setFieldAttribute('created_by', 'filter', 'unset');
+            }
+        }
 
         return $form;
     }

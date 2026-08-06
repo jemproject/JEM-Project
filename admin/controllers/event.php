@@ -42,6 +42,32 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Require the dedicated backend event-create permission.
+     */
+    protected function allowAdd($data = array())
+    {
+        return JemHelperBackend::can('event', 'create');
+    }
+
+    /**
+     * Authorise editing from the event owner stored in the database.
+     */
+    protected function allowEdit($data = array(), $key = 'id')
+    {
+        $recordId = isset($data[$key]) ? (int) $data[$key] : 0;
+
+        if ($recordId <= 0) {
+            return false;
+        }
+
+        $record = $this->getModel()->getItem($recordId);
+
+        return is_object($record)
+            && (int) ($record->id ?? 0) === $recordId
+            && JemHelperBackend::can('event', 'edit', $record);
+    }
+
+    /**
      * Method to save a record.
      *
      * @param   string  $key     The name of the primary key of the URL variable.
@@ -77,7 +103,11 @@ class JemControllerEvent extends JemControllerForm
         $model = $this->getModel();
         $redirect = Route::_('index.php?option=com_jem&view=event&layout=edit&id=' . $id, false);
 
-        if ($id && $model && $model->updateAssociatedArticleFromEvent($id, $fields)) {
+        if (!$id || !$this->allowEdit(array('id' => $id), 'id')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        if ($model && $model->updateAssociatedArticleFromEvent($id, $fields)) {
             $this->setRedirect($redirect, Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATED'), 'message');
 
             return;

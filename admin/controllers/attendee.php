@@ -40,7 +40,7 @@ class JemControllerAttendee extends BaseController
      */
     private function assertCanManageAttendees()
     {
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }
@@ -183,6 +183,8 @@ class JemControllerAttendee extends BaseController
     }
 
     public function selectUser() {
+        $this->assertCanManageAttendees();
+
         $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'userelement');
         parent::display();

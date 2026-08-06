@@ -12,6 +12,7 @@ final class AttachmentRemovalSecurityTest extends TestCase
         $site = $this->read('site/controller.php');
 
         self::assertStringContainsString("Session::checkToken('request')", $admin);
+        self::assertStringContainsString("JemHelperBackend::canAccessAttachment(\$attachment->object, 'edit')", $admin);
         self::assertStringContainsString("\$this->checkToken('request')", $site);
         self::assertStringContainsString('JemAttachment::remove($id)', $admin);
         self::assertStringContainsString('JemAttachment::remove($id)', $site);

@@ -179,11 +179,11 @@ final class AdminCodeContractsTest extends TestCase
         }
     }
 
-    public function testEventsToolbarShowsStateActionsForComponentAdministrators(): void
+    public function testEventsToolbarShowsStateActionsForDedicatedEventStatePermission(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/admin/views/events/view.html.php');
 
-        self::assertStringContainsString("\$canChangeState = \$canDo->get('core.edit.state') || \$canDo->get('core.admin');", $code);
+        self::assertStringContainsString("\$canChangeState = JemHelperBackend::can('event', 'edit.state');", $code);
         self::assertStringContainsString("\$toolbar = Toolbar::getInstance('toolbar');", $code);
         self::assertStringContainsString("\$dropdown = \$toolbar->dropdownButton('status-group')", $code);
         self::assertStringContainsString("\$childBar->publish('events.publish')->listCheck(true);", $code);

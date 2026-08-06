@@ -25,8 +25,18 @@ class JemViewVenue extends JemAdminView
     public function display($tpl = null)
     {
         // Initialise variables.
-        $this->form  = $this->get('Form');
         $this->item  = $this->get('Item');
+
+        $isNew = empty($this->item->id);
+        $allowed = $isNew
+            ? JemHelperBackend::can('venue', 'create')
+            : JemHelperBackend::can('venue', 'edit', $this->item);
+
+        if (!$allowed) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $this->form  = $this->get('Form');
         $this->state = $this->get('State');
 
         // Check for errors.
@@ -82,10 +92,11 @@ class JemViewVenue extends JemAdminView
         $user         = JemFactory::getUser();
         $isNew        = ($this->item->id == 0);
         $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo        = JemHelperBackend::getActions();
-        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
-        $canSave2New  = !$checkedOut && $canDo->get('core.create');
-        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $canEdit      = !$isNew && JemHelperBackend::can('venue', 'edit', $this->item);
+        $canCreate    = JemHelperBackend::can('venue', 'create');
+        $canSave      = !$checkedOut && (($isNew && $canCreate) || $canEdit);
+        $canSave2New  = !$checkedOut && $canCreate;
+        $canSave2Copy = !$checkedOut && !$isNew && $canEdit && $canCreate;
         $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_VENUE') : Text::_('COM_JEM_EDIT_VENUE'), 'venuesedit');

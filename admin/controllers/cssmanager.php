@@ -57,12 +57,13 @@ class JemControllerCssmanager extends AdminController
     /**
      *
      */
-    public function linenumber() {
+    public function linenumber()
+    {
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -88,7 +89,7 @@ class JemControllerCssmanager extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.edit', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -115,7 +116,7 @@ class JemControllerCssmanager extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.delete', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -140,7 +141,7 @@ class JemControllerCssmanager extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -175,7 +176,7 @@ class JemControllerCssmanager extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.edit', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

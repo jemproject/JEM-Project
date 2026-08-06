@@ -20,6 +20,10 @@ class JemViewAttendee extends HtmlView {
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         //initialise variables
         $app      = Factory::getApplication();
         $document = $app->getDocument();
@@ -66,7 +70,7 @@ class JemViewAttendee extends HtmlView {
         //get vars
         $user       = JemFactory::getUser();
         $checkedOut = false; // don't know, table hasn't such a field
-        $canDo      = JemHelperBackend::getActions();
+        $canManage  = JemHelperBackend::canManage('jem.attendees.manage');
         $isNew      = empty($this->row->id);
 
         if ($isNew) {
@@ -76,17 +80,17 @@ class JemViewAttendee extends HtmlView {
         }
 
         // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+        if (!$checkedOut && $canManage) {
             ToolbarHelper::apply('attendee.apply');
             ToolbarHelper::save('attendee.save');
         }
 
-        if (!$checkedOut && $canDo->get('core.create')) {
+        if (!$checkedOut && $canManage) {
             ToolbarHelper::save2new('attendee.save2new');
         }
 
         // If an existing item, can save to a copy.
-        if (!$isNew && $canDo->get('core.create')) {
+        if (!$isNew && $canManage) {
             ToolbarHelper::save2copy('attendee.save2copy');
         }
 

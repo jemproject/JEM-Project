@@ -40,7 +40,7 @@ class JemControllerVenues extends AdminController
         $app = Factory::getApplication();
         $user = $app->getIdentity();
 
-        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+        if (!JemHelperBackend::can('venue', 'edit.state')) {
             echo '0';
             $app->close();
         }
@@ -75,6 +75,28 @@ class JemControllerVenues extends AdminController
     }
 
     /**
+     * Check-in is allowed only for venues the user may edit.
+     */
+    public function checkin()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $ids = Factory::getApplication()->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($ids);
+        $model = $this->getModel();
+
+        foreach (array_filter($ids) as $id) {
+            $record = $model->getItem((int) $id);
+
+            if (!is_object($record) || !JemHelperBackend::can('venue', 'edit', $record)) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+        }
+
+        return parent::checkin();
+    }
+
+    /**
      * logic for remove venues
      *
      * @access public
@@ -85,7 +107,7 @@ class JemControllerVenues extends AdminController
 
         $app = Factory::getApplication();
         $user = $app->getIdentity();
-        if (!$user->authorise('core.delete', 'com_jem')) {
+        if (!JemHelperBackend::can('venue', 'delete')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

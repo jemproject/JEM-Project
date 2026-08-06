@@ -36,6 +36,32 @@ class JemControllerVenue extends JemControllerForm
     }
 
     /**
+     * Require the dedicated backend venue-create permission.
+     */
+    protected function allowAdd($data = array())
+    {
+        return JemHelperBackend::can('venue', 'create');
+    }
+
+    /**
+     * Authorise editing from the venue owner stored in the database.
+     */
+    protected function allowEdit($data = array(), $key = 'id')
+    {
+        $recordId = isset($data[$key]) ? (int) $data[$key] : 0;
+
+        if ($recordId <= 0) {
+            return false;
+        }
+
+        $record = $this->getModel()->getItem($recordId);
+
+        return is_object($record)
+            && (int) ($record->id ?? 0) === $recordId
+            && JemHelperBackend::can('venue', 'edit', $record);
+    }
+
+    /**
      * Function that allows child controller access to model data
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.

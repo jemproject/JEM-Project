@@ -21,6 +21,10 @@ class JemViewCssmanager extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->files = $this->get('Files');
         $this->statusLinenumber = $this->get('StatusLinenumber');
 

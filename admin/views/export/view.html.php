@@ -23,6 +23,10 @@ class JemViewExport extends JemAdminView
 {
 
     public function display($tpl = null) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         //initialise variables
         $app = Factory::getApplication();
         $document = $app->getDocument();

@@ -14,8 +14,6 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
-use Joomla\CMS\User\User;
-
 use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Event Table
@@ -229,24 +227,6 @@ class JemTableEvent extends Table
         }
 
         JemHelper::setEventUtcDates($this);
-
-        // Check created_by user
-        $currentUser = Factory::getApplication()->getIdentity();
-        $currentUserId = (int) $currentUser->id;
-        $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
-        $isAdmin = false;
-        if ($createdBy > 0) {
-            try {
-                $creator = User::getInstance($createdBy);
-                $isAdmin = $creator && !$creator->guest && $creator->authorise('core.admin');
-            } catch (\Throwable $e) {
-                $isAdmin = false;
-            }
-        }
-
-        if (!$isAdmin) {
-            $this->created_by = $currentUserId;
-        }
 
         // If publish_up does not exist, is empty, or is the unresolved form default 'now'
         if (empty($this->publish_up) || $this->publish_up === 'now') {

@@ -98,7 +98,7 @@ class JemViewMain extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_MAIN_TITLE'), 'home');
 
-        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+        if (JemHelperBackend::canManage('core.options')) {
             ToolbarHelper::preferences('com_jem');
         }
 

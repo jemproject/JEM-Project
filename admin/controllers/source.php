@@ -38,7 +38,7 @@ class JemControllerSource extends BaseController
      * @return boolean
      */
     protected function allowEdit() {
-        return JemFactory::getUser()->authorise('core.edit', 'com_jem');
+        return JemHelperBackend::canManage('jem.tools.manage');
     }
 
     /**

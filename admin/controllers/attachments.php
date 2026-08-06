@@ -31,12 +31,6 @@ class JemControllerAttachments extends AdminController
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
         $app = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.delete', 'com_jem')) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
-
         $cid = $app->input->get('cid', array(), 'array');
         ArrayHelper::toInteger($cid);
         $cid = array_filter($cid);
@@ -60,12 +54,14 @@ class JemControllerAttachments extends AdminController
     {
         Session::checkToken('request') or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        $id = Factory::getApplication()->input->getInt('id', 0);
+        $model = $this->getModel();
+        $object = $model->getAttachmentObject($id);
+
+        if ($object === null || !JemHelperBackend::canAccessAttachment($object, 'access')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $id = Factory::getApplication()->input->getInt('id', 0);
-        $model = $this->getModel();
         $path = $model->getAttachmentPath($id);
 
         if (!$path || !is_file($path)) {
@@ -96,7 +92,7 @@ class JemControllerAttachments extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

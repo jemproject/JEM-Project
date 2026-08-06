@@ -21,6 +21,10 @@ class JemViewEventelement extends Htmlview {
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('event', 'access')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
 
         //initialise variables

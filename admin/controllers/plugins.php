@@ -34,6 +34,10 @@ class JemControllerPlugins extends BaseController
      * @return void
      */
     public function plugins() {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         $query = $db->getQuery(true);

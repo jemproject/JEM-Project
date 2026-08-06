@@ -134,7 +134,7 @@ class JemModelEvents extends ListModel
         $query->from($db->quoteName('#__jem_events').' AS a');
 
         // Join over the venue.
-        $query->select('loc.venue, loc.city, loc.state, loc.checked_out AS vchecked_out');
+        $query->select('loc.venue, loc.city, loc.state, loc.created_by AS venue_created_by, loc.checked_out AS vchecked_out');
         $query->join('LEFT', '#__jem_venues AS loc ON loc.id = a.locid');
 
         // Join over the users for the checked out user.
