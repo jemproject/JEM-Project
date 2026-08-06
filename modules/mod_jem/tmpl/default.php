@@ -40,21 +40,18 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                 // Block T: Title
                 $blockTitle = '';
                 if ($showtitle) {
-                    $linkAttr = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
-                    $content  = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'" '.$linkAttr.'>'.$item->title.'</a>' : $item->title;
+                    $content  = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'">'.$item->title.'</a>' : $item->title;
                     $blockTitle = '<div class="event-title">' . $content . '</div>';
                 }
 
                 // Block D: Date
-                $linkAttrDate = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
-                $contentDate  = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'" '.$linkAttrDate.'>'.$item->dateinfo.'</a>' : $item->dateinfo;
+                $contentDate  = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'">'.$item->dateinfo.'</a>' : $item->dateinfo;
                 $blockDate    = '<div class="event-date" style="font-size: 0.95em;">' . $contentDate . '</div>';
 
                 // Block V: Venue
                 $blockVenue = '';
                 if ($showvenue && !empty($item->venue)) {
-                    $linkAttrVenue = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
-                    $contentVenue  = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkAttrVenue.'>'.$item->venue.'</a>' : $item->venue;
+                    $contentVenue  = ($linkloc == 1) ? '<a href="'.$item->venueurl.'">'.$item->venue.'</a>' : $item->venue;
                     $blockVenue    = '<div class="event-venue" style="font-style: italic; font-size: 0.9em;">' . $contentVenue . '</div>';
                 }
 
