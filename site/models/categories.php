@@ -139,10 +139,11 @@ class JemModelCategories extends BaseDatabaseModel
         }
 
         $this->_id = $id;
-        $typeParam = $params->get('typeid', null);
-        $this->_typeFilterRequested = $app->input->exists('typeid') || (int) $typeParam > 0;
-        $requestedTypeId = $app->input->getInt('typeid', (int) $params->get('typeid', 0));
-        $this->_typeid = ($this->_typeFilterRequested && $requestedTypeId > 0) ? $requestedTypeId : 0;
+        list($this->_typeFilterRequested, $this->_typeid) = self::resolveTypeSelection(
+            $app->input->exists('typeid'),
+            $app->input->getString('typeid', ''),
+            $params->get('typeid', null)
+        );
         $this->_filterTypeid = $this->_typeFilterRequested ? 0 : $app->input->getInt('filter_typeid', 0);
 
         $this->_showemptycats    = (bool)$params->get('showemptycats', 1);
@@ -158,6 +159,33 @@ class JemModelCategories extends BaseDatabaseModel
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);
+    }
+
+    /**
+     * Resolve the category type mode without conflating an empty selection
+     * with the explicit "all types" value (0).
+     *
+     * @param   bool   $requestHasTypeId  Whether typeid exists in the request
+     * @param   mixed  $requestTypeId     Request value
+     * @param   mixed  $menuTypeId        Menu parameter value
+     *
+     * @return  array  Whether type grouping/filtering is active and its type ID
+     */
+    private static function resolveTypeSelection(bool $requestHasTypeId, $requestTypeId, $menuTypeId): array
+    {
+        $rawTypeId = $requestHasTypeId ? $requestTypeId : $menuTypeId;
+
+        if ($rawTypeId === null) {
+            return array(false, 0);
+        }
+
+        $rawTypeId = trim((string) $rawTypeId);
+
+        if ($rawTypeId === '' || preg_match('/^\d+$/D', $rawTypeId) !== 1) {
+            return array(false, 0);
+        }
+
+        return array(true, (int) $rawTypeId);
     }
 
     /**
