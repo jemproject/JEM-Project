@@ -26,6 +26,8 @@ ALTER TABLE `#__jem_events` ADD INDEX `idx_start_utc` (`start_utc`) /** CAN FAIL
 ALTER TABLE `#__jem_events` ADD INDEX `idx_end_utc` (`end_utc`) /** CAN FAIL **/;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_timezone_default', 'joomla');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_automatic', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_strategy', 'strict');
 
 -- change values
 

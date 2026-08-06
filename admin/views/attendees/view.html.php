@@ -91,6 +91,8 @@ class JemViewAttendees extends JemAdminView
         //assign to template
         $this->lists         = $lists;
         $this->event         = $event;
+        $this->waitingListStatus = JemWaitingListPromotion::availability((int) $event->id);
+        $this->canForcePromotion = $app->getIdentity()->authorise('core.admin', 'com_jem');
 
         // add toolbar
         $this->addToolbar();
@@ -136,6 +138,7 @@ class JemViewAttendees extends JemAdminView
         ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
         if ($this->event->waitinglist) {
             ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+            ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
         }
         ToolbarHelper::custom('attendees.renotify', 'envelope', 'envelope', Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_SELECTED'), true);
         ToolbarHelper::spacer();

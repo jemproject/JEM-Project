@@ -420,7 +420,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         // #__jem_register (id, event, uid, waiting, status, comment)
-        $query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
+        $query->select(array('reg.uid, reg.status, reg.waiting, reg.places, reg.id'));
         $query->from('#__jem_register As reg');
         $query->where('reg.event = ' . $eventId);
         $db->setQuery($query);

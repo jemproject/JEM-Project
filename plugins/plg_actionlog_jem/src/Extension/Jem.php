@@ -387,6 +387,10 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
                 : $this->statusToText((int) $transition->oldStatus);
             $message['status'] = $this->statusToText((int) ($transition->newStatus ?? $status ?? 0));
             $message['source'] = (string) ($transition->source ?? 'unknown');
+            $message['notification'] = !empty($transition->notificationRequested) ? Text::_('JYES') : Text::_('JNO');
+            $message['forced'] = !empty($transition->forced) ? Text::_('JYES') : Text::_('JNO');
+            $message['oldplaces'] = (int) ($transition->oldPlaces ?? 0);
+            $message['places'] = (int) ($transition->newPlaces ?? 0);
         }
 
         return $message;

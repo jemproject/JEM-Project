@@ -958,11 +958,22 @@ class JemModelEvent extends ItemModel
             return false;
         }
 
-        $oldstat = is_object($registration) ? $registration->status : 0;
+        $oldstat = is_object($registration)
+            ? JemRegistrationTransition::logicalStatus($registration)
+            : 0;
+
+        // A waiting attendee cannot promote their own registration by posting
+        // the attending value rendered by the response form. Keep the row on
+        // the waiting list; only the central automatic/manual policy promotes it.
+        if ($oldstat === JemRegistrationTransition::WAITING_LIST
+            && $status === JemRegistrationTransition::ATTENDING) {
+            $status = JemRegistrationTransition::WAITING_LIST;
+        }
+
         if ($status == 1 && $status != $oldstat) {
             if ($respectPlaces && ($event->maxplaces > 0)) {    // there is a max
                 // check if the user should go on waiting list
-                if ($event->booked >= $event->maxplaces) {
+                if (((int) $event->booked + (int) $event->reservedplaces + max(1, (int) $places)) > (int) $event->maxplaces) {
                     if (!$event->waitinglist) {
                         $this->setError(Text::_('COM_JEM_EVENT_FULL_NOTICE'));
                         return false;

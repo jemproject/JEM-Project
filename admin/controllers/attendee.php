@@ -116,6 +116,16 @@ class JemControllerAttendee extends BaseController
             $old_data = $model->getData();
         }
         $old_uid = !empty($old_data->uid) ? (int) $old_data->uid : 0;
+        $manualPromotion = $old_data
+            && JemRegistrationTransition::logicalStatus($old_data) === JemRegistrationTransition::WAITING_LIST
+            && (int) ($post['status'] ?? 0) === JemRegistrationTransition::ATTENDING;
+
+        // Keep the row waiting while saving other edits. The central service
+        // performs the capacity-locked promotion after the save succeeds.
+        if ($manualPromotion) {
+            $post['status'] = JemRegistrationTransition::WAITING_LIST;
+        }
+
         if ($row = $model->store($post)) {
             $transition = JemRegistrationTransition::create(
                 $old_data,
@@ -140,7 +150,7 @@ class JemControllerAttendee extends BaseController
                     JemRegistrationTransition::dispatchDeletionMail($dispatcher, $old_data);
                 }
                 // Notify a new user or an existing user whose registration data changed.
-                if ($uid && $registrationChanged) {
+                if ($uid && $registrationChanged && !$manualPromotion) {
                     JemRegistrationTransition::dispatchStatusMail($dispatcher, $row, $transition, false, true);
                 }
                 // but show warning if mailer is disabled
@@ -155,6 +165,44 @@ class JemControllerAttendee extends BaseController
 
             if ($old_data) {
                 JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+
+                if (JemRegistrationTransition::releasesCapacity($old_data, $row)) {
+                    JemHelper::reconcileWaitingList((int) $old_data->event, array(
+                        'source' => 'administrator.attendee.edit',
+                        'excludeIds' => JemRegistrationTransition::logicalStatus($row) === JemRegistrationTransition::WAITING_LIST
+                            ? array((int) $row->id)
+                            : array(),
+                    ));
+                }
+            }
+
+            if ($manualPromotion) {
+                $promotion = JemWaitingListPromotion::promote((int) $row->event, array(
+                    'mode' => JemWaitingListPromotion::MODE_MANUAL,
+                    'registrationIds' => array((int) $row->id),
+                    'notify' => $sendemail === 1,
+                    'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                    'source' => 'administrator.attendee.manual',
+                ));
+
+                if (!$promotion->success) {
+                    $reason = $promotion->reason === 'capacity_exceeded'
+                        ? 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED'
+                        : 'COM_JEM_WAITINGLIST_PROMOTION_FAILED';
+                    $this->setRedirect(
+                        'index.php?option=com_jem&view=attendee&hidemainmenu=1&id=' . (int) $row->id . '&eventid=' . (int) $row->event,
+                        Text::_($reason),
+                        'error'
+                    );
+                    return;
+                }
+
+                if ($promotion->reason === 'notification_failed') {
+                    Factory::getApplication()->enqueueMessage(
+                        Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'),
+                        'warning'
+                    );
+                }
             }
 
             switch ($task) {

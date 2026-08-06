@@ -326,6 +326,16 @@ if (!function_exists('jem_attendeeregistrations_manage_button')) {
             return;
         }
 
+        if (action === 'promote' && !window.confirm(<?php echo json_encode(Text::_('COM_JEM_WAITINGLIST_PROMOTION_CONFIRM_GLOBAL')); ?>)) {
+            return;
+        }
+
+        if (action === 'promote'
+            && form.querySelector('[name="waitinglist_force"]:checked')
+            && !window.confirm(<?php echo json_encode(Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION_CONFIRM')); ?>)) {
+            return;
+        }
+
         form.querySelector('[name="task"]').value = 'attendeeregistrations.batch';
         form.querySelector('[name="batch_action"]').value = action;
         form.submit();
@@ -442,7 +452,19 @@ if (!function_exists('jem_attendeeregistrations_manage_button')) {
                 <option value="status:0"><?php echo Text::_('COM_JEM_ATTENDEES_INVITED'); ?></option>
                 <option value="status:1"><?php echo Text::_('COM_JEM_ATTENDEES_ATTENDING'); ?></option>
                 <option value="status:2"><?php echo Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'); ?></option>
+                <option value="promote"><?php echo Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'); ?></option>
             </select>
+            <label class="mb-0">
+                <input type="hidden" name="waitinglist_notify" value="0">
+                <input type="checkbox" name="waitinglist_notify" value="1" checked="checked">
+                <?php echo Text::_('COM_JEM_WAITINGLIST_NOTIFY_PROMOTED'); ?>
+            </label>
+            <?php if (!empty($this->permissions->canForceWaitingListPromotion)) : ?>
+                <label class="mb-0 text-danger">
+                    <input type="checkbox" name="waitinglist_force" value="1">
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION'); ?>
+                </label>
+            <?php endif; ?>
             <button type="button" class="btn btn-primary" onclick="jemAttendeeRegistrationApplySelected();">
                 <?php echo Text::_('COM_JEM_ATTENDEE_REGISTRATION_BATCH_APPLY'); ?>
             </button>

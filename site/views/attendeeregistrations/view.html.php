@@ -105,6 +105,7 @@ class JemViewAttendeeregistrations extends JemView
 
         $permissions = new stdClass();
         $permissions->canManageAttendees = $canManageAttendees;
+        $permissions->canForceWaitingListPromotion = $user->authorise('core.admin', 'com_jem');
         $this->action = $uri->toString();
         $this->rows = $rows;
         $this->pagination = $pagination;

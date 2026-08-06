@@ -81,6 +81,12 @@ class JemControllerEvent extends JemControllerForm
         $model = $this->getModel();
 
         if ($result && $model) {
+            $eventId = (int) $model->getState('event.id', 0);
+
+            if ($eventId > 0) {
+                JemHelper::reconcileWaitingList($eventId, array('source' => 'administrator.event.save'));
+            }
+
             $this->handleCreatedArticleContentRedirect($model);
             $this->handleAssociatedArticleSyncNotice($model);
         }

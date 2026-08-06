@@ -61,6 +61,26 @@ final class JemRegistrationTransition
         return true;
     }
 
+    public static function activePlaces($registration)
+    {
+        return self::logicalStatus($registration) === self::ATTENDING
+            ? max(1, (int) ($registration->places ?? 1))
+            : 0;
+    }
+
+    public static function releasesCapacity($before, $after = null)
+    {
+        if (!is_object($before) || empty($before->event)) {
+            return false;
+        }
+
+        if (is_object($after) && (int) ($after->event ?? 0) !== (int) $before->event) {
+            return self::activePlaces($before) > 0;
+        }
+
+        return self::activePlaces($before) > self::activePlaces($after);
+    }
+
     public static function create($before, $after, $actorId, $source)
     {
         $hasBefore = is_object($before);
@@ -73,12 +93,21 @@ final class JemRegistrationTransition
         $transition->attendeeId = (int) ($after->uid ?? $before->uid ?? 0);
         $transition->oldStatus = $hasBefore ? self::logicalStatus($before) : null;
         $transition->newStatus = $hasAfter ? self::logicalStatus($after) : null;
+        $transition->oldPlaces = $hasBefore ? max(1, (int) ($before->places ?? 1)) : null;
+        $transition->newPlaces = $hasAfter ? max(1, (int) ($after->places ?? 1)) : null;
         $transition->actorId = (int) $actorId;
         $transition->source = preg_replace('/[^a-z0-9_.-]/i', '', (string) $source);
+        $transition->notificationRequested = false;
+        $transition->forced = false;
         $transition->changed = $transition->registrationId > 0
             && $transition->eventId > 0
             && $transition->newStatus !== null
             && $transition->oldStatus !== $transition->newStatus;
+        $transition->capacityChanged = $transition->registrationId > 0
+            && $transition->eventId > 0
+            && $transition->oldPlaces !== null
+            && $transition->newPlaces !== null
+            && self::activePlaces($before) !== self::activePlaces($after);
 
         return $transition;
     }
@@ -115,6 +144,8 @@ final class JemRegistrationTransition
             );
         }
 
+        $transition->notificationRequested = true;
+
         return true;
     }
 
@@ -132,7 +163,8 @@ final class JemRegistrationTransition
     public static function dispatchAudit($dispatcher, array $transitions)
     {
         $changed = array_values(array_filter($transitions, static function ($transition) {
-            return is_object($transition) && !empty($transition->changed);
+            return is_object($transition)
+                && (!empty($transition->changed) || !empty($transition->capacityChanged));
         }));
 
         if (!$changed) {

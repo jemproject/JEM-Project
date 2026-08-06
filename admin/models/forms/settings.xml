@@ -482,6 +482,27 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="waitinglist_automatic" type="radio"
+            label="COM_JEM_WAITINGLIST_AUTOMATIC"
+            description="COM_JEM_WAITINGLIST_AUTOMATIC_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="waitinglist_strategy" type="list"
+            label="COM_JEM_WAITINGLIST_STRATEGY"
+            description="COM_JEM_WAITINGLIST_STRATEGY_DESC"
+            class="inputbox w-auto"
+            default="strict"
+            required="false"
+            showon="waitinglist_automatic:1"
+        >
+            <option value="strict">COM_JEM_WAITINGLIST_STRATEGY_STRICT</option>
+            <option value="fill">COM_JEM_WAITINGLIST_STRATEGY_FILL</option>
+        </field>
     </fieldset>
 
     <fieldset name="evimagehandling"

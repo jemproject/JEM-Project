@@ -2875,66 +2875,62 @@ class JemHelper
      */
     static public function updateWaitingList($event)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        return self::reconcileWaitingList($event)->success;
+    }
 
-        // get event details for registration
-        $query = ' SELECT maxplaces, waitinglist, reservedplaces FROM #__jem_events WHERE id = ' . $db->Quote($event);
-        $db->setQuery($query);
-        $event_places = $db->loadObject();
+    /**
+     * Return the complete result of an automatic waiting-list reconciliation.
+     *
+     * @param  int    $event    Event identifier.
+     * @param  array  $options  Promotion options such as source or excludeIds.
+     * @return object Structured promotion result.
+     */
+    static public function reconcileWaitingList($event, array $options = array())
+    {
+        $options['mode'] = JemWaitingListPromotion::MODE_AUTOMATIC;
+        $result = JemWaitingListPromotion::promote((int) $event, $options);
 
-        // get attendees after deletion, and their status
-        $query = 'SELECT r.id, r.waiting, r.places'
-               . ' FROM #__jem_register AS r'
-               . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
-               . ' ORDER BY r.uregdate ASC '
-               ;
-        $db->SetQuery($query);
-        $res = $db->loadObjectList();
+        if (!$result->success) {
+            self::addLogEntry(
+                'Waiting-list reconciliation failed for event ' . (int) $event . ': ' . (string) $result->reason,
+                __METHOD__,
+                Log::ERROR
+            );
 
-        $registered = 0;
-        $waitingregs = array();
-        foreach ((array) $res as $r)
-        {
-            if ($r->waiting) {
-                $waitingregs[] = $r;
-            } else {
-                $registered+=$r->places;
-            }
-        }
-        //Add the Reserved Places of the event
-        $registered+=$event_places->reservedplaces;
-
-        if (($registered < $event_places->maxplaces) && count($waitingregs))
-        {
-            $placesavailable = $event_places->maxplaces - $registered;
-            // need to bump users to attending status
-            foreach ($waitingregs as $waitreg)
-            {
-                if($waitreg->places <= $placesavailable)
-                {
-                    $query   = ' UPDATE #__jem_register SET waiting = 0 WHERE id = ' . $waitreg->id;
-                    $db->setQuery($query);
-                    if ($db->execute() === false)
-                    {
-                        Factory::getApplication()->enqueueMessage(
-                            Text::_(
-                                'COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'
-                            ) . ': ' . $db->getErrorMsg(),
-                            'warning'
-                        );
-                    }
-                    else
-                    {
-                        $placesavailable -= $waitreg->places;
-                        PluginHelper::importPlugin('jem');
-                        $dispatcher = JemFactory::getDispatcher();
-                        $res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
-                    }
-                }
+            if (JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::_('COM_JEM_WAITINGLIST_PROMOTION_FAILED'),
+                    'warning'
+                );
             }
         }
 
-        return true;
+        if ($result->reason === 'automatic_disabled'
+            && $result->waitingListEnabled
+            && $result->maxPlaces > 0
+            && $result->availableBefore > 0
+            && $result->waitingBefore > 0
+            && JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf(
+                    'COM_JEM_WAITINGLIST_MANUAL_ACTION_REQUIRED',
+                    $result->availableBefore,
+                    $result->waitingBefore
+                ),
+                'notice'
+            );
+        }
+
+        if ($result->success
+            && $result->reason === 'notification_failed'
+            && JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'),
+                'warning'
+            );
+        }
+
+        return $result;
     }
 
     /**

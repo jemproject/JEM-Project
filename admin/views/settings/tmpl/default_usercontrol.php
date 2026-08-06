@@ -40,6 +40,8 @@ use Joomla\CMS\Language\Text;
                 <li><div class="label-form"><?php echo $this->form->renderfield('showfroregistra'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('regallowinvitation'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('regallowcomments'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist_automatic'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist_strategy'); ?></div></li>
             </ul>
         </fieldset>
     </div>

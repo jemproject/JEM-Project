@@ -22,10 +22,48 @@ $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
 $document   = Factory::getApplication()->getDocument();
 $wa         = $document->getWebAssetManager();
+$waitingListPlaces = array();
+$waitingListIds = array();
+
+foreach ($this->items as $item) {
+    $waitingListPlaces[(int) $item->id] = max(1, (int) $item->places);
+
+    if ((int) $item->status === JemRegistrationTransition::ATTENDING && !empty($item->waiting)) {
+        $waitingListIds[(int) $item->id] = true;
+    }
+}
 
 $wa->addInlineScript('
+    const jemWaitingListPlaces = ' . json_encode($waitingListPlaces) . ';
+    const jemWaitingListIds = ' . json_encode($waitingListIds) . ';
     Joomla.submitbutton = function(task)
     {
+        if (task === "attendees.promoteWaitingList" || task === "attendees.setAttending") {
+            let requested = 0;
+            let waitingSelected = false;
+            document.querySelectorAll("#adminForm input[name=\"cid[]\"]:checked").forEach(function(checkbox) {
+                requested += jemWaitingListPlaces[checkbox.value] || 0;
+                waitingSelected = waitingSelected || !!jemWaitingListIds[checkbox.value];
+            });
+
+            if (task === "attendees.setAttending" && !waitingSelected) {
+                Joomla.submitform(task, document.getElementById("adminForm"));
+                return;
+            }
+            const message = ' . json_encode(Text::_('COM_JEM_WAITINGLIST_PROMOTION_CONFIRM')) . '
+                .replace("%1$s", ' . (int) $this->waitingListStatus->availableBefore . ')
+                .replace("%2$s", requested);
+
+            if (!window.confirm(message)) {
+                return false;
+            }
+
+            const force = document.querySelector("#adminForm input[name=\"waitinglist_force\"]:checked");
+            if (force && !window.confirm(' . json_encode(Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION_CONFIRM')) . ')) {
+                return false;
+            }
+        }
+
         document.adminForm.task.value=task;
         if (task == "attendees.export") {
             Joomla.submitform(task, document.getElementById("adminForm"));
@@ -67,6 +105,31 @@ $wa->addInlineScript('
                 </div>
             </div>
         </fieldset>
+        <?php if ($this->event->waitinglist) : ?>
+            <div class="alert alert-info d-flex flex-wrap gap-4 align-items-center" role="status">
+                <span><?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?></span>
+                <span>
+                    <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
+                        <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
+                            ? Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_FILL')
+                            : Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_STRICT'); ?>
+                    <?php else : ?>
+                        <?php echo Text::_('COM_JEM_WAITINGLIST_MODE_MANUAL'); ?>
+                    <?php endif; ?>
+                </span>
+                <label class="mb-0">
+                    <input type="hidden" name="waitinglist_notify" value="0">
+                    <input type="checkbox" name="waitinglist_notify" value="1" checked="checked">
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_NOTIFY_PROMOTED'); ?>
+                </label>
+                <?php if ($this->canForcePromotion) : ?>
+                    <label class="mb-0 text-danger">
+                        <input type="checkbox" name="waitinglist_force" value="1">
+                        <?php echo Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION'); ?>
+                    </label>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <table class="adminform">
             <tr>
                 <td style="width: 100%;">

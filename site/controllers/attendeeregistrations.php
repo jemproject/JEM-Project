@@ -93,6 +93,22 @@ class JemControllerAttendeeregistrations extends BaseController
             'site.attendeeregistrations.edit'
         );
 
+        if ($transition->oldStatus === JemRegistrationTransition::WAITING_LIST
+            && $transition->newStatus === JemRegistrationTransition::ATTENDING) {
+            $url = 'index.php?option=com_jem&view=attendeeregistrations';
+
+            if ($itemId) {
+                $url .= '&Itemid=' . $itemId;
+            }
+
+            $this->setRedirect(
+                Route::_($url, false),
+                Text::_('COM_JEM_WAITINGLIST_USE_PROMOTION_ACTION'),
+                'warning'
+            );
+            return;
+        }
+
         if (!$transition->changed) {
             $msg = Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
             $type = 'message';
@@ -103,6 +119,15 @@ class JemControllerAttendeeregistrations extends BaseController
 
             JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition);
             JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+
+            if (JemRegistrationTransition::releasesCapacity($attendee, $after)) {
+                JemHelper::reconcileWaitingList((int) $attendee->event, array(
+                    'source' => 'site.attendeeregistrations.edit',
+                    'excludeIds' => $status === JemRegistrationTransition::WAITING_LIST
+                        ? array((int) $attendee->id)
+                        : array(),
+                ));
+            }
 
             $msg = Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
             $type = 'message';
@@ -207,6 +232,70 @@ class JemControllerAttendeeregistrations extends BaseController
             return;
         }
 
+        if ($action === 'promote') {
+            $force = $input->getBool('waitinglist_force', false);
+
+            if ($force && !$app->getIdentity()->authorise('core.admin', 'com_jem')) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            $model = $this->getModel('attendee');
+            $idsByEvent = array();
+
+            foreach ($ids as $id) {
+                $model->setId($id);
+                $attendee = $model->getData();
+
+                if (empty($attendee->id)) {
+                    throw new Exception(Text::_('COM_JEM_MISSING_ATTENDEE_ID'), 404);
+                }
+
+                $idsByEvent[(int) $attendee->event][] = (int) $attendee->id;
+            }
+
+            if (count($idsByEvent) !== 1) {
+                $this->setRedirect(
+                    Route::_($url, false),
+                    Text::_('COM_JEM_WAITINGLIST_PROMOTION_ONE_EVENT_ONLY'),
+                    'warning'
+                );
+                return;
+            }
+
+            $promoted = 0;
+
+            foreach ($idsByEvent as $eventId => $eventRegistrationIds) {
+                $result = JemWaitingListPromotion::promote($eventId, array(
+                    'mode' => JemWaitingListPromotion::MODE_MANUAL,
+                    'registrationIds' => $eventRegistrationIds,
+                    'notify' => $input->getBool('waitinglist_notify', true),
+                    'force' => $force,
+                    'actorId' => (int) $app->getIdentity()->id,
+                    'source' => $force ? 'site.attendeeregistrations.force' : 'site.attendeeregistrations.manual',
+                ));
+
+                if (!$result->success) {
+                    $key = $result->reason === 'capacity_exceeded'
+                        ? 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED'
+                        : 'COM_JEM_WAITINGLIST_PROMOTION_FAILED';
+                    $this->setRedirect(Route::_($url, false), Text::_($key), 'error');
+                    return;
+                }
+
+                $promoted += count($result->promotedIds);
+
+                if ($result->reason === 'notification_failed') {
+                    $app->enqueueMessage(Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'), 'warning');
+                }
+            }
+
+            $this->setRedirect(
+                Route::_($url, false),
+                Text::plural('COM_JEM_WAITINGLIST_PROMOTED_N', $promoted)
+            );
+            return;
+        }
+
         if (!preg_match('/^status:(-1|0|1|2)$/', $action)) {
             $this->setRedirect(Route::_($url, false), Text::_('COM_JEM_ATTENDEE_REGISTRATION_BATCH_INVALID_ACTION'), 'warning');
             return;
@@ -247,6 +336,18 @@ class JemControllerAttendeeregistrations extends BaseController
             }
         }
 
+        if ($status === JemRegistrationTransition::ATTENDING
+            && array_filter($transitions, static function ($transition) {
+                return $transition->oldStatus === JemRegistrationTransition::WAITING_LIST;
+            })) {
+            $this->setRedirect(
+                Route::_($url, false),
+                Text::_('COM_JEM_WAITINGLIST_USE_PROMOTION_ACTION'),
+                'warning'
+            );
+            return;
+        }
+
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
@@ -280,6 +381,28 @@ class JemControllerAttendeeregistrations extends BaseController
         }
 
         JemRegistrationTransition::dispatchAudit($dispatcher, $transitions);
+
+        $releasedEvents = array();
+        $excludedByEvent = array();
+
+        foreach ($transitions as $transition) {
+            if ($transition->oldStatus === JemRegistrationTransition::ATTENDING
+                && $transition->newStatus !== JemRegistrationTransition::ATTENDING) {
+                $releasedEvents[(int) $transition->eventId] = true;
+
+                if ($transition->newStatus === JemRegistrationTransition::WAITING_LIST) {
+                    $excludedByEvent[(int) $transition->eventId][] = (int) $transition->registrationId;
+                }
+            }
+        }
+
+        foreach (array_keys($releasedEvents) as $releasedEventId) {
+            JemHelper::reconcileWaitingList($releasedEventId, array(
+                'source' => 'site.attendeeregistrations.batch',
+                'excludeIds' => $excludedByEvent[$releasedEventId] ?? array(),
+            ));
+        }
+
         $changed = count($transitions);
 
         if (!PluginHelper::isEnabled('jem', 'mailer')) {

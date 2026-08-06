@@ -317,6 +317,11 @@ class JemControllerEvent extends JemControllerForm
         // If ok, redirect to the return page.
         if ($result) {
             $model = $this->getModel();
+            $eventId = (int) $model->getState('event.id', 0);
+
+            if ($eventId > 0) {
+                JemHelper::reconcileWaitingList($eventId, array('source' => 'site.event.save'));
+            }
 
             if ($this->handleCreatedArticleContentRedirect($model)) {
                 return $result;
