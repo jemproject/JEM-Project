@@ -31,7 +31,12 @@ class JemViewAttendeeregistrations extends JemView
             return;
         }
 
-        if (!$user->authorise('core.manage', 'com_jem')) {
+        $canManageAttendees = $user->authorise('core.admin', 'com_jem')
+            || ($user->authorise('core.manage', 'com_jem')
+                && $user->authorise('jem.events.access', 'com_jem')
+                && $user->authorise('jem.attendees.manage', 'com_jem'));
+
+        if (!$canManageAttendees) {
             $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
             $app->redirect(Route::_('index.php', false));
 
@@ -99,7 +104,7 @@ class JemViewAttendeeregistrations extends JemView
         $document->setTitle($pagetitle);
 
         $permissions = new stdClass();
-        $permissions->canManageAttendees = $user->authorise('core.manage', 'com_jem');
+        $permissions->canManageAttendees = $canManageAttendees;
         $this->action = $uri->toString();
         $this->rows = $rows;
         $this->pagination = $pagination;

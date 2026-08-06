@@ -149,6 +149,14 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
+        if (!in_array(JemRegistrationTransition::logicalStatus($attendee), array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         $row = Table::getInstance('jem_register', '');
         $row->bind($attendee);
         $row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
@@ -174,6 +182,11 @@ class JemModelAttendee extends BaseDatabaseModel
 
         if ($eventid < 1 || $userid < 1) {
             Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED'), 'warning');
+            return false;
+        }
+
+        if ($status !== false && !JemRegistrationTransition::isValidStatus($status)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
             return false;
         }
 
@@ -369,6 +382,11 @@ class JemModelAttendee extends BaseDatabaseModel
      */
     public function setStatus($pks, $value = 1, $eventId = 0)
     {
+        if (!JemRegistrationTransition::isValidStatus($value) || (int) $eventId < 1) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         // Sanitize the ids.
         $pks = (array)$pks;
         ArrayHelper::toInteger($pks);

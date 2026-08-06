@@ -522,9 +522,17 @@ class JemControllerEvent extends JemControllerForm
         JemHelper::updateWaitingList($id);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
-        $places = isset($reg->places) ? $reg->places : 0;
-        $dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $places));
+        $updatedRegistration = $model->getUserRegistration($id);
+        $transition = JemRegistrationTransition::create(
+            $reg ?: null,
+            $updatedRegistration,
+            (int) Factory::getApplication()->getIdentity()->id,
+            'site.event.registration_response'
+        );
+        JemRegistrationTransition::dispatchStatusMail($dispatcher, $updatedRegistration, $transition, false, true);
+        JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();
@@ -547,13 +555,21 @@ class JemControllerEvent extends JemControllerForm
         $model = $this->getModel('Event', 'JemModel');
 
         $model->setId($id);
-        $model->delreguser();
+        $registration = $model->getUserRegistration($id);
+
+        if (!$registration || !$model->delreguser()) {
+            $msg = $model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED');
+            $this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
+            return;
+        }
 
         JemHelper::updateWaitingList($id);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
-        $dispatcher->triggerEvent('onEventUserUnregistered', array($id));
+        JemRegistrationTransition::dispatchDeletionMail($dispatcher, $registration);
+        $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($registration));
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();

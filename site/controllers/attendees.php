@@ -92,6 +92,10 @@ class JemControllerAttendees extends BaseController
 
         $this->assertCanManageAttendees($eventid);
 
+        if (!JemRegistrationTransition::isValidStatus($status)) {
+            throw new Exception(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'), 400);
+        }
+
         $uids    = explode(',', $input->getString('uids', ''));
         ArrayHelper::toInteger($uids);
         $uids    = array_filter($uids);
@@ -141,12 +145,14 @@ class JemControllerAttendees extends BaseController
             $msg = '0 ' . Text::_('COM_JEM_REGISTERED_USERS_ADDED');
         } else {
             PluginHelper::importPlugin('jem');
+            PluginHelper::importPlugin('actionlog', 'jem');
             $dispatcher = JemFactory::getDispatcher();
 
             // We have to check all users first if there are already records for given event.
             // If not we have to add the records and than on success send the emails.
             $modelEventItem = $this->getModel('event');
             $modelAttendees = $this->getModel('attendees'); // required to ensure JemModelAttendees is loaded
+            $modelAttendeeItem = $this->getModel('attendee');
             $errMsgs = array();
             $errMsg  = '';
             $skip    = 0;
@@ -180,6 +186,7 @@ class JemControllerAttendees extends BaseController
                 $this->assertCanManageAttendees($row->id);
                 $regs = JemModelAttendees::getRegisteredUsers($row->id);
                 $skip = $error = $changed = 0;
+                $transitions = array();
 
                 foreach ($uids as $uid) {
                     $userPlaces = isset($placesByUser[$uid]) ? $placesByUser[$uid] : $places;
@@ -191,7 +198,16 @@ class JemControllerAttendees extends BaseController
                             JemHelper::addLogEntry("Change user {$uid} already registered for event {$row->id}.", __METHOD__, Log::DEBUG);
                             $reg_id = $modelEventItem->adduser($row->id, $uid, $status, $userPlaces, $comment, $errMsg, $reg->id);
                             if ($reg_id) {
-                                $res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
+                                $modelAttendeeItem->setId($reg_id);
+                                $after = $modelAttendeeItem->getData();
+                                $transition = JemRegistrationTransition::create(
+                                    $reg,
+                                    $after,
+                                    (int) Factory::getApplication()->getIdentity()->id,
+                                    'site.attendees.edit'
+                                );
+                                JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition, false, true);
+                                $transitions[] = $transition;
                                 ++$changed;
                             } else {
                                 JemHelper::addLogEntry(implode(' - ', array("Model returned error while changing registration of user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
@@ -207,7 +223,16 @@ class JemControllerAttendees extends BaseController
                     } else {
                         $reg_id = $modelEventItem->adduser($row->id, $uid, $status, $userPlaces, $comment, $errMsg);
                         if ($reg_id) {
-                            $res = $dispatcher->triggerEvent('onEventUserRegistered', array($reg_id));
+                            $modelAttendeeItem->setId($reg_id);
+                            $after = $modelAttendeeItem->getData();
+                            $transition = JemRegistrationTransition::create(
+                                null,
+                                $after,
+                                (int) Factory::getApplication()->getIdentity()->id,
+                                'site.attendees.add'
+                            );
+                            JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition, false, true);
+                            $transitions[] = $transition;
                         } else {
                             JemHelper::addLogEntry(implode(' - ', array("Model returned error while adding user {$uid}", $errMsg)), __METHOD__, Log::DEBUG);
                             if (!empty($errMsg)) {
@@ -217,6 +242,8 @@ class JemControllerAttendees extends BaseController
                         }
                     }
                 }
+
+                JemRegistrationTransition::dispatchAudit($dispatcher, $transitions);
 
                 $cache = Factory::getCache('com_jem');
                 $cache->clean();
@@ -257,6 +284,7 @@ class JemControllerAttendees extends BaseController
         $modelAttendeeList = $this->getModel('attendees');
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
 
         $modelAttendeeItem = $this->getModel('attendee');
@@ -272,7 +300,8 @@ class JemControllerAttendees extends BaseController
             }
 
             if ($modelAttendeeList->remove(array($reg_id), $id)) {
-                $res = $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
+                JemRegistrationTransition::dispatchDeletionMail($dispatcher, $entry);
+                $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($entry));
             } else {
                 $error = true;
             }
@@ -313,14 +342,26 @@ class JemControllerAttendees extends BaseController
 
         $this->assertCanManageAttendees($attendee->event);
 
+        $after = clone $attendee;
+        $after->status = JemRegistrationTransition::ATTENDING;
+        $after->waiting = $attendee->waiting ? 0 : 1;
+        $transition = JemRegistrationTransition::create(
+            $attendee,
+            $after,
+            (int) Factory::getApplication()->getIdentity()->id,
+            'site.attendees.waitinglist'
+        );
+
         $res = $model->toggle();
 
         $type = 'message';
 
         if ($res) {
             PluginHelper::importPlugin('jem');
+            PluginHelper::importPlugin('actionlog', 'jem');
             $dispatcher = JemFactory::getDispatcher();
-            $res = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($id));
+            JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition);
+            JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
 
             if ($attendee->waiting) {
                 $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');

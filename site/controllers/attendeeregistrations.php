@@ -22,23 +22,17 @@ class JemControllerAttendeeregistrations extends BaseController
 {
     private function triggerRegistrationStatusMail($dispatcher, $attendee, int $registrationId, ?int $status = null, bool $userOnly = false): void
     {
-        $status = $status ?? (int) ($attendee->status ?? 0);
+        $status = $status ?? JemRegistrationTransition::logicalStatus($attendee);
+        $after = clone $attendee;
+        JemRegistrationTransition::applyLogicalStatus($after, $status);
+        $transition = JemRegistrationTransition::create(
+            $attendee,
+            $after,
+            (int) Factory::getApplication()->getIdentity()->id,
+            'site.attendeeregistrations.renotify'
+        );
 
-        if ($status === 1 && (int) ($attendee->waiting ?? 0) === 1) {
-            $status = 2;
-        }
-
-        switch ($status) {
-            case -1:
-                $dispatcher->triggerEvent('onEventUserUnregistered', array($attendee->event, false, $registrationId));
-                break;
-            case 2:
-                $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($registrationId));
-                break;
-            default:
-                $dispatcher->triggerEvent('onEventUserRegistered', array($registrationId, $attendee->places, $userOnly));
-                break;
-        }
+        JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition, $userOnly, true);
     }
 
     private function assertCanManageAttendeeRegistrations()
@@ -53,7 +47,12 @@ class JemControllerAttendeeregistrations extends BaseController
             $app->close();
         }
 
-        if (!$user->authorise('core.manage', 'com_jem')) {
+        $fullControl = $user->authorise('core.admin', 'com_jem');
+        $canManage = $user->authorise('core.manage', 'com_jem')
+            && $user->authorise('jem.events.access', 'com_jem')
+            && $user->authorise('jem.attendees.manage', 'com_jem');
+
+        if (!$fullControl && !$canManage) {
             $app->enqueueMessage(Text::_('COM_JEM_ATTENDEE_REGISTRATIONS_NO_ACCESS'), 'warning');
             $app->redirect(Route::_('index.php', false));
             $app->close();
@@ -81,11 +80,29 @@ class JemControllerAttendeeregistrations extends BaseController
             throw new Exception(Text::_('COM_JEM_MISSING_ATTENDEE_ID'), 404);
         }
 
-        if ($model->setRegistrationStatus($status)) {
+        if (!JemRegistrationTransition::isValidStatus($status)) {
+            throw new Exception(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'), 400);
+        }
+
+        $after = clone $attendee;
+        JemRegistrationTransition::applyLogicalStatus($after, $status);
+        $transition = JemRegistrationTransition::create(
+            $attendee,
+            $after,
+            (int) $app->getIdentity()->id,
+            'site.attendeeregistrations.edit'
+        );
+
+        if (!$transition->changed) {
+            $msg = Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
+            $type = 'message';
+        } elseif ($model->setRegistrationStatus($status)) {
             PluginHelper::importPlugin('jem');
+            PluginHelper::importPlugin('actionlog', 'jem');
             $dispatcher = JemFactory::getDispatcher();
 
-            $this->triggerRegistrationStatusMail($dispatcher, $attendee, $id, $status);
+            JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition);
+            JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
 
             $msg = Text::_('COM_JEM_REGISTERED_USERS_CHANGED');
             $type = 'message';
@@ -131,15 +148,20 @@ class JemControllerAttendeeregistrations extends BaseController
         PluginHelper::importPlugin('jem');
         $dispatcher = JemFactory::getDispatcher();
         $sent = 0;
+        $attendees = array();
 
         foreach ($ids as $id) {
             $model->setId($id);
             $attendee = $model->getData();
 
             if (empty($attendee->id)) {
-                continue;
+                throw new Exception(Text::_('COM_JEM_MISSING_ATTENDEE_ID'), 404);
             }
 
+            $attendees[(int) $id] = clone $attendee;
+        }
+
+        foreach ($attendees as $id => $attendee) {
             $this->triggerRegistrationStatusMail($dispatcher, $attendee, $id, null, true);
             ++$sent;
         }
@@ -198,24 +220,67 @@ class JemControllerAttendeeregistrations extends BaseController
         }
 
         $model = $this->getModel('attendee');
-        PluginHelper::importPlugin('jem');
-        $dispatcher = JemFactory::getDispatcher();
-        $changed = 0;
+        $transitions = array();
+        $changedRows = array();
 
+        // Validate every record before starting the transaction.
         foreach ($ids as $id) {
             $model->setId($id);
             $attendee = $model->getData();
 
             if (empty($attendee->id)) {
-                continue;
+                throw new Exception(Text::_('COM_JEM_MISSING_ATTENDEE_ID'), 404);
             }
 
-            if ($model->setRegistrationStatus($status)) {
-                ++$changed;
+            $after = clone $attendee;
+            JemRegistrationTransition::applyLogicalStatus($after, $status);
+            $transition = JemRegistrationTransition::create(
+                $attendee,
+                $after,
+                (int) $app->getIdentity()->id,
+                'site.attendeeregistrations.batch'
+            );
 
-                $this->triggerRegistrationStatusMail($dispatcher, $attendee, $id, $status);
+            if ($transition->changed) {
+                $transitions[] = $transition;
+                $changedRows[(int) $id] = $after;
             }
         }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $db->transactionStart();
+
+            foreach ($transitions as $transition) {
+                $model->setId((int) $transition->registrationId);
+
+                if (!$model->setRegistrationStatus((int) $transition->newStatus)) {
+                    throw new RuntimeException($model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'));
+                }
+            }
+
+            $db->transactionCommit();
+        } catch (Throwable $e) {
+            $db->transactionRollback();
+            $this->setRedirect(Route::_($url, false), $e->getMessage(), 'error');
+            return;
+        }
+
+        PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
+        $dispatcher = JemFactory::getDispatcher();
+
+        foreach ($transitions as $transition) {
+            JemRegistrationTransition::dispatchStatusMail(
+                $dispatcher,
+                $changedRows[(int) $transition->registrationId],
+                $transition
+            );
+        }
+
+        JemRegistrationTransition::dispatchAudit($dispatcher, $transitions);
+        $changed = count($transitions);
 
         if (!PluginHelper::isEnabled('jem', 'mailer')) {
             $app->enqueueMessage(Text::_('COM_JEM_GLOBAL_MAILERPLUGIN_DISABLED'), 'notice');

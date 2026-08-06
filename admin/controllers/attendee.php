@@ -116,17 +116,14 @@ class JemControllerAttendee extends BaseController
             $old_data = $model->getData();
         }
         $old_uid = !empty($old_data->uid) ? (int) $old_data->uid : 0;
-        $effectiveStatus = static function ($registration) {
-            if (!$registration) {
-                return null;
-            }
-
-            return (int) $registration->status === 1 && !empty($registration->waiting)
-                ? 2
-                : (int) $registration->status;
-        };
-
         if ($row = $model->store($post)) {
+            $transition = JemRegistrationTransition::create(
+                $old_data,
+                $row,
+                (int) Factory::getApplication()->getIdentity()->id,
+                'administrator.attendee.edit'
+            );
+
             if ($sendemail == 1) {
                 PluginHelper::importPlugin('jem');
                 $dispatcher = JemFactory::getDispatcher();
@@ -134,17 +131,17 @@ class JemControllerAttendee extends BaseController
                 $registrationChanged = !$old_data
                     || $eventChanged
                     || $old_uid !== (int) $row->uid
-                    || $effectiveStatus($old_data) !== $effectiveStatus($row)
+                    || JemRegistrationTransition::logicalStatus($old_data) !== JemRegistrationTransition::logicalStatus($row)
                     || (int) ($old_data->places ?? 0) !== (int) ($row->places ?? 0)
                     || (string) ($old_data->comment ?? '') !== (string) ($row->comment ?? '');
 
                 // there was a user and it's overwritten by a new user -> send unregister mails
                 if ($old_uid && (($old_uid != $uid) || $eventChanged)) {
-                    $dispatcher->triggerEvent('onEventUserUnregistered', array($old_data->event, $old_data));
+                    JemRegistrationTransition::dispatchDeletionMail($dispatcher, $old_data);
                 }
                 // Notify a new user or an existing user whose registration data changed.
                 if ($uid && $registrationChanged) {
-                    $dispatcher->triggerEvent('onEventUserRegistered', array($row->id));
+                    JemRegistrationTransition::dispatchStatusMail($dispatcher, $row, $transition, false, true);
                 }
                 // but show warning if mailer is disabled
                 if (!PluginHelper::isEnabled('jem', 'mailer')) {
@@ -153,7 +150,12 @@ class JemControllerAttendee extends BaseController
             }
 
             PluginHelper::importPlugin('actionlog', 'jem');
-            JemFactory::getDispatcher()->triggerEvent('onJemAfterAttendeeSave', array($row, empty($id)));
+            $dispatcher = JemFactory::getDispatcher();
+            $dispatcher->triggerEvent('onJemAfterAttendeeSave', array($row, empty($id)));
+
+            if ($old_data) {
+                JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+            }
 
             switch ($task) {
             case 'apply':

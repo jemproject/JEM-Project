@@ -132,6 +132,14 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
+        if (!in_array(JemRegistrationTransition::logicalStatus($attendee), array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         $row = Table::getInstance('jem_register', '');
         $row->bind($attendee);
         $row->waiting = $attendee->waiting ? 0 : 1;

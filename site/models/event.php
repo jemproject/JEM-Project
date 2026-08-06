@@ -1038,6 +1038,16 @@ class JemModelEvent extends ItemModel
         $uid = (int) $user->get('id');
         $eventId = (int) $this->_registerid;
         $events = array();
+
+        // A visitor can only submit the two choices rendered by the event form.
+        // Waiting-list state is calculated by JEM and invitation state is set by a manager.
+        if (!in_array($status, array(
+            JemRegistrationTransition::NOT_ATTENDING,
+            JemRegistrationTransition::ATTENDING,
+        ), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
         try {
             $event = $this->getItem($eventId);
         }
