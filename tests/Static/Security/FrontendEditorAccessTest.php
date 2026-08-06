@@ -92,6 +92,16 @@ final class FrontendEditorAccessTest extends TestCase
         }
     }
 
+    public function testNoMenuRouterHasNoCopiedDebugScaffolding(): void
+    {
+        $noMenuRule = $this->read('/site/services/JemNomenuRules.php');
+
+        self::assertStringNotContainsString('com_mywalks', $noMenuRule);
+        self::assertStringNotContainsString('$test = \'Test\'', $noMenuRule);
+        self::assertStringNotContainsString('print_r($segments)', $noMenuRule);
+        self::assertStringContainsString('if (empty($segments))', $noMenuRule);
+    }
+
     public function testSelectorQueriesRespectJoomlaViewLevels(): void
     {
         $model = $this->read('/site/models/editevent.php');
