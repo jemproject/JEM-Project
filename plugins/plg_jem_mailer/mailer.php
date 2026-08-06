@@ -150,7 +150,8 @@ class plgJemMailer extends CMSPlugin
 
         if (!empty($recipients['user'])) {
             $data = new stdClass();
-            switch ($event->status) {
+            $bodyUsesActor = $attendeeid != $userid;
+            switch ((int) $event->status) {
                 case -1: // not attanding
                     $txt_subject = 'PLG_JEM_MAILER_USER_REG_NOT_ATTEND_SUBJECT';
                     if ($attendeeid != $userid) {
@@ -167,18 +168,23 @@ class plgJemMailer extends CMSPlugin
                         $txt_body = 'PLG_JEM_MAILER_USER_REG'.$waiting.'_BODY_' . ($comment ? 'A' : '9');
                     }
                     break;
-                default: // whatever
+                case  0: // invited, not answered yet
                     if ($attendeeid != $userid) {
                         $txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
                         $txt_body = 'PLG_JEM_MAILER_USER_REG_INVITATION_BODY_' . ($comment ? 'B' : 'A');
                     } else {
-                        $txt_subject = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($comment ? 'A' : '9');
+                        $txt_subject = 'PLG_JEM_MAILER_USER_REG_INVITATION_SUBJECT';
+                        $txt_body = 'PLG_JEM_MAILER_USER_REG_SELF_INVITATION_BODY_' . ($comment ? 'A' : '9');
                     }
+                    break;
+                default: // defensive fallback for an unexpected stored status
+                    $txt_subject = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_SUBJECT';
+                    $txt_body = 'PLG_JEM_MAILER_USER_REG_UNKNOWN_BODY_' . ($comment ? 'A' : '9');
+                    $bodyUsesActor = false;
                     break;
             }
             $data->subject = Text::sprintf($txt_subject, $this->_SiteName);
-            if ($attendeeid != $userid) {
+            if ($bodyUsesActor) {
                 if ($comment) {
                     $data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
                 } else {
@@ -201,7 +207,8 @@ class plgJemMailer extends CMSPlugin
 
         if (!empty($recipients['all'])) {
             $data = new stdClass();
-            switch ($event->status) {
+            $bodyUsesActor = $attendeeid != $userid;
+            switch ((int) $event->status) {
                 case -1: // not attanding
                     $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_NOT_ATTEND_SUBJECT';
                     if ($attendeeid != $userid) {
@@ -218,18 +225,23 @@ class plgJemMailer extends CMSPlugin
                         $txt_body = 'PLG_JEM_MAILER_ADMIN_REG'.$waiting.'_BODY_' . ($comment ? '9' : '8');
                     }
                     break;
-                default: // whatever
+                case  0: // invited, not answered yet
                     if ($attendeeid != $userid) {
                         $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
                         $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_BODY_' . ($comment ? 'A' : '9');
                     } else {
-                        $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_SUBJECT';
-                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($comment ? '9' : '8');
+                        $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_INVITATION_SUBJECT';
+                        $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_SELF_INVITATION_BODY_' . ($comment ? '9' : '8');
                     }
+                    break;
+                default: // defensive fallback for an unexpected stored status
+                    $txt_subject = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_SUBJECT';
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_REG_UNKNOWN_BODY_' . ($comment ? '9' : '8');
+                    $bodyUsesActor = false;
                     break;
             }
             $data->subject = Text::sprintf($txt_subject, $this->_SiteName);
-            if ($attendeeid != $userid) {
+            if ($bodyUsesActor) {
                 if ($comment) {
                     $data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
                 } else {
