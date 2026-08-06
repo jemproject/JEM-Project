@@ -85,6 +85,21 @@ final class RegistrationTransitionTest extends TestCase
         self::assertCount(1, $dispatcher->events);
     }
 
+    public function testCapacityReleaseIncludesStatusAndPlaceReductions(): void
+    {
+        $attending = $this->registration(41, 7, 15, 1, 0);
+        $attending->places = 3;
+        $reduced = clone $attending;
+        $reduced->places = 1;
+        $notAttending = clone $attending;
+        $notAttending->status = -1;
+
+        self::assertTrue(JemRegistrationTransition::releasesCapacity($attending, $reduced));
+        self::assertTrue(JemRegistrationTransition::releasesCapacity($attending, $notAttending));
+        self::assertFalse(JemRegistrationTransition::releasesCapacity($reduced, $attending));
+        self::assertFalse(JemRegistrationTransition::releasesCapacity($attending, $attending));
+    }
+
     private function registration(int $id, int $event, int $uid, int $status, int $waiting): object
     {
         return (object) array(
