@@ -87,7 +87,11 @@ final class SqlConfigDefaultsTest extends TestCase
         $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
         $lines = preg_grep('/^ALTER TABLE /', preg_split('/\R/', $sql) ?: array()) ?: array();
 
-        self::assertCount(16, $lines);
+        self::assertGreaterThanOrEqual(
+            19,
+            count($lines),
+            'The 5.0.1 migration must retain every previously shipped schema operation.'
+        );
 
         foreach ($lines as $line) {
             self::assertMatchesRegularExpression(
@@ -108,7 +112,15 @@ final class SqlConfigDefaultsTest extends TestCase
         $installSql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
         $updateSql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
         $fieldsByTable = array(
-            '#__jem_events' => array('timezone_mode', 'timezone', 'start_utc', 'end_utc', 'last_visit'),
+            '#__jem_events' => array(
+                'timezone_mode',
+                'timezone',
+                'start_utc',
+                'end_utc',
+                'last_visit',
+                'series_id',
+                'series_order',
+            ),
             '#__jem_venues' => array('district', 'level', 'capacity', 'timezone', 'email', 'phone', 'mobile'),
             '#__jem_attachments' => array('downloads', 'last_download'),
         );
@@ -123,6 +135,9 @@ final class SqlConfigDefaultsTest extends TestCase
                 );
             }
         }
+
+        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_event_series`', $updateSql);
+        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_event_series`', $installSql);
     }
 
     public function test501PhpSchemaRepairRemainsACompleteSecondaryFallback(): void

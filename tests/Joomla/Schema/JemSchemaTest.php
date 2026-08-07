@@ -34,6 +34,7 @@ final class JemSchemaTest extends JoomlaTestCase
             'jem_countries',
             'jem_links',
             'jem_types',
+            'jem_event_series',
         ) as $table) {
             yield $table => array($table);
         }
@@ -54,7 +55,7 @@ final class JemSchemaTest extends JoomlaTestCase
      */
     public static function criticalColumnProvider(): iterable
     {
-        yield 'events' => array('jem_events', array('id', 'title', 'dates', 'enddates', 'timezone_mode', 'timezone', 'start_utc', 'end_utc', 'last_visit', 'published', 'created_by', 'access', 'event_status', 'ticket_availability', 'type_id', 'attribs'));
+        yield 'events' => array('jem_events', array('id', 'title', 'dates', 'enddates', 'timezone_mode', 'timezone', 'start_utc', 'end_utc', 'last_visit', 'series_id', 'series_order', 'published', 'created_by', 'access', 'event_status', 'ticket_availability', 'type_id', 'attribs'));
         yield 'venues' => array('jem_venues', array('id', 'venue', 'alias', 'url', 'district', 'level', 'capacity', 'timezone', 'email', 'phone', 'mobile', 'latitude', 'longitude', 'published', 'created_by', 'access', 'type_id', 'attribs'));
         yield 'categories' => array('jem_categories', array('id', 'catname', 'alias', 'parent_id', 'published', 'access', 'type_id'));
         yield 'attachments' => array('jem_attachments', array('id', 'object', 'file', 'name', 'description', 'frontend', 'access', 'created_by', 'downloads', 'last_download'));
@@ -62,6 +63,7 @@ final class JemSchemaTest extends JoomlaTestCase
         yield 'types' => array('jem_types', array('id', 'name', 'alias', 'entity', 'translations', 'published', 'access', 'language'));
         yield 'countries' => array('jem_countries', array('id', 'continent', 'iso2', 'iso3', 'name', 'published'));
         yield 'config' => array('jem_config', array('keyname', 'value', 'access'));
+        yield 'event series' => array('jem_event_series', array('id', 'root_event_id', 'title', 'series_type', 'created', 'created_by', 'modified', 'modified_by', 'published'));
     }
 
     #[DataProvider('criticalColumnProvider')]
@@ -88,10 +90,10 @@ final class JemSchemaTest extends JoomlaTestCase
             static fn ($item): bool => in_array($item->queryType, array('ADD_COLUMN', 'ADD_INDEX'), true)
         ));
 
-        self::assertCount(19, $items501, 'Joomla must parse every statement in 5.0.1.sql separately.');
-        self::assertCount(16, $recognised, 'Joomla must recognise all 5.0.1 table and index changes.');
-        self::assertCount(14, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_COLUMN'));
-        self::assertCount(2, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_INDEX'));
+        self::assertCount(25, $items501, 'Joomla must parse every statement in 5.0.1.sql separately.');
+        self::assertCount(19, $recognised, 'Joomla must recognise all 5.0.1 table and index changes.');
+        self::assertCount(16, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_COLUMN'));
+        self::assertCount(3, array_filter($recognised, static fn ($item): bool => $item->queryType === 'ADD_INDEX'));
 
         $changeSet->check();
         $errors501 = array_filter(
