@@ -153,6 +153,8 @@ final class SqlConfigDefaultsTest extends TestCase
             'start_utc',
             'end_utc',
             'last_visit',
+            'series_id',
+            'series_order',
             'district',
             'level',
             'capacity',
@@ -164,6 +166,10 @@ final class SqlConfigDefaultsTest extends TestCase
         ) as $field) {
             self::assertStringContainsString("'" . $field . "'", $script);
         }
+
+        self::assertStringContainsString("'idx_series'", $script);
+        self::assertStringContainsString("'#__jem_event_series'", $script);
+        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS', $script);
     }
 
     public function testFreshInstallSchemaMatchesCurrentUpdateSchema(): void

@@ -174,6 +174,65 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testExistingPackageArtifactsContainCustomDateSeries(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $zipFiles = $this->currentPackageZipFiles();
+
+        if ($zipFiles === array()) {
+            self::markTestSkipped('No current package ZIP artifacts found. Run the build before inspecting Custom dates.');
+        }
+
+        foreach ($zipFiles as $zipFile) {
+            $source = $this->relativePath($zipFile);
+            $zip = new ZipArchive();
+            self::assertTrue($zip->open($zipFile), $source . ' should be readable as a ZIP file.');
+            $packageManifest = $zip->getFromName('pkg_jem.xml');
+            $zip->close();
+
+            self::assertNotFalse($packageManifest, $source . ':pkg_jem.xml should exist.');
+            self::assertStringContainsString('Issue #2288', $packageManifest, $source . ' should publish the Custom dates release note.');
+            self::assertStringContainsString(
+                'final class JemEventSeriesSchedule',
+                $this->componentEntryContents($zipFile, 'site/classes/eventseries.class.php'),
+                $source . ' should include the custom-series schedule implementation.'
+            );
+            self::assertStringContainsString(
+                'custom_schedule_editor',
+                $this->componentEntryContents($zipFile, 'site/views/editevent/tmpl/edit_customschedule.php'),
+                $source . ' should include the frontend Custom dates editor.'
+            );
+            $recurrenceJavaScript = $this->componentEntryContents($zipFile, 'media/js/recurrence.js');
+            self::assertStringContainsString(
+                "if (\$select_value === '7')",
+                $recurrenceJavaScript,
+                $source . ' should include the Custom dates JavaScript mode.'
+            );
+            self::assertStringNotContainsString(
+                'custom_schedule_seed_row',
+                $recurrenceJavaScript,
+                $source . ' should keep the main event outside the additional-occurrence rows.'
+            );
+
+            $eventModel = $this->componentEntryContents($zipFile, 'admin/models/event.php');
+            self::assertStringContainsString('completeCustomSeriesSchedule', $eventModel);
+            self::assertStringContainsString('getCustomSeriesSchedule((int) $item->series_id, (int) $item->id)', $eventModel);
+            self::assertStringContainsString("\$customSeriesScope = \$customSeriesIsRoot ? 'all' : 'occurrence';", $eventModel);
+            self::assertStringContainsString("->select(\$db->quoteName('root_event_id'))", $eventModel);
+
+            $updateSql = $this->componentEntryContents($zipFile, 'admin/sql/updates/mysql/5.0.1.sql');
+            self::assertStringContainsString('ADD COLUMN `series_id`', $updateSql);
+            self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_event_series`', $updateSql);
+
+            $installer = $this->componentEntryContents($zipFile, 'script.php');
+            self::assertStringContainsString("'series_id'", $installer);
+            self::assertStringContainsString("'#__jem_event_series'", $installer);
+        }
+    }
+
     /**
      * @return list<string>
      */

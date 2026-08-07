@@ -26,11 +26,44 @@ final class CustomEventSeriesScheduleTest extends TestCase
         self::assertSame('18:30', $rows[1]['time']);
     }
 
-    public function testAtLeastTwoOccurrencesAreRequired(): void
+    public function testOneAdditionalOccurrenceIsAccepted(): void
+    {
+        $rows = JemEventSeriesSchedule::parse('[{"date":"2026-08-08","time":"18:00"}]');
+
+        self::assertCount(1, $rows);
+        self::assertSame('2026-08-08', $rows[0]['date']);
+    }
+
+    public function testAtLeastOneAdditionalOccurrenceIsRequired(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('minimum');
-        JemEventSeriesSchedule::parse('[{"date":"2026-08-08","time":"18:00"}]');
+        JemEventSeriesSchedule::parse('[]');
+    }
+
+    public function testPrimaryOccurrenceIsCombinedWithAdditionalDates(): void
+    {
+        $rows = JemEventSeriesSchedule::combine(
+            array('event_id' => 10, 'date' => '2026-08-10', 'time' => '19:00', 'end_date' => '', 'end_time' => ''),
+            array(array('event_id' => 0, 'date' => '2026-08-17', 'time' => '19:00', 'end_date' => '', 'end_time' => '')),
+            true
+        );
+
+        self::assertCount(2, $rows);
+        self::assertSame(10, $rows[0]['event_id']);
+        self::assertSame('2026-08-17', $rows[1]['date']);
+    }
+
+    public function testNewSeriesRejectsAnAdditionalDateBeforeThePrimaryEvent(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('before_primary');
+
+        JemEventSeriesSchedule::combine(
+            array('event_id' => 10, 'date' => '2026-08-10', 'time' => '19:00'),
+            array(array('event_id' => 0, 'date' => '2026-08-09', 'time' => '19:00')),
+            true
+        );
     }
 
     public function testDuplicateOccurrencesAreRejected(): void

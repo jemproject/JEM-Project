@@ -23,6 +23,8 @@ final class CustomEventSeriesContractsTest extends TestCase
         self::assertStringContainsString('ADD COLUMN `series_id`', $update);
         self::assertStringContainsString("\$data['recurrence_type'] = 0;", $model);
         self::assertStringContainsString('createCustomEventSeries', $model);
+        self::assertStringContainsString("'series_order' => \$index + 1", $model);
+        self::assertStringContainsString('repairCustomSeriesAfterDelete', $model);
     }
 
     public function testFrontendAndBackendExposeTheSameCustomScheduleMode(): void
@@ -38,6 +40,8 @@ final class CustomEventSeriesContractsTest extends TestCase
         $javascript = file_get_contents(JEM_TEST_ROOT . '/media/js/recurrence.js');
         self::assertStringContainsString("if (\$select_value === '7')", $javascript);
         self::assertStringContainsString('custom_schedule_json', $javascript);
+        self::assertStringNotContainsString('custom_schedule_seed_row', $javascript);
+        self::assertStringContainsString("rows.push({event_id: 0, date: '', time: '', end_date: '', end_time: ''});", $javascript);
     }
 
     public function testSeriesBookingAcceptsRegularAndCustomSeries(): void
@@ -62,6 +66,40 @@ final class CustomEventSeriesContractsTest extends TestCase
             '/site/views/event/tmpl/responsive/default_regform.php',
         ) as $file) {
             self::assertStringContainsString('series_id', file_get_contents(JEM_TEST_ROOT . $file));
+        }
+    }
+
+    public function testSeriesWritesShareOneOuterTransaction(): void
+    {
+        $model = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
+
+        self::assertStringContainsString('$seriesTransactionActive = false;', $model);
+        self::assertStringContainsString('$seriesDb->transactionStart();', $model);
+        self::assertStringContainsString('completeCustomSeriesSchedule($savedId, $customSchedule, $new || $customSeriesIsRoot)', $model);
+        self::assertStringContainsString('createCustomEventSeries($savedId, $completeCustomSchedule, $cats, $backend, false)', $model);
+        self::assertStringContainsString('synchroniseCustomSeriesSchedule($existingSeriesId, $savedId, $completeCustomSchedule, $cats, $backend, false)', $model);
+        self::assertStringContainsString('getCustomSeriesSchedule((int) $item->series_id, (int) $item->id)', $model);
+        self::assertStringContainsString('$seriesDb->transactionCommit();', $model);
+        self::assertStringContainsString('$seriesDb->transactionRollback();', $model);
+        self::assertStringContainsString("if (\$manageTransaction) {\n                Factory::getApplication()->enqueueMessage", $model);
+    }
+
+    public function testCustomSeriesRootPropagatesWhileChildrenRemainIndependent(): void
+    {
+        $model = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
+        $adminView = file_get_contents(JEM_TEST_ROOT . '/admin/views/event/tmpl/edit.php');
+        $siteView = file_get_contents(JEM_TEST_ROOT . '/site/views/editevent/tmpl/edit_customschedule.php');
+
+        self::assertStringContainsString("->select(\$db->quoteName('root_event_id'))", $model);
+        self::assertStringContainsString("\$customSeriesScope = \$customSeriesIsRoot ? 'all' : 'occurrence';", $model);
+        self::assertStringContainsString('propagateCustomSeriesFields($existingSeriesId, $savedId, $data, $cats, $backend)', $model);
+        self::assertStringContainsString("'introtext', 'fulltext'", $model);
+
+        foreach (array($adminView, $siteView) as $view) {
+            self::assertStringContainsString('COM_JEM_CUSTOM_SERIES_ROOT_NOTICE', $view);
+            self::assertStringContainsString('COM_JEM_CUSTOM_SERIES_CHILD_NOTICE', $view);
+            self::assertStringContainsString('type="hidden" name="custom_series_scope"', $view);
+            self::assertStringNotContainsString('<select name="custom_series_scope"', $view);
         }
     }
 }
