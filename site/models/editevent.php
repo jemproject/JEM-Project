@@ -207,7 +207,8 @@ class JemModelEditevent extends JemModelEvent
 
             if (!empty($value->series_id)) {
                 $value->recurrence_type = 7;
-                $value->custom_schedule_json = json_encode($this->getCustomSeriesSchedule((int) $value->series_id));
+                $value->custom_series_is_root = $this->isCustomSeriesRoot((int) $value->series_id, (int) $value->id);
+                $value->custom_schedule_json = json_encode($this->getCustomSeriesSchedule((int) $value->series_id, (int) $value->id));
             }
         }
 

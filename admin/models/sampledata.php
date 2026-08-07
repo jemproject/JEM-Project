@@ -135,6 +135,26 @@ class JemModelSampledata extends BaseDatabaseModel
             $this->executeSchemaQuery("ALTER TABLE `#__jem_events` ADD COLUMN `series_order` INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_id`");
         }
 
+        if (!empty($eventColumns)) {
+            $eventTable = $this->_db->replacePrefix('#__jem_events');
+            $keyNames = array();
+            foreach ((array) $this->_db->getTableKeys($eventTable) as $name => $key) {
+                if (is_string($name)) {
+                    $keyNames[] = $name;
+                }
+                if (is_object($key)) {
+                    foreach (array('Key_name', 'key_name', 'name') as $property) {
+                        if (isset($key->$property)) {
+                            $keyNames[] = (string) $key->$property;
+                        }
+                    }
+                }
+            }
+            if (!in_array('idx_series', $keyNames, true)) {
+                $this->executeSchemaQuery("ALTER TABLE `#__jem_events` ADD INDEX `idx_series` (`series_id`, `series_order`)");
+            }
+        }
+
         $this->executeSchemaQuery("CREATE TABLE IF NOT EXISTS `#__jem_event_series` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `root_event_id` INT(11) UNSIGNED NOT NULL DEFAULT '0', `title` VARCHAR(255) NOT NULL DEFAULT '', `series_type` VARCHAR(20) NOT NULL DEFAULT 'custom', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', PRIMARY KEY (`id`), KEY `idx_root_event` (`root_event_id`), KEY `idx_created_by` (`created_by`), KEY `idx_published` (`published`)) ENGINE=InnoDB");
     }
 

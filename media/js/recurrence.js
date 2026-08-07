@@ -93,21 +93,6 @@ function custom_schedule_rows() {
     }
 }
 
-function custom_schedule_seed_row() {
-    var value = function (id) {
-        var element = document.getElementById(id);
-        return element ? element.value : '';
-    };
-
-    return {
-        event_id: 0,
-        date: value('jform_dates'),
-        time: value('jform_times'),
-        end_date: value('jform_enddates'),
-        end_time: value('jform_endtimes')
-    };
-}
-
 function store_custom_schedule() {
     var field = document.getElementById('custom_schedule_json');
     var table = document.getElementById('custom_schedule_rows');
@@ -192,7 +177,6 @@ function render_custom_schedule() {
 
     var rows = custom_schedule_rows();
     if (!rows.length) {
-        rows.push(custom_schedule_seed_row());
         rows.push({event_id: 0, date: '', time: '', end_date: '', end_time: ''});
     }
     rows.forEach(function (row) {

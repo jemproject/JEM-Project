@@ -15,19 +15,17 @@ $isExistingSeries = !empty($this->item->series_id);
 ?>
 <div id="custom_schedule_editor" class="jem-custom-schedule mt-3" hidden>
     <h4><?php echo Text::_('COM_JEM_CUSTOM_DATES'); ?></h4>
-    <p><?php echo Text::_('COM_JEM_CUSTOM_DATES_DESC'); ?></p>
+    <p><?php echo Text::_($isExistingSeries ? 'COM_JEM_CUSTOM_DATES_EXISTING_DESC' : 'COM_JEM_CUSTOM_DATES_DESC'); ?></p>
 
     <?php if ($isExistingSeries) : ?>
         <div class="alert alert-info">
-            <?php echo Text::sprintf('COM_JEM_CUSTOM_SERIES_MEMBER_NOTICE', (int) $this->item->series_id); ?>
+            <?php echo Text::sprintf(
+                !empty($this->item->custom_series_is_root) ? 'COM_JEM_CUSTOM_SERIES_ROOT_NOTICE' : 'COM_JEM_CUSTOM_SERIES_CHILD_NOTICE',
+                (int) $this->item->series_id
+            ); ?>
         </div>
-        <label for="custom_series_scope"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_EDIT_SCOPE'); ?></label>
-        <select name="custom_series_scope" id="custom_series_scope" class="form-select mb-3">
-            <option value="occurrence"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_OCCURRENCE'); ?></option>
-            <option value="schedule"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_SCHEDULE'); ?></option>
-            <option value="all"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_ALL'); ?></option>
-        </select>
-        <p class="form-text"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_EDIT_SCOPE_DESC'); ?></p>
+        <input type="hidden" name="custom_series_scope" id="custom_series_scope"
+               value="<?php echo !empty($this->item->custom_series_is_root) ? 'all' : 'occurrence'; ?>">
     <?php endif; ?>
 
     <div class="table-responsive">

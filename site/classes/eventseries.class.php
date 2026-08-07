@@ -71,7 +71,7 @@ final class JemEventSeriesSchedule
         usort($rows, static function ($left, $right) {
             return strcmp($left['date'] . ' ' . $left['time'], $right['date'] . ' ' . $right['time']);
         });
-        if ($required && count($rows) < 2) {
+        if ($required && count($rows) < 1) {
             throw new InvalidArgumentException('minimum');
         }
 
@@ -84,6 +84,23 @@ final class JemEventSeriesSchedule
         $event['times'] = $row['time'] !== '' ? $row['time'] : null;
         $event['enddates'] = $row['end_date'] !== '' ? $row['end_date'] : null;
         $event['endtimes'] = $row['end_time'] !== '' ? $row['end_time'] : null;
+    }
+
+    public static function combine(array $primary, array $additional, $requirePrimaryFirst = false, $maximum = 250)
+    {
+        if ($requirePrimaryFirst) {
+            $primaryStart = (string) ($primary['date'] ?? '') . ' '
+                . (!empty($primary['time']) ? (string) $primary['time'] : '00:00');
+            foreach ($additional as $row) {
+                $additionalStart = (string) ($row['date'] ?? '') . ' '
+                    . (!empty($row['time']) ? (string) $row['time'] : '00:00');
+                if ($additionalStart <= $primaryStart) {
+                    throw new InvalidArgumentException('before_primary');
+                }
+            }
+        }
+
+        return self::parse(json_encode(array_merge(array($primary), $additional)), true, $maximum);
     }
 
     private static function validDate($value)
