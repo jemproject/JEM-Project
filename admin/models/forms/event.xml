@@ -597,6 +597,7 @@
             <option value="4">COM_JEM_WEEKDAY</option>
             <option value="5">COM_JEM_YEARLY</option>
             <option value="6">COM_JEM_LASTDAY</option>
+            <option value="7">COM_JEM_CUSTOM_DATES</option>
         </field>
         <field name="recurrence_limit_date" type="calendarjem"
             default="now"

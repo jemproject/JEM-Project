@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_limit_date` date NULL DEFAULT NULL,
     `recurrence_byday` varchar(20) NULL DEFAULT NULL,
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
+    `series_id` int(11) unsigned NULL DEFAULT NULL,
+    `series_order` int(11) unsigned NOT NULL DEFAULT '0',
     `datimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage_layout` varchar(20) NOT NULL DEFAULT 'global',
@@ -86,7 +88,24 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_article` (`article_id`),
     KEY `idx_type` (`type_id`),
     KEY `idx_start_utc` (`start_utc`),
-    KEY `idx_end_utc` (`end_utc`)
+    KEY `idx_end_utc` (`end_utc`),
+    KEY `idx_series` (`series_id`, `series_order`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_event_series` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `root_event_id` int(11) unsigned NOT NULL DEFAULT '0',
+    `title` varchar(255) NOT NULL DEFAULT '',
+    `series_type` varchar(20) NOT NULL DEFAULT 'custom',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    PRIMARY KEY (`id`),
+    KEY `idx_root_event` (`root_event_id`),
+    KEY `idx_created_by` (`created_by`),
+    KEY `idx_published` (`published`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (

@@ -1284,14 +1284,16 @@ static public function lightbox() {
         $item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
         //stop if disabled
-        if (empty($item->recurrence_number) && empty($item->recurrence_type)) {
+        if (empty($item->recurrence_number) && empty($item->recurrence_type) && empty($item->series_id)) {
             return null;
         }
 
         $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
         $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
-        $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
+        $first = !empty($item->series_id)
+            ? ((int) ($item->series_order ?? 0) === 1)
+            : (!empty($item->recurrence_type) && empty($item->recurrence_first_id));
 
         $image = $first
             ? 'com_jem/icon-32-recurrence-first.svg'

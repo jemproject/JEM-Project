@@ -26,6 +26,11 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditevent extends JemModelEvent
 {
+    protected function canEditCustomSeriesOccurrence($event, $backend)
+    {
+        return JemFactory::getUser()->can('edit', 'event', (int) $event->id, (int) $event->created_by);
+    }
+
     /**
      * Create a placeholder Joomla article from the front-end article selector and
      * return it so the event form can store the associated article id.
@@ -187,6 +192,8 @@ class JemModelEditevent extends JemModelEvent
             $value->recurrence_type = 0;
             $value->recurrence_first_id = 0;
             $value->recurrence_counter = 0;
+            $value->series_id = null;
+            $value->series_order = 0;
         }
 
         // Backup current recurrence values
@@ -196,6 +203,11 @@ class JemModelEditevent extends JemModelEvent
                 if (strncmp('recurrence_', $k, 11) === 0) {
                     $value->recurr_bak->$k = $v;
                 }
+            }
+
+            if (!empty($value->series_id)) {
+                $value->recurrence_type = 7;
+                $value->custom_schedule_json = json_encode($this->getCustomSeriesSchedule((int) $value->series_id));
             }
         }
 

@@ -820,7 +820,7 @@ $document->addStyleDeclaration('
                 <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
             </div>
-            <?php if ($this->item->recurrence_type > 0) : ?>
+            <?php if ($this->item->recurrence_type > 0 && (int) $this->item->recurrence_type !== 7) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
                         <?php echo JemOutput::recurrenceicon($this->item, false, false); ?>

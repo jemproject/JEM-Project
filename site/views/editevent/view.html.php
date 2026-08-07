@@ -150,7 +150,7 @@ class JemViewEditevent extends JemView
             $tmp = new stdClass();
 
             // check for recurrence
-            if (($this->item->recurrence_type != 0) || ($this->item->recurrence_first_id != 0)) {
+            if (empty($this->item->series_id) && (($this->item->recurrence_type != 0) || ($this->item->recurrence_first_id != 0))) {
                 $tmp->recurrence_type = 0;
                 $tmp->recurrence_first_id = 0;
             }

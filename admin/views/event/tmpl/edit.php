@@ -450,8 +450,8 @@ $this->document->addStyleDeclaration('
         <inlinehelp button="show"/>
     </config>
 
-    <?php $recurr = empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak; ?>
-    <?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type)) : ?>
+    <?php $recurr = !empty($this->item->series_id) ? $this->item : (empty($this->item->recurr_bak) ? $this->item : $this->item->recurr_bak); ?>
+    <?php if (!empty($recurr->recurrence_number) || !empty($recurr->recurrence_type) || !empty($recurr->series_id)) : ?>
         <div class="description">
             <div style="float:left;">
                 <?php echo JemOutput::recurrenceicon($recurr, false, false); ?>
@@ -791,6 +791,40 @@ $this->document->addStyleDeclaration('
                             <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday;?>" />
                             <input type="hidden" name="recurrence_bylastday" id="recurrence_bylastday" value="<?php echo $this->item->recurrence_bylastday;?>" />
 
+                            <div id="custom_schedule_editor" class="mt-3" hidden>
+                                <h4><?php echo Text::_('COM_JEM_CUSTOM_DATES'); ?></h4>
+                                <p><?php echo Text::_('COM_JEM_CUSTOM_DATES_DESC'); ?></p>
+                                <?php if (!empty($this->item->series_id)) : ?>
+                                    <div class="alert alert-info">
+                                        <?php echo Text::sprintf('COM_JEM_CUSTOM_SERIES_MEMBER_NOTICE', (int) $this->item->series_id); ?>
+                                    </div>
+                                    <label for="custom_series_scope"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_EDIT_SCOPE'); ?></label>
+                                    <select name="custom_series_scope" id="custom_series_scope" class="form-select mb-3">
+                                        <option value="occurrence"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_OCCURRENCE'); ?></option>
+                                        <option value="schedule"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_SCHEDULE'); ?></option>
+                                        <option value="all"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_SCOPE_ALL'); ?></option>
+                                    </select>
+                                    <p class="form-text"><?php echo Text::_('COM_JEM_CUSTOM_SERIES_EDIT_SCOPE_DESC'); ?></p>
+                                <?php endif; ?>
+                                <div class="table-responsive">
+                                    <table class="table table-sm align-middle">
+                                        <thead><tr>
+                                            <th><?php echo Text::_('COM_JEM_STARTDATE'); ?></th>
+                                            <th><?php echo Text::_('COM_JEM_STARTTIME'); ?></th>
+                                            <th><?php echo Text::_('COM_JEM_ENDDATE'); ?></th>
+                                            <th><?php echo Text::_('COM_JEM_ENDTIME'); ?></th>
+                                            <th><?php echo Text::_('COM_JEM_ACTIONS'); ?></th>
+                                        </tr></thead>
+                                        <tbody id="custom_schedule_rows"></tbody>
+                                    </table>
+                                </div>
+                                <button type="button" id="custom_schedule_add" class="btn btn-outline-primary">
+                                    <?php echo Text::_('COM_JEM_CUSTOM_DATES_ADD'); ?>
+                                </button>
+                                <input type="hidden" name="custom_schedule_json" id="custom_schedule_json"
+                                       value="<?php echo htmlspecialchars((string) ($this->item->custom_schedule_json ?? ''), ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+
                             <script
                                     type="text/javascript">
                                 <!--
@@ -813,6 +847,11 @@ $this->document->addStyleDeclaration('
 
                                 var $before_last = "<?php echo Text::_ ('COM_JEM_BEFORE_LAST'); ?>";
                                 var $last = "<?php echo Text::_ ('COM_JEM_LAST'); ?>";
+                                window.jemCustomScheduleLabels = <?php echo json_encode(array(
+                                    'duplicate'      => Text::_('COM_JEM_CUSTOM_DATES_DUPLICATE'),
+                                    'remove'         => Text::_('COM_JEM_CUSTOM_DATES_REMOVE'),
+                                    'cancelExisting' => Text::_('COM_JEM_CUSTOM_DATES_CANCEL_EXISTING'),
+                                ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
 
                                 var $lastday = new Array();
                                 $lastday[0]  = new Array("L1", "<?php echo Text::_ ('COM_JEM_LAST_DAY'); ?>");

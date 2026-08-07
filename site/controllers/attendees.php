@@ -171,7 +171,7 @@ class JemControllerAttendees extends BaseController
             }
 
             // If event has 'seriesbooking' active and $series is true then get all recurrence events of series from now (register or unregister)
-            if ($event->recurrence_type) {
+            if ($event->recurrence_type || !empty($event->series_id)) {
                 if (($event->seriesbooking && $checkseries)) {
                     $events = $modelEventItem->getListRecurrenceEventsbyId($eventid, $event->recurrence_first_id, time());
                 }

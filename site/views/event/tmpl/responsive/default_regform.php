@@ -232,7 +232,7 @@ if ($this->showRegForm && empty($this->print)) :
                         } else {
                             echo ' <input id="addplaces" style="text-align: center; width:auto;" type="hidden" name="addplaces" value="1">';
                         }
-                        if ($this->item->recurrence_type){
+                    if ($this->item->recurrence_type || !empty($this->item->series_id)){
                             if ($this->item->seriesbooking) {
                                 if ($seriesEvents) {
                                     if ($this->item->singlebooking) {
@@ -276,7 +276,7 @@ if ($this->showRegForm && empty($this->print)) :
                                     echo ' ' . Text::_('COM_JEM_I_WILL_NOT_GO_2');
                                     echo ' <input id="cancelplaces" style="text-align: center;" type="number" name="cancelplaces" value="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" max="' . ($placesRegisteredUser ? $placesRegisteredUser : $waitingPlacesUser) . '" min="1">' . ' ' . $cancelplaces;
                                 }
-                                if ($this->item->recurrence_type) {
+                                if ($this->item->recurrence_type || !empty($this->item->series_id)) {
                                     echo '<div class="pt-3 pl-3">' . Text::_('COM_JEM_I_WILL_NOT_GO_SERIES_1') . '</div>';
                                     if ($this->item->seriesbooking) {
                                         if($seriesEvents) {

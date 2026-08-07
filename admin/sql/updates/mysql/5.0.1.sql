@@ -24,6 +24,11 @@ ALTER TABLE `#__jem_events` ADD COLUMN `end_utc` DATETIME NULL DEFAULT NULL AFTE
 ALTER TABLE `#__jem_events` ADD COLUMN `last_visit` DATETIME NULL DEFAULT NULL AFTER `hits` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD INDEX `idx_start_utc` (`start_utc`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD INDEX `idx_end_utc` (`end_utc`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD COLUMN `series_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `recurrence_bylastday` /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD COLUMN `series_order` INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_id` /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD INDEX `idx_series` (`series_id`, `series_order`) /** CAN FAIL **/;
+
+CREATE TABLE IF NOT EXISTS `#__jem_event_series` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `root_event_id` INT(11) UNSIGNED NOT NULL DEFAULT '0', `title` VARCHAR(255) NOT NULL DEFAULT '', `series_type` VARCHAR(20) NOT NULL DEFAULT 'custom', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', PRIMARY KEY (`id`), KEY `idx_root_event` (`root_event_id`), KEY `idx_created_by` (`created_by`), KEY `idx_published` (`published`)) ENGINE=InnoDB;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('event_timezone_default', 'joomla');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_automatic', '1');

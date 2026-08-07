@@ -142,7 +142,7 @@ Joomla.submitbutton = function(task)
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if ($this->row->recurrence_type && $this->row->seriesbooking): ?>
+            <?php if (($this->row->recurrence_type || !empty($this->row->series_id)) && $this->row->seriesbooking): ?>
             <tr>
                 <td class="key">
                     <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>

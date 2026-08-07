@@ -92,7 +92,7 @@ class JemModelEvent extends ItemModel
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.type_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id'));
                 $query->from('#__jem_events AS a');
 
                 # Author
@@ -415,7 +415,7 @@ class JemModelEvent extends ItemModel
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -483,10 +483,25 @@ class JemModelEvent extends ItemModel
                 $query->select('0 AS contactid2');
             }
 
-            $dateFrom = date('Y-m-d', $datetimeFrom);
-            $timeFrom = date('H:i:s', $datetimeFrom);
-            $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
-            $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+            $dateFrom = gmdate('Y-m-d', $datetimeFrom);
+            $timeFrom = gmdate('H:i:s', $datetimeFrom);
+            $utcFrom = gmdate('Y-m-d H:i:s', $datetimeFrom);
+            $seriesLookup = $db->getQuery(true)
+                ->select($db->quoteName('series_id'))
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('id') . ' = ' . (int) $id);
+            $db->setQuery($seriesLookup);
+            $seriesId = (int) $db->loadResult();
+            if ($seriesId > 0) {
+                $query->where('a.series_id = ' . $seriesId);
+            } else {
+                $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
+            }
+            $query->where(
+                '((a.start_utc IS NOT NULL AND a.start_utc >= ' . $db->quote($utcFrom) . ')' .
+                ' OR (a.start_utc IS NULL AND (a.dates > ' . $db->quote($dateFrom) .
+                ' OR (a.dates = ' . $db->quote($dateFrom) . ' AND (a.times IS NULL OR a.times >= ' . $db->quote($timeFrom) . ')))))'
+            );
             $query->order('a.dates ASC');
 
             try
@@ -1072,7 +1087,7 @@ class JemModelEvent extends ItemModel
         }
 
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
-        if($event->recurrence_type){
+        if($event->recurrence_type || !empty($event->series_id)){
 
             if(($event->seriesbooking && !$event->singlebooking) || ($event->singlebooking && $checkseries)) {
                 $events = $this->getListRecurrenceEventsbyId($event->id, $event->recurrence_first_id, time());

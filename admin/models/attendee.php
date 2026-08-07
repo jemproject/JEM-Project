@@ -88,7 +88,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
-            $query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.seriesbooking'));
+            $query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.series_id', 'a.series_order', 'a.seriesbooking'));
             $query->from('#__jem_register as r');
             $query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
             $query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -260,7 +260,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
             // Get event
             $query = $db->getQuery(true);
-            $query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','seriesbooking','singlebooking'));
+            $query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','series_id','series_order','seriesbooking','singlebooking'));
             $query->from('#__jem_events');
             $query->where('id= '.$db->quote($eventid));
 
@@ -269,7 +269,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
             // If recurrence event, save series event
             $events = array();
-            if($event->recurrence_type){
+            if($event->recurrence_type || !empty($event->series_id)){
                 // Retrieving seriesbooking
                 $seriesbooking = $data["seriesbooking"];
                 $singlebooking = $data["singlebooking"];
@@ -277,15 +277,25 @@ class JemModelAttendee extends BaseDatabaseModel
                 // If event has 'seriesbooking' active
                 if($event->seriesbooking && $seriesbooking && !$singlebooking){
                     //GEt date and time now
-                    $dateFrom = date('Y-m-d', time());
-                    $timeFrom = date('H:i', time());
+                    $nowTimestamp = time();
+                    $dateFrom = gmdate('Y-m-d', $nowTimestamp);
+                    $timeFrom = gmdate('H:i:s', $nowTimestamp);
+                    $utcFrom = gmdate('Y-m-d H:i:s', $nowTimestamp);
 
                     // Get the all recurrence events of serie from now
                     $query = $db->getQuery(true);
-                    $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
+                    $query->select(array('id','recurrence_first_id','series_id','series_order','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
                     $query->from('#__jem_events as a');
-                    $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
-                    $query->where('(a.dates > ' . $db->quote($dateFrom) . ' OR a.dates = ' . $db->quote($dateFrom) . ' AND dates >= ' . $db->quote($timeFrom) . ')');
+                    if (!empty($event->series_id)) {
+                        $query->where('a.series_id = ' . (int) $event->series_id);
+                    } else {
+                        $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
+                    }
+                    $query->where(
+                        '((a.start_utc IS NOT NULL AND a.start_utc >= ' . $db->quote($utcFrom) . ')' .
+                        ' OR (a.start_utc IS NULL AND (a.dates > ' . $db->quote($dateFrom) .
+                        ' OR (a.dates = ' . $db->quote($dateFrom) . ' AND (a.times IS NULL OR a.times >= ' . $db->quote($timeFrom) . ')))))'
+                    );
                     $db->setQuery($query);
                     $events = $db->loadObjectList();
                 }

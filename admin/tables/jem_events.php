@@ -97,6 +97,10 @@ class jem_events extends Table
     public $recurrence_bylastday = '';
     /** @var int id of first event for recurrence events*/
     public $recurrence_first_id = 0;
+    /** @var int|null id of an explicitly managed event series */
+    public $series_id = null;
+    /** @var int order inside an explicitly managed event series */
+    public $series_order = 0;
     /** @var string */
     public $datimage = '';
     public $fullimage = '';

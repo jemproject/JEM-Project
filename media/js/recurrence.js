@@ -37,6 +37,16 @@ function output_recurrencescript() {
 
     var $select_value = $select_element.value;	// the value of the select list
 
+    if ($select_value === '7') {
+        document.getElementById("recurrence_number").value = 0;
+        $content.textContent = '';
+        document.getElementById("counter_row").style.display = "none";
+        toggle_custom_schedule(true);
+        return;
+    }
+
+    toggle_custom_schedule(false);
+
     if ($select_value != 0) { // want the user a recurrence
         // create an element by the generate_output function
         // ** $select_output is an array of all sentences of each type **
@@ -62,6 +72,179 @@ function output_recurrencescript() {
         $content.appendChild($nothing);
 
         document.getElementById("counter_row").style.display = "none"; // hide the counter
+    }
+}
+
+function custom_schedule_labels() {
+    return window.jemCustomScheduleLabels || {};
+}
+
+function custom_schedule_rows() {
+    var field = document.getElementById('custom_schedule_json');
+    if (!field || !field.value) {
+        return [];
+    }
+
+    try {
+        var rows = JSON.parse(field.value);
+        return Array.isArray(rows) ? rows : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function custom_schedule_seed_row() {
+    var value = function (id) {
+        var element = document.getElementById(id);
+        return element ? element.value : '';
+    };
+
+    return {
+        event_id: 0,
+        date: value('jform_dates'),
+        time: value('jform_times'),
+        end_date: value('jform_enddates'),
+        end_time: value('jform_endtimes')
+    };
+}
+
+function store_custom_schedule() {
+    var field = document.getElementById('custom_schedule_json');
+    var table = document.getElementById('custom_schedule_rows');
+    if (!field || !table) {
+        return;
+    }
+
+    field.value = JSON.stringify(Array.from(table.querySelectorAll('tr')).map(function (row) {
+        return {
+            event_id: Number.parseInt(row.dataset.eventId || '0', 10) || 0,
+            date: row.querySelector('[data-field="date"]').value,
+            time: row.querySelector('[data-field="time"]').value,
+            end_date: row.querySelector('[data-field="end_date"]').value,
+            end_time: row.querySelector('[data-field="end_time"]').value
+        };
+    }));
+}
+
+function render_custom_schedule_row(data) {
+    var labels = custom_schedule_labels();
+    var row = document.createElement('tr');
+    row.dataset.eventId = Number.parseInt(data.event_id || '0', 10) || 0;
+
+    [['date', 'date'], ['time', 'time'], ['end_date', 'date'], ['end_time', 'time']].forEach(function (definition) {
+        var cell = document.createElement('td');
+        var input = document.createElement('input');
+        input.type = definition[1];
+        input.className = 'form-control form-control-sm';
+        input.dataset.field = definition[0];
+        input.value = data[definition[0]] || '';
+        if (definition[0] === 'date') {
+            input.required = true;
+        }
+        input.addEventListener('change', store_custom_schedule);
+        cell.appendChild(input);
+        row.appendChild(cell);
+    });
+
+    var actions = document.createElement('td');
+    var duplicate = document.createElement('button');
+    duplicate.type = 'button';
+    duplicate.dataset.action = 'duplicate';
+    duplicate.className = 'btn btn-sm btn-outline-secondary me-1';
+    duplicate.textContent = labels.duplicate || 'Duplicate';
+    duplicate.addEventListener('click', function () {
+        var copy = {
+            event_id: 0,
+            date: row.querySelector('[data-field="date"]').value,
+            time: row.querySelector('[data-field="time"]').value,
+            end_date: row.querySelector('[data-field="end_date"]').value,
+            end_time: row.querySelector('[data-field="end_time"]').value
+        };
+        row.parentNode.insertBefore(render_custom_schedule_row(copy), row.nextSibling);
+        store_custom_schedule();
+    });
+    actions.appendChild(duplicate);
+
+    var remove = document.createElement('button');
+    remove.type = 'button';
+    remove.dataset.action = 'remove';
+    remove.className = 'btn btn-sm btn-outline-danger';
+    remove.textContent = labels.remove || 'Remove';
+    remove.disabled = row.dataset.eventId !== '0';
+    if (remove.disabled) {
+        remove.title = labels.cancelExisting || 'Cancel an existing occurrence from its event editor.';
+    }
+    remove.addEventListener('click', function () {
+        row.remove();
+        store_custom_schedule();
+    });
+    actions.appendChild(remove);
+    row.appendChild(actions);
+
+    return row;
+}
+
+function render_custom_schedule() {
+    var table = document.getElementById('custom_schedule_rows');
+    if (!table || table.dataset.rendered === 'true') {
+        return;
+    }
+
+    var rows = custom_schedule_rows();
+    if (!rows.length) {
+        rows.push(custom_schedule_seed_row());
+        rows.push({event_id: 0, date: '', time: '', end_date: '', end_time: ''});
+    }
+    rows.forEach(function (row) {
+        table.appendChild(render_custom_schedule_row(row));
+    });
+    table.dataset.rendered = 'true';
+    store_custom_schedule();
+
+    var add = document.getElementById('custom_schedule_add');
+    if (add) {
+        add.addEventListener('click', function () {
+            table.appendChild(render_custom_schedule_row({event_id: 0, date: '', time: '', end_date: '', end_time: ''}));
+            store_custom_schedule();
+        });
+    }
+
+    var scope = document.getElementById('custom_series_scope');
+    if (scope) {
+        scope.addEventListener('change', update_custom_schedule_scope);
+    }
+    update_custom_schedule_scope();
+}
+
+function update_custom_schedule_scope() {
+    var scope = document.getElementById('custom_series_scope');
+    var table = document.getElementById('custom_schedule_rows');
+    var add = document.getElementById('custom_schedule_add');
+    var locked = scope && scope.value === 'occurrence';
+    if (!table) {
+        return;
+    }
+
+    table.querySelectorAll('input').forEach(function (input) {
+        input.disabled = locked;
+    });
+    table.querySelectorAll('button').forEach(function (button) {
+        var row = button.closest('tr');
+        button.disabled = locked || (button.dataset.action === 'remove' && row && row.dataset.eventId !== '0');
+    });
+    if (add) {
+        add.disabled = locked;
+    }
+}
+
+function toggle_custom_schedule(show) {
+    var editor = document.getElementById('custom_schedule_editor');
+    if (!editor) {
+        return;
+    }
+    editor.hidden = !show;
+    if (show) {
+        render_custom_schedule();
     }
 }
 

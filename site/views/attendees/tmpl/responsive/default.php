@@ -159,7 +159,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
     <form action="<?php echo htmlspecialchars($this->action); ?>"  method="post" name="adminForm" id="adminForm">
         <dl class="jem-dl">
             <dt class="jem-title"><?php echo Text::_('COM_JEM_TITLE').':'; ?></dt>
-                <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ?>
+                <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo ($this->event->recurrence_type || !empty($this->event->series_id)) ? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ?>
             <dt class="jem-date"><?php echo Text::_('COM_JEM_DATE').':'; ?></dt>
             <dd class="jem-date">
                 <?php echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
