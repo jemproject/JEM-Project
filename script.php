@@ -439,6 +439,8 @@ class com_jemInstallerScript
                 'start_utc'     => "DATETIME NULL DEFAULT NULL AFTER `timezone`",
                 'end_utc'       => "DATETIME NULL DEFAULT NULL AFTER `start_utc`",
                 'last_visit'    => "DATETIME NULL DEFAULT NULL AFTER `hits`",
+                'series_id'     => "INT(11) UNSIGNED NULL DEFAULT NULL AFTER `recurrence_bylastday`",
+                'series_order'  => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_id`",
             ),
             '#__jem_venues' => array(
                 'district' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `city`",
@@ -497,7 +499,35 @@ class com_jemInstallerScript
                 $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events') . ' ADD INDEX ' . $db->quoteName('idx_end_utc') . ' (' . $db->quoteName('end_utc') . ')');
                 $db->execute();
             }
+            if (!in_array('idx_series', $keyNames, true)) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_events')
+                    . ' ADD INDEX ' . $db->quoteName('idx_series')
+                    . ' (' . $db->quoteName('series_id') . ', ' . $db->quoteName('series_order') . ')'
+                );
+                $db->execute();
+            }
         }
+
+        $db->setQuery(
+            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_event_series')
+            . ' ('
+            . $db->quoteName('id') . ' INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,'
+            . $db->quoteName('root_event_id') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('title') . " VARCHAR(255) NOT NULL DEFAULT '',"
+            . $db->quoteName('series_type') . " VARCHAR(20) NOT NULL DEFAULT 'custom',"
+            . $db->quoteName('created') . ' DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,'
+            . $db->quoteName('created_by') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('modified') . ' DATETIME NULL DEFAULT NULL,'
+            . $db->quoteName('modified_by') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('published') . " TINYINT(1) NOT NULL DEFAULT '1',"
+            . ' PRIMARY KEY (' . $db->quoteName('id') . '),'
+            . ' KEY ' . $db->quoteName('idx_root_event') . ' (' . $db->quoteName('root_event_id') . '),'
+            . ' KEY ' . $db->quoteName('idx_created_by') . ' (' . $db->quoteName('created_by') . '),'
+            . ' KEY ' . $db->quoteName('idx_published') . ' (' . $db->quoteName('published') . ')'
+            . ') ENGINE=InnoDB'
+        );
+        $db->execute();
 
         if (in_array($db->replacePrefix('#__jem_config'), $existingTables, true)) {
             $query = $db->getQuery(true)
