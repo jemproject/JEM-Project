@@ -266,10 +266,25 @@ class JemControllerEvent extends JemControllerForm
      * @return void
      */
     protected function _postSaveHook($model, $validData = array()) {
+        $modelName = method_exists($model, 'getName') ? $model->getName() : 'editevent';
+        $eventId   = (int) $model->getState('event.id', 0);
+
+        if (!$eventId) {
+            $eventId = (int) $model->getState($modelName . '.id', 0);
+        }
+
+        if (!$eventId && !empty($validData['id'])) {
+            $eventId = (int) $validData['id'];
+        }
+
+        if ($eventId > 0) {
+            JemHelper::reconcileWaitingList($eventId, array('source' => 'site.event.save'));
+        }
+
         $task = $this->getTask();
         if ($task == 'save') {
             $isNew     = $model->getState('editevent.new');
-            $this->_id = $model->getState('editevent.id');
+            $this->_id = $eventId;
 
             // trigger all jem plugins
             PluginHelper::importPlugin('jem');
@@ -317,11 +332,6 @@ class JemControllerEvent extends JemControllerForm
         // If ok, redirect to the return page.
         if ($result) {
             $model = $this->getModel();
-            $eventId = (int) $model->getState('event.id', 0);
-
-            if ($eventId > 0) {
-                JemHelper::reconcileWaitingList($eventId, array('source' => 'site.event.save'));
-            }
 
             if ($this->handleCreatedArticleContentRedirect($model)) {
                 return $result;
