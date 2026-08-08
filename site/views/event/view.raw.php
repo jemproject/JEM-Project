@@ -44,6 +44,10 @@ class JemViewEvent extends HtmlView
                 return;
             }
 
+            if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), $app)) {
+                return;
+            }
+
             $row->categories = $this->get('Categories');
             $row->id         = $row->did;
             $row->slug       = $row->alias ? ($row->id.':'.$row->alias) : $row->id;
@@ -77,6 +81,10 @@ class JemViewEvent extends HtmlView
         if (empty($row)) {
             Factory::getApplication()->close();
 
+            return;
+        }
+
+        if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), Factory::getApplication())) {
             return;
         }
 

@@ -193,7 +193,7 @@ class JemModelEvent extends ItemModel
                 }
 
                 # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN ('.implode(',', $levels).'))');
+                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR (jt.id IS NOT NULL AND jt.access IN ('.implode(',', $levels).')))');
 
                 # Filter by published state ==> later.
                 //  It would result in too complicated query.

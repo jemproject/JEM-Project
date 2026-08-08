@@ -19,6 +19,39 @@ require_once __DIR__ . '/accessdecision.class.php';
 abstract class JemFrontendAccess
 {
     /**
+     * Enforce an already-computed frontend view permission.
+     *
+     * Raw downloads do not pass through the HTML view, so they must apply the
+     * same record or view-level decision before writing calendar or PDF data.
+     * Guests are redirected to login; authenticated users receive HTTP 403.
+     *
+     * @param  boolean  $allowed          Whether the current user may view the resource.
+     * @param  object   $app              Joomla application.
+     * @param  string   $guestMessageKey  Language key shown before the login redirect.
+     *
+     * @return boolean True when access is allowed, false when a guest redirect was issued.
+     *
+     * @throws Exception When an authenticated user is not authorised.
+     */
+    public static function enforceViewAccess($allowed, $app, $guestMessageKey = 'COM_JEM_LOGIN_TO_ACCESS')
+    {
+        if ($allowed) {
+            return true;
+        }
+
+        $user = JemFactory::getUser();
+
+        if ($user->get('guest') || !$user->get('id')) {
+            $app->enqueueMessage(Text::_($guestMessageKey), 'warning');
+            $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode(Uri::getInstance()->toString()), false));
+
+            return false;
+        }
+
+        throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+    }
+
+    /**
      * Redirect guests to the Joomla login form and preserve the requested URL.
      *
      * @param  object  $app  Joomla application.

@@ -579,7 +579,7 @@ class JemModelEventslist extends ListModel
         $case_when_c .= ' END as user_has_access_category';
 
         $case_when_t  = ' CASE WHEN ';
-        $case_when_t .= " (a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN (" . $levelsList . "))";
+        $case_when_t .= " (" . $effectiveTypeId . " IS NULL OR " . $effectiveTypeId . " = 0 OR (jt.id IS NOT NULL AND jt.access IN (" . $levelsList . ")))";
         $case_when_t .= ' THEN 1 ';
         $case_when_t .= ' ELSE 0 ';
         $case_when_t .= ' END as user_has_access_type';
@@ -638,7 +638,7 @@ class JemModelEventslist extends ListModel
         }
 
         # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-        $query->where('(' . $effectiveTypeId . ' IS NULL OR ' . $effectiveTypeId . ' = 0 OR jt.id IS NULL OR jt.access IN (' . $levelsList . '))');
+        $query->where('(' . $effectiveTypeId . ' IS NULL OR ' . $effectiveTypeId . ' = 0 OR (jt.id IS NOT NULL AND jt.access IN (' . $levelsList . ')))');
 
         ####################
         ## FILTER-TYPE_ID ##
