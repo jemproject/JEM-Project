@@ -19,10 +19,12 @@ use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
 use Joomla\String\StringHelper;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/map.php');
 
 // HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
@@ -1005,10 +1007,13 @@ static public function lightbox() {
      * @param int    $zoom      Initial Leaflet zoom level
      * @param string $id        Optional unique element id
      * @param string $class     Optional additional CSS classes
+     * @param string $marker    Configured fallback marker image
+     * @param string $typeIcon  Optional type icon CSS class
+     * @param string $typeColor Optional type marker background colour
      *
      * @return string
      */
-    static public function osmMapCanvas($latitude, $longitude, $height = '250px', $zoom = 15, $id = '', $class = '')
+    static public function osmMapCanvas($latitude, $longitude, $height = '250px', $zoom = 15, $id = '', $class = '', $marker = '', $typeIcon = '', $typeColor = '')
     {
         $latitude = (float) $latitude;
         $longitude = (float) $longitude;
@@ -1023,6 +1028,12 @@ static public function lightbox() {
         $zoom = max(1, min(19, (int) $zoom));
         $id = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $id);
         $class = trim(preg_replace('/[^A-Za-z0-9 _-]/', '', (string) $class));
+        $marker = JemMapHelper::resolveMarkerUrl($marker, 'media/com_jem/images/marker-red.webp');
+        $typeIcon = trim((string) $typeIcon);
+        $typeIcon = preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $typeIcon) ? $typeIcon : '';
+        $typeColor = trim((string) $typeColor);
+        $typeColor = preg_match('/^#[0-9a-fA-F]{6}$/', $typeColor) ? strtolower($typeColor) : '#d9ddb5';
+        $typeIconColor = JemHelper::getContrastTextColor($typeColor) ?: '#ffffff';
 
         if ($id === '') {
             static $mapNumber = 0;
@@ -1051,6 +1062,10 @@ static public function lightbox() {
             . ' data-latitude="' . htmlspecialchars((string) $latitude, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-longitude="' . htmlspecialchars((string) $longitude, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-zoom="' . $zoom . '"'
+            . ' data-marker="' . htmlspecialchars($marker, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon="' . htmlspecialchars($typeIcon, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-color="' . htmlspecialchars($typeColor, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon-color="' . htmlspecialchars($typeIconColor, ENT_QUOTES, 'UTF-8') . '"'
             . ' role="region" aria-label="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8') . '"></div>';
     }
 
@@ -1260,7 +1275,34 @@ static public function lightbox() {
                 }
 
                 if ($lat && $lng) {
-                    $output = self::osmMapCanvas($lat, $lng, '250px', 15);
+                    $typeIcon = '';
+                    $typeColor = '';
+
+                    if ($view === 'event') {
+                        $typeIcon = (string) ($data->type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? '');
+
+                        if ($typeIcon === '' && !empty($data->categories)) {
+                            foreach ((array) $data->categories as $category) {
+                                if (!empty($category->type_icon)) {
+                                    $typeIcon = (string) $category->type_icon;
+                                    $typeColor = (string) ($category->type_color ?? '');
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($typeIcon === '') {
+                            $typeIcon = (string) ($data->venue_type_icon ?? '');
+                            $typeColor = (string) ($data->venue_type_color ?? '');
+                        }
+                    } else {
+                        $typeIcon = (string) ($data->type_icon ?? $data->venue_type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? $data->venue_type_color ?? '');
+                    }
+
+                    $marker = $paramGet($params, 'venue_markerfile', 'media/com_jem/images/marker-red.webp');
+                    $output = self::osmMapCanvas($lat, $lng, '250px', 15, '', '', $marker, $typeIcon, $typeColor);
                 } else {
                     $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
                     $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';

@@ -53,4 +53,29 @@ final class EventsMapViewTest extends TestCase
             self::assertSame(2, substr_count($source, 'JemMapHelper::typeBadgeHtml('));
         }
     }
+
+    public function testMapMarkerUsesTypePriorityBeforeConfiguredFallback(): void
+    {
+        $helper = (string) file_get_contents(JEM_TEST_ROOT . '/site/helpers/map.php');
+
+        self::assertStringContainsString("'t.icon AS event_type_icon'", $helper);
+        self::assertStringContainsString('AS category_type_icon', $helper);
+        self::assertStringContainsString("'vt.icon AS venue_type_icon'", $helper);
+
+        foreach (array('default.php', 'responsive.php') as $template) {
+            $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/eventsmap/tmpl/' . $template);
+
+            $event = strpos($source, "if (!empty(\$event->event_type_icon))");
+            $category = strpos($source, "elseif (!empty(\$event->category_type_icon))");
+            $venue = strpos($source, "elseif (!empty(\$event->venue_type_icon))");
+
+            self::assertNotFalse($event);
+            self::assertNotFalse($category);
+            self::assertNotFalse($venue);
+            self::assertLessThan($category, $event);
+            self::assertLessThan($venue, $category);
+            self::assertStringContainsString('typeMarker ? typeMarker.icon : venueIcon', $source);
+            self::assertStringContainsString('? getLeafletTypeMarker(', $source);
+        }
+    }
 }

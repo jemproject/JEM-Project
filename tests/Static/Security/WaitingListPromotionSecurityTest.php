@@ -67,4 +67,34 @@ final class WaitingListPromotionSecurityTest extends TestCase
             self::assertMatchesRegularExpression('/(?:reconcile|update)WaitingList\s*\(/', $source, $file);
         }
     }
+
+    public function testEventSaveReconciliationUsesThePersistedPostSaveModel(): void
+    {
+        foreach (array(
+            '/admin/controllers/event.php',
+            '/site/controllers/event.php',
+        ) as $file) {
+            $source = (string) file_get_contents(JEM_TEST_ROOT . $file);
+            $save = $this->method($source, 'save');
+            $postSaveHook = $this->method($source, '_postSaveHook');
+
+            self::assertStringNotContainsString('reconcileWaitingList(', $save, $file);
+            self::assertStringContainsString("getState('event.id'", $postSaveHook, $file);
+            self::assertStringContainsString('reconcileWaitingList(', $postSaveHook, $file);
+        }
+    }
+
+    private function method(string $php, string $name): string
+    {
+        $start = strpos($php, 'function ' . $name . '(');
+        self::assertNotFalse($start, 'Method not found: ' . $name);
+
+        $end = strpos($php, "\n    /**", $start);
+
+        if ($end === false) {
+            $end = strlen($php);
+        }
+
+        return substr($php, $start, $end - $start);
+    }
 }

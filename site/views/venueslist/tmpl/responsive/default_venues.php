@@ -212,7 +212,8 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
         $external = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
         $title = htmlspecialchars((string) ($row->venue ?? Text::_('COM_JEM_MAP')), ENT_QUOTES, 'UTF-8');
         $modalId = 'jem-venueslist-map-responsive-' . (int) ($row->id ?? 0);
-        $mapCanvas = JemOutput::osmMapCanvas($lat, $lon, '100%', 16, $modalId . '-canvas');
+        $marker = $params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp');
+        $mapCanvas = JemOutput::osmMapCanvas($lat, $lon, '100%', 16, $modalId . '-canvas', '', $marker, $row->type_icon ?? '', $row->type_color ?? '');
 
         $output = HTMLHelper::_(
             'bootstrap.renderModal',

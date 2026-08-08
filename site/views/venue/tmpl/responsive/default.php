@@ -71,6 +71,9 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
 $venueMapLatitude = null;
 $venueMapLongitude = null;
 $venueMapExternalUrl = '';
+$venueMarker = $this->params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp');
+$venueTypeIcon = (string) ($this->venue->type_icon ?? '');
+$venueTypeColor = (string) ($this->venue->type_color ?? '');
 if (is_numeric($this->venue->latitude ?? null) && is_numeric($this->venue->longitude ?? null)) {
     $lat = (float) $this->venue->latitude;
     $lon = (float) $this->venue->longitude;
@@ -80,14 +83,14 @@ if (is_numeric($this->venue->latitude ?? null) && is_numeric($this->venue->longi
         $venueMapExternalUrl = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
     }
 }
-$renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venueMapLongitude, $venueMapExternalUrl) {
+$renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venueMapLongitude, $venueMapExternalUrl, $venueMarker, $venueTypeIcon, $venueTypeColor) {
     if ($venueMapExternalUrl === '') {
         return '';
     }
 
     $modalId = 'jem-venue-map-' . (int) $this->venue->id;
     $title = Text::_('COM_JEM_MAP') . ': ' . $this->escape($this->venue->venue);
-    $mapCanvas = JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '560px', 16, $modalId . '-canvas');
+    $mapCanvas = JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '560px', 16, $modalId . '-canvas', '', $venueMarker, $venueTypeIcon, $venueTypeColor);
     $modal = $mapCanvas !== '' ? HTMLHelper::_(
             'bootstrap.renderModal',
             $modalId,
@@ -447,7 +450,7 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
     <?php if ($venueShowMapSection) : ?>
         <div class="jem-venue-map-section">
             <?php if ($venueShowMapBlock && $venueMapLatitude !== null && $venueMapLongitude !== null) : ?>
-                <?php echo JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '350px', 16, 'jem-venue-inline-map-' . (int) $this->venue->id); ?>
+                <?php echo JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '350px', 16, 'jem-venue-inline-map-' . (int) $this->venue->id, '', $venueMarker, $venueTypeIcon, $venueTypeColor); ?>
             <?php endif; ?>
 
             <?php if ($venueShowMapBlock && ($venueMapLatitude === null || $venueMapLongitude === null) && $venueMapExternalUrl !== '') : ?>

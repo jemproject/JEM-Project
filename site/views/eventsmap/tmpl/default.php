@@ -45,6 +45,24 @@ $mylocMarker   = $this->mylocMarker;
 $jemItemid     = (int) $this->jemItemid;
 $events        = $this->eventslist ?? [];
 
+if (!function_exists('jem_eventsmap_normalise_icon_class')) {
+    function jem_eventsmap_normalise_icon_class($icon)
+    {
+        $icon = trim((string) $icon);
+
+        return $icon !== '' && preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $icon) ? $icon : '';
+    }
+}
+
+if (!function_exists('jem_eventsmap_normalise_color')) {
+    function jem_eventsmap_normalise_color($color, $fallback = '#d9ddb5')
+    {
+        $color = trim((string) $color);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : $fallback;
+    }
+}
+
 $startLat      = (float) $this->params->get('map_center_lat', '54.526');
 $startLng      = (float) $this->params->get('map_center_lng', '15.255');
 $startZoom     = (int)   $this->params->get('map_zoom', '4');
@@ -163,8 +181,35 @@ foreach ((array) $events as $event) {
             'countryFlag' => $countryFlagFile,
             'venue_type_name' => (string) ($event->venue_type_name ?? ''),
             'venue_type_color' => (string) ($event->venue_type_color ?? ''),
+            'marker_icon' => (string) ($event->venue_type_icon ?? ''),
+            'marker_color' => (string) ($event->venue_type_color ?? ''),
+            'marker_priority' => !empty($event->venue_type_icon) ? 1 : 0,
             'events' => [],
         ];
+    }
+
+    $candidateIcon = '';
+    $candidateColor = '';
+    $candidatePriority = 0;
+
+    if (!empty($event->event_type_icon)) {
+        $candidateIcon = (string) $event->event_type_icon;
+        $candidateColor = (string) ($event->event_type_color ?? '');
+        $candidatePriority = 3;
+    } elseif (!empty($event->category_type_icon)) {
+        $candidateIcon = (string) $event->category_type_icon;
+        $candidateColor = (string) ($event->category_type_color ?? '');
+        $candidatePriority = 2;
+    } elseif (!empty($event->venue_type_icon)) {
+        $candidateIcon = (string) $event->venue_type_icon;
+        $candidateColor = (string) ($event->venue_type_color ?? '');
+        $candidatePriority = 1;
+    }
+
+    if ($candidatePriority > $eventMarkers[$key]['marker_priority']) {
+        $eventMarkers[$key]['marker_icon'] = $candidateIcon;
+        $eventMarkers[$key]['marker_color'] = $candidateColor;
+        $eventMarkers[$key]['marker_priority'] = $candidatePriority;
     }
 
     $link = $buildEventLink($event);
@@ -423,6 +468,60 @@ foreach ((array) $events as $event) {
             return;
         }
 
+        function getTypeIconDetails(iconClass) {
+            var probe = document.createElement('span');
+            probe.className = iconClass;
+            probe.style.position = 'absolute';
+            probe.style.visibility = 'hidden';
+            document.body.appendChild(probe);
+            var pseudoStyle = window.getComputedStyle(probe, '::before');
+            var content = pseudoStyle.content || '';
+            var details = {
+                glyph: content.replace(/^['"]|['"]$/g, ''),
+                fontFamily: pseudoStyle.fontFamily,
+                fontWeight: pseudoStyle.fontWeight
+            };
+            probe.remove();
+
+            return details.glyph && details.glyph !== 'none' && details.glyph !== 'normal' ? details : null;
+        }
+
+        function getGoogleTypeMarker(iconClass, color, iconColor) {
+            var iconDetails = getTypeIconDetails(iconClass);
+
+            return {
+                icon: {
+                    path: 'M16 0C7.16 0 0 7.16 0 16c0 12 16 28 16 28s16-16 16-28C32 7.16 24.84 0 16 0z',
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeOpacity: 1,
+                    strokeWeight: 2,
+                    anchor: new google.maps.Point(16, 44),
+                    labelOrigin: new google.maps.Point(16, 16)
+                },
+                label: iconDetails ? {
+                    text: iconDetails.glyph,
+                    color: iconColor,
+                    fontFamily: iconDetails.fontFamily,
+                    fontSize: '15px',
+                    fontWeight: iconDetails.fontWeight
+                } : null
+            };
+        }
+
+        function getLeafletTypeMarker(iconClass, color, iconColor) {
+            return L.divIcon({
+                className: '',
+                html: '<span style="display:flex;width:34px;height:34px;align-items:center;justify-content:center;border:2px solid #fff;border-radius:50%;box-sizing:border-box;background:' +
+                    color + ';color:' + iconColor + ';box-shadow:0 1px 4px rgba(0,0,0,.45)">' +
+                    '<i class="' + iconClass + '" aria-hidden="true"></i></span>',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17],
+                popupAnchor: [0, -17]
+            });
+        }
+
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
             return;
@@ -591,6 +690,9 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
+        $markerIcon = jem_eventsmap_normalise_icon_class($marker['marker_icon']);
+        $markerColor = jem_eventsmap_normalise_color($marker['marker_color']);
+        $markerIconColor = JemHelper::getContrastTextColor($markerColor) ?: '#ffffff';
         $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
         $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
             . '<strong>' . $marker['venue'] . '</strong>'
@@ -601,10 +703,14 @@ foreach ((array) $events as $event) {
         ?>
         (function() {
             var position = {lat: <?= (float) $marker['lat'] ?>, lng: <?= (float) $marker['lng'] ?>};
+            var typeMarker = <?= json_encode($markerIcon) ?>
+                ? getGoogleTypeMarker(<?= json_encode($markerIcon) ?>, <?= json_encode($markerColor) ?>, <?= json_encode($markerIconColor) ?>)
+                : null;
             var marker = new google.maps.Marker({
                 position: position,
                 map: map,
-                icon: venueIcon
+                icon: typeMarker ? typeMarker.icon : venueIcon,
+                label: typeMarker ? typeMarker.label : null
             });
             marker.addListener('click', function() {
                 infoWindow.setContent(<?= json_encode($popupHtml) ?>);
@@ -829,6 +935,9 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
+        $markerIcon = jem_eventsmap_normalise_icon_class($marker['marker_icon']);
+        $markerColor = jem_eventsmap_normalise_color($marker['marker_color']);
+        $markerIconColor = JemHelper::getContrastTextColor($markerColor) ?: '#ffffff';
         $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
         $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
             . '<strong>' . $marker['venue'] . '</strong>'
@@ -838,7 +947,9 @@ foreach ((array) $events as $event) {
             . $mapActionsHtml;
         ?>
         L.marker([<?= (float) $marker['lat'] ?>, <?= (float) $marker['lng'] ?>], {
-            icon: L.icon({
+            icon: <?= json_encode($markerIcon) ?>
+                ? getLeafletTypeMarker(<?= json_encode($markerIcon) ?>, <?= json_encode($markerColor) ?>, <?= json_encode($markerIconColor) ?>)
+                : L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
             })

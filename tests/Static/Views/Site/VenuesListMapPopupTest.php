@@ -41,4 +41,26 @@ final class VenuesListMapPopupTest extends TestCase
             self::assertStringNotContainsString("'height' => \$modalHeight . 'vh'", $template);
         }
     }
+
+    public function testVenueMapUsesVenueTypeIconThenConfiguredMarker(): void
+    {
+        $output = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
+        $javascript = (string) file_get_contents(JEM_TEST_ROOT . '/media/js/osm-map.js');
+
+        self::assertStringContainsString("resolveMarkerUrl(\$marker, 'media/com_jem/images/marker-red.webp')", $output);
+        self::assertStringContainsString('data-type-icon=', $output);
+        self::assertStringNotContainsString('L.circleMarker(', $javascript);
+        self::assertStringContainsString('element.dataset.typeIcon', $javascript);
+        self::assertStringContainsString('iconUrl: element.dataset.marker', $javascript);
+
+        foreach (array(
+            JEM_TEST_ROOT . '/site/views/venueslist/tmpl/default_venues.php',
+            JEM_TEST_ROOT . '/site/views/venueslist/tmpl/responsive/default_venues.php',
+        ) as $templatePath) {
+            $template = (string) file_get_contents($templatePath);
+            self::assertStringContainsString("\$row->type_icon ?? ''", $template);
+            self::assertStringContainsString("\$row->type_color ?? ''", $template);
+            self::assertStringContainsString("get('venue_markerfile', 'media/com_jem/images/marker-red.webp')", $template);
+        }
+    }
 }

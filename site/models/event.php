@@ -669,6 +669,11 @@ class JemModelEvent extends ItemModel
         $query->from('#__jem_categories as c');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
 
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(ct.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR ct.base_language <> ' . $db->quote('') . ' OR ct.translation_languages IS NOT NULL)';
+        $query->select(array('ct.icon AS type_icon', 'ct.color AS type_color'));
+        $query->join('LEFT', '#__jem_types AS ct ON ct.id = c.type_id AND ct.entity = 2 AND ct.published = 1 AND ct.access IN (' . implode(',', array_map('intval', $levels)) . ') AND ' . $typeLanguageCondition);
+
         $query->select(array('a.id AS multi'));
         $query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
 

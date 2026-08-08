@@ -63,6 +63,7 @@ class JemViewEvent extends JemView
 
         $categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
         $this->categories  = $categories;
+        $this->item->categories = $categories;
         $this->registers   = null;
 
         $registration      = $this->get('UserRegistration');
