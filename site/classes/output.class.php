@@ -378,7 +378,9 @@ static public function lightbox() {
      */
     static protected function buildCurrentPdfLink()
     {
-        $uri = Uri::getInstance();
+        // Uri::getInstance() is shared. Mutating it here would contaminate
+        // edit/add return URLs rendered after the PDF button.
+        $uri = clone Uri::getInstance();
         $query = $uri->getQuery(true);
         $query['format'] = 'raw';
         $query['layout'] = 'pdf';
