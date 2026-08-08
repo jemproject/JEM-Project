@@ -185,7 +185,7 @@ class JemViewEditevent extends JemView
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
+        JemHelper::loadCss('jem-attachments');
 
         // Load scripts
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');

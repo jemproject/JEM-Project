@@ -18,8 +18,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
-JemHelper::loadModuleStyleSheet('mod_jem_cal', 'mod_jem_cal_grid');
-
 # Ensure $use_ajax is defined and boolean
 $use_ajax = !empty($use_ajax);
 

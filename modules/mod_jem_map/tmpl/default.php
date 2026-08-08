@@ -68,9 +68,9 @@ if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
 } else {
     $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
-    $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
+    JemHelper::loadCss('leaflet');
     $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
-    $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
+    JemHelper::loadCss('leaflet-fullscreen');
     $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 }
 

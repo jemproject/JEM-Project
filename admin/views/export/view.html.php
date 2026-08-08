@@ -33,7 +33,6 @@ class JemViewExport extends JemAdminView
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->usePreset('choicesjs')->useScript('webcomponent.field-fancy-select');
         //Cause of group limits we can't use class here to build the categories tree
         $categories = $this->get('Categories');

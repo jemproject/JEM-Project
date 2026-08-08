@@ -28,10 +28,6 @@ class JemViewHousekeeping extends JemAdminView
 
         $this->totalcats = $this->get('Countcats');
 
-        // Load css
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // add toolbar
         $this->addToolbar();
 

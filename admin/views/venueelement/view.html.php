@@ -42,10 +42,6 @@ class JemViewVenueelement extends Htmlview {
         //prepare document
         $document->setTitle(Text::_('COM_JEM_SELECTVENUE'));
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // Get data from the model
         $rows = $this->get('Data');
 

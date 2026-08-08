@@ -155,7 +155,7 @@ $days = ModJemCalHelper::getDays($offset_year, $offset_month, $params);
 $mod_name = 'mod_jem_cal';
 
 # Add css
-$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');

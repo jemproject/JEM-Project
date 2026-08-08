@@ -25,7 +25,6 @@ class JemViewMain extends JemAdminView
     {
         //initialise variables
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
         $user     = JemFactory::getUser();
 
         // Get main model data
@@ -49,10 +48,6 @@ class JemViewMain extends JemAdminView
             $updatedata->current = null;
         }
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         //assign vars to the template
         $this->events   = $events;
         $this->venue    = $venue;
@@ -64,13 +59,6 @@ class JemViewMain extends JemAdminView
         $this->registration = $registration;
         $this->user     = $user;
         $this->updatedata = $updatedata;
-
-        // Load CSS
-        $wa = $document->getWebAssetManager();
-        if (!$wa->assetExists('style', 'jem.backend')) {
-           $wa->registerStyle('jem.backend', 'com_jem/backend.css');
-        }
-        $wa->useStyle('jem.backend');
 
         // Assign variables to template
         $this->events     = $events;

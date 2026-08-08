@@ -56,7 +56,7 @@ static public function lightbox() {
     if ($settings->lightbox == 1) {
         $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
-        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+        JemHelper::loadCss('lightbox.min');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
         echo '<script>lightbox.option({
                       \'showImageNumberLabel\': false,
@@ -1044,9 +1044,7 @@ static public function lightbox() {
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-        if (!$wa->assetExists('style', 'leaflet.css')) {
-            $wa->registerStyle('leaflet.css', 'media/com_jem/css/leaflet.css');
-        }
+        JemHelper::loadCss('leaflet');
         if (!$wa->assetExists('script', 'leaflet')) {
             $wa->registerScript('leaflet', 'media/com_jem/js/leaflet.js');
         }
@@ -1054,7 +1052,6 @@ static public function lightbox() {
             $wa->registerScript('jem.osm-map', 'media/com_jem/js/osm-map.js', array(), array('defer' => true), array('leaflet'));
         }
 
-        $wa->useStyle('leaflet.css');
         $wa->useScript('leaflet');
         $wa->useScript('jem.osm-map');
 

@@ -43,9 +43,6 @@ class JemViewUpdatecheck extends JemAdminView
             $updatedata = new stdClass();
         }
 
-        // Load CSS properly
-        $this->loadCss();
-
         // Assign data to template
         $this->updatedata = $updatedata;
 
@@ -53,20 +50,6 @@ class JemViewUpdatecheck extends JemAdminView
         $this->addToolbar();
 
         parent::display($tpl);
-    }
-
-    /**
-     * Load CSS assets
-     */
-    protected function loadCss()
-    {
-        $wa = $this->app->getDocument()->getWebAssetManager();
-
-        // Register style if not already registered
-        if (!$wa->assetExists('style', 'jem.backend')) {
-            $wa->registerStyle('jem.backend', 'com_jem/backend.css');
-        }
-        $wa->useStyle('jem.backend');
     }
 
     /**

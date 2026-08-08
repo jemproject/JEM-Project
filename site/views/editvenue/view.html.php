@@ -151,7 +151,7 @@ class JemViewEditvenue extends JemView
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
+        JemHelper::loadCss('jem-attachments');
 
         // Load script
         $wa->useScript('jquery');

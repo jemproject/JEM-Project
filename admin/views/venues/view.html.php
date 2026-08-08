@@ -56,7 +56,6 @@ use Joomla\CMS\Factory;
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Add Scripts
         $wa->useScript('jquery');

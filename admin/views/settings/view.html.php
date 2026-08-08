@@ -47,7 +47,6 @@ class JemViewSettings extends JemAdminView
         // Load css
         $wa = $document->getWebAssetManager();
 
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         $style = '
             div.current fieldset.radio input {

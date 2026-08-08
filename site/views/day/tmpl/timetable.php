@@ -11,10 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 JemHelper::loadCss('timetable');
-Factory::getApplication()->getDocument()->addStyleSheet(Uri::root() . 'media/com_jem/css/timetable.css');
 
 $getCategoryColor = static function ($row) {
     foreach ((array) $row->categories as $category) {

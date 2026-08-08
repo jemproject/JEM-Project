@@ -11,7 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-$wa->registerAndUseStyle('com_jem.jem-links-responsive', 'media/com_jem/css/jem-link-responsive.css');
+JemHelper::loadCss('jem-link-responsive');
 $wa->registerAndUseScript('com_jem.jem-links', 'media/com_jem/js/jem-links.js');
 ?>
 

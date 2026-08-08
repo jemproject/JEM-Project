@@ -37,6 +37,17 @@ require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 class JemHelper
 {
     /**
+     * Component stylesheet assets loaded during the current request.
+     *
+     * The list is used as the dependency chain for jem-user-front.css so the
+     * additive user stylesheet is always rendered after the selected JEM
+     * component stylesheets.
+     *
+     * @var  array
+     */
+    protected static $frontendCssAssets = array();
+
+    /**
      * Renders optional module intro or footer text.
      *
      * @param   Registry|object  $params    Module parameters.
@@ -3567,6 +3578,32 @@ class JemHelper
     }
 
     /**
+     * Return the CSS/layout basename from Joomla's module layout value.
+     *
+     * Joomla normally stores alternative layouts as "template:layout", but
+     * older or incomplete module instances can contain only "layout" or an
+     * empty value. Normalising it here prevents requests for an empty .css
+     * filename and keeps those module instances on the default stylesheet.
+     *
+     * @param   string  $layout  Stored Joomla module layout value.
+     *
+     * @return  string
+     */
+    static public function getModuleLayoutName($layout = 'default')
+    {
+        $layout = (string) $layout;
+
+        if (strpos($layout, ':') !== false) {
+            $parts = explode(':', $layout, 2);
+            $layout = $parts[1];
+        }
+
+        $layout = trim($layout);
+
+        return $layout !== '' ? $layout : 'default';
+    }
+
+    /**
      * Get the path to a layout for a module respecting layout style configured in JEM Settings.
      *
      * @param   string  $module  The name of the module
@@ -3615,13 +3652,16 @@ class JemHelper
         $settings = self::retrieveCss();
         $layoutSuffix = self::getLayoutStyleSuffix();
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $uri      = Uri::getInstance();
-        $url      = $uri->root();
-        $suffix   = $layoutSuffix ? '-' . $layoutSuffix : '';
+        $wa       = $app->getDocument()->getWebAssetManager();
+        $isAdmin  = $app->isClient('administrator');
+        $expectedSuffix = $layoutSuffix ? '-' . $layoutSuffix : '';
+        $suffix   = $expectedSuffix !== '' && substr($css, -strlen($expectedSuffix)) !== $expectedSuffix
+            ? $expectedSuffix
+            : '';
         $variant  = $css . $suffix;
         $key      = str_replace('-', '_', $variant);
         $baseKey  = str_replace('-', '_', $css);
+        $styleUri = '';
 
         $hasVariantSetting = $suffix
             && ($settings->get('css_' . $key . '_usecustom', null) !== null || $settings->get('css_' . $key . '_customfile', null) !== null);
@@ -3633,23 +3673,48 @@ class JemHelper
             $file = $file ? preg_replace('%^/([^/]*)%', '$1', $file) : '';
 
             if ($file && File::getExt($file) === 'css' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $file)) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $file);
+                $styleUri = 'media/com_jem/css/custom/' . $file;
             }
 
-            if (is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $variant . '.css')) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $variant . '.css');
+            if ($styleUri === '' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $variant . '.css')) {
+                $styleUri = 'media/com_jem/css/custom/' . $variant . '.css';
             }
 
-            if (is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $css . '.css')) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $css . '.css');
+            if ($styleUri === '' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $css . '.css')) {
+                $styleUri = 'media/com_jem/css/custom/' . $css . '.css';
             }
         }
 
-        if (is_file(JPATH_SITE . '/media/com_jem/css/' . $variant . '.css')) {
-            return $document->addStyleSheet($url . 'media/com_jem/css/' . $variant . '.css');
+        if ($styleUri === '') {
+            $template = (string) $app->getTemplate();
+            $templateRoot = $isAdmin ? JPATH_ADMINISTRATOR . '/templates/' : JPATH_THEMES . '/';
+            $templateUri  = $isAdmin ? 'administrator/templates/' : 'templates/';
+            $templateBase = $templateRoot . $template . '/css/com_jem/';
+
+            if (is_file($templateBase . $variant . '.css')) {
+                $styleUri = $templateUri . $template . '/css/com_jem/' . $variant . '.css';
+            } elseif (is_file(JPATH_SITE . '/media/com_jem/css/' . $variant . '.css')) {
+                $styleUri = 'media/com_jem/css/' . $variant . '.css';
+            } elseif ($variant !== $css && is_file($templateBase . $css . '.css')) {
+                $styleUri = $templateUri . $template . '/css/com_jem/' . $css . '.css';
+            } else {
+                $styleUri = 'media/com_jem/css/' . $css . '.css';
+            }
         }
 
-        return $document->addStyleSheet($url . 'media/com_jem/css/' . $css . '.css');
+        $asset = ($isAdmin ? 'com_jem.admin.' : 'com_jem.frontend.') . str_replace('_', '-', $variant);
+
+        if ($wa->assetExists('style', $asset)) {
+            $wa->useStyle($asset);
+        } else {
+            $wa->registerAndUseStyle($asset, $styleUri);
+        }
+
+        if (!$isAdmin) {
+            self::$frontendCssAssets[$asset] = $asset;
+        }
+
+        return $wa;
     }
 
     /**
@@ -3662,7 +3727,11 @@ class JemHelper
      */
     static public function loadFrontendUserCss()
     {
-        self::loadUserCssFile('jem-user-front.css', 'com_jem.user.front');
+        self::loadUserCssFile(
+            'jem-user-front.css',
+            'com_jem.user.front',
+            array_values(self::$frontendCssAssets)
+        );
     }
 
     /**
@@ -3681,12 +3750,13 @@ class JemHelper
     /**
      * Load an optional user override CSS file from media/com_jem/css/custom.
      *
-     * @param   string  $file   The CSS file name.
-     * @param   string  $asset  The WebAssetManager asset name.
+     * @param   string  $file          The CSS file name.
+     * @param   string  $asset         The WebAssetManager asset name.
+     * @param   array   $dependencies  Styles that must be rendered first.
      *
      * @return  void
      */
-    protected static function loadUserCssFile($file, $asset)
+    protected static function loadUserCssFile($file, $asset, $dependencies = array())
     {
         $path = JPATH_SITE . '/media/com_jem/css/custom/' . $file;
 
@@ -3698,18 +3768,27 @@ class JemHelper
         $wa  = $app->getDocument()->getWebAssetManager();
 
         if (method_exists($wa, 'assetExists') && $wa->assetExists('style', $asset)) {
+            if ($wa->isAssetActive('style', $asset)) {
+                $wa->disableStyle($asset);
+            }
             $wa->useStyle($asset);
             return;
         }
 
-        $wa->registerAndUseStyle($asset, 'media/com_jem/css/custom/' . $file);
+        $wa->registerAndUseStyle(
+            $asset,
+            'media/com_jem/css/custom/' . $file,
+            array(),
+            array(),
+            $dependencies
+        );
     }
 
     /**
      * Get the url to a css file for a module respecting layout style configured in JEM Settings.
      *
      * @param   string  $module  The name of the module
-     * @param   string  $css     The name of the css file (in the root path). If null, the name of module is used (in the suffix directory).
+     * @param   string  $css     CSS basename. Empty values use the module's default stylesheet.
      *
      * @since   2.3
      */
@@ -3718,29 +3797,38 @@ class JemHelper
         $app = Factory::getApplication();
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
+        $css = self::getModuleLayoutName($css);
         $filestyle = $css . '.css';
+        $asset = $module . ($css ? '.' . $css : '');
+        $styleUri = '';
 
         //Search for template overrides
-        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle);
+        if(file_exists(JPATH_SITE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
+            $styleUri = 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle;
         }
         //Search for template overrides
-        else if (file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+            $styleUri = 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle;
         }
         //Search in media folder
-        else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/media/' . $module . '/css/' . $filestyle)) {
+            $styleUri = 'media/' . $module . '/css/' . $filestyle;
         }
         //Search in the module
-        else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
+            $styleUri = 'modules/'. $module . '/tmpl/' . $filestyle;
         }
         //Error no css file found
         else {
             JemHelper::addLogEntry("Warning: The file " . $filestyle . " couldn't be found.", __METHOD__);
+            return;
         }
 
+        if ($wa->assetExists('style', $asset)) {
+            $wa->useStyle($asset);
+        } else {
+            $wa->registerAndUseStyle($asset, $styleUri);
+        }
     }
 
     static public function loadIconFont()

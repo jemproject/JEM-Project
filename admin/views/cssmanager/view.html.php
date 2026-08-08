@@ -41,10 +41,6 @@ class JemViewCssmanager extends JemAdminView
         $this->document = $app->getDocument();
         $user = JemFactory::getUser();
 
-        // Load css
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         $this->addToolbar();
 
         parent::display($tpl);

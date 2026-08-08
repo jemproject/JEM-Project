@@ -41,10 +41,6 @@ class JemViewAttendees extends JemAdminView
         $filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
         $filter_search    = $db->escape(trim(StringHelper::strtolower($filter_search)));
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // Get data from the model
         $event = $this->get('Event');
 
@@ -105,9 +101,6 @@ class JemViewAttendees extends JemAdminView
      */
     protected function _displayprint($tpl = null)
     {
-        // Load css
-        HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-
         $rows = $this->get('Items');
         $event = $this->get('Event');
 

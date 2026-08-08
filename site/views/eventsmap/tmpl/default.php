@@ -21,8 +21,6 @@ use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
-$wa->registerAndUseStyle('com_jem.eventsmap', 'media/com_jem/css/eventsmap.css');
-
 $jemsettings  = JemHelper::config();
 $map_id        = 'leafletmap-' . uniqid();
 $showDateFilter = (int) $this->showDateFilter;
@@ -83,9 +81,7 @@ if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
 } else {
     $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
-    $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
     $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
-    $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
     $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 }
 

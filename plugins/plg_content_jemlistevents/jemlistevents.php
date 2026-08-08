@@ -159,12 +159,21 @@ class PlgContentJemlistevents extends CMSPlugin
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
 
-        $templatePath = JPATH_BASE . '/templates/' . $templateName . '/css/jemlistevents.css';
+        $templatePath = JPATH_SITE . '/templates/' . $templateName . '/css/plg_content_jemlistevents/jemlistevents.css';
+        $legacyTemplatePath = JPATH_SITE . '/templates/' . $templateName . '/css/jemlistevents.css';
 
         if (file_exists($templatePath)) {
-            $wa->registerAndUseStyle('jemlistevents', 'templates/' . $templateName . '/css/jemlistevents.css');
+            $styleUri = 'templates/' . $templateName . '/css/plg_content_jemlistevents/jemlistevents.css';
+        } elseif (file_exists($legacyTemplatePath)) {
+            $styleUri = 'templates/' . $templateName . '/css/jemlistevents.css';
         } else {
-            $wa->registerAndUseStyle('jemlistevents', 'media/plg_content_jemlistevents/css/jemlistevents.css');
+            $styleUri = 'media/plg_content_jemlistevents/css/jemlistevents.css';
+        }
+
+        if ($wa->assetExists('style', 'plg_content_jemlistevents')) {
+            $wa->useStyle('plg_content_jemlistevents');
+        } else {
+            $wa->registerAndUseStyle('plg_content_jemlistevents', $styleUri);
         }
     }
 

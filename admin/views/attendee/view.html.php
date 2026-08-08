@@ -26,21 +26,13 @@ class JemViewAttendee extends HtmlView {
 
         //initialise variables
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
         $jinput   = $app->input;
 
         $this->jemsettings = JemHelper::config();
 
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         //get id register user for event
         $id = $jinput->getInt('id', 0);
         $this->event = $jinput->getInt('eventid', 0);
-
-        // Load css
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         //Get data from the model
         $row = $this->get('Data');

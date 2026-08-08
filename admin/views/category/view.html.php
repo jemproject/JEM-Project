@@ -42,10 +42,6 @@ class JemViewCategory extends JemAdminView
             Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');
             return false;
         }
-        $wa = $app->getDocument()->getWebAssetManager();
-        // Load css
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // build grouplist
         // @todo: make a form-field for this one
         $groups = $this->get('Groups');

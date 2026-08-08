@@ -15,8 +15,7 @@ use Joomla\CMS\Language\Text;
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 $wa = $this->document->getWebAssetManager();
-        $wa->useStyle('jem.geostyle')
-            ->useScript('keepalive')
+$wa->useScript('keepalive')
             ->useScript('form.validate')
             ->useScript('jem.attachments')
             ->useScript('inlinehelp')

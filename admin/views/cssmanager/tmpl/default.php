@@ -254,7 +254,7 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canDo, $renderDownloadButton) {
+                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canManageTools, $renderDownloadButton) {
                                     ob_start();
                                     if ($canManageTools && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';
@@ -391,7 +391,7 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canDo, $renderDownloadButton) {
+                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canManageTools, $renderDownloadButton) {
                                     ob_start();
                                     if ($canManageTools && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';

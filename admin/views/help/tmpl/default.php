@@ -121,10 +121,6 @@ modal.onclick = e => {
 
 <?php
 $wa = $this->document->getWebAssetManager();
-$wa->registerAndUseStyle(
-    'com_jem.help.modal',
-    'media/com_jem/css/help-modal.css'
-);
-
+JemHelper::loadCss('help-modal');
 $wa->useScript('keepalive');
 ?>
