@@ -158,6 +158,21 @@ final class SiteCodeContractsTest extends TestCase
         );
     }
 
+    public function testPdfLinkBuilderDoesNotMutateTheSharedRequestUri(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/output.class.php');
+        $start = strpos($code, 'static protected function buildCurrentPdfLink()');
+        $end = strpos($code, 'static public function archivebutton', $start);
+
+        self::assertNotFalse($start);
+        self::assertNotFalse($end);
+
+        $method = substr($code, $start, $end - $start);
+
+        self::assertStringContainsString('$uri = clone Uri::getInstance();', $method);
+        self::assertStringNotContainsString('$uri = Uri::getInstance();', $method);
+    }
+
     public function testMergedGlobalAttributesAreClonedPerItem(): void
     {
         $expectedCloneCounts = array(
