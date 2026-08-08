@@ -34,6 +34,12 @@ use Joomla\CMS\Uri\Uri;
             </h1>
         <?php endif; ?>
 
+        <?php if ($this->params->get('showintrotext')) : ?>
+            <div class="description no_space floattext">
+                <?php echo $this->params->get('introtext'); ?>
+            </div>
+        <?php endif; ?>
+
         <?php echo $this->loadTemplate('attendances'); ?>
 
             <?php if ($this->params->get('showfootertext')) : ?>

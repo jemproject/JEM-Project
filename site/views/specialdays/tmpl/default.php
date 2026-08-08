@@ -104,6 +104,12 @@ $renderLocation = function ($item) {
         <h1 class="componentheading"><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <form action="<?php echo $this->action; ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
         <fieldset class="adminform mb-3 jem-specialdays-import">
             <legend><?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV'); ?></legend>
@@ -260,4 +266,10 @@ $renderLocation = function ($item) {
         <input type="hidden" name="task" value="" />
         <?php echo HTMLHelper::_('form.token'); ?>
     </form>
+
+    <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
 </div>

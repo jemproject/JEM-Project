@@ -25,6 +25,12 @@ use Joomla\String\StringHelper;
     </h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <div class="clr"> </div>
 
     <!--Venue-->
