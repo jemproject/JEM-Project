@@ -105,4 +105,14 @@ final class VenueCalendarViewTest extends TestCase
             self::assertStringContainsString('#jem .jem-venue-calendar-selector .form-select', $css);
         }
     }
+
+    public function testResponsiveCalendarUsesTabletPortraitBreakpoint(): void
+    {
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/calendar-responsive.css');
+        $mediaQuery = '@media only all and (max-width: 48rem) and (orientation: portrait), screen and (max-device-width: 48rem) and (orientation: portrait) {';
+
+        self::assertStringContainsString($mediaQuery, $css);
+        self::assertStringNotContainsString('max-width: 30rem) and (orientation: portrait)', $css);
+        self::assertStringNotContainsString('max-device-width: 30rem) and (orientation: portrait)', $css);
+    }
 }
