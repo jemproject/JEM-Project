@@ -2741,40 +2741,6 @@
                 size="50"
                 required="false"
             />
-            <field type="spacer" name="spacer2b" hr="true" />
-            <field name="css_colorpicker_usecustom" type="radio"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
-                class="inputbox btn-group btn-group-yesno"
-                default="0"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="css_colorpicker_customfile" type="cssfile"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
-                class="inputbox"
-                size="50"
-                required="false"
-            />
-            <field type="spacer" name="spacer3" hr="true" />
-            <field name="css_colorpicker_responsive_usecustom" type="radio"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM"
-                class="inputbox btn-group btn-group-yesno"
-                default="0"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="css_colorpicker_responsive_customfile" type="cssfile"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_CUSTOMFILE_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
-                class="inputbox"
-                size="50"
-                required="false"
-            />
             <field type="spacer" name="spacer3b" hr="true" />
             <field name="css_geostyle_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_GEOSTYLE_USECUSTOM_DESC"

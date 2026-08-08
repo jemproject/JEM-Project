@@ -95,21 +95,6 @@ input.button {
 input.button:focus { /*background-color:#......; */
 }
 
-input#clear {
-    background: url('../images/clear.webp') no-repeat scroll left center;
-    border: none;
-    cursor: pointer;
-    caret-color: transparent;
-}
-
-input#clear:focus {
-    cursor: pointer;
-}
-
-.colorpicker {
-    border: 1px solid grey;
-}
-
 div.linkicon a {
     display: block;
     border: 1px solid #F0F0F0;
@@ -1171,10 +1156,6 @@ div.current fieldset.checkbox input[type="checkbox"] {
     float: left;
     min-width: 15px;
     /* margin-top: 8px; */
-}
-
-fieldset.adminform input#clear {
-    width: auto;
 }
 
 fieldset.adminform .jem-options-width-auto,

@@ -123,8 +123,6 @@ class JemModelSource extends AdminModel
             'backend-responsive.css' => array('use' => 'css_backend_responsive_usecustom', 'file' => 'css_backend_responsive_customfile', 'fallbackUse' => 'css_backend_usecustom', 'label' => 'backend-responsive.css'),
             'calendar.css' => array('use' => 'css_calendar_usecustom', 'file' => 'css_calendar_customfile', 'label' => 'calendar.css'),
             'calendar-responsive.css' => array('use' => 'css_calendar_responsive_usecustom', 'file' => 'css_calendar_responsive_customfile', 'fallbackUse' => 'css_calendar_usecustom', 'label' => 'calendar-responsive.css'),
-            'colorpicker.css' => array('use' => 'css_colorpicker_usecustom', 'file' => 'css_colorpicker_customfile', 'label' => 'colorpicker.css'),
-            'colorpicker-responsive.css' => array('use' => 'css_colorpicker_responsive_usecustom', 'file' => 'css_colorpicker_responsive_customfile', 'fallbackUse' => 'css_colorpicker_usecustom', 'label' => 'colorpicker-responsive.css'),
             'geostyle.css' => array('use' => 'css_geostyle_usecustom', 'file' => 'css_geostyle_customfile', 'label' => 'geostyle.css'),
             'geostyle-responsive.css' => array('use' => 'css_geostyle_responsive_usecustom', 'file' => 'css_geostyle_responsive_customfile', 'fallbackUse' => 'css_geostyle_usecustom', 'label' => 'geostyle-responsive.css'),
             'googlemap.css' => array('use' => 'css_googlemap_usecustom', 'file' => 'css_googlemap_customfile', 'label' => 'googlemap.css'),
