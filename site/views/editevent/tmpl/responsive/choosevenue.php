@@ -17,6 +17,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
 $cssSettings = JemHelper::retrieveCss();
 $filterBackground = $cssSettings->get('css_color_bg_filter');
@@ -208,7 +209,7 @@ if (!function_exists('jem_choosevenue_country')) {
                 </div>
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+                <button type="button" class="pointer btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
                 <div class="jem-row jem-justify-start jem-nowrap jem-choosevenue-limit">
                     <?php echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>'; ?>
                     <?php echo $this->pagination->getLimitBox(); ?>
@@ -240,7 +241,7 @@ if (!function_exists('jem_choosevenue_country')) {
 
                         <div class="jem-event-info-small jem-venue-name">
               <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->venue, 'editlinktip selectvenue'); ?>>
-                                <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
+                                <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
                             </span>
                         </div>
 

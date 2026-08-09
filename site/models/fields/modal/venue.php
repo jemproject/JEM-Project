@@ -8,112 +8,65 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
-use Joomla\CMS\Form\FormField;
+use Joomla\CMS\Form\Field\ModalSelectField;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
- * Venue Select
+ * Venue selector using Joomla's native modal content-select field.
  */
-class JFormFieldModal_Venue extends FormField
+class JFormFieldModal_Venue extends ModalSelectField
 {
-    /**
-     * field type
-     * @var string
-     */
     protected $type = 'Modal_Venue';
 
-
-    /**
-     * Method to get the field input markup
-     */
     protected function getInput()
     {
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $wa       = $document->getWebAssetManager();
+        $function = 'jSelectVenue_' . preg_replace('/[^A-Za-z0-9_]/', '_', $this->id);
 
-        // Build the script
-        $script = array();
-        $script[] = '    function jSelectVenue_'.$this->id.'(id, venue, object) {';
-        $script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
-        $script[] = '        document.getElementById("'.$this->id.'_name").value = venue;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#venue-modal").modal("hide");';
-        $script[] = '    }';
+        $this->select      = true;
+        $this->clear       = false;
+        $this->urlSelect   = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function=' . $function;
+        $this->titleSelect = 'COM_JEM_SELECT_VENUE';
+        $this->iconSelect  = 'icon-location';
 
-        // Add to document head
-        $wa->addInlineScript(implode("\n", $script));
-
-        // Setup variables for display
-        $html = array();
-        $link = Uri::base() . 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id
-            . '&amp;' . Session::getFormToken() . '=1';
-
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('venue');
-        $query->from('#__jem_venues');
-        $query->where(array('id='.(int)$this->value));
-        $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
-        $query->where('access IN (' . implode(',', $levels) . ')');
-        $db->setQuery($query);
-
-
-
-        // if ($error = $db->getErrorMsg()) {
-        //     Factory::getApplication()->enqueueMessage($error, 'warning');
-        // }
-        try
-        {
-            $venue = $db->loadResult();
-        }
-        catch (RuntimeException $e)
-        {
-            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
-        }
-
-        if (empty($venue)) {
-            $venue = Text::_('COM_JEM_SELECT_VENUE');
-        }
-        $venue = htmlspecialchars($venue, ENT_QUOTES, 'UTF-8');
-
-        // The current venue input field
-        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$venue.'" disabled="disabled" size="35" class="form-control readonly valid form-control-success" style="display:inline-block;" />';
-
-        $html[] = HTMLHelper::_(
-            'bootstrap.renderModal',
-            'venue-modal',
-            array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
-                'title'  => Text::_('COM_JEM_SELECT_VENUE'),
-                'width'  => '800px',
-                'height' => '450px',
-                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-            )
+        // Compatibility for third-party chooser overrides that still call the legacy callback.
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(
+            'window.' . $function . ' = function (id, venue) {' . "\n"
+            . '    var value = document.getElementById(' . json_encode($this->id . '_id') . ');' . "\n"
+            . '    var title = document.getElementById(' . json_encode($this->id) . ') || document.getElementById(' . json_encode($this->id . '_name') . ');' . "\n"
+            . '    if (value) { value.value = id; value.dispatchEvent(new CustomEvent("change", {bubbles: true})); }' . "\n"
+            . '    if (title) { title.value = venue; }' . "\n"
+            . '    var dialog = document.querySelector("joomla-dialog.joomla-dialog-content-select-field");' . "\n"
+            . '    if (dialog && typeof dialog.close === "function") { dialog.close(); }' . "\n"
+            . '};'
         );
-        $html[] ='<button type="button" class="btn btn-success button-select" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#venue-modal">'.Text::_('COM_JEM_SELECT').'
-        </button>';
 
-        // The active venue id field
-        if (0 == (int)$this->value) {
-            $value = '';
-        } else {
-            $value = (int)$this->value;
+        return parent::getInput();
+    }
+
+    protected function getValueTitle()
+    {
+        if (!$this->value) {
+            return Text::_('COM_JEM_SELECT_VENUE');
         }
 
-        // class='required' for client side validation
-        $class = '';
-        if ($this->required) {
-            $class = ' class="required modal-value"';
+        try {
+            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('venue'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . (int) $this->value);
+
+            $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
+            $query->where('access IN (' . implode(',', $levels) . ')');
+            $db->setQuery($query);
+
+            return $db->loadResult() ?: Text::_('COM_JEM_SELECT_VENUE');
+        } catch (\Throwable $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return Text::_('COM_JEM_SELECT_VENUE');
         }
-
-        $html[] = '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
-
-        return implode("\n", $html);
     }
 }
-?>

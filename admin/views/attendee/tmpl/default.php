@@ -14,19 +14,18 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Session\Session;
 
-HTMLHelper::_('jquery.framework');
-
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
-        $wa->useScript('jquery')
-        ->useScript('keepalive')
-            ->useScript('form.validate');
+        $wa->useScript('keepalive')
+           ->useScript('form.validate');
+
+$userModalId = 'jem-attendee-user-modal';
 
 $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
 echo HTMLHelper::_(
     'bootstrap.renderModal',
-    'user-modal',
+    $userModalId,
     array(
         'url'    => $selectuser_link.'&amp;'.Session::getFormToken().'=1',
         'title'  => Text::_('COM_JEM_SELECT'),
@@ -40,10 +39,16 @@ echo HTMLHelper::_(
 <script>
 function modalSelectUser(id, username)
 {
-        jQuery('#uid').val(id)  ;
-        jQuery('#username').val(username);
-        // window.parent.SqueezeBox.close();
-        jQuery("#user-modal").modal("hide");
+        document.getElementById('uid').value = id;
+        document.getElementById('username').value = username;
+
+        const modal = document.getElementById('<?php echo $userModalId; ?>');
+        if (modal && window.bootstrap && bootstrap.Modal) {
+            const instance = bootstrap.Modal.getInstance(modal);
+            if (instance) {
+                instance.hide();
+            }
+        }
 }
 Joomla.submitbutton = function(task)
     {
@@ -90,11 +95,13 @@ Joomla.submitbutton = function(task)
                     </label>
                 </td>
                 <td>
-                    <input type="text" name="username" id="username" class="form-control inputbox required valid form-control-success" readonly="readonly" value="<?php echo $this->row->username; ?>" />
-                    <input type="hidden" name="uid" id="uid" value="<?php echo $this->row->uid; ?>" />
-                    <a class="usermodal" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#user-modal">
-                        <span class="btn btn-primary"><?php echo Text::_('COM_JEM_SELECT_USER')?></span>
-                    </a>
+                    <div class="input-group">
+                        <input type="text" name="username" id="username" class="form-control inputbox required valid form-control-success" readonly="readonly" value="<?php echo $this->escape($this->row->username); ?>" />
+                        <button type="button" class="btn btn-primary usermodal" data-bs-toggle="modal" data-bs-target="#<?php echo $userModalId; ?>">
+                            <span class="icon-user" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_SELECT_USER')?>
+                        </button>
+                    </div>
+                    <input type="hidden" name="uid" id="uid" value="<?php echo (int) $this->row->uid; ?>" />
                 </td>
             </tr>
             <tr>

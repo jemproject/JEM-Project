@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategory');
+Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -23,7 +24,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
             <input type="text" name="filter_search" id="filter_search" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area" onChange="document.adminForm.submit();" />
             <button type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
             <button type="button" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            <button type="button" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_CATEGORY') ?>');"><?php echo Text::_('COM_JEM_GLOBAL_NOCATEGORY')?></button>
+            <button type="button" class="btn btn-danger" data-content-select data-content-type="com_jem.category" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECT_CATEGORY')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_GLOBAL_NOCATEGORY')?></button>
         </td>
         <td nowrap="nowrap">
             <select name="filter_state" class="inputbox" onchange="this.form.submit()">
@@ -60,7 +61,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectCategor
          <tr class="row<?php echo $i % 2; ?>">
             <td class="center" style="width: 7px;"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
             <td style="text-align: left;">
-                <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->catname)); ?>');"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
+                <a href="#" class="pointer" data-content-select data-content-type="com_jem.category" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->catname, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo htmlspecialchars_decode($this->escape($row->treename)); ?></a>
             </td>
             <td class="center"><?php echo $access; ?></td>
             <td class="center">

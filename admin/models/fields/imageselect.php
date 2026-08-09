@@ -56,6 +56,8 @@ class JFormFieldImageselect extends ListField
         $script[] = '        image: ' . json_encode($imageInputId) . ',';
         $script[] = '        name: ' . json_encode($imageNameId) . ',';
         $script[] = '        preview: ' . json_encode($imagePreviewId) . ',';
+        $script[] = '        uploadModal: ' . json_encode($uploadModalId) . ',';
+        $script[] = '        selectModal: ' . json_encode($selectModalId) . ',';
         $script[] = '        base: ' . json_encode('../images/jem/' . $imagetype . '/') . ',';
         $script[] = '        blank: ' . json_encode('../media/com_jem/images/blank.webp');
         $script[] = '    };';
@@ -66,8 +68,13 @@ class JFormFieldImageselect extends ListField
         $script[] = '        document.getElementById(field.image).value = image;';
         $script[] = '        document.getElementById(field.name).value = imagename;';
         $script[] = '        document.getElementById(field.preview).src = image ? field.base + image : field.blank;';
-        // $script[] = '        window.parent.SqueezeBox.close()';
-        $script[] = '        $(".btn-close").trigger("click");';
+        $script[] = '        [field.uploadModal, field.selectModal].some(function (modalId) {';
+        $script[] = '            var modal = document.getElementById(modalId);';
+        $script[] = '            if (!modal || !modal.classList.contains("show") || !window.bootstrap || !bootstrap.Modal) { return false; }';
+        $script[] = '            var instance = bootstrap.Modal.getInstance(modal);';
+        $script[] = '            if (instance) { instance.hide(); }';
+        $script[] = '            return true;';
+        $script[] = '        });';
         $script[] = '    }';
 
         switch ($imagetype)
@@ -127,12 +134,7 @@ img.venue-image {
         $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $recordQuery;
         $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
 
-        //
-        $html[] = "<div class=\"fltlft\">";
-        $html[] = "<input class=\"form-control\" style=\"background: #fff;\" type=\"text\" id=\"" . $imageNameId . "\" value=\"$this->value\" disabled=\"disabled\" onchange=\"javascript:if (document.getElementById('" . $imageNameId . "').value!='') {document.getElementById('" . $imagePreviewId . "').src='../images/jem/$imagetype/' + document.getElementById('" . $imageNameId . "').value} else {document.getElementById('" . $imagePreviewId . "').src='../media/com_jem/images/blank.webp'}\"; />";
-        $html[] = "</div>";
-        $html[] = "<div class=\"button2-left\"><div class=\"blank\">";
-            $html[] = HTMLHelper::_(
+        $html[] = HTMLHelper::_(
                 'bootstrap.renderModal',
                 $uploadModalId,
                 array(
@@ -143,11 +145,6 @@ img.venue-image {
                     'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
                 )
             );
-            $html[] ='<button type="button" class="btn btn-primary btn-margin" onclick="window.jemActiveImageField=\'' . $fieldId . '\';" data-bs-toggle="modal"  data-bs-target="#' . $uploadModalId . '">'.Text::_('COM_JEM_UPLOAD').'</button>';
-
-        $html[] ='</div></div>';
-        // $html[] = "<div class=\"button2-left\"><div class=\"blank\"><a class=\"modal\" title=\"".Text::_('COM_JEM_SELECTIMAGE')."\" href=\"$link2\" rel=\"{handler: 'iframe', size: {x: 650, y: 375}}\">".Text::_('COM_JEM_SELECTIMAGE')."</a></div></div>\n";
-        $html[] = "<div class=\"button2-left\"><div class=\"blank\">";
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             $selectModalId,
@@ -159,10 +156,12 @@ img.venue-image {
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
             )
         );
-        $html[] = "<button type=\"button\" class=\"btn btn-primary btn-margin\" onclick=\"window.jemActiveImageField='" . $fieldId . "';\" data-bs-toggle=\"modal\" data-bs-target=\"#" . $selectModalId . "\">".Text::_('COM_JEM_SELECTIMAGE')."
-        </button>";
-        $html[] = "</div></div>";
-        $html[] = "\n&nbsp;<input class=\"btn btn-danger btn-margin\" type=\"button\" onclick=\"SelectImage('', '".Text::_('COM_JEM_SELECTIMAGE')."', '" . $fieldId . "');\" value=\"".Text::_('COM_JEM_RESET')."\" />";
+        $html[] = '<div class="input-group">';
+        $html[] = '<input class="form-control" style="background: #fff;" type="text" id="' . $imageNameId . '" value="' . htmlspecialchars((string) $this->value, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
+        $html[] = '<button type="button" class="btn btn-primary" onclick="window.jemActiveImageField=\'' . $fieldId . '\';" data-bs-toggle="modal" data-bs-target="#' . $uploadModalId . '"><span class="icon-upload" aria-hidden="true"></span> '.Text::_('COM_JEM_UPLOAD').'</button>';
+        $html[] = '<button type="button" class="btn btn-primary" onclick="window.jemActiveImageField=\'' . $fieldId . '\';" data-bs-toggle="modal" data-bs-target="#' . $selectModalId . '"><span class="icon-images" aria-hidden="true"></span> '.Text::_('COM_JEM_SELECTIMAGE').'</button>';
+        $html[] = '<button type="button" class="btn btn-danger" onclick="SelectImage(\'\', ' . htmlspecialchars(json_encode(Text::_('COM_JEM_SELECTIMAGE')), ENT_QUOTES, 'UTF-8') . ', \'' . $fieldId . '\');"><span class="icon-times" aria-hidden="true"></span> '.Text::_('COM_JEM_RESET').'</button>';
+        $html[] = '</div>';
         $html[] = "\n<input type=\"hidden\" id=\"" . $imageInputId . "\" name=\"$this->name\" value=\"$this->value\" />";
         $html[] = "<img src=\"../media/com_jem/images/blank.webp\" id=\"" . $imagePreviewId . "\" class=\"venue-image\" style=\"width:min(100%, " . $previewWidth . "px);height:" . $previewHeight . "px;max-width:100%;max-height:" . $previewHeight . "px;\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
         $html[] = "<script type=\"text/javascript\">";

@@ -126,7 +126,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 <script>
     function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
         document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
-        SqueezeBox.close();
     }
 </script>
 

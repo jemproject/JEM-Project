@@ -9,115 +9,59 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
 
 /**
- * Category select
- *
- * @package JEM
- *
+ * Category selector using Joomla's native modal content-select field.
  */
-class JFormFieldCategories extends ListField
+class JFormFieldCategories extends ModalSelectField
 {
     protected $type = 'Categories';
 
-    /**
-     * Method to get the field input markup.
-     *
-     * @return    string    The field input markup.
-     *
-     */
     protected function getInput()
     {
-        $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $wa       = $document->getWebAssetManager();
+        $function = 'jSelectCategory_' . preg_replace('/[^A-Za-z0-9_]/', '_', $this->id);
 
-        // Build the script.
-        $script = array();
-        $script[] = '    function jSelectCategory_'.$this->id.'(id, category, object) {';
-        $script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
-        $script[] = '        document.getElementById("'.$this->id.'_name").value = category;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#categories-modal").modal("hide");';
+        $this->select      = true;
+        $this->clear       = false;
+        $this->urlSelect   = 'index.php?option=com_jem&view=categoryelement&tmpl=component&function=' . $function;
+        $this->titleSelect = 'COM_JEM_SELECT_CATEGORY';
+        $this->iconSelect  = 'icon-folder';
 
-        $script[] = '    };';
-
-        // Add the script to the document head.
-        $wa->addInlineScript(implode("\n", $script));
-
-        // Setup variables for display.
-        $html = array();
-        $link = 'index.php?option=com_jem&amp;view=categoryelement&amp;tmpl=component&amp;function=jSelectCategory_'.$this->id;
-
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select('catname');
-        $query->from('#__jem_categories');
-        $query->where('id='.(int)$this->value);
-
-
-        try
-        {
-            $db->setQuery($query);
-            $category = $db->loadResult();
-        }
-        catch (RuntimeException $e)
-        {
-            $app->enqueueMessage($e->getMessage(), 'warning');
-        }
-        // if ($error = $db->getErrorMsg()) {
-        //     Factory::getApplication()->enqueueMessage($error, 'warning');
-        // }
-
-        if (empty($category)) {
-            $category = Text::_('COM_JEM_SELECT_CATEGORY');
-        }
-        $category = htmlspecialchars($category, ENT_QUOTES, 'UTF-8');
-
-        // The current user display field.
-        $html[] = '<div class="fltlft">';
-        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$category.'" disabled="disabled" size="35" class="form-control valid form-control-success w-auto" style="max-width: 36rem;" />';
-        $html[] = '</div>';
-
-        // The user select button.
-        $html[] = '<div class="button2-left">';
-        $html[] = '  <div class="blank">';
-        $html[] = HTMLHelper::_(
-            'bootstrap.renderModal',
-            'categories-modal',
-            array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
-                'title'  => Text::_('COM_JEM_SELECT_CATEGORY'),
-                'width'  => '800px',
-                'height' => '450px',
-                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-            )
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(
+            'window.' . $function . ' = function (id, category) {' . "\n"
+            . '    var value = document.getElementById(' . json_encode($this->id . '_id') . ');' . "\n"
+            . '    var title = document.getElementById(' . json_encode($this->id) . ') || document.getElementById(' . json_encode($this->id . '_name') . ');' . "\n"
+            . '    if (value) { value.value = id; value.dispatchEvent(new CustomEvent("change", {bubbles: true})); }' . "\n"
+            . '    if (title) { title.value = category; }' . "\n"
+            . '    var dialog = document.querySelector("joomla-dialog.joomla-dialog-content-select-field");' . "\n"
+            . '    if (dialog && typeof dialog.close === "function") { dialog.close(); }' . "\n"
+            . '};'
         );
-        $html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#categories-modal">'.Text::_('COM_JEM_SELECT_CATEGORY').'
-</button>';
-        $html[] = '  </div>';
-        $html[] = '</div>';
 
-        // The active category-id field.
-        if (0 == (int)$this->value) {
-            $value = '';
-        } else {
-            $value = (int)$this->value;
+        return parent::getInput();
+    }
+
+    protected function getValueTitle()
+    {
+        if (!$this->value) {
+            return Text::_('COM_JEM_SELECT_CATEGORY');
         }
 
-        // class='required' for client side validation
-        $class = '';
-        if ($this->required) {
-            $class = ' class="required modal-value"';
+        try {
+            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('catname'))
+                ->from($db->quoteName('#__jem_categories'))
+                ->where($db->quoteName('id') . ' = ' . (int) $this->value);
+            $db->setQuery($query);
+
+            return $db->loadResult() ?: Text::_('COM_JEM_SELECT_CATEGORY');
+        } catch (\Throwable $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return Text::_('COM_JEM_SELECT_CATEGORY');
         }
-
-        $html[] = '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
-
-        return implode("\n", $html);
     }
 }
-?>

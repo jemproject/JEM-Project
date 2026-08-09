@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -24,7 +25,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
             <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area form-control" onChange="document.adminForm.submit();" />&nbsp;
             <button type="submit" class="filter-search-bar__button btn btn-primary"><span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span></button>&nbsp;
             <button type="button" class="filter-search-bar__button btn btn-success" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>&nbsp;
-            <button type="button" class="filter-search-bar__button btn btn-danger"" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECTVENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+            <button type="button" class="filter-search-bar__button btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECTVENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
             </div>
         </td>
     </tr>
@@ -55,7 +56,7 @@ $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue')
          <tr class="row<?php echo $i % 2; ?>">
             <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
             <td style="text-align: left;">
-                 <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
+                 <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
             </td>
             <td class="center">
             <div class="colorpreview<?php echo ($this->escape($row->color) == '') ? ' transparent-color" title="transparent"' : '" style="background-color:' . $this->escape($row->color) . '"' ?> aria-labelledby="color-desc-<?php echo $this->escape($row->id); ?>"></div></td>

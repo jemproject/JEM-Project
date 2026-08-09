@@ -10,6 +10,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+
+$function = Factory::getApplication()->input->getCmd('function', 'jSelectEvent');
+Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 ?>
 
 <form action="index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
@@ -59,7 +63,7 @@ use Joomla\CMS\HTML\HTMLHelper;
             <td class="center"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
             <td>
                 <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->title, 'editlinktip'); ?>>
-                <a style="cursor:pointer" onclick="window.parent.elSelectEvent('<?php echo $row->id; ?>', '<?php echo str_replace( array("'", "\""), array("\\'", ""), $row->title ); ?>');">
+                <a href="#" style="cursor:pointer" data-content-select data-content-type="com_jem.event" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->title, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);">
                     <?php echo $this->escape($row->title); ?>
                 </a></span>
             </td>
@@ -103,6 +107,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 </p>
 
 <input type="hidden" name="task" value="" />
+<input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 <?php echo HTMLHelper::_('form.token'); ?>
