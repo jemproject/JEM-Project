@@ -100,6 +100,7 @@
             <exclude name="phpunit.progress.xml.dist" />
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
+            <exclude name="tmp/**" />
             <exclude name="tools/**" />
             <exclude name="vendor/**" />
             <patternset refid="windows.junk.excludes" />
