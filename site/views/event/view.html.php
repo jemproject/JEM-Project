@@ -54,6 +54,21 @@ class JemViewEvent extends JemView
         $edit_att            = new \stdClass();
         $this->params      = $app->getParams('com_jem');
         $this->item        = $this->get('Item');
+
+        // Stop before reading or assigning event properties when the requested
+        // event does not exist. Model errors remain server-side errors; an
+        // empty result without model errors is a genuine not-found response.
+        if (empty($this->item)) {
+            $errors = $this->get('Errors');
+
+            if (is_array($errors) && count($errors)) {
+                $app->enqueueMessage(implode("\n", $errors), 'warning');
+                return false;
+            }
+
+            throw new \Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+        }
+
         $this->contacts    = $this->get('Contacts');
         $this->print       = $app->input->getBool('print', false);
         $this->state       = $this->get('State');
@@ -105,12 +120,6 @@ class JemViewEvent extends JemView
 
         //JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
         //JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
-
-        // check for data error
-        if (empty($this->item)) {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-            return false;
-        }
 
         // Check for errors.
         $errors = $this->get('Errors');
