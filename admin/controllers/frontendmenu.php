@@ -60,6 +60,7 @@ class JemControllerFrontendmenu extends BaseController
 
         $items = array(
             array('Events List', 'events-list', 'index.php?option=com_jem&view=eventslist', $groups['events']),
+            array('Events Blog', 'events-blog', 'index.php?option=com_jem&view=eventsblog', $groups['events']),
             array('Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', $groups['events']),
             array('Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
             array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),

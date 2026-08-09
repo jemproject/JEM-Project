@@ -1,0 +1,180 @@
+.jem-eventsblog {
+    --jem-eventsblog-columns: 4;
+    --jem-eventsblog-accent: var(--link-color, #f36b16);
+    --jem-eventsblog-image-ratio: 1 / 1;
+}
+
+.jem-eventsblog-filters {
+    margin: 1.5rem 0;
+}
+
+.jem-eventsblog-periods,
+.jem-eventsblog-selects {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .65rem;
+}
+
+.jem-eventsblog-periods {
+    border: 0;
+    margin: 0 0 1rem;
+    padding: 0;
+}
+
+.jem-eventsblog-period input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.jem-eventsblog-period span {
+    border: 1px solid var(--border-color, #ced4da);
+    border-radius: 999px;
+    cursor: pointer;
+    display: inline-block;
+    padding: .45rem .85rem;
+}
+
+.jem-eventsblog-period input:focus-visible + span,
+.jem-eventsblog-period.is-active span {
+    background: var(--jem-eventsblog-accent);
+    border-color: var(--jem-eventsblog-accent);
+    color: #fff;
+}
+
+.jem-eventsblog-selects .form-select {
+    min-width: 12rem;
+}
+
+.jem-eventsblog-count {
+    font-weight: 600;
+}
+
+.jem-eventsblog-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(var(--jem-eventsblog-columns), minmax(0, 1fr));
+}
+
+.jem-eventsblog-card {
+    background: var(--body-bg, #fff);
+    border: 1px solid var(--border-color, #d8dde3);
+    border-radius: .75rem;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.jem-eventsblog-card.is-featured {
+    border-color: var(--jem-eventsblog-accent);
+}
+
+.jem-eventsblog-image-link {
+    align-items: center;
+    aspect-ratio: var(--jem-eventsblog-image-ratio);
+    background: var(--body-bg, #f3f4f6);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.jem-eventsblog-image {
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform .25s ease;
+    width: 100%;
+}
+
+.jem-eventsblog-image-fit--height .jem-eventsblog-image {
+    height: 100%;
+    max-width: none;
+    object-fit: initial;
+    width: auto;
+}
+
+.jem-eventsblog-image-fit--width .jem-eventsblog-image {
+    height: auto;
+    max-height: none;
+    object-fit: initial;
+    width: 100%;
+}
+
+.jem-eventsblog-card:hover .jem-eventsblog-image {
+    transform: scale(1.025);
+}
+
+.jem-eventsblog-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: .45rem;
+    padding: 1rem;
+}
+
+.jem-eventsblog-date {
+    color: var(--jem-eventsblog-accent);
+    font-size: .92rem;
+    font-weight: 700;
+}
+
+.jem-eventsblog-category {
+    font-size: .75rem;
+    letter-spacing: .035em;
+    text-transform: uppercase;
+}
+
+.jem-eventsblog-title {
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.jem-eventsblog-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.jem-eventsblog-title a:hover,
+.jem-eventsblog-title a:focus {
+    color: var(--jem-eventsblog-accent);
+}
+
+.jem-eventsblog-location {
+    color: var(--secondary-color, #667085);
+    font-size: .9rem;
+    margin-top: auto;
+}
+
+.jem-eventsblog-card-action {
+    padding: 0 1rem 1rem;
+}
+
+.jem-eventsblog-card-action .btn {
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+.jem-eventsblog-pagination,
+.jem-eventsblog-footer {
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 1199.98px) {
+    .jem-eventsblog-grid { grid-template-columns: repeat(min(3, var(--jem-eventsblog-columns)), minmax(0, 1fr)); }
+}
+
+@media (max-width: 767.98px) {
+    .jem-eventsblog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 575.98px) {
+    .jem-eventsblog-grid { grid-template-columns: 1fr; }
+    .jem-eventsblog-selects,
+    .jem-eventsblog-selects label,
+    .jem-eventsblog-selects .form-select,
+    .jem-eventsblog-selects .btn { width: 100%; }
+}

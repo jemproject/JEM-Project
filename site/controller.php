@@ -131,6 +131,7 @@ class JemController extends BaseController
                 case 'editevent':
                 case 'editvenue':
                 case 'event':
+                case 'eventsblog':
                 case 'eventslist':
                 case 'myattendances':
                 case 'myevents':

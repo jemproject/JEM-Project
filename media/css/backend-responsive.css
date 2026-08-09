@@ -78,6 +78,103 @@
     background-image: url(../images/icon-48-plugins.svg);
 }
 
+/** cpanel groups **/
+.jem-wei-group-title {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 74%, var(--body-bg, #fff) 26%);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    margin: 1.25rem 0 .5rem;
+    text-transform: uppercase;
+}
+
+.jem-wei-group-title:first-child {
+    margin-top: 0;
+}
+
+.jem-wei-group {
+    border-bottom: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 15%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    padding-bottom: .5rem;
+}
+
+.jem-wei-group:last-child {
+    border-bottom: none;
+}
+
+.jem-wei-menus .icon {
+    position: relative;
+}
+
+/* Keep the add shortcut as an overlay badge instead of inheriting the
+   control-panel tile dimensions declared later in this stylesheet. */
+.cpanel div.icon a.jem-wei-add,
+#cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add {
+    align-items: center;
+    background-color: #fff;
+    background-position: 0 0;
+    border: 2px solid #45A12C;
+    border-radius: 50%;
+    box-shadow: none;
+    color: #45A12C;
+    display: flex;
+    float: none;
+    font-size: 1.2rem;
+    height: 20px;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    position: absolute;
+    right: -4px;
+    text-decoration: none;
+    bottom: -4px;
+    transition: background-color .15s ease;
+    width: 20px;
+    z-index: 20;
+}
+
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add {
+    background-color: #000;
+}
+
+.cpanel div.icon a.jem-wei-add:hover,
+.cpanel div.icon a.jem-wei-add:focus,
+.cpanel div.icon a.jem-wei-add:active,
+#cpanel div.icon a.jem-wei-add:hover,
+#cpanel div.icon a.jem-wei-add:focus,
+#cpanel div.icon a.jem-wei-add:active,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:hover,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:focus,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:active,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:hover,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:focus,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:active {
+    border: 2px solid #45D92C;
+    border-radius: 50%;
+    box-shadow: none;
+    color: #fff;
+    float: none;
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    z-index: 6;
+}
+
+.cpanel div.icon a.jem-wei-add:hover,
+.cpanel div.icon a.jem-wei-add:focus,
+.cpanel div.icon a.jem-wei-add:active,
+#cpanel div.icon a.jem-wei-add:hover,
+#cpanel div.icon a.jem-wei-add:focus,
+#cpanel div.icon a.jem-wei-add:active {
+    background-color: #45D92C;
+}
+
 /** linkicons **/
 div.linkicon {
     text-align: center;
@@ -393,14 +490,14 @@ div.pagination ul li {
     background-position: -30px;
     display: block;
     float: left;
-    height: 97px;
-    width: 108px;
+    height: 115px;
+    width: 137px;
     color: #565656;
     vertical-align: middle;
     text-decoration: none;
     border: 1px solid #ccc;
     border-radius: 5px;
-    transition-property: background-position, border-bottom-left-radius, box-shadow;
+    transition-property: background-position, border-bottom-left-radius, box-shadow, background, border-color;
     transition-duration: 0.8s;
 }
 

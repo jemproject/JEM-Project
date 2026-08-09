@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_EVENTSBLOG_VIEW_DEFAULT_TITLE">
+        <message><![CDATA[COM_JEM_EVENTSBLOG_VIEW_DEFAULT_DESC]]></message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="blog_columns" type="list" default="4" label="COM_JEM_EVENTSBLOG_COLUMNS" description="COM_JEM_EVENTSBLOG_COLUMNS_DESC" class="form-select w-auto">
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </field>
+            <field name="blog_image_fit" type="list" default="automatic" label="COM_JEM_EVENTSBLOG_IMAGE_FIT" description="COM_JEM_EVENTSBLOG_IMAGE_FIT_DESC" class="form-select w-auto">
+                <option value="automatic">COM_JEM_EVENTSBLOG_IMAGE_FIT_AUTOMATIC</option>
+                <option value="height">COM_JEM_EVENTSBLOG_IMAGE_FIT_HEIGHT</option>
+                <option value="width">COM_JEM_EVENTSBLOG_IMAGE_FIT_WIDTH</option>
+            </field>
+            <field name="blog_image_ratio_width" type="number" default="1" min="1" max="20" label="COM_JEM_EVENTSBLOG_IMAGE_RATIO_WIDTH" description="COM_JEM_EVENTSBLOG_IMAGE_RATIO_WIDTH_DESC" class="form-control w-auto" />
+            <field name="blog_image_ratio_height" type="number" default="1" min="1" max="20" label="COM_JEM_EVENTSBLOG_IMAGE_RATIO_HEIGHT" description="COM_JEM_EVENTSBLOG_IMAGE_RATIO_HEIGHT_DESC" class="form-control w-auto" />
+            <field name="blog_events_per_page" type="number" default="12" min="1" max="100" label="COM_JEM_EVENTSBLOG_EVENTS_PER_PAGE" description="COM_JEM_EVENTSBLOG_EVENTS_PER_PAGE_DESC" class="form-control w-auto" />
+            <field name="blog_default_period" type="list" default="all" label="COM_JEM_EVENTSBLOG_DEFAULT_PERIOD" description="COM_JEM_EVENTSBLOG_DEFAULT_PERIOD_DESC" class="form-select w-auto">
+                <option value="all">COM_JEM_EVENTSBLOG_ALL</option>
+                <option value="today">COM_JEM_EVENTSBLOG_TODAY</option>
+                <option value="tomorrow">COM_JEM_EVENTSBLOG_TOMORROW</option>
+                <option value="week">COM_JEM_EVENTSBLOG_THIS_WEEK</option>
+                <option value="weekend">COM_JEM_EVENTSBLOG_WEEKEND</option>
+                <option value="next-week">COM_JEM_EVENTSBLOG_NEXT_WEEK</option>
+            </field>
+            <field type="spacer" name="scope_filters_spacer" label="COM_JEM_EVENTSBLOG_SCOPE_FILTERS" class="badge border px-3 py-2 fs-5 fw-bold text-body" />
+            <field name="blog_filter_categories" type="categoryedit" multiple="true" removeroot="true" published="1" default="" label="COM_JEM_EVENTSBLOG_FILTER_CATEGORIES" description="COM_JEM_EVENTSBLOG_FILTER_CATEGORIES_DESC" class="form-select w-auto jem-options-width-auto" />
+            <field name="blog_filter_venues" type="venueoptions" multiple="true" published="1" default="" label="COM_JEM_EVENTSBLOG_FILTER_VENUES" description="COM_JEM_EVENTSBLOG_FILTER_VENUES_DESC" class="form-select w-auto jem-options-width-auto" />
+            <field name="blog_filter_types" type="jemtype" entity="1" multiple="true" default="" label="COM_JEM_EVENTSBLOG_FILTER_TYPES" description="COM_JEM_EVENTSBLOG_FILTER_TYPES_DESC" class="form-select w-auto jem-options-width-auto" />
+            <field name="blog_filter_countries" type="countryoptions" multiple="true" default="" label="COM_JEM_EVENTSBLOG_FILTER_COUNTRIES" description="COM_JEM_EVENTSBLOG_FILTER_COUNTRIES_DESC" class="form-select w-auto jem-options-width-auto" />
+            <field name="blog_show_registration" type="radio" default="1" label="COM_JEM_EVENTSBLOG_SHOW_REGISTRATION" description="COM_JEM_EVENTSBLOG_SHOW_REGISTRATION_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field type="spacer" name="page_text_spacer" label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT" class="badge border px-3 py-2 fs-5 fw-bold text-body" />
+            <field name="showintrotext" type="radio" default="0" label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor" filter="safehtml" hide="readmore,pagebreak,module,menu,fields,contact,article" default="" rows="8" cols="30" height="300px" label="COM_JEM_INTROTEXT_FIELD" description="COM_JEM_INTROTEXT_FIELD_DESC" />
+            <field name="showfootertext" type="radio" default="0" label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT" description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor" filter="safehtml" hide="readmore,pagebreak,module,menu,fields,contact,article" default="" rows="8" cols="30" height="300px" label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT" description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC" />
+        </fieldset>
+    </fields>
+</metadata>
