@@ -103,6 +103,9 @@ function jem_common_show_filter(&$obj) {
   if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
     return false;
   }
+  if (!empty($obj->lists['show_venue_event_filter'])) {
+    return true;
+  }
   if ((int) $obj->params->get('showcountryfilter', 1)) {
     return true;
   }
@@ -378,6 +381,14 @@ foreach ((array) $this->rows as $venueRow) {
         </div>
         <?php endif; ?>
 
+        <?php if (!empty($this->lists['show_venue_event_filter'])) : ?>
+        <label class="d-flex align-items-center gap-1 mb-0">
+            <input type="hidden" name="show_all_venues" value="0">
+            <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+            <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+        </label>
+        <?php endif; ?>
+
         <?php if ($this->settings->get('global_display',1)) : ?>
         <div class="jem-venueslist-filter-limit d-flex align-items-center gap-2 ms-auto">
             <label for="limit" class="mb-0"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
@@ -532,6 +543,16 @@ foreach ((array) $this->rows as $venueRow) {
     <input type="hidden" name="option" value="com_jem" />
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+
+<?php if (!empty($this->lists['show_venue_event_filter']) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
+<div class="jem-venueslist-filter d-flex align-items-center gap-2 mt-2">
+    <label class="d-flex align-items-center gap-1 mb-0">
+        <input type="hidden" name="show_all_venues" value="0">
+        <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+        <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+    </label>
+</div>
+<?php endif; ?>
 
 <div class="pagination">
     <?php echo $this->pagination->getPagesLinks(); ?>

@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\String\StringHelper;
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx . ' venues_id' . $this->item->id; ?>">
@@ -29,6 +30,20 @@ use Joomla\String\StringHelper;
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>
         </div>
+    <?php endif; ?>
+
+    <?php if ($this->show_venue_event_filter) : ?>
+        <form action="<?php echo Route::_('index.php'); ?>" method="get" class="jem-form mb-3">
+            <label>
+                <input type="hidden" name="show_all_venues" value="0">
+                <input type="checkbox" name="show_all_venues" value="1"<?php echo $this->show_all_venues ? ' checked' : ''; ?> onchange="this.form.submit();">
+                <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+            </label>
+            <input type="hidden" name="option" value="com_jem">
+            <input type="hidden" name="view" value="venues">
+            <?php if ($this->task) : ?><input type="hidden" name="task" value="<?php echo $this->escape($this->task); ?>"><?php endif; ?>
+            <?php if ($this->item) : ?><input type="hidden" name="Itemid" value="<?php echo (int) $this->item->id; ?>"><?php endif; ?>
+        </form>
     <?php endif; ?>
 
     <div class="clr"> </div>

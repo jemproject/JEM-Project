@@ -122,6 +122,7 @@ class JemViewVenues extends JemView
 
         // Create the pagination object
         $pagination = $this->get('Pagination');
+        $state = $this->get('State');
 
         $this->rows          = $items;
         $this->print_link    = $print_link;
@@ -136,6 +137,8 @@ class JemViewVenues extends JemView
         $this->task          = $task;
         $this->pagetitle     = $pagetitle;
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
+        $this->show_venue_event_filter = (bool) $state->get('filter.show_venue_event_filter', false);
+        $this->show_all_venues = (bool) $state->get('filter.show_all_venues', false);
 
         parent::display($tpl);
     }

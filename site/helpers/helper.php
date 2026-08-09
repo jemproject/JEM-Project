@@ -327,6 +327,71 @@ class JemHelper
     }
 
     /**
+     * Build an EXISTS condition for venues which do (or do not) have an event
+     * visible to the current user.
+     *
+     * @param   string   $venueAlias  Venue table alias.
+     * @param   boolean  $hasEvents   True for EXISTS, false for NOT EXISTS.
+     * @param   integer  $state       Event state (1 published, 2 archived).
+     *
+     * @return string
+     */
+    static public function getVenueEventExistsWhere($venueAlias = 'a', $hasEvents = true, $state = 1)
+    {
+        $app         = Factory::getApplication();
+        $db          = Factory::getContainer()->get('DatabaseDriver');
+        $user        = $app->getIdentity();
+        $settings    = self::config();
+        $levels      = array_map('intval', $user->getAuthorisedViewLevels());
+        $eventLevels = self::mergeLockedViewLevels($levels, $settings->access_level_locked_events ?? '["1"]');
+        $catLevels   = self::mergeLockedViewLevels($levels, $settings->access_level_locked_categories ?? '["1"]');
+        $typeLevels  = implode(',', array_unique($levels));
+        $language    = $app->getLanguage()->getTag();
+
+        $effectiveType = 'COALESCE(NULLIF(ve.type_id, 0), vp.type_id)';
+        $typeLanguage = '(vet.language IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')'
+            . ' OR vet.base_language <> ' . $db->quote('') . ' OR vet.translation_languages IS NOT NULL)';
+
+        $conditions = array(
+            've.locid = ' . $venueAlias . '.id',
+            've.published = ' . (int) $state,
+            'vc.published = 1',
+            've.access IN (' . implode(',', $eventLevels) . ')',
+            'vc.access IN (' . implode(',', $catLevels) . ')',
+            '(' . $effectiveType . ' IS NULL OR ' . $effectiveType . ' = 0'
+                . ' OR (vet.id IS NOT NULL AND vet.access IN (' . $typeLevels . ')))',
+        );
+
+        if ((int) $state === 1) {
+            $conditions[] = self::getEventPublicationWhere('ve', false);
+        }
+
+        $subquery = 'SELECT 1 FROM #__jem_events AS ve'
+            . ' LEFT JOIN #__jem_events AS vp ON vp.id = ve.recurrence_first_id'
+            . ' INNER JOIN #__jem_cats_event_relations AS vrel ON vrel.itemid = ve.id'
+            . ' INNER JOIN #__jem_categories AS vc ON vc.id = vrel.catid'
+            . ' LEFT JOIN #__jem_types AS vet ON vet.id = ' . $effectiveType
+            . ' AND vet.entity = 1 AND vet.published = 1 AND ' . $typeLanguage
+            . ' WHERE ' . implode(' AND ', $conditions);
+
+        return ($hasEvents ? 'EXISTS' : 'NOT EXISTS') . ' (' . $subquery . ')';
+    }
+
+    private static function mergeLockedViewLevels(array $levels, $lockedLevels)
+    {
+        if ((string) $lockedLevels !== '["1"]') {
+            $extra = json_decode((string) $lockedLevels, true);
+            if (is_array($extra)) {
+                $levels = array_merge($levels, array_map('intval', $extra));
+            }
+        }
+
+        $levels = array_values(array_unique(array_filter(array_map('intval', $levels))));
+
+        return $levels ?: array(1);
+    }
+
+    /**
      * Test an event's publication state and UTC publication window.
      *
      * @param   object   $event         Event data.

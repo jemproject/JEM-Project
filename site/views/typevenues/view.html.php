@@ -68,7 +68,7 @@ class JemViewTypevenues extends JemView
             $this->rows          = array();
             $this->novenues      = 1;
             $this->pagination    = null;
-            $this->lists         = array('filter' => '', 'search' => '', 'order_Dir' => '', 'order' => 'a.city');
+            $this->lists         = array('filter' => '', 'search' => '', 'order_Dir' => '', 'order' => 'a.city', 'show_venue_event_filter' => false, 'show_all_venues' => false);
             $this->params        = $params;
             $this->action        = $uri->toString();
             $this->jemsettings   = $jemsettings;
@@ -118,6 +118,9 @@ class JemViewTypevenues extends JemView
         $lists['search']      = $search;
         $lists['order_Dir']   = $filter_order_Dir;
         $lists['order']       = $filter_order;
+        $state                = $this->get('State');
+        $lists['show_venue_event_filter'] = (bool) $state->get('filter.show_venue_event_filter', false);
+        $lists['show_all_venues'] = (bool) $state->get('filter.show_all_venues', false);
 
         $typeName  = htmlspecialchars($typeObj->name, ENT_QUOTES, 'UTF-8');
         $pagetitle = Text::sprintf('COM_JEM_TYPEVENUES_TITLE', $typeName);

@@ -79,6 +79,9 @@ function jem_common_show_filter(&$obj) {
   if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
     return false;
   }
+  if (!empty($obj->lists['show_venue_event_filter'])) {
+    return true;
+  }
   if ((int) $obj->params->get('showcountryfilter', 1)) {
     return true;
   }
@@ -399,6 +402,13 @@ if ($showEditColumn) {
       <?php echo $this->lists['country_filter']; ?>
     </div>
     <?php endif; ?>
+    <?php if (!empty($this->lists['show_venue_event_filter'])) : ?>
+    <label class="jem-row jem-align-center jem-nowrap">
+      <input type="hidden" name="show_all_venues" value="0">
+      <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+      <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+    </label>
+    <?php endif; ?>
     <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-actions">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
@@ -558,6 +568,16 @@ if ($showEditColumn) {
             <?php endforeach; ?>
   <?php endif; ?>
 </ul>
+
+<?php if (!empty($this->lists['show_venue_event_filter']) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
+<div class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
+    <label class="jem-row jem-align-center jem-nowrap">
+        <input type="hidden" name="show_all_venues" value="0">
+        <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+        <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+    </label>
+</div>
+<?php endif; ?>
 
 <div class="pagination">
     <?php echo $this->pagination->getPagesLinks(); ?>

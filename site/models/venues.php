@@ -42,8 +42,24 @@ class JemModelVenues extends JemModelEventslist
     //    $this->setState('filter.published', 1);
         $this->setState('filter.groupby', array('l.id'));
 
+        $eventMode = (int) $params->get('venue_event_filter', 0);
+        $eventMode = in_array($eventMode, array(0, 1, 2), true) ? $eventMode : 0;
+        $showControl = (bool) $params->get('show_venue_event_filter', 0) && $eventMode !== 0;
+        $showAll = $showControl && $app->input->getBool('show_all_venues', false);
+        $this->setState('filter.venue_event_mode', $showAll ? 0 : $eventMode);
+        $this->setState('filter.show_venue_event_filter', $showControl);
+        $this->setState('filter.show_all_venues', $showAll);
+
         # publish state
         $this->_populatePublishState($task);
+    }
+
+    protected function getStoreId($id = '')
+    {
+        $id .= ':' . (int) $this->getState('filter.venue_event_mode');
+        $id .= ':' . (int) $this->getState('filter.show_all_venues');
+
+        return parent::getStoreId($id);
     }
 
     /**
@@ -123,6 +139,13 @@ class JemModelVenues extends JemModelEventslist
         }
 
         $query->where($where);
+
+        $eventMode = (int) $this->getState('filter.venue_event_mode', 0);
+        if ($eventMode === 1 || $eventMode === 2) {
+            $eventState = $this->getState('filter.published') == 2 ? 2 : 1;
+            $query->where(JemHelper::getVenueEventExistsWhere('l', $eventMode === 1, $eventState));
+        }
+
         $query->group(array('l.id'));
         $query->order(array('l.ordering', 'l.venue'));
 
