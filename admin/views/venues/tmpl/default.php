@@ -19,7 +19,8 @@ $user        = JemFactory::getUser();
 $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem');
+$canOrder    = JemHelperBackend::can('venue', 'edit.state');
+$canAccessEvents = JemHelperBackend::can('event', 'access');
 $saveOrder    = $canOrder && $listOrder == 'a.ordering' && strtolower($listDirn) === 'asc';
 $saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
@@ -170,10 +171,12 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <th style="width:5%" class="center">
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?>
                 </th>
+                <?php if ($canAccessEvents) : ?>
                 <th style="width:15%" class="center" nowrap="nowrap">
                     <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
                     <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
+                <?php endif; ?>
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
@@ -194,11 +197,10 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
             $countItems = count($this->items);
             foreach ($this->items as $i => $item) :
                 $ordering    = ($listOrder == 'a.ordering');
-                $canCreate    = $user->authorise('core.create');
-                $canEdit    = $user->authorise('core.edit');
+                $canCreate    = JemHelperBackend::can('venue', 'create');
+                $canEdit      = JemHelperBackend::can('venue', 'edit', $item);
                 $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-                $canEditOwn    = $user->authorise('core.edit.own') && $item->created_by == $userId;
-                $canChange    = $user->authorise('core.edit.state') && $canCheckin;
+                $canChange     = JemHelperBackend::can('venue', 'edit.state', $item) && $canCheckin;
                 $link         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
                 $published     = HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
                 ?>
@@ -215,7 +217,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <?php if ($item->checked_out) : ?>
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'venues.', $canCheckin); ?>
                         <?php endif; ?>
-                        <?php if ($canEdit || $canEditOwn) : ?>
+                        <?php if ($canEdit) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jem&task=venue.edit&id='.(int) $item->id); ?>">
                                 <?php echo $this->escape($item->venue); ?>
                             </a>
@@ -254,7 +256,9 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     <td style="text-align:left" class="city"><?php echo $item->city ? $this->escape($item->city) : '-'; ?></td>
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
+                    <?php if ($canAccessEvents) : ?>
                     <td class="center"><?php echo $renderEventStateCounts($item); ?></td>
+                    <?php endif; ?>
                     <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php

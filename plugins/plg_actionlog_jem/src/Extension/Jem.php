@@ -207,6 +207,14 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         $subject = $this->eventArgument($event, 0);
         $status = (int) $this->eventArgument($event, 1, 0);
         $eventId = (int) $this->eventArgument($event, 2, 0);
+        $transitionList = (array) $this->eventArgument($event, 3, array());
+        $transitions = array();
+
+        foreach ($transitionList as $transition) {
+            if (is_object($transition) && !empty($transition->registrationId)) {
+                $transitions[(int) $transition->registrationId] = $transition;
+            }
+        }
         $attendees = array();
 
         if (is_array($subject)) {
@@ -218,14 +226,22 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         $messages = array();
 
         foreach ($attendees as $attendee) {
-            $messages[] = $this->createAttendeeMessage($attendee, $status);
+            $messages[] = $this->createAttendeeMessage(
+                $attendee,
+                $status,
+                $transitions[(int) ($attendee->id ?? 0)] ?? null
+            );
         }
 
         if (!$messages) {
             return;
         }
 
-        $this->addLog($messages, 'PLG_ACTIONLOG_JEM_ATTENDEE_STATUS_CHANGED', 'com_jem.attendee');
+        $this->addLog(
+            $messages,
+            $transitions ? 'PLG_ACTIONLOG_JEM_ATTENDEE_STATUS_TRANSITIONED' : 'PLG_ACTIONLOG_JEM_ATTENDEE_STATUS_CHANGED',
+            'com_jem.attendee'
+        );
     }
 
     public function onJemAfterAttachmentSave(Event $event): void
@@ -329,7 +345,7 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         return $message;
     }
 
-    private function createAttendeeMessage(object $attendee, ?int $status = null): array
+    private function createAttendeeMessage(object $attendee, ?int $status = null, ?object $transition = null): array
     {
         $user = $this->getApplication()->getIdentity();
         $id = (int) ($attendee->id ?? 0);
@@ -363,6 +379,18 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
 
         if ($status !== null) {
             $message['status'] = $this->statusToText($status);
+        }
+
+        if ($transition !== null) {
+            $message['oldstatus'] = $transition->oldStatus === null
+                ? Text::_('PLG_ACTIONLOG_JEM_STATUS_NOT_REGISTERED')
+                : $this->statusToText((int) $transition->oldStatus);
+            $message['status'] = $this->statusToText((int) ($transition->newStatus ?? $status ?? 0));
+            $message['source'] = (string) ($transition->source ?? 'unknown');
+            $message['notification'] = !empty($transition->notificationRequested) ? Text::_('JYES') : Text::_('JNO');
+            $message['forced'] = !empty($transition->forced) ? Text::_('JYES') : Text::_('JNO');
+            $message['oldplaces'] = (int) ($transition->oldPlaces ?? 0);
+            $message['places'] = (int) ($transition->newPlaces ?? 0);
         }
 
         return $message;

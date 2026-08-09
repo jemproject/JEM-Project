@@ -40,10 +40,6 @@ class JemViewCategories extends JemAdminView
             return false;
         }
 
-        // Load css
-        $wa = $this->app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // Preprocess the list of items to find ordering divisions.
         foreach ($this->items as &$item) {
             $this->ordering[$item->parent_id][] = $item->id;

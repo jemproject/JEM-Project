@@ -155,10 +155,25 @@ img.venue-image {
 
         // Setup variables for display.
         $html = array();
-        $imagePathQuery = ((string) $imagetype === 'events' && $imagePathValue !== '') ? '&amp;image_path=' . rawurlencode($imagePathValue) : '';
-        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $imagePathQuery;
-        $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component' . $imagePathQuery;
-        $folderHint = $imagePathValue !== '' ? 'images/jem/events/' . $imagePathValue : 'images/jem/events';
+        // Setup variables for display.
+        $html = array();
+
+        $recordId = (int) ($this->form ? $this->form->getValue('id') : 0);
+        $recordQuery = '&amp;record_id=' . $recordId;
+
+        $imagePathQuery = ((string) $imagetype === 'events' && $imagePathValue !== '')
+            ? '&amp;image_path=' . rawurlencode($imagePathValue)
+            : '';
+
+        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='
+            . $task . '&amp;tmpl=component' . $recordQuery . $imagePathQuery;
+
+        $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='
+            . $taskselect . '&amp;tmpl=component' . $imagePathQuery;
+
+        $folderHint = $imagePathValue !== ''
+            ? 'images/jem/events/' . $imagePathValue
+            : 'images/jem/events';
 
         //
         $html[] = "<div class=\"fltlft\">";

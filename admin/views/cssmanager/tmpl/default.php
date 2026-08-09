@@ -17,7 +17,7 @@ $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive');
 
 
-$canDo = JEMHelperBackend::getActions();
+$canManageTools = JemHelperBackend::canManage('jem.tools.manage');
 $customByStandard = array();
 $customExtras = array();
 $standardFiles = !empty($this->files['css']) ? $this->files['css'] : array();
@@ -198,7 +198,7 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                             <td class="text-muted"><?php echo htmlspecialchars($file->version ?: '-', ENT_COMPAT, 'UTF-8'); ?></td>
                             <td class="text-muted"><?php echo $formatBytes($file->size ?? 0); ?></td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php if ($canDo->get('core.edit')) : ?>
+                                <?php if ($canManageTools) : ?>
                                     <a class="btn btn-secondary btn-sm jem-copy-custom-btn"
                                         href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.copycustom&file=' . rawurlencode($file->name) . '&' . Session::getFormToken() . '=1'); ?>"
                                         onclick="var target = prompt('<?php echo htmlspecialchars($copyPrompt, ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars($file->name, ENT_QUOTES, 'UTF-8'); ?>'); if (!target) { return false; } this.href += '&customfile=' + encodeURIComponent(target);">
@@ -254,13 +254,13 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canDo, $renderDownloadButton) {
+                                <?php echo $renderCustomColumn($customFiles, function ($customFile) use ($canManageTools, $renderDownloadButton) {
                                     ob_start();
-                                    if ($canDo->get('core.edit') && $customFile->exists) {
+                                    if ($canManageTools && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';
                                     }
 
-                                    if ($canDo->get('core.delete') && $customFile->exists) {
+                                    if ($canManageTools && $customFile->exists) {
                                         echo ' <a class="btn btn-danger btn-sm" href="'
                                             . Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($customFile->name) . '&' . Session::getFormToken() . '=1')
                                             . '" onclick="return confirm(\'' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '\');">'
@@ -322,7 +322,7 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 <td class="text-muted"><?php echo htmlspecialchars($userFile->definitionVersion ?? '0.0', ENT_COMPAT, 'UTF-8'); ?></td>
                                 <td class="text-muted"><?php echo $formatBytes($userFile->definitionSize ?? 0); ?></td>
                                 <td class="jem-cssmanager-actions-cell">
-                                    <?php if ($canDo->get('core.edit') && !$userFile->exists) : ?>
+                                    <?php if ($canManageTools && !$userFile->exists) : ?>
                                         <a class="btn btn-secondary btn-sm"
                                             href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.createusercss&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>">
                                             <?php echo Text::_('COM_JEM_CSSMANAGER_CREATE'); ?>
@@ -344,12 +344,12 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 <td class="text-muted"><?php echo !empty($userFile->created) ? HTMLHelper::_('date', $userFile->created, 'Y-m-d') : ''; ?></td>
                                 <td class="text-muted"><?php echo !empty($userFile->modified) ? HTMLHelper::_('date', $userFile->modified, 'Y-m-d') : ''; ?></td>
                                 <td class="jem-cssmanager-actions-cell">
-                                    <?php if ($canDo->get('core.edit') && $userFile->exists) : ?>
+                                    <?php if ($canManageTools && $userFile->exists) : ?>
                                         <a class="btn btn-secondary btn-sm" href="<?php echo Route::_('index.php?option=com_jem&task=source.edit&id=' . $userFile->id); ?>">
                                             <?php echo Text::_('JTOOLBAR_EDIT'); ?>
                                         </a>
                                     <?php endif; ?>
-                                    <?php if ($canDo->get('core.delete') && $userFile->exists) : ?>
+                                    <?php if ($canManageTools && $userFile->exists) : ?>
                                         <a class="btn btn-danger btn-sm" href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>"
                                             onclick="return confirm('<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $userFile->name), ENT_QUOTES, 'UTF-8'); ?>');">
                                             <?php echo Text::_('JACTION_DELETE'); ?>
@@ -391,13 +391,13 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 }); ?>
                             </td>
                             <td class="jem-cssmanager-actions-cell">
-                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canDo, $renderDownloadButton) {
+                                <?php echo $renderCustomColumn($customExtras, function ($customFile) use ($canManageTools, $renderDownloadButton) {
                                     ob_start();
-                                    if ($canDo->get('core.edit') && $customFile->exists) {
+                                    if ($canManageTools && $customFile->exists) {
                                         echo '<a class="btn btn-secondary btn-sm" href="' . Route::_('index.php?option=com_jem&task=source.edit&id=' . $customFile->id) . '">' . Text::_('JTOOLBAR_EDIT') . '</a>';
                                     }
 
-                                    if ($canDo->get('core.delete') && $customFile->exists) {
+                                    if ($canManageTools && $customFile->exists) {
                                         echo ' <a class="btn btn-danger btn-sm" href="'
                                             . Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($customFile->name) . '&' . Session::getFormToken() . '=1')
                                             . '" onclick="return confirm(\'' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '\');">'

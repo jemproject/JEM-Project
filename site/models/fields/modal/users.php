@@ -50,7 +50,8 @@ class JFormFieldModal_Users extends FormField
         // Setup variables for display
         $html = array();
         $eventid = isset($this->element['eventid']) ? (int)$this->element['eventid'] : 0;
-        $link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=chooseusers&amp;tmpl=component&amp;function=jSelectUsers_'.$this->id.'&amp;a_id='.$eventid;
+        $link = 'index.php?option=com_jem&amp;view=editevent&amp;layout=chooseusers&amp;tmpl=component&amp;function=jSelectUsers_'.$this->id.'&amp;a_id='.$eventid
+            . '&amp;' . Session::getFormToken() . '=1';
 
         // we expect a list of unique, non-zero numbers
         $ids = explode(',', $this->value);

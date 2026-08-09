@@ -140,6 +140,7 @@ class JemViewAttendees extends JemView
         $this->rows         = $rows;
         $this->pagination     = $pagination;
         $this->event         = $event;
+        $this->waitingListStatus = JemWaitingListPromotion::availability((int) $event->id);
         $this->isModal       = $isModal;
         $this->pagetitle    = $pagetitle;
         $this->backlink        = $backlink;

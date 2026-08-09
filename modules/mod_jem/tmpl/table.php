@@ -30,7 +30,6 @@ $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulebasic">
@@ -44,18 +43,18 @@ $linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit
                 // Column: Title
                 $colTitle = '';
                 if ($showtitle) {
-                    $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
+                    $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'">'.$item->title.'</a>' : $item->title;
                     $colTitle = '<td style="padding: 10px 5px; vertical-align: middle;"><div class="event-title">' . $contentTitle . '</div></td>';
                 }
 
                 // Column: Date
-                $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'" '.$linkStyle.'>'.$item->dateinfo.'</a>' : $item->dateinfo;
+                $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'">'.$item->dateinfo.'</a>' : $item->dateinfo;
                 $colDate = '<td style="padding: 10px 5px; vertical-align: middle; font-size: 0.9em;">' . $contentDate . '</td>';
 
                 // Column: Venue
                 $colVenue = '';
                 if ($showvenue) {
-                    $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
+                    $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'">'.$item->venue.'</a>' : $item->venue;
                     $colVenue = '<td style="padding: 10px 5px; vertical-align: middle; font-size: 0.9em; font-style: italic;">' . $contentVenue . '</td>';
                 }
 

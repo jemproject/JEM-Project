@@ -167,6 +167,12 @@ class JemTableVenue extends Table
             return false;
         }
 
+        $this->timezone = trim(strip_tags((string) ($this->timezone ?? '')));
+        if ($this->timezone !== '' && !JemHelper::isValidTimeZone($this->timezone)) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_TIMEZONE'));
+            return false;
+        }
+
         $this->email = trim(strip_tags((string) $this->email));
         if (StringHelper::strlen($this->email) > 254) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_EMAIL_LENGTH'));
@@ -286,6 +292,9 @@ class JemTableVenue extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        if ($ret) {
+            JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
+        }
         if ($ret && $image_to_delete) {
             JemHelper::delete_unused_image_files('venue', $image_to_delete);
         }

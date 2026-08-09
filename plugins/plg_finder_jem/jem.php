@@ -343,7 +343,7 @@ class plgFinderJEM extends Adapter
         $sql = $sql instanceof JDatabaseQuery ? $sql : $db->getQuery(true);
 
         $sql->select('a.id, a.access, a.title, a.alias, a.article_id, a.attribs, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
-        $sql->select('a.created AS publish_start_date, a.dates AS start_date, a.enddates AS end_date');
+        $sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date, a.start_utc AS start_date, a.end_utc AS end_date');
         $sql->select('a.created_by, a.modified, a.version, a.published AS state');
         $sql->select('a.fulltext, a.introtext, a.fulltext AS body, a.introtext AS summary');
         $sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');

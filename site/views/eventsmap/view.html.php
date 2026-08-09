@@ -67,9 +67,11 @@ class JemViewEventsMap extends JemView
 
         // Load CSS
         JemHelper::loadCss('jem');
+        JemHelper::loadCss('eventsmap');
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
         JemHelper::loadCss('leaflet');
+        JemHelper::loadCss('leaflet-fullscreen');
 
         if ($print) {
             JemHelper::loadCss('print');

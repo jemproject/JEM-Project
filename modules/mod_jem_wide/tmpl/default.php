@@ -96,7 +96,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                     <?php if ($item->eventimageorig) {
                         $image = $item->eventimageorig;
                         $document = Factory::getApplication()->getDocument();
-                        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+                        JemHelper::loadCss('lightbox.min');
                         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                         echo '<script>lightbox.option({
                             \'showImageNumberLabel\': false,

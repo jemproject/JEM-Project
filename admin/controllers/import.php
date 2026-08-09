@@ -9,6 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
@@ -197,7 +199,7 @@ class JemControllerImport extends BaseController
      */
     private function assertCanImport()
     {
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }
@@ -1672,7 +1674,9 @@ class JemControllerImport extends BaseController
         }
 
         $app = Factory::getApplication();
-        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true)
+            ->setHeader('X-Content-Type-Options', 'nosniff', true)
+            ->sendHeaders();
 
         echo '<!doctype html><html><head><meta charset="utf-8"><title>'
             . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
@@ -1704,9 +1708,17 @@ class JemControllerImport extends BaseController
             throw new Exception(Text::_('COM_JEM_IMPORT_LOGS_EMPTY'), 404);
         }
 
-        $app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
-        $app->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true);
-        $app->setHeader('Content-Length', (string) filesize($log['path']), true);
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        $app->setHeader('Content-Type', 'application/octet-stream', true)
+            ->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true)
+            ->setHeader('Content-Length', (string) filesize($log['path']), true)
+            ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
+            ->setHeader('Pragma', 'public', true)
+            ->setHeader('X-Content-Type-Options', 'nosniff', true)
+            ->sendHeaders();
 
         readfile($log['path']);
         $app->close();

@@ -68,9 +68,9 @@ class JemViewVenuesMap extends JemView
         $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
         $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
         $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
-        $wa->registerAndUseStyle('leaflet.css', 'media/com_jem/css/leaflet.css');
-        $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
-        $wa->registerAndUseStyle('jem.css', 'media/com_jem/css/jem.css');
+        JemHelper::loadCss('leaflet');
+        JemHelper::loadCss('leaflet-fullscreen');
+        JemHelper::loadCss('jem');
 
         // Load css
         JemHelper::loadCustomCss();

@@ -16,7 +16,6 @@ $showtime        = (int)$params->get('showtime', 0);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showCategory    = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
 $showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
-$introtext       = $params->get('introtext', '');
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 
@@ -61,12 +60,6 @@ if ($flyer_link_type == 1) {
                         <?php echo $date['day']; ?>
                     </div>
                 </div>
-                <?php endif; ?>
-
-                <?php if (!empty($introtext)) :?>
-                    <div class="intro">
-                        <?php echo $introtext; ?>
-                    </div>
                 <?php endif; ?>
 
                 <?php $i = count($list); ?>

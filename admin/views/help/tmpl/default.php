@@ -13,19 +13,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 
-$options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
-    'opacityTransition' => true,
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
-);
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=help'); ?>" method="post" name="adminForm" id="adminForm">
 
@@ -134,10 +121,6 @@ modal.onclick = e => {
 
 <?php
 $wa = $this->document->getWebAssetManager();
-$wa->registerAndUseStyle(
-    'com_jem.help.modal',
-    'media/com_jem/css/help-modal.css'
-);
-
+JemHelper::loadCss('help-modal');
 $wa->useScript('keepalive');
 ?>

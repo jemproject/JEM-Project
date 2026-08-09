@@ -111,7 +111,7 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
             <div class="jem-admin-filter-bar">
                 <div class="jem-admin-filter-search">
                     <div class="input-group">
-                        <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
+                        <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
 
                         <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
                             <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>

@@ -37,9 +37,11 @@ $modified = !empty($this->_tmp_img->modified) ? HTMLHelper::_('date', $this->_tm
         <span class="jem-imagehandler-card-size"><?php echo htmlspecialchars((string) $this->_tmp_img->size, ENT_QUOTES, 'UTF-8'); ?></span>
         <span class="jem-imagehandler-card-size"><?php echo (int) $this->_tmp_img->width; ?> x <?php echo (int) $this->_tmp_img->height; ?> px</span>
         <span class="jem-imagehandler-card-date"><?php echo htmlspecialchars($modified, ENT_QUOTES, 'UTF-8'); ?></span>
+        <?php if ($this->canDeleteImages) : ?>
         <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
             <span class="icon-times" aria-hidden="true"></span>
             <span class="jem-imagehandler-delete-label"><?php echo Text::_('COM_JEM_DELETE_IMAGE'); ?></span>
         </a>
+        <?php endif; ?>
     </div>
 </div>

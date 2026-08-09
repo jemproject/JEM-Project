@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Session\Session;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
 
@@ -30,10 +29,13 @@ class JemControllerVenue extends JemControllerForm
      * @return boolean True if the event can be added, false if not.
      */
     public function add() {
-        if (!parent::add()) {
-            // Redirect to the return page.
-            $this->setRedirect($this->getReturnPage());
+        if (!$this->requireFrontendUser()) {
+            return false;
         }
+
+        $this->assertFrontendCanAdd('venue');
+
+        return parent::add();
     }
 
     /**
@@ -48,12 +50,7 @@ class JemControllerVenue extends JemControllerForm
         $user = JemFactory::getUser();
         // venues don't have a category yet
 
-        if ($user->can('add', 'venue')) {
-            return true;
-        }
-
-        // In the absense of better information, revert to the component permissions.
-        return parent::allowAdd();
+        return JemFrontendAccess::canAdd($user, 'venue');
     }
 
     /**
@@ -70,19 +67,14 @@ class JemControllerVenue extends JemControllerForm
         $recordId = isset($data[$key]) ? (int) $data[$key] : 0;
         $user     = JemFactory::getUser();
 
-        if (isset($data['created_by'])) {
-            $created_by = $data['created_by'];
-        } else {
-            $record = $this->getModel()->getItem($recordId);
-            $created_by = isset($record->created_by) ? $record->created_by : false;
+        if ($recordId < 1) {
+            return false;
         }
 
-        if ($user->can('edit', 'venue', $recordId, $created_by)) {
-            return true;
-        }
+        // Never authorise with submitted ownership or access fields.
+        $record = $this->getModel()->getItem($recordId);
 
-        // Since there is no asset tracking, revert to the component permissions.
-        return parent::allowEdit($data, $key);
+        return JemFrontendAccess::canEdit($user, 'venue', $record);
     }
 
     /**
@@ -93,13 +85,27 @@ class JemControllerVenue extends JemControllerForm
      * @return Boolean True if access level checks pass, false otherwise.
      */
     public function cancel($key = 'a_id') {
-        // Check for request forgeries
-        Session::checkToken() or jexit('Invalid Token');
+        $this->checkToken();
 
-        parent::cancel($key);
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId();
+
+        if ($recordId > 0) {
+            $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND');
+            $this->assertFrontendCanEdit('venue', $item);
+        } else {
+            $this->assertFrontendCanAdd('venue');
+        }
+
+        $result = parent::cancel($key);
 
         // Redirect to the return page.
         $this->setRedirect($this->getReturnPage());
+
+        return $result;
     }
 
     /**
@@ -111,7 +117,20 @@ class JemControllerVenue extends JemControllerForm
      * @return boolean True if access level check and checkout passes, false otherwise.
      */
     public function edit($key = null, $urlVar = 'a_id') {
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId(true);
+        $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND');
+        $this->assertFrontendCanEdit('venue', $item);
+
         $result = parent::edit($key, $urlVar);
+
+        if (!$result) {
+            // A checkout conflict must not expose an editable venue form.
+            $this->setRedirect($this->getReturnPage());
+        }
 
         return $result;
     }
@@ -122,10 +141,16 @@ class JemControllerVenue extends JemControllerForm
      * @return boolean True if the venue can be added, false if not.
      */
     public function copy() {
-        if (!parent::add()) {
-            // Redirect to the return page.
-            $this->setRedirect($this->getReturnPage());
+        if (!$this->requireFrontendUser()) {
+            return false;
         }
+
+        $this->assertFrontendCanAdd('venue');
+        $sourceId = $this->getFrontendRecordId(true);
+        $source = $this->getFrontendItemOrFail($sourceId, 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND');
+        $this->assertFrontendCanEdit('venue', $source);
+
+        return parent::add();
     }
 
     /**
@@ -248,8 +273,21 @@ class JemControllerVenue extends JemControllerForm
      * @return boolean True if successful, false otherwise.
      */
     public function save($key = null, $urlVar = 'a_id') {
-        // Check for request forgeries
-        Session::checkToken() or jexit('Invalid Token');
+        // Use Joomla's translated token failure and safe referrer redirect.
+        $this->checkToken();
+
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId();
+
+        if ($recordId > 0) {
+            $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND');
+            $this->assertFrontendCanEdit('venue', $item);
+        } else {
+            $this->assertFrontendCanAdd('venue');
+        }
 
         $result = parent::save($key, $urlVar);
 

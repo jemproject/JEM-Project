@@ -21,11 +21,14 @@
                 type="sql"
                 label="COM_JEM_TYPE_FIELD_TYPE"
                 description="COM_JEM_TYPE_FIELD_TYPE_DESC"
-                query="SELECT 0 AS value, '- ' AS text UNION SELECT id AS value, name AS text FROM #__jem_types WHERE published = 1 AND entity = 2 ORDER BY text ASC"
+                query="SELECT 0 AS value, 'COM_JEM_TYPECATEGORIES_ALL_TYPES' AS text, 0 AS sort_group UNION ALL SELECT id AS value, name AS text, 1 AS sort_group FROM #__jem_types WHERE published = 1 AND entity = 2 ORDER BY sort_group ASC, text ASC"
                 key_field="value"
                 value_field="text"
+                translate="true"
                 required="false" class="form-select w-auto jem-options-width-auto"
-            />
+            >
+                <option value="">COM_JEM_TYPECATEGORIES_NO_GROUPING</option>
+            </field>
         </fieldset>
     </fields>
 

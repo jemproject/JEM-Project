@@ -23,9 +23,6 @@ $params = $params->toArray();
 
 ?>
 <script>
-    window.addEvent('domready', function(){
-    });
-
     // moves elements from one select box to another one
     function moveOptions(from,to) {
         // Move them over

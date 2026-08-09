@@ -234,11 +234,15 @@ class JemMapHelper
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
         $country  = trim((string) $country);
         $typeAccess = self::accessList($levels);
+        $eventTypeJoin = $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id')
+            . ' AND ' . $db->quoteName('t.entity') . ' = 1'
+            . ' AND ' . $db->quoteName('t.published') . ' = 1';
         $venueTypeJoin = $db->quoteName('vt.id') . ' = ' . $db->quoteName('v.type_id')
             . ' AND ' . $db->quoteName('vt.entity') . ' = 3'
             . ' AND ' . $db->quoteName('vt.published') . ' = 1';
 
         if ($typeAccess !== '') {
+            $eventTypeJoin .= ' AND ' . $db->quoteName('t.access') . ' IN (' . $typeAccess . ')';
             $venueTypeJoin .= ' AND ' . $db->quoteName('vt.access') . ' IN (' . $typeAccess . ')';
         }
 
@@ -261,14 +265,17 @@ class JemMapHelper
                 'v.country',
                 'v.latitude',
                 'v.longitude',
+                't.icon AS event_type_icon',
+                't.color AS event_type_color',
                 'vt.name AS venue_type_name',
+                'vt.icon AS venue_type_icon',
                 'vt.color AS venue_type_color',
             ])
             ->from($db->quoteName('#__jem_events', 'e'))
             ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
             ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'))
             ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'))
-            ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1')
+            ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $eventTypeJoin)
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
@@ -279,6 +286,16 @@ class JemMapHelper
                 'v.longitude IS NOT NULL',
                 "v.longitude <> ''",
             ]);
+
+        $categoryTypeAccess = $typeAccess !== '' ? ' AND ct.access IN (' . $typeAccess . ')' : '';
+        $categoryContentAccess = $categoryAccess !== '' ? ' AND c2.access IN (' . $categoryAccess . ')' : '';
+        $categoryTypeBase = ' FROM #__jem_cats_event_relations AS cr2'
+            . ' INNER JOIN #__jem_categories AS c2 ON c2.id = cr2.catid AND c2.published = 1' . $categoryContentAccess
+            . ' INNER JOIN #__jem_types AS ct ON ct.id = c2.type_id AND ct.entity = 2 AND ct.published = 1' . $categoryTypeAccess
+            . ' WHERE cr2.itemid = e.id AND ct.icon <> ' . $db->quote('')
+            . ' ORDER BY c2.ordering ASC, c2.id ASC LIMIT 1';
+        $query->select('(' . 'SELECT ct.icon' . $categoryTypeBase . ') AS category_type_icon');
+        $query->select('(' . 'SELECT ct.color' . $categoryTypeBase . ') AS category_type_color');
 
         self::applyPublishWindow($query, 'e');
 
@@ -537,11 +554,7 @@ class JemMapHelper
 
     private static function applyPublishWindow($query, $eventAlias)
     {
-        $db = Factory::getDbo();
-        $now = Factory::getDate()->toSql();
-
-        $query->where($db->quoteName($eventAlias . '.publish_up') . ' <= ' . $db->quote($now));
-        $query->where('(' . $db->quoteName($eventAlias . '.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName($eventAlias . '.publish_down') . ' IS NULL)');
+        $query->where(\JemHelper::getEventPublicationWhere($eventAlias, false));
     }
 
     private static function accessList(array $levels, $lockedLevels = '["1"]')

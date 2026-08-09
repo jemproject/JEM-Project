@@ -231,11 +231,23 @@ class JemHtml
             $html .= Text::_($state[5]);
         } elseif ($canChange && !empty($state[2])) {
             $html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], null, $backend);
+            $confirm = addslashes(Text::_('COM_JEM_WAITINGLIST_PROMOTION_CONFIRM_SINGLE'));
+            $forceConfirm = addslashes(Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION_CONFIRM'));
             if ($backend) {
-                $attr .= ' onclick="return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
+                $confirmation = (int) $value === 2
+                    ? 'if (!window.confirm(\'' . $confirm . '\')) return false; '
+                        . 'var force = document.querySelector(\'#adminForm input[name="waitinglist_force"]:checked\'); '
+                        . 'if (force && !window.confirm(\'' . $forceConfirm . '\')) return false; '
+                    : '';
+                $attr .= ' onclick="' . $confirmation . 'return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
                 $url = '#';
             } else {
-                $url = Route::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i.'&'.Session::getFormToken().'=1');
+                if ((int) $value === 2) {
+                    $attr .= ' onclick="var notify = document.getElementById(\'jem-waitinglist-notify\'); '
+                        . 'if (notify && !notify.checked) { this.href = this.href.replace(\'waitinglist_notify=1\', \'waitinglist_notify=0\'); } '
+                        . 'return window.confirm(\'' . htmlspecialchars($confirm, ENT_QUOTES, 'UTF-8') . '\')"';
+                }
+                $url = Route::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i.'&waitinglist_notify=1&'.Session::getFormToken().'=1');
             }
             $html = HTMLHelper::_('link', $url, $html, $attr);
         } else {

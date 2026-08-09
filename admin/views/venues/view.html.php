@@ -27,6 +27,10 @@ use Joomla\CMS\Factory;
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('venue', 'access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $user     = JemFactory::getUser();
         $app      = Factory::getApplication();
         $document = $app->getDocument();
@@ -52,7 +56,6 @@ use Joomla\CMS\Factory;
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Add Scripts
         $wa->useScript('jquery');
@@ -126,17 +129,20 @@ use Joomla\CMS\Factory;
         $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
+        $canCreate = JemHelperBackend::can('venue', 'create');
+        $canEdit = JemHelperBackend::can('venue', 'edit')
+            || ($canDo->get('jem.venues.access') && $canDo->get('jem.venues.edit.own'));
+        $canChangeState = JemHelperBackend::can('venue', 'edit.state');
+        $canDelete = JemHelperBackend::can('venue', 'delete');
         $filterState = $this->state->get('filter_state');
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canCreate) {
             ToolbarHelper::addNew('venue.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canEdit) {
             ToolbarHelper::editList('venue.edit');
             ToolbarHelper::divider();
         }

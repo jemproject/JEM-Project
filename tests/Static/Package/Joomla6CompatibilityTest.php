@@ -38,6 +38,25 @@ final class Joomla6CompatibilityTest extends TestCase
         self::assertSame('8.3', (string) $current->php_minimum);
     }
 
+    public function testBetaReleaseNotesAreStoredInTheComponentAndPackageManifests(): void
+    {
+        foreach (array('/jem.xml', '/package/pkg_jem.xml') as $relativePath) {
+            $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
+
+            self::assertNotFalse($manifest);
+            self::assertSame('5.0.1beta2', (string) $manifest->version);
+            self::assertCount(33, explode(';', (string) $manifest->notes));
+            self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2257', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2263', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2288', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2280', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2287', (string) $manifest->notes);
+            self::assertStringContainsString('Commit 1e82bf8', (string) $manifest->notes);
+            self::assertStringContainsString('Commit f199043', (string) $manifest->notes);
+        }
+    }
+
     public function testExtensionManifestsUseJem5Version(): void
     {
         $manifestPaths = array_merge(

@@ -44,7 +44,7 @@ if (empty($list) && !$params->get('show_no_events')) {
     return;
 }
 
-$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 

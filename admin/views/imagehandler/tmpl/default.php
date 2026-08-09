@@ -304,10 +304,12 @@ use Joomla\CMS\Session\Session;
                         <td><?php echo (int) $image->width; ?> x <?php echo (int) $image->height; ?> px</td>
                         <td><?php echo htmlspecialchars($modified, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td class="text-end">
+                            <?php if ($this->canDeleteImages) : ?>
                             <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
                                 <span class="icon-trash" aria-hidden="true"></span>
                                 <?php echo Text::_('COM_JEM_DELETE_IMAGE'); ?>
                             </a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endfor; ?>

@@ -50,13 +50,16 @@ class JFormFieldModal_Venue extends FormField
 
         // Setup variables for display
         $html = array();
-        $link = Uri::base() . 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id;
+        $link = Uri::base() . 'index.php?option=com_jem&amp;view=editevent&amp;layout=choosevenue&amp;tmpl=component&amp;function=jSelectVenue_'.$this->id
+            . '&amp;' . Session::getFormToken() . '=1';
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         $query->select('venue');
         $query->from('#__jem_venues');
         $query->where(array('id='.(int)$this->value));
+        $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
+        $query->where('access IN (' . implode(',', $levels) . ')');
         $db->setQuery($query);
 
 

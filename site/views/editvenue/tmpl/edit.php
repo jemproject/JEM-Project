@@ -26,19 +26,6 @@ $hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed
 $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 
-$options = array(
-    'onActive' => 'function(title, description){
-        description.setStyle("display", "block");
-        title.addClass("open").removeClass("closed");
-    }',
-    'onBackground' => 'function(title, description){
-        description.setStyle("display", "none");
-        title.addClass("closed").removeClass("open");
-    }',
-    'startOffset' => 0,  // 0 starts on the first tab, 1 starts the second, etc...
-    'useCookie' => true, // this must not be a string. Don't use quotes.
-);
-
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
 
@@ -800,7 +787,6 @@ Text::script('JCANCEL');
 
 </script>
 <script>
-    // window.addEvent('domready', function(){
     window.onload = (event) => {
 
         setAttribute();
@@ -1001,6 +987,7 @@ Text::script('JCANCEL');
                     <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <li class="jem-venue-geocode-actions">
                         <label>&nbsp;</label>
                         <div class="jem-geocode-toolbar">

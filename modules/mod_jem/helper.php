@@ -79,12 +79,14 @@ abstract class ModJemHelper
         # upcoming or running events, on mistake default to upcoming events
         else {
             $model->setState('filter.published',1);
-            $model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby',array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
             $offset_minutes = 60 * $params->get('offset_hours', 0);
 
-            $cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
+            $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+            $cal_from .= ($type == 1)
+                ? ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')'
+                : ')';
         }
 
         $model->setState('filter.calendar_from',$cal_from);
@@ -139,7 +141,7 @@ abstract class ModJemHelper
             $lists[$i]->enddates    = $row->enddates;
             $lists[$i]->endtimes    = $row->endtimes;
             $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(', ', JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));

@@ -60,7 +60,8 @@ final class FilePermissionGuardTest extends TestCase
         }
 
         self::assertStringContainsString('Session::checkToken()', $contents);
-        self::assertStringContainsString('$app->getIdentity()->authorise(\'core.manage\', \'com_jem\')', $contents);
+        self::assertStringContainsString('canUploadForTask($task, $recordId)', $contents);
+        self::assertStringContainsString("JemHelperBackend::canManage('jem.tools.manage')", $contents);
         self::assertStringContainsString('$allowedFolders = array(\'events\', \'venues\', \'categories\')', $contents);
         self::assertStringContainsString('Path::clean($directories[$task])', $contents);
         self::assertStringContainsString('JemImage::sanitize($base_Dir, $file[\'name\'])', $contents);

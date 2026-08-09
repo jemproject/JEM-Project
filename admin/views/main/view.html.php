@@ -25,7 +25,6 @@ class JemViewMain extends JemAdminView
     {
         //initialise variables
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
         $user     = JemFactory::getUser();
 
         // Get main model data
@@ -49,10 +48,6 @@ class JemViewMain extends JemAdminView
             $updatedata->current = null;
         }
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         //assign vars to the template
         $this->events   = $events;
         $this->venue    = $venue;
@@ -64,13 +59,6 @@ class JemViewMain extends JemAdminView
         $this->registration = $registration;
         $this->user     = $user;
         $this->updatedata = $updatedata;
-
-        // Load CSS
-        $wa = $document->getWebAssetManager();
-        if (!$wa->assetExists('style', 'jem.backend')) {
-           $wa->registerStyle('jem.backend', 'com_jem/backend.css');
-        }
-        $wa->useStyle('jem.backend');
 
         // Assign variables to template
         $this->events     = $events;
@@ -98,7 +86,7 @@ class JemViewMain extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_MAIN_TITLE'), 'home');
 
-        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+        if (JemHelperBackend::canManage('core.options')) {
             ToolbarHelper::preferences('com_jem');
         }
 
@@ -109,18 +97,25 @@ class JemViewMain extends JemAdminView
     /**
      * Creates the buttons view
      *
-     * @param  string  $link  targeturl
-     * @param  string  $image path to image
-     * @param  string  $text  image description
-     * @param  boolean $modal 1 for loading in modal
+     * @param  string      $link     targeturl
+     * @param  string      $image    path to image
+     * @param  string      $text     image description
+     * @param  boolean     $modal    1 for loading in modal
+     * @param  string|null $addLink  optional "add new" target url, shown as a small overlay badge
+     * @param  string|null $addText  tooltip text for the add badge (falls back to $text)
      */
-    protected function quickiconButton($link, $image, $text, $modal = 0)
+    protected function quickiconButton($link, $image, $text, $modal = 0, $addLink = null, $addText = null)
     {
         // Initialise variables
         $lang = Factory::getApplication()->getLanguage();
         ?>
         <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
             <div class="icon">
+                <?php if ($addLink) : ?>
+                    <a href="<?php echo $addLink; ?>" class="jem-wei-add" title="<?php echo $addText ?: $text; ?>">
+                        <span aria-hidden="true">+</span>
+                    </a>
+                <?php endif; ?>
                 <?php if ($modal == 1) : ?>
                     <a href="<?php echo $link.'&amp;tmpl=component'; ?>" style="cursor:pointer" class="modal"
                             rel="{handler: 'iframe', size: {x: 650, y: 400}}">

@@ -63,6 +63,7 @@ use Joomla\CMS\Date\Date;
     <input type="hidden" name="recurrence_number" id="recurrence_number" value="<?php echo $this->item->recurrence_number; ?>" />
     <input type="hidden" name="recurrence_number_saved" id="recurrence_number_saved" value="<?php echo $this->item->recurrence_number; ?>">
     <input type="hidden" name="recurrence_byday" id="recurrence_byday" value="<?php echo $this->item->recurrence_byday; ?>" />
+    <?php echo $this->loadTemplate('customschedule'); ?>
 
     <script>
 

@@ -15,8 +15,7 @@ use Joomla\CMS\Language\Text;
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 $wa = $this->document->getWebAssetManager();
-        $wa->useStyle('jem.geostyle')
-            ->useScript('keepalive')
+$wa->useScript('keepalive')
             ->useScript('form.validate')
             ->useScript('jem.attachments')
             ->useScript('inlinehelp')
@@ -855,7 +854,6 @@ Text::script('JCANCEL');
         }
     });
 
-    // window.addEvent('domready', function() {
     window.onload = function() {
         setAttribute();
         test();
@@ -1057,6 +1055,7 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                             <li>
                                 <div class="label-form">
                                     <div class="control-group">

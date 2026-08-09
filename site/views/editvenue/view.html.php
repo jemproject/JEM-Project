@@ -26,11 +26,16 @@ class JemViewEditvenue extends JemView
      */
     public function display($tpl = null)
     {
+        $app  = Factory::getApplication();
+        $user = JemFactory::getUser();
+
+        if (JemFrontendAccess::redirectGuestToLogin($app)) {
+            return false;
+        }
+
         // Initialise variables.
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
-        $app         = Factory::getApplication();
-        $user        = JemFactory::getUser();
         $document    = $app->getDocument();
         $model       = $this->getModel();
         $menu        = $app->getMenu();
@@ -55,14 +60,7 @@ class JemViewEditvenue extends JemView
 
         // check for data error
         if (empty($item)) {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-            return false;
-        }
-
-        // check for guest
-        if (!$user || $user->id == 0) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 500);
         }
 
         if (empty($item->id)) {
@@ -77,8 +75,7 @@ class JemViewEditvenue extends JemView
         $authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
         if ($authorised !== true) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         // Decide which parameters should take priority
@@ -154,7 +151,7 @@ class JemViewEditvenue extends JemView
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
+        JemHelper::loadCss('jem-attachments');
 
         // Load script
         $wa->useScript('jquery');

@@ -29,7 +29,7 @@ class JemModelAnnualcalendar extends JemModelEventslist
         $show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->show_archived_events = $show_archived_events;
         $startdayonly         = $params->get('show_only_start', false);
-        $year                 = (int) $app->input->getInt('yearID', date('Y'));
+        $year                 = (int) $app->input->getInt('yearID', substr(JemHelper::getJoomlaDate(), 0, 4));
         $startMonth           = max(1, min(12, (int) $params->get('annual_start_month', 1)));
 
         $periodStart = new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $startMonth));

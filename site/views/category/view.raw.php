@@ -50,16 +50,8 @@ class JemViewCategory extends HtmlView
                 return;
             }
 
-            if (empty($category->user_has_access_category)) {
-                $user = JemFactory::getUser();
-                if ($user->get('guest') || !$user->get('id')) {
-                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
-                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($app->input->server->getString('REQUEST_URI')), false));
-
-                    return;
-                }
-
-                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            if (!JemFrontendAccess::enforceViewAccess(!empty($category->user_has_access_category), $app)) {
+                return;
             }
 
             $description = Text::_('COM_JEM_NO_DESCRIPTION');
@@ -90,6 +82,20 @@ class JemViewCategory extends HtmlView
         }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
+            $categoryModel = $this->getModel('Category');
+            $categoryModel->setId($catid);
+            $categoryItem = $categoryModel->getCategory();
+
+            if (empty($categoryItem)) {
+                $app->close();
+
+                return;
+            }
+
+            if (!JemFrontendAccess::enforceViewAccess(!empty($categoryItem->user_has_access_category), $app)) {
+                return;
+            }
+
             // Get data from the model
             $model = $this->getModel('CategoryCal');
             $model->setId($catid);

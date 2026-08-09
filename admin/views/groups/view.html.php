@@ -37,10 +37,6 @@ class JemViewGroups extends JemAdminView
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         // assign data to template
         $this->user         = $user;
         $this->jemsettings  = $jemsettings;

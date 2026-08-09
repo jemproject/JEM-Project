@@ -96,6 +96,16 @@
             <option value="0">COM_JEM_SETTINGS_ICAL_TIMEZONE_FLOAT</option>
             <option value="1">COM_JEM_SETTINGS_ICAL_TIMEZONE_JOOMLA</option>
         </field>
+        <field name="event_timezone_default" type="list"
+            label="COM_JEM_SETTINGS_EVENT_TIMEZONE_DEFAULT"
+            description="COM_JEM_SETTINGS_EVENT_TIMEZONE_DEFAULT_DESC"
+            class="inputbox form-select"
+            default="joomla"
+            required="true"
+        >
+            <option value="joomla">COM_JEM_EVENT_TIMEZONE_MODE_JOOMLA</option>
+            <option value="venue">COM_JEM_EVENT_TIMEZONE_MODE_VENUE</option>
+        </field>
         <field name="weekdaystart" type="list"
             label="COM_JEM_SETTINGS_SELECTFIRSTWEEKDAY"
             description="COM_JEM_SETTINGS_SELECTFIRSTWEEKDAY_DESC"
@@ -456,6 +466,7 @@
             class="inputbox btn-group btn-group-yesno"
             default="0"
             required="false"
+            showon="showfroregistra:1,2"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -466,9 +477,31 @@
             class="inputbox btn-group btn-group-yesno"
             default="0"
             required="false"
+            showon="showfroregistra:1,2"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
+        </field>
+        <field name="waitinglist_automatic" type="radio"
+            label="COM_JEM_WAITINGLIST_AUTOMATIC"
+            description="COM_JEM_WAITINGLIST_AUTOMATIC_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="false"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="waitinglist_strategy" type="list"
+            label="COM_JEM_WAITINGLIST_STRATEGY"
+            description="COM_JEM_WAITINGLIST_STRATEGY_DESC"
+            class="inputbox w-auto"
+            default="strict"
+            required="false"
+            showon="waitinglist_automatic:1"
+        >
+            <option value="strict">COM_JEM_WAITINGLIST_STRATEGY_STRICT</option>
+            <option value="fill">COM_JEM_WAITINGLIST_STRATEGY_FILL</option>
         </field>
     </fieldset>
 
@@ -1134,6 +1167,7 @@
             class="inputbox btn-group btn-group-yesno"
             default="0"
             required="false"
+            showon="gddisabled:1"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -1178,6 +1212,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="oldevent:1,2,3"
         />
     </fieldset>
 
@@ -1248,6 +1283,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showcity:1"
         />
     </fieldset>
 
@@ -1271,6 +1307,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showatte:1"
         />
     </fieldset>
 
@@ -1294,6 +1331,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showtitle:1"
         />
     </fieldset>
 
@@ -1317,6 +1355,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showlocate:1"
         />
         <field name="showlinkvenue" type="radio"
             label="COM_JEM_DISPLAY_LINK_TO_VENUE_VIEW"
@@ -1324,6 +1363,7 @@
             class="inputbox btn-group btn-group-yesno"
             default="0"
             required="false"
+            showon="showlocate:1"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -1350,6 +1390,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showstate:1"
         />
     </fieldset>
 
@@ -1373,6 +1414,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showcat:1"
         />
         <field name="catlinklist" type="radio"
             label="COM_JEM_DISPLAY_LINK_TO_CATEGORY_VIEW"
@@ -1380,6 +1422,7 @@
             class="inputbox btn-group btn-group-yesno"
             default="0"
             required="false"
+            showon="showcat:1"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -1406,6 +1449,7 @@
             size="10"
             maxlength="10"
             required="false"
+            showon="showeventimage:1"
         />
     </fieldset>
 
@@ -2482,6 +2526,7 @@
                 class="inputbox"
                 default="0"
                 required="false"
+                showon="event_comunsolution:1"
             >
                 <option value="0">COM_JEM_LINK_PROFILE</option>
                 <option value="1">COM_JEM_LINK_AVATAR</option>
@@ -2737,40 +2782,6 @@
             <field name="css_calendar_responsive_customfile" type="cssfile"
                 description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_RESPONSIVE_CUSTOMFILE_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_CUSTOMFILE"
-                class="inputbox"
-                size="50"
-                required="false"
-            />
-            <field type="spacer" name="spacer2b" hr="true" />
-            <field name="css_colorpicker_usecustom" type="radio"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_USECUSTOM"
-                class="inputbox btn-group btn-group-yesno"
-                default="0"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="css_colorpicker_customfile" type="cssfile"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
-                class="inputbox"
-                size="50"
-                required="false"
-            />
-            <field type="spacer" name="spacer3" hr="true" />
-            <field name="css_colorpicker_responsive_usecustom" type="radio"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_USECUSTOM"
-                class="inputbox btn-group btn-group-yesno"
-                default="0"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="css_colorpicker_responsive_customfile" type="cssfile"
-                description="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_RESPONSIVE_CUSTOMFILE_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_COLORPICKER_CUSTOMFILE"
                 class="inputbox"
                 size="50"
                 required="false"

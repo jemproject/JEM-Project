@@ -163,7 +163,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <tr>
                 <td style="width: 80%">
                     <b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
-                    <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
+                    <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo ($this->event->recurrence_type || !empty($this->event->series_id)) ? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
                     <br>
                     <b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
                         echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
@@ -189,6 +189,23 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                 <?php echo $this->pagination->getLimitBox(); ?>
             </div>
         </div>
+
+        <?php if ($this->event->waitinglist) : ?>
+            <div class="alert alert-info" role="status">
+                <?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?>
+                <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
+                    <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
+                        ? Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_FILL')
+                        : Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_STRICT'); ?>
+                <?php else : ?>
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_MODE_MANUAL'); ?>
+                <?php endif; ?>
+                <label class="ms-3 mb-0">
+                    <input id="jem-waitinglist-notify" type="checkbox" checked="checked">
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_NOTIFY_PROMOTED'); ?>
+                </label>
+            </div>
+        <?php endif; ?>
 
         <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.Session::getFormToken().'=1'; ?>
 

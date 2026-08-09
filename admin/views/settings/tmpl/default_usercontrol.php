@@ -38,8 +38,10 @@ use Joomla\CMS\Language\Text;
             <legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield('showfroregistra'); ?></div></li>
-                <li id="froreg1"><div class="label-form"><?php echo $this->form->renderfield('regallowinvitation'); ?></div></li>
-                <li id="froreg2"><div class="label-form"><?php echo $this->form->renderfield('regallowcomments'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('regallowinvitation'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('regallowcomments'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist_automatic'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield('waitinglist_strategy'); ?></div></li>
             </ul>
         </fieldset>
     </div>

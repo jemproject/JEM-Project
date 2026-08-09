@@ -159,12 +159,21 @@ class PlgContentJemlistevents extends CMSPlugin
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
 
-        $templatePath = JPATH_BASE . '/templates/' . $templateName . '/css/jemlistevents.css';
+        $templatePath = JPATH_SITE . '/templates/' . $templateName . '/css/plg_content_jemlistevents/jemlistevents.css';
+        $legacyTemplatePath = JPATH_SITE . '/templates/' . $templateName . '/css/jemlistevents.css';
 
         if (file_exists($templatePath)) {
-            $wa->registerAndUseStyle('jemlistevents', 'templates/' . $templateName . '/css/jemlistevents.css');
+            $styleUri = 'templates/' . $templateName . '/css/plg_content_jemlistevents/jemlistevents.css';
+        } elseif (file_exists($legacyTemplatePath)) {
+            $styleUri = 'templates/' . $templateName . '/css/jemlistevents.css';
         } else {
-            $wa->registerAndUseStyle('jemlistevents', 'media/plg_content_jemlistevents/css/jemlistevents.css');
+            $styleUri = 'media/plg_content_jemlistevents/css/jemlistevents.css';
+        }
+
+        if ($wa->assetExists('style', 'plg_content_jemlistevents')) {
+            $wa->useStyle('plg_content_jemlistevents');
+        } else {
+            $wa->registerAndUseStyle('plg_content_jemlistevents', $styleUri);
         }
     }
 
@@ -280,7 +289,7 @@ class PlgContentJemlistevents extends CMSPlugin
 
         $type = $parameters['type'] ?? 'unfinished';
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $currentTime = date('Y-m-d H:i:s');
+        $currentTime = Factory::getDate()->toSql();
 
         try {
             $this->applyTypeFilter($model, $type, $currentTime);
@@ -388,7 +397,7 @@ class PlgContentJemlistevents extends CMSPlugin
      */
     private function applyTodayFilter(BaseDatabaseModel $model, string $to_date): void
     {
-        $today = date('Y-m-d', strtotime($to_date));
+        $today = JemHelper::getJoomlaDate();
         $model->setState('filter.published', 1);
         $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
         $model->setState('filter.calendar_from', 'a.dates <= "' . $today . '"');
@@ -401,8 +410,8 @@ class PlgContentJemlistevents extends CMSPlugin
     private function applyUnfinishedFilter(BaseDatabaseModel $model, string $to_date, string $full_end_datetime): void
     {
         $model->setState('filter.published', 1);
-        $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $model->setState('filter.calendar_from', $full_end_datetime . ' > "' . $to_date . '"');
+        $model->setState('filter.orderby', ['a.start_utc ASC', 'a.dates ASC', 'a.times ASC']);
+        $model->setState('filter.calendar_from', JemHelper::getEventDateTimeWhere('end', '>'));
         $model->setState('filter.calendar_to', null);
     }
 
@@ -412,8 +421,8 @@ class PlgContentJemlistevents extends CMSPlugin
     private function applyUpcomingFilter(BaseDatabaseModel $model, string $to_date, string $full_start_datetime): void
     {
         $model->setState('filter.published', 1);
-        $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $model->setState('filter.calendar_from', $full_start_datetime . ' > "' . $to_date . '"');
+        $model->setState('filter.orderby', ['a.start_utc ASC', 'a.dates ASC', 'a.times ASC']);
+        $model->setState('filter.calendar_from', JemHelper::getEventDateTimeWhere('start', '>'));
         $model->setState('filter.calendar_to', null);
     }
 
@@ -423,9 +432,9 @@ class PlgContentJemlistevents extends CMSPlugin
     private function applyOngoingFilter(BaseDatabaseModel $model, string $to_date, string $full_start_datetime, string $full_end_datetime): void
     {
         $model->setState('filter.published', 1);
-        $model->setState('filter.orderby', ['a.dates ASC', 'a.times ASC']);
-        $model->setState('filter.calendar_from', $full_start_datetime . ' <= "' . $to_date . '"');
-        $model->setState('filter.calendar_to', $full_end_datetime . ' >= "' . $to_date . '"');
+        $model->setState('filter.orderby', ['a.start_utc ASC', 'a.dates ASC', 'a.times ASC']);
+        $model->setState('filter.calendar_from', JemHelper::getEventDateTimeWhere('start', '<='));
+        $model->setState('filter.calendar_to', JemHelper::getEventDateTimeWhere('end', '>='));
     }
 
     /**

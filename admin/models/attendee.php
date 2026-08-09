@@ -43,12 +43,7 @@ class JemModelAttendee extends BaseDatabaseModel
         parent::__construct();
 
         $jinput = Factory::getApplication()->input;
-        $array = $jinput->get('id',  0, 'array');
-
-        if(is_array($array))
-        {
-            $this->setId((int)$array[0]);
-        }
+        $this->setId($jinput->getInt('id', 0));
     }
 
     /**
@@ -93,7 +88,7 @@ class JemModelAttendee extends BaseDatabaseModel
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
-            $query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.seriesbooking'));
+            $query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.series_id', 'a.series_order', 'a.seriesbooking'));
             $query->from('#__jem_register as r');
             $query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
             $query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -154,6 +149,14 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
+        if (!in_array(JemRegistrationTransition::logicalStatus($attendee), array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         $row = Table::getInstance('jem_register', '');
         $row->bind($attendee);
         $row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
@@ -182,12 +185,18 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
+        if ($status !== false && !JemRegistrationTransition::isValidStatus($status)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         // Split status and waiting
         if ($status !== false) {
             if ($status == 2) {
                 $data['status'] = 1;
                 $data['waiting'] = 1;
-            } elseif ($status == 1) {
+            } else {
+                $data['status'] = (int) $status;
                 $data['waiting'] = 0;
             }
         }
@@ -196,8 +205,10 @@ class JemModelAttendee extends BaseDatabaseModel
         $row = Table::getInstance('jem_register', '');
 
         if ($id > 0) {
-            $row->load($id);
-            $old_data = clone $row;
+            if (!$row->load($id)) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
         }
 
         // bind it to the table
@@ -229,7 +240,17 @@ class JemModelAttendee extends BaseDatabaseModel
 
         // Are we saving from an item edit?
         if ($row->id) {
+            if (!$row->check()) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
 
+            if (!$row->store()) {
+                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+                return false;
+            }
+
+            return $row;
         } else {
             if ($row->status === 0) {
                 // todo: add "invited" field to store such timestamps?
@@ -239,7 +260,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
             // Get event
             $query = $db->getQuery(true);
-            $query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','seriesbooking','singlebooking'));
+            $query->select(array('id','maxplaces','waitinglist','recurrence_first_id','recurrence_type','series_id','series_order','seriesbooking','singlebooking'));
             $query->from('#__jem_events');
             $query->where('id= '.$db->quote($eventid));
 
@@ -248,7 +269,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
             // If recurrence event, save series event
             $events = array();
-            if($event->recurrence_type){
+            if($event->recurrence_type || !empty($event->series_id)){
                 // Retrieving seriesbooking
                 $seriesbooking = $data["seriesbooking"];
                 $singlebooking = $data["singlebooking"];
@@ -256,15 +277,25 @@ class JemModelAttendee extends BaseDatabaseModel
                 // If event has 'seriesbooking' active
                 if($event->seriesbooking && $seriesbooking && !$singlebooking){
                     //GEt date and time now
-                    $dateFrom = date('Y-m-d', time());
-                    $timeFrom = date('H:i', time());
+                    $nowTimestamp = time();
+                    $dateFrom = gmdate('Y-m-d', $nowTimestamp);
+                    $timeFrom = gmdate('H:i:s', $nowTimestamp);
+                    $utcFrom = gmdate('Y-m-d H:i:s', $nowTimestamp);
 
                     // Get the all recurrence events of serie from now
                     $query = $db->getQuery(true);
-                    $query->select(array('id','recurrence_first_id','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
+                    $query->select(array('id','recurrence_first_id','series_id','series_order','maxplaces','waitinglist','recurrence_type','seriesbooking','singlebooking'));
                     $query->from('#__jem_events as a');
-                    $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
-                    $query->where('(a.dates > ' . $db->quote($dateFrom) . ' OR a.dates = ' . $db->quote($dateFrom) . ' AND dates >= ' . $db->quote($timeFrom) . ')');
+                    if (!empty($event->series_id)) {
+                        $query->where('a.series_id = ' . (int) $event->series_id);
+                    } else {
+                        $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ') OR a.recurrence_first_id = ' . (int)($event->recurrence_first_id?$event->recurrence_first_id:$event->id) . ")");
+                    }
+                    $query->where(
+                        '((a.start_utc IS NOT NULL AND a.start_utc >= ' . $db->quote($utcFrom) . ')' .
+                        ' OR (a.start_utc IS NULL AND (a.dates > ' . $db->quote($dateFrom) .
+                        ' OR (a.dates = ' . $db->quote($dateFrom) . ' AND (a.times IS NULL OR a.times >= ' . $db->quote($timeFrom) . ')))))'
+                    );
                     $db->setQuery($query);
                     $events = $db->loadObjectList();
                 }
@@ -274,6 +305,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 $events [] = clone $event;
             }
 
+            $storedRow = null;
             foreach ($events as $e) {
 
                 // Check if user is registered to each series event
@@ -341,8 +373,13 @@ class JemModelAttendee extends BaseDatabaseModel
                     Factory::getApplication()->enqueueMessage($row->getError(), 'error');
                     return false;
                 }
+
+                if ($storedRow === null || (int) $e->id === $eventid) {
+                    $storedRow = $row_aux;
+                }
             }
-            return $row;
+
+            return $storedRow ?: false;
         }
     }
 
@@ -355,6 +392,11 @@ class JemModelAttendee extends BaseDatabaseModel
      */
     public function setStatus($pks, $value = 1, $eventId = 0)
     {
+        if (!JemRegistrationTransition::isValidStatus($value) || (int) $eventId < 1) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
         // Sanitize the ids.
         $pks = (array)$pks;
         ArrayHelper::toInteger($pks);

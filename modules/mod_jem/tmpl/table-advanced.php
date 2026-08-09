@@ -29,8 +29,6 @@ $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
-
 // --- PREPARE TABLE HEADERS ---
 $headerTitle = '<th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> '.Text::_('COM_JEM_EVENT').'</th>';
 $headerDate  = '<th><i class="fa-solid fa-calendar-check"></i> '.Text::_('COM_JEM_DATE').'</th>'; // Simplified Date Header

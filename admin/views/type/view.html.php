@@ -42,7 +42,6 @@ class JemViewType extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         if (version_compare(JVERSION, '5.0.0', '>=')) {
             $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');

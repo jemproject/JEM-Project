@@ -42,6 +42,9 @@ Table::addIncludePath(JPATH_BASE.'/components/com_jem/tables');
 // create JEM's file logger
 JemHelper::addFileLogger();
 
+// Load the selected backend stylesheet once for every administrator view.
+JemHelper::loadCss('backend');
+
 // Require the frontend base controller
 require_once (JPATH_BASE.'/components/com_jem/controller.php');
 

@@ -356,7 +356,7 @@ class JemModelImport extends BaseDatabaseModel
 
         return $user
             && !$user->guest
-            && ($user->authorise('core.admin') || $user->authorise('core.manage', 'com_jem'));
+            && JemHelperBackend::canManage('jem.tools.manage');
     }
 
     /**

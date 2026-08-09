@@ -110,6 +110,16 @@ class JemViewVenue extends JemView
             $model->setDate(mktime(0, 0, 1, $month, 1, $year));
             $rows = $this->get('Items','VenueCal');
 
+            $showVenueSelector = (bool) $params->get('show_venue_selector', 0);
+            $venueOptions = $showVenueSelector ? $this->get('VenueOptions') : array();
+            $useFancyVenueSelector = $showVenueSelector && !$print && count($venueOptions) >= 8;
+
+            if ($useFancyVenueSelector) {
+                $document->getWebAssetManager()
+                    ->usePreset('choicesjs')
+                    ->useScript('webcomponent.field-fancy-select');
+            }
+
             // Set Page title
             $pagetitle = $params->def('page_title', $menuitem->title);
             $params->def('page_heading', $params->get('page_title'));
@@ -163,6 +173,10 @@ class JemViewVenue extends JemView
 
             // map variables
             $this->rows          = $rows;
+            $this->venue         = $venue;
+            $this->venueOptions  = $venueOptions;
+            $this->showVenueSelector = $showVenueSelector;
+            $this->useFancyVenueSelector = $useFancyVenueSelector;
             $this->locid         = $venueID;
             $this->params        = $params;
             $this->jemsettings   = $jemsettings;

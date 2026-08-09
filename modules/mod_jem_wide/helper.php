@@ -60,10 +60,12 @@ abstract class ModJemWideHelper
             $offset_minutes = $offset_hours * 60;
 
             $model->setState('filter.published',1);
-            $model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby',array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
+            $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+            $cal_from .= ($type == 1)
+                ? ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')'
+                : ')';
         }
 
         # archived events only
@@ -80,7 +82,8 @@ abstract class ModJemWideHelper
             $model->setState('filter.published',1);
             $model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
+            $targetDate = $db->quote(JemHelper::getJoomlaDate($offset_days));
+            $cal_from = ' (a.dates <= ' . $targetDate . ' AND IFNULL(a.enddates,a.dates) >= ' . $targetDate . ')';
         }
 
         $model->setState('filter.calendar_from',$cal_from);
@@ -143,7 +146,7 @@ abstract class ModJemWideHelper
             list($lists[$i]->date,
                 $lists[$i]->time)   = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(", ", JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));

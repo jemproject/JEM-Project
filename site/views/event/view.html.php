@@ -54,6 +54,21 @@ class JemViewEvent extends JemView
         $edit_att            = new \stdClass();
         $this->params      = $app->getParams('com_jem');
         $this->item        = $this->get('Item');
+
+        // Stop before reading or assigning event properties when the requested
+        // event does not exist. Model errors remain server-side errors; an
+        // empty result without model errors is a genuine not-found response.
+        if (empty($this->item)) {
+            $errors = $this->get('Errors');
+
+            if (is_array($errors) && count($errors)) {
+                $app->enqueueMessage(implode("\n", $errors), 'warning');
+                return false;
+            }
+
+            throw new \Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+        }
+
         $this->contacts    = $this->get('Contacts');
         $this->print       = $app->input->getBool('print', false);
         $this->state       = $this->get('State');
@@ -63,6 +78,7 @@ class JemViewEvent extends JemView
 
         $categories        = isset($this->item->categories) ? $this->item->categories : $this->get('Categories');
         $this->categories  = $categories;
+        $this->item->categories = $categories;
         $this->registers   = null;
 
         $registration      = $this->get('UserRegistration');
@@ -104,12 +120,6 @@ class JemViewEvent extends JemView
 
         //JemHelper::addLogEntry("Attendees:\n" . print_r($this->registers, true), __METHOD__);
         //JemHelper::addLogEntry("Attendees:\n" . print_r($this->regs, true), __METHOD__);
-
-        // check for data error
-        if (empty($this->item)) {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-            return false;
-        }
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -285,24 +295,29 @@ class JemViewEvent extends JemView
         $this->e_reg = $e_reg;
 
         $timeNow = time();
-        $this->dateRegistationFrom    = strtotime(($item->registra_from ?? ''));
-        $this->dateRegistationUntil   = strtotime(($item->registra_until ?? ''));
-        $this->dateUnregistationUntil = strtotime(($item->unregistra_until ?? ''));
-        $this->allowRegistration      = ($e_reg == 1) || (($e_reg == 2) && (empty($e_dates) || ($this->dateRegistationFrom <= $timeNow && ($this->dateRegistationUntil? $timeNow < $this->dateRegistationUntil : 1))));
-        $this->allowAnnulation = ($e_unreg == 1) || (($e_unreg == 2) && (empty($e_dates) || (strtotime($e_unreg_until ?? '') > strtotime('now'))));
+        $this->dateRegistationFrom    = JemHelper::getUtcTimestamp($item->registra_from ?? '');
+        $this->dateRegistationUntil   = JemHelper::getUtcTimestamp($item->registra_until ?? '');
+        $this->dateUnregistationUntil = JemHelper::getUtcTimestamp($item->unregistra_until ?? '');
+        $this->registrationWindowState   = JemHelper::getEventRegistrationWindowState($item, $timeNow);
+        $this->unregistrationWindowState = JemHelper::getEventUnregistrationWindowState($item, $timeNow);
+        $this->allowRegistration         = $this->registrationWindowState === 'open';
+        $this->allowAnnulation           = $this->unregistrationWindowState === 'open';
 
         // Timecheck for registration
-        $now       = strtotime(date("Y-m-d"));
-        $date      = empty($item->dates) ? $now : strtotime($item->dates);
-        $enddate   = empty($item->enddates) ? $date : strtotime($item->enddates);
-        $timecheck = $now - $date; // on open date $timecheck is 0
+        $eventStart = JemHelper::getUtcTimestamp($item->start_utc ?? '');
+        $eventEnd   = JemHelper::getUtcTimestamp($item->end_utc ?? '');
+        $date       = empty($item->dates) || !$eventStart ? $timeNow : $eventStart;
+        $enddate    = !$eventEnd ? $date : $eventEnd;
+        $timecheck  = $timeNow - $date; // on open date $timecheck is 0
 
         // let's build the registration handling
         $formhandler = 0; // too late to unregister
+        $hasActiveRegistration = is_object($registration) && in_array((int) $registration->status, array(1, 2), true);
+        $this->showRegistrationAction = $this->allowRegistration || $hasActiveRegistration;
 
         if (is_object($registration)){
             if($registration->status != 0) { // is the user already registered at the event
-                if ($now <= $enddate) { // allows registration changes on unfinished events
+                if ($timeNow <= $enddate) { // allows registration changes on unfinished events
                     $formhandler = 4;
                 }
             } else {
@@ -314,6 +329,8 @@ class JemViewEvent extends JemView
             }
         } elseif ($timecheck > 0) { // check if it is too late to register and overwrite $formhandler
             $formhandler = 1;
+        } elseif (!$this->allowRegistration) {
+            $formhandler = 1; // registration is not currently available
         } elseif (!$userId) { // user doesn't have an ID (mostly guest)
             $formhandler = 2;
         } else {

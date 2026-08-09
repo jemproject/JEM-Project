@@ -1570,7 +1570,7 @@ document.addEventListener('keydown', function (event) {
                                             </div>
                                         <?php endif; ?>
                                     </div>
-                                    <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+                                    <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -1801,7 +1801,7 @@ document.addEventListener('keydown', function (event) {
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
                         </div>
                     </article>
                 <?php endforeach; endforeach; ?>

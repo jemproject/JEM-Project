@@ -190,10 +190,11 @@ class JemModelVenues extends JemModelEventslist
         if ((int)$state === 1) {
             $where_pub = $this->_getPublishWhere();
             if (!empty($where_pub)) {
-                $query->where('(' . implode(' OR ', $where_pub) . ')');
+                $query->where('(' . implode(' OR ', $where_pub) . ')')
+                    ->where(JemHelper::getEventPublicationWhere('a', false));
             } else {
                 // something wrong - fallback to published events
-                $query->where('a.published = 1');
+                $query->where(JemHelper::getEventPublicationWhere('a'));
             }
         } else {
             $query->where('a.published = '.$db->quote($state));

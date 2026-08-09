@@ -28,7 +28,6 @@ $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx'); ?>" id="jemmodulebasic">
@@ -42,18 +41,18 @@ $linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit
                 // Block: Title
                 $blockTitle = '';
                 if ($showtitle) {
-                    $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
+                    $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'">'.$item->title.'</a>' : $item->title;
                     $blockTitle = '<div class="event-title">' . $contentTitle . '</div>';
                 }
 
                 // Block: Date
-                $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'" '.$linkStyle.'>'.$item->dateinfo.'</a>' : $item->dateinfo;
+                $contentDate = ($linkdet == 1) ? '<a href="'.$item->link.'" title="'.strip_tags($item->dateinfo).'">'.$item->dateinfo.'</a>' : $item->dateinfo;
                 $blockDate = '<div class="event-date" style="font-size: 0.95em;">' . $contentDate . '</div>';
 
                 // Block: Venue
                 $blockVenue = '';
                 if ($showvenue && !empty($item->venue)) {
-                    $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
+                    $contentVenue = ($linkloc == 1) ? '<a href="'.$item->venueurl.'">'.$item->venue.'</a>' : $item->venue;
                     $blockVenue = '<div class="event-venue" style="font-style: italic; font-size: 0.9em;">' . $contentVenue . '</div>';
                 }
 

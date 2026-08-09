@@ -11,21 +11,21 @@ final class AuthorizationGuardTest extends TestCase
         $event = (string) file_get_contents(JEM_TEST_ROOT . '/site/controllers/event.php');
         $venue = (string) file_get_contents(JEM_TEST_ROOT . '/site/controllers/venue.php');
 
-        self::assertStringContainsString("\$user->can('add', 'event'", $event);
-        self::assertStringContainsString("\$user->can('edit', 'event', \$recordId, \$created_by)", $event);
-        self::assertStringContainsString("\$user->can('add', 'venue')", $venue);
-        self::assertStringContainsString("\$user->can('edit', 'venue', \$recordId, \$created_by)", $venue);
+        self::assertStringContainsString("JemFrontendAccess::canAdd(\$user, 'event'", $event);
+        self::assertStringContainsString("JemFrontendAccess::canEdit(\$user, 'event', \$record)", $event);
+        self::assertStringContainsString("JemFrontendAccess::canAdd(\$user, 'venue'", $venue);
+        self::assertStringContainsString("JemFrontendAccess::canEdit(\$user, 'venue', \$record)", $venue);
     }
 
-    public function testAdminDeleteControllersCheckDeleteOrManagePermission(): void
+    public function testAdminDeleteControllersCheckTheResourceOrToolPermission(): void
     {
         $files = array(
             'admin/controllers/categories.php' => 'core.delete',
             'admin/controllers/groups.php' => 'core.delete',
             'admin/controllers/types.php' => 'core.delete',
-            'admin/controllers/venues.php' => 'core.delete',
-            'admin/controllers/imagehandler.php' => 'core.manage',
-            'admin/controllers/housekeeping.php' => 'core.manage',
+            'admin/controllers/venues.php' => "JemHelperBackend::can('venue', 'delete')",
+            'admin/controllers/imagehandler.php' => "canManage('jem.tools.manage')",
+            'admin/controllers/housekeeping.php' => "canManage('jem.tools.manage')",
         );
 
         foreach ($files as $file => $permission) {
@@ -38,8 +38,8 @@ final class AuthorizationGuardTest extends TestCase
     public function testModelPermissionMethodsGateEventVenueAndCategoryActions(): void
     {
         $contracts = array(
-            'admin/models/event.php' => array("can('delete', 'event'", "can('publish', 'event'"),
-            'admin/models/venue.php' => array("authorise('core.delete'", "authorise('core.edit.state'"),
+            'admin/models/event.php' => array("JemHelperBackend::can('event', 'delete'", "JemHelperBackend::can('event', 'edit.state'"),
+            'admin/models/venue.php' => array("JemHelperBackend::can('venue', 'delete'", "JemHelperBackend::can('venue', 'edit.state'"),
             'admin/models/category.php' => array("authorise('core.delete'", "authorise('core.edit.state'"),
         );
 

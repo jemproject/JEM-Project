@@ -56,14 +56,18 @@ $uri = Uri::getInstance();
   }
 
   .modal[id^="jem-venueslist-map-"] .modal-body {
+      position: relative;
+      height: var(--jem-venueslist-map-height, 70vh);
+      min-height: 0;
       padding: 0;
+      overflow: hidden;
   }
 
-  .modal[id^="jem-venueslist-map-"] iframe {
+  .modal[id^="jem-venueslist-map-"] .jem-osm-map {
       display: block;
       width: 100%;
       height: 100%;
-      min-height: 22rem;
+      min-height: 0;
       border: 0;
   }
 
@@ -201,25 +205,36 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
         $modalHeight = max(25, min(95, (int) $params->get('venuemap_popup_height', 70)));
         $lat = (float) $row->latitude;
         $lon = (float) $row->longitude;
-        $bbox = ($lon - 0.005) . ',' . ($lat - 0.003) . ',' . ($lon + 0.005) . ',' . ($lat + 0.003);
-        $src = 'https://www.openstreetmap.org/export/embed.html?bbox=' . rawurlencode($bbox) . '&layer=mapnik&marker=' . rawurlencode($lat . ',' . $lon);
+        if ($lat < -90.0 || $lat > 90.0 || $lon < -180.0 || $lon > 180.0) {
+            return '';
+        }
+
         $external = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
         $title = htmlspecialchars((string) ($row->venue ?? Text::_('COM_JEM_MAP')), ENT_QUOTES, 'UTF-8');
         $modalId = 'jem-venueslist-map-responsive-' . (int) ($row->id ?? 0);
+        $marker = $params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp');
+        $mapCanvas = JemOutput::osmMapCanvas($lat, $lon, '100%', 16, $modalId . '-canvas', '', $marker, $row->type_icon ?? '', $row->type_color ?? '');
 
         $output = HTMLHelper::_(
             'bootstrap.renderModal',
             $modalId,
             array(
-                'url'    => $src,
                 'title'  => Text::_('COM_JEM_MAP') . ': ' . $title,
-                'width'  => $modalWidth . '%',
-                'height' => $modalHeight . 'vh',
+                'width'  => '100%',
+                'height' => '100%',
                 'modalWidth' => $modalWidth,
                 'bodyHeight' => $modalHeight,
                 'footer' => '<a class="btn btn-primary" href="' . htmlspecialchars($external, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_MAP') . '</a>'
                     . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>',
-            )
+            ),
+            $mapCanvas
+        );
+
+        $modalRoot = 'id="' . $modalId . '"';
+        $output = str_replace(
+            $modalRoot,
+            $modalRoot . ' style="--jem-venueslist-map-height:' . $modalHeight . 'vh"',
+            $output
         );
 
         $output .= '<button type="button" class="btn btn-sm btn-outline-primary jem-venueslist-map-button" data-bs-toggle="modal" data-bs-target="#' . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '" title="' . $title . '">'

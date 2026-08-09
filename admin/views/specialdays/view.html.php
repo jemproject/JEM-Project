@@ -40,7 +40,6 @@ class JemViewSpecialdays extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->useScript('table.columns');
 
         $this->addToolbar();

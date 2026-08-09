@@ -192,7 +192,7 @@ class JemModelVenue extends JemModelEventslist
 
         $query->select('v.id, v.venue, v.published, v.city, v.district, v.level, v.capacity, v.state, v.url, v.email, v.phone, v.mobile, v.street, v.custom1, v.custom2, v.custom3, v.custom4, v.custom5, '.
                        ' v.custom6, v.custom7, v.custom8, v.custom9, v.custom10, v.locimage, v.meta_keywords, v.meta_description, v.access, '.
-                       ' v.created, v.created_by, v.locdescription, v.country, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
+                       ' v.created, v.created_by, v.locdescription, v.country, v.timezone, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
                        ' v.attribs, '.
                        ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug');
         $query->from($db->quoteName('#__jem_venues', 'v'));
@@ -254,12 +254,57 @@ class JemModelVenue extends JemModelEventslist
 
         $registry = new Registry;
         $registry->loadString($_venue->attribs ?? '{}');
-        $_venue->params = JemHelper::globalattribs();
+        $_venue->params = clone JemHelper::globalattribs();
         $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
 
         return $_venue;
+    }
+
+    /**
+     * Get the published venues available to the current user.
+     *
+     * @return  array<int, object>
+     */
+    public function getVenueOptions()
+    {
+        $user       = JemFactory::getUser();
+        $levels     = array_map('intval', $user->getAuthorisedViewLevels());
+        $levelsList = implode(',', $levels) ?: '0';
+        $db         = Factory::getContainer()->get('DatabaseDriver');
+        $query      = $db->getQuery(true);
+        $params     = Factory::getApplication()->getParams();
+        $allowedIds = $this->normaliseParamIds($params->get('timeline_filter_venues', array()));
+
+        $query->select(array(
+                $db->quoteName('v.id', 'value'),
+                $db->quoteName('v.venue', 'text'),
+                $db->quoteName('v.city'),
+            ))
+            ->from($db->quoteName('#__jem_venues', 'v'))
+            ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.access') . ' IN (' . $levelsList . ')')
+            ->order(array($db->quoteName('v.venue') . ' ASC', $db->quoteName('v.city') . ' ASC'));
+
+        if ($allowedIds) {
+            $query->where($db->quoteName('v.id') . ' IN (' . implode(',', $allowedIds) . ')');
+        }
+
+        $db->setQuery($query);
+        $options = $db->loadObjectList();
+
+        foreach ($options as $option) {
+            $city = trim((string) $option->city);
+
+            if ($city !== '') {
+                $option->text .= ' - ' . $city;
+            }
+
+            unset($option->city);
+        }
+
+        return $options;
     }
 }
 ?>

@@ -33,10 +33,13 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if the event can be added, false if not.
      */
     public function add() {
-        if (!parent::add()) {
-            // Redirect to the return page.
-            $this->setRedirect($this->getReturnPage());
+        if (!$this->requireFrontendUser()) {
+            return false;
         }
+
+        $this->assertFrontendCanAdd('event', Factory::getApplication()->input->getInt('catid', 0));
+
+        return parent::add();
     }
 
     /**
@@ -50,14 +53,9 @@ class JemControllerEvent extends JemControllerForm
         // Initialise variables.
         $user       = JemFactory::getUser();
         $inputCatId = Factory::getApplication()->input->getInt('catid', 0);
-        $categoryId = ArrayHelper::getValue($data, 'catid', $inputCatId, 'int');
+        $categoryIds = ArrayHelper::getValue($data, 'cats', $inputCatId ? array($inputCatId) : array(), 'array');
 
-        if ($user->can('add', 'event', false, $categoryId ? $categoryId : false)) {
-            return true;
-        }
-
-        // In the absence of better information, revert to the component permissions.
-        return parent::allowAdd();
+        return JemFrontendAccess::canAdd($user, 'event', $categoryIds);
     }
 
     /**
@@ -73,30 +71,14 @@ class JemControllerEvent extends JemControllerForm
         $recordId = (int) ($data[$key] ?? 0);
         $user     = JemFactory::getUser();
 
-        if (isset($data['access'])) {
-            $access = $data['access'];
-        } else {
-            $record = $this->getModel()->getItem($recordId);
-            $access = $record->access ?? 0;
-        }
-
-        if (!in_array($access, $user->getAuthorisedViewLevels())) {
+        if ($recordId < 1) {
             return false;
         }
 
-        if (isset($data['created_by'])) {
-            $created_by = $data['created_by'];
-        } else {
-            $record = $this->getModel()->getItem($recordId);
-            $created_by = $record->created_by ?? 0;
-        }
+        // Never authorise with submitted ownership or access fields.
+        $record = $this->getModel()->getItem($recordId);
 
-        if ($user->can('edit', 'event', $recordId, $created_by)) {
-            return true;
-        }
-
-        // Since there is no asset tracking, revert to the component permissions.
-        return parent::allowEdit($data, $key);
+        return JemFrontendAccess::canEdit($user, 'event', $record);
     }
 
     /**
@@ -107,13 +89,31 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if access level checks pass, false otherwise.
      */
     public function cancel($key = 'a_id') {
-        // Check for request forgeries
-        Session::checkToken() or jexit('Invalid Token');
+        $this->checkToken();
 
-        parent::cancel($key);
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId();
+
+        if ($recordId > 0) {
+            $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+            $this->assertFrontendCanEdit('event', $item);
+        } else {
+            $data = Factory::getApplication()->input->post->get('jform', array(), 'array');
+            $categories = !empty($data['cats'])
+                ? (array) $data['cats']
+                : array_filter(array(Factory::getApplication()->input->getInt('catid', 0)));
+            $this->assertFrontendCanAdd('event', $categories);
+        }
+
+        $result = parent::cancel($key);
 
         // Redirect to the return page.
         $this->setRedirect($this->getReturnPage());
+
+        return $result;
     }
 
     /**
@@ -125,7 +125,23 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if access level check and checkout passes, false otherwise.
      */
     public function edit($key = null, $urlVar = 'a_id') {
-        return parent::edit($key, $urlVar);
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId(true);
+        $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+        $this->assertFrontendCanEdit('event', $item);
+
+        $result = parent::edit($key, $urlVar);
+
+        if (!$result) {
+            // A checkout conflict must not redirect into an unheld editor form.
+            $this->_id = $recordId;
+            $this->setRedirect($this->getReturnPage());
+        }
+
+        return $result;
     }
 
     /**
@@ -134,10 +150,16 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if the event can be added, false if not.
      */
     public function copy() {
-        if (!parent::add()) {
-            // Redirect to the return page.
-            $this->setRedirect($this->getReturnPage());
+        if (!$this->requireFrontendUser()) {
+            return false;
         }
+
+        $this->assertFrontendCanAdd('event', Factory::getApplication()->input->getInt('catid', 0));
+        $sourceId = $this->getFrontendRecordId(true);
+        $source = $this->getFrontendItemOrFail($sourceId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+        $this->assertFrontendCanEdit('event', $source);
+
+        return parent::add();
     }
 
     /**
@@ -244,10 +266,25 @@ class JemControllerEvent extends JemControllerForm
      * @return void
      */
     protected function _postSaveHook($model, $validData = array()) {
+        $modelName = method_exists($model, 'getName') ? $model->getName() : 'editevent';
+        $eventId   = (int) $model->getState('event.id', 0);
+
+        if (!$eventId) {
+            $eventId = (int) $model->getState($modelName . '.id', 0);
+        }
+
+        if (!$eventId && !empty($validData['id'])) {
+            $eventId = (int) $validData['id'];
+        }
+
+        if ($eventId > 0) {
+            JemHelper::reconcileWaitingList($eventId, array('source' => 'site.event.save'));
+        }
+
         $task = $this->getTask();
         if ($task == 'save') {
             $isNew     = $model->getState('editevent.new');
-            $this->_id = $model->getState('editevent.id');
+            $this->_id = $eventId;
 
             // trigger all jem plugins
             PluginHelper::importPlugin('jem');
@@ -270,8 +307,25 @@ class JemControllerEvent extends JemControllerForm
      * @return boolean True if successful, false otherwise.
      */
     public function save($key = null, $urlVar = 'a_id') {
-        // Check for request forgeries
-        Session::checkToken() or jexit('Invalid Token');
+        // Use Joomla's translated token failure and safe referrer redirect.
+        $this->checkToken();
+
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        $recordId = $this->getFrontendRecordId();
+
+        if ($recordId > 0) {
+            $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+            $this->assertFrontendCanEdit('event', $item);
+        } else {
+            $data = Factory::getApplication()->input->post->get('jform', array(), 'array');
+            $categories = !empty($data['cats'])
+                ? (array) $data['cats']
+                : array_filter(array(Factory::getApplication()->input->getInt('catid', 0)));
+            $this->assertFrontendCanAdd('event', $categories);
+        }
 
         $result = parent::save($key, $urlVar);
 
@@ -297,10 +351,16 @@ class JemControllerEvent extends JemControllerForm
      */
     public function updateAssociatedArticle()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        $this->checkToken('get');
+
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
 
         $app = Factory::getApplication();
-        $id = $app->input->getInt('a_id', $app->input->getInt('id', 0));
+        $id = $this->getFrontendRecordId(true);
+        $item = $this->getFrontendItemOrFail($id, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
+        $this->assertFrontendCanEdit('event', $item);
         $fields = $app->input->getString('fields', '');
         $return = $app->input->getBase64('return', '');
         $model = $this->getModel();
@@ -335,7 +395,11 @@ class JemControllerEvent extends JemControllerForm
      */
     public function createAssociatedArticle()
     {
-        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->checkToken();
+
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
 
         $app      = Factory::getApplication();
         $input    = $app->input;
@@ -344,6 +408,16 @@ class JemControllerEvent extends JemControllerForm
         $targetId = $input->getInt('article_catid', 0);
         $jemcats  = array_values(array_filter(array_map('intval', explode(',', (string) $input->getString('jemcats', '')))));
         $model    = $this->getModel();
+
+        if (!$model || !JemFrontendAccess::canUseEventSelectors(
+            $app,
+            JemFactory::getUser(),
+            $model,
+            $this->getFrontendRecordId()
+        )) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $article  = $model ? $model->createAssociatedArticlePlaceholder($title, $targetId, $jemcats) : array();
 
         $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
@@ -463,9 +537,17 @@ class JemControllerEvent extends JemControllerForm
         JemHelper::updateWaitingList($id);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
-        $places = isset($reg->places) ? $reg->places : 0;
-        $dispatcher->triggerEvent('onEventUserRegistered', array($register_id, $places));
+        $updatedRegistration = $model->getUserRegistration($id);
+        $transition = JemRegistrationTransition::create(
+            $reg ?: null,
+            $updatedRegistration,
+            (int) Factory::getApplication()->getIdentity()->id,
+            'site.event.registration_response'
+        );
+        JemRegistrationTransition::dispatchStatusMail($dispatcher, $updatedRegistration, $transition, false, true);
+        JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();
@@ -488,13 +570,21 @@ class JemControllerEvent extends JemControllerForm
         $model = $this->getModel('Event', 'JemModel');
 
         $model->setId($id);
-        $model->delreguser();
+        $registration = $model->getUserRegistration($id);
+
+        if (!$registration || !$model->delreguser()) {
+            $msg = $model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED');
+            $this->setRedirect(Route::_(JemHelperRoute::getEventRoute($id), false), $msg, 'error');
+            return;
+        }
 
         JemHelper::updateWaitingList($id);
 
         PluginHelper::importPlugin('jem');
+        PluginHelper::importPlugin('actionlog', 'jem');
         $dispatcher = JemFactory::getDispatcher();
-        $dispatcher->triggerEvent('onEventUserUnregistered', array($id));
+        JemRegistrationTransition::dispatchDeletionMail($dispatcher, $registration);
+        $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($registration));
 
         $cache = Factory::getCache('com_jem');
         $cache->clean();

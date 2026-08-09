@@ -38,7 +38,12 @@ class JemViewAttendeeregistrations extends HtmlView
             return;
         }
 
-        if (!$user->authorise('core.manage', 'com_jem')) {
+        $canManageAttendees = $user->authorise('core.admin', 'com_jem')
+            || ($user->authorise('core.manage', 'com_jem')
+                && $user->authorise('jem.events.access', 'com_jem')
+                && $user->authorise('jem.attendees.manage', 'com_jem'));
+
+        if (!$canManageAttendees) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

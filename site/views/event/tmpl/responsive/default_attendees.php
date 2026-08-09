@@ -87,6 +87,7 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
         $isGuest = (bool) $this->user->get('guest');
         $canManageRegistration = !empty($this->permissions->canEditAttendees) || $this->user->authorise('core.manage', 'com_jem');
         $availableplaces = $maxplaces > 0 ? max(0, $maxplaces - $booked - $reservedplaces) : 0;
+        $showRegistrationAction = $this->print == 0 && ($this->showRegistrationAction ?? true);
         ?>
 
         <?php if($this->settings->get('event_show_registration_counters','1')) : ?>
@@ -284,11 +285,11 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
             <dd><a href="<?php echo $linkreg; ?>" title="<?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES'); ?>"><?php echo Text::_('COM_JEM_MYEVENT_MANAGEATTENDEES') ?> <i class="icon-out-2" aria-hidden="true"></i></a></dd>
         <?php endif; ?>
     </dl>
-    <?php if ($eventLayout !== 'compact') : ?>
+    <?php if ($eventLayout !== 'compact' && $showRegistrationAction) : ?>
         <hr />
     <?php endif; ?>
 
-    <?php if ($this->print == 0) : ?>
+    <?php if ($showRegistrationAction) : ?>
         <dl class="jem-dl floattext jem-registration-action">
             <?php $registrationLabel = $isGuest ? Text::_('COM_JEM_REGISTER') : Text::_('COM_JEM_YOUR_REGISTRATION'); ?>
             <dt class="register registration jem-registration-action-label hasTooltip" data-original-title="<?php echo $registrationLabel; ?>"><?php echo $registrationLabel; ?>:</dt>

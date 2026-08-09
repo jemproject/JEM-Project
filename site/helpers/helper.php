@@ -37,6 +37,17 @@ require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 class JemHelper
 {
     /**
+     * Component stylesheet assets loaded during the current request.
+     *
+     * The list is used as the dependency chain for jem-user-front.css so the
+     * additive user stylesheet is always rendered after the selected JEM
+     * component stylesheets.
+     *
+     * @var  array
+     */
+    protected static $frontendCssAssets = array();
+
+    /**
      * Renders optional module intro or footer text.
      *
      * @param   Registry|object  $params    Module parameters.
@@ -103,6 +114,421 @@ class JemHelper
         }
 
         return $config;
+    }
+
+    /**
+     * Return Joomla's configured timezone as a valid PHP timezone identifier.
+     *
+     * @return string
+     */
+    static public function getJoomlaTimeZoneName()
+    {
+        $timeZone = trim((string) Factory::getConfig()->get('offset', 'UTC'));
+
+        try {
+            new \DateTimeZone($timeZone);
+        } catch (\Exception $e) {
+            $timeZone = 'UTC';
+        }
+
+        return $timeZone;
+    }
+
+    /**
+     * Return a Joomla-timezone calendar date.
+     *
+     * @param   integer  $offsetDays  Number of days relative to today.
+     *
+     * @return string
+     */
+    static public function getJoomlaDate($offsetDays = 0)
+    {
+        $date = new \DateTimeImmutable('now', new \DateTimeZone(self::getJoomlaTimeZoneName()));
+
+        if ((int) $offsetDays !== 0) {
+            $date = $date->modify(((int) $offsetDays > 0 ? '+' : '') . (int) $offsetDays . ' days');
+        }
+
+        return $date->format('Y-m-d');
+    }
+
+    /**
+     * Check whether a timezone can be used for event date calculations.
+     *
+     * @param   string  $timeZone  Timezone identifier.
+     *
+     * @return boolean
+     */
+    static public function isValidTimeZone($timeZone)
+    {
+        $timeZone = trim((string) $timeZone);
+
+        if ($timeZone === '') {
+            return false;
+        }
+
+        if (!in_array($timeZone, \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC), true)) {
+            return false;
+        }
+
+        try {
+            new \DateTimeZone($timeZone);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Resolve the authoritative timezone of an event.
+     *
+     * Existing events default to Joomla's timezone. Venue mode falls back to
+     * Joomla when no valid timezone is assigned to the selected venue.
+     *
+     * @param   object|array  $event          Event data.
+     * @param   string|null   $venueTimeZone  Known venue timezone, if available.
+     *
+     * @return string
+     */
+    static public function getEventTimeZoneName($event, $venueTimeZone = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            $event = new \stdClass();
+        }
+        $mode  = isset($event->timezone_mode) ? trim((string) $event->timezone_mode) : 'joomla';
+
+        if ($mode === 'custom') {
+            $customTimeZone = isset($event->timezone) ? trim((string) $event->timezone) : '';
+
+            if (self::isValidTimeZone($customTimeZone)) {
+                return $customTimeZone;
+            }
+        }
+
+        if ($mode === 'venue') {
+            if ($venueTimeZone === null && !empty($event->venue_timezone)) {
+                $venueTimeZone = $event->venue_timezone;
+            }
+
+            if ($venueTimeZone === null && !empty($event->locid)) {
+                $db = Factory::getContainer()->get('DatabaseDriver');
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('timezone'))
+                    ->from($db->quoteName('#__jem_venues'))
+                    ->where($db->quoteName('id') . ' = ' . (int) $event->locid);
+                $db->setQuery($query);
+                $venueTimeZone = $db->loadResult();
+            }
+
+            if (self::isValidTimeZone($venueTimeZone)) {
+                return trim((string) $venueTimeZone);
+            }
+        }
+
+        return self::getJoomlaTimeZoneName();
+    }
+
+    /**
+     * Calculate the canonical UTC start and end values for an event.
+     *
+     * The dates and times stored in the event remain local wall-clock values.
+     * These UTC columns are derived values used for reliable comparisons.
+     *
+     * @param   object  $event          Event table or data object.
+     * @param   string  $venueTimeZone  Known venue timezone, if available.
+     *
+     * @return void
+     */
+    static public function setEventUtcDates(&$event, $venueTimeZone = null)
+    {
+        $event->start_utc = null;
+        $event->end_utc   = null;
+
+        if (empty($event->dates) || !self::isValidDate($event->dates)) {
+            return;
+        }
+
+        $timeZoneName = self::getEventTimeZoneName($event, $venueTimeZone);
+        $timeZone     = new \DateTimeZone($timeZoneName);
+        $utc          = new \DateTimeZone('UTC');
+        $startTime    = empty($event->times) ? '00:00:00' : (string) $event->times;
+        $endDate      = !empty($event->enddates) ? (string) $event->enddates : (string) $event->dates;
+        $endTime      = empty($event->endtimes) ? '23:59:59' : (string) $event->endtimes;
+
+        try {
+            $start = new \DateTimeImmutable((string) $event->dates . ' ' . $startTime, $timeZone);
+            $end   = new \DateTimeImmutable($endDate . ' ' . $endTime, $timeZone);
+
+            $event->start_utc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
+            $event->end_utc   = $end->setTimezone($utc)->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            $event->start_utc = null;
+            $event->end_utc   = null;
+        }
+    }
+
+    /**
+     * Rebuild UTC values of all events that inherit a venue timezone.
+     *
+     * @param   integer  $venueId       Venue id.
+     * @param   string   $venueTimeZone Venue timezone.
+     *
+     * @return void
+     */
+    static public function refreshVenueEventUtcDates($venueId, $venueTimeZone = '')
+    {
+        $venueId = (int) $venueId;
+
+        if ($venueId <= 0) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('locid') . ' = ' . $venueId)
+            ->where($db->quoteName('timezone_mode') . ' = ' . $db->quote('venue'));
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $event) {
+            self::setEventUtcDates($event, $venueTimeZone);
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('start_utc') . ' = ' . ($event->start_utc === null ? 'NULL' : $db->quote($event->start_utc)))
+                ->set($db->quoteName('end_utc') . ' = ' . ($event->end_utc === null ? 'NULL' : $db->quote($event->end_utc)))
+                ->where($db->quoteName('id') . ' = ' . (int) $event->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Build the UTC publication-window condition for an event query.
+     *
+     * @param   string       $alias         Event table alias.
+     * @param   boolean      $includeState  Include the published state check.
+     * @param   string|null  $now           UTC SQL datetime, mainly for tests.
+     *
+     * @return string
+     */
+    static public function getEventPublicationWhere($alias = 'a', $includeState = true, $now = null)
+    {
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $now      = $now ?: Factory::getDate()->toSql();
+        $nullDate = $db->quote($db->getNullDate());
+        $prefix   = $includeState ? $alias . '.published = 1 AND ' : '';
+
+        return $prefix
+            . '(' . $alias . '.publish_up IS NULL OR ' . $alias . '.publish_up = ' . $nullDate . ' OR ' . $alias . '.publish_up <= ' . $db->quote($now) . ')'
+            . ' AND (' . $alias . '.publish_down IS NULL OR ' . $alias . '.publish_down = ' . $nullDate . ' OR ' . $alias . '.publish_down > ' . $db->quote($now) . ')';
+    }
+
+    /**
+     * Test an event's publication state and UTC publication window.
+     *
+     * @param   object   $event         Event data.
+     * @param   boolean  $includeState  Require published=1.
+     *
+     * @return boolean
+     */
+    static public function isEventPublishedNow($event, $includeState = true)
+    {
+        if ($includeState && (int) ($event->published ?? 0) !== 1) {
+            return false;
+        }
+
+        $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        foreach (array('publish_up' => 'up', 'publish_down' => 'down') as $field => $direction) {
+            $value = trim((string) ($event->$field ?? ''));
+            if ($value === '' || $value === '0000-00-00 00:00:00') {
+                continue;
+            }
+
+            try {
+                $boundary = new \DateTimeImmutable($value, new \DateTimeZone('UTC'));
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            if (($direction === 'up' && $boundary > $now) || ($direction === 'down' && $boundary <= $now)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Convert a UTC database datetime to a Unix timestamp.
+     *
+     * @param   string  $value  SQL datetime value.
+     *
+     * @return integer
+     */
+    static public function getUtcTimestamp($value)
+    {
+        $value = trim((string) $value);
+
+        if ($value === '' || $value === '0000-00-00 00:00:00') {
+            return 0;
+        }
+
+        try {
+            return (new \DateTimeImmutable($value, new \DateTimeZone('UTC')))->getTimestamp();
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
+
+    /**
+     * Return the current state of an event registration window.
+     *
+     * Registration boundary values are stored in UTC. Open-date events keep
+     * the legacy behaviour where a limited window does not restrict access.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return string disabled, not_started, open or closed.
+     */
+    static public function getEventRegistrationWindowState($event, $now = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            return 'disabled';
+        }
+
+        $mode = (int) ($event->registra ?? 0);
+        if ($mode === 1) {
+            return 'open';
+        }
+
+        if ($mode !== 2) {
+            return 'disabled';
+        }
+
+        if (empty($event->dates)) {
+            return 'open';
+        }
+
+        $now   = $now === null ? time() : (int) $now;
+        $from  = self::getUtcTimestamp($event->registra_from ?? '');
+        $until = self::getUtcTimestamp($event->registra_until ?? '');
+
+        if ($from && $now < $from) {
+            return 'not_started';
+        }
+
+        if ($until && $now >= $until) {
+            return 'closed';
+        }
+
+        return 'open';
+    }
+
+    /**
+     * Return whether an event currently accepts registrations.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return boolean
+     */
+    static public function isEventRegistrationOpen($event, $now = null)
+    {
+        return self::getEventRegistrationWindowState($event, $now) === 'open';
+    }
+
+    /**
+     * Return the current state of an event cancellation window.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return string disabled, open or closed.
+     */
+    static public function getEventUnregistrationWindowState($event, $now = null)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event)) {
+            return 'disabled';
+        }
+
+        $mode = (int) ($event->unregistra ?? 0);
+        if ($mode === 1) {
+            return 'open';
+        }
+
+        if ($mode !== 2) {
+            return 'disabled';
+        }
+
+        if (empty($event->dates)) {
+            return 'open';
+        }
+
+        $now   = $now === null ? time() : (int) $now;
+        $until = self::getUtcTimestamp($event->unregistra_until ?? '');
+
+        return $until && $now < $until ? 'open' : 'closed';
+    }
+
+    /**
+     * Return whether an existing registration can currently be cancelled.
+     *
+     * @param   object|array  $event  Event data.
+     * @param   integer|null  $now    Unix timestamp, mainly for tests.
+     *
+     * @return boolean
+     */
+    static public function isEventUnregistrationOpen($event, $now = null)
+    {
+        return self::getEventUnregistrationWindowState($event, $now) === 'open';
+    }
+
+    /**
+     * Build an event start/end comparison against the current instant.
+     *
+     * Cached UTC values are preferred. The fallback preserves the legacy
+     * Joomla-timezone interpretation for records not backfilled yet.
+     *
+     * @param   string   $boundary       start or end.
+     * @param   string   $operator       SQL comparison operator.
+     * @param   integer  $offsetMinutes  Offset applied to the current instant.
+     * @param   string   $alias          Event table alias.
+     * @param   boolean  $includeOpen    Include events without a start date.
+     *
+     * @return string
+     */
+    static public function getEventDateTimeWhere($boundary, $operator, $offsetMinutes = 0, $alias = 'a', $includeOpen = false)
+    {
+        $boundary = $boundary === 'end' ? 'end' : 'start';
+        $operator = in_array($operator, array('>', '>=', '<', '<='), true) ? $operator : '>';
+        $instant  = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
+
+        if ((int) $offsetMinutes !== 0) {
+            $instant = $instant->modify(((int) $offsetMinutes > 0 ? '+' : '') . (int) $offsetMinutes . ' minutes');
+        }
+
+        $utcNow   = $instant->format('Y-m-d H:i:s');
+        $localNow = $instant->setTimezone(new \DateTimeZone(self::getJoomlaTimeZoneName()))->format('Y-m-d H:i:s');
+        $db       = Factory::getContainer()->get('DatabaseDriver');
+        $utcField = $alias . '.' . ($boundary === 'end' ? 'end_utc' : 'start_utc');
+        $local    = $boundary === 'end'
+            ? 'CONCAT(IFNULL(' . $alias . '.enddates,' . $alias . '.dates), \' \', IFNULL(' . $alias . '.endtimes,\'23:59:59\'))'
+            : 'CONCAT(' . $alias . '.dates, \' \', IFNULL(' . $alias . '.times,\'00:00:00\'))';
+        $condition = '((COALESCE(' . $alias . '.timezone_mode, \'joomla\') <> \'joomla\' AND ' . $utcField . ' IS NOT NULL AND ' . $utcField . ' ' . $operator . ' ' . $db->quote($utcNow) . ')'
+            . ' OR ((COALESCE(' . $alias . '.timezone_mode, \'joomla\') = \'joomla\' OR ' . $utcField . ' IS NULL) AND ' . $alias . '.dates IS NOT NULL AND ' . $local . ' ' . $operator . ' ' . $db->quote($localNow) . '))';
+
+        if ($includeOpen) {
+            $condition = '(' . $alias . '.dates IS NULL OR ' . $condition . ')';
+        }
+
+        return $condition;
     }
 
     /**
@@ -1695,7 +2121,7 @@ class JemHelper
                     ))
                     ->from('#__jem_events')
                     ->where('recurrence_type <> ' . $db->quote('0'))
-                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE NOW() < recurrence_limit_date END')
+                    ->where('CASE WHEN recurrence_limit_date IS NULL THEN 1 ELSE ' . $db->quote(self::getJoomlaDate()) . ' < recurrence_limit_date END')
                     ->where('recurrence_number <> ' . $db->quote('0'))
                     ->group('first_id')
                     ->order('dates DESC');
@@ -1798,7 +2224,7 @@ class JemHelper
                 // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
                 // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
                 $minusDays    = (int) $jemsettings->minus;
-                $outdatedWhere = 'dates > 0 AND DATE_SUB(NOW(), INTERVAL ' . $minusDays . ' DAY) > (IF (enddates IS NOT NULL, enddates, dates))';
+                $outdatedWhere = 'dates > 0 AND ' . $db->quote(self::getJoomlaDate(-$minusDays)) . ' > (IF (enddates IS NOT NULL, enddates, dates))';
 
                 //delete outdated events
                 if ($jemsettings->oldevent == 1) {
@@ -2460,66 +2886,62 @@ class JemHelper
      */
     static public function updateWaitingList($event)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
+        return self::reconcileWaitingList($event)->success;
+    }
 
-        // get event details for registration
-        $query = ' SELECT maxplaces, waitinglist, reservedplaces FROM #__jem_events WHERE id = ' . $db->Quote($event);
-        $db->setQuery($query);
-        $event_places = $db->loadObject();
+    /**
+     * Return the complete result of an automatic waiting-list reconciliation.
+     *
+     * @param  int    $event    Event identifier.
+     * @param  array  $options  Promotion options such as source or excludeIds.
+     * @return object Structured promotion result.
+     */
+    static public function reconcileWaitingList($event, array $options = array())
+    {
+        $options['mode'] = JemWaitingListPromotion::MODE_AUTOMATIC;
+        $result = JemWaitingListPromotion::promote((int) $event, $options);
 
-        // get attendees after deletion, and their status
-        $query = 'SELECT r.id, r.waiting, r.places'
-               . ' FROM #__jem_register AS r'
-               . ' WHERE r.status = 1 AND r.event = '.$db->Quote($event)
-               . ' ORDER BY r.uregdate ASC '
-               ;
-        $db->SetQuery($query);
-        $res = $db->loadObjectList();
+        if (!$result->success) {
+            self::addLogEntry(
+                'Waiting-list reconciliation failed for event ' . (int) $event . ': ' . (string) $result->reason,
+                __METHOD__,
+                Log::ERROR
+            );
 
-        $registered = 0;
-        $waitingregs = array();
-        foreach ((array) $res as $r)
-        {
-            if ($r->waiting) {
-                $waitingregs[] = $r;
-            } else {
-                $registered+=$r->places;
-            }
-        }
-        //Add the Reserved Places of the event
-        $registered+=$event_places->reservedplaces;
-
-        if (($registered < $event_places->maxplaces) && count($waitingregs))
-        {
-            $placesavailable = $event_places->maxplaces - $registered;
-            // need to bump users to attending status
-            foreach ($waitingregs as $waitreg)
-            {
-                if($waitreg->places <= $placesavailable)
-                {
-                    $query   = ' UPDATE #__jem_register SET waiting = 0 WHERE id = ' . $waitreg->id;
-                    $db->setQuery($query);
-                    if ($db->execute() === false)
-                    {
-                        Factory::getApplication()->enqueueMessage(
-                            Text::_(
-                                'COM_JEM_FAILED_BUMPING_USERS_FROM_WAITING_TO_CONFIRMED_LIST'
-                            ) . ': ' . $db->getErrorMsg(),
-                            'warning'
-                        );
-                    }
-                    else
-                    {
-                        $placesavailable -= $waitreg->places;
-                        PluginHelper::importPlugin('jem');
-                        $dispatcher = JemFactory::getDispatcher();
-                        $res        = $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($waitreg->id));
-                    }
-                }
+            if (JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::_('COM_JEM_WAITINGLIST_PROMOTION_FAILED'),
+                    'warning'
+                );
             }
         }
 
-        return true;
+        if ($result->reason === 'automatic_disabled'
+            && $result->waitingListEnabled
+            && $result->maxPlaces > 0
+            && $result->availableBefore > 0
+            && $result->waitingBefore > 0
+            && JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf(
+                    'COM_JEM_WAITINGLIST_MANUAL_ACTION_REQUIRED',
+                    $result->availableBefore,
+                    $result->waitingBefore
+                ),
+                'notice'
+            );
+        }
+
+        if ($result->success
+            && $result->reason === 'notification_failed'
+            && JemFactory::getUser()->authorise('jem.attendees.manage', 'com_jem')) {
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'),
+                'warning'
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -2585,16 +3007,7 @@ class JemHelper
      */
     static public function getTimeZoneName()
     {
-        $user     = JemFactory::getUser();
-        $userTz   = $user->getParam('timezone');
-        $timeZone = Factory::getConfig()->get('offset');
-
-        /* disabled for now
-        if($userTz) {
-            $timeZone = $userTz;
-        }
-        */
-        return $timeZone;
+        return self::getJoomlaTimeZoneName();
     }
 
     /**
@@ -2665,7 +3078,7 @@ class JemHelper
         $language->load('com_jem', JPATH_SITE, null, false);
 
         $jemsettings   = JemHelper::config();
-        $timezone_name = JemHelper::getTimeZoneName();
+        $timezone_name = JemHelper::getEventTimeZoneName($event);
         $config        = Factory::getConfig();
         $sitename      = $config->get('sitename');
         $uri           = Uri::getInstance();
@@ -2878,6 +3291,37 @@ class JemHelper
             return false;
         }
         return true;
+    }
+
+    /**
+     * Test a date against an exact calendar format without normalising invalid values.
+     *
+     * Unlike strtotime(), this rejects impossible dates such as 2027-02-29 and
+     * 2027-04-31. Empty values are not dates; callers can allow them explicitly.
+     *
+     * @param   mixed   $date    Date value to validate.
+     * @param   string  $format  Expected PHP date format.
+     *
+     * @return  boolean
+     */
+    static public function isValidCalendarDate($date, $format = 'Y-m-d')
+    {
+        if (!is_string($date) || $date === '') {
+            return false;
+        }
+
+        $parsed = \DateTimeImmutable::createFromFormat('!' . $format, $date);
+        $errors = \DateTimeImmutable::getLastErrors();
+
+        if ($parsed === false) {
+            return false;
+        }
+
+        if ($errors !== false && ((int) $errors['warning_count'] > 0 || (int) $errors['error_count'] > 0)) {
+            return false;
+        }
+
+        return $parsed->format($format) === $date;
     }
 
     /**
@@ -3134,6 +3578,32 @@ class JemHelper
     }
 
     /**
+     * Return the CSS/layout basename from Joomla's module layout value.
+     *
+     * Joomla normally stores alternative layouts as "template:layout", but
+     * older or incomplete module instances can contain only "layout" or an
+     * empty value. Normalising it here prevents requests for an empty .css
+     * filename and keeps those module instances on the default stylesheet.
+     *
+     * @param   string  $layout  Stored Joomla module layout value.
+     *
+     * @return  string
+     */
+    static public function getModuleLayoutName($layout = 'default')
+    {
+        $layout = (string) $layout;
+
+        if (strpos($layout, ':') !== false) {
+            $parts = explode(':', $layout, 2);
+            $layout = $parts[1];
+        }
+
+        $layout = trim($layout);
+
+        return $layout !== '' ? $layout : 'default';
+    }
+
+    /**
      * Get the path to a layout for a module respecting layout style configured in JEM Settings.
      *
      * @param   string  $module  The name of the module
@@ -3182,13 +3652,16 @@ class JemHelper
         $settings = self::retrieveCss();
         $layoutSuffix = self::getLayoutStyleSuffix();
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
-        $uri      = Uri::getInstance();
-        $url      = $uri->root();
-        $suffix   = $layoutSuffix ? '-' . $layoutSuffix : '';
+        $wa       = $app->getDocument()->getWebAssetManager();
+        $isAdmin  = $app->isClient('administrator');
+        $expectedSuffix = $layoutSuffix ? '-' . $layoutSuffix : '';
+        $suffix   = $expectedSuffix !== '' && substr($css, -strlen($expectedSuffix)) !== $expectedSuffix
+            ? $expectedSuffix
+            : '';
         $variant  = $css . $suffix;
         $key      = str_replace('-', '_', $variant);
         $baseKey  = str_replace('-', '_', $css);
+        $styleUri = '';
 
         $hasVariantSetting = $suffix
             && ($settings->get('css_' . $key . '_usecustom', null) !== null || $settings->get('css_' . $key . '_customfile', null) !== null);
@@ -3200,23 +3673,48 @@ class JemHelper
             $file = $file ? preg_replace('%^/([^/]*)%', '$1', $file) : '';
 
             if ($file && File::getExt($file) === 'css' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $file)) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $file);
+                $styleUri = 'media/com_jem/css/custom/' . $file;
             }
 
-            if (is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $variant . '.css')) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $variant . '.css');
+            if ($styleUri === '' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $variant . '.css')) {
+                $styleUri = 'media/com_jem/css/custom/' . $variant . '.css';
             }
 
-            if (is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $css . '.css')) {
-                return $document->addStyleSheet($url . 'media/com_jem/css/custom/' . $css . '.css');
+            if ($styleUri === '' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $css . '.css')) {
+                $styleUri = 'media/com_jem/css/custom/' . $css . '.css';
             }
         }
 
-        if (is_file(JPATH_SITE . '/media/com_jem/css/' . $variant . '.css')) {
-            return $document->addStyleSheet($url . 'media/com_jem/css/' . $variant . '.css');
+        if ($styleUri === '') {
+            $template = (string) $app->getTemplate();
+            $templateRoot = $isAdmin ? JPATH_ADMINISTRATOR . '/templates/' : JPATH_THEMES . '/';
+            $templateUri  = $isAdmin ? 'administrator/templates/' : 'templates/';
+            $templateBase = $templateRoot . $template . '/css/com_jem/';
+
+            if (is_file($templateBase . $variant . '.css')) {
+                $styleUri = $templateUri . $template . '/css/com_jem/' . $variant . '.css';
+            } elseif (is_file(JPATH_SITE . '/media/com_jem/css/' . $variant . '.css')) {
+                $styleUri = 'media/com_jem/css/' . $variant . '.css';
+            } elseif ($variant !== $css && is_file($templateBase . $css . '.css')) {
+                $styleUri = $templateUri . $template . '/css/com_jem/' . $css . '.css';
+            } else {
+                $styleUri = 'media/com_jem/css/' . $css . '.css';
+            }
         }
 
-        return $document->addStyleSheet($url . 'media/com_jem/css/' . $css . '.css');
+        $asset = ($isAdmin ? 'com_jem.admin.' : 'com_jem.frontend.') . str_replace('_', '-', $variant);
+
+        if ($wa->assetExists('style', $asset)) {
+            $wa->useStyle($asset);
+        } else {
+            $wa->registerAndUseStyle($asset, $styleUri);
+        }
+
+        if (!$isAdmin) {
+            self::$frontendCssAssets[$asset] = $asset;
+        }
+
+        return $wa;
     }
 
     /**
@@ -3229,7 +3727,11 @@ class JemHelper
      */
     static public function loadFrontendUserCss()
     {
-        self::loadUserCssFile('jem-user-front.css', 'com_jem.user.front');
+        self::loadUserCssFile(
+            'jem-user-front.css',
+            'com_jem.user.front',
+            array_values(self::$frontendCssAssets)
+        );
     }
 
     /**
@@ -3248,12 +3750,13 @@ class JemHelper
     /**
      * Load an optional user override CSS file from media/com_jem/css/custom.
      *
-     * @param   string  $file   The CSS file name.
-     * @param   string  $asset  The WebAssetManager asset name.
+     * @param   string  $file          The CSS file name.
+     * @param   string  $asset         The WebAssetManager asset name.
+     * @param   array   $dependencies  Styles that must be rendered first.
      *
      * @return  void
      */
-    protected static function loadUserCssFile($file, $asset)
+    protected static function loadUserCssFile($file, $asset, $dependencies = array())
     {
         $path = JPATH_SITE . '/media/com_jem/css/custom/' . $file;
 
@@ -3265,18 +3768,27 @@ class JemHelper
         $wa  = $app->getDocument()->getWebAssetManager();
 
         if (method_exists($wa, 'assetExists') && $wa->assetExists('style', $asset)) {
+            if ($wa->isAssetActive('style', $asset)) {
+                $wa->disableStyle($asset);
+            }
             $wa->useStyle($asset);
             return;
         }
 
-        $wa->registerAndUseStyle($asset, 'media/com_jem/css/custom/' . $file);
+        $wa->registerAndUseStyle(
+            $asset,
+            'media/com_jem/css/custom/' . $file,
+            array(),
+            array(),
+            $dependencies
+        );
     }
 
     /**
      * Get the url to a css file for a module respecting layout style configured in JEM Settings.
      *
      * @param   string  $module  The name of the module
-     * @param   string  $css     The name of the css file (in the root path). If null, the name of module is used (in the suffix directory).
+     * @param   string  $css     CSS basename. Empty values use the module's default stylesheet.
      *
      * @since   2.3
      */
@@ -3285,29 +3797,38 @@ class JemHelper
         $app = Factory::getApplication();
         $wa = $app->getDocument()->getWebAssetManager();
         $templateName = $app->getTemplate();
+        $css = self::getModuleLayoutName($css);
         $filestyle = $css . '.css';
+        $asset = $module . ($css ? '.' . $css : '');
+        $styleUri = '';
 
         //Search for template overrides
-        if(file_exists(JPATH_BASE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle);
+        if(file_exists(JPATH_SITE . '/templates/' . $templateName . '/css/' . $module . '/' . $filestyle)) {
+            $styleUri = 'templates/' . $templateName . '/css/'. $module . '/' . $filestyle;
         }
         //Search for template overrides
-        else if (file_exists(JPATH_BASE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
+            $styleUri = 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle;
         }
         //Search in media folder
-        else if (file_exists(JPATH_BASE . '/media/' . $module . '/css/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'media/' . $module . '/css/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/media/' . $module . '/css/' . $filestyle)) {
+            $styleUri = 'media/' . $module . '/css/' . $filestyle;
         }
         //Search in the module
-        else if (file_exists(JPATH_BASE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
-            $wa->registerAndUseStyle($module . ($css? '.' . $css: ''), 'modules/'. $module . '/tmpl/' . $filestyle);
+        else if (file_exists(JPATH_SITE . '/modules/' . $module . '/tmpl/' . $filestyle)) {
+            $styleUri = 'modules/'. $module . '/tmpl/' . $filestyle;
         }
         //Error no css file found
         else {
             JemHelper::addLogEntry("Warning: The file " . $filestyle . " couldn't be found.", __METHOD__);
+            return;
         }
 
+        if ($wa->assetExists('style', $asset)) {
+            $wa->useStyle($asset);
+        } else {
+            $wa->registerAndUseStyle($asset, $styleUri);
+        }
     }
 
     static public function loadIconFont()

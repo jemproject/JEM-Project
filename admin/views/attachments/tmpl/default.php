@@ -14,7 +14,8 @@ use Joomla\CMS\Session\Session;
 
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
-$canEdit   = JemFactory::getUser()->authorise('core.edit', 'com_jem');
+$canAccessEvents = JemHelperBackend::can('event', 'access');
+$canAccessVenues = JemHelperBackend::can('venue', 'access');
 
 $objectTypeLabels = array(
     'event'    => Text::_('COM_JEM_ATTACHMENT_OBJECT_EVENT'),
@@ -115,8 +116,12 @@ $fileExtension = function ($filename) {
                         <div class="col-md-2">
                             <select name="filter_type" class="form-select" onchange="this.form.submit()">
                                 <option value=""><?php echo Text::_('COM_JEM_ATTACHMENT_FILTER_OBJECT_TYPE'); ?></option>
+                                <?php if ($canAccessEvents) : ?>
                                 <option value="event" <?php echo $this->state->get('filter_type') === 'event' ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_ATTACHMENT_OBJECT_EVENT'); ?></option>
+                                <?php endif; ?>
+                                <?php if ($canAccessVenues) : ?>
                                 <option value="venue" <?php echo $this->state->get('filter_type') === 'venue' ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_ATTACHMENT_OBJECT_VENUE'); ?></option>
+                                <?php endif; ?>
                                 <option value="category" <?php echo $this->state->get('filter_type') === 'category' ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_ATTACHMENT_OBJECT_CATEGORY'); ?></option>
                             </select>
                         </div>
@@ -202,7 +207,9 @@ $fileExtension = function ($filename) {
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
                     <td class="center">
-                        <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                        <?php if ($item->canEdit) : ?>
+                            <?php echo HTMLHelper::_('grid.id', $i, $item->id); ?>
+                        <?php endif; ?>
                     </td>
                     <td class="center">
                         <?php
@@ -219,7 +226,7 @@ $fileExtension = function ($filename) {
                                 <?php echo $this->escape($fileExtension($item->file)); ?>
                             </span>
                             <div class="jem-attachment-file-meta">
-                                <?php if ($canEdit) : ?>
+                                <?php if ($item->canEdit) : ?>
                                     <a class="jem-attachment-file-name" href="<?php echo $editUrl; ?>"><strong><?php echo $this->escape($item->file); ?></strong></a>
                                 <?php else : ?>
                                     <strong class="jem-attachment-file-name"><?php echo $this->escape($item->file); ?></strong>
@@ -237,7 +244,7 @@ $fileExtension = function ($filename) {
                         <?php echo $this->escape($objectTypeLabels[$item->object_type] ?? $item->object_type); ?>
                     </td>
                     <td>
-                        <?php if ($link && $item->linked_title) : ?>
+                        <?php if ($item->canEdit && $link && $item->linked_title) : ?>
                             <a href="<?php echo Route::_($link); ?>"><?php echo $this->escape($title); ?></a>
                         <?php else : ?>
                             <?php echo $this->escape($title); ?>

@@ -1,11 +1,10 @@
 <?php
 /**
- * Joomla! Content Management System
- *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @copyright  (C) 2005-2009 Christoph Lukes
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
  */
-
 
 defined('_JEXEC') or die;
 
@@ -40,7 +39,7 @@ class JemNomenuRules implements RulesInterface
     }
 
     /**
-     * Dummymethod to fullfill the interface requirements
+     * Normalize query values before a menu-less URL is built.
      *
      * @param   array  &$query  The query array to process
      *
@@ -51,12 +50,10 @@ class JemNomenuRules implements RulesInterface
      */
     public function preprocess(&$query)
     {
-        if(isset($query['Itemid'])) {
+        if (isset($query['Itemid'])) {
             $itmid = is_array($query['Itemid']) ? array_values($query['Itemid']) : $query['Itemid'];
             $query['Itemid'] = is_array($itmid) ? $itmid[0] : $itmid;
         }
-
-        $test = 'Test';
     }
 
     /**
@@ -71,22 +68,13 @@ class JemNomenuRules implements RulesInterface
      */
     public function parse(&$segments, &$vars)
     {
+        if (empty($segments)) {
+            return;
+        }
 
         // Count segments
         $count = count($segments);
 
-
-        // echo "<pre/>";print_r($segments);die;
-        //with this url: https://localhost/j4x/my-walks/mywalk-n/walk-title.html
-        // segments: [[0] => mywalk-n, [1] => walk-title]
-        // vars: [[option] => com_mywalks, [view] => mywalks, [id] => 0]
-
-        // $vars['view'] = 'mywalk';
-        // $vars['id'] = substr($segments[0], strpos($segments[0], '-') + 1);
-        // array_shift($segments);
-
-        // array_shift($segments);
-        // $vars['option']='com_jem';
         switch ($segments[0])
         {
             case 'category':
@@ -131,7 +119,16 @@ class JemNomenuRules implements RulesInterface
                 {
                     $vars['view'] = 'editvenue';
                     if ($count == 2) {
-                        $vars['id'] = $segments[1];
+                        $vars['a_id'] = $segments[1];
+                    }
+                }
+                break;
+
+            case 'editevent':
+                {
+                    $vars['view'] = 'editevent';
+                    if ($count == 2) {
+                        $vars['a_id'] = $segments[1];
                     }
                 }
                 break;
@@ -166,8 +163,6 @@ class JemNomenuRules implements RulesInterface
 
             case 'calendar':
                 {
-                    // $id = explode(':', $segments[1]);
-                    // $vars['id'] = $id[0];
                     $vars['view'] = 'calendar';
                 }
                 break;
@@ -269,9 +264,15 @@ class JemNomenuRules implements RulesInterface
      */
     public function build(&$query, &$segments)
     {
-        // $itmid = is_array($query['Itemid']) ? array_values($query['Itemid']) : $query['Itemid'] ;
+        if (isset($query['view'], $query['a_id'])
+            && in_array($query['view'], array('editevent', 'editvenue'), true)) {
+            $segments[] = $query['view'];
+            $segments[] = $query['a_id'];
+            unset($query['view'], $query['tmpl'], $query['a_id'], $query['Itemid']);
 
-        // $query['Itemid']= is_array($itmid) ?  $itmid[0] : $itmid;
+            return;
+        }
+
         if(isset($query['view'],$query['id'])){
             $segments[] =$query['view'];
             $segments[] =$query['id'];

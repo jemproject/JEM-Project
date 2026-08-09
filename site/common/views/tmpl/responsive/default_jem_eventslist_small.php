@@ -253,7 +253,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php endif; ?>
                                 <?php
                                 echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                                 ?>
                                 <?php if ($this->jemsettings->showdetails == 1) : ?>
                             </a>
@@ -271,7 +271,7 @@ function jem_common_show_filter(&$obj) {
                         <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                         <?php
                         echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                         ?>
                         <?php if ($this->jemsettings->showtitle == 0) : ?>
                             <?php echo JemOutput::recurrenceicon($row); ?>

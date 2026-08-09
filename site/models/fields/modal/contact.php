@@ -85,7 +85,8 @@ class JFormFieldModal_Contact extends FormField
 
         $link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
             . '&function=jSelectContact_' . $this->id
-            . '&selected=' . $currentValues;
+            . '&selected=' . $currentValues
+            . '&' . Session::getFormToken() . '=1';
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $contactNames = array();
@@ -95,10 +96,20 @@ class JFormFieldModal_Contact extends FormField
             $ids = explode(',', $this->value);
             $ids = array_map('intval', $ids);
 
+            $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
             $query = $db->getQuery(true)
-                ->select($db->quoteName('name'))
-                ->from($db->quoteName('#__contact_details'))
-                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+                ->select($db->quoteName('con.name'))
+                ->from($db->quoteName('#__contact_details', 'con'))
+                ->join(
+                    'INNER',
+                    $db->quoteName('#__categories', 'cat')
+                    . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid')
+                )
+                ->where($db->quoteName('con.id') . ' IN (' . implode(',', $ids) . ')')
+                ->where($db->quoteName('con.published') . ' = 1')
+                ->where($db->quoteName('con.access') . ' IN (' . implode(',', $levels) . ')')
+                ->where($db->quoteName('cat.published') . ' = 1')
+                ->where($db->quoteName('cat.access') . ' IN (' . implode(',', $levels) . ')');
 
             try {
                 $db->setQuery($query);

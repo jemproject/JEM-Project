@@ -33,6 +33,11 @@ class JemViewTypeevents extends HtmlView
         $model->setState('list.start', 0);
         $model->setState('list.limit', 0);
         $type = $model->getType();
+
+        if ($type && !JemFrontendAccess::enforceViewAccess(!empty($type->user_has_access_type), $app)) {
+            return;
+        }
+
         $typeName = $type && trim((string) ($type->name ?? '')) !== ''
             ? Text::sprintf('COM_JEM_TYPEEVENTS_TITLE', (string) $type->name)
             : Text::_('COM_JEM_EVENTS');

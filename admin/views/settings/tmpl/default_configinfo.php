@@ -152,7 +152,7 @@ $logFiles = array(
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#<?php echo $modalId; ?>">
                                     <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_VIEW'); ?>
                                 </button>
-                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $downloadUrl; ?>">
+                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $downloadUrl; ?>" download="<?php echo htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <span class="icon-download" aria-hidden="true"></span>
                                     <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_DOWNLOAD'); ?>
                                 </a>

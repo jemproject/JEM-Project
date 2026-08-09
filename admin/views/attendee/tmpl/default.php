@@ -111,7 +111,7 @@ Joomla.submitbutton = function(task)
                                      HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
 
                     $selectOptions = array('id' => 'reg_status', 'class' => 'form-select');
-                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions);
+                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions, 'value', 'text', (int) $this->row->status);
                     ?>
                 </td>
             </tr>
@@ -142,7 +142,7 @@ Joomla.submitbutton = function(task)
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if ($this->row->recurrence_type && $this->row->seriesbooking): ?>
+            <?php if (($this->row->recurrence_type || !empty($this->row->series_id)) && $this->row->seriesbooking): ?>
             <tr>
                 <td class="key">
                     <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>
@@ -150,7 +150,7 @@ Joomla.submitbutton = function(task)
                     </label>
                 </td>
                 <td>
-                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1""/>
+                    <input type="checkbox" id="seriesbooking" name="seriesbooking" value="1"/>
                 </td>
             </tr>
             <?php endif; ?>

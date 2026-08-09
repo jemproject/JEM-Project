@@ -183,6 +183,12 @@ document.addEventListener('DOMContentLoaded', function() {
         <h1 class="componentheading"><?php echo $this->escape($this->params->get('page_heading')); ?></h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <form action="<?php echo Route::_('index.php?option=com_jem&view=specialday&layout=edit&id=' . (int) $this->item->id); ?>"
           method="post" name="adminForm" id="specialday-form" class="form-validate jem-specialday-form">
 
@@ -363,4 +369,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <input type="hidden" name="task" value="">
         <?php echo HTMLHelper::_('form.token'); ?>
     </form>
+
+    <?php if ($this->params->get('showfootertext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('footertext'); ?>
+        </div>
+    <?php endif; ?>
 </div>

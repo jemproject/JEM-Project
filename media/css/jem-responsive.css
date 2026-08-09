@@ -190,6 +190,10 @@ body.com_jem.body-overlayed {
     color: currentColor;
 }
 
+#jem .buttons .jem-layout-toggle-label {
+    display: none;
+}
+
 #jem .buttons::after {
     clear: both;
 }

@@ -30,7 +30,6 @@ $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
 ?>
 
 <div class="jemmodulebasic<?php echo $params->get('moduleclass_sfx')?>" id="jemmodulebasic-tablestyle">
@@ -48,18 +47,18 @@ $linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit
                         $flagfile = $baseUri . $flagPath . strtolower($item->country) . '.' . $flagExt;
                         $flagHtml = '<img src="' . $flagfile . '" alt="' . $item->country . ' ' . Text::_('MOD_JEM_SHOW_FLAG_ICON') . '" style="max-width: 25px; margin-right: 5px; vertical-align: middle;">';
                     }
-                    $titleContent = ($linkdet == 2) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->title.'</a>' : $item->title;
+                    $titleContent = ($linkdet == 2) ? '<a href="'.$item->link.'">'.$item->title.'</a>' : $item->title;
                     $colTitle = '<td style="padding: 8px 4px; vertical-align: middle;"><span class="event-title">' . $flagHtml . $titleContent . '</span></td>';
                 }
 
                 // Column: Date
-                $dateContent = ($linkdet == 1) ? '<a href="'.$item->link.'" '.$linkStyle.'>'.$item->dateinfo.'</a>' : $item->dateinfo;
+                $dateContent = ($linkdet == 1) ? '<a href="'.$item->link.'">'.$item->dateinfo.'</a>' : $item->dateinfo;
                 $colDate = '<td style="padding: 8px 4px; vertical-align: middle;"><span class="event-date">' . $dateContent . '</span></td>';
 
                 // Column: Venue
                 $colVenue = '';
                 if ($showvenue) {
-                    $venueContent = ($linkloc == 1) ? '<a href="'.$item->venueurl.'" '.$linkStyle.'>'.$item->venue.'</a>' : $item->venue;
+                    $venueContent = ($linkloc == 1) ? '<a href="'.$item->venueurl.'">'.$item->venue.'</a>' : $item->venue;
                     $colVenue = '<td style="padding: 8px 4px; vertical-align: middle;"><span class="event-venue" style="font-style: italic;">' . $venueContent . '</span></td>';
                 }
 

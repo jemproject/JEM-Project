@@ -340,7 +340,7 @@ if (!function_exists('jem_addusers_account_status')) {
             <div class="choose-places">
                 <?php echo Text::_('COM_JEM_SELECT');?> <?php echo Text::_('COM_JEM_PLACES'); ?> <input id="places" name="places" type="number" style="text-align: center; width:auto;" value="<?php echo $this->event->minbookeduser; ?>" max="<?php echo ($placesavailableuser > 0 ? $placesavailableuser : ($placesavailableuser ?? '')); ?>" min="<?php echo $this->event->minbookeduser; ?>">
             </div>
-            <?php if ($this->event->recurrence_type && $this->event->seriesbooking): ?>
+            <?php if (($this->event->recurrence_type || !empty($this->event->series_id)) && $this->event->seriesbooking): ?>
                 <div class="choose-places">
                     <?php echo Text::_('COM_JEM_SERIES_BOOKED').':'; ?>
                     <input type="checkbox" id="seriesbooking" name="seriesbooking" />

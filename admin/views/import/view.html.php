@@ -28,9 +28,12 @@ class JemViewImport extends JemAdminView
 {
 
     public function display($tpl = null) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->usePreset('choicesjs')->useScript('webcomponent.field-fancy-select');
 
         // Get data from the model

@@ -19,10 +19,12 @@ use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
 use Joomla\String\StringHelper;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/map.php');
 
 // HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
@@ -54,7 +56,7 @@ static public function lightbox() {
     if ($settings->lightbox == 1) {
         $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
-        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+        JemHelper::loadCss('lightbox.min');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
         echo '<script>lightbox.option({
                       \'showImageNumberLabel\': false,
@@ -376,7 +378,9 @@ static public function lightbox() {
      */
     static protected function buildCurrentPdfLink()
     {
-        $uri = Uri::getInstance();
+        // Uri::getInstance() is shared. Mutating it here would contaminate
+        // edit/add return URLs rendered after the PDF button.
+        $uri = clone Uri::getInstance();
         $query = $uri->getQuery(true);
         $query['format'] = 'raw';
         $query['layout'] = 'pdf';
@@ -983,6 +987,88 @@ static public function lightbox() {
     }
 
     /**
+     * Build an identifying User-Agent for Nominatim requests.
+     *
+     * @return string
+     */
+    static protected function nominatimUserAgent()
+    {
+        return 'JEM (+https://www.joomlaeventmanager.net; site=' . Uri::root() . ')';
+    }
+
+    /**
+     * Render an OpenStreetMap canvas using JEM's local Leaflet assets.
+     *
+     * The map is initialised by osm-map.js when it is visible. This also supports
+     * maps inside Bootstrap modals, whose dimensions are not available until the
+     * modal has been opened.
+     *
+     * @param float  $latitude  Marker latitude
+     * @param float  $longitude Marker longitude
+     * @param string $height    CSS height including its unit
+     * @param int    $zoom      Initial Leaflet zoom level
+     * @param string $id        Optional unique element id
+     * @param string $class     Optional additional CSS classes
+     * @param string $marker    Configured fallback marker image
+     * @param string $typeIcon  Optional type icon CSS class
+     * @param string $typeColor Optional type marker background colour
+     *
+     * @return string
+     */
+    static public function osmMapCanvas($latitude, $longitude, $height = '250px', $zoom = 15, $id = '', $class = '', $marker = '', $typeIcon = '', $typeColor = '')
+    {
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        if ($latitude < -90.0 || $latitude > 90.0 || $longitude < -180.0 || $longitude > 180.0) {
+            return '';
+        }
+
+        $height = preg_match('/^\d+(?:\.\d+)?(?:px|vh|vw|rem|%)$/', (string) $height)
+            ? (string) $height
+            : '250px';
+        $zoom = max(1, min(19, (int) $zoom));
+        $id = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $id);
+        $class = trim(preg_replace('/[^A-Za-z0-9 _-]/', '', (string) $class));
+        $marker = JemMapHelper::resolveMarkerUrl($marker, 'media/com_jem/images/marker-red.webp');
+        $typeIcon = trim((string) $typeIcon);
+        $typeIcon = preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $typeIcon) ? $typeIcon : '';
+        $typeColor = trim((string) $typeColor);
+        $typeColor = preg_match('/^#[0-9a-fA-F]{6}$/', $typeColor) ? strtolower($typeColor) : '#d9ddb5';
+        $typeIconColor = JemHelper::getContrastTextColor($typeColor) ?: '#ffffff';
+
+        if ($id === '') {
+            static $mapNumber = 0;
+            $id = 'jem-osm-map-' . ++$mapNumber;
+        }
+
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+        JemHelper::loadCss('leaflet');
+        if (!$wa->assetExists('script', 'leaflet')) {
+            $wa->registerScript('leaflet', 'media/com_jem/js/leaflet.js');
+        }
+        if (!$wa->assetExists('script', 'jem.osm-map')) {
+            $wa->registerScript('jem.osm-map', 'media/com_jem/js/osm-map.js', array(), array('defer' => true), array('leaflet'));
+        }
+
+        $wa->useScript('leaflet');
+        $wa->useScript('jem.osm-map');
+
+        return '<div id="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '"'
+            . ' class="jem-osm-map' . ($class !== '' ? ' ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') : '') . '"'
+            . ' style="width:100%;height:' . htmlspecialchars($height, ENT_QUOTES, 'UTF-8') . ';min-height:1px"'
+            . ' data-latitude="' . htmlspecialchars((string) $latitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-longitude="' . htmlspecialchars((string) $longitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-zoom="' . $zoom . '"'
+            . ' data-marker="' . htmlspecialchars($marker, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon="' . htmlspecialchars($typeIcon, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-color="' . htmlspecialchars($typeColor, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon-color="' . htmlspecialchars($typeIconColor, ENT_QUOTES, 'UTF-8') . '"'
+            . ' role="region" aria-label="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8') . '"></div>';
+    }
+
+    /**
      * Creates the map button
      *
      * @param obj $data
@@ -1135,12 +1221,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in Seconds
                     ]
                 ];
@@ -1173,12 +1257,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5.0.0') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in seconds
                     ]
                 ];
@@ -1191,12 +1273,35 @@ static public function lightbox() {
                 $lng = $decoded[0]["lon"] ?? null;
                 }
 
-                $wa = $app->getDocument()->getWebAssetManager();
-                $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
-
                 if ($lat && $lng) {
-                    $zoom = 15; // Adjust the zoom level as per your requirement
-                    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+                    $typeIcon = '';
+                    $typeColor = '';
+
+                    if ($view === 'event') {
+                        $typeIcon = (string) ($data->type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? '');
+
+                        if ($typeIcon === '' && !empty($data->categories)) {
+                            foreach ((array) $data->categories as $category) {
+                                if (!empty($category->type_icon)) {
+                                    $typeIcon = (string) $category->type_icon;
+                                    $typeColor = (string) ($category->type_color ?? '');
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($typeIcon === '') {
+                            $typeIcon = (string) ($data->venue_type_icon ?? '');
+                            $typeColor = (string) ($data->venue_type_color ?? '');
+                        }
+                    } else {
+                        $typeIcon = (string) ($data->type_icon ?? $data->venue_type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? $data->venue_type_color ?? '');
+                    }
+
+                    $marker = $paramGet($params, 'venue_markerfile', 'media/com_jem/images/marker-red.webp');
+                    $output = self::osmMapCanvas($lat, $lng, '250px', 15, '', '', $marker, $typeIcon, $typeColor);
                 } else {
                     $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
                     $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
@@ -1220,14 +1325,16 @@ static public function lightbox() {
         $item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
         //stop if disabled
-        if (empty($item->recurrence_number) && empty($item->recurrence_type)) {
+        if (empty($item->recurrence_number) && empty($item->recurrence_type) && empty($item->series_id)) {
             return null;
         }
 
         $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
         $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
-        $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
+        $first = !empty($item->series_id)
+            ? ((int) ($item->series_order ?? 0) === 1)
+            : (!empty($item->recurrence_type) && empty($item->recurrence_first_id));
 
         $image = $first
             ? 'com_jem/icon-32-recurrence-first.svg'
@@ -1909,10 +2016,10 @@ static public function lightbox() {
         }
     }
 
-    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true, $event = null)
     {
         if (is_array($dateStart)) {
-            foreach (array('timeStart','dateEnd','timeEnd','showTime') as $param) {
+            foreach (array('timeStart','dateEnd','timeEnd','showTime','event') as $param) {
                 if (isset($dateStart[$param])) {
                     $$param = $dateStart[$param];
                 }
@@ -1924,37 +2031,49 @@ static public function lightbox() {
         $formatD = 'Y-m-d';
         $formatT = 'H:i';
 
-        if (JemHelper::isValidDate($dateStart)) {
-            $content = self::formatdate($dateStart, $formatD);
+        // Schema.org Event startDate/endDate only accept Date or DateTime.
+        // An open-date event may retain its visible times in JEM, but those
+        // times cannot be emitted as standalone temporal metadata.
+        if (!JemHelper::isValidDate($dateStart)) {
+            return $output;
+        }
 
-            if ($showTime && $timeStart) {
+        $timeZoneName = JemHelper::getEventTimeZoneName($event ?: (object) array('timezone_mode' => 'joomla'));
+        $timeZone = new \DateTimeZone($timeZoneName);
+
+        $content = self::formatdate($dateStart, $formatD);
+
+        if ($showTime && JemHelper::isValidTime($timeStart)) {
+            try {
+                $content = (new \DateTimeImmutable($dateStart . ' ' . $timeStart, $timeZone))->format('Y-m-d\TH:iP');
+            } catch (\Exception $e) {
                 $content .= 'T'.self::formattime($timeStart, $formatT, false);
             }
-            $output .= '<meta itemprop="startDate" content="'.$content.'" />';
+        }
+        $output .= '<meta itemprop="startDate" content="'.$content.'" />';
 
-            if (JemHelper::isValidDate($dateEnd)) {
-                $content = self::formatdate($dateEnd, $formatD);
+        $effectiveEndDate = JemHelper::isValidDate($dateEnd) ? $dateEnd : '';
 
-                if ($showTime && $timeEnd) {
+        // JEM treats an end time without an explicit end date as ending on
+        // the start date. Preserve that meaning in the structured metadata.
+        if ($effectiveEndDate === '' && $showTime
+            && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd)) {
+            $effectiveEndDate = $dateStart;
+        }
+
+        if ($effectiveEndDate !== '') {
+            $content = self::formatdate($effectiveEndDate, $formatD);
+
+            if ($showTime && JemHelper::isValidTime($timeEnd)) {
+                try {
+                    $content = (new \DateTimeImmutable($effectiveEndDate . ' ' . $timeEnd, $timeZone))->format('Y-m-d\TH:iP');
+                } catch (\Exception $e) {
                     $content .= 'T'.self::formattime($timeEnd, $formatT, false);
                 }
-                $output .= '<meta itemprop="endDate" content="'.$content.'" />';
             }
-        } else {
-            // Open date
-
-            if ($showTime) {
-                if ($timeStart) {
-                    $content = self::formattime($timeStart, $formatT, false);
-                    $output .= '<meta itemprop="startDate" content="'.$content.'" />';
-                }
-                // Display end time only when both times are set
-                if ($timeStart && $timeEnd) {
-                    $content .= self::formattime($timeEnd, $formatT, false);
-                    $output .= '<meta itemprop="endDate" content="'.$content.'" />';
-                }
-            }
+            $output .= '<meta itemprop="endDate" content="'.$content.'" />';
         }
+
         return $output;
     }
 

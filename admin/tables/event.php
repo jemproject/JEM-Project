@@ -14,8 +14,6 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
-use Joomla\CMS\User\User;
-
 use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 /**
@@ -138,6 +136,21 @@ class JemTableEvent extends Table
             $this->endtimes = null;
         }
 
+        $this->timezone_mode = isset($this->timezone_mode) ? trim((string) $this->timezone_mode) : 'joomla';
+        if (!in_array($this->timezone_mode, array('joomla', 'venue', 'custom'), true)) {
+            $this->timezone_mode = 'joomla';
+        }
+
+        $this->timezone = isset($this->timezone) ? trim(strip_tags((string) $this->timezone)) : '';
+        if ($this->timezone_mode === 'custom' && !JemHelper::isValidTimeZone($this->timezone)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_TIMEZONE'));
+            return false;
+        }
+
+        if ($this->timezone_mode !== 'custom') {
+            $this->timezone = '';
+        }
+
         $validEventStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
         if (empty($this->event_status) || !in_array($this->event_status, $validEventStatuses, true)) {
             $this->event_status = 'scheduled';
@@ -159,6 +172,24 @@ class JemTableEvent extends Table
 
         if (empty($this->dates) || ($this->dates == $nullDate)) {
             $this->dates = null;
+        }
+
+        if (empty($this->recurrence_limit_date) || ($this->recurrence_limit_date == $nullDate)) {
+            $this->recurrence_limit_date = null;
+        }
+
+        $dateFields = array(
+            'dates'                 => 'COM_JEM_STARTDATE',
+            'enddates'              => 'COM_JEM_ENDDATE',
+            'recurrence_limit_date' => 'COM_JEM_RECURRENCE_COUNTER',
+        );
+
+        foreach ($dateFields as $field => $labelKey) {
+            if ($this->$field !== null && !JemHelper::isValidCalendarDate((string) $this->$field)) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', Text::_($labelKey)));
+
+                return false;
+            }
         }
 
         // check startDate - don't delete other fields; it's ok to know a time but not the day
@@ -196,23 +227,7 @@ class JemTableEvent extends Table
             return false;
         }
 
-        // Check created_by user
-        $currentUser = Factory::getApplication()->getIdentity();
-        $currentUserId = (int) $currentUser->id;
-        $createdBy = isset($this->created_by) ? (int) $this->created_by : 0;
-        $isAdmin = false;
-        if ($createdBy > 0) {
-            try {
-                $creator = User::getInstance($createdBy);
-                $isAdmin = $creator && !$creator->guest && $creator->authorise('core.admin');
-            } catch (\Throwable $e) {
-                $isAdmin = false;
-            }
-        }
-
-        if (!$isAdmin) {
-            $this->created_by = $currentUserId;
-        }
+        JemHelper::setEventUtcDates($this);
 
         // If publish_up does not exist, is empty, or is the unresolved form default 'now'
         if (empty($this->publish_up) || $this->publish_up === 'now') {

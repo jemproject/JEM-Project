@@ -23,13 +23,16 @@ class JemViewExport extends JemAdminView
 {
 
     public function display($tpl = null) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         //initialise variables
         $app = Factory::getApplication();
         $document = $app->getDocument();
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->usePreset('choicesjs')->useScript('webcomponent.field-fancy-select');
         //Cause of group limits we can't use class here to build the categories tree
         $categories = $this->get('Categories');

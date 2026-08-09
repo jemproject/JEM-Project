@@ -10,11 +10,14 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Access\Access;
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\HTML\Helpers\Sidebar;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Registry\Registry;
 
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_ADMINISTRATOR.'/components/com_jem/classes/backendacl.class.php');
 
 
 // class JemSidebarHelper extends HTMLHelperSidebar
@@ -42,6 +45,110 @@ class JemHelperBackend
     public static $extension = 'com_jem';
 
     /**
+     * Check a dedicated event or venue backend permission.
+     *
+     * These permissions deliberately exclude the frontend User Control and JEM
+     * Group grant paths evaluated by JemUser::can(). Backend mutations must be
+     * determined only by Joomla component ACL and the stored record owner.
+     *
+     * core.admin remains the Joomla-standard full-control permission. Edit-own
+     * is granted only when the owner loaded from storage matches the current
+     * identity; callers must never build $record from submitted form data.
+     *
+     * @param   string       $type       event or venue.
+     * @param   string       $operation  access, create, edit, edit.state or delete.
+     * @param   object|null  $record     Stored record for edit-own evaluation.
+     *
+     * @return boolean
+     */
+    public static function can($type, $operation, $record = null)
+    {
+        $user = JemFactory::getUser();
+        $owner = is_object($record) && isset($record->created_by) ? (int) $record->created_by : null;
+
+        return JemBackendAclPolicy::allows(
+            $type,
+            $operation,
+            $owner,
+            (int) $user->id,
+            static function ($action) use ($user) {
+                return $user->authorise($action, self::$extension);
+            }
+        );
+    }
+
+    /**
+     * Return the ACL action name used for a backend resource operation.
+     *
+     * @return string|null
+     */
+    public static function getResourceAction($type, $operation)
+    {
+        return JemBackendAclPolicy::getAction($type, $operation);
+    }
+
+    /**
+     * Check a non-resource backend administration action.
+     */
+    public static function canManage($action)
+    {
+        $allowedActions = array('jem.attendees.manage', 'jem.tools.manage', 'core.options');
+
+        if (!in_array($action, $allowedActions, true)) {
+            return false;
+        }
+
+        $user = JemFactory::getUser();
+
+        if ($action === 'jem.attendees.manage' && !self::can('event', 'access')) {
+            return false;
+        }
+
+        return $user->authorise('core.admin', self::$extension)
+            || $user->authorise($action, self::$extension);
+    }
+
+    /**
+     * Check access to an attachment through the ACL of its linked resource.
+     *
+     * Viewing and downloading require resource access. Changing attachment
+     * metadata or deleting a file requires edit permission on the stored event
+     * or venue, including edit-own when its stored creator matches the user.
+     */
+    public static function canAccessAttachment($object, $operation = 'access')
+    {
+        if (!preg_match('/^(event|venue)([0-9]+)$/i', (string) $object, $matches)) {
+            $user = JemFactory::getUser();
+
+            if (preg_match('/^category[0-9]+$/i', (string) $object)) {
+                $action = $operation === 'access' ? 'core.manage' : 'core.edit';
+
+                return $user->authorise('core.admin', self::$extension)
+                    || $user->authorise($action, self::$extension);
+            }
+
+            return self::canManage('jem.tools.manage');
+        }
+
+        $type = strtolower($matches[1]);
+
+        if ($operation === 'access') {
+            return self::can($type, 'access');
+        }
+
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'created_by')))
+            ->from($db->quoteName($type === 'event' ? '#__jem_events' : '#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . (int) $matches[2]);
+        $db->setQuery($query);
+        $record = $db->loadObject();
+
+        // Orphaned attachments require the unrestricted edit permission.
+        return $record ? self::can($type, 'edit', $record) : self::can($type, 'edit');
+    }
+
+    /**
      * Configure the Linkbar.
      *
      * @param    string    The name of the active view.
@@ -57,17 +164,21 @@ class JemHelperBackend
             $vName == 'main'
         );
 
-        JemSidebarHelper::addEntry(
-            Text::_('COM_JEM_EVENTS'),
-            'index.php?option=com_jem&view=events',
-            $vName == 'events'
-        );
+        if (self::can('event', 'access')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_EVENTS'),
+                'index.php?option=com_jem&view=events',
+                $vName == 'events'
+            );
+        }
 
-        JemSidebarHelper::addEntry(
-            Text::_('COM_JEM_VENUES'),
-            'index.php?option=com_jem&view=venues',
-            $vName == 'venues'
-        );
+        if (self::can('venue', 'access')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_VENUES'),
+                'index.php?option=com_jem&view=venues',
+                $vName == 'venues'
+            );
+        }
 
         JemSidebarHelper::addEntry(
             Text::_('COM_JEM_CATEGORIES'),
@@ -99,13 +210,15 @@ class JemHelperBackend
             $vName == 'specialdays'
         );
 
-        if (JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
+        if (self::canManage('core.options')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),
                 'index.php?option=com_jem&view=settings',
                 $vName == 'settings'
             );
+        }
 
+        if (self::canManage('jem.tools.manage')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_HOUSEKEEPING'),
                 'index.php?option=com_jem&amp;view=housekeeping',

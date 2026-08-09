@@ -33,7 +33,7 @@ if (empty($list) && !$params->get('show_no_events')) {
 }
 
 $jemsettings = JemHelper::config();
-$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 $iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);

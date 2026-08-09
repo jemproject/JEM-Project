@@ -755,7 +755,6 @@ $document->addStyleDeclaration('
     }
 </script>
 <script>
-    // window.addEvent('domready', function(){
     jQuery(document).ready(function($){
 
         var showUnregistraUntil = function(){
@@ -826,7 +825,7 @@ $document->addStyleDeclaration('
                 <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
             </div>
-            <?php if ($this->item->recurrence_type > 0) : ?>
+            <?php if ($this->item->recurrence_type > 0 && (int) $this->item->recurrence_type !== 7) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
                         <?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
@@ -875,6 +874,10 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

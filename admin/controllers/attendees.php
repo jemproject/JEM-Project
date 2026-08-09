@@ -47,7 +47,7 @@ class JemControllerAttendees extends BaseController
      */
     private function assertCanManageAttendees()
     {
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }
@@ -86,6 +86,7 @@ class JemControllerAttendees extends BaseController
 
         $modelAttendeeList = $this->getModel('attendees');
         $modelAttendeeItem = $this->getModel('attendee');
+        $releasedCapacity = false;
 
         // We need information about every entry to delete for mailer.
         // But we should first delete the entry and than on success send the mails.
@@ -97,14 +98,19 @@ class JemControllerAttendees extends BaseController
                 continue;
             }
             if ($modelAttendeeList->remove(array($reg_id), $eventid)) {
-                $dispatcher->triggerEvent('onEventUserUnregistered', array($entry->event, $entry));
+                JemRegistrationTransition::dispatchDeletionMail($dispatcher, $entry);
                 $dispatcher->triggerEvent('onJemAfterAttendeeDelete', array($entry));
+                $releasedCapacity = $releasedCapacity || JemRegistrationTransition::releasesCapacity($entry);
             } else {
                 $error = true;
             }
         }
         if (!empty($error)) {
             Factory::getApplication()->enqueueMessage($modelAttendeeList->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'warning');
+        }
+
+        if ($releasedCapacity) {
+            JemHelper::reconcileWaitingList($eventid, array('source' => 'administrator.attendees.remove'));
         }
 
         $cache = Factory::getCache('com_jem');
@@ -175,20 +181,58 @@ class JemControllerAttendees extends BaseController
                     continue;
                 }
                 $redirectEvent = (int)$attendee->event;
-                $res = $model->toggle();
+                $after = clone $attendee;
+                $after->status = JemRegistrationTransition::ATTENDING;
+                $after->waiting = $attendee->waiting ? 0 : 1;
+                $transition = JemRegistrationTransition::create(
+                    $attendee,
+                    $after,
+                    (int) $app->getIdentity()->id,
+                    'administrator.attendees.waitinglist'
+                );
+                unset($promotion);
 
-                if ($res) {
-                    $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
-                    $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array(array($pk), $attendee->waiting ? 1 : 2, (int) $attendee->event));
+                if ($attendee->waiting) {
+                    $force = $app->input->getBool('waitinglist_force', false);
 
-                    if ($attendee->waiting) {
-                        $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
-                    } else {
-                        $msg = Text::_('COM_JEM_ADDED_TO_WAITING');
+                    if ($force && !$app->getIdentity()->authorise('core.admin', 'com_jem')) {
+                        throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
                     }
+
+                    $promotion = JemWaitingListPromotion::promote((int) $attendee->event, array(
+                        'mode' => JemWaitingListPromotion::MODE_MANUAL,
+                        'registrationIds' => array((int) $attendee->id),
+                        'notify' => $app->input->getBool('waitinglist_notify', true),
+                        'force' => $force,
+                        'actorId' => (int) $app->getIdentity()->id,
+                        'source' => $force ? 'administrator.waitinglist.force' : 'administrator.attendees.manual',
+                    ));
+                    $res = $promotion->success && in_array((int) $attendee->id, $promotion->promotedIds, true);
+                } else {
+                    $res = $model->toggle();
+                }
+
+                if ($res && !$attendee->waiting) {
+                    JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transition);
+                    JemRegistrationTransition::dispatchAudit($dispatcher, array($transition));
+
+                    if (JemRegistrationTransition::releasesCapacity($attendee, $after)) {
+                        JemHelper::reconcileWaitingList((int) $attendee->event, array(
+                            'source' => 'administrator.attendees.waitinglist',
+                            'excludeIds' => array($pk),
+                        ));
+                    }
+
+                    $msg = Text::_('COM_JEM_ADDED_TO_WAITING');
+                    $type = 'message';
+                } elseif ($res) {
+                    $msg = Text::_('COM_JEM_ADDED_TO_ATTENDING');
                     $type = 'message';
                 } else {
-                    $msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR') . ': ' . $model->getError();
+                    $reason = isset($promotion) && $promotion->reason === 'capacity_exceeded'
+                        ? Text::_('COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED')
+                        : $model->getError();
+                    $msg = Text::_('COM_JEM_WAITINGLIST_TOGGLE_ERROR') . ': ' . $reason;
                     $type = 'error';
                 }
 
@@ -225,7 +269,8 @@ class JemControllerAttendees extends BaseController
         $jinput->set('view', 'attendee');
         // 'attendee' expects event id as 'event' not 'id'
         $jinput->set('event', $jinput->getInt('eventid'));
-        $jinput->set('id', null);
+        $cid = $jinput->get('cid', array(), 'array');
+        $jinput->set('id', (int) ($cid[0] ?? 0));
         $jinput->set('hidemainmenu', '1');
 
         parent::display();
@@ -248,7 +293,11 @@ class JemControllerAttendees extends BaseController
         $ids     = $app->input->get('cid', array(), 'array');
         $values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
         $task    = $this->getTask();
-        $value   = ArrayHelper::getValue($values, $task, 0, 'int');
+        $value   = array_key_exists($task, $values) ? (int) $values[$task] : null;
+
+        if ($value === null || !JemRegistrationTransition::isValidStatus($value)) {
+            throw new Exception(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'), 400);
+        }
 
         if (empty($ids)) {
             $message = Text::_('JERROR_NO_ITEMS_SELECTED');
@@ -259,9 +308,81 @@ class JemControllerAttendees extends BaseController
 
             // Get the model.
             $model = $this->getModel('attendee');
+            $transitions = array();
+            $changedIds = array();
+            $changedRows = array();
+
+            // Validate the complete selection before changing any row. This
+            // prevents cross-event IDs from being updated or notified.
+            foreach ($ids as $pk) {
+                $model->setId($pk);
+                $before = $model->getData();
+
+                if (empty($before->id) || (int) $before->event !== (int) $eventid) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+
+                $after = clone $before;
+                JemRegistrationTransition::applyLogicalStatus($after, $value);
+                $transition = JemRegistrationTransition::create(
+                    $before,
+                    $after,
+                    (int) $user->id,
+                    'administrator.attendees.batch'
+                );
+
+                if ($transition->changed) {
+                    $changedIds[] = (int) $pk;
+                    $changedRows[(int) $pk] = $after;
+                    $transitions[] = $transition;
+                }
+            }
+
+            $waitingPromotionIds = array_map(static function ($transition) {
+                return (int) $transition->registrationId;
+            }, array_filter($transitions, static function ($transition) {
+                return $transition->oldStatus === JemRegistrationTransition::WAITING_LIST
+                    && $transition->newStatus === JemRegistrationTransition::ATTENDING;
+            }));
+
+            if ($waitingPromotionIds) {
+                if (count($waitingPromotionIds) !== count($changedIds)) {
+                    $message = Text::_('COM_JEM_WAITINGLIST_PROMOTION_SELECTION_INVALID');
+                    $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message, 'error');
+                    return;
+                }
+
+                $force = $app->input->getBool('waitinglist_force', false);
+
+                if ($force && !$user->authorise('core.admin', 'com_jem')) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+
+                $promotion = JemWaitingListPromotion::promote($eventid, array(
+                    'mode' => JemWaitingListPromotion::MODE_MANUAL,
+                    'registrationIds' => $waitingPromotionIds,
+                    'notify' => $app->input->getBool('waitinglist_notify', true),
+                    'force' => $force,
+                    'actorId' => (int) $user->id,
+                    'source' => $force ? 'administrator.waitinglist.force' : 'administrator.waitinglist.manual',
+                ));
+                $message = $promotion->success
+                    ? Text::plural('COM_JEM_WAITINGLIST_PROMOTED_N', count($promotion->promotedIds))
+                    : self::promotionErrorMessage($promotion->reason);
+
+                if ($promotion->success && $promotion->reason === 'notification_failed') {
+                    $app->enqueueMessage(Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'), 'warning');
+                }
+                $this->setRedirect(
+                    Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false),
+                    $message,
+                    $promotion->success ? 'message' : 'error'
+                );
+                return;
+            }
 
             // Publish the items.
-            if (!$model->setStatus($ids, $value, $eventid)) {
+            if ($changedIds && !$model->setStatus($changedIds, $value, $eventid)) {
                 $message = $model->getError();
                 JemHelper::addLogEntry($message, __METHOD__, Log::ERROR);
                 Factory::getApplication()->enqueueMessage($message, 'warning');
@@ -272,36 +393,41 @@ class JemControllerAttendees extends BaseController
 
                 switch ($value) {
                     case -1:
-                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_NOTATTENDING', count($ids));
-                        foreach ($ids AS $pk) {
-                            // onEventUserUnregistered($eventid, $record, $recordid)
-                            $dispatcher->triggerEvent('onEventUserUnregistered', array($eventid, false, $pk));
-                        }
+                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_NOTATTENDING', count($changedIds));
                         break;
                     case 0:
-                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_INVITED', count($ids));
-                        foreach ($ids AS $pk) {
-                            // onEventUserRegistered($recordid)
-                            $dispatcher->triggerEvent('onEventUserRegistered', array($pk));
-                        }
+                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_INVITED', count($changedIds));
                         break;
                     case 1:
-                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($ids));
-                        foreach ($ids AS $pk) {
-                            // onEventUserRegistered($recordid)
-                            $dispatcher->triggerEvent('onEventUserRegistered', array($pk));
-                        }
+                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_ATTENDING', count($changedIds));
                         break;
                     case 2:
-                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($ids));
-                        foreach ($ids AS $pk) {
-                            // onUserOnOffWaitinglist($recordid)
-                            $dispatcher->triggerEvent('onUserOnOffWaitinglist', array($pk));
-                        }
+                        $message = Text::plural('COM_JEM_ATTENDEES_N_ITEMS_WAITINGLIST', count($changedIds));
                         break;
                 }
 
-                $dispatcher->triggerEvent('onJemAfterAttendeeStatusChange', array($ids, $value, $eventid));
+                foreach ($transitions as $transition) {
+                    JemRegistrationTransition::dispatchStatusMail(
+                        $dispatcher,
+                        $changedRows[(int) $transition->registrationId],
+                        $transition
+                    );
+                }
+
+                JemRegistrationTransition::dispatchAudit($dispatcher, $transitions);
+
+                $releasedCapacity = array_filter($transitions, static function ($transition) use ($changedRows) {
+                    $after = $changedRows[(int) $transition->registrationId] ?? null;
+                    return $transition->oldStatus === JemRegistrationTransition::ATTENDING
+                        && JemRegistrationTransition::activePlaces($after) === 0;
+                });
+
+                if ($releasedCapacity) {
+                    JemHelper::reconcileWaitingList($eventid, array(
+                        'source' => 'administrator.attendees.batch',
+                        'excludeIds' => $value === JemRegistrationTransition::WAITING_LIST ? $changedIds : array(),
+                    ));
+                }
 
                 JemHelper::addLogEntry($message, __METHOD__, Log::DEBUG);
             }
@@ -339,8 +465,22 @@ class JemControllerAttendees extends BaseController
                     continue;
                 }
 
-                $dispatcher->triggerEvent('onEventUserRegistered', array($id, $attendee->places, true));
-                ++$sent;
+                $transition = JemRegistrationTransition::create(
+                    $attendee,
+                    $attendee,
+                    (int) $app->getIdentity()->id,
+                    'backend.renotify'
+                );
+
+                if (JemRegistrationTransition::dispatchStatusMail(
+                    $dispatcher,
+                    $attendee,
+                    $transition,
+                    true,
+                    true
+                )) {
+                    ++$sent;
+                }
             }
 
             if (!PluginHelper::isEnabled('jem', 'mailer')) {
@@ -352,5 +492,63 @@ class JemControllerAttendees extends BaseController
         }
 
         $this->setRedirect(Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventid, false), $message, $type);
+    }
+
+    public function promoteWaitingList()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
+
+        $app = Factory::getApplication();
+        $user = $app->getIdentity();
+        $eventId = $app->input->getInt('eventid', 0);
+        $ids = $app->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($ids);
+        $ids = array_values(array_filter($ids));
+        $force = $app->input->getBool('waitinglist_force', false);
+
+        if ($force && !$user->authorise('core.admin', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $result = JemWaitingListPromotion::promote($eventId, array(
+            'mode' => JemWaitingListPromotion::MODE_MANUAL,
+            'registrationIds' => $ids,
+            'notify' => $app->input->getBool('waitinglist_notify', true),
+            'force' => $force,
+            'actorId' => (int) $user->id,
+            'source' => $force ? 'administrator.waitinglist.force' : 'administrator.waitinglist.manual',
+        ));
+
+        if (!$result->success) {
+            $message = self::promotionErrorMessage($result->reason);
+            $type = 'error';
+        } else {
+            $message = Text::plural('COM_JEM_WAITINGLIST_PROMOTED_N', count($result->promotedIds));
+            $type = 'message';
+
+            if ($result->reason === 'notification_failed') {
+                $app->enqueueMessage(Text::_('COM_JEM_WAITINGLIST_PROMOTION_NOTIFICATION_FAILED'), 'warning');
+            }
+        }
+
+        $this->setRedirect(
+            Route::_('index.php?option=com_jem&view=attendees&eventid=' . $eventId, false),
+            $message,
+            $type
+        );
+    }
+
+    private static function promotionErrorMessage($reason)
+    {
+        $keys = array(
+            'capacity_exceeded' => 'COM_JEM_WAITINGLIST_PROMOTION_CAPACITY_EXCEEDED',
+            'selection_not_waiting' => 'COM_JEM_WAITINGLIST_PROMOTION_SELECTION_INVALID',
+            'no_selection' => 'JERROR_NO_ITEMS_SELECTED',
+            'event_not_found' => 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND',
+            'waiting_list_unavailable' => 'COM_JEM_NO_WAITINGLIST',
+        );
+
+        return Text::_($keys[(string) $reason] ?? 'COM_JEM_WAITINGLIST_PROMOTION_FAILED');
     }
 }

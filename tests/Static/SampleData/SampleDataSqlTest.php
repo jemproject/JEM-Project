@@ -55,6 +55,42 @@ final class SampleDataSqlTest extends TestCase
         );
     }
 
+    public function testSampleDataVenueInsertsDeclareColumns(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertDoesNotMatchRegularExpression(
+            '/INSERT\s+INTO\s+`#__jem_venues`\s+VALUES\s*\(/i',
+            $sql,
+            'Sample venue inserts must declare columns so the timezone column cannot shift legacy values.'
+        );
+        self::assertMatchesRegularExpression(
+            '/INSERT\s+INTO\s+`#__jem_venues`\s*\([^)]*`country`[^)]*`type_id`[^)]*\)\s+VALUES\s*\(/i',
+            $sql
+        );
+    }
+
+    public function testSampleDataDemonstratesAllTimezoneModes(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        foreach (array(
+            "WHEN 1 THEN 'Europe/Berlin'",
+            "WHEN 4 THEN 'Europe/Madrid'",
+            "WHEN 5 THEN 'Europe/Paris'",
+            "WHEN 6 THEN 'Europe/London'",
+            "SET `timezone_mode` = 'venue'",
+            "SET `timezone_mode` = 'custom', `timezone` = 'Europe/Berlin'",
+        ) as $expected) {
+            self::assertStringContainsString($expected, $sql);
+        }
+
+        self::assertStringContainsString(
+            '`timezone_mode` varchar(10) NOT NULL DEFAULT \'joomla\'',
+            (string) file_get_contents(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql')
+        );
+    }
+
     public function testSampleDataContainsJem5TypesLinksAttachmentsAndMuseumExamples(): void
     {
         $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
@@ -121,6 +157,39 @@ final class SampleDataSqlTest extends TestCase
             '/if\s*\(!empty\(\$columns\)\s*&&\s*!isset\(\$columns\[\'type_id\'\]\)\)\s*\{/',
             $code,
             'The schema guard should add type_id only when the table exists and the column is missing.'
+        );
+    }
+
+    public function testSampleDataModelPreparesDatesAndRebuildsUtcBoundaries(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$buffer = $this->prepareDateExpressions($buffer);', $code);
+        self::assertStringContainsString('JemHelper::getJoomlaDate()', $code);
+        self::assertStringContainsString('Factory::getDate()->toSql()', $code);
+        self::assertStringContainsString('$this->rebuildEventUtcDates();', $code);
+        self::assertStringContainsString('JemHelper::setEventUtcDates($event, $event->venue_timezone);', $code);
+        self::assertStringContainsString("'v.timezone AS venue_timezone'", $code);
+        self::assertStringContainsString("'start_utc'", $code);
+        self::assertStringContainsString("'end_utc'", $code);
+    }
+
+    public function testSampleDataModelEnsuresTimezoneColumnsBeforeLoadingSql(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$this->ensureTimezoneSchema();', $code);
+        self::assertStringContainsString(
+            "'timezone_mode' => \"`timezone_mode` VARCHAR(10) NOT NULL DEFAULT 'joomla' AFTER `endtimes`\"",
+            $code
+        );
+        self::assertStringContainsString(
+            "'start_utc'     => \"`start_utc` DATETIME NULL DEFAULT NULL AFTER `timezone`\"",
+            $code
+        );
+        self::assertStringContainsString(
+            "\"ALTER TABLE `#__jem_venues` ADD COLUMN `timezone` VARCHAR(64) NOT NULL DEFAULT '' AFTER `country`\"",
+            $code
         );
     }
 }

@@ -38,9 +38,8 @@ class JemModelDay extends JemModelEventslist
     private function getOffsetDate($params)
     {
         $dayoffset = (int) $params->get('days', 0);
-        $timestamp = mktime(0, 0, 0, date("m"), date("d") + $dayoffset, date("Y"));
 
-        return date('Y-m-d', $timestamp);
+        return JemHelper::getJoomlaDate($dayoffset);
     }
 
     /**

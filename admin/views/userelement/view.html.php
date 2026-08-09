@@ -23,6 +23,10 @@ class JEMViewUserElement extends HtmlView {
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
 
         // initialise variables
@@ -40,9 +44,6 @@ class JEMViewUserElement extends HtmlView {
         // prepare the document
         $document->setTitle(Text::_('COM_JEM_SELECTATTENDEE'));
 
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         // Get data from the model
         $users            = $this->get('Data');
         $pagination     = $this->get('Pagination');

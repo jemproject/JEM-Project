@@ -26,6 +26,49 @@ require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php'
 class JemControllerImagehandler extends BaseController
 {
     /**
+     * Check whether the current user may add images for the requested resource.
+     *
+     * Existing event and venue uploads carry the record id so edit-own can be
+     * evaluated against the owner loaded from storage. New records require the
+     * corresponding create permission.
+     */
+    private function canUploadForTask($task, $recordId)
+    {
+        if ($task === 'eventimgup') {
+            return $this->canCreateOrEditResource('event', $recordId);
+        }
+
+        if ($task === 'venueimgup') {
+            return $this->canCreateOrEditResource('venue', $recordId);
+        }
+
+        if ($task === 'categoriesimgup') {
+            $user = Factory::getApplication()->getIdentity();
+
+            return $user->authorise('core.create', 'com_jem') || $user->authorise('core.edit', 'com_jem');
+        }
+
+        return false;
+    }
+
+    private function canCreateOrEditResource($type, $recordId)
+    {
+        if ((int) $recordId <= 0) {
+            return JemHelperBackend::can($type, 'create');
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'created_by')))
+            ->from($db->quoteName($type === 'event' ? '#__jem_events' : '#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . (int) $recordId);
+        $db->setQuery($query);
+        $record = $db->loadObject();
+
+        return is_object($record) && JemHelperBackend::can($type, 'edit', $record);
+    }
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -48,7 +91,10 @@ class JemControllerImagehandler extends BaseController
         Session::checkToken() or jexit('Invalid token');
 
         $app = Factory::getApplication();
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        $task = $app->input->getCmd('task', '');
+        $recordId = $app->input->getInt('record_id', 0);
+
+        if (!$this->canUploadForTask($task, $recordId)) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -141,7 +187,7 @@ class JemControllerImagehandler extends BaseController
         Session::checkToken('get') or jexit('Invalid Token');
 
         $app = Factory::getApplication();
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

@@ -5,6 +5,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `enddates` date NULL DEFAULT NULL,
     `times` time NULL DEFAULT NULL,
     `endtimes` time NULL DEFAULT NULL,
+    `timezone_mode` varchar(10) NOT NULL DEFAULT 'joomla',
+    `timezone` varchar(64) NOT NULL DEFAULT '',
+    `start_utc` datetime NULL DEFAULT NULL,
+    `end_utc` datetime NULL DEFAULT NULL,
     `title` varchar(255) NOT NULL DEFAULT '',
     `alias` varchar(255) NOT NULL DEFAULT '',
     `created_by` int(11) unsigned NOT NULL DEFAULT '0',
@@ -30,6 +34,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_limit_date` date NULL DEFAULT NULL,
     `recurrence_byday` varchar(20) NULL DEFAULT NULL,
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
+    `series_id` int(11) unsigned NULL DEFAULT NULL,
+    `series_order` int(11) unsigned NOT NULL DEFAULT '0',
     `datimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage` varchar(100) NOT NULL DEFAULT '',
     `image_path` varchar(255) NOT NULL DEFAULT '',
@@ -81,7 +87,26 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
     KEY `idx_article` (`article_id`),
-    KEY `idx_type` (`type_id`)
+    KEY `idx_type` (`type_id`),
+    KEY `idx_start_utc` (`start_utc`),
+    KEY `idx_end_utc` (`end_utc`),
+    KEY `idx_series` (`series_id`, `series_order`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_event_series` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `root_event_id` int(11) unsigned NOT NULL DEFAULT '0',
+    `title` varchar(255) NOT NULL DEFAULT '',
+    `series_type` varchar(20) NOT NULL DEFAULT 'custom',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    PRIMARY KEY (`id`),
+    KEY `idx_root_event` (`root_event_id`),
+    KEY `idx_created_by` (`created_by`),
+    KEY `idx_published` (`published`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
@@ -98,6 +123,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `capacity` int(10) unsigned NOT NULL DEFAULT '0',
     `state` varchar(50) DEFAULT NULL,
     `country` varchar(2) DEFAULT NULL,
+    `timezone` varchar(64) NOT NULL DEFAULT '',
     `email` varchar(254) NOT NULL DEFAULT '',
     `phone` varchar(50) NOT NULL DEFAULT '',
     `mobile` varchar(50) NOT NULL DEFAULT '',
@@ -495,6 +521,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('attewidth', '10%'),
 ('weekdaystart', '1'),
 ('ical_tz', '1'),
+('event_timezone_default', 'joomla'),
 ('attachments_path', 'media/com_jem/attachments'),
 ('attachments_maxsize', '1000'),
 ('attachments_types', 'txt,pdf,doc,docx,xls,xlsx,ppt,pptx,csv,ics,jpg,jpeg,gif,png,webp,zip,tar.gz'),
@@ -512,9 +539,11 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
 ('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","import_additional_blocked_tags":"","import_allow_trusted_iframes":"0","import_trusted_iframe_hosts":"","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_detail_image_layout":"right","event_detail_image_header_display":"fill","event_detail_image_header_max_height":"420","event_venue_layout":"details","event_show_publish_state":"0","calendar_special_days_enabled":"1","calendar_special_day_types":"Weekend | #d1d5db | 0\\nPublic holiday | #e5e7eb | 0"}'),
-('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_colorpicker_usecustom":"0","css_colorpicker_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
+('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
+('waitinglist_automatic', '1'),
+('waitinglist_strategy', 'strict'),
 ('layoutstyle', '1'),
 ('useiconfont', '1'),
 ('flyer', '0'),

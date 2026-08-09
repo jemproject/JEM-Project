@@ -20,23 +20,19 @@ class JemViewAttendee extends HtmlView {
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         //initialise variables
         $app      = Factory::getApplication();
-        $document = $app->getDocument();
         $jinput   = $app->input;
 
         $this->jemsettings = JemHelper::config();
 
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-
         //get id register user for event
         $id = $jinput->getInt('id', 0);
         $this->event = $jinput->getInt('eventid', 0);
-
-        // Load css
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         //Get data from the model
         $row = $this->get('Data');
@@ -64,33 +60,33 @@ class JemViewAttendee extends HtmlView {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
         //get vars
-        $cid        = Factory::getApplication()->input->get('cid', array(), 'array');
         $user       = JemFactory::getUser();
         $checkedOut = false; // don't know, table hasn't such a field
-        $canDo      = JemHelperBackend::getActions();
+        $canManage  = JemHelperBackend::canManage('jem.attendees.manage');
+        $isNew      = empty($this->row->id);
 
-        if (empty($cid[0])) {
+        if ($isNew) {
             ToolbarHelper::title(Text::_('COM_JEM_ADD_ATTENDEE'), 'users');
         } else {
             ToolbarHelper::title(Text::_('COM_JEM_EDIT_ATTENDEE'), 'users');
         }
 
         // If not checked out, can save the item.
-        if (!$checkedOut && ($canDo->get('core.edit')||$canDo->get('core.create'))) {
+        if (!$checkedOut && $canManage) {
             ToolbarHelper::apply('attendee.apply');
             ToolbarHelper::save('attendee.save');
         }
 
-        if (!$checkedOut && $canDo->get('core.create')) {
+        if (!$checkedOut && $canManage) {
             ToolbarHelper::save2new('attendee.save2new');
         }
 
         // If an existing item, can save to a copy.
-        if (!empty($cid[0]) && $canDo->get('core.create')) {
+        if (!$isNew && $canManage) {
             ToolbarHelper::save2copy('attendee.save2copy');
         }
 
-        if (empty($cid[0])) {
+        if ($isNew) {
             ToolbarHelper::cancel('attendee.cancel');
         } else {
             ToolbarHelper::cancel('attendee.cancel', 'JTOOLBAR_CLOSE');
