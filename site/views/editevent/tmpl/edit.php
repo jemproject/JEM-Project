@@ -865,6 +865,10 @@ $document->addStyleDeclaration('
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
                     <li><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
                     <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
+                    <li><?php echo $this->form->getLabel('parent_event_id'); ?><?php echo $this->form->getInput('parent_event_id'); ?></li>
+                    <li><?php echo $this->form->renderField('event_hierarchy_note'); ?></li>
+                    <li><?php echo $this->form->getLabel('event_tree_order'); ?><?php echo $this->form->getInput('event_tree_order'); ?></li>
+                    <li><?php echo $this->form->getLabel('show_in_calendar'); ?><?php echo $this->form->getInput('show_in_calendar'); ?></li>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

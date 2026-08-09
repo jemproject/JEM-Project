@@ -115,10 +115,13 @@ class JemModelVenues extends ListModel
                         .'a.latitude, a.longitude, a.locdescription, a.meta_keywords, a.meta_description,'
                         .'a.locimage, a.map, a.created_by, a.author_ip, a.created, a.modified,'
                         .'a.modified_by, a.version, a.published, a.checked_out, a.checked_out_time,'
-                        .'a.ordering, a.publish_up, a.publish_down, a.access, a.type_id'
+                        .'a.ordering, a.publish_up, a.publish_down, a.access, a.type_id, a.parent_venue_id, a.venue_tree_order'
                 )
         );
         $query->from($db->quoteName('#__jem_venues').' AS a');
+
+        $query->select('tree_parent.venue AS parent_venue_name, tree_parent.alias AS parent_venue_alias');
+        $query->join('LEFT', '#__jem_venues AS tree_parent ON tree_parent.id = a.parent_venue_id');
 
         // Join over the users for the checked out user.
         $query->select('uc.name AS editor');

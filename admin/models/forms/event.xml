@@ -136,6 +136,37 @@
             filter="string"
             showon="timezone_mode:custom"
         />
+        <field name="parent_event_id" type="eventparent"
+            label="COM_JEM_PARENT_EVENT"
+            description="COM_JEM_PARENT_EVENT_DESC"
+            required="false"
+            default="0"
+            filter="integer"
+        />
+        <field name="event_hierarchy_note" type="note"
+            label="COM_JEM_EVENT_HIERARCHY_RULES"
+            description="COM_JEM_EVENT_HIERARCHY_RULES_DESC"
+            class="alert alert-info"
+            showon="parent_event_id!:0"
+        />
+        <field name="event_tree_order" type="number"
+            label="COM_JEM_EVENT_TREE_ORDER"
+            description="COM_JEM_EVENT_TREE_ORDER_DESC"
+            default="0"
+            min="0"
+            filter="integer"
+            showon="parent_event_id!:0"
+        />
+        <field name="show_in_calendar" type="radio"
+            label="COM_JEM_SHOW_IN_CALENDAR"
+            description="COM_JEM_SHOW_IN_CALENDAR_DESC"
+            default="0"
+            layout="joomla.form.field.radio.switcher"
+            showon="parent_event_id!:0"
+        >
+            <option value="0">JNO</option>
+            <option value="1">JYES</option>
+        </field>
         <field name="cats" type="catoptions"
             multiple="true"
             class="inputbox required form-select"
@@ -490,6 +521,7 @@
             label="COM_JEM_MAX_PLACES"
             description="COM_JEM_MAX_PLACES_DESC"
             filter="integer"
+            showon="parent_event_id!:0"
             default="0"
             min="0"
         />

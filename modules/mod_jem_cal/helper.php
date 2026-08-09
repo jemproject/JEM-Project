@@ -87,6 +87,7 @@ abstract class ModJemCalHelper extends ModuleHelper
 
         # Set params for the model
         $model->setState('params', $params);
+        $model->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
 
         $db       = Factory::getDbo();
         $user     = JemFactory::getUser();

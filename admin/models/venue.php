@@ -101,6 +101,15 @@ class JemModelVenue extends JemModelAdmin
                     $result[] = Text::_('COM_JEM_VENUE_ASSIGNED_EVENT');
                 }
 
+                $query = $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName('#__jem_venues'))
+                    ->where($db->quoteName('parent_venue_id') . ' = ' . $pk);
+                $db->setQuery($query);
+                if ((int) $db->loadResult() > 0) {
+                    $result[] = Text::_('COM_JEM_VENUE_ERROR_HAS_CHILDREN');
+                }
+
                 if ($result)
                 {
                     $pkInfo = array("id:".$pk);

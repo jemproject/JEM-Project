@@ -988,6 +988,9 @@ Text::script('JCANCEL');
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
                     <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
+                    <li><?php echo $this->form->getLabel('parent_venue_id'); ?><?php echo $this->form->getInput('parent_venue_id'); ?></li>
+                    <li><?php echo $this->form->renderField('timezone_inherited_note'); ?></li>
+                    <li><?php echo $this->form->getLabel('venue_tree_order'); ?><?php echo $this->form->getInput('venue_tree_order'); ?></li>
                     <li class="jem-venue-geocode-actions">
                         <label>&nbsp;</label>
                         <div class="jem-geocode-toolbar">

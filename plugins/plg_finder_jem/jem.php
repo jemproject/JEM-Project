@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Finder\Administrator\Indexer\Adapter;
 use Joomla\Component\Finder\Administrator\Indexer\Helper;
 use Joomla\Component\Finder\Administrator\Indexer\Indexer;
@@ -247,7 +248,8 @@ class plgFinderJEM extends Adapter
             return;
         }
 
-        $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+        $identity = Factory::getApplication()->getIdentity();
+        $levels = $identity !== null ? $identity->getAuthorisedViewLevels() : array(1);
         JemHelper::applyAssociatedArticleEventContent($item, $levels);
 
         $item->slug = !empty($item->alias) ? ((int) $item->id . ':' . $item->alias) : (int) $item->id;
@@ -264,10 +266,16 @@ class plgFinderJEM extends Adapter
         $item->summary = Helper::prepareContent($item->summary, $item->params);
         $item->body    = Helper::prepareContent($item->body, $item->params);
         $item->summary .= ' ' . trim(implode(' ', array_filter(array($item->venue, $item->city, $item->countryname))));
+        if (!empty($item->parent_event_title)) {
+            $item->summary .= ' ' . Text::_('COM_JEM_PARENT_EVENT') . ': ' . $item->parent_event_title;
+        }
 
         // Build the necessary route and path information.
         $item->url   = $this->getURL($item->id, $this->extension, $this->layout);
-        $item->route = JEMHelperRoute::getEventRoute($item->slug, $item->catslug);
+        $application = Factory::getApplication();
+        $item->route = method_exists($application, 'getMenu')
+            ? JEMHelperRoute::getEventRoute($item->slug, $item->catslug)
+            : $item->url;
 
         // Get the menu title if it exists.
         // $title = $this->getItemMenuTitle($item->url);
@@ -345,6 +353,7 @@ class plgFinderJEM extends Adapter
         $sql->select('a.id, a.access, a.title, a.alias, a.article_id, a.attribs, a.dates, a.enddates, a.times, a.endtimes, a.datimage');
         $sql->select('a.publish_up AS publish_start_date, a.publish_down AS publish_end_date, a.start_utc AS start_date, a.end_utc AS end_date');
         $sql->select('a.created_by, a.modified, a.version, a.published AS state');
+        $sql->select('a.parent_event_id, a.event_tree_order, a.show_in_calendar, pe.title AS parent_event_title');
         $sql->select('a.fulltext, a.introtext, a.fulltext AS body, a.introtext AS summary');
         $sql->select('l.venue, l.city, l.state as loc_state, l.url, l.street');
         $sql->select('l.published AS loc_published');
@@ -381,6 +390,7 @@ class plgFinderJEM extends Adapter
 
         $sql->from($this->table . ' AS a');
         $sql->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+        $sql->join('LEFT', '#__jem_events AS pe ON pe.id = a.parent_event_id');
         $sql->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
         $sql->join('LEFT', '#__jem_cats_event_relations AS cer ON cer.itemid = a.id');
         $sql->join('LEFT', '#__jem_categories AS c ON cer.catid = c.id');
@@ -397,11 +407,15 @@ class plgFinderJEM extends Adapter
         // Item ID
         $sql->select('a.id');
         // Item and category published state
-        $sql->select($db->quoteName('a.' . $this->state_field, 'state'));
+        $sql->select(
+            'CASE WHEN a.parent_event_id IS NULL OR a.parent_event_id = 0 OR pe.published = 1'
+            . ' THEN ' . $db->quoteName('a.' . $this->state_field) . ' ELSE 0 END AS state'
+        );
         $sql->select('c.published AS cat_state');
         // Item and category access levels
         $sql->select('1 AS access, c.access AS cat_access');
         $sql->from($db->quoteName($this->table, 'a'));
+        $sql->join('LEFT', '#__jem_events AS pe ON pe.id = a.parent_event_id');
         $sql->join('LEFT', '#__jem_cats_event_relations AS cer ON cer.itemid = a.id');
         $sql->join('LEFT', '#__jem_categories AS c ON cer.catid = c.id');
 

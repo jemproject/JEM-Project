@@ -70,9 +70,10 @@ class JemViewVenue extends JemView
             $venue = $this->get('Venue');
             // check for data error
             if (empty($venue)) {
-                $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
+
+            $this->venueHierarchy = $this->makeVenueHierarchyState($venue);
 
             if (empty($venue->user_has_access_venue)) {
                 if ($user->get('guest') || !$user->get('id')) {
@@ -230,9 +231,10 @@ class JemViewVenue extends JemView
 
             // check for data error
             if (empty($venue)) {
-                $app->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 404);
             }
+
+            $this->venueHierarchy = $this->makeVenueHierarchyState($venue);
 
             if (empty($venue->user_has_access_venue)) {
                 if ($user->get('guest') || !$user->get('id')) {
@@ -420,6 +422,19 @@ class JemViewVenue extends JemView
         }
 
         parent::display($tpl);
+    }
+
+    /**
+     * Preserve hierarchy data independently of content-plugin mutations.
+     */
+    private function makeVenueHierarchyState($venue)
+    {
+        return array(
+            'parent_venue_id' => (int) ($venue->parent_venue_id ?? 0),
+            'parent_venue_name' => (string) ($venue->parent_venue_name ?? ''),
+            'parent_venue_alias' => (string) ($venue->parent_venue_alias ?? ''),
+            'child_venues' => (array) ($venue->child_venues ?? array()),
+        );
     }
 }
 ?>

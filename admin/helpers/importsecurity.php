@@ -437,6 +437,8 @@ class JemImportSecurityHelper
             'id', 'published', 'access', 'ordering', 'created_by', 'modified_by',
             'checked_out', 'hits', 'featured', 'locid', 'catid', 'type_id', 'day_type_id',
             'article_id',
+            'parent_event_id', 'event_tree_order', 'show_in_calendar',
+            'parent_venue_id', 'venue_tree_order',
             'registra', 'unregistra', 'maxplaces', 'reservedplaces',
             'minbookeduser', 'maxbookeduser', 'waitinglist', 'requestanswer',
             'show_dates', 'map', 'event_status', 'ticket_availability',

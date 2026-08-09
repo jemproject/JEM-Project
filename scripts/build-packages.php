@@ -186,7 +186,7 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 
@@ -235,6 +235,17 @@ final class JemPackageBuilder
                 $component->close();
                 @unlink($tmpComponent);
                 throw new RuntimeException($package . ':packages/com_jem.zip contains forbidden entry ' . $forbidden);
+            }
+        }
+
+        foreach (['tmp/', 'tests/', 'vendor/', 'docs/', 'scripts/', 'old_packages/', '_old packages/'] as $forbiddenPrefix) {
+            for ($i = 0; $i < $component->numFiles; $i++) {
+                $name = str_replace('\\', '/', (string) $component->getNameIndex($i));
+                if (str_starts_with($name, $forbiddenPrefix)) {
+                    $component->close();
+                    @unlink($tmpComponent);
+                    throw new RuntimeException($package . ':packages/com_jem.zip contains forbidden development path ' . $name);
+                }
             }
         }
 

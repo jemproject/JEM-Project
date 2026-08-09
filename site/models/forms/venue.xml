@@ -140,9 +140,31 @@
             class="inputbox form-select"
             default=""
             filter="string"
+            showon="parent_venue_id:0"
         >
             <option value="">COM_JEM_VENUE_TIMEZONE_JOOMLA</option>
         </field>
+        <field name="parent_venue_id" type="venueparent"
+            label="COM_JEM_PARENT_VENUE"
+            description="COM_JEM_PARENT_VENUE_DESC"
+            required="false"
+            default="0"
+            filter="integer"
+        />
+        <field name="timezone_inherited_note" type="note"
+            label="COM_JEM_VENUE_TIMEZONE_INHERITED"
+            description="COM_JEM_VENUE_TIMEZONE_INHERITED_DESC"
+            class="alert alert-info"
+            showon="parent_venue_id!:0"
+        />
+        <field name="venue_tree_order" type="number"
+            label="COM_JEM_VENUE_TREE_ORDER"
+            description="COM_JEM_VENUE_TREE_ORDER_DESC"
+            default="0"
+            min="0"
+            filter="integer"
+            showon="parent_venue_id!:0"
+        />
         <field name="email" type="email"
             class="inputbox"
             size="40"

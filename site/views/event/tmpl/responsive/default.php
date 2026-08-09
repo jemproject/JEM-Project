@@ -1438,6 +1438,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </dl>
         <?php } ?>
 
+        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
+
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
             <hr class="jem-hr">
             <?php echo $this->item->pluginevent->onEventEnd; ?>

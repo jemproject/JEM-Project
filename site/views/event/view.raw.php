@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Router\Route;
@@ -41,7 +42,7 @@ class JemViewEvent extends HtmlView
             $row = $this->get('Item');
 
             if (empty($row)) {
-                return;
+                throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), $app)) {
@@ -59,6 +60,29 @@ class JemViewEvent extends HtmlView
                 $vcal     = JemHelper::getCalendarTool();
                 $filename = "event" . $row->did . ".ics";
                 JemHelper::icalAddEvent($vcal, $row);
+
+                // A parent event represents the complete programme. Include
+                // every visible programme item in the same calendar download
+                // so users do not need to export each session separately.
+                if (empty($row->parent_event_id) && !empty($row->child_events)) {
+                    $model = $this->getModel();
+
+                    foreach ((array) $row->child_events as $programmeItem) {
+                        $child = $model ? $model->getItem((int) ($programmeItem->id ?? 0)) : null;
+
+                        if (empty($child) || empty($child->params)
+                            || !$child->params->get('access-view')
+                            || !$child->params->get('event_show_ical_icon', 1)) {
+                            continue;
+                        }
+
+                        $child->categories = $model->getCategories((int) $child->did);
+                        $child->id = $child->did;
+                        $child->slug = $child->alias ? ($child->id . ':' . $child->alias) : $child->id;
+                        JemHelper::icalAddEvent($vcal, $child);
+                    }
+                }
+
                 // generate and redirect output to user browser
                 JemHelper::sendCalendar($vcal, $filename);
             }
@@ -79,9 +103,7 @@ class JemViewEvent extends HtmlView
         $row = $this->get('Item');
 
         if (empty($row)) {
-            Factory::getApplication()->close();
-
-            return;
+            throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
         }
 
         if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), Factory::getApplication())) {
@@ -262,6 +284,16 @@ class JemViewEvent extends HtmlView
         if ($showEventDetailsTitle) {
             $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_TITLE'), htmlspecialchars((string) $row->title, ENT_COMPAT, 'UTF-8') . $this->buildPdfTypeBadge($row));
         }
+
+        if (!empty($row->parent_event_id) && !empty($row->parent_event_title)) {
+            $parentSlug = (int) $row->parent_event_id . (!empty($row->parent_event_alias) ? ':' . $row->parent_event_alias : '');
+            $parentUrl = $this->buildPdfAbsoluteUrl(Route::_(JemHelperRoute::getEventRoute($parentSlug), false));
+            $eventSummaryHtml[] = $this->buildSummaryRow(
+                Text::_('COM_JEM_PARENT_EVENT'),
+                '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($parentUrl, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) $row->parent_event_title, ENT_COMPAT, 'UTF-8') . '</a>'
+            );
+        }
+
         $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHEN'), htmlspecialchars($this->htmlToPlainText(JemOutput::formatLongDateTime($row->dates, $row->times, $row->enddates, $row->endtimes)), ENT_COMPAT, 'UTF-8'));
 
         if ($showEventVenueName && !empty($row->venue)) {
@@ -363,11 +395,62 @@ class JemViewEvent extends HtmlView
             $html[] = $this->buildPdfRegistrationHtml($row);
         }
 
+        if (empty($row->parent_event_id) && !empty($row->child_events)) {
+            $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events);
+        }
+
         $footer = JemPdfView::buildViewTextBlock('footer');
 
         if ($footer !== '') {
             $html[] = $footer;
         }
+
+        return implode("\n", $html);
+    }
+
+    /**
+     * Build the programme table included in a parent event PDF.
+     */
+    private function buildPdfProgrammeHtml(array $programmeItems): string
+    {
+        if (!$programmeItems) {
+            return '';
+        }
+
+        $html = array('<h2>' . Text::_('COM_JEM_EVENT_PROGRAMME') . '</h2>');
+        $html[] = '<table class="jem-pdf-event-summary" width="100%" cellpadding="3" cellspacing="0">';
+        $currentDate = null;
+
+        foreach ($programmeItems as $item) {
+            $date = (string) ($item->dates ?? '');
+
+            if ($date !== $currentDate) {
+                $currentDate = $date;
+                $day = $date !== ''
+                    ? HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC1'))
+                    : Text::_('COM_JEM_OPEN_DATE');
+                $html[] = '<tr><td colspan="2"><strong>' . htmlspecialchars((string) $day, ENT_COMPAT, 'UTF-8') . '</strong></td></tr>';
+            }
+
+            $time = '';
+            if (!empty($item->times)) {
+                $time = substr((string) $item->times, 0, 5);
+                if (!empty($item->endtimes)) {
+                    $time .= '&ndash;' . substr((string) $item->endtimes, 0, 5);
+                }
+            }
+
+            $url = $this->buildPdfAbsoluteUrl(Route::_(JemHelperRoute::getEventRoute((string) ($item->slug ?? $item->id)), false));
+            $title = '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($url, ENT_COMPAT, 'UTF-8') . '">' . htmlspecialchars((string) ($item->title ?? ''), ENT_COMPAT, 'UTF-8') . '</a>';
+
+            if (!empty($item->venue)) {
+                $title .= '<br /><span class="jem-pdf-muted">' . htmlspecialchars((string) $item->venue, ENT_COMPAT, 'UTF-8') . '</span>';
+            }
+
+            $html[] = '<tr><td width="22%">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</td><td width="78%">' . $title . '</td></tr>';
+        }
+
+        $html[] = '</table>';
 
         return implode("\n", $html);
     }

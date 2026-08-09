@@ -35,6 +35,7 @@ class JemMapHelper
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $visibleVenueIds = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($venueAccess));
         $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
@@ -56,6 +57,7 @@ class JemMapHelper
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where([
                 'v.latitude IS NOT NULL',
                 "v.latitude <> ''",
@@ -81,6 +83,7 @@ class JemMapHelper
             $query->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'));
             $query->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1');
             $query->where($db->quoteName('e.published') . ' = 1');
+            self::applyEventTreeFilter($query, 'e', $params);
             $query->where($db->quoteName('c.published') . ' = 1');
             self::applyPublishWindow($query, 'e');
 
@@ -145,6 +148,7 @@ class JemMapHelper
         $levels = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $visibleVenueIds = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($venueAccess));
         $countryColumns = $db->getTableColumns('#__jem_countries');
         $query  = $db->getQuery(true);
 
@@ -152,6 +156,7 @@ class JemMapHelper
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->join('INNER', $db->quoteName('#__jem_countries', 'ct') . ' ON ' . $db->quoteName('ct.iso2') . ' = ' . $db->quoteName('v.country'))
             ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where($db->quoteName('v.country') . ' <> ' . $db->quote(''))
             ->where([
                 'v.latitude IS NOT NULL',
@@ -192,11 +197,13 @@ class JemMapHelper
         $levels = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $visibleVenueIds = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($venueAccess));
         $query  = $db->getQuery(true);
 
         $query->select('DISTINCT ' . $db->quoteName('city'))
             ->from($db->quoteName('#__jem_venues'))
             ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where($db->quoteName('country') . ' = ' . $db->quote($country))
             ->where($db->quoteName('city') . ' <> ' . $db->quote(''))
             ->where([
@@ -229,6 +236,7 @@ class JemMapHelper
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $visibleVenueIds = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($venueAccess));
         $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $query    = $db->getQuery(true);
         $catids   = self::getFilterCategoryIds($params, (int) $selectedCategoryId);
@@ -279,6 +287,7 @@ class JemMapHelper
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where($db->quoteName('c.published') . ' = 1')
             ->where([
                 'v.latitude IS NOT NULL',
@@ -298,6 +307,7 @@ class JemMapHelper
         $query->select('(' . 'SELECT ct.color' . $categoryTypeBase . ') AS category_type_color');
 
         self::applyPublishWindow($query, 'e');
+        self::applyEventTreeFilter($query, 'e', $params);
 
         if ($eventAccess !== '') {
             $query->where($db->quoteName('e.access') . ' IN (' . $eventAccess . ')');
@@ -383,6 +393,7 @@ class JemMapHelper
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
         $venueAccess = self::accessList($levels, $settings->access_level_locked_venues ?? '["1"]');
+        $visibleVenueIds = \JemHelper::getVisibleVenueHierarchyIds(self::levelsFromList($venueAccess));
         $categoryAccess = self::accessList($levels, $settings->access_level_locked_categories ?? '["1"]');
         $today  = Factory::getDate()->format('Y-m-d');
         $query  = $db->getQuery(true);
@@ -397,6 +408,7 @@ class JemMapHelper
             ->where($db->quoteName('c.catname') . ' <> ' . $db->quote('root'))
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
+            ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where('COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ') >= ' . $db->quote($today))
             ->order($db->quoteName('c.lft') . ' ASC');
 
@@ -557,6 +569,23 @@ class JemMapHelper
         $query->where(\JemHelper::getEventPublicationWhere($eventAlias, false));
     }
 
+    private static function applyEventTreeFilter($query, $eventAlias, $params)
+    {
+        $mode = (string) $params->get('event_tree_mode', 'calendar');
+        $prefix = $eventAlias . '.';
+
+        if ($mode === 'parents') {
+            $query->where('(' . $prefix . 'parent_event_id IS NULL OR ' . $prefix . 'parent_event_id = 0)');
+        } elseif ($mode === 'children') {
+            $query->where($prefix . 'parent_event_id > 0');
+        } elseif ($mode !== 'all') {
+            $query->where('(' . $prefix . 'parent_event_id IS NULL OR ' . $prefix . 'parent_event_id = 0 OR ' . $prefix . 'show_in_calendar = 1)');
+        }
+
+        $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+        $query->where(\JemHelper::getEventParentVisibilityWhere($eventAlias, $levels));
+    }
+
     private static function accessList(array $levels, $lockedLevels = '["1"]')
     {
         $levels = array_map('intval', $levels);
@@ -571,6 +600,11 @@ class JemMapHelper
         $levels = array_values(array_unique(array_filter($levels)));
 
         return $levels ? implode(',', $levels) : '';
+    }
+
+    private static function levelsFromList($levels)
+    {
+        return array_values(array_filter(array_map('intval', explode(',', (string) $levels))));
     }
 
     private static function isDate($date)

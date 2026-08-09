@@ -121,6 +121,7 @@ class plgJemMailer extends CMSPlugin
             return false;
         }
         $this->_applyAssociatedArticleContent($event);
+        $this->_appendParentEventContext($event);
         $this->_formatEventMailDateTime($event);
 
         // check if currrent user handles on behalf of
@@ -317,6 +318,7 @@ class plgJemMailer extends CMSPlugin
             return false;
         }
         $this->_applyAssociatedArticleContent($event);
+        $this->_appendParentEventContext($event);
         $this->_formatEventMailDateTime($event);
 
         $attendee     = JemFactory::getUser($event->uid);
@@ -428,6 +430,7 @@ class plgJemMailer extends CMSPlugin
             return false;
         }
         $this->_applyAssociatedArticleContent($event);
+        $this->_appendParentEventContext($event);
         $this->_formatEventMailDateTime($event);
 
         if (empty($registration)) {
@@ -597,6 +600,7 @@ class plgJemMailer extends CMSPlugin
             return false;
         }
         $this->_applyAssociatedArticleContent($event);
+        $this->_appendParentEventContext($event);
         $this->_formatEventMailDateTime($event);
 
         // Link for event
@@ -851,6 +855,33 @@ class plgJemMailer extends CMSPlugin
 
         $event->slug = !empty($event->alias) ? ((int) $event->id . ':' . $event->alias) : (int) $event->id;
         $event->text = (string) ($event->introtext ?? '') . (string) ($event->fulltext ?? '');
+    }
+
+    /**
+     * Add programme context to mail subjects and bodies for subevents.
+     *
+     * @param   object  $event  Event data.
+     *
+     * @return  void
+     */
+    private function _appendParentEventContext($event)
+    {
+        if (empty($event) || empty($event->id)) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('parent.title')
+            ->from($db->quoteName('#__jem_events', 'child'))
+            ->join('INNER', $db->quoteName('#__jem_events', 'parent') . ' ON parent.id = child.parent_event_id')
+            ->where('child.id = ' . (int) $event->id);
+        $db->setQuery($query);
+        $parentTitle = trim((string) $db->loadResult());
+
+        if ($parentTitle !== '') {
+            $event->title = Text::sprintf('PLG_JEM_MAILER_SUBEVENT_TITLE', (string) $event->title, $parentTitle);
+        }
     }
 
     /**

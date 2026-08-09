@@ -109,6 +109,7 @@ class JemModelVenue extends JemModelEventslist
 
         # params
         $this->setState('params', $params);
+        $this->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
 
         # publish state
         $this->_populatePublishState($task);
@@ -139,7 +140,8 @@ class JemModelVenue extends JemModelEventslist
         $query = parent::getListQuery();
 
         // here we can extend the query of the Eventslist model
-        $query->where('a.locid = '.(int)$this->_id);
+        $venueIds = $this->getVenueTreeIds((int) $this->_id);
+        $query->where('a.locid IN (' . implode(',', $venueIds) . ')');
 
         return $query;
     }
@@ -193,9 +195,10 @@ class JemModelVenue extends JemModelEventslist
         $query->select('v.id, v.venue, v.published, v.city, v.district, v.level, v.capacity, v.state, v.url, v.email, v.phone, v.mobile, v.street, v.custom1, v.custom2, v.custom3, v.custom4, v.custom5, '.
                        ' v.custom6, v.custom7, v.custom8, v.custom9, v.custom10, v.locimage, v.meta_keywords, v.meta_description, v.access, '.
                        ' v.created, v.created_by, v.locdescription, v.country, v.timezone, v.map, v.latitude, v.longitude, v.postalCode, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, '.
-                       ' v.attribs, '.
+                       ' v.attribs, v.parent_venue_id, v.venue_tree_order, pv.venue AS parent_venue_name, pv.alias AS parent_venue_alias, '.
                        ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug');
         $query->from($db->quoteName('#__jem_venues', 'v'));
+        $query->join('LEFT', $db->quoteName('#__jem_venues', 'pv') . ' ON pv.id = v.parent_venue_id');
 
         $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
         $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
@@ -252,14 +255,113 @@ class JemModelVenue extends JemModelEventslist
             return false;
         }
 
+        if (!empty($_venue->parent_venue_id)
+            && !$this->canViewVenueAncestors((int) $_venue->parent_venue_id, $user, $levels)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_VENUE_ERROR_VENUE_NOT_FOUND'), 'error');
+            return false;
+        }
+
         $registry = new Registry;
         $registry->loadString($_venue->attribs ?? '{}');
         $_venue->params = clone JemHelper::globalattribs();
         $_venue->params->merge($registry);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
+        $_venue->child_venues = $this->getChildVenues((int) $_venue->id);
 
         return $_venue;
+    }
+
+    public function getChildVenues($parentId)
+    {
+        $user = JemFactory::getUser();
+        $levels = array_map('intval', $user->getAuthorisedViewLevels());
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('v.id', 'v.venue', 'v.alias', 'v.district', 'v.level', 'v.capacity', 'v.parent_venue_id', 'v.venue_tree_order', "CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(':', v.id, v.alias) ELSE v.id END AS slug"))
+            ->from($db->quoteName('#__jem_venues', 'v'))
+            ->where('v.parent_venue_id = ' . (int) $parentId)
+            ->where('v.published = 1')
+            ->where('v.access IN (' . (implode(',', $levels) ?: '0') . ')')
+            ->order(array('v.venue_tree_order ASC', 'v.venue ASC'));
+        $db->setQuery($query);
+
+        return $db->loadObjectList() ?: array();
+    }
+
+    /**
+     * Verify visibility of every ancestor of a subvenue.
+     */
+    protected function canViewVenueAncestors($parentId, $user, array $levels)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $parentId;
+        $levels = array_map('intval', $levels);
+
+        while ($current > 0 && count($seen) < 100) {
+            if (isset($seen[$current])) {
+                return false;
+            }
+            $seen[$current] = true;
+
+            $query = $db->getQuery(true)
+                ->select(array('id', 'parent_venue_id', 'created_by', 'access', 'published'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $ancestor = $db->loadObject();
+
+            if (!$ancestor || !in_array((int) $ancestor->access, $levels, true)) {
+                return false;
+            }
+
+            $canManage = $user->can('edit', 'venue', (int) $ancestor->id, (int) $ancestor->created_by)
+                || $user->can('publish', 'venue', (int) $ancestor->id, (int) $ancestor->created_by);
+            if ((int) $ancestor->published !== 1 && !$canManage) {
+                return false;
+            }
+
+            $current = (int) $ancestor->parent_venue_id;
+        }
+
+        return $current === 0;
+    }
+
+    protected function getVenueTreeIds($rootId)
+    {
+        $ids = array((int) $rootId);
+        $pending = $ids;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $user = JemFactory::getUser();
+        $levels = array_map('intval', $user->getAuthorisedViewLevels());
+
+        while ($pending && count($ids) < 1000) {
+            $query = $db->getQuery(true)
+                ->select(array('id', 'created_by', 'access', 'published'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('parent_venue_id') . ' IN (' . implode(',', array_map('intval', $pending)) . ')');
+            $db->setQuery($query);
+            $children = array();
+
+            foreach ($db->loadObjectList() ?: array() as $venue) {
+                if (!in_array((int) $venue->access, $levels, true)) {
+                    continue;
+                }
+
+                $canManage = $user->can('edit', 'venue', (int) $venue->id, (int) $venue->created_by)
+                    || $user->can('publish', 'venue', (int) $venue->id, (int) $venue->created_by);
+                if ((int) $venue->published === 1 || $canManage) {
+                    $children[] = (int) $venue->id;
+                }
+            }
+
+            $children = array_values(array_diff($children, $ids));
+            $ids = array_merge($ids, $children);
+            $pending = $children;
+        }
+
+        return array_values(array_unique(array_filter($ids)));
     }
 
     /**

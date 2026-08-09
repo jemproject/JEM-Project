@@ -92,8 +92,12 @@ class JemModelEvent extends ItemModel
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, ' .
+                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id'));
                 $query->from('#__jem_events AS a');
+
+                $query->select('pe.title AS parent_event_title, pe.alias AS parent_event_alias');
+                $query->join('LEFT', '#__jem_events AS pe ON pe.id = a.parent_event_id');
 
                 # Author
                 $name = $settings->get('global_regname','1') ? 'u.name' : 'u.username';
@@ -106,7 +110,7 @@ class JemModelEvent extends ItemModel
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                     'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id, l.parent_venue_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
                 # Join over the category tables
@@ -226,6 +230,19 @@ class JemModelEvent extends ItemModel
                     throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
                 }
 
+                // A programme item must never expose content through a parent
+                // event that the current user cannot view. Check the complete
+                // ancestor chain because event trees may contain several levels.
+                if (!empty($data->parent_event_id)
+                    && !$this->canViewEventAncestors((int) $data->parent_event_id, $user, $levels)) {
+                    throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+                }
+
+                if (!empty($data->parent_venue_id)
+                    && !$this->canViewVenueAncestors((int) $data->parent_venue_id, $user, $levels)) {
+                    throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+                }
+
                 # Convert parameter fields to objects.
                 $registry = new Registry;
                 $registry->loadString($data->attribs);
@@ -309,6 +326,7 @@ class JemModelEvent extends ItemModel
 
         # Get venue attachments
         $this->_item[$pk]->vattachments = JemAttachment::getAttachments('venue' . $this->_item[$pk]->locid);
+        $this->_item[$pk]->child_events = $this->getChildEvents((int) $pk);
 
         // Define Booked
         $query = $db->getQuery(true);
@@ -325,6 +343,185 @@ class JemModelEvent extends ItemModel
         $this->_item[$pk]->booked = $res;
 
         return $this->_item[$pk];
+    }
+
+    /**
+     * Load the visible programme items directly below an event.
+     */
+    public function getChildEvents($parentId)
+    {
+        $parentId = (int) $parentId;
+        if ($parentId <= 0) {
+            return array();
+        }
+
+        $user = JemFactory::getUser();
+        $levels = array_map('intval', $user->getAuthorisedViewLevels());
+        $levelsList = implode(',', $levels) ?: '0';
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'e.id', 'e.title', 'e.alias', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
+                'e.parent_event_id', 'e.event_tree_order', 'e.locid', 'e.event_status', 'e.type_id',
+                'v.venue', 'v.alias AS venue_alias', 'v.parent_venue_id',
+                "CASE WHEN CHAR_LENGTH(e.alias) THEN CONCAT_WS(':', e.id, e.alias) ELSE e.id END AS slug",
+                "CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(':', v.id, v.alias) ELSE v.id END AS venueslug",
+            ))
+            ->from($db->quoteName('#__jem_events', 'e'))
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+            ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON t.id = e.type_id AND t.entity = 1')
+            ->where('e.parent_event_id = ' . $parentId)
+            ->where(JemHelper::getEventPublicationWhere('e'))
+            ->where('e.access IN (' . $levelsList . ')')
+            ->where('(v.id IS NULL OR (v.published = 1 AND v.access IN (' . $levelsList . ')))')
+            ->where('(e.type_id IS NULL OR e.type_id = 0 OR (t.published = 1 AND t.access IN (' . $levelsList . ')))')
+            ->where('EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS hrel INNER JOIN #__jem_categories AS hc ON hc.id = hrel.catid WHERE hrel.itemid = e.id AND hc.published = 1 AND hc.access IN (' . $levelsList . '))')
+            ->order(array('e.dates ASC', 'e.times ASC', 'e.event_tree_order ASC', 'e.title ASC'));
+        $db->setQuery($query);
+
+        $items = $db->loadObjectList() ?: array();
+
+        return array_values(array_filter($items, function ($item) use ($user, $levels) {
+            return empty($item->parent_venue_id)
+                || $this->canViewVenueAncestors((int) $item->parent_venue_id, $user, $levels);
+        }));
+    }
+
+    /**
+     * Verify visibility of every ancestor of a programme item.
+     */
+    protected function canViewEventAncestors($parentId, $user, array $levels)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $parentId;
+        $levels = array_map('intval', $levels);
+
+        while ($current > 0 && count($seen) < 100) {
+            if (isset($seen[$current])) {
+                return false;
+            }
+            $seen[$current] = true;
+
+            $query = $db->getQuery(true)
+                ->select(array('id', 'parent_event_id', 'created_by', 'access', 'published', 'publish_up', 'publish_down', 'locid', 'type_id'))
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $ancestor = $db->loadObject();
+
+            if (!$ancestor || !in_array((int) $ancestor->access, $levels, true)) {
+                return false;
+            }
+
+            $canManage = $user->can('edit', 'event', (int) $ancestor->id, (int) $ancestor->created_by)
+                || $user->can('publish', 'event', (int) $ancestor->id, (int) $ancestor->created_by);
+            $isVisible = JemHelper::isEventPublishedNow($ancestor) || (int) $ancestor->published === 2 || $canManage;
+
+            if (!$isVisible || empty($this->getCategories((int) $ancestor->id))) {
+                return false;
+            }
+
+            if (!$this->canViewHierarchyVenue((int) $ancestor->locid, $user, $levels)
+                || !$this->canViewHierarchyType((int) $ancestor->type_id, $levels)) {
+                return false;
+            }
+
+            $current = (int) $ancestor->parent_event_id;
+        }
+
+        return $current === 0;
+    }
+
+    /**
+     * Verify visibility of every venue ancestor used by an event.
+     */
+    protected function canViewVenueAncestors($parentId, $user, array $levels)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $parentId;
+        $levels = array_map('intval', $levels);
+
+        while ($current > 0 && count($seen) < 100) {
+            if (isset($seen[$current])) {
+                return false;
+            }
+            $seen[$current] = true;
+
+            $query = $db->getQuery(true)
+                ->select(array('id', 'parent_venue_id', 'created_by', 'access', 'published'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $venue = $db->loadObject();
+
+            if (!$venue || !in_array((int) $venue->access, $levels, true)) {
+                return false;
+            }
+
+            $canManage = $user->can('edit', 'venue', (int) $venue->id, (int) $venue->created_by)
+                || $user->can('publish', 'venue', (int) $venue->id, (int) $venue->created_by);
+            if ((int) $venue->published !== 1 && !$canManage) {
+                return false;
+            }
+
+            $current = (int) $venue->parent_venue_id;
+        }
+
+        return $current === 0;
+    }
+
+    /**
+     * Verify an event's physical venue and its parent chain.
+     */
+    protected function canViewHierarchyVenue($venueId, $user, array $levels)
+    {
+        $venueId = (int) $venueId;
+        if ($venueId <= 0) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'parent_venue_id', 'created_by', 'access', 'published'))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . $venueId);
+        $db->setQuery($query);
+        $venue = $db->loadObject();
+
+        if (!$venue || !in_array((int) $venue->access, array_map('intval', $levels), true)) {
+            return false;
+        }
+
+        $canManage = $user->can('edit', 'venue', (int) $venue->id, (int) $venue->created_by)
+            || $user->can('publish', 'venue', (int) $venue->id, (int) $venue->created_by);
+
+        return ((int) $venue->published === 1 || $canManage)
+            && $this->canViewVenueAncestors((int) $venue->parent_venue_id, $user, $levels);
+    }
+
+    /**
+     * Verify an optional event type used by an ancestor event.
+     */
+    protected function canViewHierarchyType($typeId, array $levels)
+    {
+        $typeId = (int) $typeId;
+        if ($typeId <= 0) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_types'))
+            ->where($db->quoteName('id') . ' = ' . $typeId)
+            ->where($db->quoteName('entity') . ' = 1')
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . (implode(',', array_map('intval', $levels)) ?: '0') . ')');
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
     }
 
      /**

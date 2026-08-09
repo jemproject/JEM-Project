@@ -109,6 +109,48 @@ class JemTableEvent extends Table
     {
         $jinput = Factory::getApplication()->input;
 
+        $this->parent_event_id = empty($this->parent_event_id) ? null : (int) $this->parent_event_id;
+        $this->event_tree_order = max(0, (int) ($this->event_tree_order ?? 0));
+        $this->show_in_calendar = isset($this->show_in_calendar) ? (int) (bool) $this->show_in_calendar : 0;
+
+        if ($this->parent_event_id !== null) {
+            if ((int) $this->id === $this->parent_event_id
+                || $this->isHierarchyDescendant('#__jem_events', 'parent_event_id', $this->parent_event_id, (int) $this->id)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_CYCLE'));
+                return false;
+            }
+
+            if (!$this->hierarchyRecordExists('#__jem_events', $this->parent_event_id)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_NOT_FOUND'));
+                return false;
+            }
+
+            $parentEvent = $this->getHierarchyEvent($this->parent_event_id);
+            if ($parentEvent && !empty($parentEvent->parent_event_id)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_IS_SUBEVENT'));
+                return false;
+            }
+
+            if ((int) $this->id > 0 && $this->hasHierarchyChildren((int) $this->id)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_HAS_PROGRAMME'));
+                return false;
+            }
+
+            if ($parentEvent && !$this->isInsideParentSchedule($parentEvent)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_OUTSIDE_PARENT_DATES'));
+                return false;
+            }
+
+            if ($parentEvent && (int) $parentEvent->locid > 0 && (int) ($this->locid ?? 0) > 0
+                && !$this->isVenueInHierarchy((int) $this->locid, (int) $parentEvent->locid)) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_UNRELATED_PARENT_VENUE'));
+                return false;
+            }
+        } elseif ((int) $this->id > 0 && !$this->childrenRemainInsideParent()) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_CONFLICTS_CHILDREN'));
+            return false;
+        }
+
         if (trim($this->title) == '') {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_NAME'));
             return false;
@@ -236,6 +278,174 @@ class JemTableEvent extends Table
         }
 
         return true;
+    }
+
+    protected function hierarchyRecordExists($table, $id)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName($table))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+        $db->setQuery($query);
+
+        return (bool) $db->loadResult();
+    }
+
+    protected function getHierarchyEvent($id)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'parent_event_id', 'dates', 'enddates', 'times', 'endtimes', 'locid'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+        $db->setQuery($query);
+
+        return $db->loadObject();
+    }
+
+    protected function hasHierarchyChildren($eventId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('parent_event_id') . ' = ' . (int) $eventId);
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
+    }
+
+    protected function isInsideParentSchedule($parent)
+    {
+        return $this->isScheduleInside((object) array(
+            'dates' => $this->dates,
+            'enddates' => $this->enddates,
+            'times' => $this->times,
+            'endtimes' => $this->endtimes,
+        ), $parent);
+    }
+
+    protected function isScheduleInside($child, $parent)
+    {
+        if (empty($parent->dates) || empty($child->dates)) {
+            return false;
+        }
+
+        [$parentStart, $parentEnd] = $this->getScheduleBounds($parent, true);
+        [$childStart, $childEnd] = $this->getScheduleBounds($child, false);
+
+        return $childStart >= $parentStart && $childEnd <= $parentEnd;
+    }
+
+    /**
+     * Return comparable local schedule boundaries.
+     *
+     * A programme item with a start time but no explicit end is an instantaneous
+     * occurrence. A date-only item occupies its complete day. A parent without
+     * an explicit end keeps the complete final day available for its programme.
+     */
+    protected function getScheduleBounds($event, $isParent)
+    {
+        $startTime = !empty($event->times) ? $event->times : '00:00:00';
+        $endDate = !empty($event->enddates) ? $event->enddates : $event->dates;
+
+        if (!empty($event->endtimes)) {
+            $endTime = $event->endtimes;
+        } elseif (!$isParent && empty($event->enddates) && !empty($event->times)) {
+            $endTime = $event->times;
+        } else {
+            $endTime = '23:59:59';
+        }
+
+        return array(
+            $event->dates . ' ' . $startTime,
+            $endDate . ' ' . $endTime,
+        );
+    }
+
+    /**
+     * Prevent edits to a parent from leaving existing programme items outside
+     * its schedule or physical venue tree.
+     */
+    protected function childrenRemainInsideParent()
+    {
+        if (!$this->hasHierarchyChildren((int) $this->id)) {
+            return true;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'dates', 'enddates', 'times', 'endtimes', 'locid'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('parent_event_id') . ' = ' . (int) $this->id);
+        $db->setQuery($query);
+
+        foreach ($db->loadObjectList() ?: array() as $child) {
+            if (!$this->isScheduleInside($child, $this)) {
+                return false;
+            }
+
+            if ((int) ($this->locid ?? 0) > 0 && (int) $child->locid > 0
+                && !$this->isVenueInHierarchy((int) $child->locid, (int) $this->locid)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected function isVenueInHierarchy($venueId, $rootVenueId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $venueId;
+
+        while ($current > 0 && count($seen) < 100) {
+            if ($current === (int) $rootVenueId) {
+                return true;
+            }
+            if (isset($seen[$current])) {
+                return false;
+            }
+
+            $seen[$current] = true;
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('parent_venue_id'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $current = (int) $db->loadResult();
+        }
+
+        return false;
+    }
+
+    protected function isHierarchyDescendant($table, $parentColumn, $candidateId, $recordId)
+    {
+        if ($candidateId <= 0 || $recordId <= 0) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $candidateId;
+
+        while ($current > 0 && count($seen) < 100) {
+            if ($current === $recordId || isset($seen[$current])) {
+                return true;
+            }
+
+            $seen[$current] = true;
+            $query = $db->getQuery(true)
+                ->select($db->quoteName($parentColumn))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $current = (int) $db->loadResult();
+        }
+
+        return false;
     }
 
     /**

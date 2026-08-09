@@ -49,6 +49,7 @@ abstract class ModJemBannerHelper
         # Set params for the model
         # has to go before the getItems function
         $model->setState('params', $params);
+        $model->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
 
         # filter published
         #  0: unpublished

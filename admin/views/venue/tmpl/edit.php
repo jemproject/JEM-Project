@@ -1056,6 +1056,9 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('venue_tree_order'); ?></div></li>
                             <li>
                                 <div class="label-form">
                                     <div class="control-group">

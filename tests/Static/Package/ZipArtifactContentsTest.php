@@ -412,7 +412,7 @@ final class ZipArtifactContentsTest extends TestCase
         }
 
         return preg_match(
-            '#(^|/)(tests|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
+            '#(^|/)(tests|tmp|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
             $entry
         ) === 1;
     }

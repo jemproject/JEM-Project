@@ -239,6 +239,23 @@ class JemModelSearch extends BaseDatabaseModel
 
         // filter by user's access levels
         $where .= ' AND a.access IN (' . implode(', ', $levels) .')';
+        $where .= ' AND ' . JemHelper::getEventParentVisibilityWhere('a', $levels);
+        $where .= ' AND ' . JemHelper::getVenueHierarchyVisibilityWhere('a', $levels);
+
+        switch ((string) $params->get('event_tree_mode', 'calendar')) {
+            case 'parents':
+                $where .= ' AND (a.parent_event_id IS NULL OR a.parent_event_id = 0)';
+                break;
+            case 'children':
+                $where .= ' AND a.parent_event_id > 0';
+                break;
+            case 'all':
+                break;
+            case 'calendar':
+            default:
+                $where .= ' AND (a.parent_event_id IS NULL OR a.parent_event_id = 0 OR a.show_in_calendar = 1)';
+                break;
+        }
 
         //$filter            = $app->input->getString('filter', '');
         $filter            = $app->getUserStateFromRequest('com_jem.search.filter_search', 'filter_search', '', 'string');

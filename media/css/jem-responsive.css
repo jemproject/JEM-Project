@@ -3183,3 +3183,51 @@ div#jem.jem_specialdays #specialDayList .jem-specialdays-location-cell {
         padding-left: 0.35rem;
     }
 }
+.jem-event-parent,
+.jem-venue-parent {
+    margin: 1rem 0;
+    padding: .75rem 1rem;
+    border-inline-start: 4px solid #5b7fa3;
+    background: #f4f7fa;
+}
+
+.jem-event-programme,
+.jem-subvenues {
+    clear: both;
+    margin: 1.5rem 0;
+}
+
+.jem-programme-item {
+    display: grid;
+    grid-template-columns: minmax(6rem, 8rem) 1fr;
+    gap: 1rem;
+    padding: .75rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.jem-programme-time {
+    font-weight: 600;
+}
+
+.jem-programme-content h4 {
+    margin: 0 0 .25rem;
+}
+
+.jem-subvenues-list {
+    display: grid;
+    gap: .5rem;
+    padding-inline-start: 1.25rem;
+}
+
+.jem-subvenue-level,
+.jem-subvenue-capacity {
+    margin-inline-start: .5rem;
+    color: #666;
+}
+
+@media (max-width: 640px) {
+    .jem-programme-item {
+        grid-template-columns: 1fr;
+        gap: .25rem;
+    }
+}

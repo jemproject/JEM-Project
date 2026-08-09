@@ -3851,3 +3851,44 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
 }
 
 
+.jem-event-parent,
+.jem-venue-parent {
+    margin: 1rem 0;
+    padding: .75rem 1rem;
+    border-left: 4px solid #5b7fa3;
+    background: #f4f7fa;
+}
+
+.jem-event-programme,
+.jem-subvenues {
+    clear: both;
+    margin: 1.5rem 0;
+}
+
+.jem-programme-item {
+    display: flex;
+    gap: 1rem;
+    padding: .75rem 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.jem-programme-time {
+    flex: 0 0 8rem;
+    font-weight: 600;
+}
+
+.jem-programme-content h4 {
+    margin: 0 0 .25rem;
+}
+
+.jem-subvenues-list {
+    display: grid;
+    gap: .5rem;
+    padding-left: 1.25rem;
+}
+
+.jem-subvenue-level,
+.jem-subvenue-capacity {
+    margin-left: .5rem;
+    color: #666;
+}
