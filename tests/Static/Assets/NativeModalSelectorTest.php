@@ -63,6 +63,20 @@ final class NativeModalSelectorTest extends TestCase
         }
     }
 
+    public function testFrontendContactSelectorsCanClearAllContacts(): void
+    {
+        foreach (array(
+            'site/views/editevent/tmpl/choosecontact.php',
+            'site/views/editevent/tmpl/responsive/choosecontact.php',
+        ) as $relativePath) {
+            $code = $this->read($relativePath);
+
+            self::assertStringContainsString("Text::_('COM_JEM_NOCONTACT')", $code, $relativePath);
+            self::assertStringContainsString('jemClearSelectedContacts();', $code, $relativePath);
+            self::assertStringContainsString("window.parent[callbackName]('', emptyLabel);", $code, $relativePath);
+        }
+    }
+
     public function testAttendeeViewsDoNotCallRemovedSqueezeBoxApi(): void
     {
         foreach (array(

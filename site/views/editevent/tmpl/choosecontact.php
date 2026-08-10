@@ -195,6 +195,9 @@ if (!empty($filterBorder)) {
                 <button type="button" class="btn-save-selection" onclick="jemGetSelectedContacts();">
                     <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
                 </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="jemClearSelectedContacts();">
+                    <?php echo Text::_('COM_JEM_NOCONTACT'); ?>
+                </button>
                 <span class="jem-contact-footer">
                     <label for="limit">#</label>
                     <?php echo $this->pagination->getLimitBox(); ?>
@@ -270,6 +273,15 @@ if (!empty($filterBorder)) {
             window.parent.<?php echo $this->escape($function); ?>(ids.join(','), names.join(', '));
         } else {
             alert("<?php echo Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST'); ?>");
+        }
+    }
+
+    function jemClearSelectedContacts() {
+        var callbackName = <?php echo json_encode($function); ?>;
+        var emptyLabel = <?php echo json_encode(Text::_('COM_JEM_SELECT_CONTACT')); ?>;
+
+        if (window.parent && typeof window.parent[callbackName] === 'function') {
+            window.parent[callbackName]('', emptyLabel);
         }
     }
 
