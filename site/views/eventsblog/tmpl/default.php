@@ -16,6 +16,12 @@ $imageFit = (string) $this->params->get('blog_image_fit', 'automatic');
 $imageFit = in_array($imageFit, array('automatic', 'height', 'width'), true) ? $imageFit : 'automatic';
 $imageRatioWidth = max(1, min(20, (int) $this->params->get('blog_image_ratio_width', 1)));
 $imageRatioHeight = max(1, min(20, (int) $this->params->get('blog_image_ratio_height', 1)));
+$showDateFilter = (int) $this->params->get('blog_show_date_filter', 1) === 1;
+$showCategoryFilter = (int) $this->params->get('blog_show_category_filter', 1) === 1;
+$showVenueFilter = (int) $this->params->get('blog_show_venue_filter', 1) === 1;
+$showTypeFilter = (int) $this->params->get('blog_show_type_filter', 1) === 1;
+$showCountryFilter = (int) $this->params->get('blog_show_country_filter', 1) === 1;
+$showFilters = $showDateFilter || $showCategoryFilter || $showVenueFilter || $showTypeFilter || $showCountryFilter;
 $periods = array(
     'all'       => 'COM_JEM_EVENTSBLOG_ALL',
     'today'     => 'COM_JEM_EVENTSBLOG_TODAY',
@@ -34,11 +40,13 @@ $periods = array(
         <div class="jem-eventsblog-intro description no_space floattext"><?php echo $this->params->get('introtext'); ?></div>
     <?php endif; ?>
 
+    <?php if ($showFilters) : ?>
     <form class="jem-eventsblog-filters" action="<?php echo htmlspecialchars($this->action, ENT_QUOTES, 'UTF-8'); ?>" method="get">
         <input type="hidden" name="option" value="com_jem">
         <input type="hidden" name="view" value="eventsblog">
         <?php if ($this->itemId) : ?><input type="hidden" name="Itemid" value="<?php echo (int) $this->itemId; ?>"><?php endif; ?>
 
+        <?php if ($showDateFilter) : ?>
         <fieldset class="jem-eventsblog-periods">
             <legend class="visually-hidden"><?php echo Text::_('COM_JEM_EVENTSBLOG_DATE_FILTER'); ?></legend>
             <?php foreach ($periods as $value => $label) : ?>
@@ -48,8 +56,11 @@ $periods = array(
                 </label>
             <?php endforeach; ?>
         </fieldset>
+        <?php endif; ?>
 
+        <?php if ($showCategoryFilter || $showVenueFilter || $showTypeFilter || $showCountryFilter) : ?>
         <div class="jem-eventsblog-selects">
+            <?php if ($showCategoryFilter) : ?>
             <label>
                 <span class="visually-hidden"><?php echo Text::_('COM_JEM_CATEGORY'); ?></span>
                 <select name="blog_category" class="form-select" onchange="this.form.submit()">
@@ -59,6 +70,8 @@ $periods = array(
                     <?php endforeach; ?>
                 </select>
             </label>
+            <?php endif; ?>
+            <?php if ($showVenueFilter) : ?>
             <label>
                 <span class="visually-hidden"><?php echo Text::_('COM_JEM_VENUE'); ?></span>
                 <select name="blog_venue" class="form-select" onchange="this.form.submit()">
@@ -68,6 +81,8 @@ $periods = array(
                     <?php endforeach; ?>
                 </select>
             </label>
+            <?php endif; ?>
+            <?php if ($showTypeFilter) : ?>
             <label>
                 <span class="visually-hidden"><?php echo Text::_('COM_JEM_TYPE'); ?></span>
                 <select name="blog_type" class="form-select" onchange="this.form.submit()">
@@ -77,6 +92,8 @@ $periods = array(
                     <?php endforeach; ?>
                 </select>
             </label>
+            <?php endif; ?>
+            <?php if ($showCountryFilter) : ?>
             <label>
                 <span class="visually-hidden"><?php echo Text::_('COM_JEM_COUNTRY'); ?></span>
                 <select name="blog_country" class="form-select" onchange="this.form.submit()">
@@ -86,8 +103,11 @@ $periods = array(
                     <?php endforeach; ?>
                 </select>
             </label>
+            <?php endif; ?>
         </div>
+        <?php endif; ?>
     </form>
+    <?php endif; ?>
 
     <p class="jem-eventsblog-count" aria-live="polite"><?php echo Text::plural('COM_JEM_EVENTSBLOG_RESULTS', $this->pagination->total); ?></p>
 

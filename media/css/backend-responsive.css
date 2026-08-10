@@ -1327,7 +1327,12 @@ fieldset.adminform .inputbox {
     margin-left: inherit;
 }
 
-select.inputbox, textarea.inputbox {
+select.inputbox {
+    padding: 0.5rem;
+    padding-inline-end: 2.5rem;
+}
+
+textarea.inputbox {
     padding: 0.5rem;
 }
 

@@ -34,6 +34,7 @@ final class EventsBlogViewTest extends TestCase
     public function testEventsBlogHasBothLayoutStyleAssetsAndPageTextOptions(): void
     {
         $metadata = $this->read('site/views/eventsblog/tmpl/default.xml');
+        $adminLanguage = $this->read('admin/language/en-GB/com_jem.ini');
         $css = $this->read('media/css/eventsblog.css');
         $responsiveCss = $this->read('media/css/eventsblog-responsive.css');
 
@@ -41,6 +42,12 @@ final class EventsBlogViewTest extends TestCase
         self::assertStringContainsString('name="blog_image_fit"', $metadata);
         self::assertStringContainsString('name="blog_image_ratio_width"', $metadata);
         self::assertStringContainsString('name="blog_image_ratio_height"', $metadata);
+        self::assertStringContainsString('name="blog_show_date_filter"', $metadata);
+        self::assertStringContainsString('name="blog_show_category_filter"', $metadata);
+        self::assertStringContainsString('name="blog_show_venue_filter"', $metadata);
+        self::assertStringContainsString('name="blog_show_type_filter"', $metadata);
+        self::assertStringContainsString('name="blog_show_country_filter"', $metadata);
+        self::assertSame(5, substr_count($metadata, '_filter" type="radio" default="1"'));
         self::assertStringContainsString('name="blog_filter_categories"', $metadata);
         self::assertStringContainsString('name="blog_filter_venues"', $metadata);
         self::assertStringContainsString('name="blog_filter_types"', $metadata);
@@ -50,6 +57,18 @@ final class EventsBlogViewTest extends TestCase
         self::assertStringContainsString('name="introtext"', $metadata);
         self::assertStringContainsString('name="showfootertext"', $metadata);
         self::assertStringContainsString('name="footertext"', $metadata);
+        foreach (array(
+            'COM_JEM_EVENTSBLOG_VISIBLE_FILTERS',
+            'COM_JEM_EVENTSBLOG_SHOW_DATE_FILTER',
+            'COM_JEM_EVENTSBLOG_DEFAULT_PERIOD',
+            'COM_JEM_EVENTSBLOG_SHOW_CATEGORY_FILTER',
+            'COM_JEM_EVENTSBLOG_SHOW_VENUE_FILTER',
+            'COM_JEM_EVENTSBLOG_SHOW_TYPE_FILTER',
+            'COM_JEM_EVENTSBLOG_SHOW_COUNTRY_FILTER',
+            'COM_JEM_EVENTSBLOG_SCOPE_FILTERS',
+        ) as $languageKey) {
+            self::assertStringContainsString($languageKey . '=', $adminLanguage, $languageKey);
+        }
         self::assertStringContainsString('grid-template-columns', $css);
         self::assertStringContainsString('@media', $css);
         self::assertStringContainsString('object-fit: cover', $css);
@@ -65,6 +84,12 @@ final class EventsBlogViewTest extends TestCase
         self::assertStringContainsString('filter.blog_allowed_types', $model);
         self::assertStringContainsString('filter.blog_allowed_countries', $model);
         self::assertStringContainsString('limitSelection', $model);
+        self::assertStringContainsString("get('blog_show_date_filter', 1)", $model);
+        self::assertStringContainsString("get('blog_show_category_filter', 1)", $model);
+        self::assertStringContainsString("get('blog_show_venue_filter', 1)", $model);
+        self::assertStringContainsString("get('blog_show_type_filter', 1)", $model);
+        self::assertStringContainsString("get('blog_show_country_filter', 1)", $model);
+        self::assertStringContainsString('$showFilters = $showDateFilter || $showCategoryFilter || $showVenueFilter || $showTypeFilter || $showCountryFilter', $this->read('site/views/eventsblog/tmpl/default.php'));
         self::assertStringContainsString('$gridColumns = max(3, min($columns, $rowCount))', $this->read('site/views/eventsblog/tmpl/default.php'));
     }
 
