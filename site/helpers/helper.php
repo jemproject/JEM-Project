@@ -2293,8 +2293,31 @@ class JemHelper
 
                 //delete outdated events
                 if ($jemsettings->oldevent == 1) {
-                    $db->setQuery('DELETE FROM #__jem_events WHERE ' . $outdatedWhere);
-                    $db->execute();
+                    $db->setQuery('SELECT id FROM #__jem_events WHERE ' . $outdatedWhere . ' ORDER BY id ASC');
+                    $outdatedEventIds = array_map('intval', (array) $db->loadColumn());
+
+                    if ($outdatedEventIds) {
+                        $db->transactionStart();
+                        try {
+                            $registrationService = new JemRegistrationService($db);
+                            foreach ($outdatedEventIds as $outdatedEventId) {
+                                $registrationService->purgeForEventLocked($outdatedEventId, array(
+                                    'actorId'    => 0,
+                                    'source'     => 'system.cleanup',
+                                    'reasonCode' => 'outdated_event_deleted',
+                                ));
+                            }
+
+                            $db->setQuery('DELETE FROM #__jem_events WHERE id IN (' . implode(',', $outdatedEventIds) . ')');
+                            $db->execute();
+                            $db->setQuery('DELETE FROM #__jem_cats_event_relations WHERE itemid IN (' . implode(',', $outdatedEventIds) . ')');
+                            $db->execute();
+                            $db->transactionCommit();
+                        } catch (Throwable $e) {
+                            $db->transactionRollback();
+                            throw $e;
+                        }
+                    }
                 }
 
                 //Set state archived of outdated events
@@ -2315,9 +2338,16 @@ class JemHelper
                     $db->execute();
                 }
 
-                // Cleanup orphaned registrations (events that no longer exist).
-                $db->setQuery('DELETE FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events)');
-                $db->execute();
+                // Preserve terminal history when cleaning legacy orphan rows.
+                $db->setQuery('SELECT DISTINCT event FROM #__jem_register WHERE event NOT IN (SELECT id FROM #__jem_events) ORDER BY event ASC');
+                $orphanEventIds = array_map('intval', (array) $db->loadColumn());
+                foreach ($orphanEventIds as $orphanEventId) {
+                    (new JemRegistrationService($db))->purgeForEvent($orphanEventId, array(
+                        'actorId'    => 0,
+                        'source'     => 'system.cleanup',
+                        'reasonCode' => 'legacy_orphan_cleanup',
+                    ));
+                }
 
                 // Set timestamp of last cleanup
                 JemConfig::getInstance()->set('lastupdate', $now);

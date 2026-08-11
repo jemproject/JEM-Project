@@ -31,6 +31,7 @@ final class JemPackageBuilder
         'plugins/plg_jem_mailer'           => 'plg_jem_mailer.zip',
         'plugins/plg_quickicon_jem'        => 'plg_quickicon_jem.zip',
         'plugins/plg_actionlog_jem'        => 'plg_actionlog_jem.zip',
+        'plugins/plg_user_jem'             => 'plg_user_jem.zip',
     ];
 
     public function build(string $root): string
@@ -186,7 +187,7 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|memories|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 
@@ -200,7 +201,7 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate package: ' . $package);
         }
 
-        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip'] as $entry) {
+        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip', 'packages/plg_user_jem.zip'] as $entry) {
             if ($outer->locateName($entry) === false) {
                 throw new RuntimeException($package . ' is missing ' . $entry);
             }

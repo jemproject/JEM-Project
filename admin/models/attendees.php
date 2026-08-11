@@ -199,22 +199,19 @@ class JemModelAttendees extends ListModel
                 return true;
             }
 
-            $user = implode(',', $cid);
-            $db = Factory::getContainer()->get('DatabaseDriver');
-
-            $query = $db->getQuery(true);
-            $query->delete($db->quoteName('#__jem_register'));
-            $query->where('id IN ('.$user.')');
-            if ($eventId > 0) {
-                $query->where('event = ' . (int)$eventId);
+            if ((int) $eventId < 1) {
+                throw new InvalidArgumentException('Event ID is required when cancelling registrations.');
             }
 
-            $db->setQuery($query);
-
-            // TODO: use exception handling
-            if ($db->execute() === false) {
-                throw new Exception($db->getErrorMsg(), 500);
-            }
+            (new JemRegistrationService())->cancelByIds(
+                $cid,
+                (int) $eventId,
+                array(
+                    'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
+                    'source'     => 'administrator.attendees.remove',
+                    'reasonCode' => 'manager_cancelled',
+                )
+            );
         }
         return true;
     }

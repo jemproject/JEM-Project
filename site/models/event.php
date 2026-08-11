@@ -957,7 +957,7 @@ class JemModelEvent extends ItemModel
      * @access protected
      * @return int register id on success, else false
      */
-    protected function _doRegister($eventId, $uid, $uip, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+    protected function _doRegister($eventId, $uid, $uip, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true, array $options = array())
     {
         //    $app = Factory::getApplication('site');
         //    $user = JemFactory::getUser();
@@ -1025,18 +1025,26 @@ class JemModelEvent extends ItemModel
         $obj->uip = $uip;
         $obj->comment = $comment;
 
-        $result = false;
         try {
             if ($regid) {
                 $obj->id = $regid;
-                $this->_db->updateObject('#__jem_register', $obj, 'id');
-                $result = $regid;
-            } else {
-                $this->_db->insertObject('#__jem_register', $obj);
-                $result = $this->_db->insertid();
             }
+
+            $options += array(
+                'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                'source'  => 'registration.model',
+                'respectPlaces' => (bool) $respectPlaces,
+                'allowWaiting'  => (bool) $respectPlaces,
+            );
+            if ($regid) {
+                $options['requireExisting'] = true;
+            } elseif (!is_object($registration)) {
+                $options['requireNew'] = true;
+            }
+            $stored = (new JemRegistrationService($this->_db))->save($obj, $options);
+            $result = (int) $stored->after->id;
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
             // we have a unique user-event key so registering twice will fail
             $errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $eventId  .']';
             return false;
@@ -1122,9 +1130,16 @@ class JemModelEvent extends ItemModel
             }
         }
 
+        if ($uid < 1) {
+            Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
+            return false;
+        }
+
+        $pending = array();
+        $uip = JemHelper::getStoredIP();
+
         foreach ($events as $e) {
             $reg = $registrations[(int) $e->id];
-            $errMsg = '';
             $eventStatus = $status;
 
 
@@ -1172,23 +1187,56 @@ class JemModelEvent extends ItemModel
                 }
             }
 
-            // Must be logged in
-            if ($uid < 1) {
-                Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-                return;
+            if (is_object($reg)
+                && JemRegistrationTransition::logicalStatus($reg) === JemRegistrationTransition::WAITING_LIST
+                && $eventStatus === JemRegistrationTransition::ATTENDING) {
+                $eventStatus = JemRegistrationTransition::WAITING_LIST;
             }
 
-            // IP
-            $uip = JemHelper::getStoredIP();
+            $row = (object) array(
+                'event'    => (int) $e->id,
+                'uid'      => $uid,
+                'places'   => (int) $places,
+                'uregdate' => gmdate('Y-m-d H:i:s'),
+                'uip'      => $uip,
+                'comment'  => $comment,
+            );
+            JemRegistrationTransition::applyLogicalStatus($row, $eventStatus);
 
-            $regid = $reg ? (int) $reg->id : 0;
-            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
-            if (!$result) {
-                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
-            } else {
-                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
+            if ($reg) {
+                $row->id = (int) $reg->id;
             }
+
+            $pending[] = $row;
         }
+
+        try {
+            $stored = (new JemRegistrationService($this->_db))->saveMany($pending, array(
+                'actorId'      => $uid,
+                'source'       => 'site.event.registration_response',
+                'respectPlaces'=> true,
+                'allowWaiting' => true,
+            ));
+        } catch (Throwable $e) {
+            $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ': ' . $e->getMessage());
+            return false;
+        }
+
+        $result = 0;
+        foreach ($stored as $storedRegistration) {
+            if ((int) $storedRegistration->after->event === $eventId || !$result) {
+                $result = (int) $storedRegistration->after->id;
+            }
+
+            $logicalStatus = JemRegistrationTransition::logicalStatus($storedRegistration->after);
+            Factory::getApplication()->enqueueMessage(
+                $logicalStatus === JemRegistrationTransition::NOT_ATTENDING
+                    ? Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')
+                    : Text::_('COM_JEM_REGISTERED_USER_IN_EVENT'),
+                'info'
+            );
+        }
+
         return $result;
     }
 
@@ -1207,7 +1255,7 @@ class JemModelEvent extends ItemModel
      * @access public
      * @return int register id on success, else false
      */
-    public function adduser($eventId, $uid, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true)
+    public function adduser($eventId, $uid, $status, $places, $comment, &$errMsg, $regid = 0, $respectPlaces = true, array $options = array())
     {
         //    $app = Factory::getApplication('site');
         $user = JemFactory::getUser();
@@ -1222,7 +1270,7 @@ class JemModelEvent extends ItemModel
         // IP
         $uip = JemHelper::getStoredIP();
 
-        $result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces);
+        $result = $this->_doRegister($eventId, $uid, $uip, $status, $places, $comment, $errMsg, $regid, $respectPlaces, $options);
 
         return $result;
     }
@@ -1245,14 +1293,27 @@ class JemModelEvent extends ItemModel
             return;
         }
 
-        $query = 'DELETE FROM #__jem_register WHERE event = ' . $event . ' AND uid= ' . $userid;
-        $this->_db->SetQuery($query);
-
-        if ($this->_db->execute() === false) {
-            throw new Exception($this->_db->getErrorMsg(), 500);
+        $registration = $this->getUserRegistration($event);
+        if (!$registration || empty($registration->id)) {
+            return false;
         }
 
-        return true;
+        try {
+            $results = (new JemRegistrationService($this->_db))->cancelByIds(
+                array((int) $registration->id),
+                $event,
+                array(
+                    'actorId'   => $userid,
+                    'source'    => 'site.event.unregister',
+                    'reasonCode'=> 'booking_holder_cancelled',
+                )
+            );
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        return !empty($results);
     }
 }
 ?>

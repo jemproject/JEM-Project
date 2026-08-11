@@ -545,26 +545,36 @@ class JemTableEvent extends Table
      */
     public function delete($pk = null)
     {
-        $id = $this->id;
+        $id = (int) ($pk ?: $this->id);
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->transactionStart();
 
-        if (parent::delete($pk)) {
-            $db = Factory::getContainer()->get('DatabaseDriver');
+        try {
+            (new JemRegistrationService($db))->purgeForEventLocked($id, array(
+                'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
+                'source'     => 'administrator.event.delete',
+                'reasonCode' => 'event_deleted',
+            ));
+
+            if (!parent::delete($pk)) {
+                throw new RuntimeException($this->getError() ?: 'Could not delete the JEM event.');
+            }
+
             $query = $db->getQuery(true);
             $query->delete($db->quoteName('#__jem_cats_event_relations'));
             $query->where('itemid = '.$db->quote($id));
             $db->setQuery($query);
             $db->execute();
 
-            $query = $db->getQuery(true);
-            $query->delete($db->quoteName('#__jem_register'));
-            $query->where('event = '.$db->quote($id));
-            $db->setQuery($query);
-            $db->execute();
+            $db->transactionCommit();
 
             return true;
-        }
+        } catch (Throwable $e) {
+            $db->transactionRollback();
+            $this->setError($e->getMessage());
 
-        return false;
+            return false;
+        }
     }
 }
 ?>

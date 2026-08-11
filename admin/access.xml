@@ -22,6 +22,7 @@
         <action name="jem.venues.edit.state" title="COM_JEM_ACL_VENUES_EDIT_STATE" description="COM_JEM_ACL_VENUES_EDIT_STATE_DESC" />
         <action name="jem.venues.edit.own" title="COM_JEM_ACL_VENUES_EDIT_OWN" description="COM_JEM_ACL_VENUES_EDIT_OWN_DESC" />
         <action name="jem.attendees.manage" title="COM_JEM_ACL_ATTENDEES_MANAGE" description="COM_JEM_ACL_ATTENDEES_MANAGE_DESC" />
+        <action name="jem.registrations.history" title="COM_JEM_ACL_REGISTRATIONS_HISTORY" description="COM_JEM_ACL_REGISTRATIONS_HISTORY_DESC" />
         <action name="jem.tools.manage" title="COM_JEM_ACL_TOOLS_MANAGE" description="COM_JEM_ACL_TOOLS_MANAGE_DESC" />
     </section>
     <section name="category">

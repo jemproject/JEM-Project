@@ -337,17 +337,19 @@ class JemModelAttendees extends BaseDatabaseModel
         if (is_array($cid) && count($cid))
         {
             ArrayHelper::toInteger($cid);
-            $query = 'DELETE FROM #__jem_register WHERE id IN ('. implode(',', $cid) .') ';
-
-            if ((int) $eventId > 0) {
-                $query .= ' AND event = ' . (int) $eventId;
+            if ((int) $eventId < 1) {
+                throw new InvalidArgumentException('Event ID is required when cancelling registrations.');
             }
 
-            $this->_db->setQuery($query);
-
-            if ($this->_db->execute() === false) {
-                throw new Exception($this->_db->getErrorMsg(), 1001);
-            }
+            (new JemRegistrationService($this->_db))->cancelByIds(
+                $cid,
+                (int) $eventId,
+                array(
+                    'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
+                    'source'     => 'site.attendees.remove',
+                    'reasonCode' => 'manager_cancelled',
+                )
+            );
 
             // clear attendees cache
             $this->_data = null;

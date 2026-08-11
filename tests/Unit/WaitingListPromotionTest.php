@@ -14,6 +14,17 @@ require_once JEM_TEST_ROOT . '/site/classes/waitinglistpromotion.class.php';
 
 final class WaitingListPromotionTest extends TestCase
 {
+    public function testPromotionLoadsCompleteRowsForTheStableIdentityWriter(): void
+    {
+        $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/waitinglistpromotion.class.php');
+
+        self::assertMatchesRegularExpression(
+            '/->select\([\'\"]\*[\'\"]\)\s*->from\(\$db->quoteName\([\'\"]#__jem_register[\'\"]\)\)/',
+            $source,
+            'saveLocked() requires the complete registration row during promotion.'
+        );
+    }
+
     public function testAutomaticSelectionUsesQueueOrderAndOnlyFitsAvailablePlaces(): void
     {
         $queue = array(

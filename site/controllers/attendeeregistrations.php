@@ -348,22 +348,17 @@ class JemControllerAttendeeregistrations extends BaseController
             return;
         }
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
         try {
-            $db->transactionStart();
-
-            foreach ($transitions as $transition) {
-                $model->setId((int) $transition->registrationId);
-
-                if (!$model->setRegistrationStatus((int) $transition->newStatus)) {
-                    throw new RuntimeException($model->getError() ?: Text::_('JERROR_AN_ERROR_HAS_OCCURRED'));
-                }
-            }
-
-            $db->transactionCommit();
+            (new JemRegistrationService())->setLogicalStatusAcrossEvents(
+                array_keys($changedRows),
+                $status,
+                array(
+                    'actorId' => (int) $app->getIdentity()->id,
+                    'source'  => 'site.attendeeregistrations.batch',
+                    'respectPlaces' => true,
+                )
+            );
         } catch (Throwable $e) {
-            $db->transactionRollback();
             $this->setRedirect(Route::_($url, false), $e->getMessage(), 'error');
             return;
         }

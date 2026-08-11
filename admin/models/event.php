@@ -3270,21 +3270,30 @@ class JemModelEvent extends JemModelAdmin
         # Add new records, ignore users already registered
         foreach ($users AS $user)
         {
-            if (!array_key_exists($user, $regs)) {
-                $query = $db->getQuery(true);
-                $query->insert('#__jem_register');
-                $query->columns(array('event', 'uid', 'status'));
-                $query->values($eventId.','.$user.',0');
-                $db->setQuery($query);
+            if (!array_key_exists($user, $regs) || (int) $regs[$user]->status === -1) {
                 try {
-                    $ret = $db->execute();
-                } catch (Exception $e) {
+                    $data = (object) array(
+                        'id'      => isset($regs[$user]) ? (int) $regs[$user]->id : 0,
+                        'event'   => $eventId,
+                        'uid'     => (int) $user,
+                        'status'  => 0,
+                        'waiting' => 0,
+                        'places'  => 1,
+                    );
+                    $stored = (new JemRegistrationService($db))->save($data, array(
+                        'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
+                        'source'     => 'administrator.event.invitation',
+                        'action'     => 'invited',
+                        'reasonCode' => isset($regs[$user]) ? 'invitation_reactivated' : 'invitation_created',
+                    ));
+                    $ret = true;
+                    $id = (int) $stored->after->id;
+                } catch (Throwable $e) {
                     JemHelper::addLogEntry('Exception: '. $e->getMessage(), __METHOD__, Log::ERROR);
                     $ret = false;
                 }
 
                 if ($ret !== false) {
-                    $id = $db->insertid();
                     $dispatcher->triggerEvent('onEventUserRegistered', array($id));
                 }
             }
@@ -3294,13 +3303,19 @@ class JemModelEvent extends JemModelAdmin
         foreach ($regs as $reg)
         {
             if (($reg->status == 0) && (array_search($reg->uid, $users) === false)) {
-                $query = $db->getQuery(true);
-                $query->delete('#__jem_register');
-                $query->where('id = '.$reg->id);
-                $db->setQuery($query);
                 try {
-                    $ret = $db->execute();
-                } catch (Exception $e) {
+                    $results = (new JemRegistrationService($db))->cancelByIds(
+                        array((int) $reg->id),
+                        $eventId,
+                        array(
+                            'actorId'    => (int) Factory::getApplication()->getIdentity()->id,
+                            'source'     => 'administrator.event.invitation',
+                            'action'     => 'invitation_removed',
+                            'reasonCode' => 'invitation_removed',
+                        )
+                    );
+                    $ret = !empty($results);
+                } catch (Throwable $e) {
                     JemHelper::addLogEntry('Exception: '. $e->getMessage(), __METHOD__, Log::ERROR);
                     $ret = false;
                 }

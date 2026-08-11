@@ -64,6 +64,7 @@
             <exclude name=".codex/**" />
             <exclude name=".cursor/**" />
             <exclude name=".github/copilot/**" />
+            <exclude name="memories/**" />
             <exclude name=".env" />
             <exclude name=".env.*" />
             <exclude name=".*" />
@@ -190,6 +191,9 @@
             <patternset refid="windows.junk.excludes" />
         </zip>
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_actionlog_${cfg.name}.zip" basedir="plugins/plg_actionlog_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_user_${cfg.name}.zip" basedir="plugins/plg_user_${cfg.name}">
             <patternset refid="windows.junk.excludes" />
         </zip>
     </target>

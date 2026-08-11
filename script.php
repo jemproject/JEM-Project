@@ -318,9 +318,364 @@ class com_jemInstallerScript
             $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
+            $this->repair510RegistrationSchema();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
         }
+    }
+
+    /**
+     * Complete the additive JEM 5.1 registration migration.
+     *
+     * The versioned SQL owns the normal schema update. This idempotent fallback
+     * also handles installations where Joomla recorded the SQL version before
+     * a previous request completed the reference/history backfill.
+     *
+     * @return void
+     */
+    private function repair510RegistrationSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $registerTable = $db->replacePrefix('#__jem_register');
+
+        if (!in_array($registerTable, $db->getTableList(), true)) {
+            return;
+        }
+
+        try {
+            // Block new registration writes until both schema and legacy-data
+            // proof complete, including during an idempotent repair rerun.
+            $this->setRegistrationSchemaReady($db, false);
+            $columns = array_change_key_case($db->getTableColumns($registerTable, false), CASE_LOWER);
+            $definitions = array(
+                'reference' => "VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL AFTER `comment`",
+                'created'   => "DATETIME NULL DEFAULT NULL AFTER `reference`",
+                'modified'  => "DATETIME NULL DEFAULT NULL AFTER `created`",
+                'revision'  => "INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `modified`",
+            );
+
+            foreach ($definitions as $column => $definition) {
+                if (!isset($columns[$column])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName('#__jem_register')
+                        . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                    );
+                    $db->execute();
+                }
+            }
+
+            $this->createRegistrationHistoryTable($db);
+            $legacyFingerprint = $this->registrationLegacyFingerprint($db);
+
+            $identityFile = JPATH_SITE . '/components/com_jem/classes/registrationidentity.class.php';
+            if (!class_exists('JemRegistrationIdentity', false) && is_file($identityFile)) {
+                require_once $identityFile;
+            }
+            if (!class_exists('JemRegistrationIdentity', false)) {
+                throw new RuntimeException('Registration identity generator is unavailable.');
+            }
+
+            $lastRegistrationId = 0;
+            do {
+                $query = $db->getQuery(true)
+                    ->select(array('r.*', 'e.title AS event_title'))
+                    ->from($db->quoteName('#__jem_register', 'r'))
+                    ->join('LEFT', $db->quoteName('#__jem_events', 'e') . ' ON e.id = r.event')
+                    ->where('r.id > ' . $lastRegistrationId)
+                    ->order('r.id ASC');
+                $db->setQuery($query, 0, 250);
+                $registrations = (array) $db->loadObjectList();
+
+                foreach ($registrations as $registration) {
+                    $this->backfillRegistrationRow($db, $registration);
+                    $lastRegistrationId = (int) $registration->id;
+                }
+            } while (count($registrations) === 250);
+
+            $this->finaliseRegistrationReferenceConstraint($db);
+
+            if ($legacyFingerprint !== $this->registrationLegacyFingerprint($db)) {
+                throw new RuntimeException('Registration migration changed legacy registration data.');
+            }
+
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_register', 'r'))
+                ->join(
+                    'LEFT',
+                    $db->quoteName('#__jem_registration_history', 'h')
+                    . ' ON h.registration_id = r.id AND h.revision = 1'
+                )
+                ->where('(r.reference IS NULL OR r.reference = ' . $db->quote('') . ' OR h.id IS NULL)');
+            $db->setQuery($query);
+            if ((int) $db->loadResult() !== 0) {
+                throw new RuntimeException('Registration migration verification found incomplete rows.');
+            }
+
+            $this->setRegistrationSchemaReady($db, true);
+        } catch (Throwable $e) {
+            $this->setRegistrationSchemaReady($db, false);
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_REGISTRATION_MIGRATION_FAILED', $e->getMessage()),
+                'error'
+            );
+        }
+    }
+
+    /**
+     * Create the append-only registration history table when it is absent.
+     */
+    private function createRegistrationHistoryTable($db)
+    {
+        $db->setQuery(
+            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_registration_history') . ' ('
+            . $db->quoteName('id') . ' BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,'
+            . $db->quoteName('operation_reference') . ' VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,'
+            . $db->quoteName('registration_id') . ' INT(11) UNSIGNED NOT NULL,'
+            . $db->quoteName('registration_reference') . ' VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,'
+            . $db->quoteName('revision') . ' INT(10) UNSIGNED NOT NULL,'
+            . $db->quoteName('event_id') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('event_title') . " VARCHAR(255) NOT NULL DEFAULT '',"
+            . $db->quoteName('action') . ' VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,'
+            . $db->quoteName('old_status') . ' TINYINT(3) NULL DEFAULT NULL,'
+            . $db->quoteName('new_status') . ' TINYINT(3) NULL DEFAULT NULL,'
+            . $db->quoteName('old_places') . ' INT(11) NULL DEFAULT NULL,'
+            . $db->quoteName('new_places') . ' INT(11) NULL DEFAULT NULL,'
+            . $db->quoteName('old_user_id') . ' INT(11) NULL DEFAULT NULL,'
+            . $db->quoteName('new_user_id') . ' INT(11) NULL DEFAULT NULL,'
+            . $db->quoteName('actor_user_id') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('source') . " VARCHAR(80) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',"
+            . $db->quoteName('reason_code') . ' VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL,'
+            . $db->quoteName('forced') . " TINYINT(1) NOT NULL DEFAULT '0',"
+            . $db->quoteName('changed_fields') . ' TEXT NULL DEFAULT NULL,'
+            . $db->quoteName('occurred') . ' DATETIME NOT NULL,'
+            . ' PRIMARY KEY (' . $db->quoteName('id') . '),'
+            . ' UNIQUE KEY ' . $db->quoteName('idx_history_registration_revision') . ' (' . $db->quoteName('registration_id') . ', ' . $db->quoteName('revision') . '),'
+            . ' UNIQUE KEY ' . $db->quoteName('idx_history_operation_registration') . ' (' . $db->quoteName('operation_reference') . ', ' . $db->quoteName('registration_id') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_reference_occurred') . ' (' . $db->quoteName('registration_reference') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_operation') . ' (' . $db->quoteName('operation_reference') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_event_occurred') . ' (' . $db->quoteName('event_id') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_actor_occurred') . ' (' . $db->quoteName('actor_user_id') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_action_occurred') . ' (' . $db->quoteName('action') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_source_occurred') . ' (' . $db->quoteName('source') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_status_occurred') . ' (' . $db->quoteName('new_status') . ', ' . $db->quoteName('occurred') . '),'
+            . ' KEY ' . $db->quoteName('idx_history_occurred') . ' (' . $db->quoteName('occurred') . ')'
+            . ') ENGINE=InnoDB'
+        );
+        $db->execute();
+    }
+
+    /**
+     * Backfill one legacy registration atomically and safely on retry.
+     */
+    private function backfillRegistrationRow($db, $registration)
+    {
+        $db->transactionStart();
+
+        try {
+            $reference = trim((string) ($registration->reference ?? ''));
+            if ($reference === '') {
+                $reference = $this->createUniqueRegistrationReference($db, (int) $registration->id);
+            } elseif (!JemRegistrationIdentity::isRegistrationReference($reference)) {
+                throw new RuntimeException('Invalid existing registration reference for row ' . (int) $registration->id . '.');
+            }
+
+            $created = $registration->created ?? null;
+            $modified = $registration->modified ?? null;
+            $legacyTimestamp = $this->validLegacyRegistrationTimestamp($registration->uregdate ?? '');
+            $revision = max(1, (int) ($registration->revision ?? 1));
+
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_register'))
+                ->set($db->quoteName('reference') . ' = ' . $db->quote($reference))
+                ->set($db->quoteName('revision') . ' = ' . $revision)
+                ->where($db->quoteName('id') . ' = ' . (int) $registration->id);
+
+            if (empty($created) && $legacyTimestamp !== null) {
+                $query->set($db->quoteName('created') . ' = ' . $db->quote($legacyTimestamp));
+            }
+            if (empty($modified) && $legacyTimestamp !== null) {
+                $query->set($db->quoteName('modified') . ' = ' . $db->quote($legacyTimestamp));
+            }
+            $db->setQuery($query);
+            $db->execute();
+
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_registration_history'))
+                ->where($db->quoteName('registration_id') . ' = ' . (int) $registration->id)
+                ->where($db->quoteName('revision') . ' = 1');
+            $db->setQuery($query);
+
+            if ((int) $db->loadResult() === 0) {
+                $logicalStatus = ((int) $registration->status === 1 && !empty($registration->waiting))
+                    ? 2
+                    : (int) $registration->status;
+                $history = (object) array(
+                    'operation_reference'  => JemRegistrationIdentity::generateOperationReference(),
+                    'registration_id'      => (int) $registration->id,
+                    'registration_reference' => $reference,
+                    'revision'             => 1,
+                    'event_id'             => (int) $registration->event,
+                    'event_title'          => (string) ($registration->event_title ?? ''),
+                    'action'               => 'migrated',
+                    'old_status'           => null,
+                    'new_status'           => $logicalStatus,
+                    'old_places'           => null,
+                    'new_places'           => max(0, (int) $registration->places),
+                    'old_user_id'          => null,
+                    'new_user_id'          => (int) $registration->uid,
+                    'actor_user_id'        => 0,
+                    'source'               => 'installer.migration',
+                    'reason_code'          => 'jem_5_0_1_upgrade',
+                    'forced'               => 0,
+                    'changed_fields'       => json_encode(array('baseline'), JSON_UNESCAPED_SLASHES),
+                    'occurred'             => gmdate('Y-m-d H:i:s'),
+                );
+                $db->insertObject('#__jem_registration_history', $history);
+            }
+
+            $db->transactionCommit();
+        } catch (Throwable $e) {
+            $db->transactionRollback();
+            throw $e;
+        }
+    }
+
+    private function createUniqueRegistrationReference($db, $registrationId)
+    {
+        for ($attempt = 0; $attempt < 10; $attempt++) {
+            $reference = JemRegistrationIdentity::generateRegistrationReference();
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_register'))
+                ->where($db->quoteName('reference') . ' = ' . $db->quote($reference))
+                ->where($db->quoteName('id') . ' <> ' . (int) $registrationId);
+            $db->setQuery($query);
+
+            if ((int) $db->loadResult() === 0) {
+                return $reference;
+            }
+        }
+
+        throw new RuntimeException('Could not generate a unique registration reference.');
+    }
+
+    private function validLegacyRegistrationTimestamp($value)
+    {
+        $value = trim((string) $value);
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $value, new DateTimeZone('UTC'));
+        $errors = DateTimeImmutable::getLastErrors();
+
+        if (!$date || ($errors !== false && ($errors['warning_count'] || $errors['error_count']))) {
+            return null;
+        }
+
+        return $date->format('Y-m-d H:i:s') === $value ? $value : null;
+    }
+
+    /**
+     * Return a bounded-memory proof of every legacy registration field.
+     *
+     * Length-prefixed binary values preserve the distinction between NULL,
+     * empty strings and arbitrary comment/IP contents without depending on
+     * database collation or connection character-set conversions.
+     */
+    private function registrationLegacyFingerprint($db)
+    {
+        $context = hash_init('sha256');
+        $count = 0;
+        $lastRegistrationId = 0;
+        $fields = array('id', 'event', 'uid', 'places', 'uregdate', 'uip', 'waiting', 'status', 'comment');
+
+        do {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName($fields))
+                ->from($db->quoteName('#__jem_register'))
+                ->where($db->quoteName('id') . ' > ' . $lastRegistrationId)
+                ->order($db->quoteName('id') . ' ASC');
+            $db->setQuery($query, 0, 250);
+            $rows = (array) $db->loadObjectList();
+
+            foreach ($rows as $row) {
+                foreach ($fields as $field) {
+                    $value = $row->$field ?? null;
+                    if ($value === null) {
+                        hash_update($context, "\xFF");
+                        continue;
+                    }
+
+                    $value = (string) $value;
+                    hash_update($context, "\x00" . pack('N', strlen($value)) . $value);
+                }
+
+                $lastRegistrationId = (int) $row->id;
+                ++$count;
+            }
+        } while (count($rows) === 250);
+
+        return $count . ':' . hash_final($context);
+    }
+
+    private function finaliseRegistrationReferenceConstraint($db)
+    {
+        $table = $db->replacePrefix('#__jem_register');
+        $keys = $db->getTableKeys($table);
+        $keyNames = array();
+
+        foreach ((array) $keys as $name => $key) {
+            if (is_string($name)) {
+                $keyNames[] = $name;
+            }
+            if (is_object($key)) {
+                foreach (array('Key_name', 'key_name', 'name') as $property) {
+                    if (isset($key->$property)) {
+                        $keyNames[] = (string) $key->$property;
+                    }
+                }
+            }
+        }
+
+        if (!in_array('idx_register_reference', $keyNames, true)) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_register')
+                . ' ADD UNIQUE INDEX ' . $db->quoteName('idx_register_reference')
+                . ' (' . $db->quoteName('reference') . ')'
+            );
+            $db->execute();
+        }
+
+        $columns = array_change_key_case($db->getTableColumns($table, false), CASE_LOWER);
+        $referenceColumn = $columns['reference'] ?? null;
+        $nullable = is_object($referenceColumn)
+            ? strtoupper((string) ($referenceColumn->Null ?? $referenceColumn->null ?? 'YES')) === 'YES'
+            : true;
+
+        if ($nullable) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_register')
+                . ' MODIFY ' . $db->quoteName('reference')
+                . ' VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL'
+            );
+            $db->execute();
+        }
+    }
+
+    private function setRegistrationSchemaReady($db, $ready)
+    {
+        $configTable = $db->replacePrefix('#__jem_config');
+        if (!in_array($configTable, $db->getTableList(), true)) {
+            return;
+        }
+
+        $value = $ready ? '1' : '0';
+        $db->setQuery(
+            'INSERT INTO ' . $db->quoteName('#__jem_config')
+            . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ')'
+            . ' VALUES (' . $db->quote('registration_schema_ready') . ', ' . $db->quote($value) . ')'
+            . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote($value)
+        );
+        $db->execute();
     }
 
     /**
@@ -368,6 +723,7 @@ class com_jemInstallerScript
             'jem.venues.edit.state' => 'core.edit.state',
             'jem.venues.edit.own'   => 'core.edit.own',
             'jem.attendees.manage'  => 'core.edit',
+            'jem.registrations.history' => 'core.edit',
             'jem.tools.manage'      => 'core.admin',
         );
         $changed = false;
@@ -1511,6 +1867,7 @@ class com_jemInstallerScript
             '#__jem_groups',
             '#__jem_import_profiles',
             '#__jem_links',
+            '#__jem_registration_history',
             '#__jem_register',
             '#__jem_special_days',
             '#__jem_settings',

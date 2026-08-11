@@ -86,6 +86,7 @@ class Pkg_JemInstallerScript
 
         $this->enablePlugin('content', 'jemlistevents');
         $this->enablePlugin('quickicon', 'jem');
+        $this->enablePlugin('user', 'jem');
         $this->uninstallPlugin('content', 'jem');
         $this->uninstallPlugin('search', 'jem');
         $this->uninstallModule('mod_jem_calajax');

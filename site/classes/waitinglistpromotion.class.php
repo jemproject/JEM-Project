@@ -95,8 +95,10 @@ final class JemWaitingListPromotion
                 return $result;
             }
 
+            // saveLocked() must receive the complete persisted row so it can
+            // preserve stable identity, timestamps, revision and legacy data.
             $query = $db->getQuery(true)
-                ->select(array('id', 'event', 'uid', 'status', 'waiting', 'places', 'uregdate'))
+                ->select('*')
                 ->from($db->quoteName('#__jem_register'))
                 ->where($db->quoteName('event') . ' = ' . $eventId)
                 ->where($db->quoteName('status') . ' = 1')
@@ -158,15 +160,22 @@ final class JemWaitingListPromotion
                 return (int) $registration->places;
             }, $promoted));
 
-            $query = $db->getQuery(true)
-                ->update($db->quoteName('#__jem_register'))
-                ->set($db->quoteName('waiting') . ' = 0')
-                ->where($db->quoteName('event') . ' = ' . $eventId)
-                ->where($db->quoteName('status') . ' = 1')
-                ->where($db->quoteName('waiting') . ' = 1')
-                ->where($db->quoteName('id') . ' IN (' . implode(',', $promotedIds) . ')');
-            $db->setQuery($query);
-            $db->execute();
+            $registrationService = new JemRegistrationService($db);
+            $operationReference = JemRegistrationIdentity::generateOperationReference();
+            $storedPromotions = array();
+
+            foreach ($promoted as $before) {
+                $after = clone $before;
+                $after->waiting = 0;
+                $storedPromotions[] = $registrationService->saveLocked($before, $after, array(
+                    'actorId'           => $actorId,
+                    'source'            => $source,
+                    'action'            => 'promoted',
+                    'reasonCode'        => $force ? 'manual_forced_promotion' : $mode . '_promotion',
+                    'forced'            => $force,
+                    'operationReference'=> $operationReference,
+                ));
+            }
             $db->transactionCommit();
             Factory::getCache('com_jem')->clean();
 
@@ -182,12 +191,10 @@ final class JemWaitingListPromotion
 
             $transitions = array();
 
-            foreach ($promoted as $before) {
-                $after = clone $before;
-                $after->waiting = 0;
-                $transition = JemRegistrationTransition::create($before, $after, $actorId, $source);
-                $transition->forced = $force;
-                $transitions[] = $transition;
+            foreach ($storedPromotions as $storedPromotion) {
+                if ($storedPromotion->changed && $storedPromotion->transition) {
+                    $transitions[] = $storedPromotion->transition;
+                }
             }
 
             try {
@@ -196,10 +203,14 @@ final class JemWaitingListPromotion
                 $dispatcher = JemFactory::getDispatcher();
 
                 if ($notify) {
-                    foreach ($promoted as $index => $before) {
-                        $after = clone $before;
-                        $after->waiting = 0;
-                        JemRegistrationTransition::dispatchStatusMail($dispatcher, $after, $transitions[$index]);
+                    foreach ($storedPromotions as $storedPromotion) {
+                        if ($storedPromotion->changed && $storedPromotion->transition) {
+                            JemRegistrationTransition::dispatchStatusMail(
+                                $dispatcher,
+                                $storedPromotion->after,
+                                $storedPromotion->transition
+                            );
+                        }
                     }
                 }
 

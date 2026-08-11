@@ -32,6 +32,14 @@ class jem_register extends Table
     public $waiting = 0;
     /** @var int */
     public $status = 0;
+    /** @var string */
+    public $reference = null;
+    /** @var date */
+    public $created = null;
+    /** @var date */
+    public $modified = null;
+    /** @var int */
+    public $revision = 1;
 
 
     public function __construct(& $db)

@@ -32,6 +32,7 @@ final class BuildPackageExcludesTest extends TestCase
             '.codex/**',
             '.cursor/**',
             '.github/copilot/**',
+            'memories/**',
             '.env',
             '.env.*',
             '*.pem',
@@ -74,6 +75,17 @@ final class BuildPackageExcludesTest extends TestCase
 
         self::assertStringContainsString('/*.code-workspace', $gitignore, 'Root VS Code workspace files should remain local and untracked.');
         self::assertStringContainsString('/*.code-workspace export-ignore', $gitattributes, 'Root VS Code workspace files should be excluded from Git archive/GitHub source archives.');
+    }
+
+    public function testMemoriesAreLocalOnlyAndNeverPackaged(): void
+    {
+        $gitignore = (string) file_get_contents(JEM_TEST_ROOT . '/.gitignore');
+        $gitattributes = (string) file_get_contents(JEM_TEST_ROOT . '/.gitattributes');
+        $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');
+
+        self::assertStringContainsString('/memories', $gitignore);
+        self::assertStringContainsString('/memories/** export-ignore', $gitattributes);
+        self::assertStringContainsString('|docs|memories|modules|', $builder);
     }
 
     public function testPackageManifestFilesAreProducedByBuild(): void

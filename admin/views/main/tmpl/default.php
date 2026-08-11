@@ -84,6 +84,7 @@ $canAccessVenues = JemHelperBackend::can('venue', 'access');
 $canCreateVenues = JemHelperBackend::can('venue', 'create');
 $canManageTools = JemHelperBackend::canManage('jem.tools.manage');
 $canManageAttendees = JemHelperBackend::canManage('jem.attendees.manage');
+$canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.history');
 $canConfigure = JemHelperBackend::canManage('core.options');
 
 ?>
@@ -159,6 +160,11 @@ $canConfigure = JemHelperBackend::canManage('core.options');
 
                                         $link = 'index.php?option=com_jem&amp;view=attachments';
                                         $this->quickiconButton($link, 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
+
+                                        if ($canViewRegistrationHistory) {
+                                            $link = 'index.php?option=com_jem&amp;view=registrationhistory';
+                                            $this->quickiconButton($link, 'icon-48-users.svg', Text::_('COM_JEM_REGISTRATION_HISTORY'));
+                                        }
                                     ?>
                                     </div>
 

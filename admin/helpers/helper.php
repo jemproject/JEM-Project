@@ -92,7 +92,7 @@ class JemHelperBackend
      */
     public static function canManage($action)
     {
-        $allowedActions = array('jem.attendees.manage', 'jem.tools.manage', 'core.options');
+        $allowedActions = array('jem.attendees.manage', 'jem.registrations.history', 'jem.tools.manage', 'core.options');
 
         if (!in_array($action, $allowedActions, true)) {
             return false;
@@ -253,6 +253,14 @@ class JemHelperBackend
                 Text::_('COM_JEM_CSSMANAGER_TITLE'),
                 'index.php?option=com_jem&amp;view=cssmanager',
                 $vName == 'cssmanager'
+            );
+        }
+
+        if (self::canManage('jem.registrations.history')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_REGISTRATION_HISTORY'),
+                'index.php?option=com_jem&amp;view=registrationhistory',
+                in_array($vName, array('registrationhistory', 'registrationhistoryentry'), true)
             );
         }
 

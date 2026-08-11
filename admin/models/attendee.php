@@ -157,13 +157,25 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
-        $row = Table::getInstance('jem_register', '');
-        $row->bind($attendee);
-        $row->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
-        if ($row->status == 2) {
-            $row->status = 1;
+        $after = clone $attendee;
+        $after->waiting = ($attendee->waiting || ($attendee->status == 2)) ? 0 : 1;
+        if ($after->status == 2) {
+            $after->status = 1;
         }
-        return $row->store();
+
+        try {
+            $result = (new JemRegistrationService())->save($after, array(
+                'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                'source'  => 'administrator.attendee.toggle',
+                'respectPlaces' => true,
+            ));
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+            return false;
+        }
+
+        $this->_data = $result->after;
+        return true;
     }
 
     /**
@@ -245,12 +257,20 @@ class JemModelAttendee extends BaseDatabaseModel
                 return false;
             }
 
-            if (!$row->store()) {
-                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+            try {
+                $result = (new JemRegistrationService($db))->save($row, array(
+                    'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                    'source'  => 'administrator.attendee.edit',
+                    'respectPlaces' => true,
+                    'requireExisting' => true,
+                ));
+            } catch (Throwable $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
                 return false;
             }
 
-            return $row;
+            $this->_data = $result->after;
+            return $result->after;
         } else {
             if ($row->status === 0) {
                 // todo: add "invited" field to store such timestamps?
@@ -305,7 +325,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 $events [] = clone $event;
             }
 
-            $storedRow = null;
+            $pendingRows = array();
             foreach ($events as $e) {
 
                 // Check if user is registered to each series event
@@ -319,48 +339,11 @@ class JemModelAttendee extends BaseDatabaseModel
 
                 if ($cnt > 0) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_USER_ALREADY_REGISTERED') . '[id: ' . $e->id . ']', 'warning');
-                    continue;
+                    return false;
                 }
 
                 $row_aux= clone $row;
                 $row_aux->event = $e->id;
-
-                // Get register information of the event
-                $query = $db->getQuery(true);
-                $query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
-                $query->from('#__jem_register');
-                $query->where('status = 1 AND event = ' . $db->quote($e->id));
-
-                $db->setQuery($query);
-                $register = $db->loadObject();
-
-                // If no one is registered yet, $register is null!
-                if (is_null($register)) {
-                    $register = new stdClass;
-                    $register->registered = 0;
-                    $register->waiting = 0;
-                    $register->booked = 0;
-                } else {
-                    $register->booked = $register->registered + $register->waiting;
-                }
-
-                // put on waiting list ?
-                if (($event->maxplaces > 0) && ($status == 1)) // there is a max and user will attend
-                {
-                    // check if the user should go on waiting list
-                    if ($register->booked >= $event->maxplaces) {
-                        if (!$event->waitinglist) {
-                            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
-                            return false;
-                        } else {
-                            $row_aux->waiting = 1;
-                        }
-                    }else{
-                        $row_aux->status = $status;
-                    }
-                }else{
-                    $row_aux->status = $status;
-                }
 
                 // Make sure the data is valid
                 if (!$row_aux->check()) {
@@ -368,14 +351,26 @@ class JemModelAttendee extends BaseDatabaseModel
                     return false;
                 }
 
-                // Store it in the db
-                if (!$row_aux->store()) {
-                    Factory::getApplication()->enqueueMessage($row->getError(), 'error');
-                    return false;
-                }
+                $pendingRows[] = $row_aux;
+            }
 
-                if ($storedRow === null || (int) $e->id === $eventid) {
-                    $storedRow = $row_aux;
+            try {
+                $stored = (new JemRegistrationService($db))->saveMany($pendingRows, array(
+                    'actorId'      => (int) Factory::getApplication()->getIdentity()->id,
+                    'source'       => 'administrator.attendee.add',
+                    'respectPlaces'=> true,
+                    'allowWaiting' => true,
+                    'requireNew'   => true,
+                ));
+            } catch (Throwable $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+                return false;
+            }
+
+            $storedRow = null;
+            foreach ($stored as $result) {
+                if ($storedRow === null || (int) $result->after->event === $eventid) {
+                    $storedRow = $result->after;
                 }
             }
 
@@ -406,29 +401,18 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
-        // Split status and waiting
-        if ($value == 2) {
-            $status = 1;
-            $waiting = 1;
-        } else {
-            $status = (int)$value;
-            $waiting = 0;
-        }
-
         try {
-            $db = Factory::getContainer()->get('DatabaseDriver');
-
-            $db->setQuery(
-                    'UPDATE #__jem_register' .
-                    ' SET status = '.$status.', waiting = '.$waiting.
-                    ' WHERE id IN ('.implode(',', $pks).')' .
-                    ($eventId > 0 ? ' AND event = ' . (int)$eventId : '')
-                    );
-            if ($db->execute() === false) {
-                throw new Exception($db->getErrorMsg());
-            }
-
-        } catch (Exception $e) {
+            (new JemRegistrationService())->setLogicalStatusByIds(
+                $pks,
+                (int) $eventId,
+                (int) $value,
+                array(
+                    'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                    'source'  => 'administrator.attendees.batch',
+                    'respectPlaces' => true,
+                )
+            );
+        } catch (Throwable $e) {
             JemHelper::addLogEntry($e->getMessage(), __METHOD__, Log::ERROR);
             $this->setError($e->getMessage());
             return false;
