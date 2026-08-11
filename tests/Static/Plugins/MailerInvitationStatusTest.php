@@ -53,4 +53,14 @@ final class MailerInvitationStatusTest extends TestCase
         self::assertStringNotContainsString('undecided', strtolower($this->language));
         self::assertStringContainsString('Event Attendance Status Unknown', $this->language);
     }
+
+    public function testCustomNotificationsProvideAbsoluteEventAndVenueImageUrls(): void
+    {
+        self::assertStringContainsString("'a.datimage'", $this->mailer);
+        self::assertStringContainsString("'v.locimage'", $this->mailer);
+        self::assertStringContainsString("['event_image_url']", $this->mailer);
+        self::assertStringContainsString("['venue_image_url']", $this->mailer);
+        self::assertStringContainsString('private function _notificationImageUrl', $this->mailer);
+        self::assertStringContainsString("rtrim(Uri::root(), '/')", $this->mailer);
+    }
 }

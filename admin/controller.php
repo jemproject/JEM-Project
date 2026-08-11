@@ -39,7 +39,7 @@ class JemController extends BaseController
         $jinput = Factory::getApplication()->input;
         $view = $jinput->getCmd('view', 'main');
         // Views that should not show the backend sidebar.
-        static $views_without_submenu = array('attendee', 'category', 'event', 'group', 'source', 'venue');
+        static $views_without_submenu = array('attendee', 'category', 'event', 'group', 'notificationtemplate', 'source', 'venue');
 
         if (!in_array($view, $views_without_submenu)) {
             JemHelperBackend::addSubmenu($view);

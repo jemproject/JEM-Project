@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="template">
+        <field name="template_id" type="hidden" filter="string" />
+        <field name="language" type="hidden" filter="cmd" />
+        <field
+            name="subject"
+            type="text"
+            label="COM_JEM_NOTIFICATION_TEMPLATE_SUBJECT"
+            required="true"
+            maxlength="255"
+            filter="string"
+        />
+        <field
+            name="body"
+            type="textarea"
+            label="COM_JEM_NOTIFICATION_TEMPLATE_PLAIN_BODY"
+            required="true"
+            rows="18"
+            filter="raw"
+        />
+        <field
+            name="htmlbody"
+            type="editor"
+            label="COM_JEM_NOTIFICATION_TEMPLATE_HTML_BODY"
+            buttons="true"
+            hide="fields,pagebreak,readmore,module"
+            filter="raw"
+        />
+    </fieldset>
+</form>

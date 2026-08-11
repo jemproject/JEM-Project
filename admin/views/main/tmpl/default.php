@@ -85,6 +85,7 @@ $canCreateVenues = JemHelperBackend::can('venue', 'create');
 $canManageTools = JemHelperBackend::canManage('jem.tools.manage');
 $canManageAttendees = JemHelperBackend::canManage('jem.attendees.manage');
 $canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.history');
+$canManageNotificationTemplates = JemHelperBackend::canManage('jem.notifications.templates');
 $canConfigure = JemHelperBackend::canManage('core.options');
 
 ?>
@@ -163,8 +164,9 @@ $canConfigure = JemHelperBackend::canManage('core.options');
 
                                         if ($canViewRegistrationHistory) {
                                             $link = 'index.php?option=com_jem&amp;view=registrationhistory';
-                                            $this->quickiconButton($link, 'icon-48-users.svg', Text::_('COM_JEM_REGISTRATION_HISTORY'));
+                                            $this->quickiconButton($link, 'icon-48-registration.svg', Text::_('COM_JEM_REGISTRATION_BUTTON'));
                                         }
+
                                     ?>
                                     </div>
 
@@ -175,6 +177,11 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                         if ($canConfigure) {
                                             $link = 'index.php?option=com_jem&amp;view=settings';
                                             $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
+                                        }
+
+                                        if ($canManageNotificationTemplates) {
+                                            $link = 'index.php?option=com_jem&amp;view=notifications';
+                                            $this->quickiconButton($link, 'icon-48-notifications.svg', Text::_('COM_JEM_NOTIFICATIONS'));
                                         }
 
                                         if ($canManageTools) {

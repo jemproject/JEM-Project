@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Registration">
+        <path d="M26,18L70,18C73.314,18 76,20.686 76,24L76,78C76,81.314 73.314,84 70,84L26,84C22.686,84 20,81.314 20,78L20,24C20,20.686 22.686,18 26,18Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M38,18L38,13C38,10.791 39.791,9 42,9L54,9C56.209,9 58,10.791 58,13L58,18" style="fill:white;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M33,35L63,35M33,48L53,48M33,61L47,61" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M52,65L60,73L78,53" style="fill:none;stroke:rgb(249,159,0);stroke-width:6px;"/>
+    </g>
+</svg>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100%" height="100%" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="Notifications">
+        <path d="M12,29C12,25.686 14.686,23 18,23L72,23C75.314,23 78,25.686 78,29L78,70C78,73.314 75.314,76 72,76L18,76C14.686,76 12,73.314 12,70L12,29Z" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M15,27L45,52L75,27M15,72L36,51M75,72L54,51" style="fill:none;stroke:rgb(114,149,177);stroke-width:4.5px;"/>
+        <path d="M68,25C68,17.82 73.82,12 81,12C88.18,12 94,17.82 94,25C94,32.18 88.18,38 81,38C73.82,38 68,32.18 68,25Z" style="fill:white;stroke:rgb(249,159,0);stroke-width:4.5px;"/>
+        <path d="M75,29L77.5,26L77.5,22.5C77.5,20.015 79.067,18 81,18C82.933,18 84.5,20.015 84.5,22.5L84.5,26L87,29L75,29ZM79,32C79.667,33.333 82.333,33.333 83,32" style="fill:none;stroke:rgb(249,159,0);stroke-width:3px;"/>
+    </g>
+</svg>

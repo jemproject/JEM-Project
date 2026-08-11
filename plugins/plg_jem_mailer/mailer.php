@@ -106,11 +106,11 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -183,20 +183,23 @@ class plgJemMailer extends CMSPlugin
                     $bodyUsesActor = false;
                     break;
             }
-            $data->subject = Text::sprintf($txt_subject, $this->_SiteName);
-            if ($bodyUsesActor) {
-                if ($comment) {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
-                } else {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
-                }
-            } else {
-                if ($comment) {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
-                } else {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $text_description, $link, $this->_SiteName);
-                }
-            }
+            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+                'user_name'        => $attendeename,
+                'actor_name'       => $username,
+                'comment'          => $comment ?: '',
+                'event_title'      => $event->title,
+                'event_date'       => $event->dates,
+                'event_time'       => $event->times,
+                'venue'            => $event->venue,
+                'city'             => $event->city,
+                'places'           => $event->status < 0 && is_scalar($registration) ? $registration : $event->places,
+                'event_description'=> $text_description,
+                'event_url'        => $link,
+                'site_name'        => $this->_SiteName,
+            ), $event);
+            $data->subject  = $message->subject;
+            $data->body     = $message->body;
+            $data->htmlbody = $message->htmlbody;
             $data->receivers = $recipients['user'];
             $this->_mailer($data);
         }
@@ -240,20 +243,23 @@ class plgJemMailer extends CMSPlugin
                     $bodyUsesActor = false;
                     break;
             }
-            $data->subject = Text::sprintf($txt_subject, $this->_SiteName);
-            if ($bodyUsesActor) {
-                if ($comment) {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
-                } else {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
-                }
-            } else {
-                if ($comment) {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
-                } else {
-                    $data->body = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, ($event->status<0?$registration:$event->places), $link, $this->_SiteName);
-                }
-            }
+            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+                'user_name'         => $attendeename,
+                'actor_name'        => $username,
+                'comment'           => $comment ?: '',
+                'event_title'       => $event->title,
+                'event_date'        => $event->dates,
+                'event_time'        => $event->times,
+                'venue'             => $event->venue,
+                'city'              => $event->city,
+                'places'            => $event->status < 0 && is_scalar($registration) ? $registration : $event->places,
+                'event_description' => $text_description,
+                'event_url'         => $link,
+                'site_name'         => $this->_SiteName,
+            ), $event);
+            $data->subject  = $message->subject;
+            $data->body     = $message->body;
+            $data->htmlbody = $message->htmlbody;
             $data->recipients = $recipients['all'];
             $this->_mailer($data);
         }
@@ -302,11 +308,11 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -337,9 +343,24 @@ class plgJemMailer extends CMSPlugin
         if (!empty($recipients['user'])) {
             $data            = new stdClass();
             $txt_subject     = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT';
-            $data->subject   = Text::sprintf($txt_subject, $this->_SiteName);
             $txt_body        = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY_9' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY_9';
-            $data->body      = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $text_description, $link, $this->_SiteName);
+            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+                'user_name'         => $attendeename,
+                'actor_name'        => $attendeename,
+                'comment'           => '',
+                'event_title'       => $event->title,
+                'event_date'        => $event->dates,
+                'event_time'        => $event->times,
+                'venue'             => $event->venue,
+                'city'              => $event->city,
+                'places'            => $event->places,
+                'event_description' => $text_description,
+                'event_url'         => $link,
+                'site_name'         => $this->_SiteName,
+            ), $event);
+            $data->subject   = $message->subject;
+            $data->body      = $message->body;
+            $data->htmlbody  = $message->htmlbody;
             $data->receivers = $recipients['user'];
             $this->_mailer($data);
         }
@@ -351,9 +372,24 @@ class plgJemMailer extends CMSPlugin
         if (!empty($recipients['all'])) {
             $data             = new stdClass();
             $txt_subject      = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT';
-            $data->subject    = Text::sprintf($txt_subject, $this->_SiteName);
             $txt_body         = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY_8' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY_8';
-            $data->body       = Text::sprintf($txt_body, $attendeename, $event->title, $event->dates, $event->times, $event->venue, $event->city, $event->places, $link, $this->_SiteName);
+            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+                'user_name'         => $attendeename,
+                'actor_name'        => $attendeename,
+                'comment'           => '',
+                'event_title'       => $event->title,
+                'event_date'        => $event->dates,
+                'event_time'        => $event->times,
+                'venue'             => $event->venue,
+                'city'              => $event->city,
+                'places'            => $event->places,
+                'event_description' => $text_description,
+                'event_url'         => $link,
+                'site_name'         => $this->_SiteName,
+            ), $event);
+            $data->subject    = $message->subject;
+            $data->body       = $message->body;
+            $data->htmlbody   = $message->htmlbody;
             $data->recipients = $recipients['all'];
             $this->_mailer($data);
         }
@@ -408,9 +444,9 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage'));
         if (empty($registration) && ((int)$register_id > 0)) {
             $query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places'));
             $query->from($db->quoteName('#__jem_register').' AS r');
@@ -463,20 +499,36 @@ class plgJemMailer extends CMSPlugin
 
         if (!empty($recipients['user'])) {
             $data            = new stdClass();
-            $data->subject   = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $this->_SiteName);
             if ($attendeeid != $userid) {
                 if ($comment) {
-                    $data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_B';
                 } else {
-                    $data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_USER_UNREG_ONBEHALF_BODY_A';
                 }
             } else {
                 if ($comment) {
-                    $data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_A', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_USER_UNREG_BODY_A';
                 } else {
-                    $data->body  = Text::sprintf('PLG_JEM_MAILER_USER_UNREG_BODY_9', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $text_description, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_USER_UNREG_BODY_9';
                 }
             }
+            $message = $this->_renderNotification('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $txt_body, array(
+                'user_name'         => $attendeename,
+                'actor_name'        => $username,
+                'comment'           => $comment ?: '',
+                'event_title'       => $event->title,
+                'event_date'        => $event->dates,
+                'event_time'        => $event->times,
+                'venue'             => $event->venue,
+                'city'              => $event->city,
+                'places'            => $registration->places,
+                'event_description' => $text_description,
+                'event_url'         => $link,
+                'site_name'         => $this->_SiteName,
+            ), $event);
+            $data->subject  = $message->subject;
+            $data->body     = $message->body;
+            $data->htmlbody = $message->htmlbody;
             $data->receivers = $recipients['user'];
             $this->_mailer($data);
         }
@@ -487,20 +539,36 @@ class plgJemMailer extends CMSPlugin
 
         if (!empty($recipients['all'])) {
             $data             = new stdClass();
-            $data->subject    = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $this->_SiteName);
             if ($attendeeid != $userid) {
                 if ($comment) {
-                    $data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A', $attendeename, $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_A';
                 } else {
-                    $data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9', $attendeename, $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_ONBEHALF_BODY_9';
                 }
             } else {
                 if ($comment) {
-                    $data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_9', $username, $comment, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_BODY_9';
                 } else {
-                    $data->body   = Text::sprintf('PLG_JEM_MAILER_ADMIN_UNREG_BODY_8', $username, $event->title, $event->dates, $event->times, $event->venue, $event->city, $registration->places, $link, $this->_SiteName);
+                    $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_BODY_8';
                 }
             }
+            $message = $this->_renderNotification('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $txt_body, array(
+                'user_name'         => $attendeename,
+                'actor_name'        => $username,
+                'comment'           => $comment ?: '',
+                'event_title'       => $event->title,
+                'event_date'        => $event->dates,
+                'event_time'        => $event->times,
+                'venue'             => $event->venue,
+                'city'              => $event->city,
+                'places'            => $registration->places,
+                'event_description' => $text_description,
+                'event_url'         => $link,
+                'site_name'         => $this->_SiteName,
+            ), $event);
+            $data->subject    = $message->subject;
+            $data->body       = $message->body;
+            $data->htmlbody   = $message->htmlbody;
             $data->recipients = $recipients['all'];
             $this->_mailer($data);
         }
@@ -1173,6 +1241,93 @@ class plgJemMailer extends CMSPlugin
     }
 
     /**
+     * Render one catalogued notification while preserving a safe legacy fallback.
+     */
+    private function _renderNotification($subjectKey, $bodyKey, array $values, $event = null)
+    {
+        $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
+        $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+
+        try {
+            $message = JemNotificationTemplateService::renderByLanguageKeys(
+                $subjectKey,
+                $bodyKey,
+                $values,
+                Factory::getApplication()->getLanguage()->getTag()
+            );
+
+            if ($message->fallback_reason !== '') {
+                JemHelper::addLogEntry(
+                    'Invalid custom notification template ' . $message->template_id
+                    . '; translated default used: ' . $message->fallback_reason,
+                    __METHOD__,
+                    Log::WARNING
+                );
+            }
+
+            return $message;
+        } catch (Throwable $e) {
+            $definition = JemNotificationTemplateCatalog::findByLanguageKeys($subjectKey, $bodyKey);
+            if (!$definition) {
+                throw $e;
+            }
+
+            JemHelper::addLogEntry(
+                'Notification template service failed for ' . $definition['id']
+                . '; legacy language rendering used: ' . $e->getMessage(),
+                __METHOD__,
+                Log::WARNING
+            );
+
+            $subjectArgs = array($subjectKey);
+            foreach ($definition['subject_legacy_tokens'] as $token) {
+                $subjectArgs[] = $values[$token] ?? '';
+            }
+            $bodyArgs = array($bodyKey);
+            foreach ($definition['body_legacy_tokens'] as $token) {
+                $bodyArgs[] = $values[$token] ?? '';
+            }
+
+            return (object) array(
+                'template_id' => $definition['id'],
+                'language'    => Factory::getApplication()->getLanguage()->getTag(),
+                'custom'      => false,
+                'subject'     => call_user_func_array(array(Text::class, 'sprintf'), $subjectArgs),
+                'body'        => call_user_func_array(array(Text::class, 'sprintf'), $bodyArgs),
+                'htmlbody'    => '',
+                'fallback_reason' => $e->getMessage(),
+            );
+        }
+    }
+
+    /**
+     * Build an absolute public URL for an existing local JEM image.
+     */
+    private function _notificationImageUrl($image, $type)
+    {
+        $folders = array('event' => 'events', 'venue' => 'venues');
+        $image = trim(str_replace('\\', '/', (string) $image));
+        if ($image === '' || !isset($folders[$type])) {
+            return '';
+        }
+
+        $relative = strpos($image, '/') === false
+            ? 'images/jem/' . $folders[$type] . '/' . $image
+            : ltrim($image, '/');
+
+        if ($relative === '' || preg_match('#(?:^|/)\.{1,2}(?:/|$)#', $relative)) {
+            return '';
+        }
+        if (!is_file(JPATH_SITE . '/' . $relative)) {
+            return '';
+        }
+
+        $urlPath = implode('/', array_map('rawurlencode', explode('/', $relative)));
+
+        return rtrim(Uri::root(), '/') . '/' . $urlPath;
+    }
+
+    /**
      * This method executes and send the mail
      * info: https://docs.joomla.org/Sending_email_from_extensions
      *
@@ -1196,7 +1351,12 @@ class plgJemMailer extends CMSPlugin
             if ($receivers) {
                 foreach ($receivers as $receiver)
                 {
-                    $ret = $this->_send($receiver, $data->subject, $data->body);
+                    $ret = $this->_send(
+                        $receiver,
+                        $data->subject,
+                        $data->body,
+                        $data->htmlbody ?? ''
+                    );
                     ++$sent[$ret ? 'ok' : 'failed'];
                 }
 
@@ -1239,11 +1399,16 @@ class plgJemMailer extends CMSPlugin
                 }
 
                 $body = $data->body;
+                $htmlbody = $data->htmlbody ?? '';
                 if (!empty($why)) {
-                    $body .= Text::sprintf('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', implode(', ', $why));
+                    $because = Text::sprintf('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', implode(', ', $why));
+                    $body .= $because;
+                    if ($htmlbody !== '') {
+                        $htmlbody .= '<p>' . nl2br(htmlspecialchars($because, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
+                    }
                 }
 
-                $ret = $this->_send($receiver, $data->subject, $body);
+                $ret = $this->_send($receiver, $data->subject, $body, $htmlbody);
                 ++$sent[$ret ? 'ok' : 'failed'];
             }
 
@@ -1266,10 +1431,11 @@ class plgJemMailer extends CMSPlugin
      * @access  private
      * @param   string  $recipient  mail recipient
      * @param   string  $subject    mail subject
-     * @param   string  $body       mail body
+     * @param   string  $body       plain-text mail body
+     * @param   string  $htmlbody   optional customised HTML body
      * @return  boolean true on success, false on error
      */
-    private function _send($recipient, $subject, $body)
+    private function _send($recipient, $subject, $body, $htmlbody = '')
     {
         $result = false;
         $recipient = filter_var(trim((string) $recipient), FILTER_VALIDATE_EMAIL);
@@ -1288,8 +1454,9 @@ class plgJemMailer extends CMSPlugin
             if ($this->params->get('send_html','0')== 1) {
                 $mail->isHTML(true);
                 $mail->Encoding = 'base64';
-                $body_html = nl2br ($body);
+                $body_html = $htmlbody !== '' ? $htmlbody : nl2br($body);
                 $mail->setBody($body_html);
+                $mail->AltBody = $body;
             } else {
                 $mail->setBody($body);
             }

@@ -319,8 +319,31 @@ class com_jemInstallerScript
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
             $this->repair510RegistrationSchema();
+            $this->registerNotificationTemplates();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
+        }
+    }
+
+    /**
+     * Register Point 2A master templates in Joomla's native mail-template table.
+     *
+     * Language-specific rows are owned by the administrator and are never
+     * changed by this idempotent install/update step.
+     */
+    private function registerNotificationTemplates()
+    {
+        try {
+            require_once JPATH_SITE . '/components/com_jem/classes/notificationtemplatecatalog.class.php';
+            require_once JPATH_SITE . '/components/com_jem/classes/notificationtemplaterenderer.class.php';
+            require_once JPATH_SITE . '/components/com_jem/classes/notificationtemplateservice.class.php';
+
+            JemNotificationTemplateService::registerDefaults();
+        } catch (Throwable $e) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_NOTIFICATION_TEMPLATES_FAILED', $e->getMessage()),
+                'error'
+            );
         }
     }
 
@@ -724,6 +747,7 @@ class com_jemInstallerScript
             'jem.venues.edit.own'   => 'core.edit.own',
             'jem.attendees.manage'  => 'core.edit',
             'jem.registrations.history' => 'core.edit',
+            'jem.notifications.templates' => 'core.edit',
             'jem.tools.manage'      => 'core.admin',
         );
         $changed = false;
