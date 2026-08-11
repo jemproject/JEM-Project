@@ -24,6 +24,8 @@
         <action name="jem.attendees.manage" title="COM_JEM_ACL_ATTENDEES_MANAGE" description="COM_JEM_ACL_ATTENDEES_MANAGE_DESC" />
         <action name="jem.registrations.history" title="COM_JEM_ACL_REGISTRATIONS_HISTORY" description="COM_JEM_ACL_REGISTRATIONS_HISTORY_DESC" />
         <action name="jem.notifications.templates" title="COM_JEM_ACL_NOTIFICATION_TEMPLATES" description="COM_JEM_ACL_NOTIFICATION_TEMPLATES_DESC" />
+        <action name="jem.notifications.history" title="COM_JEM_ACL_NOTIFICATION_HISTORY" description="COM_JEM_ACL_NOTIFICATION_HISTORY_DESC" />
+        <action name="jem.notifications.resend" title="COM_JEM_ACL_NOTIFICATION_RESEND" description="COM_JEM_ACL_NOTIFICATION_RESEND_DESC" />
         <action name="jem.tools.manage" title="COM_JEM_ACL_TOOLS_MANAGE" description="COM_JEM_ACL_TOOLS_MANAGE_DESC" />
     </section>
     <section name="category">

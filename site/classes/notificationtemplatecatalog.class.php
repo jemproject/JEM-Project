@@ -362,6 +362,7 @@ final class JemNotificationTemplateCatalog
             'places',
             'event_description',
             'event_url',
+            'reservation_url',
             'event_image_url',
             'venue_image_url',
             'site_name',

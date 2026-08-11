@@ -161,6 +161,14 @@ jQuery(document).ready(function($) {
                     <div class="clr"></div>
 
 
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'notification-settings', Text::_('COM_JEM_NOTIFICATION_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('notifications'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'configinfo', Text::_('COM_JEM_SETTINGS_TAB_CONFIGINFO')); ?>
                         <fieldset class="adminform">
                            <?php echo $this->loadTemplate('configinfo'); ?>

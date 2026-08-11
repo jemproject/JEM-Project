@@ -44,6 +44,26 @@ class JemViewAttendee extends HtmlView {
         //assign data to template
         $this->lists     = $lists;
         $this->row        = $row;
+        $this->registrationChanges = array();
+        $this->notifications = array();
+        $this->canNotificationResend = JemHelperBackend::canManage('jem.notifications.resend');
+
+        if (!empty($row->id)) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            if (JemHelperBackend::canManage('jem.registrations.history')) {
+                $query = $db->getQuery(true)
+                    ->select(array('h.*', 'u.name AS actor_name'))
+                    ->from($db->quoteName('#__jem_registration_history', 'h'))
+                    ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id = h.actor_user_id')
+                    ->where('h.registration_id = ' . (int) $row->id)
+                    ->order('h.occurred DESC, h.id DESC');
+                $db->setQuery($query, 0, 100);
+                $this->registrationChanges = (array) $db->loadObjectList();
+            }
+            if (JemHelperBackend::canManage('jem.notifications.history')) {
+                $this->notifications = (new JemNotificationService($db))->getRegistrationNotifications((int) $row->id, 100);
+            }
+        }
 
         // add toolbar
         $this->addToolbar();

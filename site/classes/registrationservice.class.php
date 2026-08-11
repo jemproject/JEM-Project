@@ -637,9 +637,20 @@ final class JemRegistrationService
         $this->db->setQuery($query);
         $user = $this->db->loadObject();
 
-        if (!$user || !empty($user->block) || trim((string) $user->activation) !== '') {
+        if (!$user || !empty($user->block) || self::activationRequiresVerification($user->activation)) {
             throw new RuntimeException('The Joomla booking-holder account is not active and verified.');
         }
+    }
+
+    /**
+     * Joomla normally clears the activation token after verification, while
+     * legacy/migrated active accounts may store the equivalent string "0".
+     */
+    private static function activationRequiresVerification($activation)
+    {
+        $activation = trim((string) $activation);
+
+        return $activation !== '' && $activation !== '0';
     }
 
     private function assertSchemaReady()

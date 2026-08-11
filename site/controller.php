@@ -51,6 +51,9 @@ class JemController extends BaseController
         $viewName   = $jinput->getCmd('view', 'eventslist');
         $viewFormat = $document->getType();
         $layoutName = $jinput->getCmd('layout', 'edit');
+        if ($viewName === 'registration' && !$jinput->exists('layout')) {
+            $layoutName = 'default';
+        }
 
         // Apply one access policy before any frontend editor or selector can load data.
         if (($viewName === 'editevent') || ($viewName === 'editvenue')) {
@@ -134,6 +137,7 @@ class JemController extends BaseController
                 case 'eventsblog':
                 case 'eventslist':
                 case 'myattendances':
+                case 'registration':
                 case 'myevents':
                 case 'myvenues':
                 case 'search':

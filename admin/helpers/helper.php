@@ -96,6 +96,8 @@ class JemHelperBackend
             'jem.attendees.manage',
             'jem.registrations.history',
             'jem.notifications.templates',
+            'jem.notifications.history',
+            'jem.notifications.resend',
             'jem.tools.manage',
             'core.options',
         );
@@ -270,11 +272,14 @@ class JemHelperBackend
             );
         }
 
-        if (self::canManage('jem.notifications.templates')) {
+        $canManageNotificationTemplates = self::canManage('jem.notifications.templates');
+        $canViewNotificationHistory = self::canManage('jem.notifications.history');
+        if ($canManageNotificationTemplates || $canViewNotificationHistory) {
+            $notificationView = $canManageNotificationTemplates ? 'notifications' : 'notificationhistory';
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_NOTIFICATIONS'),
-                'index.php?option=com_jem&amp;view=notifications',
-                in_array($vName, array('notifications', 'notificationtemplates', 'notificationtemplate', 'notificationcontent'), true)
+                'index.php?option=com_jem&amp;view=' . $notificationView,
+                in_array($vName, array('notifications', 'notificationtemplates', 'notificationtemplate', 'notificationcontent', 'notificationhistory'), true)
             );
         }
 

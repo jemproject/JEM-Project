@@ -319,6 +319,7 @@ class com_jemInstallerScript
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
             $this->repair510RegistrationSchema();
+            $this->repair510NotificationSchema();
             $this->registerNotificationTemplates();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
@@ -342,6 +343,145 @@ class com_jemInstallerScript
         } catch (Throwable $e) {
             Factory::getApplication()->enqueueMessage(
                 Text::sprintf('COM_JEM_INSTALL_NOTIFICATION_TEMPLATES_FAILED', $e->getMessage()),
+                'error'
+            );
+        }
+    }
+
+    /**
+     * Ensure the Point 2B notification journal is available after every
+     * install/update. The migration is additive and never rewrites legacy JEM
+     * registration data or existing notification snapshots.
+     */
+    private function repair510NotificationSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $notifications = <<<'SQL'
+CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
+`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+`notification_uuid` CHAR(36) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+`registration_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`registration_reference` VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+`registration_revision` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+`event_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`ticket_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL COMMENT 'Reserved for a future individual ticket/QR phase',
+`notification_type` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+`recipient_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'user',
+`recipient_user_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`recipient_name` VARCHAR(255) NOT NULL DEFAULT '',
+`recipient_email` VARCHAR(320) NOT NULL,
+`requested_language` VARCHAR(12) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+`resolved_language` VARCHAR(12) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'en-GB',
+`language_source` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'fallback',
+`fallback_reason` VARCHAR(255) NOT NULL DEFAULT '',
+`template_id` VARCHAR(255) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+`subject` TEXT NOT NULL,
+`body` MEDIUMTEXT NOT NULL,
+`htmlbody` MEDIUMTEXT NULL DEFAULT NULL,
+`payload_json` MEDIUMTEXT NULL DEFAULT NULL,
+`attachments_json` MEDIUMTEXT NULL DEFAULT NULL COMMENT 'Reserved for a future individual ticket/PDF phase',
+`content_hash` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+`state` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'queued',
+`scheduled_at` DATETIME NULL DEFAULT NULL,
+`queued_at` DATETIME NULL DEFAULT NULL,
+`processing_started_at` DATETIME NULL DEFAULT NULL,
+`sent_at` DATETIME NULL DEFAULT NULL,
+`failed_at` DATETIME NULL DEFAULT NULL,
+`cancelled_at` DATETIME NULL DEFAULT NULL,
+`next_attempt_at` DATETIME NULL DEFAULT NULL,
+`attempt_count` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+`max_attempts` INT(10) UNSIGNED NOT NULL DEFAULT '4',
+`idempotency_key` CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+`resend_of` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
+`source` VARCHAR(80) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+`created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`created` DATETIME NOT NULL,
+`modified` DATETIME NOT NULL,
+PRIMARY KEY (`id`),
+UNIQUE KEY `idx_notification_uuid` (`notification_uuid`),
+UNIQUE KEY `idx_notification_idempotency` (`idempotency_key`),
+KEY `idx_notification_registration_created` (`registration_id`,`created`),
+KEY `idx_notification_reference_created` (`registration_reference`,`created`),
+KEY `idx_notification_event_created` (`event_id`,`created`),
+KEY `idx_notification_recipient_created` (`recipient_user_id`,`created`),
+KEY `idx_notification_email_created` (`recipient_email`(191),`created`),
+KEY `idx_notification_state_attempt` (`state`,`next_attempt_at`),
+KEY `idx_notification_resend_of` (`resend_of`),
+KEY `idx_notification_created` (`created`)
+) ENGINE=InnoDB
+SQL;
+            $attempts = <<<'SQL'
+CREATE TABLE IF NOT EXISTS `#__jem_notification_attempts` (
+`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+`notification_id` BIGINT(20) UNSIGNED NOT NULL,
+`attempt_number` INT(10) UNSIGNED NOT NULL,
+`transport` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'mail',
+`source` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'automatic',
+`requested_by_user_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`started_at` DATETIME NOT NULL,
+`finished_at` DATETIME NULL DEFAULT NULL,
+`result` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'processing',
+`transport_message_id` VARCHAR(255) NOT NULL DEFAULT '',
+`error_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+`error_message` VARCHAR(1000) NOT NULL DEFAULT '',
+PRIMARY KEY (`id`),
+UNIQUE KEY `idx_attempt_notification_number` (`notification_id`,`attempt_number`),
+KEY `idx_attempt_notification_started` (`notification_id`,`started_at`),
+KEY `idx_attempt_result_started` (`result`,`started_at`)
+) ENGINE=InnoDB
+SQL;
+
+            foreach (array($notifications, $attempts) as $sql) {
+                $db->setQuery($db->replacePrefix($sql));
+                $db->execute();
+            }
+
+            $notificationTable = $db->replacePrefix('#__jem_notifications');
+            $notificationColumns = array_change_key_case($db->getTableColumns($notificationTable, false), CASE_LOWER);
+            if (!isset($notificationColumns['registration_revision'])) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_notifications')
+                    . ' ADD COLUMN ' . $db->quoteName('registration_revision')
+                    . " INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER " . $db->quoteName('registration_reference')
+                );
+                $db->execute();
+            }
+
+            $defaults = array(
+                'notification_retention_years' => '4',
+                'notification_user_resend_limit' => '2',
+                'notification_user_resend_window_hours' => '24',
+                'notification_user_resend_cooldown_minutes' => '10',
+                'notification_max_attempts' => '4',
+                'notification_schema_ready' => '1',
+            );
+            foreach ($defaults as $key => $value) {
+                $query = 'INSERT IGNORE INTO ' . $db->quoteName('#__jem_config')
+                    . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ') VALUES ('
+                    . $db->quote($key) . ', ' . $db->quote($value) . ')';
+                $db->setQuery($query);
+                $db->execute();
+            }
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_config'))
+                ->set($db->quoteName('value') . ' = ' . $db->quote('1'))
+                ->where($db->quoteName('keyname') . ' = ' . $db->quote('notification_schema_ready'));
+            $db->setQuery($query);
+            $db->execute();
+        } catch (Throwable $e) {
+            try {
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_config'))
+                    ->set($db->quoteName('value') . ' = ' . $db->quote('0'))
+                    ->where($db->quoteName('keyname') . ' = ' . $db->quote('notification_schema_ready'));
+                $db->setQuery($query);
+                $db->execute();
+            } catch (Throwable $ignored) {
+            }
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_NOTIFICATION_SCHEMA_FAILED', $e->getMessage()),
                 'error'
             );
         }
@@ -748,6 +888,8 @@ class com_jemInstallerScript
             'jem.attendees.manage'  => 'core.edit',
             'jem.registrations.history' => 'core.edit',
             'jem.notifications.templates' => 'core.edit',
+            'jem.notifications.history' => 'core.edit',
+            'jem.notifications.resend' => 'core.edit',
             'jem.tools.manage'      => 'core.admin',
         );
         $changed = false;
@@ -1892,6 +2034,8 @@ class com_jemInstallerScript
             '#__jem_import_profiles',
             '#__jem_links',
             '#__jem_registration_history',
+            '#__jem_notification_attempts',
+            '#__jem_notifications',
             '#__jem_register',
             '#__jem_special_days',
             '#__jem_settings',

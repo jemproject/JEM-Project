@@ -1543,6 +1543,19 @@
         </field>
     </fieldset>
 
+    <fieldset name="notifications" label="COM_JEM_NOTIFICATION_SETTINGS">
+        <field name="notification_retention_years" type="number" default="4" min="1" max="20"
+               label="COM_JEM_NOTIFICATION_RETENTION_YEARS" description="COM_JEM_NOTIFICATION_RETENTION_YEARS_DESC" />
+        <field name="notification_user_resend_limit" type="number" default="2" min="1" max="20"
+               label="COM_JEM_NOTIFICATION_USER_RESEND_LIMIT" description="COM_JEM_NOTIFICATION_USER_RESEND_LIMIT_DESC" />
+        <field name="notification_user_resend_window_hours" type="number" default="24" min="1" max="168"
+               label="COM_JEM_NOTIFICATION_USER_RESEND_WINDOW" description="COM_JEM_NOTIFICATION_USER_RESEND_WINDOW_DESC" />
+        <field name="notification_user_resend_cooldown_minutes" type="number" default="10" min="1" max="1440"
+               label="COM_JEM_NOTIFICATION_USER_RESEND_COOLDOWN" description="COM_JEM_NOTIFICATION_USER_RESEND_COOLDOWN_DESC" />
+        <field name="notification_max_attempts" type="number" default="4" min="1" max="20"
+               label="COM_JEM_NOTIFICATION_MAX_ATTEMPTS" description="COM_JEM_NOTIFICATION_MAX_ATTEMPTS_DESC" />
+    </fieldset>
+
     <fields name="globalattribs">
         <fieldset name="calendar_special_days"
                   label="COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS"

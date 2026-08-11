@@ -87,6 +87,7 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
             'onJemAfterAttendeeStatusChange' => 'onJemAfterAttendeeStatusChange',
             'onJemAfterAttachmentSave' => 'onJemAfterAttachmentSave',
             'onJemAfterAttachmentDelete' => 'onJemAfterAttachmentDelete',
+            'onJemNotificationAction' => 'onJemNotificationAction',
         );
     }
 
@@ -283,6 +284,36 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
             array($this->createAttachmentMessage($attachment, false)),
             'PLG_ACTIONLOG_JEM_ATTACHMENT_DELETED',
             'com_jem.attachment'
+        );
+    }
+
+    public function onJemNotificationAction(Event $event): void
+    {
+        if (!$this->isEnabled() || !$this->isFeatureEnabled('log_notifications')) {
+            return;
+        }
+
+        $notificationId = (int) $this->eventArgument($event, 0, 0);
+        $mode = (string) $this->eventArgument($event, 1, '');
+        if ($notificationId < 1 || !in_array($mode, array('retry', 'resend'), true)) {
+            return;
+        }
+
+        $user = $this->getApplication()->getIdentity();
+        $message = array(
+            'action' => $mode,
+            'type' => 'PLG_ACTIONLOG_JEM_TYPE_NOTIFICATION',
+            'id' => $notificationId,
+            'title' => '#' . $notificationId,
+            'extension' => 'COM_JEM',
+            'userid' => (int) $user->id,
+            'username' => (string) $user->username,
+            'itemlink' => 'index.php?option=com_jem&view=notificationhistory&filter_search=id:' . $notificationId,
+        );
+        $this->addLog(
+            array($message),
+            $mode === 'retry' ? 'PLG_ACTIONLOG_JEM_NOTIFICATION_RETRIED' : 'PLG_ACTIONLOG_JEM_NOTIFICATION_RESENT',
+            'com_jem.notification'
         );
     }
 

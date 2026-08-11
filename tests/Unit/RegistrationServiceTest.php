@@ -52,6 +52,16 @@ final class RegistrationServiceTest extends TestCase
         self::assertSame('places_changed', JemRegistrationService::inferAction($before, $changed));
     }
 
+    public function testLegacyZeroActivationValueBelongsToAnActiveAccount(): void
+    {
+        $method = new ReflectionMethod(JemRegistrationService::class, 'activationRequiresVerification');
+
+        self::assertFalse($method->invoke(null, ''));
+        self::assertFalse($method->invoke(null, '0'));
+        self::assertFalse($method->invoke(null, ' 0 '));
+        self::assertTrue($method->invoke(null, 'pending-activation-token'));
+    }
+
     private function registration(int $id, int $event, int $uid, int $status, int $waiting, int $places, string $comment): object
     {
         return (object) compact('id', 'event', 'uid', 'status', 'waiting', 'places', 'comment');

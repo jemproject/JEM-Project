@@ -180,3 +180,23 @@ Joomla.submitbutton = function(task)
     <input type="hidden" name="event" value="<?php echo ($this->row->event ? $this->row->event : $this->event); ?>" />
     <input type="hidden" name="task" value="" />
 </form>
+
+<?php if (!empty($this->row->id) && ($this->registrationChanges || $this->notifications)) : ?>
+<div class="card mt-4">
+    <div class="card-header"><strong><?php echo Text::_('COM_JEM_REGISTRATION_AUDIT'); ?></strong></div>
+    <div class="card-body">
+        <h4><?php echo Text::_('COM_JEM_REGISTRATION_CHANGES'); ?></h4>
+        <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_OCCURRED'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_ACTION'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_CHANGE'); ?></th><th><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_ACTOR'); ?></th></tr></thead><tbody>
+        <?php if (!$this->registrationChanges) : ?><tr><td colspan="4"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr><?php endif; ?>
+        <?php foreach ($this->registrationChanges as $change) : ?><tr><td><?php echo HTMLHelper::_('date', $change->occurred, Text::_('DATE_FORMAT_LC5')); ?></td><td><?php echo $this->escape($change->action); ?></td><td><?php echo $this->escape((string) $change->old_status . ' → ' . (string) $change->new_status . ' / ' . (string) $change->old_places . ' → ' . (string) $change->new_places); ?></td><td><?php echo $this->escape($change->actor_name ?: Text::_('COM_JEM_REGISTRATION_HISTORY_SYSTEM')); ?></td></tr><?php endforeach; ?>
+        </tbody></table></div>
+
+        <h4 class="mt-4"><?php echo Text::_('COM_JEM_NOTIFICATION_HISTORY'); ?></h4>
+        <div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th><?php echo Text::_('COM_JEM_NOTIFICATION_CREATED'); ?></th><th><?php echo Text::_('COM_JEM_NOTIFICATION_STATE'); ?></th><th><?php echo Text::_('COM_JEM_NOTIFICATION_RECIPIENT'); ?></th><th><?php echo Text::_('COM_JEM_NOTIFICATION_MESSAGE'); ?></th><th><?php echo Text::_('COM_JEM_NOTIFICATION_ACTIONS'); ?></th></tr></thead><tbody>
+        <?php if (!$this->notifications) : ?><tr><td colspan="5"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr><?php endif; ?>
+        <?php foreach ($this->notifications as $notification) : ?><tr><td><?php echo HTMLHelper::_('date', $notification->created, Text::_('DATE_FORMAT_LC5')); ?></td><td><?php echo $this->escape($notification->state); ?> (<?php echo (int) $notification->attempts_total; ?>)<br><small><?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_REVISION'); ?> <?php echo (int) $notification->registration_revision; ?></small><?php if (!empty($notification->last_error)) : ?><br><small class="text-danger"><?php echo $this->escape($notification->last_error); ?></small><?php endif; ?></td><td><?php echo $this->escape($notification->recipient_email); ?><br><small><?php echo $this->escape($notification->resolved_language); ?></small></td><td><details><summary><?php echo $this->escape($notification->subject); ?></summary><pre class="text-wrap"><?php echo $this->escape($notification->body); ?></pre></details></td><td><?php if ($this->canNotificationResend && in_array($notification->state, array('queued', 'failed'), true) && $notification->attempt_count < $notification->max_attempts) : ?><button class="btn btn-sm btn-warning" type="submit" form="attendee-notification-<?php echo (int) $notification->id; ?>" name="task" value="notification.retry"><?php echo Text::_('COM_JEM_NOTIFICATION_RETRY'); ?></button><?php elseif ($this->canNotificationResend && $notification->state === 'sent') : ?><button class="btn btn-sm btn-primary" type="submit" form="attendee-notification-<?php echo (int) $notification->id; ?>" name="task" value="notification.resend"><?php echo Text::_('COM_JEM_NOTIFICATION_RESEND'); ?></button><?php endif; ?></td></tr><?php endforeach; ?>
+        </tbody></table></div>
+    </div>
+</div>
+<?php foreach ($this->notifications as $notification) : ?><form id="attendee-notification-<?php echo (int) $notification->id; ?>" method="post" action="<?php echo Route::_('index.php?option=com_jem'); ?>"><input type="hidden" name="notification_id" value="<?php echo (int) $notification->id; ?>"><input type="hidden" name="return_view" value="attendee"><input type="hidden" name="registration_id" value="<?php echo (int) $this->row->id; ?>"><input type="hidden" name="event_id" value="<?php echo (int) $this->row->event; ?>"><?php echo HTMLHelper::_('form.token'); ?></form><?php endforeach; ?>
+<?php endif; ?>

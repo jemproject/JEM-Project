@@ -62,7 +62,7 @@ class plgJemMailer extends CMSPlugin
      * @return  boolean
      *
      */
-    public function onEventUserRegistered($register_id, $registration = false, $userOnly = false)
+    public function onEventUserRegistered($register_id, $registration = false, $userOnly = false, array $notificationOptions = array())
     {
         ####################
         ## DEFINING ARRAY ##
@@ -85,7 +85,7 @@ class plgJemMailer extends CMSPlugin
             );
 
         // skip if processing not needed
-        if (!array_filter($send_to)) {
+        if (!array_filter($send_to) && empty($notificationOptions['recipient_email'])) {
             return true;
         }
 
@@ -108,7 +108,8 @@ class plgJemMailer extends CMSPlugin
 
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
-            'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
+            'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
+            'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage'));
         $query->from($db->quoteName('#__jem_register').' AS r');
@@ -142,7 +143,15 @@ class plgJemMailer extends CMSPlugin
 
         $recipients = $this->_getRecipients($send_to, array('user'), $event->id, $event->created_by, $attendeeid);
 
+        if (!empty($notificationOptions['recipient_email'])) {
+            $target = filter_var(trim((string) $notificationOptions['recipient_email']), FILTER_VALIDATE_EMAIL);
+            $recipientType = (string) ($notificationOptions['recipient_type'] ?? 'user');
+            $recipients['user'] = $recipientType === 'user' && $target ? array($target) : false;
+            $recipients['all'] = $recipientType !== 'user' && $target ? array($target => array($recipientType)) : array();
+        }
+
         $waiting = $event->waiting ? '_WAITING' : '';
+        $deliveryResult = true;
 
         #####################
         ## SENDMAIL - USER ##
@@ -183,7 +192,7 @@ class plgJemMailer extends CMSPlugin
                     $bodyUsesActor = false;
                     break;
             }
-            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+            $notificationValues = array(
                 'user_name'        => $attendeename,
                 'actor_name'       => $username,
                 'comment'          => $comment ?: '',
@@ -195,13 +204,16 @@ class plgJemMailer extends CMSPlugin
                 'places'           => $event->status < 0 && is_scalar($registration) ? $registration : $event->places,
                 'event_description'=> $text_description,
                 'event_url'        => $link,
+                'reservation_url'  => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'        => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject  = $message->subject;
             $data->body     = $message->body;
             $data->htmlbody = $message->htmlbody;
             $data->receivers = $recipients['user'];
-            $this->_mailer($data);
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'user', $attendeeid, $notificationOptions);
+            $deliveryResult = $this->_mailer($data) && $deliveryResult;
         }
 
         #############################
@@ -243,7 +255,7 @@ class plgJemMailer extends CMSPlugin
                     $bodyUsesActor = false;
                     break;
             }
-            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+            $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
                 'comment'           => $comment ?: '',
@@ -255,16 +267,86 @@ class plgJemMailer extends CMSPlugin
                 'places'            => $event->status < 0 && is_scalar($registration) ? $registration : $event->places,
                 'event_description' => $text_description,
                 'event_url'         => $link,
+                'reservation_url'   => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'         => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject  = $message->subject;
             $data->body     = $message->body;
             $data->htmlbody = $message->htmlbody;
             $data->recipients = $recipients['all'];
-            $this->_mailer($data);
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'admin', 0, $notificationOptions);
+            $deliveryResult = $this->_mailer($data) && $deliveryResult;
         }
 
-        return true;
+        return $deliveryResult;
+    }
+
+    /**
+     * Controlled Point 2B retry/resend entry point.
+     *
+     * Retry delivers the immutable stored snapshot. Resend resolves the current
+     * account email, language, reservation revision and template content, then
+     * creates a new row linked through resend_of.
+     */
+    public function onJemNotificationAction($notificationId, $mode, $actorId = 0, $source = 'admin')
+    {
+        $service = new JemNotificationService();
+        $notification = $service->getById((int) $notificationId);
+        if (!$notification) {
+            return false;
+        }
+
+        if ($mode === 'retry') {
+            return $service->retryStored(
+                (int) $notification->id,
+                function ($snapshot, &$error) {
+                    return $this->_send(
+                        $snapshot->recipient_email,
+                        $snapshot->subject,
+                        $snapshot->body,
+                        $snapshot->htmlbody,
+                        $error
+                    );
+                },
+                (int) $actorId,
+                $source === 'user' ? 'user_retry' : 'admin_retry'
+            );
+        }
+
+        if ($mode !== 'resend' || (int) $notification->registration_id < 1) {
+            return false;
+        }
+
+        $recipientEmail = (string) $notification->recipient_email;
+        if ((int) $notification->recipient_user_id > 0) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('email'))
+                ->from($db->quoteName('#__users'))
+                ->where($db->quoteName('id') . ' = ' . (int) $notification->recipient_user_id)
+                ->where($db->quoteName('block') . ' = 0');
+            $db->setQuery($query);
+            $currentEmail = filter_var(trim((string) $db->loadResult()), FILTER_VALIDATE_EMAIL);
+            if (!$currentEmail) {
+                return false;
+            }
+            $recipientEmail = $currentEmail;
+        }
+
+        return $this->onEventUserRegistered(
+            (int) $notification->registration_id,
+            false,
+            (string) $notification->recipient_type === 'user',
+            array(
+                'recipient_email' => $recipientEmail,
+                'recipient_type' => (string) $notification->recipient_type,
+                'source' => $source === 'user' ? 'user_resend' : 'admin_resend',
+                'created_by' => (int) $actorId,
+                'resend_of' => (int) $notification->id,
+                'force_unique' => true,
+            )
+        );
     }
 
     /**
@@ -310,7 +392,8 @@ class plgJemMailer extends CMSPlugin
 
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
-            'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places'));
+            'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
+            'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage'));
         $query->from($db->quoteName('#__jem_register').' AS r');
@@ -344,7 +427,7 @@ class plgJemMailer extends CMSPlugin
             $data            = new stdClass();
             $txt_subject     = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_SUBJECT';
             $txt_body        = $event->waiting ? 'PLG_JEM_MAILER_USER_REG_ON_WAITING_BODY_9' : 'PLG_JEM_MAILER_USER_REG_ON_ATTENDING_BODY_9';
-            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+            $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $attendeename,
                 'comment'           => '',
@@ -356,12 +439,15 @@ class plgJemMailer extends CMSPlugin
                 'places'            => $event->places,
                 'event_description' => $text_description,
                 'event_url'         => $link,
+                'reservation_url'   => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'         => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject   = $message->subject;
             $data->body      = $message->body;
             $data->htmlbody  = $message->htmlbody;
             $data->receivers = $recipients['user'];
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'user', (int) $event->uid);
             $this->_mailer($data);
         }
 
@@ -373,7 +459,7 @@ class plgJemMailer extends CMSPlugin
             $data             = new stdClass();
             $txt_subject      = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_SUBJECT' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_SUBJECT';
             $txt_body         = $event->waiting ? 'PLG_JEM_MAILER_ADMIN_REG_ON_WAITING_BODY_8' : 'PLG_JEM_MAILER_ADMIN_REG_ON_ATTENDING_BODY_8';
-            $message = $this->_renderNotification($txt_subject, $txt_body, array(
+            $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $attendeename,
                 'comment'           => '',
@@ -385,12 +471,15 @@ class plgJemMailer extends CMSPlugin
                 'places'            => $event->places,
                 'event_description' => $text_description,
                 'event_url'         => $link,
+                'reservation_url'   => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'         => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject    = $message->subject;
             $data->body       = $message->body;
             $data->htmlbody   = $message->htmlbody;
             $data->recipients = $recipients['all'];
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'admin', 0);
             $this->_mailer($data);
         }
 
@@ -448,7 +537,8 @@ class plgJemMailer extends CMSPlugin
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage'));
         if (empty($registration) && ((int)$register_id > 0)) {
-            $query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places'));
+            $query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places',
+                'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
             $query->from($db->quoteName('#__jem_register').' AS r');
             $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
             $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -469,6 +559,10 @@ class plgJemMailer extends CMSPlugin
         if (empty($registration)) {
             $registration = $event;
         }
+
+        $event->registration_id = (int) ($registration->id ?? $event->registration_id ?? $register_id);
+        $event->registration_reference = (string) ($registration->reference ?? $event->registration_reference ?? '');
+        $event->registration_revision = (int) ($registration->revision ?? $event->registration_revision ?? 1);
 
         if (!empty($registration->waiting)) {
             return true;
@@ -512,7 +606,8 @@ class plgJemMailer extends CMSPlugin
                     $txt_body = 'PLG_JEM_MAILER_USER_UNREG_BODY_9';
                 }
             }
-            $message = $this->_renderNotification('PLG_JEM_MAILER_USER_UNREG_SUBJECT', $txt_body, array(
+            $txt_subject = 'PLG_JEM_MAILER_USER_UNREG_SUBJECT';
+            $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
                 'comment'           => $comment ?: '',
@@ -524,12 +619,15 @@ class plgJemMailer extends CMSPlugin
                 'places'            => $registration->places,
                 'event_description' => $text_description,
                 'event_url'         => $link,
+                'reservation_url'   => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'         => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject  = $message->subject;
             $data->body     = $message->body;
             $data->htmlbody = $message->htmlbody;
             $data->receivers = $recipients['user'];
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'user', $attendeeid);
             $this->_mailer($data);
         }
 
@@ -552,7 +650,8 @@ class plgJemMailer extends CMSPlugin
                     $txt_body = 'PLG_JEM_MAILER_ADMIN_UNREG_BODY_8';
                 }
             }
-            $message = $this->_renderNotification('PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT', $txt_body, array(
+            $txt_subject = 'PLG_JEM_MAILER_ADMIN_UNREG_SUBJECT';
+            $notificationValues = array(
                 'user_name'         => $attendeename,
                 'actor_name'        => $username,
                 'comment'           => $comment ?: '',
@@ -564,12 +663,15 @@ class plgJemMailer extends CMSPlugin
                 'places'            => $registration->places,
                 'event_description' => $text_description,
                 'event_url'         => $link,
+                'reservation_url'   => $this->_reservationUrl((int) $event->registration_id),
                 'site_name'         => $this->_SiteName,
-            ), $event);
+            );
+            $message = $this->_renderNotification($txt_subject, $txt_body, $notificationValues, $event);
             $data->subject    = $message->subject;
             $data->body       = $message->body;
             $data->htmlbody   = $message->htmlbody;
             $data->recipients = $recipients['all'];
+            $this->_attachNotificationContext($data, $txt_subject, $txt_body, $notificationValues, $event, 'admin', 0);
             $this->_mailer($data);
         }
 
@@ -1243,17 +1345,207 @@ class plgJemMailer extends CMSPlugin
     /**
      * Render one catalogued notification while preserving a safe legacy fallback.
      */
-    private function _renderNotification($subjectKey, $bodyKey, array $values, $event = null)
+    private function _reservationUrl($registrationId)
     {
-        $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
-        $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+        if ((int) $registrationId < 1) {
+            return '';
+        }
+
+        return Route::_(
+            rtrim(Uri::root(), '/') . '/index.php?option=com_jem&view=registration&id=' . (int) $registrationId,
+            false
+        );
+    }
+
+    /**
+     * Add the immutable business context consumed by the persistent delivery
+     * path. Existing public JEM Mailer events and their arguments stay intact.
+     */
+    private function _attachNotificationContext(
+        $data,
+        $subjectKey,
+        $bodyKey,
+        array $values,
+        $event,
+        $recipientType,
+        $recipientUserId = 0,
+        array $options = array()
+    ) {
+        if ($event !== null) {
+            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
+            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+        } else {
+            $values += array('event_image_url' => '', 'venue_image_url' => '');
+        }
+        $definition = JemNotificationTemplateCatalog::findByLanguageKeys($subjectKey, $bodyKey);
+        $data->notification = (object) array(
+            'subject_key' => (string) $subjectKey,
+            'body_key' => (string) $bodyKey,
+            'values' => $values,
+            'registration_id' => (int) ($event->registration_id ?? 0),
+            'registration_reference' => (string) ($event->registration_reference ?? ''),
+            'revision' => max(1, (int) ($event->registration_revision ?? 1)),
+            'event_id' => (int) ($event->id ?? 0),
+            'notification_type' => (string) ($definition['workflow'] ?? 'registration'),
+            'recipient_type' => (string) $recipientType,
+            'recipient_user_id' => (int) $recipientUserId,
+            'source' => (string) ($options['source'] ?? 'automatic'),
+            'created_by' => (int) ($options['created_by'] ?? Factory::getApplication()->getIdentity()->id),
+            'resend_of' => (int) ($options['resend_of'] ?? 0),
+            'force_unique' => !empty($options['force_unique']),
+        );
+    }
+
+    /**
+     * Render one recipient language, persist the immutable snapshot and record
+     * the transport attempt around the actual Joomla mail handoff.
+     */
+    private function _deliverPersistedNotification($data, $receiver, $recipientType, array $causes = array())
+    {
+        $spec = $data->notification;
+        $service = new JemNotificationService();
+        $language = $service->resolveRecipientLanguage(
+            $recipientType === 'user' ? (int) $spec->recipient_user_id : 0,
+            $receiver
+        );
+        $recipientUser = $language->user;
+        $recipientUserId = $recipientType === 'user'
+            ? (int) $spec->recipient_user_id
+            : (int) ($recipientUser->id ?? 0);
+        $message = $this->_renderNotification(
+            $spec->subject_key,
+            $spec->body_key,
+            (array) $spec->values,
+            null,
+            $language->resolved
+        );
+        $bodySuffix = $this->_recipientBecause($causes, $language->resolved);
+        if ($bodySuffix !== '') {
+            $message->body .= $bodySuffix;
+            if ($message->htmlbody !== '') {
+                $message->htmlbody .= '<p>' . nl2br(htmlspecialchars($bodySuffix, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')) . '</p>';
+            }
+        }
+
+        $idempotencyMaterial = implode('|', array(
+            'jem-notification-v1',
+            (int) $spec->registration_id,
+            (int) $spec->revision,
+            (string) $message->template_id,
+            strtolower((string) $receiver),
+            (string) $recipientType,
+        ));
+        if (!empty($spec->force_unique)) {
+            $idempotencyMaterial .= '|' . microtime(true) . '|' . bin2hex(random_bytes(8));
+        }
+
+        try {
+            $notification = $service->create(array(
+                'registration_id' => (int) $spec->registration_id,
+                'registration_reference' => (string) $spec->registration_reference,
+                'revision' => (int) $spec->revision,
+                'event_id' => (int) $spec->event_id,
+                'notification_type' => (string) $spec->notification_type,
+                'recipient_type' => (string) $recipientType,
+                'recipient_user_id' => $recipientUserId,
+                'recipient_name' => (string) ($recipientUser->name ?? ''),
+                'recipient_email' => (string) $receiver,
+                'requested_language' => (string) $language->requested,
+                'resolved_language' => (string) $language->resolved,
+                'language_source' => (string) $language->source,
+                'fallback_reason' => trim((string) $language->fallback_reason . ' ' . (string) $message->fallback_reason),
+                'template_id' => (string) $message->template_id,
+                'subject' => (string) $message->subject,
+                'body' => (string) $message->body,
+                'htmlbody' => (string) $message->htmlbody,
+                'payload' => array(
+                    'subject_key' => (string) $spec->subject_key,
+                    'body_key' => (string) $spec->body_key,
+                    'values' => (array) $spec->values,
+                    'recipient_causes' => array_values($causes),
+                    'revision' => (int) $spec->revision,
+                ),
+                'attachments' => array(),
+                'idempotency_key' => hash('sha256', $idempotencyMaterial),
+                'resend_of' => (int) $spec->resend_of,
+                'source' => (string) $spec->source,
+                'created_by' => (int) $spec->created_by,
+            ));
+
+            if (empty($notification->_created) && $notification->state !== JemNotificationService::STATE_QUEUED) {
+                return $notification->state === JemNotificationService::STATE_SENT;
+            }
+
+            $attempt = $service->beginAttempt(
+                (int) $notification->id,
+                (string) $spec->source,
+                (int) $spec->created_by
+            );
+            if (!$attempt) {
+                $current = $service->getById((int) $notification->id);
+                return $current && $current->state === JemNotificationService::STATE_SENT;
+            }
+
+            $error = '';
+            $sent = $this->_send(
+                $notification->recipient_email,
+                $notification->subject,
+                $notification->body,
+                $notification->htmlbody,
+                $error
+            );
+            $service->finishAttempt($notification->id, $attempt->id, $sent, $error);
+
+            return $sent;
+        } catch (Throwable $e) {
+            JemHelper::addLogEntry(
+                'Persistent notification delivery failed before transport: ' . $e->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+            return false;
+        }
+    }
+
+    private function _recipientBecause(array $causes, $languageTag)
+    {
+        $keys = array(
+            'admin' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_ADMIN',
+            'creator' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_ITEM_CREATOR',
+            'ev-creator' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_EVENT_CREATOR',
+            'group' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_GROUP_MEMBER',
+            'category' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_LISTED',
+            'registered' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_ATTENDEE',
+            'category_acl' => 'PLG_JEM_MAILER_RECIPIENT_BECAUSE_CATEGORY_ACL',
+        );
+        $labels = array();
+        foreach ($causes as $cause) {
+            if (isset($keys[$cause])) {
+                $labels[] = JemNotificationTemplateService::translateWithEnglishFallback($keys[$cause], $languageTag);
+            }
+        }
+        if (!$labels) {
+            return '';
+        }
+        $template = JemNotificationTemplateService::translateWithEnglishFallback('PLG_JEM_MAILER_RECIPIENT_BECAUSE_1', $languageTag);
+        return (string) sprintf($template, implode(', ', $labels));
+    }
+
+    private function _renderNotification($subjectKey, $bodyKey, array $values, $event = null, $languageTag = null)
+    {
+        if ($event !== null) {
+            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
+            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+        } else {
+            $values += array('event_image_url' => '', 'venue_image_url' => '');
+        }
 
         try {
             $message = JemNotificationTemplateService::renderByLanguageKeys(
                 $subjectKey,
                 $bodyKey,
                 $values,
-                Factory::getApplication()->getLanguage()->getTag()
+                $languageTag ?: Factory::getApplication()->getLanguage()->getTag()
             );
 
             if ($message->fallback_reason !== '') {
@@ -1290,7 +1582,7 @@ class plgJemMailer extends CMSPlugin
 
             return (object) array(
                 'template_id' => $definition['id'],
-                'language'    => Factory::getApplication()->getLanguage()->getTag(),
+                'language'    => $languageTag ?: Factory::getApplication()->getLanguage()->getTag(),
                 'custom'      => false,
                 'subject'     => call_user_func_array(array(Text::class, 'sprintf'), $subjectArgs),
                 'body'        => call_user_func_array(array(Text::class, 'sprintf'), $bodyArgs),
@@ -1351,12 +1643,18 @@ class plgJemMailer extends CMSPlugin
             if ($receivers) {
                 foreach ($receivers as $receiver)
                 {
-                    $ret = $this->_send(
-                        $receiver,
-                        $data->subject,
-                        $data->body,
-                        $data->htmlbody ?? ''
-                    );
+                    $ret = isset($data->notification)
+                        ? $this->_deliverPersistedNotification(
+                            $data,
+                            $receiver,
+                            (string) $data->notification->recipient_type
+                        )
+                        : $this->_send(
+                            $receiver,
+                            $data->subject,
+                            $data->body,
+                            $data->htmlbody ?? ''
+                        );
                     ++$sent[$ret ? 'ok' : 'failed'];
                 }
 
@@ -1366,7 +1664,7 @@ class plgJemMailer extends CMSPlugin
                 }
             }
 
-            return true;
+            return empty($sent['failed']);
         }
         # $data->recipients contains email addresses as array keys with cause(s) as value
         elseif (isset($data->recipients) && is_array($data->recipients)) {
@@ -1408,7 +1706,14 @@ class plgJemMailer extends CMSPlugin
                     }
                 }
 
-                $ret = $this->_send($receiver, $data->subject, $body, $htmlbody);
+                $ret = isset($data->notification)
+                    ? $this->_deliverPersistedNotification(
+                        $data,
+                        $receiver,
+                        (string) $data->notification->recipient_type,
+                        (array) $causes
+                    )
+                    : $this->_send($receiver, $data->subject, $body, $htmlbody);
                 ++$sent[$ret ? 'ok' : 'failed'];
             }
 
@@ -1417,7 +1722,7 @@ class plgJemMailer extends CMSPlugin
                 $app->enqueueMessage(Text::sprintf('PLG_JEM_MAILER_MAILS_NOT_SENT_1', $sent['failed']), 'notice');
             }
 
-            return true;
+            return empty($sent['failed']);
         }
         else {
             return false;
@@ -1435,9 +1740,10 @@ class plgJemMailer extends CMSPlugin
      * @param   string  $htmlbody   optional customised HTML body
      * @return  boolean true on success, false on error
      */
-    private function _send($recipient, $subject, $body, $htmlbody = '')
+    private function _send($recipient, $subject, $body, $htmlbody = '', &$errorMessage = '')
     {
         $result = false;
+        $errorMessage = '';
         $recipient = filter_var(trim((string) $recipient), FILTER_VALIDATE_EMAIL);
 
         if (!$recipient) {
@@ -1464,16 +1770,19 @@ class plgJemMailer extends CMSPlugin
             $ret = $mail->send();
             // Check for an error
             if ($ret instanceof Exception) {
+                $errorMessage = $ret->getMessage();
                 JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $ret->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
             }
             elseif (empty($ret)) {
+                $errorMessage = Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient);
                 JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient), __METHOD__ . '#' . __LINE__, Log::WARNING);
             }
             else {
                 $result = true;
             }
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
+            $errorMessage = $e->getMessage();
             JemHelper::addLogEntry(Text::sprintf('PLG_JEM_MAILER_LOG_SEND_ERROR', $recipient) . ' : ' . $e->getMessage(), __METHOD__ . '#' . __LINE__, Log::WARNING);
         }
 

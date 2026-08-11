@@ -248,6 +248,19 @@ class JemModelSettings extends AdminModel
             }
         }
 
+        $notificationDefaults = array(
+            'notification_retention_years' => 4,
+            'notification_user_resend_limit' => 2,
+            'notification_user_resend_window_hours' => 24,
+            'notification_user_resend_cooldown_minutes' => 10,
+            'notification_max_attempts' => 4,
+        );
+        foreach ($notificationDefaults as $key => $value) {
+            if (!isset($data[$key]) || $data[$key] === '') {
+                $data[$key] = $value;
+            }
+        }
+
         //
         // Store into new table
         //
