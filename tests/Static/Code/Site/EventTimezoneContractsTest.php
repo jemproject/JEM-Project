@@ -127,6 +127,29 @@ final class EventTimezoneContractsTest extends TestCase
         }
     }
 
+    public function testCalendarViewsPassTheSelectedCivilMonthToTheirModels(): void
+    {
+        $views = array(
+            '/site/views/calendar/view.html.php' => 1,
+            '/site/views/calendar/view.raw.php' => 2,
+            '/site/views/category/view.html.php' => 1,
+            '/site/views/category/view.raw.php' => 1,
+            '/site/views/venue/view.html.php' => 1,
+            '/site/views/venue/view.raw.php' => 2,
+        );
+
+        foreach ($views as $path => $expectedCalls) {
+            $code = $this->read($path);
+
+            self::assertSame(
+                $expectedCalls,
+                substr_count($code, "setDate(sprintf('%04d-%02d-01', \$year, \$month))"),
+                ltrim($path, '/') . ' must pass the selected civil month without a PHP-timezone timestamp.'
+            );
+            self::assertStringNotContainsString('setDate(mktime(', $code);
+        }
+    }
+
     private function read(string $relativePath): string
     {
         $path = JEM_TEST_ROOT . $relativePath;
