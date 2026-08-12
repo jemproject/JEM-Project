@@ -321,6 +321,8 @@ class com_jemInstallerScript
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
+            $this->installCountryCurrencyCatalogue();
+            $this->installEuropeanTaxRateCatalogue();
             $this->registerNotificationTemplates();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
@@ -653,6 +655,9 @@ SQL;
                     'price_locked_at'            => "DATETIME NULL DEFAULT NULL AFTER `payment_state`",
                     'external_payment_reference' => "VARCHAR(255) NULL DEFAULT NULL AFTER `price_locked_at`",
                 ),
+                '#__jem_countries' => array(
+                    'currency' => "CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `name`",
+                ),
             );
             $tableList = (array) $db->getTableList();
 
@@ -673,7 +678,7 @@ SQL;
             }
 
             $statements = array(
-                "CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `country_code` CHAR(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `region_code` VARCHAR(100) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `valid_from` DATE NULL DEFAULT NULL, `valid_until` DATE NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL, `checked_out_time` DATETIME NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_tax_rate_code` (`code`), KEY `idx_tax_rate_published_ordering` (`published`,`ordering`), KEY `idx_tax_rate_validity` (`valid_from`,`valid_until`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `country_code` CHAR(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `region_code` VARCHAR(100) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `valid_from` DATE NULL DEFAULT NULL, `valid_until` DATE NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL, `checked_out_time` DATETIME NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_tax_rate_code` (`code`), KEY `idx_tax_rate_published_ordering` (`published`,`ordering`), KEY `idx_tax_rate_country` (`country_code`,`published`,`valid_from`,`valid_until`), KEY `idx_tax_rate_validity` (`valid_from`,`valid_until`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_capacity_pools` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_capacity_pool_event_code` (`event_id`,`code`), KEY `idx_capacity_pool_event_published` (`event_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `amount` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_rate_id` INT(11) UNSIGNED NULL DEFAULT NULL, `quota` INT(10) UNSIGNED NULL DEFAULT NULL, `min_quantity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `max_quantity` INT(10) UNSIGNED NULL DEFAULT NULL, `available_from` DATETIME NULL DEFAULT NULL, `available_until` DATETIME NULL DEFAULT NULL, `min_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `max_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `access_level_id` INT(10) UNSIGNED NULL DEFAULT NULL, `user_group_id` INT(10) UNSIGNED NULL DEFAULT NULL, `verification_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_event_price_event_code` (`event_id`,`code`), KEY `idx_event_price_event_published` (`event_id`,`published`,`ordering`), KEY `idx_event_price_pool` (`capacity_pool_id`), KEY `idx_event_price_tax` (`tax_rate_id`), KEY `idx_event_price_availability` (`available_from`,`available_until`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, `register_id` INT(11) UNSIGNED NOT NULL, `registration_revision` INT(10) UNSIGNED NOT NULL, `line_number` INT(10) UNSIGNED NOT NULL, `line_kind` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `event_price_id` INT(11) UNSIGNED NULL DEFAULT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `item_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `item_name` VARCHAR(255) NOT NULL DEFAULT '', `item_description` TEXT NULL DEFAULT NULL, `quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1', `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `price_includes_tax` TINYINT(1) NOT NULL DEFAULT '1', `unit_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `calculation_mode` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `calculation_value` DECIMAL(15,2) NULL DEFAULT NULL, `calculation_basis` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `condition_snapshot` MEDIUMTEXT NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `idx_register_item_revision_line` (`register_id`,`registration_revision`,`line_number`), KEY `idx_register_item_price` (`event_price_id`), KEY `idx_register_item_pool` (`capacity_pool_id`), KEY `idx_register_item_kind` (`line_kind`)) ENGINE=InnoDB",
@@ -694,6 +699,27 @@ SQL;
                         . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
                     )->execute();
                 }
+            }
+
+            $hasCountryIndex = false;
+            foreach ((array) $db->getTableKeys($db->replacePrefix('#__jem_tax_rates')) as $name => $key) {
+                $keyName = is_string($name) ? $name : '';
+                if (is_object($key)) {
+                    $keyName = (string) ($key->Key_name ?? $key->key_name ?? $key->name ?? $keyName);
+                }
+                if (strcasecmp($keyName, 'idx_tax_rate_country') === 0) {
+                    $hasCountryIndex = true;
+                    break;
+                }
+            }
+            if (!$hasCountryIndex) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_tax_rates')
+                    . ' ADD INDEX ' . $db->quoteName('idx_tax_rate_country')
+                    . ' (' . implode(', ', array_map(array($db, 'quoteName'), array(
+                        'country_code', 'published', 'valid_from', 'valid_until',
+                    ))) . ')'
+                )->execute();
             }
 
             $tableList = (array) $db->getTableList();
@@ -733,6 +759,173 @@ SQL;
             . ' VALUES (' . $db->quote('pricing_schema_ready') . ', ' . $db->quote($value) . ')'
             . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote($value)
         )->execute();
+    }
+
+    /**
+     * Fill empty country currencies from Unicode CLDR territory data.
+     *
+     * Currency codes are checked against the official ISO 4217 list maintained
+     * by SIX when the bundled catalogue is prepared. Source URLs and the as-of
+     * date live in the JSON/help documentation, never in database country rows.
+     * Territories without exactly one current tender currency remain empty.
+     */
+    private function installCountryCurrencyCatalogue()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        if (!in_array($db->replacePrefix('#__jem_countries'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $path = JPATH_ADMINISTRATOR . '/components/com_jem/data/currencies/country-currencies.json';
+
+        try {
+            $contents = is_file($path) ? file_get_contents($path) : false;
+            $catalogue = $contents !== false ? json_decode($contents, true, 512, JSON_THROW_ON_ERROR) : null;
+            if (!is_array($catalogue) || empty($catalogue['currencies'])) {
+                throw new RuntimeException('The bundled country-currency catalogue is missing or invalid.');
+            }
+
+            foreach ($catalogue['currencies'] as $countryCode => $currency) {
+                $countryCode = strtoupper(trim((string) $countryCode));
+                $currency = strtoupper(trim((string) $currency));
+                if (preg_match('/^[A-Z]{2}$/D', $countryCode) !== 1 || preg_match('/^[A-Z]{3}$/D', $currency) !== 1) {
+                    continue;
+                }
+
+                $db->setQuery(
+                    'UPDATE ' . $db->quoteName('#__jem_countries')
+                    . ' SET ' . $db->quoteName('currency') . ' = ' . $db->quote($currency)
+                    . ' WHERE ' . $db->quoteName('iso2') . ' = ' . $db->quote($countryCode)
+                    . ' AND ' . $db->quoteName('currency') . " = ''"
+                )->execute();
+            }
+        } catch (Throwable $e) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_COUNTRY_CURRENCY_CATALOG_FAILED', $e->getMessage()),
+                'warning'
+            );
+        }
+    }
+
+    /**
+     * Install the editable European VAT reference catalogue once per version.
+     *
+     * Source: European Commission, Taxes in Europe Database (TEDB), official
+     * SOAP/XML service:
+     * https://ec.europa.eu/taxation_customs/tedb/ws/VatRetrievalService.wsdl
+     *
+     * The bundled JSON is a convenience for administrators, not fiscal advice.
+     * Existing codes are never updated, so local names, rates, publication state
+     * and validity dates remain entirely under administrator control.
+     */
+    private function installEuropeanTaxRateCatalogue()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $table = $db->replacePrefix('#__jem_tax_rates');
+        $configTable = $db->replacePrefix('#__jem_config');
+        if (!in_array($table, $db->getTableList(), true) || !in_array($configTable, $db->getTableList(), true)) {
+            return;
+        }
+
+        $cataloguePath = JPATH_ADMINISTRATOR . '/components/com_jem/data/taxrates/eu-vat-rates.json';
+
+        try {
+            $contents = is_file($cataloguePath) ? file_get_contents($cataloguePath) : false;
+            $catalogue = $contents !== false ? json_decode($contents, true, 512, JSON_THROW_ON_ERROR) : null;
+            if (!is_array($catalogue) || empty($catalogue['version']) || empty($catalogue['countries'])) {
+                throw new RuntimeException('The bundled European tax-rate catalogue is missing or invalid.');
+            }
+
+            $version = trim((string) $catalogue['version']);
+            $db->setQuery(
+                'SELECT ' . $db->quoteName('value') . ' FROM ' . $db->quoteName('#__jem_config')
+                . ' WHERE ' . $db->quoteName('keyname') . ' = ' . $db->quote('tax_rates_eu_catalog_version')
+            );
+            $installRates = (string) $db->loadResult() !== $version;
+
+            $existingCodes = array();
+            if ($installRates) {
+                $db->setQuery('SELECT ' . $db->quoteName('code') . ' FROM ' . $db->quoteName('#__jem_tax_rates'));
+                $existingCodes = array_fill_keys(array_map('strtoupper', (array) $db->loadColumn()), true);
+            }
+            $now = Factory::getDate()->toSql();
+            $ordering = 0;
+
+            foreach ($catalogue['countries'] as $country) {
+                $countryCode = strtoupper(trim((string) ($country['code'] ?? '')));
+                $countryName = trim((string) ($country['name'] ?? ''));
+                if (preg_match('/^[A-Z]{2}$/D', $countryCode) !== 1 || $countryName === '') {
+                    continue;
+                }
+
+                $currency = strtoupper(trim((string) ($country['currency'] ?? '')));
+                if (preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
+                    $db->setQuery(
+                        'UPDATE ' . $db->quoteName('#__jem_countries')
+                        . ' SET ' . $db->quoteName('currency') . ' = ' . $db->quote($currency)
+                        . ' WHERE ' . $db->quoteName('iso2') . ' = ' . $db->quote($countryCode)
+                        . ' AND ' . $db->quoteName('currency') . " = ''"
+                    )->execute();
+                }
+
+                if (!$installRates) {
+                    continue;
+                }
+
+                foreach ((array) ($country['rates'] ?? array()) as $rateDefinition) {
+                    if (!is_array($rateDefinition) || count($rateDefinition) !== 3) {
+                        continue;
+                    }
+                    [$rateClass, $taxType, $rate] = array_map('strval', $rateDefinition);
+                    $rateClass = strtolower(trim($rateClass));
+                    $taxType = strtolower(trim($taxType));
+                    $rate = trim($rate);
+                    if (preg_match('/^[a-z0-9_]+$/D', $rateClass) !== 1
+                        || !in_array($taxType, array('standard', 'reduced', 'zero', 'exempt', 'outside_scope'), true)
+                        || preg_match('/^\d{1,3}\.\d{2}$/D', $rate) !== 1) {
+                        continue;
+                    }
+
+                    $code = 'EU_' . $countryCode . '_' . strtoupper($rateClass);
+                    if (isset($existingCodes[$code])) {
+                        continue;
+                    }
+
+                    $label = ucwords(str_replace('_', ' ', $rateClass));
+                    $query = $db->getQuery(true)
+                        ->insert($db->quoteName('#__jem_tax_rates'))
+                        ->columns(array_map(array($db, 'quoteName'), array(
+                            'code', 'name', 'tax_type', 'rate', 'country_code',
+                            'published', 'ordering', 'created', 'created_by',
+                        )))
+                        ->values(implode(',', array(
+                            $db->quote($code),
+                            $db->quote($countryName . ' - ' . $label . ' (' . $rate . '%)'),
+                            $db->quote($taxType),
+                            $db->quote($rate),
+                            $db->quote($countryCode),
+                            '0',
+                            (string) ++$ordering,
+                            $db->quote($now),
+                            '0',
+                        )));
+                    $db->setQuery($query)->execute();
+                    $existingCodes[$code] = true;
+                }
+            }
+
+            $db->setQuery(
+                'INSERT INTO ' . $db->quoteName('#__jem_config')
+                . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ')'
+                . ' VALUES (' . $db->quote('tax_rates_eu_catalog_version') . ', ' . $db->quote($version) . ')'
+                . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote($version)
+            )->execute();
+        } catch (Throwable $e) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_EU_TAX_CATALOG_FAILED', $e->getMessage()),
+                'warning'
+            );
+        }
     }
 
     /**

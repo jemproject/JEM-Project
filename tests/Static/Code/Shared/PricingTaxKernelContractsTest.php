@@ -40,6 +40,12 @@ final class PricingTaxKernelContractsTest extends TestCase
         self::assertStringContainsString('if ($canConfigure)', $dashboard);
         self::assertStringContainsString('icon-48-taxrates.svg', $dashboard);
         self::assertStringContainsString("canManage('core.options')", $this->read('/admin/views/taxrates/view.html.php'));
+        self::assertStringContainsString('type="countryoptions"', $this->read('/admin/models/forms/taxrate.xml'));
+        self::assertStringContainsString('defaultCountry', $this->read('/admin/models/taxrate.php'));
+        self::assertStringContainsString('filter.country_code', $this->read('/admin/models/taxrates.php'));
+        self::assertStringContainsString('COM_JEM_TAX_RATE_CATALOG_SOURCE', $this->read('/admin/views/taxrates/tmpl/default.php'));
+        self::assertStringContainsString('jem-taxrate-form', $this->read('/admin/views/taxrate/tmpl/edit.php'));
+        self::assertStringContainsString('.jem-taxrate-form .jem-taxrate-fields > .control-group', $this->read('/media/css/backend.css'));
     }
 
     public function testTaxCatalogueValidatesSemanticTypesRatesAndValidity(): void

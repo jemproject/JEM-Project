@@ -173,10 +173,6 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                         if ($canConfigure) {
                                             $link = 'index.php?option=com_jem&amp;view=settings';
                                             $this->quickiconButton($link, 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
-
-                                            $link = 'index.php?option=com_jem&amp;view=taxrates';
-                                            $addLink = 'index.php?option=com_jem&amp;task=taxrate.add';
-                                            $this->quickiconButton($link, 'icon-48-taxrates.svg', Text::_('COM_JEM_TAX_RATES'), 0, $addLink, Text::_('COM_JEM_TAX_RATE_ADD'));
                                         }
 
                                         if ($canManageNotificationTemplates || $canViewNotificationHistory) {
@@ -192,6 +188,12 @@ $canConfigure = JemHelperBackend::canManage('core.options');
 
                                             $link = 'index.php?option=com_jem&amp;task=plugins.plugins';
                                             $this->quickiconButton($link, 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
+                                        }
+
+                                        if ($canConfigure) {
+                                            $link = 'index.php?option=com_jem&amp;view=taxrates';
+                                            $addLink = 'index.php?option=com_jem&amp;task=taxrate.add';
+                                            $this->quickiconButton($link, 'icon-48-taxrates.svg', Text::_('COM_JEM_TAX_RATES'), 0, $addLink, Text::_('COM_JEM_TAX_RATE_ADD'));
                                         }
                                     ?>
                                     </div>

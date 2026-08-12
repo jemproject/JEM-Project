@@ -140,6 +140,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_tax_rate_code` (`code`),
     KEY `idx_tax_rate_published_ordering` (`published`, `ordering`),
+    KEY `idx_tax_rate_country` (`country_code`, `published`, `valid_from`, `valid_until`),
     KEY `idx_tax_rate_validity` (`valid_from`, `valid_until`)
     ) ENGINE=InnoDB;
 
@@ -564,6 +565,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_countries` (
     `iso3` varchar(3) NOT NULL,
     `un` int(11) NOT NULL,
     `name` varchar(100) NOT NULL,
+    `currency` char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
     `published` tinyint(1) NOT NULL DEFAULT '1',
     PRIMARY KEY (`id`),
     KEY `iso2` (`iso2`),

@@ -596,6 +596,121 @@ div.controls img {
     vertical-align: middle;
 }
 
+/* Tax-rate editor: keep Joomla field help and controls in the card flow. */
+.jem-taxrate-form .jem-taxrate-fields > .control-group {
+    display: grid;
+    grid-template-columns: minmax(9rem, 12rem) minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+    margin: 0 0 1rem;
+}
+
+.jem-taxrate-form .jem-taxrate-fields > .control-group:last-child {
+    margin-bottom: 0;
+}
+
+.jem-taxrate-form .control-label,
+.jem-taxrate-form .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-taxrate-form .control-label label {
+    display: inline-block;
+    padding-top: .5rem;
+}
+
+.jem-taxrate-form .controls > input[type="text"],
+.jem-taxrate-form .controls > input[type="number"],
+.jem-taxrate-form .controls > .field-calendar,
+.jem-taxrate-form .controls > textarea {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+
+.jem-taxrate-form .controls > select,
+.jem-taxrate-form .controls > joomla-field-fancy-select {
+    display: inline-block;
+    width: auto;
+    min-width: min(100%, 16rem);
+    max-width: 100%;
+}
+
+.jem-taxrate-form .controls > .form-text {
+    position: static;
+    display: block;
+    width: 100%;
+    margin-top: .35rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.jem-taxrate-form textarea {
+    min-height: 8rem;
+    resize: vertical;
+}
+
+@media (max-width: 767.98px) {
+    .jem-taxrate-form .jem-taxrate-fields > .control-group {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: .35rem;
+    }
+
+    .jem-taxrate-form .control-label label {
+        padding-top: 0;
+    }
+}
+
+/* Backend event Permissions tab: aligned rows on desktop, stacked on mobile. */
+.jem-event-settings-tab .jem-event-settings-grid > li {
+    display: grid;
+    grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 .75rem;
+    padding: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > label {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > select,
+.jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+    width: 100%;
+    min-width: 0;
+    max-width: 32rem;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > fieldset,
+.jem-event-settings-tab .jem-event-settings-grid > li > .btn-group {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .jem-event-settings-tab .jem-event-settings-grid > li {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-event-settings-tab .jem-event-settings-grid > li > select,
+    .jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+        max-width: 100%;
+    }
+}
+
 div.imageinfo {
     background: #f9f9f9;
     font-family: Arial, Helvetica, sans-serif;

@@ -59,8 +59,12 @@ final class PricingFoundationSchemaTest extends TestCase
         self::assertStringContainsString('idx_capacity_pool_event_code', $install);
         self::assertStringContainsString('idx_event_price_event_code', $install);
         self::assertStringContainsString('idx_tax_rate_code', $install);
+        self::assertStringContainsString('idx_tax_rate_country', $install);
+        self::assertStringContainsString('idx_tax_rate_country', $update);
         self::assertStringContainsString("('pricing_schema_ready', '1')", $install);
         self::assertStringContainsString("('pricing_schema_ready', '0')", $update);
+        self::assertMatchesRegularExpression('/CREATE TABLE IF NOT EXISTS `#__jem_countries`[\s\S]+`currency` char\(3\)/i', $install);
+        self::assertStringContainsString('ADD COLUMN `currency` CHAR(3)', $update);
     }
 
     public function testLegacyDefaultsDoNotEnablePricingOrInventCommercialValues(): void

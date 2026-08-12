@@ -18,15 +18,21 @@ class JemModelTaxrates extends ListModel
 
     protected function populateState($ordering = null, $direction = null)
     {
+        $defaultCountry = strtoupper(trim((string) (JemAdmin::config()->defaultCountry ?? '')));
+        if (preg_match('/^[A-Z]{2}$/D', $defaultCountry) !== 1) {
+            $defaultCountry = '';
+        }
+
         $this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search'));
         $this->setState('filter.state', $this->getUserStateFromRequest($this->context . '.filter_state', 'filter_state', '', 'string'));
         $this->setState('filter.tax_type', $this->getUserStateFromRequest($this->context . '.filter_tax_type', 'filter_tax_type', '', 'cmd'));
+        $this->setState('filter.country_code', $this->getUserStateFromRequest($this->context . '.filter_country_code', 'filter_country_code', $defaultCountry, 'cmd'));
         parent::populateState('a.ordering', 'asc');
     }
 
     protected function getStoreId($id = '')
     {
-        return parent::getStoreId($id . ':' . $this->getState('filter.search') . ':' . $this->getState('filter.state') . ':' . $this->getState('filter.tax_type'));
+        return parent::getStoreId($id . ':' . $this->getState('filter.search') . ':' . $this->getState('filter.state') . ':' . $this->getState('filter.tax_type') . ':' . $this->getState('filter.country_code'));
     }
 
     protected function getListQuery()
@@ -53,6 +59,10 @@ class JemModelTaxrates extends ListModel
         if ($type !== '') {
             $query->where('a.tax_type = ' . $db->quote($type));
         }
+        $countryCode = strtoupper(trim((string) $this->getState('filter.country_code')));
+        if ($countryCode !== '') {
+            $query->where('a.country_code = ' . $db->quote($countryCode));
+        }
 
         $order = $this->state->get('list.ordering', 'a.ordering');
         $direction = strtoupper($this->state->get('list.direction', 'ASC'));
@@ -64,5 +74,20 @@ class JemModelTaxrates extends ListModel
         }
 
         return $query->order($db->escape($order) . ' ' . $direction);
+    }
+
+    public function getCountries(): array
+    {
+        $db = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select('DISTINCT ' . $db->quoteName('t.country_code', 'value'))
+            ->select('COALESCE(' . $db->quoteName('c.name') . ', ' . $db->quoteName('t.country_code') . ') AS ' . $db->quoteName('text'))
+            ->from($db->quoteName('#__jem_tax_rates', 't'))
+            ->join('LEFT', $db->quoteName('#__jem_countries', 'c') . ' ON ' . $db->quoteName('c.iso2') . ' = ' . $db->quoteName('t.country_code'))
+            ->where($db->quoteName('t.country_code') . " <> ''")
+            ->order($db->quoteName('text') . ' ASC');
+        $db->setQuery($query);
+
+        return (array) $db->loadObjectList();
     }
 }

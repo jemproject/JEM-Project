@@ -78,6 +78,12 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
             self::assertArrayHasKey($column, $eventColumns);
         }
 
+        $countryColumns = array_change_key_case(
+            $db->getTableColumns($db->replacePrefix('#__jem_countries'), false),
+            CASE_LOWER
+        );
+        self::assertArrayHasKey('currency', $countryColumns);
+
         $registerColumns = array_change_key_case(
             $db->getTableColumns($db->replacePrefix('#__jem_register'), false),
             CASE_LOWER
@@ -93,6 +99,18 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         foreach (array('checked_out', 'checked_out_time') as $column) {
             self::assertArrayHasKey($column, $taxRateColumns);
         }
+
+        $taxRateKeys = $db->getTableKeys($db->replacePrefix('#__jem_tax_rates'));
+        $taxRateKeyNames = array();
+        foreach ((array) $taxRateKeys as $name => $key) {
+            if (is_string($name)) {
+                $taxRateKeyNames[] = $name;
+            }
+            if (is_object($key)) {
+                $taxRateKeyNames[] = (string) ($key->Key_name ?? $key->key_name ?? $key->name ?? '');
+            }
+        }
+        self::assertContains('idx_tax_rate_country', $taxRateKeyNames);
 
         $db->setQuery("SELECT `value` FROM `#__jem_config` WHERE `keyname` = 'pricing_schema_ready'");
         self::assertSame('1', (string) $db->loadResult());

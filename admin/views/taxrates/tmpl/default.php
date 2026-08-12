@@ -13,6 +13,10 @@ $taxTypes = array('standard', 'reduced', 'zero', 'exempt', 'outside_scope');
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=taxrates'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
+        <div class="alert alert-info">
+            <p><?php echo Text::_('COM_JEM_TAX_RATE_CATALOG_NOTICE'); ?></p>
+            <p class="mb-0"><?php echo Text::_('COM_JEM_TAX_RATE_CATALOG_SOURCE'); ?></p>
+        </div>
         <fieldset id="filter-bar" class="mb-3"><div class="d-flex flex-wrap gap-2">
             <div class="input-group" style="max-width:28rem">
                 <input type="text" name="filter_search" class="form-control" value="<?php echo $this->escape($this->state->get('filter.search')); ?>" placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>">
@@ -25,6 +29,10 @@ $taxTypes = array('standard', 'reduced', 'zero', 'exempt', 'outside_scope');
             <select name="filter_tax_type" class="form-select" style="width:auto" onchange="this.form.submit()">
                 <option value=""><?php echo Text::_('COM_JEM_TAX_RATE_FILTER_TYPE'); ?></option>
                 <?php foreach ($taxTypes as $type) : ?><option value="<?php echo $type; ?>"<?php echo $this->state->get('filter.tax_type') === $type ? ' selected' : ''; ?>><?php echo Text::_('COM_JEM_TAX_TYPE_' . strtoupper($type)); ?></option><?php endforeach; ?>
+            </select>
+            <select name="filter_country_code" class="form-select" style="width:auto" onchange="this.form.submit()">
+                <option value=""><?php echo Text::_('COM_JEM_TAX_RATE_FILTER_COUNTRY'); ?></option>
+                <?php foreach ($this->countries as $country) : ?><option value="<?php echo $this->escape($country->value); ?>"<?php echo $this->state->get('filter.country_code') === $country->value ? ' selected' : ''; ?>><?php echo $this->escape($country->text); ?> (<?php echo $this->escape($country->value); ?>)</option><?php endforeach; ?>
             </select>
         </div></fieldset>
 

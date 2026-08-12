@@ -12,6 +12,7 @@ class JemViewTaxrates extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $countries;
 
     public function display($tpl = null)
     {
@@ -22,6 +23,7 @@ class JemViewTaxrates extends JemAdminView
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
+        $this->countries = $this->get('Countries');
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
             Factory::getApplication()->enqueueMessage(implode("\n", $errors), 'error');

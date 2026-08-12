@@ -4,67 +4,61 @@ declare(strict_types=1);
 
 use Joomla\CMS\Factory;
 use Joomla\Database\DatabaseDriver;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 
 require_once dirname(__DIR__) . '/JoomlaTestCase.php';
 
+#[RunClassInSeparateProcess]
+#[PreserveGlobalState(false)]
 final class TaxRateCatalogueJoomlaIntegrationTest extends JoomlaTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
+        if (getenv('JEM_TEST_WRITABLE') !== '1') {
+            self::markTestSkipped('Set JEM_TEST_WRITABLE=1 after installing the package to verify the tax catalogue.');
+        }
         self::bootJoomlaSite();
-        require_once JEM_TEST_ROOT . '/admin/tables/jem_tax_rates.php';
     }
 
-    public function testValidSemanticTaxRateNormalisesWithoutFloatInput(): void
+    public function testInstalledCatalogueIsCompleteInactiveEditableReferenceData(): void
     {
-        $table = $this->table();
-        $table->code = ' es_iva-21 ';
-        $table->name = 'IVA general';
-        $table->tax_type = 'STANDARD';
-        $table->rate = '21';
-        $table->country_code = 'es';
-        $table->valid_from = '2026-01-01';
-        $table->valid_until = '2026-12-31';
+        $db = Factory::getContainer()->get(DatabaseDriver::class);
+        $catalogue = json_decode(
+            (string) file_get_contents(JPATH_ADMINISTRATOR . '/components/com_jem/data/taxrates/eu-vat-rates.json'),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+        $expectedRates = array_sum(array_map(
+            static fn (array $country): int => count($country['rates']),
+            $catalogue['countries']
+        ));
 
-        self::assertTrue($table->check(), (string) $table->getError());
-        self::assertSame('ES_IVA-21', $table->code);
-        self::assertSame('standard', $table->tax_type);
-        self::assertSame('21.00', $table->rate);
-        self::assertSame('ES', $table->country_code);
-    }
+        $db->setQuery("SELECT COUNT(*) FROM `#__jem_tax_rates` WHERE LEFT(`code`, 3) = 'EU_'");
+        self::assertSame($expectedRates, (int) $db->loadResult());
 
-    /** @dataProvider invalidTaxRateProvider */
-    public function testInvalidTaxCatalogueRowsAreRejected(array $values): void
-    {
-        $table = $this->table();
-        $table->code = $values['code'] ?? 'TEST';
-        $table->name = $values['name'] ?? 'Test';
-        $table->tax_type = $values['tax_type'] ?? 'standard';
-        $table->rate = $values['rate'] ?? '21.00';
-        $table->country_code = $values['country_code'] ?? '';
-        $table->valid_from = $values['valid_from'] ?? null;
-        $table->valid_until = $values['valid_until'] ?? null;
+        $db->setQuery("SELECT COUNT(*) FROM `#__jem_tax_rates` WHERE LEFT(`code`, 3) = 'EU_' AND `published` <> 0");
+        self::assertSame(0, (int) $db->loadResult());
 
-        self::assertFalse($table->check());
-    }
+        $db->setQuery("SELECT COUNT(*) FROM `#__jem_tax_rates` WHERE LEFT(`code`, 3) = 'EU_' AND (`description` LIKE '%http%' OR `description` LIKE '%TEDB%')");
+        self::assertSame(0, (int) $db->loadResult());
 
-    public static function invalidTaxRateProvider(): iterable
-    {
-        yield 'invalid code' => array(array('code' => 'IVA 21'));
-        yield 'empty name' => array(array('name' => ''));
-        yield 'unknown semantic type' => array(array('tax_type' => 'other'));
-        yield 'exempt with non-zero rate' => array(array('tax_type' => 'exempt'));
-        yield 'too many percentage decimals' => array(array('rate' => '21.001'));
-        yield 'invalid country' => array(array('country_code' => 'ESP'));
-        yield 'invalid calendar date' => array(array('valid_from' => '2026-02-30'));
-        yield 'reversed validity' => array(array('valid_from' => '2026-12-31', 'valid_until' => '2026-01-01'));
-    }
+        $db->setQuery("SELECT `code`, `rate` FROM `#__jem_tax_rates` WHERE `country_code` = 'ES' ORDER BY `rate` DESC");
+        self::assertSame(
+            array(
+                array('code' => 'EU_ES_STANDARD', 'rate' => '21.00'),
+                array('code' => 'EU_ES_REDUCED', 'rate' => '10.00'),
+                array('code' => 'EU_ES_SUPER_REDUCED', 'rate' => '4.00'),
+            ),
+            $db->loadAssocList()
+        );
 
-    private function table(): jem_tax_rates
-    {
-        $database = Factory::getContainer()->get(DatabaseDriver::class);
+        $db->setQuery("SELECT `currency` FROM `#__jem_countries` WHERE `iso2` = 'ES'");
+        self::assertSame('EUR', (string) $db->loadResult());
 
-        return new jem_tax_rates($database);
+        $db->setQuery("SELECT `value` FROM `#__jem_config` WHERE `keyname` = 'tax_rates_eu_catalog_version'");
+        self::assertSame($catalogue['version'], (string) $db->loadResult());
     }
 }

@@ -12,7 +12,9 @@
             <option value="outside_scope">COM_JEM_TAX_TYPE_OUTSIDE_SCOPE</option>
         </field>
         <field name="rate" type="number" label="COM_JEM_TAX_RATE_FIELD_RATE" description="COM_JEM_TAX_RATE_FIELD_RATE_DESC" required="true" min="0" max="100" step="0.01" default="0.00" class="form-control" />
-        <field name="country_code" type="text" label="COM_JEM_TAX_RATE_FIELD_COUNTRY" description="COM_JEM_TAX_RATE_FIELD_COUNTRY_DESC" maxlength="2" class="form-control" />
+        <field name="country_code" type="countryoptions" label="COM_JEM_TAX_RATE_FIELD_COUNTRY" description="COM_JEM_TAX_RATE_FIELD_COUNTRY_DESC" class="form-select w-auto" fancy="false">
+            <option value="">COM_JEM_SELECT_COUNTRY</option>
+        </field>
         <field name="region_code" type="text" label="COM_JEM_TAX_RATE_FIELD_REGION" maxlength="100" class="form-control" />
         <field name="valid_from" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_FROM" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />
         <field name="valid_until" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_UNTIL" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />

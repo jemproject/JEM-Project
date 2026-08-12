@@ -29,15 +29,15 @@ $group = 'attribs';
 
 ?>
 
-<div class="width-100">
+<div class="width-100 jem-event-settings-tab">
     <fieldset class="adminform">
         <legend><?php echo Text::_('COM_JEM_EVENT'); ?></legend>
-        <ul class="adminformlist">
+        <ul class="adminformlist jem-event-settings-grid">
             <?php foreach ($this->form->getFieldset('basic') as $field): ?>
                 <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
             <?php endforeach; ?>
         </ul>
-        <ul class="adminformlist">
+        <ul class="adminformlist jem-event-settings-grid">
             <?php foreach ($this->form->getFieldset('evevents',$group) as $field): ?>
                 <li><?php echo $field->label; ?> <?php echo $field->input; ?></li>
             <?php endforeach; ?>
@@ -45,7 +45,7 @@ $group = 'attribs';
     </fieldset>
     <fieldset class="adminform">
         <legend><?php echo Text::_('COM_JEM_VENUE'); ?></legend>
-        <ul class="adminformlist">
+        <ul class="adminformlist jem-event-settings-grid">
             <li><?php echo $this->form->getLabel('event_venue_layout',$group); ?> <?php echo $this->form->getInput('event_venue_layout',$group); ?></li>
             <li><?php echo $this->form->getLabel('event_show_locdescription',$group); ?> <?php echo $this->form->getInput('event_show_locdescription',$group); ?></li>
             <li><?php echo $this->form->getLabel('event_show_detailsadress',$group); ?> <?php echo $this->form->getInput('event_show_detailsadress',$group); ?></li>
@@ -58,7 +58,7 @@ $group = 'attribs';
     <div class="width-100">
         <fieldset class="adminform">
             <legend><?php echo Text::_('COM_JEM_REGISTRATION'); ?></legend>
-            <ul class="adminformlist">
+            <ul class="adminformlist jem-event-settings-grid">
                 <li><?php echo $this->form->getLabel('event_comunsolution',$group); ?> <?php echo $this->form->getInput('event_comunsolution',$group); ?></li>
                 <li id="comm1" style="display:none"><?php echo $this->form->getLabel('event_comunoption',$group); ?> <?php echo $this->form->getInput('event_comunoption',$group); ?></li>
             </ul>

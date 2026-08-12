@@ -275,6 +275,8 @@ final class ZipArtifactContentsTest extends TestCase
                 'site/classes/taxcalculator.class.php' => 'final class JemTaxCalculator',
                 'admin/tables/jem_tax_rates.php' => 'class jem_tax_rates extends Table',
                 'admin/models/forms/taxrate.xml' => 'name="tax_type"',
+                'admin/data/currencies/country-currencies.json' => '"catalog": "country-currencies"',
+                'admin/data/taxrates/eu-vat-rates.json' => '"catalog": "eu-vat-rates"',
                 'admin/views/taxrates/tmpl/default.php' => 'view=taxrates',
                 'media/images/icon-48-taxrates.svg' => '<svg',
             ) as $entry => $expected) {

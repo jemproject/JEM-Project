@@ -65,7 +65,7 @@ final class JemSchemaTest extends JoomlaTestCase
         yield 'attachments' => array('jem_attachments', array('id', 'object', 'file', 'name', 'description', 'frontend', 'access', 'created_by', 'downloads', 'last_download'));
         yield 'links' => array('jem_links', array('id', 'event_id', 'type', 'title', 'description', 'url', 'params', 'state', 'created_by'));
         yield 'types' => array('jem_types', array('id', 'name', 'alias', 'entity', 'translations', 'published', 'access', 'language'));
-        yield 'countries' => array('jem_countries', array('id', 'continent', 'iso2', 'iso3', 'name', 'published'));
+        yield 'countries' => array('jem_countries', array('id', 'continent', 'iso2', 'iso3', 'name', 'currency', 'published'));
         yield 'config' => array('jem_config', array('keyname', 'value', 'access'));
         yield 'register' => array('jem_register', array('id', 'event', 'uid', 'places', 'waiting', 'status', 'reference', 'revision', 'pricing_mode', 'currency', 'subtotal_net', 'discount_total', 'tax_total', 'management_fee_net', 'management_fee_tax', 'management_fee_gross', 'grand_total', 'payment_state', 'price_locked_at', 'external_payment_reference'));
         yield 'event series' => array('jem_event_series', array('id', 'root_event_id', 'title', 'series_type', 'created', 'created_by', 'modified', 'modified_by', 'published'));

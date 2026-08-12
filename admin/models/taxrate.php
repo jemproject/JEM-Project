@@ -10,6 +10,20 @@ require_once __DIR__ . '/admin.php';
 
 class JemModelTaxrate extends JemModelAdmin
 {
+    public function getItem($pk = null)
+    {
+        $item = parent::getItem($pk);
+
+        if ($item && empty($item->id) && empty($item->country_code)) {
+            $defaultCountry = strtoupper(trim((string) (JemAdmin::config()->defaultCountry ?? '')));
+            $item->country_code = preg_match('/^[A-Z]{2}$/D', $defaultCountry) === 1
+                ? $defaultCountry
+                : '';
+        }
+
+        return $item;
+    }
+
     protected function canDelete($record)
     {
         if (empty($record->id) || !JemHelperBackend::canManage('core.options')) {

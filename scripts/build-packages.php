@@ -224,7 +224,7 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate component archive in ' . $package);
         }
 
-        foreach (['jem.xml', 'script.php', 'admin/jem.php', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'] as $entry) {
+        foreach (['jem.xml', 'script.php', 'admin/jem.php', 'admin/data/currencies/country-currencies.json', 'admin/data/taxrates/eu-vat-rates.json', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'] as $entry) {
             if ($component->locateName($entry) === false) {
                 $component->close();
                 @unlink($tmpComponent);
