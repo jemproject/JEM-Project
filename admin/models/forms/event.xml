@@ -582,6 +582,167 @@
         />
     </fieldset>
 
+    <fieldset name="pricing_capacity" label="COM_JEM_EVENT_PRICING_CAPACITY_TAB"
+        addfieldpath="/administrator/components/com_jem/models/fields">
+        <field name="pricing_mode" type="list"
+            default="classic"
+            filter="cmd"
+            label="COM_JEM_EVENT_PRICING_MODE"
+            description="COM_JEM_EVENT_PRICING_MODE_DESC"
+        >
+            <option value="classic">COM_JEM_EVENT_PRICING_MODE_CLASSIC</option>
+            <option value="single">COM_JEM_EVENT_PRICING_MODE_SINGLE</option>
+            <option value="multiple">COM_JEM_EVENT_PRICING_MODE_MULTIPLE</option>
+        </field>
+        <field name="currency" type="currencyoptions"
+            label="COM_JEM_EVENT_CURRENCY"
+            description="COM_JEM_EVENT_CURRENCY_DESC"
+            showon="pricing_mode:single,multiple"
+        >
+            <option value="">COM_JEM_EVENT_CURRENCY_SELECT</option>
+        </field>
+        <field name="prices_include_tax" type="radio"
+            default="1"
+            filter="integer"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_JEM_EVENT_PRICES_INCLUDE_TAX"
+            description="COM_JEM_EVENT_PRICES_INCLUDE_TAX_DESC"
+            showon="pricing_mode:single,multiple"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="default_tax_rate_id" type="taxrateoptions"
+            label="COM_JEM_EVENT_DEFAULT_TAX_RATE"
+            description="COM_JEM_EVENT_DEFAULT_TAX_RATE_DESC"
+            showon="pricing_mode:single,multiple"
+        />
+        <field name="management_fee_mode" type="hidden" default="fixed_per_ticket" />
+        <field name="management_fee_value" type="number"
+            min="0"
+            step="0.01"
+            default="0.00"
+            label="COM_JEM_EVENT_MANAGEMENT_FEE"
+            description="COM_JEM_EVENT_MANAGEMENT_FEE_DESC"
+            showon="pricing_mode:single,multiple"
+        />
+        <field name="management_fee_basis" type="hidden" default="gross" />
+        <field name="management_fee_tax_rate_id" type="taxrateoptions"
+            label="COM_JEM_EVENT_MANAGEMENT_FEE_TAX_RATE"
+            description="COM_JEM_EVENT_MANAGEMENT_FEE_TAX_RATE_DESC"
+            showon="pricing_mode:single,multiple"
+        />
+        <field name="management_fee_refundable" type="radio"
+            default="0"
+            filter="integer"
+            layout="joomla.form.field.radio.switcher"
+            label="COM_JEM_EVENT_MANAGEMENT_FEE_REFUNDABLE"
+            showon="pricing_mode:single,multiple"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="venue_profile_id" type="hidden" />
+        <field name="venue_profile_revision" type="hidden" />
+        <field name="venue_snapshot" type="hidden" filter="raw" />
+        <field name="reload_venue_capacity" type="checkbox"
+            value="1"
+            default="0"
+            label="COM_JEM_EVENT_RELOAD_VENUE_CAPACITY"
+            description="COM_JEM_EVENT_RELOAD_VENUE_CAPACITY_DESC"
+            showon="pricing_mode:single,multiple"
+        />
+        <field name="capacity_pools" type="subform"
+            layout="joomla.form.field.subform.repeatable"
+            multiple="true"
+            label="COM_JEM_EVENT_CAPACITY_AREAS"
+            description="COM_JEM_EVENT_CAPACITY_AREAS_DESC"
+            buttons=""
+            showon="pricing_mode:single,multiple"
+        >
+            <form>
+                <field name="id" type="hidden" />
+                <field name="venue_capacity_area_id" type="hidden" />
+                <field name="venue_layout_id" type="hidden" />
+                <field name="venue_layout_revision" type="hidden" />
+                <field name="allocation_mode" type="hidden" default="quantity" />
+                <field name="code" type="text" readonly="true" class="readonly"
+                    label="COM_JEM_VENUE_CAPACITY_AREA_CODE" />
+                <field name="name" type="text" maxlength="255"
+                    label="COM_JEM_VENUE_CAPACITY_AREA_NAME" />
+                <field name="description" type="textarea" rows="2" filter="safehtml"
+                    label="COM_JEM_VENUE_CAPACITY_AREA_DESCRIPTION" />
+                <field name="capacity" type="number" min="0" step="1" filter="uint"
+                    label="COM_JEM_VENUE_CAPACITY_AREA_CAPACITY" />
+                <field name="published" type="list" default="1" filter="integer" label="JSTATUS">
+                    <option value="1">JPUBLISHED</option>
+                    <option value="0">JUNPUBLISHED</option>
+                </field>
+            </form>
+        </field>
+        <field name="event_prices" type="subform"
+            layout="joomla.form.field.subform.repeatable"
+            multiple="true"
+            label="COM_JEM_EVENT_PRICE_OPTIONS"
+            description="COM_JEM_EVENT_PRICE_OPTIONS_DESC"
+            buttons="add,remove,move"
+            showon="pricing_mode:single,multiple"
+        >
+            <form>
+                <field name="id" type="hidden" />
+                <field name="code" type="text" maxlength="64"
+                    label="COM_JEM_EVENT_PRICE_CODE"
+                    description="COM_JEM_EVENT_PRICE_CODE_DESC" />
+                <field name="name" type="text" maxlength="255"
+                    label="COM_JEM_EVENT_PRICE_NAME" />
+                <field name="description" type="textarea" rows="2" filter="safehtml"
+                    label="COM_JEM_EVENT_PRICE_DESCRIPTION" />
+                <field name="amount" type="number" min="0" step="0.01" default="0.00"
+                    label="COM_JEM_EVENT_PRICE_AMOUNT" />
+                <field name="tax_rate_id" type="taxrateoptions" required="true"
+                    label="COM_JEM_EVENT_PRICE_TAX_RATE" />
+                <field name="capacity_pool_id" type="capacitypooloptions"
+                    label="COM_JEM_EVENT_PRICE_CAPACITY_AREA" />
+                <field name="quota" type="number" min="0" step="1" filter="uint"
+                    label="COM_JEM_EVENT_PRICE_QUOTA" />
+                <field name="min_quantity" type="number" min="1" step="1" default="1" filter="uint"
+                    label="COM_JEM_EVENT_PRICE_MIN_QUANTITY" />
+                <field name="max_quantity" type="number" min="1" step="1" filter="uint"
+                    label="COM_JEM_EVENT_PRICE_MAX_QUANTITY" />
+                <field name="available_from" type="calendar"
+                    format="%Y-%m-%d %H:%M:%S" translateformat="true" showtime="true"
+                    filter="user_utc" filterformat="Y-m-d H:i:s"
+                    label="COM_JEM_EVENT_PRICE_AVAILABLE_FROM" />
+                <field name="available_until" type="calendar"
+                    format="%Y-%m-%d %H:%M:%S" translateformat="true" showtime="true"
+                    filter="user_utc" filterformat="Y-m-d H:i:s"
+                    label="COM_JEM_EVENT_PRICE_AVAILABLE_UNTIL" />
+                <field name="min_age" type="number" min="0" max="255" step="1" filter="uint"
+                    label="COM_JEM_EVENT_PRICE_MIN_AGE" />
+                <field name="max_age" type="number" min="0" max="255" step="1" filter="uint"
+                    label="COM_JEM_EVENT_PRICE_MAX_AGE" />
+                <field name="access_level_id" type="accesslevel"
+                    label="COM_JEM_EVENT_PRICE_ACCESS_LEVEL">
+                    <option value="">COM_JEM_EVENT_PRICE_NO_ACCESS_RESTRICTION</option>
+                </field>
+                <field name="user_group_id" type="usergrouplist" checksuperusergroup="1"
+                    label="COM_JEM_EVENT_PRICE_USER_GROUP">
+                    <option value="">COM_JEM_EVENT_PRICE_NO_GROUP_RESTRICTION</option>
+                </field>
+                <field name="verification_mode" type="list" default="none" filter="cmd"
+                    label="COM_JEM_EVENT_PRICE_VERIFICATION">
+                    <option value="none">COM_JEM_EVENT_PRICE_VERIFICATION_NONE</option>
+                    <option value="declaration">COM_JEM_EVENT_PRICE_VERIFICATION_DECLARATION</option>
+                    <option value="manual">COM_JEM_EVENT_PRICE_VERIFICATION_MANUAL</option>
+                </field>
+                <field name="published" type="list" default="1" filter="integer" label="JSTATUS">
+                    <option value="1">JPUBLISHED</option>
+                    <option value="0">JUNPUBLISHED</option>
+                </field>
+            </form>
+        </field>
+    </fieldset>
+
     <fieldset name="notifications" label="COM_JEM_EVENT_NOTIFICATIONS">
         <field name="event_reminders_enabled" type="radio" default="0"
             class="inputbox btn-group btn-group-yesno"

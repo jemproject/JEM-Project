@@ -188,6 +188,27 @@
         />
     </fieldset>
 
+    <fieldset name="capacity_configuration"
+        label="COM_JEM_VENUE_CAPACITY_CONFIGURATION"
+    >
+        <field name="capacity_configuration_submitted" type="hidden" default="1" />
+        <field name="capacity_configuration_json" type="hidden" filter="raw" />
+        <field name="capacity_profile_id" type="hidden" />
+        <field name="capacity_profile_name" type="text"
+            readonly="true"
+            class="readonly"
+            label="COM_JEM_VENUE_CAPACITY_PROFILE"
+            description="COM_JEM_VENUE_CAPACITY_PROFILE_DESC"
+        />
+        <field name="capacity_profile_revision" type="number"
+            readonly="true"
+            class="readonly"
+            filter="uint"
+            label="COM_JEM_VENUE_CAPACITY_PROFILE_REVISION"
+            description="COM_JEM_VENUE_CAPACITY_PROFILE_REVISION_DESC"
+        />
+    </fieldset>
+
     <fieldset name="custom">
         <field name="custom1" type="text"
             size="20"

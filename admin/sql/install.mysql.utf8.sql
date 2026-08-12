@@ -88,6 +88,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `management_fee_basis` varchar(8) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'gross',
     `management_fee_tax_rate_id` int(11) unsigned NULL DEFAULT NULL,
     `management_fee_refundable` tinyint(1) NOT NULL DEFAULT '0',
+    `venue_profile_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_profile_revision` int(10) unsigned NOT NULL DEFAULT '0',
+    `venue_snapshot` mediumtext NULL DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_venue` (`locid`),
     KEY `idx_access` (`access`),
@@ -99,7 +102,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_type` (`type_id`),
     KEY `idx_start_utc` (`start_utc`),
     KEY `idx_end_utc` (`end_utc`),
-    KEY `idx_series` (`series_id`, `series_order`)
+    KEY `idx_series` (`series_id`, `series_order`),
+    KEY `idx_venue_profile` (`venue_profile_id`, `venue_profile_revision`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_event_series` (
@@ -147,6 +151,10 @@ CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (
 CREATE TABLE IF NOT EXISTS `#__jem_capacity_pools` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `event_id` int(11) unsigned NOT NULL,
+    `venue_capacity_area_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_layout_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_layout_revision` int(10) unsigned NOT NULL DEFAULT '0',
+    `allocation_mode` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity',
     `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `name` varchar(255) NOT NULL DEFAULT '',
     `description` text DEFAULT NULL,
@@ -159,7 +167,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_capacity_pools` (
     `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_capacity_pool_event_code` (`event_id`, `code`),
-    KEY `idx_capacity_pool_event_published` (`event_id`, `published`, `ordering`)
+    KEY `idx_capacity_pool_event_published` (`event_id`, `published`, `ordering`),
+    KEY `idx_capacity_pool_venue_area` (`venue_capacity_area_id`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (
@@ -172,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (
     `amount` decimal(15,2) NOT NULL DEFAULT '0.00',
     `tax_rate_id` int(11) unsigned NULL DEFAULT NULL,
     `quota` int(10) unsigned NULL DEFAULT NULL,
-    `min_quantity` int(10) unsigned NOT NULL DEFAULT '0',
+    `min_quantity` int(10) unsigned NOT NULL DEFAULT '1',
     `max_quantity` int(10) unsigned NULL DEFAULT NULL,
     `available_from` datetime NULL DEFAULT NULL,
     `available_until` datetime NULL DEFAULT NULL,
@@ -253,6 +262,88 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
     KEY `idx_type` (`type_id`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `venue_id` int(11) unsigned NOT NULL,
+    `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `name` varchar(255) NOT NULL DEFAULT '',
+    `revision` int(10) unsigned NOT NULL DEFAULT '1',
+    `is_default` tinyint(1) NOT NULL DEFAULT '1',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`, `code`),
+    KEY `idx_venue_capacity_profile_default` (`venue_id`, `is_default`, `published`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `venue_id` int(11) unsigned NOT NULL,
+    `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `name` varchar(255) NOT NULL DEFAULT '',
+    `description` text DEFAULT NULL,
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_venue_space_code` (`venue_id`, `code`),
+    KEY `idx_venue_space_published` (`venue_id`, `published`, `ordering`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_venue_layouts` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `venue_space_id` int(11) unsigned NOT NULL,
+    `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `name` varchar(255) NOT NULL DEFAULT '',
+    `revision` int(10) unsigned NOT NULL DEFAULT '1',
+    `capacity` int(10) unsigned NOT NULL DEFAULT '0',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_venue_layout_revision` (`venue_space_id`, `code`, `revision`),
+    KEY `idx_venue_layout_published` (`venue_space_id`, `published`, `ordering`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_venue_profile_spaces` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `venue_profile_id` int(11) unsigned NOT NULL,
+    `venue_space_id` int(11) unsigned NOT NULL,
+    `venue_layout_id` int(11) unsigned NOT NULL,
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_venue_profile_space` (`venue_profile_id`, `venue_space_id`),
+    KEY `idx_venue_profile_layout` (`venue_layout_id`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `venue_layout_id` int(11) unsigned NOT NULL,
+    `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `name` varchar(255) NOT NULL DEFAULT '',
+    `description` text DEFAULT NULL,
+    `capacity` int(10) unsigned NOT NULL DEFAULT '0',
+    `allocation_mode` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_venue_capacity_area_code` (`venue_layout_id`, `code`),
+    KEY `idx_venue_capacity_area_published` (`venue_layout_id`, `published`, `ordering`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (

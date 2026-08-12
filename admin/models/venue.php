@@ -17,6 +17,7 @@ use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
 
 /**
  * Model: Venue
@@ -227,6 +228,8 @@ class JemModelVenue extends JemModelAdmin
             $item->attachments = $files;
         }
 
+        JemVenueCapacityService::populateFormItem($item);
+
         $item->author_ip = JemHelper::getStoredIP();
 
         if (empty($item->id)) {
@@ -287,6 +290,33 @@ class JemModelVenue extends JemModelAdmin
         $jinput      = $app->input;
         $jemsettings = JemHelper::config();
         $task        = $jinput->get('task', '', 'cmd');
+        $capacityConfigurationSubmitted = !empty($data['capacity_configuration_submitted']);
+        $capacityConfiguration = array('spaces' => array());
+        if ($capacityConfigurationSubmitted) {
+            try {
+                $decodedCapacity = json_decode(
+                    (string) ($data['capacity_configuration_json'] ?? ''),
+                    true,
+                    512,
+                    JSON_THROW_ON_ERROR
+                );
+                if (!is_array($decodedCapacity)) {
+                    throw new JsonException('Capacity configuration must be a JSON object.');
+                }
+                $capacityConfiguration = $decodedCapacity;
+            } catch (JsonException $e) {
+                $this->setError(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_INVALID_JSON'));
+
+                return false;
+            }
+        }
+        unset(
+            $data['capacity_configuration_submitted'],
+            $data['capacity_configuration_json'],
+            $data['capacity_profile_id'],
+            $data['capacity_profile_name'],
+            $data['capacity_profile_revision']
+        );
 
         // Check if we're in the front or back
         $backend = (bool)$app->isClient('administrator');
@@ -312,6 +342,19 @@ class JemModelVenue extends JemModelAdmin
         if ($data['map'] && !$this->hasMappableLocation($data)) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_MAP_ADDRESS'));
             return false;
+        }
+
+        if ($capacityConfigurationSubmitted) {
+            try {
+                $capacityConfiguration = JemVenueCapacityService::normaliseFormData(
+                    $capacityConfiguration,
+                    (int) ($data['capacity'] ?? 0)
+                );
+            } catch (InvalidArgumentException $e) {
+                $this->setError($e->getMessage());
+
+                return false;
+            }
         }
 
         $customFieldErrors = array();
@@ -345,6 +388,17 @@ class JemModelVenue extends JemModelAdmin
         if ($saved) {
             // At this point we do have an id.
             $pk = $this->getState($this->getName() . '.id');
+
+            try {
+                JemVenueCapacityService::ensureDefaultProfile((int) $pk);
+                if ($backend && $capacityConfigurationSubmitted) {
+                    JemVenueCapacityService::saveDefaultConfiguration((int) $pk, $capacityConfiguration);
+                }
+            } catch (Throwable $e) {
+                $this->setError(Text::sprintf('COM_JEM_VENUE_CAPACITY_SAVE_FAILED', $e->getMessage()));
+
+                return false;
+            }
 
             // on frontend attachment uploads maybe forbidden
             // so allow changing name or description only

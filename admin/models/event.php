@@ -23,6 +23,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
 
 /**
  * Event model.
@@ -338,9 +339,30 @@ class JemModelEvent extends JemModelAdmin
 
             if (empty($item->id)){
                 $item->country = $jemsettings->defaultCountry;
+                if (empty($item->locid) && !empty($jemsettings->defaultVenue)) {
+                    $item->locid = (int) $jemsettings->defaultVenue;
+                }
                 $item->timezone_mode = in_array(($jemsettings->event_timezone_default ?? 'joomla'), array('joomla', 'venue'), true)
                     ? $jemsettings->event_timezone_default
                     : 'joomla';
+            }
+
+            try {
+                JemEventPricingCapacityService::populateFormItem($item);
+            } catch (Throwable $error) {
+                $item->capacity_pools = array();
+                $item->event_prices = array();
+                $item->pricing_requirements = array(
+                    'venue_exists' => false,
+                    'country_code' => '',
+                    'suggested_currency' => '',
+                    'venue_capacity' => 0,
+                    'capacity_ready' => false,
+                    'profile_revision' => 0,
+                    'space_count' => 0,
+                    'configured_capacity' => 0,
+                    'pool_candidates' => array(),
+                );
             }
         }
 
@@ -652,6 +674,35 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
+        $pricingContext = null;
+        if ($backend) {
+            $submittedPricingMode = (string) ($data['pricing_mode'] ?? JemEventPricingCapacityService::MODE_CLASSIC);
+            if (($customSeriesRequested || $existingSeriesId > 0 || (int) ($data['recurrence_type'] ?? 0) > 0)
+                && in_array($submittedPricingMode, array('priced', JemEventPricingCapacityService::MODE_SINGLE, JemEventPricingCapacityService::MODE_MULTIPLE), true)) {
+                $this->setError(Text::_('COM_JEM_EVENT_PRICING_ERROR_SERIES'));
+
+                return false;
+            }
+
+            if ($task === 'save2copy') {
+                $data['event_prices'] = JemEventPricingCapacityService::prepareCopiedPriceRows(
+                    (array) ($data['event_prices'] ?? array()),
+                    (int) ($data['id'] ?? 0)
+                );
+            }
+
+            try {
+                $pricingContext = JemEventPricingCapacityService::prepareEventData(
+                    $data,
+                    $task === 'save2copy' ? 0 : (int) ($data['id'] ?? 0)
+                );
+            } catch (Throwable $error) {
+                $this->setError($error->getMessage());
+
+                return false;
+            }
+        }
+
         // Load the event from the database, check if the event is the initial event (new, root, and not a recurrence).
         // In this case, the event only needs to be updated if the recurrence setting has not changed.
         $isInitialEvent = true;
@@ -823,10 +874,16 @@ class JemModelEvent extends JemModelAdmin
 
         $seriesDb = null;
         $seriesTransactionActive = false;
+        $pricingDb = null;
+        $pricingTransactionActive = false;
         if ($customSeriesRequested && ($new || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence'))) {
             $seriesDb = Factory::getContainer()->get('DatabaseDriver');
             $seriesDb->transactionStart();
             $seriesTransactionActive = true;
+        } elseif (!empty($pricingContext['active'])) {
+            $pricingDb = Factory::getContainer()->get('DatabaseDriver');
+            $pricingDb->transactionStart();
+            $pricingTransactionActive = true;
         }
 
         try {
@@ -1162,6 +1219,17 @@ class JemModelEvent extends JemModelAdmin
             }
         }
 
+        if ($saved && $pricingContext !== null) {
+            $stateName = $this->getName();
+            $savedId = (int) $this->getState($stateName . '.id');
+            if (!$savedId && !empty($data['id'])) {
+                $savedId = (int) $data['id'];
+            }
+            if ($savedId) {
+                JemEventPricingCapacityService::saveChildren($savedId, $pricingContext, false);
+            }
+        }
+
         if ($seriesTransactionActive) {
             if ($saved) {
                 $seriesDb->transactionCommit();
@@ -1174,6 +1242,15 @@ class JemModelEvent extends JemModelAdmin
                 $seriesDb->transactionRollback();
             }
             $seriesTransactionActive = false;
+        }
+
+        if ($pricingTransactionActive) {
+            if ($saved) {
+                $pricingDb->transactionCommit();
+            } else {
+                $pricingDb->transactionRollback();
+            }
+            $pricingTransactionActive = false;
         }
 
         if ($saved) {
@@ -1212,16 +1289,26 @@ class JemModelEvent extends JemModelAdmin
 
         return $saved;
         } catch (Throwable $error) {
-            if (!$seriesTransactionActive) {
+            if (!$seriesTransactionActive && !$pricingTransactionActive) {
                 throw $error;
             }
-            $seriesDb->transactionRollback();
-            $seriesTransactionActive = false;
-            $this->setError(Text::sprintf('COM_JEM_CUSTOM_SERIES_SAVE_FAILED', $error->getMessage()));
+            if ($seriesTransactionActive) {
+                $seriesDb->transactionRollback();
+                $seriesTransactionActive = false;
+                $this->setError(Text::sprintf('COM_JEM_CUSTOM_SERIES_SAVE_FAILED', $error->getMessage()));
+            }
+            if ($pricingTransactionActive) {
+                $pricingDb->transactionRollback();
+                $pricingTransactionActive = false;
+                $this->setError(Text::sprintf('COM_JEM_EVENT_PRICING_SAVE_FAILED', $error->getMessage()));
+            }
             return false;
         } finally {
             if ($seriesTransactionActive) {
                 $seriesDb->transactionRollback();
+            }
+            if ($pricingTransactionActive) {
+                $pricingDb->transactionRollback();
             }
         }
     }

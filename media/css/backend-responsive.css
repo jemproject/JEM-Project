@@ -1817,3 +1817,241 @@ fieldset.jem-specialdays-import #replace_specialdays {
         flex-basis: 100%;
     }
 }
+
+/* Point 4D: venue capacity cards shared with the classic backend layout. */
+.jem-venue-capacity-editor {
+    display: grid;
+    gap: 1rem;
+}
+
+.jem-venue-capacity-editor .adminform {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: .25rem;
+}
+
+.jem-capacity-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem 1rem;
+}
+
+.jem-capacity-profile-summary,
+.jem-capacity-card-header,
+.jem-capacity-areas-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}
+
+.jem-capacity-card-header,
+.jem-capacity-areas-heading {
+    justify-content: space-between;
+}
+
+.jem-capacity-spaces {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.jem-capacity-space-card {
+    min-width: 0;
+    overflow: hidden;
+    background: #f5f8fc;
+    border: 1px solid #aebfd0;
+    border-left: .35rem solid #2f6f9f;
+    border-radius: .55rem;
+    box-shadow: 0 .2rem .65rem rgba(29, 55, 78, .10);
+}
+
+.jem-capacity-space-card > .jem-capacity-card-header {
+    min-height: 3.25rem;
+    padding: .7rem 1rem;
+    color: #173b59;
+    background: #dceaf6;
+    border-bottom: 1px solid #aebfd0;
+}
+
+.jem-capacity-space-card > .jem-capacity-card-header h3 {
+    font-weight: 700;
+}
+
+.jem-capacity-space-card > .card-body {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f5f8fc;
+}
+
+.jem-capacity-section {
+    min-width: 0;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #d9e1e8;
+    border-radius: .4rem;
+}
+
+.jem-capacity-section > h4,
+.jem-capacity-areas-heading h4 {
+    color: #234d6d;
+    font-weight: 700;
+}
+
+.jem-capacity-section-layout {
+    background: #edf4fa;
+    border-color: #c4d7e7;
+}
+
+.jem-capacity-section-areas {
+    background: #f8f4e9;
+    border-color: #dfd1aa;
+}
+
+.jem-capacity-section-areas .jem-capacity-areas-heading {
+    padding-bottom: .75rem;
+    border-bottom: 1px solid #dfd1aa;
+}
+
+.jem-capacity-section + .jem-capacity-section {
+    margin-top: 0;
+}
+
+.jem-capacity-field-grid > label,
+.jem-capacity-area-row > label {
+    min-width: 0;
+}
+
+.jem-capacity-field-grid > label > span,
+.jem-capacity-area-row > label > span {
+    display: block;
+    margin-bottom: .25rem;
+    font-weight: 500;
+}
+
+.jem-capacity-layout-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.jem-capacity-area-list {
+    display: grid;
+    gap: .75rem;
+    margin-top: 1rem;
+}
+
+.jem-capacity-area-row {
+    display: grid;
+    grid-template-columns: minmax(9rem, 1.4fr) minmax(8rem, 1fr) minmax(7rem, .65fr) minmax(8rem, .75fr) auto;
+    gap: .75rem;
+    align-items: end;
+    padding: .9rem;
+    background: #fff;
+    border: 1px solid #d8c898;
+    border-left: .28rem solid #b38a28;
+    border-radius: .4rem;
+    box-shadow: 0 .12rem .35rem rgba(77, 61, 22, .08);
+}
+
+[data-bs-theme="dark"] .jem-capacity-space-card {
+    background: #182532;
+    border-color: #49657b;
+    border-left-color: #63a6d8;
+    box-shadow: 0 .2rem .65rem rgba(0, 0, 0, .3);
+}
+
+[data-bs-theme="dark"] .jem-capacity-space-card > .jem-capacity-card-header {
+    color: #e1f1fd;
+    background: #243f54;
+    border-bottom-color: #49657b;
+}
+
+[data-bs-theme="dark"] .jem-capacity-space-card > .card-body {
+    background: #182532;
+}
+
+[data-bs-theme="dark"] .jem-capacity-section {
+    background: #202d38;
+    border-color: #415363;
+}
+
+[data-bs-theme="dark"] .jem-capacity-section > h4,
+[data-bs-theme="dark"] .jem-capacity-areas-heading h4 {
+    color: #d7ebfa;
+}
+
+[data-bs-theme="dark"] .jem-capacity-section-layout {
+    background: #203746;
+    border-color: #49657b;
+}
+
+[data-bs-theme="dark"] .jem-capacity-section-areas {
+    background: #3a3322;
+    border-color: #766644;
+}
+
+[data-bs-theme="dark"] .jem-capacity-section-areas .jem-capacity-areas-heading {
+    border-bottom-color: #766644;
+}
+
+[data-bs-theme="dark"] .jem-capacity-area-row {
+    background: #28271f;
+    border-color: #766644;
+    border-left-color: #d0a849;
+    box-shadow: 0 .12rem .35rem rgba(0, 0, 0, .25);
+}
+
+.jem-capacity-area-description {
+    grid-column: 1 / -2;
+}
+
+.jem-capacity-area-remove {
+    grid-column: -2 / -1;
+    align-self: end;
+}
+
+.jem-venue-capacity-editor .control-group,
+.jem-venue-capacity-editor .controls,
+.jem-venue-capacity-editor .subform-repeatable-wrapper {
+    min-width: 0;
+}
+
+.jem-venue-capacity-editor input,
+.jem-venue-capacity-editor select,
+.jem-venue-capacity-editor textarea {
+    max-width: 100%;
+}
+
+.jem-capacity-areas-fieldset .subform-repeatable-group {
+    max-width: 100%;
+}
+
+@media (max-width: 767.98px) {
+    .jem-capacity-field-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jem-venue-capacity-editor .adminform {
+        padding: .75rem;
+    }
+
+    .jem-capacity-space-card > .card-body,
+    .jem-capacity-section {
+        padding: .75rem;
+    }
+
+    .jem-capacity-layout-grid,
+    .jem-capacity-area-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jem-capacity-area-description,
+    .jem-capacity-area-remove {
+        grid-column: auto;
+    }
+
+    .jem-capacity-card-header .btn-group {
+        width: 100%;
+    }
+}

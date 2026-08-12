@@ -1,0 +1,41 @@
+<?php
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+defined('_JEXEC') or die;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\HTML\HTMLHelper;
+
+class JFormFieldCurrencyOptions extends ListField
+{
+    protected $type = 'CurrencyOptions';
+
+    protected function getOptions()
+    {
+        $options = array();
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select('DISTINCT ' . $db->quoteName('currency'))
+                ->from($db->quoteName('#__jem_countries'))
+                ->where($db->quoteName('currency') . " <> ''")
+                ->order($db->quoteName('currency') . ' ASC');
+            $db->setQuery($query);
+            foreach ((array) $db->loadColumn() as $currency) {
+                $currency = strtoupper(trim((string) $currency));
+                if (preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
+                    $options[] = HTMLHelper::_('select.option', $currency, $currency);
+                }
+            }
+        } catch (Throwable $e) {
+            // Keep the event form usable while an update is still running.
+        }
+
+        return array_merge(parent::getOptions(), $options);
+    }
+}

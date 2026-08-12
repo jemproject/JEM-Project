@@ -1095,6 +1095,9 @@ Text::script('JCANCEL');
                         </div>
                     </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_CAPACITY_TAB')); ?>
+                    <?php echo $this->loadTemplate('capacity'); ?>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
 
                     <?php echo $this->loadTemplate('attachments'); ?>

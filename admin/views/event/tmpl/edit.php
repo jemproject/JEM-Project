@@ -572,6 +572,10 @@ $this->document->addStyleDeclaration('
             </fieldset>
 
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'pricing-capacity', Text::_('COM_JEM_EVENT_PRICING_CAPACITY_TAB')); ?>
+            <?php echo $this->loadTemplate('pricing'); ?>
+
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>

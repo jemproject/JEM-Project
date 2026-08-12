@@ -18,6 +18,11 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         '#__jem_capacity_pools',
         '#__jem_event_prices',
         '#__jem_register_items',
+        '#__jem_venue_capacity_profiles',
+        '#__jem_venue_spaces',
+        '#__jem_venue_layouts',
+        '#__jem_venue_profile_spaces',
+        '#__jem_venue_capacity_areas',
     );
 
     protected function setUp(): void
@@ -40,13 +45,18 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         $hadPricingSchema = isset($eventColumnsBefore['pricing_mode']);
         $legacyFingerprint = $this->legacyFingerprint($db);
         $countsBefore = $this->pricingTableCounts($db);
+        $venueCount = $this->tableCount($db, '#__jem_venues');
 
         $installer = new com_jemInstallerScript();
         $repair = new ReflectionMethod(com_jemInstallerScript::class, 'repair510PricingSchema');
         $repair->invoke($installer);
 
         self::assertSame($legacyFingerprint, $this->legacyFingerprint($db));
-        self::assertSame($countsBefore, $this->pricingTableCounts($db));
+        $countsAfterFirstRepair = $this->pricingTableCounts($db);
+        foreach (array('#__jem_tax_rates', '#__jem_capacity_pools', '#__jem_event_prices', '#__jem_register_items') as $table) {
+            self::assertSame($countsBefore[$table], $countsAfterFirstRepair[$table]);
+        }
+        self::assertSame($venueCount, $this->defaultProfileCount($db));
         $this->assertPricingSchema($db);
 
         if (!$hadPricingSchema) {
@@ -56,7 +66,6 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
             self::assertSame(0, (int) $db->loadResult());
         }
 
-        $countsAfterFirstRepair = $this->pricingTableCounts($db);
         $repair->invoke($installer);
         self::assertSame($legacyFingerprint, $this->legacyFingerprint($db));
         self::assertSame($countsAfterFirstRepair, $this->pricingTableCounts($db));
@@ -74,8 +83,16 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
             $db->getTableColumns($db->replacePrefix('#__jem_events'), false),
             CASE_LOWER
         );
-        foreach (array('pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id', 'prices_include_tax', 'management_fee_mode', 'management_fee_value', 'management_fee_basis', 'management_fee_tax_rate_id', 'management_fee_refundable') as $column) {
+        foreach (array('pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id', 'prices_include_tax', 'management_fee_mode', 'management_fee_value', 'management_fee_basis', 'management_fee_tax_rate_id', 'management_fee_refundable', 'venue_profile_id', 'venue_profile_revision', 'venue_snapshot') as $column) {
             self::assertArrayHasKey($column, $eventColumns);
+        }
+
+        $poolColumns = array_change_key_case(
+            $db->getTableColumns($db->replacePrefix('#__jem_capacity_pools'), false),
+            CASE_LOWER
+        );
+        foreach (array('venue_capacity_area_id', 'venue_layout_id', 'venue_layout_revision', 'allocation_mode') as $column) {
+            self::assertArrayHasKey($column, $poolColumns);
         }
 
         $countryColumns = array_change_key_case(
@@ -133,6 +150,25 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         }
 
         return $counts;
+    }
+
+    private function tableCount(DatabaseDriver $db, string $table): int
+    {
+        $db->setQuery('SELECT COUNT(*) FROM ' . $db->quoteName($table));
+
+        return (int) $db->loadResult();
+    }
+
+    private function defaultProfileCount(DatabaseDriver $db): int
+    {
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_venue_capacity_profiles', 'p'))
+            ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = p.venue_id')
+            ->where($db->quoteName('p.code') . ' = ' . $db->quote('default'));
+        $db->setQuery($query);
+
+        return (int) $db->loadResult();
     }
 
     private function legacyFingerprint(DatabaseDriver $db): string

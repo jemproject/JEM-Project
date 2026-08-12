@@ -289,6 +289,64 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testExistingPackageArtifactsContainPoint4DVenueAndEventAdministration(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach (array(
+                'admin/classes/venuecapacity.class.php' => 'class JemVenueCapacityService',
+                'admin/classes/eventpricingcapacity.class.php' => 'class JemEventPricingCapacityService',
+                'admin/models/fields/capacitypooloptions.php' => 'class JFormFieldCapacityPoolOptions',
+                'admin/models/fields/currencyoptions.php' => 'class JFormFieldCurrencyOptions',
+                'admin/models/fields/taxrateoptions.php' => 'class JFormFieldTaxRateOptions',
+                'admin/views/venue/tmpl/edit_capacity.php' => 'jem-venue-capacity-editor',
+                'admin/views/event/tmpl/edit_pricing.php' => 'jem-event-pricing',
+                'media/css/backend.css' => '.jem-capacity-space-card',
+                'media/css/backend-responsive.css' => '.jem-capacity-space-card',
+                'admin/models/forms/event.xml' => 'name="venue_snapshot"',
+                'admin/sql/install.mysql.utf8.sql' => '#__jem_venue_capacity_profiles',
+                'admin/sql/updates/mysql/5.1.0.sql' => 'ADD COLUMN `venue_snapshot`',
+            ) as $entry => $expected) {
+                self::assertStringContainsString(
+                    $expected,
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+        }
+    }
+
+    public function testCurrentPackageHashesMatchUpdateMetadata(): void
+    {
+        $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        self::assertNotFalse($manifest);
+        self::assertNotFalse($updates);
+
+        $version = (string) $manifest->version;
+        $matchingUpdate = null;
+        foreach ($updates->update as $update) {
+            if ((string) $update->version === $version) {
+                $matchingUpdate = $update;
+                break;
+            }
+        }
+        self::assertNotNull($matchingUpdate, 'The current package version requires update metadata.');
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach (array('sha256', 'sha384', 'sha512') as $algorithm) {
+                self::assertSame(
+                    strtolower(trim((string) $matchingUpdate->{$algorithm})),
+                    strtolower(hash_file($algorithm, $zipFile)),
+                    $this->relativePath($zipFile) . ' must match update_pkg_jem.xml ' . $algorithm . '.'
+                );
+            }
+        }
+    }
+
     /**
      * @return list<string>
      */
