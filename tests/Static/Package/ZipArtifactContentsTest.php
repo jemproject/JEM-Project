@@ -85,6 +85,7 @@ final class ZipArtifactContentsTest extends TestCase
                 'admin/sql/updates/mysql/4.5.0.sql',
                 'admin/sql/updates/mysql/5.0.0.sql',
                 'admin/sql/updates/mysql/5.0.1.sql',
+                'admin/sql/updates/mysql/5.1.0.sql',
             ) as $entry) {
                 if ($component->locateName($entry) === false) {
                     $missing[] = $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry;
@@ -230,6 +231,59 @@ final class ZipArtifactContentsTest extends TestCase
             $installer = $this->componentEntryContents($zipFile, 'script.php');
             self::assertStringContainsString("'series_id'", $installer);
             self::assertStringContainsString("'#__jem_event_series'", $installer);
+        }
+    }
+
+    public function testExistingPackageArtifactsContainPoint4BPricingSchema(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $zipFiles = $this->currentPackageZipFiles();
+        if ($zipFiles === array()) {
+            self::markTestSkipped('No current package ZIP artifacts found. Run the build before inspecting Point 4B.');
+        }
+
+        foreach ($zipFiles as $zipFile) {
+            $install = $this->componentEntryContents($zipFile, 'admin/sql/install.mysql.utf8.sql');
+            $update = $this->componentEntryContents($zipFile, 'admin/sql/updates/mysql/5.1.0.sql');
+            $installer = $this->componentEntryContents($zipFile, 'script.php');
+
+            foreach (array('#__jem_tax_rates', '#__jem_capacity_pools', '#__jem_event_prices', '#__jem_register_items') as $table) {
+                self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `' . $table . '`', $install);
+                self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `' . $table . '`', $update);
+                self::assertStringContainsString($table, $installer);
+            }
+            self::assertStringContainsString('repair510PricingSchema()', $installer);
+            self::assertStringContainsString("DEFAULT 'classic'", $update);
+            self::assertStringContainsString("('pricing_schema_ready', '0')", $update);
+        }
+    }
+
+    public function testExistingPackageArtifactsContainPoint4CTaxKernelAndCatalogue(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach (array(
+                'site/classes/money.class.php' => 'final class JemMoney',
+                'site/classes/taxpolicy.class.php' => 'final class JemTaxPolicy',
+                'site/classes/taxcalculation.class.php' => 'final class JemTaxCalculation',
+                'site/classes/taxcalculator.class.php' => 'final class JemTaxCalculator',
+                'admin/tables/jem_tax_rates.php' => 'class jem_tax_rates extends Table',
+                'admin/models/forms/taxrate.xml' => 'name="tax_type"',
+                'admin/views/taxrates/tmpl/default.php' => 'view=taxrates',
+                'media/images/icon-48-taxrates.svg' => '<svg',
+            ) as $entry => $expected) {
+                self::assertStringContainsString(
+                    $expected,
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
         }
     }
 

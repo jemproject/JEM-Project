@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden" />
+        <field name="code" type="text" label="COM_JEM_TAX_RATE_FIELD_CODE" description="COM_JEM_TAX_RATE_FIELD_CODE_DESC" required="true" maxlength="64" class="form-control" />
+        <field name="name" type="text" label="JGLOBAL_TITLE" required="true" maxlength="255" class="form-control" />
+        <field name="tax_type" type="list" label="COM_JEM_TAX_RATE_FIELD_TYPE" required="true" default="standard" class="form-select">
+            <option value="standard">COM_JEM_TAX_TYPE_STANDARD</option>
+            <option value="reduced">COM_JEM_TAX_TYPE_REDUCED</option>
+            <option value="zero">COM_JEM_TAX_TYPE_ZERO</option>
+            <option value="exempt">COM_JEM_TAX_TYPE_EXEMPT</option>
+            <option value="outside_scope">COM_JEM_TAX_TYPE_OUTSIDE_SCOPE</option>
+        </field>
+        <field name="rate" type="number" label="COM_JEM_TAX_RATE_FIELD_RATE" description="COM_JEM_TAX_RATE_FIELD_RATE_DESC" required="true" min="0" max="100" step="0.01" default="0.00" class="form-control" />
+        <field name="country_code" type="text" label="COM_JEM_TAX_RATE_FIELD_COUNTRY" description="COM_JEM_TAX_RATE_FIELD_COUNTRY_DESC" maxlength="2" class="form-control" />
+        <field name="region_code" type="text" label="COM_JEM_TAX_RATE_FIELD_REGION" maxlength="100" class="form-control" />
+        <field name="valid_from" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_FROM" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />
+        <field name="valid_until" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_UNTIL" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />
+        <field name="description" type="textarea" label="JGLOBAL_DESCRIPTION" rows="5" filter="safehtml" class="form-control" />
+        <field name="published" type="list" label="JSTATUS" default="1" class="form-select"><option value="1">JPUBLISHED</option><option value="0">JUNPUBLISHED</option></field>
+        <field name="ordering" type="hidden" default="0" />
+    </fieldset>
+</form>

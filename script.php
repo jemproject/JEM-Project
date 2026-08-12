@@ -320,6 +320,7 @@ class com_jemInstallerScript
             $this->repair501SchemaFallback();
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
+            $this->repair510PricingSchema();
             $this->registerNotificationTemplates();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
@@ -607,6 +608,131 @@ SQL;
                 'error'
             );
         }
+    }
+
+    /**
+     * Ensure the additive Point 4B pricing schema exists without enabling it.
+     *
+     * This repair is required for JEM 5.1.0 beta installations where Joomla has
+     * already recorded 5.1.0.sql. It creates only missing structures, leaves all
+     * existing events in classic mode and never invents monetary registration
+     * snapshots.
+     *
+     * @return void
+     */
+    private function repair510PricingSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        try {
+            $this->setPricingSchemaReady($db, false);
+            $definitionsByTable = array(
+                '#__jem_events' => array(
+                    'pricing_mode'                  => "VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic' AFTER `type_id`",
+                    'pricing_revision'              => "INT(10) UNSIGNED NOT NULL DEFAULT '1' AFTER `pricing_mode`",
+                    'currency'                      => "CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `pricing_revision`",
+                    'default_tax_rate_id'           => "INT(11) UNSIGNED NULL DEFAULT NULL AFTER `currency`",
+                    'prices_include_tax'            => "TINYINT(1) NOT NULL DEFAULT '1' AFTER `default_tax_rate_id`",
+                    'management_fee_mode'           => "VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'fixed_per_ticket' AFTER `prices_include_tax`",
+                    'management_fee_value'          => "DECIMAL(15,2) NOT NULL DEFAULT '0.00' AFTER `management_fee_mode`",
+                    'management_fee_basis'          => "VARCHAR(8) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'gross' AFTER `management_fee_value`",
+                    'management_fee_tax_rate_id'    => "INT(11) UNSIGNED NULL DEFAULT NULL AFTER `management_fee_basis`",
+                    'management_fee_refundable'     => "TINYINT(1) NOT NULL DEFAULT '0' AFTER `management_fee_tax_rate_id`",
+                ),
+                '#__jem_register' => array(
+                    'pricing_mode'               => "VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic' AFTER `revision`",
+                    'currency'                   => "CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `pricing_mode`",
+                    'subtotal_net'               => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `currency`",
+                    'discount_total'             => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `subtotal_net`",
+                    'tax_total'                  => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `discount_total`",
+                    'management_fee_net'         => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `tax_total`",
+                    'management_fee_tax'         => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `management_fee_net`",
+                    'management_fee_gross'       => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `management_fee_tax`",
+                    'grand_total'                => "DECIMAL(15,2) NULL DEFAULT NULL AFTER `management_fee_gross`",
+                    'payment_state'              => "VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NULL DEFAULT NULL AFTER `grand_total`",
+                    'price_locked_at'            => "DATETIME NULL DEFAULT NULL AFTER `payment_state`",
+                    'external_payment_reference' => "VARCHAR(255) NULL DEFAULT NULL AFTER `price_locked_at`",
+                ),
+            );
+            $tableList = (array) $db->getTableList();
+
+            foreach ($definitionsByTable as $table => $definitions) {
+                $resolvedTable = $db->replacePrefix($table);
+                if (!in_array($resolvedTable, $tableList, true)) {
+                    throw new RuntimeException('Required parent table is missing: ' . $table);
+                }
+                $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+                foreach ($definitions as $column => $definition) {
+                    if (!isset($columns[$column])) {
+                        $db->setQuery(
+                            'ALTER TABLE ' . $db->quoteName($table)
+                            . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                        )->execute();
+                    }
+                }
+            }
+
+            $statements = array(
+                "CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `country_code` CHAR(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `region_code` VARCHAR(100) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `valid_from` DATE NULL DEFAULT NULL, `valid_until` DATE NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL, `checked_out_time` DATETIME NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_tax_rate_code` (`code`), KEY `idx_tax_rate_published_ordering` (`published`,`ordering`), KEY `idx_tax_rate_validity` (`valid_from`,`valid_until`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_capacity_pools` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_capacity_pool_event_code` (`event_id`,`code`), KEY `idx_capacity_pool_event_published` (`event_id`,`published`,`ordering`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `amount` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_rate_id` INT(11) UNSIGNED NULL DEFAULT NULL, `quota` INT(10) UNSIGNED NULL DEFAULT NULL, `min_quantity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `max_quantity` INT(10) UNSIGNED NULL DEFAULT NULL, `available_from` DATETIME NULL DEFAULT NULL, `available_until` DATETIME NULL DEFAULT NULL, `min_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `max_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `access_level_id` INT(10) UNSIGNED NULL DEFAULT NULL, `user_group_id` INT(10) UNSIGNED NULL DEFAULT NULL, `verification_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_event_price_event_code` (`event_id`,`code`), KEY `idx_event_price_event_published` (`event_id`,`published`,`ordering`), KEY `idx_event_price_pool` (`capacity_pool_id`), KEY `idx_event_price_tax` (`tax_rate_id`), KEY `idx_event_price_availability` (`available_from`,`available_until`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, `register_id` INT(11) UNSIGNED NOT NULL, `registration_revision` INT(10) UNSIGNED NOT NULL, `line_number` INT(10) UNSIGNED NOT NULL, `line_kind` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `event_price_id` INT(11) UNSIGNED NULL DEFAULT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `item_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `item_name` VARCHAR(255) NOT NULL DEFAULT '', `item_description` TEXT NULL DEFAULT NULL, `quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1', `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `price_includes_tax` TINYINT(1) NOT NULL DEFAULT '1', `unit_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `calculation_mode` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `calculation_value` DECIMAL(15,2) NULL DEFAULT NULL, `calculation_basis` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `condition_snapshot` MEDIUMTEXT NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `idx_register_item_revision_line` (`register_id`,`registration_revision`,`line_number`), KEY `idx_register_item_price` (`event_price_id`), KEY `idx_register_item_pool` (`capacity_pool_id`), KEY `idx_register_item_kind` (`line_kind`)) ENGINE=InnoDB",
+            );
+
+            foreach ($statements as $statement) {
+                $db->setQuery($db->replacePrefix($statement))->execute();
+            }
+
+            $taxRateColumns = array_change_key_case($db->getTableColumns($db->replacePrefix('#__jem_tax_rates'), false), CASE_LOWER);
+            foreach (array(
+                'checked_out'      => "INT(11) UNSIGNED NULL DEFAULT NULL AFTER `ordering`",
+                'checked_out_time' => "DATETIME NULL DEFAULT NULL AFTER `checked_out`",
+            ) as $column => $definition) {
+                if (!isset($taxRateColumns[$column])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName('#__jem_tax_rates')
+                        . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                    )->execute();
+                }
+            }
+
+            $tableList = (array) $db->getTableList();
+            foreach (array('#__jem_tax_rates', '#__jem_capacity_pools', '#__jem_event_prices', '#__jem_register_items') as $table) {
+                if (!in_array($db->replacePrefix($table), $tableList, true)) {
+                    throw new RuntimeException('Pricing schema table is missing after repair: ' . $table);
+                }
+            }
+
+            $this->setPricingSchemaReady($db, true);
+        } catch (Throwable $e) {
+            try {
+                $this->setPricingSchemaReady($db, false);
+            } catch (Throwable $ignored) {
+            }
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_PRICING_SCHEMA_FAILED', $e->getMessage()),
+                'error'
+            );
+        }
+    }
+
+    /**
+     * Set the Point 4B schema readiness flag without changing feature state.
+     */
+    private function setPricingSchemaReady($db, $ready)
+    {
+        $configTable = $db->replacePrefix('#__jem_config');
+        if (!in_array($configTable, $db->getTableList(), true)) {
+            return;
+        }
+
+        $value = $ready ? '1' : '0';
+        $db->setQuery(
+            'INSERT INTO ' . $db->quoteName('#__jem_config')
+            . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ')'
+            . ' VALUES (' . $db->quote('pricing_schema_ready') . ', ' . $db->quote($value) . ')'
+            . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote($value)
+        )->execute();
     }
 
     /**
@@ -2208,7 +2334,9 @@ SQL;
             '#__jem_categories',
             '#__jem_cats_event_relations',
             '#__jem_countries',
+            '#__jem_capacity_pools',
             '#__jem_events',
+            '#__jem_event_prices',
             '#__jem_groupmembers',
             '#__jem_groups',
             '#__jem_import_profiles',
@@ -2220,10 +2348,12 @@ SQL;
             '#__jem_notifications_attempts',
             '#__jem_notifications',
             '#__jem_register',
+            '#__jem_register_items',
             '#__jem_special_days',
             '#__jem_settings',
             '#__jem_config',
             '#__jem_types',
+            '#__jem_tax_rates',
             '#__jem_venues'
         );
         foreach ($tables as $table) {

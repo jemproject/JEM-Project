@@ -220,6 +220,12 @@ class JemHelperBackend
 
         if (self::canManage('core.options')) {
             JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_TAX_RATES'),
+                'index.php?option=com_jem&view=taxrates',
+                in_array($vName, array('taxrates', 'taxrate'), true)
+            );
+
+            JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),
                 'index.php?option=com_jem&view=settings',
                 $vName == 'settings'

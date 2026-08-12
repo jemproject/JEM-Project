@@ -13,6 +13,10 @@ use Joomla\CMS\User\User;
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/money.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/taxpolicy.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/taxcalculation.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/taxcalculator.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplatecatalog.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplaterenderer.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplateservice.class.php');
