@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_register` (
     KEY `idx_user` (`uid`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `#__jem_registration_history` (
+CREATE TABLE IF NOT EXISTS `#__jem_register_history` (
     `id` bigint(20) unsigned NOT NULL auto_increment,
     `operation_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `registration_id` int(11) unsigned NOT NULL,
@@ -282,6 +282,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
     `registration_reference` varchar(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
     `registration_revision` int(10) unsigned NOT NULL DEFAULT '0',
     `event_id` int(11) unsigned NOT NULL DEFAULT '0',
+    `reminder_definition_id` int(11) unsigned NULL DEFAULT NULL,
     `ticket_id` bigint(20) unsigned NULL DEFAULT NULL COMMENT 'Reserved for a future individual ticket/QR phase',
     `notification_type` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
     `recipient_type` varchar(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'user',
@@ -321,6 +322,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
     KEY `idx_notification_registration_created` (`registration_id`,`created`),
     KEY `idx_notification_reference_created` (`registration_reference`,`created`),
     KEY `idx_notification_event_created` (`event_id`,`created`),
+    KEY `idx_notification_reminder_schedule` (`reminder_definition_id`,`scheduled_at`),
     KEY `idx_notification_recipient_created` (`recipient_user_id`,`created`),
     KEY `idx_notification_email_created` (`recipient_email`(191),`created`),
     KEY `idx_notification_state_attempt` (`state`,`next_attempt_at`),
@@ -328,7 +330,31 @@ CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
     KEY `idx_notification_created` (`created`)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `#__jem_notification_attempts` (
+CREATE TABLE IF NOT EXISTS `#__jem_reminders` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `event_id` int(11) unsigned NOT NULL DEFAULT '0',
+    `source_id` int(11) unsigned NULL DEFAULT NULL,
+    `code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+    `title` varchar(255) NOT NULL DEFAULT '',
+    `minutes` int(10) unsigned NOT NULL DEFAULT '1440',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `default_new_event` tinyint(1) NOT NULL DEFAULT '0',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL,
+    `modified` datetime NOT NULL,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_reminder_event_code` (`event_id`,`code`),
+    KEY `idx_reminder_event_published_ordering` (`event_id`,`published`,`ordering`),
+    UNIQUE KEY `idx_reminder_source_event` (`source_id`,`event_id`)
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO `#__jem_reminders` (`event_id`, `source_id`, `code`, `title`, `minutes`, `published`, `default_new_event`, `ordering`, `created`, `modified`, `created_by`) VALUES
+(0, NULL, 'default_7_days', 'COM_JEM_REMINDER_DEFAULT_7_DAYS', 10080, 1, 1, 1, UTC_TIMESTAMP(), UTC_TIMESTAMP(), 0),
+(0, NULL, 'default_24_hours', 'COM_JEM_REMINDER_DEFAULT_24_HOURS', 1440, 1, 1, 2, UTC_TIMESTAMP(), UTC_TIMESTAMP(), 0),
+(0, NULL, 'default_2_hours', 'COM_JEM_REMINDER_DEFAULT_2_HOURS', 120, 1, 1, 3, UTC_TIMESTAMP(), UTC_TIMESTAMP(), 0);
+
+CREATE TABLE IF NOT EXISTS `#__jem_notifications_attempts` (
     `id` bigint(20) unsigned NOT NULL auto_increment,
     `notification_id` bigint(20) unsigned NOT NULL,
     `attempt_number` int(10) unsigned NOT NULL,
@@ -654,11 +680,14 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('waitinglist_automatic', '1'),
 ('waitinglist_strategy', 'strict'),
 ('registration_schema_ready', '1'),
-('notification_retention_years', '4'),
+('notification_retention_days', '0'),
 ('notification_user_resend_limit', '2'),
 ('notification_user_resend_window_hours', '24'),
 ('notification_user_resend_cooldown_minutes', '10'),
 ('notification_max_attempts', '4'),
+('reminders_enabled', '0'),
+('reminder_all_day_time', '09:00'),
+('notification_retry_delays_minutes', '10,30,120'),
 ('notification_schema_ready', '1'),
 ('layoutstyle', '1'),
 ('useiconfont', '1'),

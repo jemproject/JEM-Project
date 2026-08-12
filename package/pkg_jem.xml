@@ -2,13 +2,13 @@
 <extension type="package" version="5.0" method="upgrade">
     <name>pkg_jem</name>
     <author>JEM Community</author>
-    <creationDate>10 August 2026 00:00</creationDate>
+    <creationDate>12 August 2026 08:35</creationDate>
     <packagename>jem</packagename>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.1beta2</version>
+    <version>5.1.0beta1</version>
     <url>https://www.joomlaeventmanager.net/</url>
     <packager>JEM Community</packager>
     <packagerurl>https://www.joomlaeventmanager.net</packagerurl>
@@ -36,6 +36,7 @@
         <file type="plugin" id="mailer" group="jem">plg_jem_mailer.zip</file>
         <file type="plugin" id="jem" group="quickicon">plg_quickicon_jem.zip</file>
         <file type="plugin" id="jem" group="actionlog">plg_actionlog_jem.zip</file>
+        <file type="plugin" id="jem" group="task">plg_task_jem.zip</file>
         <file type="plugin" id="jem" group="user">plg_user_jem.zip</file>
     </files>
 

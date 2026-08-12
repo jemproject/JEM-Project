@@ -42,6 +42,11 @@ $sampleValues = array(
                 <?php echo Text::_('COM_JEM_NOTIFICATION_TAB_DISCLAIMER'); ?>
             </a>
         </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=reminders'); ?>">
+                <?php echo Text::_('COM_JEM_NOTIFICATION_TAB_REMINDERS'); ?>
+            </a>
+        </li>
         <?php if (JemHelperBackend::canManage('jem.notifications.history')) : ?>
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=notificationhistory'); ?>">

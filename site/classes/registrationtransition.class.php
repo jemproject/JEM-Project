@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Log\Log;
+
 /**
  * Central policy for attendee registration status transitions.
  *
@@ -146,6 +148,24 @@ final class JemRegistrationTransition
 
         $transition->notificationRequested = true;
 
+        try {
+            $factory = JPATH_SITE . '/components/com_jem/factory.php';
+            if (!class_exists('JemReminderService', false) && is_file($factory)) {
+                require_once $factory;
+            }
+            if (class_exists('JemReminderService', false)) {
+                (new JemReminderService())->syncRegistration($registrationId, true);
+            }
+        } catch (Throwable $error) {
+            if (method_exists('JemHelper', 'addLogEntry')) {
+                JemHelper::addLogEntry(
+                    'Could not synchronise reminders for registration #' . $registrationId . ': ' . $error->getMessage(),
+                    __METHOD__,
+                    Log::WARNING
+                );
+            }
+        }
+
         return true;
     }
 
@@ -153,6 +173,24 @@ final class JemRegistrationTransition
     {
         if (!is_object($registration) || empty($registration->event)) {
             return false;
+        }
+
+        try {
+            $factory = JPATH_SITE . '/components/com_jem/factory.php';
+            if (!class_exists('JemNotificationService', false) && is_file($factory)) {
+                require_once $factory;
+            }
+            if (class_exists('JemNotificationService', false)) {
+                (new JemNotificationService())->cancelPendingReminders((int) ($registration->id ?? 0));
+            }
+        } catch (Throwable $error) {
+            if (method_exists('JemHelper', 'addLogEntry')) {
+                JemHelper::addLogEntry(
+                    'Could not cancel reminders for deleted registration #' . (int) ($registration->id ?? 0) . ': ' . $error->getMessage(),
+                    __METHOD__,
+                    Log::WARNING
+                );
+            }
         }
 
         $dispatcher->triggerEvent('onEventUserUnregistered', array((int) $registration->event, $registration));

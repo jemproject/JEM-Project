@@ -688,6 +688,22 @@ $this->document->addStyleDeclaration('
                         </div>
                     </div>
                 </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="notifications-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#event-notifications" aria-expanded="true" aria-controls="event-notifications">
+                            <?php echo Text::_('COM_JEM_EVENT_NOTIFICATIONS'); ?>
+                        </button>
+                    </h2>
+                    <div id="event-notifications" class="accordion-collapse collapse" aria-labelledby="notifications-header" data-bs-parent="#accordionEventForm">
+                        <div class="accordion-body">
+                            <ul class="adminformlist">
+                                <li><div class="label-form"><?php echo $this->form->renderfield('event_reminders_enabled'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('reminder_ids'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('apply_reminders_to_series'); ?></div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 <!-- START OF PANEL IMAGE -->
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="image-event-header">

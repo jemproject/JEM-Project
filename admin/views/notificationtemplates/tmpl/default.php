@@ -20,6 +20,7 @@ $workflowLabels = array(
     'invitation' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_INVITATION'),
     'cancellation' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_CANCELLATION'),
     'waiting_list_change' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_WAITING_LIST_CHANGE'),
+    'reminder' => Text::_('COM_JEM_NOTIFICATION_WORKFLOW_REMINDER'),
 );
 $recipientLabels = array(
     'user' => Text::_('COM_JEM_NOTIFICATION_RECIPIENT_USER'),
@@ -28,6 +29,7 @@ $recipientLabels = array(
 $variantLabels = array(
     'self' => Text::_('COM_JEM_NOTIFICATION_VARIANT_SELF'),
     'on_behalf' => Text::_('COM_JEM_NOTIFICATION_VARIANT_ON_BEHALF'),
+    'scheduled' => Text::_('COM_JEM_NOTIFICATION_VARIANT_SCHEDULED'),
 );
 ?>
 
@@ -53,6 +55,11 @@ $variantLabels = array(
             <li class="nav-item" role="presentation">
                 <a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=notificationcontent&section=disclaimer&language=' . rawurlencode($sharedLanguage)); ?>">
                     <?php echo Text::_('COM_JEM_NOTIFICATION_TAB_DISCLAIMER'); ?>
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=reminders'); ?>">
+                    <?php echo Text::_('COM_JEM_NOTIFICATION_TAB_REMINDERS'); ?>
                 </a>
             </li>
             <?php if (JemHelperBackend::canManage('jem.notifications.history')) : ?>

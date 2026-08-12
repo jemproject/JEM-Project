@@ -12,7 +12,7 @@ final class NotificationHistoryContractsTest extends TestCase
         $mailer = $this->read('/plugins/plg_jem_mailer/mailer.php');
 
         self::assertStringContainsString("insertObject('#__jem_notifications'", $service);
-        self::assertStringContainsString("insertObject('#__jem_notification_attempts'", $service);
+        self::assertStringContainsString("insertObject('#__jem_notifications_attempts'", $service);
         self::assertStringContainsString('idempotency_key', $service);
         self::assertStringContainsString('retryStored', $service);
         self::assertStringContainsString('canUserResend', $service);
@@ -60,13 +60,13 @@ final class NotificationHistoryContractsTest extends TestCase
         self::assertStringContainsString('r.id AS registration_id', $model);
     }
 
-    public function testSettingsExposeFourYearRetentionAndResendLimits(): void
+    public function testSettingsExposeUnlimitedDayRetentionAndResendLimits(): void
     {
         $form = $this->read('/admin/models/forms/settings.xml');
         $layout = $this->read('/admin/views/settings/tmpl/default.php');
 
-        self::assertStringContainsString('name="notification_retention_years"', $form);
-        self::assertStringContainsString('default="4"', $form);
+        self::assertStringContainsString('name="notification_retention_days"', $form);
+        self::assertStringContainsString('name="notification_retention_days" type="number" default="0" min="0"', $form);
         self::assertStringContainsString('name="notification_user_resend_limit"', $form);
         self::assertStringContainsString('default="2"', $form);
         self::assertStringContainsString('name="notification_user_resend_cooldown_minutes"', $form);

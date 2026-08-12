@@ -16,8 +16,8 @@ final class RegistrationFoundationSchemaTest extends TestCase
             self::assertStringContainsString($column, $update);
         }
 
-        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_registration_history`', $install);
-        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_registration_history`', $update);
+        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_register_history`', $install);
+        self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_register_history`', $update);
         self::assertStringContainsString('idx_history_registration_revision', $install);
         self::assertStringContainsString('idx_history_operation_registration', $install);
         self::assertStringContainsString("('registration_schema_ready', '1')", $install);
@@ -32,6 +32,9 @@ final class RegistrationFoundationSchemaTest extends TestCase
         self::assertStringContainsString('repair510RegistrationSchema()', $script);
         self::assertStringContainsString('backfillRegistrationRow', $script);
         self::assertStringContainsString('registrationLegacyFingerprint', $script);
+        self::assertStringContainsString('migrateRegistrationHistoryTable', $script);
+        self::assertStringContainsString('#__jem_registration_history', $script);
+        self::assertStringContainsString('#__jem_register_history', $script);
         self::assertStringContainsString('Registration migration changed legacy registration data.', $script);
         self::assertStringContainsString('registration_schema_ready', $script);
         self::assertStringNotContainsString('DROP TABLE', $update);

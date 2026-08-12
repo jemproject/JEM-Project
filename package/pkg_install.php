@@ -86,11 +86,13 @@ class Pkg_JemInstallerScript
 
         $this->enablePlugin('content', 'jemlistevents');
         $this->enablePlugin('quickicon', 'jem');
+        $this->enablePlugin('task', 'jem');
         $this->enablePlugin('user', 'jem');
         $this->uninstallPlugin('content', 'jem');
         $this->uninstallPlugin('search', 'jem');
         $this->uninstallModule('mod_jem_calajax');
         $this->normaliseJemModuleParams();
+        $this->ensureJemNotificationTask();
 
         return true;
     }
@@ -189,6 +191,33 @@ class Pkg_JemInstallerScript
 
         $app->enqueueMessage(sprintf("Joomla! %s is not supported. This package requires Joomla! 5.4.x or Joomla! 6.x.", JVERSION), 'notice');
         return false;
+    }
+
+    /**
+     * Create the single native Joomla scheduler task during install/update.
+     * The global JEM option determines its initial state.
+     */
+    function ensureJemNotificationTask() {
+        $factory = JPATH_SITE . '/components/com_jem/factory.php';
+        if (!is_file($factory)) {
+            return false;
+        }
+
+        require_once $factory;
+        if (!class_exists('JemReminderSchedulerService')) {
+            return false;
+        }
+
+        try {
+            (new JemReminderSchedulerService())->syncFromConfig();
+            return true;
+        } catch (Throwable $error) {
+            Factory::getApplication()->enqueueMessage(
+                'JEM could not create the scheduled notification task: ' . $error->getMessage(),
+                'warning'
+            );
+            return false;
+        }
     }
 
     protected function checkDbo($name, $types) {

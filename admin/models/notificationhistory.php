@@ -53,8 +53,8 @@ class JemModelNotificationhistory extends ListModel
         $query = $db->getQuery(true)
             ->select(array(
                 'n.*', 'e.title AS event_title', 'u.name AS recipient_account_name',
-                '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jem_notification_attempts', 'na') . ' WHERE na.notification_id = n.id) AS attempts_total',
-                '(SELECT na2.error_message FROM ' . $db->quoteName('#__jem_notification_attempts', 'na2') . ' WHERE na2.notification_id = n.id ORDER BY na2.attempt_number DESC LIMIT 1) AS last_error',
+                '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jem_notifications_attempts', 'na') . ' WHERE na.notification_id = n.id) AS attempts_total',
+                '(SELECT na2.error_message FROM ' . $db->quoteName('#__jem_notifications_attempts', 'na2') . ' WHERE na2.notification_id = n.id ORDER BY na2.attempt_number DESC LIMIT 1) AS last_error',
             ))
             ->from($db->quoteName('#__jem_notifications', 'n'))
             ->join('LEFT', $db->quoteName('#__jem_events', 'e') . ' ON e.id = n.event_id')

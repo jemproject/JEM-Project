@@ -1544,8 +1544,17 @@
     </fieldset>
 
     <fieldset name="notifications" label="COM_JEM_NOTIFICATION_SETTINGS">
-        <field name="notification_retention_years" type="number" default="4" min="1" max="20"
-               label="COM_JEM_NOTIFICATION_RETENTION_YEARS" description="COM_JEM_NOTIFICATION_RETENTION_YEARS_DESC" />
+        <field name="reminders_enabled" type="radio" default="0"
+               class="inputbox btn-group btn-group-yesno"
+               label="COM_JEM_REMINDERS_ENABLED" description="COM_JEM_REMINDERS_ENABLED_DESC">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="reminder_all_day_time" type="time" default="09:00"
+               showon="reminders_enabled:1"
+               label="COM_JEM_REMINDER_ALL_DAY_TIME" description="COM_JEM_REMINDER_ALL_DAY_TIME_DESC" />
+        <field name="notification_retention_days" type="number" default="0" min="0"
+               label="COM_JEM_NOTIFICATION_RETENTION_DAYS" description="COM_JEM_NOTIFICATION_RETENTION_DAYS_DESC" />
         <field name="notification_user_resend_limit" type="number" default="2" min="1" max="20"
                label="COM_JEM_NOTIFICATION_USER_RESEND_LIMIT" description="COM_JEM_NOTIFICATION_USER_RESEND_LIMIT_DESC" />
         <field name="notification_user_resend_window_hours" type="number" default="24" min="1" max="168"

@@ -257,6 +257,17 @@ class JemModelEvent extends JemModelAdmin
             $item->attribs = $registry->toArray();
             $item->registration_intro = $item->attribs['registration_intro'] ?? '';
             $item->registration_footer = $item->attribs['registration_footer'] ?? '';
+            try {
+                require_once JPATH_SITE . '/components/com_jem/factory.php';
+                $reminderService = new JemReminderService();
+                $item->reminder_ids = !empty($item->id)
+                    ? $reminderService->getEventDefinitionIds((int) $item->id)
+                    : $reminderService->getDefaultDefinitionIds();
+            } catch (Throwable $error) {
+                $item->reminder_ids = array();
+            }
+            $item->event_reminders_enabled = !empty($item->reminder_ids) ? 1 : 0;
+            $item->apply_reminders_to_series = 0;
 
             // Convert the metadata field to an array.
             $registry = new Registry;
@@ -483,6 +494,20 @@ class JemModelEvent extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
         $task    = $jinput->get('task', '', 'cmd');
+        $reminderSelectionSubmitted = array_key_exists('reminder_ids', $data)
+            || array_key_exists('event_reminders_enabled', $data);
+        $eventRemindersEnabled = !empty($data['event_reminders_enabled']);
+        $reminderIds = array_values(array_filter(array_map('intval', (array) ($data['reminder_ids'] ?? array()))));
+        if (!$eventRemindersEnabled) {
+            $reminderIds = array();
+        }
+        $applyRemindersToSeries = !empty($data['apply_reminders_to_series']);
+        unset($data['event_reminders_enabled'], $data['reminder_ids'], $data['apply_reminders_to_series']);
+        if ($reminderSelectionSubmitted && $eventRemindersEnabled && !$reminderIds) {
+            $this->setError(Text::_('COM_JEM_EVENT_REMINDERS_REQUIRE_INTERVAL'));
+
+            return false;
+        }
         $previousArticleContentEvent = !$new ? $this->getAssociatedArticleSyncEventData((int) $data['id']) : array();
         $customSeriesRequested = (int) ($data['recurrence_type'] ?? 0) === 7 && $task !== 'save2copy';
         $customSeriesScope = $jinput->post->getCmd('custom_series_scope', 'occurrence');
@@ -1162,6 +1187,23 @@ class JemModelEvent extends JemModelAdmin
             if ($savedId) {
                 $this->setState('event.id', $savedId);
                 $this->setState($stateName . '.id', $savedId);
+
+                require_once JPATH_SITE . '/components/com_jem/factory.php';
+                $reminderService = new JemReminderService();
+                if ($new && !$reminderSelectionSubmitted) {
+                    $reminderIds = $reminderService->getDefaultDefinitionIds();
+                    $reminderSelectionSubmitted = true;
+                }
+                if ($reminderSelectionSubmitted) {
+                    $reminderService->storeEventDefinitions(
+                        $savedId,
+                        $reminderIds,
+                        (int) Factory::getApplication()->getIdentity()->id,
+                        $new || $applyRemindersToSeries
+                    );
+                } else {
+                    $reminderService->syncEvent($savedId, true);
+                }
             }
 
             $this->setState('event.new', $new);

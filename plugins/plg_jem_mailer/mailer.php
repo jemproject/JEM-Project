@@ -310,7 +310,7 @@ class plgJemMailer extends CMSPlugin
                     );
                 },
                 (int) $actorId,
-                $source === 'user' ? 'user_retry' : 'admin_retry'
+                $source === 'user' ? 'user_retry' : ($source === 'scheduler' ? 'scheduler_retry' : 'admin_retry')
             );
         }
 

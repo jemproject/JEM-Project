@@ -53,7 +53,7 @@ class JemViewAttendee extends HtmlView {
             if (JemHelperBackend::canManage('jem.registrations.history')) {
                 $query = $db->getQuery(true)
                     ->select(array('h.*', 'u.name AS actor_name'))
-                    ->from($db->quoteName('#__jem_registration_history', 'h'))
+                    ->from($db->quoteName('#__jem_register_history', 'h'))
                     ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON u.id = h.actor_user_id')
                     ->where('h.registration_id = ' . (int) $row->id)
                     ->order('h.occurred DESC, h.id DESC');

@@ -2306,11 +2306,14 @@ class JemHelper
                                     'source'     => 'system.cleanup',
                                     'reasonCode' => 'outdated_event_deleted',
                                 ));
+                                (new JemNotificationService($db))->cancelPendingReminders(0, $outdatedEventId);
                             }
 
                             $db->setQuery('DELETE FROM #__jem_events WHERE id IN (' . implode(',', $outdatedEventIds) . ')');
                             $db->execute();
                             $db->setQuery('DELETE FROM #__jem_cats_event_relations WHERE itemid IN (' . implode(',', $outdatedEventIds) . ')');
+                            $db->execute();
+                            $db->setQuery('DELETE FROM #__jem_reminders WHERE event_id IN (' . implode(',', $outdatedEventIds) . ')');
                             $db->execute();
                             $db->transactionCommit();
                         } catch (Throwable $e) {

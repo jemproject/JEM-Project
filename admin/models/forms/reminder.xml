@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden" />
+        <field name="code" type="hidden" />
+        <field name="title" type="text" required="true" maxlength="255"
+               label="COM_JEM_REMINDER_TITLE" description="COM_JEM_REMINDER_TITLE_DESC" />
+        <field name="amount" type="number" required="true" default="1" min="1" max="525600"
+               label="COM_JEM_REMINDER_AMOUNT" description="COM_JEM_REMINDER_AMOUNT_DESC" />
+        <field name="unit" type="list" required="true" default="day"
+               label="COM_JEM_REMINDER_UNIT" description="COM_JEM_REMINDER_UNIT_DESC">
+            <option value="minute">COM_JEM_REMINDER_UNIT_MINUTES</option>
+            <option value="hour">COM_JEM_REMINDER_UNIT_HOURS</option>
+            <option value="day">COM_JEM_REMINDER_UNIT_DAYS</option>
+            <option value="week">COM_JEM_REMINDER_UNIT_WEEKS</option>
+        </field>
+        <field name="published" type="radio" default="1" class="btn-group btn-group-yesno"
+               label="JSTATUS">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+        </field>
+        <field name="default_new_event" type="radio" default="0" class="btn-group btn-group-yesno"
+               label="COM_JEM_REMINDER_DEFAULT_NEW_EVENT" description="COM_JEM_REMINDER_DEFAULT_NEW_EVENT_DESC">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="ordering" type="number" default="0" label="JFIELD_ORDERING_LABEL" />
+    </fieldset>
+</form>

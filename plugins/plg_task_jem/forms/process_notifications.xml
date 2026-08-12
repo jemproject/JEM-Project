@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fields name="params">
+        <fieldset name="task_params">
+            <field
+                name="managed_notice"
+                type="note"
+                label="PLG_TASK_JEM_MANAGED_NOTICE"
+                description="PLG_TASK_JEM_MANAGED_NOTICE_DESC"
+            />
+        </fieldset>
+    </fields>
+</form>

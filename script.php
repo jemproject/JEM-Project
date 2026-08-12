@@ -358,6 +358,49 @@ class com_jemInstallerScript
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         try {
+            $legacyAttemptsTable = $db->replacePrefix('#__jem_notification_attempts');
+            $attemptsTable = $db->replacePrefix('#__jem_notifications_attempts');
+            $tableList = (array) $db->getTableList();
+            $hasLegacyAttemptsTable = in_array($legacyAttemptsTable, $tableList, true);
+            $hasAttemptsTable = in_array($attemptsTable, $tableList, true);
+
+            if ($hasLegacyAttemptsTable && !$hasAttemptsTable) {
+                $db->setQuery(
+                    'RENAME TABLE ' . $db->quoteName($legacyAttemptsTable)
+                    . ' TO ' . $db->quoteName($attemptsTable)
+                )->execute();
+            } elseif ($hasLegacyAttemptsTable && $hasAttemptsTable) {
+                $attemptColumns = array(
+                    'id', 'notification_id', 'attempt_number', 'transport', 'source',
+                    'requested_by_user_id', 'started_at', 'finished_at', 'result',
+                    'transport_message_id', 'error_code', 'error_message',
+                );
+                $attemptColumnList = implode(', ', array_map(array($db, 'quoteName'), $attemptColumns));
+                $db->setQuery(
+                    'INSERT IGNORE INTO ' . $db->quoteName($attemptsTable) . ' (' . $attemptColumnList . ')'
+                    . ' SELECT ' . $attemptColumnList . ' FROM ' . $db->quoteName($legacyAttemptsTable)
+                )->execute();
+
+                $equalColumns = implode(' AND ', array_map(
+                    static function ($column) use ($db) {
+                        return 'new.' . $db->quoteName($column) . ' <=> old.' . $db->quoteName($column);
+                    },
+                    $attemptColumns
+                ));
+                $db->setQuery('SELECT COUNT(*) FROM ' . $db->quoteName($legacyAttemptsTable));
+                $legacyAttemptCount = (int) $db->loadResult();
+                $query = $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName($legacyAttemptsTable, 'old'))
+                    ->join('INNER', $db->quoteName($attemptsTable, 'new') . ' ON ' . $equalColumns);
+                $db->setQuery($query);
+                if ((int) $db->loadResult() !== $legacyAttemptCount) {
+                    throw new RuntimeException('The legacy notification attempts could not be merged without changing audit data.');
+                }
+
+                $db->setQuery('DROP TABLE ' . $db->quoteName($legacyAttemptsTable))->execute();
+            }
+
             $notifications = <<<'SQL'
 CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -366,6 +409,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_notifications` (
 `registration_reference` VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
 `registration_revision` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 `event_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`reminder_definition_id` INT(11) UNSIGNED NULL DEFAULT NULL,
 `ticket_id` BIGINT(20) UNSIGNED NULL DEFAULT NULL COMMENT 'Reserved for a future individual ticket/QR phase',
 `notification_type` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
 `recipient_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'user',
@@ -405,6 +449,7 @@ UNIQUE KEY `idx_notification_idempotency` (`idempotency_key`),
 KEY `idx_notification_registration_created` (`registration_id`,`created`),
 KEY `idx_notification_reference_created` (`registration_reference`,`created`),
 KEY `idx_notification_event_created` (`event_id`,`created`),
+KEY `idx_notification_reminder_schedule` (`reminder_definition_id`,`scheduled_at`),
 KEY `idx_notification_recipient_created` (`recipient_user_id`,`created`),
 KEY `idx_notification_email_created` (`recipient_email`(191),`created`),
 KEY `idx_notification_state_attempt` (`state`,`next_attempt_at`),
@@ -413,7 +458,7 @@ KEY `idx_notification_created` (`created`)
 ) ENGINE=InnoDB
 SQL;
             $attempts = <<<'SQL'
-CREATE TABLE IF NOT EXISTS `#__jem_notification_attempts` (
+CREATE TABLE IF NOT EXISTS `#__jem_notifications_attempts` (
 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 `notification_id` BIGINT(20) UNSIGNED NOT NULL,
 `attempt_number` INT(10) UNSIGNED NOT NULL,
@@ -432,8 +477,28 @@ KEY `idx_attempt_notification_started` (`notification_id`,`started_at`),
 KEY `idx_attempt_result_started` (`result`,`started_at`)
 ) ENGINE=InnoDB
 SQL;
+            $reminders = <<<'SQL'
+CREATE TABLE IF NOT EXISTS `#__jem_reminders` (
+`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+`event_id` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+`source_id` INT(11) UNSIGNED NULL DEFAULT NULL,
+`code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+`title` VARCHAR(255) NOT NULL DEFAULT '',
+`minutes` INT(10) UNSIGNED NOT NULL DEFAULT '1440',
+`published` TINYINT(1) NOT NULL DEFAULT '1',
+`default_new_event` TINYINT(1) NOT NULL DEFAULT '0',
+`ordering` INT(11) NOT NULL DEFAULT '0',
+`created` DATETIME NOT NULL,
+`modified` DATETIME NOT NULL,
+`created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0',
+PRIMARY KEY (`id`),
+UNIQUE KEY `idx_reminder_event_code` (`event_id`,`code`),
+KEY `idx_reminder_event_published_ordering` (`event_id`,`published`,`ordering`),
+UNIQUE KEY `idx_reminder_source_event` (`source_id`,`event_id`)
+) ENGINE=InnoDB
+SQL;
 
-            foreach (array($notifications, $attempts) as $sql) {
+            foreach (array($notifications, $attempts, $reminders) as $sql) {
                 $db->setQuery($db->replacePrefix($sql));
                 $db->execute();
             }
@@ -448,13 +513,70 @@ SQL;
                 );
                 $db->execute();
             }
+            if (!isset($notificationColumns['reminder_definition_id'])) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_notifications')
+                    . ' ADD COLUMN ' . $db->quoteName('reminder_definition_id')
+                    . ' INT(11) UNSIGNED NULL DEFAULT NULL AFTER ' . $db->quoteName('event_id')
+                );
+                $db->execute();
+            }
+
+            $hasReminderScheduleIndex = false;
+            foreach ((array) $db->getTableKeys($notificationTable) as $notificationKey) {
+                $keyName = is_object($notificationKey)
+                    ? (string) ($notificationKey->Key_name ?? $notificationKey->key_name ?? '')
+                    : '';
+                if (strcasecmp($keyName, 'idx_notification_reminder_schedule') === 0) {
+                    $hasReminderScheduleIndex = true;
+                    break;
+                }
+            }
+            if (!$hasReminderScheduleIndex) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_notifications')
+                    . ' ADD INDEX ' . $db->quoteName('idx_notification_reminder_schedule')
+                    . ' (' . $db->quoteName('reminder_definition_id') . ', ' . $db->quoteName('scheduled_at') . ')'
+                );
+                $db->execute();
+            }
+
+            $now = Factory::getDate()->toSql();
+            $reminderDefaults = array(
+                array('default_7_days', 'COM_JEM_REMINDER_DEFAULT_7_DAYS', 10080, 1),
+                array('default_24_hours', 'COM_JEM_REMINDER_DEFAULT_24_HOURS', 1440, 2),
+                array('default_2_hours', 'COM_JEM_REMINDER_DEFAULT_2_HOURS', 120, 3),
+            );
+            foreach ($reminderDefaults as $definition) {
+                $row = (object) array(
+                    'event_id' => 0,
+                    'source_id' => null,
+                    'code' => $definition[0],
+                    'title' => $definition[1],
+                    'minutes' => $definition[2],
+                    'published' => 1,
+                    'default_new_event' => 1,
+                    'ordering' => $definition[3],
+                    'created' => $now,
+                    'modified' => $now,
+                    'created_by' => 0,
+                );
+                try {
+                    $db->insertObject('#__jem_reminders', $row);
+                } catch (Throwable $ignored) {
+                    // The unique code makes this migration idempotent.
+                }
+            }
 
             $defaults = array(
-                'notification_retention_years' => '4',
+                'notification_retention_days' => '0',
                 'notification_user_resend_limit' => '2',
                 'notification_user_resend_window_hours' => '24',
                 'notification_user_resend_cooldown_minutes' => '10',
                 'notification_max_attempts' => '4',
+                'reminders_enabled' => '0',
+                'reminder_all_day_time' => '09:00',
+                'notification_retry_delays_minutes' => '10,30,120',
                 'notification_schema_ready' => '1',
             );
             foreach ($defaults as $key => $value) {
@@ -527,6 +649,7 @@ SQL;
                 }
             }
 
+            $this->migrateRegistrationHistoryTable($db);
             $this->createRegistrationHistoryTable($db);
             $legacyFingerprint = $this->registrationLegacyFingerprint($db);
 
@@ -566,7 +689,7 @@ SQL;
                 ->from($db->quoteName('#__jem_register', 'r'))
                 ->join(
                     'LEFT',
-                    $db->quoteName('#__jem_registration_history', 'h')
+                    $db->quoteName('#__jem_register_history', 'h')
                     . ' ON h.registration_id = r.id AND h.revision = 1'
                 )
                 ->where('(r.reference IS NULL OR r.reference = ' . $db->quote('') . ' OR h.id IS NULL)');
@@ -586,12 +709,67 @@ SQL;
     }
 
     /**
+     * Preserve the earlier development table while aligning its name with
+     * the legacy #__jem_register parent table.
+     */
+    private function migrateRegistrationHistoryTable($db)
+    {
+        $legacyTable = $db->replacePrefix('#__jem_registration_history');
+        $historyTable = $db->replacePrefix('#__jem_register_history');
+        $tableList = (array) $db->getTableList();
+        $hasLegacyTable = in_array($legacyTable, $tableList, true);
+        $hasHistoryTable = in_array($historyTable, $tableList, true);
+
+        if ($hasLegacyTable && !$hasHistoryTable) {
+            $db->setQuery(
+                'RENAME TABLE ' . $db->quoteName($legacyTable)
+                . ' TO ' . $db->quoteName($historyTable)
+            )->execute();
+
+            return;
+        }
+
+        if (!$hasLegacyTable || !$hasHistoryTable) {
+            return;
+        }
+
+        $columns = array(
+            'id', 'operation_reference', 'registration_id', 'registration_reference',
+            'revision', 'event_id', 'event_title', 'action', 'old_status',
+            'new_status', 'old_places', 'new_places', 'old_user_id', 'new_user_id',
+            'actor_user_id', 'source', 'reason_code', 'forced', 'changed_fields', 'occurred',
+        );
+        $columnList = implode(', ', array_map(array($db, 'quoteName'), $columns));
+        $db->setQuery(
+            'INSERT IGNORE INTO ' . $db->quoteName($historyTable) . ' (' . $columnList . ')'
+            . ' SELECT ' . $columnList . ' FROM ' . $db->quoteName($legacyTable)
+        )->execute();
+
+        $db->setQuery('SELECT COUNT(*) FROM ' . $db->quoteName($legacyTable));
+        $legacyCount = (int) $db->loadResult();
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName($legacyTable, 'old'))
+            ->join('INNER', $db->quoteName($historyTable, 'new')
+                . ' ON new.id = old.id'
+                . ' AND new.operation_reference = old.operation_reference'
+                . ' AND new.registration_id = old.registration_id'
+                . ' AND new.revision = old.revision');
+        $db->setQuery($query);
+        if ((int) $db->loadResult() !== $legacyCount) {
+            throw new RuntimeException('The legacy registration history could not be merged without changing audit identifiers.');
+        }
+
+        $db->setQuery('DROP TABLE ' . $db->quoteName($legacyTable))->execute();
+    }
+
+    /**
      * Create the append-only registration history table when it is absent.
      */
     private function createRegistrationHistoryTable($db)
     {
         $db->setQuery(
-            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_registration_history') . ' ('
+            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_register_history') . ' ('
             . $db->quoteName('id') . ' BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,'
             . $db->quoteName('operation_reference') . ' VARCHAR(28) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,'
             . $db->quoteName('registration_id') . ' INT(11) UNSIGNED NOT NULL,'
@@ -665,7 +843,7 @@ SQL;
 
             $query = $db->getQuery(true)
                 ->select('COUNT(*)')
-                ->from($db->quoteName('#__jem_registration_history'))
+                ->from($db->quoteName('#__jem_register_history'))
                 ->where($db->quoteName('registration_id') . ' = ' . (int) $registration->id)
                 ->where($db->quoteName('revision') . ' = 1');
             $db->setQuery($query);
@@ -695,7 +873,7 @@ SQL;
                     'changed_fields'       => json_encode(array('baseline'), JSON_UNESCAPED_SLASHES),
                     'occurred'             => gmdate('Y-m-d H:i:s'),
                 );
-                $db->insertObject('#__jem_registration_history', $history);
+                $db->insertObject('#__jem_register_history', $history);
             }
 
             $db->transactionCommit();
@@ -2034,7 +2212,10 @@ SQL;
             '#__jem_import_profiles',
             '#__jem_links',
             '#__jem_registration_history',
+            '#__jem_register_history',
+            '#__jem_reminders',
             '#__jem_notification_attempts',
+            '#__jem_notifications_attempts',
             '#__jem_notifications',
             '#__jem_register',
             '#__jem_special_days',

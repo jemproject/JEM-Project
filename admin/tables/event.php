@@ -55,6 +55,11 @@ class JemTableEvent extends Table
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
         }
+        if (array_key_exists('created_by', $array)) {
+            // 'created_by' is int(11) unsigned NOT NULL DEFAULT '0'; an empty
+            // "Created by" selector submits '' which strict SQL modes reject.
+            $array['created_by'] = (int) $array['created_by'];
+        }
         if (array_key_exists('article_id', $array)) {
             $array['article_id'] = (int) $array['article_id'];
         }
@@ -555,6 +560,7 @@ class JemTableEvent extends Table
                 'source'     => 'administrator.event.delete',
                 'reasonCode' => 'event_deleted',
             ));
+            (new JemNotificationService($db))->cancelPendingReminders(0, $id);
 
             if (!parent::delete($pk)) {
                 throw new RuntimeException($this->getError() ?: 'Could not delete the JEM event.');
@@ -565,6 +571,11 @@ class JemTableEvent extends Table
             $query->where('itemid = '.$db->quote($id));
             $db->setQuery($query);
             $db->execute();
+
+            $query = $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_reminders'))
+                ->where($db->quoteName('event_id') . ' = ' . $id);
+            $db->setQuery($query)->execute();
 
             $db->transactionCommit();
 

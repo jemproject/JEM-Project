@@ -16,6 +16,7 @@ $listDirn = $this->escape($this->state->get('list.direction'));
             <li class="nav-item"><a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=notifications'); ?>"><?php echo Text::_('COM_JEM_NOTIFICATION_TAB_TEMPLATES'); ?></a></li>
             <li class="nav-item"><a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=notificationcontent&section=footer'); ?>"><?php echo Text::_('COM_JEM_NOTIFICATION_TAB_FOOTER'); ?></a></li>
             <li class="nav-item"><a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=notificationcontent&section=disclaimer'); ?>"><?php echo Text::_('COM_JEM_NOTIFICATION_TAB_DISCLAIMER'); ?></a></li>
+            <li class="nav-item"><a class="nav-link" href="<?php echo Route::_('index.php?option=com_jem&view=reminders'); ?>"><?php echo Text::_('COM_JEM_NOTIFICATION_TAB_REMINDERS'); ?></a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="<?php echo Route::_('index.php?option=com_jem&view=notificationhistory'); ?>"><?php echo Text::_('COM_JEM_NOTIFICATION_TAB_HISTORY'); ?></a></li>
     </ul>
@@ -37,13 +38,13 @@ $listDirn = $this->escape($this->state->get('list.direction'));
     </tr></thead><tbody>
     <?php if (!$this->items) : ?><tr><td colspan="8" class="text-center"><?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?></td></tr><?php endif; ?>
     <?php foreach ($this->items as $item) : ?>
-        <tr><td><?php echo HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5')); ?><br><small>#<?php echo (int) $item->id; ?></small></td>
-        <td><span class="badge bg-<?php echo $item->state === 'sent' ? 'success' : ($item->state === 'failed' ? 'danger' : 'secondary'); ?>"><?php echo $this->escape($item->state); ?></span><?php if (!empty($item->last_error)) : ?><br><small class="text-danger"><?php echo $this->escape($item->last_error); ?></small><?php endif; ?></td>
+        <tr><td><?php echo HTMLHelper::_('date', $item->created, Text::_('DATE_FORMAT_LC5')); ?><br><small>#<?php echo (int) $item->id; ?></small><?php if (!empty($item->scheduled_at)) : ?><br><small><?php echo Text::_('COM_JEM_NOTIFICATION_SCHEDULED_FOR'); ?>: <?php echo HTMLHelper::_('date', $item->scheduled_at, Text::_('DATE_FORMAT_LC5')); ?></small><?php endif; ?></td>
+        <td><span class="badge bg-<?php echo $item->state === 'sent' ? 'success' : ($item->state === 'failed' ? 'danger' : ($item->state === 'scheduled' ? 'info' : ($item->state === 'queued' ? 'warning text-dark' : 'secondary'))); ?>"><?php echo $this->escape($item->state); ?></span><?php if (!empty($item->last_error)) : ?><br><small class="text-danger"><?php echo $this->escape($item->last_error); ?></small><?php endif; ?></td>
         <td><?php echo $this->escape($item->notification_type); ?><br><small><?php echo $this->escape($item->resolved_language); ?> · <?php echo Text::_('COM_JEM_REGISTRATION_HISTORY_REVISION'); ?> <?php echo (int) $item->registration_revision; ?></small></td>
         <td><?php echo $this->escape($item->event_title ?: ('#' . $item->event_id)); ?><br><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&id=' . (int) $item->registration_id . '&eventid=' . (int) $item->event_id); ?>"><code><?php echo $this->escape($item->registration_reference); ?></code></a></td>
         <td><?php echo $this->escape($item->recipient_name); ?><br><small><?php echo $this->escape($item->recipient_email); ?> (<?php echo $this->escape($item->recipient_type); ?>)</small></td>
         <td><details><summary><?php echo $this->escape($item->subject); ?></summary><pre class="mt-2 text-wrap"><?php echo $this->escape($item->body); ?></pre></details></td>
-        <td><?php echo (int) $item->attempts_total; ?> / <?php echo (int) $item->max_attempts; ?></td>
+        <td><?php echo (int) $item->attempts_total; ?> / <?php echo (int) $item->max_attempts; ?><?php if (!empty($item->next_attempt_at) && in_array($item->state, array('queued', 'failed'), true)) : ?><br><small><?php echo Text::_('COM_JEM_NOTIFICATION_NEXT_ATTEMPT'); ?>: <?php echo HTMLHelper::_('date', $item->next_attempt_at, Text::_('DATE_FORMAT_LC5')); ?></small><?php endif; ?></td>
         <td><?php if ($this->canResend && in_array($item->state, array('queued', 'failed'), true) && $item->attempt_count < $item->max_attempts) : ?><button class="btn btn-sm btn-warning" type="submit" form="notification-action-<?php echo (int) $item->id; ?>" name="task" value="notification.retry"><?php echo Text::_('COM_JEM_NOTIFICATION_RETRY'); ?></button><?php elseif ($this->canResend && $item->state === 'sent') : ?><button class="btn btn-sm btn-primary" type="submit" form="notification-action-<?php echo (int) $item->id; ?>" name="task" value="notification.resend"><?php echo Text::_('COM_JEM_NOTIFICATION_RESEND'); ?></button><?php endif; ?></td></tr>
     <?php endforeach; ?>
     </tbody></table></div>

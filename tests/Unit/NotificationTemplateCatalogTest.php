@@ -31,8 +31,8 @@ final class NotificationTemplateCatalogTest extends TestCase
     {
         $definitions = JemNotificationTemplateCatalog::all();
 
-        self::assertCount(48, $definitions);
-        self::assertCount(48, array_unique(array_column($definitions, 'id')));
+        self::assertCount(49, $definitions);
+        self::assertCount(49, array_unique(array_column($definitions, 'id')));
 
         foreach ($definitions as $id => $definition) {
             self::assertSame($id, $definition['id']);
@@ -51,6 +51,9 @@ final class NotificationTemplateCatalogTest extends TestCase
                 self::assertArrayHasKey($key, $this->language, $key);
                 preg_match_all('/%(?:(?:[1-9][0-9]*)\$)?[sd]/', $this->language[$key], $matches);
                 self::assertCount(count($matches[0]), $tokens, $key);
+                if (JemNotificationTemplateRenderer::detectFormat($this->language[$key]) === 'named') {
+                    self::assertSame(array(), $tokens, $key);
+                }
             }
         }
     }
@@ -123,16 +126,33 @@ final class NotificationTemplateCatalogTest extends TestCase
             foreach (array('subject', 'body') as $part) {
                 $key = $definition[$part . '_key'];
                 $tokens = $definition[$part . '_legacy_tokens'];
-                $arguments = array_map(static fn ($token) => $values[$token], $tokens);
-                $expected = vsprintf($this->language[$key], $arguments);
                 $actual = JemNotificationTemplateRenderer::render(
                     $this->language[$key],
                     $values,
                     $tokens
                 );
-
-                self::assertSame($expected, $actual, $key);
+                if (JemNotificationTemplateRenderer::detectFormat($this->language[$key]) === 'legacy') {
+                    $arguments = array_map(static fn ($token) => $values[$token], $tokens);
+                    self::assertSame(vsprintf($this->language[$key], $arguments), $actual, $key);
+                } else {
+                    self::assertStringNotContainsString('{', $actual, $key);
+                }
             }
         }
+    }
+
+    public function testScheduledReminderUsesLiteralNamedVariables(): void
+    {
+        $definition = JemNotificationTemplateCatalog::findByLanguageKeys(
+            'PLG_JEM_MAILER_USER_REMINDER_SUBJECT',
+            'PLG_JEM_MAILER_USER_REMINDER_BODY'
+        );
+
+        self::assertNotNull($definition);
+        self::assertSame('reminder', $definition['workflow']);
+        self::assertSame('scheduled', $definition['variant']);
+        self::assertContains('reminder_interval', $definition['allowed_tokens']);
+        self::assertSame(array(), $definition['subject_legacy_tokens']);
+        self::assertSame(array(), $definition['body_legacy_tokens']);
     }
 }

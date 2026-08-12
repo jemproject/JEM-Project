@@ -140,6 +140,7 @@ final class JemNotificationService
             'registration_reference' => substr((string) ($data['registration_reference'] ?? ''), 0, 28),
             'registration_revision' => (int) ($data['revision'] ?? 0),
             'event_id' => (int) ($data['event_id'] ?? 0),
+            'reminder_definition_id' => !empty($data['reminder_definition_id']) ? (int) $data['reminder_definition_id'] : null,
             'ticket_id' => !empty($data['ticket_id']) ? (int) $data['ticket_id'] : null,
             'notification_type' => substr((string) ($data['notification_type'] ?? 'registration'), 0, 64),
             'recipient_type' => substr((string) ($data['recipient_type'] ?? 'user'), 0, 32),
@@ -157,9 +158,9 @@ final class JemNotificationService
             'payload_json' => $payloadJson,
             'attachments_json' => $attachmentsJson,
             'content_hash' => $contentHash,
-            'state' => self::STATE_QUEUED,
-            'scheduled_at' => null,
-            'queued_at' => $now,
+            'state' => !empty($data['scheduled_at']) ? self::STATE_SCHEDULED : self::STATE_QUEUED,
+            'scheduled_at' => !empty($data['scheduled_at']) ? (string) $data['scheduled_at'] : null,
+            'queued_at' => !empty($data['scheduled_at']) ? null : $now,
             'processing_started_at' => null,
             'sent_at' => null,
             'failed_at' => null,
@@ -188,7 +189,7 @@ final class JemNotificationService
 
         $row->_created = true;
         JemHelper::addLogEntry(
-            'Notification #' . (int) $row->id . ' queued for registration #' . (int) $row->registration_id,
+            'Notification #' . (int) $row->id . ' ' . $row->state . ' for registration #' . (int) $row->registration_id,
             __METHOD__,
             Log::INFO
         );
@@ -258,7 +259,7 @@ final class JemNotificationService
             'error_code' => '',
             'error_message' => '',
         );
-        $this->db->insertObject('#__jem_notification_attempts', $attempt, 'id');
+        $this->db->insertObject('#__jem_notifications_attempts', $attempt, 'id');
 
         return $attempt;
     }
@@ -268,9 +269,18 @@ final class JemNotificationService
         $now = Factory::getDate()->toSql();
         $result = $success ? 'sent' : 'failed';
         $error = substr(preg_replace('/\s+/', ' ', trim((string) $errorMessage)), 0, 1000);
+        $notification = $this->getById((int) $notificationId);
+        $nextAttempt = null;
+
+        if (!$success && $notification && (int) $notification->attempt_count < (int) $notification->max_attempts) {
+            $delays = $this->retryDelays();
+            $delayIndex = max(0, (int) $notification->attempt_count - 1);
+            $delayMinutes = (int) ($delays[$delayIndex] ?? end($delays));
+            $nextAttempt = Factory::getDate(Factory::getDate()->toUnix() + ($delayMinutes * 60))->toSql();
+        }
 
         $query = $this->db->getQuery(true)
-            ->update($this->db->quoteName('#__jem_notification_attempts'))
+            ->update($this->db->quoteName('#__jem_notifications_attempts'))
             ->set($this->db->quoteName('finished_at') . ' = ' . $this->db->quote($now))
             ->set($this->db->quoteName('result') . ' = ' . $this->db->quote($result))
             ->set($this->db->quoteName('transport_message_id') . ' = ' . $this->db->quote(substr((string) $messageId, 0, 255)))
@@ -285,6 +295,7 @@ final class JemNotificationService
             ->set($this->db->quoteName('state') . ' = ' . $this->db->quote($success ? self::STATE_SENT : self::STATE_FAILED))
             ->set($this->db->quoteName('modified') . ' = ' . $this->db->quote($now))
             ->set($this->db->quoteName('processing_started_at') . ' = NULL')
+            ->set($this->db->quoteName('next_attempt_at') . ' = ' . ($nextAttempt === null ? 'NULL' : $this->db->quote($nextAttempt)))
             ->set($this->db->quoteName($success ? 'sent_at' : 'failed_at') . ' = ' . $this->db->quote($now))
             ->where($this->db->quoteName('id') . ' = ' . (int) $notificationId)
             ->where($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_PROCESSING));
@@ -298,6 +309,149 @@ final class JemNotificationService
         );
 
         return (bool) $success;
+    }
+
+    /**
+     * Promote due scheduled snapshots and return all due queue/retry ids.
+     */
+    public function getDueNotificationIds($limit = 100)
+    {
+        $limit = max(1, min(500, (int) $limit));
+        $now = Factory::getDate()->toSql();
+        $query = $this->db->getQuery(true)
+            ->update($this->db->quoteName('#__jem_notifications'))
+            ->set($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_QUEUED))
+            ->set($this->db->quoteName('queued_at') . ' = COALESCE(' . $this->db->quoteName('queued_at') . ', ' . $this->db->quote($now) . ')')
+            ->set($this->db->quoteName('next_attempt_at') . ' = ' . $this->db->quote($now))
+            ->set($this->db->quoteName('modified') . ' = ' . $this->db->quote($now))
+            ->where($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_SCHEDULED))
+            ->where($this->db->quoteName('scheduled_at') . ' <= ' . $this->db->quote($now));
+        $this->db->setQuery($query);
+        $this->db->execute();
+
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName('id'))
+            ->from($this->db->quoteName('#__jem_notifications'))
+            ->where($this->db->quoteName('state') . ' IN (' . $this->db->quote(self::STATE_QUEUED) . ',' . $this->db->quote(self::STATE_FAILED) . ')')
+            ->where($this->db->quoteName('attempt_count') . ' < ' . $this->db->quoteName('max_attempts'))
+            ->where('(' . $this->db->quoteName('next_attempt_at') . ' IS NULL OR ' . $this->db->quoteName('next_attempt_at') . ' <= ' . $this->db->quote($now) . ')')
+            ->order(array($this->db->quoteName('scheduled_at') . ' ASC', $this->db->quoteName('id') . ' ASC'));
+        $this->db->setQuery($query, 0, $limit);
+
+        return array_map('intval', (array) $this->db->loadColumn());
+    }
+
+    /**
+     * Recover task processes abandoned without a delivery result.
+     */
+    public function recoverStaleProcessing($minutes = 30)
+    {
+        $threshold = Factory::getDate(Factory::getDate()->toUnix() - (max(5, (int) $minutes) * 60))->toSql();
+        $now = Factory::getDate()->toSql();
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName('id'))
+            ->from($this->db->quoteName('#__jem_notifications'))
+            ->where($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_PROCESSING))
+            ->where($this->db->quoteName('processing_started_at') . ' < ' . $this->db->quote($threshold));
+        $this->db->setQuery($query);
+        $ids = array_map('intval', (array) $this->db->loadColumn());
+        if (!$ids) {
+            return 0;
+        }
+        $idList = implode(',', $ids);
+        $query = $this->db->getQuery(true)
+            ->update($this->db->quoteName('#__jem_notifications_attempts'))
+            ->set($this->db->quoteName('finished_at') . ' = ' . $this->db->quote($now))
+            ->set($this->db->quoteName('result') . ' = ' . $this->db->quote('failed'))
+            ->set($this->db->quoteName('error_code') . ' = ' . $this->db->quote('stale_processing'))
+            ->set($this->db->quoteName('error_message') . ' = ' . $this->db->quote('Recovered after an interrupted scheduler process.'))
+            ->where($this->db->quoteName('notification_id') . ' IN (' . $idList . ')')
+            ->where($this->db->quoteName('result') . ' = ' . $this->db->quote('processing'));
+        $this->db->setQuery($query)->execute();
+
+        $query = $this->db->getQuery(true)
+            ->update($this->db->quoteName('#__jem_notifications'))
+            ->set($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_FAILED))
+            ->set($this->db->quoteName('processing_started_at') . ' = NULL')
+            ->set($this->db->quoteName('failed_at') . ' = ' . $this->db->quote($now))
+            ->set($this->db->quoteName('next_attempt_at') . ' = ' . $this->db->quote($now))
+            ->set($this->db->quoteName('modified') . ' = ' . $this->db->quote($now))
+            ->where($this->db->quoteName('id') . ' IN (' . $idList . ')')
+            ->where($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_PROCESSING));
+        $this->db->setQuery($query);
+        $this->db->execute();
+
+        return count($ids);
+    }
+
+    /**
+     * Cancel unsent reminder snapshots while preserving their audit rows.
+     */
+    public function cancelPendingReminders($registrationId = 0, $eventId = 0, $definitionId = 0, array $exceptIds = array())
+    {
+        $query = $this->db->getQuery(true)
+            ->update($this->db->quoteName('#__jem_notifications'))
+            ->set($this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_CANCELLED))
+            ->set($this->db->quoteName('cancelled_at') . ' = ' . $this->db->quote(Factory::getDate()->toSql()))
+            ->set($this->db->quoteName('next_attempt_at') . ' = NULL')
+            ->where($this->db->quoteName('notification_type') . ' = ' . $this->db->quote('reminder'))
+            ->where($this->db->quoteName('state') . ' IN (' . $this->db->quote(self::STATE_SCHEDULED) . ',' . $this->db->quote(self::STATE_QUEUED) . ',' . $this->db->quote(self::STATE_FAILED) . ')');
+        if ((int) $registrationId > 0) {
+            $query->where($this->db->quoteName('registration_id') . ' = ' . (int) $registrationId);
+        }
+        if ((int) $eventId > 0) {
+            $query->where($this->db->quoteName('event_id') . ' = ' . (int) $eventId);
+        }
+        if ((int) $definitionId > 0) {
+            $query->where($this->db->quoteName('reminder_definition_id') . ' = ' . (int) $definitionId);
+        }
+        $exceptIds = array_values(array_filter(array_unique(array_map('intval', $exceptIds))));
+        if ($exceptIds) {
+            $query->where($this->db->quoteName('id') . ' NOT IN (' . implode(',', $exceptIds) . ')');
+        }
+        $this->db->setQuery($query);
+        $this->db->execute();
+
+        return (int) $this->db->getAffectedRows();
+    }
+
+    /**
+     * Remove terminal notification history after the configured retention.
+     */
+    public function purgeExpired($days = 0)
+    {
+        $days = (int) $days;
+        if ($days <= 0) {
+            return 0;
+        }
+
+        $threshold = Factory::getDate(Factory::getDate()->toUnix() - ($days * 86400))->toSql();
+        $terminal = implode(',', array_map(array($this->db, 'quote'), array(self::STATE_SENT, self::STATE_CANCELLED)));
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName('id'))
+            ->from($this->db->quoteName('#__jem_notifications'))
+            ->where('(' . $this->db->quoteName('state') . ' IN (' . $terminal . ') OR ('
+                . $this->db->quoteName('state') . ' = ' . $this->db->quote(self::STATE_FAILED)
+                . ' AND (' . $this->db->quoteName('next_attempt_at') . ' IS NULL OR '
+                . $this->db->quoteName('attempt_count') . ' >= ' . $this->db->quoteName('max_attempts') . ')))')
+            ->where($this->db->quoteName('created') . ' < ' . $this->db->quote($threshold));
+        $this->db->setQuery($query);
+        $ids = array_map('intval', (array) $this->db->loadColumn());
+        if (!$ids) {
+            return 0;
+        }
+
+        $idList = implode(',', $ids);
+        $query = $this->db->getQuery(true)
+            ->delete($this->db->quoteName('#__jem_notifications_attempts'))
+            ->where($this->db->quoteName('notification_id') . ' IN (' . $idList . ')');
+        $this->db->setQuery($query)->execute();
+        $query = $this->db->getQuery(true)
+            ->delete($this->db->quoteName('#__jem_notifications'))
+            ->where($this->db->quoteName('id') . ' IN (' . $idList . ')');
+        $this->db->setQuery($query)->execute();
+
+        return count($ids);
     }
 
     /**
@@ -382,8 +536,8 @@ final class JemNotificationService
     {
         $query = $this->db->getQuery(true)
             ->select('n.*')
-            ->select('(SELECT COUNT(*) FROM ' . $this->db->quoteName('#__jem_notification_attempts', 'na') . ' WHERE na.notification_id = n.id) AS attempts_total')
-            ->select('(SELECT na2.error_message FROM ' . $this->db->quoteName('#__jem_notification_attempts', 'na2') . ' WHERE na2.notification_id = n.id ORDER BY na2.attempt_number DESC LIMIT 1) AS last_error')
+            ->select('(SELECT COUNT(*) FROM ' . $this->db->quoteName('#__jem_notifications_attempts', 'na') . ' WHERE na.notification_id = n.id) AS attempts_total')
+            ->select('(SELECT na2.error_message FROM ' . $this->db->quoteName('#__jem_notifications_attempts', 'na2') . ' WHERE na2.notification_id = n.id ORDER BY na2.attempt_number DESC LIMIT 1) AS last_error')
             ->from($this->db->quoteName('#__jem_notifications', 'n'))
             ->where('n.registration_id = ' . (int) $registrationId)
             ->order('n.created DESC, n.id DESC');
@@ -415,6 +569,19 @@ final class JemNotificationService
             return (int) $default;
         }
         return (int) JemConfig::getInstance()->toRegistry()->get($key, $default);
+    }
+
+    private function retryDelays()
+    {
+        $raw = '10,30,120';
+        if (class_exists('JemConfig')) {
+            $raw = (string) JemConfig::getInstance()->toRegistry()->get('notification_retry_delays_minutes', $raw);
+        }
+        $delays = array_values(array_filter(array_map('intval', explode(',', $raw)), static function ($value) {
+            return $value > 0;
+        }));
+
+        return $delays ?: array(10, 30, 120);
     }
 
     private static function encodeJson($value)

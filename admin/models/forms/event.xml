@@ -582,6 +582,30 @@
         />
     </fieldset>
 
+    <fieldset name="notifications" label="COM_JEM_EVENT_NOTIFICATIONS">
+        <field name="event_reminders_enabled" type="radio" default="0"
+            class="inputbox btn-group btn-group-yesno"
+            label="COM_JEM_EVENT_REMINDERS_ENABLED"
+            description="COM_JEM_EVENT_REMINDERS_ENABLED_DESC">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="reminder_ids" type="reminderdefinitions"
+            label="COM_JEM_EVENT_REMINDERS"
+            description="COM_JEM_EVENT_REMINDERS_DESC"
+            multiple="true"
+            layout="joomla.form.field.list-fancy-select"
+            showon="event_reminders_enabled:1"
+        />
+        <field name="apply_reminders_to_series" type="checkbox"
+            label="COM_JEM_EVENT_REMINDERS_APPLY_SERIES"
+            description="COM_JEM_EVENT_REMINDERS_APPLY_SERIES_DESC"
+            value="1"
+            checked="0"
+            showon="event_reminders_enabled:1"
+        />
+    </fieldset>
+
     <fieldset name="recurrence"
               label="COM_JEM_RECURRING_EVENTS"
     >

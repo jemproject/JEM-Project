@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
-
+
 use Joomla\Utilities\ArrayHelper;
 /**
  * JEM Venue Table
@@ -39,6 +39,12 @@ class JemTableVenue extends Table
 
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
+        }
+
+        if (array_key_exists('created_by', $array)) {
+            // 'created_by' is int(11) unsigned NOT NULL DEFAULT '0'; an empty
+            // "Created by" selector submits '' which strict SQL modes reject.
+            $array['created_by'] = (int) $array['created_by'];
         }
 
         if (isset($array['attribs']) && is_array($array['attribs'])) {

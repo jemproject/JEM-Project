@@ -225,6 +225,25 @@ final class JemNotificationTemplateCatalog
             false
         );
 
+        self::addDefinition(
+            $definitions,
+            'PLG_JEM_MAILER_USER_REMINDER_SUBJECT',
+            'PLG_JEM_MAILER_USER_REMINDER_BODY',
+            'reminder',
+            'user',
+            'scheduled',
+            false
+        );
+        $reminderTemplateId = self::templateIdForBodyKey('PLG_JEM_MAILER_USER_REMINDER_BODY');
+        $definitions[$reminderTemplateId]['subject_legacy_tokens'] = array();
+        $definitions[$reminderTemplateId]['body_legacy_tokens'] = array();
+        $definitions[$reminderTemplateId]['recommended_tokens'] = array(
+            'user_name',
+            'event_title',
+            'reminder_interval',
+            'reservation_url',
+        );
+
         return $definitions;
     }
 
@@ -366,6 +385,7 @@ final class JemNotificationTemplateCatalog
             'event_image_url',
             'venue_image_url',
             'site_name',
+            'reminder_interval',
         );
     }
 

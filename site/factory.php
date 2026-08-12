@@ -17,6 +17,8 @@ require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplatecatalo
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplaterenderer.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationtemplateservice.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/notificationservice.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/reminderservice.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/reminderschedulerservice.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationidentity.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationservice.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationtransition.class.php');

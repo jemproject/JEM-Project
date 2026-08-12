@@ -63,7 +63,7 @@ class JemModelRegistrationhistoryentry extends BaseDatabaseModel
                 'r.id AS current_registration_id',
                 'e.id AS current_event_id',
             ))
-            ->from($db->quoteName('#__jem_registration_history', 'h'))
+            ->from($db->quoteName('#__jem_register_history', 'h'))
             ->join('LEFT', $db->quoteName('#__jem_register', 'r')
                 . ' ON ' . $db->quoteName('r.id') . ' = ' . $db->quoteName('h.registration_id')
                 . ' AND ' . $db->quoteName('r.reference') . ' = ' . $db->quoteName('h.registration_reference'))

@@ -249,7 +249,9 @@ class JemModelSettings extends AdminModel
         }
 
         $notificationDefaults = array(
-            'notification_retention_years' => 4,
+            'reminders_enabled' => 0,
+            'reminder_all_day_time' => '09:00',
+            'notification_retention_days' => 0,
             'notification_user_resend_limit' => 2,
             'notification_user_resend_window_hours' => 24,
             'notification_user_resend_cooldown_minutes' => 10,
@@ -274,6 +276,24 @@ class JemModelSettings extends AdminModel
         if (!$config->store()) {
             $this->setError(Text::_('?'));
             return false;
+        }
+
+        try {
+            require_once JPATH_SITE . '/components/com_jem/factory.php';
+            $remindersEnabled = (int) $data['reminders_enabled'] === 1;
+            (new JemReminderSchedulerService())->ensureTask($remindersEnabled);
+
+            $reminderService = new JemReminderService();
+            if ($remindersEnabled) {
+                $reminderService->syncAllFuture();
+            } else {
+                (new JemNotificationService())->cancelPendingReminders();
+            }
+        } catch (Throwable $error) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_REMINDER_SCHEDULER_SYNC_FAILED', $error->getMessage()),
+                'warning'
+            );
         }
 
         if (!$this->storeCountryStates()) {

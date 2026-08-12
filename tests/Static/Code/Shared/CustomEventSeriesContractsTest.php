@@ -71,7 +71,7 @@ final class CustomEventSeriesContractsTest extends TestCase
 
     public function testSeriesWritesShareOneOuterTransaction(): void
     {
-        $model = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
+        $model = str_replace("\r\n", "\n", file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php'));
 
         self::assertStringContainsString('$seriesTransactionActive = false;', $model);
         self::assertStringContainsString('$seriesDb->transactionStart();', $model);

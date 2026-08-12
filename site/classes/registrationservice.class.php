@@ -210,7 +210,7 @@ final class JemRegistrationService
             $options,
             $now
         );
-        $this->db->insertObject('#__jem_registration_history', $history);
+        $this->db->insertObject('#__jem_register_history', $history);
 
         $transition = JemRegistrationTransition::create(
             $before,
@@ -440,7 +440,7 @@ final class JemRegistrationService
                 $now,
                 $revision
             );
-            $this->db->insertObject('#__jem_registration_history', $history);
+            $this->db->insertObject('#__jem_register_history', $history);
         }
 
         $query = $this->db->getQuery(true)
@@ -687,7 +687,7 @@ final class JemRegistrationService
     {
         $query = $this->db->getQuery(true)
             ->select('COUNT(*)')
-            ->from($this->db->quoteName('#__jem_registration_history'))
+            ->from($this->db->quoteName('#__jem_register_history'))
             ->where($this->db->quoteName('operation_reference') . ' = ' . $this->db->quote($operationReference))
             ->where($this->db->quoteName('registration_id') . ' = ' . (int) $registrationId);
         $this->db->setQuery($query);

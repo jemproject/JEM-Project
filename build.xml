@@ -127,6 +127,8 @@
 
         <available file="${cfg.validateDir}/package/packages/plg_actionlog_${cfg.name}.zip" property="validate.plg.actionlog.zip" />
         <fail unless="validate.plg.actionlog.zip" message="Action Log plugin package plg_actionlog_${cfg.name}.zip is missing." />
+        <available file="${cfg.validateDir}/package/packages/plg_task_${cfg.name}.zip" property="validate.plg.task.zip" />
+        <fail unless="validate.plg.task.zip" message="Task plugin package plg_task_${cfg.name}.zip is missing." />
 
         <mkdir dir="${cfg.validateDir}/component" />
         <unzip src="${cfg.validateDir}/package/packages/${cfg.comName}.zip" dest="${cfg.validateDir}/component" />
@@ -191,6 +193,9 @@
             <patternset refid="windows.junk.excludes" />
         </zip>
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_actionlog_${cfg.name}.zip" basedir="plugins/plg_actionlog_${cfg.name}">
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/plugins/plg_task_${cfg.name}.zip" basedir="plugins/plg_task_${cfg.name}">
             <patternset refid="windows.junk.excludes" />
         </zip>
         <zip destfile="${cfg.buildVersionDir}/plugins/plg_user_${cfg.name}.zip" basedir="plugins/plg_user_${cfg.name}">
