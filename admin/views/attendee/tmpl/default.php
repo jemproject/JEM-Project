@@ -106,7 +106,7 @@ Joomla.submitbutton = function(task)
             </tr>
             <tr>
                 <td class="key">
-                    <label for="status" <?php echo JemOutput::tooltip(Text::_('COM_JEM_STATUS'), Text::_('COM_JEM_STATUS_DESC')); ?>>
+                    <label for="reg_status" <?php echo JemOutput::tooltip(Text::_('COM_JEM_STATUS'), Text::_('COM_JEM_STATUS_DESC')); ?>>
                         <?php echo Text::_('COM_JEM_STATUS').':'; ?>
                     </label>
                 </td>
@@ -117,8 +117,8 @@ Joomla.submitbutton = function(task)
                                      HTMLHelper::_('select.option',  1, Text::_('COM_JEM_ATTENDEES_ATTENDING')),
                                      HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
 
-                    $selectOptions = array('id' => 'reg_status', 'class' => 'form-select');
-                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions, 'value', 'text', (int) $this->row->status);
+                    $selectOptions = array('class' => 'form-select');
+                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions, 'value', 'text', (int) $this->row->status, 'reg_status');
                     ?>
                 </td>
             </tr>
