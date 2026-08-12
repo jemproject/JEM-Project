@@ -56,7 +56,7 @@ class JemHelperBackend
      * identity; callers must never build $record from submitted form data.
      *
      * @param   string       $type       event or venue.
-     * @param   string       $operation  access, create, edit, edit.state or delete.
+     * @param   string       $operation  access, create, edit, edit.state, edit.own, edit.created or delete.
      * @param   object|null  $record     Stored record for edit-own evaluation.
      *
      * @return boolean

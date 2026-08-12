@@ -38,8 +38,8 @@ final class AuthorizationGuardTest extends TestCase
     public function testModelPermissionMethodsGateEventVenueAndCategoryActions(): void
     {
         $contracts = array(
-            'admin/models/event.php' => array("JemHelperBackend::can('event', 'delete'", "JemHelperBackend::can('event', 'edit.state'"),
-            'admin/models/venue.php' => array("JemHelperBackend::can('venue', 'delete'", "JemHelperBackend::can('venue', 'edit.state'"),
+            'admin/models/event.php' => array("JemHelperBackend::can('event', 'delete'", "JemHelperBackend::can('event', 'edit.state'", "JemHelperBackend::can('event', 'edit.created'"),
+            'admin/models/venue.php' => array("JemHelperBackend::can('venue', 'delete'", "JemHelperBackend::can('venue', 'edit.state'", "JemHelperBackend::can('venue', 'edit.created'"),
             'admin/models/category.php' => array("authorise('core.delete'", "authorise('core.edit.state'"),
         );
 

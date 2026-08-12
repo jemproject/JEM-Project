@@ -15,12 +15,14 @@
         <action name="jem.events.edit" title="COM_JEM_ACL_EVENTS_EDIT" description="COM_JEM_ACL_EVENTS_EDIT_DESC" />
         <action name="jem.events.edit.state" title="COM_JEM_ACL_EVENTS_EDIT_STATE" description="COM_JEM_ACL_EVENTS_EDIT_STATE_DESC" />
         <action name="jem.events.edit.own" title="COM_JEM_ACL_EVENTS_EDIT_OWN" description="COM_JEM_ACL_EVENTS_EDIT_OWN_DESC" />
+        <action name="jem.events.edit.created" title="COM_JEM_ACL_EVENTS_EDIT_CREATED" description="COM_JEM_ACL_EVENTS_EDIT_CREATED_DESC" />
         <action name="jem.venues.access" title="COM_JEM_ACL_VENUES_ACCESS" description="COM_JEM_ACL_VENUES_ACCESS_DESC" />
         <action name="jem.venues.create" title="COM_JEM_ACL_VENUES_CREATE" description="COM_JEM_ACL_VENUES_CREATE_DESC" />
         <action name="jem.venues.delete" title="COM_JEM_ACL_VENUES_DELETE" description="COM_JEM_ACL_VENUES_DELETE_DESC" />
         <action name="jem.venues.edit" title="COM_JEM_ACL_VENUES_EDIT" description="COM_JEM_ACL_VENUES_EDIT_DESC" />
         <action name="jem.venues.edit.state" title="COM_JEM_ACL_VENUES_EDIT_STATE" description="COM_JEM_ACL_VENUES_EDIT_STATE_DESC" />
         <action name="jem.venues.edit.own" title="COM_JEM_ACL_VENUES_EDIT_OWN" description="COM_JEM_ACL_VENUES_EDIT_OWN_DESC" />
+        <action name="jem.venues.edit.created" title="COM_JEM_ACL_VENUES_EDIT_CREATED" description="COM_JEM_ACL_VENUES_EDIT_CREATED_DESC" />
         <action name="jem.attendees.manage" title="COM_JEM_ACL_ATTENDEES_MANAGE" description="COM_JEM_ACL_ATTENDEES_MANAGE_DESC" />
         <action name="jem.tools.manage" title="COM_JEM_ACL_TOOLS_MANAGE" description="COM_JEM_ACL_TOOLS_MANAGE_DESC" />
     </section>
