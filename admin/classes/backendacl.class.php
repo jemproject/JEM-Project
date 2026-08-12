@@ -15,20 +15,22 @@ final class JemBackendAclPolicy
 {
     private const RESOURCE_ACTIONS = array(
         'event' => array(
-            'access'     => 'jem.events.access',
-            'create'     => 'jem.events.create',
-            'delete'     => 'jem.events.delete',
-            'edit'       => 'jem.events.edit',
-            'edit.state' => 'jem.events.edit.state',
-            'edit.own'   => 'jem.events.edit.own',
+            'access'       => 'jem.events.access',
+            'create'       => 'jem.events.create',
+            'delete'       => 'jem.events.delete',
+            'edit'         => 'jem.events.edit',
+            'edit.state'   => 'jem.events.edit.state',
+            'edit.own'     => 'jem.events.edit.own',
+            'edit.created' => 'jem.events.edit.created',
         ),
         'venue' => array(
-            'access'     => 'jem.venues.access',
-            'create'     => 'jem.venues.create',
-            'delete'     => 'jem.venues.delete',
-            'edit'       => 'jem.venues.edit',
-            'edit.state' => 'jem.venues.edit.state',
-            'edit.own'   => 'jem.venues.edit.own',
+            'access'       => 'jem.venues.access',
+            'create'       => 'jem.venues.create',
+            'delete'       => 'jem.venues.delete',
+            'edit'         => 'jem.venues.edit',
+            'edit.state'   => 'jem.venues.edit.state',
+            'edit.own'     => 'jem.venues.edit.own',
+            'edit.created' => 'jem.venues.edit.created',
         ),
     );
 

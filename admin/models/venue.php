@@ -194,7 +194,7 @@ class JemModelVenue extends JemModelAdmin
                 }
             }
 
-            if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_users')) {
+            if (!JemHelperBackend::can('venue', 'edit.created')) {
                 $form->setFieldAttribute('created_by', 'disabled', 'true');
                 $form->setFieldAttribute('created_by', 'filter', 'unset');
             }
