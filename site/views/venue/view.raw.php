@@ -50,7 +50,7 @@ class JemViewVenue extends HtmlView
             $model = $this->getModel('VenueCal');
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $venueid = $jinput->getInt('id');
 
             JemPdfView::renderMonthlyCalendar(
@@ -126,7 +126,7 @@ class JemViewVenue extends HtmlView
             $model = $this->getModel('VenueCal');
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $rows = $model->getItems();
             $venueid = $jinput->getInt('id');
 

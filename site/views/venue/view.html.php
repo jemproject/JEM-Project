@@ -107,7 +107,7 @@ class JemViewVenue extends JemView
 
             // get data from model and set the month
             $model = $this->getModel('VenueCal');
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $rows = $this->get('Items','VenueCal');
 
             $showVenueSelector = (bool) $params->get('show_venue_selector', 0);
