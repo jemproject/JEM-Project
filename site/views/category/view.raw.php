@@ -101,7 +101,7 @@ class JemViewCategory extends HtmlView
             $model->setId($catid);
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
 
             $rows = $model->getItems();
 
