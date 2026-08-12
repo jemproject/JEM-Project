@@ -253,16 +253,10 @@ class JemHtml
         } else {
             $html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], $attr, $backend);
         }
-        //-------------start added for tooltips initialize-----------
-        $html .= '<script>
-            jQuery(document).ready(function(){
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll(\'[data-bs-toggle="tooltip"]\'))
-                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl,{html:true})
-                })
-            });
-        </script>';
-        //-------------end added for tooltips initialize-----------
+        // Tooltip initialisation for the .hasTooltip element above is already
+        // handled by HTMLHelper::_('bootstrap.tooltip') (called earlier in this
+        // method); no extra script needed, and jQuery is not guaranteed to be
+        // loaded on Joomla 6 (#2299).
         return $html;
     }
 
