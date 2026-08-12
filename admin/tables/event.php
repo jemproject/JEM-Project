@@ -55,6 +55,11 @@ class JemTableEvent extends Table
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
         }
+        if (array_key_exists('created_by', $array)) {
+            // 'created_by' is int(11) unsigned NOT NULL DEFAULT '0'; an empty
+            // "Created by" selector submits '' which strict SQL modes reject.
+            $array['created_by'] = (int) $array['created_by'];
+        }
         if (array_key_exists('article_id', $array)) {
             $array['article_id'] = (int) $array['article_id'];
         }
