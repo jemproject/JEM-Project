@@ -330,6 +330,25 @@ CREATE TABLE IF NOT EXISTS `#__jem_venue_profile_spaces` (
     KEY `idx_venue_profile_layout` (`venue_layout_id`)
     ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `#__jem_event_space_layouts` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `event_id` int(11) unsigned NOT NULL,
+    `venue_profile_id` int(11) unsigned NOT NULL,
+    `venue_profile_revision` int(10) unsigned NOT NULL DEFAULT '0',
+    `venue_profile_space_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_space_id` int(11) unsigned NOT NULL,
+    `venue_layout_id` int(11) unsigned NOT NULL,
+    `venue_layout_revision` int(10) unsigned NOT NULL DEFAULT '0',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_event_space_layout_assignment` (`event_id`, `venue_space_id`),
+    KEY `idx_event_space_layout_profile_space` (`venue_profile_space_id`),
+    KEY `idx_event_space_layout_profile` (`venue_profile_id`, `venue_profile_revision`),
+    KEY `idx_event_space_layout_layout` (`venue_layout_id`, `venue_layout_revision`)
+    ) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `venue_layout_id` int(11) unsigned NOT NULL,

@@ -1077,11 +1077,15 @@ Text::script('JCANCEL');
                         <ul class="adminformlist">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
+                        </ul>
+                        <section class="jem-venue-address-card" aria-labelledby="jem-venue-address-title">
+                            <h3 class="h5" id="jem-venue-address-title"><?php echo Text::_('COM_JEM_ADDRESS'); ?></h3>
+                            <ul class="adminformlist">
                             <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
@@ -1102,6 +1106,9 @@ Text::script('JCANCEL');
                                     </div>
                                 </div>
                             </li>
+                            </ul>
+                        </section>
+                        <ul class="adminformlist">
                             <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>

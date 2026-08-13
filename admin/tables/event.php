@@ -562,6 +562,13 @@ class JemTableEvent extends Table
             ));
             (new JemNotificationService($db))->cancelPendingReminders(0, $id);
 
+            foreach (array('#__jem_event_prices', '#__jem_capacity_pools', '#__jem_event_space_layouts') as $ownedTable) {
+                $query = $db->getQuery(true)
+                    ->delete($db->quoteName($ownedTable))
+                    ->where($db->quoteName('event_id') . ' = ' . $id);
+                $db->setQuery($query)->execute();
+            }
+
             if (!parent::delete($pk)) {
                 throw new RuntimeException($this->getError() ?: 'Could not delete the JEM event.');
             }

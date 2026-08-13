@@ -31,6 +31,8 @@ class JemEventPricingCapacityService
         $item->capacity_pools = array();
         $item->event_prices = array();
         $item->pricing_requirements = self::getVenueRequirements((int) ($item->locid ?? 0));
+        $item->venue_configuration_key = '';
+        $item->venue_assignment_ids = '[]';
 
         if (!empty($item->id)) {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -49,6 +51,30 @@ class JemEventPricingCapacityService
                 ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
             $db->setQuery($query);
             $item->event_prices = (array) $db->loadAssocList();
+
+            $assignmentRows = self::loadEventAssignments((int) $item->id);
+            $assignmentIds = self::sortedIds(array_column($assignmentRows, 'venue_profile_space_id'));
+            if (!$assignmentIds) {
+                $assignmentIds = self::assignmentIdsFromSnapshot(
+                    self::decodeSnapshot((string) ($item->venue_snapshot ?? '')),
+                    (array) ($item->pricing_requirements['configuration_assignments'] ?? array())
+                );
+            }
+            $item->venue_assignment_ids = json_encode($assignmentIds);
+            $item->venue_configuration_key = self::configurationKeyForAssignments(
+                $assignmentIds,
+                (array) ($item->pricing_requirements['configuration_options'] ?? array())
+            );
+            if ($item->venue_configuration_key === '' && $assignmentIds) {
+                $item->venue_configuration_key = 'saved';
+            } elseif ($item->venue_configuration_key === '' && $assignmentRows) {
+                $item->venue_configuration_key = 'saved';
+            }
+        } else {
+            $firstOption = $item->pricing_requirements['configuration_options'][0] ?? array();
+            $assignmentIds = (array) ($firstOption['assignment_ids'] ?? array());
+            $item->venue_configuration_key = (string) ($firstOption['key'] ?? '');
+            $item->venue_assignment_ids = json_encode(array_values(array_map('intval', $assignmentIds)));
         }
 
         if (($item->pricing_mode ?? '') === 'priced') {
@@ -65,8 +91,11 @@ class JemEventPricingCapacityService
         if (empty($item->currency) && !empty($item->pricing_requirements['suggested_currency'])) {
             $item->currency = $item->pricing_requirements['suggested_currency'];
         }
-        if (empty($item->id) && empty($item->maxplaces) && !empty($item->pricing_requirements['configured_capacity'])) {
-            $item->maxplaces = (int) $item->pricing_requirements['configured_capacity'];
+        if (empty($item->id) && empty($item->maxplaces)) {
+            $firstOption = $item->pricing_requirements['configuration_options'][0] ?? array();
+            if (!empty($firstOption['capacity'])) {
+                $item->maxplaces = (int) $firstOption['capacity'];
+            }
         }
 
         if (!$item->event_prices) {
@@ -125,7 +154,15 @@ class JemEventPricingCapacityService
         $rawPools = $poolsSubmitted ? (array) $data['capacity_pools'] : array();
         $rawPrices = $pricesSubmitted ? (array) $data['event_prices'] : array();
         $reload = !empty($data['reload_venue_capacity']);
-        unset($data['capacity_pools'], $data['event_prices'], $data['reload_venue_capacity']);
+        $submittedAssignmentIds = self::normaliseAssignmentIds($data['venue_assignment_ids'] ?? array());
+        $submittedConfigurationKey = trim((string) ($data['venue_configuration_key'] ?? ''));
+        unset(
+            $data['capacity_pools'],
+            $data['event_prices'],
+            $data['reload_venue_capacity'],
+            $data['venue_assignment_ids'],
+            $data['venue_configuration_key']
+        );
 
         $mode = strtolower(trim((string) ($data['pricing_mode'] ?? self::MODE_CLASSIC)));
         if ($mode === 'priced') {
@@ -145,6 +182,7 @@ class JemEventPricingCapacityService
             'pools'            => array(),
             'prices'           => array(),
             'snapshot'         => array(),
+            'assignments'      => array(),
             'country_code'     => '',
         );
 
@@ -178,6 +216,29 @@ class JemEventPricingCapacityService
         }
 
         $storedSnapshot = self::decodeSnapshot($existing['venue_snapshot'] ?? '');
+        $storedAssignmentRows = self::loadEventAssignments($eventId);
+        $storedAssignmentIds = self::sortedIds(array_column($storedAssignmentRows, 'venue_profile_space_id'));
+        if (!$storedAssignmentIds && $storedSnapshot) {
+            $storedAssignmentIds = self::assignmentIdsFromSnapshot(
+                $storedSnapshot,
+                (array) ($requirements['configuration_assignments'] ?? array())
+            );
+        }
+
+        if (!$submittedAssignmentIds) {
+            if ($eventId > 0 && $storedSnapshot && $submittedConfigurationKey === 'saved') {
+                $submittedAssignmentIds = $storedAssignmentIds;
+            } elseif ($eventId > 0 && $storedAssignmentIds && $submittedConfigurationKey === 'saved') {
+                $submittedAssignmentIds = $storedAssignmentIds;
+            } elseif ($eventId > 0 && $storedAssignmentIds && !$reload) {
+                $submittedAssignmentIds = $storedAssignmentIds;
+            } else {
+                $submittedAssignmentIds = (array) (
+                    $requirements['configuration_options'][0]['assignment_ids'] ?? array()
+                );
+            }
+        }
+
         $venueChanged = $eventId > 0 && (
             (int) ($existing['locid'] ?? 0) !== $venueId
             || ($storedSnapshot && (int) ($storedSnapshot['venue_id'] ?? 0) !== $venueId)
@@ -185,12 +246,25 @@ class JemEventPricingCapacityService
         if ($venueChanged && !$reload) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_RELOAD_REQUIRED'));
         }
-        $reload = $eventId === 0 || !$storedSnapshot || $reload || $venueChanged;
+        $selectionChanged = $eventId > 0 && (
+            ($storedAssignmentIds
+                && self::sortedIds($storedAssignmentIds) !== self::sortedIds($submittedAssignmentIds))
+            || (!$storedAssignmentIds
+                && $storedSnapshot
+                && $submittedConfigurationKey !== 'saved'
+                && $submittedAssignmentIds)
+        );
+        if ($selectionChanged && !$reload) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_RELOAD_REQUIRED'));
+        }
+        $reload = $eventId === 0 || !$storedSnapshot || $reload || $venueChanged || $selectionChanged;
         if ($reload && $eventId > 0 && self::hasCommercialRegistrations($eventId)) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_RELOAD_REGISTERED'));
         }
 
-        $snapshot = $reload ? JemVenueCapacityService::buildEventSnapshot($venueId) : $storedSnapshot;
+        $snapshot = $reload
+            ? JemVenueCapacityService::buildEventSnapshot($venueId, $submittedAssignmentIds)
+            : $storedSnapshot;
         $snapshotCapacity = self::snapshotCapacity($snapshot);
         $eventCapacity = self::normaliseUnsignedInteger($data['maxplaces'] ?? 0, true);
         if ($eventCapacity < 1 && !$storedSnapshot) {
@@ -270,6 +344,9 @@ class JemEventPricingCapacityService
         $context['pools'] = $desiredPools;
         $context['prices'] = $desiredPrices;
         $context['snapshot'] = $snapshot;
+        $context['assignments'] = $reload
+            ? self::assignmentRowsFromSnapshot($snapshot)
+            : ($storedAssignmentRows ?: self::assignmentRowsFromSnapshot($snapshot));
         $context['country_code'] = $requirements['country_code'];
 
         return $context;
@@ -289,6 +366,7 @@ class JemEventPricingCapacityService
             $db->transactionStart();
         }
         try {
+            self::saveEventAssignments($eventId, (array) ($context['assignments'] ?? array()));
             $pools = self::savePoolRows($eventId, $context['pools']);
             $poolIds = array_fill_keys(array_map(static fn (array $pool): int => (int) $pool['id'], $pools), true);
             $prices = $context['prices'];
@@ -346,6 +424,10 @@ class JemEventPricingCapacityService
             'space_count'        => 0,
             'configured_capacity'=> 0,
             'pool_candidates'    => array(),
+            'configuration_assignments' => array(),
+            'configuration_options' => array(),
+            'configuration_custom_required' => false,
+            'configuration_summary' => '',
         );
         if ($venueId < 1) {
             return $requirements;
@@ -385,12 +467,39 @@ class JemEventPricingCapacityService
                 && $requirements['profile_capacity'] <= $requirements['venue_capacity']
                 && self::configurationHasCapacity($configuration);
             if ($requirements['capacity_ready']) {
+                $requirements['configuration_summary'] = Text::sprintf(
+                    'COM_JEM_EVENT_PRICING_CONFIGURATION_SUMMARY',
+                    $requirements['space_count'],
+                    $requirements['configured_capacity'],
+                    $requirements['profile_revision']
+                );
+                $eventConfigurations = JemVenueCapacityService::getEventConfigurationOptions($venueId);
+                $requirements['configuration_assignments'] = $eventConfigurations['assignments'];
+                $requirements['configuration_custom_required'] = !empty($eventConfigurations['custom_required']);
+                foreach ((array) $eventConfigurations['options'] as $option) {
+                    $snapshot = JemVenueCapacityService::buildEventSnapshot(
+                        $venueId,
+                        (array) $option['assignment_ids']
+                    );
+                    $option['pool_candidates'] = array_map(
+                        static fn (array $pool): array => array(
+                            'code' => (string) $pool['code'],
+                            'name' => (string) $pool['name'],
+                            'capacity' => (int) $pool['capacity'],
+                            'venue_layout_id' => (int) $pool['venue_layout_id'],
+                        ),
+                        self::buildPoolRowsFromSnapshot($snapshot)
+                    );
+                    $requirements['configuration_options'][] = $option;
+                }
+
                 $snapshot = JemVenueCapacityService::buildEventSnapshot($venueId);
                 foreach (self::buildPoolRowsFromSnapshot($snapshot) as $pool) {
                     $requirements['pool_candidates'][] = array(
                         'code'     => (string) $pool['code'],
                         'name'     => (string) $pool['name'],
                         'capacity' => (int) $pool['capacity'],
+                        'venue_layout_id' => (int) $pool['venue_layout_id'],
                     );
                 }
             }
@@ -399,6 +508,14 @@ class JemEventPricingCapacityService
         }
 
         return $requirements;
+    }
+
+    /**
+     * JSON-safe venue state for the dynamic event editor.
+     */
+    public static function getVenueConfigurationPayload(int $venueId): array
+    {
+        return self::getVenueRequirements($venueId);
     }
 
     private static function configurationHasCapacity(array $configuration): bool
@@ -845,6 +962,145 @@ class JemEventPricingCapacityService
                     ->where($db->quoteName('event_id') . ' = ' . $eventId);
                 $db->setQuery($query)->execute();
             }
+        }
+    }
+
+    private static function normaliseAssignmentIds($value): array
+    {
+        if (is_string($value)) {
+            $trimmed = trim($value);
+            if ($trimmed === '') {
+                return array();
+            }
+            try {
+                $decoded = json_decode($trimmed, true, 32, JSON_THROW_ON_ERROR);
+                $value = is_array($decoded) ? $decoded : explode(',', $trimmed);
+            } catch (JsonException $e) {
+                $value = explode(',', $trimmed);
+            }
+        }
+
+        return self::sortedIds((array) $value);
+    }
+
+    private static function sortedIds(array $ids): array
+    {
+        $ids = array_values(array_unique(array_filter(
+            array_map('intval', $ids),
+            static fn (int $id): bool => $id > 0
+        )));
+        sort($ids, SORT_NUMERIC);
+
+        return $ids;
+    }
+
+    private static function configurationKeyForAssignments(array $ids, array $options): string
+    {
+        $ids = self::sortedIds($ids);
+        foreach ($options as $option) {
+            if ($ids === self::sortedIds((array) ($option['assignment_ids'] ?? array()))) {
+                return (string) ($option['key'] ?? '');
+            }
+        }
+
+        return '';
+    }
+
+    private static function assignmentIdsFromSnapshot(array $snapshot, array $assignments): array
+    {
+        $bySpaceLayout = array();
+        $byId = array();
+        foreach ($assignments as $assignment) {
+            $bySpaceLayout[(int) ($assignment['space_id'] ?? 0) . ':' . (int) ($assignment['layout_id'] ?? 0)]
+                = (int) ($assignment['id'] ?? 0);
+            $byId[(int) ($assignment['id'] ?? 0)] = $assignment;
+        }
+
+        $ids = array();
+        foreach ((array) ($snapshot['spaces'] ?? array()) as $space) {
+            $id = (int) ($space['profile_space_id'] ?? 0);
+            if ($id > 0 && (
+                !isset($byId[$id])
+                || (int) ($byId[$id]['space_id'] ?? 0) !== (int) ($space['id'] ?? 0)
+                || (int) ($byId[$id]['layout_id'] ?? 0) !== (int) ($space['layout']['id'] ?? 0)
+            )) {
+                $id = 0;
+            }
+            if ($id < 1) {
+                $id = (int) ($bySpaceLayout[
+                    (int) ($space['id'] ?? 0) . ':' . (int) ($space['layout']['id'] ?? 0)
+                ] ?? 0);
+            }
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+
+        return self::sortedIds($ids);
+    }
+
+    private static function assignmentRowsFromSnapshot(array $snapshot): array
+    {
+        $rows = array();
+        foreach ((array) ($snapshot['spaces'] ?? array()) as $ordering => $space) {
+            $rows[] = array(
+                'venue_profile_id' => (int) ($snapshot['profile_id'] ?? 0),
+                'venue_profile_revision' => (int) ($snapshot['profile_revision'] ?? 0),
+                'venue_profile_space_id' => (int) ($space['profile_space_id'] ?? 0),
+                'venue_space_id' => (int) ($space['id'] ?? 0),
+                'venue_layout_id' => (int) ($space['layout']['id'] ?? 0),
+                'venue_layout_revision' => (int) ($space['layout']['revision'] ?? 0),
+                'ordering' => (int) $ordering,
+            );
+        }
+
+        return $rows;
+    }
+
+    private static function loadEventAssignments(int $eventId): array
+    {
+        if ($eventId < 1) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__jem_event_space_layouts'))
+            ->where($db->quoteName('event_id') . ' = ' . $eventId)
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
+        $db->setQuery($query);
+
+        return (array) $db->loadAssocList();
+    }
+
+    private static function saveEventAssignments(int $eventId, array $rows): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery(
+            $db->getQuery(true)
+                ->delete($db->quoteName('#__jem_event_space_layouts'))
+                ->where($db->quoteName('event_id') . ' = ' . $eventId)
+        )->execute();
+
+        $now = Factory::getDate()->toSql();
+        $identity = Factory::getApplication()->getIdentity();
+        $userId = (int) ($identity->id ?? 0);
+        foreach ($rows as $ordering => $row) {
+            $profileSpaceId = (int) ($row['venue_profile_space_id'] ?? 0);
+            $object = (object) array(
+                'event_id' => $eventId,
+                'venue_profile_id' => (int) ($row['venue_profile_id'] ?? 0),
+                'venue_profile_revision' => (int) ($row['venue_profile_revision'] ?? 0),
+                'venue_profile_space_id' => $profileSpaceId > 0 ? $profileSpaceId : null,
+                'venue_space_id' => (int) ($row['venue_space_id'] ?? 0),
+                'venue_layout_id' => (int) ($row['venue_layout_id'] ?? 0),
+                'venue_layout_revision' => (int) ($row['venue_layout_revision'] ?? 0),
+                'ordering' => (int) $ordering,
+                'created' => $now,
+                'created_by' => $userId,
+            );
+            $db->insertObject('#__jem_event_space_layouts', $object, 'id');
         }
     }
 

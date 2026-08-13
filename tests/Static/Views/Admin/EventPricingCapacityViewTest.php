@@ -25,6 +25,20 @@ final class EventPricingCapacityViewTest extends TestCase
             'https://www.joomlaeventmanager.net/documentation/backend/venues/add-venue',
             $view
         );
+        self::assertStringContainsString('class="jem-venue-address-card"', $edit);
+        self::assertStringContainsString("Text::_('COM_JEM_ADDRESS')", $edit);
+        self::assertLessThan(
+            strpos($edit, 'class="jem-venue-address-card"'),
+            strpos($edit, "renderfield('level')")
+        );
+        self::assertLessThan(
+            strpos($edit, "renderfield('level')"),
+            strpos($edit, "renderfield('alias')")
+        );
+        self::assertMatchesRegularExpression(
+            '/jem-venue-address-card[\s\S]+renderfield\(\'street\'\)[\s\S]+renderfield\(\'country\'\)/',
+            $edit
+        );
         self::assertStringContainsString('jem-capacity-section-space', $capacity);
         self::assertStringContainsString('jem-capacity-section-layout', $capacity);
         self::assertStringContainsString('jem-capacity-section-areas', $capacity);
@@ -99,6 +113,7 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringNotContainsString('name="capacity_profile_name" type="text"\n            readonly="true"', $form);
         foreach (array($css, $responsiveCss) as $backendCss) {
             self::assertStringContainsString('.jem-venue-capacity-editor', $backendCss);
+            self::assertStringContainsString('.jem-venue-address-card', $backendCss);
             self::assertStringContainsString('.jem-capacity-space-card > .jem-capacity-card-header', $backendCss);
             self::assertStringContainsString('.jem-capacity-section-areas', $backendCss);
             self::assertStringContainsString('.jem-capacity-profile-heading', $backendCss);
@@ -132,12 +147,18 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('copyRow', $pricing);
         self::assertStringContainsString('updatePreviews', $pricing);
         self::assertStringContainsString('populateCapacityOptions', $pricing);
+        self::assertStringContainsString('jem-event-venue-configuration-select', $pricing);
+        self::assertStringContainsString('configuration_custom_required', $pricing);
+        self::assertStringContainsString('event.venueConfigurations', $pricing);
+        self::assertStringContainsString('loadVenueConfigurations', $pricing);
+        self::assertStringContainsString('jform_locid_id', $pricing);
+        self::assertStringContainsString('syncConfigurationSelection', $pricing);
         self::assertStringContainsString("'source:' + pool.code", $pricing);
         self::assertStringContainsString('BigInt(', $pricing);
         self::assertStringContainsString("baseCode + '-copy-' + suffix", $pricing);
         self::assertStringContainsString('jem-price-advanced-toggle', $pricing);
 
-        foreach (array('pricing_mode', 'currency', 'capacity_pools', 'event_prices', 'venue_snapshot') as $field) {
+        foreach (array('pricing_mode', 'currency', 'capacity_pools', 'event_prices', 'venue_snapshot', 'venue_configuration_key', 'venue_assignment_ids') as $field) {
             self::assertStringContainsString('name="' . $field . '"', $form);
         }
         self::assertStringContainsString('<option value="single">', $form);

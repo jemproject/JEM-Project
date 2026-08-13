@@ -41,6 +41,7 @@ final class EventPricingCapacityCombinationsJoomlaIntegrationTest extends Joomla
             foreach (array_reverse($this->eventIds) as $eventId) {
                 $this->deleteWhere('#__jem_event_prices', 'event_id', $eventId);
                 $this->deleteWhere('#__jem_capacity_pools', 'event_id', $eventId);
+                $this->deleteWhere('#__jem_event_space_layouts', 'event_id', $eventId);
                 $this->deleteWhere('#__jem_events', 'id', $eventId);
             }
             foreach (array_reverse($this->venueIds) as $venueId) {
@@ -71,6 +72,34 @@ final class EventPricingCapacityCombinationsJoomlaIntegrationTest extends Joomla
         self::assertSame(1, $data['pricing_revision']);
         self::assertSame(array(), $context['pools']);
         self::assertSame(array(), $context['prices']);
+    }
+
+    public function testVenueConfigurationPresetsAndCustomThresholdFilterSnapshots(): void
+    {
+        $threeSpaceVenue = $this->createMultiSpaceVenue(3);
+        $three = JemEventPricingCapacityService::getVenueRequirements($threeSpaceVenue);
+        self::assertTrue($three['capacity_ready']);
+        self::assertFalse($three['configuration_custom_required']);
+        self::assertCount(3, $three['configuration_assignments']);
+        self::assertCount(7, $three['configuration_options']);
+
+        $selectedId = (int) $three['configuration_assignments'][1]['id'];
+        $snapshot = JemVenueCapacityService::buildEventSnapshot($threeSpaceVenue, array($selectedId));
+        self::assertCount(1, $snapshot['spaces']);
+        self::assertSame($selectedId, (int) $snapshot['spaces'][0]['profile_space_id']);
+        self::assertSame(20, (int) $snapshot['selected_capacity']);
+
+        try {
+            JemVenueCapacityService::buildEventSnapshot($threeSpaceVenue, array(PHP_INT_MAX));
+            self::fail('A foreign profile-space assignment must be rejected.');
+        } catch (InvalidArgumentException $error) {
+            self::assertNotSame('', trim($error->getMessage()));
+        }
+
+        $fourSpaceVenue = $this->createMultiSpaceVenue(4);
+        $four = JemEventPricingCapacityService::getVenueRequirements($fourSpaceVenue);
+        self::assertTrue($four['configuration_custom_required']);
+        self::assertLessThanOrEqual(11, count($four['configuration_options']));
     }
 
     public function testSingleTaxExcludedPriceIsNormalisedExactly(): void
@@ -279,6 +308,42 @@ final class EventPricingCapacityCombinationsJoomlaIntegrationTest extends Joomla
         $this->taxRateIds[] = $taxRateId;
 
         return $taxRateId;
+    }
+
+    private function createMultiSpaceVenue(int $spaceCount): int
+    {
+        $suffix = strtolower(substr(bin2hex(random_bytes(8)), 0, 12));
+        $capacity = 0;
+        $spaces = array();
+        for ($index = 1; $index <= $spaceCount; $index++) {
+            $spaceCapacity = $index * 10;
+            $capacity += $spaceCapacity;
+            $spaces[] = array(
+                'space_name' => 'Room ' . $index,
+                'space_code' => 'room-' . $index,
+                'layout_name' => 'Layout ' . $index,
+                'layout_code' => 'layout-' . $index,
+                'layout_capacity' => $spaceCapacity,
+                'areas' => array(),
+            );
+        }
+
+        $venue = (object) array(
+            'venue' => 'PHPUnit multi space ' . $suffix,
+            'alias' => 'phpunit-multi-space-' . $suffix,
+            'capacity' => $capacity,
+            'country' => 'ES',
+            'published' => 0,
+            'created' => gmdate('Y-m-d H:i:s'),
+            'created_by' => 0,
+        );
+        $this->db->insertObject('#__jem_venues', $venue, 'id');
+        $venueId = (int) $venue->id;
+        $this->venueIds[] = $venueId;
+        $configuration = JemVenueCapacityService::normaliseFormData(array('spaces' => $spaces), $capacity);
+        JemVenueCapacityService::saveDefaultConfiguration($venueId, $configuration);
+
+        return $venueId;
     }
 
     /** @param array{venue_id:int, floor_code:string, balcony_code:string} $fixture */

@@ -13,6 +13,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Session\Session;
 
 require_once (JPATH_COMPONENT_SITE.'/classes/controller.form.class.php');
@@ -65,6 +66,32 @@ class JemControllerEvent extends JemControllerForm
         return is_object($record)
             && (int) ($record->id ?? 0) === $recordId
             && JemHelperBackend::can('event', 'edit', $record);
+    }
+
+    /**
+     * Refresh the venue configuration choices after the modal venue changes.
+     */
+    public function venueConfigurations()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+
+        $app = Factory::getApplication();
+        $eventId = $app->input->getInt('id', 0);
+        $venueId = $app->input->getInt('venue_id', 0);
+        $authorised = $eventId > 0
+            ? $this->allowEdit(array('id' => $eventId), 'id')
+            : $this->allowAdd();
+        if (!$authorised) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
+        try {
+            echo new JsonResponse(JemEventPricingCapacityService::getVenueConfigurationPayload($venueId));
+        } catch (Throwable $e) {
+            echo new JsonResponse($e);
+        }
+        $app->close();
     }
 
     /**

@@ -128,6 +128,8 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
             self::assertSame('#225588', $snapshot['spaces'][0]['color']);
             self::assertSame('#AA7722', $snapshot['spaces'][0]['layout']['color']);
             self::assertSame('#447744', $snapshot['spaces'][0]['capacity_areas'][0]['color']);
+            self::assertGreaterThan(0, (int) $snapshot['spaces'][0]['profile_space_id']);
+            self::assertSame(100, (int) $snapshot['selected_capacity']);
 
             $event = (object) array_merge($eventData, array(
                 'title' => 'PHPUnit Point 4D ' . $suffix,
@@ -144,6 +146,12 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
             $db->insertObject('#__jem_events', $event, 'id');
             $eventId = (int) $event->id;
             JemEventPricingCapacityService::saveChildren($eventId, $context);
+
+            $db->setQuery('SELECT * FROM ' . $db->quoteName('#__jem_event_space_layouts') . ' WHERE event_id = ' . $eventId);
+            $assignment = $db->loadAssoc();
+            self::assertIsArray($assignment);
+            self::assertSame((int) $snapshot['spaces'][0]['profile_space_id'], (int) $assignment['venue_profile_space_id']);
+            self::assertSame((int) $snapshot['spaces'][0]['layout']['id'], (int) $assignment['venue_layout_id']);
 
             $db->setQuery('SELECT * FROM ' . $db->quoteName('#__jem_capacity_pools') . ' WHERE event_id = ' . $eventId);
             $pool = $db->loadAssoc();
@@ -164,6 +172,7 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
         } finally {
             $this->deleteWhere($db, '#__jem_event_prices', 'event_id', $eventId);
             $this->deleteWhere($db, '#__jem_capacity_pools', 'event_id', $eventId);
+            $this->deleteWhere($db, '#__jem_event_space_layouts', 'event_id', $eventId);
             $this->deleteWhere($db, '#__jem_events', 'id', $eventId);
 
             if ($venueId > 0) {

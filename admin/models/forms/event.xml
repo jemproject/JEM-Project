@@ -645,6 +645,8 @@
         <field name="venue_profile_id" type="hidden" />
         <field name="venue_profile_revision" type="hidden" />
         <field name="venue_snapshot" type="hidden" filter="raw" />
+        <field name="venue_configuration_key" type="hidden" filter="string" />
+        <field name="venue_assignment_ids" type="hidden" filter="raw" />
         <field name="reload_venue_capacity" type="checkbox"
             value="1"
             default="0"

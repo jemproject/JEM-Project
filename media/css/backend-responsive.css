@@ -1818,10 +1818,96 @@ fieldset.jem-specialdays-import #replace_specialdays {
     }
 }
 
+/* Venue identity and address grouping. */
+.jem-venue-address-card {
+    margin: 1.25rem 0;
+    padding: 1.25rem;
+    border: 1px solid #cbd8e6;
+    border-radius: .5rem;
+    background: #f3f7fb;
+    box-shadow: 0 .125rem .25rem rgba(31, 51, 73, .04);
+}
+
+.jem-venue-address-card > h3 {
+    margin: 0 0 1rem;
+    padding-bottom: .65rem;
+    border-bottom: 1px solid #d7e2ed;
+}
+
+.jem-venue-address-card .adminformlist {
+    margin: 0;
+}
+
+[data-bs-theme="dark"] .jem-venue-address-card {
+    border-color: #435568;
+    background: #253442;
+    box-shadow: none;
+}
+
+[data-bs-theme="dark"] .jem-venue-address-card > h3 {
+    border-bottom-color: #435568;
+}
+
+@media (max-width: 767.98px) {
+    .jem-venue-address-card {
+        padding: 1rem;
+    }
+}
+
 /* Point 4D: venue capacity cards shared with the classic backend layout. */
 .jem-venue-capacity-editor {
     display: grid;
     gap: 1rem;
+}
+
+.jem-event-venue-configuration {
+    min-width: 0;
+    border: 1px solid #b8cce0;
+    border-radius: .5rem;
+    background: #f2f7fc;
+}
+
+.jem-event-venue-custom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: .65rem;
+}
+
+.jem-event-venue-custom-option {
+    display: flex;
+    gap: .65rem;
+    align-items: flex-start;
+    padding: .75rem;
+    border: 1px solid #cad8e5;
+    border-radius: .375rem;
+    background: #fff;
+    cursor: pointer;
+}
+
+.jem-event-venue-custom-option input {
+    flex: 0 0 auto;
+    margin-top: .2rem;
+}
+
+.jem-event-venue-configuration-preview:not(.alert) {
+    padding: .8rem 1rem;
+    border-left: .25rem solid #2f6f9f;
+    background: rgba(255, 255, 255, .72);
+}
+
+.jem-event-venue-configuration-preview ul {
+    margin: .5rem 0;
+}
+
+[data-bs-theme="dark"] .jem-event-venue-configuration {
+    border-color: #435d75;
+    background: #243747;
+}
+
+[data-bs-theme="dark"] .jem-event-venue-custom-option,
+[data-bs-theme="dark"] .jem-event-venue-configuration-preview:not(.alert) {
+    border-color: #435568;
+    background: #1e2c38;
 }
 
 .jem-venue-capacity-editor .adminform {

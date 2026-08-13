@@ -688,6 +688,7 @@ SQL;
                 "CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#2F6F9F', `description` TEXT NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_space_code` (`venue_id`,`code`), KEY `idx_venue_space_published` (`venue_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_venue_layouts` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_space_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#B78324', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_layout_revision` (`venue_space_id`,`code`,`revision`), KEY `idx_venue_layout_published` (`venue_space_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_venue_profile_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_profile_id` INT(11) UNSIGNED NOT NULL, `venue_space_id` INT(11) UNSIGNED NOT NULL, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `ordering` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_profile_space` (`venue_profile_id`,`venue_space_id`), KEY `idx_venue_profile_layout` (`venue_layout_id`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_event_space_layouts` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `venue_profile_id` INT(11) UNSIGNED NOT NULL, `venue_profile_revision` INT(10) UNSIGNED NOT NULL DEFAULT '0', `venue_profile_space_id` INT(11) UNSIGNED NULL DEFAULT NULL, `venue_space_id` INT(11) UNSIGNED NOT NULL, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `venue_layout_revision` INT(10) UNSIGNED NOT NULL DEFAULT '0', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_event_space_layout_assignment` (`event_id`,`venue_space_id`), KEY `idx_event_space_layout_profile_space` (`venue_profile_space_id`), KEY `idx_event_space_layout_profile` (`venue_profile_id`,`venue_profile_revision`), KEY `idx_event_space_layout_layout` (`venue_layout_id`,`venue_layout_revision`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#8A6D3B', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `allocation_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_area_code` (`venue_layout_id`,`code`), KEY `idx_venue_capacity_area_published` (`venue_layout_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, `register_id` INT(11) UNSIGNED NOT NULL, `registration_revision` INT(10) UNSIGNED NOT NULL, `line_number` INT(10) UNSIGNED NOT NULL, `line_kind` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `event_price_id` INT(11) UNSIGNED NULL DEFAULT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `item_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `item_name` VARCHAR(255) NOT NULL DEFAULT '', `item_description` TEXT NULL DEFAULT NULL, `quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1', `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `price_includes_tax` TINYINT(1) NOT NULL DEFAULT '1', `unit_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `calculation_mode` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `calculation_value` DECIMAL(15,2) NULL DEFAULT NULL, `calculation_basis` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `condition_snapshot` MEDIUMTEXT NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `idx_register_item_revision_line` (`register_id`,`registration_revision`,`line_number`), KEY `idx_register_item_price` (`event_price_id`), KEY `idx_register_item_pool` (`capacity_pool_id`), KEY `idx_register_item_kind` (`line_kind`)) ENGINE=InnoDB",
             );
@@ -804,6 +805,7 @@ SQL;
                 '#__jem_venue_spaces',
                 '#__jem_venue_layouts',
                 '#__jem_venue_profile_spaces',
+                '#__jem_event_space_layouts',
                 '#__jem_venue_capacity_areas',
             ) as $table) {
                 if (!in_array($db->replacePrefix($table), $tableList, true)) {
@@ -812,6 +814,7 @@ SQL;
             }
 
             $this->installDefaultVenueCapacityProfiles($db);
+            $this->backfillEventSpaceLayouts($db);
 
             $this->setPricingSchemaReady($db, true);
         } catch (Throwable $e) {
@@ -935,6 +938,63 @@ SQL;
                 . ' VALUES (' . $db->quote($migrationKey) . ', ' . $db->quote('1') . ')'
                 . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote('1')
             )->execute();
+        }
+    }
+
+    /**
+     * Preserve beta snapshots by materialising their saved Space/Layout set in
+     * the new event assignment table. The snapshot remains authoritative when
+     * a venue has since moved to a newer immutable layout revision.
+     */
+    private function backfillEventSpaceLayouts($db)
+    {
+        $query = $db->getQuery(true)
+            ->select(array('e.id', 'e.venue_snapshot'))
+            ->from($db->quoteName('#__jem_events', 'e'))
+            ->where($db->quoteName('e.venue_snapshot') . ' IS NOT NULL')
+            ->where($db->quoteName('e.venue_snapshot') . ' <> ' . $db->quote(''))
+            ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jem_event_space_layouts', 'esl')
+                . ' WHERE ' . $db->quoteName('esl.event_id') . ' = ' . $db->quoteName('e.id') . ')');
+        $db->setQuery($query);
+        $events = (array) $db->loadObjectList();
+
+        foreach ($events as $event) {
+            try {
+                $snapshot = json_decode((string) $event->venue_snapshot, true, 512, JSON_THROW_ON_ERROR);
+            } catch (Throwable $e) {
+                continue;
+            }
+            if (!is_array($snapshot) || ($snapshot['schema'] ?? '') !== 'jem-venue-capacity/v1') {
+                continue;
+            }
+
+            foreach ((array) ($snapshot['spaces'] ?? array()) as $ordering => $space) {
+                $lookup = $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from($db->quoteName('#__jem_venue_profile_spaces'))
+                    ->where($db->quoteName('venue_profile_id') . ' = ' . (int) ($snapshot['profile_id'] ?? 0))
+                    ->where($db->quoteName('venue_space_id') . ' = ' . (int) ($space['id'] ?? 0))
+                    ->where($db->quoteName('venue_layout_id') . ' = ' . (int) ($space['layout']['id'] ?? 0));
+                $db->setQuery($lookup);
+                $profileSpaceId = (int) $db->loadResult();
+                $row = (object) array(
+                    'event_id' => (int) $event->id,
+                    'venue_profile_id' => (int) ($snapshot['profile_id'] ?? 0),
+                    'venue_profile_revision' => (int) ($snapshot['profile_revision'] ?? 0),
+                    'venue_profile_space_id' => $profileSpaceId > 0 ? $profileSpaceId : null,
+                    'venue_space_id' => (int) ($space['id'] ?? 0),
+                    'venue_layout_id' => (int) ($space['layout']['id'] ?? 0),
+                    'venue_layout_revision' => (int) ($space['layout']['revision'] ?? 0),
+                    'ordering' => (int) $ordering,
+                    'created' => Factory::getDate()->toSql(),
+                    'created_by' => 0,
+                );
+                try {
+                    $db->insertObject('#__jem_event_space_layouts', $row, 'id');
+                } catch (Throwable $e) {
+                    // Unique event/profile-space key makes repeated repairs safe.
+                }
+            }
         }
     }
 
@@ -2705,6 +2765,7 @@ SQL;
             '#__jem_cats_event_relations',
             '#__jem_countries',
             '#__jem_capacity_pools',
+            '#__jem_event_space_layouts',
             '#__jem_events',
             '#__jem_event_prices',
             '#__jem_groupmembers',

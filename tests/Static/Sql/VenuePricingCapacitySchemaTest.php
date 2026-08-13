@@ -11,6 +11,7 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         '#__jem_venue_spaces',
         '#__jem_venue_layouts',
         '#__jem_venue_profile_spaces',
+        '#__jem_event_space_layouts',
         '#__jem_venue_capacity_areas',
     );
 
@@ -40,6 +41,7 @@ final class VenuePricingCapacitySchemaTest extends TestCase
 
         self::assertStringContainsString('idx_venue_layout_revision', $install);
         self::assertStringContainsString('idx_venue_profile_space', $install);
+        self::assertStringContainsString('idx_event_space_layout_assignment', $install);
         self::assertStringContainsString('idx_venue_capacity_area_code', $install);
         self::assertMatchesRegularExpression(
             '/CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles`[\s\S]+?`capacity` int\(10\) unsigned/i',
@@ -75,6 +77,8 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         }
 
         self::assertStringContainsString('installDefaultVenueCapacityProfiles($db)', $script);
+        self::assertStringContainsString('backfillEventSpaceLayouts($db)', $script);
+        self::assertStringContainsString("'#__jem_event_space_layouts'", $script);
         self::assertStringContainsString("'INSERT IGNORE INTO '", $script);
         self::assertStringContainsString('$db->quote(\'Main\')', $script);
         self::assertStringContainsString('$db->quote(\'Default configuration\')', $script);
@@ -99,6 +103,9 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         self::assertStringContainsString("'capacity_areas'", $venueService);
         self::assertStringContainsString('layoutFingerprint', $venueService);
         self::assertStringContainsString('saveDefaultConfiguration', $venueService);
+        self::assertStringContainsString('getEventConfigurationOptions', $venueService);
+        self::assertStringContainsString('selected_capacity', $venueService);
+        self::assertStringContainsString('profile_space_id', $venueService);
 
         self::assertStringContainsString('$data[\'venue_snapshot\']', $eventService);
         self::assertStringContainsString('buildPoolRowsFromSnapshot', $eventService);
@@ -114,6 +121,8 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         self::assertStringContainsString('COM_JEM_EVENT_PRICING_ERROR_TAX_VALIDITY', $eventService);
         self::assertStringContainsString("str_starts_with(\$poolReference, 'source:')", $eventService);
         self::assertStringContainsString("\$price['_capacity_pool_code']", $eventService);
+        self::assertStringContainsString('saveEventAssignments', $eventService);
+        self::assertStringContainsString('#__jem_event_space_layouts', $eventService);
     }
 
     private function read(string $path): string

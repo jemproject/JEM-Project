@@ -417,12 +417,38 @@ class JemVenueCapacityService
     /**
      * Build a non-executable, authoritative event snapshot from structured data.
      */
-    public static function buildEventSnapshot(int $venueId): array
+    public static function buildEventSnapshot(int $venueId, ?array $assignmentIds = null): array
     {
         $configuration = self::getDefaultConfiguration($venueId);
         if (empty($configuration['spaces'])) {
             throw new RuntimeException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_LAYOUT_REQUIRED'));
         }
+
+        if ($assignmentIds !== null) {
+            $assignmentIds = array_values(array_unique(array_filter(
+                array_map('intval', $assignmentIds),
+                static fn (int $id): bool => $id > 0
+            )));
+            if (!$assignmentIds) {
+                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CONFIGURATION_SELECTION'));
+            }
+
+            $available = array_column($configuration['spaces'], null, 'assignment_id');
+            foreach ($assignmentIds as $assignmentId) {
+                if (!isset($available[$assignmentId])) {
+                    throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CONFIGURATION_SELECTION'));
+                }
+            }
+            $configuration['spaces'] = array_values(array_filter(
+                $configuration['spaces'],
+                static fn (array $space): bool => in_array((int) $space['assignment_id'], $assignmentIds, true)
+            ));
+        }
+
+        $selectedCapacity = array_sum(array_map(
+            static fn (array $space): int => (int) $space['layout_capacity'],
+            $configuration['spaces']
+        ));
 
         return array(
             'schema'             => 'jem-venue-capacity/v1',
@@ -432,8 +458,10 @@ class JemVenueCapacityService
             'profile_name'       => (string) $configuration['profile_name'],
             'profile_revision'   => (int) $configuration['profile_revision'],
             'profile_capacity'   => (int) $configuration['profile_capacity'],
+            'selected_capacity'  => $selectedCapacity,
             'spaces'             => array_map(static function (array $space): array {
                 return array(
+                    'profile_space_id' => (int) $space['assignment_id'],
                     'id'          => (int) $space['space_id'],
                     'code'        => (string) $space['space_code'],
                     'name'        => (string) $space['space_name'],
@@ -463,6 +491,125 @@ class JemVenueCapacityService
                 );
             }, $configuration['spaces']),
         );
+    }
+
+    /**
+     * Build the small preset list used by the event editor. Complex venues
+     * keep an explicit Custom option instead of flooding the administrator
+     * with every possible space combination.
+     */
+    public static function getEventConfigurationOptions(int $venueId, int $combinationLimit = 12): array
+    {
+        $configuration = self::getDefaultConfiguration($venueId);
+        $spaces = array_values((array) ($configuration['spaces'] ?? array()));
+        if (!$spaces) {
+            return array(
+                'profile' => $configuration,
+                'assignments' => array(),
+                'options' => array(),
+                'custom_required' => false,
+            );
+        }
+
+        $assignments = array_map(static function (array $space): array {
+            return array(
+                'id' => (int) $space['assignment_id'],
+                'space_id' => (int) $space['space_id'],
+                'space_code' => (string) $space['space_code'],
+                'space_name' => (string) $space['space_name'],
+                'space_color' => (string) $space['space_color'],
+                'layout_id' => (int) $space['layout_id'],
+                'layout_code' => (string) $space['layout_code'],
+                'layout_name' => (string) $space['layout_name'],
+                'layout_color' => (string) $space['layout_color'],
+                'layout_revision' => (int) $space['layout_revision'],
+                'capacity' => (int) $space['layout_capacity'],
+            );
+        }, $spaces);
+
+        $count = count($assignments);
+        $combinationCount = $count >= 31 ? PHP_INT_MAX : (2 ** $count) - 1;
+        $customRequired = $combinationCount > $combinationLimit;
+        $sets = array();
+
+        $allIds = array_column($assignments, 'id');
+        $sets[] = $allIds;
+        if ($customRequired) {
+            foreach (array_slice($assignments, 0, max(0, $combinationLimit - 2)) as $assignment) {
+                $sets[] = array((int) $assignment['id']);
+            }
+        } else {
+            for ($size = 1; $size <= $count; $size++) {
+                foreach (self::combinations($allIds, $size) as $ids) {
+                    if ($ids !== $allIds) {
+                        $sets[] = $ids;
+                    }
+                }
+            }
+        }
+
+        $byId = array_column($assignments, null, 'id');
+        $options = array();
+        foreach ($sets as $ids) {
+            sort($ids, SORT_NUMERIC);
+            $selected = array_values(array_intersect_key($byId, array_flip($ids)));
+            $capacity = array_sum(array_column($selected, 'capacity'));
+            $entire = count($ids) === $count;
+            if ($entire) {
+                $label = Text::sprintf(
+                    'COM_JEM_EVENT_VENUE_CONFIGURATION_ENTIRE',
+                    (string) $configuration['profile_name'],
+                    $count,
+                    $capacity
+                );
+            } elseif (count($selected) === 1) {
+                $label = Text::sprintf(
+                    'COM_JEM_EVENT_VENUE_CONFIGURATION_SPACE',
+                    (string) $selected[0]['space_name'],
+                    (string) $selected[0]['layout_name'],
+                    $capacity
+                );
+            } else {
+                $label = Text::sprintf(
+                    'COM_JEM_EVENT_VENUE_CONFIGURATION_COMBINATION',
+                    implode(' + ', array_column($selected, 'space_name')),
+                    $capacity
+                );
+            }
+            $options[] = array(
+                'key' => 'selection:' . implode(',', $ids),
+                'label' => $label,
+                'assignment_ids' => $ids,
+                'capacity' => $capacity,
+                'spaces' => $selected,
+                'entire_profile' => $entire,
+            );
+        }
+
+        return array(
+            'profile' => $configuration,
+            'assignments' => $assignments,
+            'options' => $options,
+            'custom_required' => $customRequired,
+        );
+    }
+
+    private static function combinations(array $values, int $size, int $offset = 0, array $prefix = array()): array
+    {
+        if ($size === 0) {
+            return array($prefix);
+        }
+
+        $sets = array();
+        $limit = count($values) - $size;
+        for ($index = $offset; $index <= $limit; $index++) {
+            $sets = array_merge(
+                $sets,
+                self::combinations($values, $size - 1, $index + 1, array_merge($prefix, array($values[$index])))
+            );
+        }
+
+        return $sets;
     }
 
     private static function normaliseCode($value): string
