@@ -347,6 +347,14 @@ class JemViewCategory extends JemView
 
             // Create the pagination object
             $pagination = $this->get('Pagination');
+            $pagination->setAdditionalUrlParam('option', 'com_jem');
+            $pagination->setAdditionalUrlParam('view', 'category');
+            $pagination->setAdditionalUrlParam('layout', 'default');
+            $pagination->setAdditionalUrlParam('id', (string) $category->slug);
+
+            if ($menuitem && isset($menuitem->id)) {
+                $pagination->setAdditionalUrlParam('Itemid', (int) $menuitem->id);
+            }
 
             $category->title = $category->catname;
 
