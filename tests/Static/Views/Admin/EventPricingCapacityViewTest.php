@@ -52,7 +52,10 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('COM_JEM_VENUE_CAPACITY_LAYOUT_CAPACITY', $capacity);
         self::assertStringContainsString("summary.classList.toggle('is-over-capacity', layoutsExceedProfile)", $capacity);
         self::assertStringContainsString('profileCapacityInput.setCustomValidity(validationMessage)', $capacity);
-        self::assertStringContainsString('profileCapacity.reportValidity()', $edit);
+        self::assertStringContainsString('field.reportValidity()', $edit);
+        self::assertStringContainsString('revealInvalidVenueCapacityField', $edit);
+        self::assertStringContainsString("'.jem-venue-capacity-editor input:invalid, '", $edit);
+        self::assertStringContainsString("bootstrap.Tab.getOrCreateInstance(tabTrigger).show()", $edit);
         self::assertStringContainsString('class="col-md-8"', $edit);
         self::assertStringContainsString('class="col-md-4"', $edit);
         self::assertStringContainsString('data-role="configuration-overview"', $edit);
@@ -68,6 +71,14 @@ final class EventPricingCapacityViewTest extends TestCase
         foreach (array('space_color', 'layout_color', 'data-area-field="color"') as $colourControl) {
             self::assertStringContainsString($colourControl, $capacity);
         }
+        self::assertMatchesRegularExpression(
+            '/data-field="space_name"[^>]+required[^>]+aria-required="true"/',
+            $capacity
+        );
+        self::assertMatchesRegularExpression(
+            '/data-field="layout_name"[^>]+required[^>]+aria-required="true"/',
+            $capacity
+        );
         self::assertStringContainsString("node.style.setProperty('--jem-capacity-node-color'", $capacity);
         self::assertStringContainsString("document.getElementById('jform_venue')", $capacity);
         self::assertStringContainsString("venueNameInput.addEventListener('input', sync)", $capacity);

@@ -136,8 +136,11 @@ $initialConfiguration = json_encode(
                 <h4 class="h6"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE'); ?></h4>
                 <div class="jem-capacity-field-grid jem-capacity-space-grid">
                     <label>
-                        <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_NAME'); ?></span>
-                        <input type="text" class="form-control" maxlength="255" data-field="space_name">
+                        <span>
+                            <?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_NAME'); ?>
+                            <span class="star" aria-hidden="true">&nbsp;*</span>
+                        </span>
+                        <input type="text" class="form-control required" maxlength="255" data-field="space_name" required aria-required="true">
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="space_name"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_NAME_DESC'); ?></div>
                     </label>
                     <label>
@@ -161,8 +164,11 @@ $initialConfiguration = json_encode(
                 <h4 class="h6"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT'); ?></h4>
                 <div class="jem-capacity-field-grid jem-capacity-layout-grid">
                     <label>
-                        <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_NAME'); ?></span>
-                        <input type="text" class="form-control" maxlength="255" data-field="layout_name">
+                        <span>
+                            <?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_NAME'); ?>
+                            <span class="star" aria-hidden="true">&nbsp;*</span>
+                        </span>
+                        <input type="text" class="form-control required" maxlength="255" data-field="layout_name" required aria-required="true">
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="layout_name"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_NAME_DESC'); ?></div>
                     </label>
                     <label>

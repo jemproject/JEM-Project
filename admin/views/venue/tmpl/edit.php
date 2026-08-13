@@ -130,12 +130,36 @@ Text::script('JCANCEL');
 </style>
 
 <script>
+    function revealInvalidVenueCapacityField(field)
+    {
+        var tabTrigger = document.querySelector('[data-bs-target="#capacity"], [href="#capacity"], [aria-controls="capacity"]');
+        if (tabTrigger && window.bootstrap && bootstrap.Tab) {
+            bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+        }
+
+        window.setTimeout(function () {
+            field.focus();
+            field.reportValidity();
+        }, 0);
+    }
+
     Joomla.submitbutton = function(task)
     {
         var form = document.getElementById('venue-form');
         var profileCapacity = document.getElementById('jform_capacity_profile_capacity');
-        if (task != 'venue.cancel' && profileCapacity && !profileCapacity.checkValidity()) {
-            profileCapacity.reportValidity();
+        if (task != 'venue.cancel' && form) {
+            var invalidCapacityField = form.querySelector(
+                '.jem-venue-capacity-editor input:invalid, '
+                + '.jem-venue-capacity-editor select:invalid, '
+                + '.jem-venue-capacity-editor textarea:invalid'
+            );
+            if (invalidCapacityField) {
+                form.classList.add('was-validated');
+                revealInvalidVenueCapacityField(invalidCapacityField);
+                return;
+            }
+        } else if (task != 'venue.cancel' && profileCapacity && !profileCapacity.checkValidity()) {
+            revealInvalidVenueCapacityField(profileCapacity);
             return;
         }
         if (task == 'venue.cancel' || document.formvalidator.isValid(form)) {
