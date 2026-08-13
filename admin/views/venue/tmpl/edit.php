@@ -132,8 +132,14 @@ Text::script('JCANCEL');
 <script>
     Joomla.submitbutton = function(task)
     {
-        if (task == 'venue.cancel' || document.formvalidator.isValid(document.getElementById('venue-form'))) {
-            Joomla.submitform(task, document.getElementById('venue-form'));
+        var form = document.getElementById('venue-form');
+        var profileCapacity = document.getElementById('jform_capacity_profile_capacity');
+        if (task != 'venue.cancel' && profileCapacity && !profileCapacity.checkValidity()) {
+            profileCapacity.reportValidity();
+            return;
+        }
+        if (task == 'venue.cancel' || document.formvalidator.isValid(form)) {
+            Joomla.submitform(task, form);
         }
     }
 
@@ -1033,7 +1039,7 @@ Text::script('JCANCEL');
     class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-8">
             <!-- START OF LEFT DIV -->
             <!-- <div class="width-55 fltlft"> -->
 
@@ -1052,7 +1058,6 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
@@ -1106,7 +1111,7 @@ Text::script('JCANCEL');
                 <!-- END OF LEFT DIV -->
             <!-- </div> -->
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
             <!-- START RIGHT DIV -->
             <!-- <div class="width-40 fltrt"> -->
 
@@ -1270,6 +1275,13 @@ Text::script('JCANCEL');
                         </div>
                     </div>
                 </div>
+                <aside class="card mt-3 jem-capacity-overview" aria-labelledby="jem-capacity-overview-title">
+                    <div class="card-body">
+                        <h3 class="h5" id="jem-capacity-overview-title"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_OVERVIEW'); ?></h3>
+                        <p class="form-text"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_OVERVIEW_DESC'); ?></p>
+                        <div class="jem-capacity-overview-tree" data-role="configuration-overview" aria-live="polite"></div>
+                    </div>
+                </aside>
                 <input type="hidden" name="task" value="" />
                 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
 

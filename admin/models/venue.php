@@ -291,6 +291,10 @@ class JemModelVenue extends JemModelAdmin
         $jemsettings = JemHelper::config();
         $task        = $jinput->get('task', '', 'cmd');
         $capacityConfigurationSubmitted = !empty($data['capacity_configuration_submitted']);
+        $capacityProfileName = JemVenueCapacityService::normaliseProfileName(
+            isset($data['capacity_profile_name']) ? (string) $data['capacity_profile_name'] : null
+        );
+        $capacityProfileCapacity = max(0, (int) ($data['capacity_profile_capacity'] ?? 0));
         $capacityConfiguration = array('spaces' => array());
         if ($capacityConfigurationSubmitted) {
             try {
@@ -315,6 +319,7 @@ class JemModelVenue extends JemModelAdmin
             $data['capacity_configuration_json'],
             $data['capacity_profile_id'],
             $data['capacity_profile_name'],
+            $data['capacity_profile_capacity'],
             $data['capacity_profile_revision']
         );
 
@@ -348,6 +353,7 @@ class JemModelVenue extends JemModelAdmin
             try {
                 $capacityConfiguration = JemVenueCapacityService::normaliseFormData(
                     $capacityConfiguration,
+                    $capacityProfileCapacity,
                     (int) ($data['capacity'] ?? 0)
                 );
             } catch (InvalidArgumentException $e) {
@@ -392,7 +398,11 @@ class JemModelVenue extends JemModelAdmin
             try {
                 JemVenueCapacityService::ensureDefaultProfile((int) $pk);
                 if ($backend && $capacityConfigurationSubmitted) {
-                    JemVenueCapacityService::saveDefaultConfiguration((int) $pk, $capacityConfiguration);
+                    JemVenueCapacityService::saveDefaultConfiguration(
+                        (int) $pk,
+                        $capacityConfiguration,
+                        $capacityProfileName
+                    );
                 }
             } catch (Throwable $e) {
                 $this->setError(Text::sprintf('COM_JEM_VENUE_CAPACITY_SAVE_FAILED', $e->getMessage()));

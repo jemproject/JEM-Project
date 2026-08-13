@@ -101,7 +101,7 @@
             step="1"
             default="0"
             filter="uint"
-            label="COM_JEM_VENUE_CAPACITY"
+            label="COM_JEM_VENUE_PHYSICAL_CAPACITY"
             description="COM_JEM_VENUE_CAPACITY_DESC"
         />
         <field name="state" type="text"
@@ -195,10 +195,20 @@
         <field name="capacity_configuration_json" type="hidden" filter="raw" />
         <field name="capacity_profile_id" type="hidden" />
         <field name="capacity_profile_name" type="text"
-            readonly="true"
-            class="readonly"
-            label="COM_JEM_VENUE_CAPACITY_PROFILE"
+            required="true"
+            filter="string"
+            maxlength="255"
+            label="COM_JEM_VENUE_CAPACITY_PROFILE_NAME"
             description="COM_JEM_VENUE_CAPACITY_PROFILE_DESC"
+        />
+        <field name="capacity_profile_capacity" type="number"
+            required="true"
+            min="0"
+            step="1"
+            default="0"
+            filter="uint"
+            label="COM_JEM_VENUE_PROFILE_CAPACITY"
+            description="COM_JEM_VENUE_PROFILE_CAPACITY_DESC"
         />
         <field name="capacity_profile_revision" type="number"
             readonly="true"

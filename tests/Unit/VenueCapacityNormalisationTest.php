@@ -36,6 +36,13 @@ require_once JEM_TEST_ROOT . '/admin/classes/venuecapacity.class.php';
 
 final class VenueCapacityNormalisationTest extends TestCase
 {
+    public function testProfileNameDefaultsToMainAndRemainsEditable(): void
+    {
+        self::assertSame('Main', JemVenueCapacityService::normaliseProfileName(''));
+        self::assertSame('Main profile', JemVenueCapacityService::normaliseProfileName('  Main profile  '));
+        self::assertSame(255, strlen(JemVenueCapacityService::normaliseProfileName(str_repeat('x', 300))));
+    }
+
     public function testCapacityAreasCanDefineTheLayoutCapacityExactly(): void
     {
         $configuration = JemVenueCapacityService::normaliseFormData(array(
@@ -54,9 +61,13 @@ final class VenueCapacityNormalisationTest extends TestCase
 
         self::assertCount(1, $configuration['spaces']);
         self::assertSame('main-hall', $configuration['spaces'][0]['space_code']);
+        self::assertSame('#2F6F9F', $configuration['spaces'][0]['space_color']);
         self::assertSame('standing', $configuration['spaces'][0]['layout_code']);
+        self::assertSame('#B78324', $configuration['spaces'][0]['layout_color']);
         self::assertSame(250, $configuration['spaces'][0]['layout_capacity']);
+        self::assertSame(300, $configuration['profile_capacity']);
         self::assertSame('floor', $configuration['spaces'][0]['areas'][0]['code']);
+        self::assertSame('#8A6D3B', $configuration['spaces'][0]['areas'][0]['color']);
         self::assertSame('quantity', $configuration['spaces'][0]['areas'][0]['allocation_mode']);
     }
 
@@ -71,7 +82,7 @@ final class VenueCapacityNormalisationTest extends TestCase
             )),
         ), 0);
 
-        self::assertSame(array('spaces' => array()), $configuration);
+        self::assertSame(array('profile_capacity' => 0, 'spaces' => array()), $configuration);
     }
 
     public function testPublishedAreaRequiresExactPositiveCapacity(): void
@@ -92,6 +103,18 @@ final class VenueCapacityNormalisationTest extends TestCase
     public function testProfileCannotExceedVenuePhysicalCapacity(): void
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_PHYSICAL_LIMIT');
+
+        JemVenueCapacityService::normaliseFormData(array(
+            'spaces' => array(
+                array('space_name' => 'Room A', 'layout_name' => 'Default', 'layout_capacity' => 60),
+            ),
+        ), 110, 100);
+    }
+
+    public function testCombinedLayoutsCannotExceedProfileCapacity(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_LIMIT');
 
         JemVenueCapacityService::normaliseFormData(array(
@@ -99,6 +122,40 @@ final class VenueCapacityNormalisationTest extends TestCase
                 array('space_name' => 'Room A', 'layout_name' => 'Default', 'layout_capacity' => 60),
                 array('space_name' => 'Room B', 'layout_name' => 'Default', 'layout_capacity' => 50),
             ),
-        ), 100);
+        ), 100, 120);
+    }
+
+    public function testCapacityColoursAreNormalisedAndValidated(): void
+    {
+        $configuration = JemVenueCapacityService::normaliseFormData(array(
+            'spaces' => array(array(
+                'space_name' => 'Room',
+                'space_color' => '#aabbcc',
+                'layout_name' => 'Default',
+                'layout_color' => '#112233',
+                'layout_capacity' => 10,
+                'areas' => array(array(
+                    'name' => 'General',
+                    'color' => '#abcdef',
+                    'capacity' => 10,
+                    'published' => 1,
+                )),
+            )),
+        ), 10, 10);
+
+        self::assertSame('#AABBCC', $configuration['spaces'][0]['space_color']);
+        self::assertSame('#112233', $configuration['spaces'][0]['layout_color']);
+        self::assertSame('#ABCDEF', $configuration['spaces'][0]['areas'][0]['color']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('COM_JEM_VENUE_CAPACITY_ERROR_COLOR');
+        JemVenueCapacityService::normaliseFormData(array(
+            'spaces' => array(array(
+                'space_name' => 'Invalid colour',
+                'space_color' => 'red',
+                'layout_name' => 'Default',
+                'layout_capacity' => 1,
+            )),
+        ), 1, 1);
     }
 }

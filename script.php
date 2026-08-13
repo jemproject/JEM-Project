@@ -684,16 +684,56 @@ SQL;
                 "CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `country_code` CHAR(2) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `region_code` VARCHAR(100) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `valid_from` DATE NULL DEFAULT NULL, `valid_until` DATE NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL, `checked_out_time` DATETIME NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_tax_rate_code` (`code`), KEY `idx_tax_rate_published_ordering` (`published`,`ordering`), KEY `idx_tax_rate_country` (`country_code`,`published`,`valid_from`,`valid_until`), KEY `idx_tax_rate_validity` (`valid_from`,`valid_until`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_capacity_pools` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_capacity_pool_event_code` (`event_id`,`code`), KEY `idx_capacity_pool_event_published` (`event_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `event_id` INT(11) UNSIGNED NOT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `amount` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_rate_id` INT(11) UNSIGNED NULL DEFAULT NULL, `quota` INT(10) UNSIGNED NULL DEFAULT NULL, `min_quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1', `max_quantity` INT(10) UNSIGNED NULL DEFAULT NULL, `available_from` DATETIME NULL DEFAULT NULL, `available_until` DATETIME NULL DEFAULT NULL, `min_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `max_age` TINYINT(3) UNSIGNED NULL DEFAULT NULL, `access_level_id` INT(10) UNSIGNED NULL DEFAULT NULL, `user_group_id` INT(10) UNSIGNED NULL DEFAULT NULL, `verification_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_event_price_event_code` (`event_id`,`code`), KEY `idx_event_price_event_published` (`event_id`,`published`,`ordering`), KEY `idx_event_price_pool` (`capacity_pool_id`), KEY `idx_event_price_tax` (`tax_rate_id`), KEY `idx_event_price_availability` (`available_from`,`available_until`)) ENGINE=InnoDB",
-                "CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `is_default` TINYINT(1) NOT NULL DEFAULT '1', `published` TINYINT(1) NOT NULL DEFAULT '1', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`,`code`), KEY `idx_venue_capacity_profile_default` (`venue_id`,`is_default`,`published`)) ENGINE=InnoDB",
-                "CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_space_code` (`venue_id`,`code`), KEY `idx_venue_space_published` (`venue_id`,`published`,`ordering`)) ENGINE=InnoDB",
-                "CREATE TABLE IF NOT EXISTS `#__jem_venue_layouts` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_space_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_layout_revision` (`venue_space_id`,`code`,`revision`), KEY `idx_venue_layout_published` (`venue_space_id`,`published`,`ordering`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `is_default` TINYINT(1) NOT NULL DEFAULT '1', `published` TINYINT(1) NOT NULL DEFAULT '1', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`,`code`), KEY `idx_venue_capacity_profile_default` (`venue_id`,`is_default`,`published`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#2F6F9F', `description` TEXT NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_space_code` (`venue_id`,`code`), KEY `idx_venue_space_published` (`venue_id`,`published`,`ordering`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_venue_layouts` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_space_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#B78324', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_layout_revision` (`venue_space_id`,`code`,`revision`), KEY `idx_venue_layout_published` (`venue_space_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_venue_profile_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_profile_id` INT(11) UNSIGNED NOT NULL, `venue_space_id` INT(11) UNSIGNED NOT NULL, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `ordering` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_profile_space` (`venue_profile_id`,`venue_space_id`), KEY `idx_venue_profile_layout` (`venue_layout_id`)) ENGINE=InnoDB",
-                "CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `allocation_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_area_code` (`venue_layout_id`,`code`), KEY `idx_venue_capacity_area_published` (`venue_layout_id`,`published`,`ordering`)) ENGINE=InnoDB",
+                "CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#8A6D3B', `description` TEXT NULL DEFAULT NULL, `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `allocation_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_area_code` (`venue_layout_id`,`code`), KEY `idx_venue_capacity_area_published` (`venue_layout_id`,`published`,`ordering`)) ENGINE=InnoDB",
                 "CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, `register_id` INT(11) UNSIGNED NOT NULL, `registration_revision` INT(10) UNSIGNED NOT NULL, `line_number` INT(10) UNSIGNED NOT NULL, `line_kind` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `event_price_id` INT(11) UNSIGNED NULL DEFAULT NULL, `capacity_pool_id` INT(11) UNSIGNED NULL DEFAULT NULL, `item_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `item_name` VARCHAR(255) NOT NULL DEFAULT '', `item_description` TEXT NULL DEFAULT NULL, `quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1', `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `price_includes_tax` TINYINT(1) NOT NULL DEFAULT '1', `unit_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `unit_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_net` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_tax` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `line_gross` DECIMAL(15,2) NOT NULL DEFAULT '0.00', `tax_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_name` VARCHAR(255) NOT NULL DEFAULT '', `tax_type` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `tax_rate` DECIMAL(7,2) NOT NULL DEFAULT '0.00', `calculation_mode` VARCHAR(32) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `calculation_value` DECIMAL(15,2) NULL DEFAULT NULL, `calculation_basis` VARCHAR(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `condition_snapshot` MEDIUMTEXT NULL DEFAULT NULL, `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `idx_register_item_revision_line` (`register_id`,`registration_revision`,`line_number`), KEY `idx_register_item_price` (`event_price_id`), KEY `idx_register_item_pool` (`capacity_pool_id`), KEY `idx_register_item_kind` (`line_kind`)) ENGINE=InnoDB",
             );
 
             foreach ($statements as $statement) {
                 $db->setQuery($db->replacePrefix($statement))->execute();
+            }
+
+            $profileColumns = array_change_key_case(
+                $db->getTableColumns($db->replacePrefix('#__jem_venue_capacity_profiles'), false),
+                CASE_LOWER
+            );
+            if (!isset($profileColumns['capacity'])) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_venue_capacity_profiles')
+                    . ' ADD COLUMN ' . $db->quoteName('capacity')
+                    . " INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER " . $db->quoteName('revision')
+                )->execute();
+            }
+
+            foreach (array(
+                '#__jem_venue_spaces' => array(
+                    'definition' => "CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#2F6F9F' AFTER `name`",
+                    'default' => '#2F6F9F',
+                ),
+                '#__jem_venue_layouts' => array(
+                    'definition' => "CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#B78324' AFTER `name`",
+                    'default' => '#B78324',
+                ),
+                '#__jem_venue_capacity_areas' => array(
+                    'definition' => "CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#8A6D3B' AFTER `name`",
+                    'default' => '#8A6D3B',
+                ),
+            ) as $table => $colourSchema) {
+                $columns = array_change_key_case($db->getTableColumns($db->replacePrefix($table), false), CASE_LOWER);
+                if (!isset($columns['color'])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName($table)
+                        . ' ADD COLUMN ' . $db->quoteName('color') . ' ' . $colourSchema['definition']
+                    )->execute();
+                }
+                $db->setQuery(
+                    'UPDATE ' . $db->quoteName($table)
+                    . ' SET ' . $db->quoteName('color') . ' = ' . $db->quote($colourSchema['default'])
+                    . ' WHERE ' . $db->quoteName('color') . ' = ' . $db->quote('')
+                )->execute();
             }
 
             $db->setQuery(
@@ -835,13 +875,14 @@ SQL;
         $db->setQuery(
             'INSERT IGNORE INTO ' . $db->quoteName('#__jem_venue_capacity_profiles')
             . ' (' . implode(', ', array_map(array($db, 'quoteName'), array(
-                'venue_id', 'code', 'name', 'revision', 'is_default', 'published', 'created', 'created_by',
+                'venue_id', 'code', 'name', 'revision', 'capacity', 'is_default', 'published', 'created', 'created_by',
             ))) . ')'
             . ' SELECT ' . implode(', ', array(
                 $db->quoteName('id'),
                 $db->quote('default'),
-                $db->quote('Default configuration'),
+                $db->quote('Main'),
                 '1',
+                $db->quoteName('capacity'),
                 '1',
                 '1',
                 'COALESCE(' . $db->quoteName('created') . ', CURRENT_TIMESTAMP)',
@@ -849,6 +890,52 @@ SQL;
             ))
             . ' FROM ' . $db->quoteName('#__jem_venues')
         )->execute();
+
+        // An earlier 5.1 beta stored only the venue-wide limit. Copy it once
+        // into the new per-profile ceiling without overwriting later admin edits.
+        $capacityMigrationKey = 'venue_profile_capacity_migrated';
+        $db->setQuery(
+            'SELECT ' . $db->quoteName('value')
+            . ' FROM ' . $db->quoteName('#__jem_config')
+            . ' WHERE ' . $db->quoteName('keyname') . ' = ' . $db->quote($capacityMigrationKey)
+        );
+        if ((string) $db->loadResult() !== '1') {
+            $db->setQuery(
+                'UPDATE ' . $db->quoteName('#__jem_venue_capacity_profiles', 'p')
+                . ' INNER JOIN ' . $db->quoteName('#__jem_venues', 'v')
+                . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('p.venue_id')
+                . ' SET ' . $db->quoteName('p.capacity') . ' = ' . $db->quoteName('v.capacity')
+                . ' WHERE ' . $db->quoteName('p.capacity') . ' = 0'
+            )->execute();
+            $db->setQuery(
+                'INSERT INTO ' . $db->quoteName('#__jem_config')
+                . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ')'
+                . ' VALUES (' . $db->quote($capacityMigrationKey) . ', ' . $db->quote('1') . ')'
+                . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote('1')
+            )->execute();
+        }
+
+        // Rename the provisional beta label once. Later administrator edits are preserved.
+        $migrationKey = 'venue_profile_main_label_migrated';
+        $db->setQuery(
+            'SELECT ' . $db->quoteName('value')
+            . ' FROM ' . $db->quoteName('#__jem_config')
+            . ' WHERE ' . $db->quoteName('keyname') . ' = ' . $db->quote($migrationKey)
+        );
+        if ((string) $db->loadResult() !== '1') {
+            $db->setQuery(
+                'UPDATE ' . $db->quoteName('#__jem_venue_capacity_profiles')
+                . ' SET ' . $db->quoteName('name') . ' = ' . $db->quote('Main')
+                . ' WHERE ' . $db->quoteName('code') . ' = ' . $db->quote('default')
+                . ' AND ' . $db->quoteName('name') . ' = ' . $db->quote('Default configuration')
+            )->execute();
+            $db->setQuery(
+                'INSERT INTO ' . $db->quoteName('#__jem_config')
+                . ' (' . $db->quoteName('keyname') . ', ' . $db->quoteName('value') . ')'
+                . ' VALUES (' . $db->quote($migrationKey) . ', ' . $db->quote('1') . ')'
+                . ' ON DUPLICATE KEY UPDATE ' . $db->quoteName('value') . ' = ' . $db->quote('1')
+            )->execute();
+        }
     }
 
     /**

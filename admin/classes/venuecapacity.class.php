@@ -22,8 +22,11 @@ use Joomla\String\StringHelper;
 class JemVenueCapacityService
 {
     public const DEFAULT_PROFILE_CODE = 'default';
-    public const DEFAULT_PROFILE_NAME = 'Default configuration';
+    public const DEFAULT_PROFILE_NAME = 'Main';
     public const ALLOCATION_QUANTITY = 'quantity';
+    public const DEFAULT_SPACE_COLOR = '#2F6F9F';
+    public const DEFAULT_LAYOUT_COLOR = '#B78324';
+    public const DEFAULT_AREA_COLOR = '#8A6D3B';
 
     /**
      * Create the mandatory default profile without inventing rooms or areas.
@@ -47,6 +50,14 @@ class JemVenueCapacityService
             return $profileId;
         }
 
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('capacity'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $venueId)
+        );
+        $venueCapacity = (int) $db->loadResult();
+
         $now = Factory::getDate()->toSql();
         $identity = Factory::getApplication()->getIdentity();
         $userId = (int) ($identity->id ?? 0);
@@ -55,6 +66,7 @@ class JemVenueCapacityService
             'code'        => self::DEFAULT_PROFILE_CODE,
             'name'        => self::DEFAULT_PROFILE_NAME,
             'revision'    => 1,
+            'capacity'    => $venueCapacity,
             'is_default'  => 1,
             'published'   => 1,
             'created'     => $now,
@@ -83,7 +95,10 @@ class JemVenueCapacityService
         $db = Factory::getContainer()->get('DatabaseDriver');
         $profileId = self::ensureDefaultProfile($venueId);
         $query = $db->getQuery(true)
-            ->select(array('id AS profile_id', 'code AS profile_code', 'name AS profile_name', 'revision AS profile_revision'))
+            ->select(array(
+                'id AS profile_id', 'code AS profile_code', 'name AS profile_name',
+                'revision AS profile_revision', 'capacity AS profile_capacity',
+            ))
             ->from($db->quoteName('#__jem_venue_capacity_profiles'))
             ->where($db->quoteName('id') . ' = ' . $profileId);
         $db->setQuery($query);
@@ -92,16 +107,17 @@ class JemVenueCapacityService
             'profile_code'     => self::DEFAULT_PROFILE_CODE,
             'profile_name'     => self::DEFAULT_PROFILE_NAME,
             'profile_revision' => 1,
+            'profile_capacity' => 0,
             'spaces'           => array(),
         ), $db->loadAssoc() ?: array());
 
         $query = $db->getQuery(true)
             ->select(array(
                 'ps.id AS assignment_id', 'ps.ordering',
-                's.id AS space_id', 's.code AS space_code', 's.name AS space_name',
+                's.id AS space_id', 's.code AS space_code', 's.name AS space_name', 's.color AS space_color',
                 's.description AS space_description',
                 'l.id AS layout_id', 'l.code AS layout_code', 'l.name AS layout_name',
-                'l.revision AS layout_revision', 'l.capacity AS layout_capacity',
+                'l.revision AS layout_revision', 'l.capacity AS layout_capacity', 'l.color AS layout_color',
             ))
             ->from($db->quoteName('#__jem_venue_profile_spaces', 'ps'))
             ->join('INNER', $db->quoteName('#__jem_venue_spaces', 's') . ' ON s.id = ps.venue_space_id')
@@ -113,7 +129,7 @@ class JemVenueCapacityService
         foreach ((array) $db->loadAssocList() as $space) {
             $space['areas'] = array();
             $query = $db->getQuery(true)
-                ->select(array('id', 'code', 'name', 'description', 'capacity', 'allocation_mode', 'published', 'ordering'))
+                ->select(array('id', 'code', 'name', 'color', 'description', 'capacity', 'allocation_mode', 'published', 'ordering'))
                 ->from($db->quoteName('#__jem_venue_capacity_areas'))
                 ->where($db->quoteName('venue_layout_id') . ' = ' . (int) $space['layout_id'])
                 ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
@@ -133,6 +149,7 @@ class JemVenueCapacityService
         if (empty($item->id)) {
             $item->capacity_profile_name = self::DEFAULT_PROFILE_NAME;
             $item->capacity_profile_revision = 1;
+            $item->capacity_profile_capacity = (int) ($item->capacity ?? 0);
             $item->capacity_spaces = array();
             $item->capacity_configuration_json = json_encode(array('spaces' => array()));
 
@@ -143,6 +160,7 @@ class JemVenueCapacityService
         $item->capacity_profile_id = (int) $configuration['profile_id'];
         $item->capacity_profile_name = (string) $configuration['profile_name'];
         $item->capacity_profile_revision = (int) $configuration['profile_revision'];
+        $item->capacity_profile_capacity = (int) $configuration['profile_capacity'];
         $item->capacity_spaces = $configuration['spaces'];
         $item->capacity_configuration_json = json_encode(
             array('spaces' => $configuration['spaces']),
@@ -153,11 +171,18 @@ class JemVenueCapacityService
     /**
      * Validate and canonicalise the multi-space profile editor payload.
      */
-    public static function normaliseFormData(array $data, int $venueCapacity): array
+    public static function normaliseFormData(array $data, int $profileCapacity, ?int $venueCapacity = null): array
     {
-        $normalised = array('spaces' => array());
+        if ($venueCapacity !== null && $profileCapacity > $venueCapacity) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_PHYSICAL_LIMIT'));
+        }
+
+        $normalised = array(
+            'profile_capacity' => $profileCapacity,
+            'spaces' => array(),
+        );
         $spaceCodes = array();
-        $profileCapacity = 0;
+        $combinedLayoutCapacity = 0;
 
         foreach ((array) ($data['spaces'] ?? array()) as $space) {
             if (!is_array($space)) {
@@ -173,15 +198,27 @@ class JemVenueCapacityService
             }
 
             $spaceCodes[$spaceData['space_code']] = true;
-            $profileCapacity += $spaceData['layout_capacity'];
+            $combinedLayoutCapacity += $spaceData['layout_capacity'];
             $normalised['spaces'][] = $spaceData;
         }
 
-        if ($profileCapacity > $venueCapacity) {
+        if ($combinedLayoutCapacity > $profileCapacity) {
             throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_LIMIT'));
         }
 
         return $normalised;
+    }
+
+    /**
+     * Normalise the editable display name of the mandatory profile.
+     */
+    public static function normaliseProfileName(?string $name): string
+    {
+        $name = trim((string) $name);
+
+        return $name === ''
+            ? self::DEFAULT_PROFILE_NAME
+            : StringHelper::substr($name, 0, 255);
     }
 
     private static function spaceHasConfiguration(array $space): bool
@@ -212,11 +249,19 @@ class JemVenueCapacityService
     }
 
     /**
-     * Save a new immutable layout revision only when effective data changed.
+     * Save profile metadata and create immutable layout revisions only when
+     * the effective physical capacity configuration changed.
      */
-    public static function saveDefaultConfiguration(int $venueId, array $configuration): array
+    public static function saveDefaultConfiguration(
+        int $venueId,
+        array $configuration,
+        ?string $profileName = null
+    ): array
     {
         $current = self::getDefaultConfiguration($venueId);
+        $profileName = self::normaliseProfileName($profileName ?? (string) $current['profile_name']);
+        $profileCapacity = (int) ($configuration['profile_capacity'] ?? $current['profile_capacity']);
+        $configuration['profile_capacity'] = $profileCapacity;
         $currentBySpaceId = array();
         foreach ($current['spaces'] as $space) {
             $currentBySpaceId[(int) $space['space_id']] = $space;
@@ -230,7 +275,11 @@ class JemVenueCapacityService
         }
         unset($space);
 
-        if (self::configurationFingerprint($current) === self::configurationFingerprint($configuration)) {
+        $configurationChanged = self::configurationFingerprint($current)
+            !== self::configurationFingerprint($configuration);
+        $profileNameChanged = $profileName !== (string) $current['profile_name'];
+
+        if (!$configurationChanged && !$profileNameChanged) {
             return $current;
         }
 
@@ -244,7 +293,7 @@ class JemVenueCapacityService
             $profileId = (int) $current['profile_id'];
             $keptAssignmentIds = array();
 
-            foreach ($configuration['spaces'] as $ordering => $spaceData) {
+            foreach ($configurationChanged ? $configuration['spaces'] : array() as $ordering => $spaceData) {
                 $spaceId = (int) ($spaceData['space_id'] ?? 0);
                 $currentSpace = $spaceId > 0 ? ($currentBySpaceId[$spaceId] ?? null) : null;
                 if ($spaceId > 0 && $currentSpace === null) {
@@ -255,6 +304,7 @@ class JemVenueCapacityService
                     $spaceRow = (object) array(
                         'id'          => $spaceId,
                         'name'        => $spaceData['space_name'],
+                        'color'       => $spaceData['space_color'],
                         'description' => $spaceData['space_description'],
                         'modified'    => $now,
                         'modified_by' => $userId,
@@ -265,6 +315,7 @@ class JemVenueCapacityService
                         'venue_id'    => $venueId,
                         'code'        => $spaceData['space_code'],
                         'name'        => $spaceData['space_name'],
+                        'color'       => $spaceData['space_color'],
                         'description' => $spaceData['space_description'],
                         'published'   => 1,
                         'ordering'    => (int) $ordering,
@@ -293,6 +344,7 @@ class JemVenueCapacityService
                         'name'           => $spaceData['layout_name'],
                         'revision'       => $layoutRevision,
                         'capacity'       => $spaceData['layout_capacity'],
+                        'color'          => $spaceData['layout_color'],
                         'published'      => 1,
                         'ordering'       => 0,
                         'created'        => $now,
@@ -334,17 +386,21 @@ class JemVenueCapacityService
                 $keptAssignmentIds[] = $assignmentId;
             }
 
-            $query = $db->getQuery(true)
-                ->delete($db->quoteName('#__jem_venue_profile_spaces'))
-                ->where($db->quoteName('venue_profile_id') . ' = ' . $profileId);
-            if ($keptAssignmentIds) {
-                $query->where($db->quoteName('id') . ' NOT IN (' . implode(',', array_map('intval', $keptAssignmentIds)) . ')');
+            if ($configurationChanged) {
+                $query = $db->getQuery(true)
+                    ->delete($db->quoteName('#__jem_venue_profile_spaces'))
+                    ->where($db->quoteName('venue_profile_id') . ' = ' . $profileId);
+                if ($keptAssignmentIds) {
+                    $query->where($db->quoteName('id') . ' NOT IN (' . implode(',', array_map('intval', $keptAssignmentIds)) . ')');
+                }
+                $db->setQuery($query)->execute();
             }
-            $db->setQuery($query)->execute();
 
             $profile = (object) array(
                 'id'          => $profileId,
-                'revision'    => (int) $current['profile_revision'] + 1,
+                'name'        => $profileName,
+                'revision'    => (int) $current['profile_revision'] + ($configurationChanged ? 1 : 0),
+                'capacity'    => $profileCapacity,
                 'modified'    => $now,
                 'modified_by' => $userId,
             );
@@ -375,11 +431,13 @@ class JemVenueCapacityService
             'profile_code'       => (string) $configuration['profile_code'],
             'profile_name'       => (string) $configuration['profile_name'],
             'profile_revision'   => (int) $configuration['profile_revision'],
+            'profile_capacity'   => (int) $configuration['profile_capacity'],
             'spaces'             => array_map(static function (array $space): array {
                 return array(
                     'id'          => (int) $space['space_id'],
                     'code'        => (string) $space['space_code'],
                     'name'        => (string) $space['space_name'],
+                    'color'       => (string) $space['space_color'],
                     'description' => (string) $space['space_description'],
                     'layout'      => array(
                         'id'       => (int) $space['layout_id'],
@@ -387,12 +445,14 @@ class JemVenueCapacityService
                         'name'     => (string) $space['layout_name'],
                         'revision' => (int) $space['layout_revision'],
                         'capacity' => (int) $space['layout_capacity'],
+                        'color'    => (string) $space['layout_color'],
                     ),
                     'capacity_areas' => array_map(static function (array $area): array {
                         return array(
                             'id'              => (int) $area['id'],
                             'code'            => (string) $area['code'],
                             'name'            => (string) $area['name'],
+                            'color'           => (string) $area['color'],
                             'description'     => (string) $area['description'],
                             'capacity'        => (int) $area['capacity'],
                             'allocation_mode' => (string) $area['allocation_mode'],
@@ -423,6 +483,19 @@ class JemVenueCapacityService
         return (int) $value;
     }
 
+    private static function normaliseColor($value, string $default): string
+    {
+        $color = strtoupper(trim((string) $value));
+        if ($color === '') {
+            return $default;
+        }
+        if (preg_match('/^#[0-9A-F]{6}$/D', $color) !== 1) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_COLOR'));
+        }
+
+        return $color;
+    }
+
     /**
      * Canonicalise one room, its selected layout and its quantity areas.
      */
@@ -432,10 +505,12 @@ class JemVenueCapacityService
             'space_id'          => (int) ($space['space_id'] ?? 0),
             'space_code'        => self::normaliseCode($space['space_code'] ?? ''),
             'space_name'        => trim((string) ($space['space_name'] ?? '')),
+            'space_color'       => self::normaliseColor($space['space_color'] ?? '', self::DEFAULT_SPACE_COLOR),
             'space_description' => trim((string) ($space['space_description'] ?? '')),
             'layout_id'         => (int) ($space['layout_id'] ?? 0),
             'layout_code'       => self::normaliseCode($space['layout_code'] ?? ''),
             'layout_name'       => trim((string) ($space['layout_name'] ?? '')),
+            'layout_color'      => self::normaliseColor($space['layout_color'] ?? '', self::DEFAULT_LAYOUT_COLOR),
             'layout_capacity'   => self::normaliseCapacity($space['layout_capacity'] ?? 0),
             'areas'             => array(),
         );
@@ -480,6 +555,7 @@ class JemVenueCapacityService
                 'id'              => (int) ($area['id'] ?? 0),
                 'code'            => $code,
                 'name'            => StringHelper::substr($name, 0, 255),
+                'color'           => self::normaliseColor($area['color'] ?? '', self::DEFAULT_AREA_COLOR),
                 'description'     => $description,
                 'capacity'        => $capacity,
                 'allocation_mode' => self::ALLOCATION_QUANTITY,
@@ -519,6 +595,7 @@ class JemVenueCapacityService
             $areas[] = array(
                 'code'            => (string) ($area['code'] ?? ''),
                 'name'            => (string) ($area['name'] ?? ''),
+                'color'           => (string) ($area['color'] ?? self::DEFAULT_AREA_COLOR),
                 'description'     => (string) ($area['description'] ?? ''),
                 'capacity'        => (int) ($area['capacity'] ?? 0),
                 'allocation_mode' => (string) ($area['allocation_mode'] ?? self::ALLOCATION_QUANTITY),
@@ -529,6 +606,7 @@ class JemVenueCapacityService
         return hash('sha256', json_encode(array(
             'layout_code'     => (string) ($space['layout_code'] ?? ''),
             'layout_name'     => (string) ($space['layout_name'] ?? ''),
+            'layout_color'    => (string) ($space['layout_color'] ?? self::DEFAULT_LAYOUT_COLOR),
             'layout_capacity' => (int) ($space['layout_capacity'] ?? 0),
             'areas'           => $areas,
         ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
@@ -541,11 +619,15 @@ class JemVenueCapacityService
             $spaces[] = array(
                 'space_code'        => (string) ($space['space_code'] ?? ''),
                 'space_name'        => (string) ($space['space_name'] ?? ''),
+                'space_color'       => (string) ($space['space_color'] ?? self::DEFAULT_SPACE_COLOR),
                 'space_description' => (string) ($space['space_description'] ?? ''),
                 'layout'            => self::layoutFingerprint($space),
             );
         }
 
-        return hash('sha256', json_encode($spaces, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        return hash('sha256', json_encode(array(
+            'profile_capacity' => (int) ($configuration['profile_capacity'] ?? 0),
+            'spaces'           => $spaces,
+        ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
 }

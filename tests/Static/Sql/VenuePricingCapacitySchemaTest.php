@@ -41,8 +41,28 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         self::assertStringContainsString('idx_venue_layout_revision', $install);
         self::assertStringContainsString('idx_venue_profile_space', $install);
         self::assertStringContainsString('idx_venue_capacity_area_code', $install);
+        self::assertMatchesRegularExpression(
+            '/CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles`[\s\S]+?`capacity` int\(10\) unsigned/i',
+            $install
+        );
+        self::assertStringContainsString('ADD COLUMN `capacity`', $update);
+        foreach (array('#__jem_venue_spaces', '#__jem_venue_layouts', '#__jem_venue_capacity_areas') as $colourTable) {
+            self::assertMatchesRegularExpression(
+                '/CREATE TABLE IF NOT EXISTS `' . preg_quote($colourTable, '/') . '`[\s\S]+?`color` char\(7\)/i',
+                $install
+            );
+        }
+        self::assertSame(3, substr_count($update, 'ADD COLUMN `color`'));
         self::assertStringContainsString('INSERT IGNORE INTO `#__jem_venue_capacity_profiles`', $update);
-        self::assertStringContainsString("'default','Default configuration'", $update);
+        self::assertStringContainsString("'default','Main'", $update);
+        self::assertStringContainsString("`name` = 'Main'", $update);
+        self::assertStringContainsString("`name` = 'Default configuration'", $update);
+        self::assertStringContainsString("'venue_profile_main_label_migrated','1'", $update);
+        self::assertStringContainsString("'venue_profile_capacity_migrated','1'", $update);
+        foreach (array('#2F6F9F', '#B78324', '#8A6D3B') as $defaultColour) {
+            self::assertStringContainsString("DEFAULT '" . $defaultColour . "'", $install);
+            self::assertStringContainsString("DEFAULT '" . $defaultColour . "'", $update);
+        }
     }
 
     public function testInstallerRepairsCapacitySchemaAndDefaultProfilesIdempotently(): void
@@ -56,6 +76,12 @@ final class VenuePricingCapacitySchemaTest extends TestCase
 
         self::assertStringContainsString('installDefaultVenueCapacityProfiles($db)', $script);
         self::assertStringContainsString("'INSERT IGNORE INTO '", $script);
+        self::assertStringContainsString('$db->quote(\'Main\')', $script);
+        self::assertStringContainsString('$db->quote(\'Default configuration\')', $script);
+        self::assertStringContainsString('$migrationKey = \'venue_profile_main_label_migrated\'', $script);
+        self::assertStringContainsString("\$capacityMigrationKey = 'venue_profile_capacity_migrated'", $script);
+        self::assertStringContainsString("isset(\$profileColumns['capacity'])", $script);
+        self::assertStringContainsString("isset(\$columns['color'])", $script);
         self::assertStringContainsString("'venue_snapshot'", $script);
         self::assertStringNotContainsString('venue_configuration_snapshot', $script);
     }
@@ -66,6 +92,9 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         $eventService = $this->read('/admin/classes/eventpricingcapacity.class.php');
 
         self::assertStringContainsString("'schema'             => 'jem-venue-capacity/v1'", $venueService);
+        self::assertStringContainsString("'profile_capacity'", $venueService);
+        self::assertStringContainsString('DEFAULT_SPACE_COLOR', $venueService);
+        self::assertStringContainsString('normaliseColor', $venueService);
         self::assertStringContainsString("'spaces'", $venueService);
         self::assertStringContainsString("'capacity_areas'", $venueService);
         self::assertStringContainsString('layoutFingerprint', $venueService);

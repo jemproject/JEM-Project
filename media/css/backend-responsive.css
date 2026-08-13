@@ -1832,6 +1832,240 @@ fieldset.jem-specialdays-import #replace_specialdays {
     border-radius: .25rem;
 }
 
+.jem-capacity-intro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin: 0;
+    padding: .7rem .9rem;
+}
+
+.jem-capacity-overview {
+    position: sticky;
+    top: 1rem;
+    max-height: calc(100vh - 8rem);
+    overflow: auto;
+}
+
+.jem-capacity-overview > h3 {
+    margin: 0;
+}
+
+.jem-capacity-overview-tree,
+.jem-capacity-overview-children {
+    display: grid;
+    gap: .55rem;
+}
+
+.jem-capacity-overview-tree {
+    margin-top: .75rem;
+}
+
+.jem-capacity-overview-children:empty {
+    display: none;
+}
+
+.jem-capacity-overview-node {
+    min-width: 0;
+    padding: .55rem;
+    background: var(--body-bg, #fff);
+    border: 1px solid #c8d2dc;
+    border-left: .3rem solid var(--jem-capacity-node-color, #7c99b5);
+    border-radius: .4rem;
+}
+
+.jem-capacity-overview-node.is-venue {
+    background: #eef3f8;
+    border-color: #8da5bb;
+}
+
+.jem-capacity-overview-node.is-profile {
+    background: #f6f8fb;
+    border-color: #7c99b5;
+}
+
+.jem-capacity-overview-node.is-space {
+    background: #edf4fa;
+    border-color: #aebfd0;
+}
+
+.jem-capacity-overview-node.is-layout {
+    background: #f8f4e9;
+    border-color: #dfd1aa;
+}
+
+.jem-capacity-overview-node.is-area {
+    padding: .4rem .5rem;
+    background: #fff;
+    border-color: #d8c898;
+}
+
+.jem-capacity-overview-node.is-invalid-limit {
+    border-color: #dc3545;
+    box-shadow: inset 0 0 0 1px rgba(220, 53, 69, .25);
+}
+
+.jem-capacity-overview-node-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.jem-capacity-overview-node-identity {
+    display: grid;
+    min-width: 0;
+}
+
+.jem-capacity-overview-node-identity strong {
+    overflow-wrap: anywhere;
+}
+
+.jem-capacity-overview-node-type {
+    color: var(--secondary-color, #6c757d);
+    font-size: .72rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.jem-capacity-overview-children {
+    margin-top: .55rem;
+    padding-left: .45rem;
+}
+
+.jem-capacity-venue-limit {
+    max-width: 32rem;
+}
+
+.jem-capacity-venue-limit > .control-group {
+    margin: 0;
+}
+
+.jem-capacity-venue-limit.is-over-capacity {
+    border-color: rgba(220, 53, 69, .55);
+    background: rgba(220, 53, 69, .07);
+}
+
+.jem-capacity-profile-card {
+    display: grid;
+    gap: .8rem;
+    padding: .85rem 1rem !important;
+    background: var(--body-bg, #fff);
+    border-left: .35rem solid #59799a !important;
+}
+
+.jem-capacity-profile-toolbar,
+.jem-capacity-profile-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .6rem;
+}
+
+.jem-capacity-profile-revision {
+    color: var(--secondary-color, #6c757d);
+    font-size: .875rem;
+    white-space: nowrap;
+}
+
+.jem-capacity-profile-toolbar {
+    justify-content: space-between;
+}
+
+.jem-capacity-profile-identity {
+    display: grid;
+    gap: .15rem;
+}
+
+.jem-capacity-profile-actions {
+    display: flex;
+    flex: 1 1 24rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: .5rem;
+    max-width: 32rem;
+}
+
+.jem-capacity-profile-actions .form-select {
+    flex: 1 1 13rem;
+    max-width: 18rem;
+}
+
+.jem-capacity-profile-actions .d-inline-block > .btn:disabled {
+    pointer-events: none;
+}
+
+.jem-capacity-profile-actions > .form-text {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+.jem-capacity-profile-details {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) auto;
+    gap: .75rem 1rem;
+    align-items: end;
+}
+
+.jem-capacity-profile-details > .control-group {
+    margin: 0;
+}
+
+.jem-capacity-profile-capacity {
+    justify-self: end;
+}
+
+.jem-capacity-profile-capacity > .control-group {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    margin: 0;
+}
+
+.jem-capacity-profile-capacity .control-label,
+.jem-capacity-profile-capacity .control-label label {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
+
+.jem-capacity-profile-capacity .controls {
+    flex: 0 0 8rem;
+    min-width: 0;
+}
+
+.jem-capacity-profile-capacity input[type="number"] {
+    width: 8rem;
+    max-width: 8rem;
+}
+
+.jem-capacity-profile-details .jem-capacity-profile-summary {
+    grid-column: 1 / -1;
+    justify-self: start;
+    min-height: 2.4rem;
+    padding: .45rem .7rem;
+    background: color-mix(in srgb, var(--body-color, #1f2933) 5%, transparent);
+    border-radius: .3rem;
+    white-space: nowrap;
+}
+
+.jem-capacity-profile-summary.is-over-capacity {
+    color: var(--danger, #b02a37);
+    background: rgba(220, 53, 69, .12);
+    outline: 1px solid rgba(220, 53, 69, .35);
+}
+
+.jem-capacity-profile-help {
+    grid-column: 1 / -1;
+    margin: 0;
+}
+
+.jem-capacity-validation {
+    grid-column: 1 / -1;
+    font-weight: 600;
+}
+
 .jem-capacity-field-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1895,7 +2129,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-section > h4,
-.jem-capacity-areas-heading h4 {
+.jem-capacity-areas-heading h5 {
     color: #234d6d;
     font-weight: 700;
 }
@@ -1906,6 +2140,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-section-areas {
+    margin-top: 1rem;
     background: #f8f4e9;
     border-color: #dfd1aa;
 }
@@ -1924,6 +2159,22 @@ fieldset.jem-specialdays-import #replace_specialdays {
     min-width: 0;
 }
 
+.jem-capacity-color-field {
+    max-width: 4rem;
+}
+
+.jem-capacity-color-field input[type="color"] {
+    width: 3rem;
+    min-width: 3rem;
+    height: 2.45rem;
+    padding: .15rem;
+    cursor: pointer;
+}
+
+.jem-capacity-space-grid {
+    grid-template-columns: minmax(10rem, 1fr) minmax(10rem, 1fr) auto;
+}
+
 .jem-capacity-field-grid > label > span,
 .jem-capacity-area-row > label > span {
     display: block;
@@ -1932,7 +2183,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-layout-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 }
 
 .jem-capacity-area-list {
@@ -1943,13 +2194,12 @@ fieldset.jem-specialdays-import #replace_specialdays {
 
 .jem-capacity-area-row {
     display: grid;
-    grid-template-columns: minmax(9rem, 1.4fr) minmax(8rem, 1fr) minmax(7rem, .65fr) minmax(8rem, .75fr) auto;
+    grid-template-columns: minmax(9rem, 1.4fr) minmax(8rem, 1fr) minmax(7rem, .65fr) auto minmax(8rem, .75fr) auto;
     gap: .75rem;
     align-items: end;
     padding: .9rem;
     background: #fff;
     border: 1px solid #d8c898;
-    border-left: .28rem solid #b38a28;
     border-radius: .4rem;
     box-shadow: 0 .12rem .35rem rgba(77, 61, 22, .08);
 }
@@ -1977,7 +2227,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 [data-bs-theme="dark"] .jem-capacity-section > h4,
-[data-bs-theme="dark"] .jem-capacity-areas-heading h4 {
+[data-bs-theme="dark"] .jem-capacity-areas-heading h5 {
     color: #d7ebfa;
 }
 
@@ -1998,7 +2248,6 @@ fieldset.jem-specialdays-import #replace_specialdays {
 [data-bs-theme="dark"] .jem-capacity-area-row {
     background: #28271f;
     border-color: #766644;
-    border-left-color: #d0a849;
     box-shadow: 0 .12rem .35rem rgba(0, 0, 0, .25);
 }
 
@@ -2023,6 +2272,10 @@ fieldset.jem-specialdays-import #replace_specialdays {
     max-width: 100%;
 }
 
+.jem-venue-capacity-editor .hide-aware-inline-help {
+    max-width: 72ch;
+}
+
 .jem-capacity-areas-fieldset .subform-repeatable-group {
     max-width: 100%;
 }
@@ -2036,11 +2289,43 @@ fieldset.jem-specialdays-import #replace_specialdays {
         padding: .75rem;
     }
 
+    .jem-capacity-profile-toolbar {
+        align-items: flex-start;
+    }
+
+    .jem-capacity-profile-actions {
+        flex-basis: 100%;
+        justify-content: flex-start;
+        max-width: none;
+    }
+
+    .jem-capacity-profile-actions .form-select {
+        max-width: none;
+    }
+
+    .jem-capacity-profile-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jem-capacity-profile-capacity {
+        justify-self: start;
+    }
+
+    .jem-capacity-profile-details .jem-capacity-profile-summary {
+        justify-self: stretch;
+        white-space: normal;
+    }
+
     .jem-capacity-space-card > .card-body,
     .jem-capacity-section {
         padding: .75rem;
     }
 
+    .jem-capacity-section-areas {
+        margin-top: .75rem;
+    }
+
+    .jem-capacity-space-grid,
     .jem-capacity-layout-grid,
     .jem-capacity-area-row {
         grid-template-columns: minmax(0, 1fr);

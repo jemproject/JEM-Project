@@ -61,12 +61,15 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
                 'spaces' => array(array(
                     'space_name' => 'Main hall',
                     'space_code' => 'main-hall',
+                    'space_color' => '#225588',
                     'layout_name' => 'General admission',
                     'layout_code' => 'general-admission',
+                    'layout_color' => '#AA7722',
                     'layout_capacity' => 100,
                     'areas' => array(array(
                         'name' => 'Floor',
                         'code' => 'floor',
+                        'color' => '#447744',
                         'capacity' => 100,
                         'published' => 1,
                     )),
@@ -74,12 +77,23 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
             ), 100);
             $savedConfiguration = JemVenueCapacityService::saveDefaultConfiguration($venueId, $configuration);
             self::assertSame(2, (int) $savedConfiguration['profile_revision']);
+            self::assertSame('Main', (string) $savedConfiguration['profile_name']);
+            self::assertSame(100, (int) $savedConfiguration['profile_capacity']);
+
+            $renamedConfiguration = JemVenueCapacityService::saveDefaultConfiguration(
+                $venueId,
+                $configuration,
+                'Main auditorium profile'
+            );
+            self::assertSame('Main auditorium profile', (string) $renamedConfiguration['profile_name']);
+            self::assertSame(2, (int) $renamedConfiguration['profile_revision']);
 
             $requirements = JemEventPricingCapacityService::getVenueRequirements($venueId);
             self::assertTrue($requirements['capacity_ready']);
             self::assertSame('ES', $requirements['country_code']);
             self::assertSame('EUR', $requirements['suggested_currency']);
             self::assertSame(100, $requirements['configured_capacity']);
+            self::assertSame(100, $requirements['profile_capacity']);
             self::assertCount(1, $requirements['pool_candidates']);
             $poolCode = (string) $requirements['pool_candidates'][0]['code'];
 
@@ -108,7 +122,12 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
             $context = JemEventPricingCapacityService::prepareEventData($eventData, 0);
             self::assertSame('EUR', $eventData['currency']);
             self::assertSame(1, $eventData['pricing_revision']);
-            self::assertSame('jem-venue-capacity/v1', json_decode($eventData['venue_snapshot'], true)['schema']);
+            $snapshot = json_decode($eventData['venue_snapshot'], true);
+            self::assertSame('jem-venue-capacity/v1', $snapshot['schema']);
+            self::assertSame(100, $snapshot['profile_capacity']);
+            self::assertSame('#225588', $snapshot['spaces'][0]['color']);
+            self::assertSame('#AA7722', $snapshot['spaces'][0]['layout']['color']);
+            self::assertSame('#447744', $snapshot['spaces'][0]['capacity_areas'][0]['color']);
 
             $event = (object) array_merge($eventData, array(
                 'title' => 'PHPUnit Point 4D ' . $suffix,

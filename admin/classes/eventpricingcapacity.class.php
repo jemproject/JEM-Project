@@ -200,7 +200,9 @@ class JemEventPricingCapacityService
         if ($eventCapacity < 1) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_EXACT_CAPACITY'));
         }
-        if ($eventCapacity > $snapshotCapacity || $eventCapacity > (int) $requirements['venue_capacity']) {
+        if ($eventCapacity > $snapshotCapacity
+            || $eventCapacity > (int) $requirements['profile_capacity']
+            || $eventCapacity > (int) $requirements['venue_capacity']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CAPACITY_LIMIT'));
         }
 
@@ -340,6 +342,7 @@ class JemEventPricingCapacityService
             'venue_capacity'     => 0,
             'capacity_ready'     => false,
             'profile_revision'   => 0,
+            'profile_capacity'   => 0,
             'space_count'        => 0,
             'configured_capacity'=> 0,
             'pool_candidates'    => array(),
@@ -368,14 +371,18 @@ class JemEventPricingCapacityService
         try {
             $configuration = JemVenueCapacityService::getDefaultConfiguration($venueId);
             $requirements['profile_revision'] = (int) $configuration['profile_revision'];
+            $requirements['profile_capacity'] = (int) $configuration['profile_capacity'];
             $requirements['space_count'] = count($configuration['spaces']);
             foreach ($configuration['spaces'] as $space) {
                 $requirements['configured_capacity'] += (int) ($space['layout_capacity'] ?? 0);
             }
             $requirements['capacity_ready'] = $requirements['venue_capacity'] > 0
+                && $requirements['profile_capacity'] > 0
                 && $requirements['country_code'] !== ''
                 && $requirements['space_count'] > 0
                 && $requirements['configured_capacity'] > 0
+                && $requirements['configured_capacity'] <= $requirements['profile_capacity']
+                && $requirements['profile_capacity'] <= $requirements['venue_capacity']
                 && self::configurationHasCapacity($configuration);
             if ($requirements['capacity_ready']) {
                 $snapshot = JemVenueCapacityService::buildEventSnapshot($venueId);
