@@ -319,6 +319,22 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testExistingPackageArtifactsContainPoint4EQuoteService(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            $quoteService = $this->componentEntryContents($zipFile, 'site/classes/pricingquote.class.php');
+
+            self::assertStringContainsString('final class JemPricingQuoteService', $quoteService);
+            self::assertStringContainsString("' FOR UPDATE'", $quoteService);
+            self::assertStringContainsString('expectedPricingRevision', $quoteService);
+            self::assertStringContainsString('i.registration_revision = r.revision', $quoteService);
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');

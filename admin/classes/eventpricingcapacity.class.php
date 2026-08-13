@@ -244,20 +244,18 @@ class JemEventPricingCapacityService
             ? self::normalisePriceRows($rawPrices, $eventId, $currency, $requirements['country_code'], $effectiveDate)
             : self::loadPriceRows($eventId);
 
-        if ($pricesSubmitted) {
-            $publishedPrices = array_values(array_filter(
-                $desiredPrices,
-                static fn (array $price): bool => (int) $price['published'] === 1
-            ));
-            if (!$publishedPrices) {
-                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_REQUIRED'));
-            }
-            if ($mode === self::MODE_SINGLE && count($publishedPrices) !== 1) {
-                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_SINGLE_PRICE'));
-            }
-            if ($mode === self::MODE_MULTIPLE && count($publishedPrices) < 2) {
-                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_MULTIPLE_PRICES'));
-            }
+        $publishedPrices = array_values(array_filter(
+            $desiredPrices,
+            static fn (array $price): bool => (int) $price['published'] === 1
+        ));
+        if (!$publishedPrices) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_PRICE_REQUIRED'));
+        }
+        if ($mode === self::MODE_SINGLE && count($publishedPrices) !== 1) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_SINGLE_PRICE'));
+        }
+        if ($mode === self::MODE_MULTIPLE && count($publishedPrices) < 2) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_MULTIPLE_PRICES'));
         }
         self::validatePriceCapacityLimits($desiredPrices, $desiredPools, $eventId, $eventCapacity);
 
