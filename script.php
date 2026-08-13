@@ -318,6 +318,7 @@ class com_jemInstallerScript
             $this->removeObsoleteAdminHelpMenuItem();
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
+            $this->repair510HierarchySchemaFallback();
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
@@ -1795,6 +1796,92 @@ SQL;
             $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
             $db->setQuery($query);
             $db->execute();
+        }
+    }
+
+    /**
+     * Restore hierarchy columns when an interrupted update has already recorded
+     * schema version 5.1.0. The checks are safe on clean installs and upgrades.
+     *
+     * @return void
+     */
+    private function repair510HierarchySchemaFallback()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $existingTables = $db->getTableList();
+        $definitionsByTable = array(
+            '#__jem_events' => array(
+                'parent_event_id' => 'INT(11) UNSIGNED NULL DEFAULT NULL AFTER `series_order`',
+                'event_tree_order' => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `parent_event_id`",
+                'show_in_calendar' => "TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `event_tree_order`",
+            ),
+            '#__jem_venues' => array(
+                'parent_venue_id' => 'INT(11) UNSIGNED NULL DEFAULT NULL AFTER `type_id`',
+                'venue_tree_order' => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `parent_venue_id`",
+            ),
+        );
+
+        foreach ($definitionsByTable as $table => $definitions) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $existingTables, true)) {
+                continue;
+            }
+
+            $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+            foreach ($definitions as $column => $definition) {
+                if (!isset($columns[$column])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName($table)
+                        . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                    );
+                    $db->execute();
+                    $columns[$column] = true;
+                }
+            }
+        }
+
+        $indexesByTable = array(
+            '#__jem_events' => array(
+                'idx_parent_event' => array('parent_event_id', 'event_tree_order'),
+                'idx_event_calendar_tree' => array('show_in_calendar', 'parent_event_id'),
+            ),
+            '#__jem_venues' => array(
+                'idx_parent_venue' => array('parent_venue_id', 'venue_tree_order'),
+            ),
+        );
+
+        foreach ($indexesByTable as $table => $indexes) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $existingTables, true)) {
+                continue;
+            }
+
+            $keys = $db->getTableKeys($resolvedTable);
+            $keyNames = array();
+            foreach ((array) $keys as $name => $key) {
+                if (is_string($name)) {
+                    $keyNames[] = strtolower($name);
+                }
+                if (is_object($key)) {
+                    foreach (array('Key_name', 'key_name', 'name') as $property) {
+                        if (isset($key->$property)) {
+                            $keyNames[] = strtolower((string) $key->$property);
+                        }
+                    }
+                }
+            }
+
+            foreach ($indexes as $index => $columns) {
+                if (!in_array(strtolower($index), $keyNames, true)) {
+                    $quotedColumns = array_map(array($db, 'quoteName'), $columns);
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName($table)
+                        . ' ADD INDEX ' . $db->quoteName($index)
+                        . ' (' . implode(', ', $quotedColumns) . ')'
+                    );
+                    $db->execute();
+                }
+            }
         }
     }
 

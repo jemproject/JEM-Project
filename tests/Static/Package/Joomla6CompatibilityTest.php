@@ -45,7 +45,8 @@ final class Joomla6CompatibilityTest extends TestCase
 
             self::assertNotFalse($manifest);
             self::assertSame('5.1.0beta1', (string) $manifest->version);
-            self::assertCount(33, explode(';', (string) $manifest->notes));
+            self::assertCount(34, explode(';', (string) $manifest->notes));
+            self::assertStringContainsString('parent event programmes and nested venue hierarchies', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2257', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2263', (string) $manifest->notes);

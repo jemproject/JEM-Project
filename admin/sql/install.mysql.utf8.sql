@@ -36,6 +36,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `recurrence_bylastday` varchar(20) NULL DEFAULT NULL,
     `series_id` int(11) unsigned NULL DEFAULT NULL,
     `series_order` int(11) unsigned NOT NULL DEFAULT '0',
+    `parent_event_id` int(11) unsigned NULL DEFAULT NULL,
+    `event_tree_order` int(11) unsigned NOT NULL DEFAULT '0',
+    `show_in_calendar` tinyint(1) unsigned NOT NULL DEFAULT '0',
     `datimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage` varchar(100) NOT NULL DEFAULT '',
     `fullimage_layout` varchar(20) NOT NULL DEFAULT 'global',
@@ -103,7 +106,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_start_utc` (`start_utc`),
     KEY `idx_end_utc` (`end_utc`),
     KEY `idx_series` (`series_id`, `series_order`),
-    KEY `idx_venue_profile` (`venue_profile_id`, `venue_profile_revision`)
+    KEY `idx_venue_profile` (`venue_profile_id`, `venue_profile_revision`),
+    KEY `idx_parent_event` (`parent_event_id`, `event_tree_order`),
+    KEY `idx_event_calendar_tree` (`show_in_calendar`, `parent_event_id`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_event_series` (
@@ -255,13 +260,16 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `attribs` varchar(5120) DEFAULT NULL,
     `language` char(7) NOT NULL DEFAULT '*',
     `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `parent_venue_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_tree_order` int(11) unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
-    KEY `idx_type` (`type_id`)
+    KEY `idx_type` (`type_id`),
+    KEY `idx_parent_venue` (`parent_venue_id`, `venue_tree_order`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (

@@ -493,6 +493,10 @@ $this->document->addStyleDeclaration('
                     <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone_mode'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('parent_event_id'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('event_hierarchy_note'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('event_tree_order'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('show_in_calendar'); ?></div></li>
                     <?php if($this->jemsettings->defaultCategory && empty($item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

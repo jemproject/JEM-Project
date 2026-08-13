@@ -195,6 +195,7 @@ class JemModelEventslist extends ListModel
 
         $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->setState('filter.show_archived_events', $this->show_archived_events);
+        $this->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
@@ -475,6 +476,7 @@ class JemModelEventslist extends ListModel
         $id .= ':' . serialize($this->getState('filter.unpublished.events.on_groups'));
         $id .= ':' . $this->getState('filter.unpublished.venues');
         $id .= ':' . $this->getState('filter.unpublished.on_user');
+        $id .= ':' . $this->getState('filter.event_tree', 'calendar');
 
         return parent::getStoreId($id);
     }
@@ -493,6 +495,8 @@ class JemModelEventslist extends ListModel
         $user        = JemFactory::getUser();
         $levels      = $user->getAuthorisedViewLevels();
         $levelsList  = implode(',', array_map('intval', $levels));
+        $visibleUserVenueIds = JemHelper::getVisibleVenueHierarchyIds($levels);
+        $visibleUserVenueList = $visibleUserVenueIds ? implode(',', $visibleUserVenueIds) : '0';
 
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -503,7 +507,7 @@ class JemModelEventslist extends ListModel
             $this->getState('list.select',
                 'a.access,a.alias,a.attribs,a.checked_out,a.checked_out_time,a.contactid,a.created,a.created_by,a.created_by_alias,a.custom1,a.custom2,a.custom3,a.custom4,a.custom5,a.custom6,a.custom7,a.custom8,a.custom9,a.custom10,a.dates,a.datimage,a.enddates,a.endtimes,a.featured,' .
                 'a.fulltext,a.hits,a.id,a.introtext,a.article_id,a.online_meeting_url,a.online_meeting_label,a.language,a.locid,a.maxplaces,a.reservedplaces,a.minbookeduser,a.maxbookeduser,a.metadata,a.meta_keywords,a.meta_description,a.modified,a.modified_by,a.published,a.registra,a.registra_from,a.registra_until,a.times,a.title,a.event_status,a.ticket_availability,a.timezone_mode,a.timezone,a.start_utc,a.end_utc,a.unregistra,a.unregistra_until,a.waitinglist,a.requestanswer,a.seriesbooking,a.singlebooking, DAYOFMONTH(a.dates) AS created_day, YEAR(a.dates) AS created_year, MONTH(a.dates) AS created_month,' .
-                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.series_id,a.series_order,a.version,a.type_id'
+                'a.recurrence_byday,a.recurrence_counter,a.recurrence_first_id,a.recurrence_limit,a.recurrence_limit_date,a.recurrence_number, a.recurrence_type,a.series_id,a.series_order,a.parent_event_id,a.event_tree_order,a.show_in_calendar,a.version,a.type_id'
             )
         );
         $query->from('#__jem_events as a');
@@ -567,7 +571,7 @@ class JemModelEventslist extends ListModel
         $case_when_a .= ' END as user_has_access_event';
 
         $case_when_v = ' CASE WHEN ';
-        $case_when_v .= " (l.id IS NULL OR l.access IN (" . $levelsList . "))";
+        $case_when_v .= " (l.id IS NULL OR a.locid IN (" . $visibleUserVenueList . "))";
         $case_when_v .= ' THEN 1 ';
         $case_when_v .= ' ELSE 0 ';
         $case_when_v .= ' END as user_has_access_venue';
@@ -593,6 +597,19 @@ class JemModelEventslist extends ListModel
         #############
         ## FILTERS ##
         #############
+
+        // Root events are always calendar entries. Programme items are shown
+        // independently only when requested or enabled on the child event.
+        $eventTree = (string) $this->getState('filter.event_tree', 'calendar');
+        if ($eventTree === 'parents') {
+            $query->where('(a.parent_event_id IS NULL OR a.parent_event_id = 0)');
+        } elseif ($eventTree === 'children') {
+            $query->where('a.parent_event_id > 0');
+        } elseif ($eventTree !== 'all') {
+            $query->where('(a.parent_event_id IS NULL OR a.parent_event_id = 0 OR a.show_in_calendar = 1)');
+        }
+
+        $query->where(JemHelper::getEventParentVisibilityWhere('a', $levels));
 
         ###################
         ## FILTER - TASK ##
@@ -632,9 +649,10 @@ class JemModelEventslist extends ListModel
         if ($jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
             $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
-            $query->where('(l.id IS NULL OR l.access IN (' . implode(',', array_map('intval', $newlevels)) . '))');
+            $visibleVenueIds = JemHelper::getVisibleVenueHierarchyIds($newlevels);
+            $query->where('(l.id IS NULL OR a.locid IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . '))');
         } else {
-            $query->where('(l.id IS NULL OR l.access IN (' . $levelsList . '))');
+            $query->where('(l.id IS NULL OR a.locid IN (' . $visibleUserVenueList . '))');
         }
 
         # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.

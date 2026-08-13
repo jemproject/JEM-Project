@@ -299,6 +299,7 @@ class JemModelDay extends JemModelEventslist
 
         # params
         $this->setState('params', $params);
+        $this->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
 
         # published
         /// @todo bring given pub together with eventslist's unpub calculation (_populatePublishState())

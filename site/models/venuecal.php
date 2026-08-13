@@ -92,25 +92,16 @@ class JemModelVenueCal extends JemModelEventslist
 
         #only select events within specified dates. (chosen month)
 
-        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
-        $selectedDate = is_numeric($this->_date)
-            ? (new DateTimeImmutable('@' . (int) $this->_date))->setTimezone($timeZone)
-            : new DateTimeImmutable((string) $this->_date, $timeZone);
-        $filter_date_from = $selectedDate->modify('first day of this month')->format('Y-m-01');
-        $filter_date_to   = $selectedDate->modify('last day of this month')->format('Y-m-d');
-
-        $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $this->_db->Quote($filter_date_from) .') >= 0';
-        $this->setState('filter.calendar_from', $where);
-        $this->setState('filter.date.from', $filter_date_from);
-
-        $where = ' DATEDIFF(a.dates, '. $this->_db->Quote($filter_date_to) .') <= 0';
-        $this->setState('filter.calendar_to', $where);
-        $this->setState('filter.date.to', $filter_date_to);
+        $this->applyCalendarDateState();
 
         # set filter
         $this->setState('filter.calendar_multiday', true);
         $this->setState('filter.calendar_startdayonly', (bool)$startdayonly);
-        $this->setState('filter.filter_locid', $this->_id);
+        // A venue calendar represents the complete physical site, matching the
+        // normal venue detail view. Include events assigned to any descendant;
+        // the shared list query still applies publication and ACL checks.
+        $this->setState('filter.venue_id', $this->getVenueTreeIds((int) $this->_id));
+        $this->setState('filter.venue_id.include', true);
         $this->setState('filter.show_archived_events', $show_archived_events);
 
         $app->setUserState('com_jem.venuecal.locid'.$itemid, $this->_id);
@@ -124,6 +115,10 @@ class JemModelVenueCal extends JemModelEventslist
      */
     public function getItems()
     {
+        // Joomla 5 may populate model state during construction, before the
+        // view calls setDate(). Reapply the selected month at query time so the
+        // same URL behaves identically on Joomla 5 and Joomla 6.
+        $this->applyCalendarDateState();
         $items = parent::getItems();
 
         if ($items) {
@@ -131,6 +126,28 @@ class JemModelVenueCal extends JemModelEventslist
         }
 
         return array();
+    }
+
+    protected function applyCalendarDateState()
+    {
+        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
+        // setDate() historically receives mktime() output from the view. It is
+        // a civil calendar selection, not an instant to convert between zones;
+        // converting it could move the first day back into the previous month.
+        $selectedDate = is_numeric($this->_date)
+            ? new DateTimeImmutable(date('Y-m-d', (int) $this->_date), $timeZone)
+            : new DateTimeImmutable((string) $this->_date, $timeZone);
+        $filterDateFrom = $selectedDate->modify('first day of this month')->format('Y-m-01');
+        $filterDateTo = $selectedDate->modify('last day of this month')->format('Y-m-d');
+
+        $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '
+            . $this->_db->quote($filterDateFrom) . ') >= 0';
+        $this->setState('filter.calendar_from', $where);
+        $this->setState('filter.date.from', $filterDateFrom);
+
+        $where = ' DATEDIFF(a.dates, ' . $this->_db->quote($filterDateTo) . ') <= 0';
+        $this->setState('filter.calendar_to', $where);
+        $this->setState('filter.date.to', $filterDateTo);
     }
 
     /**
@@ -146,6 +163,26 @@ class JemModelVenueCal extends JemModelEventslist
         //$query->where('a.locid = '.$this->_id);
 
         return $query;
+    }
+
+    protected function getVenueTreeIds($rootId)
+    {
+        $ids = array((int) $rootId);
+        $pending = $ids;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        while ($pending && count($ids) < 1000) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('parent_venue_id') . ' IN (' . implode(',', array_map('intval', $pending)) . ')');
+            $db->setQuery($query);
+            $children = array_values(array_diff(array_map('intval', $db->loadColumn() ?: array()), $ids));
+            $ids = array_merge($ids, $children);
+            $pending = $children;
+        }
+
+        return array_values(array_unique(array_filter($ids)));
     }
 }
 ?>

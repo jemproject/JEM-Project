@@ -3779,6 +3779,9 @@ class JemControllerImport extends BaseController
             'meta_description',
             'event_status',
             'ticket_availability',
+            'parent_event_id',
+            'event_tree_order',
+            'show_in_calendar',
         );
     }
 
@@ -3815,6 +3818,8 @@ class JemControllerImport extends BaseController
             'attribs',
             'language',
             'type_id',
+            'parent_venue_id',
+            'venue_tree_order',
         );
     }
 
@@ -4460,6 +4465,9 @@ class JemControllerImport extends BaseController
             'locid' => array_key_exists('locid', $data) ? (int) $data['locid'] : (!empty($options['locid']) ? (int) $options['locid'] : null),
             'language' => (string) ($data['language'] ?? $options['language']),
             'categories' => (string) ($data['categories'] ?? (int) $options['catid']),
+            'parent_event_id' => (int) ($data['parent_event_id'] ?? 0),
+            'event_tree_order' => max(0, (int) ($data['event_tree_order'] ?? 0)),
+            'show_in_calendar' => !empty($data['show_in_calendar']) ? 1 : 0,
         );
 
         foreach ($data as $field => $value) {
@@ -4562,6 +4570,8 @@ class JemControllerImport extends BaseController
             'type_id' => array_key_exists('type_id', $data) ? (int) $data['type_id'] : (!empty($options['type_id']) ? (int) $options['type_id'] : null),
             'language' => (string) ($data['language'] ?? $options['language']),
             'map' => array_key_exists('map', $data) ? (int) $data['map'] : (($latitude !== null && $longitude !== null) ? 1 : 0),
+            'parent_venue_id' => (int) ($data['parent_venue_id'] ?? 0),
+            'venue_tree_order' => max(0, (int) ($data['venue_tree_order'] ?? 0)),
         );
 
         foreach ($data as $field => $value) {

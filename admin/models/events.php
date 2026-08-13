@@ -133,6 +133,10 @@ class JemModelEvents extends ListModel
 
         $query->from($db->quoteName('#__jem_events').' AS a');
 
+        // Join the programme parent for hierarchy context in the manager.
+        $query->select('tree_parent.title AS parent_event_title, tree_parent.alias AS parent_event_alias');
+        $query->join('LEFT', '#__jem_events AS tree_parent ON tree_parent.id = a.parent_event_id');
+
         // Join over the venue.
         $query->select('loc.venue, loc.city, loc.state, loc.created_by AS venue_created_by, loc.checked_out AS vchecked_out');
         $query->join('LEFT', '#__jem_venues AS loc ON loc.id = a.locid');

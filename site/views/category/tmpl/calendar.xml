@@ -21,6 +21,9 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="event_tree_mode" type="list" default="calendar" label="COM_JEM_EVENT_TREE_MODE" description="COM_JEM_EVENT_TREE_MODE_DESC" class="form-select w-auto">
+                <option value="calendar">COM_JEM_EVENT_TREE_MODE_CALENDAR</option><option value="parents">COM_JEM_EVENT_TREE_MODE_PARENTS</option><option value="children">COM_JEM_EVENT_TREE_MODE_CHILDREN</option><option value="all">COM_JEM_EVENT_TREE_MODE_ALL</option>
+            </field>
 <field name="onlyfeatured" type="radio"
                 default="0"
                 label="COM_JEM_DISPLAY_FEATUREDONLY"

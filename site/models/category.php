@@ -122,6 +122,7 @@ class JemModelCategory extends JemModelEventslist
         $mergedParams->merge($params);
 
         $this->setState('params', $mergedParams);
+        $this->setState('filter.event_tree', $mergedParams->get('event_tree_mode', 'calendar'));
 
         # limit/start
 

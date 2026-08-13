@@ -22,7 +22,7 @@ final class XmlDeclarationTest extends TestCase
 
             $relative = str_replace('\\', '/', substr($file->getPathname(), strlen(JEM_TEST_ROOT) + 1));
 
-            if (preg_match('#^(build|vendor)/#', $relative) === 1) {
+            if (preg_match('#^(build|tmp|vendor)/#', $relative) === 1) {
                 continue;
             }
 

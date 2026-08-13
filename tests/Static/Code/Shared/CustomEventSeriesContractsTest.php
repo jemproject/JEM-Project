@@ -81,7 +81,10 @@ final class CustomEventSeriesContractsTest extends TestCase
         self::assertStringContainsString('getCustomSeriesSchedule((int) $item->series_id, (int) $item->id)', $model);
         self::assertStringContainsString('$seriesDb->transactionCommit();', $model);
         self::assertStringContainsString('$seriesDb->transactionRollback();', $model);
-        self::assertStringContainsString("if (\$manageTransaction) {\n                Factory::getApplication()->enqueueMessage", $model);
+        self::assertStringContainsString(
+            "if (\$manageTransaction) {\n                Factory::getApplication()->enqueueMessage",
+            str_replace("\r\n", "\n", $model)
+        );
     }
 
     public function testCustomSeriesRootPropagatesWhileChildrenRemainIndependent(): void

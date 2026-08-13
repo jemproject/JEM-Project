@@ -1077,6 +1077,9 @@ Text::script('JCANCEL');
                         <ul class="adminformlist">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('venue_tree_order'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
                         </ul>
                         <section class="jem-venue-address-card" aria-labelledby="jem-venue-address-title">

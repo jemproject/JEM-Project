@@ -138,6 +138,17 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
     }
 
+    public function testCategoryListPaginationKeepsItsRouteContext(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/category/view.html.php');
+
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('option', 'com_jem');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('view', 'category');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('layout', 'default');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('id', (string) \$category->slug);", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('Itemid', (int) \$menuitem->id);", $code);
+    }
+
     public function testAttachmentClassUsesCmsInputFilterFactory(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/site/classes/attachment.class.php');

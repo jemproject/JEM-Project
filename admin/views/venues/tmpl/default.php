@@ -224,6 +224,15 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <?php else : ?>
                             <?php echo $this->escape($item->venue); ?>
                         <?php endif; ?>
+                        <?php if (!empty($item->parent_venue_id) && !empty($item->parent_venue_name)) : ?>
+                            <div class="small text-muted jem-hierarchy-parent">
+                                <span class="icon-level-up-alt" aria-hidden="true"></span>
+                                <?php echo Text::_('COM_JEM_SUBVENUE_OF'); ?>
+                                <a href="<?php echo Route::_('index.php?option=com_jem&task=venue.edit&id=' . (int) $item->parent_venue_id); ?>">
+                                    <?php echo $this->escape($item->parent_venue_name); ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php if (StringHelper::strlen($item->alias) > 25) : ?>

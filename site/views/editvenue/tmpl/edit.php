@@ -979,6 +979,9 @@ Text::script('JCANCEL');
                     <?php if (is_null($this->item->id)) : ?>
                         <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
+                    <li><?php echo $this->form->getLabel('parent_venue_id'); ?><?php echo $this->form->getInput('parent_venue_id'); ?></li>
+                    <li><?php echo $this->form->renderField('timezone_inherited_note'); ?></li>
+                    <li><?php echo $this->form->getLabel('venue_tree_order'); ?><?php echo $this->form->getInput('venue_tree_order'); ?></li>
                     <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
                     <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
                     <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>

@@ -475,6 +475,7 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
     <?php endif; ?>
 
     <?php $this->attachments = $this->venue->attachments; ?>
+    <?php require JPATH_COMPONENT . '/common/hierarchy/venue_tree.php'; ?>
     <?php echo $this->loadTemplate('attachments'); ?>
 
     <?php if ($venueShowEvents) : ?>

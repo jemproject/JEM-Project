@@ -2,7 +2,7 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_banner</name>
     <author>JEM Community</author>
-    <creationDate>4 August 2026</creationDate>
+    <creationDate>9 August 2026</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -24,6 +24,17 @@
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+                <field name="event_tree_mode" type="list"
+                       default="calendar"
+                       label="MOD_JEM_BANNER_EVENT_TREE_MODE"
+                       description="MOD_JEM_BANNER_EVENT_TREE_MODE_DESC"
+                       class="form-select w-auto"
+                >
+                    <option value="calendar">MOD_JEM_BANNER_EVENT_TREE_MODE_CALENDAR</option>
+                    <option value="parents">MOD_JEM_BANNER_EVENT_TREE_MODE_PARENTS</option>
+                    <option value="children">MOD_JEM_BANNER_EVENT_TREE_MODE_CHILDREN</option>
+                    <option value="all">MOD_JEM_BANNER_EVENT_TREE_MODE_ALL</option>
+                </field>
                 <field name="type" type="list"
                        default="0"
                        label="MOD_JEM_BANNER_UPCOMING_ARCHIVED_OR_CURRENT"

@@ -1496,6 +1496,8 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             }?>
         <?php endif; ?>
 
+        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
+
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
             <hr class="jem-hr">
             <?php echo $this->item->pluginevent->onEventEnd; ?>

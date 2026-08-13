@@ -392,6 +392,125 @@ class JemHelper
     }
 
     /**
+     * Build the visibility condition inherited by a programme item from its
+     * parent event. Event hierarchies are intentionally limited to two levels.
+     *
+     * @param   string  $alias   Child event table alias.
+     * @param   array   $levels  Authorised view level ids.
+     *
+     * @return string
+     */
+    static public function getEventParentVisibilityWhere($alias, array $levels)
+    {
+        $levels = array_values(array_unique(array_filter(array_map('intval', $levels))));
+        $levelsList = $levels ? implode(',', $levels) : '0';
+        $visibleVenueIds = self::getVisibleVenueHierarchyIds($levels);
+        $visibleVenueList = $visibleVenueIds ? implode(',', $visibleVenueIds) : '0';
+        $parent = 'tree_parent_visibility';
+
+        return '(' . $alias . '.parent_event_id IS NULL OR ' . $alias . '.parent_event_id = 0 OR EXISTS ('
+            . 'SELECT 1 FROM #__jem_events AS ' . $parent
+            . ' WHERE ' . $parent . '.id = ' . $alias . '.parent_event_id'
+            . ' AND ' . $parent . '.published = ' . $alias . '.published'
+            . ' AND ' . self::getEventPublicationWhere($parent, false)
+            . ' AND ' . $parent . '.access IN (' . $levelsList . ')'
+            . ' AND EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS tree_parent_rel'
+            . ' INNER JOIN #__jem_categories AS tree_parent_cat ON tree_parent_cat.id = tree_parent_rel.catid'
+            . ' WHERE tree_parent_rel.itemid = ' . $parent . '.id'
+            . ' AND tree_parent_cat.published = 1 AND tree_parent_cat.access IN (' . $levelsList . '))'
+            . ' AND (' . $parent . '.locid IS NULL OR ' . $parent . '.locid = 0'
+            . ' OR ' . $parent . '.locid IN (' . $visibleVenueList . '))'
+            . ' AND (' . $parent . '.type_id IS NULL OR ' . $parent . '.type_id = 0 OR EXISTS ('
+            . 'SELECT 1 FROM #__jem_types AS tree_parent_type WHERE tree_parent_type.id = ' . $parent . '.type_id'
+            . ' AND tree_parent_type.entity = 1 AND tree_parent_type.published = 1'
+            . ' AND tree_parent_type.access IN (' . $levelsList . ')))'
+            . '))';
+    }
+
+    /**
+     * Return venues whose complete ancestry is published and viewable.
+     *
+     * @param   array  $levels  Authorised view level ids.
+     *
+     * @return array
+     */
+    static public function getVisibleVenueHierarchyIds(array $levels)
+    {
+        static $cache = array();
+
+        $levels = array_values(array_unique(array_filter(array_map('intval', $levels))));
+        sort($levels);
+        $cacheKey = implode(',', $levels);
+        if (isset($cache[$cacheKey])) {
+            return $cache[$cacheKey];
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'parent_venue_id', 'published', 'access'))
+            ->from($db->quoteName('#__jem_venues'));
+        $db->setQuery($query);
+        $venues = array();
+
+        foreach ($db->loadObjectList() ?: array() as $venue) {
+            $venues[(int) $venue->id] = $venue;
+        }
+
+        $visibility = array();
+        $isVisible = function ($id) use (&$visibility, $venues, $levels) {
+            $id = (int) $id;
+            if (array_key_exists($id, $visibility)) {
+                return $visibility[$id] === true;
+            }
+
+            $seen = array();
+            $current = $id;
+            while ($current > 0 && count($seen) < 1000) {
+                if (isset($seen[$current]) || !isset($venues[$current])) {
+                    $visibility[$id] = false;
+                    return false;
+                }
+                $seen[$current] = true;
+                $venue = $venues[$current];
+                if ((int) $venue->published !== 1 || !in_array((int) $venue->access, $levels, true)) {
+                    $visibility[$id] = false;
+                    return false;
+                }
+                $current = (int) $venue->parent_venue_id;
+            }
+
+            $visibility[$id] = $current === 0;
+            return $visibility[$id];
+        };
+
+        $result = array();
+        foreach (array_keys($venues) as $venueId) {
+            if ($isVisible($venueId)) {
+                $result[] = (int) $venueId;
+            }
+        }
+
+        return $cache[$cacheKey] = $result;
+    }
+
+    /**
+     * Require an event's complete venue ancestry to be published and viewable.
+     *
+     * @param   string  $eventAlias  Event table alias.
+     * @param   array   $levels      Authorised view level ids.
+     *
+     * @return string
+     */
+    static public function getVenueHierarchyVisibilityWhere($eventAlias, array $levels)
+    {
+        $visibleVenueIds = self::getVisibleVenueHierarchyIds($levels);
+        $visibleVenueList = $visibleVenueIds ? implode(',', $visibleVenueIds) : '0';
+
+        return '(' . $eventAlias . '.locid IS NULL OR ' . $eventAlias . '.locid = 0'
+            . ' OR ' . $eventAlias . '.locid IN (' . $visibleVenueList . '))';
+    }
+
+    /**
      * Test an event's publication state and UTC publication window.
      *
      * @param   object   $event         Event data.

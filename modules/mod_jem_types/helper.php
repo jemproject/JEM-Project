@@ -49,6 +49,8 @@ class ModJemTypesHelper
         $categoryLanguageCondition = $filterLanguage ? ' AND ' . self::languageFilter($db, $db->quoteName('c.language'), $language) : '';
         $parentTypeId = '(SELECT ' . $db->quoteName('parent.type_id') . ' FROM ' . $db->quoteName('#__jem_events', 'parent') . ' WHERE ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('a.recurrence_first_id') . ')';
         $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $parentTypeId . ')';
+        $eventTreeCondition = self::eventTreeCondition($params, 'a');
+        $eventParentCondition = ' AND ' . JemHelper::getEventParentVisibilityWhere('a', $levels);
 
         $query = $db->getQuery(true)
             ->select(array(
@@ -62,7 +64,9 @@ class ModJemTypesHelper
                 ' AND ' . JemHelper::getEventPublicationWhere('a') .
                 ' AND ' . $db->quoteName('a.access') . ' IN (' . $levelsList . ')' .
                 $eventLanguageCondition .
-                ' AND (COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today) . ')'
+                ' AND (COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today) . ')' .
+                $eventTreeCondition .
+                $eventParentCondition
             )
             ->join('LEFT', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
             ->join('LEFT',
@@ -81,7 +85,7 @@ class ModJemTypesHelper
             ->where($db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('t.entity') . ' = 1')
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
-            ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR ' . $db->quoteName('v.id') . ' IS NOT NULL)')
+            ->where('(' . $db->quoteName('a.id') . ' IS NULL OR ' . JemHelper::getVenueHierarchyVisibilityWhere('a', $levels) . ')')
             ->group('t.id, t.name, t.alias, t.icon, t.color, t.description, t.base_language, t.translation_languages, t.translations')
             ->order($db->quoteName('t.ordering') . ' ASC, ' . $db->quoteName('t.name') . ' ASC');
 
@@ -165,10 +169,12 @@ class ModJemTypesHelper
                 ->where($effectiveTypeId . ' = ' . (int) $type->id)
                 ->where(JemHelper::getEventPublicationWhere('a'))
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
+                ->where(self::eventTreeWhere($params, 'a'))
+                ->where(JemHelper::getEventParentVisibilityWhere('a', $levels))
                 ->where('COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today))
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
-                ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
+                ->where(JemHelper::getVenueHierarchyVisibilityWhere('a', $levels))
                 ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
@@ -203,4 +209,30 @@ class ModJemTypesHelper
 
         return $result;
     }
+
+    private static function eventTreeCondition($params, $alias)
+    {
+        $where = self::eventTreeWhere($params, $alias);
+
+        return $where === '1 = 1' ? '' : ' AND ' . $where;
+    }
+
+    private static function eventTreeWhere($params, $alias)
+    {
+        $mode = (string) $params->get('event_tree_mode', 'calendar');
+        $prefix = $alias . '.';
+
+        if ($mode === 'parents') {
+            return '(' . $prefix . 'parent_event_id IS NULL OR ' . $prefix . 'parent_event_id = 0)';
+        }
+        if ($mode === 'children') {
+            return $prefix . 'parent_event_id > 0';
+        }
+        if ($mode === 'all') {
+            return '1 = 1';
+        }
+
+        return '(' . $prefix . 'parent_event_id IS NULL OR ' . $prefix . 'parent_event_id = 0 OR ' . $prefix . 'show_in_calendar = 1)';
+    }
+
 }

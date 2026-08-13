@@ -69,6 +69,15 @@ class JemViewEvent extends JemView
             throw new \Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
         }
 
+        // Keep hierarchy data outside the content object. Content plugins may
+        // replace or normalise that object, especially on newer Joomla APIs.
+        $this->eventHierarchy = array(
+            'parent_event_id' => (int) ($this->item->parent_event_id ?? 0),
+            'parent_event_title' => (string) ($this->item->parent_event_title ?? ''),
+            'parent_event_alias' => (string) ($this->item->parent_event_alias ?? ''),
+            'child_events' => (array) ($this->item->child_events ?? array()),
+        );
+
         $this->contacts    = $this->get('Contacts');
         $this->print       = $app->input->getBool('print', false);
         $this->state       = $this->get('State');

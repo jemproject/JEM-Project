@@ -70,6 +70,27 @@ class JemTableVenue extends Table
     {
         $jinput = Factory::getApplication()->input;
 
+        $this->parent_venue_id = empty($this->parent_venue_id) ? null : (int) $this->parent_venue_id;
+        $this->venue_tree_order = max(0, (int) ($this->venue_tree_order ?? 0));
+
+        if ($this->parent_venue_id !== null) {
+            if ((int) $this->id === $this->parent_venue_id
+                || $this->isHierarchyDescendant('#__jem_venues', 'parent_venue_id', $this->parent_venue_id, (int) $this->id)) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_PARENT_CYCLE'));
+                return false;
+            }
+
+            $parent = $this->getHierarchyVenue($this->parent_venue_id);
+            if (!$parent) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_PARENT_NOT_FOUND'));
+                return false;
+            }
+
+            // A venue hierarchy represents one geographical site. Child
+            // venues therefore inherit the effective timezone of the parent.
+            $this->timezone = (string) $parent->timezone;
+        }
+
         if (trim($this->venue) == '') {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_NAME'));
             return false;
@@ -200,6 +221,45 @@ class JemTableVenue extends Table
         return true;
     }
 
+    protected function getHierarchyVenue($id)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('id'), $db->quoteName('parent_venue_id'), $db->quoteName('timezone')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . (int) $id);
+        $db->setQuery($query);
+
+        return $db->loadObject();
+    }
+
+    protected function isHierarchyDescendant($table, $parentColumn, $candidateId, $recordId)
+    {
+        if ($candidateId <= 0 || $recordId <= 0) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $seen = array();
+        $current = (int) $candidateId;
+
+        while ($current > 0 && count($seen) < 100) {
+            if ($current === $recordId || isset($seen[$current])) {
+                return true;
+            }
+
+            $seen[$current] = true;
+            $query = $db->getQuery(true)
+                ->select($db->quoteName($parentColumn))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . $current);
+            $db->setQuery($query);
+            $current = (int) $db->loadResult();
+        }
+
+        return false;
+    }
+
     /**
      * Overloaded store method for the Venue table.
      */
@@ -300,12 +360,46 @@ class JemTableVenue extends Table
         $ret = parent::store($updateNulls);
         if ($ret) {
             JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
+            $this->synchroniseChildVenueTimezones((int) $this->id, (string) $this->timezone);
         }
         if ($ret && $image_to_delete) {
             JemHelper::delete_unused_image_files('venue', $image_to_delete);
         }
 
         return $ret;
+    }
+
+    protected function synchroniseChildVenueTimezones($parentId, $timezone)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $pending = array((int) $parentId);
+        $seen = array();
+
+        while ($pending && count($seen) < 1000) {
+            $current = array_shift($pending);
+            if (isset($seen[$current])) {
+                continue;
+            }
+            $seen[$current] = true;
+
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('parent_venue_id') . ' = ' . (int) $current);
+            $db->setQuery($query);
+            $children = array_map('intval', $db->loadColumn() ?: array());
+
+            foreach ($children as $childId) {
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_venues'))
+                    ->set($db->quoteName('timezone') . ' = ' . $db->quote($timezone))
+                    ->where($db->quoteName('id') . ' = ' . $childId);
+                $db->setQuery($query);
+                $db->execute();
+                JemHelper::refreshVenueEventUtcDates($childId, $timezone);
+                $pending[] = $childId;
+            }
+        }
     }
 
     /**

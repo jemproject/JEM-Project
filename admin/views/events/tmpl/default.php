@@ -202,6 +202,15 @@ $ticketAvailabilityOptions = array(
                             <?php else : ?>
                                 <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?>
                             <?php endif; ?>
+                            <?php if (!empty($row->parent_event_id) && !empty($row->parent_event_title)) : ?>
+                                <div class="small text-muted jem-hierarchy-parent">
+                                    <span class="icon-level-up-alt" aria-hidden="true"></span>
+                                    <?php echo Text::_('COM_JEM_SUBEVENT_OF'); ?>
+                                    <a href="<?php echo Route::_('index.php?option=com_jem&task=event.edit&id=' . (int) $row->parent_event_id); ?>">
+                                        <?php echo $this->escape($row->parent_event_title); ?>
+                                    </a>
+                                </div>
+                            <?php endif; ?>
                             <br>
                             <?php if (StringHelper::strlen($row->alias) > 25) : ?>
                                 <?php echo StringHelper::substr( $this->escape($row->alias), 0 , 25).'...'; ?>

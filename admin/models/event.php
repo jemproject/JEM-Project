@@ -94,6 +94,16 @@ class JemModelEvent extends JemModelAdmin
         $seriesIds = array();
         if ($pks) {
             $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_events'))
+                ->whereIn($db->quoteName('parent_event_id'), array_map('intval', $pks));
+            $db->setQuery($query);
+            if ((int) $db->loadResult() > 0) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_HAS_CHILDREN'));
+                return false;
+            }
+
+            $query = $db->getQuery(true)
                 ->select($db->quoteName('series_id'))
                 ->from($db->quoteName('#__jem_events'))
                 ->whereIn($db->quoteName('id'), array_map('intval', $pks))
@@ -1100,7 +1110,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'title', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'parent_event_id', 'event_tree_order', 'show_in_calendar', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
@@ -3582,6 +3592,28 @@ class JemModelEvent extends JemModelAdmin
         if ($venueId <= 0 || !$this->venueExists($venueId)) {
             $this->setError(Text::_('COM_JEM_EVENTS_MOVE_VENUE_SELECT'));
             return false;
+        }
+
+        $pks = (array) $pks;
+        ArrayHelper::toInteger($pks);
+        $pks = array_values(array_filter($pks));
+
+        foreach ($pks as $pk) {
+            $event = $this->getTable();
+
+            if (!$event->load($pk)) {
+                $this->setError($event->getError());
+                return false;
+            }
+
+            $event->locid = $venueId;
+
+            // Keep bulk operations subject to the same event/venue hierarchy
+            // invariants as the regular edit form.
+            if (!$event->check()) {
+                $this->setError($event->getError());
+                return false;
+            }
         }
 
         return $this->updateEventsField($pks, 'locid', $venueId);
