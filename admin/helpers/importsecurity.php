@@ -243,7 +243,7 @@ class JemImportSecurityHelper
             return self::sanitiseUrl($value);
         }
 
-        if (in_array($field, array('datimage', 'fullimage', 'locimage', 'image', 'attachment'), true)) {
+        if (in_array($field, array('datimage', 'fullimage', 'locimage', 'image', 'attachment', 'image_path'), true)) {
             return self::sanitiseRelativePath($value);
         }
 

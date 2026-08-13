@@ -233,6 +233,43 @@ final class EventVenueHierarchyContractsTest extends TestCase
         self::assertStringContainsString("return \$this->updateEventsField(\$pks, 'locid', \$venueId);", $model);
     }
 
+    public function testSubeventsUseTheParentVenueOrOneDirectSubvenue(): void
+    {
+        $table = $this->read('admin/tables/event.php');
+        $selector = $this->read('admin/models/venueelement.php');
+        $modal = $this->read('admin/models/fields/modal/venue.php');
+
+        self::assertStringContainsString('if ((int) $venueId === (int) $rootVenueId)', $table);
+        self::assertStringContainsString("select(\$db->quoteName('parent_venue_id'))", $table);
+        self::assertStringContainsString('return (int) $db->loadResult() === (int) $rootVenueId;', $table);
+        self::assertStringNotContainsString('while ($current > 0 && count($seen) < 100)', substr(
+            $table,
+            strpos($table, 'protected function isVenueInHierarchy'),
+            strpos($table, 'protected function isHierarchyDescendant') - strpos($table, 'protected function isVenueInHierarchy')
+        ));
+
+        self::assertStringContainsString('(l.id = ' . "' . \$parentVenueId . '" . ' OR l.parent_venue_id = ', $selector);
+        self::assertStringContainsString("getInt('parent_venue_id', 0)", $selector);
+        self::assertStringContainsString('getSelectedParentVenueId', $modal);
+        self::assertStringContainsString('getElementById("jform_parent_event_id")', $modal);
+        self::assertStringContainsString('parentVenue > 0 ? "&parent_venue_id=" + parentVenue', $modal);
+
+        $frontendModal = $this->read('site/models/fields/modal/venue.php');
+        $frontendModel = $this->read('site/models/editevent.php');
+        self::assertStringContainsString('getSelectedParentVenueId', $frontendModal);
+        self::assertStringContainsString('getElementById("jform_parent_event_id")', $frontendModal);
+        self::assertStringContainsString('(l.id = ' . "' . \$parentVenueId . '" . ' OR l.parent_venue_id = ', $frontendModel);
+
+        foreach (array(
+            'site/views/editevent/tmpl/choosevenue.php',
+            'site/views/editevent/tmpl/responsive/choosevenue.php',
+        ) as $template) {
+            $source = $this->read($template);
+            self::assertStringContainsString('name="parent_venue_id"', $source, $template);
+            self::assertStringContainsString('empty($this->parentVenueId)', $source, $template);
+        }
+    }
+
     private function read(string $relativePath): string
     {
         $path = JEM_TEST_ROOT . '/' . $relativePath;

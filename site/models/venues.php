@@ -86,7 +86,7 @@ class JemModelVenues extends JemModelEventslist
         $case_when_l .= ' ELSE ';
         $case_when_l .= $id_l.' END as venueslug';
 
-        $query->select(array('l.id AS locid', 'l.locimage', 'l.locdescription', 'l.url', 'l.venue', 'l.created', 'l.created_by',
+        $query->select(array('l.id AS locid', 'l.locimage', 'l.image_path', 'l.locimage_alt', 'l.locdescription', 'l.url', 'l.venue', 'l.created', 'l.created_by',
                              'l.street', 'l.postalCode', 'l.city', 'l.state', 'l.country',
                              'l.map', 'l.latitude', 'l.longitude', 'l.published', 'l.access',
                              'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',

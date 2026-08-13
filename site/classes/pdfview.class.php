@@ -528,7 +528,7 @@ class JemPdfView
         $mapDisplay = in_array($mapDisplay, array('none', 'link_text', 'link_button', 'map'), true) ? $mapDisplay : 'link_button';
         $globalMapService = (int) ($settings->global_show_mapserv ?? 0);
         $showMapLink = $mapDisplay !== 'none' && ($mapDisplay !== 'link_button' || in_array($globalMapService, array(0, 1, 2, 3, 4, 5), true));
-        $imageHtml = $showImage ? self::buildTimelinePdfImage((string) ($venue->locimage ?? ''), 'venue', (string) ($venue->venue ?? $title), $venueImageWidth, $venueImageHeight) : '';
+        $imageHtml = $showImage ? self::buildTimelinePdfImage((string) ($venue->locimage ?? ''), 'venue', (string) ($venue->venue ?? $title), $venueImageWidth, $venueImageHeight, (string) ($venue->image_path ?? '')) : '';
         $description = $showDescription ? self::normaliseEditorHtmlForPdf((string) $venue->locdescription) : '';
         $html = array();
 
@@ -866,8 +866,8 @@ class JemPdfView
         $categories = (array) ($row->categories ?? array());
         $accent = self::getTimelinePdfAccentColor($row, $eventBackgroundMode, $customEventBackground);
 
-        $eventImage = $showEventImage ? self::buildTimelinePdfImage((string) ($row->datimage ?? ''), 'event', (string) ($row->title ?? ''), $eventImageWidth, $eventImageHeight) : '';
-        $venueImage = $showVenueImage ? self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) (($row->venue ?? '') ?: ($row->title ?? '')), $venueImageWidth, $venueImageHeight) : '';
+        $eventImage = $showEventImage ? self::buildTimelinePdfImage((string) ($row->datimage ?? ''), 'event', (string) ($row->title ?? ''), $eventImageWidth, $eventImageHeight, (string) ($row->image_path ?? '')) : '';
+        $venueImage = $showVenueImage ? self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) (($row->venue ?? '') ?: ($row->title ?? '')), $venueImageWidth, $venueImageHeight, (string) ($row->venue_image_path ?? '')) : '';
 
         $title = htmlspecialchars((string) ($row->title ?? ''), ENT_COMPAT, 'UTF-8');
         $url = !empty($row->slug) ? self::absoluteUrl(Route::_(JemHelperRoute::getEventRoute($row->slug), false)) : '';
@@ -1248,7 +1248,7 @@ class JemPdfView
         return HTMLHelper::_('date', $date, Text::_('DATE_FORMAT_LC3'));
     }
 
-    private static function buildTimelinePdfImage(string $imageFile, string $type, string $alt, int $maxWidth, int $maxHeight): string
+    private static function buildTimelinePdfImage(string $imageFile, string $type, string $alt, int $maxWidth, int $maxHeight, string $folderPath = ''): string
     {
         $imageFile = trim($imageFile);
 
@@ -1256,7 +1256,7 @@ class JemPdfView
             return '';
         }
 
-        $image = JemImage::flyercreator($imageFile, $type);
+        $image = JemImage::flyercreator($imageFile, $type, $folderPath);
 
         if (!is_array($image)) {
             return '';
@@ -1451,7 +1451,7 @@ class JemPdfView
 
     private static function buildVenueMapCardImageHtml($row): string
     {
-        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 42, 32);
+        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 42, 32, (string) ($row->venue_image_path ?? ''));
 
         return str_replace('class="jem-pdf-image"', 'class="jem-pdf-venuesmap-image"', $image);
     }
@@ -3417,7 +3417,7 @@ class JemPdfView
 
     private static function buildPdfVenueImageCell($row): array
     {
-        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 22, 16);
+        $image = self::buildTimelinePdfImage((string) ($row->locimage ?? ''), 'venue', (string) ($row->venue ?? $row->title ?? ''), 22, 16, (string) ($row->venue_image_path ?? ''));
 
         return array('html' => $image !== '' ? $image : '-');
     }

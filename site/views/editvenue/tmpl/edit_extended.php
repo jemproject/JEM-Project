@@ -51,6 +51,13 @@ use Joomla\CMS\Language\Text;
                     <?php endif; ?>
                 </div>
             </li>
+            <li class="jem-image-upload-row">
+                <?php echo $this->form->getLabel('locimage_alt'); ?>
+                <div class="jem-image-upload-control">
+                    <?php echo $this->form->getInput('locimage_alt'); ?>
+                    <?php echo $this->form->getInput('image_path'); ?>
+                </div>
+            </li>
         </ul>
     </fieldset>
 <?php endif; ?>

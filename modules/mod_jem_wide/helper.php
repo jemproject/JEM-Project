@@ -128,7 +128,7 @@ abstract class ModJemWideHelper
 
             # create thumbnails if needed and receive imagedata
             $dimage = $row->datimage ? JEMImage::flyercreator($row->datimage, 'event', $row->image_path ?? '') : null;
-            $limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue') : null;
+            $limage = $row->locimage ? JEMImage::flyercreator($row->locimage, 'venue', $row->venue_image_path ?? '') : null;
 
 
 

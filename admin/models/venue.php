@@ -18,6 +18,7 @@ use Joomla\String\StringHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 
 /**
  * Model: Venue
@@ -335,6 +336,19 @@ class JemModelVenue extends JemModelAdmin
         // Check if we're in the front or back
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
+        $previousVenueImage = $new ? array() : $this->getVenueImageStorageData((int) $data['id']);
+        $submittedVenueImage = isset($data['locimage']) ? (string) $data['locimage'] : (string) ($previousVenueImage['locimage'] ?? '');
+        $frontendImageFiles = $jinput->files->get('jform', array(), 'array');
+        $frontendImageFile = $jinput->files->get('userfile', array(), 'array');
+        if (empty($frontendImageFile) && !empty($frontendImageFiles['userfile'])) {
+            $frontendImageFile = $frontendImageFiles['userfile'];
+        }
+        $venueImageChanged = $new
+            || $submittedVenueImage !== (string) ($previousVenueImage['locimage'] ?? '')
+            || !empty($frontendImageFile['name']);
+        $data['image_path'] = JemVenueImagePath::normaliseRelativeFolder(
+            $data['image_path'] ?? ($previousVenueImage['image_path'] ?? '')
+        );
 
         // Store IP of author only.
         if ($new) {
@@ -404,13 +418,24 @@ class JemModelVenue extends JemModelAdmin
             // At this point we do have an id.
             $pk = $this->getState($this->getName() . '.id');
 
+            if (!$this->syncVenueImageStorage((int) $pk, $venueImageChanged)) {
+                return false;
+            }
+
             try {
                 JemVenueCapacityService::ensureDefaultProfile((int) $pk);
                 if ($backend && $capacityConfigurationSubmitted) {
-                    JemVenueCapacityService::saveDefaultConfiguration(
+                    $savedCapacityConfiguration = JemVenueCapacityService::saveDefaultConfiguration(
                         (int) $pk,
                         $capacityConfiguration,
                         $capacityProfileName
+                    );
+                    JemVenueCapacityService::saveConfigurationMedia(
+                        (int) $pk,
+                        $savedCapacityConfiguration,
+                        $capacityConfiguration,
+                        (array) $jinput->files->get('capacity_space_image', array(), 'array'),
+                        (array) $jinput->files->get('capacity_layout_image', array(), 'array')
                     );
                 }
             } catch (Throwable $e) {
@@ -467,6 +492,76 @@ class JemModelVenue extends JemModelAdmin
         }
 
         return $saved;
+    }
+
+    /**
+     * Move only new or replaced venue images into the stable ID path. Existing
+     * flat images are deliberately left untouched for compatibility.
+     */
+    private function syncVenueImageStorage(int $venueId, bool $imageChanged): bool
+    {
+        if ($venueId < 1) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(array('locimage', 'image_path')))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $venueId)
+        );
+        $current = (array) ($db->loadAssoc() ?: array());
+        $filename = (string) ($current['locimage'] ?? '');
+
+        if ($filename === '') {
+            if ((string) ($current['image_path'] ?? '') !== '') {
+                $db->updateObject('#__jem_venues', (object) array('id' => $venueId, 'image_path' => ''), 'id');
+            }
+            return true;
+        }
+
+        if (!$imageChanged) {
+            return true;
+        }
+
+        $sourceFolder = JemVenueImagePath::normaliseRelativeFolder($current['image_path'] ?? '');
+        $targetFolder = JemVenueImagePath::venueFolder($venueId);
+        if (!JemVenueImagePath::relocateImages(
+            $sourceFolder,
+            $targetFolder,
+            array($filename),
+            JemHelper::config(),
+            false
+        )) {
+            $this->setError(Text::_('COM_JEM_VENUE_IMAGE_STORAGE_FAILED'));
+            return false;
+        }
+
+        $db->updateObject(
+            '#__jem_venues',
+            (object) array('id' => $venueId, 'image_path' => $targetFolder),
+            'id'
+        );
+
+        return true;
+    }
+
+    private function getVenueImageStorageData(int $venueId): array
+    {
+        if ($venueId < 1) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(array('locimage', 'image_path')))
+                ->from($db->quoteName('#__jem_venues'))
+                ->where($db->quoteName('id') . ' = ' . $venueId)
+        );
+
+        return (array) ($db->loadAssoc() ?: array());
     }
 
     /**

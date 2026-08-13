@@ -180,14 +180,14 @@ if (!function_exists('jem_venueslist_default_venue_edit_link')) {
 if (!function_exists('jem_venueslist_default_venue_image')) {
     function jem_venueslist_default_venue_image($row)
     {
-        $image = JemImage::flyercreator($row->locimage ?? '', 'venue');
+        $image = JemImage::flyercreator($row->locimage ?? '', 'venue', $row->image_path ?? '');
 
         if (empty($image)) {
             return '';
         }
 
         $src = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb']) ? $image['thumb'] : $image['original'];
-        $alt = htmlspecialchars((string) ($row->venue ?? ''), ENT_QUOTES, 'UTF-8');
+        $alt = htmlspecialchars(trim((string) ($row->locimage_alt ?? '')) ?: (string) ($row->venue ?? ''), ENT_QUOTES, 'UTF-8');
 
         return '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="jem-venueslist-venue-image" loading="lazy" style="width:64px;height:48px;object-fit:contain;" />';
     }

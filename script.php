@@ -322,6 +322,7 @@ class com_jemInstallerScript
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
+            $this->repair510MediaSchema();
             $this->installCountryCurrencyCatalogue();
             $this->installEuropeanTaxRateCatalogue();
             $this->registerNotificationTemplates();
@@ -1796,6 +1797,66 @@ SQL;
             $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
             $db->setQuery($query);
             $db->execute();
+        }
+    }
+
+    /**
+     * Repair the additive 5.1 media metadata without relocating legacy files.
+     * Empty path values deliberately retain the JEM 5.0 flat-folder contract.
+     *
+     * @return void
+     */
+    private function repair510MediaSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $existingTables = $db->getTableList();
+        $definitionsByTable = array(
+            '#__jem_events' => array(
+                'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage`",
+            ),
+            '#__jem_categories' => array(
+                'event_image_default_storage' => "VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default`",
+            ),
+            '#__jem_venues' => array(
+                'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `locimage`",
+                'locimage_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image_path`",
+            ),
+            '#__jem_venue_capacity_profiles' => array(
+                'image' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`",
+                'image_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
+            ),
+            '#__jem_venue_spaces' => array(
+                'image' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`",
+                'image_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
+            ),
+            '#__jem_venue_layouts' => array(
+                'image' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`",
+                'image_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
+            ),
+            '#__jem_venue_capacity_areas' => array(
+                'image' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`",
+                'image_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
+            ),
+        );
+
+        foreach ($definitionsByTable as $table => $definitions) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $existingTables, true)) {
+                continue;
+            }
+
+            $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+            foreach ($definitions as $column => $definition) {
+                if (isset($columns[strtolower($column)])) {
+                    continue;
+                }
+
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName($table)
+                    . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                )->execute();
+                $columns[strtolower($column)] = true;
+            }
         }
     }
 

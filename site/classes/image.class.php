@@ -16,6 +16,7 @@ use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 
 /**
  * Holds the logic for image manipulation
@@ -232,6 +233,9 @@ class JemImage
             if (!$isSiteImagePath && $type === 'event') {
                 $img_orig  = JemEventImagePath::imagePath($folderPath, $image);
                 $img_thumb = JemEventImagePath::thumbPath($folderPath, $image);
+            } else if (!$isSiteImagePath && $type === 'venue') {
+                $img_orig  = JemVenueImagePath::imagePath($folderPath, $image);
+                $img_thumb = JemVenueImagePath::thumbPath($folderPath, $image);
             } else {
                 $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
                 $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
@@ -247,6 +251,10 @@ class JemImage
 
             //Create thumbnail if enabled and it does not exist already
             if (!$isSiteImagePath && $settings->gddisabled == 1 && !file_exists($save)) {
+                $saveFolder = dirname($save);
+                if (!Folder::exists($saveFolder)) {
+                    Folder::create($saveFolder);
+                }
                 JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
             }
 

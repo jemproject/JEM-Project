@@ -13,6 +13,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+$parentVenueId = Factory::getApplication()->input->getInt('parent_venue_id', 0);
 Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 ?>
 
@@ -25,7 +26,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal
             <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8'); ?>" class="text_area form-control" onChange="document.adminForm.submit();" />&nbsp;
             <button type="submit" class="filter-search-bar__button btn btn-primary"><span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span></button>&nbsp;
             <button type="button" class="filter-search-bar__button btn btn-success" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>&nbsp;
-            <button type="button" class="filter-search-bar__button btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECTVENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+            <?php if ($parentVenueId < 1) : ?>
+                <button type="button" class="filter-search-bar__button btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECTVENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+            <?php endif; ?>
             </div>
         </td>
     </tr>
@@ -77,6 +80,7 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal
 
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+<input type="hidden" name="parent_venue_id" value="<?php echo $parentVenueId; ?>" />
 <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
 <?php echo HTMLHelper::_('form.token'); ?>

@@ -237,7 +237,7 @@ use Joomla\CMS\Session\Session;
     <div class="jem-imagehandler-toolbar">
         <?php if (!empty($this->imagePath)) : ?>
             <div class="alert alert-info py-2 mb-0 w-100">
-                <?php echo Text::_('COM_JEM_EVENT_IMAGE_FOLDER'); ?>: <code><?php echo htmlspecialchars('images/jem/events/' . $this->imagePath, ENT_QUOTES, 'UTF-8'); ?></code>
+                <?php echo Text::_('COM_JEM_EVENT_IMAGE_FOLDER'); ?>: <code><?php echo htmlspecialchars('images/jem/' . $this->baseFolder . '/' . $this->imagePath, ENT_QUOTES, 'UTF-8'); ?></code>
             </div>
         <?php endif; ?>
 

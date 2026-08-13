@@ -195,7 +195,7 @@ if (!function_exists('jem_choosevenue_country')) {
 <div id="jem" class="jem_select_venue">
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&parent_venue_id='.(int) ($this->parentVenueId ?? 0).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
         <div class="jem-row valign-baseline">
             <div id="jem_filter" class="jem-form jem-row jem-justify-start"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
                 <div class="jem-choosevenue-label">
@@ -209,7 +209,9 @@ if (!function_exists('jem_choosevenue_country')) {
                 </div>
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                <button type="button" class="pointer btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+                <?php if (empty($this->parentVenueId)) : ?>
+                    <button type="button" class="pointer btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+                <?php endif; ?>
                 <div class="jem-row jem-justify-start jem-nowrap jem-choosevenue-limit">
                     <?php echo '<label for="limit">'.Text::_('COM_JEM_DISPLAY_NUM').'</label>'; ?>
                     <?php echo $this->pagination->getLimitBox(); ?>
@@ -265,6 +267,7 @@ if (!function_exists('jem_choosevenue_country')) {
         <input type="hidden" name="option" value="com_jem" />
         <input type="hidden" name="tmpl" value="component" />
         <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
+        <input type="hidden" name="parent_venue_id" value="<?php echo (int) ($this->parentVenueId ?? 0); ?>" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
     </form>

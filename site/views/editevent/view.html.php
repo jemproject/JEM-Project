@@ -335,6 +335,7 @@ class JemViewEditevent extends JemView
         $this->pagination   = $pagination;
         $this->lists        = $lists;
         $this->filter       = $search;
+        $this->parentVenueId = $jinput->getInt('parent_venue_id', 0);
 
         parent::display($tpl);
     }

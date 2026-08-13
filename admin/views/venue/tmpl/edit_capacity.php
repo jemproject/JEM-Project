@@ -21,12 +21,16 @@ if (!$initialSpaces) {
         'space_name'        => '',
         'space_color'       => JemVenueCapacityService::DEFAULT_SPACE_COLOR,
         'space_description' => '',
+        'space_image'       => '',
+        'space_image_alt'   => '',
         'layout_id'         => 0,
         'layout_code'       => '',
         'layout_name'       => '',
         'layout_color'      => JemVenueCapacityService::DEFAULT_LAYOUT_COLOR,
         'layout_revision'   => 0,
         'layout_capacity'   => (int) ($this->item->capacity_profile_capacity ?? 0),
+        'layout_image'      => '',
+        'layout_image_alt'  => '',
         'areas'             => array(),
     );
 }
@@ -110,6 +114,10 @@ $initialConfiguration = json_encode(
             <?php echo Text::_('COM_JEM_VENUE_CAPACITY_ADD_SPACE'); ?>
         </button>
     </div>
+    <dialog class="jem-capacity-image-dialog" data-role="capacity-image-dialog">
+        <button type="button" class="btn-close" data-action="close-capacity-image" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
+        <img src="" alt="">
+    </dialog>
 </div>
 
 <template id="jem-capacity-space-template">
@@ -159,6 +167,23 @@ $initialConfiguration = json_encode(
                     <textarea class="form-control" rows="2" data-field="space_description"></textarea>
                     <div class="form-text hide-aware-inline-help d-none" data-help-field="space_description"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_DESCRIPTION_DESC'); ?></div>
                 </label>
+                <div class="jem-capacity-media-grid mt-3">
+                    <input type="hidden" data-field="space_image">
+                    <label>
+                        <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_IMAGE'); ?></span>
+                        <input type="file" class="form-control" accept="image/*" data-upload="space">
+                        <span class="form-text" data-role="space-image-current"></span>
+                    </label>
+                    <label>
+                        <span><?php echo Text::_('COM_JEM_VENUE_IMAGE_ALT'); ?></span>
+                        <input type="text" class="form-control" maxlength="255" data-field="space_image_alt">
+                        <div class="form-text hide-aware-inline-help d-none" data-help-field="space_image_alt"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_IMAGE_ALT_DESC'); ?></div>
+                    </label>
+                    <label class="form-check jem-capacity-media-remove">
+                        <input type="checkbox" class="form-check-input" value="1" data-field="space_image_remove">
+                        <span class="form-check-label"><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></span>
+                    </label>
+                </div>
             </div>
             <div class="jem-capacity-section jem-capacity-section-layout">
                 <h4 class="h6"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT'); ?></h4>
@@ -188,6 +213,23 @@ $initialConfiguration = json_encode(
                     </label>
                 </div>
                 <p class="form-text mb-0" data-role="layout-revision"></p>
+                <div class="jem-capacity-media-grid mt-3">
+                    <input type="hidden" data-field="layout_image">
+                    <label>
+                        <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_PLAN'); ?></span>
+                        <input type="file" class="form-control" accept="image/*" data-upload="layout">
+                        <span class="form-text" data-role="layout-image-current"></span>
+                    </label>
+                    <label>
+                        <span><?php echo Text::_('COM_JEM_VENUE_IMAGE_ALT'); ?></span>
+                        <input type="text" class="form-control" maxlength="255" data-field="layout_image_alt">
+                        <div class="form-text hide-aware-inline-help d-none" data-help-field="layout_image_alt"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_IMAGE_ALT_DESC'); ?></div>
+                    </label>
+                    <label class="form-check jem-capacity-media-remove">
+                        <input type="checkbox" class="form-check-input" value="1" data-field="layout_image_remove">
+                        <span class="form-check-label"><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></span>
+                    </label>
+                </div>
                 <div class="jem-capacity-section jem-capacity-section-areas">
                     <div class="jem-capacity-areas-heading">
                         <div>
@@ -274,12 +316,16 @@ document.addEventListener('DOMContentLoaded', function () {
         'layout'         => Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT'),
         'area'           => Text::_('COM_JEM_VENUE_CAPACITY_AREA'),
     ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+    const venueId = <?php echo (int) ($this->item->id ?? 0); ?>;
 
     if (!editor || !spacesContainer || !hidden || !spaceTemplate || !areaTemplate) {
         return;
     }
 
     let initial = {spaces: []};
+    const pendingUploads = new Map();
+    const pendingPreviewUrls = new Map();
+    let nextClientKey = 1;
     try {
         initial = JSON.parse(document.getElementById('jem-capacity-initial-data').textContent || '{"spaces":[]}');
     } catch (ignore) {
@@ -293,12 +339,19 @@ document.addEventListener('DOMContentLoaded', function () {
             space_name: '',
             space_color: '#2F6F9F',
             space_description: '',
+            space_image: '',
+            space_image_alt: '',
+            space_image_remove: 0,
             layout_id: 0,
             layout_code: '',
             layout_name: '',
             layout_color: '#B78324',
             layout_revision: 0,
             layout_capacity: 0,
+            layout_image: '',
+            layout_image_alt: '',
+            layout_image_remove: 0,
+            client_key: 'new-' + (nextClientKey++),
             areas: []
         };
     }
@@ -312,7 +365,56 @@ document.addEventListener('DOMContentLoaded', function () {
         return Number.isFinite(number) && number >= 0 ? number : 0;
     }
 
-    function overviewNode(kind, label, name, capacity, color) {
+    function showCapacityImage(url, alt) {
+        const dialog = editor.querySelector('[data-role="capacity-image-dialog"]');
+        const image = dialog ? dialog.querySelector('img') : null;
+        if (!dialog || !image || !url) {
+            return;
+        }
+        image.src = url;
+        image.alt = alt || '';
+        if (typeof dialog.showModal === 'function') {
+            dialog.showModal();
+        } else {
+            window.open(url, '_blank', 'noopener');
+        }
+    }
+
+    function mediaPreview(space, kind, fallbackAlt) {
+        const pending = pendingUploads.get(space.client_key + ':' + kind);
+        if (pending) {
+            const key = space.client_key + ':' + kind;
+            let url = pendingPreviewUrls.get(key);
+            if (!url) {
+                url = URL.createObjectURL(pending);
+                pendingPreviewUrls.set(key, url);
+            }
+            return {thumb: url, original: url, alt: fallbackAlt};
+        }
+
+        const filename = kind === 'space' ? space.space_image : space.layout_image;
+        const customAlt = kind === 'space' ? space.space_image_alt : space.layout_image_alt;
+        if (!filename || venueId < 1 || integer(space.space_id) < 1) {
+            return null;
+        }
+
+        let folder = venueId + '/spaces/' + integer(space.space_id) + '/space';
+        if (kind === 'layout') {
+            if (integer(space.layout_id) < 1) {
+                return null;
+            }
+            folder = venueId + '/spaces/' + integer(space.space_id) + '/layouts/' + integer(space.layout_id) + '/layout';
+        }
+
+        const encoded = folder.split('/').map(encodeURIComponent).join('/') + '/' + encodeURIComponent(filename);
+        return {
+            thumb: '../images/jem/venues/small/' + encoded,
+            original: '../images/jem/venues/' + encoded,
+            alt: customAlt || fallbackAlt
+        };
+    }
+
+    function overviewNode(kind, label, name, capacity, color, media) {
         const node = document.createElement('div');
         const header = document.createElement('div');
         const identity = document.createElement('div');
@@ -333,6 +435,26 @@ document.addEventListener('DOMContentLoaded', function () {
         children.className = 'jem-capacity-overview-children';
         identity.append(type, title);
         header.append(identity, capacityBadge);
+        if (media && media.thumb) {
+            const button = document.createElement('button');
+            const preview = document.createElement('img');
+            button.type = 'button';
+            button.className = 'btn btn-link p-0 jem-capacity-overview-image';
+            button.title = media.alt || name;
+            preview.src = media.thumb;
+            preview.alt = media.alt || name;
+            preview.loading = 'lazy';
+            preview.addEventListener('error', function () {
+                if (preview.src !== media.original) {
+                    preview.src = media.original;
+                }
+            }, {once: true});
+            button.appendChild(preview);
+            button.addEventListener('click', function () {
+                showCapacityImage(media.original, media.alt || name);
+            });
+            header.appendChild(button);
+        }
         node.append(header, children);
 
         return {node: node, children: children};
@@ -358,9 +480,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         spaces.forEach(function (space, index) {
             const spaceName = space.space_name || (labels.space + ' ' + (index + 1));
-            const spaceNode = overviewNode('space', labels.space, spaceName, space.layout_capacity, space.space_color);
+            const spaceAlt = spaceName + ' — ' + venueName;
+            const spaceNode = overviewNode('space', labels.space, spaceName, space.layout_capacity, space.space_color, mediaPreview(space, 'space', spaceAlt));
             const layoutName = space.layout_name || labels.layout;
-            const layoutNode = overviewNode('layout', labels.layout, layoutName, space.layout_capacity, space.layout_color);
+            const layoutAlt = 'Plan ' + layoutName + ' — ' + spaceName + ' — ' + venueName;
+            const layoutNode = overviewNode('layout', labels.layout, layoutName, space.layout_capacity, space.layout_color, mediaPreview(space, 'layout', layoutAlt));
             (Array.isArray(space.areas) ? space.areas : []).forEach(function (area, areaIndex) {
                 const areaName = area.name || (labels.area + ' ' + (areaIndex + 1));
                 const areaNode = overviewNode('area', labels.area, areaName, area.capacity, area.color);
@@ -440,19 +564,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     published: integer(areaValue('published')) === 1 ? 1 : 0
                 };
             });
+            card.querySelectorAll('[data-upload]').forEach(function (upload) {
+                if (upload.files && upload.files[0]) {
+                    const key = card.dataset.clientKey + ':' + upload.dataset.upload;
+                    const previous = pendingUploads.get(key);
+                    if (previous !== upload.files[0] && pendingPreviewUrls.has(key)) {
+                        URL.revokeObjectURL(pendingPreviewUrls.get(key));
+                        pendingPreviewUrls.delete(key);
+                    }
+                    pendingUploads.set(key, upload.files[0]);
+                }
+            });
+            const checked = function (name) {
+                const field = card.querySelector('[data-field="' + name + '"]');
+                return field && field.checked ? 1 : 0;
+            };
 
             return {
+                client_key: card.dataset.clientKey,
                 space_id: integer(value('space_id')),
                 space_code: value('space_code').trim(),
                 space_name: value('space_name').trim(),
                 space_color: value('space_color'),
                 space_description: value('space_description').trim(),
+                space_image: value('space_image').trim(),
+                space_image_alt: value('space_image_alt').trim(),
+                space_image_remove: checked('space_image_remove'),
                 layout_id: integer(value('layout_id')),
                 layout_code: value('layout_code').trim(),
                 layout_name: value('layout_name').trim(),
                 layout_color: value('layout_color'),
                 layout_revision: integer(card.dataset.layoutRevision),
                 layout_capacity: integer(value('layout_capacity')),
+                layout_image: value('layout_image').trim(),
+                layout_image_alt: value('layout_image_alt').trim(),
+                layout_image_remove: checked('layout_image_remove'),
                 areas: areas
             };
         });
@@ -522,12 +668,47 @@ document.addEventListener('DOMContentLoaded', function () {
         spaces.forEach(function (space, spaceIndex) {
             const card = spaceTemplate.content.firstElementChild.cloneNode(true);
             card.dataset.spaceIndex = String(spaceIndex);
+            space.client_key = space.client_key || (integer(space.space_id) > 0 ? 'space-' + integer(space.space_id) : 'new-' + (nextClientKey++));
+            card.dataset.clientKey = space.client_key;
             card.dataset.layoutRevision = String(integer(space.layout_revision));
             space.space_color = space.space_color || '#2F6F9F';
             space.layout_color = space.layout_color || '#B78324';
-            ['space_id', 'space_code', 'space_name', 'space_color', 'space_description', 'layout_id', 'layout_code', 'layout_name', 'layout_color', 'layout_capacity'].forEach(function (field) {
+            ['space_id', 'space_code', 'space_name', 'space_color', 'space_description', 'space_image', 'space_image_alt', 'layout_id', 'layout_code', 'layout_name', 'layout_color', 'layout_capacity', 'layout_image', 'layout_image_alt'].forEach(function (field) {
                 setValue(card, '[data-field="' + field + '"]', space[field]);
             });
+            ['space_image_remove', 'layout_image_remove'].forEach(function (field) {
+                const checkbox = card.querySelector('[data-field="' + field + '"]');
+                if (checkbox) {
+                    checkbox.checked = integer(space[field]) === 1;
+                }
+            });
+            const spaceUpload = card.querySelector('[data-upload="space"]');
+            const layoutUpload = card.querySelector('[data-upload="layout"]');
+            if (spaceUpload) {
+                spaceUpload.name = 'capacity_space_image[' + spaceIndex + ']';
+            }
+            if (layoutUpload) {
+                layoutUpload.name = 'capacity_layout_image[' + spaceIndex + ']';
+            }
+            const restoreUpload = function (upload, kind) {
+                const file = pendingUploads.get(space.client_key + ':' + kind);
+                if (!upload || !file || typeof DataTransfer === 'undefined') {
+                    return;
+                }
+                const transfer = new DataTransfer();
+                transfer.items.add(file);
+                upload.files = transfer.files;
+            };
+            restoreUpload(spaceUpload, 'space');
+            restoreUpload(layoutUpload, 'layout');
+            const spaceCurrent = card.querySelector('[data-role="space-image-current"]');
+            const layoutCurrent = card.querySelector('[data-role="layout-image-current"]');
+            if (spaceCurrent) {
+                spaceCurrent.textContent = space.space_image || '';
+            }
+            if (layoutCurrent) {
+                layoutCurrent.textContent = space.layout_image || '';
+            }
             connectInlineHelp(card, 'jem-capacity-space-' + spaceIndex);
 
             const stableSpaceCode = card.querySelector('[data-field="space_code"]');
@@ -581,6 +762,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const action = button.dataset.action;
+        if (action === 'close-capacity-image') {
+            const dialog = button.closest('dialog');
+            if (dialog) {
+                dialog.close();
+            }
+            return;
+        }
         let spaces = readSpaces();
         const card = button.closest('.jem-capacity-space-card');
         const spaceIndex = card ? integer(card.dataset.spaceIndex) : -1;

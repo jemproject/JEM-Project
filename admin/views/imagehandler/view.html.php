@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 use Joomla\String\StringHelper;
 
 /**
@@ -94,8 +95,10 @@ class JemViewImagehandler extends HtmlView
         $redi   = $imageTasks[$task]['redi'];
 
         $baseFolder = $folder;
-        $imagePath  = $folder === 'events' ? JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', '')) : '';
-        if ($folder === 'events' && $imagePath !== '') {
+        $imagePath = $folder === 'events'
+            ? JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
+            : ($folder === 'venues' ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', '')) : '');
+        if (in_array($folder, array('events', 'venues'), true) && $imagePath !== '') {
             $folder .= '/' . $imagePath;
         }
 
@@ -153,7 +156,9 @@ class JemViewImagehandler extends HtmlView
 
         //get vars
         $task = Factory::getApplication()->input->get('task', '');
-        $imagePath = JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
+        $imagePath = strpos((string) $task, 'venue') === 0
+            ? JemVenueImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''))
+            : JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
 
         $ftp = ClientHelper::setCredentialsFromRequest('ftp');
 

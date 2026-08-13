@@ -55,11 +55,11 @@ class JemModelMytimeline extends BaseDatabaseModel
 
         return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.alias, a.created, a.created_by, a.locid, a.published,'
             . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-            . ' a.access, a.attribs, a.article_id, a.datimage, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
+            . ' a.access, a.attribs, a.article_id, a.datimage, a.image_path, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
             . ' a.introtext, a.fulltext,'
             . ' a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces,'
             . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.timezone AS venue_timezone, l.published AS l_published,'
-            . ' l.alias AS l_alias, l.latitude, l.longitude,'
+            . ' l.alias AS l_alias, l.locimage, l.image_path AS venue_image_path, l.locimage_alt, l.latitude, l.longitude,'
             . ' CASE WHEN a.created_by = ' . $userId . ' THEN 1 ELSE 0 END AS is_owner,'
             . ' CASE WHEN r.uid IS NULL THEN 0 ELSE 1 END AS is_registered,'
             . ' r.status, r.waiting, r.places, r.comment,'

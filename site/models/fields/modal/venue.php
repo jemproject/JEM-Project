@@ -26,7 +26,9 @@ class JFormFieldModal_Venue extends ModalSelectField
 
         $this->select      = true;
         $this->clear       = false;
-        $this->urlSelect   = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function=' . $function;
+        $parentVenueId = $this->getSelectedParentVenueId();
+        $baseSelectUrl = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function=' . $function;
+        $this->urlSelect   = $baseSelectUrl . ($parentVenueId > 0 ? '&parent_venue_id=' . $parentVenueId : '');
         $this->titleSelect = 'COM_JEM_SELECT_VENUE';
         $this->iconSelect  = 'icon-location';
 
@@ -42,7 +44,62 @@ class JFormFieldModal_Venue extends ModalSelectField
             . '};'
         );
 
+        $eventVenueMap = $this->getRootEventVenueMap();
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(
+            'document.addEventListener("DOMContentLoaded", function () {' . "\n"
+            . '    var parent = document.getElementById("jform_parent_event_id");' . "\n"
+            . '    var venueValue = document.getElementById(' . json_encode($this->id . '_id') . ');' . "\n"
+            . '    var venueTitle = document.getElementById(' . json_encode($this->id) . ');' . "\n"
+            . '    var wrapper = venueValue ? venueValue.closest(".js-modal-content-select-field") : null;' . "\n"
+            . '    var selectButton = wrapper ? wrapper.querySelector("[data-button-action=select]") : null;' . "\n"
+            . '    var map = ' . json_encode($eventVenueMap) . ';' . "\n"
+            . '    var baseUrl = ' . json_encode($baseSelectUrl) . ';' . "\n"
+            . '    if (!parent || !selectButton) { return; }' . "\n"
+            . '    parent.addEventListener("change", function () {' . "\n"
+            . '        var parentVenue = Number(map[parent.value] || 0);' . "\n"
+            . '        var config = JSON.parse(selectButton.dataset.modalConfig || "{}");' . "\n"
+            . '        config.src = baseUrl + (parentVenue > 0 ? "&parent_venue_id=" + parentVenue : "");' . "\n"
+            . '        selectButton.dataset.modalConfig = JSON.stringify(config);' . "\n"
+            . '        if (venueValue) { venueValue.value = ""; venueValue.dispatchEvent(new CustomEvent("change", {bubbles: true})); }' . "\n"
+            . '        if (venueTitle) { venueTitle.value = ' . json_encode(Text::_('COM_JEM_SELECT_VENUE')) . '; }' . "\n"
+            . '    });' . "\n"
+            . '});'
+        );
+
         return parent::getInput();
+    }
+
+    private function getSelectedParentVenueId(): int
+    {
+        $parentEventId = $this->form ? (int) $this->form->getValue('parent_event_id') : 0;
+        if ($parentEventId < 1) {
+            return 0;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('locid'))
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('id') . ' = ' . $parentEventId)
+        );
+
+        return (int) $db->loadResult();
+    }
+
+    private function getRootEventVenueMap(): array
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('id'), $db->quoteName('locid')))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . (implode(',', $levels) ?: '0') . ')')
+            ->where('(' . $db->quoteName('parent_event_id') . ' IS NULL OR ' . $db->quoteName('parent_event_id') . ' = 0)');
+        $db->setQuery($query);
+
+        return array_map('intval', (array) $db->loadAssocList('id', 'locid'));
     }
 
     protected function getValueTitle()

@@ -454,7 +454,7 @@ class plgAcymJem extends AcymPlugin
         $image = '';
         if (in_array('image', $display, true)) {
             $eventImage = !empty($event->fullimage) ? $event->fullimage : $event->datimage;
-            $image = $this->getEventImagePath((string) $eventImage);
+            $image = $this->getEventImagePath((string) $eventImage, (string) ($event->image_path ?? ''));
         }
 
         $format = new stdClass();
@@ -686,7 +686,7 @@ class plgAcymJem extends AcymPlugin
         return (string) $event->venue.(empty($event->city) ? '' : ', '.$event->city);
     }
 
-    private function getEventImagePath(string $image): string
+    private function getEventImagePath(string $image, string $folder = ''): string
     {
         $image = ltrim(trim($image), '/\\');
         if ($image === '') {
@@ -694,7 +694,9 @@ class plgAcymJem extends AcymPlugin
         }
 
         if (strpos($image, '/') === false && strpos($image, '\\') === false) {
-            return 'images/jem/events/'.$image;
+            $folder = trim(str_replace('\\', '/', $folder), '/');
+
+            return 'images/jem/events/'.($folder === '' ? '' : $folder.'/').$image;
         }
 
         return str_replace('\\', '/', $image);

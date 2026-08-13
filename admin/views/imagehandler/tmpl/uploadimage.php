@@ -24,6 +24,10 @@ if ($this->task == 'venueimg') {
     $this->task = 'imagehandler.categoriesimgup';
 }
 
+if (!empty($this->imagePath) && in_array($this->task, array('imagehandler.venueimgup', 'imagehandler.eventimgup'), true)) {
+    $targetDirectory .= trim((string) $this->imagePath, '/') . '/';
+}
+
 $imageTypes = [
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_PNG)), 'label' => Text::_('COM_JEM_PNG_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_PNG_SUPPORT')],
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_JPEG)), 'label' => Text::_('COM_JEM_JPG_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_JPG_SUPPORT')],

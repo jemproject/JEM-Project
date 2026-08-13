@@ -273,7 +273,7 @@ class JemViewVenue extends JemView
             $lists['order']     = $filter_order;
 
             // Get image
-            $limage = JemImage::flyercreator($venue->locimage,'venue');
+            $limage = JemImage::flyercreator($venue->locimage, 'venue', $venue->image_path ?? '');
 
             // Add feed links
             $link = '&format=feed&id='.$venue->id.'&limitstart=';

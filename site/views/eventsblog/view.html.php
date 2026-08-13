@@ -51,7 +51,7 @@ class JemViewEventsblog extends JemView
 
         foreach ($rows as $row) {
             $row->eventLink = Route::_(JemHelperRoute::getEventRoute($row->slug));
-            $image = !empty($row->datimage) ? JemImage::flyercreator($row->datimage, 'event') : false;
+            $image = !empty($row->datimage) ? JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '') : false;
             $row->blogImage = $image && !empty($image['original'])
                 ? Uri::root() . ltrim($image['original'], '/')
                 : Uri::root() . 'media/com_jem/images/noimage.webp';

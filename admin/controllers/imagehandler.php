@@ -16,6 +16,7 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Path;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 
 /**
  * JEM Component Imagehandler Controller
@@ -102,7 +103,9 @@ class JemControllerImagehandler extends BaseController
 
         $file = $app->input->files->get('userfile', array(), 'array');
         $task = $app->input->getCmd('task', '');
-        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        $imagePath = $task === 'venueimgup'
+            ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
+            : JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
         $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
 
         $directories = array(
@@ -125,6 +128,13 @@ class JemControllerImagehandler extends BaseController
             }
 
             $directories[$task] = JemEventImagePath::absoluteImageFolder($imagePath);
+        } elseif ($task === 'venueimgup' && $imagePath !== '') {
+            if (!JemVenueImagePath::ensureFolders($imagePath)) {
+                $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
+                $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
+                return;
+            }
+            $directories[$task] = JemVenueImagePath::absoluteImageFolder($imagePath);
         }
 
         $base_Dir = Path::clean($directories[$task]) . DIRECTORY_SEPARATOR;
@@ -171,9 +181,11 @@ class JemControllerImagehandler extends BaseController
 
         if ($task === 'eventimgup') {
             JemEventImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
+        } elseif ($task === 'venueimgup') {
+            JemVenueImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
         }
 
-        echo '<script> alert(' . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . '); window.parent.SelectImage(' . json_encode($filename) . ', ' . json_encode($filename) . ', null, ' . json_encode($task === 'eventimgup' ? $imagePath : '') . '); </script>' . "\n";
+        echo '<script> alert(' . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . '); window.parent.SelectImage(' . json_encode($filename) . ', ' . json_encode($filename) . ', null, ' . json_encode(in_array($task, array('eventimgup', 'venueimgup'), true) ? $imagePath : '') . '); </script>' . "\n";
         $app->close();
     }
     /**
@@ -195,7 +207,9 @@ class JemControllerImagehandler extends BaseController
         // Get some data from the request
         $images = Factory::getApplication()->input->get('rm', array(), 'array');
         $folder = Factory::getApplication()->input->getCmd('folder', '');
-        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        $imagePath = $folder === 'venues'
+            ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
+            : JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
         $allowedFolders = array('events', 'venues', 'categories');
 
         if (!in_array($folder, $allowedFolders, true)) {
@@ -210,6 +224,9 @@ class JemControllerImagehandler extends BaseController
         if ($folder === 'events' && $imagePath !== '') {
             $basePath = Path::clean(JemEventImagePath::absoluteImageFolder($imagePath));
             $thumbBasePath = Path::clean(JemEventImagePath::absoluteThumbFolder($imagePath));
+        } elseif ($folder === 'venues' && $imagePath !== '') {
+            $basePath = Path::clean(JemVenueImagePath::absoluteImageFolder($imagePath));
+            $thumbBasePath = Path::clean(JemVenueImagePath::absoluteThumbFolder($imagePath));
         } else {
             $imagePath = '';
         }

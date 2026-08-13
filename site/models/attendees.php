@@ -304,7 +304,7 @@ class JemModelAttendees extends BaseDatabaseModel
             $query = 'SELECT a.id, a.alias, a.title, a.article_id, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
                    . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
                    . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
-                   . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
+                   . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.image_path, a.featured, a.hits, a.version,'
                    . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
                    . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
                    . ' FROM #__jem_events AS a WHERE a.id = '.$this->_db->Quote($this->_id);

@@ -30,6 +30,8 @@ use Joomla\CMS\Language\Multilanguage;
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -2651,83 +2653,120 @@ class JemHelper
      *
      * @param  string $type     one of 'event', 'venue', 'category', 'events', 'venues', 'categories'
      * @param  mixed  $filename filename as stored in db, or null (which deletes all unused files)
+     * @param  string $relativeFolder optional path relative to the media-type root
      *
      * @return bool true on success, false on error
      * @access public
      */
-    static public function delete_unused_image_files($type, $filename = null)
+    static public function delete_unused_image_files($type, $filename = null, $relativeFolder = '')
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-
         switch ($type) {
         case 'event':
         case 'events':
             $folder = 'events';
-            $countquery_tmpl = ' SELECT id FROM #__jem_events WHERE datimage = %s OR fullimage = %s';
-            $imagequery      = ' SELECT datimage AS image, COUNT(*) AS count FROM #__jem_events WHERE datimage <> ' . $db->quote('') . ' GROUP BY datimage'
-                . ' UNION SELECT fullimage AS image, COUNT(*) AS count FROM #__jem_events WHERE fullimage <> ' . $db->quote('') . ' GROUP BY fullimage';
+            $relativeFolder = JemEventImagePath::normaliseRelativeFolder($relativeFolder);
+            $pathField = 'image_path';
+            $imageFields = array('datimage', 'fullimage');
             break;
         case 'venue':
         case 'venues':
             $folder = 'venues';
-            $countquery_tmpl = ' SELECT id FROM #__jem_venues WHERE locimage = ';
-            $imagequery      = ' SELECT locimage AS image, COUNT(*) AS count FROM #__jem_venues GROUP BY locimage';
+            $relativeFolder = JemVenueImagePath::normaliseRelativeFolder($relativeFolder);
+            $pathField = 'image_path';
+            $imageFields = array('locimage');
             break;
         case 'category':
         case 'categories':
             $folder = 'categories';
-            $countquery_tmpl = ' SELECT id FROM #__jem_categories WHERE image = ';
-            $imagequery      = ' SELECT image, COUNT(*) AS count FROM #__jem_categories GROUP BY image';
+            $pathField = null;
+            $imageFields = array('image');
+            $relativeFolder = '';
             break;
         default:
             return false;
         }
 
-        $fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$filename);
-        $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$filename);
-        if (is_file($fullPath)) {
-            // Count usage and don't delete if used elsewhere.
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            $quotedFilename = $db->quote($filename);
-            $db->setQuery(strpos($countquery_tmpl, '%s') !== false ? sprintf($countquery_tmpl, $quotedFilename, $quotedFilename) : $countquery_tmpl . $quotedFilename);
-            if (null === ($usage = $db->loadObjectList())) {
-                return false;
-            }
-            if (empty($usage)) {
-                File::delete($fullPath);
-                if (is_file($fullPaththumb)) {
-                    File::delete($fullPaththumb);
-                }
-
-                return true;
-            }
-        }
-        elseif (empty($filename) && is_dir($fullPath)) {
-            // get image files used
-            $db = Factory::getContainer()->get('DatabaseDriver');
-            $db->setQuery($imagequery);
-            if (null === ($used = $db->loadAssocList('image', 'count'))) {
-                return false;
-            }
-
-            // get all files and delete if not in $used
-            $fileList = Folder::files($fullPath);
-            if ($fileList !== false) {
-                foreach ($fileList as $file)
-                {
-                    if (is_file($fullPath.$file) && substr($file, 0, 1) != '.' && !isset($used[$file])) {
-                        File::delete($fullPath.$file);
-                        if (is_file($fullPaththumb.$file)) {
-                            File::delete($fullPaththumb.$file);
-                        }
-                    }
-                }
-
-                return true;
-            }
+        if ($filename !== null) {
+            $filename = File::makeSafe(basename(str_replace('\\', '/', (string) $filename)));
         }
 
-        return false;
+        $basePath = rtrim(Path::clean(JPATH_SITE . '/images/jem/' . $folder), DIRECTORY_SEPARATOR);
+        $thumbBase = rtrim(Path::clean($basePath . '/small'), DIRECTORY_SEPARATOR);
+        $relativeImage = trim(($relativeFolder !== '' ? $relativeFolder . '/' : '') . (string) $filename, '/');
+
+        if ($filename !== null && $filename !== '') {
+            $where = array();
+            foreach ($imageFields as $field) {
+                $where[] = $db->quoteName($field) . ' = ' . $db->quote($filename);
+            }
+            $table = $folder === 'events' ? '#__jem_events' : ($folder === 'venues' ? '#__jem_venues' : '#__jem_categories');
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName($table))
+                ->where('(' . implode(' OR ', $where) . ')');
+            if ($pathField !== null) {
+                $query->where($db->quoteName($pathField) . ' = ' . $db->quote($relativeFolder));
+            }
+            $db->setQuery($query);
+            if ((int) $db->loadResult() > 0) {
+                return false;
+            }
+
+            $fullPath = Path::clean($basePath . '/' . $relativeImage);
+            $fullPaththumb = Path::clean($thumbBase . '/' . $relativeImage);
+            $deleted = !is_file($fullPath) || File::delete($fullPath);
+            if (is_file($fullPaththumb)) {
+                $deleted = File::delete($fullPaththumb) && $deleted;
+            }
+
+            return $deleted;
+        }
+
+        if (!is_dir($basePath)) {
+            return false;
+        }
+
+        $used = array();
+        foreach ($imageFields as $field) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName($field, 'image'))
+                ->from($db->quoteName($folder === 'events' ? '#__jem_events' : ($folder === 'venues' ? '#__jem_venues' : '#__jem_categories')))
+                ->where($db->quoteName($field) . ' <> ' . $db->quote(''));
+            if ($pathField !== null) {
+                $query->select($db->quoteName($pathField, 'image_path'));
+            }
+            $db->setQuery($query);
+            foreach ((array) $db->loadAssocList() as $row) {
+                $key = trim(($pathField !== null && !empty($row['image_path']) ? $row['image_path'] . '/' : '') . $row['image'], '/');
+                $used[str_replace('\\', '/', $key)] = true;
+            }
+        }
+
+        $fileList = Folder::files($basePath, '.', true, true);
+        if ($fileList === false) {
+            return false;
+        }
+
+        $success = true;
+        foreach ($fileList as $file) {
+            $cleanFile = Path::clean($file);
+            if (strpos($cleanFile . DIRECTORY_SEPARATOR, $thumbBase . DIRECTORY_SEPARATOR) === 0) {
+                continue;
+            }
+            $relative = ltrim(str_replace('\\', '/', substr($cleanFile, strlen($basePath))), '/');
+            if ($relative === '' || basename($relative)[0] === '.' || isset($used[$relative])) {
+                continue;
+            }
+
+            $success = File::delete($cleanFile) && $success;
+            $thumb = Path::clean($thumbBase . '/' . $relative);
+            if (is_file($thumb)) {
+                $success = File::delete($thumb) && $success;
+            }
+        }
+
+        return $success;
     }
 
     /**

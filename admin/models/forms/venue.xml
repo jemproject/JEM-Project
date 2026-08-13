@@ -125,6 +125,15 @@
             label="COM_JEM_IMAGESELECT"
             description="COM_JEM_IMAGESELECT"
         />
+        <field name="image_path" type="hidden" filter="string" />
+        <field name="locimage_alt" type="text"
+            class="inputbox"
+            size="40"
+            maxlength="255"
+            label="COM_JEM_VENUE_IMAGE_ALT"
+            description="COM_JEM_VENUE_IMAGE_ALT_DESC"
+            filter="string"
+        />
         <field name="published" type="list"
             label="JSTATUS"
             description="JFIELD_PUBLISHED_DESC"

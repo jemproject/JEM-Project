@@ -2272,6 +2272,60 @@ fieldset.jem-specialdays-import #replace_specialdays {
     grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 }
 
+.jem-capacity-overview-image {
+    margin-left: auto;
+}
+
+.jem-capacity-overview-image img {
+    width: 3.5rem;
+    height: 2.5rem;
+    object-fit: cover;
+    border-radius: .25rem;
+}
+
+.jem-capacity-image-dialog {
+    max-width: min(92vw, 72rem);
+    max-height: 90vh;
+    padding: 2.5rem 1rem 1rem;
+    border: 0;
+    border-radius: .5rem;
+}
+
+.jem-capacity-image-dialog::backdrop {
+    background: rgba(0, 0, 0, .72);
+}
+
+.jem-capacity-image-dialog .btn-close {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+}
+
+.jem-capacity-image-dialog img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(90vh - 4rem);
+    object-fit: contain;
+}
+
+.jem-capacity-media-grid {
+    display: grid;
+    grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr) auto;
+    gap: .75rem;
+    align-items: end;
+}
+
+.jem-capacity-media-grid > label > span:first-child {
+    display: block;
+    margin-bottom: .25rem;
+}
+
+.jem-capacity-media-remove {
+    align-self: center;
+    margin: 1.4rem 0 0;
+    white-space: nowrap;
+}
+
 .jem-capacity-area-list {
     display: grid;
     gap: .75rem;
@@ -2413,6 +2467,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 
     .jem-capacity-space-grid,
     .jem-capacity-layout-grid,
+    .jem-capacity-media-grid,
     .jem-capacity-area-row {
         grid-template-columns: minmax(0, 1fr);
     }

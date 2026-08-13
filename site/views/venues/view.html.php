@@ -53,7 +53,7 @@ class JemViewVenues extends JemView
 
         foreach ($items AS $item) {
             // Create image information
-            $item->limage = JemImage::flyercreator($item->locimage, 'venue');
+            $item->limage = JemImage::flyercreator($item->locimage, 'venue', $item->image_path ?? '');
 
             // Generate Venuedescription
             if (!$item->locdescription == '' || !$item->locdescription == '<br>') {

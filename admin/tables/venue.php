@@ -16,6 +16,8 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 use Joomla\Utilities\ArrayHelper;
+
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 /**
  * JEM Venue Table
  */
@@ -72,6 +74,8 @@ class JemTableVenue extends Table
 
         $this->parent_venue_id = empty($this->parent_venue_id) ? null : (int) $this->parent_venue_id;
         $this->venue_tree_order = max(0, (int) ($this->venue_tree_order ?? 0));
+        $this->image_path = JemVenueImagePath::normaliseRelativeFolder($this->image_path ?? '');
+        $this->locimage_alt = StringHelper::substr(trim(strip_tags((string) ($this->locimage_alt ?? ''))), 0, 255);
 
         if ($this->parent_venue_id !== null) {
             if ((int) $this->id === $this->parent_venue_id
@@ -83,6 +87,11 @@ class JemTableVenue extends Table
             $parent = $this->getHierarchyVenue($this->parent_venue_id);
             if (!$parent) {
                 $this->setError(Text::_('COM_JEM_VENUE_ERROR_PARENT_NOT_FOUND'));
+                return false;
+            }
+
+            if (!empty($parent->parent_venue_id)) {
+                $this->setError(Text::_('COM_JEM_VENUE_ERROR_PARENT_IS_SUBVENUE'));
                 return false;
             }
 
@@ -271,6 +280,17 @@ class JemTableVenue extends Table
         $app         = Factory::getApplication();
         $jinput      = $app->input;
         $jemsettings = JemHelper::config();
+        $previousImagePath = '';
+        if ((int) $this->id > 0) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('image_path'))
+                    ->from($db->quoteName('#__jem_venues'))
+                    ->where($db->quoteName('id') . ' = ' . (int) $this->id)
+            );
+            $previousImagePath = JemVenueImagePath::normaliseRelativeFolder($db->loadResult());
+        }
 
         // Check if we're in the front or back
         if ($app->isClient('administrator')) {
@@ -294,7 +314,7 @@ class JemTableVenue extends Table
         }
 
         // Check if image was selected
-        $image_dir = JPATH_SITE.'/images/jem/venues/';
+        $image_dir = JemVenueImagePath::absoluteImageFolder($this->image_path ?? '');
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
@@ -363,7 +383,7 @@ class JemTableVenue extends Table
             $this->synchroniseChildVenueTimezones((int) $this->id, (string) $this->timezone);
         }
         if ($ret && $image_to_delete) {
-            JemHelper::delete_unused_image_files('venue', $image_to_delete);
+            JemHelper::delete_unused_image_files('venue', $image_to_delete, $previousImagePath);
         }
 
         return $ret;

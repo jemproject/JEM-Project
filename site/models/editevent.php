@@ -407,6 +407,10 @@ class JemModelEditevent extends JemModelEvent
         $where = array();
         $where[] = 'l.published = 1';
         $where[] = 'l.access IN (' . implode(',', $levels) . ')';
+        $parentVenueId = $app->input->getInt('parent_venue_id', 0);
+        if ($parentVenueId > 0) {
+            $where[] = '(l.id = ' . $parentVenueId . ' OR l.parent_venue_id = ' . $parentVenueId . ')';
+        }
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {

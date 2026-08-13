@@ -18,6 +18,7 @@ class JFormFieldVenueparent extends ListField
             ->select(array($db->quoteName('id', 'value'), $db->quoteName('venue', 'text'), $db->quoteName('city')))
             ->from($db->quoteName('#__jem_venues'))
             ->where($db->quoteName('published') . ' >= 0')
+            ->where('(' . $db->quoteName('parent_venue_id') . ' IS NULL OR ' . $db->quoteName('parent_venue_id') . ' = 0)')
             ->order(array($db->quoteName('venue') . ' ASC', $db->quoteName('city') . ' ASC'));
 
         if ($currentId > 0) {

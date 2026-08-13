@@ -147,7 +147,7 @@ $editIcon = $mediaRoot . '/media/com_jem/images/calendar_edit.webp';
 if (!function_exists('jem_venuesmap_venue_image')) {
     function jem_venuesmap_venue_image($venue, $class = 'jem-venuesmap-venue-image')
     {
-        $image = JemImage::flyercreator($venue->locimage ?? '', 'venue');
+        $image = JemImage::flyercreator($venue->locimage ?? '', 'venue', $venue->image_path ?? '');
 
         if (empty($image)) {
             return '';
@@ -160,7 +160,7 @@ if (!function_exists('jem_venuesmap_venue_image')) {
             return '';
         }
 
-        $alt = htmlspecialchars((string) ($venue->venue ?? ''), ENT_QUOTES, 'UTF-8');
+        $alt = htmlspecialchars(trim((string) ($venue->locimage_alt ?? '')) ?: (string) ($venue->venue ?? ''), ENT_QUOTES, 'UTF-8');
         $img = '<img src="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($src, '/'), ENT_QUOTES, 'UTF-8') . '" alt="' . $alt . '" class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '" loading="lazy" title="' . htmlspecialchars(Text::_('COM_JEM_CLICK_TO_ENLARGE'), ENT_QUOTES, 'UTF-8') . '" />';
 
         return '<a href="' . htmlspecialchars(Uri::root(true) . '/' . ltrim($original, '/'), ENT_QUOTES, 'UTF-8') . '" rel="lightbox" class="flyermodal jem-venuesmap-image-link" data-lightbox="venuesmap-venue-images" data-title="' . $alt . '">' . $img . '</a>';

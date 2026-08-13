@@ -1710,7 +1710,9 @@ static public function lightbox() {
             case 'venue':
                 $folder = 'venues';
                 $imagefile = $data->locimage;
-                $info = $data->venue;
+                $info = trim((string) ($data->locimage_alt ?? '')) !== ''
+                    ? (string) $data->locimage_alt
+                    : (string) $data->venue;
                 if(!$settings->flyer){
                     $precaption = Text::_('COM_JEM_VENUE');
                     if (property_exists($data, 'locid')) {

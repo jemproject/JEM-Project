@@ -1215,7 +1215,9 @@ Text::script('JCANCEL');
                                 <fieldset class="panelform">
                                     <ul class="adminformlist jem-venue-image-fields">
                                         <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div></li>
+                                        <li><?php echo $this->form->renderField('locimage_alt'); ?></li>
                                     </ul>
+                                    <?php echo $this->form->getInput('image_path'); ?>
                                 </fieldset>
                             </div>
                         </div>

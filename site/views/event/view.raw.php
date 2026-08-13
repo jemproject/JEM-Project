@@ -177,7 +177,7 @@ class JemViewEvent extends HtmlView
         }
         $showImages = (int) ($jemsettings->pdf_event_show_images ?? 1) === 1;
         $eventImageHtml = $showImages ? $this->buildPdfEventImageHtml($row, $eventImageWidth, $eventImageHeight) : '';
-        $venueImageHtml = $showImages ? $this->buildPdfImageHtml($row->locimage ?? '', 'venue', (string) $row->venue, $venueImageWidth, $venueImageHeight) : '';
+        $venueImageHtml = $showImages ? $this->buildPdfImageHtml($row->locimage ?? '', 'venue', (string) $row->venue, $venueImageWidth, $venueImageHeight, (string) ($row->venue_image_path ?? '')) : '';
         $includeLinks = (int) ($jemsettings->pdf_event_include_links ?? 1) === 1;
         $includeAttachments = (int) ($jemsettings->pdf_event_include_attachments ?? 1) === 1;
         $eventLinksHtml = $includeLinks && !empty($row->event_links) ? $this->buildPdfEventLinksHtml((array) $row->event_links) : '';
@@ -812,9 +812,9 @@ class JemViewEvent extends HtmlView
     /**
      * Builds an image tag for event and venue flyers.
      */
-    private function buildPdfImageHtml(string $image, string $type, string $alt, int $maxWidth, int $maxHeight): string
+    private function buildPdfImageHtml(string $image, string $type, string $alt, int $maxWidth, int $maxHeight, string $folderPath = ''): string
     {
-        $flyer = JemImage::flyercreator($image, $type);
+        $flyer = JemImage::flyercreator($image, $type, $folderPath);
 
         if (!empty($flyer['original'])) {
             $path = JPATH_SITE . '/' . $flyer['original'];
@@ -844,7 +844,14 @@ class JemViewEvent extends HtmlView
         );
 
         foreach ($candidates as $candidate) {
-            $html = $this->buildPdfImageHtml((string) $candidate, 'event', (string) $row->title, $maxWidth, $maxHeight);
+            $html = $this->buildPdfImageHtml(
+                (string) $candidate,
+                'event',
+                (string) $row->title,
+                $maxWidth,
+                $maxHeight,
+                (string) ($row->image_path ?? '')
+            );
 
             if ($html !== '') {
                 return $html;

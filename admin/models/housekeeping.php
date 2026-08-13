@@ -170,6 +170,12 @@ class JemModelHousekeeping extends BaseDatabaseModel
                     continue;
                 }
 
+                $thumbFolder = dirname($thumb);
+                if (!Folder::exists($thumbFolder) && !Folder::create($thumbFolder)) {
+                    JemHelper::addLogEntry('Unable to create thumbnail folder: ' . $thumbFolder, __METHOD__, Log::WARNING);
+                    continue;
+                }
+
                 JemImage::thumb($source, $thumb, $width, $height);
 
                 if (File::exists($thumb)) {
@@ -387,8 +393,13 @@ class JemModelHousekeeping extends BaseDatabaseModel
     private function getAssigned($type)
     {
         if ($type === JemModelHousekeeping::EVENTS) {
-            $query = 'SELECT datimage FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
-                . ' UNION SELECT fullimage FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
+            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), datimage)'
+                . ' FROM #__jem_events WHERE datimage <> ' . $this->_db->quote('')
+                . ' UNION SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), fullimage)'
+                . ' FROM #__jem_events WHERE fullimage <> ' . $this->_db->quote('');
+        } elseif ($type === JemModelHousekeeping::VENUES) {
+            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), locimage)'
+                . ' FROM #__jem_venues WHERE locimage <> ' . $this->_db->quote('');
         } else {
             $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
         }
@@ -408,19 +419,24 @@ class JemModelHousekeeping extends BaseDatabaseModel
     private function getAvailable($type)
     {
         // Initialize variables
-        $basePath = JPATH_SITE.'/images/jem/'.$this->map[$type]['folder'];
+        $basePath = rtrim(Path::clean(JPATH_SITE.'/images/jem/'.$this->map[$type]['folder']), DIRECTORY_SEPARATOR);
+        $thumbBase = rtrim(Path::clean($basePath . '/small'), DIRECTORY_SEPARATOR);
 
         $images = array ();
 
         // Get the list of files and folders from the given folder
-        $fileList = Folder::files($basePath);
+        $fileList = Folder::files($basePath, '.', true, true);
 
         // Iterate over the files if they exist
         if ($fileList !== false) {
-            foreach ($fileList as $file)
-            {
-                if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
-                    $images[] = $file;
+            foreach ($fileList as $file) {
+                $file = Path::clean($file);
+                if (strpos($file . DIRECTORY_SEPARATOR, $thumbBase . DIRECTORY_SEPARATOR) === 0) {
+                    continue;
+                }
+                $relative = ltrim(str_replace('\\', '/', substr($file, strlen($basePath))), '/');
+                if (is_file($file) && $relative !== '' && substr(basename($relative), 0, 1) != '.') {
+                    $images[] = $relative;
                 }
             }
         }

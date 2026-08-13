@@ -106,12 +106,12 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city', 'v.locimage'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -391,12 +391,12 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
             'a.online_meeting_url', 'a.online_meeting_label',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city', 'v.locimage'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
         $query->from($db->quoteName('#__jem_register').' AS r');
         $query->join('INNER', '#__jem_events AS a ON r.event = a.id');
         $query->join('LEFT', '#__jem_venues AS v ON v.id = a.locid');
@@ -535,9 +535,9 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
-        $query->select(array('v.venue', 'v.city', 'v.locimage'));
+        $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
         if (empty($registration) && ((int)$register_id > 0)) {
             $query->select(array('r.uid', 'r.status', 'r.waiting', 'r.comment', 'r.places',
                 'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
@@ -1403,8 +1403,8 @@ class plgJemMailer extends CMSPlugin
         array $options = array()
     ) {
         if ($event !== null) {
-            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
-            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event', $event->image_path ?? '');
+            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue', $event->venue_image_path ?? '');
         } else {
             $values += array('event_image_url' => '', 'venue_image_url' => '');
         }
@@ -1565,8 +1565,8 @@ class plgJemMailer extends CMSPlugin
     private function _renderNotification($subjectKey, $bodyKey, array $values, $event = null, $languageTag = null)
     {
         if ($event !== null) {
-            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event');
-            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue');
+            $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event', $event->image_path ?? '');
+            $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue', $event->venue_image_path ?? '');
         } else {
             $values += array('event_image_url' => '', 'venue_image_url' => '');
         }
@@ -1626,7 +1626,7 @@ class plgJemMailer extends CMSPlugin
     /**
      * Build an absolute public URL for an existing local JEM image.
      */
-    private function _notificationImageUrl($image, $type)
+    private function _notificationImageUrl($image, $type, $folderPath = '')
     {
         $folders = array('event' => 'events', 'venue' => 'venues');
         $image = trim(str_replace('\\', '/', (string) $image));
@@ -1634,8 +1634,13 @@ class plgJemMailer extends CMSPlugin
             return '';
         }
 
+        $folderPath = trim(str_replace('\\', '/', (string) $folderPath), '/');
+        if ($folderPath !== '' && preg_match('#(?:^|/)\.{1,2}(?:/|$)#', $folderPath)) {
+            return '';
+        }
+
         $relative = strpos($image, '/') === false
-            ? 'images/jem/' . $folders[$type] . '/' . $image
+            ? 'images/jem/' . $folders[$type] . '/' . ($folderPath !== '' ? $folderPath . '/' : '') . $image
             : ltrim($image, '/');
 
         if ($relative === '' || preg_match('#(?:^|/)\.{1,2}(?:/|$)#', $relative)) {

@@ -48,6 +48,11 @@ use Joomla\CMS\Language\Text;
                     <span class="jem-image-empty"><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                 <?php endif; ?>
             </dd>
+            <dt><?php echo $this->form->getLabel('locimage_alt'); ?></dt>
+            <dd class="jem-image-upload-control">
+                <?php echo $this->form->getInput('locimage_alt'); ?>
+                <?php echo $this->form->getInput('image_path'); ?>
+            </dd>
         </dl>
     </fieldset>
 <?php endif; ?>

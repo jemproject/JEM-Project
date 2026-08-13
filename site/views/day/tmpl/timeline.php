@@ -209,7 +209,7 @@ $getVenueImage = static function ($row) {
         return '';
     }
 
-    $image = JemImage::flyercreator($imageFile, 'venue');
+    $image = JemImage::flyercreator($imageFile, 'venue', $row->venue_image_path ?? '');
 
     if (!is_array($image)) {
         return '';

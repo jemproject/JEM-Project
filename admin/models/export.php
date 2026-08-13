@@ -44,7 +44,7 @@ class JemModelExport extends ListModel
             ->select(array(
                 'a.id', 'a.title', 'a.alias', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes', 'a.timezone_mode', 'a.timezone',
                 'a.parent_event_id', 'a.event_tree_order', 'a.show_in_calendar',
-                'a.introtext', 'a.fulltext', 'a.datimage', 'a.online_meeting_url', 'a.online_meeting_label',
+                'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.online_meeting_url', 'a.online_meeting_label',
                 'a.published', 'a.language',
                 'a.created', 'a.modified', 'a.locid',
                 $db->quoteName('v.venue', 'venue'), $db->quoteName('v.street', 'street'),
@@ -213,6 +213,7 @@ class JemModelExport extends ListModel
             'introtext' => Text::_('COM_JEM_INTROTEXT'),
             'fulltext' => Text::_('COM_JEM_EXPORT_CATALOG_FIELD_FULLTEXT'),
             'datimage' => Text::_('COM_JEM_IMAGE'),
+            'image_path' => Text::_('COM_JEM_EVENT_IMAGE_FOLDER'),
             'event_url' => Text::_('COM_JEM_EVENT_LINK_URL'),
             'online_meeting_url' => Text::_('COM_JEM_EVENT_FIELD_ONLINE_MEETING_URL_LABEL'),
             'online_meeting_label' => Text::_('COM_JEM_EVENT_FIELD_ONLINE_MEETING_LABEL_LABEL'),

@@ -120,7 +120,7 @@ class jemmyeventsTab extends cbTabHandler {
 
         $query      = 'SELECT DISTINCT a.id';
         if (!$fast) {
-            $query .= '  AS eventid, a.id, a.dates, a.datimage, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
+            $query .= '  AS eventid, a.id, a.dates, a.datimage, a.image_path, a.enddates, a.times, a.endtimes, a.title, a.created, a.locid,'
                     . ' CONCAT(a.introtext,a.fulltext) AS text, a.published, a.registra, a.maxplaces, a.waitinglist,'
                     . ' l.venue, l.city, l.state, l.url,'
                     . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug'
@@ -339,7 +339,7 @@ class jemmyeventsTab extends cbTabHandler {
 
                 /* Image field */
                 if ($event_image) {
-                    $dimage =    JEMImage::flyercreator($result->datimage, 'event');
+                    $dimage =    JEMImage::flyercreator($result->datimage, 'event', $result->image_path ?? '');
                     $pimage =    JEMOutput::flyer($result, $dimage, 'event');
                     $return .= "\n\t\t\t<td class='jemmyeventsCBTabTableImage'>";
                     $return .= "\n\t\t\t\t{$pimage}";

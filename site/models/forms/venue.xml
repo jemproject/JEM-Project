@@ -272,11 +272,20 @@
     </fieldset>
 
     <fieldset name="image" label="COM_JEM_IMAGE">
+        <field name="image_path" type="hidden"
+            filter="raw"
+        />
         <field name="locimage" type="imageselectevent"
             class="inputbox"
             size="40"
             label="COM_JEM_EDITVENUE_FIELD_IMAGESELECT"
             description="COM_JEM_EDITVENUE_FIELD_IMAGESELECT_DESC"
+        />
+        <field name="locimage_alt" type="text"
+            class="inputbox"
+            maxlength="255"
+            label="COM_JEM_VENUE_IMAGE_ALT"
+            description="COM_JEM_VENUE_IMAGE_ALT_DESC"
         />
         <field name="userfile" type="file"
             class="inputbox"

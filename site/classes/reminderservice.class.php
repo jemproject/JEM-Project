@@ -339,8 +339,8 @@ final class JemReminderService
             'event_description' => trim(strip_tags((string) $registration->event_description)),
             'event_url' => rtrim(Uri::root(), '/') . '/index.php?option=com_jem&view=event&id=' . (int) $registration->event_id,
             'reservation_url' => rtrim(Uri::root(), '/') . '/index.php?option=com_jem&view=registration&id=' . (int) $registration->registration_id,
-            'event_image_url' => $this->imageUrl($registration->datimage ?? '', 'event'),
-            'venue_image_url' => $this->imageUrl($registration->locimage ?? '', 'venue'),
+            'event_image_url' => $this->imageUrl($registration->datimage ?? '', 'event', $registration->image_path ?? ''),
+            'venue_image_url' => $this->imageUrl($registration->locimage ?? '', 'venue', $registration->venue_image_path ?? ''),
             'site_name' => (string) Factory::getApplication()->get('sitename'),
             'reminder_interval' => $definitionTitle,
         );
@@ -404,7 +404,7 @@ final class JemReminderService
                 'u.name AS user_name', 'u.email AS user_email', 'u.block AS user_block', 'u.activation AS user_activation',
                 'e.id AS event_id', 'e.title AS event_title', 'e.dates', 'e.times', 'e.start_utc',
                 'e.timezone_mode', 'e.timezone', 'e.locid', 'e.event_status', 'e.introtext AS event_description',
-                'e.datimage', 'v.venue', 'v.city', 'v.timezone AS venue_timezone', 'v.locimage',
+                'e.datimage', 'e.image_path', 'v.venue', 'v.city', 'v.timezone AS venue_timezone', 'v.locimage', 'v.image_path AS venue_image_path',
             ))
             ->from($this->db->quoteName('#__jem_register', 'r'))
             ->join('INNER', $this->db->quoteName('#__users', 'u') . ' ON u.id = r.uid')
@@ -560,7 +560,7 @@ final class JemReminderService
     /**
      * Build a public URL only for an existing image inside a JEM image folder.
      */
-    private function imageUrl($image, $type)
+    private function imageUrl($image, $type, $folderPath = '')
     {
         $folders = array('event' => 'events', 'venue' => 'venues');
         $image = trim(str_replace('\\', '/', (string) $image));
@@ -568,8 +568,13 @@ final class JemReminderService
             return '';
         }
 
+        $folderPath = trim(str_replace('\\', '/', (string) $folderPath), '/');
+        if ($folderPath !== '' && preg_match('#(?:^|/)\.{1,2}(?:/|$)#', $folderPath)) {
+            return '';
+        }
+
         $relative = strpos($image, '/') === false
-            ? 'images/jem/' . $folders[$type] . '/' . $image
+            ? 'images/jem/' . $folders[$type] . '/' . ($folderPath !== '' ? $folderPath . '/' : '') . $image
             : ltrim($image, '/');
         if ($relative === '' || preg_match('#(?:^|/)\.{1,2}(?:/|$)#', $relative)) {
             return '';

@@ -60,6 +60,8 @@ final class XssEscapingGuardTest extends TestCase
             'site/views/category/tmpl/responsive/default.php:echo $this->description;',
             'site/views/venue/tmpl/default.php:echo $this->venuedescription;',
             'site/views/venue/tmpl/responsive/default.php:echo $this->venuedescription;',
+            "site/views/eventsblog/tmpl/default.php:echo \$this->country === (string) \$option->value ? ' selected' : '';",
+            "site/views/eventsblog/tmpl/default.php:echo \$this->venueId === (int) \$option->value ? ' selected' : '';",
         ));
         $findings = array();
         $fields = array('title', 'name', 'venue', 'city', 'country', 'description', 'street', 'state', 'postalCode', 'url', 'urlclean', 'latitude', 'longitude');

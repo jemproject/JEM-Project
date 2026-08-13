@@ -119,3 +119,16 @@ ALTER TABLE `#__jem_countries` ADD COLUMN `currency` CHAR(3) CHARACTER SET ascii
 
 ALTER TABLE `#__jem_events` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage` /** CAN FAIL **/;
 ALTER TABLE `#__jem_categories` ADD COLUMN `event_image_default_storage` VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default` /** CAN FAIL **/;
+
+-- JEM 5.1.0: stable ID-based venue media paths. Empty image_path keeps the
+-- legacy flat images/jem/venues directory; no existing files are moved here.
+ALTER TABLE `#__jem_venues` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `locimage` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD COLUMN `locimage_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image_path` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_capacity_profiles` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_capacity_profiles` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_spaces` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_spaces` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_layouts` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_layouts` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;

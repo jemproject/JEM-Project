@@ -147,10 +147,15 @@ class JemTableEvent extends Table
                 return false;
             }
 
-            if ($parentEvent && (int) $parentEvent->locid > 0 && (int) ($this->locid ?? 0) > 0
-                && !$this->isVenueInHierarchy((int) $this->locid, (int) $parentEvent->locid)) {
-                $this->setError(Text::_('COM_JEM_EVENT_ERROR_UNRELATED_PARENT_VENUE'));
-                return false;
+            if ($parentEvent && (int) $parentEvent->locid > 0) {
+                if ((int) ($this->locid ?? 0) < 1) {
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_SUBVENUE_REQUIRED'));
+                    return false;
+                }
+                if (!$this->isVenueInHierarchy((int) $this->locid, (int) $parentEvent->locid)) {
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_UNRELATED_PARENT_VENUE'));
+                    return false;
+                }
             }
         } elseif ((int) $this->id > 0 && !$this->childrenRemainInsideParent()) {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_PARENT_CONFLICTS_CHILDREN'));
@@ -403,28 +408,18 @@ class JemTableEvent extends Table
 
     protected function isVenueInHierarchy($venueId, $rootVenueId)
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $seen = array();
-        $current = (int) $venueId;
-
-        while ($current > 0 && count($seen) < 100) {
-            if ($current === (int) $rootVenueId) {
-                return true;
-            }
-            if (isset($seen[$current])) {
-                return false;
-            }
-
-            $seen[$current] = true;
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('parent_venue_id'))
-                ->from($db->quoteName('#__jem_venues'))
-                ->where($db->quoteName('id') . ' = ' . $current);
-            $db->setQuery($query);
-            $current = (int) $db->loadResult();
+        if ((int) $venueId === (int) $rootVenueId) {
+            return true;
         }
 
-        return false;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('parent_venue_id'))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . (int) $venueId);
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() === (int) $rootVenueId;
     }
 
     protected function isHierarchyDescendant($table, $parentColumn, $candidateId, $recordId)
@@ -494,6 +489,16 @@ class JemTableEvent extends Table
         }
 
         // Check if image was selected
+        $previousImagePath = '';
+        if ((int) $this->id > 0) {
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('image_path'))
+                    ->from($db->quoteName('#__jem_events'))
+                    ->where($db->quoteName('id') . ' = ' . (int) $this->id)
+            );
+            $previousImagePath = JemEventImagePath::normaliseRelativeFolder($db->loadResult());
+        }
         $this->image_path = JemEventImagePath::normaliseRelativeFolder($this->image_path ?? '');
         $image_dir = JemEventImagePath::absoluteImageFolder($this->image_path);
         $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
@@ -616,7 +621,7 @@ class JemTableEvent extends Table
         $ret = parent::store($updateNulls);
         if ($ret && $images_to_delete) {
             foreach (array_filter(array_unique($images_to_delete)) as $image_to_delete) {
-                JemHelper::delete_unused_image_files('event', $image_to_delete);
+                JemHelper::delete_unused_image_files('event', $image_to_delete, $previousImagePath);
             }
         }
 

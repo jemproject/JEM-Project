@@ -53,7 +53,7 @@ class JemMapHelper
             $venueTypeJoin .= ' AND ' . $db->quoteName('vt.access') . ' IN (' . $typeAccess . ')';
         }
 
-        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.type_id, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, vt.name AS venue_type_name, vt.icon AS venue_type_icon, vt.color AS venue_type_color')
+        $query->select('DISTINCT v.id, v.venue, v.alias, v.color, v.type_id, v.street, v.postalCode, v.city, v.state, v.url, v.latitude, v.longitude, v.country, v.locdescription, v.locimage, v.image_path, v.locimage_alt, v.created_by, v.checked_out AS vChecked_out, v.checked_out_time AS vChecked_out_time, vt.name AS venue_type_name, vt.icon AS venue_type_icon, vt.color AS venue_type_color')
             ->from($db->quoteName('#__jem_venues', 'v'))
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
             ->where($db->quoteName('v.published') . ' = 1')
