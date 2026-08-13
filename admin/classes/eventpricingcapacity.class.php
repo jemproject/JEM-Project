@@ -216,6 +216,12 @@ class JemEventPricingCapacityService
         }
 
         $storedSnapshot = self::decodeSnapshot($existing['venue_snapshot'] ?? '');
+        if ($storedSnapshot && empty($storedSnapshot['country_code'])) {
+            // Snapshots created before country_code was added remain valid.
+            // Enrich them on the next event save without rebuilding their
+            // immutable Space/Layout selection.
+            $storedSnapshot['country_code'] = $requirements['country_code'];
+        }
         $storedAssignmentRows = self::loadEventAssignments($eventId);
         $storedAssignmentIds = self::sortedIds(array_column($storedAssignmentRows, 'venue_profile_space_id'));
         if (!$storedAssignmentIds && $storedSnapshot) {

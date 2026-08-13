@@ -8,8 +8,8 @@ use Joomla\CMS\Session\Session as CmsSession;
 use Joomla\Session\Session;
 use Joomla\Session\SessionInterface;
 
-if ($argc !== 7) {
-    fwrite(STDERR, "Usage: pricing_quote_concurrent_worker.php <joomla-root> <event-id> <price-id> <access-id> <group-id> <now>\n");
+if ($argc !== 8) {
+    fwrite(STDERR, "Usage: pricing_quote_concurrent_worker.php <joomla-root> <event-id> <price-id> <access-id> <group-id> <now> <quote-fingerprint>\n");
     exit(2);
 }
 
@@ -19,6 +19,7 @@ $priceId = (int) $argv[3];
 $accessId = (int) $argv[4];
 $groupId = (int) $argv[5];
 $now = (string) $argv[6];
+$quoteFingerprint = (string) $argv[7];
 
 define('_JEXEC', 1);
 define('JPATH_BASE', $root);
@@ -47,20 +48,38 @@ Factory::$application = $container->get(SiteApplication::class);
 
 require_once $root . '/components/com_jem/classes/pricingquote.class.php';
 $db = $container->get('DatabaseDriver');
-$service = new JemPricingQuoteService($db);
+$service = new JemPricingQuoteService($db, static fn (): string => $now);
+$identity = new class($accessId, $groupId) {
+    public readonly int $id;
+
+    public function __construct(
+        private readonly int $accessId,
+        private readonly int $groupId
+    ) {
+        $this->id = 999999;
+    }
+
+    public function getAuthorisedViewLevels(): array
+    {
+        return array($this->accessId);
+    }
+
+    public function getAuthorisedGroups(): array
+    {
+        return array($this->groupId);
+    }
+};
+$context = JemPricingQuoteContext::fromIdentity($identity, 2);
 $operationReference = JemRegistrationIdentity::generateOperationReference();
 
 try {
     $result = $service->withLockedQuote(
         $eventId,
         array(array('event_price_id' => $priceId, 'quantity' => 1)),
-        array(
-            'expectedPricingRevision' => 2,
-            'accessLevels' => array($accessId),
-            'userGroups' => array($groupId),
-            'now' => $now,
-        ),
+        $context,
+        $quoteFingerprint,
         $operationReference,
+        static fn () => null,
         static function (array $quote) use ($db, $eventId): array {
             // Keep the event row locked briefly so the competing worker must
             // wait and then re-read committed inventory before it can quote.

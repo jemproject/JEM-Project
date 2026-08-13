@@ -85,6 +85,7 @@ final class EventPricingCapacityCombinationsJoomlaIntegrationTest extends Joomla
 
         $selectedId = (int) $three['configuration_assignments'][1]['id'];
         $snapshot = JemVenueCapacityService::buildEventSnapshot($threeSpaceVenue, array($selectedId));
+        self::assertSame('ES', $snapshot['country_code']);
         self::assertCount(1, $snapshot['spaces']);
         self::assertSame($selectedId, (int) $snapshot['spaces'][0]['profile_space_id']);
         self::assertSame(20, (int) $snapshot['selected_capacity']);

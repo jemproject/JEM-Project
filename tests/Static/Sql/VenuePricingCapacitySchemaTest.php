@@ -105,6 +105,7 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         self::assertStringContainsString('saveDefaultConfiguration', $venueService);
         self::assertStringContainsString('getEventConfigurationOptions', $venueService);
         self::assertStringContainsString('selected_capacity', $venueService);
+        self::assertStringContainsString("'country_code'", $venueService);
         self::assertStringContainsString('profile_space_id', $venueService);
 
         self::assertStringContainsString('$data[\'venue_snapshot\']', $eventService);

@@ -96,11 +96,13 @@ class JemVenueCapacityService
         $profileId = self::ensureDefaultProfile($venueId);
         $query = $db->getQuery(true)
             ->select(array(
-                'id AS profile_id', 'code AS profile_code', 'name AS profile_name',
-                'revision AS profile_revision', 'capacity AS profile_capacity',
+                'p.id AS profile_id', 'p.code AS profile_code', 'p.name AS profile_name',
+                'p.revision AS profile_revision', 'p.capacity AS profile_capacity',
+                'v.country AS country_code',
             ))
-            ->from($db->quoteName('#__jem_venue_capacity_profiles'))
-            ->where($db->quoteName('id') . ' = ' . $profileId);
+            ->from($db->quoteName('#__jem_venue_capacity_profiles', 'p'))
+            ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = p.venue_id')
+            ->where('p.id = ' . $profileId);
         $db->setQuery($query);
         $configuration = array_merge(array(
             'profile_id'       => $profileId,
@@ -108,8 +110,10 @@ class JemVenueCapacityService
             'profile_name'     => self::DEFAULT_PROFILE_NAME,
             'profile_revision' => 1,
             'profile_capacity' => 0,
+            'country_code'     => '',
             'spaces'           => array(),
         ), $db->loadAssoc() ?: array());
+        $configuration['country_code'] = strtoupper(trim((string) $configuration['country_code']));
 
         $query = $db->getQuery(true)
             ->select(array(
@@ -453,6 +457,7 @@ class JemVenueCapacityService
         return array(
             'schema'             => 'jem-venue-capacity/v1',
             'venue_id'           => $venueId,
+            'country_code'       => (string) $configuration['country_code'],
             'profile_id'         => (int) $configuration['profile_id'],
             'profile_code'       => (string) $configuration['profile_code'],
             'profile_name'       => (string) $configuration['profile_name'],

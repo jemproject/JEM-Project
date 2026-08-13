@@ -124,6 +124,7 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
             self::assertSame(1, $eventData['pricing_revision']);
             $snapshot = json_decode($eventData['venue_snapshot'], true);
             self::assertSame('jem-venue-capacity/v1', $snapshot['schema']);
+            self::assertSame('ES', $snapshot['country_code']);
             self::assertSame(100, $snapshot['profile_capacity']);
             self::assertSame('#225588', $snapshot['spaces'][0]['color']);
             self::assertSame('#AA7722', $snapshot['spaces'][0]['layout']['color']);

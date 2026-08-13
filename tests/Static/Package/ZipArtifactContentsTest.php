@@ -327,11 +327,21 @@ final class ZipArtifactContentsTest extends TestCase
 
         foreach ($this->currentPackageZipFiles() as $zipFile) {
             $quoteService = $this->componentEntryContents($zipFile, 'site/classes/pricingquote.class.php');
+            $factory = $this->componentEntryContents($zipFile, 'site/factory.php');
 
             self::assertStringContainsString('final class JemPricingQuoteService', $quoteService);
+            self::assertStringContainsString('final class JemPricingQuoteContext', $quoteService);
+            self::assertStringContainsString('final class JemPricingQuoteException', $quoteService);
             self::assertStringContainsString("' FOR UPDATE'", $quoteService);
             self::assertStringContainsString('expectedPricingRevision', $quoteService);
+            self::assertStringContainsString("'quote_fingerprint'", $quoteService);
+            self::assertStringContainsString("'inventory_state'", $quoteService);
             self::assertStringContainsString('i.registration_revision = r.revision', $quoteService);
+            self::assertStringContainsString('classes/pricingquote.class.php', $factory);
+            self::assertStringContainsString(
+                "'country_code'",
+                $this->componentEntryContents($zipFile, 'admin/classes/venuecapacity.class.php')
+            );
         }
     }
 
