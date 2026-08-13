@@ -116,3 +116,6 @@ CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pricing_schema_ready', '0');
 
 ALTER TABLE `#__jem_countries` ADD COLUMN `currency` CHAR(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
+
+ALTER TABLE `#__jem_events` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage` /** CAN FAIL **/;
+ALTER TABLE `#__jem_categories` ADD COLUMN `event_image_default_storage` VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default` /** CAN FAIL **/;

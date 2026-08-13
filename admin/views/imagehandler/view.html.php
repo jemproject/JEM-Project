@@ -13,6 +13,7 @@ use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 use Joomla\String\StringHelper;
 
 /**
@@ -92,6 +93,12 @@ class JemViewImagehandler extends HtmlView
         $task   = $imageTasks[$task]['task'];
         $redi   = $imageTasks[$task]['redi'];
 
+        $baseFolder = $folder;
+        $imagePath  = $folder === 'events' ? JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', '')) : '';
+        if ($folder === 'events' && $imagePath !== '') {
+            $folder .= '/' . $imagePath;
+        }
+
         $app->input->set('folder', $folder);
         $this->canDeleteImages = JemHelperBackend::canManage('jem.tools.manage');
 
@@ -107,6 +114,8 @@ class JemViewImagehandler extends HtmlView
             $this->folder     = $folder;
             $this->task       = $redi;
             $this->search     = $search;
+            $this->baseFolder = $baseFolder;
+            $this->imagePath  = $imagePath;
             $this->state      = $this->get('state');
             $this->pagination = $pagination;
             parent::display($tpl);
@@ -144,6 +153,7 @@ class JemViewImagehandler extends HtmlView
 
         //get vars
         $task = Factory::getApplication()->input->get('task', '');
+        $imagePath = JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
 
         $ftp = ClientHelper::setCredentialsFromRequest('ftp');
 
@@ -152,6 +162,7 @@ class JemViewImagehandler extends HtmlView
         $this->jemsettings = $jemsettings;
         $this->request_url = $uri;
         $this->ftp         = $ftp;
+        $this->imagePath   = $imagePath;
 
         parent::display($tpl);
     }

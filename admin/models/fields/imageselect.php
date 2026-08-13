@@ -47,6 +47,10 @@ class JFormFieldImageselect extends ListField
         $imagePreviewId = $fieldId . '_imagelib';
         $uploadModalId = $fieldId . '_imageupload_modal';
         $selectModalId = $fieldId . '_imageselect_modal';
+        $imagePathValue = '';
+        if ((string) $imagetype === 'events' && $this->form) {
+            $imagePathValue = (string) $this->form->getValue('image_path', null, '');
+        }
 
         // Build the script.
         $script = array();
@@ -58,16 +62,35 @@ class JFormFieldImageselect extends ListField
         $script[] = '        preview: ' . json_encode($imagePreviewId) . ',';
         $script[] = '        uploadModal: ' . json_encode($uploadModalId) . ',';
         $script[] = '        selectModal: ' . json_encode($selectModalId) . ',';
+        $script[] = '        path: ' . json_encode((string) $imagetype === 'events' ? 'jform_image_path' : '') . ',';
         $script[] = '        base: ' . json_encode('../images/jem/' . $imagetype . '/') . ',';
         $script[] = '        blank: ' . json_encode('../media/com_jem/images/blank.webp');
         $script[] = '    };';
-        $script[] = '    function SelectImage(image, imagename, fieldId) {';
+        $script[] = '    function jemImagePreviewPath(field, image, imagePath) {';
+        $script[] = '        imagePath = (imagePath || "").replace(/^\\/+|\\/+$/g, "");';
+        $script[] = '        return image ? field.base + (imagePath ? imagePath + "/" : "") + image : field.blank;';
+        $script[] = '    }';
+        $script[] = '    function jemEventImagePathValue() {';
+        $script[] = '        var pathInput = document.getElementById("jform_image_path");';
+        $script[] = '        return pathInput ? pathInput.value.replace(/^\\/+|\\/+$/g, "") : "";';
+        $script[] = '    }';
+        $script[] = '    function jemUpdateImageFolderHint() {';
+        $script[] = '        var path = jemEventImagePathValue();';
+        $script[] = '        document.querySelectorAll("[data-jem-image-folder-hint]").forEach(function (item) {';
+        $script[] = '            item.textContent = "images/jem/events" + (path ? "/" + path : "");';
+        $script[] = '        });';
+        $script[] = '    }';
+        $script[] = '    function SelectImage(image, imagename, fieldId, imagePath) {';
         $script[] = '        var target = fieldId || window.jemActiveImageField || ' . json_encode($fieldId) . ';';
         $script[] = '        var field = window.jemImageFields[target];';
         $script[] = '        if (!field) { return; }';
+        $script[] = '        var pathInput = field.path ? document.getElementById(field.path) : null;';
+        $script[] = '        imagePath = typeof imagePath === "undefined" ? (pathInput ? pathInput.value : "") : imagePath;';
         $script[] = '        document.getElementById(field.image).value = image;';
         $script[] = '        document.getElementById(field.name).value = imagename;';
-        $script[] = '        document.getElementById(field.preview).src = image ? field.base + image : field.blank;';
+        $script[] = '        if (pathInput) { pathInput.value = image ? imagePath : ""; }';
+        $script[] = '        document.getElementById(field.preview).src = jemImagePreviewPath(field, image, imagePath);';
+        $script[] = '        jemUpdateImageFolderHint();';
         $script[] = '        [field.uploadModal, field.selectModal].some(function (modalId) {';
         $script[] = '            var modal = document.getElementById(modalId);';
         $script[] = '            if (!modal || !modal.classList.contains("show") || !window.bootstrap || !bootstrap.Modal) { return false; }';
@@ -75,6 +98,14 @@ class JFormFieldImageselect extends ListField
         $script[] = '            if (instance) { instance.hide(); }';
         $script[] = '            return true;';
         $script[] = '        });';
+        $script[] = '    }';
+        $script[] = '    function jemPrepareImageModal(modalId, baseUrl, activeFieldId) {';
+        $script[] = '        window.jemActiveImageField = activeFieldId;';
+        $script[] = '        var modal = document.getElementById(modalId);';
+        $script[] = '        var iframe = modal ? modal.querySelector("iframe") : null;';
+        $script[] = '        var path = jemEventImagePathValue();';
+        $script[] = '        if (iframe) { iframe.src = baseUrl + (path ? "&image_path=" + encodeURIComponent(path) : ""); }';
+        $script[] = '        jemUpdateImageFolderHint();';
         $script[] = '    }';
 
         switch ($imagetype)
@@ -129,10 +160,21 @@ img.venue-image {
 
         // Setup variables for display.
         $html = array();
-        $recordId = (int) $this->form->getValue('id');
+        $recordId = (int) ($this->form ? $this->form->getValue('id') : 0);
         $recordQuery = '&amp;record_id=' . $recordId;
         $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $recordQuery;
         $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
+        $folderHint = $imagePathValue !== ''
+            ? 'images/jem/events/' . $imagePathValue
+            : 'images/jem/events';
+        $uploadPrepare = 'jemPrepareImageModal('
+            . json_encode($uploadModalId) . ', '
+            . json_encode(str_replace('&amp;', '&', $link)) . ', '
+            . json_encode($fieldId) . ');';
+        $selectPrepare = 'jemPrepareImageModal('
+            . json_encode($selectModalId) . ', '
+            . json_encode(str_replace('&amp;', '&', $link2)) . ', '
+            . json_encode($fieldId) . ');';
 
         $html[] = HTMLHelper::_(
                 'bootstrap.renderModal',
@@ -158,16 +200,22 @@ img.venue-image {
         );
         $html[] = '<div class="input-group">';
         $html[] = '<input class="form-control" style="background: #fff;" type="text" id="' . $imageNameId . '" value="' . htmlspecialchars((string) $this->value, ENT_QUOTES, 'UTF-8') . '" disabled="disabled" />';
-        $html[] = '<button type="button" class="btn btn-primary" onclick="window.jemActiveImageField=\'' . $fieldId . '\';" data-bs-toggle="modal" data-bs-target="#' . $uploadModalId . '"><span class="icon-upload" aria-hidden="true"></span> '.Text::_('COM_JEM_UPLOAD').'</button>';
-        $html[] = '<button type="button" class="btn btn-primary" onclick="window.jemActiveImageField=\'' . $fieldId . '\';" data-bs-toggle="modal" data-bs-target="#' . $selectModalId . '"><span class="icon-images" aria-hidden="true"></span> '.Text::_('COM_JEM_SELECTIMAGE').'</button>';
+        $html[] = '<button type="button" class="btn btn-primary" onclick="' . htmlspecialchars($uploadPrepare, ENT_QUOTES, 'UTF-8') . '" data-bs-toggle="modal" data-bs-target="#' . $uploadModalId . '"><span class="icon-upload" aria-hidden="true"></span> '.Text::_('COM_JEM_UPLOAD').'</button>';
+        $html[] = '<button type="button" class="btn btn-primary" onclick="' . htmlspecialchars($selectPrepare, ENT_QUOTES, 'UTF-8') . '" data-bs-toggle="modal" data-bs-target="#' . $selectModalId . '"><span class="icon-images" aria-hidden="true"></span> '.Text::_('COM_JEM_SELECTIMAGE').'</button>';
         $html[] = '<button type="button" class="btn btn-danger" onclick="SelectImage(\'\', ' . htmlspecialchars(json_encode(Text::_('COM_JEM_SELECTIMAGE')), ENT_QUOTES, 'UTF-8') . ', \'' . $fieldId . '\');"><span class="icon-times" aria-hidden="true"></span> '.Text::_('COM_JEM_RESET').'</button>';
         $html[] = '</div>';
+        if ((string) $imagetype === 'events') {
+            $html[] = '<div class="small text-muted jem-event-image-folder-hint">'
+                . Text::_('COM_JEM_EVENT_IMAGE_FOLDER') . ': <code data-jem-image-folder-hint>'
+                . htmlspecialchars($folderHint, ENT_QUOTES, 'UTF-8') . '</code></div>';
+        }
         $html[] = "\n<input type=\"hidden\" id=\"" . $imageInputId . "\" name=\"$this->name\" value=\"$this->value\" />";
         $html[] = "<img src=\"../media/com_jem/images/blank.webp\" id=\"" . $imagePreviewId . "\" class=\"venue-image\" style=\"width:min(100%, " . $previewWidth . "px);height:" . $previewHeight . "px;max-width:100%;max-height:" . $previewHeight . "px;\" alt=\"".Text::_('COM_JEM_SELECTIMAGE_PREVIEW')."\" />";
         $html[] = "<script type=\"text/javascript\">";
         $html[] = "if (document.getElementById('" . $imageNameId . "').value!='') {";
         $html[] = "var imname = document.getElementById('" . $imageNameId . "').value;";
-        $html[] = "jsimg='../images/jem/$imagetype/' + imname;";
+        $html[] = "var imPath = document.getElementById('jform_image_path') ? document.getElementById('jform_image_path').value.replace(/^\\/+|\\/+$/g, '') : '';";
+        $html[] = "jsimg='../images/jem/$imagetype/' + (imPath ? imPath + '/' : '') + imname;";
         $html[] = "document.getElementById('" . $imagePreviewId . "').src= jsimg;";
         $html[] = "}";
         $html[] = "</script>";

@@ -15,6 +15,7 @@ use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Path;
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 
 /**
  * JEM Component Imagehandler Controller
@@ -100,6 +101,10 @@ class JemControllerImagehandler extends BaseController
         $jemsettings = JemAdmin::config();
 
         $file = $app->input->files->get('userfile', array(), 'array');
+        $task = $app->input->getCmd('task', '');
+        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
+
         $directories = array(
             'venueimgup'      => JPATH_SITE . '/images/jem/venues/',
             'eventimgup'      => JPATH_SITE . '/images/jem/events/',
@@ -112,19 +117,29 @@ class JemControllerImagehandler extends BaseController
             return;
         }
 
+        if ($task === 'eventimgup') {
+            if (!JemEventImagePath::ensureEventFolders($imagePath)) {
+                $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
+                $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
+                return;
+            }
+
+            $directories[$task] = JemEventImagePath::absoluteImageFolder($imagePath);
+        }
+
         $base_Dir = Path::clean($directories[$task]) . DIRECTORY_SEPARATOR;
         $baseCheck = rtrim(strtolower($base_Dir), '\\/') . DIRECTORY_SEPARATOR;
 
         //do we have an upload?
         if (empty($file['name'])) {
             $app->enqueueMessage(Text::_('COM_JEM_IMAGE_EMPTY'), 'warning');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
         if (!empty($file['error']) || !is_uploaded_file($file['tmp_name'])) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
@@ -133,7 +148,7 @@ class JemControllerImagehandler extends BaseController
 
         if ($check === false) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
@@ -143,21 +158,24 @@ class JemControllerImagehandler extends BaseController
 
         if (strpos(strtolower($filepath), $baseCheck) !== 0) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
         }
 
         //upload the image
         if (!File::upload($file['tmp_name'], $filepath)) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
+            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
-        } else {
-            echo "<script> alert(" . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . "); window.parent.SelectImage(" . json_encode($filename) . ", " . json_encode($filename) . "); </script>\n";
-            $app->close();
         }
-    }
 
+        if ($task === 'eventimgup') {
+            JemEventImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
+        }
+
+        echo '<script> alert(' . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . '); window.parent.SelectImage(' . json_encode($filename) . ', ' . json_encode($filename) . ', null, ' . json_encode($task === 'eventimgup' ? $imagePath : '') . '); </script>' . "\n";
+        $app->close();
+    }
     /**
      * logic to mass delete images
      *
@@ -177,6 +195,7 @@ class JemControllerImagehandler extends BaseController
         // Get some data from the request
         $images = Factory::getApplication()->input->get('rm', array(), 'array');
         $folder = Factory::getApplication()->input->getCmd('folder', '');
+        $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
         $allowedFolders = array('events', 'venues', 'categories');
 
         if (!in_array($folder, $allowedFolders, true)) {
@@ -186,7 +205,18 @@ class JemControllerImagehandler extends BaseController
         }
 
         $basePath = Path::clean(JPATH_SITE . '/images/jem/' . $folder);
+        $thumbBasePath = Path::clean($basePath . '/small');
+
+        if ($folder === 'events' && $imagePath !== '') {
+            $basePath = Path::clean(JemEventImagePath::absoluteImageFolder($imagePath));
+            $thumbBasePath = Path::clean(JemEventImagePath::absoluteThumbFolder($imagePath));
+        } else {
+            $imagePath = '';
+        }
+
         $baseCheck = rtrim(strtolower($basePath), '\\/') . DIRECTORY_SEPARATOR;
+        $thumbBaseCheck = rtrim(strtolower($thumbBasePath), '\\/') . DIRECTORY_SEPARATOR;
+        $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
 
         if (count($images)) {
             foreach ($images as $image) {
@@ -196,9 +226,9 @@ class JemControllerImagehandler extends BaseController
                 }
 
                 $fullPath = Path::clean($basePath . '/' . $image);
-                $fullPaththumb = Path::clean($basePath . '/small/' . $image);
+                $fullPaththumb = Path::clean($thumbBasePath . '/' . $image);
 
-                if (strpos(strtolower($fullPath), $baseCheck) !== 0 || strpos(strtolower($fullPaththumb), $baseCheck) !== 0) {
+                if (strpos(strtolower($fullPath), $baseCheck) !== 0 || strpos(strtolower($fullPaththumb), $thumbBaseCheck) !== 0) {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
                     continue;
                 }
@@ -220,7 +250,7 @@ class JemControllerImagehandler extends BaseController
             $task = 'selectcategoriesimg';
         }
 
-        $app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component');
+        $app->redirect('index.php?option=com_jem&view=imagehandler&task='.$task.'&tmpl=component' . $redirectPath);
     }
 
 }
