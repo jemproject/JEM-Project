@@ -1494,6 +1494,62 @@ a.label:focus {
     min-width: 100px;
 }
 
+/* Settings rows must grow with tall controls such as Contact Fields. */
+.jem-settings-form ul.adminformlist > li {
+    display: flow-root;
+    clear: both;
+}
+
+.jem-settings-form .label-form {
+    display: block;
+    float: none;
+    width: 100%;
+    min-width: 0;
+}
+
+.jem-settings-form .label-form > .control-group {
+    display: grid;
+    grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+    gap: .75rem 1rem;
+    align-items: center;
+    margin: 0;
+}
+
+.jem-settings-form .label-form .control-label,
+.jem-settings-form .label-form .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-settings-form .label-form .controls {
+    height: auto;
+    line-height: normal;
+    text-align: left;
+    border-top: 0;
+}
+
+.jem-settings-form .label-form select[multiple] {
+    display: block;
+    width: min(100%, 20rem);
+    min-height: 10.5rem;
+    height: auto;
+    overflow: auto;
+}
+
+@media (max-width: 767.98px) {
+    .jem-settings-form .label-form > .control-group {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-settings-form .label-form select[multiple] {
+        width: 100%;
+    }
+}
+
 .select-time {
     padding: 5px;
     margin-top: 5px;
