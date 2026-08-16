@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 
 
 
-<form action="<?php echo Route::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate">
+<form action="<?php echo Route::_('index.php?option=com_jem&view=settings'); ?>" method="post" id="settings-form" name="adminForm" class="form-validate jem-settings-form">
 
     <div id="j-main-container" class="j-main-container">
 
