@@ -739,7 +739,8 @@
                 <field name="capacity_pool_id" type="capacitypooloptions"
                     label="COM_JEM_EVENT_PRICE_CAPACITY_AREA" />
                 <field name="quota" type="number" min="0" step="1" filter="uint"
-                    label="COM_JEM_EVENT_PRICE_QUOTA" />
+                    label="COM_JEM_EVENT_PRICE_QUOTA"
+                    description="COM_JEM_EVENT_PRICE_QUOTA_DESC" />
                 <field name="min_quantity" type="number" min="1" step="1" default="1" filter="uint"
                     label="COM_JEM_EVENT_PRICE_MIN_QUANTITY" />
                 <field name="max_quantity" type="number" min="1" step="1" filter="uint"
@@ -756,7 +757,7 @@
                     label="COM_JEM_EVENT_PRICE_MIN_AGE" />
                 <field name="max_age" type="number" min="0" max="255" step="1" filter="uint"
                     label="COM_JEM_EVENT_PRICE_MAX_AGE" />
-                <field name="access_level_id" type="accesslevel"
+                <field name="access_level_id" type="accesslevel" default="1"
                     label="COM_JEM_EVENT_PRICE_ACCESS_LEVEL">
                     <option value="">COM_JEM_EVENT_PRICE_NO_ACCESS_RESTRICTION</option>
                 </field>

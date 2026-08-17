@@ -192,4 +192,29 @@ final class SampleDataSqlTest extends TestCase
             $code
         );
     }
+
+    public function testSampleDataImportIsAtomicAndChecksNewContentTables(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$this->_db->transactionStart();', $code);
+        self::assertStringContainsString('$this->_db->transactionCommit();', $code);
+        self::assertStringContainsString('$this->_db->transactionRollback();', $code);
+        self::assertStringContainsString('private function tableHasRows($table)', $code);
+
+        foreach (array(
+            '#__jem_venue_capacity_profiles',
+            '#__jem_venue_spaces',
+            '#__jem_venue_layouts',
+            '#__jem_venue_profile_spaces',
+            '#__jem_venue_capacity_areas',
+            '#__jem_event_space_layouts',
+            '#__jem_capacity_pools',
+            '#__jem_event_prices',
+            '#__jem_register_items',
+            '#__jem_register_history',
+        ) as $table) {
+            self::assertStringContainsString($table, $code, $table . ' must block unsafe Sample Data loading.');
+        }
+    }
 }

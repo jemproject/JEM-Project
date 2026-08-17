@@ -88,8 +88,15 @@ class JemEventPricingCapacityService
         if (!isset($item->management_fee_value) || $item->management_fee_value === '') {
             $item->management_fee_value = '0.00';
         }
-        if (empty($item->currency) && !empty($item->pricing_requirements['suggested_currency'])) {
-            $item->currency = $item->pricing_requirements['suggested_currency'];
+        if (empty($item->currency)) {
+            $suggestedCurrency = strtoupper(trim((string) ($item->pricing_requirements['suggested_currency'] ?? '')));
+            $defaultCurrency = strtoupper(trim((string) (JemHelper::config()->defaultCurrency ?? '')));
+            $currency = preg_match('/^[A-Z]{3}$/D', $suggestedCurrency) === 1
+                ? $suggestedCurrency
+                : $defaultCurrency;
+            if (preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
+                $item->currency = $currency;
+            }
         }
         if (empty($item->id) && empty($item->maxplaces)) {
             $firstOption = $item->pricing_requirements['configuration_options'][0] ?? array();
@@ -115,6 +122,7 @@ class JemEventPricingCapacityService
                 'available_until'   => null,
                 'min_age'           => null,
                 'max_age'           => null,
+                'access_level_id'   => 1,
                 'verification_mode' => 'none',
                 'published'         => 1,
             );

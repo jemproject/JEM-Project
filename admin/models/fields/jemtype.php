@@ -29,8 +29,10 @@ class JFormFieldJemtype extends FormField
     protected function getInput()
     {
         $types = $this->getTypes();
-        $class = trim('form-select ' . $this->class);
-        $class = preg_match('/(^|\s)w-auto(\s|$)/', $class) ? $class : $class . ' w-auto';
+        $classTokens = preg_split('/\s+/', trim((string) $this->class)) ?: array();
+        $classTokens[] = 'form-select';
+        $classTokens[] = 'w-auto';
+        $class = implode(' ', array_values(array_unique(array_filter($classTokens))));
 
         if ($types === array()) {
             $html = array();
@@ -56,9 +58,11 @@ class JFormFieldJemtype extends FormField
             $options[] = HTMLHelper::_('select.option', $t->id, $t->name);
         }
 
+        $useFancy = $this->multiple || count($types) >= $this->getFancySelectThreshold();
+        $selectClass = trim(preg_replace('/\bw-auto\b/', '', $class));
         $attribs = array(
             'id'    => $this->id,
-            'class' => $class,
+            'class' => $useFancy ? $selectClass : $class,
         );
 
         if ($this->multiple) {
@@ -74,7 +78,7 @@ class JFormFieldJemtype extends FormField
 
         $html = HTMLHelper::_('select.genericlist', $options, $name, $attribs, 'value', 'text', $value, $this->id);
 
-        if (!$this->multiple && count($types) < $this->getFancySelectThreshold()) {
+        if (!$useFancy) {
             return $html;
         }
 
@@ -82,7 +86,9 @@ class JFormFieldJemtype extends FormField
             ->usePreset('choicesjs')
             ->useScript('webcomponent.field-fancy-select');
 
-        $fancyAttr = ' class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '"';
+        // The wrapper must not carry form-select: Atum would render a second
+        // native dropdown arrow around the Choices control.
+        $fancyAttr = ' class="jem-type-fancy-select"';
         $fancyAttr .= ' style="width: min(100%, 36rem); max-width: 36rem;"';
         $fancyAttr .= $this->multiple ? ' multiple' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';

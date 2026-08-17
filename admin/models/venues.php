@@ -30,6 +30,7 @@ class JemModelVenues extends ListModel
                     'id', 'a.id',
                     'venue', 'a.venue',
                     'alias', 'a.alias',
+                    'parent_venue_id', 'a.parent_venue_id',
                     'state', 'a.state',
                     'country', 'a.country',
                     'url', 'a.url',
@@ -210,7 +211,16 @@ class JemModelVenues extends ListModel
         $orderCol    = $this->state->get('list.ordering');
         $orderDirn    = $this->state->get('list.direction');
 
-        $query->order($db->escape($orderCol.' '.$orderDirn));
+        if ($orderCol === 'a.venue') {
+            // Keep every root venue together with its direct children while
+            // preserving the alphabetical Venue heading behaviour.
+            $direction = strtoupper((string) $orderDirn) === 'DESC' ? 'DESC' : 'ASC';
+            $query->order('COALESCE(tree_parent.venue, a.venue) ' . $direction)
+                ->order('CASE WHEN a.parent_venue_id IS NULL OR a.parent_venue_id = 0 THEN 0 ELSE 1 END ASC')
+                ->order('a.venue ' . $direction);
+        } else {
+            $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        }
 
         return $query;
     }

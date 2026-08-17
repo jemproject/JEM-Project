@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -78,33 +79,66 @@ class JemModelSampledata extends BaseDatabaseModel
         // extract queries out of sql file
         $queries = $this->splitSql($buffer);
 
-        // Process queries
-        foreach ($queries as $query) {
-            $query = trim($query);
-            if ($query != '' && $query[0] != '#') {
-                $this->_db->setQuery($query);
-                $this->_db->execute();
+        $transactionStarted = false;
+
+        try {
+            $this->_db->transactionStart();
+            $transactionStarted = true;
+
+            // Process queries
+            foreach ($queries as $query) {
+                $query = trim($query);
+                if ($query != '' && $query[0] != '#') {
+                    $this->_db->setQuery($query);
+                    $this->_db->execute();
+                }
             }
+
+            // Populate the derived UTC boundaries after venues and timezone modes exist.
+            $this->rebuildEventUtcDates();
+
+            // Assign the current manager as creator for all sample records.
+            $this->assignCurrentUserId();
+
+            // move images in proper directory
+            $this->moveImages();
+
+            // move attachments in proper directory
+            $this->moveAttachments();
+
+            // delete temporary extraction folder
+            if (!$this->deleteTmpFolder()) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
+            }
+
+            $this->_db->transactionCommit();
+
+            return true;
+        } catch (\Throwable $error) {
+            if ($transactionStarted) {
+                try {
+                    $this->_db->transactionRollback();
+                } catch (\Throwable $rollbackError) {
+                    JemHelper::addLogEntry(
+                        'Unable to roll back failed Sample Data import: ' . $rollbackError->getMessage(),
+                        __METHOD__,
+                        Log::ERROR
+                    );
+                }
+            }
+
+            if (is_array($this->filelist) && !empty($this->filelist['folder']) && is_dir($this->filelist['folder'])) {
+                $this->deleteTmpFolder();
+            }
+
+            JemHelper::addLogEntry(
+                'Sample Data import failed and was rolled back: ' . $error->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+
+            return false;
         }
-
-        // Populate the derived UTC boundaries after venues and timezone modes exist.
-        $this->rebuildEventUtcDates();
-
-        // Assign the current manager as creator for all sample records.
-        $this->assignCurrentUserId();
-
-        // move images in proper directory
-        $this->moveImages();
-
-        // move attachments in proper directory
-        $this->moveAttachments();
-
-        // delete temporary extraction folder
-        if (!$this->deleteTmpFolder()) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
-        }
-
-        return true;
     }
 
     /**
@@ -496,6 +530,16 @@ class JemModelSampledata extends BaseDatabaseModel
     private function moveImages()
     {
         $imagebase = JPATH_ROOT . '/images/jem';
+        $structuredImageBase = Path::clean($this->filelist['folder'] . '/images/jem');
+
+        if (is_dir($structuredImageBase)
+            && !$this->copyDirectoryContents($structuredImageBase, Path::clean($imagebase))) {
+            throw new RuntimeException(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_COPY_IMAGE'));
+        }
+
+        // Keep only originals in sampledata.zip. JEM creates its configured
+        // thumbnails after the structured media tree has been copied.
+        $this->createStructuredImageThumbnails($structuredImageBase);
 
         foreach ($this->filelist['files'] as $file) {
             if (strpos($file, 'attachment-') === 0) {
@@ -523,6 +567,88 @@ class JemModelSampledata extends BaseDatabaseModel
             // Use native PHP copy function instead of File::copy
             copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
         }
+        return true;
+    }
+
+    /**
+     * Generate mirrored event and venue thumbnails from Sample Data originals.
+     * Venue media includes venue, profile, space, layout and area images.
+     *
+     * @param  string  $structuredImageBase  Extracted images/jem directory.
+     * @return void
+     */
+    private function createStructuredImageThumbnails($structuredImageBase)
+    {
+        $settings = JemHelper::config();
+
+        if ((int) ($settings->gddisabled ?? 0) !== 1) {
+            return;
+        }
+
+        foreach (array('events', 'venues') as $collection) {
+            $sourceRoot = Path::clean($structuredImageBase . '/' . $collection);
+
+            if (!is_dir($sourceRoot)) {
+                continue;
+            }
+
+            $iterator = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($sourceRoot, \FilesystemIterator::SKIP_DOTS)
+            );
+
+            foreach ($iterator as $file) {
+                if (!$file->isFile() || !preg_match('/\.(?:gif|jpe?g|png|webp)$/i', $file->getFilename())) {
+                    continue;
+                }
+
+                $relative = str_replace('\\', '/', substr($file->getPathname(), strlen($sourceRoot) + 1));
+                if (strpos('/' . $relative, '/small/') !== false) {
+                    continue;
+                }
+
+                $folder = dirname($relative);
+                $folder = $folder === '.' ? '' : $folder;
+                $filename = $file->getFilename();
+
+                if ($collection === 'events') {
+                    $original = Path::clean(JPATH_SITE . '/' . JemEventImagePath::imagePath($folder, $filename));
+                    JemEventImagePath::createThumbnail($folder, $filename, $original, $settings);
+                } else {
+                    $original = Path::clean(JPATH_SITE . '/' . JemVenueImagePath::imagePath($folder, $filename));
+                    JemVenueImagePath::createThumbnail($folder, $filename, $original, $settings);
+                }
+            }
+        }
+    }
+
+    /**
+     * Copy an extracted Sample Data media tree while preserving its stable
+     * event and venue ID folders.
+     */
+    private function copyDirectoryContents($source, $destination)
+    {
+        $source = Path::clean($source);
+        $destination = Path::clean($destination);
+
+        if (!is_dir($source)) {
+            return false;
+        }
+        if (!is_dir($destination) && !Folder::create($destination)) {
+            return false;
+        }
+
+        foreach (array_diff(scandir($source), array('.', '..')) as $entry) {
+            $sourcePath = Path::clean($source . '/' . $entry);
+            $destinationPath = Path::clean($destination . '/' . $entry);
+            if (is_dir($sourcePath)) {
+                if (!$this->copyDirectoryContents($sourcePath, $destinationPath)) {
+                    return false;
+                }
+            } elseif (!copy($sourcePath, $destinationPath)) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -614,6 +740,40 @@ class JemModelSampledata extends BaseDatabaseModel
     private function checkForJemData()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
+
+        // A previous reset or failed legacy import may have left rows in newer
+        // child tables while events, venues and categories appear empty. Those
+        // rows can collide with the explicit stable IDs used by Sample Data.
+        foreach (array(
+            '#__jem_notifications_attempts',
+            '#__jem_notifications',
+            '#__jem_register_items',
+            '#__jem_register_history',
+            '#__jem_register',
+            '#__jem_event_prices',
+            '#__jem_capacity_pools',
+            '#__jem_event_space_layouts',
+            '#__jem_venue_capacity_areas',
+            '#__jem_venue_profile_spaces',
+            '#__jem_venue_layouts',
+            '#__jem_venue_spaces',
+            '#__jem_venue_capacity_profiles',
+            '#__jem_cats_event_relations',
+            '#__jem_event_series',
+            '#__jem_attachments',
+            '#__jem_links',
+            '#__jem_events',
+            '#__jem_groupmembers',
+            '#__jem_groups',
+            '#__jem_special_days',
+            '#__jem_venues',
+            '#__jem_types',
+        ) as $table) {
+            if ($this->tableHasRows($table)) {
+                return true;
+            }
+        }
+
         $query = $db->getQuery(true);
 
         $query->select("id, catname");
@@ -654,6 +814,26 @@ class JemModelSampledata extends BaseDatabaseModel
     }
 
     /**
+     * Check whether an optional JEM content table contains at least one row.
+     *
+     * Upgrade paths can temporarily lack a newer table, so a missing table is
+     * treated as empty here and will be created by the schema guard later.
+     */
+    private function tableHasRows($table)
+    {
+        if (!$this->getTableColumns($table)) {
+            return false;
+        }
+
+        $query = $this->_db->getQuery(true)
+            ->select('1')
+            ->from($this->_db->quoteName($table));
+        $this->_db->setQuery($query, 0, 1);
+
+        return $this->_db->loadResult() !== null;
+    }
+
+    /**
      * Assign current user id to sample records.
      *
      * @return boolean True if data exists
@@ -668,7 +848,21 @@ class JemModelSampledata extends BaseDatabaseModel
             return false;
         }
 
-        foreach (array('#__jem_events', '#__jem_venues', '#__jem_types', '#__jem_links', '#__jem_attachments') as $table) {
+        foreach (array(
+            '#__jem_events',
+            '#__jem_event_series',
+            '#__jem_venues',
+            '#__jem_types',
+            '#__jem_links',
+            '#__jem_attachments',
+            '#__jem_capacity_pools',
+            '#__jem_event_prices',
+            '#__jem_venue_capacity_profiles',
+            '#__jem_venue_spaces',
+            '#__jem_venue_layouts',
+            '#__jem_event_space_layouts',
+            '#__jem_venue_capacity_areas',
+        ) as $table) {
             $query = $db->getQuery(true);
             $query->update($table);
             $query->set('created_by = ' . $db->quote($userId));

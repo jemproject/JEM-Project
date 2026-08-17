@@ -1116,6 +1116,8 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             </div>
         <?php } ?>
 
+        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
+
         <?php if ($showMoreInformation) : ?>
             <div class="jem-more-information jem-event-more-information">
                 <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
@@ -1495,8 +1497,6 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     break;
             }?>
         <?php endif; ?>
-
-        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
 
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
             <hr class="jem-hr">

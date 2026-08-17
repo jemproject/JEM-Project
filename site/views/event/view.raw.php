@@ -318,6 +318,10 @@ class JemViewEvent extends HtmlView
             $html[] = '<div class="jem-pdf-section">' . $description . '</div>';
         }
 
+        if (empty($row->parent_event_id) && !empty($row->child_events)) {
+            $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events);
+        }
+
         if ($showOnlineMeeting && (int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && !empty($row->online_meeting_url)) {
             $meetingLabel = !empty($row->online_meeting_label) ? (string) $row->online_meeting_label : Text::_('COM_JEM_ONLINE_MEETING');
             $html[] = '<h2>' . htmlspecialchars($meetingLabel, ENT_COMPAT, 'UTF-8') . '</h2>';
@@ -393,10 +397,6 @@ class JemViewEvent extends HtmlView
 
         if ($showRegistration && (int) ($jemsettings->pdf_event_include_registration ?? 1) === 1 && $this->eventAllowsRegistration($row)) {
             $html[] = $this->buildPdfRegistrationHtml($row);
-        }
-
-        if (empty($row->parent_event_id) && !empty($row->child_events)) {
-            $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events);
         }
 
         $footer = JemPdfView::buildViewTextBlock('footer');

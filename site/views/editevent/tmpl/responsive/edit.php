@@ -757,6 +757,17 @@ $document->addStyleDeclaration('
 <script>
     jQuery(document).ready(function($){
 
+        var showEventHierarchyOptions = function(){
+            var hasParent = parseInt($('#jform_parent_event_id').val() || '0', 10) > 0;
+            $('.jem-event-parent-dependent').prop('hidden', !hasParent);
+        };
+        $('#jform_parent_event_id').on('change', showEventHierarchyOptions);
+        showEventHierarchyOptions();
+
+    });
+
+    jQuery(document).ready(function($){
+
         var showUnregistraUntil = function(){
             var unregistra = $("#jform_unregistra");
 
@@ -878,6 +889,14 @@ $document->addStyleDeclaration('
                     <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
                     <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
                     <dd><?php echo $this->form->getInput('timezone'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('parent_event_id'); ?></dt>
+                    <dd><?php echo $this->form->getInput('parent_event_id'); ?></dd>
+                    <dt class="jem-event-parent-dependent"><?php echo $this->form->getLabel('event_hierarchy_note'); ?></dt>
+                    <dd class="jem-event-parent-dependent"><?php echo $this->form->getInput('event_hierarchy_note'); ?></dd>
+                    <dt class="jem-event-parent-dependent"><?php echo $this->form->getLabel('event_tree_order'); ?></dt>
+                    <dd class="jem-event-parent-dependent"><?php echo $this->form->getInput('event_tree_order'); ?></dd>
+                    <dt class="jem-event-parent-dependent"><?php echo $this->form->getLabel('show_in_calendar'); ?></dt>
+                    <dd class="jem-event-parent-dependent"><?php echo $this->form->getInput('show_in_calendar'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

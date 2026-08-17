@@ -57,20 +57,26 @@ Text::script('JCANCEL');
 ?>
 <style>
     #image-event .jem-venue-image-fields {
+        display: grid;
+        gap: .85rem;
+        list-style: none;
         margin: 0;
         padding: 0;
     }
 
+    #image-event .jem-venue-image-fields > li,
+    #image-event .jem-venue-image-control .label-form,
     #image-event .jem-venue-image-control .control-group,
     #image-event .jem-venue-image-control .controls {
+        float: none;
+        clear: both;
+        width: 100%;
+        min-width: 0;
         margin: 0;
     }
 
     #image-event .jem-venue-image-control .controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 0.45rem;
+        display: block;
     }
 
     #image-event .jem-venue-image-control .control-label,
@@ -85,46 +91,90 @@ Text::script('JCANCEL');
         margin: 0;
     }
 
-    #image-event .jem-venue-image-control input[type="text"] {
-        width: 13.5rem;
+    #image-event .jem-venue-image-control .input-group {
+        display: grid;
+        grid-template-columns: minmax(8rem, 1fr) auto auto auto;
+        width: 100%;
     }
 
-    #image-event .jem-venue-image-control .btn-margin {
+    #image-event .jem-venue-image-control .input-group > .form-control {
+        width: auto;
+        min-width: 0;
+    }
+
+    #image-event .jem-venue-image-control .input-group > .btn {
         margin: 0;
         white-space: nowrap;
     }
 
-    #image-event .jem-venue-image-control .controls::after {
-        content: "";
-        flex: 0 0 100%;
-        order: 1;
+    #image-event .jem-event-image-folder-hint {
+        margin-top: .55rem;
+        overflow-wrap: anywhere;
     }
 
     #image-event .jem-venue-image-control img.venue-image {
-        flex: 0 0 auto;
-        order: 2;
+        display: block;
+        clear: both;
         max-width: 100%;
         object-fit: contain;
-        margin: 0.1rem 0 0;
+        margin: .75rem 0 0;
     }
 
-    @media (max-width: 640px) {
-        #image-event .jem-venue-image-control .controls {
+    #image-event .jem-venue-image-control img.venue-image[src$="blank.webp"] {
+        display: none;
+    }
+
+    #image-event .jem-venue-image-alt .control-group {
+        display: grid;
+        grid-template-columns: minmax(9rem, 40%) minmax(0, 1fr);
+        align-items: center;
+        gap: .75rem;
+        margin: 0;
+    }
+
+    #image-event .jem-venue-image-alt .control-label,
+    #image-event .jem-venue-image-alt .controls {
+        float: none;
+        width: auto;
+        min-width: 0;
+        margin: 0;
+    }
+
+    #image-event .jem-venue-image-alt input[type="text"] {
+        width: 100%;
+        max-width: none;
+    }
+
+    @media (max-width: 767.98px) {
+        #image-event .jem-venue-image-control .input-group {
             display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .45rem;
+        }
+
+        #image-event .jem-venue-image-control .input-group > .form-control {
+            grid-column: 1 / -1;
+            width: 100%;
+            margin: 0;
+            border-radius: var(--border-radius, .25rem);
+        }
+
+        #image-event .jem-venue-image-control .input-group > .btn {
+            width: 100%;
+            margin: 0;
+            border-radius: var(--border-radius, .25rem);
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 420px) {
+        #image-event .jem-venue-image-control .input-group,
+        #image-event .jem-venue-image-alt .control-group {
             grid-template-columns: 1fr;
         }
 
-        #image-event .jem-venue-image-control input[type="text"],
-        #image-event .jem-venue-image-control .btn-margin {
-            width: 100%;
-        }
-
-        #image-event .jem-venue-image-control .controls::after {
-            display: none;
-        }
-
-        #image-event .jem-venue-image-control img.venue-image {
-            justify-self: start;
+        #image-event .jem-venue-image-control .input-group > .form-control {
+            grid-column: auto;
         }
     }
 </style>
@@ -1074,46 +1124,47 @@ Text::script('JCANCEL');
                             <?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_VENUE') : Text::sprintf('COM_JEM_VENUE_DETAILS', $this->item->id); ?>
                         </legend>
 
-                        <ul class="adminformlist">
+                        <ul class="adminformlist jem-venue-identity-fields">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue_tree_order'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                         </ul>
-                        <section class="jem-venue-address-card" aria-labelledby="jem-venue-address-title">
+                        <section class="jem-venue-location-card jem-venue-address-card" aria-labelledby="jem-venue-address-title">
                             <h3 class="h5" id="jem-venue-address-title"><?php echo Text::_('COM_JEM_ADDRESS'); ?></h3>
                             <ul class="adminformlist">
-                            <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
-                            <li>
-                                <div class="label-form">
-                                    <div class="control-group">
-                                        <div class="control-label"><span aria-hidden="true">&nbsp;</span></div>
-                                        <div class="controls">
-                                            <div class="btn-toolbar gap-2 mb-2">
-                                                <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
-                                                <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
-                                            </div>
-                                            <div class="alert alert-info d-none align-items-center gap-2 mt-2 mb-0" id="jem-suggested-address">
-                                                <span id="jem-suggested-address-text"></span>
-                                                <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+                            </ul>
+                        </section>
+
+                        <div class="jem-venue-geocode-actions">
+                            <div class="btn-toolbar gap-2">
+                                <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
+                                <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
+                            </div>
+                            <div class="alert alert-info d-none align-items-center gap-2 mb-0" id="jem-suggested-address">
+                                <span id="jem-suggested-address-text"></span>
+                                <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
+                            </div>
+                        </div>
+
+                        <section class="jem-venue-location-card jem-venue-coordinates-card" aria-labelledby="jem-venue-coordinates-title">
+                            <h3 class="h5" id="jem-venue-coordinates-title"><?php echo Text::_('COM_JEM_COORDINATES'); ?></h3>
+                            <ul class="adminformlist">
+                                <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             </ul>
                         </section>
                         <ul class="adminformlist">
-                            <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('email'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('phone'); ?></div></li>
@@ -1134,7 +1185,7 @@ Text::script('JCANCEL');
                         </div>
                     </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_CAPACITY_TAB')); ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_PROFILES_TAB')); ?>
                     <?php echo $this->loadTemplate('capacity'); ?>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
@@ -1215,7 +1266,7 @@ Text::script('JCANCEL');
                                 <fieldset class="panelform">
                                     <ul class="adminformlist jem-venue-image-fields">
                                         <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div></li>
-                                        <li><?php echo $this->form->renderField('locimage_alt'); ?></li>
+                                        <li class="jem-venue-image-alt"><?php echo $this->form->renderField('locimage_alt'); ?></li>
                                     </ul>
                                     <?php echo $this->form->getInput('image_path'); ?>
                                 </fieldset>

@@ -55,8 +55,9 @@ final class VenuePricingCapacitySchemaTest extends TestCase
             );
         }
         self::assertSame(3, substr_count($update, 'ADD COLUMN `color`'));
-        self::assertStringContainsString('INSERT IGNORE INTO `#__jem_venue_capacity_profiles`', $update);
-        self::assertStringContainsString("'default','Main'", $update);
+        self::assertStringNotContainsString('INSERT IGNORE INTO `#__jem_venue_capacity_profiles`', $update);
+        self::assertStringContainsString('DELETE FROM `#__jem_venue_capacity_profiles`', $update);
+        self::assertStringContainsString('NOT EXISTS (SELECT 1 FROM `#__jem_venue_profile_spaces`', $update);
         self::assertStringContainsString("`name` = 'Main'", $update);
         self::assertStringContainsString("`name` = 'Default configuration'", $update);
         self::assertStringContainsString("'venue_profile_main_label_migrated','1'", $update);
@@ -67,7 +68,7 @@ final class VenuePricingCapacitySchemaTest extends TestCase
         }
     }
 
-    public function testInstallerRepairsCapacitySchemaAndDefaultProfilesIdempotently(): void
+    public function testInstallerRepairsCapacitySchemaWithoutInventingProfiles(): void
     {
         $script = $this->read('/script.php');
 
@@ -76,10 +77,12 @@ final class VenuePricingCapacitySchemaTest extends TestCase
             self::assertStringContainsString("'" . $table . "'", $script);
         }
 
-        self::assertStringContainsString('installDefaultVenueCapacityProfiles($db)', $script);
+        self::assertStringContainsString('migrateExistingVenueCapacityProfiles($db)', $script);
+        self::assertStringNotContainsString('installDefaultVenueCapacityProfiles($db)', $script);
+        self::assertStringContainsString("'DELETE FROM ' . \$db->quoteName('#__jem_venue_capacity_profiles')", $script);
+        self::assertStringContainsString("\$db->quoteName('#__jem_event_space_layouts')", $script);
         self::assertStringContainsString('backfillEventSpaceLayouts($db)', $script);
         self::assertStringContainsString("'#__jem_event_space_layouts'", $script);
-        self::assertStringContainsString("'INSERT IGNORE INTO '", $script);
         self::assertStringContainsString('$db->quote(\'Main\')', $script);
         self::assertStringContainsString('$db->quote(\'Default configuration\')', $script);
         self::assertStringContainsString('$migrationKey = \'venue_profile_main_label_migrated\'', $script);

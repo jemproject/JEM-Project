@@ -500,7 +500,7 @@ $this->document->addStyleDeclaration('
                     <?php if($this->jemsettings->defaultCategory && empty($item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('cats'); ?></div></li>
+                    <li class="jem-event-categories-field"><div class="label-form"><?php echo $this->form->renderfield('cats'); ?></div></li>
                 </ul>
             </fieldset>
 

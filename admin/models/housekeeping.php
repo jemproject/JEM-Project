@@ -253,7 +253,35 @@ class JemModelHousekeeping extends BaseDatabaseModel
     public function truncateAllData($deleteAttachmentFiles = false, $deleteImageFiles = false)
     {
         $result = true;
-        $tables = array('attachments', 'categories', 'cats_event_relations', 'events', 'groupmembers', 'groups', 'links', 'register', 'types', 'venues');
+        // Child and history tables must be reset as well as their legacy
+        // parents. Otherwise stale explicit IDs can block a later Sample Data
+        // import even though events, venues and categories appear empty.
+        $tables = array(
+            'notifications_attempts',
+            'notifications',
+            'register_items',
+            'register_history',
+            'register',
+            'event_prices',
+            'capacity_pools',
+            'event_space_layouts',
+            'venue_capacity_areas',
+            'venue_profile_spaces',
+            'venue_layouts',
+            'venue_spaces',
+            'venue_capacity_profiles',
+            'cats_event_relations',
+            'event_series',
+            'attachments',
+            'links',
+            'events',
+            'groupmembers',
+            'groups',
+            'special_days',
+            'categories',
+            'venues',
+            'types',
+        );
         $db = Factory::getContainer()->get('DatabaseDriver');
 
         if ($deleteImageFiles && !$this->deleteAllImageFiles()) {
@@ -274,6 +302,23 @@ class JemModelHousekeeping extends BaseDatabaseModel
                 JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, Log::ERROR);
                 $result = false;
             }
+        }
+
+        // Keep the reusable global reminder definitions, but remove definitions
+        // tied to events that were just deleted.
+        $db->setQuery('DELETE FROM #__jem_reminders WHERE event_id <> 0');
+        if ($db->execute() === false) {
+            JemHelper::addLogEntry('Error deleting event reminder definitions', __METHOD__, Log::ERROR);
+            $result = false;
+        }
+
+        // This marker describes installed Sample Data rather than a setting.
+        $db->setQuery(
+            'DELETE FROM #__jem_config WHERE keyname = ' . $db->quote('sample_showcase_catalog')
+        );
+        if ($db->execute() === false) {
+            JemHelper::addLogEntry('Error deleting the Sample Data marker', __METHOD__, Log::ERROR);
+            $result = false;
         }
 
         $categoryTable = $this->getTable('category', 'JemTable');

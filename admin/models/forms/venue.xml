@@ -222,7 +222,7 @@
     <fieldset name="capacity_configuration"
         label="COM_JEM_VENUE_CAPACITY_CONFIGURATION"
     >
-        <field name="capacity_configuration_submitted" type="hidden" default="1" />
+        <field name="capacity_configuration_submitted" type="hidden" default="0" />
         <field name="capacity_configuration_json" type="hidden" filter="raw" />
         <field name="capacity_profile_id" type="hidden" />
         <field name="capacity_profile_name" type="text"

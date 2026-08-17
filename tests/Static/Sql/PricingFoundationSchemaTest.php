@@ -115,6 +115,23 @@ final class PricingFoundationSchemaTest extends TestCase
         self::assertStringNotContainsString('`discount_amount`', $install);
     }
 
+    public function testUpgradeModifyStatementsAreCompatibleWithJoomlaSchemaChecker(): void
+    {
+        $update = (string) file_get_contents(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.1.0.sql');
+        $script = (string) file_get_contents(JEM_TEST_ROOT . '/script.php');
+
+        self::assertStringContainsString(
+            "MODIFY `min_quantity` INT(10) UNSIGNED NOT NULL DEFAULT '1'",
+            $update
+        );
+        self::assertStringContainsString(
+            "MODIFY `access_level_id` INT(10) UNSIGNED NULL DEFAULT '1'",
+            $update
+        );
+        self::assertStringNotContainsString('MODIFY COLUMN', $update);
+        self::assertStringNotContainsString('MODIFY COLUMN', $script);
+    }
+
     public function testInstallerRepairIsIdempotentAndFeatureNeutral(): void
     {
         $script = (string) file_get_contents(JEM_TEST_ROOT . '/script.php');

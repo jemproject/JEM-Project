@@ -1042,6 +1042,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             </div>
         <?php } ?>
 
+        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
+
         <?php if ($showMoreInformation) : ?>
             <div class="jem-more-information jem-event-more-information">
                 <a id="jem-event-more-information-<?php echo (int) $this->item->id; ?>"
@@ -1437,8 +1439,6 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 } ?>
             </dl>
         <?php } ?>
-
-        <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
 
         <?php if (!empty($this->item->pluginevent->onEventEnd)) : ?>
             <hr class="jem-hr">

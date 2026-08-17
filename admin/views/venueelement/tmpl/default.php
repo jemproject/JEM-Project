@@ -17,6 +17,61 @@ $parentVenueId = Factory::getApplication()->input->getInt('parent_venue_id', 0);
 Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 ?>
 
+<style>
+    .jem-venue-tree-entry {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 0;
+    }
+
+    .jem-venue-tree-entry.is-child {
+        padding-inline-start: 1rem;
+    }
+
+    .jem-venue-tree-line {
+        display: inline-flex;
+        align-items: baseline;
+        min-width: 0;
+    }
+
+    .jem-venue-tree-arrow {
+        flex: 0 0 auto;
+        margin-inline-end: .4rem;
+        color: var(--secondary-color, #6c757d);
+        font-weight: 700;
+    }
+
+    .jem-venue-tree-parent {
+        margin-inline-start: 1.15rem;
+        color: var(--secondary-color, #6c757d);
+        font-size: .78rem;
+        line-height: 1.25;
+    }
+
+    .jem-venueelement-pagination .pagination__wrapper,
+    .jem-venueelement-pagination .pagination-toolbar {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .jem-venueelement-pagination ul.pagination {
+        display: flex !important;
+        flex-flow: row wrap;
+        justify-content: center;
+        gap: .35rem;
+        width: auto;
+        margin: 0 !important;
+        padding: 0;
+    }
+
+    .jem-venueelement-pagination ul.pagination > li {
+        display: block;
+        padding: 0;
+    }
+</style>
+
 <form action="index.php?option=com_jem&amp;view=venueelement&amp;tmpl=component" method="post" name="adminForm" id="adminForm">
 
 <table class="adminform">
@@ -49,7 +104,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal
     <tfoot>
         <tr>
             <td colspan="6">
-                <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+                <div class="jem-venueelement-pagination">
+                    <?php echo (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks() : $this->pagination->getListFooter()); ?>
+                </div>
             </td>
         </tr>
     </tfoot>
@@ -59,7 +116,16 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal
          <tr class="row<?php echo $i % 2; ?>">
             <td class="center"><?php echo $this->pagination->getRowOffset($i); ?></td>
             <td style="text-align: left;">
-                 <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
+                <?php $isChildVenue = (int) ($row->parent_venue_id ?? 0) > 0; ?>
+                <div class="jem-venue-tree-entry<?php echo $isChildVenue ? ' is-child' : ''; ?>">
+                    <span class="jem-venue-tree-line">
+                        <?php if ($isChildVenue) : ?><span class="jem-venue-tree-arrow" aria-hidden="true">↳</span><?php endif; ?>
+                        <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
+                    </span>
+                    <?php if ($isChildVenue && !empty($row->parent_venue_name)) : ?>
+                        <small class="jem-venue-tree-parent"><?php echo Text::_('COM_JEM_PARENT_VENUE'); ?>: <?php echo $this->escape($row->parent_venue_name); ?></small>
+                    <?php endif; ?>
+                </div>
             </td>
             <td class="center">
             <div class="colorpreview<?php echo ($this->escape($row->color) == '') ? ' transparent-color" title="transparent"' : '" style="background-color:' . $this->escape($row->color) . '"' ?> aria-labelledby="color-desc-<?php echo $this->escape($row->id); ?>"></div></td>

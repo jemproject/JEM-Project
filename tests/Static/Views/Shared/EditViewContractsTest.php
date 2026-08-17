@@ -57,7 +57,7 @@ final class EditViewContractsTest extends TestCase
         yield 'admin venue edit' => array(
             JEM_TEST_ROOT . '/admin/views/venue/tmpl/edit.php',
             array('capacity', 'attachments'),
-            array('COM_JEM_VENUE_CAPACITY_TAB', 'COM_JEM_EVENT_ATTACHMENTS_TAB'),
+            array('COM_JEM_VENUE_PROFILES_TAB', 'COM_JEM_EVENT_ATTACHMENTS_TAB'),
         );
         yield 'site venue edit' => array(
             JEM_TEST_ROOT . '/site/views/editvenue/tmpl/edit.php',
@@ -108,6 +108,15 @@ final class EditViewContractsTest extends TestCase
         $template = $this->read($path);
 
         self::assertStringContainsString('/components/com_jem/common/views/tmpl/default_attachments_edit.php', $template);
+    }
+
+    public function testEventTypeFancySelectDoesNotRenderASecondNativeArrow(): void
+    {
+        $field = $this->read(JEM_TEST_ROOT . '/admin/models/fields/jemtype.php');
+
+        self::assertStringContainsString('$fancyAttr = \' class="jem-type-fancy-select"\'', $field);
+        self::assertStringContainsString('\'class\' => $useFancy ? $selectClass : $class', $field);
+        self::assertStringNotContainsString('$fancyAttr = \' class="\' . htmlspecialchars($class', $field);
     }
 
     private function read(string $path): string

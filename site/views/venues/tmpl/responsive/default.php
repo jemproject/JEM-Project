@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\String\StringHelper;
 
 ?>
 <div id="jem" class="jem_venues<?php echo $this->pageclass_sfx; ?>">
@@ -65,6 +64,7 @@ use Joomla\String\StringHelper;
             } ?>
             <div itemscope itemtype="https://schema.org/Place" class="venue_id<?php echo $this->escape($row->locid); ?>">
                 <h2 class="jem">
+                    <?php if (!empty($row->parent_venue_id)) : ?><span class="gi" aria-hidden="true">|&mdash;</span><?php endif; ?>
                     <a href="<?php echo $row->linkEventsPublished; ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->venue); ?></span></a>
                     <?php echo JemOutput::publishstateicon($row); ?>
                     <?php echo $venueaccess;?>
@@ -74,21 +74,15 @@ use Joomla\String\StringHelper;
                     <div class="jem-row">
         <div class="jem-info">
           <dl class="jem-dl" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-            <?php if (($this->settings->get('global_show_detlinkvenue',1)) && (!empty($row->url))) : ?>
-            <dt class="venue_website hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_WEBSITE'); ?>" >
-              <?php echo Text::_('COM_JEM_WEBSITE').':'; ?>
+            <?php if (!empty($row->parent_venue_id)) : ?>
+            <dt class="venue_parent_id hasTooltip" data-placement="bottom" data-original-title="<?php echo Text::_('COM_JEM_PARENT_VENUE_ID'); ?>">
+              <?php echo Text::_('COM_JEM_PARENT_VENUE_ID').':'; ?>
             </dt>
-            <dd class="venue_website">
-              <a href="<?php echo $this->escape($row->url); ?>" target="_blank">
-              <?php
-                if (StringHelper::strlen($row->url) > 35) {
-                  $urlclean = htmlspecialchars(StringHelper::substr($row->url, 0 , 35)) . '...';
-                } else {
-                  $urlclean = htmlspecialchars($row->url);
-                }
-                echo $urlclean;
-              ?>
-              </a>
+            <dd class="venue_parent_id">
+              <?php echo (int) $row->parent_venue_id; ?>
+              <?php if (!empty($row->parent_venue_name)) : ?>
+                <span class="text-muted">(<?php echo $this->escape($row->parent_venue_name); ?>)</span>
+              <?php endif; ?>
             </dd>
             <?php endif; ?>
 

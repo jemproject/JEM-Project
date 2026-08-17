@@ -3225,6 +3225,12 @@ div#jem.jem_specialdays #specialDayList .jem-specialdays-location-cell {
     color: #666;
 }
 
+div#jem .jem-editevent-field-cats .choices__inner,
+div#jem .jem-editevent-field-cats .choices__list,
+div#jem .jem-editevent-field-cats .choices__item {
+    text-align: left !important;
+}
+
 @media (max-width: 640px) {
     .jem-programme-item {
         grid-template-columns: 1fr;

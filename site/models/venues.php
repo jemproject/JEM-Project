@@ -89,10 +89,12 @@ class JemModelVenues extends JemModelEventslist
         $query->select(array('l.id AS locid', 'l.locimage', 'l.image_path', 'l.locimage_alt', 'l.locdescription', 'l.url', 'l.venue', 'l.created', 'l.created_by',
                              'l.street', 'l.postalCode', 'l.city', 'l.state', 'l.country',
                              'l.map', 'l.latitude', 'l.longitude', 'l.published', 'l.access',
+                             'l.parent_venue_id', 'tree_parent.venue AS parent_venue_name',
                              'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',
                              'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time'));
         $query->select(array($case_when_l));
         $query->from('#__jem_venues as l');
+        $query->join('LEFT', '#__jem_venues AS tree_parent ON tree_parent.id = l.parent_venue_id');
         $query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
         $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
@@ -147,7 +149,11 @@ class JemModelVenues extends JemModelEventslist
         }
 
         $query->group(array('l.id'));
-        $query->order(array('l.ordering', 'l.venue'));
+        $query->order(array(
+            'COALESCE(tree_parent.venue, l.venue) ASC',
+            'CASE WHEN l.parent_venue_id IS NULL OR l.parent_venue_id = 0 THEN 0 ELSE 1 END ASC',
+            'l.venue ASC',
+        ));
 
         return $query;
     }

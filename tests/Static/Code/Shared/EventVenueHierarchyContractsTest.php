@@ -250,6 +250,8 @@ final class EventVenueHierarchyContractsTest extends TestCase
 
         self::assertStringContainsString('(l.id = ' . "' . \$parentVenueId . '" . ' OR l.parent_venue_id = ', $selector);
         self::assertStringContainsString("getInt('parent_venue_id', 0)", $selector);
+        self::assertStringContainsString('parent.venue AS parent_venue_name', $selector);
+        self::assertStringContainsString("join('LEFT', '#__jem_venues AS parent ON parent.id = l.parent_venue_id')", $selector);
         self::assertStringContainsString('getSelectedParentVenueId', $modal);
         self::assertStringContainsString('getElementById("jform_parent_event_id")', $modal);
         self::assertStringContainsString('parentVenue > 0 ? "&parent_venue_id=" + parentVenue', $modal);
@@ -259,6 +261,7 @@ final class EventVenueHierarchyContractsTest extends TestCase
         self::assertStringContainsString('getSelectedParentVenueId', $frontendModal);
         self::assertStringContainsString('getElementById("jform_parent_event_id")', $frontendModal);
         self::assertStringContainsString('(l.id = ' . "' . \$parentVenueId . '" . ' OR l.parent_venue_id = ', $frontendModel);
+        self::assertStringContainsString('AS parent_venue_name', $frontendModel);
 
         foreach (array(
             'site/views/editevent/tmpl/choosevenue.php',
@@ -267,6 +270,47 @@ final class EventVenueHierarchyContractsTest extends TestCase
             $source = $this->read($template);
             self::assertStringContainsString('name="parent_venue_id"', $source, $template);
             self::assertStringContainsString('empty($this->parentVenueId)', $source, $template);
+            self::assertStringContainsString('jem-venue-tree-entry', $source, $template);
+            self::assertStringContainsString("Text::_('COM_JEM_PARENT_VENUE')", $source, $template);
+        }
+
+        $backendTemplate = $this->read('admin/views/venueelement/tmpl/default.php');
+        self::assertStringContainsString('jem-venue-tree-entry', $backendTemplate);
+        self::assertStringContainsString('jem-venueelement-pagination', $backendTemplate);
+        self::assertStringContainsString('flex-flow: row wrap', $backendTemplate);
+    }
+
+    public function testVenueListsGroupAlphabeticalChildrenUnderTheirParent(): void
+    {
+        $backendModel = $this->read('admin/models/venues.php');
+        self::assertStringContainsString('$orderCol === \'a.venue\'', $backendModel);
+        self::assertStringContainsString('COALESCE(tree_parent.venue, a.venue)', $backendModel);
+        self::assertStringContainsString('CASE WHEN a.parent_venue_id IS NULL OR a.parent_venue_id = 0 THEN 0 ELSE 1 END ASC', $backendModel);
+        self::assertStringContainsString("->order('a.venue ' . \$direction)", $backendModel);
+
+        $frontendModel = $this->read('site/models/venues.php');
+        self::assertStringContainsString('tree_parent.venue AS parent_venue_name', $frontendModel);
+        self::assertStringContainsString('COALESCE(tree_parent.venue, l.venue) ASC', $frontendModel);
+        self::assertStringContainsString('CASE WHEN l.parent_venue_id IS NULL OR l.parent_venue_id = 0 THEN 0 ELSE 1 END ASC', $frontendModel);
+        self::assertStringContainsString("'l.venue ASC'", $frontendModel);
+    }
+
+    public function testVenueListsReplaceTheDefaultWebsitePresentationWithParentId(): void
+    {
+        $backend = $this->read('admin/views/venues/tmpl/default.php');
+        self::assertStringContainsString('COM_JEM_PARENT_VENUE_ID', $backend);
+        self::assertStringContainsString('window.localStorage.setItem(\'<?php echo $columnStorageKey; ?>\', \'7\')', $backend);
+        self::assertStringContainsString('<span class="gi">|&mdash;</span>', $backend);
+
+        foreach (array(
+            'site/views/venues/tmpl/default.php',
+            'site/views/venues/tmpl/responsive/default.php',
+        ) as $template) {
+            $source = $this->read($template);
+            self::assertStringContainsString('COM_JEM_PARENT_VENUE_ID', $source, $template);
+            self::assertStringContainsString('parent_venue_name', $source, $template);
+            self::assertStringContainsString('<span class="gi" aria-hidden="true">|&mdash;</span>', $source, $template);
+            self::assertStringNotContainsString('venue_website', $source, $template);
         }
     }
 

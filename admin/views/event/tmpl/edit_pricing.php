@@ -490,6 +490,10 @@ document.addEventListener('DOMContentLoaded', function () {
             'available_from', 'available_until', 'min_age', 'max_age',
             'access_level_id', 'user_group_id', 'verification_mode'
         ];
+        const inlineHelpReference = document.querySelector('#jform_pricing_mode-desc');
+        const showInlineHelp = inlineHelpReference
+            && !inlineHelpReference.classList.contains('d-none')
+            && window.getComputedStyle(inlineHelpReference).display !== 'none';
         priceRows().forEach(function (row) {
             const rowId = row.querySelector('[name$="[id]"]');
             const rowCode = row.querySelector('[name$="[code]"]');
@@ -504,6 +508,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (group) {
                         group.classList.add('jem-price-advanced-field');
                     }
+                }
+            });
+
+            row.querySelectorAll('[id$="-desc"]').forEach(function (description) {
+                description.classList.add('hide-aware-inline-help');
+                description.classList.toggle('d-none', !showInlineHelp);
+
+                const text = description.querySelector('.form-text');
+                if (text) {
+                    text.classList.remove('hide-aware-inline-help', 'd-none');
                 }
             });
 

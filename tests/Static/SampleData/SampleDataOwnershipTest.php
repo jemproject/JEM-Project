@@ -8,10 +8,18 @@ final class SampleDataOwnershipTest extends TestCase
 {
     private const REASSIGNED_TABLES = array(
         '#__jem_events',
+        '#__jem_event_series',
         '#__jem_venues',
         '#__jem_types',
         '#__jem_links',
         '#__jem_attachments',
+        '#__jem_capacity_pools',
+        '#__jem_event_prices',
+        '#__jem_venue_capacity_profiles',
+        '#__jem_venue_spaces',
+        '#__jem_venue_layouts',
+        '#__jem_event_space_layouts',
+        '#__jem_venue_capacity_areas',
     );
 
     public function testSampleDataOwnershipUsesCurrentUser(): void

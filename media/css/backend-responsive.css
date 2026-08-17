@@ -1312,6 +1312,13 @@ fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) 
     padding-left: 0 !important;
 }
 
+.jem-event-categories-field .controls,
+.jem-event-categories-field .choices__inner,
+.jem-event-categories-field .choices__list,
+.jem-event-categories-field .choices__item {
+    text-align: left !important;
+}
+
 fieldset.adminform fieldset.radio label,
 fieldset.panelform fieldset.radio label {
     min-width: 85px;
@@ -1874,8 +1881,13 @@ fieldset.jem-specialdays-import #replace_specialdays {
     }
 }
 
-/* Venue identity and address grouping. */
-.jem-venue-address-card {
+/* Venue identity, address and coordinates grouping. */
+.jem-venue-identity-fields {
+    display: flow-root;
+    margin-bottom: 1rem;
+}
+
+.jem-venue-location-card {
     margin: 1.25rem 0;
     padding: 1.25rem;
     border: 1px solid #cbd8e6;
@@ -1884,34 +1896,104 @@ fieldset.jem-specialdays-import #replace_specialdays {
     box-shadow: 0 .125rem .25rem rgba(31, 51, 73, .04);
 }
 
-.jem-venue-address-card > h3 {
+.jem-venue-coordinates-card {
+    background: #f7f9fc;
+}
+
+.jem-venue-location-card > h3 {
     margin: 0 0 1rem;
     padding-bottom: .65rem;
     border-bottom: 1px solid #d7e2ed;
+    text-align: left;
 }
 
-.jem-venue-address-card .adminformlist {
+.jem-venue-location-card .adminformlist {
+    display: grid;
+    gap: .75rem;
     margin: 0;
 }
 
-[data-bs-theme="dark"] .jem-venue-address-card {
+.jem-venue-location-card .adminformlist > li {
+    display: flow-root;
+    min-width: 0;
+}
+
+.jem-venue-location-card .label-form {
+    display: block;
+    float: none;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+}
+
+.jem-venue-location-card .control-group {
+    display: grid;
+    grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+    gap: .75rem 1rem;
+    align-items: center;
+    margin: 0;
+}
+
+.jem-venue-location-card .control-label,
+.jem-venue-location-card .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-venue-geocode-actions {
+    display: grid;
+    gap: .75rem;
+    justify-items: center;
+    margin: .75rem 0;
+    padding: 0 1rem;
+}
+
+.jem-venue-geocode-actions .btn-toolbar {
+    justify-content: center;
+    margin: 0;
+}
+
+.jem-venue-geocode-actions #jem-suggested-address {
+    width: 100%;
+}
+
+[data-bs-theme="dark"] .jem-venue-location-card {
     border-color: #435568;
     background: #253442;
     box-shadow: none;
 }
 
-[data-bs-theme="dark"] .jem-venue-address-card > h3 {
+[data-bs-theme="dark"] .jem-venue-location-card > h3 {
     border-bottom-color: #435568;
 }
 
 @media (max-width: 767.98px) {
-    .jem-venue-address-card {
+    .jem-venue-location-card {
         padding: 1rem;
+    }
+
+    .jem-venue-location-card .control-group {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-venue-geocode-actions {
+        padding: 0;
+    }
+
+    .jem-venue-geocode-actions .btn-toolbar,
+    .jem-venue-geocode-actions .btn {
+        width: 100%;
     }
 }
 
 /* Point 4D: venue capacity cards shared with the classic backend layout. */
 .jem-venue-capacity-editor {
+    --jem-capacity-text-control-width: 23rem;
+    --jem-capacity-number-control-width: 8rem;
     display: grid;
     gap: 1rem;
 }
@@ -2050,17 +2132,49 @@ fieldset.jem-specialdays-import #replace_specialdays {
 .jem-capacity-overview-node-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: .5rem;
+}
+
+.jem-capacity-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .65rem;
+    min-height: 9rem;
+    text-align: center;
+}
+
+.jem-capacity-empty-state > .form-text {
+    max-width: 56rem;
+}
+
+.jem-capacity-empty-state[hidden],
+[data-role="profile-configuration"][hidden] {
+    display: none !important;
 }
 
 .jem-capacity-overview-node-identity {
     display: grid;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
-.jem-capacity-overview-node-identity strong {
+.jem-capacity-overview-node-name {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    min-width: 0;
+}
+
+.jem-capacity-overview-node-name strong {
+    min-width: 0;
     overflow-wrap: anywhere;
+}
+
+.jem-capacity-overview-node-header > .badge {
+    flex: 0 0 auto;
+    margin-left: auto;
 }
 
 .jem-capacity-overview-node-type {
@@ -2075,15 +2189,35 @@ fieldset.jem-specialdays-import #replace_specialdays {
     padding-left: .45rem;
 }
 
-.jem-capacity-venue-limit {
-    max-width: 32rem;
+.jem-capacity-venue-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
 }
 
 .jem-capacity-venue-limit > .control-group {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
     margin: 0;
 }
 
-.jem-capacity-venue-limit.is-over-capacity {
+.jem-capacity-venue-limit .control-label,
+.jem-capacity-venue-limit .controls,
+.jem-capacity-venue-limit label {
+    float: none;
+    width: auto;
+    margin: 0;
+}
+
+.jem-capacity-venue-limit input[type="number"] {
+    width: var(--jem-capacity-number-control-width);
+    max-width: var(--jem-capacity-number-control-width);
+}
+
+.jem-capacity-venue-toolbar.is-over-capacity {
     border-color: rgba(220, 53, 69, .55);
     background: rgba(220, 53, 69, .07);
 }
@@ -2121,16 +2255,21 @@ fieldset.jem-specialdays-import #replace_specialdays {
 
 .jem-capacity-profile-actions {
     display: flex;
-    flex: 1 1 24rem;
+    flex: 0 1 auto;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     gap: .5rem;
-    max-width: 32rem;
+    min-width: 0;
 }
 
 .jem-capacity-profile-actions .form-select {
-    flex: 1 1 13rem;
-    max-width: 18rem;
+    flex: 0 1 var(--jem-capacity-text-control-width);
+    width: var(--jem-capacity-text-control-width);
+    max-width: 100%;
+}
+
+.jem-capacity-profile-actions .d-inline-block > .btn {
+    white-space: nowrap;
 }
 
 .jem-capacity-profile-actions .d-inline-block > .btn:disabled {
@@ -2143,48 +2282,68 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-profile-details {
-    display: grid;
-    grid-template-columns: minmax(14rem, 1fr) auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: .75rem 1rem;
-    align-items: end;
+    align-items: center;
 }
 
 .jem-capacity-profile-details > .control-group {
     margin: 0;
 }
 
-.jem-capacity-profile-capacity {
-    justify-self: end;
-}
-
-.jem-capacity-profile-capacity > .control-group {
+.jem-capacity-profile-name {
     display: flex;
     align-items: center;
+    flex: 0 1 auto;
     gap: .65rem;
-    margin: 0;
+    min-width: 18rem;
 }
 
-.jem-capacity-profile-capacity .control-label,
-.jem-capacity-profile-capacity .control-label label {
+.jem-capacity-profile-name > label {
     flex: 0 0 auto;
     margin: 0;
-    padding: 0;
     white-space: nowrap;
 }
 
-.jem-capacity-profile-capacity .controls {
-    flex: 0 0 8rem;
-    min-width: 0;
+.jem-capacity-profile-name > input {
+    flex: 0 1 var(--jem-capacity-text-control-width);
+    width: var(--jem-capacity-text-control-width);
+    max-width: 100%;
+    min-width: 10rem;
+}
+
+.jem-capacity-profile-default {
+    flex: 0 0 auto;
+}
+
+.jem-capacity-profile-capacity {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: .65rem;
+}
+
+.jem-capacity-profile-capacity > label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .jem-capacity-profile-capacity input[type="number"] {
-    width: 8rem;
-    max-width: 8rem;
+    flex: 0 0 var(--jem-capacity-number-control-width);
+    width: var(--jem-capacity-number-control-width);
+    max-width: var(--jem-capacity-number-control-width);
+}
+
+.jem-capacity-profile-name > .form-text,
+.jem-capacity-profile-capacity > .form-text {
+    flex-basis: 100%;
 }
 
 .jem-capacity-profile-details .jem-capacity-profile-summary {
-    grid-column: 1 / -1;
-    justify-self: start;
+    flex: 0 0 auto;
     min-height: 2.4rem;
     padding: .45rem .7rem;
     background: color-mix(in srgb, var(--body-color, #1f2933) 5%, transparent);
@@ -2199,12 +2358,12 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-profile-help {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
     margin: 0;
 }
 
 .jem-capacity-validation {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
     font-weight: 600;
 }
 
@@ -2328,42 +2487,6 @@ fieldset.jem-specialdays-import #replace_specialdays {
     grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 }
 
-.jem-capacity-overview-image {
-    margin-left: auto;
-}
-
-.jem-capacity-overview-image img {
-    width: 3.5rem;
-    height: 2.5rem;
-    object-fit: cover;
-    border-radius: .25rem;
-}
-
-.jem-capacity-image-dialog {
-    max-width: min(92vw, 72rem);
-    max-height: 90vh;
-    padding: 2.5rem 1rem 1rem;
-    border: 0;
-    border-radius: .5rem;
-}
-
-.jem-capacity-image-dialog::backdrop {
-    background: rgba(0, 0, 0, .72);
-}
-
-.jem-capacity-image-dialog .btn-close {
-    position: absolute;
-    top: .75rem;
-    right: .75rem;
-}
-
-.jem-capacity-image-dialog img {
-    display: block;
-    max-width: 100%;
-    max-height: calc(90vh - 4rem);
-    object-fit: contain;
-}
-
 .jem-capacity-media-grid {
     display: grid;
     grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr) auto;
@@ -2377,9 +2500,14 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 .jem-capacity-media-remove {
-    align-self: center;
-    margin: 1.4rem 0 0;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: end;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin: 0;
+    padding: 0;
 }
 
 .jem-capacity-area-list {
@@ -2477,6 +2605,10 @@ fieldset.jem-specialdays-import #replace_specialdays {
 }
 
 @media (max-width: 767.98px) {
+    .jem-capacity-venue-toolbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .jem-capacity-field-grid {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -2491,7 +2623,7 @@ fieldset.jem-specialdays-import #replace_specialdays {
 
     .jem-capacity-profile-actions {
         flex-basis: 100%;
-        justify-content: flex-start;
+        justify-content: center;
         max-width: none;
     }
 
@@ -2500,15 +2632,28 @@ fieldset.jem-specialdays-import #replace_specialdays {
     }
 
     .jem-capacity-profile-details {
-        grid-template-columns: minmax(0, 1fr);
+        align-items: flex-start;
+    }
+
+    .jem-capacity-profile-name {
+        flex-wrap: wrap;
+        flex-basis: 100%;
+        min-width: 0;
+    }
+
+    .jem-capacity-profile-name > input {
+        flex-basis: 100%;
+        width: 100%;
+        max-width: 100%;
     }
 
     .jem-capacity-profile-capacity {
-        justify-self: start;
+        flex-wrap: wrap;
+        flex-basis: 100%;
     }
 
     .jem-capacity-profile-details .jem-capacity-profile-summary {
-        justify-self: stretch;
+        flex-basis: 100%;
         white-space: normal;
     }
 
@@ -2535,5 +2680,268 @@ fieldset.jem-specialdays-import #replace_specialdays {
 
     .jem-capacity-card-header .btn-group {
         width: 100%;
+    }
+}
+
+/* Event Pricing & Capacity: shared backend presentation. */
+.jem-event-pricing {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.jem-event-venue-configuration {
+    min-width: 0;
+    border: 1px solid #b8cce0;
+    border-radius: .5rem;
+    background: #f2f7fc;
+}
+
+.jem-event-venue-custom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: .65rem;
+}
+
+.jem-event-venue-custom-option {
+    display: flex;
+    gap: .65rem;
+    align-items: flex-start;
+    padding: .75rem;
+    border: 1px solid #cad8e5;
+    border-radius: .375rem;
+    background: #fff;
+    cursor: pointer;
+}
+
+.jem-event-venue-custom-option input {
+    flex: 0 0 auto;
+    margin-top: .2rem;
+}
+
+.jem-event-venue-configuration-preview:not(.alert) {
+    padding: .8rem 1rem;
+    border-left: .25rem solid #2f6f9f;
+    background: rgba(255, 255, 255, .72);
+}
+
+.jem-event-venue-configuration-preview ul {
+    margin: .5rem 0;
+}
+
+[data-bs-theme="dark"] .jem-event-venue-configuration {
+    border-color: #435d75;
+    background: #243747;
+}
+
+[data-bs-theme="dark"] .jem-event-venue-custom-option,
+[data-bs-theme="dark"] .jem-event-venue-configuration-preview:not(.alert) {
+    border-color: #435568;
+    background: #1e2c38;
+}
+
+.jem-event-pricing > .adminform,
+.jem-event-pricing-details > .adminform {
+    min-width: 0;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: .25rem;
+}
+
+.jem-event-pricing-readiness {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+    margin-bottom: 1rem;
+}
+
+.jem-event-pricing-check {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    min-width: 0;
+    padding: .75rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-left-width: .3rem;
+    border-radius: .25rem;
+}
+
+.jem-event-pricing-check.is-ready {
+    border-left-color: var(--success, #198754);
+}
+
+.jem-event-pricing-check.is-missing {
+    border-left-color: var(--warning, #ffc107);
+}
+
+.jem-event-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem 1rem;
+}
+
+.jem-event-pricing-grid .control-group,
+.jem-event-pricing .controls,
+.jem-event-pricing .subform-repeatable-wrapper,
+.jem-event-pricing .subform-repeatable,
+.jem-event-pricing .subform-repeatable-group {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.jem-event-pricing input,
+.jem-event-pricing select,
+.jem-event-pricing textarea,
+.jem-event-pricing .field-calendar,
+.jem-event-pricing .input-group {
+    max-width: 100%;
+}
+
+.jem-event-pricing .subform-repeatable-group {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: .25rem;
+    background: var(--body-bg, #fff);
+}
+
+.jem-event-price-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: .75rem;
+}
+
+.jem-event-price-options .subform-repeatable-group,
+.jem-event-capacity-pools .subform-repeatable-group {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .75rem 1rem;
+}
+
+.jem-event-price-options .subform-repeatable-group > .btn-toolbar,
+.jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar,
+.jem-event-price-options .jem-price-preview {
+    grid-column: 1 / -1;
+}
+
+.jem-event-price-options .subform-repeatable-group > .btn-toolbar,
+.jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.jem-event-price-options .subform-repeatable-group > .btn-toolbar > .btn-group,
+.jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar > .btn-group {
+    margin-left: auto;
+}
+
+.jem-event-pricing:not(.show-price-advanced) .jem-price-advanced-field {
+    display: none !important;
+}
+
+.jem-event-price-options .jem-price-preview {
+    margin: 0;
+    padding: .65rem .75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.jem-event-price-options .jem-price-copy {
+    min-width: max-content;
+}
+
+.jem-event-pricing .subform-repeatable-group .control-group {
+    margin-bottom: .65rem;
+}
+
+.jem-event-pricing .subform-repeatable-group .control-label,
+.jem-event-pricing .subform-repeatable-group .controls {
+    float: none;
+    width: 100%;
+    height: auto;
+    line-height: normal;
+    text-align: left;
+    border-top: 0;
+    margin-left: 0;
+}
+
+.jem-event-pricing .subform-repeatable-group .control-label label {
+    width: auto;
+    margin-bottom: .2rem;
+}
+
+.jem-event-pricing .subform-repeatable-group [id$="-desc"] {
+    display: block;
+    grid-column: 1 / -1;
+    margin-top: .25rem;
+    line-height: 1.35;
+}
+
+.jem-event-pricing .subform-repeatable-group [id$="-desc"].d-none {
+    display: none !important;
+}
+
+/* Event Permissions: label and control share a row when space permits. */
+.jem-event-settings-tab .jem-event-settings-grid > li {
+    display: grid;
+    grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 .75rem;
+    padding: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > label {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > select,
+.jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+    width: 100%;
+    min-width: 0;
+    max-width: 32rem;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > fieldset,
+.jem-event-settings-tab .jem-event-settings-grid > li > .btn-group {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .jem-event-pricing-readiness,
+    .jem-event-pricing-grid,
+    .jem-event-price-options .subform-repeatable-group,
+    .jem-event-capacity-pools .subform-repeatable-group,
+    .jem-event-settings-tab .jem-event-settings-grid > li {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .jem-event-price-options .subform-repeatable-group > .btn-toolbar,
+    .jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar,
+    .jem-event-price-options .jem-price-preview {
+        grid-column: auto;
+    }
+
+    .jem-event-pricing > .adminform,
+    .jem-event-pricing-details > .adminform,
+    .jem-event-pricing .subform-repeatable-group {
+        padding: .75rem;
+    }
+
+    .jem-event-settings-tab .jem-event-settings-grid > li {
+        row-gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-event-settings-tab .jem-event-settings-grid > li > select,
+    .jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+        max-width: 100%;
     }
 }

@@ -26,6 +26,7 @@ $saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
+$columnStorageKey = 'joomla-tablecolumns-jem-venues-hierarchy';
 
 $eventStateColumns = array(
     'event_published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
@@ -138,7 +139,14 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
         </fieldset>
         <div class="clr"> </div>
 
-        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList">
+        <script>
+            // Website remains available in Joomla's column chooser, but the
+            // hierarchy-focused layout hides it for first-time visitors.
+            if (window.localStorage && window.localStorage.getItem('<?php echo $columnStorageKey; ?>') === null) {
+                window.localStorage.setItem('<?php echo $columnStorageKey; ?>', '7');
+            }
+        </script>
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList" data-name="jem-venues-hierarchy">
             <thead>
             <tr>
                 <th class="center jem-list-check">
@@ -158,6 +166,9 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 </th>
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('COM_JEM_COLOR'); ?>
+                </th>
+                <th style="width:7%" class="center" nowrap="nowrap">
+                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_PARENT_VENUE_ID', 'a.parent_venue_id', $listDirn, $listOrder); ?>
                 </th>
                 <th>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
@@ -203,6 +214,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 $canChange     = JemHelperBackend::can('venue', 'edit.state', $item) && $canCheckin;
                 $link         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
                 $published     = HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
+                $hierarchyLevel = !empty($item->parent_venue_id) ? 1 : 0;
                 ?>
                 <tr class="row<?php echo $i % 2; ?>" draggable="<?php echo $saveOrder ? 'true' : 'false'; ?>" data-id="<?php echo (int) $item->id; ?>">
                     <td class="center">
@@ -214,6 +226,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     </td>
                     <td class="center"><?php echo $published; ?></td>
                     <td style="text-align:left" class="venue">
+                        <?php echo str_repeat('<span class="gi">|&mdash;</span>', $hierarchyLevel); ?>
                         <?php if ($item->checked_out) : ?>
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'venues.', $canCheckin); ?>
                         <?php endif; ?>
@@ -248,6 +261,15 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <div role="tooltip"
                              id="color-desc-<?php echo $item->id; ?>"><?php echo ($item->color == '') ? 'transparent' : $item->color ?>
                         </div>
+                    </td>
+                    <td class="center">
+                        <?php if (!empty($item->parent_venue_id)) : ?>
+                            <a href="<?php echo Route::_('index.php?option=com_jem&task=venue.edit&id=' . (int) $item->parent_venue_id); ?>">
+                                <?php echo (int) $item->parent_venue_id; ?>
+                            </a>
+                        <?php else : ?>
+                            &mdash;
+                        <?php endif; ?>
                     </td>
                     <td style="text-align:left">
                         <?php if ($item->url) : ?>

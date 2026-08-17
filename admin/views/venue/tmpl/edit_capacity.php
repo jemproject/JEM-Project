@@ -14,33 +14,14 @@ if ($profileName === '') {
     $profileName = Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_MAIN');
 }
 $initialSpaces = array_values((array) ($this->item->capacity_spaces ?? array()));
-if (!$initialSpaces) {
-    $initialSpaces[] = array(
-        'space_id'          => 0,
-        'space_code'        => '',
-        'space_name'        => '',
-        'space_color'       => JemVenueCapacityService::DEFAULT_SPACE_COLOR,
-        'space_description' => '',
-        'space_image'       => '',
-        'space_image_alt'   => '',
-        'layout_id'         => 0,
-        'layout_code'       => '',
-        'layout_name'       => '',
-        'layout_color'      => JemVenueCapacityService::DEFAULT_LAYOUT_COLOR,
-        'layout_revision'   => 0,
-        'layout_capacity'   => (int) ($this->item->capacity_profile_capacity ?? 0),
-        'layout_image'      => '',
-        'layout_image_alt'  => '',
-        'areas'             => array(),
-    );
-}
+$hasConfiguredProfile = (int) ($this->item->capacity_profile_id ?? 0) > 0;
 
 $initialConfiguration = json_encode(
     array('spaces' => $initialSpaces),
     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
 ?>
-<div class="jem-venue-capacity-editor" id="jem-venue-capacity-editor">
+<div class="jem-venue-capacity-editor" id="jem-venue-capacity-editor" data-profile-configured="<?php echo $hasConfiguredProfile ? '1' : '0'; ?>">
     <?php echo $this->form->getInput('capacity_configuration_submitted'); ?>
     <?php echo $this->form->getInput('capacity_configuration_json'); ?>
     <?php echo $this->form->getInput('capacity_profile_id'); ?>
@@ -50,47 +31,65 @@ $initialConfiguration = json_encode(
         <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_CONFIGURATION_INTRO'); ?></span>
     </div>
 
-    <section class="adminform jem-capacity-venue-limit">
-        <?php echo $this->form->renderField('capacity'); ?>
+    <section class="adminform jem-capacity-empty-state" data-role="profile-empty-state"<?php echo $hasConfiguredProfile ? ' hidden' : ''; ?>>
+        <strong><?php echo Text::_('COM_JEM_VENUE_CAPACITY_NO_PROFILES'); ?></strong>
+        <span class="form-text"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_NO_PROFILES_DESC'); ?></span>
+        <button type="button" class="btn btn-primary" data-action="create-profile">
+            <span class="icon-plus" aria-hidden="true"></span>
+            <?php echo Text::_('COM_JEM_VENUE_CAPACITY_CREATE_PROFILE'); ?>
+        </button>
     </section>
 
-    <section class="adminform jem-capacity-profile-card" aria-labelledby="jem-capacity-profile-title">
-        <div class="jem-capacity-profile-toolbar">
-            <div class="jem-capacity-profile-identity">
-                <span class="text-muted small"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE'); ?></span>
-                <div class="jem-capacity-profile-heading">
-                    <h2 class="h5 mb-0" id="jem-capacity-profile-title" data-role="profile-title"><?php echo htmlspecialchars($profileName, ENT_QUOTES, 'UTF-8'); ?></h2>
-                    <span class="badge bg-info text-dark"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_DEFAULT'); ?></span>
-                    <span class="jem-capacity-profile-revision">
-                        <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_REVISION_SHORT'); ?>
-                        <strong><?php echo (int) ($this->item->capacity_profile_revision ?? 1); ?></strong>
-                    </span>
-                </div>
-            </div>
+    <div data-role="profile-configuration"<?php echo $hasConfiguredProfile ? '' : ' hidden'; ?>>
+        <section class="adminform jem-capacity-venue-toolbar">
             <div class="jem-capacity-profile-actions">
-                <label class="visually-hidden" for="jem-capacity-profile-selector"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_SELECTOR'); ?></label>
-                <select class="form-select" id="jem-capacity-profile-selector" disabled>
-                    <option data-role="profile-option"><?php echo htmlspecialchars(
-                        $profileName . ' (' . Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_DEFAULT') . ')',
-                        ENT_QUOTES,
-                        'UTF-8'
-                    ); ?></option>
-                </select>
-                <span class="d-inline-block" title="<?php echo htmlspecialchars(Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_FUTURE_DESC'), ENT_QUOTES, 'UTF-8'); ?>">
-                    <button type="button" class="btn btn-outline-primary" disabled>
-                        <span class="icon-plus" aria-hidden="true"></span>
-                        <?php echo Text::_('COM_JEM_VENUE_CAPACITY_ADD_PROFILE'); ?>
-                    </button>
+            <label class="visually-hidden" for="jem-capacity-profile-selector"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_SELECTOR'); ?></label>
+            <select class="form-select" id="jem-capacity-profile-selector" disabled>
+                <option data-role="profile-option"><?php echo htmlspecialchars(
+                    $profileName . ' (' . Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_DEFAULT') . ')',
+                    ENT_QUOTES,
+                    'UTF-8'
+                ); ?></option>
+            </select>
+            <span class="d-inline-block" title="<?php echo htmlspecialchars(Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_FUTURE_DESC'), ENT_QUOTES, 'UTF-8'); ?>">
+                <button type="button" class="btn btn-outline-primary" disabled>
+                    <span class="icon-plus" aria-hidden="true"></span>
+                    <?php echo Text::_('COM_JEM_VENUE_CAPACITY_ADD_PROFILE'); ?>
+                </button>
+            </span>
+            <span class="d-inline-block" title="<?php echo htmlspecialchars(Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_ALREADY_DEFAULT_DESC'), ENT_QUOTES, 'UTF-8'); ?>">
+                <button type="button" class="btn btn-outline-secondary" disabled>
+                    <span class="icon-check" aria-hidden="true"></span>
+                    <?php echo Text::_('COM_JEM_VENUE_CAPACITY_SET_DEFAULT'); ?>
+                </button>
+            </span>
+            <div id="jem-capacity-profile-selector-desc" class="form-text hide-aware-inline-help d-none">
+                <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_FUTURE_DESC'); ?>
+            </div>
+            </div>
+        </section>
+
+        <section class="adminform jem-capacity-profile-card" aria-labelledby="jem-capacity-profile-title">
+        <h2 class="visually-hidden" id="jem-capacity-profile-title" data-role="profile-title"><?php echo htmlspecialchars($profileName, ENT_QUOTES, 'UTF-8'); ?></h2>
+        <div class="jem-capacity-profile-details">
+            <div class="jem-capacity-profile-name">
+                <?php echo $this->form->getLabel('capacity_profile_name'); ?>
+                <span class="badge bg-info text-dark jem-capacity-profile-default"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_DEFAULT'); ?></span>
+                <span class="jem-capacity-profile-revision">
+                    <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_REVISION_COMPACT'); ?>
+                    <strong><?php echo (int) ($this->item->capacity_profile_revision ?? 1); ?></strong>
                 </span>
-                <div id="jem-capacity-profile-selector-desc" class="form-text hide-aware-inline-help d-none">
-                    <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_FUTURE_DESC'); ?>
+                <?php echo $this->form->getInput('capacity_profile_name'); ?>
+                <div id="jform_capacity_profile_name-desc" class="form-text hide-aware-inline-help d-none">
+                    <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_DESC'); ?>
                 </div>
             </div>
-        </div>
-        <div class="jem-capacity-profile-details">
-            <?php echo $this->form->renderField('capacity_profile_name'); ?>
             <div class="jem-capacity-profile-capacity">
-                <?php echo $this->form->renderField('capacity_profile_capacity'); ?>
+                <?php echo $this->form->getLabel('capacity_profile_capacity'); ?>
+                <?php echo $this->form->getInput('capacity_profile_capacity'); ?>
+                <div id="jform_capacity_profile_capacity-desc" class="form-text hide-aware-inline-help d-none">
+                    <?php echo Text::_('COM_JEM_VENUE_PROFILE_CAPACITY_DESC'); ?>
+                </div>
             </div>
             <div hidden><?php echo $this->form->getInput('capacity_profile_revision'); ?></div>
             <div class="jem-capacity-profile-summary" aria-live="polite">
@@ -105,19 +104,16 @@ $initialConfiguration = json_encode(
             </div>
             <div class="jem-capacity-validation text-danger" data-role="capacity-validation" role="alert" hidden></div>
         </div>
-    </section>
+        </section>
 
-    <div class="jem-capacity-spaces" data-role="spaces"></div>
-    <div>
-        <button type="button" class="btn btn-outline-primary" data-action="add-space">
-            <span class="icon-plus" aria-hidden="true"></span>
-            <?php echo Text::_('COM_JEM_VENUE_CAPACITY_ADD_SPACE'); ?>
-        </button>
+        <div class="jem-capacity-spaces" data-role="spaces"></div>
+        <div>
+            <button type="button" class="btn btn-outline-primary" data-action="add-space">
+                <span class="icon-plus" aria-hidden="true"></span>
+                <?php echo Text::_('COM_JEM_VENUE_CAPACITY_ADD_SPACE'); ?>
+            </button>
+        </div>
     </div>
-    <dialog class="jem-capacity-image-dialog" data-role="capacity-image-dialog">
-        <button type="button" class="btn-close" data-action="close-capacity-image" aria-label="<?php echo Text::_('JCLOSE'); ?>"></button>
-        <img src="" alt="">
-    </dialog>
 </div>
 
 <template id="jem-capacity-space-template">
@@ -143,6 +139,7 @@ $initialConfiguration = json_encode(
             <div class="jem-capacity-section jem-capacity-section-space">
                 <h4 class="h6"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE'); ?></h4>
                 <div class="jem-capacity-field-grid jem-capacity-space-grid">
+                    <input type="hidden" data-field="space_code">
                     <label>
                         <span>
                             <?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_NAME'); ?>
@@ -150,11 +147,6 @@ $initialConfiguration = json_encode(
                         </span>
                         <input type="text" class="form-control required" maxlength="255" data-field="space_name" required aria-required="true">
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="space_name"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_NAME_DESC'); ?></div>
-                    </label>
-                    <label>
-                        <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_CODE'); ?></span>
-                        <input type="text" class="form-control" maxlength="64" data-field="space_code">
-                        <div class="form-text hide-aware-inline-help d-none" data-help-field="space_code"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_CODE_DESC'); ?></div>
                     </label>
                     <label class="jem-capacity-color-field">
                         <span><?php echo Text::_('COM_JEM_COLOR'); ?></span>
@@ -179,10 +171,10 @@ $initialConfiguration = json_encode(
                         <input type="text" class="form-control" maxlength="255" data-field="space_image_alt">
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="space_image_alt"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE_IMAGE_ALT_DESC'); ?></div>
                     </label>
-                    <label class="form-check jem-capacity-media-remove">
-                        <input type="checkbox" class="form-check-input" value="1" data-field="space_image_remove">
-                        <span class="form-check-label"><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></span>
-                    </label>
+                    <input type="hidden" value="0" data-field="space_image_remove">
+                    <button type="button" class="btn btn-outline-danger jem-capacity-media-remove" data-action="remove-space-image" title="<?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>" aria-label="<?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>">
+                        <span class="icon-times" aria-hidden="true"></span>
+                    </button>
                 </div>
             </div>
             <div class="jem-capacity-section jem-capacity-section-layout">
@@ -198,7 +190,7 @@ $initialConfiguration = json_encode(
                     </label>
                     <label>
                         <span><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_CODE'); ?></span>
-                        <input type="text" class="form-control" maxlength="64" data-field="layout_code">
+                        <input type="text" class="form-control readonly" maxlength="64" data-field="layout_code" readonly>
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="layout_code"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_CODE_DESC'); ?></div>
                     </label>
                     <label>
@@ -225,10 +217,10 @@ $initialConfiguration = json_encode(
                         <input type="text" class="form-control" maxlength="255" data-field="layout_image_alt">
                         <div class="form-text hide-aware-inline-help d-none" data-help-field="layout_image_alt"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT_IMAGE_ALT_DESC'); ?></div>
                     </label>
-                    <label class="form-check jem-capacity-media-remove">
-                        <input type="checkbox" class="form-check-input" value="1" data-field="layout_image_remove">
-                        <span class="form-check-label"><?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?></span>
-                    </label>
+                    <input type="hidden" value="0" data-field="layout_image_remove">
+                    <button type="button" class="btn btn-outline-danger jem-capacity-media-remove" data-action="remove-layout-image" title="<?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>" aria-label="<?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>">
+                        <span class="icon-times" aria-hidden="true"></span>
+                    </button>
                 </div>
                 <div class="jem-capacity-section jem-capacity-section-areas">
                     <div class="jem-capacity-areas-heading">
@@ -297,6 +289,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const editor = document.getElementById('jem-venue-capacity-editor');
     const spacesContainer = editor ? editor.querySelector('[data-role="spaces"]') : null;
     const hidden = document.getElementById('jform_capacity_configuration_json');
+    const profileSubmittedInput = document.getElementById('jform_capacity_configuration_submitted');
+    const emptyState = editor ? editor.querySelector('[data-role="profile-empty-state"]') : null;
+    const profileConfiguration = editor ? editor.querySelector('[data-role="profile-configuration"]') : null;
     const spaceTemplate = document.getElementById('jem-capacity-space-template');
     const areaTemplate = document.getElementById('jem-capacity-area-template');
     const profileCapacityInput = document.getElementById('jform_capacity_profile_capacity');
@@ -316,15 +311,13 @@ document.addEventListener('DOMContentLoaded', function () {
         'layout'         => Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT'),
         'area'           => Text::_('COM_JEM_VENUE_CAPACITY_AREA'),
     ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-    const venueId = <?php echo (int) ($this->item->id ?? 0); ?>;
-
     if (!editor || !spacesContainer || !hidden || !spaceTemplate || !areaTemplate) {
         return;
     }
 
     let initial = {spaces: []};
+    let profileConfigured = editor.dataset.profileConfigured === '1';
     const pendingUploads = new Map();
-    const pendingPreviewUrls = new Map();
     let nextClientKey = 1;
     try {
         initial = JSON.parse(document.getElementById('jem-capacity-initial-data').textContent || '{"spaces":[]}');
@@ -365,60 +358,26 @@ document.addEventListener('DOMContentLoaded', function () {
         return Number.isFinite(number) && number >= 0 ? number : 0;
     }
 
-    function showCapacityImage(url, alt) {
-        const dialog = editor.querySelector('[data-role="capacity-image-dialog"]');
-        const image = dialog ? dialog.querySelector('img') : null;
-        if (!dialog || !image || !url) {
-            return;
+    function setProfileConfigured(configured) {
+        profileConfigured = Boolean(configured);
+        editor.dataset.profileConfigured = profileConfigured ? '1' : '0';
+        if (emptyState) {
+            emptyState.hidden = profileConfigured;
         }
-        image.src = url;
-        image.alt = alt || '';
-        if (typeof dialog.showModal === 'function') {
-            dialog.showModal();
-        } else {
-            window.open(url, '_blank', 'noopener');
+        if (profileConfiguration) {
+            profileConfiguration.hidden = !profileConfigured;
+        }
+        if (profileSubmittedInput) {
+            profileSubmittedInput.value = profileConfigured ? '1' : '0';
         }
     }
 
-    function mediaPreview(space, kind, fallbackAlt) {
-        const pending = pendingUploads.get(space.client_key + ':' + kind);
-        if (pending) {
-            const key = space.client_key + ':' + kind;
-            let url = pendingPreviewUrls.get(key);
-            if (!url) {
-                url = URL.createObjectURL(pending);
-                pendingPreviewUrls.set(key, url);
-            }
-            return {thumb: url, original: url, alt: fallbackAlt};
-        }
-
-        const filename = kind === 'space' ? space.space_image : space.layout_image;
-        const customAlt = kind === 'space' ? space.space_image_alt : space.layout_image_alt;
-        if (!filename || venueId < 1 || integer(space.space_id) < 1) {
-            return null;
-        }
-
-        let folder = venueId + '/spaces/' + integer(space.space_id) + '/space';
-        if (kind === 'layout') {
-            if (integer(space.layout_id) < 1) {
-                return null;
-            }
-            folder = venueId + '/spaces/' + integer(space.space_id) + '/layouts/' + integer(space.layout_id) + '/layout';
-        }
-
-        const encoded = folder.split('/').map(encodeURIComponent).join('/') + '/' + encodeURIComponent(filename);
-        return {
-            thumb: '../images/jem/venues/small/' + encoded,
-            original: '../images/jem/venues/' + encoded,
-            alt: customAlt || fallbackAlt
-        };
-    }
-
-    function overviewNode(kind, label, name, capacity, color, media) {
+    function overviewNode(kind, label, name, capacity, color) {
         const node = document.createElement('div');
         const header = document.createElement('div');
         const identity = document.createElement('div');
         const type = document.createElement('span');
+        const nameRow = document.createElement('div');
         const title = document.createElement('strong');
         const capacityBadge = document.createElement('span');
         const children = document.createElement('div');
@@ -428,33 +387,15 @@ document.addEventListener('DOMContentLoaded', function () {
         header.className = 'jem-capacity-overview-node-header';
         identity.className = 'jem-capacity-overview-node-identity';
         type.className = 'jem-capacity-overview-node-type';
+        nameRow.className = 'jem-capacity-overview-node-name';
         type.textContent = label;
         title.textContent = name;
         capacityBadge.className = 'badge bg-secondary';
         capacityBadge.textContent = String(integer(capacity));
         children.className = 'jem-capacity-overview-children';
-        identity.append(type, title);
+        nameRow.appendChild(title);
+        identity.append(type, nameRow);
         header.append(identity, capacityBadge);
-        if (media && media.thumb) {
-            const button = document.createElement('button');
-            const preview = document.createElement('img');
-            button.type = 'button';
-            button.className = 'btn btn-link p-0 jem-capacity-overview-image';
-            button.title = media.alt || name;
-            preview.src = media.thumb;
-            preview.alt = media.alt || name;
-            preview.loading = 'lazy';
-            preview.addEventListener('error', function () {
-                if (preview.src !== media.original) {
-                    preview.src = media.original;
-                }
-            }, {once: true});
-            button.appendChild(preview);
-            button.addEventListener('click', function () {
-                showCapacityImage(media.original, media.alt || name);
-            });
-            header.appendChild(button);
-        }
         node.append(header, children);
 
         return {node: node, children: children};
@@ -470,6 +411,10 @@ document.addEventListener('DOMContentLoaded', function () {
             ? venueNameInput.value.trim()
             : labels.venue;
         const venue = overviewNode('venue', labels.venue, venueName, venueLimit, '#59799A');
+        if (!profileConfigured) {
+            overview.replaceChildren(venue.node);
+            return;
+        }
         const profileName = profileNameInput && profileNameInput.value.trim()
             ? profileNameInput.value.trim()
             : labels.profileMain;
@@ -480,11 +425,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         spaces.forEach(function (space, index) {
             const spaceName = space.space_name || (labels.space + ' ' + (index + 1));
-            const spaceAlt = spaceName + ' — ' + venueName;
-            const spaceNode = overviewNode('space', labels.space, spaceName, space.layout_capacity, space.space_color, mediaPreview(space, 'space', spaceAlt));
+            const spaceNode = overviewNode('space', labels.space, spaceName, space.layout_capacity, space.space_color);
             const layoutName = space.layout_name || labels.layout;
-            const layoutAlt = 'Plan ' + layoutName + ' — ' + spaceName + ' — ' + venueName;
-            const layoutNode = overviewNode('layout', labels.layout, layoutName, space.layout_capacity, space.layout_color, mediaPreview(space, 'layout', layoutAlt));
+            const layoutNode = overviewNode('layout', labels.layout, layoutName, space.layout_capacity, space.layout_color);
             (Array.isArray(space.areas) ? space.areas : []).forEach(function (area, areaIndex) {
                 const areaName = area.name || (labels.area + ' ' + (areaIndex + 1));
                 const areaNode = overviewNode('area', labels.area, areaName, area.capacity, area.color);
@@ -567,17 +510,12 @@ document.addEventListener('DOMContentLoaded', function () {
             card.querySelectorAll('[data-upload]').forEach(function (upload) {
                 if (upload.files && upload.files[0]) {
                     const key = card.dataset.clientKey + ':' + upload.dataset.upload;
-                    const previous = pendingUploads.get(key);
-                    if (previous !== upload.files[0] && pendingPreviewUrls.has(key)) {
-                        URL.revokeObjectURL(pendingPreviewUrls.get(key));
-                        pendingPreviewUrls.delete(key);
-                    }
                     pendingUploads.set(key, upload.files[0]);
                 }
             });
-            const checked = function (name) {
+            const flagged = function (name) {
                 const field = card.querySelector('[data-field="' + name + '"]');
-                return field && field.checked ? 1 : 0;
+                return field && (field.checked || integer(field.value) === 1) ? 1 : 0;
             };
 
             return {
@@ -589,7 +527,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 space_description: value('space_description').trim(),
                 space_image: value('space_image').trim(),
                 space_image_alt: value('space_image_alt').trim(),
-                space_image_remove: checked('space_image_remove'),
+                space_image_remove: flagged('space_image_remove'),
                 layout_id: integer(value('layout_id')),
                 layout_code: value('layout_code').trim(),
                 layout_name: value('layout_name').trim(),
@@ -598,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 layout_capacity: integer(value('layout_capacity')),
                 layout_image: value('layout_image').trim(),
                 layout_image_alt: value('layout_image_alt').trim(),
-                layout_image_remove: checked('layout_image_remove'),
+                layout_image_remove: flagged('layout_image_remove'),
                 areas: areas
             };
         });
@@ -613,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const profileLimit = integer(profileCapacityInput ? profileCapacityInput.value : 0);
         const venueLimit = integer(venueCapacityInput ? venueCapacityInput.value : 0);
         const summary = editor.querySelector('.jem-capacity-profile-summary');
-        const venueLimitCard = editor.querySelector('.jem-capacity-venue-limit');
+        const venueLimitCard = editor.querySelector('.jem-capacity-venue-toolbar');
         const validation = editor.querySelector('[data-role="capacity-validation"]');
         const layoutsExceedProfile = profileTotal > profileLimit;
         const profileExceedsVenue = profileLimit > venueLimit;
@@ -661,7 +599,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const showInlineHelp = Array.from(editor.querySelectorAll('div.hide-aware-inline-help'))
             .some(function (description) { return !description.classList.contains('d-none'); });
         spacesContainer.replaceChildren();
-        if (!spaces.length) {
+        if (profileConfigured && !spaces.length) {
             spaces = [blankSpace()];
         }
 
@@ -677,9 +615,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 setValue(card, '[data-field="' + field + '"]', space[field]);
             });
             ['space_image_remove', 'layout_image_remove'].forEach(function (field) {
-                const checkbox = card.querySelector('[data-field="' + field + '"]');
-                if (checkbox) {
-                    checkbox.checked = integer(space[field]) === 1;
+                const removeField = card.querySelector('[data-field="' + field + '"]');
+                if (removeField) {
+                    removeField.value = integer(space[field]) === 1 ? '1' : '0';
                 }
             });
             const spaceUpload = card.querySelector('[data-upload="space"]');
@@ -709,13 +647,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (layoutCurrent) {
                 layoutCurrent.textContent = space.layout_image || '';
             }
-            connectInlineHelp(card, 'jem-capacity-space-' + spaceIndex);
-
-            const stableSpaceCode = card.querySelector('[data-field="space_code"]');
-            if (stableSpaceCode && integer(space.space_id) > 0) {
-                stableSpaceCode.readOnly = true;
-                stableSpaceCode.classList.add('readonly');
+            const spaceRemove = card.querySelector('[data-action="remove-space-image"]');
+            const layoutRemove = card.querySelector('[data-action="remove-layout-image"]');
+            if (spaceRemove) {
+                spaceRemove.disabled = !space.space_image && !pendingUploads.has(space.client_key + ':space');
             }
+            if (layoutRemove) {
+                layoutRemove.disabled = !space.layout_image && !pendingUploads.has(space.client_key + ':layout');
+            }
+            connectInlineHelp(card, 'jem-capacity-space-' + spaceIndex);
 
             card.querySelector('[data-role="space-title"]').textContent = space.space_name || (labels.space + ' ' + (spaceIndex + 1));
             const revision = integer(space.layout_revision);
@@ -754,7 +694,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         sync();
     });
-    editor.addEventListener('change', sync);
+    editor.addEventListener('change', function (event) {
+        if (event.target.matches('[data-upload]') && event.target.files && event.target.files[0]) {
+            const card = event.target.closest('.jem-capacity-space-card');
+            const kind = event.target.dataset.upload;
+            const removeField = card ? card.querySelector('[data-field="' + kind + '_image_remove"]') : null;
+            if (removeField) {
+                removeField.value = '0';
+            }
+        }
+        sync();
+    });
     editor.addEventListener('click', function (event) {
         const button = event.target.closest('[data-action]');
         if (!button) {
@@ -762,20 +712,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const action = button.dataset.action;
-        if (action === 'close-capacity-image') {
-            const dialog = button.closest('dialog');
-            if (dialog) {
-                dialog.close();
-            }
-            return;
-        }
         let spaces = readSpaces();
         const card = button.closest('.jem-capacity-space-card');
         const spaceIndex = card ? integer(card.dataset.spaceIndex) : -1;
         const areaRow = button.closest('.jem-capacity-area-row');
         const areaIndex = areaRow ? integer(areaRow.dataset.areaIndex) : -1;
 
-        if (action === 'add-space') {
+        if (action === 'create-profile') {
+            setProfileConfigured(true);
+            if (profileCapacityInput && integer(profileCapacityInput.value) === 0) {
+                profileCapacityInput.value = String(integer(venueCapacityInput ? venueCapacityInput.value : 0));
+            }
+            spaces = [blankSpace()];
+        } else if (action === 'add-space') {
             spaces.push(blankSpace());
         } else if (action === 'remove-space' && spaceIndex >= 0) {
             if (spaces.length > 1 && !window.confirm(labels.confirmRemove)) {
@@ -790,11 +739,24 @@ document.addEventListener('DOMContentLoaded', function () {
             spaces[spaceIndex].areas.push(blankArea());
         } else if (action === 'remove-area' && spaceIndex >= 0 && areaIndex >= 0) {
             spaces[spaceIndex].areas.splice(areaIndex, 1);
+        } else if (action === 'remove-space-image' && spaceIndex >= 0) {
+            pendingUploads.delete(spaces[spaceIndex].client_key + ':space');
+            spaces[spaceIndex].space_image = '';
+            spaces[spaceIndex].space_image_alt = '';
+            spaces[spaceIndex].space_image_remove = 1;
+        } else if (action === 'remove-layout-image' && spaceIndex >= 0) {
+            pendingUploads.delete(spaces[spaceIndex].client_key + ':layout');
+            spaces[spaceIndex].layout_image = '';
+            spaces[spaceIndex].layout_image_alt = '';
+            spaces[spaceIndex].layout_image_remove = 1;
         } else {
             return;
         }
 
         render(spaces);
+        if (action === 'create-profile' && profileNameInput) {
+            profileNameInput.focus();
+        }
     });
 
     const form = document.getElementById('venue-form');
@@ -808,6 +770,7 @@ document.addEventListener('DOMContentLoaded', function () {
         venueNameInput.addEventListener('input', sync);
     }
 
+    setProfileConfigured(profileConfigured);
     render(Array.isArray(initial.spaces) ? initial.spaces : []);
 });
 </script>

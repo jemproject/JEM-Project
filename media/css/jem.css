@@ -3892,3 +3892,9 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
     margin-left: .5rem;
     color: #666;
 }
+
+div#jem .jem-editevent-field-cats .choices__inner,
+div#jem .jem-editevent-field-cats .choices__list,
+div#jem .jem-editevent-field-cats .choices__item {
+    text-align: left !important;
+}

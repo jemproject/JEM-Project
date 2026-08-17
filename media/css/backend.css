@@ -667,6 +667,8 @@ div.controls img {
 
 /* Point 4D: simple default venue profile editor. */
 .jem-venue-capacity-editor {
+    --jem-capacity-text-control-width: 23rem;
+    --jem-capacity-number-control-width: 8rem;
     display: grid;
     gap: 1rem;
 }
@@ -780,15 +782,54 @@ div.controls img {
     padding-left: .45rem;
 }
 
-.jem-capacity-venue-limit {
-    max-width: 32rem;
+.jem-capacity-venue-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+}
+
+.jem-capacity-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .65rem;
+    min-height: 9rem;
+    text-align: center;
+}
+
+.jem-capacity-empty-state > .form-text {
+    max-width: 56rem;
+}
+
+.jem-capacity-empty-state[hidden],
+[data-role="profile-configuration"][hidden] {
+    display: none !important;
 }
 
 .jem-capacity-venue-limit > .control-group {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
     margin: 0;
 }
 
-.jem-capacity-venue-limit.is-over-capacity {
+.jem-capacity-venue-limit .control-label,
+.jem-capacity-venue-limit .controls,
+.jem-capacity-venue-limit label {
+    float: none;
+    width: auto;
+    margin: 0;
+}
+
+.jem-capacity-venue-limit input[type="number"] {
+    width: var(--jem-capacity-number-control-width);
+    max-width: var(--jem-capacity-number-control-width);
+}
+
+.jem-capacity-venue-toolbar.is-over-capacity {
     border-color: rgba(220, 53, 69, .55);
     background: rgba(220, 53, 69, .07);
 }
@@ -826,16 +867,21 @@ div.controls img {
 
 .jem-capacity-profile-actions {
     display: flex;
-    flex: 1 1 24rem;
+    flex: 0 1 auto;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: center;
     gap: .5rem;
-    max-width: 32rem;
+    min-width: 0;
 }
 
 .jem-capacity-profile-actions .form-select {
-    flex: 1 1 13rem;
-    max-width: 18rem;
+    flex: 0 1 var(--jem-capacity-text-control-width);
+    width: var(--jem-capacity-text-control-width);
+    max-width: 100%;
+}
+
+.jem-capacity-profile-actions .d-inline-block > .btn {
+    white-space: nowrap;
 }
 
 .jem-capacity-profile-actions .d-inline-block > .btn:disabled {
@@ -848,48 +894,68 @@ div.controls img {
 }
 
 .jem-capacity-profile-details {
-    display: grid;
-    grid-template-columns: minmax(14rem, 1fr) auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: .75rem 1rem;
-    align-items: end;
+    align-items: center;
 }
 
 .jem-capacity-profile-details > .control-group {
     margin: 0;
 }
 
-.jem-capacity-profile-capacity {
-    justify-self: end;
-}
-
-.jem-capacity-profile-capacity > .control-group {
+.jem-capacity-profile-name {
     display: flex;
     align-items: center;
+    flex: 0 1 auto;
     gap: .65rem;
-    margin: 0;
+    min-width: 18rem;
 }
 
-.jem-capacity-profile-capacity .control-label,
-.jem-capacity-profile-capacity .control-label label {
+.jem-capacity-profile-name > label {
     flex: 0 0 auto;
     margin: 0;
-    padding: 0;
     white-space: nowrap;
 }
 
-.jem-capacity-profile-capacity .controls {
-    flex: 0 0 8rem;
-    min-width: 0;
+.jem-capacity-profile-name > input {
+    flex: 0 1 var(--jem-capacity-text-control-width);
+    width: var(--jem-capacity-text-control-width);
+    max-width: 100%;
+    min-width: 10rem;
+}
+
+.jem-capacity-profile-default {
+    flex: 0 0 auto;
+}
+
+.jem-capacity-profile-capacity {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: .65rem;
+}
+
+.jem-capacity-profile-capacity > label {
+    flex: 0 0 auto;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .jem-capacity-profile-capacity input[type="number"] {
-    width: 8rem;
-    max-width: 8rem;
+    flex: 0 0 var(--jem-capacity-number-control-width);
+    width: var(--jem-capacity-number-control-width);
+    max-width: var(--jem-capacity-number-control-width);
+}
+
+.jem-capacity-profile-name > .form-text,
+.jem-capacity-profile-capacity > .form-text {
+    flex-basis: 100%;
 }
 
 .jem-capacity-profile-details .jem-capacity-profile-summary {
-    grid-column: 1 / -1;
-    justify-self: start;
+    flex: 0 0 auto;
     min-height: 2.4rem;
     padding: .45rem .7rem;
     background: color-mix(in srgb, var(--body-color, #1f2933) 5%, transparent);
@@ -904,12 +970,12 @@ div.controls img {
 }
 
 .jem-capacity-profile-help {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
     margin: 0;
 }
 
 .jem-capacity-validation {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
     font-weight: 600;
 }
 
@@ -1033,42 +1099,6 @@ div.controls img {
     grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
 }
 
-.jem-capacity-overview-image {
-    margin-left: auto;
-}
-
-.jem-capacity-overview-image img {
-    width: 3.5rem;
-    height: 2.5rem;
-    object-fit: cover;
-    border-radius: .25rem;
-}
-
-.jem-capacity-image-dialog {
-    max-width: min(92vw, 72rem);
-    max-height: 90vh;
-    padding: 2.5rem 1rem 1rem;
-    border: 0;
-    border-radius: .5rem;
-}
-
-.jem-capacity-image-dialog::backdrop {
-    background: rgba(0, 0, 0, .72);
-}
-
-.jem-capacity-image-dialog .btn-close {
-    position: absolute;
-    top: .75rem;
-    right: .75rem;
-}
-
-.jem-capacity-image-dialog img {
-    display: block;
-    max-width: 100%;
-    max-height: calc(90vh - 4rem);
-    object-fit: contain;
-}
-
 .jem-capacity-media-grid {
     display: grid;
     grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr) auto;
@@ -1082,9 +1112,14 @@ div.controls img {
 }
 
 .jem-capacity-media-remove {
-    align-self: center;
-    margin: 1.4rem 0 0;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: end;
+    width: 2.6rem;
+    height: 2.6rem;
+    margin: 0;
+    padding: 0;
 }
 
 .jem-capacity-area-list {
@@ -1182,6 +1217,10 @@ div.controls img {
 }
 
 @media (max-width: 767.98px) {
+    .jem-capacity-venue-toolbar {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .jem-capacity-field-grid {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -1196,7 +1235,7 @@ div.controls img {
 
     .jem-capacity-profile-actions {
         flex-basis: 100%;
-        justify-content: flex-start;
+        justify-content: center;
         max-width: none;
     }
 
@@ -1205,15 +1244,28 @@ div.controls img {
     }
 
     .jem-capacity-profile-details {
-        grid-template-columns: minmax(0, 1fr);
+        align-items: flex-start;
+    }
+
+    .jem-capacity-profile-name {
+        flex-wrap: wrap;
+        flex-basis: 100%;
+        min-width: 0;
+    }
+
+    .jem-capacity-profile-name > input {
+        flex-basis: 100%;
+        width: 100%;
+        max-width: 100%;
     }
 
     .jem-capacity-profile-capacity {
-        justify-self: start;
+        flex-wrap: wrap;
+        flex-basis: 100%;
     }
 
     .jem-capacity-profile-details .jem-capacity-profile-summary {
-        justify-self: stretch;
+        flex-basis: 100%;
         white-space: normal;
     }
 
@@ -1243,8 +1295,13 @@ div.controls img {
     }
 }
 
-/* Venue identity and address grouping. */
-.jem-venue-address-card {
+/* Venue identity, address and coordinates grouping. */
+.jem-venue-identity-fields {
+    display: flow-root;
+    margin-bottom: 1rem;
+}
+
+.jem-venue-location-card {
     margin: 1.25rem 0;
     padding: 1.25rem;
     border: 1px solid #cbd8e6;
@@ -1253,29 +1310,97 @@ div.controls img {
     box-shadow: 0 .125rem .25rem rgba(31, 51, 73, .04);
 }
 
-.jem-venue-address-card > h3 {
+.jem-venue-coordinates-card {
+    background: #f7f9fc;
+}
+
+.jem-venue-location-card > h3 {
     margin: 0 0 1rem;
     padding-bottom: .65rem;
     border-bottom: 1px solid #d7e2ed;
+    text-align: left;
 }
 
-.jem-venue-address-card .adminformlist {
+.jem-venue-location-card .adminformlist {
+    display: grid;
+    gap: .75rem;
     margin: 0;
 }
 
-[data-bs-theme="dark"] .jem-venue-address-card {
+.jem-venue-location-card .adminformlist > li {
+    display: flow-root;
+    min-width: 0;
+}
+
+.jem-venue-location-card .label-form {
+    display: block;
+    float: none;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+}
+
+.jem-venue-location-card .control-group {
+    display: grid;
+    grid-template-columns: minmax(10rem, 14rem) minmax(0, 1fr);
+    gap: .75rem 1rem;
+    align-items: center;
+    margin: 0;
+}
+
+.jem-venue-location-card .control-label,
+.jem-venue-location-card .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-venue-geocode-actions {
+    display: grid;
+    gap: .75rem;
+    justify-items: center;
+    margin: .75rem 0;
+    padding: 0 1rem;
+}
+
+.jem-venue-geocode-actions .btn-toolbar {
+    justify-content: center;
+    margin: 0;
+}
+
+.jem-venue-geocode-actions #jem-suggested-address {
+    width: 100%;
+}
+
+[data-bs-theme="dark"] .jem-venue-location-card {
     border-color: #435568;
     background: #253442;
     box-shadow: none;
 }
 
-[data-bs-theme="dark"] .jem-venue-address-card > h3 {
+[data-bs-theme="dark"] .jem-venue-location-card > h3 {
     border-bottom-color: #435568;
 }
 
 @media (max-width: 767.98px) {
-    .jem-venue-address-card {
+    .jem-venue-location-card {
         padding: 1rem;
+    }
+
+    .jem-venue-location-card .control-group {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-venue-geocode-actions {
+        padding: 0;
+    }
+
+    .jem-venue-geocode-actions .btn-toolbar,
+    .jem-venue-geocode-actions .btn {
+        width: 100%;
     }
 }
 
@@ -1421,6 +1546,17 @@ div.controls img {
     grid-column: 1 / -1;
 }
 
+.jem-event-price-options .subform-repeatable-group > .btn-toolbar,
+.jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.jem-event-price-options .subform-repeatable-group > .btn-toolbar > .btn-group,
+.jem-event-capacity-pools .subform-repeatable-group > .btn-toolbar > .btn-group {
+    margin-left: auto;
+}
+
 .jem-event-pricing:not(.show-price-advanced) .jem-price-advanced-field {
     display: none !important;
 }
@@ -1443,7 +1579,22 @@ div.controls img {
 .jem-event-pricing .subform-repeatable-group .controls {
     float: none;
     width: 100%;
+    height: auto;
+    line-height: normal;
+    text-align: left;
+    border-top: 0;
     margin-left: 0;
+}
+
+.jem-event-pricing .subform-repeatable-group [id$="-desc"] {
+    display: block;
+    grid-column: 1 / -1;
+    margin-top: .25rem;
+    line-height: 1.35;
+}
+
+.jem-event-pricing .subform-repeatable-group [id$="-desc"].d-none {
+    display: none !important;
 }
 
 .jem-event-pricing .subform-repeatable-group .control-label label {
@@ -3406,6 +3557,13 @@ fieldset.adminform joomla-field-fancy-select:has(#jform_params_default_country) 
     border: 0 !important;
     margin: 0 !important;
     padding-left: 0 !important;
+}
+
+.jem-event-categories-field .controls,
+.jem-event-categories-field .choices__inner,
+.jem-event-categories-field .choices__list,
+.jem-event-categories-field .choices__item {
+    text-align: left !important;
 }
 
 fieldset.adminform fieldset.radio label,

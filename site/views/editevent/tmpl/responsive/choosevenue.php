@@ -190,6 +190,28 @@ if (!function_exists('jem_choosevenue_country')) {
         height: auto;
         vertical-align: middle;
     }
+
+    #jem.jem_select_venue .jem-venue-tree-entry {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #jem.jem_select_venue .jem-venue-tree-entry.is-child {
+        padding-inline-start: 1rem;
+    }
+
+    #jem.jem_select_venue .jem-venue-tree-arrow {
+        margin-inline-end: .4rem;
+        color: #6c757d;
+        font-weight: 700;
+    }
+
+    #jem.jem_select_venue .jem-venue-tree-parent {
+        margin-inline-start: 1.15rem;
+        color: #6c757d;
+        font-size: .78rem;
+    }
 </style>
 
 <div id="jem" class="jem_select_venue">
@@ -242,9 +264,16 @@ if (!function_exists('jem_choosevenue_country')) {
                         </div>
 
                         <div class="jem-event-info-small jem-venue-name">
-              <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->venue, 'editlinktip selectvenue'); ?>>
-                                <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
-                            </span>
+                            <?php $isChildVenue = (int) ($row->parent_venue_id ?? 0) > 0; ?>
+                            <div class="jem-venue-tree-entry<?php echo $isChildVenue ? ' is-child' : ''; ?>">
+                                <span <?php echo JEMOutput::tooltip(Text::_('COM_JEM_SELECT'), $row->venue, 'editlinktip selectvenue'); ?>>
+                                    <?php if ($isChildVenue) : ?><span class="jem-venue-tree-arrow" aria-hidden="true">↳</span><?php endif; ?>
+                                    <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
+                                </span>
+                                <?php if ($isChildVenue && !empty($row->parent_venue_name)) : ?>
+                                    <small class="jem-venue-tree-parent"><?php echo Text::_('COM_JEM_PARENT_VENUE'); ?>: <?php echo $this->escape($row->parent_venue_name); ?></small>
+                                <?php endif; ?>
+                            </div>
                         </div>
 
                         <div class="jem-event-info-small jem-venue-city">

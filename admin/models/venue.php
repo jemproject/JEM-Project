@@ -423,7 +423,6 @@ class JemModelVenue extends JemModelAdmin
             }
 
             try {
-                JemVenueCapacityService::ensureDefaultProfile((int) $pk);
                 if ($backend && $capacityConfigurationSubmitted) {
                     $savedCapacityConfiguration = JemVenueCapacityService::saveDefaultConfiguration(
                         (int) $pk,
