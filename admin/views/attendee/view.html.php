@@ -36,6 +36,7 @@ class JemViewAttendee extends HtmlView {
 
         //Get data from the model
         $row = $this->get('Data');
+        $model = $this->getModel();
 
         //build selectlists
         $lists = array();
@@ -44,6 +45,11 @@ class JemViewAttendee extends HtmlView {
         //assign data to template
         $this->lists     = $lists;
         $this->row        = $row;
+        $this->pricing = $model->getPricingData(
+            (int) ($row->event ?: $this->event),
+            (int) $row->uid,
+            (int) $row->id
+        );
         $this->registrationChanges = array();
         $this->notifications = array();
         $this->canNotificationResend = JemHelperBackend::canManage('jem.notifications.resend');
@@ -102,7 +108,7 @@ class JemViewAttendee extends HtmlView {
         }
 
         // If an existing item, can save to a copy.
-        if (!$isNew && $canManage) {
+        if (!$isNew && $canManage && empty($this->pricing->is_priced)) {
             ToolbarHelper::save2copy('attendee.save2copy');
         }
 

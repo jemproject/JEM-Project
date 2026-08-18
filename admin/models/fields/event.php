@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Event selector using Joomla's native modal content-select field.
@@ -25,7 +26,7 @@ class JFormFieldEvent extends ModalSelectField
 
         $this->select      = true;
         $this->clear       = false;
-        $this->urlSelect   = 'index.php?option=com_jem&view=eventelement&tmpl=component&function=' . $function;
+        $this->urlSelect   = rtrim(Uri::root(true), '/') . '/administrator/index.php?option=com_jem&view=eventelement&tmpl=component&function=' . $function;
         $this->titleSelect = 'COM_JEM_SELECT_EVENT';
         $this->iconSelect  = 'icon-calendar';
 

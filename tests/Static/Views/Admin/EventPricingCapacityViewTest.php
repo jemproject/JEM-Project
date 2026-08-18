@@ -198,6 +198,21 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('BigInt(', $pricing);
         self::assertStringContainsString("baseCode + '-copy-' + suffix", $pricing);
         self::assertStringContainsString('jem-price-advanced-toggle', $pricing);
+        self::assertStringContainsString("details.hidden = classic", $pricing);
+        self::assertStringContainsString("taxRate.toggleAttribute('required', !classic)", $pricing);
+        self::assertStringContainsString("taxRate.classList.toggle('required', !classic)", $pricing);
+        self::assertStringContainsString("control.removeAttribute('required')", $pricing);
+        self::assertStringContainsString("control.classList.remove('required')", $pricing);
+        self::assertStringContainsString("control.setAttribute('required', 'required')", $pricing);
+        self::assertStringContainsString('jemRevealInvalidEventFields', $edit);
+        self::assertStringContainsString('[aria-invalid="true"]', $edit);
+        self::assertStringContainsString('bootstrap.Tab.getOrCreateInstance(tabTrigger).show()', $edit);
+        self::assertStringContainsString('bootstrap.Collapse.getOrCreateInstance(collapse, {toggle: false}).show()', $edit);
+        self::assertStringContainsString('COM_JEM_EVENT_REQUIRED_FIELDS', $edit);
+        self::assertStringContainsString(
+            'COM_JEM_EVENT_REQUIRED_FIELDS="Please complete the following required field(s): %s."',
+            $this->read('/admin/language/en-GB/com_jem.ini')
+        );
 
         foreach (array('pricing_mode', 'currency', 'capacity_pools', 'event_prices', 'venue_snapshot', 'venue_configuration_key', 'venue_assignment_ids') as $field) {
             self::assertStringContainsString('name="' . $field . '"', $form);
@@ -208,6 +223,10 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('name="user_group_id"', $form);
         self::assertStringContainsString('default="1"', $form);
         self::assertStringContainsString('required="true"', $form);
+        self::assertDoesNotMatchRegularExpression(
+            '/<field\s+name="tax_rate_id"[^>]*\srequired="true"/',
+            $form
+        );
     }
 
     private function read(string $path): string

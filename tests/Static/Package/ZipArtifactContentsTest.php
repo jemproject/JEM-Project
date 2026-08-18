@@ -345,6 +345,53 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testExistingPackageArtifactsContainPoint4FManualAdmissionOrders(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            $pricedRegistration = $this->componentEntryContents($zipFile, 'site/classes/pricedregistration.class.php');
+            $attendeeModel = $this->componentEntryContents($zipFile, 'admin/models/attendee.php');
+            $attendeeTemplate = $this->componentEntryContents($zipFile, 'admin/views/attendee/tmpl/default.php');
+            $attendeesTemplate = $this->componentEntryContents($zipFile, 'admin/views/attendees/tmpl/default.php');
+
+            self::assertStringContainsString('final class JemPricedRegistrationService', $pricedRegistration);
+            self::assertStringContainsString("'requestedStatus'", $pricedRegistration);
+            self::assertStringContainsString('new JemPricedRegistrationService($db)', $attendeeModel);
+            self::assertStringContainsString('attendee.pricingOptions', $attendeeTemplate);
+            self::assertStringContainsString('jem-admission-options', $attendeeTemplate);
+            self::assertStringContainsString('commercialBreakdowns', $attendeesTemplate);
+            self::assertStringContainsString('poolAvailability', $attendeesTemplate);
+        }
+    }
+
+    public function testExistingPackageArtifactsContainDedicatedStatisticsDashboard(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            $model = $this->componentEntryContents($zipFile, 'admin/models/statistics.php');
+            $template = $this->componentEntryContents($zipFile, 'admin/views/statistics/tmpl/default.php');
+            $controlPanel = $this->componentEntryContents($zipFile, 'admin/views/main/tmpl/default.php');
+            $css = $this->componentEntryContents($zipFile, 'media/css/backend.css');
+
+            self::assertStringContainsString('class JemModelStatistics', $model);
+            self::assertStringContainsString('getFutureEventCapacity', $model);
+            self::assertStringContainsString('getBookingValueTimeline', $model);
+            self::assertStringContainsString('getProgrammeSummary', $model);
+            self::assertStringContainsString('author_id', $template);
+            self::assertStringContainsString('jem-statistics-chart', $template);
+            self::assertStringContainsString('view=statistics', $controlPanel);
+            self::assertStringNotContainsString('accordion_jem', $controlPanel);
+            self::assertStringContainsString('.jem-statistics-card-grid', $css);
+            $this->componentEntryContents($zipFile, 'media/images/icon-48-statistics.svg');
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');

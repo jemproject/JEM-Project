@@ -173,13 +173,65 @@ class JemModelAttendees extends ListModel
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('id','title','dates','maxplaces','waitinglist'));
+        $query->select(array(
+            'id', 'title', 'dates', 'maxplaces', 'reservedplaces', 'waitinglist',
+            'pricing_mode', 'pricing_revision', 'currency', 'prices_include_tax',
+        ));
         $query->from('#__jem_events');
         $query->where('id = '.$db->Quote($this->eventid));
         $db->setQuery( $query );
         $event = $db->loadObject();
 
         return $event;
+    }
+
+    public function getCommercialBreakdowns()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'i.register_id', 'i.line_number', 'i.item_name', 'i.quantity',
+                'i.unit_gross', 'i.line_gross', 'i.currency', 'cp.name AS pool_name',
+            ))
+            ->from($db->quoteName('#__jem_register_items', 'i'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.id = i.register_id AND r.revision = i.registration_revision')
+            ->join('LEFT', $db->quoteName('#__jem_capacity_pools', 'cp') . ' ON cp.id = i.capacity_pool_id')
+            ->where('r.event = ' . (int) $this->eventid)
+            ->where("i.line_kind = 'admission'")
+            ->order('i.register_id ASC, i.line_number ASC');
+        $db->setQuery($query);
+        $breakdowns = array();
+        foreach ((array) $db->loadObjectList() as $line) {
+            $breakdowns[(int) $line->register_id][] = $line;
+        }
+
+        return $breakdowns;
+    }
+
+    public function getPoolAvailability()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'p.id', 'p.name', 'p.capacity',
+                'COALESCE(SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN i.quantity ELSE 0 END), 0) AS used',
+            ))
+            ->from($db->quoteName('#__jem_capacity_pools', 'p'))
+            ->join('LEFT', $db->quoteName('#__jem_register_items', 'i') . ' ON i.capacity_pool_id = p.id')
+            ->join('LEFT', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.id = i.register_id AND r.revision = i.registration_revision')
+            ->where('p.event_id = ' . (int) $this->eventid)
+            ->group(array('p.id', 'p.name', 'p.capacity'))
+            ->order('p.ordering ASC, p.id ASC');
+        $db->setQuery($query);
+        $pools = (array) $db->loadObjectList();
+        foreach ($pools as $pool) {
+            $pool->used = (int) $pool->used;
+            $pool->remaining = max(0, (int) $pool->capacity - $pool->used);
+        }
+
+        return $pools;
     }
 
     /**
@@ -230,6 +282,8 @@ class JemModelAttendees extends ListModel
 
         $event = $this->getEvent();
         $items = $this->getItems();
+        $priced = in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true);
+        $breakdowns = $priced ? $this->getCommercialBreakdowns() : array();
 
         $waitinglist = $event->waitinglist ?? false;
 
@@ -240,7 +294,7 @@ class JemModelAttendees extends ListModel
                 Text::_('COM_JEM_USERNAME'),
                 Text::_('COM_JEM_EMAIL'),
                 Text::_('COM_JEM_REGDATE'),
-                Text::_('COM_JEM_ATTENDEES_PLACES'),
+                Text::_($priced ? 'COM_JEM_PRICED_REGISTRATION_ORDER' : 'COM_JEM_ATTENDEES_PLACES'),
                 Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS')
             );
         if ($comments) {
@@ -260,12 +314,23 @@ class JemModelAttendees extends ListModel
             } else {
                 $txt_stat = 'COM_JEM_ATTENDEES_INVITED';
             }
+            $order = (string) $item->places;
+            if ($priced) {
+                $parts = array();
+                foreach ($breakdowns[(int) $item->id] ?? array() as $line) {
+                    $parts[] = (int) $line->quantity . 'x ' . $line->item_name
+                        . ($line->pool_name ? ' (' . $line->pool_name . ')' : '');
+                }
+                $order = $parts
+                    ? implode(' | ', $parts) . ' | ' . $item->currency . ' ' . $item->grand_total
+                    : Text::_('COM_JEM_PRICED_REGISTRATION_NO_ORDER');
+            }
             $data = array(
                     $item->name,
                     $item->username,
                     $item->email,
                     empty($item->uregdate) ? '' : HTMLHelper::_('date', $item->uregdate, Text::_('DATE_FORMAT_LC2')),
-                    $item->places,
+                    $order,
                     Text::_($txt_stat)
                 );
             if ($comments) {

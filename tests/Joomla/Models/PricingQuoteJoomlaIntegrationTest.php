@@ -30,7 +30,10 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
             self::markTestSkipped('Set JEM_TEST_WRITABLE=1 after installing the package to verify Point 4E quotes.');
         }
         self::bootJoomlaSite();
+        require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
         require_once JPATH_SITE . '/components/com_jem/classes/pricingquote.class.php';
+        require_once JPATH_SITE . '/components/com_jem/classes/pricedregistration.class.php';
+        require_once JPATH_SITE . '/components/com_jem/classes/waitinglistpromotion.class.php';
         $this->db = Factory::getContainer()->get(DatabaseDriver::class);
     }
 
@@ -318,6 +321,171 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
         self::assertSame(2, $first['pricing_revision']);
     }
 
+    public function testPricedOrderKeepsModificationTermsAndRepricesOnlyReactivation(): void
+    {
+        $fixture = $this->createFixture();
+        $registerId = $fixture['active_register_id'];
+        $userId = $this->activeUserId();
+        $this->db->setQuery(
+            'DELETE FROM ' . $this->db->quoteName('#__jem_register_items')
+            . ' WHERE register_id = ' . $registerId . ' AND registration_revision > 1'
+        )->execute();
+        $this->db->setQuery(
+            'UPDATE ' . $this->db->quoteName('#__jem_register')
+            . ' SET uid = ' . $userId . ', price_locked_at = ' . $this->db->quote('2026-09-01 09:00:00')
+            . ' WHERE id = ' . $registerId
+        )->execute();
+        $this->db->setQuery(
+            'UPDATE ' . $this->db->quoteName('#__jem_register_items')
+            . " SET unit_net = '9.92', unit_tax = '2.08', unit_gross = '12.00',"
+            . " line_net = '19.84', line_tax = '4.16', line_gross = '24.00',"
+            . " tax_code = 'locked', tax_name = 'Locked tax', tax_type = 'standard', tax_rate = '21.00'"
+            . ' WHERE register_id = ' . $registerId
+            . ' AND registration_revision = 1 AND event_price_id = ' . $fixture['adult_price_id']
+        )->execute();
+        $this->updateValue('#__jem_event_prices', $fixture['adult_price_id'], 'amount', 20);
+
+        $service = new JemPricedRegistrationService($this->db, static fn (): string => '2026-09-15 12:00:00');
+        $context = $this->context($fixture, 2, true, true, $registerId, $userId);
+        $selection = array(array('event_price_id' => $fixture['adult_price_id'], 'quantity' => 2));
+        $preview = $service->quote($fixture['event_id'], $selection, $context);
+
+        self::assertSame('12.00', $preview['lines'][0]['unit_gross']);
+        self::assertSame('24.00', $preview['grand_total']);
+
+        $operationReference = JemRegistrationIdentity::generateOperationReference();
+        $modified = $service->confirm(
+            $fixture['event_id'],
+            $selection,
+            $context,
+            $preview['quote_fingerprint'],
+            $operationReference,
+            array(),
+            array('expectedRevision' => 1, 'source' => 'phpunit')
+        );
+        self::assertTrue($modified->changed);
+        self::assertSame(2, (int) $modified->after->revision);
+        self::assertSame('24.00', (string) $modified->after->grand_total);
+        self::assertSame('2026-09-01 09:00:00', (string) $modified->after->price_locked_at);
+
+        $retry = $service->confirm(
+            $fixture['event_id'],
+            $selection,
+            $context,
+            $preview['quote_fingerprint'],
+            $operationReference,
+            array(),
+            array('expectedRevision' => 1, 'source' => 'phpunit')
+        );
+        self::assertFalse($retry->changed);
+        self::assertSame(2, (int) $retry->after->revision);
+
+        $registrationService = new JemRegistrationService($this->db);
+        $cancelled = $registrationService->cancelByIds(array($registerId), $fixture['event_id'], array(
+            'actorId' => $userId,
+            'source' => 'phpunit',
+        ));
+        self::assertSame(3, (int) $cancelled[0]->after->revision);
+        self::assertSame('24.00', (string) $cancelled[0]->after->grand_total);
+        self::assertSame(1, $this->itemCount($registerId, 3));
+
+        $this->updateValue('#__jem_event_prices', $fixture['adult_price_id'], 'amount', 30);
+        $reactivationContext = $this->context($fixture, 2, true, true, $registerId, $userId);
+        $reactivationPreview = $service->quote($fixture['event_id'], $selection, $reactivationContext);
+        self::assertSame('30.00', $reactivationPreview['lines'][0]['unit_gross']);
+        $reactivated = $service->confirm(
+            $fixture['event_id'],
+            $selection,
+            $reactivationContext,
+            $reactivationPreview['quote_fingerprint'],
+            JemRegistrationIdentity::generateOperationReference(),
+            array(),
+            array('expectedRevision' => 3, 'source' => 'phpunit')
+        );
+
+        self::assertSame(4, (int) $reactivated->after->revision);
+        self::assertSame('60.00', (string) $reactivated->after->grand_total);
+        self::assertSame('2026-09-15 12:00:00', (string) $reactivated->after->price_locked_at);
+        self::assertSame(1, $this->itemCount($registerId, 4));
+    }
+
+    public function testPricedOrderCreationPersistsOneAtomicWaitingSnapshot(): void
+    {
+        $fixture = $this->createFixture();
+        $userId = $this->activeUserId();
+        $this->updateValue('#__jem_events', $fixture['event_id'], 'waitinglist', 1);
+        $this->updateValue('#__jem_event_prices', $fixture['adult_price_id'], 'quota', 2);
+        $service = new JemPricedRegistrationService($this->db, static fn (): string => '2026-09-15 12:00:00');
+        $context = $this->context($fixture, 2, true, true, 0, $userId);
+        $selection = array(array('event_price_id' => $fixture['adult_price_id'], 'quantity' => 1));
+        $preview = $service->quote($fixture['event_id'], $selection, $context);
+
+        self::assertSame('waiting_list', $preview['inventory_state']);
+        $operationReference = JemRegistrationIdentity::generateOperationReference();
+        $created = $service->confirm(
+            $fixture['event_id'],
+            $selection,
+            $context,
+            $preview['quote_fingerprint'],
+            $operationReference,
+            array('comment' => 'Atomic waiting order'),
+            array('actorId' => $userId, 'source' => 'phpunit')
+        );
+        $registerId = (int) $created->after->id;
+        $this->ids['registers'][] = $registerId;
+
+        self::assertSame(1, (int) $created->after->revision);
+        self::assertSame(1, (int) $created->after->waiting);
+        self::assertSame(1, (int) $created->after->places);
+        self::assertSame('12.00', (string) $created->after->grand_total);
+        self::assertSame(1, $this->itemCount($registerId, 1));
+
+        $retry = $service->confirm(
+            $fixture['event_id'],
+            $selection,
+            $context,
+            $preview['quote_fingerprint'],
+            $operationReference,
+            array('comment' => 'Atomic waiting order'),
+            array('actorId' => $userId, 'source' => 'phpunit')
+        );
+        self::assertFalse($retry->changed);
+        self::assertSame($registerId, (int) $retry->after->id);
+        self::assertSame(1, $this->itemCount($registerId, 1));
+    }
+
+    public function testPricedWaitingPromotionHonoursPoolAndQuotaEvenWhenForced(): void
+    {
+        $fixture = $this->createFixture();
+        $this->updateValue('#__jem_events', $fixture['event_id'], 'waitinglist', 1);
+        $blocked = JemWaitingListPromotion::promote($fixture['event_id'], array(
+            'mode' => JemWaitingListPromotion::MODE_MANUAL,
+            'registrationIds' => array($fixture['waiting_register_id']),
+            'force' => true,
+            'notify' => false,
+            'actorId' => $this->activeUserId(),
+            'source' => 'phpunit',
+        ));
+
+        self::assertFalse($blocked->success);
+        self::assertSame('capacity_exceeded', $blocked->reason);
+        self::assertFalse($blocked->forced);
+
+        $this->updateValue('#__jem_capacity_pools', $fixture['pool_id'], 'capacity', 20);
+        $this->updateValue('#__jem_event_prices', $fixture['adult_price_id'], 'quota', 20);
+        $promoted = JemWaitingListPromotion::promote($fixture['event_id'], array(
+            'mode' => JemWaitingListPromotion::MODE_MANUAL,
+            'registrationIds' => array($fixture['waiting_register_id']),
+            'notify' => false,
+            'actorId' => $this->activeUserId(),
+            'source' => 'phpunit',
+        ));
+
+        self::assertTrue($promoted->success, $promoted->reason);
+        self::assertSame(array($fixture['waiting_register_id']), $promoted->promotedIds);
+        self::assertSame(1, $this->itemCount($fixture['waiting_register_id'], 2));
+    }
+
     public function testLockedQuoteRejectsChangedTaxFingerprint(): void
     {
         $fixture = $this->createFixture();
@@ -360,7 +528,7 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
     }
 
     /**
-     * @return array{venue_id:int,event_id:int,pool_id:int,standard_tax_id:int,adult_price_id:int,child_price_id:int,active_register_id:int,access_level_id:int,user_group_id:int}
+     * @return array{venue_id:int,event_id:int,pool_id:int,standard_tax_id:int,adult_price_id:int,child_price_id:int,active_register_id:int,waiting_register_id:int,access_level_id:int,user_group_id:int}
      */
     private function createFixture(): array
     {
@@ -484,6 +652,7 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
             'adult_price_id' => $adultPriceId,
             'child_price_id' => $childPriceId,
             'active_register_id' => $registrationId,
+            'waiting_register_id' => $waitingId,
             'access_level_id' => $accessLevelId,
             'user_group_id' => $userGroupId,
         );
@@ -615,10 +784,11 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
         int $pricingRevision = 2,
         bool $withAccess = true,
         bool $withGroup = true,
-        int $excludedRegisterId = 0
+        int $excludedRegisterId = 0,
+        int $userId = 999999
     ): JemPricingQuoteContext {
         $identity = new PricingQuoteIdentityStub(
-            999999,
+            $userId,
             $withAccess ? array($fixture['access_level_id']) : array(),
             $withGroup ? array($fixture['user_group_id']) : array()
         );
@@ -720,6 +890,29 @@ final class PricingQuoteJoomlaIntegrationTest extends JoomlaTestCase
         self::assertGreaterThan(0, $id);
 
         return $id;
+    }
+
+    private function activeUserId(): int
+    {
+        $this->db->setQuery(
+            'SELECT MIN(id) FROM ' . $this->db->quoteName('#__users')
+            . " WHERE block = 0 AND (activation = '' OR activation = '0')"
+        );
+        $id = (int) $this->db->loadResult();
+        self::assertGreaterThan(0, $id);
+
+        return $id;
+    }
+
+    private function itemCount(int $registerId, int $revision): int
+    {
+        $this->db->setQuery(
+            'SELECT COUNT(*) FROM ' . $this->db->quoteName('#__jem_register_items')
+            . ' WHERE register_id = ' . $registerId
+            . ' AND registration_revision = ' . $revision
+        );
+
+        return (int) $this->db->loadResult();
     }
 
     private function deleteWhere(string $table, string $column, int $value): void

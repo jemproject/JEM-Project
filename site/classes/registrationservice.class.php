@@ -158,6 +158,16 @@ final class JemRegistrationService
         $after = $this->applyCapacityPolicy($before, $after, $options);
         $oldStatus = is_object($before) ? JemRegistrationTransition::logicalStatus($before) : null;
         $newStatus = JemRegistrationTransition::logicalStatus($after);
+        $hasCommercialLines = array_key_exists('commercialLines', $options);
+        if (is_object($before) && self::isPricedRegistration($before) && !$hasCommercialLines) {
+            if ((int) ($before->places ?? 0) !== (int) ($after->places ?? 0)) {
+                throw new RuntimeException('Priced registration quantities require a commercial revision.');
+            }
+            if ($oldStatus === JemRegistrationTransition::NOT_ATTENDING
+                && $newStatus !== JemRegistrationTransition::NOT_ATTENDING) {
+                throw new RuntimeException('A cancelled priced registration must be reactivated from a current quote.');
+            }
+        }
         $requiresActiveUser = !is_object($before)
             || (int) ($before->uid ?? 0) !== (int) $after->uid
             || ($oldStatus === JemRegistrationTransition::NOT_ATTENDING
@@ -176,6 +186,9 @@ final class JemRegistrationService
         }
 
         $changedFields = self::changedFields($before, $after);
+        if (!empty($options['forceRevision']) && !in_array('commercial_items', $changedFields, true)) {
+            $changedFields[] = 'commercial_items';
+        }
         if (is_object($before) && !$changedFields) {
             return $this->result($before, $before, null, $operationReference, false);
         }
@@ -199,6 +212,8 @@ final class JemRegistrationService
             $this->db->insertObject('#__jem_register', $after);
             $after->id = (int) $this->db->insertid();
         }
+
+        $this->persistCommercialRevision($before, $after, $options, $now);
 
         $action = (string) ($options['action'] ?? self::inferAction($before, $after));
         $history = $this->createHistoryRow(
@@ -454,9 +469,17 @@ final class JemRegistrationService
 
     public static function changedFields($before, $after)
     {
-        $fields = array('event', 'uid', 'places', 'status', 'waiting', 'comment');
+        $fields = array(
+            'event', 'uid', 'places', 'status', 'waiting', 'comment',
+            'pricing_mode', 'currency', 'subtotal_net', 'discount_total', 'tax_total',
+            'management_fee_net', 'management_fee_tax', 'management_fee_gross',
+            'grand_total', 'payment_state', 'price_locked_at', 'external_payment_reference',
+        );
         if (!is_object($before)) {
-            return $fields;
+            return array_values(array_filter($fields, static function ($field) use ($after) {
+                return in_array($field, array('event', 'uid', 'places', 'status', 'waiting', 'comment'), true)
+                    || property_exists($after, $field);
+            }));
         }
 
         return array_values(array_filter($fields, static function ($field) use ($before, $after) {
@@ -497,7 +520,12 @@ final class JemRegistrationService
         $input = (object) (array) $data;
         $after = is_object($before) ? clone $before : new stdClass();
 
-        foreach (array('event', 'uid', 'places', 'uregdate', 'uip', 'waiting', 'status', 'comment') as $field) {
+        foreach (array(
+            'event', 'uid', 'places', 'uregdate', 'uip', 'waiting', 'status', 'comment',
+            'pricing_mode', 'currency', 'subtotal_net', 'discount_total', 'tax_total',
+            'management_fee_net', 'management_fee_tax', 'management_fee_gross',
+            'grand_total', 'payment_state', 'price_locked_at', 'external_payment_reference',
+        ) as $field) {
             if (property_exists($input, $field)) {
                 $after->$field = $input->$field;
             }
@@ -525,6 +553,107 @@ final class JemRegistrationService
         }
 
         return $after;
+    }
+
+    /**
+     * Return the immutable item snapshot for one registration revision.
+     */
+    public function commercialItems($registerId, $revision, $lock = false)
+    {
+        $registerId = (int) $registerId;
+        $revision = (int) $revision;
+        if ($registerId < 1 || $revision < 1) {
+            return array();
+        }
+
+        $query = $this->db->getQuery(true)
+            ->select('*')
+            ->from($this->db->quoteName('#__jem_register_items'))
+            ->where($this->db->quoteName('register_id') . ' = ' . $registerId)
+            ->where($this->db->quoteName('registration_revision') . ' = ' . $revision)
+            ->order($this->db->quoteName('line_number') . ' ASC');
+        $this->db->setQuery((string) $query . ($lock ? ' FOR UPDATE' : ''));
+
+        return (array) $this->db->loadObjectList();
+    }
+
+    private function persistCommercialRevision($before, $after, array $options, $now)
+    {
+        if (!self::isPricedRegistration($after)) {
+            return;
+        }
+
+        if (array_key_exists('commercialLines', $options)) {
+            $lines = (array) $options['commercialLines'];
+        } elseif (is_object($before) && self::isPricedRegistration($before)) {
+            $lines = $this->commercialItems(
+                (int) $before->id,
+                max(1, (int) ($before->revision ?? 1)),
+                true
+            );
+        } else {
+            throw new RuntimeException('A new priced registration requires admission lines.');
+        }
+
+        if (!$lines) {
+            throw new RuntimeException('A priced registration revision cannot have an empty commercial snapshot.');
+        }
+
+        $admissionQuantity = 0;
+        foreach (array_values($lines) as $offset => $source) {
+            $source = (object) (array) $source;
+            $kind = preg_replace('/[^a-z0-9_.-]/i', '', (string) ($source->line_kind ?? ''));
+            $quantity = (int) ($source->quantity ?? 0);
+            if ($kind === '' || $quantity < 1) {
+                throw new RuntimeException('Commercial lines require a valid kind and positive quantity.');
+            }
+            if ($kind === 'admission') {
+                $admissionQuantity += $quantity;
+            }
+
+            $item = (object) array(
+                'register_id' => (int) $after->id,
+                'registration_revision' => (int) $after->revision,
+                'line_number' => $offset + 1,
+                'line_kind' => $kind,
+                'event_price_id' => !empty($source->event_price_id) ? (int) $source->event_price_id : null,
+                'capacity_pool_id' => !empty($source->capacity_pool_id) ? (int) $source->capacity_pool_id : null,
+                'item_code' => (string) ($source->item_code ?? ''),
+                'item_name' => (string) ($source->item_name ?? ''),
+                'item_description' => isset($source->item_description) ? (string) $source->item_description : null,
+                'quantity' => $quantity,
+                'currency' => (string) ($source->currency ?? $after->currency ?? ''),
+                'price_includes_tax' => !empty($source->price_includes_tax) ? 1 : 0,
+                'unit_net' => (string) ($source->unit_net ?? '0.00'),
+                'unit_tax' => (string) ($source->unit_tax ?? '0.00'),
+                'unit_gross' => (string) ($source->unit_gross ?? '0.00'),
+                'line_net' => (string) ($source->line_net ?? '0.00'),
+                'line_tax' => (string) ($source->line_tax ?? '0.00'),
+                'line_gross' => (string) ($source->line_gross ?? '0.00'),
+                'tax_code' => (string) ($source->tax_code ?? ''),
+                'tax_name' => (string) ($source->tax_name ?? ''),
+                'tax_type' => (string) ($source->tax_type ?? ''),
+                'tax_rate' => (string) ($source->tax_rate ?? '0.00'),
+                'calculation_mode' => (string) ($source->calculation_mode ?? ''),
+                'calculation_value' => isset($source->calculation_value) ? (string) $source->calculation_value : null,
+                'calculation_basis' => (string) ($source->calculation_basis ?? ''),
+                'condition_snapshot' => isset($source->condition_snapshot)
+                    ? (string) $source->condition_snapshot
+                    : null,
+                'created' => $now,
+            );
+            $this->db->insertObject('#__jem_register_items', $item);
+        }
+
+        if ($admissionQuantity !== (int) $after->places) {
+            throw new RuntimeException('Registration places must equal the current admission quantities.');
+        }
+    }
+
+    private static function isPricedRegistration($row)
+    {
+        return is_object($row)
+            && in_array((string) ($row->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true);
     }
 
     private function loadForUpdate($row)

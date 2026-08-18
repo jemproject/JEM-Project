@@ -88,7 +88,13 @@ class JemModelAttendee extends BaseDatabaseModel
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             $query = $db->getQuery(true);
-            $query->select(array('r.*','u.name AS username', 'a.title AS eventtitle', 'a.waitinglist', 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.series_id', 'a.series_order', 'a.seriesbooking'));
+            $query->select(array(
+                'r.*', 'u.name AS username', 'a.title AS eventtitle', 'a.waitinglist',
+                'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.series_id',
+                'a.series_order', 'a.seriesbooking', 'a.pricing_mode AS event_pricing_mode',
+                'a.pricing_revision AS event_pricing_revision', 'a.currency AS event_currency',
+                'a.prices_include_tax',
+            ));
             $query->from('#__jem_register as r');
             $query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
             $query->join('LEFT', '#__jem_events AS a ON (a.id = r.event)');
@@ -132,6 +138,10 @@ class JemModelAttendee extends BaseDatabaseModel
                     $data->minbookeduser = $table->minbookeduser;
                     $data->recurrence_type = $table->recurrence_type;
                     $data->seriesbooking = $table->seriesbooking;
+                    $data->event_pricing_mode = $table->pricing_mode;
+                    $data->event_pricing_revision = $table->pricing_revision;
+                    $data->event_currency = $table->currency;
+                    $data->prices_include_tax = $table->prices_include_tax;
                 }
                 $data->waitinglist = $table->waitinglist ?? 0;
             }
@@ -140,12 +150,215 @@ class JemModelAttendee extends BaseDatabaseModel
         return true;
     }
 
+    /**
+     * Build the administrator admission selector from current inventory and
+     * the selected booking holder's access/group eligibility.
+     */
+    public function getPricingData($eventId = 0, $userId = 0, $registrationId = 0)
+    {
+        $eventId = (int) $eventId;
+        $userId = (int) $userId;
+        $registrationId = (int) $registrationId;
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'id', 'pricing_mode', 'pricing_revision', 'currency', 'prices_include_tax',
+                'maxplaces', 'reservedplaces', 'waitinglist',
+            ))
+            ->from($db->quoteName('#__jem_events'))
+            ->where('id = ' . $eventId);
+        $db->setQuery($query);
+        $event = $db->loadObject();
+        $priced = $event && in_array((string) $event->pricing_mode, array('single', 'multiple', 'priced'), true);
+        $result = (object) array(
+            'is_priced' => $priced,
+            'pricing_mode' => $event ? (string) $event->pricing_mode : 'classic',
+            'pricing_revision' => $event ? (int) $event->pricing_revision : 0,
+            'currency' => $event ? (string) $event->currency : '',
+            'event_capacity' => $event ? (int) $event->maxplaces : 0,
+            'event_used' => 0,
+            'event_remaining' => 0,
+            'waitinglist' => $event ? (int) $event->waitinglist : 0,
+            'options' => array(),
+            'pools' => array(),
+        );
+        if (!$priced) {
+            return $result;
+        }
+
+        $currentItems = array();
+        $currentStatus = null;
+        if ($registrationId > 0) {
+            $query = $db->getQuery(true)
+                ->select(array('status', 'waiting'))
+                ->from($db->quoteName('#__jem_register'))
+                ->where('id = ' . $registrationId)
+                ->where('event = ' . $eventId);
+            if ($userId > 0) {
+                $query->where('uid = ' . $userId);
+            }
+            $db->setQuery($query);
+            $currentRegistration = $db->loadObject();
+            $currentStatus = $currentRegistration
+                ? JemRegistrationTransition::logicalStatus($currentRegistration)
+                : null;
+            if ($currentRegistration) {
+                $query = $db->getQuery(true)
+                    ->select('i.*')
+                    ->from($db->quoteName('#__jem_register_items', 'i'))
+                    ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                        . ' ON r.id = i.register_id AND r.revision = i.registration_revision')
+                    ->where('r.id = ' . $registrationId)
+                    ->where('r.event = ' . $eventId)
+                    ->where("i.line_kind = 'admission'")
+                    ->order('i.line_number ASC');
+                $db->setQuery($query);
+                foreach ((array) $db->loadObjectList() as $item) {
+                    $currentItems[(int) $item->event_price_id] = $item;
+                }
+            }
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                'p.*', 'cp.name AS pool_name', 'cp.capacity AS pool_capacity',
+                't.code AS tax_code', 't.name AS tax_name', 't.tax_type', 't.rate AS tax_rate',
+            ))
+            ->from($db->quoteName('#__jem_event_prices', 'p'))
+            ->join('LEFT', $db->quoteName('#__jem_capacity_pools', 'cp') . ' ON cp.id = p.capacity_pool_id')
+            ->join('LEFT', $db->quoteName('#__jem_tax_rates', 't') . ' ON t.id = p.tax_rate_id')
+            ->where('p.event_id = ' . $eventId)
+            ->order('p.ordering ASC, p.id ASC');
+        $db->setQuery($query);
+        $prices = (array) $db->loadObjectList();
+
+        $active = 'r.status = 1 AND r.waiting = 0';
+        $query = $db->getQuery(true)
+            ->select('COALESCE(SUM(GREATEST(r.places, 1)), 0)')
+            ->from($db->quoteName('#__jem_register', 'r'))
+            ->where('r.event = ' . $eventId)
+            ->where($active);
+        if ($registrationId > 0) {
+            $query->where('r.id <> ' . $registrationId);
+        }
+        $db->setQuery($query);
+        $result->event_used = max(0, (int) $event->reservedplaces) + (int) $db->loadResult();
+        $eventRemaining = (int) $event->maxplaces > 0
+            ? max(0, (int) $event->maxplaces - $result->event_used)
+            : PHP_INT_MAX;
+        $result->event_remaining = $eventRemaining === PHP_INT_MAX ? null : $eventRemaining;
+
+        $base = $db->getQuery(true)
+            ->select(array('i.capacity_pool_id', 'i.event_price_id', 'i.quantity'))
+            ->from($db->quoteName('#__jem_register_items', 'i'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.id = i.register_id AND r.revision = i.registration_revision')
+            ->where('r.event = ' . $eventId)
+            ->where($active)
+            ->where("i.line_kind = 'admission'");
+        if ($registrationId > 0) {
+            $base->where('r.id <> ' . $registrationId);
+        }
+        $db->setQuery($base);
+        $poolUsed = array();
+        $priceUsed = array();
+        foreach ((array) $db->loadObjectList() as $used) {
+            if ((int) $used->capacity_pool_id > 0) {
+                $poolUsed[(int) $used->capacity_pool_id] = ($poolUsed[(int) $used->capacity_pool_id] ?? 0)
+                    + (int) $used->quantity;
+            }
+            if ((int) $used->event_price_id > 0) {
+                $priceUsed[(int) $used->event_price_id] = ($priceUsed[(int) $used->event_price_id] ?? 0)
+                    + (int) $used->quantity;
+            }
+        }
+
+        $levels = array();
+        $groups = array();
+        if ($userId > 0) {
+            $bookingHolder = JemFactory::getUser($userId);
+            $levels = array_flip(array_map('intval', $bookingHolder->getAuthorisedViewLevels()));
+            $groups = array_flip(array_map('intval', $bookingHolder->getAuthorisedGroups()));
+        }
+        $now = gmdate('Y-m-d H:i:s');
+        foreach ($prices as $price) {
+            $priceId = (int) $price->id;
+            $current = $currentItems[$priceId] ?? null;
+            $lockedCurrent = $current
+                && $currentStatus !== JemRegistrationTransition::NOT_ATTENDING;
+            $eligible = $userId > 0
+                && ((int) $price->published === 1 || $lockedCurrent)
+                && (empty($price->available_from) || (string) $price->available_from <= $now || $lockedCurrent)
+                && (empty($price->available_until) || (string) $price->available_until >= $now || $lockedCurrent)
+                && (empty($price->access_level_id) || isset($levels[(int) $price->access_level_id]))
+                && (empty($price->user_group_id) || isset($groups[(int) $price->user_group_id]));
+            $poolId = (int) ($price->capacity_pool_id ?? 0);
+            $poolRemaining = $poolId > 0
+                ? max(0, (int) $price->pool_capacity - (int) ($poolUsed[$poolId] ?? 0))
+                : $eventRemaining;
+            $quotaRemaining = $price->quota === null
+                ? PHP_INT_MAX
+                : max(0, (int) $price->quota - (int) ($priceUsed[$priceId] ?? 0));
+            $available = min($eventRemaining, $poolRemaining, $quotaRemaining);
+            $unitGross = $lockedCurrent ? (string) $current->unit_gross : (string) $price->amount;
+            if (!$lockedCurrent && !empty($price->tax_type)) {
+                try {
+                    $policy = new JemTaxPolicy(
+                        (string) $price->tax_type,
+                        (string) $price->tax_rate,
+                        (int) $event->prices_include_tax === 1
+                    );
+                    $calculation = JemTaxCalculator::calculate(
+                        JemMoney::fromDecimal((string) $price->amount, (string) $event->currency),
+                        $policy,
+                        1
+                    );
+                    $unitGross = $calculation->unitGross->decimal();
+                } catch (Throwable $ignored) {
+                    // The authoritative save path will reject an invalid tax configuration.
+                }
+            }
+
+            $result->options[] = (object) array(
+                'id' => $priceId,
+                'code' => (string) $price->code,
+                'name' => $lockedCurrent ? (string) $current->item_name : (string) $price->name,
+                'pool_id' => $poolId ?: null,
+                'pool_name' => (string) ($price->pool_name ?? ''),
+                'available' => $available === PHP_INT_MAX ? null : $available,
+                'unit_gross' => $unitGross,
+                'quantity' => $current ? (int) $current->quantity : 0,
+                'min_quantity' => max(1, (int) $price->min_quantity),
+                'max_quantity' => $price->max_quantity === null ? null : (int) $price->max_quantity,
+                'eligible' => $eligible,
+                'locked' => (bool) $lockedCurrent,
+            );
+            if ($poolId > 0 && !isset($result->pools[$poolId])) {
+                $result->pools[$poolId] = (object) array(
+                    'id' => $poolId,
+                    'name' => (string) $price->pool_name,
+                    'capacity' => (int) $price->pool_capacity,
+                    'used' => (int) ($poolUsed[$poolId] ?? 0),
+                    'remaining' => $poolRemaining,
+                );
+            }
+        }
+        $result->pools = array_values($result->pools);
+
+        return $result;
+    }
+
     public function toggle()
     {
         $attendee = $this->getData();
 
         if (!$attendee->id) {
             $this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
+            return false;
+        }
+
+        if (in_array((string) ($attendee->event_pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)) {
+            $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED'));
             return false;
         }
 
@@ -202,6 +415,106 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'pricing_mode', 'pricing_revision', 'waitinglist', 'recurrence_type', 'series_id'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where('id = ' . $eventid);
+        $db->setQuery($query);
+        $pricedEvent = $db->loadObject();
+        $isPriced = $pricedEvent && in_array(
+            (string) $pricedEvent->pricing_mode,
+            array('single', 'multiple', 'priced'),
+            true
+        );
+
+        if ($isPriced && in_array((int) $status, array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            if (!empty($data['seriesbooking']) || !empty($pricedEvent->recurrence_type) || !empty($pricedEvent->series_id)) {
+                $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_SERIES_UNAVAILABLE'));
+                return false;
+            }
+            if ((int) $status === JemRegistrationTransition::WAITING_LIST && empty($pricedEvent->waitinglist)) {
+                $this->setError(Text::_('COM_JEM_NO_WAITINGLIST'));
+                return false;
+            }
+
+            $before = null;
+            if ($id > 0) {
+                $query = $db->getQuery(true)
+                    ->select('*')
+                    ->from($db->quoteName('#__jem_register'))
+                    ->where('id = ' . $id);
+                $db->setQuery($query);
+                $before = $db->loadObject();
+                if (!$before || (int) $before->event !== $eventid) {
+                    $this->setError(Text::_('COM_JEM_MISSING_ATTENDEE_ID'));
+                    return false;
+                }
+                if ((int) $before->uid !== $userid) {
+                    $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_USER_LOCKED'));
+                    return false;
+                }
+            }
+
+            $selections = array();
+            foreach ((array) ($data['admissions'] ?? array()) as $priceId => $quantity) {
+                $priceId = (int) $priceId;
+                $quantity = (int) $quantity;
+                if ($priceId > 0 && $quantity > 0) {
+                    $selections[] = array('event_price_id' => $priceId, 'quantity' => $quantity);
+                }
+            }
+            if (!$selections) {
+                $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED'));
+                return false;
+            }
+
+            try {
+                $bookingHolder = JemFactory::getUser($userid);
+                $context = JemPricingQuoteContext::fromIdentity(
+                    $bookingHolder,
+                    max(1, (int) $pricedEvent->pricing_revision),
+                    $id
+                );
+                $service = new JemPricedRegistrationService($db);
+                $quote = $service->quote($eventid, $selections, $context);
+                $options = array(
+                    'actorId' => (int) Factory::getApplication()->getIdentity()->id,
+                    'source' => $id > 0 ? 'administrator.attendee.order_edit' : 'administrator.attendee.order_add',
+                    'requestedStatus' => (int) $status,
+                );
+                if ($before) {
+                    $options['expectedRevision'] = max(1, (int) ($before->revision ?? 1));
+                }
+                $result = $service->confirm(
+                    $eventid,
+                    $selections,
+                    $context,
+                    $quote['quote_fingerprint'],
+                    JemRegistrationIdentity::generateOperationReference(),
+                    array(
+                        'comment' => (string) ($data['comment'] ?? ($before->comment ?? '')),
+                        'uip' => (string) ($data['uip'] ?? ($before->uip ?? '')),
+                    ),
+                    $options
+                );
+                $this->_data = $result->after;
+
+                return $result->after;
+            } catch (Throwable $e) {
+                $this->setError($e->getMessage());
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+                return false;
+            }
+        }
+
+        if ($isPriced && (int) $status === JemRegistrationTransition::INVITED) {
+            $data['places'] = 0;
+        }
+
         // Split status and waiting
         if ($status !== false) {
             if ($status == 2) {
@@ -231,8 +544,6 @@ class JemModelAttendee extends BaseDatabaseModel
 
         // sanitise id field
         $row->id = (int)$row->id;
-        $db = Factory::getContainer()->get('DatabaseDriver');
-
         // Check if user is already registered to this event
         $query = $db->getQuery(true);
         $query->select(array('COUNT(id) AS count'));
@@ -390,6 +701,22 @@ class JemModelAttendee extends BaseDatabaseModel
         if (!JemRegistrationTransition::isValidStatus($value) || (int) $eventId < 1) {
             $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
             return false;
+        }
+
+        if (in_array((int) $value, array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select('pricing_mode')
+                ->from($db->quoteName('#__jem_events'))
+                ->where('id = ' . (int) $eventId);
+            $db->setQuery($query);
+            if (in_array((string) $db->loadResult(), array('single', 'multiple', 'priced'), true)) {
+                $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED'));
+                return false;
+            }
         }
 
         // Sanitize the ids.

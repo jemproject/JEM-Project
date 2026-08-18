@@ -734,7 +734,7 @@
                     label="COM_JEM_EVENT_PRICE_DESCRIPTION" />
                 <field name="amount" type="number" min="0" step="0.01" default="0.00"
                     label="COM_JEM_EVENT_PRICE_AMOUNT" />
-                <field name="tax_rate_id" type="taxrateoptions" required="true"
+                <field name="tax_rate_id" type="taxrateoptions"
                     label="COM_JEM_EVENT_PRICE_TAX_RATE" />
                 <field name="capacity_pool_id" type="capacitypooloptions"
                     label="COM_JEM_EVENT_PRICE_CAPACITY_AREA" />

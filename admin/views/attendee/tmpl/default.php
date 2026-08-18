@@ -21,6 +21,13 @@ $wa = $document->getWebAssetManager();
            ->useScript('form.validate');
 
 $userModalId = 'jem-attendee-user-modal';
+$isPriced = !empty($this->pricing->is_priced);
+$pricedUserLocked = $isPriced && !empty($this->row->id);
+$pricingEndpoint = Route::_(
+    'index.php?option=com_jem&task=attendee.pricingOptions&format=json&event=' . (int) ($this->row->event ?: $this->event)
+    . '&id=' . (int) $this->row->id . '&' . Session::getFormToken() . '=1',
+    false
+);
 
 $selectuser_link = Route::_('index.php?option=com_jem&task=attendee.selectuser&tmpl=component');
 echo HTMLHelper::_(
@@ -41,6 +48,9 @@ function modalSelectUser(id, username)
 {
         document.getElementById('uid').value = id;
         document.getElementById('username').value = username;
+        if (window.jemLoadAdmissionOptions) {
+            window.jemLoadAdmissionOptions(id);
+        }
 
         const modal = document.getElementById('<?php echo $userModalId; ?>');
         if (modal && window.bootstrap && bootstrap.Modal) {
@@ -52,6 +62,15 @@ function modalSelectUser(id, username)
 }
 Joomla.submitbutton = function(task)
     {
+        const status = parseInt(document.getElementById('reg_status').value, 10);
+        if (task !== 'attendee.cancel' && <?php echo $isPriced ? 'true' : 'false'; ?> && (status === 1 || status === 2)) {
+            const quantities = Array.from(document.querySelectorAll('#jem-admission-options input[type="number"]'));
+            const total = quantities.reduce((sum, input) => sum + Math.max(0, parseInt(input.value || '0', 10)), 0);
+            if (!window.jemPricingLoaded || total < 1) {
+                alert(<?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED')); ?>);
+                return false;
+            }
+        }
         if (task == 'attendee.cancel' || document.formvalidator.isValid(document.getElementById('adminForm'))) {
             if (task == 'attendee.cancel' || document.getElementById('adminForm').uid.value != 0) {
                 Joomla.submitform(task, document.getElementById('adminForm'));
@@ -63,6 +82,131 @@ Joomla.submitbutton = function(task)
             alert('<?php echo $this->escape(Text::_('JGLOBAL_VALIDATION_FORM_FAILED'));?>');
         }
     }
+
+const jemInitialPricing = <?php echo json_encode($this->pricing, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+window.jemPricingLoaded = <?php echo $isPriced && !empty($this->row->uid) ? 'true' : 'false'; ?>;
+
+function jemFormatMoney(amount, currency) {
+    return currency + ' ' + Number(amount || 0).toFixed(2);
+}
+
+function jemRenderAdmissionOptions(pricing) {
+    const body = document.getElementById('jem-admission-options');
+    if (!body) return;
+    body.replaceChildren();
+    const currency = pricing.currency || '';
+    (pricing.options || []).forEach(function(option) {
+        const row = document.createElement('tr');
+        const admission = document.createElement('td');
+        const name = document.createElement('strong');
+        name.textContent = option.name;
+        admission.appendChild(name);
+        if (option.code) {
+            const code = document.createElement('small');
+            code.className = 'd-block text-muted';
+            code.textContent = option.code;
+            admission.appendChild(code);
+        }
+        if (option.locked) {
+            const locked = document.createElement('span');
+            locked.className = 'badge bg-info text-dark ms-2';
+            locked.textContent = <?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_LOCKED')); ?>;
+            name.appendChild(locked);
+        }
+        const pool = document.createElement('td');
+        pool.textContent = option.pool_name || <?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_EVENT_CAPACITY')); ?>;
+        const available = document.createElement('td');
+        available.className = 'text-center';
+        available.textContent = option.available === null ? '\u221e' : option.available;
+        const price = document.createElement('td');
+        price.className = 'text-end';
+        price.textContent = jemFormatMoney(option.unit_gross, currency);
+        const quantity = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.name = 'admissions[' + option.id + ']';
+        input.value = option.quantity || 0;
+        input.min = '0';
+        const availableMaximum = option.available === null ? null : parseInt(option.available, 10);
+        const priceMaximum = option.max_quantity === null ? null : parseInt(option.max_quantity, 10);
+        const maximum = availableMaximum === null ? priceMaximum
+            : (priceMaximum === null ? availableMaximum : Math.min(availableMaximum, priceMaximum));
+        if (maximum !== null) input.max = String(maximum);
+        input.className = 'form-control form-control-sm jem-admission-quantity';
+        input.style.maxWidth = '7rem';
+        input.disabled = !option.eligible;
+        input.dataset.unitGross = option.unit_gross;
+        input.addEventListener('input', jemUpdateAdmissionTotal);
+        quantity.appendChild(input);
+        if (!option.eligible) {
+            const unavailable = document.createElement('small');
+            unavailable.className = 'd-block text-danger';
+            unavailable.textContent = <?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_NOT_ELIGIBLE')); ?>;
+            quantity.appendChild(unavailable);
+        }
+        row.append(admission, pool, available, price, quantity);
+        body.appendChild(row);
+    });
+    document.getElementById('jem-event-remaining').textContent = pricing.event_remaining === null
+        ? '\u221e'
+        : pricing.event_remaining;
+    const userHelp = document.getElementById('jem-admission-user-help');
+    if (userHelp) userHelp.hidden = true;
+    const pools = document.getElementById('jem-pool-summary');
+    pools.replaceChildren();
+    (pricing.pools || []).forEach(function(pool) {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-light text-dark border me-2 mb-1';
+        badge.textContent = pool.name + ': ' + pool.remaining + ' / ' + pool.capacity;
+        pools.appendChild(badge);
+    });
+    window.jemPricingLoaded = true;
+    jemUpdateAdmissionTotal();
+}
+
+function jemUpdateAdmissionTotal() {
+    let quantity = 0;
+    let total = 0;
+    document.querySelectorAll('.jem-admission-quantity:not(:disabled)').forEach(function(input) {
+        const value = Math.max(0, parseInt(input.value || '0', 10));
+        quantity += value;
+        total += value * Number(input.dataset.unitGross || 0);
+    });
+    document.getElementById('jem-admission-total-places').textContent = quantity;
+    document.getElementById('jem-admission-total-price').textContent = jemFormatMoney(total, jemInitialPricing.currency || '');
+}
+
+window.jemLoadAdmissionOptions = function(userId) {
+    if (!<?php echo $isPriced ? 'true' : 'false'; ?> || !userId) return;
+    window.jemPricingLoaded = false;
+    fetch(<?php echo json_encode($pricingEndpoint); ?> + '&uid=' + encodeURIComponent(userId), {
+        credentials: 'same-origin',
+        headers: {'Accept': 'application/json'}
+    }).then(response => response.json()).then(function(response) {
+        if (!response.success) throw new Error(response.message || 'Pricing request failed');
+        jemRenderAdmissionOptions(response.data);
+    }).catch(function(error) {
+        const body = document.getElementById('jem-admission-options');
+        body.innerHTML = '<tr><td colspan="5" class="text-danger"></td></tr>';
+        body.querySelector('td').textContent = error.message;
+    });
+};
+
+function jemToggleRegistrationMode() {
+    const block = document.getElementById('jem-priced-admissions-row');
+    if (!block) return;
+    const status = parseInt(document.getElementById('reg_status').value, 10);
+    block.hidden = status !== 1 && status !== 2;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const status = document.getElementById('reg_status');
+    status.addEventListener('change', jemToggleRegistrationMode);
+    jemToggleRegistrationMode();
+    if (<?php echo $isPriced && !empty($this->row->uid) ? 'true' : 'false'; ?>) {
+        jemRenderAdmissionOptions(jemInitialPricing);
+    }
+});
 </script>
 
 
@@ -97,9 +241,11 @@ Joomla.submitbutton = function(task)
                 <td>
                     <div class="input-group">
                         <input type="text" name="username" id="username" class="form-control inputbox required valid form-control-success" readonly="readonly" value="<?php echo $this->escape($this->row->username); ?>" />
+                        <?php if (!$pricedUserLocked) : ?>
                         <button type="button" class="btn btn-primary usermodal" data-bs-toggle="modal" data-bs-target="#<?php echo $userModalId; ?>">
                             <span class="icon-user" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_SELECT_USER')?>
                         </button>
+                        <?php endif; ?>
                     </div>
                     <input type="hidden" name="uid" id="uid" value="<?php echo (int) $this->row->uid; ?>" />
                 </td>
@@ -118,10 +264,51 @@ Joomla.submitbutton = function(task)
                                      HTMLHelper::_('select.option',  2, Text::_('COM_JEM_ATTENDEES_ON_WAITINGLIST'), array('disable' => empty($this->row->waitinglist))));
 
                     $selectOptions = array('class' => 'form-select');
-                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions, 'value', 'text', (int) $this->row->status, 'reg_status');
+                    $selectedStatus = JemRegistrationTransition::logicalStatus($this->row);
+                    echo HTMLHelper::_('select.genericlist', $options, 'status', $selectOptions, 'value', 'text', $selectedStatus, 'reg_status');
                     ?>
                 </td>
             </tr>
+            <?php if ($isPriced) : ?>
+            <tr id="jem-priced-admissions-row">
+                <td class="key align-top">
+                    <label><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_ADMISSIONS'); ?>:</label>
+                </td>
+                <td>
+                    <div class="card border-0 bg-light">
+                        <div class="card-body p-3">
+                            <div class="d-flex flex-wrap gap-3 mb-3">
+                                <span><strong><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_EVENT_AVAILABLE'); ?>:</strong> <span id="jem-event-remaining"></span></span>
+                                <span id="jem-pool-summary"></span>
+                            </div>
+                            <?php if (empty($this->row->uid)) : ?>
+                                <p class="text-muted" id="jem-admission-user-help"><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_SELECT_USER_FIRST'); ?></p>
+                            <?php endif; ?>
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle mb-2">
+                                    <thead><tr>
+                                        <th><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_ADMISSION'); ?></th>
+                                        <th><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_AREA_POOL'); ?></th>
+                                        <th class="text-center"><?php echo Text::_('COM_JEM_AVAILABLE'); ?></th>
+                                        <th class="text-end"><?php echo Text::_('COM_JEM_PRICE'); ?></th>
+                                        <th><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_QUANTITY'); ?></th>
+                                    </tr></thead>
+                                    <tbody id="jem-admission-options"></tbody>
+                                    <tfoot><tr class="fw-bold">
+                                        <td colspan="2"><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_TOTAL'); ?></td>
+                                        <td class="text-center" id="jem-admission-total-places">0</td>
+                                        <td class="text-end" id="jem-admission-total-price"></td>
+                                        <td></td>
+                                    </tr></tfoot>
+                                </table>
+                            </div>
+                            <small class="text-muted"><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_ADMIN_HELP'); ?></small>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if (!$isPriced) : ?>
             <tr>
                 <td class="key">
                     <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>
@@ -134,6 +321,7 @@ Joomla.submitbutton = function(task)
                     />
                 </td>
             </tr>
+            <?php endif; ?>
             <?php if (!empty($this->jemsettings->regallowcomments)): ?>
             <tr>
                 <td class="key" style="vertical-align: baseline;">
@@ -149,7 +337,7 @@ Joomla.submitbutton = function(task)
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if (($this->row->recurrence_type || !empty($this->row->series_id)) && $this->row->seriesbooking): ?>
+            <?php if (!$isPriced && ($this->row->recurrence_type || !empty($this->row->series_id)) && $this->row->seriesbooking): ?>
             <tr>
                 <td class="key">
                     <label for="seriesbooking" <?php echo JemOutput::tooltip(Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES'), Text::_('COM_JEM_EDITEVENT_FIELD_BOOKED_SERIES')); ?>>

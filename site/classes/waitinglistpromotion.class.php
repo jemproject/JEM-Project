@@ -77,7 +77,7 @@ final class JemWaitingListPromotion
             $db->transactionStart();
 
             $query = $db->getQuery(true)
-                ->select(array('maxplaces', 'waitinglist', 'reservedplaces'))
+                ->select(array('maxplaces', 'waitinglist', 'reservedplaces', 'pricing_mode'))
                 ->from($db->quoteName('#__jem_events'))
                 ->where($db->quoteName('id') . ' = ' . $eventId);
             $db->setQuery((string) $query . ' FOR UPDATE');
@@ -109,6 +109,7 @@ final class JemWaitingListPromotion
 
             $registeredPlaces = (int) $event->reservedplaces;
             $waiting = array();
+            $confirmed = array();
 
             foreach ($registrations as $registration) {
                 $registration->places = max(1, (int) $registration->places);
@@ -116,6 +117,7 @@ final class JemWaitingListPromotion
                 if ((int) $registration->waiting === 1) {
                     $waiting[(int) $registration->id] = $registration;
                 } else {
+                    $confirmed[] = $registration;
                     $registeredPlaces += $registration->places;
                 }
             }
@@ -123,6 +125,9 @@ final class JemWaitingListPromotion
             $available = max(0, (int) $event->maxplaces - $registeredPlaces);
             $result->availableBefore = $available;
             $result->waitingBefore = count($waiting);
+
+            $priced = in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true);
+            $effectiveForce = $force && !$priced;
 
             if ($mode === self::MODE_MANUAL) {
                 if (array_diff($selectedIds, array_keys($waiting))) {
@@ -134,7 +139,7 @@ final class JemWaitingListPromotion
                     return (int) $registration->places;
                 }, $candidates));
 
-                if (!$force && $required > $available) {
+                if (!$effectiveForce && $required > $available) {
                     throw new RuntimeException('capacity_exceeded');
                 }
 
@@ -142,6 +147,21 @@ final class JemWaitingListPromotion
             } else {
                 $candidates = array_values(array_diff_key($waiting, array_flip($excludedIds)));
                 $promoted = self::selectForAvailablePlaces($candidates, $available, $strategy);
+            }
+
+            if ($priced && $promoted) {
+                $pricedService = new JemPricedRegistrationService($db);
+                $promoted = $pricedService->selectPromotableLocked(
+                    $eventId,
+                    $confirmed,
+                    $mode === self::MODE_MANUAL ? $candidates : array_values(array_diff_key($waiting, array_flip($excludedIds))),
+                    $available,
+                    $strategy,
+                    $mode === self::MODE_MANUAL
+                );
+                if ($mode === self::MODE_MANUAL && count($promoted) !== count($candidates)) {
+                    throw new RuntimeException('capacity_exceeded');
+                }
             }
 
             if (!$promoted) {
@@ -171,8 +191,8 @@ final class JemWaitingListPromotion
                     'actorId'           => $actorId,
                     'source'            => $source,
                     'action'            => 'promoted',
-                    'reasonCode'        => $force ? 'manual_forced_promotion' : $mode . '_promotion',
-                    'forced'            => $force,
+                    'reasonCode'        => $effectiveForce ? 'manual_forced_promotion' : $mode . '_promotion',
+                    'forced'            => $effectiveForce,
                     'operationReference'=> $operationReference,
                 ));
             }
@@ -184,10 +204,10 @@ final class JemWaitingListPromotion
             $result->success = true;
             $result->promotedIds = $promotedIds;
             $result->promotedPlaces = $usedPlaces;
-            $result->availableAfter = $force ? $available - $usedPlaces : max(0, $available - $usedPlaces);
+            $result->availableAfter = $effectiveForce ? $available - $usedPlaces : max(0, $available - $usedPlaces);
             $result->waitingAfter = count($waiting) - count($promotedIds);
             $result->notified = $notify;
-            $result->forced = $force;
+            $result->forced = $effectiveForce;
 
             $transitions = array();
 

@@ -222,16 +222,79 @@ $this->document->addStyleDeclaration('
     }
 </script>
 <script>
+    function jemEventInvalidFieldLabel(field)
+    {
+        var label = field.id ? document.querySelector('label[for="' + CSS.escape(field.id) + '"]') : null;
+        if (!label) {
+            label = field.closest('.control-group, .subform-repeatable-group')?.querySelector('label');
+        }
+        if (label) {
+            var cleanLabel = label.cloneNode(true);
+            cleanLabel.querySelectorAll('.form-control-feedback, .star, .required').forEach(function(node) {
+                node.remove();
+            });
+            var labelText = cleanLabel.textContent.replace(/\s*\*\s*$/, '').trim();
+            if (labelText) {
+                return labelText;
+            }
+        }
+        return field.getAttribute('aria-label') || field.name || field.id || <?php echo json_encode(Text::_('COM_JEM_REQUIRED')); ?>;
+    }
+
+    function jemRevealInvalidEventFields(form)
+    {
+        var invalidFields = Array.from(form.querySelectorAll('[aria-invalid="true"], .form-control-danger.invalid'))
+            .filter(function(field, index, fields) {
+                return fields.indexOf(field) === index;
+            });
+        if (!invalidFields.length) {
+            return;
+        }
+
+        var first = invalidFields[0];
+        var tabPane = first.closest('.tab-pane');
+        if (tabPane && window.bootstrap && bootstrap.Tab) {
+            var tabSelector = '[data-bs-target="#' + CSS.escape(tabPane.id) + '"], [href="#' + CSS.escape(tabPane.id) + '"], [aria-controls="' + CSS.escape(tabPane.id) + '"]';
+            var tabTrigger = document.querySelector(tabSelector);
+            if (tabTrigger) {
+                bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+            }
+        }
+
+        var collapse = first.closest('.accordion-collapse');
+        if (collapse && window.bootstrap && bootstrap.Collapse) {
+            bootstrap.Collapse.getOrCreateInstance(collapse, {toggle: false}).show();
+        }
+
+        var labels = invalidFields.map(jemEventInvalidFieldLabel).filter(function(label, index, values) {
+            return values.indexOf(label) === index;
+        });
+        if (labels.length) {
+            Joomla.renderMessages({
+                error: [<?php echo json_encode(Text::_('COM_JEM_EVENT_REQUIRED_FIELDS')); ?>.replace('%s', labels.join(', '))]
+            });
+        }
+
+        window.setTimeout(function() {
+            first.scrollIntoView({behavior: 'smooth', block: 'center'});
+            first.focus({preventScroll: true});
+        }, 180);
+    }
+
     Joomla.submitbutton = function(task)
     {
-        if (task == 'event.cancel' || document.formvalidator.isValid(document.getElementById('event-form'))) {
-            Joomla.submitform(task, document.getElementById('event-form'));
-
-            <?php //echo $this->form->getField('articletext')->save(); ?>
-
-            document.getElementById("meta_keywords").value = $keywords;
-            document.getElementById("meta_description").value = $description;
+        var form = document.getElementById('event-form');
+        if (task != 'event.cancel' && !document.formvalidator.isValid(form)) {
+            jemRevealInvalidEventFields(form);
+            return false;
         }
+
+        Joomla.submitform(task, form);
+
+        <?php //echo $this->form->getField('articletext')->save(); ?>
+
+        document.getElementById("meta_keywords").value = $keywords;
+        document.getElementById("meta_description").value = $description;
     }
 </script>
 <script>

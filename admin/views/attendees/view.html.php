@@ -47,6 +47,8 @@ class JemViewAttendees extends JemAdminView
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->commercialBreakdowns = $this->get('CommercialBreakdowns');
+        $this->poolAvailability = $this->get('PoolAvailability');
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -88,7 +90,13 @@ class JemViewAttendees extends JemAdminView
         $this->lists         = $lists;
         $this->event         = $event;
         $this->waitingListStatus = JemWaitingListPromotion::availability((int) $event->id);
-        $this->canForcePromotion = $app->getIdentity()->authorise('core.admin', 'com_jem');
+        $this->isPriced = in_array(
+            (string) ($event->pricing_mode ?? 'classic'),
+            array('single', 'multiple', 'priced'),
+            true
+        );
+        $this->canForcePromotion = !$this->isPriced
+            && $app->getIdentity()->authorise('core.admin', 'com_jem');
 
         // add toolbar
         $this->addToolbar();
@@ -103,6 +111,12 @@ class JemViewAttendees extends JemAdminView
     {
         $rows = $this->get('Items');
         $event = $this->get('Event');
+        $this->commercialBreakdowns = $this->get('CommercialBreakdowns');
+        $this->isPriced = in_array(
+            (string) ($event->pricing_mode ?? 'classic'),
+            array('single', 'multiple', 'priced'),
+            true
+        );
 
         if (JemHelper::isValidDate($event->dates)) {
             $event->dates = JemOutput::formatdate($event->dates);
@@ -128,9 +142,13 @@ class JemViewAttendees extends JemAdminView
         ToolbarHelper::addNew('attendees.add');
         ToolbarHelper::editList('attendees.edit');
         ToolbarHelper::custom('attendees.setNotAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
-        ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
+        if (!$this->isPriced) {
+            ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
+        }
         if ($this->event->waitinglist) {
-            ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+            if (!$this->isPriced) {
+                ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+            }
             ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
         }
         ToolbarHelper::custom('attendees.renotify', 'envelope', 'envelope', Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_SELECTED'), true);

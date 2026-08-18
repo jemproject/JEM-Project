@@ -14,6 +14,7 @@ use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Response\JsonResponse;
 
 /**
  * Controller: Attendee
@@ -143,6 +144,7 @@ class JemControllerAttendee extends BaseController
                     || $old_uid !== (int) $row->uid
                     || JemRegistrationTransition::logicalStatus($old_data) !== JemRegistrationTransition::logicalStatus($row)
                     || (int) ($old_data->places ?? 0) !== (int) ($row->places ?? 0)
+                    || (int) ($old_data->revision ?? 0) !== (int) ($row->revision ?? 0)
                     || (string) ($old_data->comment ?? '') !== (string) ($row->comment ?? '');
 
                 // there was a user and it's overwritten by a new user -> send unregister mails
@@ -238,5 +240,28 @@ class JemControllerAttendee extends BaseController
         $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'userelement');
         parent::display();
+    }
+
+    /**
+     * Return the admission catalogue and current inventory for the selected
+     * event, booking holder and optional existing registration.
+     */
+    public function pricingOptions()
+    {
+        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanManageAttendees();
+        $app = Factory::getApplication();
+        $eventId = $app->input->getInt('event', 0);
+        $userId = $app->input->getInt('uid', 0);
+        $registrationId = $app->input->getInt('id', 0);
+
+        try {
+            $data = $this->getModel('attendee')->getPricingData($eventId, $userId, $registrationId);
+            echo new JsonResponse($data);
+        } catch (Throwable $e) {
+            echo new JsonResponse($e);
+        }
+
+        $app->close();
     }
 }

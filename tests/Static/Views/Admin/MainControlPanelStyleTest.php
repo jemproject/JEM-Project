@@ -34,4 +34,16 @@ final class MainControlPanelStyleTest extends TestCase
             );
         }
     }
+
+    public function testControlPanelUsesDedicatedStatisticsPageInsteadOfAccordions(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/main/tmpl/default.php');
+        $view = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/main/view.html.php');
+
+        self::assertStringContainsString('view=statistics', $template);
+        self::assertStringContainsString('icon-48-statistics.svg', $template);
+        self::assertStringNotContainsString('accordion_jem', $template);
+        self::assertStringNotContainsString("get('EventsData')", $view);
+        self::assertStringNotContainsString("get('RegistrationData')", $view);
+    }
 }

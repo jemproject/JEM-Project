@@ -151,6 +151,17 @@ final class JemPricingQuoteService
     }
 
     /**
+     * Rebuild the stable commercial fingerprint after an authorised server
+     * service has applied stored price-lock terms to a quote.
+     */
+    public function refingerprint(array $quote): array
+    {
+        $quote['quote_fingerprint'] = $this->quoteFingerprint($quote);
+
+        return $quote;
+    }
+
+    /**
      * Lock inventory, re-quote it, and run a caller supplied atomic operation.
      *
      * The callback receives the authoritative quote. Phase 4F will use it to
@@ -165,7 +176,8 @@ final class JemPricingQuoteService
         string $expectedQuoteFingerprint,
         string $operationReference,
         callable $idempotencyLookup,
-        callable $operation
+        callable $operation,
+        ?callable $quoteTransformer = null
     ): mixed {
         $operationReference = trim($operationReference);
         if (!JemRegistrationIdentity::isOperationReference($operationReference)) {
@@ -187,6 +199,9 @@ final class JemPricingQuoteService
             }
 
             $quote = $this->buildQuote($eventId, $selections, $context, true);
+            if ($quoteTransformer !== null) {
+                $quote = $this->refingerprint($quoteTransformer($quote));
+            }
             if (preg_match('/^[a-f0-9]{64}$/D', $expectedQuoteFingerprint) !== 1
                 || !hash_equals($quote['quote_fingerprint'], $expectedQuoteFingerprint)) {
                 throw new JemPricingQuoteException(
@@ -333,7 +348,13 @@ final class JemPricingQuoteService
             $taxTotal = $taxTotal->plus($calculation->lineTax);
             $grandTotal = $grandTotal->plus($calculation->lineGross);
             $eventQuantity += $quantity;
-            $lines[] = $this->quoteLine($price, $tax, $calculation, $used);
+            $lines[] = $this->quoteLine(
+                $price,
+                $tax,
+                $calculation,
+                $used,
+                (int) $event['prices_include_tax']
+            );
         }
 
         $this->assertBookingQuantity($event, $eventQuantity);
@@ -395,6 +416,7 @@ final class JemPricingQuoteService
         $quote = array(
             'schema' => self::SCHEMA,
             'event_id' => $eventId,
+            'pricing_mode' => (string) $event['pricing_mode'],
             'pricing_revision' => (int) $event['pricing_revision'],
             'currency' => (string) $event['currency'],
             'prices_include_tax' => (int) $event['prices_include_tax'],
@@ -805,7 +827,13 @@ final class JemPricingQuoteService
         }
     }
 
-    private function quoteLine(array $price, array $tax, JemTaxCalculation $calculation, array $used): array
+    private function quoteLine(
+        array $price,
+        array $tax,
+        JemTaxCalculation $calculation,
+        array $used,
+        int $pricesIncludeTax
+    ): array
     {
         $poolId = (int) ($price['capacity_pool_id'] ?? 0);
         $quota = $price['quota'] === null ? null : (int) $price['quota'];
@@ -818,6 +846,7 @@ final class JemPricingQuoteService
             'name' => (string) $price['name'],
             'description' => (string) ($price['description'] ?? ''),
             'quantity' => $calculation->quantity,
+            'price_includes_tax' => $pricesIncludeTax === 1 ? 1 : 0,
             'unit_net' => $calculation->unitNet->decimal(),
             'unit_tax' => $calculation->unitTax->decimal(),
             'unit_gross' => $calculation->unitGross->decimal(),
@@ -852,6 +881,7 @@ final class JemPricingQuoteService
     {
         $lineFields = array_fill_keys(array(
             'event_price_id', 'capacity_pool_id', 'code', 'name', 'description', 'quantity',
+            'price_includes_tax',
             'unit_net', 'unit_tax', 'unit_gross', 'line_net', 'line_tax', 'line_gross',
             'tax_code', 'tax_name', 'tax_type', 'tax_rate', 'conditions',
         ), true);
@@ -862,6 +892,7 @@ final class JemPricingQuoteService
         $canonical = array(
             'schema' => self::SCHEMA,
             'event_id' => (int) $quote['event_id'],
+            'pricing_mode' => (string) ($quote['pricing_mode'] ?? ''),
             'pricing_revision' => (int) $quote['pricing_revision'],
             'currency' => (string) $quote['currency'],
             'prices_include_tax' => (int) $quote['prices_include_tax'],

@@ -215,7 +215,41 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const updateMode = function () {
-        details.hidden = mode.value === 'classic';
+        const classic = mode.value === 'classic';
+        details.hidden = classic;
+
+        priceRows().forEach(function (row) {
+            const taxRate = row.querySelector('[name$="[tax_rate_id]"]');
+            if (!taxRate) {
+                return;
+            }
+
+            taxRate.toggleAttribute('required', !classic);
+            taxRate.classList.toggle('required', !classic);
+        });
+
+        details.querySelectorAll('input, select, textarea, fieldset').forEach(function (control) {
+            if (classic) {
+                if (control.hasAttribute('required') && !control.hasAttribute('data-jem-pricing-required')) {
+                    control.setAttribute('data-jem-pricing-required', 'attribute');
+                    control.removeAttribute('required');
+                }
+                if (control.classList.contains('required') && !control.hasAttribute('data-jem-pricing-required-class')) {
+                    control.setAttribute('data-jem-pricing-required-class', '1');
+                    control.classList.remove('required');
+                }
+                return;
+            }
+
+            if (control.getAttribute('data-jem-pricing-required') === 'attribute') {
+                control.setAttribute('required', 'required');
+                control.removeAttribute('data-jem-pricing-required');
+            }
+            if (control.getAttribute('data-jem-pricing-required-class') === '1') {
+                control.classList.add('required');
+                control.removeAttribute('data-jem-pricing-required-class');
+            }
+        });
     };
 
     const sortedAssignmentIds = function (ids) {
@@ -751,6 +785,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     mode.addEventListener('change', updateMode);
     new MutationObserver(function () {
+        updateMode();
         decorateRows();
         filterTaxRates();
         populateCapacityOptions();

@@ -93,7 +93,7 @@ class JemModelEvent extends ItemModel
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                         'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, ' .
-                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id'));
+                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax'));
                 $query->from('#__jem_events AS a');
 
                 $query->select('pe.title AS parent_event_title, pe.alias AS parent_event_alias');
@@ -612,7 +612,7 @@ class JemModelEvent extends ItemModel
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -1175,6 +1175,12 @@ class JemModelEvent extends ItemModel
             return false;
         }
 
+        if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
+            && (int) $status !== JemRegistrationTransition::NOT_ATTENDING) {
+            $errMsg = Text::_('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER') . ' [id: ' . $eventId . ']';
+            return false;
+        }
+
         $oldstat = is_object($registration)
             ? JemRegistrationTransition::logicalStatus($registration)
             : 0;
@@ -1284,6 +1290,7 @@ class JemModelEvent extends ItemModel
             $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
             return false;
         }
+
         try {
             $event = $this->getItem($eventId);
         }
@@ -1293,6 +1300,12 @@ class JemModelEvent extends ItemModel
 
         if (!$event) {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
+            return false;
+        }
+
+        if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
+            && $status !== JemRegistrationTransition::NOT_ATTENDING) {
+            $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER') . ' [id: ' . $eventId . ']');
             return false;
         }
 

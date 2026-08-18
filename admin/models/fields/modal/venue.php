@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Venue selector using Joomla's native modal content-select field.
@@ -26,7 +27,8 @@ class JFormFieldModal_Venue extends ModalSelectField
         $this->select      = true;
         $this->clear       = false;
         $parentVenueId = $this->getSelectedParentVenueId();
-        $this->urlSelect   = 'index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function
+        $baseSelectUrl = rtrim(Uri::root(true), '/') . '/administrator/index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
+        $this->urlSelect   = $baseSelectUrl
             . ($parentVenueId > 0 ? '&parent_venue_id=' . $parentVenueId : '');
         $this->titleSelect = 'COM_JEM_SELECTVENUE';
         $this->iconSelect  = 'icon-location';
@@ -44,7 +46,6 @@ class JFormFieldModal_Venue extends ModalSelectField
         );
 
         $eventVenueMap = $this->getRootEventVenueMap();
-        $baseSelectUrl = 'index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
         Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(
             'document.addEventListener("DOMContentLoaded", function () {' . "\n"
             . '    var parent = document.getElementById("jform_parent_event_id");' . "\n"

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Venue selector using Joomla's native modal content-select field.
@@ -25,7 +26,7 @@ class JFormFieldVenue extends ModalSelectField
 
         $this->select      = true;
         $this->clear       = false;
-        $this->urlSelect   = 'index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
+        $this->urlSelect   = rtrim(Uri::root(true), '/') . '/administrator/index.php?option=com_jem&view=venueelement&tmpl=component&function=' . $function;
         $this->titleSelect = 'COM_JEM_SELECT_VENUE';
         $this->iconSelect  = 'icon-location';
 

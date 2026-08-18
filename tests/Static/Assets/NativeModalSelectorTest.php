@@ -20,6 +20,11 @@ final class NativeModalSelectorTest extends TestCase
             self::assertStringContainsString('ModalSelectField', $code, $relativePath);
             self::assertStringContainsString('return parent::getInput();', $code, $relativePath);
             self::assertStringContainsString('$this->iconSelect', $code, $relativePath);
+            if (str_starts_with($relativePath, 'admin/')) {
+                self::assertStringContainsString("rtrim(Uri::root(true), '/') . '/administrator/index.php?", $code, $relativePath);
+            } else {
+                self::assertStringContainsString('Uri::base()', $code, $relativePath);
+            }
             self::assertStringNotContainsString('bootstrap.renderModal', $code, $relativePath);
             self::assertStringNotContainsString('button2-left', $code, $relativePath);
             self::assertStringNotContainsString('.modal(', $code, $relativePath);

@@ -34,6 +34,9 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <th class="title"><?php echo Text::_('COM_JEM_USERNAME'); ?></th>
                 <th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
                 <th class="title"><?php echo Text::_('COM_JEM_REGDATE'); ?></th>
+                <th class="title"><?php echo !empty($this->isPriced)
+                    ? Text::_('COM_JEM_PRICED_REGISTRATION_ORDER')
+                    : Text::_('COM_JEM_ATTENDEES_PLACES'); ?></th>
                 <?php if ($this->event->waitinglist): ?>
                 <th class="title"><?php echo Text::_('COM_JEM_HEADER_WAITINGLIST_STATUS' ); ?></th>
                 <?php endif; ?>
@@ -52,6 +55,22 @@ use Joomla\CMS\HTML\HTMLHelper;
                 <td><?php echo $this->escape($row->username); ?></td>
                 <td><?php echo $this->escape($row->email); ?></td>
                 <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC2')); } ?></td>
+                <td>
+                    <?php if (empty($this->isPriced)) : ?>
+                        <?php echo (int) $row->places; ?>
+                    <?php else : ?>
+                        <?php $lines = $this->commercialBreakdowns[(int) $row->id] ?? array(); ?>
+                        <?php if (!$lines) : ?>
+                            <?php echo Text::_('COM_JEM_PRICED_REGISTRATION_NO_ORDER'); ?>
+                        <?php else : ?>
+                            <?php foreach ($lines as $line) : ?>
+                                <?php echo (int) $line->quantity; ?>&times; <?php echo $this->escape($line->item_name); ?>
+                                <?php if ($line->pool_name) : ?>(<?php echo $this->escape($line->pool_name); ?>)<?php endif; ?>;
+                            <?php endforeach; ?>
+                            <?php echo $this->escape((string) $row->currency . ' ' . (string) $row->grand_total); ?>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </td>
                 <?php
                 switch ($row->status) {
                 case -1: // explicitely unregistered
@@ -67,7 +86,9 @@ use Joomla\CMS\HTML\HTMLHelper;
                     $text = 'COM_JEM_ATTENDEES_STATUS_UNKNOWN';
                     break;
                 } ?>
+                <?php if ($this->event->waitinglist): ?>
                 <td><?php echo Text::_($text); ?></td>
+                <?php endif; ?>
                 <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                 <td><?php echo $this->escape($row->comment); ?></td>
                 <?php endif; ?>

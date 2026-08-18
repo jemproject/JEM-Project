@@ -24,6 +24,7 @@ $document   = Factory::getApplication()->getDocument();
 $wa         = $document->getWebAssetManager();
 $waitingListPlaces = array();
 $waitingListIds = array();
+$isPriced = !empty($this->isPriced);
 
 foreach ($this->items as $item) {
     $waitingListPlaces[(int) $item->id] = max(1, (int) $item->places);
@@ -105,9 +106,18 @@ $wa->addInlineScript('
                 </div>
             </div>
         </fieldset>
-        <?php if ($this->event->waitinglist) : ?>
+        <?php if ($this->event->waitinglist || $isPriced) : ?>
             <div class="alert alert-info d-flex flex-wrap gap-4 align-items-center" role="status">
                 <span><?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?></span>
+                <?php if ($isPriced) : ?>
+                    <?php foreach ($this->poolAvailability as $pool) : ?>
+                        <span class="badge bg-light text-dark border">
+                            <?php echo $this->escape($pool->name); ?>:
+                            <?php echo (int) $pool->remaining; ?> / <?php echo (int) $pool->capacity; ?>
+                        </span>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if ($this->event->waitinglist) : ?>
                 <span>
                     <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
                         <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
@@ -127,6 +137,7 @@ $wa->addInlineScript('
                         <input type="checkbox" name="waitinglist_force" value="1">
                         <?php echo Text::_('COM_JEM_WAITINGLIST_FORCE_PROMOTION'); ?>
                     </label>
+                <?php endif; ?>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -154,7 +165,9 @@ $wa->addInlineScript('
                     <th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_REGDATE', 'r.uregdate', $listDirn, $listOrder); ?></th>
                     <th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USER_ID', 'r.uid', $listDirn, $listOrder); ?></th>
                     <th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HEADER_WAITINGLIST_STATUS', 'r.waiting',$listDirn, $listOrder); ?></th>
-                    <th class="title center"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_PLACES', 'r.waiting',$listDirn, $listOrder); ?></th>
+                    <th class="title center"><?php echo $isPriced
+                        ? Text::_('COM_JEM_PRICED_REGISTRATION_ORDER')
+                        : HTMLHelper::_('grid.sort', 'COM_JEM_ATTENDEES_PLACES', 'r.waiting', $listDirn, $listOrder); ?></th>
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                     <th class="title"><?php echo Text::_('COM_JEM_COMMENT'); ?></th>
                     <?php endif;?>
@@ -187,14 +200,38 @@ $wa->addInlineScript('
                             if ($status === 1 && $row->waiting == 1) {
                                 $status = 2;
                             }
-                            echo jemhtml::toggleAttendanceStatus($i, $status, $canChange);
+                            echo jemhtml::toggleAttendanceStatus($i, $status, $canChange && !$isPriced);
                         } else {
                             echo jemhtml::toggleAttendanceStatus($i, $status, false);
                         }
                         ?>
                     </td>
                     <td class="center">
-                        <?php echo (int) $row->places; ?>
+                        <?php if (!$isPriced) : ?>
+                            <?php echo (int) $row->places; ?>
+                        <?php else : ?>
+                            <?php $orderLines = $this->commercialBreakdowns[(int) $row->id] ?? array(); ?>
+                            <?php if (!$orderLines) : ?>
+                                <span class="text-muted"><?php echo Text::_('COM_JEM_PRICED_REGISTRATION_NO_ORDER'); ?></span>
+                            <?php else : ?>
+                                <ul class="list-unstyled text-start mb-1">
+                                    <?php foreach ($orderLines as $line) : ?>
+                                        <li>
+                                            <strong><?php echo (int) $line->quantity; ?>&times;</strong>
+                                            <?php echo $this->escape($line->item_name); ?>
+                                            <?php if (!empty($line->pool_name)) : ?>
+                                                <small class="text-muted">&middot; <?php echo $this->escape($line->pool_name); ?></small>
+                                            <?php endif; ?>
+                                            <span class="text-nowrap">&mdash; <?php echo $this->escape($line->currency . ' ' . $line->line_gross); ?></span>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                                <small class="d-block text-start fw-semibold">
+                                    <?php echo (int) $row->places; ?> &middot;
+                                    <?php echo $this->escape((string) $row->currency . ' ' . (string) $row->grand_total); ?>
+                                </small>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     </td>
                     <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
                     <?php $cmnt = (StringHelper::strlen($row->comment) > 16) ? (rtrim(StringHelper::substr($row->comment, 0, 14)).'&hellip;') : $row->comment; ?>

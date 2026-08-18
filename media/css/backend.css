@@ -4178,3 +4178,209 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     color: white !important;
     font-weight: bold;
 }
+.jem-statistics-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr));
+    gap: 1.25rem;
+}
+
+.jem-statistics-card {
+    min-width: 0;
+}
+
+.jem-statistics-card .card-header {
+    background: var(--template-bg-light, var(--body-bg, #f4f6f8));
+}
+
+.jem-statistics-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.jem-statistics-kpis > div {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: 0.35rem;
+    background: var(--body-bg, #fff);
+}
+
+.jem-statistics-kpis span,
+.jem-statistics-kpis strong {
+    display: block;
+}
+
+.jem-statistics-kpis span {
+    color: var(--secondary-color, #6c757d);
+    font-size: 0.82rem;
+}
+
+.jem-statistics-kpis strong {
+    margin-top: 0.15rem;
+    font-size: 1.65rem;
+    line-height: 1.1;
+}
+
+.jem-statistics-chart-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.jem-statistics-chart {
+    display: block;
+    width: 100%;
+    min-width: 34rem;
+    height: auto;
+    color: var(--template-link-color, #2a69a5);
+}
+
+.jem-statistics-chart-grid,
+.jem-statistics-axis {
+    stroke: var(--border-color, #d5d9dd);
+    stroke-width: 1;
+}
+
+.jem-statistics-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.jem-statistics-point {
+    fill: var(--body-bg, #fff);
+    stroke: currentColor;
+    stroke-width: 3;
+}
+
+.jem-statistics-axis-label,
+.jem-statistics-axis-title {
+    fill: var(--body-color, #202428);
+    font-size: 12px;
+}
+
+.jem-statistics-axis-title {
+    font-weight: 600;
+}
+
+.jem-statistics-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.35rem 1.25rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-color, #dfe3e7);
+}
+
+.jem-statistics-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-height: 1.75rem;
+}
+
+.jem-statistics-summary-row.is-total {
+    font-weight: 700;
+}
+
+.jem-statistics-filters .form-label {
+    font-weight: 600;
+}
+
+.jem-statistics-detail-card {
+    overflow: hidden;
+}
+
+.jem-statistics-detail-card .card-header {
+    border-bottom: 1px solid var(--border-color, #dfe3e7);
+    background: var(--template-bg-light, var(--body-bg, #f4f6f8));
+}
+
+.jem-statistics-detail-card th {
+    white-space: nowrap;
+}
+
+.jem-statistics-order-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.75rem;
+}
+
+.jem-statistics-order-kpis > div {
+    padding: 0.85rem 1rem;
+    border-left: 0.25rem solid var(--template-link-color, #2a69a5);
+    border-radius: 0.25rem;
+    background: var(--template-bg-light, #f4f6f8);
+}
+
+.jem-statistics-order-kpis span,
+.jem-statistics-order-kpis strong {
+    display: block;
+}
+
+.jem-statistics-order-kpis span {
+    color: var(--secondary-color, #6c757d);
+    font-size: 0.82rem;
+}
+
+.jem-statistics-order-kpis strong {
+    margin-top: 0.15rem;
+    font-size: 1.4rem;
+}
+
+.jem-statistics-tree {
+    display: inline-block;
+    margin-inline-end: 0.35rem;
+    color: var(--template-link-color, #2a69a5);
+    font-weight: 700;
+}
+
+.jem-statistics-revenue {
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: 0.35rem;
+}
+
+.jem-statistics-event-filters {
+    background: color-mix(in srgb, var(--template-bg-light, #f4f6f8) 55%, transparent);
+    margin-inline: -1rem;
+    margin-bottom: -1rem;
+    padding: 1rem;
+}
+
+.jem-statistics-money-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 34rem), 1fr));
+    gap: 1.25rem;
+}
+
+.jem-statistics-money-card {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #dfe3e7);
+    border-radius: 0.35rem;
+}
+
+.jem-statistics-detail-card .progress {
+    height: 1.35rem;
+    background: var(--template-bg-light, #e9ecef);
+}
+
+.jem-statistics-detail-card .progress-bar {
+    min-width: 2.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    .jem-statistics-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-statistics-chart {
+        min-width: 30rem;
+    }
+}
