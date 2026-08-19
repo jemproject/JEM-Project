@@ -3575,7 +3575,13 @@ class JemPdfView
         $showKey = $position === 'footer' ? 'showfootertext' : 'showintrotext';
         $textKey = $position === 'footer' ? 'footertext' : 'introtext';
         $class = $position === 'footer' ? 'jem-pdf-view-footer-text' : 'jem-pdf-view-intro';
-        $params = Factory::getApplication()->getParams();
+        $app = Factory::getApplication();
+
+        if (!JemHelper::isActiveMenuView($app->input->getCmd('view', ''))) {
+            return '';
+        }
+
+        $params = $app->getParams();
 
         if (!$params || !$params->get($showKey)) {
             return '';

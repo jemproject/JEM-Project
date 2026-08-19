@@ -191,9 +191,6 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                         $link = 'index.php?option=com_jem&amp;view=export';
                                         $this->quickiconButton($link, 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));
 
-                                        $link = 'index.php?option=com_jem&amp;view=housekeeping';
-                                        $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
-
                                         $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
                                         $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
                                     ?>
@@ -204,6 +201,9 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                     <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_MISC'); ?></h3>
                                     <div class="jem-wei-group">
                                     <?php
+                                        $link = 'index.php?option=com_jem&amp;view=housekeeping';
+                                        $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
+
                                         $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
                                         $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
 

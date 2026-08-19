@@ -309,7 +309,7 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                     <th style="width:10%">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
                     </th>
-                    <th>
+                    <th data-jem-default-hidden>
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                     </th>
                     <th class="center nowrap">

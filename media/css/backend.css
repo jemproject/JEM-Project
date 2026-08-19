@@ -2929,6 +2929,76 @@ input#places::-webkit-inner-spin-button {
     margin-left: auto;
 }
 
+.jem-admin-filter-actions {
+    align-items: stretch;
+    display: flex;
+    flex: 0 0 auto;
+    gap: .5rem;
+    margin-left: auto;
+}
+
+.jem-admin-filter-actions .jem-admin-filter-limit {
+    margin-left: 0;
+}
+
+.jem-admin-filter-columns:empty {
+    display: none;
+}
+
+.jem-admin-filter-columns > .dropdown {
+    height: 100%;
+}
+
+.jem-admin-filter-columns .dropdown-toggle {
+    height: 100%;
+    white-space: nowrap;
+}
+
+.jem-events-table-actions {
+    justify-content: flex-end;
+    margin-bottom: .5rem;
+    width: 100%;
+}
+
+@media (min-width: 1600px) {
+    .jem-events-admin-filter-bar {
+        align-items: stretch;
+        flex-wrap: nowrap;
+    }
+
+    .jem-events-admin-filter-bar .jem-admin-filter-search {
+        flex: 1 1 15rem;
+        min-width: 13rem;
+    }
+
+    .jem-events-admin-filter-bar .jem-admin-filter-date-range {
+        flex: 1 1 25rem;
+        min-width: 22rem;
+    }
+
+    .jem-events-admin-filter-bar .jem-admin-filter-item {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .jem-events-admin-filter-bar .jem-events-filter-order {
+        flex-basis: 7.5rem;
+    }
+
+    .jem-events-admin-filter-bar .jem-events-filter-type {
+        flex-basis: 11.5rem;
+    }
+
+    .jem-events-admin-filter-bar .jem-events-filter-category,
+    .jem-events-admin-filter-bar .jem-events-filter-state {
+        flex-basis: 10rem;
+    }
+
+    .jem-events-admin-filter-bar .jem-events-filter-access {
+        flex-basis: 10.5rem;
+    }
+}
+
 .jem-specialdays-admin-filter-bar .jem-admin-filter-search,
 .jem-specialdays-admin-filter-bar .jem-admin-filter-item {
     flex: 0 0 auto;
@@ -3095,6 +3165,12 @@ table.itemList .jem-list-order-heading {
 table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"] {
     justify-content: center;
     width: 100%;
+}
+
+#attachmentList .jem-attachment-download-action {
+    min-width: 3rem;
+    white-space: nowrap;
+    width: 1%;
 }
 
 table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"]::after {

@@ -28,6 +28,7 @@ $params        = (isset($this->state->params)) ? $this->state->params : new Regi
 $settings    = $this->settings;
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
+$wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
 $eventStatusOptions = array(
     'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'icon' => 'fa fa-calendar', 'class' => 'bg-secondary'),
@@ -55,14 +56,34 @@ $ticketAvailabilityOptions = array(
                 highlightevents();
                 break;
         }
+
+        var moveColumnSelector = function(attempt) {
+            var table = document.getElementById('eventList');
+            var target = document.getElementById('jem-events-column-selector');
+            var selector = table ? table.previousElementSibling : null;
+
+            if (target && selector && selector.classList.contains('dropdown')) {
+                selector.classList.remove('float-end', 'pb-2');
+                target.appendChild(selector);
+                return;
+            }
+
+            if (attempt < 10) {
+                window.requestAnimationFrame(function() {
+                    moveColumnSelector(attempt + 1);
+                });
+            }
+        };
+
+        moveColumnSelector(0);
     });
 </script>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
         <fieldset id="filter-bar" class=" mb-3">
-            <div class="jem-admin-filter-bar">
-                <div class="jem-admin-filter-item">
+            <div class="jem-admin-filter-bar jem-events-admin-filter-bar">
+                <div class="jem-admin-filter-item jem-events-filter-order">
                     <?php echo $this->lists['filter']; ?>
                 </div>
                 <div class="jem-admin-filter-search">
@@ -83,29 +104,32 @@ $ticketAvailabilityOptions = array(
                         <?php echo HTMLHelper::_('calendar', $this->state->get('filter_end'), 'filter_end', 'filter_end', '%Y-%m-%d' , array('size'=>10, 'onchange'=>"this.form.fireEvent('submit');this.form.submit()",'placeholder'=>Text::_('COM_JEM_EVENTS_FILTER_ENDDATE') ));?>
                     </div>
                 </div>
-                <div class="jem-admin-filter-item">
+                <div class="jem-admin-filter-item jem-events-filter-type">
                     <?php echo $this->lists['event_type_filter']; ?>
                 </div>
-                <div class="jem-admin-filter-item">
+                <div class="jem-admin-filter-item jem-events-filter-category">
                     <?php echo $this->lists['category_filter']; ?>
                 </div>
-                <div class="jem-admin-filter-item">
+                <div class="jem-admin-filter-item jem-events-filter-state">
                     <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
                         <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter_state'), true);?>
                     </select>
                 </div>
-                <div class="jem-admin-filter-item">
+                <div class="jem-admin-filter-item jem-events-filter-access">
                     <select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
                         <option value=""><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
                         <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
                     </select>
                 </div>
-                <div class="jem-admin-filter-limit">
-                    <?php echo $this->pagination->getLimitBox(); ?>
-                </div>
             </div>
         </fieldset>
+        <div class="jem-admin-filter-actions jem-events-table-actions">
+            <div class="jem-admin-filter-limit">
+                <?php echo $this->pagination->getLimitBox(); ?>
+            </div>
+            <div id="jem-events-column-selector" class="jem-admin-filter-columns"></div>
+        </div>
         <div class="clr"> </div>
         <div class="table">
             <table class="table table-striped itemList" id="eventList">
@@ -125,7 +149,7 @@ $ticketAvailabilityOptions = array(
                     <th style="width: 1%" class="center nowrap"><?php echo Text::_('COM_JEM_REGISTERED_USERS_SHORT'); ?></th>
                     <th style="width: 1%" class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?></th>
                     <th style="width: 9%" class="center"><?php echo HTMLHelper::_('grid.sort',  'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?></th>
-                    <th class="nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?></th>
+                    <th class="nowrap" data-jem-default-hidden><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?></th>
                     <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', $listDirn, $listOrder); ?></th>
                     <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_LAST_VISIT', 'a.last_visit', $listDirn, $listOrder); ?></th>
                     <th class="center nowrap"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?></th>

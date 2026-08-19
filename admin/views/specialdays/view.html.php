@@ -41,6 +41,7 @@ class JemViewSpecialdays extends JemAdminView
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
         $wa->useScript('table.columns');
+        $wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
         $this->addToolbar();
         parent::display($tpl);

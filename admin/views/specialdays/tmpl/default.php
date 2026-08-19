@@ -225,7 +225,7 @@ $renderUrl = function ($url) {
                     <th style="width:16%">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_URL', 'a.url', $listDirn, $listOrder); ?>
                     </th>
-                    <th style="width:10%">
+                    <th style="width:10%" data-jem-default-hidden>
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:8%" class="center">

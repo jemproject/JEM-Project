@@ -66,7 +66,7 @@ $periods = array(
                 <select name="blog_category" class="form-select" onchange="this.form.submit()">
                     <option value="0"><?php echo Text::_('COM_JEM_EVENTSBLOG_ALL_CATEGORIES'); ?></option>
                     <?php foreach ($this->categories as $option) : ?>
-                        <option value="<?php echo (int) $option->value; ?>"<?php echo $this->categoryId === (int) $option->value ? ' selected' : ''; ?>><?php echo $this->escape($option->text); ?></option>
+                        <option value="<?php echo (int) $option->value; ?>"<?php if ($this->categoryId === (int) $option->value) : ?> selected<?php endif; ?>><?php echo $this->escape($option->text); ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -77,7 +77,7 @@ $periods = array(
                 <select name="blog_venue" class="form-select" onchange="this.form.submit()">
                     <option value="0"><?php echo Text::_('COM_JEM_EVENTSBLOG_ALL_VENUES'); ?></option>
                     <?php foreach ($this->venues as $option) : ?>
-                        <option value="<?php echo (int) $option->value; ?>"<?php echo $this->venueId === (int) $option->value ? ' selected' : ''; ?>><?php echo $this->escape($option->text); ?></option>
+                        <option value="<?php echo (int) $option->value; ?>"<?php if ($this->venueId === (int) $option->value) : ?> selected<?php endif; ?>><?php echo $this->escape($option->text); ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -88,7 +88,7 @@ $periods = array(
                 <select name="blog_type" class="form-select" onchange="this.form.submit()">
                     <option value="0"><?php echo Text::_('COM_JEM_EVENTSBLOG_ALL_TYPES'); ?></option>
                     <?php foreach ($this->types as $option) : ?>
-                        <option value="<?php echo (int) $option->value; ?>"<?php echo $this->typeId === (int) $option->value ? ' selected' : ''; ?>><?php echo $this->escape($option->text); ?></option>
+                        <option value="<?php echo (int) $option->value; ?>"<?php if ($this->typeId === (int) $option->value) : ?> selected<?php endif; ?>><?php echo $this->escape($option->text); ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -99,7 +99,7 @@ $periods = array(
                 <select name="blog_country" class="form-select" onchange="this.form.submit()">
                     <option value=""><?php echo Text::_('COM_JEM_EVENTSBLOG_ALL_COUNTRIES'); ?></option>
                     <?php foreach ($this->countries as $option) : ?>
-                        <option value="<?php echo $this->escape($option->value); ?>"<?php echo $this->country === (string) $option->value ? ' selected' : ''; ?>><?php echo $this->escape($option->text ?: $option->value); ?></option>
+                        <option value="<?php echo $this->escape($option->value); ?>"<?php if ($this->country === (string) $option->value) : ?> selected<?php endif; ?>><?php echo $this->escape($option->text ?: $option->value); ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>

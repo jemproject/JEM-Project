@@ -26,6 +26,7 @@ $saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
+$wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
 $eventStateColumns = array(
     'event_published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
@@ -159,7 +160,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('COM_JEM_COLOR'); ?>
                 </th>
-                <th>
+                <th data-jem-default-hidden>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
                 </th>
                 <th style="width:10%">
@@ -180,7 +181,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
-                <th>
+                <th data-jem-default-hidden>
                     <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                 </th>
                 <th class="center nowrap">

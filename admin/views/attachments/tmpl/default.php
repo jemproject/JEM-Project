@@ -180,9 +180,6 @@ $fileExtension = function ($filename) {
                     <th style="width:8%" class="center">
                         <?php echo Text::_('COM_JEM_ATTACHMENT_FILE_SIZE'); ?>
                     </th>
-                    <th style="width:5%" class="center">
-                        <?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?>
-                    </th>
                     <th style="width:7%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ATTACHMENT_DOWNLOADS', 'a.downloads', $listDirn, $listOrder); ?>
                     </th>
@@ -194,6 +191,9 @@ $fileExtension = function ($filename) {
                     </th>
                     <th style="width:5%" class="center">
                         <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+                    </th>
+                    <th class="center jem-attachment-download-action">
+                        <span class="visually-hidden"><?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?></span>
                     </th>
                 </tr>
             </thead>
@@ -270,16 +270,6 @@ $fileExtension = function ($filename) {
                         <?php echo $formatBytes($item->file_size); ?>
                     </td>
                     <td class="center">
-                        <?php if ($item->file_exists) : ?>
-                            <a class="btn btn-sm btn-outline-secondary hasTooltip" href="<?php echo $downloadUrl; ?>" title="<?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?>">
-                                <span class="icon-download" aria-hidden="true"></span>
-                                <span class="visually-hidden"><?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?></span>
-                            </a>
-                        <?php else : ?>
-                            -
-                        <?php endif; ?>
-                    </td>
-                    <td class="center">
                         <?php echo (int) $item->downloads; ?>
                     </td>
                     <td class="nowrap">
@@ -293,6 +283,16 @@ $fileExtension = function ($filename) {
                     </td>
                     <td class="center">
                         <?php echo (int) $item->id; ?>
+                    </td>
+                    <td class="center jem-attachment-download-action">
+                        <?php if ($item->file_exists) : ?>
+                            <a class="btn btn-sm btn-outline-secondary hasTooltip" href="<?php echo $downloadUrl; ?>" title="<?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?>">
+                                <span class="icon-download" aria-hidden="true"></span>
+                                <span class="visually-hidden"><?php echo Text::_('COM_JEM_ATTACHMENT_DOWNLOAD'); ?></span>
+                            </a>
+                        <?php else : ?>
+                            -
+                        <?php endif; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

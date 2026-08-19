@@ -30,6 +30,7 @@ use Joomla\CMS\Language\Multilanguage;
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -46,6 +47,41 @@ class JemHelper
      * @var  array
      */
     protected static $frontendCssAssets = array();
+
+    /**
+     * Checks whether the active Joomla menu item targets the current JEM view.
+     *
+     * Page intro and footer text belong to a menu view, not to the records
+     * reached from that view. Joomla keeps the originating Itemid while
+     * navigating to an event, category or venue, so the generic page-text
+     * parameters must only be honoured when the active menu item actually
+     * represents the view being rendered.
+     *
+     * @param   string      $view       Current JEM view name.
+     * @param   mixed|null  $requestId  Current record id; the request value is
+     *                                 used when omitted.
+     *
+     * @return  boolean
+     */
+    static public function isActiveMenuView($view, $requestId = null)
+    {
+        try {
+            $app  = Factory::getApplication();
+            $menu = $app->getMenu()->getActive();
+        } catch (\Throwable $e) {
+            return false;
+        }
+
+        if (!$menu || empty($menu->query)) {
+            return false;
+        }
+
+        if ($requestId === null) {
+            $requestId = $app->input->getString('id', '');
+        }
+
+        return JemMenuViewScope::matches($menu->query, $view, $requestId);
+    }
 
     /**
      * Renders optional module intro or footer text.
