@@ -255,15 +255,61 @@ img.venue-image {
     padding: 3px;
 }
 
-div.controls {
+div.item-image div.controls {
     text-align: center;
     height: 20px;
     line-height: 20px;
     border-top: 1px solid #ddd;
 }
 
-div.controls img {
+div.item-image div.controls img {
     vertical-align: middle;
+}
+
+/* Backend event Permissions tab: aligned rows on desktop, stacked on mobile. */
+.jem-event-settings-tab .jem-event-settings-grid > li {
+    display: grid;
+    grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 .75rem;
+    padding: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > label {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > select,
+.jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+    width: 100%;
+    min-width: 0;
+    max-width: 32rem;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > fieldset,
+.jem-event-settings-tab .jem-event-settings-grid > li > .btn-group {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .jem-event-settings-tab .jem-event-settings-grid > li {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-event-settings-tab .jem-event-settings-grid > li > select,
+    .jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+        max-width: 100%;
+    }
 }
 
 div.imageinfo {
@@ -1550,9 +1596,25 @@ a.label:focus {
     }
 }
 
-.select-time {
-    padding: 5px;
-    margin-top: 5px;
+.jem-time-select {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    max-width: 100%;
+}
+
+.jem-time-select .select-time {
+    width: auto;
+    min-width: 4rem;
+    margin: 0;
+}
+
+#event-form joomla-field-fancy-select,
+#event-form joomla-field-fancy-select .choices,
+#event-form joomla-field-fancy-select .choices__inner,
+#event-form joomla-field-fancy-select .choices__list,
+#event-form joomla-field-fancy-select .choices__item {
+    text-align: left;
 }
 
 /* --- ALERT CODE ---- */
