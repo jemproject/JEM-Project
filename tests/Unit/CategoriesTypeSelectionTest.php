@@ -72,11 +72,11 @@ namespace {
             $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
 
             self::assertStringContainsString(
-                "array('Categories', 'categories-list', 'index.php?option=com_jem&view=categories'",
+                "'Categories', 'categories-list', 'index.php?option=com_jem&view=categories'",
                 $controller
             );
             self::assertStringContainsString(
-                "array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0'",
+                "'Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0'",
                 $controller
             );
         }

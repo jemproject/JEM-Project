@@ -14,6 +14,27 @@ use PHPUnit\Framework\TestCase;
  */
 class MenuPageTextRenderingTest extends TestCase
 {
+    public function testPageTextIsScopedToTheActiveMenuView(): void
+    {
+        $helper = $this->read('site/helpers/helper.php');
+        $scope = $this->read('site/classes/menuviewscope.class.php');
+        $view = $this->read('site/classes/view.class.php');
+        $pdf = $this->read('site/classes/pdfview.class.php');
+
+        self::assertStringContainsString('function isActiveMenuView(', $helper);
+        self::assertStringContainsString('JemMenuViewScope::matches($menu->query, $view, $requestId)', $helper);
+        self::assertStringContainsString("(\$query['option'] ?? '') !== 'com_jem'", $scope);
+        self::assertStringContainsString("strtolower((string) (\$query['view'] ?? '')) !== \$view", $scope);
+        self::assertStringContainsString("array_key_exists('id', \$query)", $scope);
+
+        self::assertStringContainsString('function display($tpl = null)', $view);
+        self::assertStringContainsString('!JemHelper::isActiveMenuView($this->getName())', $view);
+        self::assertStringContainsString("\$this->params->set('showintrotext', 0)", $view);
+        self::assertStringContainsString("\$this->params->set('showfootertext', 0)", $view);
+
+        self::assertStringContainsString("JemHelper::isActiveMenuView(\$app->input->getCmd('view', ''))", $pdf);
+    }
+
     public function testEverySelectableMenuLayoutOffersAndRendersPageText(): void
     {
         $xmlFiles = glob(JEM_TEST_ROOT . '/site/views/*/tmpl/*.xml');
@@ -111,5 +132,14 @@ class MenuPageTextRenderingTest extends TestCase
                 $this->assertStringNotContainsString("\$params->get('footertext'", $template);
             }
         }
+    }
+
+    private function read(string $relativePath): string
+    {
+        $path = JEM_TEST_ROOT . '/' . $relativePath;
+
+        self::assertFileExists($path);
+
+        return (string) file_get_contents($path);
     }
 }
