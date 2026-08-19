@@ -777,6 +777,24 @@ input#replace_attachments1.inputbox {
     align-items: stretch;
 }
 
+.jem-import-grid > hr {
+    display: none;
+}
+
+.jem-import-grid > div {
+    min-width: 0;
+}
+
+.jem-import-grid > div > fieldset.adminform {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.jem-import-grid input[type="file"] {
+    max-width: 100%;
+}
+
 .jem-import-card {
     background: var(--body-bg, #fff);
     border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
@@ -1525,6 +1543,15 @@ table#el-attachments input {
 
 table#el-attachments select.inputbox {
     width: auto;
+}
+
+select.inputbox {
+    padding: .5rem;
+    padding-inline-end: 2.5rem;
+}
+
+textarea.inputbox {
+    padding: .5rem;
 }
 
 table#el-attachments {
@@ -3023,6 +3050,19 @@ fieldset.jem-specialdays-import #replace_specialdays {
     display: inline-block;
     font-size: .95rem;
     line-height: 1;
+}
+
+#specialDayList thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #adb5bd;
+    color: #212529;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+#specialDayList thead th a {
+    color: inherit;
+    font-weight: 700;
 }
 
 #specialDayList .jem-specialdays-location-heading,

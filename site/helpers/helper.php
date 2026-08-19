@@ -3715,10 +3715,12 @@ class JemHelper
     static public function loadCss($css)
     {
         $settings = self::retrieveCss();
-        $layoutSuffix = self::getLayoutStyleSuffix();
         $app      = Factory::getApplication();
         $wa       = $app->getDocument()->getWebAssetManager();
         $isAdmin  = $app->isClient('administrator');
+        // The layout style setting belongs to the frontend. Administrator
+        // views always use the single canonical backend stylesheet.
+        $layoutSuffix = $isAdmin ? '' : self::getLayoutStyleSuffix();
         $expectedSuffix = $layoutSuffix ? '-' . $layoutSuffix : '';
         $suffix   = $expectedSuffix !== '' && substr($css, -strlen($expectedSuffix)) !== $expectedSuffix
             ? $expectedSuffix

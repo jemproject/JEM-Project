@@ -2691,23 +2691,6 @@
                 required="false"
             />
             <field type="spacer" name="spacer1" hr="true" />
-            <field name="css_backend_responsive_usecustom" type="radio"
-                description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_USECUSTOM_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_USECUSTOM"
-                class="inputbox btn-group btn-group-yesno"
-                default="0"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="css_backend_responsive_customfile" type="cssfile"
-                description="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_RESPONSIVE_CUSTOMFILE_DESC"
-                label="COM_JEM_SETTINGS_FIELD_CSS_BACKEND_CUSTOMFILE"
-                class="inputbox"
-                size="50"
-                required="false"
-            />
-            <field type="spacer" name="spacer1b" hr="true" />
             <field name="css_calendar_usecustom" type="radio"
                 description="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM_DESC"
                 label="COM_JEM_SETTINGS_FIELD_CSS_CALENDAR_USECUSTOM"
