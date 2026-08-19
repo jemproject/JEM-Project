@@ -127,6 +127,25 @@ final class EventTimezoneContractsTest extends TestCase
         }
     }
 
+    public function testCleanupUsesJoomlaTimezoneAndPreservesArchiveDayBoundary(): void
+    {
+        $helper = $this->read('/site/helpers/helper.php');
+
+        self::assertStringContainsString(
+            '$cleanupTimeZone = new \\DateTimeZone(self::getJoomlaTimeZoneName());',
+            $helper
+        );
+        self::assertStringContainsString(
+            "->setTimezone(\$cleanupTimeZone)\n            ->format('Y-m-d')",
+            $helper
+        );
+        self::assertStringNotContainsString("\$offset = idate('Z')", $helper);
+        self::assertStringContainsString(
+            "self::getJoomlaDate(-\$minusDays)) . ' >= (IF (enddates IS NOT NULL, enddates, dates))'",
+            $helper
+        );
+    }
+
     public function testCalendarViewsPassTheSelectedCivilMonthToTheirModels(): void
     {
         $views = array(

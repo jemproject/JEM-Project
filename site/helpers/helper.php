@@ -2177,20 +2177,25 @@ class JemHelper
         $jemsettings  = JemHelper::config();
         $weekstart    = $jemsettings->weekdaystart;
 
-        $now = time(); // UTC
-        $offset = idate('Z'); // timezone offset for "new day" test
+        $now = time(); // UTC timestamp
+        $cleanupTimeZone = new \DateTimeZone(self::getJoomlaTimeZoneName());
         $lastupdate = (int)$jemsettings->lastupdate;
         $runningupdate = isset($jemsettings->runningupdate) ? $jemsettings->runningupdate : 0;
         $maxexectime = get_cfg_var('max_execution_time');
         $delay = min(86400, max(300, $maxexectime * 2));
 
-        // New (local) day since last update?
-        $nrdaysnow = floor(($now + $offset) / 86400);
-        $nrdaysupdate = floor(($lastupdate + $offset) / 86400);
+        // New day in Joomla's configured timezone since the last update?
+        $currentCleanupDate = (new \DateTimeImmutable('@' . $now))
+            ->setTimezone($cleanupTimeZone)
+            ->format('Y-m-d');
+        $lastCleanupDate = (new \DateTimeImmutable('@' . $lastupdate))
+            ->setTimezone($cleanupTimeZone)
+            ->format('Y-m-d');
 
-        if (($nrdaysnow > $nrdaysupdate) || $forced) {
+        if (($currentCleanupDate > $lastCleanupDate) || $forced) {
             JemHelper::addLogEntry('forced: ' . $forced . ', now: '. $now . ', last update: ' . $lastupdate .
-                                   ', running update: ' . $runningupdate . ', delay: ' . $delay . ', tz-offset: ' . $offset, __METHOD__);
+                                   ', running update: ' . $runningupdate . ', delay: ' . $delay .
+                                   ', timezone: ' . $cleanupTimeZone->getName(), __METHOD__);
 
             if (($runningupdate + $delay) < $now) {
                 // Set timestamp of running cleanup
@@ -2325,7 +2330,10 @@ class JemHelper
                 // The only dynamic value is $minusDays — cast to int to eliminate any injection risk
                 // even if the stored setting were somehow corrupted. Column names are hardcoded constants.
                 $minusDays    = (int) $jemsettings->minus;
-                $outdatedWhere = 'dates > 0 AND ' . $db->quote(self::getJoomlaDate(-$minusDays)) . ' > (IF (enddates IS NOT NULL, enddates, dates))';
+                // Keep the legacy day-count contract: 1 archives an event on the
+                // calendar day after its end date. The comparison is date-only,
+                // so equality is required to avoid adding an unintended extra day.
+                $outdatedWhere = 'dates > 0 AND ' . $db->quote(self::getJoomlaDate(-$minusDays)) . ' >= (IF (enddates IS NOT NULL, enddates, dates))';
 
                 //delete outdated events
                 if ($jemsettings->oldevent == 1) {
