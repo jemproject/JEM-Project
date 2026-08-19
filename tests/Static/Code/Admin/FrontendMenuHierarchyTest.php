@@ -20,7 +20,7 @@ final class FrontendMenuHierarchyTest extends TestCase
             array('User Area', 'user-area'),
         ) as $group) {
             self::assertStringContainsString(
-                "createMenuItem(\$menutype, '" . $group[0] . "', '" . $group[1] . "', '#', \$rootId, 'url', 0",
+                "'" . $group[0] . "', '" . $group[1] . "', '#', \$rootId, 'url', 0",
                 $controller
             );
         }

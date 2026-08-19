@@ -78,7 +78,7 @@ final class AdminCodeContractsTest extends TestCase
     {
         $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
 
-        self::assertStringContainsString("'JEM', 'jem-frontend'", $code);
+        self::assertStringContainsString("array('JEM'), 'JEM', 'jem-frontend'", $code);
         self::assertStringContainsString("array('jem')", $code);
         self::assertStringContainsString('array_merge(array($alias), $legacyAliases)', $code);
         self::assertStringContainsString("->where(\$db->quoteName('alias') . ' IN ('", $code);
@@ -88,8 +88,8 @@ final class AdminCodeContractsTest extends TestCase
     {
         $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
 
-        self::assertStringContainsString("array('Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', \$groups['events'])", $code);
-        self::assertStringContainsString("array('Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', \$groups['venues'])", $code);
+        self::assertStringContainsString("'Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', \$groups['events']", $code);
+        self::assertStringContainsString("'Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', \$groups['venues']", $code);
     }
 
     public function testFrontendMenuGeneratorDoesNotCreateSampleCategoryLinksToRootCategory(): void
@@ -110,10 +110,10 @@ final class AdminCodeContractsTest extends TestCase
     {
         $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
 
-        self::assertStringContainsString("array('Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', \$groups['calendars'])", $code);
-        self::assertStringContainsString("array('Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', \$groups['venues'])", $code);
-        self::assertStringContainsString("array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', \$groups['user'])", $code);
-        self::assertStringContainsString("array('My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', \$groups['user'])", $code);
+        self::assertStringContainsString("'Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', \$groups['calendars']", $code);
+        self::assertStringContainsString("'Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', \$groups['venues']", $code);
+        self::assertStringContainsString("'My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', \$groups['user']", $code);
+        self::assertStringContainsString("'My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', \$groups['user']", $code);
     }
 
     public function testFrontendMenuGeneratorAddsVenueCalendarLastWithSelectorEnabled(): void
@@ -126,14 +126,49 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("array('show_venue_selector' => '1')", $code);
         self::assertStringContainsString('// Keep Venue Calendar as the final entry in the Calendars group.', $code);
         self::assertStringContainsString('$items[] = $venueCalendarItem;', $code);
-        self::assertStringContainsString("if (\$item[1] === 'venue-calendar')", $code);
+        self::assertStringContainsString("if (\$item[2] === 'venue-calendar')", $code);
         self::assertStringContainsString("\$this->moveMenuItemToLastChild(\$menuItemId, \$groups['calendars']);", $code);
         self::assertStringContainsString('protected function moveMenuItemToLastChild($id, $parentId)', $code);
 
         self::assertGreaterThan(
-            strpos($code, "array('Category Calendar', 'category-calendar'"),
+            strpos($code, "'Category Calendar', 'category-calendar'"),
             strpos($code, '$items[] = $venueCalendarItem;')
         );
+    }
+
+    public function testFrontendMenuGeneratorUsesTheDefaultSiteLanguageWithEnglishFallback(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString("ComponentHelper::getParams('com_languages')->get('site', 'en-GB')", $code);
+        self::assertStringContainsString("Factory::getContainer()->get(LanguageFactoryInterface::class)", $code);
+        self::assertStringContainsString("->load('com_jem.sys', JPATH_ADMINISTRATOR, \$siteTag, true, false)", $code);
+        self::assertStringContainsString("->load('com_jem.sys', JPATH_ADMINISTRATOR, 'en-GB', true, false)", $code);
+        self::assertStringContainsString("if (\$hasSystemPack || \$hasComponentPack)", $code);
+    }
+
+    public function testFrontendMenuGeneratorPreservesCustomExistingTitles(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString('(string) $table->title === (string) $defaultTitle', $code);
+        self::assertStringContainsString("\$data['title'] = \$title;", $code);
+        self::assertStringNotContainsString("'language'     => \$siteTag", $code);
+        self::assertStringContainsString("'language'     => '*'", $code);
+    }
+
+    public function testFrontendMenuGeneratorPrimaryTitleKeysExistInEnglish(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/admin/controllers/frontendmenu.php');
+        $language = self::read(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.sys.ini');
+
+        preg_match_all("/array\\('(COM_JEM_FRONTEND_MENU_[A-Z_]+)'/", $code, $matches);
+        $keys = array_values(array_unique($matches[1] ?? array()));
+
+        self::assertNotEmpty($keys);
+        foreach ($keys as $key) {
+            self::assertMatchesRegularExpression('/^' . preg_quote($key, '/') . '=/m', $language, $key);
+        }
     }
 
     public function testFrontendMenuGeneratorRepairsExistingGeneratedAliasesAcrossTheMenuType(): void
