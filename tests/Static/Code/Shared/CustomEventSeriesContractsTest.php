@@ -73,15 +73,24 @@ final class CustomEventSeriesContractsTest extends TestCase
     {
         $model = file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
 
+        self::assertStringContainsString(
+            '$customSeriesCreate = $customSeriesRequested && ($new || $existingSeriesId === 0);',
+            $model
+        );
         self::assertStringContainsString('$seriesTransactionActive = false;', $model);
         self::assertStringContainsString('$seriesDb->transactionStart();', $model);
-        self::assertStringContainsString('completeCustomSeriesSchedule($savedId, $customSchedule, $new || $customSeriesIsRoot)', $model);
+        self::assertStringContainsString('completeCustomSeriesSchedule($savedId, $customSchedule, $customSeriesCreate || $customSeriesIsRoot)', $model);
         self::assertStringContainsString('createCustomEventSeries($savedId, $completeCustomSchedule, $cats, $backend, false)', $model);
+        self::assertStringContainsString('if ($saved && $customSeriesCreate)', $model);
+        self::assertStringNotContainsString('if ($saved && $new)', $model);
         self::assertStringContainsString('synchroniseCustomSeriesSchedule($existingSeriesId, $savedId, $completeCustomSchedule, $cats, $backend, false)', $model);
         self::assertStringContainsString('getCustomSeriesSchedule((int) $item->series_id, (int) $item->id)', $model);
         self::assertStringContainsString('$seriesDb->transactionCommit();', $model);
         self::assertStringContainsString('$seriesDb->transactionRollback();', $model);
-        self::assertStringContainsString("if (\$manageTransaction) {\n                Factory::getApplication()->enqueueMessage", $model);
+        self::assertMatchesRegularExpression(
+            '/if \(\$manageTransaction\) \{\R\s+Factory::getApplication\(\)->enqueueMessage/',
+            $model
+        );
     }
 
     public function testCustomSeriesRootPropagatesWhileChildrenRemainIndependent(): void
