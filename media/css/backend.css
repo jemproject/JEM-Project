@@ -587,12 +587,12 @@ img.venue-image {
     padding: 3px;
 }
 
-div.controls {
+div.item-image div.controls {
      text-align:left;
      line-height:20px;
 }
 
-div.controls img {
+div.item-image div.controls img {
     vertical-align: middle;
 }
 
@@ -757,17 +757,30 @@ div.controls img {
 .jem-capacity-overview-node-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: .5rem;
 }
 
 .jem-capacity-overview-node-identity {
     display: grid;
+    flex: 1 1 auto;
     min-width: 0;
 }
 
-.jem-capacity-overview-node-identity strong {
+.jem-capacity-overview-node-name {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    min-width: 0;
+}
+
+.jem-capacity-overview-node-name strong {
+    min-width: 0;
     overflow-wrap: anywhere;
+}
+
+.jem-capacity-overview-node-header > .badge {
+    flex: 0 0 auto;
+    margin-left: auto;
 }
 
 .jem-capacity-overview-node-type {
@@ -1807,6 +1820,24 @@ input#replace_attachments1.inputbox {
     align-items: stretch;
 }
 
+.jem-import-grid > hr {
+    display: none;
+}
+
+.jem-import-grid > div {
+    min-width: 0;
+}
+
+.jem-import-grid > div > fieldset.adminform {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.jem-import-grid input[type="file"] {
+    max-width: 100%;
+}
+
 .jem-import-card {
     background: var(--body-bg, #fff);
     border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent);
@@ -2555,6 +2586,15 @@ table#el-attachments input {
 
 table#el-attachments select.inputbox {
     width: auto;
+}
+
+select.inputbox {
+    padding: .5rem;
+    padding-inline-end: 2.5rem;
+}
+
+textarea.inputbox {
+    padding: .5rem;
 }
 
 table#el-attachments {
@@ -3750,9 +3790,25 @@ a.label:focus {
     }
 }
 
-.select-time {
-    padding: 5px;
-    margin-top: 10px;
+.jem-time-select {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    max-width: 100%;
+}
+
+.jem-time-select .select-time {
+    width: auto;
+    min-width: 4rem;
+    margin: 0;
+}
+
+#event-form joomla-field-fancy-select,
+#event-form joomla-field-fancy-select .choices,
+#event-form joomla-field-fancy-select .choices__inner,
+#event-form joomla-field-fancy-select .choices__list,
+#event-form joomla-field-fancy-select .choices__item {
+    text-align: left;
 }
 
 /* --- ALERT CODE ---- */
@@ -4044,6 +4100,19 @@ fieldset.jem-specialdays-import #replace_specialdays {
     display: inline-block;
     font-size: .95rem;
     line-height: 1;
+}
+
+#specialDayList thead th {
+    background-color: #f1f3f5;
+    border-bottom: 2px solid #adb5bd;
+    color: #212529;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+#specialDayList thead th a {
+    color: inherit;
+    font-weight: 700;
 }
 
 #specialDayList .jem-specialdays-location-heading,

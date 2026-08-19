@@ -166,7 +166,6 @@ class JemModelCssmanager extends BaseDatabaseModel
     {
         return array(
             'backend.css' => array('use' => 'css_backend_usecustom', 'file' => 'css_backend_customfile', 'label' => 'backend.css'),
-            'backend-responsive.css' => array('use' => 'css_backend_responsive_usecustom', 'file' => 'css_backend_responsive_customfile', 'fallbackUse' => 'css_backend_usecustom', 'label' => 'backend-responsive.css'),
             'calendar.css' => array('use' => 'css_calendar_usecustom', 'file' => 'css_calendar_customfile', 'label' => 'calendar.css'),
             'calendar-responsive.css' => array('use' => 'css_calendar_responsive_usecustom', 'file' => 'css_calendar_responsive_customfile', 'fallbackUse' => 'css_calendar_usecustom', 'label' => 'calendar-responsive.css'),
             'geostyle.css' => array('use' => 'css_geostyle_usecustom', 'file' => 'css_geostyle_customfile', 'label' => 'geostyle.css'),

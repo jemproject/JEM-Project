@@ -562,11 +562,12 @@ class JemModelEvent extends JemModelAdmin
                 }
             }
         }
+        $customSeriesCreate = $customSeriesRequested && ($new || $existingSeriesId === 0);
 
         if ($customSeriesRequested) {
             $customSchedule = $this->parseCustomSeriesSchedule(
                 $jinput->post->get('custom_schedule_json', '', 'raw'),
-                $new || $customSeriesScope !== 'occurrence'
+                $customSeriesCreate || $customSeriesScope !== 'occurrence'
             );
             if ($customSchedule === false) {
                 return false;
@@ -909,7 +910,7 @@ class JemModelEvent extends JemModelAdmin
         $seriesTransactionActive = false;
         $pricingDb = null;
         $pricingTransactionActive = false;
-        if ($customSeriesRequested && ($new || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence'))) {
+        if ($customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
             $seriesDb = Factory::getContainer()->get('DatabaseDriver');
             $seriesDb->transactionStart();
             $seriesTransactionActive = true;
@@ -1225,14 +1226,14 @@ class JemModelEvent extends JemModelAdmin
             }
 
             $completeCustomSchedule = array();
-            if ($new || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
-                $completeCustomSchedule = $this->completeCustomSeriesSchedule($savedId, $customSchedule, $new || $customSeriesIsRoot);
+            if ($customSeriesCreate || ($existingSeriesId > 0 && $customSeriesScope !== 'occurrence')) {
+                $completeCustomSchedule = $this->completeCustomSeriesSchedule($savedId, $customSchedule, $customSeriesCreate || $customSeriesIsRoot);
                 if ($completeCustomSchedule === false) {
                     $saved = false;
                 }
             }
 
-            if ($saved && $new) {
+            if ($saved && $customSeriesCreate) {
                 $saved = $this->createCustomEventSeries($savedId, $completeCustomSchedule, $cats, $backend, false);
             } elseif ($saved && $existingSeriesId > 0 && $customSeriesScope !== 'occurrence') {
                 $saved = $this->synchroniseCustomSeriesSchedule($existingSeriesId, $savedId, $completeCustomSchedule, $cats, $backend, false);
@@ -1256,7 +1257,7 @@ class JemModelEvent extends JemModelAdmin
         if ($seriesTransactionActive) {
             if ($saved) {
                 $seriesDb->transactionCommit();
-                if ($new) {
+                if ($customSeriesCreate) {
                     Factory::getApplication()->enqueueMessage(Text::sprintf('COM_JEM_CUSTOM_SERIES_CREATED', count($completeCustomSchedule)), 'success');
                 } else {
                     Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_CUSTOM_SERIES_SCHEDULE_UPDATED'), 'success');
