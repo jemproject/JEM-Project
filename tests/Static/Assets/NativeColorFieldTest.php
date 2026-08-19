@@ -50,7 +50,6 @@ final class NativeColorFieldTest extends TestCase
             'admin/models/source.php',
             'admin/sql/install.mysql.utf8.sql',
             'media/css/backend.css',
-            'media/css/backend-responsive.css',
         ) as $relativePath) {
             $contents = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
 

@@ -13,20 +13,19 @@ final class EventSettingsResponsiveLayoutTest extends TestCase
         self::assertStringContainsString('jem-event-settings-tab', $layout);
         self::assertSame(4, substr_count($layout, 'jem-event-settings-grid'));
 
-        foreach (array('backend.css', 'backend-responsive.css') as $fileName) {
-            $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
+        $fileName = 'backend.css';
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
 
-            self::assertStringContainsString('.jem-event-settings-tab .jem-event-settings-grid > li', $css, $fileName);
-            self::assertStringContainsString(
-                'grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr)',
-                $css,
-                $fileName
-            );
-            self::assertMatchesRegularExpression(
-                '/@media \(max-width: 767\.98px\)[\s\S]+\.jem-event-settings-tab \.jem-event-settings-grid > li[\s\S]+grid-template-columns: minmax\(0, 1fr\)/',
-                $css,
-                $fileName
-            );
-        }
+        self::assertStringContainsString('.jem-event-settings-tab .jem-event-settings-grid > li', $css, $fileName);
+        self::assertStringContainsString(
+            'grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr)',
+            $css,
+            $fileName
+        );
+        self::assertMatchesRegularExpression(
+            '/@media \(max-width: 767\.98px\)[\s\S]+\.jem-event-settings-tab \.jem-event-settings-grid > li[\s\S]+grid-template-columns: minmax\(0, 1fr\)/',
+            $css,
+            $fileName
+        );
     }
 }

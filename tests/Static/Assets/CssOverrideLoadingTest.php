@@ -50,6 +50,27 @@ final class CssOverrideLoadingTest extends TestCase
         self::assertStringContainsString('$dependencies', $loader);
     }
 
+    public function testAdministratorUsesOneCanonicalBackendStylesheet(): void
+    {
+        $method = $this->method('loadCss', 'loadFrontendUserCss');
+
+        self::assertStringContainsString("\$layoutSuffix = \$isAdmin ? '' : self::getLayoutStyleSuffix();", $method);
+        self::assertFileExists(JEM_TEST_ROOT . '/media/css/backend.css');
+        self::assertFileDoesNotExist(JEM_TEST_ROOT . '/media/css/backend-responsive.css');
+
+        foreach (array(
+            'admin/models/forms/settings.xml',
+            'admin/models/cssmanager.php',
+            'admin/models/source.php',
+        ) as $relativePath) {
+            self::assertStringNotContainsString(
+                'backend-responsive',
+                (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath),
+                $relativePath
+            );
+        }
+    }
+
     public function testModuleCssKeepsOneConsistentOverridePriority(): void
     {
         $method = $this->method('loadModuleStyleSheet', 'loadIconFont');

@@ -15,14 +15,13 @@ final class EventFormControlAlignmentTest extends TestCase
             self::assertStringContainsString('class="jem-time-select"', $field, $fileName);
         }
 
-        foreach (array('backend.css', 'backend-responsive.css') as $fileName) {
-            $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
+        $fileName = 'backend.css';
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
 
-            self::assertStringContainsString('.jem-time-select {', $css, $fileName);
-            self::assertStringContainsString('#event-form joomla-field-fancy-select .choices__item', $css, $fileName);
-            self::assertStringNotContainsString("\ndiv.controls {", $css, $fileName);
-            self::assertStringContainsString('div.item-image div.controls {', $css, $fileName);
-        }
+        self::assertStringContainsString('.jem-time-select {', $css, $fileName);
+        self::assertStringContainsString('#event-form joomla-field-fancy-select .choices__item', $css, $fileName);
+        self::assertStringNotContainsString("\ndiv.controls {", $css, $fileName);
+        self::assertStringContainsString('div.item-image div.controls {', $css, $fileName);
     }
 
     public function testCategoryChoicesUsePlainTextHierarchyLabels(): void

@@ -6,9 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 final class BackendSelectSpacingTest extends TestCase
 {
-    public function testResponsiveBackendSelectsReserveSpaceForTheNativeArrow(): void
+    public function testBackendSelectsReserveSpaceForTheNativeArrow(): void
     {
-        $css = $this->read('media/css/backend-responsive.css');
+        $css = $this->read('media/css/backend.css');
 
         self::assertStringContainsString('select.inputbox {', $css);
         self::assertStringContainsString('padding-inline-end: 2.5rem;', $css);
