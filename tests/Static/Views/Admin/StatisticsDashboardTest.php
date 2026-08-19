@@ -55,15 +55,14 @@ final class StatisticsDashboardTest extends TestCase
         self::assertStringNotContainsString('XMLHttpRequest', $template);
     }
 
-    public function testBothBackendLayoutsStyleTheDashboardResponsively(): void
+    public function testCanonicalBackendLayoutStylesTheDashboardResponsively(): void
     {
-        foreach (array('media/css/backend.css', 'media/css/backend-responsive.css') as $relativePath) {
-            $css = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
-            self::assertStringContainsString('.jem-statistics-card-grid', $css, $relativePath);
-            self::assertStringContainsString('.jem-statistics-chart', $css, $relativePath);
-            self::assertStringContainsString('.jem-statistics-order-kpis', $css, $relativePath);
-            self::assertStringContainsString('.jem-statistics-money-grid', $css, $relativePath);
-            self::assertStringContainsString('@media (max-width: 767.98px)', $css, $relativePath);
-        }
+        $relativePath = 'media/css/backend.css';
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
+        self::assertStringContainsString('.jem-statistics-card-grid', $css, $relativePath);
+        self::assertStringContainsString('.jem-statistics-chart', $css, $relativePath);
+        self::assertStringContainsString('.jem-statistics-order-kpis', $css, $relativePath);
+        self::assertStringContainsString('.jem-statistics-money-grid', $css, $relativePath);
+        self::assertStringContainsString('@media (max-width: 767.98px)', $css, $relativePath);
     }
 }

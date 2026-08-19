@@ -93,27 +93,26 @@ final class ImportViewLayoutTest extends TestCase
 
     public function testImportGridCssKeepsTwoColumnsWithSingleColumnResponsiveFallback(): void
     {
-        foreach (array('media/css/backend.css', 'media/css/backend-responsive.css') as $relativePath) {
-            $css = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
+        $relativePath = 'media/css/backend.css';
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
 
-            self::assertMatchesRegularExpression(
-                '/\.jem-import-grid\s*\{[^}]*display\s*:\s*grid\s*;/s',
-                $css,
-                $relativePath . ' should define the import wrapper as a CSS grid.'
-            );
+        self::assertMatchesRegularExpression(
+            '/\.jem-import-grid\s*\{[^}]*display\s*:\s*grid\s*;/s',
+            $css,
+            $relativePath . ' should define the import wrapper as a CSS grid.'
+        );
 
-            self::assertMatchesRegularExpression(
-                '/\.jem-import-grid\s*\{[^}]*grid-template-columns\s*:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)\s*;/s',
-                $css,
-                $relativePath . ' should keep the desktop import view in two columns.'
-            );
+        self::assertMatchesRegularExpression(
+            '/\.jem-import-grid\s*\{[^}]*grid-template-columns\s*:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)\s*;/s',
+            $css,
+            $relativePath . ' should keep the desktop import view in two columns.'
+        );
 
-            self::assertMatchesRegularExpression(
-                '/@media\s*\(max-width:\s*900px\)\s*\{[^}]*\.jem-import-grid\s*\{[^}]*grid-template-columns\s*:\s*1fr\s*;/s',
-                $css,
-                $relativePath . ' should collapse the import grid to one column on smaller screens.'
-            );
-        }
+        self::assertMatchesRegularExpression(
+            '/@media\s*\(max-width:\s*900px\)\s*\{[^}]*\.jem-import-grid\s*\{[^}]*grid-template-columns\s*:\s*1fr\s*;/s',
+            $css,
+            $relativePath . ' should collapse the import grid to one column on smaller screens.'
+        );
 
 
         $backendCss = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/backend.css');

@@ -13,7 +13,6 @@ final class EventPricingCapacityViewTest extends TestCase
         $form = $this->read('/admin/models/forms/venue.xml');
         $view = $this->read('/admin/views/venue/view.html.php');
         $css = $this->read('/media/css/backend.css');
-        $responsiveCss = $this->read('/media/css/backend-responsive.css');
 
         self::assertStringContainsString("loadTemplate('capacity')", $edit);
         self::assertStringContainsString('COM_JEM_VENUE_PROFILES_TAB', $edit);
@@ -147,31 +146,29 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('name="capacity_configuration_submitted" type="hidden" default="0"', $form);
         self::assertStringNotContainsString('JemVenueCapacityService::ensureDefaultProfile((int) $pk);', $this->read('/admin/models/venue.php'));
         self::assertStringContainsString('if ((int) $current[\'profile_id\'] < 1)', $this->read('/admin/classes/venuecapacity.class.php'));
-        foreach (array($css, $responsiveCss) as $backendCss) {
-            self::assertStringContainsString('.jem-venue-capacity-editor', $backendCss);
-            self::assertStringContainsString('.jem-venue-location-card', $backendCss);
-            self::assertStringContainsString('.jem-capacity-space-card > .jem-capacity-card-header', $backendCss);
-            self::assertStringContainsString('.jem-capacity-section-areas', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-heading', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-actions', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-details', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-capacity > label', $backendCss);
-            self::assertStringContainsString('max-width: var(--jem-capacity-number-control-width)', $backendCss);
-            self::assertStringContainsString('.jem-capacity-intro', $backendCss);
-            self::assertStringContainsString('.jem-capacity-empty-state', $backendCss);
-            self::assertStringContainsString('[data-role="profile-configuration"][hidden]', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-revision', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-summary.is-over-capacity', $backendCss);
-            self::assertStringContainsString('.jem-capacity-overview-node', $backendCss);
-            self::assertStringContainsString('.jem-capacity-color-field', $backendCss);
-            self::assertStringContainsString('.jem-capacity-profile-name', $backendCss);
-            self::assertStringContainsString('--jem-capacity-text-control-width: 23rem', $backendCss);
-            self::assertStringContainsString('--jem-capacity-number-control-width: 8rem', $backendCss);
-            self::assertStringContainsString('justify-content: center', $backendCss);
-            self::assertStringContainsString('.jem-venue-capacity-editor .hide-aware-inline-help', $backendCss);
-            self::assertStringContainsString('[data-bs-theme="dark"] .jem-capacity-space-card', $backendCss);
-            self::assertStringContainsString('@media (max-width: 767.98px)', $backendCss);
-        }
+        self::assertStringContainsString('.jem-venue-capacity-editor', $css);
+        self::assertStringContainsString('.jem-venue-location-card', $css);
+        self::assertStringContainsString('.jem-capacity-space-card > .jem-capacity-card-header', $css);
+        self::assertStringContainsString('.jem-capacity-section-areas', $css);
+        self::assertStringContainsString('.jem-capacity-profile-heading', $css);
+        self::assertStringContainsString('.jem-capacity-profile-actions', $css);
+        self::assertStringContainsString('.jem-capacity-profile-details', $css);
+        self::assertStringContainsString('.jem-capacity-profile-capacity > label', $css);
+        self::assertStringContainsString('max-width: var(--jem-capacity-number-control-width)', $css);
+        self::assertStringContainsString('.jem-capacity-intro', $css);
+        self::assertStringContainsString('.jem-capacity-empty-state', $css);
+        self::assertStringContainsString('[data-role="profile-configuration"][hidden]', $css);
+        self::assertStringContainsString('.jem-capacity-profile-revision', $css);
+        self::assertStringContainsString('.jem-capacity-profile-summary.is-over-capacity', $css);
+        self::assertStringContainsString('.jem-capacity-overview-node', $css);
+        self::assertStringContainsString('.jem-capacity-color-field', $css);
+        self::assertStringContainsString('.jem-capacity-profile-name', $css);
+        self::assertStringContainsString('--jem-capacity-text-control-width: 23rem', $css);
+        self::assertStringContainsString('--jem-capacity-number-control-width: 8rem', $css);
+        self::assertStringContainsString('justify-content: center', $css);
+        self::assertStringContainsString('.jem-venue-capacity-editor .hide-aware-inline-help', $css);
+        self::assertStringContainsString('[data-bs-theme="dark"] .jem-capacity-space-card', $css);
+        self::assertStringContainsString('@media (max-width: 767.98px)', $css);
     }
 
     public function testEventEditorExposesPricingCapacityWorkflowAndCountryTaxFilter(): void

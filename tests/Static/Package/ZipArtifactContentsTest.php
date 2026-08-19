@@ -305,7 +305,6 @@ final class ZipArtifactContentsTest extends TestCase
                 'admin/views/venue/tmpl/edit_capacity.php' => 'jem-venue-capacity-editor',
                 'admin/views/event/tmpl/edit_pricing.php' => 'jem-event-pricing',
                 'media/css/backend.css' => '.jem-capacity-space-card',
-                'media/css/backend-responsive.css' => '.jem-capacity-space-card',
                 'admin/models/forms/event.xml' => 'name="venue_snapshot"',
                 'admin/sql/install.mysql.utf8.sql' => '#__jem_venue_capacity_profiles',
                 'admin/sql/updates/mysql/5.1.0.sql' => 'ADD COLUMN `venue_snapshot`',
