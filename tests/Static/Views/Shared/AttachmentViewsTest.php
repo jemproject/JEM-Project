@@ -80,6 +80,26 @@ final class AttachmentViewsTest extends TestCase
         self::assertStringContainsString("'last_download', 'a.last_download'", $model);
     }
 
+    public function testBackendDownloadActionIsTheCompactLastColumn(): void
+    {
+        $template = $this->read(JEM_TEST_ROOT . '/admin/views/attachments/tmpl/default.php');
+        $css = $this->read(JEM_TEST_ROOT . '/media/css/backend.css');
+        $downloadsHeading = strpos($template, "'COM_JEM_ATTACHMENT_DOWNLOADS', 'a.downloads'");
+        $idHeading = strpos($template, "'JGRID_HEADING_ID', 'a.id'");
+        $actionHeading = strpos($template, 'class="center jem-attachment-download-action"');
+
+        self::assertIsInt($downloadsHeading);
+        self::assertIsInt($idHeading);
+        self::assertIsInt($actionHeading);
+        self::assertTrue($downloadsHeading < $idHeading && $idHeading < $actionHeading);
+        self::assertMatchesRegularExpression(
+            '/<th class="center jem-attachment-download-action">\s*<span class="visually-hidden">/',
+            $template
+        );
+        self::assertStringContainsString('#attachmentList .jem-attachment-download-action {', $css);
+        self::assertStringContainsString('width: 1%;', $css);
+    }
+
     public function testSuccessfulFrontendAndBackendDeliveriesAreRecorded(): void
     {
         $frontendController = $this->read(JEM_TEST_ROOT . '/site/controller.php');

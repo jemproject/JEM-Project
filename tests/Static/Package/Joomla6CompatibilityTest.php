@@ -38,14 +38,14 @@ final class Joomla6CompatibilityTest extends TestCase
         self::assertSame('8.3', (string) $current->php_minimum);
     }
 
-    public function testBetaReleaseNotesAreStoredInTheComponentAndPackageManifests(): void
+    public function testReleaseCandidateNotesAreStoredInTheComponentAndPackageManifests(): void
     {
         foreach (array('/jem.xml', '/package/pkg_jem.xml') as $relativePath) {
             $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
 
             self::assertNotFalse($manifest);
-            self::assertSame('5.0.1beta2', (string) $manifest->version);
-            self::assertCount(33, explode(';', (string) $manifest->notes));
+            self::assertSame('5.0.1rc1', (string) $manifest->version);
+            self::assertCount(35, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2257', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2263', (string) $manifest->notes);
@@ -54,6 +54,8 @@ final class Joomla6CompatibilityTest extends TestCase
             self::assertStringContainsString('Issue #2287', (string) $manifest->notes);
             self::assertStringContainsString('Commit 1e82bf8', (string) $manifest->notes);
             self::assertStringContainsString('Commit f199043', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2306', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2307', (string) $manifest->notes);
         }
     }
 
