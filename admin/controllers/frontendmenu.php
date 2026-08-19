@@ -8,6 +8,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\LanguageFactoryInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
@@ -15,6 +17,8 @@ use Joomla\CMS\Table\Table;
 
 class JemControllerFrontendmenu extends BaseController
 {
+    protected $frontendMenuLanguages;
+
     public function create()
     {
         Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
@@ -46,55 +50,56 @@ class JemControllerFrontendmenu extends BaseController
         $this->ensureMenuType($menutype);
         $this->ensureMenuModule($menutype);
 
-        $rootId = $this->createMenuItem($menutype, 'JEM', 'jem-frontend', '#', 1, 'heading', 0, array('jem'));
+        $rootId = $this->createMenuItem($menutype, array('JEM'), 'JEM', 'jem-frontend', '#', 1, 'heading', 0, array('jem'));
 
         $groups = array(
-            'events'     => $this->createMenuItem($menutype, 'Events', 'events', '#', $rootId, 'url', 0),
-            'calendars'  => $this->createMenuItem($menutype, 'Calendars', 'calendars', '#', $rootId, 'url', 0),
-            'venues'     => $this->createMenuItem($menutype, 'Venues', 'venues', '#', $rootId, 'url', 0),
-            'categories' => $this->createMenuItem($menutype, 'Categories', 'categories', '#', $rootId, 'url', 0),
-            'types'      => $this->createMenuItem($menutype, 'Types', 'types', '#', $rootId, 'url', 0),
-            'management' => $this->createMenuItem($menutype, 'Management', 'management', '#', $rootId, 'url', 0, array(), $specialAccessId),
-            'user'       => $this->createMenuItem($menutype, 'User Area', 'user-area', '#', $rootId, 'url', 0),
+            'events'     => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_EVENTS', 'COM_JEM_MENU_EVENTS'), 'Events', 'events', '#', $rootId, 'url', 0),
+            'calendars'  => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_CALENDARS', 'COM_JEM_PDF_CALENDARS'), 'Calendars', 'calendars', '#', $rootId, 'url', 0),
+            'venues'     => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_VENUES', 'COM_JEM_MENU_VENUES'), 'Venues', 'venues', '#', $rootId, 'url', 0),
+            'categories' => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_CATEGORIES', 'COM_JEM_MENU_CATEGORIES'), 'Categories', 'categories', '#', $rootId, 'url', 0),
+            'types'      => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_TYPES', 'COM_JEM_MENU_TYPES'), 'Types', 'types', '#', $rootId, 'url', 0),
+            'management' => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_MANAGEMENT'), 'Management', 'management', '#', $rootId, 'url', 0, array(), $specialAccessId),
+            'user'       => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_USER_AREA'), 'User Area', 'user-area', '#', $rootId, 'url', 0),
         );
 
         $items = array(
-            array('Events List', 'events-list', 'index.php?option=com_jem&view=eventslist', $groups['events']),
-            array('Events Blog', 'events-blog', 'index.php?option=com_jem&view=eventsblog', $groups['events']),
-            array('Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', $groups['events']),
-            array('Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
-            array('Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
-            array('Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
-            array('Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', $groups['calendars']),
-            array('Annual Calendar', 'annual-calendar', 'index.php?option=com_jem&view=annualcalendar', $groups['calendars']),
-            array('Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
-            array('Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
-            array('Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', $groups['venues']),
-            array('Venues List', 'venues-list', 'index.php?option=com_jem&view=venueslist', $groups['venues']),
-            array('Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', $groups['venues']),
-            array('Submit Venue', 'submit-venue', 'index.php?option=com_jem&view=editvenue', $groups['venues']),
-            array('Categories', 'categories-list', 'index.php?option=com_jem&view=categories', $groups['categories']),
-            array('Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
-            array('Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
-            array('Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
-            array('Attendee Registrations', 'attendee-registrations', 'index.php?option=com_jem&view=attendeeregistrations', $groups['management']),
-            array('My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
-            array('My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
-            array('My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),
-            array('My Attendances', 'my-attendances', 'index.php?option=com_jem&view=myattendances', $groups['user']),
-            array('My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_EVENTS_LIST', 'COM_JEM_EVENTSLIST_VIEW_DEFAULT_TITLE'), 'Events List', 'events-list', 'index.php?option=com_jem&view=eventslist', $groups['events']),
+            array(array('COM_JEM_FRONTEND_MENU_EVENTS_BLOG', 'COM_JEM_EVENTSBLOG_VIEW_DEFAULT_TITLE'), 'Events Blog', 'events-blog', 'index.php?option=com_jem&view=eventsblog', $groups['events']),
+            array(array('COM_JEM_FRONTEND_MENU_EVENTS_MAP', 'COM_JEM_EVENTSMAP_VIEW_DEFAULT_TITLE'), 'Events Map', 'events-map', 'index.php?option=com_jem&view=eventsmap', $groups['events']),
+            array(array('COM_JEM_FRONTEND_MENU_SUBMIT_EVENT', 'COM_JEM_EDITEVENT_VIEW_DEFAULT_TITLE'), 'Submit Event', 'submit-event', 'index.php?option=com_jem&view=editevent', $groups['events']),
+            array(array('COM_JEM_FRONTEND_MENU_TODAY', 'COM_JEM_TIMETABLE_TODAY', 'COM_JEM_DAY_VIEW_DEFAULT_TITLE'), 'Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_DAY_TIMETABLE', 'COM_JEM_DAY_VIEW_TIMETABLE_TITLE'), 'Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_DAY_TIMELINE', 'COM_JEM_DAY_VIEW_TIMELINE_TITLE'), 'Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_ANNUAL_CALENDAR', 'COM_JEM_ANNUALCALENDAR_VIEW_DEFAULT_TITLE'), 'Annual Calendar', 'annual-calendar', 'index.php?option=com_jem&view=annualcalendar', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_MONTHLY_CALENDAR', 'COM_JEM_CALENDAR_VIEW_DEFAULT_TITLE'), 'Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_WEEKLY_CALENDAR', 'COM_JEM_WEEKCAL_VIEW_DEFAULT_TITLE'), 'Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
+            array(array('COM_JEM_FRONTEND_MENU_VENUES', 'COM_JEM_VENUES_VIEW_DEFAULT_TITLE'), 'Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', $groups['venues']),
+            array(array('COM_JEM_FRONTEND_MENU_VENUES_LIST', 'COM_JEM_VENUESLIST_VIEW_DEFAULT_TITLE'), 'Venues List', 'venues-list', 'index.php?option=com_jem&view=venueslist', $groups['venues']),
+            array(array('COM_JEM_FRONTEND_MENU_VENUES_MAP', 'COM_JEM_VENUESMAP_VIEW_DEFAULT_TITLE'), 'Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', $groups['venues']),
+            array(array('COM_JEM_FRONTEND_MENU_SUBMIT_VENUE', 'COM_JEM_EDITVENUE_VIEW_DEFAULT_TITLE'), 'Submit Venue', 'submit-venue', 'index.php?option=com_jem&view=editvenue', $groups['venues']),
+            array(array('COM_JEM_FRONTEND_MENU_CATEGORIES', 'COM_JEM_CATEGORIES_VIEW_DEFAULT_TITLE'), 'Categories', 'categories-list', 'index.php?option=com_jem&view=categories', $groups['categories']),
+            array(array('COM_JEM_FRONTEND_MENU_SEARCH', 'COM_JEM_SEARCH_VIEW_DEFAULT_TITLE'), 'Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_SPECIAL_DAYS', 'COM_JEM_SPECIAL_DAYS_VIEW_DEFAULT_TITLE'), 'Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
+            array(array('COM_JEM_FRONTEND_MENU_SUBMIT_SPECIAL_DAY', 'COM_JEM_SPECIALDAY_VIEW_EDIT_TITLE'), 'Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
+            array(array('COM_JEM_FRONTEND_MENU_ATTENDEE_REGISTRATIONS', 'COM_JEM_ATTENDEE_REGISTRATIONS_VIEW_DEFAULT_TITLE'), 'Attendee Registrations', 'attendee-registrations', 'index.php?option=com_jem&view=attendeeregistrations', $groups['management']),
+            array(array('COM_JEM_FRONTEND_MENU_MY_EVENTS', 'COM_JEM_MYEVENTS_VIEW_DEFAULT_TITLE'), 'My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_MY_TIMELINE', 'COM_JEM_MY_TIMELINE_VIEW_DEFAULT_TITLE'), 'My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_MY_VENUES', 'COM_JEM_MYVENUES_VIEW_DEFAULT_TITLE'), 'My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_MY_ATTENDANCES', 'COM_JEM_MYATTENDANCES_VIEW_DEFAULT_TITLE'), 'My Attendances', 'my-attendances', 'index.php?option=com_jem&view=myattendances', $groups['user']),
+            array(array('COM_JEM_FRONTEND_MENU_MY_ATTENDANCES_TIMELINE', 'COM_JEM_MYATTENDANCES_VIEW_TIMELINE_TITLE'), 'My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', $groups['user']),
         );
 
         $event = $this->getRandomRecord('#__jem_events', 'published = 1', array('id', 'alias'));
         if ($event) {
-            $items[] = array('Sample Event', 'sample-event', 'index.php?option=com_jem&view=event&id=' . $this->slug($event), $groups['events']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_EVENT', 'COM_JEM_EVENT_VIEW_DEFAULT_TITLE'), 'Sample Event', 'sample-event', 'index.php?option=com_jem&view=event&id=' . $this->slug($event), $groups['events']);
         }
 
         $venueCalendarItem = null;
         $venue = $this->getRandomRecord('#__jem_venues', 'published = 1', array('id', 'alias'));
         if ($venue) {
-            $items[] = array('Sample Venue', 'sample-venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_VENUE', 'COM_JEM_VENUE_VIEW_DEFAULT_TITLE'), 'Sample Venue', 'sample-venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
             $venueCalendarItem = array(
+                array('COM_JEM_FRONTEND_MENU_VENUE_CALENDAR', 'COM_JEM_VENUE_CALENDAR_VIEW_DEFAULT_TITLE'),
                 'Venue Calendar',
                 'venue-calendar',
                 'index.php?option=com_jem&view=venue&layout=calendar&id=' . $this->slug($venue),
@@ -109,8 +114,8 @@ class JemControllerFrontendmenu extends BaseController
 
         $category = $this->getRandomCategoryRecord();
         if ($category) {
-            $items[] = array('Sample Category', 'sample-category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
-            $items[] = array('Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_CATEGORY', 'COM_JEM_CATEGORY_VIEW_DEFAULT_TITLE'), 'Sample Category', 'sample-category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_CATEGORY_CALENDAR', 'COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_TITLE'), 'Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
         } else {
             $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
         }
@@ -122,28 +127,28 @@ class JemControllerFrontendmenu extends BaseController
 
         $eventType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 1', array('id', 'alias'));
         $items[] = $eventType
-            ? array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) $eventType->id, $groups['types'])
-            : array('Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents', $groups['types']);
+            ? array(array('COM_JEM_FRONTEND_MENU_EVENTS_BY_TYPE', 'COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE'), 'Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents&id=' . (int) $eventType->id, $groups['types'])
+            : array(array('COM_JEM_FRONTEND_MENU_EVENTS_BY_TYPE', 'COM_JEM_TYPEEVENTS_VIEW_DEFAULT_TITLE'), 'Events by Type', 'events-by-type', 'index.php?option=com_jem&view=typeevents', $groups['types']);
 
         $venueType = $this->getRandomRecord('#__jem_types', 'published = 1 AND entity = 3', array('id', 'alias'));
         $items[] = $venueType
-            ? array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types'])
-            : array('Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues', $groups['types']);
+            ? array(array('COM_JEM_FRONTEND_MENU_VENUES_BY_TYPE', 'COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE'), 'Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues&id=' . (int) $venueType->id, $groups['types'])
+            : array(array('COM_JEM_FRONTEND_MENU_VENUES_BY_TYPE', 'COM_JEM_TYPEVENUES_VIEW_DEFAULT_TITLE'), 'Venues by Type', 'venues-by-type', 'index.php?option=com_jem&view=typevenues', $groups['types']);
 
-        $items[] = array('Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
+        $items[] = array(array('COM_JEM_FRONTEND_MENU_CATEGORIES_BY_TYPE'), 'Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
 
         foreach ($items as $item) {
-            $itemType        = $item[4] ?? 'component';
-            $itemComponentId = $item[5] ?? $componentId;
-            $itemParams      = array_merge($this->getMenuItemDefaultParams($item[2]), $item[6] ?? array());
-            $itemAccess      = ((int) $item[3] === (int) $groups['management']) ? $specialAccessId : 1;
+            $itemType        = $item[5] ?? 'component';
+            $itemComponentId = $item[6] ?? $componentId;
+            $itemParams      = array_merge($this->getMenuItemDefaultParams($item[3]), $item[7] ?? array());
+            $itemAccess      = ((int) $item[4] === (int) $groups['management']) ? $specialAccessId : 1;
 
-            $menuItemId = $this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $itemType, $itemComponentId, array(), $itemAccess, $itemParams);
+            $menuItemId = $this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $item[4], $itemType, $itemComponentId, array(), $itemAccess, $itemParams);
 
             if ($menuItemId) {
                 $created++;
 
-                if ($item[1] === 'venue-calendar') {
+                if ($item[2] === 'venue-calendar') {
                     $this->moveMenuItemToLastChild($menuItemId, $groups['calendars']);
                 }
             }
@@ -181,8 +186,8 @@ class JemControllerFrontendmenu extends BaseController
         $columns = array('menutype', 'title', 'description', 'client_id');
         $values  = array(
             $db->quote($menutype),
-            $db->quote('JEM Frontend Menu'),
-            $db->quote('Generated menu with the available JEM frontend views.'),
+            $db->quote($this->translateFrontendMenuTitle(array('COM_JEM_FRONTEND_MENU_TITLE'), 'JEM Frontend Menu')),
+            $db->quote($this->translateFrontendMenuTitle(array('COM_JEM_FRONTEND_MENU_DESCRIPTION'), 'Generated menu with the available JEM frontend views.')),
             0,
         );
 
@@ -239,7 +244,7 @@ class JemControllerFrontendmenu extends BaseController
         );
 
         $values = array(
-            $db->quote('JEM Frontend Menu'),
+            $db->quote($this->translateFrontendMenuTitle(array('COM_JEM_FRONTEND_MENU_TITLE'), 'JEM Frontend Menu')),
             $db->quote(''),
             $db->quote(''),
             $ordering,
@@ -274,12 +279,13 @@ class JemControllerFrontendmenu extends BaseController
         $db->execute();
     }
 
-    protected function createMenuItem($menutype, $title, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1, array $params = array())
+    protected function createMenuItem($menutype, array $titleKeys, $defaultTitle, $alias, $link, $parentId, $type, $componentId, array $legacyAliases = array(), $access = 1, array $params = array())
     {
+        $title = $this->translateFrontendMenuTitle($titleKeys, $defaultTitle);
         $existing = $this->getExistingMenuItem($menutype, array_merge(array($alias), $legacyAliases), $parentId);
 
         if ($existing) {
-            $this->updateExistingMenuItem($existing, $title, $link, $type, $componentId, $parentId, $access, $params);
+            $this->updateExistingMenuItem($existing, $title, $defaultTitle, $link, $type, $componentId, $parentId, $access, $params);
             return (int) $existing;
         }
 
@@ -348,7 +354,7 @@ class JemControllerFrontendmenu extends BaseController
         return (int) $db->loadResult();
     }
 
-    protected function updateExistingMenuItem($id, $title, $link, $type, $componentId, $parentId = null, $access = 1, array $defaultParams = array())
+    protected function updateExistingMenuItem($id, $title, $defaultTitle, $link, $type, $componentId, $parentId = null, $access = 1, array $defaultParams = array())
     {
         $table = Table::getInstance('Menu');
 
@@ -361,7 +367,6 @@ class JemControllerFrontendmenu extends BaseController
         }
 
         $data = array(
-            'title'        => $title,
             'link'         => $link,
             'type'         => $type,
             'component_id' => (int) $componentId,
@@ -370,6 +375,10 @@ class JemControllerFrontendmenu extends BaseController
             'parent_id'    => $parentId !== null ? (int) $parentId : (int) $table->parent_id,
         );
 
+        if (trim((string) $table->title) === '' || (string) $table->title === (string) $defaultTitle) {
+            $data['title'] = $title;
+        }
+
         if ($defaultParams) {
             $data['params'] = $this->mergeMenuParamDefaults((string) $table->params, $defaultParams);
         }
@@ -377,6 +386,54 @@ class JemControllerFrontendmenu extends BaseController
         if (!$table->bind($data) || !$table->check() || !$table->store()) {
             throw new \RuntimeException($table->getError());
         }
+    }
+
+    protected function translateFrontendMenuTitle(array $keys, $fallback)
+    {
+        $languages = $this->getFrontendMenuLanguages();
+
+        foreach ($languages as $language) {
+            foreach ($keys as $key) {
+                if ($language->hasKey($key)) {
+                    return $language->_($key);
+                }
+            }
+        }
+
+        return (string) $fallback;
+    }
+
+    protected function getFrontendMenuLanguages()
+    {
+        if (is_array($this->frontendMenuLanguages)) {
+            return $this->frontendMenuLanguages;
+        }
+
+        $factory = Factory::getContainer()->get(LanguageFactoryInterface::class);
+        $english = $factory->createLanguage('en-GB');
+        $english->load('com_jem.sys', JPATH_ADMINISTRATOR, 'en-GB', true, false);
+        $english->load('com_jem', JPATH_ADMINISTRATOR, 'en-GB', true, false);
+
+        $siteTag = trim((string) ComponentHelper::getParams('com_languages')->get('site', 'en-GB'));
+        if (!preg_match('/^[a-z]{2,3}-[A-Z]{2}$/', $siteTag)) {
+            $siteTag = 'en-GB';
+        }
+
+        $languages = array();
+        if ($siteTag !== 'en-GB') {
+            $siteLanguage = $factory->createLanguage($siteTag);
+            $hasSystemPack = $siteLanguage->load('com_jem.sys', JPATH_ADMINISTRATOR, $siteTag, true, false);
+            $hasComponentPack = $siteLanguage->load('com_jem', JPATH_ADMINISTRATOR, $siteTag, true, false);
+
+            if ($hasSystemPack || $hasComponentPack) {
+                $languages[] = $siteLanguage;
+            }
+        }
+
+        $languages[] = $english;
+        $this->frontendMenuLanguages = $languages;
+
+        return $this->frontendMenuLanguages;
     }
 
     protected function moveMenuItemToLastChild($id, $parentId)

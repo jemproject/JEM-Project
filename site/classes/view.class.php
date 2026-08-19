@@ -161,6 +161,27 @@ class JemView extends HtmlView
     }
 
     /**
+     * Renders the view after scoping optional page text to its own menu item.
+     *
+     * @param   string|null  $tpl  The name of the template file to parse.
+     *
+     * @return  void
+     */
+    public function display($tpl = null)
+    {
+        if (is_object($this->params)
+            && method_exists($this->params, 'set')
+            && !JemHelper::isActiveMenuView($this->getName())) {
+            // Do not mutate Joomla's shared parameter registry for the request.
+            $this->params = clone $this->params;
+            $this->params->set('showintrotext', 0);
+            $this->params->set('showfootertext', 0);
+        }
+
+        parent::display($tpl);
+    }
+
+    /**
      * Adds a row to data indicating even/odd row number
      *
      * @return object $rows
