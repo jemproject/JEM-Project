@@ -270,17 +270,19 @@ use Joomla\CMS\Date\Date;
 
 <!-- REGISTRATION END -->
 
-<fieldset class="adminform">
-    <legend><?php echo Text::_('COM_JEM_EVENT_NOTIFICATIONS'); ?></legend>
-    <dl class="jem-dl">
-        <dt><?php echo $this->form->getLabel('event_reminders_enabled'); ?></dt>
-        <dd><?php echo $this->form->getInput('event_reminders_enabled'); ?></dd>
-        <dt><?php echo $this->form->getLabel('reminder_ids'); ?></dt>
-        <dd><?php echo $this->form->getInput('reminder_ids'); ?></dd>
-        <dt><?php echo $this->form->getLabel('apply_reminders_to_series'); ?></dt>
-        <dd><?php echo $this->form->getInput('apply_reminders_to_series'); ?></dd>
-    </dl>
-</fieldset>
+<?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) : ?>
+    <fieldset class="adminform">
+        <legend><?php echo Text::_('COM_JEM_EVENT_NOTIFICATIONS'); ?></legend>
+        <dl class="jem-dl">
+            <dt><?php echo $this->form->getLabel('event_reminders_enabled'); ?></dt>
+            <dd><?php echo $this->form->getInput('event_reminders_enabled'); ?></dd>
+            <dt><?php echo $this->form->getLabel('reminder_ids'); ?></dt>
+            <dd><?php echo $this->form->getInput('reminder_ids'); ?></dd>
+            <dt><?php echo $this->form->getLabel('apply_reminders_to_series'); ?></dt>
+            <dd><?php echo $this->form->getInput('apply_reminders_to_series'); ?></dd>
+        </dl>
+    </fieldset>
+<?php endif; ?>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

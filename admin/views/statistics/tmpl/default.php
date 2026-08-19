@@ -15,6 +15,7 @@ use Joomla\CMS\Router\Route;
 $filters = $this->filters;
 $cards = $this->statistics->cards;
 $permissions = $this->permissions;
+$commerceEnabled = !empty($this->statistics->commerce_enabled);
 $filterQuery = http_build_query(array(
     'period' => $filters->period,
     'group' => $filters->group,
@@ -465,7 +466,7 @@ $renderChart = static function ($card) {
                         <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_ORDERS'); ?></th>
                         <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_PLACES'); ?></th>
                         <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_WAITING'); ?></th>
-                        <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_BOOKING_VALUE'); ?></th>
+                        <?php if ($commerceEnabled) : ?><th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_BOOKING_VALUE'); ?></th><?php endif; ?>
                     </tr></thead>
                     <tbody><?php foreach ($this->statistics->programmes as $programme) : ?><tr>
                         <td><a href="<?php echo Route::_('index.php?option=com_jem&task=event.edit&id=' . (int) $programme->id); ?>"><?php echo $this->escape($programme->title); ?></a></td>
@@ -474,11 +475,11 @@ $renderChart = static function ($card) {
                         <td class="text-end"><?php echo (int) $programme->confirmed_orders; ?></td>
                         <td class="text-end"><?php echo (int) $programme->confirmed_places; ?></td>
                         <td class="text-end"><?php echo (int) $programme->waiting_orders; ?> / <?php echo (int) $programme->waiting_places; ?></td>
-                        <td class="text-end text-nowrap">
+                        <?php if ($commerceEnabled) : ?><td class="text-end text-nowrap">
                             <?php if ($programme->revenue) : foreach ($programme->revenue as $revenue) : ?>
                                 <span class="badge bg-success ms-1"><?php echo $this->escape($revenue->currency . ' ' . number_format((float) $revenue->total, 2, '.', '')); ?></span>
                             <?php endforeach; else : ?><span class="text-muted">&mdash;</span><?php endif; ?>
-                        </td>
+                        </td><?php endif; ?>
                     </tr><?php endforeach; ?></tbody>
                 </table>
             </div>
@@ -504,7 +505,7 @@ $renderChart = static function ($card) {
                         <th><?php echo Text::_('COM_JEM_STATISTICS_OCCUPANCY'); ?></th>
                         <th><?php echo Text::_('COM_JEM_STATISTICS_AREA_AVAILABILITY'); ?></th>
                         <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_WAITING'); ?></th>
-                        <th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_REVENUE'); ?></th>
+                        <?php if ($commerceEnabled) : ?><th class="text-end"><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_REVENUE'); ?></th><?php endif; ?>
                     </tr>
                     </thead>
                     <tbody>
@@ -546,13 +547,13 @@ $renderChart = static function ($card) {
                                 <?php endif; ?>
                             </td>
                             <td class="text-end"><?php echo (int) $event->waiting_orders; ?> / <?php echo (int) $event->waiting_places; ?></td>
-                            <td class="text-end text-nowrap">
+                            <?php if ($commerceEnabled) : ?><td class="text-end text-nowrap">
                                 <?php if ((string) $event->pricing_mode !== 'classic' && $event->currency !== '') : ?>
                                     <?php echo $this->escape($event->currency . ' ' . number_format((float) $event->confirmed_revenue, 2, '.', '')); ?>
                                 <?php else : ?>
                                     <span class="text-muted">&mdash;</span>
                                 <?php endif; ?>
-                            </td>
+                            </td><?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
@@ -603,20 +604,21 @@ $renderChart = static function ($card) {
         <?php $workflow = $this->statistics->registration_workflow; ?>
         <section class="card mt-4 jem-statistics-detail-card">
             <div class="card-header">
-                <h2 class="h4 mb-1"><?php echo Text::_('COM_JEM_STATISTICS_REGISTRATION_ORDERS'); ?></h2>
-                <p class="text-muted mb-0"><?php echo Text::_('COM_JEM_STATISTICS_REGISTRATION_ORDERS_DESC'); ?></p>
+                <h2 class="h4 mb-1"><?php echo Text::_('COM_JEM_STATISTICS_REGISTRATION_ACTIVITY'); ?></h2>
+                <p class="text-muted mb-0"><?php echo Text::_('COM_JEM_STATISTICS_REGISTRATION_ACTIVITY_DESC'); ?></p>
             </div>
             <div class="card-body">
                 <div class="jem-statistics-order-kpis">
-                    <?php foreach (array(
+                    <?php $registrationKpis = array(
                         'confirmed' => 'COM_JEM_STATISTICS_CONFIRMED_ORDERS',
                         'confirmed_places' => 'COM_JEM_STATISTICS_CONFIRMED_PLACES',
                         'waiting' => 'COM_JEM_ATTENDEES_ON_WAITINGLIST',
                         'invited' => 'COM_JEM_ATTENDEES_INVITED',
                         'cancelled' => 'COM_JEM_STATISTICS_CANCELLED_ORDERS',
                         'classic' => 'COM_JEM_STATISTICS_CLASSIC_BOOKINGS',
-                        'priced' => 'COM_JEM_STATISTICS_PRICED_ORDERS',
-                    ) as $field => $label) : ?>
+                    ); ?>
+                    <?php if ($commerceEnabled) $registrationKpis['priced'] = 'COM_JEM_STATISTICS_PRICED_ORDERS'; ?>
+                    <?php foreach ($registrationKpis as $field => $label) : ?>
                         <div><span><?php echo Text::_($label); ?></span><strong><?php echo (int) $commercial->{$field}; ?></strong></div>
                     <?php endforeach; ?>
                 </div>
@@ -628,7 +630,7 @@ $renderChart = static function ($card) {
                     <?php endforeach; ?>
                     <div><span><?php echo Text::_('COM_JEM_STATISTICS_QUEUE_RESOLUTION'); ?></span><strong><?php echo $workflow->queue_resolution === null ? '&mdash;' : $workflow->queue_resolution . '%'; ?></strong></div>
                 </div>
-                <div class="jem-statistics-revenue mt-3">
+                <?php if ($commerceEnabled) : ?><div class="jem-statistics-revenue mt-3">
                     <strong><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_BOOKING_VALUE'); ?>:</strong>
                     <?php if ($commercial->revenue) : ?>
                         <?php foreach ($commercial->revenue as $revenue) : ?>
@@ -637,7 +639,7 @@ $renderChart = static function ($card) {
                     <?php else : ?>
                         <span class="text-muted ms-2"><?php echo Text::_('COM_JEM_STATISTICS_NO_REVENUE'); ?></span>
                     <?php endif; ?>
-                </div>
+                </div><?php endif; ?>
             </div>
         </section>
     <?php endif; ?>

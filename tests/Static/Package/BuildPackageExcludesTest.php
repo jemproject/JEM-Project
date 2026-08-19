@@ -88,6 +88,14 @@ final class BuildPackageExcludesTest extends TestCase
         self::assertStringContainsString('|docs|memories|modules|', $builder);
     }
 
+    public function testNoArgumentPhpBuilderOnlyPackagesItsOwnCheckout(): void
+    {
+        $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');
+
+        self::assertStringContainsString('$roots = [dirname(__DIR__)];', $builder);
+        self::assertStringNotContainsString("dirname(__DIR__) . '/../JEM-Project-4.5'", $builder);
+    }
+
     public function testPackageManifestFilesAreProducedByBuild(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');

@@ -266,7 +266,10 @@ final class JemNotificationService
 
     public function finishAttempt($notificationId, $attemptId, $success, $errorMessage = '', $messageId = '')
     {
-        $now = Factory::getDate()->toSql();
+        // Factory caches the literal "now" date for the lifetime of a long
+        // request. Anchor retries to the actual completion time instead.
+        $completedAt = Factory::getDate(time());
+        $now = $completedAt->toSql();
         $result = $success ? 'sent' : 'failed';
         $error = substr(preg_replace('/\s+/', ' ', trim((string) $errorMessage)), 0, 1000);
         $notification = $this->getById((int) $notificationId);
@@ -276,7 +279,7 @@ final class JemNotificationService
             $delays = $this->retryDelays();
             $delayIndex = max(0, (int) $notification->attempt_count - 1);
             $delayMinutes = (int) ($delays[$delayIndex] ?? end($delays));
-            $nextAttempt = Factory::getDate(Factory::getDate()->toUnix() + ($delayMinutes * 60))->toSql();
+            $nextAttempt = Factory::getDate($completedAt->toUnix() + ($delayMinutes * 60))->toSql();
         }
 
         $query = $this->db->getQuery(true)

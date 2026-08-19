@@ -82,6 +82,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
     `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',
     `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_allocation_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none',
+    `capacity_mode` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
     `pricing_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
     `pricing_revision` int(10) unsigned NOT NULL DEFAULT '1',
     `currency` char(3) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
@@ -286,13 +288,14 @@ CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (
     `capacity` int(10) unsigned NOT NULL DEFAULT '0',
     `is_default` tinyint(1) NOT NULL DEFAULT '1',
     `published` tinyint(1) NOT NULL DEFAULT '1',
+    `ordering` int(11) NOT NULL DEFAULT '0',
     `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `created_by` int(11) unsigned NOT NULL DEFAULT '0',
     `modified` datetime NULL DEFAULT NULL,
     `modified_by` int(11) unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
     UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`, `code`),
-    KEY `idx_venue_capacity_profile_default` (`venue_id`, `is_default`, `published`)
+    KEY `idx_venue_capacity_profile_default` (`venue_id`, `is_default`, `published`, `ordering`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (
@@ -364,6 +367,24 @@ CREATE TABLE IF NOT EXISTS `#__jem_event_space_layouts` (
     KEY `idx_event_space_layout_profile_space` (`venue_profile_space_id`),
     KEY `idx_event_space_layout_profile` (`venue_profile_id`, `venue_profile_revision`),
     KEY `idx_event_space_layout_layout` (`venue_layout_id`, `venue_layout_revision`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_space_conflict_overrides` (
+    `id` bigint(20) unsigned NOT NULL auto_increment,
+    `event_id` int(11) unsigned NOT NULL,
+    `conflicting_event_id` int(11) unsigned NOT NULL,
+    `venue_space_id` int(11) unsigned NOT NULL,
+    `requested_start_utc` datetime NOT NULL,
+    `requested_end_utc` datetime NOT NULL,
+    `conflicting_start_utc` datetime NOT NULL,
+    `conflicting_end_utc` datetime NOT NULL,
+    `reason` varchar(1000) NOT NULL DEFAULT '',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_by` int(11) unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `idx_space_conflict_event` (`event_id`, `created`),
+    KEY `idx_space_conflict_other_event` (`conflicting_event_id`),
+    KEY `idx_space_conflict_space` (`venue_space_id`, `requested_start_utc`, `requested_end_utc`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (
@@ -508,6 +529,26 @@ CREATE TABLE IF NOT EXISTS `#__jem_register_items` (
     KEY `idx_register_item_price` (`event_price_id`),
     KEY `idx_register_item_pool` (`capacity_pool_id`),
     KEY `idx_register_item_kind` (`line_kind`)
+    ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_register_capacity_allocations` (
+    `id` bigint(20) unsigned NOT NULL auto_increment,
+    `register_id` int(11) unsigned NOT NULL,
+    `registration_revision` int(10) unsigned NOT NULL,
+    `event_id` int(11) unsigned NOT NULL,
+    `venue_capacity_area_id` int(11) unsigned NULL DEFAULT NULL,
+    `venue_layout_id` int(11) unsigned NOT NULL,
+    `venue_layout_revision` int(10) unsigned NOT NULL DEFAULT '0',
+    `area_code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `area_name` varchar(255) NOT NULL DEFAULT '',
+    `space_code` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '',
+    `space_name` varchar(255) NOT NULL DEFAULT '',
+    `quantity` int(10) unsigned NOT NULL DEFAULT '0',
+    `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_register_capacity_revision_area` (`register_id`, `registration_revision`, `venue_layout_id`, `area_code`),
+    KEY `idx_register_capacity_event_area` (`event_id`, `venue_capacity_area_id`),
+    KEY `idx_register_capacity_event_layout` (`event_id`, `venue_layout_id`)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS `#__jem_register_history` (
@@ -944,7 +985,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),
 ('csv_bom', '1'),
-('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","import_additional_blocked_tags":"","import_allow_trusted_iframes":"0","import_trusted_iframe_hosts":"","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_detail_image_layout":"right","event_detail_image_header_display":"fill","event_detail_image_header_max_height":"420","event_venue_layout":"details","event_show_publish_state":"0","calendar_special_days_enabled":"1","calendar_special_day_types":"Weekend | #d1d5db | 0\\nPublic holiday | #e5e7eb | 0"}'),
+('globalattribs', '{"loglevel":"2","actionlog_enabled":"0","import_additional_blocked_tags":"","import_allow_trusted_iframes":"0","import_trusted_iframe_hosts":"","event_show_online_meeting":"1","event_online_meeting_ics":"1","event_online_meeting_ics_description":"1","event_online_meeting_default_label":"","event_details_layout":"details","event_detail_image_layout":"right","event_detail_image_header_display":"fill","event_detail_image_header_max_height":"420","event_venue_layout":"details","event_show_venue_configuration":"1","event_show_publish_state":"0","calendar_special_days_enabled":"1","calendar_special_day_types":"Weekend | #d1d5db | 0\\nPublic holiday | #e5e7eb | 0"}'),
 ('css', '{"css_backend_usecustom":"0","css_backend_customfile":"","css_calendar_usecustom":"0","css_calendar_customfile":"","css_geostyle_usecustom":"0","css_geostyle_customfile":"","css_googlemap_usecustom":"0","css_googlemap_customfile":"","css_jem_usecustom":"0","css_jem_customfile":"","css_print_usecustom":"0","css_print_customfile":"","css_color_bg_filter":"#ffa500","css_color_bg_h2":"","css_color_bg_jem":"","css_color_bg_table_th":"","css_color_bg_table_td":"","css_color_bg_table_tr_entry2":"","css_color_bg_table_tr_hover":"","css_color_bg_table_tr_featured":"","css_color_border_filter":"","css_color_border_h2":"","css_color_border_table_th":"","css_color_border_table_td":"","css_color_font_h2":"","css_color_font_table_th":"","css_color_font_table_td":"","css_color_font_table_td_a":""}'),
 ('regallowcomments', '0'),
 ('regallowinvitation', '0'),
@@ -961,6 +1002,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('notification_retry_delays_minutes', '10,30,120'),
 ('notification_schema_ready', '1'),
 ('pricing_schema_ready', '1'),
+('operating_profile', 'essential'),
+('operating_profile_configured', '0'),
 ('layoutstyle', '1'),
 ('useiconfont', '1'),
 ('flyer', '0'),

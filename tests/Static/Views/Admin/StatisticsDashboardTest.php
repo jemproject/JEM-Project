@@ -20,12 +20,12 @@ final class StatisticsDashboardTest extends TestCase
         self::assertStringContainsString('COM_JEM_STATISTICS_DATA_TABLE', $template);
     }
 
-    public function testDashboardCoversHierarchyCapacityInfrastructureAndSavedRevenue(): void
+    public function testDashboardCoversHierarchyCapacityInfrastructureAndProfileGatedRevenue(): void
     {
         $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/statistics.php');
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/statistics/tmpl/default.php');
 
-        foreach (array('parent_event_id', 'parent_venue_id', '#__jem_venue_capacity_profiles', '#__jem_venue_spaces', '#__jem_venue_capacity_areas', '#__jem_capacity_pools') as $expected) {
+        foreach (array('parent_event_id', 'parent_venue_id', '#__jem_venue_capacity_profiles', '#__jem_venue_spaces', '#__jem_venue_capacity_areas', '#__jem_register_capacity_allocations') as $expected) {
             self::assertStringContainsString($expected, $model, $expected);
         }
 
@@ -33,7 +33,7 @@ final class StatisticsDashboardTest extends TestCase
         self::assertStringContainsString('registration_revision = r.revision', $model);
         self::assertStringContainsString('COM_JEM_STATISTICS_FUTURE_EVENTS', $template);
         self::assertStringContainsString('COM_JEM_STATISTICS_VENUE_INFRASTRUCTURE', $template);
-        self::assertStringContainsString('COM_JEM_STATISTICS_REGISTRATION_ORDERS', $template);
+        self::assertStringContainsString('COM_JEM_STATISTICS_REGISTRATION_ACTIVITY', $template);
         self::assertStringContainsString('COM_JEM_STATISTICS_BOOKING_VALUE_TREND', $template);
         self::assertStringContainsString('COM_JEM_STATISTICS_PROGRAMME_SUMMARY', $template);
         self::assertStringContainsString('COM_JEM_STATISTICS_OCCUPANCY', $template);
@@ -41,6 +41,8 @@ final class StatisticsDashboardTest extends TestCase
         self::assertStringContainsString('getBookingValueTimeline', $model);
         self::assertStringContainsString('getRegistrationWorkflowSummary', $model);
         self::assertStringContainsString('getProgrammeSummary', $model);
+        self::assertStringContainsString('&& $commerceEnabled', $model);
+        self::assertStringContainsString('$commerceEnabled', $template);
         self::assertStringContainsString('created_by = ', $model);
     }
 

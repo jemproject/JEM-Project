@@ -77,6 +77,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="event_show_venue_configuration" type="list"
+                default="-1"
+                label="COM_JEM_EVENT_DISPLAY_VENUE_CONFIGURATION"
+                description="COM_JEM_EVENT_DISPLAY_VENUE_CONFIGURATION_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="-1">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="footertext" type="editor"
                 filter="safehtml"
                 hide="readmore,pagebreak,module,menu,fields,contact,article"

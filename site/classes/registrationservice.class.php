@@ -156,6 +156,7 @@ final class JemRegistrationService
             throw new RuntimeException('A registration cannot be moved to another event.');
         }
         $after = $this->applyCapacityPolicy($before, $after, $options);
+        $capacity = $this->prepareCapacityAllocations($before, $after, $options);
         $oldStatus = is_object($before) ? JemRegistrationTransition::logicalStatus($before) : null;
         $newStatus = JemRegistrationTransition::logicalStatus($after);
         $hasCommercialLines = array_key_exists('commercialLines', $options);
@@ -186,6 +187,9 @@ final class JemRegistrationService
         }
 
         $changedFields = self::changedFields($before, $after);
+        if (!empty($capacity['changed'])) {
+            $changedFields[] = 'capacity_allocations';
+        }
         if (!empty($options['forceRevision']) && !in_array('commercial_items', $changedFields, true)) {
             $changedFields[] = 'commercial_items';
         }
@@ -214,6 +218,7 @@ final class JemRegistrationService
         }
 
         $this->persistCommercialRevision($before, $after, $options, $now);
+        $this->persistCapacityAllocations($after, (array) ($capacity['rows'] ?? array()), $now);
 
         $action = (string) ($options['action'] ?? self::inferAction($before, $after));
         $history = $this->createHistoryRow(
@@ -737,6 +742,314 @@ final class JemRegistrationService
         }
 
         throw new RuntimeException('Event capacity would be exceeded.');
+    }
+
+    /**
+     * Return the immutable capacity catalogue and live availability used by
+     * both site and administrator registration forms.
+     */
+    public function capacityOptions($eventId, $registerId = 0)
+    {
+        $eventId = (int) $eventId;
+        $registerId = (int) $registerId;
+        $event = $this->loadCapacityEvent($eventId);
+        $result = (object) array(
+            'enabled' => false,
+            'capacity_mode' => $event ? (string) ($event->capacity_mode ?? 'classic') : 'classic',
+            'event_capacity' => $event ? (int) ($event->maxplaces ?? 0) : 0,
+            'options' => array(),
+            'current' => array(),
+        );
+
+        if (!$event || (string) $event->capacity_mode !== 'areas') {
+            return $result;
+        }
+
+        $catalogue = $this->capacityCatalogue($event);
+        $current = $registerId > 0
+            ? $this->loadCapacityAllocationRevision($registerId, 0, false)
+            : array();
+        $used = $this->loadUsedCapacity($eventId, $registerId);
+        foreach ($catalogue as $key => $option) {
+            $usedQuantity = (int) ($used[$key] ?? 0);
+            $currentQuantity = (int) ($current[$key]['quantity'] ?? 0);
+            $option['used'] = $usedQuantity;
+            $option['remaining'] = max(0, (int) $option['capacity'] - $usedQuantity);
+            $option['current_quantity'] = $currentQuantity;
+            $result->options[] = $option;
+            if ($currentQuantity > 0) {
+                $result->current[$key] = $currentQuantity;
+            }
+        }
+        $result->enabled = !empty($result->options);
+
+        return $result;
+    }
+
+    /**
+     * Validate one capacity-only booking against the event snapshot while the
+     * event row is locked. Registration revisions retain their allocation
+     * snapshot even after cancellation or waiting-list changes.
+     */
+    private function prepareCapacityAllocations($before, $after, array $options)
+    {
+        $event = $this->loadCapacityEvent((int) $after->event);
+        if (!$event || (string) ($event->capacity_mode ?? 'classic') !== 'areas') {
+            return array('rows' => array(), 'changed' => false);
+        }
+
+        $catalogue = $this->capacityCatalogue($event);
+        if (!$catalogue) {
+            throw new RuntimeException('This event does not have reservable capacity areas.');
+        }
+
+        $previous = is_object($before)
+            ? $this->loadCapacityAllocationRevision(
+                (int) $before->id,
+                max(1, (int) ($before->revision ?? 1)),
+                true
+            )
+            : array();
+        $submitted = array_key_exists('capacityAllocations', $options);
+        $quantities = $submitted
+            ? $this->normaliseCapacityQuantities($options['capacityAllocations'], $catalogue)
+            : array_map(static function ($row) {
+                return (int) $row['quantity'];
+            }, $previous);
+
+        $logicalStatus = JemRegistrationTransition::logicalStatus($after);
+        $requiresSelection = in_array($logicalStatus, array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true);
+        $selectedTotal = array_sum($quantities);
+        if ($requiresSelection && ($selectedTotal < 1 || $selectedTotal !== (int) $after->places)) {
+            throw new RuntimeException('The selected capacity areas must equal the number of places.');
+        }
+
+        $rows = array();
+        foreach ($quantities as $key => $quantity) {
+            if ($quantity < 1) {
+                continue;
+            }
+            $row = $catalogue[$key];
+            $row['quantity'] = $quantity;
+            $rows[$key] = $row;
+        }
+
+        if ($logicalStatus === JemRegistrationTransition::ATTENDING) {
+            $used = $this->loadUsedCapacity((int) $after->event, (int) ($before->id ?? 0));
+            $unavailable = false;
+            foreach ($rows as $key => $row) {
+                if ((int) ($used[$key] ?? 0) + (int) $row['quantity'] > (int) $row['capacity']) {
+                    $unavailable = true;
+                    break;
+                }
+            }
+            if ($unavailable && !empty($options['allowWaiting']) && !empty($event->waitinglist)) {
+                JemRegistrationTransition::applyLogicalStatus($after, JemRegistrationTransition::WAITING_LIST);
+            } elseif ($unavailable) {
+                throw new RuntimeException('The requested capacity area no longer has enough available places.');
+            }
+        }
+
+        return array(
+            'rows' => array_values($rows),
+            'changed' => $this->capacityFingerprint($previous) !== $this->capacityFingerprint($rows),
+        );
+    }
+
+    private function loadCapacityEvent($eventId)
+    {
+        if ((int) $eventId < 1) {
+            return null;
+        }
+        $query = $this->db->getQuery(true)
+            ->select(array('id', 'capacity_mode', 'venue_snapshot', 'maxplaces', 'waitinglist'))
+            ->from($this->db->quoteName('#__jem_events'))
+            ->where($this->db->quoteName('id') . ' = ' . (int) $eventId);
+        $this->db->setQuery($query);
+
+        return $this->db->loadObject() ?: null;
+    }
+
+    private function capacityCatalogue($event)
+    {
+        $snapshot = json_decode((string) ($event->venue_snapshot ?? ''), true);
+        if (!is_array($snapshot) || ($snapshot['schema'] ?? '') !== 'jem-venue-capacity/v1') {
+            return array();
+        }
+
+        $catalogue = array();
+        foreach ((array) ($snapshot['spaces'] ?? array()) as $space) {
+            $layout = (array) ($space['layout'] ?? array());
+            $areas = array_values(array_filter(
+                (array) ($space['capacity_areas'] ?? array()),
+                static function ($area) {
+                    return !empty($area['published']) && (int) ($area['capacity'] ?? 0) > 0;
+                }
+            ));
+            if (!$areas && (int) ($layout['capacity'] ?? 0) > 0) {
+                $areas[] = array(
+                    'id' => null,
+                    'code' => 'general',
+                    'name' => (string) ($space['name'] ?? ''),
+                    'capacity' => (int) $layout['capacity'],
+                );
+            }
+            foreach ($areas as $area) {
+                $areaId = (int) ($area['id'] ?? 0);
+                $layoutId = (int) ($layout['id'] ?? 0);
+                $key = $areaId > 0 ? 'area:' . $areaId : 'layout:' . $layoutId;
+                if ($layoutId < 1 || isset($catalogue[$key])) {
+                    continue;
+                }
+                $catalogue[$key] = array(
+                    'key' => $key,
+                    'venue_capacity_area_id' => $areaId > 0 ? $areaId : null,
+                    'venue_layout_id' => $layoutId,
+                    'venue_layout_revision' => (int) ($layout['revision'] ?? 0),
+                    'area_code' => (string) ($area['code'] ?? 'general'),
+                    'area_name' => (string) ($area['name'] ?? $space['name'] ?? ''),
+                    'space_code' => (string) ($space['code'] ?? ''),
+                    'space_name' => (string) ($space['name'] ?? ''),
+                    'capacity' => (int) ($area['capacity'] ?? 0),
+                );
+            }
+        }
+
+        return $catalogue;
+    }
+
+    private function normaliseCapacityQuantities($input, array $catalogue)
+    {
+        $quantities = array();
+        foreach ((array) $input as $key => $value) {
+            if (is_array($value) || is_object($value)) {
+                $source = (array) $value;
+                $key = (string) ($source['key'] ?? $source['allocation_key'] ?? $key);
+                $value = $source['quantity'] ?? 0;
+            }
+            $key = (string) $key;
+            if (ctype_digit($key)) {
+                $key = 'area:' . $key;
+            }
+            if (!isset($catalogue[$key])) {
+                if ((int) $value > 0) {
+                    throw new RuntimeException('An invalid capacity area was selected.');
+                }
+                continue;
+            }
+            $quantity = max(0, (int) $value);
+            if ($quantity > (int) $catalogue[$key]['capacity']) {
+                throw new RuntimeException('A capacity area quantity exceeds its configured limit.');
+            }
+            $quantities[$key] = $quantity;
+        }
+
+        return $quantities;
+    }
+
+    private function loadCapacityAllocationRevision($registerId, $revision = 0, $lock = false)
+    {
+        if ((int) $registerId < 1) {
+            return array();
+        }
+        if ((int) $revision < 1) {
+            $query = $this->db->getQuery(true)
+                ->select($this->db->quoteName('revision'))
+                ->from($this->db->quoteName('#__jem_register'))
+                ->where($this->db->quoteName('id') . ' = ' . (int) $registerId);
+            $this->db->setQuery($query);
+            $revision = (int) $this->db->loadResult();
+        }
+        $query = $this->db->getQuery(true)
+            ->select('*')
+            ->from($this->db->quoteName('#__jem_register_capacity_allocations'))
+            ->where($this->db->quoteName('register_id') . ' = ' . (int) $registerId)
+            ->where($this->db->quoteName('registration_revision') . ' = ' . (int) $revision)
+            ->order($this->db->quoteName('id') . ' ASC');
+        $this->db->setQuery((string) $query . ($lock ? ' FOR UPDATE' : ''));
+        $rows = array();
+        foreach ((array) $this->db->loadAssocList() as $row) {
+            $key = !empty($row['venue_capacity_area_id'])
+                ? 'area:' . (int) $row['venue_capacity_area_id']
+                : 'layout:' . (int) $row['venue_layout_id'];
+            $rows[$key] = $row;
+        }
+
+        return $rows;
+    }
+
+    private function loadUsedCapacity($eventId, $excludedRegisterId = 0)
+    {
+        $query = $this->db->getQuery(true)
+            ->select(array(
+                'a.venue_capacity_area_id',
+                'a.venue_layout_id',
+                'SUM(a.quantity) AS quantity',
+            ))
+            ->from($this->db->quoteName('#__jem_register_capacity_allocations', 'a'))
+            ->join('INNER', $this->db->quoteName('#__jem_register', 'r')
+                . ' ON r.id = a.register_id AND r.revision = a.registration_revision')
+            ->where('r.event = ' . (int) $eventId)
+            ->where('r.status = 1')
+            ->where('r.waiting = 0')
+            ->group(array('a.venue_capacity_area_id', 'a.venue_layout_id'));
+        if ((int) $excludedRegisterId > 0) {
+            $query->where('r.id <> ' . (int) $excludedRegisterId);
+        }
+        $this->db->setQuery($query);
+        $used = array();
+        foreach ((array) $this->db->loadObjectList() as $row) {
+            $key = !empty($row->venue_capacity_area_id)
+                ? 'area:' . (int) $row->venue_capacity_area_id
+                : 'layout:' . (int) $row->venue_layout_id;
+            $used[$key] = (int) $row->quantity;
+        }
+
+        return $used;
+    }
+
+    private function persistCapacityAllocations($after, array $rows, $now)
+    {
+        foreach ($rows as $source) {
+            $source = (array) $source;
+            $row = (object) array(
+                'register_id' => (int) $after->id,
+                'registration_revision' => (int) $after->revision,
+                'event_id' => (int) $after->event,
+                'venue_capacity_area_id' => !empty($source['venue_capacity_area_id'])
+                    ? (int) $source['venue_capacity_area_id']
+                    : null,
+                'venue_layout_id' => (int) $source['venue_layout_id'],
+                'venue_layout_revision' => (int) $source['venue_layout_revision'],
+                'area_code' => (string) $source['area_code'],
+                'area_name' => (string) $source['area_name'],
+                'space_code' => (string) $source['space_code'],
+                'space_name' => (string) $source['space_name'],
+                'quantity' => (int) $source['quantity'],
+                'created' => $now,
+            );
+            $this->db->insertObject('#__jem_register_capacity_allocations', $row);
+        }
+    }
+
+    private function capacityFingerprint(array $rows)
+    {
+        $fingerprint = array();
+        foreach ($rows as $key => $row) {
+            $row = (array) $row;
+            $resolvedKey = is_string($key) && strpos($key, ':') !== false
+                ? $key
+                : (!empty($row['venue_capacity_area_id'])
+                    ? 'area:' . (int) $row['venue_capacity_area_id']
+                    : 'layout:' . (int) ($row['venue_layout_id'] ?? 0));
+            $fingerprint[$resolvedKey] = (int) ($row['quantity'] ?? 0);
+        }
+        ksort($fingerprint, SORT_STRING);
+
+        return json_encode($fingerprint);
     }
 
     private function lockEvent($eventId, $required = true)

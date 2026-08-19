@@ -186,6 +186,10 @@ final class JemReminderService
      */
     public function syncRegistration($registrationId, $force = false)
     {
+        if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
+            return 0;
+        }
+
         $registration = $this->loadRegistration((int) $registrationId);
         if (!$registration || !$this->isEligible($registration) || !$this->isEnabled()) {
             $this->notifications->cancelPendingReminders((int) $registrationId);
@@ -269,6 +273,10 @@ final class JemReminderService
     public function processDue(callable $sender, $limit = 100)
     {
         $result = (object) array('due' => 0, 'sent' => 0, 'failed' => 0, 'cancelled' => 0, 'recovered' => 0, 'purged' => 0);
+        if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
+            return $result;
+        }
+
         $result->recovered = $this->notifications->recoverStaleProcessing(30);
         foreach ($this->notifications->getDueNotificationIds($limit) as $notificationId) {
             $notification = $this->notifications->getById($notificationId);
@@ -334,6 +342,7 @@ final class JemReminderService
             'event_date' => class_exists('JemOutput') ? (string) JemOutput::formatdate($registration->dates) : (string) $registration->dates,
             'event_time' => class_exists('JemOutput') ? (string) JemOutput::formattime($registration->times) : (string) $registration->times,
             'venue' => (string) $registration->venue,
+            'venue_configuration' => JemVenueSnapshot::summary($registration),
             'city' => (string) $registration->city,
             'places' => (int) $registration->places,
             'event_description' => trim(strip_tags((string) $registration->event_description)),
@@ -350,6 +359,20 @@ final class JemReminderService
             $values,
             $language->resolved
         );
+        if ($values['venue_configuration'] !== '') {
+            $label = JemNotificationTemplateService::translateWithEnglishFallback(
+                'COM_JEM_EVENT_VENUE_CONFIGURATION',
+                $language->resolved
+            );
+            if (strpos((string) $message->body, $values['venue_configuration']) === false) {
+                $message->body = rtrim((string) $message->body) . "\n\n" . $label . ': ' . $values['venue_configuration'];
+            }
+            if (strpos((string) $message->htmlbody, htmlspecialchars($values['venue_configuration'], ENT_QUOTES, 'UTF-8')) === false) {
+                $message->htmlbody = rtrim((string) $message->htmlbody)
+                    . '<p><strong>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . ':</strong> '
+                    . htmlspecialchars($values['venue_configuration'], ENT_QUOTES, 'UTF-8') . '</p>';
+            }
+        }
 
         $material = implode('|', array(
             'jem-reminder-v1',
@@ -403,7 +426,7 @@ final class JemReminderService
                 'r.status', 'r.waiting', 'r.places', 'r.modified', 'r.uid AS user_id',
                 'u.name AS user_name', 'u.email AS user_email', 'u.block AS user_block', 'u.activation AS user_activation',
                 'e.id AS event_id', 'e.title AS event_title', 'e.dates', 'e.times', 'e.start_utc',
-                'e.timezone_mode', 'e.timezone', 'e.locid', 'e.event_status', 'e.introtext AS event_description',
+                'e.timezone_mode', 'e.timezone', 'e.locid', 'e.event_status', 'e.introtext AS event_description', 'e.venue_snapshot',
                 'e.datimage', 'e.image_path', 'v.venue', 'v.city', 'v.timezone AS venue_timezone', 'v.locimage', 'v.image_path AS venue_image_path',
             ))
             ->from($this->db->quoteName('#__jem_register', 'r'))
@@ -536,6 +559,10 @@ final class JemReminderService
 
     private function isEnabled()
     {
+        if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
+            return false;
+        }
+
         $query = $this->db->getQuery(true)
             ->select($this->db->quoteName('value'))
             ->from($this->db->quoteName('#__jem_config'))

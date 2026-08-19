@@ -309,10 +309,10 @@ final class JemPackageBuilder
 
 $roots = array_slice($argv, 1);
 if (!$roots) {
-    $roots = [
-        dirname(__DIR__),
-        dirname(__DIR__) . '/../JEM-Project-4.5',
-    ];
+    // A no-argument build must only package the checkout that owns this
+    // script. Other release branches can still be supplied explicitly, but
+    // must never be rebuilt implicitly with this branch's validation rules.
+    $roots = [dirname(__DIR__)];
 }
 
 $builder = new JemPackageBuilder();

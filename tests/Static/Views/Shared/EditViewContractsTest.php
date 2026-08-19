@@ -14,8 +14,8 @@ final class EditViewContractsTest extends TestCase
     {
         yield 'admin event edit' => array(
             JEM_TEST_ROOT . '/admin/views/event/tmpl/edit.php',
-            array('pricing', 'attachments', 'links', 'settings'),
-            array('COM_JEM_EVENT_PRICING_CAPACITY_TAB', 'COM_JEM_EVENT_ATTACHMENTS_TAB', 'COM_JEM_EVENT_LINKS_TAB', 'COM_JEM_EVENT_SETTINGS_TAB'),
+            array('capacity', 'attachments', 'links', 'settings'),
+            array('COM_JEM_EVENT_VENUE_CAPACITY_TAB', 'COM_JEM_EVENT_ATTACHMENTS_TAB', 'COM_JEM_EVENT_LINKS_TAB', 'COM_JEM_EVENT_SETTINGS_TAB'),
         );
         yield 'site event edit' => array(
             JEM_TEST_ROOT . '/site/views/editevent/tmpl/edit.php',

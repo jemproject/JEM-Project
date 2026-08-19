@@ -13,7 +13,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\File;
 
-require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+// Integration tests and third-party entry points may already have loaded the
+// legacy global helper from another valid component root. Avoid redeclaring it.
+if (!class_exists('\\JemHelper', false)) {
+    require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+}
 
 /**
  * Shared map data helper for JEM map module and map menu views.

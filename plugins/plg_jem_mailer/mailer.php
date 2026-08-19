@@ -107,7 +107,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= $id.' END as slug';
 
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-            'a.online_meeting_url', 'a.online_meeting_label',
+            'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
@@ -392,7 +392,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= $id.' END as slug';
 
         $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by',
-            'a.online_meeting_url', 'a.online_meeting_label',
+            'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot',
             'r.waiting', $case_when, 'r.uid', 'r.status', 'r.comment', 'r.places',
             'r.id AS registration_id', 'r.reference AS registration_reference', 'r.revision AS registration_revision'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
@@ -535,7 +535,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', $case_when));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.datimage', 'a.image_path', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot', $case_when));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city', 'v.locimage', 'v.image_path AS venue_image_path'));
         if (empty($registration) && ((int)$register_id > 0)) {
@@ -757,7 +757,7 @@ class plgJemMailer extends CMSPlugin
         $case_when .= ' ELSE ';
         $case_when .= $id.' END as slug';
 
-        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label'));
+        $query->select(array('a.id', 'a.title', 'a.alias', 'a.article_id', 'a.attribs', 'a.introtext', 'a.fulltext', 'a.dates', 'a.times', 'a.locid', 'a.published', 'a.created', 'a.modified', 'a.created_by', 'a.online_meeting_url', 'a.online_meeting_label', 'a.venue_snapshot'));
         $query->select($query->concatenate(array('a.introtext', 'a.fulltext')).' AS text');
         $query->select(array('v.venue', 'v.city'));
         $query->select($case_when);
@@ -1405,8 +1405,9 @@ class plgJemMailer extends CMSPlugin
         if ($event !== null) {
             $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event', $event->image_path ?? '');
             $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue', $event->venue_image_path ?? '');
+            $values['venue_configuration'] = JemVenueSnapshot::summary($event);
         } else {
-            $values += array('event_image_url' => '', 'venue_image_url' => '');
+            $values += array('event_image_url' => '', 'venue_image_url' => '', 'venue_configuration' => '');
         }
         $definition = JemNotificationTemplateCatalog::findByLanguageKeys($subjectKey, $bodyKey);
         $data->notification = (object) array(
@@ -1567,8 +1568,9 @@ class plgJemMailer extends CMSPlugin
         if ($event !== null) {
             $values['event_image_url'] = $this->_notificationImageUrl($event->datimage ?? '', 'event', $event->image_path ?? '');
             $values['venue_image_url'] = $this->_notificationImageUrl($event->locimage ?? '', 'venue', $event->venue_image_path ?? '');
+            $values['venue_configuration'] = JemVenueSnapshot::summary($event);
         } else {
-            $values += array('event_image_url' => '', 'venue_image_url' => '');
+            $values += array('event_image_url' => '', 'venue_image_url' => '', 'venue_configuration' => '');
         }
 
         try {
@@ -1588,7 +1590,7 @@ class plgJemMailer extends CMSPlugin
                 );
             }
 
-            return $message;
+            return $this->_appendVenueConfiguration($message, $values);
         } catch (Throwable $e) {
             $definition = JemNotificationTemplateCatalog::findByLanguageKeys($subjectKey, $bodyKey);
             if (!$definition) {
@@ -1611,7 +1613,7 @@ class plgJemMailer extends CMSPlugin
                 $bodyArgs[] = $values[$token] ?? '';
             }
 
-            return (object) array(
+            $message = (object) array(
                 'template_id' => $definition['id'],
                 'language'    => $languageTag ?: Factory::getApplication()->getLanguage()->getTag(),
                 'custom'      => false,
@@ -1620,7 +1622,28 @@ class plgJemMailer extends CMSPlugin
                 'htmlbody'    => '',
                 'fallback_reason' => $e->getMessage(),
             );
+
+            return $this->_appendVenueConfiguration($message, $values);
         }
+    }
+
+    private function _appendVenueConfiguration($message, array $values)
+    {
+        $configuration = trim((string) ($values['venue_configuration'] ?? ''));
+        if ($configuration === '') {
+            return $message;
+        }
+        $label = Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION');
+        if (strpos((string) $message->body, $configuration) === false) {
+            $message->body = rtrim((string) $message->body) . "\n\n" . $label . ': ' . $configuration;
+        }
+        if (strpos((string) $message->htmlbody, htmlspecialchars($configuration, ENT_QUOTES, 'UTF-8')) === false) {
+            $message->htmlbody = rtrim((string) $message->htmlbody)
+                . '<p><strong>' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . ':</strong> '
+                . htmlspecialchars($configuration, ENT_QUOTES, 'UTF-8') . '</p>';
+        }
+
+        return $message;
     }
 
     /**

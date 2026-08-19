@@ -211,6 +211,7 @@ final class EventVenueHierarchyContractsTest extends TestCase
         $types = $this->read('modules/mod_jem_types/helper.php');
         self::assertStringContainsString('getVenueHierarchyVisibilityWhere', $helper);
         self::assertStringContainsString('getVisibleVenueHierarchyIds', $map);
+        self::assertStringContainsString("class_exists('\\\\JemHelper', false)", $map);
         self::assertStringContainsString('getVenueHierarchyVisibilityWhere', $types);
     }
 

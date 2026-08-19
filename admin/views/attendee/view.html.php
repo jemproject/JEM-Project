@@ -29,6 +29,7 @@ class JemViewAttendee extends HtmlView {
         $jinput   = $app->input;
 
         $this->jemsettings = JemHelper::config();
+        $this->featurePolicy = JemFeaturePolicy::current();
 
         //get id register user for event
         $id = $jinput->getInt('id', 0);
@@ -50,9 +51,16 @@ class JemViewAttendee extends HtmlView {
             (int) $row->uid,
             (int) $row->id
         );
+        $this->commerceReadOnly = !empty($this->pricing->is_priced)
+            && !$this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PRICING);
+        $this->capacity = $model->getCapacityData(
+            (int) ($row->event ?: $this->event),
+            (int) $row->id
+        );
         $this->registrationChanges = array();
         $this->notifications = array();
-        $this->canNotificationResend = JemHelperBackend::canManage('jem.notifications.resend');
+        $this->canNotificationResend = $this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)
+            && JemHelperBackend::canManage('jem.notifications.resend');
 
         if (!empty($row->id)) {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -98,12 +106,12 @@ class JemViewAttendee extends HtmlView {
         }
 
         // If not checked out, can save the item.
-        if (!$checkedOut && $canManage) {
+        if (!$checkedOut && $canManage && empty($this->commerceReadOnly)) {
             ToolbarHelper::apply('attendee.apply');
             ToolbarHelper::save('attendee.save');
         }
 
-        if (!$checkedOut && $canManage) {
+        if (!$checkedOut && $canManage && empty($this->commerceReadOnly)) {
             ToolbarHelper::save2new('attendee.save2new');
         }
 

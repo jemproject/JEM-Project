@@ -217,4 +217,19 @@ final class SampleDataSqlTest extends TestCase
             self::assertStringContainsString($table, $code, $table . ' must block unsafe Sample Data loading.');
         }
     }
+
+    public function testFreshInstallDefaultsDoNotBlockSampleData(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+        self::assertMatchesRegularExpression(
+            '/A previous reset.*?foreach \(array\((.*?)\) as \$table\)/s',
+            $code
+        );
+        preg_match('/A previous reset.*?foreach \(array\((.*?)\) as \$table\)/s', $code, $matches);
+        $blockingTables = (string) ($matches[1] ?? '');
+
+        self::assertStringNotContainsString('#__jem_special_days', $blockingTables);
+        self::assertStringNotContainsString('#__jem_types', $blockingTables);
+        self::assertStringContainsString('#__jem_events', $blockingTables);
+    }
 }

@@ -1127,11 +1127,15 @@ Text::script('JCANCEL');
                         <ul class="adminformlist jem-venue-identity-fields">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('venue_tree_order'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
-                            <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
+                            <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY)) : ?>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('venue_tree_order'); ?></div></li>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
+                            <?php endif; ?>
+                            <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
+                                <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
+                            <?php endif; ?>
                             <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                         </ul>
                         <section class="jem-venue-location-card jem-venue-address-card" aria-labelledby="jem-venue-address-title">
@@ -1185,9 +1189,11 @@ Text::script('JCANCEL');
                         </div>
                     </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_PROFILES_TAB')); ?>
-                    <?php echo $this->loadTemplate('capacity'); ?>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
+                        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_PROFILES_TAB')); ?>
+                        <?php echo $this->loadTemplate('capacity'); ?>
+                        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <?php endif; ?>
                     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
 
                     <?php echo $this->loadTemplate('attachments'); ?>

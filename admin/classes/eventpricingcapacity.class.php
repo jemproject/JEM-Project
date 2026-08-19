@@ -82,6 +82,15 @@ class JemEventPricingCapacityService
         } elseif (empty($item->pricing_mode)) {
             $item->pricing_mode = self::MODE_CLASSIC;
         }
+        $allocationMode = strtolower(trim((string) ($item->venue_allocation_mode ?? '')));
+        if (!in_array($allocationMode, array('none', 'profile', 'custom'), true)) {
+            $allocationMode = self::decodeSnapshot((string) ($item->venue_snapshot ?? '')) ? 'profile' : 'none';
+        }
+        $item->venue_allocation_mode = $allocationMode;
+        $capacityMode = strtolower(trim((string) ($item->capacity_mode ?? '')));
+        $item->capacity_mode = in_array($capacityMode, array('classic', 'configured', 'areas'), true)
+            ? $capacityMode
+            : ($allocationMode === 'none' ? 'classic' : 'configured');
         if (!isset($item->prices_include_tax)) {
             $item->prices_include_tax = 1;
         }
@@ -98,7 +107,7 @@ class JemEventPricingCapacityService
                 $item->currency = $currency;
             }
         }
-        if (empty($item->id) && empty($item->maxplaces)) {
+        if (empty($item->id) && $allocationMode !== 'none' && empty($item->maxplaces)) {
             $firstOption = $item->pricing_requirements['configuration_options'][0] ?? array();
             if (!empty($firstOption['capacity'])) {
                 $item->maxplaces = (int) $firstOption['capacity'];
@@ -159,6 +168,7 @@ class JemEventPricingCapacityService
     {
         $poolsSubmitted = array_key_exists('capacity_pools', $data);
         $pricesSubmitted = array_key_exists('event_prices', $data);
+        $allocationSubmitted = array_key_exists('venue_allocation_mode', $data);
         $rawPools = $poolsSubmitted ? (array) $data['capacity_pools'] : array();
         $rawPrices = $pricesSubmitted ? (array) $data['event_prices'] : array();
         $reload = !empty($data['reload_venue_capacity']);
@@ -172,7 +182,8 @@ class JemEventPricingCapacityService
             $data['venue_configuration_key']
         );
 
-        $mode = strtolower(trim((string) ($data['pricing_mode'] ?? self::MODE_CLASSIC)));
+        $existing = $eventId > 0 ? self::loadEventPricingRow($eventId) : array();
+        $mode = strtolower(trim((string) ($data['pricing_mode'] ?? ($existing['pricing_mode'] ?? self::MODE_CLASSIC))));
         if ($mode === 'priced') {
             $mode = count($rawPrices) > 1 ? self::MODE_MULTIPLE : self::MODE_SINGLE;
         }
@@ -181,9 +192,31 @@ class JemEventPricingCapacityService
         }
         $data['pricing_mode'] = $mode;
 
-        $existing = $eventId > 0 ? self::loadEventPricingRow($eventId) : array();
+        $storedSnapshot = self::decodeSnapshot($existing['venue_snapshot'] ?? '');
+        $storedAllocationMode = strtolower(trim((string) ($existing['venue_allocation_mode'] ?? '')));
+        if (!in_array($storedAllocationMode, array('none', 'profile', 'custom'), true)) {
+            $storedAllocationMode = $storedSnapshot ? 'profile' : 'none';
+        }
+        $allocationMode = strtolower(trim((string) ($data['venue_allocation_mode'] ?? $storedAllocationMode)));
+        if (!in_array($allocationMode, array('none', 'profile', 'custom'), true)) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_VENUE_CAPACITY_ERROR_MODE'));
+        }
+        $capacityMode = strtolower(trim((string) ($data['capacity_mode'] ?? ($existing['capacity_mode'] ?? 'classic'))));
+        if (!in_array($capacityMode, array('classic', 'configured', 'areas'), true)) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_CAPACITY_ERROR_MODE'));
+        }
+        if ($allocationMode === 'none') {
+            $capacityMode = 'classic';
+        }
+        $data['venue_allocation_mode'] = $allocationMode;
+        $data['capacity_mode'] = $capacityMode;
+
+        $pricingActive = $mode !== self::MODE_CLASSIC;
+        $physicalActive = $allocationMode !== 'none';
         $context = array(
-            'active'           => $mode !== self::MODE_CLASSIC,
+            'active'           => $pricingActive || $physicalActive || ($allocationSubmitted && !empty($storedSnapshot)),
+            'physical_active'  => $physicalActive,
+            'pricing_active'   => $pricingActive,
             'reload'           => false,
             'pools_submitted'  => $poolsSubmitted,
             'prices_submitted' => $pricesSubmitted,
@@ -194,7 +227,10 @@ class JemEventPricingCapacityService
             'country_code'     => '',
         );
 
-        if ($mode === self::MODE_CLASSIC) {
+        if (!$physicalActive) {
+            $data['venue_profile_id'] = null;
+            $data['venue_profile_revision'] = 0;
+            $data['venue_snapshot'] = null;
             $data['currency'] = self::normaliseOptionalCurrency($data['currency'] ?? '');
             $data['default_tax_rate_id'] = self::normaliseNullableId($data['default_tax_rate_id'] ?? null);
             $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
@@ -216,14 +252,13 @@ class JemEventPricingCapacityService
         if (!$requirements['venue_exists']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_VENUE'));
         }
-        if (!$requirements['country_code']) {
+        if ($pricingActive && !$requirements['country_code']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_COUNTRY'));
         }
         if (!$requirements['capacity_ready']) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CAPACITY_CONFIGURATION'));
         }
 
-        $storedSnapshot = self::decodeSnapshot($existing['venue_snapshot'] ?? '');
         if ($storedSnapshot && empty($storedSnapshot['country_code'])) {
             // Snapshots created before country_code was added remain valid.
             // Enrich them on the next event save without rebuilding their
@@ -275,23 +310,57 @@ class JemEventPricingCapacityService
         if ($reload && $eventId > 0 && self::hasCommercialRegistrations($eventId)) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_RELOAD_REGISTERED'));
         }
+        if ($reload && $physicalActive && $eventId > 0 && self::hasRegistrations($eventId)) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_VENUE_CAPACITY_ERROR_RELOAD_REGISTERED'));
+        }
 
         $snapshot = $reload
             ? JemVenueCapacityService::buildEventSnapshot($venueId, $submittedAssignmentIds)
             : $storedSnapshot;
         $snapshotCapacity = self::snapshotCapacity($snapshot);
         $eventCapacity = self::normaliseUnsignedInteger($data['maxplaces'] ?? 0, true);
-        if ($eventCapacity < 1 && !$storedSnapshot) {
+        if ($capacityMode !== 'classic' && $eventCapacity < 1 && !$storedSnapshot) {
             $eventCapacity = $snapshotCapacity;
             $data['maxplaces'] = $eventCapacity;
         }
-        if ($eventCapacity < 1) {
+        if ($capacityMode !== 'classic' && $eventCapacity < 1) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_EXACT_CAPACITY'));
         }
-        if ($eventCapacity > $snapshotCapacity
-            || $eventCapacity > (int) $requirements['profile_capacity']
-            || $eventCapacity > (int) $requirements['venue_capacity']) {
+        if ($eventCapacity > 0 && ($eventCapacity > $snapshotCapacity
+            || $eventCapacity > (int) ($snapshot['profile_capacity'] ?? 0)
+            || $eventCapacity > (int) $requirements['venue_capacity'])) {
             throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CAPACITY_LIMIT'));
+        }
+
+        $data['venue_profile_id'] = (int) $snapshot['profile_id'];
+        $data['venue_profile_revision'] = (int) $snapshot['profile_revision'];
+        $data['venue_snapshot'] = json_encode(
+            $snapshot,
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
+        );
+
+        $context['reload'] = $reload;
+        $context['snapshot'] = $snapshot;
+        $context['assignments'] = $reload
+            ? self::assignmentRowsFromSnapshot($snapshot)
+            : ($storedAssignmentRows ?: self::assignmentRowsFromSnapshot($snapshot));
+        $context['country_code'] = $requirements['country_code'];
+
+        if (!$pricingActive) {
+            $data['currency'] = self::normaliseOptionalCurrency($data['currency'] ?? '');
+            $data['default_tax_rate_id'] = self::normaliseNullableId($data['default_tax_rate_id'] ?? null);
+            $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
+            $data['management_fee_mode'] = 'fixed_per_ticket';
+            $data['management_fee_value'] = self::normaliseMoney($data['management_fee_value'] ?? '0.00', $data['currency'] ?: 'XXX');
+            $data['management_fee_basis'] = 'gross';
+            $data['management_fee_tax_rate_id'] = self::normaliseNullableId($data['management_fee_tax_rate_id'] ?? null);
+            $data['management_fee_refundable'] = !empty($data['management_fee_refundable']) ? 1 : 0;
+            $desiredFingerprint = self::eventPolicyFingerprint($data)
+                . '|' . self::rowsFingerprint(self::loadPoolRows($eventId), 'pool')
+                . '|' . self::rowsFingerprint(self::loadPriceRows($eventId), 'price');
+            self::setPricingRevision($data, $existing, $desiredFingerprint, $eventId);
+
+            return $context;
         }
 
         $currency = self::normaliseOptionalCurrency($data['currency'] ?? '');
@@ -318,13 +387,6 @@ class JemEventPricingCapacityService
             array_filter(array($data['default_tax_rate_id'], $data['management_fee_tax_rate_id'])),
             $requirements['country_code'],
             $effectiveDate
-        );
-
-        $data['venue_profile_id'] = (int) $snapshot['profile_id'];
-        $data['venue_profile_revision'] = (int) $snapshot['profile_revision'];
-        $data['venue_snapshot'] = json_encode(
-            $snapshot,
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR
         );
 
         $desiredPools = $reload
@@ -354,14 +416,8 @@ class JemEventPricingCapacityService
             . '|' . self::rowsFingerprint($desiredPrices, 'price');
         self::setPricingRevision($data, $existing, $desiredFingerprint, $eventId);
 
-        $context['reload'] = $reload;
         $context['pools'] = $desiredPools;
         $context['prices'] = $desiredPrices;
-        $context['snapshot'] = $snapshot;
-        $context['assignments'] = $reload
-            ? self::assignmentRowsFromSnapshot($snapshot)
-            : ($storedAssignmentRows ?: self::assignmentRowsFromSnapshot($snapshot));
-        $context['country_code'] = $requirements['country_code'];
 
         return $context;
     }
@@ -381,6 +437,13 @@ class JemEventPricingCapacityService
         }
         try {
             self::saveEventAssignments($eventId, (array) ($context['assignments'] ?? array()));
+            if (empty($context['pricing_active'])) {
+                if ($manageTransaction) {
+                    $db->transactionCommit();
+                }
+
+                return;
+            }
             $pools = self::savePoolRows($eventId, $context['pools']);
             $poolIds = array_fill_keys(array_map(static fn (array $pool): int => (int) $pool['id'], $pools), true);
             $prices = $context['prices'];
@@ -423,6 +486,72 @@ class JemEventPricingCapacityService
     }
 
     /**
+     * Enforce the physical allocation contract between a programme container
+     * and its direct items after event-owned assignment rows are stored.
+     */
+    public static function assertProgrammeAllocation(int $eventId): void
+    {
+        if ($eventId < 1) {
+            return;
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'parent_event_id', 'locid', 'venue_allocation_mode'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where('id = ' . $eventId);
+        $db->setQuery($query);
+        $event = $db->loadObject();
+        if (!$event) {
+            return;
+        }
+
+        $related = array();
+        if ((int) $event->parent_event_id > 0) {
+            $related[] = array($event, self::loadProgrammeEvent((int) $event->parent_event_id));
+        } else {
+            $query = $db->getQuery(true)
+                ->select(array('id', 'parent_event_id', 'locid', 'venue_allocation_mode'))
+                ->from($db->quoteName('#__jem_events'))
+                ->where('parent_event_id = ' . $eventId);
+            $db->setQuery($query);
+            foreach ((array) $db->loadObjectList() as $child) {
+                $related[] = array($child, $event);
+            }
+        }
+
+        foreach ($related as [$child, $parent]) {
+            if (!$parent || (string) ($parent->venue_allocation_mode ?? 'none') === 'none') {
+                continue;
+            }
+            if ((string) ($child->venue_allocation_mode ?? 'none') === 'none') {
+                throw new RuntimeException(Text::_('COM_JEM_EVENT_PROGRAMME_ALLOCATION_REQUIRED'));
+            }
+            if ((int) $child->locid !== (int) $parent->locid) {
+                // Direct subvenues own independent physical Spaces. Their venue
+                // relationship is already validated by JemTableEvent::check().
+                continue;
+            }
+            $parentSpaces = array_column(self::loadEventAssignments((int) $parent->id), 'venue_space_id');
+            $childSpaces = array_column(self::loadEventAssignments((int) $child->id), 'venue_space_id');
+            if (!$childSpaces || array_diff(array_map('intval', $childSpaces), array_map('intval', $parentSpaces))) {
+                throw new RuntimeException(Text::_('COM_JEM_EVENT_PROGRAMME_ALLOCATION_OUTSIDE_PARENT'));
+            }
+        }
+    }
+
+    private static function loadProgrammeEvent(int $eventId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array('id', 'parent_event_id', 'locid', 'venue_allocation_mode'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where('id = ' . $eventId);
+        $db->setQuery($query);
+
+        return $db->loadObject() ?: null;
+    }
+
+    /**
      * Venue/country/profile state used both by form UX and authoritative save.
      */
     public static function getVenueRequirements(int $venueId): array
@@ -438,6 +567,7 @@ class JemEventPricingCapacityService
             'space_count'        => 0,
             'configured_capacity'=> 0,
             'pool_candidates'    => array(),
+            'configuration_profiles' => array(),
             'configuration_assignments' => array(),
             'configuration_options' => array(),
             'configuration_custom_required' => false,
@@ -472,14 +602,12 @@ class JemEventPricingCapacityService
             foreach ($configuration['spaces'] as $space) {
                 $requirements['configured_capacity'] += (int) ($space['layout_capacity'] ?? 0);
             }
+            $eventConfigurations = JemVenueCapacityService::getEventConfigurationOptions($venueId);
+            $requirements['configuration_profiles'] = (array) ($eventConfigurations['profiles'] ?? array());
+            $requirements['configuration_assignments'] = $eventConfigurations['assignments'];
+            $requirements['configuration_custom_required'] = !empty($eventConfigurations['custom_required']);
             $requirements['capacity_ready'] = $requirements['venue_capacity'] > 0
-                && $requirements['profile_capacity'] > 0
-                && $requirements['country_code'] !== ''
-                && $requirements['space_count'] > 0
-                && $requirements['configured_capacity'] > 0
-                && $requirements['configured_capacity'] <= $requirements['profile_capacity']
-                && $requirements['profile_capacity'] <= $requirements['venue_capacity']
-                && self::configurationHasCapacity($configuration);
+                && !empty($eventConfigurations['options']);
             if ($requirements['capacity_ready']) {
                 $requirements['configuration_summary'] = Text::sprintf(
                     'COM_JEM_EVENT_PRICING_CONFIGURATION_SUMMARY',
@@ -487,14 +615,16 @@ class JemEventPricingCapacityService
                     $requirements['configured_capacity'],
                     $requirements['profile_revision']
                 );
-                $eventConfigurations = JemVenueCapacityService::getEventConfigurationOptions($venueId);
-                $requirements['configuration_assignments'] = $eventConfigurations['assignments'];
-                $requirements['configuration_custom_required'] = !empty($eventConfigurations['custom_required']);
                 foreach ((array) $eventConfigurations['options'] as $option) {
                     $snapshot = JemVenueCapacityService::buildEventSnapshot(
                         $venueId,
                         (array) $option['assignment_ids']
                     );
+                    if ((int) $snapshot['selected_capacity'] < 1
+                        || (int) $snapshot['selected_capacity'] > (int) $snapshot['profile_capacity']
+                        || (int) $snapshot['profile_capacity'] > $requirements['venue_capacity']) {
+                        continue;
+                    }
                     $option['pool_candidates'] = array_map(
                         static fn (array $pool): array => array(
                             'code' => (string) $pool['code'],
@@ -506,16 +636,10 @@ class JemEventPricingCapacityService
                     );
                     $requirements['configuration_options'][] = $option;
                 }
-
-                $snapshot = JemVenueCapacityService::buildEventSnapshot($venueId);
-                foreach (self::buildPoolRowsFromSnapshot($snapshot) as $pool) {
-                    $requirements['pool_candidates'][] = array(
-                        'code'     => (string) $pool['code'],
-                        'name'     => (string) $pool['name'],
-                        'capacity' => (int) $pool['capacity'],
-                        'venue_layout_id' => (int) $pool['venue_layout_id'],
-                    );
+                if ($requirements['configuration_options']) {
+                    $requirements['pool_candidates'] = (array) $requirements['configuration_options'][0]['pool_candidates'];
                 }
+                $requirements['capacity_ready'] = !empty($requirements['configuration_options']);
             }
         } catch (Throwable $e) {
             // The installer may still be creating the additive 4D tables.
@@ -1126,7 +1250,8 @@ class JemEventPricingCapacityService
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select(array(
-                'id', 'locid', 'pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id',
+                'id', 'locid', 'venue_allocation_mode', 'capacity_mode', 'pricing_mode',
+                'pricing_revision', 'currency', 'default_tax_rate_id',
                 'prices_include_tax', 'management_fee_mode', 'management_fee_value', 'management_fee_basis',
                 'management_fee_tax_rate_id', 'management_fee_refundable', 'venue_profile_id',
                 'venue_profile_revision', 'venue_snapshot', 'maxplaces',
@@ -1183,6 +1308,18 @@ class JemEventPricingCapacityService
         return (int) $db->loadResult() > 0;
     }
 
+    private static function hasRegistrations(int $eventId): bool
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_register'))
+            ->where($db->quoteName('event') . ' = ' . $eventId);
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
+    }
+
     private static function decodeSnapshot($value): array
     {
         if (!is_string($value) || trim($value) === '') {
@@ -1202,7 +1339,8 @@ class JemEventPricingCapacityService
     private static function eventPolicyFingerprint(array $data): string
     {
         $fields = array(
-            'pricing_mode', 'currency', 'default_tax_rate_id', 'prices_include_tax',
+            'venue_allocation_mode', 'capacity_mode', 'pricing_mode', 'currency',
+            'default_tax_rate_id', 'prices_include_tax',
             'management_fee_mode', 'management_fee_value', 'management_fee_basis',
             'management_fee_tax_rate_id', 'management_fee_refundable', 'venue_profile_id',
             'venue_profile_revision', 'venue_snapshot', 'locid', 'maxplaces',

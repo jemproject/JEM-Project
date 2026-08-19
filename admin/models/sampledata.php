@@ -765,9 +765,7 @@ class JemModelSampledata extends BaseDatabaseModel
             '#__jem_events',
             '#__jem_groupmembers',
             '#__jem_groups',
-            '#__jem_special_days',
             '#__jem_venues',
-            '#__jem_types',
         ) as $table) {
             if ($this->tableHasRows($table)) {
                 return true;

@@ -22,6 +22,8 @@ $canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.his
 $canManageNotificationTemplates = JemHelperBackend::canManage('jem.notifications.templates');
 $canViewNotificationHistory = JemHelperBackend::canManage('jem.notifications.history');
 $canConfigure = JemHelperBackend::canManage('core.options');
+$featurePolicy = $this->featurePolicy ?? JemFeaturePolicy::current();
+$profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy->getProfile()));
 ?>
 <style>
     .jem-wei-menus .card { min-height: 126px; }
@@ -37,6 +39,17 @@ $canConfigure = JemHelperBackend::canManage('core.options');
 <?php // Group titles, tile groups and the "Add" badge are defined in media/com_jem/css/backend.css. ?>
 <form action="<?php echo Route::_('index.php?option=com_jem'); ?>" id="application-form" method="post" name="adminForm" class="form-validate">
     <div id="j-main-container" class="j-main-container">
+        <?php if ($canConfigure) : ?>
+            <section class="jem-operating-profile-summary<?php echo empty($this->operatingProfileConfigured) ? ' border-warning' : ''; ?>" aria-label="<?php echo Text::_('COM_JEM_OPERATING_PROFILE'); ?>">
+                <div>
+                    <strong><?php echo Text::sprintf('COM_JEM_OPERATING_PROFILE_CURRENT', $profileLabel); ?></strong>
+                    <?php if (empty($this->operatingProfileConfigured)) : ?>
+                        <div class="form-text"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_INTRO'); ?></div>
+                    <?php endif; ?>
+                </div>
+                <a class="btn btn-sm btn-outline-primary" href="index.php?option=com_jem&amp;view=settings"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_CONFIGURE'); ?></a>
+            </section>
+        <?php endif; ?>
         <div class="cpanel jem-wei-menus">
             <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_CONTENT'); ?></h3>
             <div class="jem-wei-group">
@@ -68,7 +81,8 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                     $this->quickiconButton('index.php?option=com_jem&amp;view=settings', 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
                 }
 
-                if ($canManageNotificationTemplates || $canViewNotificationHistory) {
+                if ($featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)
+                    && ($canManageNotificationTemplates || $canViewNotificationHistory)) {
                     $link = $canManageNotificationTemplates
                         ? 'index.php?option=com_jem&amp;view=notifications'
                         : 'index.php?option=com_jem&amp;view=notificationhistory';
@@ -80,7 +94,7 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                     $this->quickiconButton('index.php?option=com_jem&amp;task=plugins.plugins', 'icon-48-plugins.svg', Text::_('COM_JEM_MANAGE_PLUGINS'));
                 }
 
-                if ($canConfigure) {
+                if ($canConfigure && $featurePolicy->allows(JemFeaturePolicy::FEATURE_PRICING)) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=taxrates', 'icon-48-taxrates.svg', Text::_('COM_JEM_TAX_RATES'), 0, 'index.php?option=com_jem&amp;task=taxrate.add', Text::_('COM_JEM_TAX_RATE_ADD'));
                 }
             ?>

@@ -101,6 +101,7 @@ final class EventPricingCapacityJoomlaIntegrationTest extends JoomlaTestCase
                 'locid' => $venueId,
                 'dates' => gmdate('Y-m-d'),
                 'maxplaces' => 100,
+                'venue_allocation_mode' => 'profile',
                 'pricing_mode' => JemEventPricingCapacityService::MODE_SINGLE,
                 'currency' => '',
                 'prices_include_tax' => 1,

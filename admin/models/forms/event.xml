@@ -617,6 +617,27 @@
 
     <fieldset name="pricing_capacity" label="COM_JEM_EVENT_PRICING_CAPACITY_TAB"
         addfieldpath="/administrator/components/com_jem/models/fields">
+        <field name="venue_allocation_mode" type="list"
+            default="none"
+            filter="cmd"
+            label="COM_JEM_EVENT_VENUE_ALLOCATION_MODE"
+            description="COM_JEM_EVENT_VENUE_ALLOCATION_MODE_DESC"
+        >
+            <option value="none">COM_JEM_EVENT_VENUE_ALLOCATION_NONE</option>
+            <option value="profile">COM_JEM_EVENT_VENUE_ALLOCATION_PROFILE</option>
+            <option value="custom">COM_JEM_EVENT_VENUE_ALLOCATION_CUSTOM</option>
+        </field>
+        <field name="capacity_mode" type="list"
+            default="classic"
+            filter="cmd"
+            label="COM_JEM_EVENT_CAPACITY_MODE"
+            description="COM_JEM_EVENT_CAPACITY_MODE_DESC"
+            showon="venue_allocation_mode:profile,custom"
+        >
+            <option value="classic">COM_JEM_EVENT_CAPACITY_MODE_CLASSIC</option>
+            <option value="configured">COM_JEM_EVENT_CAPACITY_MODE_CONFIGURED</option>
+            <option value="areas">COM_JEM_EVENT_CAPACITY_MODE_AREAS</option>
+        </field>
         <field name="pricing_mode" type="list"
             default="classic"
             filter="cmd"
@@ -685,7 +706,21 @@
             default="0"
             label="COM_JEM_EVENT_RELOAD_VENUE_CAPACITY"
             description="COM_JEM_EVENT_RELOAD_VENUE_CAPACITY_DESC"
-            showon="pricing_mode:single,multiple"
+            showon="venue_allocation_mode:profile,custom"
+        />
+        <field name="space_conflict_override" type="checkbox"
+            value="1"
+            default="0"
+            label="COM_JEM_EVENT_SPACE_CONFLICT_OVERRIDE"
+            description="COM_JEM_EVENT_SPACE_CONFLICT_OVERRIDE_DESC"
+        />
+        <field name="space_conflict_reason" type="textarea"
+            rows="3"
+            maxlength="1000"
+            filter="string"
+            label="COM_JEM_EVENT_SPACE_CONFLICT_REASON"
+            description="COM_JEM_EVENT_SPACE_CONFLICT_REASON_DESC"
+            showon="space_conflict_override:1"
         />
         <field name="capacity_pools" type="subform"
             layout="joomla.form.field.subform.repeatable"

@@ -377,6 +377,7 @@ final class JemNotificationTemplateCatalog
             'event_date',
             'event_time',
             'venue',
+            'venue_configuration',
             'city',
             'places',
             'event_description',

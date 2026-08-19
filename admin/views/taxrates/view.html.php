@@ -16,6 +16,10 @@ class JemViewTaxrates extends JemAdminView
 
     public function display($tpl = null)
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
+        if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
         if (!JemHelperBackend::canManage('core.options')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }

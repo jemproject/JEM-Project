@@ -28,7 +28,8 @@ final class NotificationTemplateAdminContractsTest extends TestCase
         self::assertStringContainsString('jem.notifications.templates', $access);
         self::assertStringContainsString("canManage('jem.notifications.templates')", $helper);
         self::assertStringContainsString('view=notifications', $dashboard);
-        self::assertStringContainsString('view=notifications', $manifest);
+        self::assertStringNotContainsString('view=notifications', $manifest);
+        self::assertStringContainsString('FEATURE_NOTIFICATION_AUTOMATION', $helper);
         self::assertStringContainsString('icon-48-notifications.svg', $dashboard);
         self::assertFileExists(JEM_TEST_ROOT . '/media/images/icon-48-notifications.svg');
         self::assertStringContainsString('icon-48-registration.svg', $dashboard);

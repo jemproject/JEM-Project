@@ -183,6 +183,7 @@ class JemModelStatistics extends JemModelMain
      */
     public function getDashboardData($filters, array $permissions)
     {
+        $commerceEnabled = JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING);
         $summaries = array(
             'events' => !empty($permissions['events']) ? $this->getEventsData() : null,
             'venues' => !empty($permissions['venues']) ? $this->getVenuesData() : null,
@@ -255,14 +256,17 @@ class JemModelStatistics extends JemModelMain
         }
 
         return (object) array(
+            'commerce_enabled' => $commerceEnabled,
             'cards' => $cards,
             'summaries' => $summaries,
             'venue_infrastructure' => !empty($permissions['venues']) ? $this->getVenueInfrastructure($filters) : array(),
             'future_events' => !empty($permissions['events']) ? $this->getFutureEventCapacity($filters) : array(),
-            'programmes' => !empty($permissions['events']) ? $this->getProgrammeSummary($filters) : array(),
-            'booking_value_series' => !empty($permissions['registrations']) ? $this->getBookingValueTimeline($filters) : array(),
+            'programmes' => !empty($permissions['events']) ? $this->getProgrammeSummary($filters, $commerceEnabled) : array(),
+            'booking_value_series' => !empty($permissions['registrations']) && $commerceEnabled
+                ? $this->getBookingValueTimeline($filters)
+                : array(),
             'registration_workflow' => !empty($permissions['registrations']) ? $this->getRegistrationWorkflowSummary($filters) : new stdClass(),
-            'registration_commercial' => !empty($permissions['registrations'])
+            'registration_commercial' => !empty($permissions['registrations']) && $commerceEnabled
                 ? $this->getRegistrationCommercialSummary($filters)
                 : (object) array('revenue' => array()),
         );
@@ -420,7 +424,7 @@ class JemModelStatistics extends JemModelMain
         $query = $db->getQuery(true)
             ->select(array(
                 'e.id', 'e.title', 'e.dates', 'e.times', 'e.parent_event_id', 'parent.title AS parent_title',
-                'e.maxplaces', 'e.reservedplaces', 'e.pricing_mode', 'e.currency',
+                'e.maxplaces', 'e.reservedplaces', 'e.capacity_mode', 'e.venue_snapshot', 'e.pricing_mode', 'e.currency',
                 'SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN 1 ELSE 0 END) AS confirmed_orders',
                 'COALESCE(SUM(CASE WHEN r.status = 1 AND r.waiting = 0 THEN r.places ELSE 0 END), 0) AS confirmed_places',
                 'SUM(CASE WHEN r.status = 1 AND r.waiting = 1 THEN 1 ELSE 0 END) AS waiting_orders',
@@ -440,7 +444,7 @@ class JemModelStatistics extends JemModelMain
         $query
             ->group(array(
                 'e.id', 'e.title', 'e.dates', 'e.times', 'e.parent_event_id', 'parent.title',
-                'e.maxplaces', 'e.reservedplaces', 'e.pricing_mode', 'e.currency',
+                'e.maxplaces', 'e.reservedplaces', 'e.capacity_mode', 'e.venue_snapshot', 'e.pricing_mode', 'e.currency',
             ))
             ->order('e.dates ASC, e.times ASC, COALESCE(parent.title, e.title) ASC, e.title ASC');
         $db->setQuery($query, 0, 100);
@@ -450,24 +454,22 @@ class JemModelStatistics extends JemModelMain
         }
 
         $eventIds = array_map(static fn ($event) => (int) $event->id, $events);
-        $poolQuery = $db->getQuery(true)
+        $allocationQuery = $db->getQuery(true)
             ->select(array(
-                'p.event_id', 'p.id', 'p.name', 'p.capacity',
-                'COALESCE(SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND i.registration_revision = r.revision THEN i.quantity ELSE 0 END), 0) AS used',
+                'a.event_id', 'a.venue_capacity_area_id', 'a.venue_layout_id',
+                'COALESCE(SUM(CASE WHEN r.status = 1 AND r.waiting = 0 AND a.registration_revision = r.revision THEN a.quantity ELSE 0 END), 0) AS used',
             ))
-            ->from($db->quoteName('#__jem_capacity_pools', 'p'))
-            ->join('LEFT', $db->quoteName('#__jem_register_items', 'i') . ' ON i.capacity_pool_id = p.id AND i.line_kind = ' . $db->quote('admission'))
-            ->join('LEFT', $db->quoteName('#__jem_register', 'r') . ' ON r.id = i.register_id')
-            ->where('p.published = 1')
-            ->where('p.event_id IN (' . implode(',', $eventIds) . ')')
-            ->group(array('p.event_id', 'p.id', 'p.name', 'p.capacity'))
-            ->order('p.event_id ASC, p.ordering ASC, p.id ASC');
-        $db->setQuery($poolQuery);
-        $pools = array();
-        foreach ((array) $db->loadObjectList() as $pool) {
-            $pool->used = (int) $pool->used;
-            $pool->remaining = max(0, (int) $pool->capacity - $pool->used);
-            $pools[(int) $pool->event_id][] = $pool;
+            ->from($db->quoteName('#__jem_register_capacity_allocations', 'a'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r') . ' ON r.id = a.register_id')
+            ->where('a.event_id IN (' . implode(',', $eventIds) . ')')
+            ->group(array('a.event_id', 'a.venue_capacity_area_id', 'a.venue_layout_id'));
+        $db->setQuery($allocationQuery);
+        $usedCapacity = array();
+        foreach ((array) $db->loadObjectList() as $allocation) {
+            $key = !empty($allocation->venue_capacity_area_id)
+                ? 'area:' . (int) $allocation->venue_capacity_area_id
+                : 'layout:' . (int) $allocation->venue_layout_id;
+            $usedCapacity[(int) $allocation->event_id][$key] = (int) $allocation->used;
         }
 
         foreach ($events as $event) {
@@ -481,7 +483,10 @@ class JemModelStatistics extends JemModelMain
             $event->occupancy_percent = (int) $event->maxplaces > 0
                 ? min(100, round(100 * ((int) $event->reservedplaces + $event->confirmed_places) / (int) $event->maxplaces, 1))
                 : null;
-            $event->pools = $pools[(int) $event->id] ?? array();
+            $event->pools = $this->snapshotCapacityPools(
+                (string) ($event->venue_snapshot ?? ''),
+                $usedCapacity[(int) $event->id] ?? array()
+            );
         }
 
         return $events;
@@ -644,7 +649,7 @@ class JemModelStatistics extends JemModelMain
      * Capacity is intentionally not summed because programme members can use
      * independent or shared physical pools.
      */
-    public function getProgrammeSummary($filters)
+    public function getProgrammeSummary($filters, $commerceEnabled = false)
     {
         $db = $this->getDatabase();
         $query = $db->getQuery(true)
@@ -673,7 +678,9 @@ class JemModelStatistics extends JemModelMain
             return array();
         }
 
-        $programmeIds = array_map(static fn ($programme) => (int) $programme->id, $programmes);
+        $revenue = array();
+        if ($commerceEnabled) {
+            $programmeIds = array_map(static fn ($programme) => (int) $programme->id, $programmes);
         $revenueQuery = $db->getQuery(true)
             ->select(array('parent.id AS programme_id', 'r.currency', 'SUM(r.grand_total) AS total'))
             ->from($db->quoteName('#__jem_events', 'parent'))
@@ -691,6 +698,7 @@ class JemModelStatistics extends JemModelMain
         foreach ((array) $db->loadObjectList() as $row) {
             $revenue[(int) $row->programme_id][] = $row;
         }
+        }
 
         foreach ($programmes as $programme) {
             foreach (array('child_events', 'confirmed_orders', 'confirmed_places', 'waiting_orders', 'waiting_places') as $field) {
@@ -700,6 +708,51 @@ class JemModelStatistics extends JemModelMain
         }
 
         return $programmes;
+    }
+
+    /**
+     * Build capacity availability from the immutable event venue snapshot.
+     */
+    private function snapshotCapacityPools($snapshotJson, array $usedCapacity)
+    {
+        $snapshot = json_decode((string) $snapshotJson, true);
+        if (!is_array($snapshot) || ($snapshot['schema'] ?? '') !== 'jem-venue-capacity/v1') {
+            return array();
+        }
+
+        $pools = array();
+        foreach ((array) ($snapshot['spaces'] ?? array()) as $space) {
+            $layout = (array) ($space['layout'] ?? array());
+            $layoutId = (int) ($layout['id'] ?? 0);
+            if ($layoutId < 1) {
+                continue;
+            }
+            $areas = array_values(array_filter((array) ($space['capacity_areas'] ?? array()), static function ($area) {
+                return !empty($area['published']) && (int) ($area['capacity'] ?? 0) > 0;
+            }));
+            if (!$areas && (int) ($layout['capacity'] ?? 0) > 0) {
+                $areas[] = array(
+                    'id' => null,
+                    'name' => (string) ($space['name'] ?? $layout['name'] ?? ''),
+                    'capacity' => (int) $layout['capacity'],
+                );
+            }
+            foreach ($areas as $area) {
+                $areaId = (int) ($area['id'] ?? 0);
+                $key = $areaId > 0 ? 'area:' . $areaId : 'layout:' . $layoutId;
+                $capacity = max(0, (int) ($area['capacity'] ?? 0));
+                $used = max(0, (int) ($usedCapacity[$key] ?? 0));
+                $pools[] = (object) array(
+                    'id' => $areaId > 0 ? $areaId : $layoutId,
+                    'name' => (string) ($area['name'] ?? $space['name'] ?? ''),
+                    'capacity' => $capacity,
+                    'used' => $used,
+                    'remaining' => max(0, $capacity - $used),
+                );
+            }
+        }
+
+        return $pools;
     }
 
     private function eventFilterConditions($filters, $alias = '')

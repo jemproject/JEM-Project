@@ -93,7 +93,7 @@ class JemModelEvent extends ItemModel
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                         'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, ' .
-                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax'));
+                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax'));
                 $query->from('#__jem_events AS a');
 
                 $query->select('pe.title AS parent_event_title, pe.alias AS parent_event_alias');
@@ -363,6 +363,7 @@ class JemModelEvent extends ItemModel
             ->select(array(
                 'e.id', 'e.title', 'e.alias', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
                 'e.parent_event_id', 'e.event_tree_order', 'e.locid', 'e.event_status', 'e.type_id',
+                'e.venue_allocation_mode', 'e.capacity_mode', 'e.venue_snapshot',
                 'v.venue', 'v.alias AS venue_alias', 'v.parent_venue_id',
                 "CASE WHEN CHAR_LENGTH(e.alias) THEN CONCAT_WS(':', e.id, e.alias) ELSE e.id END AS slug",
                 "CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(':', v.id, v.alias) ELSE v.id END AS venueslug",
@@ -612,7 +613,7 @@ class JemModelEvent extends ItemModel
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -1176,6 +1177,12 @@ class JemModelEvent extends ItemModel
         }
 
         if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
+            && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            $errMsg = Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY') . ' [id: ' . $eventId . ']';
+            return false;
+        }
+
+        if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
             && (int) $status !== JemRegistrationTransition::NOT_ATTENDING) {
             $errMsg = Text::_('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER') . ' [id: ' . $eventId . ']';
             return false;
@@ -1275,6 +1282,7 @@ class JemModelEvent extends ItemModel
         $regid   = $app->input->getInt('regid', 0);
         $addplaces = $app->input->getInt('addplaces', 0);
         $cancelplaces = $app->input->getInt('cancelplaces', 0);
+        $capacityAllocations = (array) $app->input->post->get('capacity_areas', array(), 'array');
         $checkseries = $app->input->getString('reg_check_series', '0');
         $checkseries = ($checkseries === 'true' || $checkseries === 'on' || $checkseries === '1');
         $uid = (int) $user->get('id');
@@ -1304,10 +1312,17 @@ class JemModelEvent extends ItemModel
         }
 
         if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
+            && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY') . ' [id: ' . $eventId . ']');
+            return false;
+        }
+
+        if (in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true)
             && $status !== JemRegistrationTransition::NOT_ATTENDING) {
             $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_REQUIRES_ORDER') . ' [id: ' . $eventId . ']');
             return false;
         }
+        $isAreaCapacity = (string) ($event->capacity_mode ?? 'classic') === 'areas';
 
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
         if($event->recurrence_type || !empty($event->series_id)){
@@ -1353,7 +1368,13 @@ class JemModelEvent extends ItemModel
             $eventStatus = $status;
 
 
-            if ($eventStatus > 0) {
+            if ($eventStatus > 0 && $isAreaCapacity) {
+                $places = array_sum(array_map('intval', $capacityAllocations));
+                if ($places < 1) {
+                    $this->setError(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED'));
+                    return false;
+                }
+            } elseif ($eventStatus > 0) {
                 if ($addplaces > 0) {
                     if ($reg) {
                         if ($reg->status > 0) {
@@ -1379,6 +1400,8 @@ class JemModelEvent extends ItemModel
                 } else {
                     $places = 0;
                 }
+            } elseif ($isAreaCapacity) {
+                $places = $reg ? (int) $reg->places : 0;
             } else {
                 if ($reg) {
                     $places = $reg->places - $cancelplaces;
@@ -1426,6 +1449,7 @@ class JemModelEvent extends ItemModel
                 'source'       => 'site.event.registration_response',
                 'respectPlaces'=> true,
                 'allowWaiting' => true,
+                'capacityAllocations' => $capacityAllocations,
             ));
         } catch (Throwable $e) {
             $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ': ' . $e->getMessage());

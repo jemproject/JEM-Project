@@ -19,6 +19,10 @@ final class NotificationPersistenceJoomlaIntegrationTest extends JoomlaTestCase
         require_once JPATH_SITE . '/components/com_jem/factory.php';
         require_once JPATH_ADMINISTRATOR . '/components/com_jem/script.php';
 
+        // Notification automation belongs to the Advanced profile. Keep the
+        // integration fixture aligned with the capability it is exercising.
+        JemConfig::getInstance()->toRegistry()->set('operating_profile', JemFeaturePolicy::PROFILE_ADVANCED);
+
         $installer = new com_jemInstallerScript();
         $registrationRepair = new ReflectionMethod(com_jemInstallerScript::class, 'repair510RegistrationSchema');
         $registrationRepair->invoke($installer);

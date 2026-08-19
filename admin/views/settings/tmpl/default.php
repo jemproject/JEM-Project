@@ -70,6 +70,8 @@ jQuery(document).ready(function($) {
 
     <div id="j-main-container" class="j-main-container">
 
+            <?php echo $this->loadTemplate('profile'); ?>
+
             <div class="row">
                 <div class="col-md-12">
                     <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
@@ -161,12 +163,14 @@ jQuery(document).ready(function($) {
                     <div class="clr"></div>
 
 
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'notification-settings', Text::_('COM_JEM_NOTIFICATION_SETTINGS')); ?>
-                        <fieldset class="adminform">
-                            <?php echo $this->loadTemplate('notifications'); ?>
-                        </fieldset>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <div class="clr"></div>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) : ?>
+                        <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'notification-settings', Text::_('COM_JEM_NOTIFICATION_SETTINGS')); ?>
+                            <fieldset class="adminform">
+                                <?php echo $this->loadTemplate('notifications'); ?>
+                            </fieldset>
+                        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                        <div class="clr"></div>
+                    <?php endif; ?>
 
 
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'configinfo', Text::_('COM_JEM_SETTINGS_TAB_CONFIGINFO')); ?>

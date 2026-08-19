@@ -75,6 +75,7 @@ class JemViewEditevent extends JemView
         $params = $this->params;
 
         $this->form = $this->get('Form');
+        $this->featurePolicy = JemFeaturePolicy::current();
         $this->return_page = $this->get('ReturnPage');
         $this->invited = (array)$this->get('InvitedUsers');
 

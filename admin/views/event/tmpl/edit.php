@@ -556,10 +556,12 @@ $this->document->addStyleDeclaration('
                     <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone_mode'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('parent_event_id'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('event_hierarchy_note'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('event_tree_order'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('show_in_calendar'); ?></div></li>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PROGRAMMES)) : ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('parent_event_id'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('event_hierarchy_note'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('event_tree_order'); ?></div></li>
+                        <li><div class="label-form"><?php echo $this->form->renderfield('show_in_calendar'); ?></div></li>
+                    <?php endif; ?>
                     <?php if($this->jemsettings->defaultCategory && empty($item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
@@ -639,10 +641,11 @@ $this->document->addStyleDeclaration('
             </fieldset>
 
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'pricing-capacity', Text::_('COM_JEM_EVENT_PRICING_CAPACITY_TAB')); ?>
-            <?php echo $this->loadTemplate('pricing'); ?>
-
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-capacity', Text::_('COM_JEM_EVENT_VENUE_CAPACITY_TAB')); ?>
+                <?php echo $this->loadTemplate('capacity'); ?>
+                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php endif; ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>
@@ -759,6 +762,7 @@ $this->document->addStyleDeclaration('
                         </div>
                     </div>
                 </div>
+                <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) : ?>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="notifications-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#event-notifications" aria-expanded="true" aria-controls="event-notifications">
@@ -775,6 +779,7 @@ $this->document->addStyleDeclaration('
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
                 <!-- START OF PANEL IMAGE -->
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="image-event-header">

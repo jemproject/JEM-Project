@@ -53,7 +53,19 @@ $controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;
-$controller->execute($input->getCmd('task'));
+$task = $input->getCmd('task');
+$view = $input->getCmd('view', 'main');
+$taskController = strtolower((string) strtok($task, '.'));
+$notificationViews = array(
+    'notificationcontent', 'notificationhistory', 'notifications',
+    'notificationtemplate', 'notificationtemplates', 'reminder', 'reminders',
+);
+$notificationControllers = array('notification', 'notificationcontent', 'notificationtemplate', 'reminder', 'reminders');
+if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)
+    && (in_array($view, $notificationViews, true) || in_array($taskController, $notificationControllers, true))) {
+    throw new \Exception(Text::_('COM_JEM_EVENT_FEATURE_NOTIFICATION_DISABLED'), 403);
+}
+$controller->execute($task);
 HTMLHelper::_('bootstrap.tooltip','.hasTooltip');
 
 // Redirect if set by the controller

@@ -59,6 +59,11 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
 ?>
 
 <div class="register<?php echo $eventLayout === 'compact' ? ' jem-registration-compact' : ''; ?>">
+    <?php if (!empty($this->commerceReadOnly)) : ?>
+        <div class="alert alert-info" role="status">
+            <?php echo Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'); ?>
+        </div>
+    <?php endif; ?>
     <?php if ($registrationIntro !== '' && trim(strip_tags($registrationIntro)) !== '') : ?>
         <div class="jem-registration-text jem-registration-text-intro">
             <?php echo $registrationIntro; ?>

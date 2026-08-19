@@ -44,10 +44,40 @@ class JemVenueCapacityService
             ->select($db->quoteName('id'))
             ->from($db->quoteName('#__jem_venue_capacity_profiles'))
             ->where($db->quoteName('venue_id') . ' = ' . $venueId)
-            ->where($db->quoteName('code') . ' = ' . $db->quote(self::DEFAULT_PROFILE_CODE));
+            ->where($db->quoteName('published') . ' = 1')
+            ->order($db->quoteName('is_default') . ' DESC, ' . $db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
+        $query->setLimit(1);
         $db->setQuery($query);
 
         return (int) $db->loadResult();
+    }
+
+    /**
+     * List every reusable profile for a Venue, including archived profiles.
+     */
+    public static function getProfiles(int $venueId): array
+    {
+        if ($venueId < 1) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'p.id', 'p.venue_id', 'p.code', 'p.name', 'p.revision', 'p.capacity',
+                'p.is_default', 'p.published', 'p.ordering',
+                '(SELECT COUNT(*) FROM ' . $db->quoteName('#__jem_venue_profile_spaces', 'psc')
+                    . ' WHERE psc.venue_profile_id = p.id) AS space_count',
+                '(SELECT COALESCE(SUM(lc.capacity), 0) FROM ' . $db->quoteName('#__jem_venue_profile_spaces', 'psl')
+                    . ' INNER JOIN ' . $db->quoteName('#__jem_venue_layouts', 'lc')
+                    . ' ON lc.id = psl.venue_layout_id WHERE psl.venue_profile_id = p.id) AS layout_capacity',
+            ))
+            ->from($db->quoteName('#__jem_venue_capacity_profiles', 'p'))
+            ->where('p.venue_id = ' . $venueId)
+            ->order('p.published DESC, p.ordering ASC, p.name ASC, p.id ASC');
+        $db->setQuery($query);
+
+        return (array) $db->loadAssocList();
     }
 
     /**
@@ -64,6 +94,20 @@ class JemVenueCapacityService
 
         if ($profileId > 0) {
             return $profileId;
+        }
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__jem_venue_capacity_profiles'))
+                ->where($db->quoteName('venue_id') . ' = ' . $venueId)
+                ->where($db->quoteName('code') . ' = ' . $db->quote(self::DEFAULT_PROFILE_CODE))
+        );
+        $archivedProfileId = (int) $db->loadResult();
+        if ($archivedProfileId > 0) {
+            self::setDefaultProfile($venueId, $archivedProfileId);
+
+            return $archivedProfileId;
         }
 
         $db->setQuery(
@@ -105,14 +149,16 @@ class JemVenueCapacityService
     /**
      * Load the current default profile and every selected space/layout.
      */
-    public static function getDefaultConfiguration(int $venueId): array
+    public static function getConfiguration(int $venueId, int $profileId = 0): array
     {
         if ($venueId < 1) {
             throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SAVED_VENUE_REQUIRED'));
         }
 
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $profileId = self::findDefaultProfileId($venueId);
+        if ($profileId < 1) {
+            $profileId = self::findDefaultProfileId($venueId);
+        }
         $db->setQuery(
             $db->getQuery(true)
                 ->select($db->quoteName('country'))
@@ -122,8 +168,8 @@ class JemVenueCapacityService
         $countryCode = strtoupper(trim((string) $db->loadResult()));
         $configuration = array(
             'profile_id'       => $profileId,
-            'profile_code'     => $profileId > 0 ? self::DEFAULT_PROFILE_CODE : '',
-            'profile_name'     => $profileId > 0 ? self::DEFAULT_PROFILE_NAME : '',
+            'profile_code'     => '',
+            'profile_name'     => '',
             'profile_revision' => $profileId > 0 ? 1 : 0,
             'profile_capacity' => 0,
             'country_code'     => $countryCode,
@@ -139,11 +185,18 @@ class JemVenueCapacityService
                 'p.id AS profile_id', 'p.code AS profile_code', 'p.name AS profile_name',
                 'p.image AS profile_image', 'p.image_alt AS profile_image_alt',
                 'p.revision AS profile_revision', 'p.capacity AS profile_capacity',
+                'p.is_default AS profile_is_default', 'p.published AS profile_published',
+                'p.ordering AS profile_ordering',
             ))
             ->from($db->quoteName('#__jem_venue_capacity_profiles', 'p'))
-            ->where('p.id = ' . $profileId);
+            ->where('p.id = ' . $profileId)
+            ->where('p.venue_id = ' . $venueId);
         $db->setQuery($query);
-        $configuration = array_merge($configuration, $db->loadAssoc() ?: array());
+        $profile = $db->loadAssoc() ?: array();
+        if (!$profile) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_OWNERSHIP'));
+        }
+        $configuration = array_merge($configuration, $profile);
 
         $query = $db->getQuery(true)
             ->select(array(
@@ -177,6 +230,14 @@ class JemVenueCapacityService
     }
 
     /**
+     * Load the current default profile.
+     */
+    public static function getDefaultConfiguration(int $venueId): array
+    {
+        return self::getConfiguration($venueId, 0);
+    }
+
+    /**
      * Add the current capacity configuration to a venue form item.
      */
     public static function populateFormItem(object $item): void
@@ -185,20 +246,31 @@ class JemVenueCapacityService
             $item->capacity_configuration_submitted = 0;
             $item->capacity_profile_id = 0;
             $item->capacity_profile_name = self::DEFAULT_PROFILE_NAME;
+            $item->capacity_profile_code = self::DEFAULT_PROFILE_CODE;
             $item->capacity_profile_revision = 1;
             $item->capacity_profile_capacity = (int) ($item->capacity ?? 0);
+            $item->capacity_profile_is_default = 1;
+            $item->capacity_profile_published = 1;
+            $item->capacity_profile_ordering = 0;
+            $item->capacity_profiles = array();
             $item->capacity_spaces = array();
             $item->capacity_configuration_json = json_encode(array('spaces' => array()));
 
             return;
         }
 
-        $configuration = self::getDefaultConfiguration((int) $item->id);
+        $requestedProfileId = Factory::getApplication()->input->getInt('profile_id', 0);
+        $configuration = self::getConfiguration((int) $item->id, $requestedProfileId);
+        $item->capacity_profiles = self::getProfiles((int) $item->id);
         $item->capacity_configuration_submitted = (int) $configuration['profile_id'] > 0 ? 1 : 0;
         $item->capacity_profile_id = (int) $configuration['profile_id'];
         $item->capacity_profile_name = (string) ($configuration['profile_name'] ?: self::DEFAULT_PROFILE_NAME);
         $item->capacity_profile_revision = max(1, (int) $configuration['profile_revision']);
         $item->capacity_profile_capacity = (int) $configuration['profile_capacity'];
+        $item->capacity_profile_code = (string) $configuration['profile_code'];
+        $item->capacity_profile_is_default = (int) ($configuration['profile_is_default'] ?? 0);
+        $item->capacity_profile_published = (int) ($configuration['profile_published'] ?? 1);
+        $item->capacity_profile_ordering = (int) ($configuration['profile_ordering'] ?? 0);
         $item->capacity_spaces = $configuration['spaces'];
         $item->capacity_configuration_json = json_encode(
             array('spaces' => $configuration['spaces']),
@@ -286,21 +358,182 @@ class JemVenueCapacityService
         return false;
     }
 
-    /**
-     * Save profile metadata and create immutable layout revisions only when
-     * the effective physical capacity configuration changed.
-     */
-    public static function saveDefaultConfiguration(
+    private static function createProfile(
         int $venueId,
+        string $name,
+        ?string $requestedCode,
+        bool $makeDefault,
+        int $ordering
+    ): int {
+        if ($venueId < 1) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SAVED_VENUE_REQUIRED'));
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        // Profile aliases are presentation identifiers generated by JEM. Never
+        // trust a hidden or crafted form value to choose a new stable alias.
+        $requestedCode = null;
+        $baseCode = self::normaliseCode($name);
+        if ($baseCode === '') {
+            $baseCode = 'profile';
+        }
+        $code = $baseCode;
+        for ($suffix = 2; ; $suffix++) {
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName('#__jem_venue_capacity_profiles'))
+                    ->where($db->quoteName('venue_id') . ' = ' . $venueId)
+                    ->where($db->quoteName('code') . ' = ' . $db->quote($code))
+            );
+            if ((int) $db->loadResult() === 0) {
+                break;
+            }
+            $suffixText = '-' . $suffix;
+            $code = StringHelper::substr($baseCode, 0, 64 - strlen($suffixText)) . $suffixText;
+        }
+
+        $profiles = self::getProfiles($venueId);
+        $makeDefault = $makeDefault || !$profiles;
+        $now = Factory::getDate()->toSql();
+        $identity = Factory::getApplication()->getIdentity();
+        $profile = (object) array(
+            'venue_id' => $venueId,
+            'code' => $code,
+            'name' => $name,
+            'revision' => 1,
+            'capacity' => 0,
+            'is_default' => 0,
+            'published' => 1,
+            'ordering' => max(0, $ordering),
+            'created' => $now,
+            'created_by' => (int) ($identity->id ?? 0),
+        );
+        $db->insertObject('#__jem_venue_capacity_profiles', $profile, 'id');
+        if ($makeDefault) {
+            self::setDefaultProfile($venueId, (int) $profile->id);
+        }
+
+        return (int) $profile->id;
+    }
+
+    /**
+     * Make one active profile the unique Venue default.
+     */
+    public static function setDefaultProfile(int $venueId, int $profileId): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_venue_capacity_profiles'))
+            ->where($db->quoteName('id') . ' = ' . $profileId)
+            ->where($db->quoteName('venue_id') . ' = ' . $venueId);
+        $db->setQuery($query);
+        if ((int) $db->loadResult() !== 1) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_OWNERSHIP'));
+        }
+
+        $db->transactionStart();
+        try {
+            $db->setQuery(
+                'SELECT ' . $db->quoteName('id')
+                . ' FROM ' . $db->quoteName('#__jem_venues')
+                . ' WHERE ' . $db->quoteName('id') . ' = ' . $venueId
+                . ' FOR UPDATE'
+            )->loadResult();
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_venue_capacity_profiles'))
+                    ->set($db->quoteName('is_default') . ' = 0')
+                    ->where($db->quoteName('venue_id') . ' = ' . $venueId)
+            )->execute();
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_venue_capacity_profiles'))
+                    ->set($db->quoteName('is_default') . ' = 1')
+                    ->set($db->quoteName('published') . ' = 1')
+                    ->where($db->quoteName('id') . ' = ' . $profileId)
+                    ->where($db->quoteName('venue_id') . ' = ' . $venueId)
+            )->execute();
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            $db->transactionRollback();
+            throw $error;
+        }
+    }
+
+    /**
+     * Archive a non-default profile without deleting snapshot history.
+     */
+    public static function archiveProfile(int $venueId, int $profileId): void
+    {
+        $configuration = self::getConfiguration($venueId, $profileId);
+        if (!empty($configuration['profile_is_default'])) {
+            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_ARCHIVE_DEFAULT'));
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $profile = (object) array('id' => $profileId, 'published' => 0);
+        $db->updateObject('#__jem_venue_capacity_profiles', $profile, 'id');
+    }
+
+    /**
+     * Move a profile in the selector while retaining stable profile identity.
+     */
+    public static function moveProfile(int $venueId, int $profileId, int $direction): void
+    {
+        $profiles = array_values(array_filter(
+            self::getProfiles($venueId),
+            static fn (array $profile): bool => (int) $profile['published'] === 1
+        ));
+        $index = null;
+        foreach ($profiles as $position => $profile) {
+            if ((int) $profile['id'] === $profileId) {
+                $index = $position;
+                break;
+            }
+        }
+        $target = $index === null ? -1 : $index + ($direction < 0 ? -1 : 1);
+        if ($index === null || $target < 0 || $target >= count($profiles)) {
+            return;
+        }
+        [$profiles[$index], $profiles[$target]] = [$profiles[$target], $profiles[$index]];
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $db->transactionStart();
+        try {
+            foreach ($profiles as $ordering => $profile) {
+                $row = (object) array('id' => (int) $profile['id'], 'ordering' => $ordering);
+                $db->updateObject('#__jem_venue_capacity_profiles', $row, 'id');
+            }
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            $db->transactionRollback();
+            throw $error;
+        }
+    }
+
+    /**
+     * Save one profile and create immutable Layout revisions only after an
+     * effective physical change. A zero profile ID creates a reusable profile.
+     */
+    public static function saveProfileConfiguration(
+        int $venueId,
+        int $profileId,
         array $configuration,
-        ?string $profileName = null
+        ?string $profileName = null,
+        ?string $requestedCode = null,
+        bool $setDefault = false,
+        int $ordering = 0
     ): array
     {
-        $current = self::getDefaultConfiguration($venueId);
-        if ((int) $current['profile_id'] < 1) {
-            self::ensureDefaultProfile($venueId);
-            $current = self::getDefaultConfiguration($venueId);
+        if ($profileId < 1) {
+            $profileId = self::createProfile(
+                $venueId,
+                self::normaliseProfileName($profileName),
+                $requestedCode,
+                $setDefault,
+                $ordering
+            );
         }
+        $current = self::getConfiguration($venueId, $profileId);
         $profileName = self::normaliseProfileName($profileName ?? (string) $current['profile_name']);
         $profileCapacity = (int) ($configuration['profile_capacity'] ?? $current['profile_capacity']);
         $configuration['profile_capacity'] = $profileCapacity;
@@ -310,11 +543,17 @@ class JemVenueCapacityService
         }
         foreach ($configuration['spaces'] as &$space) {
             $spaceId = (int) ($space['space_id'] ?? 0);
-            if ($spaceId > 0 && isset($currentBySpaceId[$spaceId])) {
+            $ownedSpace = $spaceId > 0
+                ? self::loadOwnedSpaceConfiguration($venueId, $spaceId, (int) ($space['layout_id'] ?? 0))
+                : array();
+            if ($spaceId > 0 && !$ownedSpace) {
+                throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SPACE_OWNERSHIP'));
+            }
+            if ($ownedSpace) {
                 // Physical spaces and their immutable layout revision chains keep
                 // their aliases for their whole lifetime.
-                $space['space_code'] = (string) $currentBySpaceId[$spaceId]['space_code'];
-                $space['layout_code'] = (string) $currentBySpaceId[$spaceId]['layout_code'];
+                $space['space_code'] = (string) $ownedSpace['space_code'];
+                $space['layout_code'] = (string) $ownedSpace['layout_code'];
             }
         }
         unset($space);
@@ -322,8 +561,9 @@ class JemVenueCapacityService
         $configurationChanged = self::configurationFingerprint($current)
             !== self::configurationFingerprint($configuration);
         $profileNameChanged = $profileName !== (string) $current['profile_name'];
+        $orderingChanged = $ordering !== (int) ($current['profile_ordering'] ?? 0);
 
-        if (!$configurationChanged && !$profileNameChanged) {
+        if (!$configurationChanged && !$profileNameChanged && !$orderingChanged && !$setDefault) {
             return $current;
         }
 
@@ -340,11 +580,11 @@ class JemVenueCapacityService
             foreach ($configurationChanged ? $configuration['spaces'] : array() as $ordering => $spaceData) {
                 $spaceId = (int) ($spaceData['space_id'] ?? 0);
                 $currentSpace = $spaceId > 0 ? ($currentBySpaceId[$spaceId] ?? null) : null;
-                if ($spaceId > 0 && $currentSpace === null) {
-                    throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SPACE_OWNERSHIP'));
-                }
+                $referenceSpace = $currentSpace ?: ($spaceId > 0
+                    ? self::loadOwnedSpaceConfiguration($venueId, $spaceId, (int) ($spaceData['layout_id'] ?? 0))
+                    : null);
 
-                if ($currentSpace !== null) {
+                if ($referenceSpace !== null) {
                     $spaceRow = (object) array(
                         'id'          => $spaceId,
                         'name'        => $spaceData['space_name'],
@@ -370,10 +610,10 @@ class JemVenueCapacityService
                     $spaceId = (int) $spaceRow->id;
                 }
 
-                $layoutUnchanged = $currentSpace !== null
-                    && self::layoutFingerprint($currentSpace) === self::layoutFingerprint($spaceData);
+                $layoutUnchanged = $referenceSpace !== null
+                    && self::layoutFingerprint($referenceSpace) === self::layoutFingerprint($spaceData);
                 if ($layoutUnchanged) {
-                    $layoutId = (int) $currentSpace['layout_id'];
+                    $layoutId = (int) $referenceSpace['layout_id'];
                 } else {
                     $query = $db->getQuery(true)
                         ->select('MAX(' . $db->quoteName('revision') . ')')
@@ -445,6 +685,8 @@ class JemVenueCapacityService
                 'name'        => $profileName,
                 'revision'    => (int) $current['profile_revision'] + ($configurationChanged ? 1 : 0),
                 'capacity'    => $profileCapacity,
+                'ordering'    => $ordering,
+                'published'   => 1,
                 'modified'    => $now,
                 'modified_by' => $userId,
             );
@@ -455,7 +697,32 @@ class JemVenueCapacityService
             throw $e;
         }
 
-        return self::getDefaultConfiguration($venueId);
+        if ($setDefault) {
+            self::setDefaultProfile($venueId, $profileId);
+        }
+
+        return self::getConfiguration($venueId, $profileId);
+    }
+
+    /**
+     * Backwards-compatible wrapper for the original single-profile editor.
+     */
+    public static function saveDefaultConfiguration(
+        int $venueId,
+        array $configuration,
+        ?string $profileName = null
+    ): array {
+        $profileId = self::findDefaultProfileId($venueId);
+
+        return self::saveProfileConfiguration(
+            $venueId,
+            $profileId,
+            $configuration,
+            $profileName,
+            $profileId > 0 ? null : self::DEFAULT_PROFILE_CODE,
+            true,
+            0
+        );
     }
 
     /**
@@ -463,11 +730,7 @@ class JemVenueCapacityService
      */
     public static function buildEventSnapshot(int $venueId, ?array $assignmentIds = null): array
     {
-        $configuration = self::getDefaultConfiguration($venueId);
-        if (empty($configuration['spaces'])) {
-            throw new RuntimeException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_LAYOUT_REQUIRED'));
-        }
-
+        $profileId = 0;
         if ($assignmentIds !== null) {
             $assignmentIds = array_values(array_unique(array_filter(
                 array_map('intval', $assignmentIds),
@@ -476,7 +739,26 @@ class JemVenueCapacityService
             if (!$assignmentIds) {
                 throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CONFIGURATION_SELECTION'));
             }
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select('DISTINCT ps.venue_profile_id')
+                ->from($db->quoteName('#__jem_venue_profile_spaces', 'ps'))
+                ->join('INNER', $db->quoteName('#__jem_venue_capacity_profiles', 'p') . ' ON p.id = ps.venue_profile_id')
+                ->where('p.venue_id = ' . $venueId)
+                ->where('ps.id IN (' . implode(',', $assignmentIds) . ')');
+            $db->setQuery($query);
+            $profileIds = array_map('intval', (array) $db->loadColumn());
+            if (count($profileIds) !== 1) {
+                throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CONFIGURATION_SELECTION'));
+            }
+            $profileId = (int) $profileIds[0];
+        }
+        $configuration = self::getConfiguration($venueId, $profileId);
+        if (empty($configuration['spaces'])) {
+            throw new RuntimeException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_LAYOUT_REQUIRED'));
+        }
 
+        if ($assignmentIds !== null) {
             $available = array_column($configuration['spaces'], null, 'assignment_id');
             foreach ($assignmentIds as $assignmentId) {
                 if (!isset($available[$assignmentId])) {
@@ -681,94 +963,87 @@ class JemVenueCapacityService
      */
     public static function getEventConfigurationOptions(int $venueId, int $combinationLimit = 12): array
     {
-        $configuration = self::getDefaultConfiguration($venueId);
-        $spaces = array_values((array) ($configuration['spaces'] ?? array()));
-        if (!$spaces) {
-            return array(
-                'profile' => $configuration,
-                'assignments' => array(),
-                'options' => array(),
-                'custom_required' => false,
-            );
-        }
-
-        $assignments = array_map(static function (array $space): array {
-            return array(
-                'id' => (int) $space['assignment_id'],
-                'space_id' => (int) $space['space_id'],
-                'space_code' => (string) $space['space_code'],
-                'space_name' => (string) $space['space_name'],
-                'space_color' => (string) $space['space_color'],
-                'layout_id' => (int) $space['layout_id'],
-                'layout_code' => (string) $space['layout_code'],
-                'layout_name' => (string) $space['layout_name'],
-                'layout_color' => (string) $space['layout_color'],
-                'layout_revision' => (int) $space['layout_revision'],
-                'capacity' => (int) $space['layout_capacity'],
-            );
-        }, $spaces);
-
-        $count = count($assignments);
-        $combinationCount = $count >= 31 ? PHP_INT_MAX : (2 ** $count) - 1;
-        $customRequired = $combinationCount > $combinationLimit;
-        $sets = array();
-
-        $allIds = array_column($assignments, 'id');
-        $sets[] = $allIds;
-        if ($customRequired) {
-            foreach (array_slice($assignments, 0, max(0, $combinationLimit - 2)) as $assignment) {
-                $sets[] = array((int) $assignment['id']);
+        $profileRows = array_values(array_filter(
+            self::getProfiles($venueId),
+            static fn (array $profile): bool => (int) $profile['published'] === 1
+        ));
+        $profiles = array();
+        $assignments = array();
+        $options = array();
+        $customRequired = false;
+        foreach ($profileRows as $profileRow) {
+            $configuration = self::getConfiguration($venueId, (int) $profileRow['id']);
+            $spaces = array_values((array) ($configuration['spaces'] ?? array()));
+            if (!$spaces) {
+                continue;
             }
-        } else {
-            for ($size = 1; $size <= $count; $size++) {
-                foreach (self::combinations($allIds, $size) as $ids) {
-                    if ($ids !== $allIds) {
-                        $sets[] = $ids;
+            $profileAssignments = array_map(static function (array $space) use ($configuration): array {
+                return array(
+                    'id' => (int) $space['assignment_id'],
+                    'profile_id' => (int) $configuration['profile_id'],
+                    'profile_code' => (string) $configuration['profile_code'],
+                    'profile_name' => (string) $configuration['profile_name'],
+                    'space_id' => (int) $space['space_id'],
+                    'space_code' => (string) $space['space_code'],
+                    'space_name' => (string) $space['space_name'],
+                    'space_color' => (string) $space['space_color'],
+                    'layout_id' => (int) $space['layout_id'],
+                    'layout_code' => (string) $space['layout_code'],
+                    'layout_name' => (string) $space['layout_name'],
+                    'layout_color' => (string) $space['layout_color'],
+                    'layout_revision' => (int) $space['layout_revision'],
+                    'capacity' => (int) $space['layout_capacity'],
+                );
+            }, $spaces);
+            $assignments = array_merge($assignments, $profileAssignments);
+            $count = count($profileAssignments);
+            $combinationCount = $count >= 31 ? PHP_INT_MAX : (2 ** $count) - 1;
+            $profileNeedsCustom = $combinationCount > $combinationLimit;
+            $customRequired = $customRequired || $profileNeedsCustom;
+            $allIds = array_column($profileAssignments, 'id');
+            $sets = array($allIds);
+            if ($profileNeedsCustom) {
+                foreach (array_slice($profileAssignments, 0, max(0, $combinationLimit - 1)) as $assignment) {
+                    $sets[] = array((int) $assignment['id']);
+                }
+            } else {
+                for ($size = 1; $size <= $count; $size++) {
+                    foreach (self::combinations($allIds, $size) as $ids) {
+                        if ($ids !== $allIds) {
+                            $sets[] = $ids;
+                        }
                     }
                 }
             }
-        }
-
-        $byId = array_column($assignments, null, 'id');
-        $options = array();
-        foreach ($sets as $ids) {
-            sort($ids, SORT_NUMERIC);
-            $selected = array_values(array_intersect_key($byId, array_flip($ids)));
-            $capacity = array_sum(array_column($selected, 'capacity'));
-            $entire = count($ids) === $count;
-            if ($entire) {
-                $label = Text::sprintf(
-                    'COM_JEM_EVENT_VENUE_CONFIGURATION_ENTIRE',
-                    (string) $configuration['profile_name'],
-                    $count,
-                    $capacity
-                );
-            } elseif (count($selected) === 1) {
-                $label = Text::sprintf(
-                    'COM_JEM_EVENT_VENUE_CONFIGURATION_SPACE',
-                    (string) $selected[0]['space_name'],
-                    (string) $selected[0]['layout_name'],
-                    $capacity
-                );
-            } else {
-                $label = Text::sprintf(
-                    'COM_JEM_EVENT_VENUE_CONFIGURATION_COMBINATION',
-                    implode(' + ', array_column($selected, 'space_name')),
-                    $capacity
+            $byId = array_column($profileAssignments, null, 'id');
+            foreach ($sets as $ids) {
+                sort($ids, SORT_NUMERIC);
+                $selected = array_values(array_intersect_key($byId, array_flip($ids)));
+                $capacity = array_sum(array_column($selected, 'capacity'));
+                $entire = count($ids) === $count;
+                if ($entire) {
+                    $label = Text::sprintf('COM_JEM_EVENT_VENUE_CONFIGURATION_ENTIRE', (string) $configuration['profile_name'], $count, $capacity);
+                } elseif (count($selected) === 1) {
+                    $label = Text::sprintf('COM_JEM_EVENT_VENUE_CONFIGURATION_SPACE', (string) $selected[0]['space_name'], (string) $selected[0]['layout_name'], $capacity);
+                } else {
+                    $label = Text::sprintf('COM_JEM_EVENT_VENUE_CONFIGURATION_COMBINATION', implode(' + ', array_column($selected, 'space_name')), $capacity);
+                }
+                $options[] = array(
+                    'key' => 'profile:' . (int) $configuration['profile_id'] . ':selection:' . implode(',', $ids),
+                    'profile_id' => (int) $configuration['profile_id'],
+                    'label' => $label,
+                    'assignment_ids' => $ids,
+                    'capacity' => $capacity,
+                    'spaces' => $selected,
+                    'entire_profile' => $entire,
                 );
             }
-            $options[] = array(
-                'key' => 'selection:' . implode(',', $ids),
-                'label' => $label,
-                'assignment_ids' => $ids,
-                'capacity' => $capacity,
-                'spaces' => $selected,
-                'entire_profile' => $entire,
-            );
+            $profiles[] = $configuration;
         }
 
         return array(
-            'profile' => $configuration,
+            'profile' => $profiles ? $profiles[0] : self::getDefaultConfiguration($venueId),
+            'profiles' => $profiles,
             'assignments' => $assignments,
             'options' => $options,
             'custom_required' => $customRequired,
@@ -791,6 +1066,42 @@ class JemVenueCapacityService
         }
 
         return $sets;
+    }
+
+    private static function loadOwnedSpaceConfiguration(int $venueId, int $spaceId, int $layoutId): array
+    {
+        if ($venueId < 1 || $spaceId < 1 || $layoutId < 1) {
+            return array();
+        }
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                's.id AS space_id', 's.code AS space_code', 's.name AS space_name',
+                's.color AS space_color', 's.description AS space_description',
+                's.image AS space_image', 's.image_alt AS space_image_alt',
+                'l.id AS layout_id', 'l.code AS layout_code', 'l.name AS layout_name',
+                'l.revision AS layout_revision', 'l.capacity AS layout_capacity',
+                'l.color AS layout_color', 'l.image AS layout_image', 'l.image_alt AS layout_image_alt',
+            ))
+            ->from($db->quoteName('#__jem_venue_spaces', 's'))
+            ->join('INNER', $db->quoteName('#__jem_venue_layouts', 'l') . ' ON l.venue_space_id = s.id')
+            ->where('s.id = ' . $spaceId)
+            ->where('s.venue_id = ' . $venueId)
+            ->where('l.id = ' . $layoutId);
+        $db->setQuery($query);
+        $space = $db->loadAssoc() ?: array();
+        if (!$space) {
+            return array();
+        }
+        $query = $db->getQuery(true)
+            ->select(array('id', 'code', 'name', 'image', 'image_alt', 'color', 'description', 'capacity', 'allocation_mode', 'published', 'ordering'))
+            ->from($db->quoteName('#__jem_venue_capacity_areas'))
+            ->where($db->quoteName('venue_layout_id') . ' = ' . $layoutId)
+            ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('id') . ' ASC');
+        $db->setQuery($query);
+        $space['areas'] = (array) $db->loadAssocList();
+
+        return $space;
     }
 
     private static function normaliseCode($value): string
@@ -902,10 +1213,10 @@ class JemVenueCapacityService
         if ($normalised['space_name'] === '' || $normalised['layout_name'] === '') {
             throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_SPACE_LAYOUT'));
         }
-        if ($normalised['space_code'] === '') {
+        if ($normalised['space_id'] < 1) {
             $normalised['space_code'] = self::normaliseCode($normalised['space_name']);
         }
-        if ($normalised['layout_code'] === '') {
+        if ($normalised['layout_id'] < 1) {
             $normalised['layout_code'] = self::normaliseCode($normalised['layout_name']);
         }
         if ($normalised['space_code'] === '' || $normalised['layout_code'] === '') {

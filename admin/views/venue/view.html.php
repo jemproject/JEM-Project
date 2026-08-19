@@ -50,6 +50,10 @@ class JemViewVenue extends JemAdminView
         $app            = Factory::getApplication();
         $this->document = $app->getDocument();
         $this->settings = JemAdmin::config();
+        $this->featurePolicy = JemFeaturePolicy::current();
+        $this->showAdvancedData = !empty($this->item->parent_venue_id)
+            || !empty($this->item->capacity_profile)
+            || !empty($this->item->capacity_profiles);
         $globalregistry = JemHelper::globalattribs();
         $task           = $app->input->get('task', '');
         $this->task     = $task;

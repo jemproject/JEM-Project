@@ -978,6 +978,14 @@ Text::script('JCANCEL');
                         <dt><?php echo $this->form->getLabel('alias'); ?></dt>
                         <dd><?php echo $this->form->getInput('alias'); ?></dd>
                     <?php endif; ?>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY)) : ?>
+                        <dt><?php echo $this->form->getLabel('parent_venue_id'); ?></dt>
+                        <dd><?php echo $this->form->getInput('parent_venue_id'); ?></dd>
+                        <dt><?php echo $this->form->getLabel('timezone_inherited_note'); ?></dt>
+                        <dd><?php echo $this->form->getInput('timezone_inherited_note'); ?></dd>
+                        <dt><?php echo $this->form->getLabel('venue_tree_order'); ?></dt>
+                        <dd><?php echo $this->form->getInput('venue_tree_order'); ?></dd>
+                    <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('street'); ?></dt>
                     <dd><?php echo $this->form->getInput('street'); ?></dd>
                     <dt><?php echo $this->form->getLabel('postalCode'); ?></dt>
@@ -988,8 +996,10 @@ Text::script('JCANCEL');
                     <dd><?php echo $this->form->getInput('district'); ?></dd>
                     <dt><?php echo $this->form->getLabel('level'); ?></dt>
                     <dd><?php echo $this->form->getInput('level'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('capacity'); ?></dt>
-                    <dd><?php echo $this->form->getInput('capacity'); ?></dd>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
+                        <dt><?php echo $this->form->getLabel('capacity'); ?></dt>
+                        <dd><?php echo $this->form->getInput('capacity'); ?></dd>
+                    <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('state'); ?></dt>
                     <dd><?php echo $this->form->getInput('state'); ?></dd>
                     <dt><?php echo $this->form->getLabel('country'); ?></dt>

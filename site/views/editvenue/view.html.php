@@ -56,6 +56,7 @@ class JemViewEditvenue extends JemView
         $params = $this->params;
 
         $this->form = $this->get('Form');
+        $this->featurePolicy = JemFeaturePolicy::current();
         $this->return_page = $this->get('ReturnPage');
 
         // check for data error

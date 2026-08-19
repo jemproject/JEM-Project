@@ -25,6 +25,10 @@ final class PricedAttendeeOrderViewTest extends TestCase
         self::assertStringContainsString("Session::checkToken('get')", $controller);
         self::assertStringContainsString('getPricingData($eventId, $userId, $registrationId)', $controller);
         self::assertStringContainsString('empty($this->pricing->is_priced)', $view);
+        self::assertStringContainsString('commerceReadOnly', $view);
+        self::assertStringContainsString('FEATURE_PRICING', $view);
+        self::assertStringContainsString('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY', $model);
+        self::assertStringContainsString('FEATURE_PRICING', $controller);
     }
 
     public function testRegisteredUsersListShowsOrdersAndPreventsLegacyPricedTransitions(): void
@@ -46,6 +50,22 @@ final class PricedAttendeeOrderViewTest extends TestCase
         self::assertStringContainsString('getCommercialBreakdowns', $model);
         self::assertStringContainsString('getPoolAvailability', $model);
         self::assertStringContainsString("Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED')", $itemModel);
+        self::assertStringContainsString('commerceReadOnly', $view);
+        self::assertStringContainsString('assertCommerceMutationAllowedForEvent', $this->read('/admin/controllers/attendees.php'));
+    }
+
+    public function testDeferredPricedRegistrationsAreReadOnlyOnTheFrontend(): void
+    {
+        $view = $this->read('/site/views/event/view.html.php');
+        $model = $this->read('/site/models/event.php');
+        $classic = $this->read('/site/views/event/tmpl/default_attendees.php');
+        $responsive = $this->read('/site/views/event/tmpl/responsive/default_attendees.php');
+
+        self::assertStringContainsString('FEATURE_PRICING', $view);
+        self::assertStringContainsString('$this->showRegistrationAction = false', $view);
+        self::assertStringContainsString('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY', $model);
+        self::assertStringContainsString('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY', $classic);
+        self::assertStringContainsString('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY', $responsive);
     }
 
     private function read(string $path): string

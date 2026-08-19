@@ -68,7 +68,11 @@ final class EventPricingCapacityViewTest extends TestCase
             '/jem-capacity-venue-toolbar.*jem-capacity-profile-actions.*jem-capacity-profile-card/s',
             $capacity
         );
-        self::assertStringContainsString('COM_JEM_VENUE_CAPACITY_PROFILE_FUTURE_DESC', $capacity);
+        self::assertStringContainsString('data-action="add-profile"', $capacity);
+        self::assertStringContainsString('data-action="set-default"', $capacity);
+        self::assertStringContainsString('data-action="duplicate-profile"', $capacity);
+        self::assertStringContainsString('COM_JEM_VENUE_CAPACITY_PROFILE_OPTION_SUMMARY', $capacity);
+        self::assertStringContainsString('data-action="archive-profile"', $capacity);
         self::assertStringContainsString('data-role="profile-title"', $capacity);
         self::assertStringContainsString('data-role="profile-option"', $capacity);
         self::assertStringContainsString('jem-capacity-profile-revision', $capacity);
@@ -123,14 +127,14 @@ final class EventPricingCapacityViewTest extends TestCase
             '/data-role="profile-capacity">0<\/strong>\s*<span>\/<\/span>\s*<strong data-role="venue-capacity">0/',
             $capacity
         );
-        self::assertMatchesRegularExpression('/<select[^>]+jem-capacity-profile-selector[^>]+disabled>/', $capacity);
-        self::assertMatchesRegularExpression('/<button[^>]+btn btn-outline-primary[^>]+disabled>/', $capacity);
+        self::assertDoesNotMatchRegularExpression('/<select[^>]+jem-capacity-profile-selector[^>]+disabled>/', $capacity);
+        self::assertStringContainsString('profileSelector.addEventListener', $capacity);
         self::assertMatchesRegularExpression('/<input type="hidden" data-field="space_code">/', $capacity);
         self::assertStringNotContainsString('COM_JEM_VENUE_CAPACITY_SPACE_CODE_DESC', $capacity);
         self::assertStringContainsString('data-action="remove-space-image"', $capacity);
         self::assertStringContainsString('data-action="remove-layout-image"', $capacity);
         self::assertMatchesRegularExpression('/data-field="layout_code"[^>]+readonly/', $capacity);
-        self::assertStringContainsString("\$space['layout_code'] = (string) \$currentBySpaceId[\$spaceId]['layout_code'];", $this->read('/admin/classes/venuecapacity.class.php'));
+        self::assertStringContainsString("\$space['layout_code'] = (string) \$ownedSpace['layout_code'];", $this->read('/admin/classes/venuecapacity.class.php'));
         self::assertStringNotContainsString('type="checkbox" class="form-check-input" value="1" data-field="space_image_remove"', $capacity);
         self::assertStringContainsString("spaces[spaceIndex].space_image_alt = '';", $capacity);
         self::assertStringContainsString("spaces[spaceIndex].layout_image_alt = '';", $capacity);
@@ -145,7 +149,7 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringNotContainsString('name="capacity_profile_name" type="text"\n            readonly="true"', $form);
         self::assertStringContainsString('name="capacity_configuration_submitted" type="hidden" default="0"', $form);
         self::assertStringNotContainsString('JemVenueCapacityService::ensureDefaultProfile((int) $pk);', $this->read('/admin/models/venue.php'));
-        self::assertStringContainsString('if ((int) $current[\'profile_id\'] < 1)', $this->read('/admin/classes/venuecapacity.class.php'));
+        self::assertStringContainsString('saveProfileConfiguration', $this->read('/admin/classes/venuecapacity.class.php'));
         self::assertStringContainsString('.jem-venue-capacity-editor', $css);
         self::assertStringContainsString('.jem-venue-location-card', $css);
         self::assertStringContainsString('.jem-capacity-space-card > .jem-capacity-card-header', $css);
@@ -171,36 +175,25 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('@media (max-width: 767.98px)', $css);
     }
 
-    public function testEventEditorExposesPricingCapacityWorkflowAndCountryTaxFilter(): void
+    public function testEventEditorExposesNonCommercialVenueCapacityWorkflow(): void
     {
         $edit = $this->read('/admin/views/event/tmpl/edit.php');
-        $pricing = $this->read('/admin/views/event/tmpl/edit_pricing.php');
+        $capacity = $this->read('/admin/views/event/tmpl/edit_capacity.php');
         $form = $this->read('/admin/models/forms/event.xml');
 
-        self::assertStringContainsString("loadTemplate('pricing')", $edit);
-        self::assertStringContainsString('COM_JEM_EVENT_PRICING_CAPACITY_TAB', $edit);
-        self::assertStringContainsString('jem-event-pricing-readiness', $pricing);
-        self::assertStringContainsString('filterTaxRates', $pricing);
-        self::assertStringContainsString('data-country-code', $pricing);
-        self::assertStringContainsString('copyRow', $pricing);
-        self::assertStringContainsString('updatePreviews', $pricing);
-        self::assertStringContainsString('populateCapacityOptions', $pricing);
-        self::assertStringContainsString('jem-event-venue-configuration-select', $pricing);
-        self::assertStringContainsString('configuration_custom_required', $pricing);
-        self::assertStringContainsString('event.venueConfigurations', $pricing);
-        self::assertStringContainsString('loadVenueConfigurations', $pricing);
-        self::assertStringContainsString('jform_locid_id', $pricing);
-        self::assertStringContainsString('syncConfigurationSelection', $pricing);
-        self::assertStringContainsString("'source:' + pool.code", $pricing);
-        self::assertStringContainsString('BigInt(', $pricing);
-        self::assertStringContainsString("baseCode + '-copy-' + suffix", $pricing);
-        self::assertStringContainsString('jem-price-advanced-toggle', $pricing);
-        self::assertStringContainsString("details.hidden = classic", $pricing);
-        self::assertStringContainsString("taxRate.toggleAttribute('required', !classic)", $pricing);
-        self::assertStringContainsString("taxRate.classList.toggle('required', !classic)", $pricing);
-        self::assertStringContainsString("control.removeAttribute('required')", $pricing);
-        self::assertStringContainsString("control.classList.remove('required')", $pricing);
-        self::assertStringContainsString("control.setAttribute('required', 'required')", $pricing);
+        self::assertStringContainsString("loadTemplate('capacity')", $edit);
+        self::assertStringContainsString('COM_JEM_EVENT_VENUE_CAPACITY_TAB', $edit);
+        self::assertStringNotContainsString("loadTemplate('pricing')", $edit);
+        self::assertStringContainsString('jem-event-pricing-readiness', $capacity);
+        self::assertStringContainsString('jem-event-venue-configuration-select', $capacity);
+        self::assertStringContainsString('configuration_custom_required', $capacity);
+        self::assertStringContainsString('event.venueConfigurations', $capacity);
+        self::assertStringContainsString('loadVenueConfigurations', $capacity);
+        self::assertStringContainsString('jform_locid_id', $capacity);
+        self::assertStringContainsString('jform_venue_allocation_mode', $capacity);
+        self::assertStringContainsString('jform_capacity_mode', $capacity);
+        self::assertStringNotContainsString('filterTaxRates', $capacity);
+        self::assertStringNotContainsString('data-country-code', $capacity);
         self::assertStringContainsString('jemRevealInvalidEventFields', $edit);
         self::assertStringContainsString('[aria-invalid="true"]', $edit);
         self::assertStringContainsString('bootstrap.Tab.getOrCreateInstance(tabTrigger).show()', $edit);
@@ -211,7 +204,7 @@ final class EventPricingCapacityViewTest extends TestCase
             $this->read('/admin/language/en-GB/com_jem.ini')
         );
 
-        foreach (array('pricing_mode', 'currency', 'capacity_pools', 'event_prices', 'venue_snapshot', 'venue_configuration_key', 'venue_assignment_ids') as $field) {
+        foreach (array('venue_allocation_mode', 'capacity_mode', 'pricing_mode', 'currency', 'capacity_pools', 'event_prices', 'venue_snapshot', 'venue_configuration_key', 'venue_assignment_ids') as $field) {
             self::assertStringContainsString('name="' . $field . '"', $form);
         }
         self::assertStringContainsString('<option value="single">', $form);

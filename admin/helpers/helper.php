@@ -219,11 +219,13 @@ class JemHelperBackend
         );
 
         if (self::canManage('core.options')) {
-            JemSidebarHelper::addEntry(
-                Text::_('COM_JEM_TAX_RATES'),
-                'index.php?option=com_jem&view=taxrates',
-                in_array($vName, array('taxrates', 'taxrate'), true)
-            );
+            if (JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+                JemSidebarHelper::addEntry(
+                    Text::_('COM_JEM_TAX_RATES'),
+                    'index.php?option=com_jem&view=taxrates',
+                    in_array($vName, array('taxrates', 'taxrate'), true)
+                );
+            }
 
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_SETTINGS_TITLE'),
@@ -280,7 +282,8 @@ class JemHelperBackend
 
         $canManageNotificationTemplates = self::canManage('jem.notifications.templates');
         $canViewNotificationHistory = self::canManage('jem.notifications.history');
-        if ($canManageNotificationTemplates || $canViewNotificationHistory) {
+        if (JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)
+            && ($canManageNotificationTemplates || $canViewNotificationHistory)) {
             $notificationView = $canManageNotificationTemplates ? 'notifications' : 'notificationhistory';
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_NOTIFICATIONS'),

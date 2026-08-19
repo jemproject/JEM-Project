@@ -53,6 +53,10 @@ class JemViewEvent extends JemAdminView
         $this->document = $app->getDocument();
         $user           = JemFactory::getUser();
         $this->settings = JemAdmin::config();
+        $this->featurePolicy = JemFeaturePolicy::current();
+        $this->showAdvancedData = !empty($this->item->parent_event_id)
+            || !empty($this->item->venue_profile_id)
+            || trim((string) ($this->item->venue_snapshot ?? '')) !== '';
         $task           = $app->input->get('task', '');
         $this->task     = $task;
         $uri            = Uri::getInstance();

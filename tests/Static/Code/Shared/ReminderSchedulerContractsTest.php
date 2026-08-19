@@ -51,6 +51,8 @@ final class ReminderSchedulerContractsTest extends TestCase
         self::assertStringContainsString("'09:00'", $reminders);
         self::assertStringContainsString('if (empty($event->dates))', $reminders);
         self::assertStringContainsString("array(10, 30, 120)", $notifications);
+        self::assertStringContainsString('$completedAt = Factory::getDate(time())', $notifications);
+        self::assertStringContainsString('$completedAt->toUnix() + ($delayMinutes * 60)', $notifications);
         self::assertStringContainsString('recoverStaleProcessing', $notifications);
         self::assertStringContainsString('purgeExpired', $notifications);
         self::assertStringContainsString('if ($days <= 0)', $notifications);

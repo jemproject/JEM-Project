@@ -3,6 +3,21 @@
     <config>
         <inlinehelp button="show"/>
     </config>
+    <fieldset name="operatingprofile" label="COM_JEM_OPERATING_PROFILE">
+        <field name="operating_profile" type="list"
+            label="COM_JEM_OPERATING_PROFILE"
+            description="COM_JEM_OPERATING_PROFILE_DESC"
+            class="form-select"
+            default="essential"
+            filter="cmd"
+            validate="options"
+            required="true"
+        >
+            <option value="essential">COM_JEM_OPERATING_PROFILE_ESSENTIAL</option>
+            <option value="advanced">COM_JEM_OPERATING_PROFILE_ADVANCED</option>
+        </field>
+        <field name="operating_profile_configured" type="hidden" default="0" filter="integer" />
+    </fieldset>
     <fieldset name="globalparam2"
             label="COM_JEM_GLOBAL_PARAMETERS"
     >
@@ -2423,6 +2438,17 @@
             <field name="event_show_locdescription" type="radio"
                 label="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT"
                 description="COM_JEM_EVENT_DISPLAY_VENUE_DESCRIPT_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="1"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+
+            <field name="event_show_venue_configuration" type="radio"
+                label="COM_JEM_EVENT_DISPLAY_VENUE_CONFIGURATION"
+                description="COM_JEM_EVENT_DISPLAY_VENUE_CONFIGURATION_DESC"
                 class="inputbox btn-group btn-group-yesno"
                 default="1"
                 required="false"

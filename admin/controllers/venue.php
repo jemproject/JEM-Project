@@ -62,6 +62,20 @@ class JemControllerVenue extends JemControllerForm
     }
 
     /**
+     * Keep the profile being edited selected after Save or Apply.
+     */
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
+    {
+        $append = parent::getRedirectToItemAppend($recordId, $urlVar);
+        $profileId = (int) $this->getModel()->getState('venue.capacity_profile_id', 0);
+        if ($profileId > 0) {
+            $append .= '&profile_id=' . $profileId;
+        }
+
+        return $append;
+    }
+
+    /**
      * Function that allows child controller access to model data
      * after the data has been saved.
      * Here used to trigger the jem plugins, mainly the mailer.

@@ -419,6 +419,27 @@ class JemViewEvent extends JemView
             $this->isregistered = false;
         }
         $this->registration  = $registration;
+        $this->commerceReadOnly = in_array(
+            (string) ($item->pricing_mode ?? 'classic'),
+            array('single', 'multiple', 'priced'),
+            true
+        ) && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING);
+        if ($this->commerceReadOnly) {
+            $this->showRegForm = false;
+            $this->showRegistrationAction = false;
+        }
+        $this->capacityRegistration = (new JemRegistrationService())->capacityOptions(
+            (int) $item->id,
+            is_object($registration) ? (int) $registration->id : 0
+        );
+        $showVenueConfiguration = (int) $item->params->get('event_show_venue_configuration', -1);
+        if ($showVenueConfiguration < 0) {
+            $showVenueConfiguration = (int) $settings->get('event_show_venue_configuration', 1);
+        }
+        $this->showVenueConfiguration = $showVenueConfiguration === 1;
+        $this->venueConfiguration = $this->showVenueConfiguration
+            ? JemVenueSnapshot::lines($item)
+            : array();
         $this->dispatcher    = $dispatcher;
         $pageclass_sfx          =  $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

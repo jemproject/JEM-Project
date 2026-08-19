@@ -25,6 +25,8 @@ $wa         = $document->getWebAssetManager();
 $waitingListPlaces = array();
 $waitingListIds = array();
 $isPriced = !empty($this->isPriced);
+$isCommerceReadOnly = !empty($this->commerceReadOnly);
+$isAreaCapacity = !empty($this->isAreaCapacity);
 
 foreach ($this->items as $item) {
     $waitingListPlaces[(int) $item->id] = max(1, (int) $item->places);
@@ -83,6 +85,11 @@ $wa->addInlineScript('
 ?>
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&eventid='.$this->event->id); ?>"  method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
+        <?php if ($isCommerceReadOnly) : ?>
+            <div class="alert alert-info" role="status">
+                <?php echo Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'); ?>
+            </div>
+        <?php endif; ?>
         <fieldset id="filter-bar" class="mb-3">
             <div class="row">
                 <div class="col-md-11">
@@ -106,7 +113,7 @@ $wa->addInlineScript('
                 </div>
             </div>
         </fieldset>
-        <?php if ($this->event->waitinglist || $isPriced) : ?>
+        <?php if ($this->event->waitinglist || $isPriced || $isAreaCapacity) : ?>
             <div class="alert alert-info d-flex flex-wrap gap-4 align-items-center" role="status">
                 <span><?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?></span>
                 <?php if ($isPriced) : ?>
@@ -114,6 +121,14 @@ $wa->addInlineScript('
                         <span class="badge bg-light text-dark border">
                             <?php echo $this->escape($pool->name); ?>:
                             <?php echo (int) $pool->remaining; ?> / <?php echo (int) $pool->capacity; ?>
+                        </span>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if ($isAreaCapacity) : ?>
+                    <?php foreach ((array) $this->capacityAvailability->options as $area) : ?>
+                        <span class="badge bg-light text-dark border">
+                            <?php echo $this->escape((string) $area['space_name'] . ' · ' . (string) $area['area_name']); ?>:
+                            <?php echo (int) $area['remaining']; ?> / <?php echo (int) $area['capacity']; ?>
                         </span>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -157,7 +172,7 @@ $wa->addInlineScript('
         <table class="table table-striped" id="attendeeList">
             <thead>
                 <tr>
-                    <th style="width: 1%" class="center"><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /></th>
+                    <th style="width: 1%" class="center"><?php if (!$isCommerceReadOnly) : ?><input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" /><?php endif; ?></th>
                     <th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_NAME', 'u.name', $listDirn, $listOrder); ?></th>
                     <th class="title"><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_USERNAME', 'u.username', $listDirn, $listOrder); ?></th>
                     <th class="title"><?php echo Text::_('COM_JEM_EMAIL'); ?></th>
@@ -184,7 +199,7 @@ $wa->addInlineScript('
                 foreach ($this->items as $i => $row) :
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
-                    <td class="center"><?php echo HTMLHelper::_('grid.id', $i, $row->id); ?></td> <?php // The ID could also be passed to submitName(), avoiding DOM traversal. ?>
+                    <td class="center"><?php if (!$isCommerceReadOnly) { echo HTMLHelper::_('grid.id', $i, $row->id); } ?></td> <?php // The ID could also be passed to submitName(), avoiding DOM traversal. ?>
                     <td><a href="<?php echo Route::_('index.php?option=com_jem&view=attendee&event='.(int) $row->event . '&id='.(int) $row->id);?>"><?php echo $this->escape($row->name); ?></a></td>
                     <td><?php echo $this->escape($row->username); ?></td>
                     <td class="email"><a href="mailto:<?php echo htmlspecialchars($row->email, ENT_QUOTES, 'UTF-8'); ?>"><?php echo $this->escape($row->email); ?></a></td>
@@ -208,7 +223,15 @@ $wa->addInlineScript('
                     </td>
                     <td class="center">
                         <?php if (!$isPriced) : ?>
-                            <?php echo (int) $row->places; ?>
+                            <strong><?php echo (int) $row->places; ?></strong>
+                            <?php if ($isAreaCapacity) : ?>
+                                <?php $capacityLines = $this->capacityBreakdowns[(int) $row->id] ?? array(); ?>
+                                <ul class="list-unstyled text-start mb-0 small">
+                                    <?php foreach ($capacityLines as $line) : ?>
+                                        <li><?php echo (int) $line->quantity; ?>&times; <?php echo $this->escape($line->space_name . ' · ' . $line->area_name); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
                         <?php else : ?>
                             <?php $orderLines = $this->commercialBreakdowns[(int) $row->id] ?? array(); ?>
                             <?php if (!$orderLines) : ?>
@@ -238,9 +261,11 @@ $wa->addInlineScript('
                     <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
                     <?php endif; ?>
                     <td class="center">
-                        <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
-                            <?php echo HTMLHelper::_('image','com_jem/publish_r.webp',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
-                        </a>
+                        <?php if (!$isCommerceReadOnly) : ?>
+                            <a href="javascript: void(0);" onclick="return Joomla.listItemTask('cb<?php echo $i;?>','attendees.remove')">
+                                <?php echo HTMLHelper::_('image','com_jem/publish_r.webp',Text::_('COM_JEM_REMOVE'),NULL,true); ?>
+                            </a>
+                        <?php endif; ?>
                     </td>
                     <td class="center">
                     <?php echo $this->escape($row->id); ?>

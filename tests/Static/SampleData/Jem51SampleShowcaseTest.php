@@ -36,8 +36,6 @@ final class Jem51SampleShowcaseTest extends TestCase
             'INSERT INTO `#__jem_venue_profile_spaces`',
             'INSERT INTO `#__jem_venue_capacity_areas`',
             'INSERT INTO `#__jem_event_space_layouts`',
-            'INSERT INTO `#__jem_capacity_pools`',
-            'INSERT INTO `#__jem_event_prices`',
             'INSERT INTO `#__jem_links`',
             'INSERT INTO `#__jem_attachments`',
             "'sample_showcase_catalog'",
@@ -46,6 +44,8 @@ final class Jem51SampleShowcaseTest extends TestCase
         }
 
         self::assertStringNotContainsString('sampledata-universities.json', $sql);
+        self::assertStringNotContainsString('INSERT INTO `#__jem_capacity_pools`', $sql);
+        self::assertStringNotContainsString('INSERT INTO `#__jem_event_prices`', $sql);
     }
 
     public function testEveryEventStartsWithTheColouredDemoMediaNotice(): void
@@ -60,14 +60,14 @@ final class Jem51SampleShowcaseTest extends TestCase
         self::assertStringContainsString("WHERE e.`introtext` NOT LIKE '%jem-sample-notice%'", $sql);
     }
 
-    public function testCompactUniversityProgrammeCoversTheThreeAdmissionModes(): void
+    public function testCompactUniversityProgrammeCoversTheThreeAdvancedCapacityModes(): void
     {
         $sql = $this->sql();
 
         foreach (array(
             'JEM Classic Registration Seminar',
-            'JEM Single Admission Workshop',
-            'JEM Multiple Admission Conference',
+            'JEM Configured Capacity Workshop',
+            'JEM Capacity by Area Conference',
         ) as $title) {
             self::assertStringContainsString($title, $sql);
         }
@@ -75,20 +75,22 @@ final class Jem51SampleShowcaseTest extends TestCase
         self::assertStringContainsString('CURDATE() + INTERVAL 7 DAY', $sql);
         self::assertStringContainsString('CURDATE() + INTERVAL 14 DAY', $sql);
         self::assertStringContainsString('CURDATE() + INTERVAL 21 DAY', $sql);
-        self::assertStringContainsString("`pricing_mode` = 'single'", $sql);
-        self::assertStringContainsString("`pricing_mode` = 'multiple'", $sql);
+        self::assertStringContainsString("`capacity_mode` = 'configured'", $sql);
+        self::assertStringContainsString("`capacity_mode` = 'areas'", $sql);
+        self::assertStringNotContainsString("`pricing_mode` = 'single'", $sql);
+        self::assertStringNotContainsString("`pricing_mode` = 'multiple'", $sql);
     }
 
-    public function testMultipleAdmissionConferenceContainsAnOrderedProgramme(): void
+    public function testCapacityAreaConferenceContainsAnOrderedProgramme(): void
     {
         $sql = $this->sql();
 
         self::assertStringContainsString('Opening Keynote', $sql);
-        self::assertStringContainsString('Capacity and Ticketing Lab', $sql);
+        self::assertStringContainsString('Space Scheduling Lab', $sql);
         self::assertStringContainsString("'18:15:00', '19:00:00'", $sql);
         self::assertStringContainsString("'19:15:00', '20:30:00'", $sql);
         self::assertMatchesRegularExpression("/\\(22, 10, .*?'Opening Keynote'.*?, 21, 1, 0,/", $sql);
-        self::assertMatchesRegularExpression("/\\(23, 11, .*?'Capacity and Ticketing Lab'.*?, 21, 2, 0,/", $sql);
+        self::assertMatchesRegularExpression("/\\(23, 11, .*?'Space Scheduling Lab'.*?, 21, 2, 0,/", $sql);
         self::assertStringContainsString('an ordered child event contained within its parent programme and schedule.', $sql);
         self::assertStringContainsString('"new_events":5,"programme_items":2', $sql);
     }
@@ -114,23 +116,23 @@ final class Jem51SampleShowcaseTest extends TestCase
         self::assertMatchesRegularExpression("/\\(11, 'Faculty of Science'.*?, 9, 2\\);/", $sql);
     }
 
-    public function testCapacityAndTicketVariantsArePresent(): void
+    public function testAdvancedVenueProfilesAndCapacityVariantsArePresentWithoutCommerce(): void
     {
         $sql = $this->sql();
 
-        self::assertSame(2, $this->insertedRowCount('#__jem_venue_capacity_profiles', $sql));
-        self::assertSame(2, $this->insertedRowCount('#__jem_venue_spaces', $sql));
-        self::assertSame(2, $this->insertedRowCount('#__jem_venue_layouts', $sql));
+        self::assertSame(5, $this->insertedRowCount('#__jem_venue_capacity_profiles', $sql));
+        self::assertSame(4, $this->insertedRowCount('#__jem_venue_spaces', $sql));
+        self::assertSame(5, $this->insertedRowCount('#__jem_venue_layouts', $sql));
         self::assertSame(3, $this->insertedRowCount('#__jem_venue_capacity_areas', $sql));
-        self::assertSame(4, $this->insertedRowCount('#__jem_capacity_pools', $sql));
-        self::assertSame(4, $this->insertedRowCount('#__jem_event_prices', $sql));
-        self::assertStringContainsString("'One tax-inclusive admission type.'", $sql);
-        self::assertStringContainsString("'Reduced admission with manual verification.'", $sql);
-        self::assertStringContainsString("`prices_include_tax` = 1", $sql);
-        self::assertStringContainsString("`management_fee_value` = '1.50'", $sql);
-        self::assertStringContainsString("'manual'", $sql);
-        self::assertStringContainsString("'EU_IT_STANDARD'", $sql);
-        self::assertStringContainsString("'EU_AT_STANDARD'", $sql);
+        self::assertSame(4, $this->insertedRowCount('#__jem_event_space_layouts', $sql));
+        self::assertStringContainsString("(3, 9, 'lecture', 'Lecture'", $sql);
+        self::assertStringContainsString("(3, 3, 2, 3, 0)", $sql);
+        self::assertStringContainsString('One physical space reused by two venue profiles with different layouts.', $sql);
+        self::assertStringContainsString('"profile":"advanced"', $sql);
+        self::assertStringContainsString('"commercial_examples":0', $sql);
+        self::assertStringNotContainsString('Pricing and capacity proposal', $sql);
+        self::assertStringNotContainsString("`prices_include_tax` = 1", $sql);
+        self::assertStringNotContainsString("`management_fee_value` = '1.50'", $sql);
         self::assertStringNotContainsString("(7, 'Main'", $sql);
     }
 
@@ -160,8 +162,8 @@ final class Jem51SampleShowcaseTest extends TestCase
             'images/jem/events/20/sample-event-conference.webp',
             'images/jem/events/21/sample-event-theatre.webp',
             'attachment-event19-sample-classic-registration-checklist.txt',
-            'attachment-event20-sample-single-admission.csv',
-            'attachment-event21-sample-multiple-admissions.csv',
+            'attachment-event20-sample-configured-capacity.csv',
+            'attachment-event21-sample-capacity-areas.csv',
         );
 
         $missing = array_values(array_filter($required, static fn (string $entry): bool => $zip->locateName($entry) === false));
@@ -177,7 +179,15 @@ final class Jem51SampleShowcaseTest extends TestCase
             }
         }
 
-        self::assertSame($this->sql(), (string) $zip->getFromName('sampledata.sql'));
+        $normaliseLineEndings = static fn (string $contents): string => str_replace(
+            array("\r\n", "\r"),
+            "\n",
+            $contents
+        );
+        self::assertSame(
+            $normaliseLineEndings($this->sql()),
+            $normaliseLineEndings((string) $zip->getFromName('sampledata.sql'))
+        );
         $zip->close();
 
         self::assertSame(array(), $missing, "sampledata.zip is missing showcase assets:\n" . implode("\n", $missing));

@@ -225,6 +225,10 @@
         <field name="capacity_configuration_submitted" type="hidden" default="0" />
         <field name="capacity_configuration_json" type="hidden" filter="raw" />
         <field name="capacity_profile_id" type="hidden" />
+        <field name="capacity_profile_code" type="hidden" filter="cmd" />
+        <field name="capacity_profile_action" type="hidden" filter="cmd" />
+        <field name="capacity_profile_set_default" type="hidden" default="0" filter="uint" />
+        <field name="capacity_profile_ordering" type="hidden" default="0" filter="int" />
         <field name="capacity_profile_name" type="text"
             required="true"
             filter="string"

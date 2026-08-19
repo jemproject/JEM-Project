@@ -24,7 +24,9 @@ require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/spaceavailability.class.php';
 
 /**
  * Event model.
@@ -535,6 +537,12 @@ class JemModelEvent extends JemModelAdmin
             $reminderIds = array();
         }
         $applyRemindersToSeries = !empty($data['apply_reminders_to_series']);
+        if ($reminderSelectionSubmitted
+            && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
+            $this->setError(Text::_('COM_JEM_EVENT_FEATURE_NOTIFICATION_DISABLED'));
+
+            return false;
+        }
         unset($data['event_reminders_enabled'], $data['reminder_ids'], $data['apply_reminders_to_series']);
         if ($reminderSelectionSubmitted && $eventRemindersEnabled && !$reminderIds) {
             $this->setError(Text::_('COM_JEM_EVENT_REMINDERS_REQUIRE_INTERVAL'));
@@ -551,6 +559,7 @@ class JemModelEvent extends JemModelAdmin
         $customSchedule = array();
         $existingSeriesId = 0;
         $customSeriesIsRoot = false;
+        $existingEvent = null;
 
         if (!$new) {
             $existingEvent = $this->getTable();
@@ -709,7 +718,14 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $pricingContext = null;
+        $spaceConflictOverride = !empty($data['space_conflict_override']);
+        $spaceConflictReason = (string) ($data['space_conflict_reason'] ?? '');
+        unset($data['space_conflict_override'], $data['space_conflict_reason']);
         if ($backend) {
+            if (!$this->enforceOperatingProfile($data, $existingEvent, $new, $task)) {
+                return false;
+            }
+
             $submittedPricingMode = (string) ($data['pricing_mode'] ?? JemEventPricingCapacityService::MODE_CLASSIC);
             if (($customSeriesRequested || $existingSeriesId > 0 || (int) ($data['recurrence_type'] ?? 0) > 0)
                 && in_array($submittedPricingMode, array('priced', JemEventPricingCapacityService::MODE_SINGLE, JemEventPricingCapacityService::MODE_MULTIPLE), true)) {
@@ -986,6 +1002,20 @@ class JemModelEvent extends JemModelAdmin
             // Save the event
             $saved = parent::save($data);
 
+            if ($saved && !empty($pricingContext['physical_active'])) {
+                $savedEventId = (int) $this->getState($this->getName() . '.id');
+                $savedEvent = $this->getTable();
+                $savedEvent->load($savedEventId);
+                $pricingContext['space_conflict_overrides'] = JemSpaceAvailabilityService::assertAvailable(
+                    $savedEvent->getProperties(),
+                    $pricingContext,
+                    $task === 'save2copy' ? 0 : $savedEventId,
+                    $spaceConflictOverride,
+                    $spaceConflictReason,
+                    Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem')
+                );
+            }
+
             if ($saved) {
                 // At this point we do have an id.
                 $pk = $this->getState($this->getName() . '.id');
@@ -1251,6 +1281,19 @@ class JemModelEvent extends JemModelAdmin
             }
             if ($savedId) {
                 JemEventPricingCapacityService::saveChildren($savedId, $pricingContext, false);
+                JemEventPricingCapacityService::assertProgrammeAllocation($savedId);
+                JemSpaceAvailabilityService::saveOverrides(
+                    $savedId,
+                    (array) ($pricingContext['space_conflict_overrides'] ?? array())
+                );
+                if (!empty($pricingContext['physical_active'])) {
+                    $this->synchronisePhysicalSeriesAllocation(
+                        $savedId,
+                        $pricingContext,
+                        $spaceConflictOverride,
+                        $spaceConflictReason
+                    );
+                }
             }
         }
 
@@ -1324,7 +1367,7 @@ class JemModelEvent extends JemModelAdmin
             if ($pricingTransactionActive) {
                 $pricingDb->transactionRollback();
                 $pricingTransactionActive = false;
-                $this->setError(Text::sprintf('COM_JEM_EVENT_PRICING_SAVE_FAILED', $error->getMessage()));
+                $this->setError(Text::sprintf('COM_JEM_EVENT_VENUE_CAPACITY_SAVE_FAILED', $error->getMessage()));
             }
             return false;
         } finally {
@@ -1335,6 +1378,91 @@ class JemModelEvent extends JemModelAdmin
                 $pricingDb->transactionRollback();
             }
         }
+    }
+
+    /**
+     * Copy one root occurrence's immutable Venue snapshot and assignments to
+     * generated/custom occurrences, then validate every occurrence interval.
+     */
+    protected function synchronisePhysicalSeriesAllocation(
+        int $sourceEventId,
+        array $context,
+        bool $override,
+        string $reason
+    ): void {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $source = $this->getTable();
+        if (!$source->load($sourceEventId)) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('root_event_id'))
+            ->from($db->quoteName('#__jem_event_series'))
+            ->where($db->quoteName('root_event_id') . ' = ' . $sourceEventId);
+        $db->setQuery($query);
+        $customRoot = (int) $db->loadResult() === $sourceEventId;
+        $conditions = array($db->quoteName('recurrence_first_id') . ' = ' . $sourceEventId);
+        if ($customRoot && (int) ($source->series_id ?? 0) > 0) {
+            $conditions[] = $db->quoteName('series_id') . ' = ' . (int) $source->series_id;
+        }
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where('(' . implode(' OR ', $conditions) . ')')
+            ->where($db->quoteName('id') . ' <> ' . $sourceEventId)
+            ->order($db->quoteName('id') . ' ASC');
+        $db->setQuery($query);
+        $occurrenceIds = array_map('intval', (array) $db->loadColumn());
+        if (!$occurrenceIds) {
+            return;
+        }
+
+        $physicalFields = array(
+            'locid', 'venue_allocation_mode', 'capacity_mode', 'maxplaces',
+            'venue_profile_id', 'venue_profile_revision', 'venue_snapshot',
+        );
+        $authorisedOverride = Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem');
+        foreach ($occurrenceIds as $occurrenceId) {
+            $occurrence = $this->getTable();
+            if (!$occurrence->load($occurrenceId)) {
+                continue;
+            }
+            $snapshotChanged = (string) ($occurrence->venue_snapshot ?? '') !== (string) ($source->venue_snapshot ?? '');
+            if ($snapshotChanged && $this->eventHasRegistrations($occurrenceId)) {
+                throw new RuntimeException(Text::_('COM_JEM_EVENT_VENUE_CAPACITY_SERIES_REGISTERED'));
+            }
+            $update = (object) array('id' => $occurrenceId);
+            foreach ($physicalFields as $field) {
+                $update->$field = $source->$field ?? null;
+            }
+            $db->updateObject('#__jem_events', $update, 'id', true);
+            JemEventPricingCapacityService::saveChildren($occurrenceId, $context, false);
+
+            $occurrence->load($occurrenceId);
+            $overrides = JemSpaceAvailabilityService::assertAvailable(
+                $occurrence->getProperties(),
+                $context,
+                $occurrenceId,
+                $override,
+                $reason,
+                $authorisedOverride
+            );
+            JemSpaceAvailabilityService::saveOverrides($occurrenceId, $overrides);
+            JemEventPricingCapacityService::assertProgrammeAllocation($occurrenceId);
+        }
+    }
+
+    protected function eventHasRegistrations(int $eventId): bool
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__jem_register'))
+            ->where($db->quoteName('event') . ' = ' . $eventId);
+        $db->setQuery($query);
+
+        return (int) $db->loadResult() > 0;
     }
 
     /**
@@ -3406,6 +3534,97 @@ class JemModelEvent extends JemModelAdmin
         return true;
     }
 
+
+    /**
+     * Enforce the selected JEM operating profile on authoritative save data.
+     * Existing data from a richer profile is retained, but remains read-only.
+     */
+    private function enforceOperatingProfile(array &$data, $existingEvent, bool $new, string $task): bool
+    {
+        $policy = JemFeaturePolicy::current();
+        $copying = $task === 'save2copy';
+
+        if (!$policy->allows(JemFeaturePolicy::FEATURE_PROGRAMMES)) {
+            $programmeFields = array('parent_event_id', 'event_tree_order', 'show_in_calendar');
+            if (($new || $copying) && (int) ($data['parent_event_id'] ?? 0) > 0) {
+                $this->setError(Text::_('COM_JEM_EVENT_FEATURE_PROGRAMMES_DISABLED'));
+
+                return false;
+            }
+            foreach ($programmeFields as $field) {
+                if ($existingEvent !== null) {
+                    $data[$field] = $existingEvent->{$field} ?? ($field === 'show_in_calendar' ? 1 : 0);
+                } else {
+                    $data[$field] = $field === 'show_in_calendar' ? 1 : 0;
+                }
+            }
+        }
+
+        if (!$policy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) {
+            $requestedAllocation = (string) ($data['venue_allocation_mode'] ?? 'none');
+            $requestedCapacity = (string) ($data['capacity_mode'] ?? 'classic');
+            if (($new || $copying) && ($requestedAllocation !== 'none' || $requestedCapacity !== 'classic')) {
+                $this->setError(Text::_('COM_JEM_EVENT_FEATURE_VENUE_CAPACITY_DISABLED'));
+
+                return false;
+            }
+            if ($existingEvent !== null) {
+                foreach (array(
+                    'venue_allocation_mode', 'capacity_mode', 'venue_profile_id',
+                    'venue_profile_revision', 'venue_snapshot',
+                ) as $field) {
+                    $data[$field] = $existingEvent->{$field} ?? null;
+                }
+            } else {
+                $data['venue_allocation_mode'] = 'none';
+                $data['capacity_mode'] = 'classic';
+                $data['venue_profile_id'] = null;
+                $data['venue_profile_revision'] = 0;
+                $data['venue_snapshot'] = null;
+            }
+            unset(
+                $data['venue_configuration_key'],
+                $data['venue_assignment_ids'],
+                $data['reload_venue_capacity']
+            );
+        }
+
+        if (!$policy->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            $storedMode = (string) ($existingEvent->pricing_mode ?? JemEventPricingCapacityService::MODE_CLASSIC);
+            $requestedMode = (string) ($data['pricing_mode'] ?? $storedMode);
+            $submittedCommerceRows = array_key_exists('event_prices', $data)
+                || array_key_exists('capacity_pools', $data);
+            if (($new || $copying) && (
+                !in_array($requestedMode, array('', JemEventPricingCapacityService::MODE_CLASSIC), true)
+                || $submittedCommerceRows
+                || (float) ($data['management_fee_value'] ?? 0) !== 0.0
+            )) {
+                $this->setError(Text::_('COM_JEM_EVENT_FEATURE_COMMERCE_DISABLED'));
+
+                return false;
+            }
+            if (!$new && !$copying && ($requestedMode !== $storedMode || $submittedCommerceRows)) {
+                $this->setError(Text::_('COM_JEM_EVENT_FEATURE_COMMERCE_READ_ONLY'));
+
+                return false;
+            }
+            if ($existingEvent !== null) {
+                foreach (array(
+                    'pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id',
+                    'prices_include_tax', 'management_fee_mode', 'management_fee_value',
+                    'management_fee_basis', 'management_fee_tax_rate_id',
+                    'management_fee_refundable',
+                ) as $field) {
+                    $data[$field] = $existingEvent->{$field} ?? null;
+                }
+            } else {
+                $data['pricing_mode'] = JemEventPricingCapacityService::MODE_CLASSIC;
+            }
+            unset($data['event_prices'], $data['capacity_pools']);
+        }
+
+        return true;
+    }
 
     /**
      * Synchronizes links for an event: preserves 'created' and sets 'modified' only on updates.

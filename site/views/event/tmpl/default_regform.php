@@ -204,7 +204,10 @@ if ($this->showRegForm && empty($this->print)) :
                     echo '<span class="badge bg-warning text-light" role="alert">' . Text::_('COM_JEM_NOT_AVAILABLE_PLACES_USER') . '</span>';
                 } else {
                     // Booking places
-                    if ($this->item->maxbookeduser > 1) {
+                    if (!empty($this->capacityRegistration->enabled)) {
+                        echo ' ' . Text::_('COM_JEM_CAPACITY_REGISTRATION_HELP');
+                        echo '<input id="addplaces" type="hidden" name="addplaces" value="0">';
+                    } elseif ($this->item->maxbookeduser > 1) {
                         echo ' ' . Text::_('COM_JEM_I_WILL_GO_2');
                         echo ' <input id="addplaces" style="text-align: center; width:auto;" type="number" name="addplaces" '
                             . 'value="' . ($placesavailableuser > 0 ? ($this->item->maxbookeduser - $placesBookedUser < $placesavailableuser ? $this->item->minbookeduser - $placesBookedUser : 1) : ($placesavailableuser ?? 1))
@@ -304,6 +307,10 @@ if ($this->showRegForm && empty($this->print)) :
 
             $canSendExplicitNoAnswer = !empty($this->item->requestanswer) && $this->isregistered === false;
             $disabledOptions = (($placesavailableuser && !$this->allowRegistration) || (!$placesavailableuser && $this->allowRegistration && !$this->allowAnnulation) || (!$this->allowAnnulation && !$this->allowRegistration)) && !$canSendExplicitNoAnswer;
+
+            if (!empty($this->capacityRegistration->enabled)) {
+                echo $this->loadTemplate('capacityareas');
+            }
 
             //Comment?>
             <?php if (!empty($this->jemsettings->regallowcomments)) { ?>

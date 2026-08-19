@@ -40,6 +40,10 @@ class JemViewMain extends JemAdminView
 
         $this->user       = $user;
         $this->updatedata = $updatedata;
+        $this->featurePolicy = JemFeaturePolicy::current();
+        $this->operatingProfileConfigured = (int) JemConfig::getInstance()
+            ->toRegistry()
+            ->get('operating_profile_configured', 0);
 
         // Add toolbar
         $this->addToolbar();

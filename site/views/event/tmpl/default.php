@@ -1117,6 +1117,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
         <?php } ?>
 
         <?php require JPATH_COMPONENT . '/common/hierarchy/event_programme.php'; ?>
+        <?php echo $this->loadTemplate('venueconfiguration'); ?>
 
         <?php if ($showMoreInformation) : ?>
             <div class="jem-more-information jem-event-more-information">

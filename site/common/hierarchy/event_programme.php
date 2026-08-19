@@ -6,6 +6,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 $event = $this->item;
+$showVenueConfiguration = $this->showVenueConfiguration ?? true;
 $hierarchy = $this->eventHierarchy ?? array(
     'parent_event_id' => (int) ($event->parent_event_id ?? 0),
     'parent_event_title' => (string) ($event->parent_event_title ?? ''),
@@ -51,6 +52,12 @@ if (!empty($hierarchy['parent_event_id']) && !empty($hierarchy['parent_event_tit
                             <a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($programmeItem->venueslug)); ?>">
                                 <?php echo htmlspecialchars($programmeItem->venue, ENT_QUOTES, 'UTF-8'); ?>
                             </a>
+                        </div>
+                    <?php endif; ?>
+                    <?php $programmeLocation = $showVenueConfiguration ? JemVenueSnapshot::summary($programmeItem) : ''; ?>
+                    <?php if ($programmeLocation !== '') : ?>
+                        <div class="jem-programme-venue-configuration text-muted">
+                            <?php echo htmlspecialchars($programmeLocation, ENT_QUOTES, 'UTF-8'); ?>
                         </div>
                     <?php endif; ?>
                 </div>

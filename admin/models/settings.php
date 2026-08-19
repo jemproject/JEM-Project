@@ -18,6 +18,7 @@ use Joomla\Database\DatabaseDriver;
 use Joomla\Registry\Registry;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 
 /**
  * JEM Component Settings Model
@@ -163,6 +164,18 @@ class JemModelSettings extends AdminModel
             $data = get_object_vars($data);
         }
 
+        try {
+            $data['operating_profile'] = JemFeaturePolicy::normaliseSelectableProfile(
+                $data['operating_profile'] ?? JemFeaturePolicy::PROFILE_ESSENTIAL
+            );
+        } catch (InvalidArgumentException $error) {
+            $this->setError(Text::_($error->getMessage()));
+
+            return false;
+        }
+        $data['operating_profile_configured'] = 1;
+        $policy = new JemFeaturePolicy($data['operating_profile']);
+
         // additional data:
         $jinput = Factory::getApplication()->input;
         $varmetakey = $jinput->get('meta_keywords','','');
@@ -257,8 +270,11 @@ class JemModelSettings extends AdminModel
             'notification_user_resend_cooldown_minutes' => 10,
             'notification_max_attempts' => 4,
         );
+        $storedConfiguration = JemConfig::getInstance()->toRegistry();
         foreach ($notificationDefaults as $key => $value) {
-            if (!isset($data[$key]) || $data[$key] === '') {
+            if (!$policy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
+                $data[$key] = $storedConfiguration->get($key, $value);
+            } elseif (!isset($data[$key]) || $data[$key] === '') {
                 $data[$key] = $value;
             }
         }
@@ -280,13 +296,14 @@ class JemModelSettings extends AdminModel
 
         try {
             require_once JPATH_SITE . '/components/com_jem/factory.php';
-            $remindersEnabled = (int) $data['reminders_enabled'] === 1;
+            $remindersEnabled = $policy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)
+                && (int) $data['reminders_enabled'] === 1;
             (new JemReminderSchedulerService())->ensureTask($remindersEnabled);
 
             $reminderService = new JemReminderService();
             if ($remindersEnabled) {
                 $reminderService->syncAllFuture();
-            } else {
+            } elseif ($policy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) {
                 (new JemNotificationService())->cancelPendingReminders();
             }
         } catch (Throwable $error) {

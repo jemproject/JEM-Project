@@ -197,6 +197,11 @@ class JemViewEvent extends HtmlView
         $showVenueSection = (int) $params->get('event_show_venue', 1) === 1;
         $showVenueAddress = (int) $params->get('event_show_detailsadress', 1) === 1;
         $showVenueDescription = (int) $params->get('event_show_locdescription', 1) === 1;
+        $showVenueConfiguration = (int) $params->get('event_show_venue_configuration', -1);
+        if ($showVenueConfiguration < 0) {
+            $showVenueConfiguration = (int) JemHelper::globalattribs()->get('event_show_venue_configuration', 1);
+        }
+        $showVenueConfiguration = $showVenueConfiguration === 1;
         $showVenueMap = in_array((int) $params->get('event_show_mapserv', 0), array(1, 2, 3, 4, 5), true);
         $eventHeadingDisplay = (string) $params->get('event_heading_display', 'label_name');
         $eventHeadingDisplay = in_array($eventHeadingDisplay, array('label', 'label_name', 'name'), true) ? $eventHeadingDisplay : 'label_name';
@@ -301,6 +306,13 @@ class JemViewEvent extends HtmlView
             $location = trim(implode(', ', array_filter(array($row->city ?? '', $row->state ?? '', $row->country ?? ''))));
             $eventSummaryHtml[] = $this->buildSummaryRow(Text::_('COM_JEM_WHERE'), '<a class="jem-pdf-inline-link" href="' . htmlspecialchars($this->buildPdfVenueUrl($row), ENT_COMPAT, 'UTF-8') . '">' . $venue . '</a>' . ($location !== '' ? ' - ' . htmlspecialchars($location, ENT_COMPAT, 'UTF-8') : ''));
         }
+        $venueConfiguration = $showVenueConfiguration ? JemVenueSnapshot::summary($row) : '';
+        if ($venueConfiguration !== '') {
+            $eventSummaryHtml[] = $this->buildSummaryRow(
+                Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION'),
+                htmlspecialchars($venueConfiguration, ENT_COMPAT, 'UTF-8')
+            );
+        }
 
         if ($showEventCategory && $categoryNames) {
             $eventSummaryHtml[] = $this->buildSummaryRow(count($categoryNames) > 1 ? Text::_('COM_JEM_CATEGORIES') : Text::_('COM_JEM_CATEGORY'), htmlspecialchars(implode(', ', $categoryNames), ENT_COMPAT, 'UTF-8'));
@@ -319,7 +331,7 @@ class JemViewEvent extends HtmlView
         }
 
         if (empty($row->parent_event_id) && !empty($row->child_events)) {
-            $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events);
+            $html[] = $this->buildPdfProgrammeHtml((array) $row->child_events, $showVenueConfiguration);
         }
 
         if ($showOnlineMeeting && (int) ($jemsettings->pdf_event_include_online_meeting ?? 1) === 1 && !empty($row->online_meeting_url)) {
@@ -411,7 +423,7 @@ class JemViewEvent extends HtmlView
     /**
      * Build the programme table included in a parent event PDF.
      */
-    private function buildPdfProgrammeHtml(array $programmeItems): string
+    private function buildPdfProgrammeHtml(array $programmeItems, bool $showVenueConfiguration = true): string
     {
         if (!$programmeItems) {
             return '';
@@ -445,6 +457,10 @@ class JemViewEvent extends HtmlView
 
             if (!empty($item->venue)) {
                 $title .= '<br /><span class="jem-pdf-muted">' . htmlspecialchars((string) $item->venue, ENT_COMPAT, 'UTF-8') . '</span>';
+            }
+            $venueConfiguration = $showVenueConfiguration ? JemVenueSnapshot::summary($item) : '';
+            if ($venueConfiguration !== '') {
+                $title .= '<br /><span class="jem-pdf-muted">' . htmlspecialchars($venueConfiguration, ENT_COMPAT, 'UTF-8') . '</span>';
             }
 
             $html[] = '<tr><td width="22%">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</td><td width="78%">' . $title . '</td></tr>';

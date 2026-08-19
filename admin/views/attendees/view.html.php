@@ -49,6 +49,7 @@ class JemViewAttendees extends JemAdminView
         $this->state      = $this->get('State');
         $this->commercialBreakdowns = $this->get('CommercialBreakdowns');
         $this->poolAvailability = $this->get('PoolAvailability');
+        $this->capacityBreakdowns = $this->get('CapacityBreakdowns');
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -95,6 +96,12 @@ class JemViewAttendees extends JemAdminView
             array('single', 'multiple', 'priced'),
             true
         );
+        $this->commerceReadOnly = $this->isPriced
+            && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING);
+        $this->isAreaCapacity = !$this->isPriced && (string) ($event->capacity_mode ?? 'classic') === 'areas';
+        $this->capacityAvailability = $this->isAreaCapacity
+            ? (new JemRegistrationService())->capacityOptions((int) $event->id)
+            : null;
         $this->canForcePromotion = !$this->isPriced
             && $app->getIdentity()->authorise('core.admin', 'com_jem');
 
@@ -112,11 +119,13 @@ class JemViewAttendees extends JemAdminView
         $rows = $this->get('Items');
         $event = $this->get('Event');
         $this->commercialBreakdowns = $this->get('CommercialBreakdowns');
+        $this->capacityBreakdowns = $this->get('CapacityBreakdowns');
         $this->isPriced = in_array(
             (string) ($event->pricing_mode ?? 'classic'),
             array('single', 'multiple', 'priced'),
             true
         );
+        $this->isAreaCapacity = !$this->isPriced && (string) ($event->capacity_mode ?? 'classic') === 'areas';
 
         if (JemHelper::isValidDate($event->dates)) {
             $event->dates = JemOutput::formatdate($event->dates);
@@ -139,17 +148,19 @@ class JemViewAttendees extends JemAdminView
     {
         ToolbarHelper::title(Text::_('COM_JEM_REGISTERED_USERS'), 'users');
 
-        ToolbarHelper::addNew('attendees.add');
-        ToolbarHelper::editList('attendees.edit');
-        ToolbarHelper::custom('attendees.setNotAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
-        if (!$this->isPriced) {
-            ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
-        }
-        if ($this->event->waitinglist) {
+        if (empty($this->commerceReadOnly)) {
+            ToolbarHelper::addNew('attendees.add');
+            ToolbarHelper::editList('attendees.edit');
+            ToolbarHelper::custom('attendees.setNotAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETNOTATTENDING'), true);
             if (!$this->isPriced) {
-                ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+                ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
             }
-            ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
+            if ($this->event->waitinglist) {
+                if (!$this->isPriced) {
+                    ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+                }
+                ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
+            }
         }
         ToolbarHelper::custom('attendees.renotify', 'envelope', 'envelope', Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_SELECTED'), true);
         ToolbarHelper::spacer();
@@ -161,7 +172,9 @@ class JemViewAttendees extends JemAdminView
         $bar = ToolBar::getInstance('toolbar');
         $bar->appendButton('Popup', 'print', 'COM_JEM_PRINT', $link_print, 600, 300);
 
-        ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
+        if (empty($this->commerceReadOnly)) {
+            ToolbarHelper::deleteList('COM_JEM_CONFIRM_DELETE', 'attendees.remove', 'COM_JEM_ATTENDEES_DELETE');
+        }
         ToolbarHelper::spacer();
         ToolbarHelper::custom('attendees.back', 'back', 'back', Text::_('COM_JEM_ATT_BACK'), false);
         ToolbarHelper::divider();

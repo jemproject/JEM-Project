@@ -979,15 +979,19 @@ Text::script('JCANCEL');
                     <?php if (is_null($this->item->id)) : ?>
                         <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('parent_venue_id'); ?><?php echo $this->form->getInput('parent_venue_id'); ?></li>
-                    <li><?php echo $this->form->renderField('timezone_inherited_note'); ?></li>
-                    <li><?php echo $this->form->getLabel('venue_tree_order'); ?><?php echo $this->form->getInput('venue_tree_order'); ?></li>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY)) : ?>
+                        <li><?php echo $this->form->getLabel('parent_venue_id'); ?><?php echo $this->form->getInput('parent_venue_id'); ?></li>
+                        <li><?php echo $this->form->renderField('timezone_inherited_note'); ?></li>
+                        <li><?php echo $this->form->getLabel('venue_tree_order'); ?><?php echo $this->form->getInput('venue_tree_order'); ?></li>
+                    <?php endif; ?>
                     <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
                     <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
                     <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
                     <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
                     <li><?php echo $this->form->getLabel('level'); ?><?php echo $this->form->getInput('level'); ?></li>
-                    <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
+                    <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
+                        <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
+                    <?php endif; ?>
                     <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
                     <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
                     <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>

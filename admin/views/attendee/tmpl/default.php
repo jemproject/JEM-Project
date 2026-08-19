@@ -22,6 +22,9 @@ $wa = $document->getWebAssetManager();
 
 $userModalId = 'jem-attendee-user-modal';
 $isPriced = !empty($this->pricing->is_priced);
+$isCommerceReadOnly = !empty($this->commerceReadOnly);
+$isPricedEditable = $isPriced && !$isCommerceReadOnly;
+$isAreaCapacity = !$isPriced && !empty($this->capacity->enabled);
 $pricedUserLocked = $isPriced && !empty($this->row->id);
 $pricingEndpoint = Route::_(
     'index.php?option=com_jem&task=attendee.pricingOptions&format=json&event=' . (int) ($this->row->event ?: $this->event)
@@ -63,11 +66,19 @@ function modalSelectUser(id, username)
 Joomla.submitbutton = function(task)
     {
         const status = parseInt(document.getElementById('reg_status').value, 10);
-        if (task !== 'attendee.cancel' && <?php echo $isPriced ? 'true' : 'false'; ?> && (status === 1 || status === 2)) {
+        if (task !== 'attendee.cancel' && <?php echo $isPricedEditable ? 'true' : 'false'; ?> && (status === 1 || status === 2)) {
             const quantities = Array.from(document.querySelectorAll('#jem-admission-options input[type="number"]'));
             const total = quantities.reduce((sum, input) => sum + Math.max(0, parseInt(input.value || '0', 10)), 0);
             if (!window.jemPricingLoaded || total < 1) {
                 alert(<?php echo json_encode(Text::_('COM_JEM_PRICED_REGISTRATION_SELECTION_REQUIRED')); ?>);
+                return false;
+            }
+        }
+        if (task !== 'attendee.cancel' && <?php echo $isAreaCapacity ? 'true' : 'false'; ?> && (status === 1 || status === 2)) {
+            const total = Array.from(document.querySelectorAll('.jem-capacity-area-quantity'))
+                .reduce((sum, input) => sum + Math.max(0, parseInt(input.value || '0', 10)), 0);
+            if (total < 1) {
+                alert(<?php echo json_encode(Text::_('COM_JEM_CAPACITY_REGISTRATION_SELECTION_REQUIRED')); ?>);
                 return false;
             }
         }
@@ -134,7 +145,7 @@ function jemRenderAdmissionOptions(pricing) {
         if (maximum !== null) input.max = String(maximum);
         input.className = 'form-control form-control-sm jem-admission-quantity';
         input.style.maxWidth = '7rem';
-        input.disabled = !option.eligible;
+        input.disabled = <?php echo $isCommerceReadOnly ? 'true' : 'false'; ?> || !option.eligible;
         input.dataset.unitGross = option.unit_gross;
         input.addEventListener('input', jemUpdateAdmissionTotal);
         quantity.appendChild(input);
@@ -167,7 +178,7 @@ function jemRenderAdmissionOptions(pricing) {
 function jemUpdateAdmissionTotal() {
     let quantity = 0;
     let total = 0;
-    document.querySelectorAll('.jem-admission-quantity:not(:disabled)').forEach(function(input) {
+    document.querySelectorAll('.jem-admission-quantity').forEach(function(input) {
         const value = Math.max(0, parseInt(input.value || '0', 10));
         quantity += value;
         total += value * Number(input.dataset.unitGross || 0);
@@ -177,7 +188,7 @@ function jemUpdateAdmissionTotal() {
 }
 
 window.jemLoadAdmissionOptions = function(userId) {
-    if (!<?php echo $isPriced ? 'true' : 'false'; ?> || !userId) return;
+    if (!<?php echo $isPricedEditable ? 'true' : 'false'; ?> || !userId) return;
     window.jemPricingLoaded = false;
     fetch(<?php echo json_encode($pricingEndpoint); ?> + '&uid=' + encodeURIComponent(userId), {
         credentials: 'same-origin',
@@ -211,7 +222,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=attendee'); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
-    <fieldset>
+    <?php if ($isCommerceReadOnly) : ?>
+        <div class="alert alert-info" role="status">
+            <?php echo Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'); ?>
+        </div>
+    <?php endif; ?>
+    <fieldset<?php echo $isCommerceReadOnly ? ' disabled="disabled"' : ''; ?>>
         <h3><?php echo Text::_('COM_JEM_DETAILS'); ?></h3>
         <?php if (!empty($this->row->id)) : ?>
         <p>
@@ -308,7 +324,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             </tr>
             <?php endif; ?>
-            <?php if (!$isPriced) : ?>
+            <?php if ($isAreaCapacity) : ?>
+            <tr id="jem-capacity-areas-row">
+                <td class="key align-top">
+                    <label><?php echo Text::_('COM_JEM_CAPACITY_REGISTRATION_AREAS'); ?>:</label>
+                </td>
+                <td>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-1">
+                            <thead><tr>
+                                <th><?php echo Text::_('COM_JEM_VENUE_CAPACITY_SPACE'); ?></th>
+                                <th><?php echo Text::_('COM_JEM_VENUE_CAPACITY_AREA_NAME'); ?></th>
+                                <th class="text-center"><?php echo Text::_('COM_JEM_AVAILABLE'); ?></th>
+                                <th style="width:8rem"><?php echo Text::_('COM_JEM_ATTENDEES_PLACES'); ?></th>
+                            </tr></thead>
+                            <tbody>
+                            <?php foreach ((array) $this->capacity->options as $option) : ?>
+                                <tr>
+                                    <td><?php echo $this->escape((string) $option['space_name']); ?></td>
+                                    <td><?php echo $this->escape((string) $option['area_name']); ?></td>
+                                    <td class="text-center"><?php echo (int) $option['remaining']; ?></td>
+                                    <td><input class="form-control form-control-sm jem-capacity-area-quantity" type="number"
+                                        name="capacity_areas[<?php echo $this->escape((string) $option['key']); ?>]"
+                                        min="0" max="<?php echo (int) $option['remaining']; ?>"
+                                        value="<?php echo (int) $option['current_quantity']; ?>"></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <small class="text-muted"><?php echo Text::_('COM_JEM_CAPACITY_REGISTRATION_HELP'); ?></small>
+                </td>
+            </tr>
+            <?php elseif (!$isPriced) : ?>
             <tr>
                 <td class="key">
                     <label for="eventtitle" <?php echo JemOutput::tooltip(Text::_('COM_JEM_ATTENDEES_PLACES'), Text::_('COM_JEM_ATTENDEES_PLACES_DESC')); ?>>

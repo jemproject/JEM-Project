@@ -53,6 +53,32 @@ class JemControllerAttendees extends BaseController
     }
 
     /**
+     * Keep registrations belonging to deferred priced events read-only.
+     */
+    private function assertCommerceMutationAllowedForEvent($eventId)
+    {
+        if (JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            return;
+        }
+
+        $eventId = (int) $eventId;
+        if ($eventId < 1) {
+            return;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('pricing_mode'))
+            ->from($db->quoteName('#__jem_events'))
+            ->where($db->quoteName('id') . ' = ' . $eventId);
+        $db->setQuery($query);
+
+        if (in_array((string) $db->loadResult(), array('single', 'multiple', 'priced'), true)) {
+            throw new Exception(Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'), 403);
+        }
+    }
+
+    /**
      * Delete attendees
      *
      * @return true on sucess
@@ -77,6 +103,7 @@ class JemControllerAttendees extends BaseController
         if (empty($cid) || $eventid < 1) {
             throw new Exception(Text::_('COM_JEM_SELECT_ITEM_TO_DELETE'), 500);
         }
+        $this->assertCommerceMutationAllowedForEvent($eventid);
 
         $total = count($cid);
 
@@ -180,6 +207,7 @@ class JemControllerAttendees extends BaseController
                 if (empty($attendee->event)) {
                     continue;
                 }
+                $this->assertCommerceMutationAllowedForEvent((int) $attendee->event);
                 $redirectEvent = (int)$attendee->event;
                 $after = clone $attendee;
                 $after->status = JemRegistrationTransition::ATTENDING;
@@ -290,6 +318,7 @@ class JemControllerAttendees extends BaseController
         $user = $app->getIdentity();
 
         $eventid = $app->input->getInt('eventid');
+        $this->assertCommerceMutationAllowedForEvent($eventid);
         $ids     = $app->input->get('cid', array(), 'array');
         $values  = array('setWaitinglist' => 2, 'setAttending' => 1, 'setInvited' => 0, 'setNotAttending' => -1);
         $task    = $this->getTask();
@@ -502,6 +531,7 @@ class JemControllerAttendees extends BaseController
         $app = Factory::getApplication();
         $user = $app->getIdentity();
         $eventId = $app->input->getInt('eventid', 0);
+        $this->assertCommerceMutationAllowedForEvent($eventId);
         $ids = $app->input->get('cid', array(), 'array');
         ArrayHelper::toInteger($ids);
         $ids = array_values(array_filter($ids));

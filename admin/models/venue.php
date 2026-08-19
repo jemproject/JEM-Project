@@ -17,6 +17,7 @@ use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 
@@ -300,10 +301,51 @@ class JemModelVenue extends JemModelAdmin
         $jinput      = $app->input;
         $jemsettings = JemHelper::config();
         $task        = $jinput->get('task', '', 'cmd');
+        $backend     = (bool) $app->isClient('administrator');
+        $new         = (bool) empty($data['id']);
+        $policy      = JemFeaturePolicy::current();
+        $existingVenue = null;
+        if (!$new) {
+            $existingVenue = $this->getTable();
+            $existingVenue->load((int) $data['id']);
+        }
         $capacityConfigurationSubmitted = !empty($data['capacity_configuration_submitted']);
+
+        if (!$policy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY)) {
+            if (($new || $task === 'save2copy') && (int) ($data['parent_venue_id'] ?? 0) > 0) {
+                $this->setError(Text::_('COM_JEM_VENUE_FEATURE_HIERARCHY_DISABLED'));
+
+                return false;
+            }
+            $data['parent_venue_id'] = $existingVenue !== null
+                ? (int) ($existingVenue->parent_venue_id ?? 0)
+                : 0;
+        }
+
+        if (!$policy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) {
+            if (($new || $task === 'save2copy') && (
+                $capacityConfigurationSubmitted || (int) ($data['capacity'] ?? 0) > 0
+            )) {
+                $this->setError(Text::_('COM_JEM_VENUE_FEATURE_CAPACITY_DISABLED'));
+
+                return false;
+            }
+            $capacityConfigurationSubmitted = false;
+            $data['capacity'] = $existingVenue !== null ? (int) ($existingVenue->capacity ?? 0) : 0;
+        }
         $capacityProfileName = JemVenueCapacityService::normaliseProfileName(
             isset($data['capacity_profile_name']) ? (string) $data['capacity_profile_name'] : null
         );
+        $capacityProfileId = max(0, (int) ($data['capacity_profile_id'] ?? 0));
+        $capacityProfileCode = (string) ($data['capacity_profile_code'] ?? '');
+        $capacityProfileAction = (string) ($data['capacity_profile_action'] ?? '');
+        $capacityProfileSetDefault = !empty($data['capacity_profile_set_default']);
+        $capacityProfileOrdering = max(0, (int) ($data['capacity_profile_ordering'] ?? 0));
+        if ($capacityProfileAction === 'duplicate') {
+            $capacityProfileId = 0;
+            $capacityProfileCode = '';
+            $capacityProfileName = Text::sprintf('COM_JEM_VENUE_CAPACITY_PROFILE_COPY_NAME', $capacityProfileName);
+        }
         $capacityProfileCapacity = max(0, (int) ($data['capacity_profile_capacity'] ?? 0));
         $capacityConfiguration = array('spaces' => array());
         if ($capacityConfigurationSubmitted) {
@@ -328,14 +370,16 @@ class JemModelVenue extends JemModelAdmin
             $data['capacity_configuration_submitted'],
             $data['capacity_configuration_json'],
             $data['capacity_profile_id'],
+            $data['capacity_profile_code'],
+            $data['capacity_profile_action'],
+            $data['capacity_profile_set_default'],
+            $data['capacity_profile_ordering'],
             $data['capacity_profile_name'],
             $data['capacity_profile_capacity'],
             $data['capacity_profile_revision']
         );
 
         // Check if we're in the front or back
-        $backend = (bool)$app->isClient('administrator');
-        $new     = (bool)empty($data['id']);
         $previousVenueImage = $new ? array() : $this->getVenueImageStorageData((int) $data['id']);
         $submittedVenueImage = isset($data['locimage']) ? (string) $data['locimage'] : (string) ($previousVenueImage['locimage'] ?? '');
         $frontendImageFiles = $jinput->files->get('jform', array(), 'array');
@@ -424,18 +468,42 @@ class JemModelVenue extends JemModelAdmin
 
             try {
                 if ($backend && $capacityConfigurationSubmitted) {
-                    $savedCapacityConfiguration = JemVenueCapacityService::saveDefaultConfiguration(
-                        (int) $pk,
-                        $capacityConfiguration,
-                        $capacityProfileName
-                    );
-                    JemVenueCapacityService::saveConfigurationMedia(
-                        (int) $pk,
-                        $savedCapacityConfiguration,
-                        $capacityConfiguration,
-                        (array) $jinput->files->get('capacity_space_image', array(), 'array'),
-                        (array) $jinput->files->get('capacity_layout_image', array(), 'array')
-                    );
+                    if ($capacityProfileAction === 'archive') {
+                        JemVenueCapacityService::archiveProfile((int) $pk, $capacityProfileId);
+                        $defaultCapacityConfiguration = JemVenueCapacityService::getDefaultConfiguration((int) $pk);
+                        $this->setState(
+                            'venue.capacity_profile_id',
+                            (int) ($defaultCapacityConfiguration['profile_id'] ?? 0)
+                        );
+                    } else {
+                        $savedCapacityConfiguration = JemVenueCapacityService::saveProfileConfiguration(
+                            (int) $pk,
+                            $capacityProfileId,
+                            $capacityConfiguration,
+                            $capacityProfileName,
+                            $capacityProfileCode,
+                            $capacityProfileSetDefault,
+                            $capacityProfileOrdering
+                        );
+                        JemVenueCapacityService::saveConfigurationMedia(
+                            (int) $pk,
+                            $savedCapacityConfiguration,
+                            $capacityConfiguration,
+                            (array) $jinput->files->get('capacity_space_image', array(), 'array'),
+                            (array) $jinput->files->get('capacity_layout_image', array(), 'array')
+                        );
+                        if ($capacityProfileAction === 'move-up' || $capacityProfileAction === 'move-down') {
+                            JemVenueCapacityService::moveProfile(
+                                (int) $pk,
+                                (int) $savedCapacityConfiguration['profile_id'],
+                                $capacityProfileAction === 'move-up' ? -1 : 1
+                            );
+                        }
+                        $this->setState(
+                            'venue.capacity_profile_id',
+                            (int) $savedCapacityConfiguration['profile_id']
+                        );
+                    }
                 }
             } catch (Throwable $e) {
                 $this->setError(Text::sprintf('COM_JEM_VENUE_CAPACITY_SAVE_FAILED', $e->getMessage()));

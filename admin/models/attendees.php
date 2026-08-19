@@ -176,6 +176,7 @@ class JemModelAttendees extends ListModel
         $query->select(array(
             'id', 'title', 'dates', 'maxplaces', 'reservedplaces', 'waitinglist',
             'pricing_mode', 'pricing_revision', 'currency', 'prices_include_tax',
+            'capacity_mode',
         ));
         $query->from('#__jem_events');
         $query->where('id = '.$db->Quote($this->eventid));
@@ -232,6 +233,27 @@ class JemModelAttendees extends ListModel
         }
 
         return $pools;
+    }
+
+    public function getCapacityBreakdowns()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'a.register_id', 'a.space_name', 'a.area_name', 'a.quantity',
+            ))
+            ->from($db->quoteName('#__jem_register_capacity_allocations', 'a'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.id = a.register_id AND r.revision = a.registration_revision')
+            ->where('r.event = ' . (int) $this->eventid)
+            ->order('a.register_id ASC, a.id ASC');
+        $db->setQuery($query);
+        $breakdowns = array();
+        foreach ((array) $db->loadObjectList() as $row) {
+            $breakdowns[(int) $row->register_id][] = $row;
+        }
+
+        return $breakdowns;
     }
 
     /**

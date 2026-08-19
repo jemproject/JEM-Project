@@ -84,6 +84,7 @@ class JemViewSettings extends JemAdminView
         $this->config      = $config;
         $this->countryGroups = $countryGroups;
         $this->settings       = $settings;
+        $this->featurePolicy  = JemFeaturePolicy::current();
         $this->customFieldLanguages = JemCustomFields::getLanguageTags();
         $this->customFieldsConfig   = JemCustomFields::getConfig();
 

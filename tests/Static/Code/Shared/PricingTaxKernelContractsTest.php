@@ -33,11 +33,14 @@ final class PricingTaxKernelContractsTest extends TestCase
             self::assertFileExists(JEM_TEST_ROOT . $path, $path);
         }
 
-        self::assertStringContainsString('view=taxrates', $this->read('/jem.xml'));
-        self::assertStringContainsString('view=taxrates', $this->read('/admin/helpers/helper.php'));
+        self::assertStringNotContainsString('view=taxrates', $this->read('/jem.xml'));
+        $helper = $this->read('/admin/helpers/helper.php');
+        self::assertStringContainsString('view=taxrates', $helper);
+        self::assertStringContainsString('FEATURE_PRICING', $helper);
         $dashboard = $this->read('/admin/views/main/tmpl/default.php');
         self::assertStringContainsString('COM_JEM_MAIN_GROUP_SYSTEM', $dashboard);
         self::assertStringContainsString('if ($canConfigure)', $dashboard);
+        self::assertStringContainsString('FEATURE_PRICING', $dashboard);
         self::assertStringContainsString('icon-48-taxrates.svg', $dashboard);
         self::assertStringContainsString("canManage('core.options')", $this->read('/admin/views/taxrates/view.html.php'));
         self::assertStringContainsString('type="countryoptions"', $this->read('/admin/models/forms/taxrate.xml'));

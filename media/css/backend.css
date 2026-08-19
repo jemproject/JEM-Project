@@ -4453,3 +4453,116 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
         min-width: 30rem;
     }
 }
+
+/* JEM usage profile selector. */
+.jem-operating-profile {
+    padding: 1.25rem;
+    border: 1px solid var(--border-color, #d5d9dd);
+    border-left: 0.3rem solid var(--template-link-color, #2a69a5);
+    border-radius: 0.35rem;
+    background: var(--body-bg, #fff);
+}
+
+.jem-operating-profile.is-setup-required {
+    border-left-color: var(--warning, #f0ad4e);
+}
+
+.jem-operating-profile-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.jem-operating-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.jem-operating-profile-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    min-width: 0;
+    min-height: 9rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color, #d5d9dd);
+    border-radius: 0.35rem;
+    background: var(--template-bg-light, #f4f6f8);
+    cursor: pointer;
+}
+
+.jem-operating-profile-card:hover,
+.jem-operating-profile-card:focus-within {
+    border-color: var(--template-link-color, #2a69a5);
+}
+
+.jem-operating-profile-card.is-selected {
+    border-color: var(--template-link-color, #2a69a5);
+    box-shadow: inset 0 0 0 1px var(--template-link-color, #2a69a5);
+    background: color-mix(in srgb, var(--template-link-color, #2a69a5) 8%, var(--body-bg, #fff));
+}
+
+.jem-operating-profile-card.is-disabled {
+    opacity: 0.68;
+    cursor: not-allowed;
+}
+
+.jem-operating-profile-card-copy,
+.jem-operating-profile-card-copy strong,
+.jem-operating-profile-card-copy small,
+.jem-operating-profile-card-copy span,
+.jem-operating-profile-card-copy em {
+    display: block;
+}
+
+.jem-operating-profile-card-copy strong {
+    margin-bottom: 0.15rem;
+    font-size: 1rem;
+}
+
+.jem-operating-profile-card-copy small {
+    margin-bottom: 0.65rem;
+    color: var(--secondary-color, #6c757d);
+    font-weight: 600;
+}
+
+.jem-operating-profile-card-copy em {
+    margin-top: 0.65rem;
+    color: var(--template-link-color, #2a69a5);
+    font-style: normal;
+    font-weight: 700;
+}
+
+.jem-operating-profile-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border-color, #d5d9dd);
+    border-radius: 0.35rem;
+    background: var(--template-bg-light, #f4f6f8);
+}
+
+@media (max-width: 991.98px) {
+    .jem-operating-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-operating-profile-card {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .jem-operating-profile-heading,
+    .jem-operating-profile-summary {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

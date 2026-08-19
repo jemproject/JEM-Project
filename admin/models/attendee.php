@@ -93,7 +93,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 'a.maxbookeduser', 'a.minbookeduser', 'a.recurrence_type', 'a.series_id',
                 'a.series_order', 'a.seriesbooking', 'a.pricing_mode AS event_pricing_mode',
                 'a.pricing_revision AS event_pricing_revision', 'a.currency AS event_currency',
-                'a.prices_include_tax',
+                'a.prices_include_tax', 'a.capacity_mode AS event_capacity_mode',
             ));
             $query->from('#__jem_register as r');
             $query->join('LEFT', '#__users AS u ON (u.id = r.uid)');
@@ -142,6 +142,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     $data->event_pricing_revision = $table->pricing_revision;
                     $data->event_currency = $table->currency;
                     $data->prices_include_tax = $table->prices_include_tax;
+                    $data->event_capacity_mode = $table->capacity_mode;
                 }
                 $data->waitinglist = $table->waitinglist ?? 0;
             }
@@ -348,6 +349,14 @@ class JemModelAttendee extends BaseDatabaseModel
         return $result;
     }
 
+    public function getCapacityData($eventId = 0, $registrationId = 0)
+    {
+        return (new JemRegistrationService())->capacityOptions(
+            (int) $eventId,
+            (int) $registrationId
+        );
+    }
+
     public function toggle()
     {
         $attendee = $this->getData();
@@ -417,7 +426,7 @@ class JemModelAttendee extends BaseDatabaseModel
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(array('id', 'pricing_mode', 'pricing_revision', 'waitinglist', 'recurrence_type', 'series_id'))
+            ->select(array('id', 'pricing_mode', 'pricing_revision', 'capacity_mode', 'waitinglist', 'recurrence_type', 'series_id'))
             ->from($db->quoteName('#__jem_events'))
             ->where('id = ' . $eventid);
         $db->setQuery($query);
@@ -427,6 +436,19 @@ class JemModelAttendee extends BaseDatabaseModel
             array('single', 'multiple', 'priced'),
             true
         );
+        if ($isPriced && !JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
+            $this->setError(Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'));
+
+            return false;
+        }
+        $isAreaCapacity = $pricedEvent && (string) ($pricedEvent->capacity_mode ?? 'classic') === 'areas';
+        $capacityAllocations = (array) ($data['capacity_areas'] ?? array());
+        if ($isAreaCapacity && in_array((int) $status, array(
+            JemRegistrationTransition::ATTENDING,
+            JemRegistrationTransition::WAITING_LIST,
+        ), true)) {
+            $data['places'] = array_sum(array_map('intval', $capacityAllocations));
+        }
 
         if ($isPriced && in_array((int) $status, array(
             JemRegistrationTransition::ATTENDING,
@@ -574,6 +596,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     'source'  => 'administrator.attendee.edit',
                     'respectPlaces' => true,
                     'requireExisting' => true,
+                    'capacityAllocations' => $capacityAllocations,
                 ));
             } catch (Throwable $e) {
                 Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
@@ -672,6 +695,7 @@ class JemModelAttendee extends BaseDatabaseModel
                     'respectPlaces'=> true,
                     'allowWaiting' => true,
                     'requireNew'   => true,
+                    'capacityAllocations' => $capacityAllocations,
                 ));
             } catch (Throwable $e) {
                 Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
