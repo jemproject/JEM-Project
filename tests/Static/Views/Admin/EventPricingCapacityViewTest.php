@@ -87,7 +87,15 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringNotContainsString("renderField('capacity_profile_revision')", $capacity);
         self::assertStringContainsString('COM_JEM_VENUE_CAPACITY_LAYOUT_CAPACITY', $capacity);
         self::assertStringContainsString("summary.classList.toggle('is-over-capacity', layoutsExceedProfile)", $capacity);
-        self::assertStringContainsString('profileCapacityInput.setCustomValidity(validationMessage)', $capacity);
+        self::assertStringContainsString('profileCapacityInput.setCustomValidity(profileValidationMessage)', $capacity);
+        self::assertStringContainsString("getValue('capacity_configuration_submitted')", $capacity);
+        self::assertStringContainsString("getValue('capacity_configuration_json')", $capacity);
+        self::assertStringContainsString('data-restored-unsaved=', $capacity);
+        self::assertStringContainsString('COM_JEM_VENUE_CAPACITY_ERROR_AREA_TOTAL_DETAIL', $capacity);
+        self::assertStringContainsString('layoutCapacityField.setCustomValidity(message)', $capacity);
+        self::assertStringContainsString("window.addEventListener('beforeunload'", $edit);
+        self::assertStringContainsString('COM_JEM_VENUE_UNSAVED_CHANGES_CONFIRM', $edit);
+        self::assertStringContainsString('window.jemVenueEditState.markDirty()', $capacity);
         self::assertStringContainsString('field.reportValidity()', $edit);
         self::assertStringContainsString('revealInvalidVenueCapacityField', $edit);
         self::assertStringContainsString("'.jem-venue-capacity-editor input:invalid, '", $edit);

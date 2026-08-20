@@ -180,6 +180,36 @@ Text::script('JCANCEL');
 </style>
 
 <script>
+    (function () {
+        var dirty = false;
+        var navigationAllowed = false;
+        var confirmMessage = <?php echo json_encode(Text::_('COM_JEM_VENUE_UNSAVED_CHANGES_CONFIRM'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+
+        window.jemVenueEditState = {
+            markDirty: function () {
+                dirty = true;
+                navigationAllowed = false;
+            },
+            hasUnsavedChanges: function () {
+                return dirty;
+            },
+            allowNavigation: function () {
+                navigationAllowed = true;
+            },
+            confirmNavigation: function () {
+                return !dirty || window.confirm(confirmMessage);
+            }
+        };
+
+        window.addEventListener('beforeunload', function (event) {
+            if (!dirty || navigationAllowed) {
+                return;
+            }
+            event.preventDefault();
+            event.returnValue = '';
+        });
+    }());
+
     function revealInvalidVenueCapacityField(field)
     {
         var tabTrigger = document.querySelector('[data-bs-target="#capacity"], [href="#capacity"], [aria-controls="capacity"]');
@@ -197,6 +227,9 @@ Text::script('JCANCEL');
     {
         var form = document.getElementById('venue-form');
         var profileCapacity = document.getElementById('jform_capacity_profile_capacity');
+        if (task == 'venue.cancel' && window.jemVenueEditState && !window.jemVenueEditState.confirmNavigation()) {
+            return;
+        }
         if (task != 'venue.cancel' && form) {
             var invalidCapacityField = form.querySelector(
                 '.jem-venue-capacity-editor input:invalid, '
@@ -213,11 +246,20 @@ Text::script('JCANCEL');
             return;
         }
         if (task == 'venue.cancel' || document.formvalidator.isValid(form)) {
+            if (window.jemVenueEditState) {
+                window.jemVenueEditState.allowNavigation();
+            }
             Joomla.submitform(task, form);
         }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        var venueForm = document.getElementById('venue-form');
+        if (venueForm && window.jemVenueEditState) {
+            venueForm.addEventListener('input', window.jemVenueEditState.markDirty);
+            venueForm.addEventListener('change', window.jemVenueEditState.markDirty);
+        }
+
         var requestedTab = new URLSearchParams(window.location.search).get('active_tab') || window.location.hash.replace('#', '');
         if (requestedTab === 'attachments' && window.bootstrap && bootstrap.Tab) {
             var tabTrigger = document.querySelector('[data-bs-target="#attachments"], [href="#attachments"], [aria-controls="attachments"]');

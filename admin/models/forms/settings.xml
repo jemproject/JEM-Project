@@ -18,8 +18,8 @@
         </field>
         <field name="operating_profile_configured" type="hidden" default="0" filter="integer" />
     </fieldset>
-    <fieldset name="globalparam2"
-            label="COM_JEM_GLOBAL_PARAMETERS"
+    <fieldset name="globalparam_access"
+            label="COM_JEM_SETTINGS_ACCESS_VISIBILITY"
     >
             <field name="access_level_locked_events" type="accesslevel"
             label="COM_JEM_SETTINGS_DISPLAY_LOCKED_EVENTS"
@@ -42,18 +42,11 @@
             default="1"
             multiple="true"
         />
-        <field name="categories_order" type="list"
-            label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
-            description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"
-            class="inputbox"
-            default="0"
-            required="false"
-        >
-            <option value="0">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_ASC</option>
-            <option value="1">COM_JEM_SETTINGS_CATEGORIES_ORDER_ID_DESC</option>
-            <option value="2">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_ASC</option>
-            <option value="3">COM_JEM_SETTINGS_CATEGORIES_ORDER_NAME_DESC</option>
-        </field>
+    </fieldset>
+
+    <fieldset name="globalparam_lists_calendar"
+            label="COM_JEM_SETTINGS_LISTS_CALENDAR"
+    >
         <field name="categories_order" type="list"
             label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
             description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"
@@ -100,7 +93,11 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+    </fieldset>
 
+    <fieldset name="globalparam_time_regional"
+            label="COM_JEM_SETTINGS_TIME_REGIONAL"
+    >
         <field name="ical_tz" type="list"
             label="COM_JEM_SETTINGS_ICAL_TIMEZONE"
             description="COM_JEM_SETTINGS_ICAL_TIMEZONE_DESC"
@@ -139,9 +136,11 @@
             size="40"
             required="true"
         />
-        <field name="spacer_attachments_start" type="spacer"
-            hr="true"
-        />
+    </fieldset>
+
+    <fieldset name="globalparam_attachments"
+            label="COM_JEM_ATTACHMENTS"
+    >
         <field name="attachments_path" type="text"
             label="COM_JEM_SETTINGS_ATTACHEMENT_PATH"
             description="COM_JEM_SETTINGS_ATTACHEMENT_PATH_DESC"
@@ -189,9 +188,11 @@
             <option value="medium">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_MEDIUM</option>
             <option value="large">COM_JEM_SETTINGS_ATTACHEMENT_ICON_SIZE_LARGE</option>
         </field>
-        <field name="spacer2" type="spacer"
-            hr="true"
-        />
+    </fieldset>
+
+    <fieldset name="globalparam_defaults"
+            label="COM_JEM_SETTINGS_DEFAULT_CONTENT_VALUES"
+    >
         <field name="defaultCategory" type="catoptionsdefault"
             label="COM_JEM_SETTINGS_SELECT_DEFAULT_CATEGORY"
             description="COM_JEM_SETTINGS_SELECT_DEFAULT_CATEGORY_DESC"
@@ -222,9 +223,11 @@
         >
             <option value="">COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY_AUTO</option>
         </field>
-        <field name="spacer3" type="spacer"
-            hr="true"
-        />
+    </fieldset>
+
+    <fieldset name="globalparam_csv"
+            label="COM_JEM_SETTINGS_CSV_IMPORT_EXPORT"
+    >
         <field name="csv_separator" type="list"
             label="COM_JEM_SETTINGS_CSV_SEPARATOR"
             description="COM_JEM_SETTINGS_CSV_SEPARATOR_DESC"
@@ -1989,8 +1992,8 @@
             </field>
         </fieldset>
 
-        <fieldset name="globalparam"
-                  label="COM_JEM_GLOBAL_PARAMETERS"
+        <fieldset name="globalparam_display"
+                  label="COM_JEM_SETTINGS_DISPLAY_NAVIGATION"
         >
             <field name="global_show_filter" type="radio"
                 label="COM_JEM_SETTINGS_FIELD_SHOW_FILTER"
@@ -2112,6 +2115,11 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+        </fieldset>
+
+        <fieldset name="globalparam_system"
+                  label="COM_JEM_SETTINGS_SYSTEM_INTEGRATIONS"
+        >
             <field name="loglevel" type="list"
                 label="COM_JEM_SETTINGS_FIELD_LOGLEVEL"
                 description="COM_JEM_SETTINGS_FIELD_LOGLEVEL_DESC"

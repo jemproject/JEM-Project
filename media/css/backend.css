@@ -4456,15 +4456,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 
 /* JEM usage profile selector. */
 .jem-operating-profile {
-    padding: 1.25rem;
-    border: 1px solid var(--border-color, #d5d9dd);
-    border-left: 0.3rem solid var(--template-link-color, #2a69a5);
-    border-radius: 0.35rem;
-    background: var(--body-bg, #fff);
-}
-
-.jem-operating-profile.is-setup-required {
-    border-left-color: var(--warning, #f0ad4e);
+    margin: 0;
 }
 
 .jem-operating-profile-heading {
@@ -4472,23 +4464,23 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .jem-operating-profile-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+    margin-bottom: 0;
 }
 
 .jem-operating-profile-card {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
+    gap: 0.6rem;
     min-width: 0;
-    min-height: 9rem;
-    padding: 1rem;
+    min-height: 4.5rem;
+    padding: 0.6rem 0.7rem;
     border: 1px solid var(--border-color, #d5d9dd);
     border-radius: 0.35rem;
     background: var(--template-bg-light, #f4f6f8);
@@ -4525,16 +4517,23 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 }
 
 .jem-operating-profile-card-copy small {
-    margin-bottom: 0.65rem;
+    margin-bottom: 0;
     color: var(--secondary-color, #6c757d);
     font-weight: 600;
 }
 
 .jem-operating-profile-card-copy em {
-    margin-top: 0.65rem;
+    margin-top: 0.2rem;
     color: var(--template-link-color, #2a69a5);
     font-style: normal;
     font-weight: 700;
+}
+
+.jem-global-parameters-profile {
+    float: none;
+    clear: both;
+    box-sizing: border-box;
+    padding: 10px 1vw 0;
 }
 
 .jem-operating-profile-summary {

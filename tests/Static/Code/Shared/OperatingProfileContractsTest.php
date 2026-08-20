@@ -30,6 +30,11 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringNotContainsString('<option value="commerce">', $form);
         self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_COMMERCE', $layout);
         self::assertStringContainsString('aria-disabled="true"', $layout);
+        self::assertStringContainsString('<fieldset class="options-form jem-operating-profile', $layout);
+        self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_DESC', $layout);
+        self::assertSame(4, substr_count($layout, 'hide-aware-inline-help d-none'));
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_INTRO', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_SAFE_CHANGE', $layout);
         self::assertStringContainsString('normaliseSelectableProfile', $model);
     }
 
@@ -108,5 +113,74 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringContainsString("getCmd('task', '')", $entrypoint);
         self::assertStringContainsString("strtok(\$task, '.') ?: ''", $entrypoint);
         self::assertStringNotContainsString("strtolower((string) strtok(\$task, '.'))", $entrypoint);
+    }
+
+    public function testOperatingProfileStartsTheDefaultGlobalParametersTab(): void
+    {
+        $settingsLayout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default.php');
+        $parametersLayout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_parameters.php');
+
+        self::assertStringContainsString("'active' => 'parameters'", $settingsLayout);
+        self::assertStringContainsString("'recall' => false", $settingsLayout);
+        self::assertLessThan(
+            strpos($settingsLayout, "'settings-basic'"),
+            strpos($settingsLayout, "'parameters'")
+        );
+        self::assertStringNotContainsString("loadTemplate('profile')", $settingsLayout);
+        self::assertStringContainsString("loadTemplate('profile')", $parametersLayout);
+        self::assertStringContainsString('jem-global-parameters-profile', $parametersLayout);
+    }
+
+    public function testGlobalParametersSeparateDisplayFromSystemSettings(): void
+    {
+        $form = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/forms/settings.xml');
+        $layout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_parameters.php');
+        $language = (string) file_get_contents(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini');
+
+        self::assertStringContainsString('fieldset name="globalparam_display"', $form);
+        self::assertStringContainsString('fieldset name="globalparam_system"', $form);
+        self::assertStringNotContainsString('fieldset name="globalparam"', $form);
+        self::assertStringContainsString("getFieldset('globalparam_display')", $layout);
+        self::assertStringContainsString("getFieldset('globalparam_system')", $layout);
+        self::assertLessThan(
+            strpos($form, 'name="globalparam_system"'),
+            strpos($form, 'name="backend_show_order_numbers"')
+        );
+        self::assertLessThan(
+            strpos($form, 'name="loglevel"'),
+            strpos($form, 'name="globalparam_system"')
+        );
+        self::assertStringContainsString('COM_JEM_SETTINGS_DISPLAY_NAVIGATION="Display & Navigation"', $language);
+        self::assertStringContainsString('COM_JEM_SETTINGS_SYSTEM_INTEGRATIONS="System & Integrations"', $language);
+        self::assertLessThan(
+            strpos($layout, "globalparam_recurrence"),
+            strpos($layout, 'COM_JEM_SETTINGS_CALENDAR_SPECIAL_DAYS')
+        );
+        self::assertLessThan(
+            strpos($layout, '<div class="width-50 fltrt">'),
+            strpos($layout, "globalparam_recurrence")
+        );
+    }
+
+    public function testAdvancedParametersAreSplitIntoFocusedFieldsets(): void
+    {
+        $form = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/forms/settings.xml');
+        $layout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_parameters.php');
+
+        foreach (array(
+            'globalparam_access',
+            'globalparam_lists_calendar',
+            'globalparam_time_regional',
+            'globalparam_attachments',
+            'globalparam_defaults',
+            'globalparam_csv',
+        ) as $fieldset) {
+            self::assertStringContainsString('fieldset name="' . $fieldset . '"', $form);
+            self::assertStringContainsString("'" . $fieldset . "'", $layout);
+        }
+
+        self::assertStringNotContainsString('fieldset name="globalparam2"', $form);
+        self::assertSame(1, substr_count($form, '<field name="categories_order"'));
+        self::assertStringContainsString('label="COM_JEM_SETTINGS_DISPLAY_LOCKED_EVENTS"', $form);
     }
 }

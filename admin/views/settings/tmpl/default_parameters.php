@@ -12,14 +12,25 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 $group = 'globalattribs';
+$advancedFieldsets = array(
+    'globalparam_access'         => 'COM_JEM_SETTINGS_ACCESS_VISIBILITY',
+    'globalparam_lists_calendar' => 'COM_JEM_SETTINGS_LISTS_CALENDAR',
+    'globalparam_time_regional'  => 'COM_JEM_SETTINGS_TIME_REGIONAL',
+    'globalparam_attachments'    => 'COM_JEM_ATTACHMENTS',
+    'globalparam_defaults'       => 'COM_JEM_SETTINGS_DEFAULT_CONTENT_VALUES',
+    'globalparam_csv'            => 'COM_JEM_SETTINGS_CSV_IMPORT_EXPORT',
+);
 
 ?>
+<div class="width-100 jem-global-parameters-profile">
+    <?php echo $this->loadTemplate('profile'); ?>
+</div>
 <div class="width-50 fltlft">
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
-            <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS'); ?></legend>
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_DISPLAY_NAVIGATION'); ?></legend>
             <ul class="adminformlist">
-                <?php foreach ($this->form->getFieldset('globalparam') as $field): ?>
+                <?php foreach ($this->form->getFieldset('globalparam_display') as $field): ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname,$group); ?></div></li>
                 <?php endforeach; ?>
             </ul>
@@ -60,18 +71,6 @@ $group = 'globalattribs';
             </a>
         </fieldset>
     </div>
-</div>
-<div class="width-50 fltrt">
-    <div class="width-100" style="padding: 10px 1vw;">
-        <fieldset class="options-form">
-            <legend><?php echo Text::_('COM_JEM_GLOBAL_PARAMETERS_ADVANCED'); ?></legend>
-            <ul class="adminformlist">
-                <?php foreach ($this->form->getFieldset('globalparam2') as $field): ?>
-                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
-                <?php endforeach; ?>
-            </ul>
-        </fieldset>
-    </div>
     <div class="width-100" style="padding: 10px 1vw;">
         <fieldset class="options-form">
             <legend><?php echo Text::_('COM_JEM_SETTINGS_GLOBAL_RECURRENCE'); ?></legend>
@@ -82,6 +81,30 @@ $group = 'globalattribs';
             </ul>
         </fieldset>
     </div>
+</div>
+<div class="width-50 fltrt">
+    <div class="width-100" style="padding: 10px 1vw;">
+        <fieldset class="options-form">
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_SYSTEM_INTEGRATIONS'); ?></legend>
+            <ul class="adminformlist">
+                <?php foreach ($this->form->getFieldset('globalparam_system') as $field): ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname, $group); ?></div></li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+    </div>
+    <?php foreach ($advancedFieldsets as $fieldsetName => $fieldsetLabel) : ?>
+        <div class="width-100" style="padding: 10px 1vw;">
+            <fieldset class="options-form">
+                <legend><?php echo Text::_($fieldsetLabel); ?></legend>
+                <ul class="adminformlist">
+                    <?php foreach ($this->form->getFieldset($fieldsetName) as $field): ?>
+                        <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
+                    <?php endforeach; ?>
+                </ul>
+            </fieldset>
+        </div>
+    <?php endforeach; ?>
 </div>
 <div class="clr"></div>
 

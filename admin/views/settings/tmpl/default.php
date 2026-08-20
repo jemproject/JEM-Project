@@ -70,11 +70,18 @@ jQuery(document).ready(function($) {
 
     <div id="j-main-container" class="j-main-container">
 
-            <?php echo $this->loadTemplate('profile'); ?>
-
             <div class="row">
                 <div class="col-md-12">
-                    <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'settings-basic', 'recall' => true, 'breakpoint' => 768]); ?>
+                    <?php echo HTMLHelper::_('uitab.startTabSet', 'settings-pane', ['active' => 'parameters', 'recall' => false, 'breakpoint' => 768]); ?>
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'parameters', Text::_('COM_JEM_GLOBAL_PARAMETERS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('parameters'); ?>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
                         <fieldset class="adminform">
 
@@ -121,15 +128,6 @@ jQuery(document).ready(function($) {
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
-
-
-                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'parameters', Text::_('COM_JEM_GLOBAL_PARAMETERS')); ?>
-                        <fieldset class="adminform">
-                            <?php echo $this->loadTemplate('parameters'); ?>
-                        </fieldset>
-                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
-                    <div class="clr"></div>
-
 
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'usercontrol', Text::_('COM_JEM_USER_CONTROL')); ?>
                         <fieldset class="adminform">

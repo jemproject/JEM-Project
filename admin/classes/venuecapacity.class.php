@@ -1226,7 +1226,12 @@ class JemVenueCapacityService
             $normalised['layout_capacity'] = $areaTotal;
         }
         if ($areaTotal > $normalised['layout_capacity']) {
-            throw new InvalidArgumentException(Text::_('COM_JEM_VENUE_CAPACITY_ERROR_AREA_TOTAL'));
+            throw new InvalidArgumentException(Text::sprintf(
+                'COM_JEM_VENUE_CAPACITY_ERROR_AREA_TOTAL_DETAIL',
+                $normalised['layout_name'],
+                $areaTotal,
+                $normalised['layout_capacity']
+            ));
         }
 
         return $normalised;

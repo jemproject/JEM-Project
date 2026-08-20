@@ -27,6 +27,11 @@ if (!class_exists('Joomla\\CMS\\Language\\Text')) {
         {
             return $key;
         }
+
+        public static function sprintf(string $key, ...$values): string
+        {
+            return $key . ':' . implode('|', array_map('strval', $values));
+        }
     }
 
     class_alias(JemVenueCapacityTestText::class, 'Joomla\\CMS\\Language\\Text');
@@ -98,6 +103,24 @@ final class VenueCapacityNormalisationTest extends TestCase
                 'areas' => array(array('name' => 'Floor', 'capacity' => 0, 'published' => 1)),
             )),
         ), 50);
+    }
+
+    public function testAreaTotalErrorIdentifiesLayoutAndComparedCapacities(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('COM_JEM_VENUE_CAPACITY_ERROR_AREA_TOTAL_DETAIL:Theatre|130|120');
+
+        JemVenueCapacityService::normaliseFormData(array(
+            'spaces' => array(array(
+                'space_name' => 'Main hall',
+                'layout_name' => 'Theatre',
+                'layout_capacity' => 120,
+                'areas' => array(
+                    array('name' => 'Floor', 'capacity' => 80, 'published' => 1),
+                    array('name' => 'Balcony', 'capacity' => 50, 'published' => 1),
+                ),
+            )),
+        ), 150, 150);
     }
 
     public function testProfileCannotExceedVenuePhysicalCapacity(): void

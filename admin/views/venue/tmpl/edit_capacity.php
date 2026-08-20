@@ -9,23 +9,57 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 
-$profileName = trim((string) ($this->item->capacity_profile_name ?? ''));
+$configurationSubmitted = (int) $this->form->getValue('capacity_configuration_submitted') === 1;
+$submittedConfiguration = null;
+if ($configurationSubmitted) {
+    $submittedConfiguration = json_decode((string) $this->form->getValue('capacity_configuration_json'), true);
+    if (!is_array($submittedConfiguration) || !isset($submittedConfiguration['spaces']) || !is_array($submittedConfiguration['spaces'])) {
+        $submittedConfiguration = null;
+    }
+}
+
+$profileName = trim((string) ($configurationSubmitted
+    ? $this->form->getValue('capacity_profile_name')
+    : ($this->item->capacity_profile_name ?? '')));
 if ($profileName === '') {
     $profileName = Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_MAIN');
 }
-$initialSpaces = array_values((array) ($this->item->capacity_spaces ?? array()));
-$hasConfiguredProfile = (int) ($this->item->capacity_profile_id ?? 0) > 0;
+$initialSpaces = $submittedConfiguration !== null
+    ? array_values($submittedConfiguration['spaces'])
+    : array_values((array) ($this->item->capacity_spaces ?? array()));
+$hasConfiguredProfile = $configurationSubmitted || (int) ($this->item->capacity_profile_id ?? 0) > 0;
 $profiles = array_values((array) ($this->item->capacity_profiles ?? array()));
-$selectedProfileId = (int) ($this->item->capacity_profile_id ?? 0);
-$isDefaultProfile = !empty($this->item->capacity_profile_is_default);
+$selectedProfileId = (int) ($configurationSubmitted
+    ? $this->form->getValue('capacity_profile_id')
+    : ($this->item->capacity_profile_id ?? 0));
+$isDefaultProfile = $configurationSubmitted
+    ? (int) $this->form->getValue('capacity_profile_set_default') === 1
+    : !empty($this->item->capacity_profile_is_default);
 $isPublishedProfile = !isset($this->item->capacity_profile_published) || !empty($this->item->capacity_profile_published);
+$profileRevision = (int) ($configurationSubmitted
+    ? $this->form->getValue('capacity_profile_revision')
+    : ($this->item->capacity_profile_revision ?? 1));
+$profileCapacity = (int) ($configurationSubmitted
+    ? $this->form->getValue('capacity_profile_capacity')
+    : ($this->item->capacity_profile_capacity ?? 0));
+$selectedProfileAvailable = false;
+$initialLayoutCapacity = 0;
+foreach ($initialSpaces as $space) {
+    $initialLayoutCapacity += max(0, (int) ($space['layout_capacity'] ?? 0));
+}
+foreach ($profiles as $profile) {
+    if ((int) ($profile['id'] ?? 0) === $selectedProfileId) {
+        $selectedProfileAvailable = true;
+        break;
+    }
+}
 
 $initialConfiguration = json_encode(
     array('spaces' => $initialSpaces),
     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 );
 ?>
-<div class="jem-venue-capacity-editor" id="jem-venue-capacity-editor" data-profile-configured="<?php echo $hasConfiguredProfile ? '1' : '0'; ?>">
+<div class="jem-venue-capacity-editor" id="jem-venue-capacity-editor" data-profile-configured="<?php echo $hasConfiguredProfile ? '1' : '0'; ?>" data-restored-unsaved="<?php echo $configurationSubmitted ? '1' : '0'; ?>">
     <?php echo $this->form->getInput('capacity_configuration_submitted'); ?>
     <?php echo $this->form->getInput('capacity_configuration_json'); ?>
     <?php echo $this->form->getInput('capacity_profile_id'); ?>
@@ -53,6 +87,24 @@ $initialConfiguration = json_encode(
             <div class="jem-capacity-profile-actions">
             <label class="visually-hidden" for="jem-capacity-profile-selector"><?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_SELECTOR'); ?></label>
             <select class="form-select" id="jem-capacity-profile-selector">
+                <?php if ($configurationSubmitted && !$selectedProfileAvailable) : ?>
+                    <option value="<?php echo $selectedProfileId; ?>"
+                        data-space-count="<?php echo count($initialSpaces); ?>"
+                        data-layout-capacity="<?php echo $initialLayoutCapacity; ?>"
+                        data-profile-capacity="<?php echo $profileCapacity; ?>"
+                        data-is-default="<?php echo $isDefaultProfile ? 1 : 0; ?>"
+                        data-is-published="1" selected data-role="profile-option"><?php echo htmlspecialchars(
+                        Text::sprintf(
+                            'COM_JEM_VENUE_CAPACITY_PROFILE_OPTION_SUMMARY',
+                            $profileName,
+                            count($initialSpaces),
+                            $initialLayoutCapacity,
+                            $profileCapacity
+                        ),
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ); ?></option>
+                <?php endif; ?>
                 <?php foreach ($profiles as $profile) : ?>
                     <option value="<?php echo (int) $profile['id']; ?>"
                         data-space-count="<?php echo (int) ($profile['space_count'] ?? 0); ?>"
@@ -106,7 +158,7 @@ $initialConfiguration = json_encode(
                 <?php endif; ?>
                 <span class="jem-capacity-profile-revision">
                     <?php echo Text::_('COM_JEM_VENUE_CAPACITY_PROFILE_REVISION_COMPACT'); ?>
-                    <strong><?php echo (int) ($this->item->capacity_profile_revision ?? 1); ?></strong>
+                    <strong><?php echo max(1, $profileRevision); ?></strong>
                 </span>
                 <?php echo $this->form->getInput('capacity_profile_name'); ?>
                 <div id="jform_capacity_profile_name-desc" class="form-text hide-aware-inline-help d-none">
@@ -342,6 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'confirmRemove'  => Text::_('COM_JEM_VENUE_CAPACITY_CONFIRM_REMOVE_SPACE'),
         'profileLimit'   => Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_LIMIT'),
         'physicalLimit'  => Text::_('COM_JEM_VENUE_CAPACITY_ERROR_PROFILE_PHYSICAL_LIMIT'),
+        'areaTotal'      => Text::_('COM_JEM_VENUE_CAPACITY_ERROR_AREA_TOTAL_DETAIL'),
         'venue'          => Text::_('COM_JEM_VENUE'),
         'profile'        => Text::_('COM_JEM_VENUE_CAPACITY_PROFILE'),
         'layout'         => Text::_('COM_JEM_VENUE_CAPACITY_LAYOUT'),
@@ -395,6 +448,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function integer(value) {
         const number = Number.parseInt(value, 10);
         return Number.isFinite(number) && number >= 0 ? number : 0;
+    }
+
+    function formatMessage(message, values) {
+        values.forEach(function (value) {
+            message = message.replace(/%[sd]/, String(value));
+        });
+        return message;
     }
 
     function profileOptionLabel(name, option) {
@@ -615,9 +675,30 @@ document.addEventListener('DOMContentLoaded', function () {
         const validation = editor.querySelector('[data-role="capacity-validation"]');
         const layoutsExceedProfile = profileTotal > profileLimit;
         const profileExceedsVenue = profileLimit > venueLimit;
-        const validationMessage = profileExceedsVenue
+        let areaValidationMessage = '';
+        spaces.forEach(function (space, index) {
+            const card = spacesContainer.querySelector('[data-space-index="' + index + '"]');
+            const layoutCapacityField = card ? card.querySelector('[data-field="layout_capacity"]') : null;
+            const activeAreaTotal = (Array.isArray(space.areas) ? space.areas : []).reduce(function (total, area) {
+                return total + (integer(area.published) === 1 ? integer(area.capacity) : 0);
+            }, 0);
+            const exceedsLayout = integer(space.layout_capacity) > 0
+                && activeAreaTotal > integer(space.layout_capacity);
+            const message = exceedsLayout
+                ? formatMessage(labels.areaTotal, [space.layout_name || labels.layout, activeAreaTotal, integer(space.layout_capacity)])
+                : '';
+            if (layoutCapacityField) {
+                layoutCapacityField.setCustomValidity(message);
+                layoutCapacityField.classList.toggle('is-invalid', exceedsLayout);
+            }
+            if (!areaValidationMessage && message) {
+                areaValidationMessage = message;
+            }
+        });
+        const profileValidationMessage = profileExceedsVenue
             ? labels.physicalLimit
             : (layoutsExceedProfile ? labels.profileLimit : '');
+        const validationMessage = areaValidationMessage || profileValidationMessage;
         const profileOption = editor.querySelector('[data-role="profile-option"]');
         if (profileOption) {
             const configuredSpaceCount = spaces.filter(function (space) {
@@ -643,8 +724,8 @@ document.addEventListener('DOMContentLoaded', function () {
             venueLimitCard.classList.toggle('is-over-capacity', profileExceedsVenue);
         }
         if (profileCapacityInput) {
-            profileCapacityInput.setCustomValidity(validationMessage);
-            profileCapacityInput.classList.toggle('is-invalid', validationMessage !== '');
+            profileCapacityInput.setCustomValidity(profileValidationMessage);
+            profileCapacityInput.classList.toggle('is-invalid', profileValidationMessage !== '');
         }
         if (validation) {
             validation.textContent = validationMessage;
@@ -867,6 +948,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        if (window.jemVenueEditState) {
+            window.jemVenueEditState.markDirty();
+        }
         render(spaces);
         if ((action === 'create-profile' || action === 'add-profile') && profileNameInput) {
             profileNameInput.focus();
@@ -890,6 +974,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 profileSelector.value = String(<?php echo $selectedProfileId; ?>);
                 return;
             }
+            if (window.jemVenueEditState) {
+                window.jemVenueEditState.allowNavigation();
+            }
             const url = new URL(window.location.href);
             url.searchParams.set('task', 'venue.edit');
             url.searchParams.set('id', String(<?php echo (int) ($this->item->id ?? 0); ?>));
@@ -900,5 +987,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setProfileConfigured(profileConfigured);
     render(Array.isArray(initial.spaces) ? initial.spaces : []);
+    if (editor.dataset.restoredUnsaved === '1' && window.jemVenueEditState) {
+        window.jemVenueEditState.markDirty();
+    }
 });
 </script>
