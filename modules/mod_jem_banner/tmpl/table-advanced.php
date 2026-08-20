@@ -112,7 +112,7 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <div class="event-card" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                <div class="event-card">
                     <div class="event-header">
                         <?php if ($showcalendar == 1) : ?>
                             <div class="event-date">
@@ -126,8 +126,8 @@ $wa->addInlineStyle($css);
                         <?php endif; ?>
 
                         <div class="event-heading">
-                            <h3 class="event-title" itemprop="name">
-                                <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'" itemprop="url">'.$item->title.'</a>' : $item->title; ?>
+                            <h3 class="event-title">
+                                <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'">'.$item->title.'</a>' : $item->title; ?>
                             </h3>
 
                             <div class="event-title-meta">
@@ -184,13 +184,13 @@ $wa->addInlineStyle($css);
                             <div class="event-image">
                                 <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
                                    title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>">
-                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
                                 </a>
                             </div>
                         <?php endif; ?>
 
                         <?php if ($params->get('showdesc', 1) == 1) :?>
-                            <div class="event-description" itemprop="description">
+                            <div class="event-description">
                                 <?php echo $item->eventdescription; ?>
                                 <?php $readmoreDisplay = JemHelper::getMoreInformationDisplay($params->get('readmore', 1)); ?>
                                 <?php if (isset($item->link) && $item->readmore != 0 && $readmoreDisplay !== '') : ?>

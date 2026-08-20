@@ -14,6 +14,7 @@ use Joomla\CMS\User\User;
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/featurepolicy.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/eventstructureddata.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/venuesnapshot.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/money.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/taxpolicy.class.php');

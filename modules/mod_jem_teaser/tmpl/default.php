@@ -26,10 +26,10 @@ if ($params->get('use_modal', 0)) {
     <div class="eventset" >
         <?php if (count($list)) : ?>
             <?php
-            $titletag = '<h2 class="event-title" itemprop="name">';
+            $titletag = '<h2 class="event-title">';
             $titleendtag = '</h2>';
             if ($module->showtitle) {
-                $titletag = '<h3 class="event-title" itemprop="name">';
+                $titletag = '<h3 class="event-title">';
                 $titleendtag = '</h3>';
             }
             ?>
@@ -42,7 +42,7 @@ if ($params->get('use_modal', 0)) {
                     $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 }
                 ?>
-                <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                <div class="event_id<?php echo $item->eventid; ?>">
                     <table>
                         <tr>
                             <td class="event-calendar">
@@ -72,7 +72,7 @@ if ($params->get('use_modal', 0)) {
                             <td class="event-info">
                                 <?php echo $titletag; ?>
                                 <?php if ($item->eventlink) : ?>
-                                    <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
+                                    <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
                                 <?php else : ?>
                                     <?php echo $item->title; ?>
                                 <?php endif; ?>
@@ -108,7 +108,7 @@ if ($params->get('use_modal', 0)) {
                                             <?php if (strpos($item->eventimage, '/media/com_jem/images/blank.webp') === false) : ?>
                                                 <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal; ?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" title="<?php echo Text::_(
                                                     'COM_JEM_CLICK_TO_ENLARGE'
-                                                ); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') . ': ' . $item->fulltitle; ?>"><img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
+                                                ); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') . ': ' . $item->fulltitle; ?>"><img class="float_right image-preview" style="height:auto" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" /></a>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                         <?php if ($item->showimagevenue) : ?>
@@ -123,7 +123,7 @@ if ($params->get('use_modal', 0)) {
                                     </div>
                                     <div>
                                         <?php if ($item->showdescriptionevent) : ?>
-                                            <div class="jem-description-teaser" itemprop="description">
+                                            <div class="jem-description-teaser">
                                                 <?php echo $item->eventdescription; ?>
                                             </div>
                                             <?php
@@ -150,16 +150,6 @@ if ($params->get('use_modal', 0)) {
                                         </a>
                                     </div>
                                 <?php endif; ?>
-                                <?php echo $item->dateschema; ?>
-                                <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                                    <meta itemprop="name" content="<?php echo $item->venue; ?>" />
-                                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                                        <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-                                        <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-                                        <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-                                        <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-                                    </div>
-                                </div>
                             </td>
                         </tr>
                     </table>

@@ -62,7 +62,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                 }
                 ?>
 
-                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="margin-bottom: 15px;">
+                <li class="event_id<?php echo $item->eventid; ?>" style="margin-bottom: 15px;">
                     <div class="jem-event-wrapper" style="display: flex; align-items: flex-start; gap: 12px;">
 
                         <?php // Flag Section ?>
@@ -111,11 +111,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                         </div>
                     </div>
 
-                    <?php echo $item->dateschema; ?>
-                    <meta itemprop="name" content="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>" />
-                    <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                        <meta itemprop="name" content="<?php echo htmlspecialchars($item->venue, ENT_QUOTES, 'UTF-8'); ?>" />
-                    </div>
+
                 </li>
             <?php endforeach; ?>
         </ul>

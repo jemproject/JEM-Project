@@ -97,12 +97,12 @@ $css = '
                 height: ' . $imageheight . ';
             }
         }
-        
+
     @media (max-width: 768px) {
         .events-grid {
             grid-template-columns: 1fr;
         }
-        
+
         .event-date-container {
             flex-direction: column;
             align-items: flex-start;
@@ -122,7 +122,7 @@ $wa->addInlineStyle($css);
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
                 <?php $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)); ?>
-                <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>">
                     <?php if ($showflyer == 1) : ?>
                         <div class="event-media">
                             <?php if (!empty($item->eventlink)) : ?>

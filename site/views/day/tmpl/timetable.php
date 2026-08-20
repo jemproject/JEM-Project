@@ -451,10 +451,10 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                                         $textColor = $getContrastColor($accentColor);
                                         $gridColumnStart = array_search($venueIndex, $venueKeys, true) + 1;
                                         ?>
-                                        <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;" itemscope="itemscope" itemtype="https://schema.org/Event">
-                                            <span class="jem-timetable-block-title" itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                        <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;">
+                                            <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                             <span class="jem-timetable-block-time"><?php echo $this->escape($timeRange); ?></span>
-                                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                                            <?php  ?>
                                         </a>
                                     <?php endforeach; ?>
                                 <?php endforeach; ?>
@@ -476,9 +476,9 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                                     $venueKey = !empty($row->locid) ? 'venue-' . (int) $row->locid : 'venue-0';
                                     $gridColumnStart = max(1, (int) array_search($venueKey, $venueKeys, true) + 1);
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;" itemscope="itemscope" itemtype="https://schema.org/Event">
-                                        <span class="jem-timetable-block-title" itemprop="name"><?php echo $this->escape($row->title); ?></span>
-                                        <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;">
+                                        <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
+                                        <?php  ?>
                                     </a>
                                 <?php endforeach; ?>
                             </div>
@@ -529,10 +529,10 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                                     $accentColor = $getEventBackgroundColor($row);
                                     $textColor = $getContrastColor($accentColor);
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; left: <?php echo round($leftPercent, 4); ?>%; width: <?php echo round($widthPercent, 4); ?>%;" itemscope="itemscope" itemtype="https://schema.org/Event">
-                                        <span class="jem-timetable-block-title" itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; left: <?php echo round($leftPercent, 4); ?>%; width: <?php echo round($widthPercent, 4); ?>%;">
+                                        <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                         <span class="jem-timetable-block-time"><?php echo $this->escape($timeRange); ?></span>
-                                        <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                                        <?php  ?>
                                     </a>
                                 <?php endforeach; ?>
                             </div>
@@ -548,9 +548,9 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                                     $accentColor = $getEventBackgroundColor($row);
                                     $textColor = $getContrastColor($accentColor);
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: 1 / -1;" itemscope="itemscope" itemtype="https://schema.org/Event">
-                                        <span class="jem-timetable-block-title" itemprop="name"><?php echo $this->escape($row->title); ?></span>
-                                        <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: 1 / -1;">
+                                        <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
+                                        <?php  ?>
                                     </a>
                                 <?php endforeach; ?>
                             </div>

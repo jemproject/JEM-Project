@@ -77,10 +77,10 @@ $document->addStyleDeclaration($css);
     <div class="eventset">
         <?php if (count($list)) : ?>
             <?php
-            $titletag = '<h2 class="event-title" itemprop="name">';
+            $titletag = '<h2 class="event-title">';
             $titleendtag = '</h2>';
             if ($module->showtitle) {
-                $titletag = '<h3 class="event-title" itemprop="name">';
+                $titletag = '<h3 class="event-title">';
                 $titleendtag = '</h3>';
             }
             ?>
@@ -93,10 +93,10 @@ $document->addStyleDeclaration($css);
                     $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 }
                 ?>
-                <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                <div class="event_id<?php echo $item->eventid; ?>">
                     <?php echo $titletag; ?>
                     <?php if ($item->eventlink) : ?>
-                        <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
+                        <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
                     <?php else : ?>
                         <?php echo $item->title; ?>
                     <?php endif; ?>
@@ -185,7 +185,7 @@ $document->addStyleDeclaration($css);
 
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
@@ -207,7 +207,7 @@ $document->addStyleDeclaration($css);
                                                 } ?>
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
@@ -218,7 +218,7 @@ $document->addStyleDeclaration($css);
                                 <?php endif; ?>
 
                                 <?php if($item->showdescriptionevent): ?>
-                                    <div class="jem-description-teaser" itemprop="description">
+                                    <div class="jem-description-teaser">
                                         <?php echo $item->eventdescription; ?>
                                     </div>
                                     <?php
@@ -242,17 +242,7 @@ $document->addStyleDeclaration($css);
                                             <?php echo Text::_('MOD_JEM_TEASER_MORE_INFORMATION'); ?><?php echo ((int)$params->get('show_more_information_title', 0) && !empty($item->articletitle)) ? ': ' . $item->articletitle : ''; ?>
                                         </a>
                                     </div>
-                                <?php endif;
-                                echo $item->dateschema; ?>
-                                <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                                    <meta itemprop="name" content="<?php echo $item->venue; ?>" />
-                                    <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                                        <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-                                        <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-                                        <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-                                        <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-                                    </div>
-                                </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

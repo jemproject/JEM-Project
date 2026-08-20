@@ -125,9 +125,9 @@ use Joomla\CMS\Router\Route;
                 }
                 ?>
                 <?php if (!empty($row->featured)) : ?>
-                    <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>">
                 <?php else : ?>
-                    <tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>">
                 <?php endif; ?>
 
                 <?php if ($this->jemsettings->showeventimage == 1) : ?>
@@ -145,7 +145,7 @@ use Joomla\CMS\Router\Route;
                     <?php
                     echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true">&nbsp;</i>':'');
                     echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
                     ?>
                 </td>
 
@@ -154,17 +154,16 @@ use Joomla\CMS\Router\Route;
                         <?php if ($this->jemsettings->showdetails == 1) : ?>
                             <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                         <?php endif; ?>
-                        <span itemprop="name"><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span>
+                        <span><?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '');?></span>
                         <?php if ($this->jemsettings->showdetails == 1) : ?>
                             </a>
                         <?php endif; ?>
-                        <?php echo JemOutput::publishstateicon($row);
-                        echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
+                        <?php echo JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
                         echo $eventaccess;
-                        echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
+                        echo JemOutput::eventStateBadges($row, false, $showAvailabilityText);
                         echo JemOutput::typeBadge($row);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
@@ -179,13 +178,13 @@ use Joomla\CMS\Router\Route;
                 <?php endif; ?>
 
                 <?php if ($this->jemsettings->showtitle == 0) : ?>
-                    <td headers="jem_title" class="header-td" itemprop="name">
+                    <td headers="jem_title" class="header-td">
                         <?php echo $this->escape($row->title) . ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '') . JemOutput::publishstateicon($row);
                         if (!empty($row->featured)) :
                             echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':'');
                         endif;
                         echo $eventaccess;
-                        echo JemOutput::eventStateBadges($row, true, $showAvailabilityText);
+                        echo JemOutput::eventStateBadges($row, false, $showAvailabilityText);
                         echo JemOutput::typeBadge($row);
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
@@ -196,30 +195,22 @@ use Joomla\CMS\Router\Route;
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
-                        <?php echo "<meta itemprop='url' content='" . Route::_(JemHelperRoute::getEventRoute($row->slug)) . "'>"; ?>
                     </td>
                 <?php endif; ?>
 
                 <?php if ($this->jemsettings->showlocate == 1) : ?>
-                    <td headers="jem_location" class="header-td" itemtype="https://schema.org/Place" itemscope itemprop="location">
+                    <td headers="jem_location" class="header-td">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                         <?php
                         if (!empty($row->venue)) :
                             if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) :
-                                echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>";
+                                echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span>".$this->escape($row->venue)."</span></a>";
                             else :
-                                echo "<span itemprop='name'>" . $this->escape($row->venue)."</span>";
+                                echo "<span>" . $this->escape($row->venue)."</span>";
                             endif;
                         else :
-                            echo "-<meta itemprop='name' content='' />";
+                            echo "-";
                         endif; ?>
-                        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
-                            <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
-                            <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
-                            <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
-                            <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
-                            <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
-                        </div>
 
                     </td>
                 <?php endif; ?>

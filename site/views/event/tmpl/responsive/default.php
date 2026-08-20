@@ -30,17 +30,17 @@ $document    = $app->getDocument();
 $uri         = Uri::getInstance();
 
 $eventStatusOptions = array(
-    'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled', 'schema' => 'https://schema.org/EventScheduled'),
-    'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled', 'schema' => 'https://schema.org/EventCancelled'),
-    'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed', 'schema' => 'https://schema.org/EventPostponed'),
-    'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled', 'schema' => 'https://schema.org/EventRescheduled'),
-    'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online', 'schema' => 'https://schema.org/EventMovedOnline'),
+    'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled'),
+    'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled'),
+    'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed'),
+    'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled'),
+    'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online'),
 );
 $ticketAvailabilityOptions = array(
-    'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available', 'schema' => 'https://schema.org/InStock'),
-    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder', 'schema' => 'https://schema.org/PreOrder'),
-    'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout', 'schema' => 'https://schema.org/SoldOut'),
-    'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist', 'schema' => 'https://schema.org/SoldOut'),
+    'instock'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_INSTOCK', 'class' => 'jem-event-state-badge--available'),
+    'preorder' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder'),
+    'soldout'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout'),
+    'waitinglist' => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist'),
 );
 $eventStatus = !empty($this->item->event_status) && isset($eventStatusOptions[$this->item->event_status]) ? $this->item->event_status : 'scheduled';
 $eventStatusOption = $eventStatusOptions[$eventStatus];
@@ -140,7 +140,7 @@ $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginal
         $lightboxId  = 'lightbox-event-header-' . (int) $this->item->id;
         $image = '<div class="flyerimage">'
             . '<a href="' . $imageUrl . '" rel="lightbox" class="flyermodal flyerimage" data-lightbox="' . $lightboxId . '" title="' . $imageTitle . '" data-title="' . $imageTitle . '">'
-            . '<img class="jem-event-header-fullimage" itemprop="image" src="' . $imageUrl . '" alt="' . $imageTitle . '" loading="lazy" />'
+            . '<img class="jem-event-header-fullimage" src="' . $imageUrl . '" alt="' . $imageTitle . '" loading="lazy" />'
             . '</a>'
             . '</div>';
     } else {
@@ -278,28 +278,28 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     $html .= '<div class="jem-venue-compact-name">' . $venueName . $venueaccess . '</div>';
 
     if ($includeAddress && $addressParts) {
-        $html .= '<div class="jem-venue-compact-address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">';
+        $html .= '<div class="jem-venue-compact-address">';
 
         if (!empty($this->item->street)) {
-            $html .= '<span itemprop="streetAddress">' . $this->escape($this->item->street) . '</span>';
+            $html .= '<span>' . $this->escape($this->item->street) . '</span>';
         }
 
         if ($locality) {
             $html .= '<span class="jem-venue-compact-locality">';
 
             if (!empty($this->item->postalCode)) {
-                $html .= '<span itemprop="postalCode">' . $this->escape($this->item->postalCode) . '</span>';
+                $html .= '<span>' . $this->escape($this->item->postalCode) . '</span>';
             }
 
             if (!empty($this->item->city)) {
-                $html .= '<span itemprop="addressLocality">' . $this->escape($this->item->city) . '</span>';
+                $html .= '<span>' . $this->escape($this->item->city) . '</span>';
             }
 
             $html .= '</span>';
         }
 
         if (!empty($this->item->state)) {
-            $html .= '<span itemprop="addressRegion">' . $this->escape($this->item->state) . '</span>';
+            $html .= '<span>' . $this->escape($this->item->state) . '</span>';
         }
 
         if (trim((string) $this->item->country) !== '') {
@@ -307,7 +307,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             if ($this->item->countryimg) {
                 $html .= ' ' . $this->item->countryimg;
             }
-            $html .= '<meta itemprop="addressCountry" content="' . $this->escape($this->item->country) . '" /></span>';
+            $html .= '</span>';
         }
 
         $html .= '</div>';
@@ -464,22 +464,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
     if (!empty($catclasses)) {
         echo $this->escape($catclasses);
     }
-    ?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>"
-         itemscope="itemscope" itemtype="https://schema.org/Event">
+    ?> jem_event<?php echo $this->escape($this->pageclass_sfx); ?>">
 
         <?php if ($this->params->get('showintrotext')) : ?>
             <div class="description no_space floattext">
                 <?php echo $this->params->get('introtext'); ?>
             </div>
         <?php endif; ?>
-
-        <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-        <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-        <meta itemprop="eventStatus" content="<?php echo $eventStatusOption['schema']; ?>" />
-        <div itemprop="offers" itemscope itemtype="https://schema.org/Offer" hidden>
-            <link itemprop="url" href="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($this->item->slug)); ?>" />
-            <link itemprop="availability" href="<?php echo $ticketAvailabilityOption['schema']; ?>" />
-        </div>
 
         <div class="buttons jem-event-toolbar">
             <?php
@@ -535,7 +526,6 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <div class="jem-row jem-event-main-responsive jem-event-overview-panel">
             <div class="jem-info jem-event-overview-details">
                 <?php if ($eventLayout === 'compact') : ?>
-                    <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
                     <div class="jem-event-compact">
                         <?php $eventCategories = $renderEventCategoryLinks(); ?>
                         <?php if (($params->get('event_show_category') == 1 && $eventCategories !== '') || JemOutput::typeBadge($this->item)) : ?>
@@ -549,7 +539,6 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <div class="jem-event-compact-when">
                             <?php
                             echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
-                            echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes, true, $this->item);
                             ?>
                             <?php if (!empty($this->item->times)) : ?>
                                 <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
@@ -563,7 +552,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <dl class="jem-dl jem-event-info-list">
                     <?php if ($params->get('event_show_detailstitle',1)) : ?>
                         <dt class="jem-title hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_TITLE'); ?>"><?php echo Text::_('COM_JEM_TITLE'); ?>:</dt>
-                        <dd class="jem-title" itemprop="name">
+                        <dd class="jem-title">
                             <?php echo $this->escape($this->item->title); ?>
                             <?php if ($showEventStatusBadge || $showTicketAvailabilityBadge) : ?>
                                 <span class="jem-event-badges">
@@ -578,14 +567,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             <?php echo JemOutput::typeBadge($this->item); ?>
                         </dd>
                     <?php else : ?>
-                        <meta itemprop="name" content="<?php echo $this->escape($this->item->title); ?>" />
                     <?php endif; ?>
                     <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
                     <dd class="jem-when">
             <span style="white-space: nowrap;">
               <?php
               echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
-              echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes, true, $this->item);
               ?>
             </span>
                     </dd>
@@ -764,7 +751,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <?php if ($showEventDescription) : ?>
                 <h2 class="description"><?php echo Text::_('COM_JEM_EVENT_DESCRIPTION'); ?></h2>
             <?php endif; ?>
-            <div class="description event_desc" itemprop="description">
+            <div class="description event_desc">
 
                 <?php
                 if ($params->get('access-view')) {
@@ -1184,8 +1171,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             }
             ?>
 
-            <div class="venue_id<?php echo $this->item->locid; ?>" itemprop="location" itemscope="itemscope" itemtype="https://schema.org/Place">
-                <meta itemprop="name" content="<?php echo $this->escape($this->item->venue); ?>" />
+            <div class="venue_id<?php echo $this->item->locid; ?>">
                 <?php $itemid = $this->item ? $this->item->id : 0 ; ?>
                 <?php if ($venueLayout !== 'compact') : ?>
                     <h2 class="jem-location">
@@ -1210,8 +1196,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <div class="jem-row jem-wrap-reverse">
                     <?php if ($params->get('event_show_detailsadress', '1')) : ?>
                         <div class="jem-grow-2">
-                            <dl class="jem-dl" itemprop="address" itemscope
-                                itemtype="https://schema.org/PostalAddress">
+                            <dl class="jem-dl">
                                 <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_LOCATION'); ?>"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
                                 <dd class="venue">
                                     <?php
@@ -1222,28 +1207,28 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                 <?php if($this->item->user_has_access_venue) : ?>
                                     <?php if ($this->item->street) : ?>
                                         <dt class="venue_street hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STREET'); ?>"><?php echo Text::_('COM_JEM_STREET'); ?>:</dt>
-                                        <dd class="venue_street" itemprop="streetAddress">
+                                        <dd class="venue_street">
                                             <?php echo $this->escape($this->item->street); ?>
                                         </dd>
                                     <?php endif; ?>
 
                                     <?php if ($this->item->postalCode) : ?>
                                         <dt class="venue_postalCode hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_ZIP'); ?>"><?php echo Text::_('COM_JEM_ZIP'); ?>:</dt>
-                                        <dd class="venue_postalCode" itemprop="postalCode">
+                                        <dd class="venue_postalCode">
                                             <?php echo $this->escape($this->item->postalCode); ?>
                                         </dd>
                                     <?php endif; ?>
 
                                     <?php if ($this->item->city) : ?>
                                         <dt class="venue_city hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_CITY'); ?>"><?php echo Text::_('COM_JEM_CITY'); ?>:</dt>
-                                        <dd class="venue_city" itemprop="addressLocality">
+                                        <dd class="venue_city">
                                             <?php echo $this->escape($this->item->city); ?>
                                         </dd>
                                     <?php endif; ?>
 
                                     <?php if ($this->item->state) : ?>
                                         <dt class="venue_state hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_STATE'); ?>"><?php echo Text::_('COM_JEM_STATE'); ?>:</dt>
-                                        <dd class="venue_state" itemprop="addressRegion">
+                                        <dd class="venue_state">
                                             <?php echo $this->escape($this->item->state); ?>
                                         </dd>
                                     <?php endif; ?>
@@ -1252,7 +1237,6 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         <dt class="venue_country hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_COUNTRY'); ?>"><?php echo Text::_('COM_JEM_COUNTRY'); ?>:</dt>
                                         <dd class="venue_country">
                                             <?php echo $this->item->countryimg ? $this->item->countryimg : $this->item->country; ?>
-                                            <meta itemprop="addressCountry" content="<?php echo $this->item->country; ?>" />
                                         </dd>
                                     <?php endif; ?>
 
@@ -1284,8 +1268,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
                     <?php else : // $params->get('event_show_detailsadress', '1') == 0 ?>
                         <div class="jem-grow-2">
-                            <dl class="jem-dl" itemprop="address" itemscope
-                                itemtype="https://schema.org/PostalAddress">
+                            <dl class="jem-dl">
                                 <dt class="venue hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_LOCATION'); ?>"><?php echo Text::_('COM_JEM_LOCATION'); ?>:</dt>
                                 <dd class="venue">
                                     <?php echo $renderVenueName(); ?>
@@ -1338,7 +1321,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php if ($params->get('event_show_locdescription', '1') && ($venueDescriptionHtml !== ''
                     && $venueDescriptionHtml !== '<br>' || $venueCompactHasMore)) : ?>
                     <h2 class="location_desc"><?php echo Text::_('COM_JEM_VENUE_DESCRIPTION'); ?></h2>
-                    <div class="description location_desc" itemprop="description">
+                    <div class="description location_desc">
                         <?php echo $venueDescriptionHtml; ?>
                         <?php
                         if ($venueCompactHasMore) {

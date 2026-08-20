@@ -25,6 +25,7 @@ class JemViewEvent extends JemView
     public $print;
     public $state;
     public $user;
+    public $eventStructuredDataAnalysis = array();
 
     public function __construct($config = array())
     {
@@ -392,7 +393,7 @@ class JemViewEvent extends JemView
                 }
             }
         } else {
-            $description_content = "";
+            $description_content = JemEventStructuredData::normaliseText($this->item->text, 320);
         }
 
         $document->setDescription(strip_tags($description_content));
@@ -484,8 +485,107 @@ class JemViewEvent extends JemView
         }
 
         $this->_prepareDocument();
+        $this->prepareEventStructuredData($item, $document, $app);
 
         parent::display($tpl);
+    }
+
+    /**
+     * Add one canonical Event entity to the HTML detail response.
+     *
+     * The projection is based only on public facts rendered by this event
+     * response. It intentionally does not inspect the active JEM profile.
+     */
+    protected function prepareEventStructuredData($item, $document, $app): void
+    {
+        $baseUrl = Uri::root();
+        $canonicalUrl = JemEventStructuredData::absoluteUrl(
+            Route::_(JemHelperRoute::getEventRoute($item->slug), false),
+            $baseUrl
+        );
+
+        if ($canonicalUrl !== '') {
+            $document->addHeadLink($canonicalUrl, 'canonical');
+        }
+
+        if ($this->print || $canonicalUrl === '') {
+            return;
+        }
+
+        $params = $item->params;
+        $eventLayout = (string) $params->get('event_details_layout', '');
+        if ($eventLayout === '') {
+            $eventLayout = (string) $this->settings->get('event_details_layout', 'details');
+        }
+        if (!in_array($eventLayout, array('details', 'compact'), true)) {
+            $eventLayout = 'details';
+        }
+
+        $layoutOverride = $app->input->getCmd('jem_layout', '');
+        if (in_array($layoutOverride, array('details', 'compact'), true)) {
+            $eventLayout = $layoutOverride;
+        }
+        $eventLayoutOverride = $app->input->getCmd('jem_event_layout', '');
+        if (in_array($eventLayoutOverride, array('details', 'compact'), true)) {
+            $eventLayout = $eventLayoutOverride;
+        }
+
+        $description = '';
+        if ((int) $params->get('event_show_description', 1) === 1) {
+            $introHtml = trim((string) ($item->introtext ?? ''));
+            $fullHtml = trim((string) ($item->fulltext ?? ''));
+            if ($eventLayout === 'compact') {
+                $description = $introHtml;
+            } elseif ($fullHtml !== '' && $fullHtml !== '<br>') {
+                $description = $params->get('event_show_intro')
+                    ? trim($introHtml . $fullHtml)
+                    : $fullHtml;
+            } else {
+                $description = (string) ($item->text ?? '');
+            }
+        }
+
+        $detailImageLayout = (string) ($item->fullimage_layout ?? 'global');
+        if ($detailImageLayout === 'global' || $detailImageLayout === '') {
+            $detailImageLayout = (string) $this->settings->get('event_detail_image_layout', 'right');
+        }
+        $imageUrls = array();
+        if ($detailImageLayout !== 'hidden' && !empty($this->dimage['original'])) {
+            $imageUrls[] = ltrim((string) $this->dimage['original'], '/');
+        }
+
+        $showVenue = !empty($item->locid)
+            && trim((string) ($item->venue ?? '')) !== ''
+            && (int) $params->get('event_show_venue', 1) === 1;
+        $showVenueName = !empty($item->locid)
+            && trim((string) ($item->venue ?? '')) !== ''
+            && (int) $params->get('event_show_venue_name', 0) === 1;
+        $showVenueAddress = $showVenue
+            && !empty($item->user_has_access_venue)
+            && (int) $params->get('event_show_detailsadress', 1) === 1;
+
+        $onlineMeetingUrl = JemHelper::getOnlineMeetingUrl($item);
+        $showOnlineMeeting = $onlineMeetingUrl !== ''
+            && (int) $params->get('event_show_online_meeting', 1) === 1;
+
+        $this->eventStructuredDataAnalysis = JemEventStructuredData::analyse($item, array(
+            'canonical_url' => $canonicalUrl,
+            'base_url' => $baseUrl,
+            'timezone' => JemHelper::getEventTimeZoneName($item),
+            'physical_location_visible' => $showVenue || $showVenueName,
+            'physical_address_visible' => $showVenueAddress,
+            'virtual_location_visible' => $showOnlineMeeting,
+            'virtual_location_url' => $showOnlineMeeting ? $onlineMeetingUrl : '',
+            'virtual_location_name' => $showOnlineMeeting ? JemHelper::getOnlineMeetingLabel($item) : '',
+            'description' => $description,
+            'image_urls' => $imageUrls,
+            'general_public' => empty($item->reginvitedonly),
+        ));
+
+        $jsonLd = JemEventStructuredData::render($this->eventStructuredDataAnalysis['data']);
+        if ($jsonLd !== '') {
+            $document->addCustomTag($jsonLd);
+        }
     }
 
     /**

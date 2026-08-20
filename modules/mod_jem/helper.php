@@ -142,7 +142,6 @@ abstract class ModJemHelper
             $lists[$i]->enddates    = $row->enddates;
             $lists[$i]->endtimes    = $row->endtimes;
             $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(', ', JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));

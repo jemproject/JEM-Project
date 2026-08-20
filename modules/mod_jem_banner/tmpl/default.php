@@ -50,10 +50,10 @@ $wa->addInlineStyle($css);
         <?php $i = count($list); ?>
         <?php if ($i > 0) : ?>
         <?php foreach ($list as $item) : ?>
-        <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
-            <h2 class="event-title" itemprop="name">
+        <div class="event_id<?php echo $item->eventid; ?>">
+            <h2 class="event-title">
                 <?php if ($item->eventlink) : ?>
-                    <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
+                    <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>"><?php echo $item->title; ?></a>
                 <?php else : ?>
                     <?php echo $item->title; ?>
                 <?php endif; ?>
@@ -87,7 +87,6 @@ $wa->addInlineStyle($css);
                             <div class="daynumbanner">
                                 <?php echo $item->startdate['day']; ?>
                             </div>
-                            <?php echo $item->dateschema; ?>
                         </div>
                         <?php endif; ?>
 
@@ -98,7 +97,7 @@ $wa->addInlineStyle($css);
                                         <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                         <?php if ($flyer_link_type != 3) : ?>
                                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="banner-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
-                                            <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                            <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
                                             <?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
                                     </div>
                                 </div>
@@ -202,15 +201,6 @@ $wa->addInlineStyle($css);
                             <?php echo $item->catname; ?>
                         </div>
                     <?php endif; ?>
-                    <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                        <meta itemprop="name" content="<?php echo $item->venue; ?>" />
-                        <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                            <meta itemprop="streetAddress" content="<?php echo $item->street; ?>" />
-                            <meta itemprop="addressLocality" content="<?php echo $item->city; ?>" />
-                            <meta itemprop="addressRegion" content="<?php echo $item->state; ?>" />
-                            <meta itemprop="postalCode" content="<?php echo $item->postalCode; ?>" />
-                        </div>
-                    </div>
 
                     <div class="clr"></div>
 

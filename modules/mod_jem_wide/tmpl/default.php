@@ -38,11 +38,11 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
             </colgroup>
 
             <?php foreach ($list as $item) : ?>
-                <tr class="event_id<?= $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
+                <tr class="event_id<?= $item->eventid; ?>">
                     <td>
-                        <span itemprop="name" class="event-title<?= ($highlight_featured && $item->featured) ? ' highlight_featured' : '' ?>">
+                        <span class="event-title<?= ($highlight_featured && $item->featured) ? ' highlight_featured' : '' ?>">
                         <?php if ($item->eventlink) : ?>
-                            <a href="<?= $item->eventlink; ?>" itemprop="url" title="<?= $item->fulltitle; ?>"><?= $item->title; ?></a></span>
+                            <a href="<?= $item->eventlink; ?>" title="<?= $item->fulltitle; ?>"><?= $item->title; ?></a></span>
                         <?php else : ?>
                             <?= $item->title; ?></span>
                         <?php endif; ?>
@@ -51,8 +51,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                         <?php if ($item->time && $params->get('datemethod', 1) == 1) :
                             ?>
                             <span class="time" title="<?= strip_tags($item->dateinfo); ?>"><?= $item->time; ?></span>
-                        <?php endif;
-                        echo $item->dateschema; ?>
+                        <?php endif; ?>
                         <?php $moreInformationDisplay = JemHelper::getMoreInformationDisplay($params->get('show_more_information', 'link')); ?>
                         <?php if ($moreInformationDisplay !== '' && !empty($item->articlelink)) : ?>
                             <div class="jem-more-information">
@@ -74,19 +73,13 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                     <?php endif; ?>
 
                     <?php if ($showVenue) : ?>
-                    <td itemprop="location" itemscope itemtype="https://schema.org/Place">
+                    <td>
                         <?php if (!empty($item->venue)) : ?>
                             <?php if ($item->venuelink) : ?>
-                                <span class="venue-title" itemprop="name"><a href="<?= $item->venuelink; ?>" title="<?= $item->venue; ?>" itemprop="url"><?= $item->venue; ?></a></span>
+                                <span class="venue-title"><a href="<?= $item->venuelink; ?>" title="<?= $item->venue; ?>"><?= $item->venue; ?></a></span>
                             <?php else : ?>
-                                <span class="venue-title" itemprop="name"><?= $item->venue; ?></span>
+                                <span class="venue-title"><?= $item->venue; ?></span>
                             <?php endif; ?>
-                            <div class="address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" style="display:none;">
-                                <meta itemprop="streetAddress" content="<?= $item->street; ?>" />
-                                <meta itemprop="addressLocality" content="<?= $item->city; ?>" />
-                                <meta itemprop="addressRegion" content="<?= $item->state; ?>" />
-                                <meta itemprop="postalCode" content="<?= $item->postalCode; ?>" />
-                            </div>
                         <?php endif; ?>
                     </td>
                     <?php endif; ?>
@@ -108,7 +101,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
 
                         <a href="<?= $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?= $item->eventid ?>"  data-title="<?= Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
                             <?php endif; ?>
-                            <img src="<?= $item->eventimage; ?>" alt="<?= $item->title; ?>" class="image-preview" title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" itemprop="image" />
+                            <img src="<?= $item->eventimage; ?>" alt="<?= $item->title; ?>" class="image-preview" title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                             <?php if ($params->get('use_modal')) : ?>
                         </a>
                     <?php endif; ?>

@@ -1500,8 +1500,8 @@ document.addEventListener('keydown', function (event) {
                                                     <div class="jem-day-timeline-detail-row jem-day-timeline-detail-title">
                                                         <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_TITLE'); ?></span>
                                                         <span class="jem-day-timeline-detail-value">
-                                                            <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" itemprop="url">
-                                                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                                            <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>">
+                                                                <span><?php echo $this->escape($row->title); ?></span>
                                                             </a>
                                                             <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                                                         </span>
@@ -1533,8 +1533,8 @@ document.addEventListener('keydown', function (event) {
                                                 </div>
                                             <?php else : ?>
                                                 <h3>
-                                                    <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" itemprop="url">
-                                                        <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                                    <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>">
+                                                        <span><?php echo $this->escape($row->title); ?></span>
                                                     </a>
                                                     <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                                                 </h3>
@@ -1570,7 +1570,7 @@ document.addEventListener('keydown', function (event) {
                                             </div>
                                         <?php endif; ?>
                                     </div>
-                                    <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                                    <?php  ?>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -1703,7 +1703,7 @@ document.addEventListener('keydown', function (event) {
                     $timelineEventIndex++;
                     $timelineEventSide = ($timelineSide === 'left' || ($timelineSide === 'alternate' && ($timelineEventIndex % 2) === 0)) ? 'left' : 'right';
                     ?>
-                    <article class="jem-day-timeline-row jem-day-timeline-side-<?php echo $this->escape($timelineEventSide); ?><?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>; min-height: <?php echo $this->escape(number_format($rowMinHeight, 1, '.', '')); ?>rem;" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <article class="jem-day-timeline-row jem-day-timeline-side-<?php echo $this->escape($timelineEventSide); ?><?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>; min-height: <?php echo $this->escape(number_format($rowMinHeight, 1, '.', '')); ?>rem;">
                         <div class="jem-day-timeline-time">
                             <span><?php echo $this->escape($formatGridTime($startTime)); ?></span>
                             <small><?php echo $this->escape($formatGridTime($endTime)); ?></small>
@@ -1731,8 +1731,8 @@ document.addEventListener('keydown', function (event) {
                                             <div class="jem-day-timeline-detail-row jem-day-timeline-detail-title">
                                                 <span class="jem-day-timeline-detail-label"><?php echo Text::_('COM_JEM_TITLE'); ?></span>
                                                 <span class="jem-day-timeline-detail-value">
-                                                    <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" itemprop="url">
-                                                        <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                                    <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>">
+                                                        <span><?php echo $this->escape($row->title); ?></span>
                                                     </a>
                                                     <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                                                 </span>
@@ -1764,8 +1764,8 @@ document.addEventListener('keydown', function (event) {
                                         </div>
                                     <?php else : ?>
                                         <h3>
-                                            <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" itemprop="url">
-                                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                            <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>">
+                                                <span><?php echo $this->escape($row->title); ?></span>
                                             </a>
                                             <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                                         </h3>
@@ -1801,7 +1801,7 @@ document.addEventListener('keydown', function (event) {
                                     </div>
                                 <?php endif; ?>
                             </div>
-                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                            <?php  ?>
                         </div>
                     </article>
                 <?php endforeach; endforeach; ?>

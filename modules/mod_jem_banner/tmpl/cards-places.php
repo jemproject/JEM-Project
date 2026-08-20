@@ -34,7 +34,7 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                 $location = trim(implode(', ', array_filter(array($item->venue, $item->city))));
                 $hasPlaces = ((int) $item->registra > 0) && ((int) $item->maxplaces > 0);
                 ?>
-                <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>" itemscope itemtype="https://schema.org/Event">
+                <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>">
                     <div class="jem-banner-card-image">
                         <?php if (!empty($item->eventlink)) : ?>
                             <a class="jem-banner-card-image-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
@@ -42,7 +42,7 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                             <div class="jem-banner-card-image-link">
                         <?php endif; ?>
                                 <?php if (!empty($item->eventimageorig)) : ?>
-                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->fulltitle; ?>" itemprop="image">
+                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->fulltitle; ?>">
                                 <?php else : ?>
                                     <span class="jem-banner-card-image-placeholder">
                                         <i class="far fa-image" aria-hidden="true"></i>
@@ -61,9 +61,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                             <span class="jem-banner-card-icon jem-banner-card-icon-primary" aria-hidden="true">
                                 <i class="far fa-calendar-alt"></i>
                             </span>
-                            <h3 class="jem-banner-card-title" itemprop="name">
+                            <h3 class="jem-banner-card-title">
                                 <?php if (!empty($item->eventlink)) : ?>
-                                    <a href="<?php echo $item->eventlink; ?>" itemprop="url"><?php echo $item->title; ?></a>
+                                    <a href="<?php echo $item->eventlink; ?>"><?php echo $item->title; ?></a>
                                 <?php else : ?>
                                     <?php echo $item->title; ?>
                                 <?php endif; ?>
@@ -80,9 +80,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                                 <dd><?php echo $item->time ?: Text::_('MOD_JEM_BANNER_ALL_DAY'); ?></dd>
                             </div>
                             <?php if ($showVenue && $location !== '') : ?>
-                                <div itemprop="location" itemscope itemtype="https://schema.org/Place">
+                                <div>
                                     <dt><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span class="visually-hidden"><?php echo Text::_('COM_JEM_VENUE'); ?></span></dt>
-                                    <dd itemprop="name"><?php echo $location; ?></dd>
+                                    <dd><?php echo $location; ?></dd>
                                 </div>
                             <?php endif; ?>
                             <?php if ($showCategory && !empty($item->catname)) : ?>
@@ -93,7 +93,6 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                             <?php endif; ?>
                         </dl>
 
-                        <?php echo $item->dateschema; ?>
                     </section>
 
                     <?php if ($hasPlaces) : ?>

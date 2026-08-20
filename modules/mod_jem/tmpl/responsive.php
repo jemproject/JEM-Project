@@ -62,7 +62,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                     $blockCategory = '<div class="event-category" style="font-size: 0.9em;">' . $item->catname . '</div>';
                 }
                 ?>
-                <li class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px;">
+                <li class="event_id<?php echo $item->eventid; ?>" style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px;">
 
                     <div class="event-icon" style="padding-top: 3px; flex-shrink: 0;">
                         <i class="far fa-calendar-alt"></i>
@@ -106,11 +106,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                         </div>
                     </div>
 
-                    <?php echo $item->dateschema; ?>
-                    <meta itemprop="name" content="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>" />
-                    <div itemprop="location" itemscope itemtype="https://schema.org/Place" style="display:none;">
-                        <meta itemprop="name" content="<?php echo htmlspecialchars($item->venue, ENT_QUOTES, 'UTF-8'); ?>" />
-                    </div>
+
                 </li>
             <?php endforeach; ?>
         </ul>

@@ -223,13 +223,13 @@ function jem_common_show_filter(&$obj) {
 
                 //Publish month row
                 if ($showMonthRow) { ?>
-                    <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
+                    <li class="jem-event jem-row jem-justify-center bg-body-secondary"><span class="row-month"><?php echo $showMonthRow;?></span></li>
                 <?php }
             } ?>
             <?php if (!empty($row->featured)) : ?>
-                <li class="jem-event jem-list-column jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php else : ?>
-                <li class="jem-event jem-list-column jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php endif; ?>
             <div class="jem-list-row jem-small-list">
                 <?php if ($this->jemsettings->showeventimage == 1) : ?>
@@ -253,7 +253,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php endif; ?>
                                 <?php
                                 echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
                                 ?>
                                 <?php if ($this->jemsettings->showdetails == 1) : ?>
                             </a>
@@ -263,7 +263,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
-                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                            <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>
@@ -271,7 +271,7 @@ function jem_common_show_filter(&$obj) {
                         <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                         <?php
                         echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
                         ?>
                         <?php if ($this->jemsettings->showtitle == 0) : ?>
                             <?php echo JemOutput::recurrenceicon($row); ?>
@@ -280,7 +280,7 @@ function jem_common_show_filter(&$obj) {
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
-                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                            <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
                         <?php endif; ?>
                     </div>
                 <?php endif; ?>
@@ -289,16 +289,16 @@ function jem_common_show_filter(&$obj) {
                     <div class="jem-event-info-small jem-event-title">
                         <h4    title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                             <?php if ($this->jemsettings->showdetails == 1) : ?>
-                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo $this->escape($row->title); ?></a>
+                                <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo $this->escape($row->title); ?></a>
                             <?php else : ?>
-                                <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                <span><?php echo $this->escape($row->title); ?></span>
                             <?php endif; ?>
                             <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) : '') . JemOutput::publishstateicon($row); ?>
                             <?php if (!empty($row->featured)) :?>
                                 <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                             <?php endif; ?>
                             <?php echo $eventaccess; ?>
-                            <?php echo JemOutput::eventStateBadges($row, true, $showAvailabilityText); ?>
+                            <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
                         </h4>
                     </div>
                 <?php else : ?>
@@ -306,20 +306,13 @@ function jem_common_show_filter(&$obj) {
                 <?php if($row->user_has_access_venue) : ?>
                     <?php if ($this->jemsettings->showlocate == 1) : ?>
                         <?php if (!empty($row->locid)) : ?>
-                            <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
+                            <div class="jem-event-info-small jem-event-venue" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                                 <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                                 <?php if ($this->jemsettings->showlinkvenue == 1) : ?>
-                                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
+                                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span>".$this->escape($row->venue)."</span></a>"; ?>
                                 <?php else : ?>
-                                    <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
+                                    <span><?php echo $this->escape($row->venue); ?></span>
                                 <?php endif; ?>
-                                <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
-                                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
-                                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
-                                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
-                                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
-                                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
-                                </div>
                             </div>
                         <?php else : ?>
                             <div class="jem-event-info-small jem-event-venue">
@@ -392,8 +385,8 @@ function jem_common_show_filter(&$obj) {
                 }
                 ?>
             </div>
-            <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-            <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+
+
             </li>
         <?php endforeach; ?>
     <?php endif; ?>

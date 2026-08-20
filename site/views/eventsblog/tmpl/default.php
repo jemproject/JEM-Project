@@ -119,7 +119,7 @@ $periods = array(
                 $hasRegistration = (int) ($row->registra ?? 0) > 0;
                 $canRegister = $hasRegistration && $row->registrationOpen && $row->availabilityState !== 'soldout';
                 ?>
-                <article class="jem-eventsblog-card<?php echo !empty($row->featured) ? ' is-featured' : ''; ?>" itemscope itemtype="https://schema.org/Event">
+                <article class="jem-eventsblog-card<?php echo !empty($row->featured) ? ' is-featured' : ''; ?>">
                     <a class="jem-eventsblog-image-link" href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>" tabindex="-1" aria-hidden="true">
                         <img class="jem-eventsblog-image" src="<?php echo htmlspecialchars($row->blogImage, ENT_QUOTES, 'UTF-8'); ?>" alt="" loading="lazy">
                     </a>
@@ -127,13 +127,13 @@ $periods = array(
                         <div class="jem-eventsblog-date">
                             <span class="icon-calendar" aria-hidden="true"></span>
                             <?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime); ?>
-                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                            <?php  ?>
                         </div>
                         <?php if ($category) : ?><div class="jem-eventsblog-category"><?php echo $this->escape($category->catname); ?></div><?php endif; ?>
-                        <h2 class="jem-eventsblog-title"><a href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->title); ?></span></a></h2>
-                        <?php echo JemOutput::eventStateBadges($row, true, true); ?>
+                        <h2 class="jem-eventsblog-title"><a href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>"><span><?php echo $this->escape($row->title); ?></span></a></h2>
+                        <?php echo JemOutput::eventStateBadges($row, false, true); ?>
                         <?php if ($location !== '') : ?>
-                            <div class="jem-eventsblog-location" itemprop="location" itemscope itemtype="https://schema.org/Place"><span class="icon-location" aria-hidden="true"></span> <span itemprop="name"><?php echo $this->escape($location); ?></span></div>
+                            <div class="jem-eventsblog-location"><span class="icon-location" aria-hidden="true"></span> <span><?php echo $this->escape($location); ?></span></div>
                         <?php endif; ?>
                     </div>
                     <?php if ($this->params->get('blog_show_registration', 1) && $hasRegistration) : ?>

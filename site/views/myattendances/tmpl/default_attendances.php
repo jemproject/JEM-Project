@@ -197,9 +197,9 @@ if (!function_exists('jem_myattendances_country_flag')) {
                 <?php foreach ($this->attending as $row) : ?>
                     <?php $odd = 1 - $odd; ?>
                     <?php if (!empty($row->featured)) : ?>
-                    <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>">
                     <?php else : ?>
-                    <tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); ?>">
                     <?php endif; ?>
 
                         <?php if ($this->showdate == 1) : ?>
@@ -212,15 +212,15 @@ if (!function_exists('jem_myattendances_country_flag')) {
 
                         <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : ?>
                         <td headers="jem_title" style="text-align: left; vertical-align: top;">
-                            <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-                                <span itemprop="name"><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
+                            <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
+                                <span><?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row); ?></span>
                             </a><?php echo JemOutput::publishstateicon($row); ?>
                             <br><small><a href="<?php echo Route::_('index.php?option=com_jem&view=registration&id=' . (int) $row->registration_id); ?>"><?php echo Text::_('COM_JEM_VIEW_REGISTRATION'); ?> · <code><?php echo $this->escape($row->registration_reference); ?></code></a></small>
                         </td>
                         <?php endif; ?>
 
                         <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : ?>
-                        <td headers="jem_title" style="text-align: left; vertical-align: top;" itemprop="name">
+                        <td headers="jem_title" style="text-align: left; vertical-align: top;">
                             <?php echo $this->escape($row->title) . JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                             <br><small><a href="<?php echo Route::_('index.php?option=com_jem&view=registration&id=' . (int) $row->registration_id); ?>"><?php echo Text::_('COM_JEM_VIEW_REGISTRATION'); ?> · <code><?php echo $this->escape($row->registration_reference); ?></code></a></small>
                         </td>

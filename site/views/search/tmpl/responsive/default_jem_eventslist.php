@@ -221,15 +221,15 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
             <?php $this->rows = $this->getRows(); ?>
             <?php foreach ($this->rows as $row) : ?>
         <?php if (!empty($row->featured)) :   ?>
-          <li class="jem-event jem-row jem-justify-start jem-nowrap jem-featured event_id<?php echo $row->id . ' ' . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
+          <li class="jem-event jem-row jem-justify-start jem-nowrap jem-featured event_id<?php echo $row->id . ' ' . $this->params->get('pageclass_sfx'); ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
                 <?php else : ?>
-          <li class="jem-event jem-row jem-justify-start jem-nowrap event_id<?php echo $row->id . ' jem-odd' . ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
+          <li class="jem-event jem-row jem-justify-start jem-nowrap event_id<?php echo $row->id . ' jem-odd' . ($row->odd +1) . $this->params->get('pageclass_sfx'); ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
                 <?php endif; ?>
 
           <div class="jem-event-details" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari) && ($this->jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?>>
             <?php if (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url"><span itemprop="name"><?php echo $this->escape($row->title); ?></span></a>
+              <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><span><?php echo $this->escape($row->title); ?></span></a>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
@@ -239,7 +239,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
 
             <?php elseif (($this->jemsettings->showtitle == 1) && ($this->jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
             <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
-              <span itemprop="name"><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+              <span><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
               <?php if (!empty($row->featured)) :?>
                 <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
               <?php endif; ?>
@@ -251,7 +251,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
               ?>
               </a>
               <?php echo JemOutput::recurrenceicon($row); ?>
@@ -266,7 +266,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
               ?>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
@@ -284,7 +284,7 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
                   <?php
                     echo JemOutput::formatShortDateTime($row->dates, $row->times,
                       $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
+
                   ?>
                 </div>
               <?php endif; ?>
@@ -292,25 +292,18 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
               <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.$this->escape($row->title); ?>">
                   <i class="fa fa-comment" aria-hidden="true"></i>
-                  <span itemprop="name"><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                  <span><?php echo $this->escape($row->title); ?></span><?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                 </div>
               <?php endif; ?>
 
               <?php if (($this->jemsettings->showlocate == 1) && (!empty($row->venue))) : ?>
-                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
+                <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION').': '.$this->escape($row->venue); ?>">
                   <i class="fa fa-map-marker" aria-hidden="true"></i>
                   <?php if (($this->jemsettings->showlinkvenue == 1) && !empty($row->venueslug)) : ?>
-                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."' itemprop='url'><span itemprop='name'>".$this->escape($row->venue)."</span></a>"; ?>
+                    <?php echo "<a href='".Route::_(JemHelperRoute::getVenueRoute($row->venueslug))."'><span>".$this->escape($row->venue)."</span></a>"; ?>
                   <?php else : ?>
-                    <span itemprop="name"><?php echo $this->escape($row->venue); ?></span>
+                    <span><?php echo $this->escape($row->venue); ?></span>
                   <?php endif; ?>
-                  <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
-                    <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo $this->escape($row->street); ?>" /><?php endif; ?>
-                    <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo $this->escape($row->postalCode); ?>" /><?php endif; ?>
-                    <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo $this->escape($row->city); ?>" /><?php endif; ?>
-                    <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo $this->escape($row->state); ?>" /><?php endif; ?>
-                    <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo $this->escape($row->country); ?>" /><?php endif; ?>
-                  </div>
                 </div>
               <?php endif; ?>
 
@@ -346,8 +339,8 @@ $flagBase = Uri::root(true) . '/media/com_jem/images/flags/w80-webp/';
             </div>
           </div>
 
-          <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-          <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
+
+
 
         </li>
             <?php endforeach; ?>

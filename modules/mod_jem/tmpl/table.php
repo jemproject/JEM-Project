@@ -65,7 +65,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                 }
                 ?>
 
-                <tr class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event" style="border-bottom: 1px solid #eee; <?php echo $boldStyle; ?>">
+                <tr class="event_id<?php echo $item->eventid; ?>" style="border-bottom: 1px solid #eee; <?php echo $boldStyle; ?>">
 
                     <td style="padding: 10px 5px; vertical-align: middle; width: 50px; text-align: center;">
                         <?php if ($showiconcountry == 1 && !empty($item->country)) :
@@ -101,15 +101,6 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                     ?>
                 </tr>
 
-                <tr style="display:none;">
-                    <td colspan="4">
-                        <?php echo $item->dateschema; ?>
-                        <meta itemprop="name" content="<?php echo htmlspecialchars($item->title, ENT_QUOTES, 'UTF-8'); ?>" />
-                        <div itemprop="location" itemscope itemtype="https://schema.org/Place">
-                            <meta itemprop="name" content="<?php echo htmlspecialchars($item->venue, ENT_QUOTES, 'UTF-8'); ?>" />
-                        </div>
-                    </td>
-                </tr>
             <?php endforeach; ?>
             </tbody>
         </table>

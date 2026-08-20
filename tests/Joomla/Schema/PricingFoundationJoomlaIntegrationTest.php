@@ -45,7 +45,6 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         $hadPricingSchema = isset($eventColumnsBefore['pricing_mode']);
         $legacyFingerprint = $this->legacyFingerprint($db);
         $countsBefore = $this->pricingTableCounts($db);
-        $venueCount = $this->tableCount($db, '#__jem_venues');
 
         $installer = new com_jemInstallerScript();
         $repair = new ReflectionMethod(com_jemInstallerScript::class, 'repair510PricingSchema');
@@ -56,7 +55,11 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         foreach (array('#__jem_tax_rates', '#__jem_capacity_pools', '#__jem_event_prices', '#__jem_register_items') as $table) {
             self::assertSame($countsBefore[$table], $countsAfterFirstRepair[$table]);
         }
-        self::assertSame($venueCount, $this->defaultProfileCount($db));
+        self::assertSame(
+            0,
+            $this->unusedDefaultProfileCount($db),
+            'Schema repair must not recreate empty default profiles for classic venues.'
+        );
         $this->assertPricingSchema($db);
 
         if (!$hadPricingSchema) {
@@ -152,20 +155,18 @@ final class PricingFoundationJoomlaIntegrationTest extends JoomlaTestCase
         return $counts;
     }
 
-    private function tableCount(DatabaseDriver $db, string $table): int
-    {
-        $db->setQuery('SELECT COUNT(*) FROM ' . $db->quoteName($table));
-
-        return (int) $db->loadResult();
-    }
-
-    private function defaultProfileCount(DatabaseDriver $db): int
+    private function unusedDefaultProfileCount(DatabaseDriver $db): int
     {
         $query = $db->getQuery(true)
             ->select('COUNT(*)')
             ->from($db->quoteName('#__jem_venue_capacity_profiles', 'p'))
-            ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = p.venue_id')
-            ->where($db->quoteName('p.code') . ' = ' . $db->quote('default'));
+            ->where($db->quoteName('p.code') . ' = ' . $db->quote('default'))
+            ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jem_venue_profile_spaces', 'ps')
+                . ' WHERE ' . $db->quoteName('ps.venue_profile_id') . ' = ' . $db->quoteName('p.id') . ')')
+            ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jem_events', 'e')
+                . ' WHERE ' . $db->quoteName('e.venue_profile_id') . ' = ' . $db->quoteName('p.id') . ')')
+            ->where('NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jem_event_space_layouts', 'esl')
+                . ' WHERE ' . $db->quoteName('esl.venue_profile_id') . ' = ' . $db->quoteName('p.id') . ')');
         $db->setQuery($query);
 
         return (int) $db->loadResult();

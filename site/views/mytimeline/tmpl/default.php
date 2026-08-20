@@ -258,7 +258,7 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
                         $diaryText = StringHelper::strlen($plainIntro) > 180 ? StringHelper::substr($plainIntro, 0, 178) . '&hellip;' : $plainIntro;
                     }
                     ?>
-                    <article class="jem-mytimeline-row<?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>" itemscope="itemscope" itemtype="https://schema.org/Event">
+                    <article class="jem-mytimeline-row<?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>">
                         <div class="jem-mytimeline-time">
                             <?php if ($showAxisDate) : ?>
                                 <span><?php echo $this->escape($dateText); ?></span>
@@ -271,11 +271,11 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
                         <div class="jem-mytimeline-card">
                             <h3>
                                 <?php if ($this->jemsettings->showdetails == 1) : ?>
-                                    <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="url">
-                                        <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                    <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
+                                        <span><?php echo $this->escape($row->title); ?></span>
                                     </a>
                                 <?php else : ?>
-                                    <span itemprop="name"><?php echo $this->escape($row->title); ?></span>
+                                    <span><?php echo $this->escape($row->title); ?></span>
                                 <?php endif; ?>
                                 <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
                             </h3>
@@ -320,7 +320,7 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
                                 <p class="jem-mytimeline-diary"><?php echo $this->escape($diaryText); ?></p>
                             <?php endif; ?>
 
-                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
+                            <?php  ?>
                         </div>
                     </article>
                 <?php endforeach; ?>

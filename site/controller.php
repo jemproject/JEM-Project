@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Uri\Uri;
 
 /**
  * JEM Component Controller
@@ -269,8 +268,6 @@ class JemController extends BaseController
         $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
         
         $showMonthRow = false;
-        $uri = Uri::getInstance();
-        
         $odd = 0;
 
         foreach ($items as $row) : ?>
@@ -294,13 +291,13 @@ class JemController extends BaseController
 
                 // Publish month row
                 if ($showMonthRow) { ?>
-                    <li class="jem-event jem-row jem-justify-center bg-body-secondary" itemscope="itemscope"><span class="row-month"><?php echo $showMonthRow;?></span></li>
+                    <li class="jem-event jem-row jem-justify-center bg-body-secondary"><span class="row-month"><?php echo $showMonthRow;?></span></li>
                 <?php }
             } ?>
             <?php if (!empty($row->featured)) : ?>
-                <li class="jem-event jem-row jem-justify-start jem-featured <?php echo $params->get('pageclass_sfx') . ' event_id' . htmlspecialchars($row->id); if (!empty($row->locid)) {  echo ' venue_id' . htmlspecialchars($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if ($jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?> >
+                <li class="jem-event jem-row jem-justify-start jem-featured <?php echo $params->get('pageclass_sfx') . ' event_id' . htmlspecialchars($row->id); if (!empty($row->locid)) {  echo ' venue_id' . htmlspecialchars($row->locid); } ?>" <?php if ($jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?> >
             <?php else : ?>
-                <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd + 1) . $params->get('pageclass_sfx') . ' event_id' . htmlspecialchars($row->id); if (!empty($row->locid)) {  echo ' venue_id' . htmlspecialchars($row->locid); } ?>" itemscope="itemscope" itemtype="https://schema.org/Event" <?php if (($jemsettings->showdetails == 1) && (!$isSafari) && ($jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''. Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?>>
+                <li class="jem-event jem-row jem-justify-start jem-odd<?php echo ($row->odd + 1) . $params->get('pageclass_sfx') . ' event_id' . htmlspecialchars($row->id); if (!empty($row->locid)) {  echo ' venue_id' . htmlspecialchars($row->locid); } ?>" <?php if (($jemsettings->showdetails == 1) && (!$isSafari) && ($jemsettings->gddisabled == 0)) : echo 'onclick="location.href=\''. Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?>>
             <?php endif; ?>
 
             <?php if ($jemsettings->showeventimage == 1) : ?>
@@ -317,7 +314,7 @@ class JemController extends BaseController
             <div class="jem-event-details" <?php if (($jemsettings->showdetails == 1) && (!$isSafari) && ($jemsettings->gddisabled == 1)) : echo 'onclick="location.href=\''. Route::_(JemHelperRoute::getEventRoute($row->slug)) .'\'"'; endif; ?>>
                 <?php if (($jemsettings->showtitle == 1) && ($jemsettings->showdetails == 1)) : // Display title as title of jem-event with link ?>
                     <h3 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . htmlspecialchars($row->title); ?>">
-                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" itemprop="name"><?php echo htmlspecialchars($row->title); ?></a>
+                        <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>"><?php echo htmlspecialchars($row->title); ?></a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
@@ -328,7 +325,7 @@ class JemController extends BaseController
 
                 <?php elseif (($jemsettings->showtitle == 1) && ($jemsettings->showdetails == 0)) : //Display title as title of jem-event without link ?>
                     <h4 title="<?php echo Text::_('COM_JEM_TABLE_TITLE') . ': ' . htmlspecialchars($row->title); ?>">
-                        <span itemprop="name"><?php echo htmlspecialchars($row->title); ?></span><?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
+                        <span><?php echo htmlspecialchars($row->title); ?></span><?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :'') . JemOutput::publishstateicon($row); ?>
                         <?php if (!empty($row->featured)) : ?>
                             <?php echo ($showiconsineventtitle? '<i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>':''); ?>
                         <?php endif; ?>
@@ -340,7 +337,6 @@ class JemController extends BaseController
                         <a href="<?php echo Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>">
                             <?php
                             echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                             ?>
                         </a>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
@@ -356,7 +352,6 @@ class JemController extends BaseController
                         <?php
                         echo JemOutput::formatShortDateTime($row->dates, $row->times,
                             $row->enddates, $row->endtimes, $jemsettings->showtime);
-                        echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                         ?>
                         <?php echo ($showiconsineventtitle? JemOutput::recurrenceicon($row) :''); ?>
                         <?php echo JemOutput::publishstateicon($row); ?>
@@ -374,7 +369,6 @@ class JemController extends BaseController
                             <?php echo ($showiconsineventdata? '<i class="far fa-clock" aria-hidden="true"></i>':''); ?>
                             <?php
                             echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                             ?>
                         </div>
                     <?php endif; ?>
@@ -382,27 +376,20 @@ class JemController extends BaseController
                     <?php if ($jemsettings->showtitle == 0) : ?>
                         <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_TITLE').': '.htmlspecialchars($row->title); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-comment" aria-hidden="true"></i>':''); ?>
-                            <span itemprop="name"><?php echo htmlspecialchars($row->title); ?></span>
+                            <span><?php echo htmlspecialchars($row->title); ?></span>
                         </div>
                     <?php endif; ?>
 
                     <?php if ($jemsettings->showlocate == 1 && !empty($row->locid)) : ?>
-                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION') . ': ' . htmlspecialchars($row->venue); ?>" itemprop="location" itemscope itemtype="https://schema.org/Place">
+                        <div class="jem-event-info" title="<?php echo Text::_('COM_JEM_TABLE_LOCATION') . ': ' . htmlspecialchars($row->venue); ?>">
                             <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                             <?php if ($jemsettings->showlinkvenue == 1) : ?>
                                 <a href="<?php echo Route::_(JemHelperRoute::getVenueRoute($row->venueslug ?? '')); ?>">
-                                    <span itemprop="name"><?php echo htmlspecialchars($row->venue); ?></span>
+                                    <span><?php echo htmlspecialchars($row->venue); ?></span>
                                 </a>
                             <?php else : ?>
-                                <span itemprop="name"><?php echo htmlspecialchars($row->venue); ?></span>
+                                <span><?php echo htmlspecialchars($row->venue); ?></span>
                             <?php endif; ?>
-                            <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress" hidden>
-                                <?php if (!empty($row->street)) : ?><meta itemprop="streetAddress" content="<?php echo htmlspecialchars($row->street); ?>" /><?php endif; ?>
-                                <?php if (!empty($row->postalCode)) : ?><meta itemprop="postalCode" content="<?php echo htmlspecialchars($row->postalCode); ?>" /><?php endif; ?>
-                                <?php if (!empty($row->city)) : ?><meta itemprop="addressLocality" content="<?php echo htmlspecialchars($row->city); ?>" /><?php endif; ?>
-                                <?php if (!empty($row->state)) : ?><meta itemprop="addressRegion" content="<?php echo htmlspecialchars($row->state); ?>" /><?php endif; ?>
-                                <?php if (!empty($row->country)) : ?><meta itemprop="addressCountry" content="<?php echo htmlspecialchars($row->country); ?>" /><?php endif; ?>
-                            </div>
                         </div>
                     <?php endif; ?>
 
@@ -464,9 +451,6 @@ class JemController extends BaseController
                     </div>
                 <?php endif; ?>
             </div>
-
-            <meta itemprop="url" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
-            <meta itemprop="identifier" content="<?php echo rtrim($uri->base(), '/').Route::_(JemHelperRoute::getEventRoute($row->slug)); ?>" />
 
             </li>
         <?php endforeach;
