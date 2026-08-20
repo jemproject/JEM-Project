@@ -100,4 +100,13 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringContainsString('elseif ($policy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION))', $settingsModel);
         self::assertGreaterThanOrEqual(3, substr_count($reminderService, 'FEATURE_NOTIFICATION_AUTOMATION'));
     }
+
+    public function testAdminEntrypointHandlesViewsWithoutATask(): void
+    {
+        $entrypoint = (string) file_get_contents(JEM_TEST_ROOT . '/admin/jem.php');
+
+        self::assertStringContainsString("getCmd('task', '')", $entrypoint);
+        self::assertStringContainsString("strtok(\$task, '.') ?: ''", $entrypoint);
+        self::assertStringNotContainsString("strtolower((string) strtok(\$task, '.'))", $entrypoint);
+    }
 }

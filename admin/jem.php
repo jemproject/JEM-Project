@@ -53,9 +53,9 @@ $controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;
-$task = $input->getCmd('task');
+$task = $input->getCmd('task', '');
 $view = $input->getCmd('view', 'main');
-$taskController = strtolower((string) strtok($task, '.'));
+$taskController = strtolower(strtok($task, '.') ?: '');
 $notificationViews = array(
     'notificationcontent', 'notificationhistory', 'notifications',
     'notificationtemplate', 'notificationtemplates', 'reminder', 'reminders',
