@@ -94,6 +94,10 @@ class JemModelSampledata extends BaseDatabaseModel
                 }
             }
 
+            // Sample SQL bypasses the event form service, so initialise every
+            // imported event with the configured site-wide currency here.
+            $this->initialiseEventCurrencies();
+
             // Populate the derived UTC boundaries after venues and timezone modes exist.
             $this->rebuildEventUtcDates();
 
@@ -246,6 +250,27 @@ class JemModelSampledata extends BaseDatabaseModel
             ),
             $sql
         );
+    }
+
+    /**
+     * Apply the configured site-wide currency to every imported sample event.
+     *
+     * @return void
+     */
+    private function initialiseEventCurrencies()
+    {
+        require_once JPATH_SITE . '/components/com_jem/classes/config.class.php';
+
+        $currency = strtoupper(trim((string) JemConfig::getInstance()->toRegistry()->get('defaultCurrency', 'EUR')));
+        if (preg_match('/^[A-Z]{3}$/D', $currency) !== 1) {
+            $currency = 'EUR';
+        }
+
+        $query = $this->_db->getQuery(true)
+            ->update($this->_db->quoteName('#__jem_events'))
+            ->set($this->_db->quoteName('currency') . ' = ' . $this->_db->quote($currency));
+        $this->_db->setQuery($query);
+        $this->_db->execute();
     }
 
     /**

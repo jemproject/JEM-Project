@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\String\StringHelper;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/config.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
 
 /**
@@ -224,7 +225,7 @@ class JemEventPricingCapacityService
             $data['venue_profile_id'] = null;
             $data['venue_profile_revision'] = 0;
             $data['venue_snapshot'] = null;
-            $data['currency'] = self::normaliseOptionalCurrency($data['currency'] ?? '');
+            $data['currency'] = self::storedOrDefaultCurrency($existing);
             $data['default_tax_rate_id'] = self::normaliseNullableId($data['default_tax_rate_id'] ?? null);
             $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
             $data['management_fee_mode'] = 'fixed_per_ticket';
@@ -411,7 +412,7 @@ class JemEventPricingCapacityService
 
     public static function defaultCurrency(): string
     {
-        $currency = strtoupper(trim((string) (JemHelper::config()->defaultCurrency ?? '')));
+        $currency = strtoupper(trim((string) JemConfig::getInstance()->toRegistry()->get('defaultCurrency', '')));
 
         return preg_match('/^[A-Z]{3}$/D', $currency) === 1 ? $currency : 'EUR';
     }

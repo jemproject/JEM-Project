@@ -86,6 +86,9 @@ final class PricingTaxKernelContractsTest extends TestCase
         self::assertStringContainsString('$currencies[$currency] = true', $currencyField);
         self::assertStringContainsString('JemMoney::currencyLabel', $currencyField);
         self::assertStringContainsString('storedOrDefaultCurrency', $pricingService);
+        self::assertStringContainsString("classes/config.class.php", $pricingService);
+        self::assertStringContainsString('JemConfig::getInstance()', $pricingService);
+        self::assertStringNotContainsString('JemHelper::config()', $pricingService);
         self::assertStringNotContainsString('payload.suggested_currency', $pricingView);
         self::assertStringContainsString('Intl.NumberFormat', $pricingView);
         self::assertStringContainsString('formatDecimal', $money);

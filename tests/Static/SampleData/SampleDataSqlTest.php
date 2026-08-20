@@ -174,6 +174,19 @@ final class SampleDataSqlTest extends TestCase
         self::assertStringContainsString("'end_utc'", $code);
     }
 
+    public function testSampleDataModelInitialisesEveryEventWithTheGlobalCurrency(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$this->initialiseEventCurrencies();', $code);
+        self::assertStringContainsString("->get('defaultCurrency', 'EUR')", $code);
+        self::assertStringContainsString('preg_match(\'/^[A-Z]{3}$/D\', $currency)', $code);
+        self::assertMatchesRegularExpression(
+            '/->update\(\$this->_db->quoteName\(\'#__jem_events\'\)\)[\s\S]+->set\(\$this->_db->quoteName\(\'currency\'\)/',
+            $code
+        );
+    }
+
     public function testSampleDataModelEnsuresTimezoneColumnsBeforeLoadingSql(): void
     {
         $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
