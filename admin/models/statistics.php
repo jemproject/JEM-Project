@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 
 require_once __DIR__ . '/main.php';
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
 
 /**
  * Model for the dedicated administrator statistics dashboard.
@@ -585,7 +586,11 @@ class JemModelStatistics extends JemModelMain
             foreach ($points as &$point) {
                 $point['orders'] = (int) ($data['orders'][$point['key']] ?? 0);
                 $point['places'] = (int) ($data['places'][$point['key']] ?? 0);
-                $point['display'] = $currency . ' ' . number_format((float) $point['value'], 2, '.', '');
+                $point['display'] = JemMoney::formatDecimal(
+                    number_format((float) $point['value'], 2, '.', ''),
+                    $currency,
+                    Factory::getApplication()->getLanguage()->getTag()
+                );
                 $orders += $point['orders'];
                 $places += $point['places'];
             }

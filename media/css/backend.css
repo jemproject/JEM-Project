@@ -4487,6 +4487,11 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     cursor: pointer;
 }
 
+.jem-operating-profile-card > input[type="radio"] {
+    flex: 0 0 auto;
+    margin-top: 0.3rem;
+}
+
 .jem-operating-profile-card:hover,
 .jem-operating-profile-card:focus-within {
     border-color: var(--template-link-color, #2a69a5);

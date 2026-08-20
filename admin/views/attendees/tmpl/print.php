@@ -10,6 +10,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
+
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+$moneyLocale = Factory::getApplication()->getLanguage()->getTag();
 ?>
     <table style="width:100%" class="adminlist">
         <tr>
@@ -67,7 +71,7 @@ use Joomla\CMS\HTML\HTMLHelper;
                                 <?php echo (int) $line->quantity; ?>&times; <?php echo $this->escape($line->item_name); ?>
                                 <?php if ($line->pool_name) : ?>(<?php echo $this->escape($line->pool_name); ?>)<?php endif; ?>;
                             <?php endforeach; ?>
-                            <?php echo $this->escape((string) $row->currency . ' ' . (string) $row->grand_total); ?>
+                            <?php echo $this->escape(JemMoney::formatDecimal((string) $row->grand_total, (string) $row->currency, $moneyLocale)); ?>
                         <?php endif; ?>
                     <?php endif; ?>
                 </td>

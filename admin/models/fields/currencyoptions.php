@@ -11,6 +11,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+
 class JFormFieldCurrencyOptions extends ListField
 {
     protected $type = 'CurrencyOptions';
@@ -18,6 +20,7 @@ class JFormFieldCurrencyOptions extends ListField
     protected function getOptions()
     {
         $options = array();
+        $currencies = array();
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $query = $db->getQuery(true)
@@ -29,11 +32,17 @@ class JFormFieldCurrencyOptions extends ListField
             foreach ((array) $db->loadColumn() as $currency) {
                 $currency = strtoupper(trim((string) $currency));
                 if (preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
-                    $options[] = HTMLHelper::_('select.option', $currency, $currency);
+                    $currencies[$currency] = true;
                 }
             }
         } catch (Throwable $e) {
             // Keep the event form usable while an update is still running.
+        }
+
+        ksort($currencies, SORT_STRING);
+        $locale = Factory::getApplication()->getLanguage()->getTag();
+        foreach (array_keys($currencies) as $currency) {
+            $options[] = HTMLHelper::_('select.option', $currency, JemMoney::currencyLabel($currency, $locale));
         }
 
         return array_merge(parent::getOptions(), $options);

@@ -980,7 +980,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('recurrence_anticipation_lastday', '60'),
 ('ical_max_items', '100'),
 ('defaultCountry', ''),
-('defaultCurrency', ''),
+('defaultCurrency', 'EUR'),
 ('flagicons_path', 'media/com_jem/images/flags/w80-webp/'),
 ('csv_separator', ';'),
 ('csv_delimiter', '"'),

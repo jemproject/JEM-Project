@@ -11,11 +11,18 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Factory;
+
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
 
 $filters = $this->filters;
 $cards = $this->statistics->cards;
 $permissions = $this->permissions;
 $commerceEnabled = !empty($this->statistics->commerce_enabled);
+$moneyLocale = Factory::getApplication()->getLanguage()->getTag();
+$formatMoney = static function ($amount, $currency) use ($moneyLocale): string {
+    return JemMoney::formatDecimal(number_format((float) $amount, 2, '.', ''), (string) $currency, $moneyLocale);
+};
 $filterQuery = http_build_query(array(
     'period' => $filters->period,
     'group' => $filters->group,
@@ -433,7 +440,7 @@ $renderChart = static function ($card) {
                                 <h3 class="h5 mb-0"><?php echo $this->escape($series->currency); ?></h3>
                                 <small class="text-muted"><?php echo (int) $series->orders; ?> <?php echo Text::_('COM_JEM_STATISTICS_ORDERS_LOWER'); ?> · <?php echo (int) $series->places; ?> <?php echo Text::_('COM_JEM_STATISTICS_PLACES_LOWER'); ?></small>
                             </div>
-                            <strong class="fs-4"><?php echo $this->escape($series->currency . ' ' . number_format((float) $series->total, 2, '.', '')); ?></strong>
+                            <strong class="fs-4"><?php echo $this->escape($formatMoney($series->total, $series->currency)); ?></strong>
                         </div>
                         <?php $renderChart($moneyCard); ?>
                         <details>
@@ -477,7 +484,7 @@ $renderChart = static function ($card) {
                         <td class="text-end"><?php echo (int) $programme->waiting_orders; ?> / <?php echo (int) $programme->waiting_places; ?></td>
                         <?php if ($commerceEnabled) : ?><td class="text-end text-nowrap">
                             <?php if ($programme->revenue) : foreach ($programme->revenue as $revenue) : ?>
-                                <span class="badge bg-success ms-1"><?php echo $this->escape($revenue->currency . ' ' . number_format((float) $revenue->total, 2, '.', '')); ?></span>
+                                <span class="badge bg-success ms-1"><?php echo $this->escape($formatMoney($revenue->total, $revenue->currency)); ?></span>
                             <?php endforeach; else : ?><span class="text-muted">&mdash;</span><?php endif; ?>
                         </td><?php endif; ?>
                     </tr><?php endforeach; ?></tbody>
@@ -549,7 +556,7 @@ $renderChart = static function ($card) {
                             <td class="text-end"><?php echo (int) $event->waiting_orders; ?> / <?php echo (int) $event->waiting_places; ?></td>
                             <?php if ($commerceEnabled) : ?><td class="text-end text-nowrap">
                                 <?php if ((string) $event->pricing_mode !== 'classic' && $event->currency !== '') : ?>
-                                    <?php echo $this->escape($event->currency . ' ' . number_format((float) $event->confirmed_revenue, 2, '.', '')); ?>
+                                    <?php echo $this->escape($formatMoney($event->confirmed_revenue, $event->currency)); ?>
                                 <?php else : ?>
                                     <span class="text-muted">&mdash;</span>
                                 <?php endif; ?>
@@ -634,7 +641,7 @@ $renderChart = static function ($card) {
                     <strong><?php echo Text::_('COM_JEM_STATISTICS_CONFIRMED_BOOKING_VALUE'); ?>:</strong>
                     <?php if ($commercial->revenue) : ?>
                         <?php foreach ($commercial->revenue as $revenue) : ?>
-                            <span class="badge bg-success ms-2"><?php echo $this->escape($revenue->currency . ' ' . number_format((float) $revenue->total, 2, '.', '')); ?></span>
+                            <span class="badge bg-success ms-2"><?php echo $this->escape($formatMoney($revenue->total, $revenue->currency)); ?></span>
                         <?php endforeach; ?>
                     <?php else : ?>
                         <span class="text-muted ms-2"><?php echo Text::_('COM_JEM_STATISTICS_NO_REVENUE'); ?></span>

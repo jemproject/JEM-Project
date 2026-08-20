@@ -21,6 +21,14 @@ final class PricingCalculationTest extends TestCase
         self::assertSame('15.00', $money->plus(JemMoney::fromDecimal('2.50', 'EUR'))->decimal());
     }
 
+    public function testCurrencyLabelsAndAmountsUseDisplaySymbols(): void
+    {
+        self::assertSame('EUR (€)', JemMoney::currencyLabel('EUR', 'es-ES'));
+        self::assertStringContainsString('€', JemMoney::formatDecimal('100.00', 'EUR', 'es-ES'));
+        self::assertStringContainsString('100', JemMoney::formatDecimal('100.00', 'EUR', 'es-ES'));
+        self::assertSame('', JemMoney::currencySymbol('invalid', 'es-ES'));
+    }
+
     /** @dataProvider invalidMoneyProvider */
     public function testMoneyRejectsInexactOrInvalidInput($amount): void
     {

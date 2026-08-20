@@ -89,6 +89,68 @@ final class JemMoney
         return $this->minorUnits < 0 ? '-' . $value : $value;
     }
 
+    /**
+     * Locale-aware display symbol while the ISO code remains authoritative.
+     */
+    public static function currencySymbol(string $currency, string $locale = 'en-GB'): string
+    {
+        $currency = strtoupper(trim($currency));
+        if (preg_match('/^[A-Z]{3}$/D', $currency) !== 1) {
+            return '';
+        }
+
+        if (class_exists('NumberFormatter')) {
+            $formatter = new NumberFormatter($locale ?: 'en-GB', NumberFormatter::CURRENCY);
+            $formatter->setTextAttribute(NumberFormatter::CURRENCY_CODE, $currency);
+            $symbol = trim((string) $formatter->getSymbol(NumberFormatter::CURRENCY_SYMBOL));
+            if ($symbol !== '' && strtoupper($symbol) !== $currency) {
+                return $symbol;
+            }
+        }
+
+        $fallback = array(
+            'EUR' => '€',
+            'GBP' => '£',
+            'JPY' => '¥',
+            'USD' => '$',
+        );
+
+        return $fallback[$currency] ?? '';
+    }
+
+    public static function currencyLabel(string $currency, string $locale = 'en-GB'): string
+    {
+        $currency = strtoupper(trim($currency));
+        $symbol = self::currencySymbol($currency, $locale);
+
+        return $symbol !== '' ? $currency . ' (' . $symbol . ')' : $currency;
+    }
+
+    /**
+     * Format an exact decimal for display only. Calculations remain integer based.
+     */
+    public static function formatDecimal($amount, string $currency, string $locale = 'en-GB'): string
+    {
+        $money = self::fromDecimal((string) $amount, $currency);
+
+        if (class_exists('NumberFormatter')) {
+            $formatter = new NumberFormatter($locale ?: 'en-GB', NumberFormatter::CURRENCY);
+            $formatted = $formatter->formatCurrency((float) $money->decimal(), $money->currency());
+            if ($formatted !== false) {
+                return $formatted;
+            }
+        }
+
+        $symbol = self::currencySymbol($money->currency(), $locale);
+        if ($symbol === '') {
+            return $money->decimal() . ' ' . $money->currency();
+        }
+
+        return in_array($money->currency(), array('USD', 'GBP', 'JPY'), true)
+            ? $symbol . $money->decimal()
+            : $money->decimal() . ' ' . $symbol;
+    }
+
     public function plus(self $other): self
     {
         $this->assertSameCurrency($other);

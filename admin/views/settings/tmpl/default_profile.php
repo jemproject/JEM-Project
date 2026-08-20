@@ -15,25 +15,18 @@ $configured = (int) $this->form->getValue('operating_profile_configured', null, 
 ?>
 <fieldset class="options-form jem-operating-profile<?php echo $configured ? '' : ' is-setup-required'; ?>" aria-describedby="jem-operating-profile-desc">
     <legend><?php echo Text::_('COM_JEM_OPERATING_PROFILE'); ?></legend>
-    <div class="jem-operating-profile-heading">
-        <div>
-            <strong><?php echo Text::_('COM_JEM_OPERATING_PROFILE_QUESTION'); ?></strong>
-            <div id="jem-operating-profile-desc" class="form-text hide-aware-inline-help d-none">
-                <?php echo Text::_('COM_JEM_OPERATING_PROFILE_DESC'); ?>
-            </div>
-        </div>
-        <?php if (!$configured) : ?>
+    <?php if (!$configured) : ?>
+        <div class="jem-operating-profile-heading">
             <span class="badge bg-warning text-dark"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_SETUP_REQUIRED'); ?></span>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 
     <div class="jem-operating-profile-grid">
         <label class="jem-operating-profile-card<?php echo $profile === JemFeaturePolicy::PROFILE_ESSENTIAL ? ' is-selected' : ''; ?>">
             <input type="radio" name="jform[operating_profile]" value="essential" aria-describedby="jem-operating-profile-essential-desc"<?php echo $profile === JemFeaturePolicy::PROFILE_ESSENTIAL ? ' checked' : ''; ?>>
             <span class="jem-operating-profile-card-copy">
                 <strong><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ESSENTIAL'); ?></strong>
-                <small><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ESSENTIAL_VERSION'); ?></small>
-                <span id="jem-operating-profile-essential-desc" class="form-text hide-aware-inline-help d-none"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ESSENTIAL_DESC'); ?></span>
+                <span id="jem-operating-profile-essential-desc" class="form-text"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ESSENTIAL_DESC'); ?></span>
             </span>
         </label>
 
@@ -41,8 +34,7 @@ $configured = (int) $this->form->getValue('operating_profile_configured', null, 
             <input type="radio" name="jform[operating_profile]" value="advanced" aria-describedby="jem-operating-profile-advanced-desc"<?php echo $profile === JemFeaturePolicy::PROFILE_ADVANCED ? ' checked' : ''; ?>>
             <span class="jem-operating-profile-card-copy">
                 <strong><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ADVANCED'); ?></strong>
-                <small><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ADVANCED_VERSION'); ?></small>
-                <span id="jem-operating-profile-advanced-desc" class="form-text hide-aware-inline-help d-none"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ADVANCED_DESC'); ?></span>
+                <span id="jem-operating-profile-advanced-desc" class="form-text"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_ADVANCED_DESC'); ?></span>
             </span>
         </label>
 
@@ -50,11 +42,12 @@ $configured = (int) $this->form->getValue('operating_profile_configured', null, 
             <input type="radio" disabled aria-describedby="jem-operating-profile-commerce-desc">
             <span class="jem-operating-profile-card-copy">
                 <strong><?php echo Text::_('COM_JEM_OPERATING_PROFILE_COMMERCE'); ?></strong>
-                <small><?php echo Text::_('COM_JEM_OPERATING_PROFILE_COMMERCE_VERSION'); ?></small>
-                <span id="jem-operating-profile-commerce-desc" class="form-text hide-aware-inline-help d-none"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_COMMERCE_DESC'); ?></span>
-                <em><?php echo Text::_('COM_JEM_OPERATING_PROFILE_COMING_SOON'); ?></em>
+                <span id="jem-operating-profile-commerce-desc" class="form-text"><?php echo Text::_('COM_JEM_OPERATING_PROFILE_COMMERCE_DESC'); ?></span>
             </span>
         </div>
+    </div>
+    <div id="jem-operating-profile-desc" class="form-text hide-aware-inline-help d-none">
+        <?php echo Text::_('COM_JEM_OPERATING_PROFILE_DESC'); ?>
     </div>
     <input type="hidden" name="jform[operating_profile_configured]" value="1">
 </fieldset>

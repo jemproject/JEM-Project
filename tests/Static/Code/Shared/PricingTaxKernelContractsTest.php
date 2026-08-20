@@ -64,6 +64,35 @@ final class PricingTaxKernelContractsTest extends TestCase
         self::assertStringNotContainsString('(float)', $this->read('/admin/views/taxrates/tmpl/default.php'));
     }
 
+    public function testOneGlobalCurrencyInitialisesEventsAndUsesUniqueSymbolLabels(): void
+    {
+        $settingsForm = $this->read('/admin/models/forms/settings.xml');
+        $eventForm = $this->read('/admin/models/forms/event.xml');
+        $settingsModel = $this->read('/admin/models/settings.php');
+        $currencyField = $this->read('/admin/models/fields/currencyoptions.php');
+        $pricingService = $this->read('/admin/classes/eventpricingcapacity.class.php');
+        $pricingView = $this->read('/admin/views/event/tmpl/edit_pricing.php');
+        $money = $this->read('/site/classes/money.class.php');
+        $install = $this->read('/admin/sql/install.mysql.utf8.sql');
+        $update = $this->read('/admin/sql/updates/mysql/5.1.0.sql');
+
+        self::assertMatchesRegularExpression(
+            '/name="defaultCurrency"[\s\S]+default="EUR"[\s\S]+required="true"/',
+            $settingsForm
+        );
+        self::assertMatchesRegularExpression('/name="currency" type="hidden"/', $eventForm);
+        self::assertStringContainsString('hasStoredEconomicCurrencyData', $settingsModel);
+        self::assertStringContainsString("->select('DISTINCT '", $currencyField);
+        self::assertStringContainsString('$currencies[$currency] = true', $currencyField);
+        self::assertStringContainsString('JemMoney::currencyLabel', $currencyField);
+        self::assertStringContainsString('storedOrDefaultCurrency', $pricingService);
+        self::assertStringNotContainsString('payload.suggested_currency', $pricingView);
+        self::assertStringContainsString('Intl.NumberFormat', $pricingView);
+        self::assertStringContainsString('formatDecimal', $money);
+        self::assertStringContainsString("('defaultCurrency', 'EUR')", $install);
+        self::assertStringContainsString("VALUES ('defaultCurrency', 'EUR')", $update);
+    }
+
     private function read(string $path): string
     {
         $contents = file_get_contents(JEM_TEST_ROOT . $path);

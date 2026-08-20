@@ -32,9 +32,18 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringContainsString('aria-disabled="true"', $layout);
         self::assertStringContainsString('<fieldset class="options-form jem-operating-profile', $layout);
         self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_DESC', $layout);
-        self::assertSame(4, substr_count($layout, 'hide-aware-inline-help d-none'));
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_QUESTION', $layout);
+        self::assertGreaterThan(
+            strpos($layout, 'jem-operating-profile-grid'),
+            strpos($layout, 'id="jem-operating-profile-desc"')
+        );
+        self::assertSame(1, substr_count($layout, 'hide-aware-inline-help d-none'));
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_INTRO', $layout);
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_SAFE_CHANGE', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_COMING_SOON', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_ESSENTIAL_VERSION', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_ADVANCED_VERSION', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_COMMERCE_VERSION', $layout);
         self::assertStringContainsString('normaliseSelectableProfile', $model);
     }
 
@@ -158,6 +167,10 @@ final class OperatingProfileContractsTest extends TestCase
         );
         self::assertLessThan(
             strpos($layout, '<div class="width-50 fltrt">'),
+            strpos($layout, "globalparam_csv")
+        );
+        self::assertLessThan(
+            strpos($layout, "globalparam_csv"),
             strpos($layout, "globalparam_recurrence")
         );
     }

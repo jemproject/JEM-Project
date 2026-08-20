@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
 $user        = JemFactory::getUser();
@@ -21,6 +23,7 @@ $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
 $document   = Factory::getApplication()->getDocument();
+$moneyLocale = Factory::getApplication()->getLanguage()->getTag();
 $wa         = $document->getWebAssetManager();
 $waitingListPlaces = array();
 $waitingListIds = array();
@@ -245,13 +248,13 @@ $wa->addInlineScript('
                                             <?php if (!empty($line->pool_name)) : ?>
                                                 <small class="text-muted">&middot; <?php echo $this->escape($line->pool_name); ?></small>
                                             <?php endif; ?>
-                                            <span class="text-nowrap">&mdash; <?php echo $this->escape($line->currency . ' ' . $line->line_gross); ?></span>
+                                            <span class="text-nowrap">&mdash; <?php echo $this->escape(JemMoney::formatDecimal((string) $line->line_gross, (string) $line->currency, $moneyLocale)); ?></span>
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
                                 <small class="d-block text-start fw-semibold">
                                     <?php echo (int) $row->places; ?> &middot;
-                                    <?php echo $this->escape((string) $row->currency . ' ' . (string) $row->grand_total); ?>
+                                    <?php echo $this->escape(JemMoney::formatDecimal((string) $row->grand_total, (string) $row->currency, $moneyLocale)); ?>
                                 </small>
                             <?php endif; ?>
                         <?php endif; ?>

@@ -95,10 +95,19 @@ Joomla.submitbutton = function(task)
     }
 
 const jemInitialPricing = <?php echo json_encode($this->pricing, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP); ?>;
+const jemMoneyLocale = <?php echo json_encode($app->getLanguage()->getTag()); ?>;
 window.jemPricingLoaded = <?php echo $isPriced && !empty($this->row->uid) ? 'true' : 'false'; ?>;
 
 function jemFormatMoney(amount, currency) {
-    return currency + ' ' + Number(amount || 0).toFixed(2);
+    if (currency && window.Intl && Intl.NumberFormat) {
+        try {
+            return new Intl.NumberFormat(jemMoneyLocale, {style: 'currency', currency: currency})
+                .format(Number(amount || 0));
+        } catch (ignore) {
+            // Fall through to the ISO representation.
+        }
+    }
+    return Number(amount || 0).toFixed(2) + (currency ? ' ' + currency : '');
 }
 
 function jemRenderAdmissionOptions(pricing) {

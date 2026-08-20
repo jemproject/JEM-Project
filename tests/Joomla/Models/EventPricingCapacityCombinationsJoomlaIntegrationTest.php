@@ -68,7 +68,7 @@ final class EventPricingCapacityCombinationsJoomlaIntegrationTest extends Joomla
 
         self::assertFalse($context['active']);
         self::assertSame(JemEventPricingCapacityService::MODE_CLASSIC, $data['pricing_mode']);
-        self::assertSame('', $data['currency']);
+        self::assertSame('EUR', $data['currency']);
         self::assertSame(1, $data['pricing_revision']);
         self::assertSame(array(), $context['pools']);
         self::assertSame(array(), $context['prices']);

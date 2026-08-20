@@ -98,14 +98,7 @@ class JemEventPricingCapacityService
             $item->management_fee_value = '0.00';
         }
         if (empty($item->currency)) {
-            $suggestedCurrency = strtoupper(trim((string) ($item->pricing_requirements['suggested_currency'] ?? '')));
-            $defaultCurrency = strtoupper(trim((string) (JemHelper::config()->defaultCurrency ?? '')));
-            $currency = preg_match('/^[A-Z]{3}$/D', $suggestedCurrency) === 1
-                ? $suggestedCurrency
-                : $defaultCurrency;
-            if (preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
-                $item->currency = $currency;
-            }
+            $item->currency = self::defaultCurrency();
         }
         if (empty($item->id) && $allocationMode !== 'none' && empty($item->maxplaces)) {
             $firstOption = $item->pricing_requirements['configuration_options'][0] ?? array();
@@ -347,7 +340,7 @@ class JemEventPricingCapacityService
         $context['country_code'] = $requirements['country_code'];
 
         if (!$pricingActive) {
-            $data['currency'] = self::normaliseOptionalCurrency($data['currency'] ?? '');
+            $data['currency'] = self::storedOrDefaultCurrency($existing);
             $data['default_tax_rate_id'] = self::normaliseNullableId($data['default_tax_rate_id'] ?? null);
             $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
             $data['management_fee_mode'] = 'fixed_per_ticket';
@@ -363,13 +356,7 @@ class JemEventPricingCapacityService
             return $context;
         }
 
-        $currency = self::normaliseOptionalCurrency($data['currency'] ?? '');
-        if ($currency === '') {
-            $currency = (string) $requirements['suggested_currency'];
-        }
-        if (preg_match('/^[A-Z]{3}$/D', $currency) !== 1) {
-            throw new InvalidArgumentException(Text::_('COM_JEM_EVENT_PRICING_ERROR_CURRENCY'));
-        }
+        $currency = self::storedOrDefaultCurrency($existing);
         $data['currency'] = $currency;
         $data['prices_include_tax'] = !empty($data['prices_include_tax']) ? 1 : 0;
         $data['management_fee_mode'] = 'fixed_per_ticket';
@@ -420,6 +407,20 @@ class JemEventPricingCapacityService
         $context['prices'] = $desiredPrices;
 
         return $context;
+    }
+
+    public static function defaultCurrency(): string
+    {
+        $currency = strtoupper(trim((string) (JemHelper::config()->defaultCurrency ?? '')));
+
+        return preg_match('/^[A-Z]{3}$/D', $currency) === 1 ? $currency : 'EUR';
+    }
+
+    private static function storedOrDefaultCurrency(array $existing): string
+    {
+        $stored = strtoupper(trim((string) ($existing['currency'] ?? '')));
+
+        return preg_match('/^[A-Z]{3}$/D', $stored) === 1 ? $stored : self::defaultCurrency();
     }
 
     /**

@@ -18,7 +18,6 @@ $advancedFieldsets = array(
     'globalparam_time_regional'  => 'COM_JEM_SETTINGS_TIME_REGIONAL',
     'globalparam_attachments'    => 'COM_JEM_ATTACHMENTS',
     'globalparam_defaults'       => 'COM_JEM_SETTINGS_DEFAULT_CONTENT_VALUES',
-    'globalparam_csv'            => 'COM_JEM_SETTINGS_CSV_IMPORT_EXPORT',
 );
 
 ?>
@@ -76,6 +75,16 @@ $advancedFieldsets = array(
             <legend><?php echo Text::_('COM_JEM_SETTINGS_GLOBAL_RECURRENCE'); ?></legend>
             <ul class="adminformlist">
                 <?php foreach ($this->form->getFieldset('globalparam_recurrence') as $field): ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+    </div>
+    <div class="width-100" style="padding: 10px 1vw;">
+        <fieldset class="options-form">
+            <legend><?php echo Text::_('COM_JEM_SETTINGS_CSV_IMPORT_EXPORT'); ?></legend>
+            <ul class="adminformlist">
+                <?php foreach ($this->form->getFieldset('globalparam_csv') as $field): ?>
                     <li><div class="label-form"><?php echo $this->form->renderfield($field->fieldname); ?></div></li>
                 <?php endforeach; ?>
             </ul>

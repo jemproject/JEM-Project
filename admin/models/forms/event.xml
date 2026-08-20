@@ -648,13 +648,7 @@
             <option value="single">COM_JEM_EVENT_PRICING_MODE_SINGLE</option>
             <option value="multiple">COM_JEM_EVENT_PRICING_MODE_MULTIPLE</option>
         </field>
-        <field name="currency" type="currencyoptions"
-            label="COM_JEM_EVENT_CURRENCY"
-            description="COM_JEM_EVENT_CURRENCY_DESC"
-            showon="pricing_mode:single,multiple"
-        >
-            <option value="">COM_JEM_EVENT_CURRENCY_SELECT</option>
-        </field>
+        <field name="currency" type="hidden" default="EUR" filter="cmd" />
         <field name="prices_include_tax" type="radio"
             default="1"
             filter="integer"

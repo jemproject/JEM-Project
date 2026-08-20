@@ -9,6 +9,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Factory;
+
+require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
 
 $requirements = (array) ($this->item->pricing_requirements ?? array());
 $venueExists = !empty($requirements['venue_exists']);
@@ -25,6 +28,12 @@ $poolCandidates = array_values((array) ($requirements['pool_candidates'] ?? arra
 $configurationOptions = array_values((array) ($requirements['configuration_options'] ?? array()));
 $configurationAssignments = array_values((array) ($requirements['configuration_assignments'] ?? array()));
 $configurationCustomRequired = !empty($requirements['configuration_custom_required']);
+$eventCurrency = strtoupper(trim((string) ($this->item->currency ?? '')));
+if (preg_match('/^[A-Z]{3}$/D', $eventCurrency) !== 1) {
+    $eventCurrency = JemEventPricingCapacityService::defaultCurrency();
+}
+$currencyLocale = Factory::getApplication()->getLanguage()->getTag();
+$currencyLabel = JemMoney::currencyLabel($eventCurrency, $currencyLocale);
 $selectedConfigurationKey = (string) ($this->item->venue_configuration_key ?? '');
 $selectedAssignmentIds = json_decode((string) ($this->item->venue_assignment_ids ?? '[]'), true);
 if (!is_array($selectedAssignmentIds)) {
@@ -127,7 +136,14 @@ if (!is_array($selectedAssignmentIds)) {
         <fieldset class="adminform jem-event-pricing-policy">
             <legend><?php echo Text::_('COM_JEM_EVENT_PRICING_POLICY'); ?></legend>
             <div class="jem-event-pricing-grid">
-                <?php echo $this->form->renderField('currency'); ?>
+                <div class="control-group">
+                    <div class="control-label"><label for="jform_currency_display"><?php echo Text::_('COM_JEM_EVENT_CURRENCY'); ?></label></div>
+                    <div class="controls">
+                        <output id="jform_currency_display" class="form-control-plaintext fw-semibold"><?php echo htmlspecialchars($currencyLabel, ENT_QUOTES, 'UTF-8'); ?></output>
+                        <?php echo $this->form->getInput('currency'); ?>
+                        <div id="jform_currency-desc" class="form-text hide-aware-inline-help d-none"><?php echo Text::_('COM_JEM_EVENT_CURRENCY_DESC'); ?></div>
+                    </div>
+                </div>
                 <?php echo $this->form->renderField('prices_include_tax'); ?>
                 <?php echo $this->form->renderField('default_tax_rate_id'); ?>
                 <?php echo $this->form->renderField('management_fee_value'); ?>
@@ -462,11 +478,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (configurationSelect.options.length) {
             configurationSelect.selectedIndex = 0;
         }
-        const currency = document.getElementById('jform_currency');
-        if (currency && !currency.value && payload.suggested_currency) {
-            currency.value = payload.suggested_currency;
-            currency.dispatchEvent(new Event('change', {bubbles: true}));
-        }
         syncConfigurationSelection(true);
         filterTaxRates();
         populateCapacityOptions();
@@ -594,6 +605,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const formatMoney = function (minor, currency) {
         const whole = minor / 100n;
         const decimals = String(minor % 100n).padStart(2, '0');
+        const decimal = Number(String(whole) + '.' + decimals);
+        if (currency && window.Intl && Intl.NumberFormat) {
+            try {
+                return new Intl.NumberFormat(<?php echo json_encode($currencyLocale); ?>, {
+                    style: 'currency',
+                    currency: currency
+                }).format(decimal);
+            } catch (ignore) {
+                // Fall through to the exact ISO display.
+            }
+        }
         return String(whole) + '.' + decimals + (currency ? ' ' + currency : '');
     };
 

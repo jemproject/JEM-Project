@@ -219,10 +219,9 @@
             label="COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY"
             description="COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY_DESC"
             class="inputbox form-select w-auto"
-            default=""
-        >
-            <option value="">COM_JEM_SETTINGS_SELECT_DEFAULT_CURRENCY_AUTO</option>
-        </field>
+            default="EUR"
+            required="true"
+        />
     </fieldset>
 
     <fieldset name="globalparam_csv"

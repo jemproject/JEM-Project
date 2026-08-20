@@ -66,6 +66,8 @@ class JemModelSettings extends AdminModel
         $config = JemConfig::getInstance();
         $data = $config->toObject();
 
+        $data->defaultCurrency = $this->normaliseDefaultCurrency($data->defaultCurrency ?? '');
+
         if (isset($data->pdf_enabled_views) && !is_array($data->pdf_enabled_views)) {
             $data->pdf_enabled_views = array_filter(array_map('trim', explode(',', (string) $data->pdf_enabled_views)));
         }
@@ -203,6 +205,15 @@ class JemModelSettings extends AdminModel
         }
         if (empty($data['pdf_enabled_views'])) {
             $data['pdf_enabled_views'] = 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
+        }
+        $data['defaultCurrency'] = $this->normaliseDefaultCurrency($data['defaultCurrency'] ?? '');
+        $storedCurrency = $this->normaliseDefaultCurrency(
+            JemConfig::getInstance()->toRegistry()->get('defaultCurrency', '')
+        );
+        if ($data['defaultCurrency'] !== $storedCurrency && $this->hasStoredEconomicCurrencyData()) {
+            $this->setError(Text::_('COM_JEM_SETTINGS_DEFAULT_CURRENCY_CHANGE_BLOCKED'));
+
+            return false;
         }
         $pdfDefaults = array(
             'pdf_paper_size' => 'A4',
@@ -363,6 +374,43 @@ class JemModelSettings extends AdminModel
         $this->logSettingsAction($data);
 
         return true;
+    }
+
+    private function normaliseDefaultCurrency($currency): string
+    {
+        $currency = strtoupper(trim((string) $currency));
+
+        return preg_match('/^[A-Z]{3}$/D', $currency) === 1 ? $currency : 'EUR';
+    }
+
+    private function hasStoredEconomicCurrencyData(): bool
+    {
+        try {
+            $db = Factory::getContainer()->get(DatabaseDriver::class);
+
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('currency') . " <> ''")
+                ->where($db->quoteName('pricing_mode') . " <> 'classic'");
+            $db->setQuery($query);
+            if ((int) $db->loadResult() > 0) {
+                return true;
+            }
+
+            $query = $db->getQuery(true)
+                ->select('COUNT(*)')
+                ->from($db->quoteName('#__jem_register'))
+                ->where($db->quoteName('currency') . " <> ''");
+            $db->setQuery($query);
+            if ((int) $db->loadResult() > 0) {
+                return true;
+            }
+        } catch (Throwable $error) {
+            // During an incomplete update the currency columns may not exist yet.
+        }
+
+        return false;
     }
 
     /**
