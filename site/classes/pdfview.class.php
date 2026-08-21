@@ -3445,7 +3445,7 @@ class JemPdfView
             $createdBy = (int) ($row->created_by ?? 0);
 
             if ($user && method_exists($user, 'can') && $user->can('edit', 'venue', $venueId, $createdBy)) {
-                $editRoute = 'index.php?option=com_jem&task=venue.edit&a_id=' . $venueId;
+                $editRoute = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id=' . $venueId;
                 $links[] = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($editRoute, false)), ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_EDIT_VENUE') . '</a>';
             }
         }

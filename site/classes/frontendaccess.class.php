@@ -76,18 +76,21 @@ abstract class JemFrontendAccess
     /**
      * Read and normalise the frontend record id used by canonical and legacy routes.
      *
-     * Both id and a_id are accepted, but conflicting values are rejected.
+     * The editor-specific a_id is authoritative when present. Joomla may also
+     * inject an unrelated id from the active item route, so the legacy id is
+     * only used when a_id is absent.
      *
      * @param  object   $input     Joomla input object.
      * @param  boolean  $required  Whether a positive id is required.
      *
      * @return integer
      *
-     * @throws Exception For a missing, malformed or ambiguous id.
+     * @throws Exception For a missing or malformed id.
      */
     public static function normaliseRecordId($input, $required = false)
     {
-        $id = self::readId($input, array('a_id', 'id'), $required);
+        $keys = $input->exists('a_id') ? array('a_id') : array('id');
+        $id = self::readId($input, $keys, $required);
 
         $input->set('a_id', $id);
         $input->set('id', $id);

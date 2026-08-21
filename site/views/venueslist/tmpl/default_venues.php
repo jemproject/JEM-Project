@@ -173,7 +173,7 @@ if (!function_exists('jem_venueslist_default_venue_calendar_link')) {
 if (!function_exists('jem_venueslist_default_venue_edit_link')) {
     function jem_venueslist_default_venue_edit_link($row)
     {
-        return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
+        return Route::_('index.php?option=com_jem&view=editvenue&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
     }
 }
 
