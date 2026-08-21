@@ -47,6 +47,32 @@
     <fieldset name="globalparam_lists_calendar"
             label="COM_JEM_SETTINGS_LISTS_CALENDAR"
     >
+        <field name="backend_events_order" type="list"
+            label="COM_JEM_SETTINGS_BACKEND_EVENT_ORDER"
+            description="COM_JEM_SETTINGS_BACKEND_EVENT_ORDER_DESC"
+            class="inputbox form-select"
+            default="a.dates"
+            filter="cmd"
+            validate="options"
+            required="true"
+        >
+            <option value="a.dates">COM_JEM_DATE</option>
+            <option value="a.times">COM_JEM_STARTTIME_SHORT</option>
+            <option value="a.title">COM_JEM_EVENT_TITLE</option>
+            <option value="loc.venue">COM_JEM_VENUE</option>
+        </field>
+        <field name="backend_events_direction" type="list"
+            label="COM_JEM_SETTINGS_SORT_DIRECTION"
+            description="COM_JEM_SETTINGS_SORT_DIRECTION_DESC"
+            class="inputbox form-select"
+            default="ASC"
+            filter="word"
+            validate="options"
+            required="true"
+        >
+            <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
+            <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+        </field>
         <field name="categories_order" type="list"
             label="COM_JEM_SETTINGS_CATEGORIES_ORDER"
             description="COM_JEM_SETTINGS_CATEGORIES_ORDER_DESC"

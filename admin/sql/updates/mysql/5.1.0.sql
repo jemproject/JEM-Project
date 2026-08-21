@@ -122,6 +122,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_register_items` (`id` BIGINT(20) UNSIGNED NOT
 CREATE TABLE IF NOT EXISTS `#__jem_register_capacity_allocations` (`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, `register_id` INT(11) UNSIGNED NOT NULL, `registration_revision` INT(10) UNSIGNED NOT NULL, `event_id` INT(11) UNSIGNED NOT NULL, `venue_capacity_area_id` INT(11) UNSIGNED NULL DEFAULT NULL, `venue_layout_id` INT(11) UNSIGNED NOT NULL, `venue_layout_revision` INT(10) UNSIGNED NOT NULL DEFAULT '0', `area_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `area_name` VARCHAR(255) NOT NULL DEFAULT '', `space_code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '', `space_name` VARCHAR(255) NOT NULL DEFAULT '', `quantity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`), UNIQUE KEY `idx_register_capacity_revision_area` (`register_id`,`registration_revision`,`venue_layout_id`,`area_code`), KEY `idx_register_capacity_event_area` (`event_id`,`venue_capacity_area_id`), KEY `idx_register_capacity_event_layout` (`event_id`,`venue_layout_id`)) ENGINE=InnoDB;
 
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('pricing_schema_ready', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('backend_events_order', 'a.dates');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('backend_events_direction', 'ASC');
 INSERT INTO `#__jem_config` (`keyname`, `value`) VALUES ('defaultCurrency', 'EUR')
 ON DUPLICATE KEY UPDATE `value` = IF(UPPER(TRIM(`value`)) REGEXP '^[A-Z]{3}$', UPPER(TRIM(`value`)), 'EUR');
 
