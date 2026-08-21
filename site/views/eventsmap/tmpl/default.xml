@@ -7,7 +7,16 @@
     </layout>
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
-<field name="map_center_lat" type="text"
+            <field name="map_auto_center" type="radio"
+                default="1"
+                label="COM_JEM_EVENTS_MAP_AUTO_CENTER"
+                description="COM_JEM_EVENTS_MAP_AUTO_CENTER_DESC"
+                class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="map_center_lat" type="text"
                    default="54.526"
                    label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC" class="form-control w-auto"/>
