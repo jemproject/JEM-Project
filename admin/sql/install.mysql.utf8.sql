@@ -531,6 +531,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('recurrence_anticipation_year', '180'),
 ('recurrence_anticipation_lastday', '60'),
 ('ical_max_items', '100'),
+('backend_events_order', 'a.dates'),
+('backend_events_direction', 'ASC'),
 ('defaultCountry', ''),
 ('flagicons_path', 'media/com_jem/images/flags/w80-webp/'),
 ('csv_separator', ';'),

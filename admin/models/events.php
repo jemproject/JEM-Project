@@ -87,8 +87,20 @@ class JemModelEvents extends ListModel
         $params = ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
 
-        // List state information.
-        parent::populateState('a.dates', 'asc');
+        // List state information. The current session choice still takes precedence.
+        $jemConfig        = JemConfig::getInstance()->toRegistry();
+        $defaultOrdering  = (string) $jemConfig->get('backend_events_order', 'a.dates');
+        $defaultDirection = strtoupper((string) $jemConfig->get('backend_events_direction', 'ASC'));
+
+        if (!in_array($defaultOrdering, $this->filter_fields, true)) {
+            $defaultOrdering = 'a.dates';
+        }
+
+        if (!in_array($defaultDirection, array('ASC', 'DESC'), true)) {
+            $defaultDirection = 'ASC';
+        }
+
+        parent::populateState($defaultOrdering, $defaultDirection);
     }
 
     /**
