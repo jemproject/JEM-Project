@@ -45,7 +45,7 @@ final class Joomla6CompatibilityTest extends TestCase
 
             self::assertNotFalse($manifest);
             self::assertSame('5.1.0beta1', (string) $manifest->version);
-            self::assertCount(35, explode(';', (string) $manifest->notes));
+            self::assertCount(36, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('profile-independent JSON-LD entity', (string) $manifest->notes);
             self::assertStringContainsString('parent event programmes and nested venue hierarchies', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
@@ -56,6 +56,7 @@ final class Joomla6CompatibilityTest extends TestCase
             self::assertStringContainsString('Issue #2287', (string) $manifest->notes);
             self::assertStringContainsString('Commit 1e82bf8', (string) $manifest->notes);
             self::assertStringContainsString('Commit f199043', (string) $manifest->notes);
+            self::assertStringContainsString('Issue #2313', (string) $manifest->notes);
         }
     }
 

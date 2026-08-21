@@ -521,7 +521,7 @@ static public function lightbox() {
                         $text = Text::_('COM_JEM_EDIT_EVENT');
                     }
                     $id = isset($item->did) ? $item->did : $item->id;
-                    $url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editevent&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'editvenue':
@@ -540,7 +540,7 @@ static public function lightbox() {
                     $id = $item->locid;
                     $overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
                     $text = Text::_('COM_JEM_EDIT_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'venue':
@@ -559,7 +559,7 @@ static public function lightbox() {
                     $id = $item->id;
                     $overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
                     $text = Text::_('COM_JEM_EDIT_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
             }
 
@@ -613,7 +613,7 @@ static public function lightbox() {
                     $id = isset($item->did) ? $item->did : $item->id;
                     $overlib = Text::_('COM_JEM_COPY_EVENT_DESC');
                     $text = Text::_('COM_JEM_COPY_EVENT');
-                    $url = 'index.php?option=com_jem&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editevent&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'editvenue':
@@ -625,7 +625,7 @@ static public function lightbox() {
                     $id = $item->locid;
                     $overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
                     $text = Text::_('COM_JEM_COPY_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'venue':
@@ -637,7 +637,7 @@ static public function lightbox() {
                     $id = $item->id;
                     $overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
                     $text = Text::_('COM_JEM_COPY_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
             }
 

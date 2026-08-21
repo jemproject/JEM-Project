@@ -320,7 +320,7 @@ $buildVenueCalendarLink = static function ($venue) use ($jemItemid) {
 };
 
 $buildVenueEditLink = static function ($venue) use ($currentUri) {
-    return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $venue->id . '&return=' . base64_encode($currentUri));
+    return Route::_('index.php?option=com_jem&view=editvenue&task=venue.edit&a_id=' . (int) $venue->id . '&return=' . base64_encode($currentUri));
 };
 
 $editableVenues = [];

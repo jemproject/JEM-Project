@@ -7,11 +7,11 @@ use PHPUnit\Framework\TestCase;
 
 final class FrontendEditorAccessTest extends TestCase
 {
-    public function testSharedPolicyNormalisesRoutesAndRejectsAmbiguousIds(): void
+    public function testSharedPolicyPrioritisesCanonicalEditorIdsAndRejectsAmbiguousGenericIds(): void
     {
         $policy = $this->read('/site/classes/frontendaccess.class.php');
 
-        self::assertStringContainsString("array('a_id', 'id')", $policy);
+        self::assertStringContainsString("\$input->exists('a_id') ? array('a_id') : array('id')", $policy);
         self::assertStringContainsString('count($ids) > 1', $policy);
         self::assertStringContainsString('COM_JEM_ERROR_INVALID_RECORD_ID', $policy);
         self::assertStringContainsString('getAuthorisedViewLevels()', $policy);
@@ -89,6 +89,27 @@ final class FrontendEditorAccessTest extends TestCase
             self::assertNotFalse($case);
             self::assertNotFalse($nextBreak);
             self::assertStringContainsString("\$vars['a_id']", substr($noMenuRule, $case, $nextBreak - $case));
+        }
+
+        $routeContracts = array(
+            '/site/classes/output.class.php' => array(
+                'view=editevent&task=event.edit&a_id=',
+                'view=editevent&task=event.copy&a_id=',
+                'view=editvenue&task=venue.edit&a_id=',
+                'view=editvenue&task=venue.copy&a_id=',
+            ),
+            '/site/classes/pdfview.class.php' => array('view=editvenue&task=venue.edit&a_id='),
+            '/site/views/venuesmap/tmpl/default.php' => array('view=editvenue&task=venue.edit&a_id='),
+            '/site/views/venueslist/tmpl/default_venues.php' => array('view=editvenue&task=venue.edit&a_id='),
+            '/site/views/venueslist/tmpl/responsive/default_venues.php' => array('view=editvenue&task=venue.edit&a_id='),
+        );
+
+        foreach ($routeContracts as $path => $needles) {
+            $source = $this->read($path);
+
+            foreach ($needles as $needle) {
+                self::assertStringContainsString($needle, $source, $path);
+            }
         }
     }
 

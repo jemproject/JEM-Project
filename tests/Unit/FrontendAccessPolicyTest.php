@@ -37,12 +37,24 @@ namespace {
             self::assertSame(73, $legacy->value('a_id'));
         }
 
-        public function testMalformedMissingAndConflictingIdsAreRejected(): void
+        public function testCanonicalEditorIdOverridesAnUnrelatedRoutedItemId(): void
+        {
+            $input = new FrontendAccessInputStub(array(
+                'a_id' => '13',
+                'id' => '12:source-event',
+            ));
+
+            self::assertSame(13, JemFrontendAccess::normaliseRecordId($input, true));
+            self::assertSame(13, $input->value('a_id'));
+            self::assertSame(13, $input->value('id'));
+        }
+
+        public function testMalformedAndMissingEditorIdsAreRejected(): void
         {
             foreach (array(
                 new FrontendAccessInputStub(array('id' => '12invalid')),
                 new FrontendAccessInputStub(array()),
-                new FrontendAccessInputStub(array('id' => '12', 'a_id' => '13')),
+                new FrontendAccessInputStub(array('id' => '12', 'a_id' => '13invalid')),
             ) as $input) {
                 try {
                     JemFrontendAccess::normaliseRecordId($input, true);
@@ -51,6 +63,16 @@ namespace {
                     self::assertSame(400, $exception->getCode());
                 }
             }
+        }
+
+        public function testGenericIdReaderStillRejectsAmbiguousValues(): void
+        {
+            $input = new FrontendAccessInputStub(array('id' => '12', 'a_id' => '13'));
+
+            $this->expectException(Exception::class);
+            $this->expectExceptionCode(400);
+
+            JemFrontendAccess::readId($input, array('a_id', 'id'), true);
         }
 
         public function testEventCreatePermissionReceivesSelectedCategories(): void
