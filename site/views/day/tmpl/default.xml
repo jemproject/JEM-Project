@@ -27,8 +27,17 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-          <field type="spacer" name="spacer1" hr="true" />
-<field name="categoryswitchcats" type="categoryedit"
+                <field type="spacer" name="spacer1" hr="true" />
+                <field name="categoryswitch" type="radio"
+                    default="0"
+                    label="COM_JEM_TIMELINE_CATEGORY_FILTER_MODE_LABEL"
+                    description="COM_JEM_CATEGORYSWITCH_DESC"
+                    class="btn-group btn-group-yesno"
+                >
+                    <option value="1">COM_JEM_INCLUDE</option>
+                    <option value="0">COM_JEM_EXCLUDE</option>
+                </field>
+                <field name="categoryswitchcats" type="categoryedit"
                     multiple="true"
                     removeroot="true"
                     class="form-select w-auto jem-options-width-auto"

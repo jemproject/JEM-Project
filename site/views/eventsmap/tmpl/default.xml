@@ -10,7 +10,16 @@
             <field name="event_tree_mode" type="list" default="calendar" label="COM_JEM_EVENT_TREE_MODE" description="COM_JEM_EVENT_TREE_MODE_DESC" class="form-select w-auto">
                 <option value="calendar">COM_JEM_EVENT_TREE_MODE_CALENDAR</option><option value="parents">COM_JEM_EVENT_TREE_MODE_PARENTS</option><option value="children">COM_JEM_EVENT_TREE_MODE_CHILDREN</option><option value="all">COM_JEM_EVENT_TREE_MODE_ALL</option>
             </field>
-<field name="map_center_lat" type="text"
+            <field name="map_auto_center" type="radio"
+                default="1"
+                label="COM_JEM_EVENTS_MAP_AUTO_CENTER"
+                description="COM_JEM_EVENTS_MAP_AUTO_CENTER_DESC"
+                class="inputbox btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="map_center_lat" type="text"
                    default="54.526"
                    label="COM_JEM_EVENTS_MAP_CENTER_LATITUDE"
                    description="COM_JEM_EVENTS_MAP_CENTER_LATITUDE_DESC" class="form-control w-auto"/>

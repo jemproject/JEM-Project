@@ -128,11 +128,21 @@
                 <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
                 <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
             </field>
-      <field type="spacer" name="spacer1" hr="true" />
-<field name="categoryswitchcats" type="text"
+            <field type="spacer" name="spacer1" hr="true" />
+            <field name="categoryswitch" type="radio"
+                default="0"
+                label="COM_JEM_CATEGORYSWITCH"
+                description="COM_JEM_CATEGORYSWITCH_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
+            </field>
+            <field name="categoryswitchcats" type="text"
                 default=""
                 label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC" class="form-control w-auto"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                class="form-control w-auto"
             />
             <field name="includesubcategories" type="radio"
                 default="0"
