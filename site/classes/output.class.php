@@ -1730,6 +1730,8 @@ static public function lightbox() {
                 break;
         }
 
+        $info = htmlspecialchars((string) $info, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
         // Do we have an image?
         if (empty($imagefile) || empty($image)) {
             return;
@@ -2132,21 +2134,22 @@ static public function lightbox() {
             function ($category) use ($doLink, $backend) {
                 $hasAccess = !isset($category->user_has_access_category) || (bool) $category->user_has_access_category;
                 $lockIcon  = $hasAccess ? '' : ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                $categoryName = htmlspecialchars((string) ($category->catname ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
                 if ($doLink && $hasAccess) {
                     if ($backend) {
                         $path = $category->path;
                         $path = str_replace('/', ' &#187; ', $path);
                         $value  = '<span ' . self::tooltip(Text::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
-                        $value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . $category->id . '">' .
-                                      $category->catname . '</a>';
+                        $value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . (int) $category->id . '">' .
+                                      $categoryName . '</a>';
                         $value .= '</span>';
                     } else {
                         $value  = '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
-                                      $category->catname . '</a>';
+                                      $categoryName . '</a>';
                     }
                 } else {
-                    $value = $category->catname;
+                    $value = $categoryName;
                 }
                 return $value . $lockIcon;
             },

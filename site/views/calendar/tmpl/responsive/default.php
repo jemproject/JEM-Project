@@ -196,9 +196,9 @@ use Joomla\CMS\Factory;
 
             // Attach category color in front of the catname
             if ($category->color) {
-                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$this->escape($category->catname);
             } else {
-                $multicatname .= $category->catname;
+                $multicatname .= $this->escape($category->catname);
             }
 
             $ix++;

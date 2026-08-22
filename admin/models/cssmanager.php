@@ -18,6 +18,8 @@ use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\Path;
 
+require_once JPATH_SITE . '/components/com_jem/classes/cssfilepolicy.class.php';
+
 /**
  * Model-CSSManager
  */
@@ -246,13 +248,13 @@ class JemModelCssmanager extends BaseDatabaseModel
         $targetFile = trim((string) $targetFile);
         $targetFile = $targetFile !== '' ? $targetFile : $file;
 
-        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file !== InputFilter::getInstance()->clean($file, 'path') || !JemCssFilePolicy::isValidFileName($file)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy rejected: invalid source file "' . $file . '"', Log::WARNING);
             return false;
         }
 
-        if ($targetFile === '' || $targetFile !== InputFilter::getInstance()->clean($targetFile, 'path') || File::getExt($targetFile) !== 'css') {
+        if ($targetFile !== InputFilter::getInstance()->clean($targetFile, 'path') || !JemCssFilePolicy::isValidFileName($targetFile)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy rejected: invalid target file "' . $targetFile . '" for source "' . $file . '"', Log::WARNING);
             return false;
@@ -263,19 +265,19 @@ class JemModelCssmanager extends BaseDatabaseModel
         $targetDir = Path::clean($basePath . '/custom');
         $target = Path::clean($targetDir . '/' . $targetFile);
 
-        if (!is_file($source)) {
+        if (!is_file($source) || is_link($source)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy failed: source file not found "' . $file . '"', Log::WARNING);
             return false;
         }
 
-        if (!is_dir($targetDir) && !Folder::create($targetDir)) {
+        if (is_link($targetDir) || (!is_dir($targetDir) && !Folder::create($targetDir))) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
             $this->logCssOperation('CSS custom copy failed: custom CSS folder not available for "' . $targetFile . '"', Log::WARNING);
             return false;
         }
 
-        if (is_file($target)) {
+        if (file_exists($target) || is_link($target)) {
             $this->setError(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_EXISTS', $targetFile));
             $this->logCssOperation('CSS custom copy skipped: target already exists "' . $targetFile . '" from source "' . $file . '"', Log::WARNING);
             return false;
@@ -314,7 +316,7 @@ class JemModelCssmanager extends BaseDatabaseModel
     {
         $file = (string) $file;
 
-        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file !== InputFilter::getInstance()->clean($file, 'path') || !JemCssFilePolicy::isValidFileName($file)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom delete rejected: invalid custom file "' . $file . '"', Log::WARNING);
             return false;
@@ -330,7 +332,7 @@ class JemModelCssmanager extends BaseDatabaseModel
             return false;
         }
 
-        if (!is_file($target)) {
+        if (!is_file($target) || is_link($target)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom delete failed: file not found "' . $file . '"', Log::WARNING);
             return false;
@@ -359,7 +361,7 @@ class JemModelCssmanager extends BaseDatabaseModel
     {
         $file = (string) $file;
 
-        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path') || File::getExt($file) !== 'css') {
+        if ($file !== InputFilter::getInstance()->clean($file, 'path') || !JemCssFilePolicy::isValidFileName($file)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom download rejected: invalid file "' . $file . '"', Log::WARNING);
             return false;
@@ -367,10 +369,12 @@ class JemModelCssmanager extends BaseDatabaseModel
 
         $customDir = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom');
         $path = Path::clean($customDir . '/' . $file);
-        $baseCheck = rtrim(strtolower($customDir), '\\/') . DIRECTORY_SEPARATOR;
-        $pathCheck = strtolower($path);
+        $realBase = realpath($customDir);
+        $realPath = realpath($path);
+        $baseCheck = $realBase === false ? '' : rtrim(strtolower(Path::clean($realBase)), '\\/') . DIRECTORY_SEPARATOR;
+        $pathCheck = $realPath === false ? '' : strtolower(Path::clean($realPath));
 
-        if (strpos($pathCheck, $baseCheck) !== 0 || preg_match('#(^|[\\\\/])\\.\\.([\\\\/]|$)#', $file) || !is_file($path)) {
+        if ($baseCheck === '' || $pathCheck === '' || strpos($pathCheck, $baseCheck) !== 0 || !is_file($path) || is_link($path)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS custom download failed: file not found "' . $file . '"', Log::WARNING);
             return false;
@@ -378,8 +382,8 @@ class JemModelCssmanager extends BaseDatabaseModel
 
         return (object) array(
             'name' => basename($file),
-            'path' => $path,
-            'size' => filesize($path),
+            'path' => $realPath,
+            'size' => filesize($realPath),
         );
     }
 
@@ -388,7 +392,7 @@ class JemModelCssmanager extends BaseDatabaseModel
         $file = (string) $file;
         $definitions = $this->getUserCssDefinitions();
 
-        if (!isset($definitions[$file])) {
+        if (!isset($definitions[$file]) || !JemCssFilePolicy::isValidFileName($file)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             $this->logCssOperation('CSS user override create rejected: invalid file "' . $file . '"', Log::WARNING);
             return false;
@@ -397,13 +401,13 @@ class JemModelCssmanager extends BaseDatabaseModel
         $customDir = Path::clean(JPATH_ROOT . '/media/com_jem/css/custom');
         $target = Path::clean($customDir . '/' . $file);
 
-        if (!is_dir($customDir) && !Folder::create($customDir)) {
+        if (is_link($customDir) || (!is_dir($customDir) && !Folder::create($customDir))) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_CSS_FOLDER_NOT_FOUND'));
             $this->logCssOperation('CSS user override create failed: custom CSS folder not available for "' . $file . '"', Log::WARNING);
             return false;
         }
 
-        if (is_file($target)) {
+        if (file_exists($target) || is_link($target)) {
             $this->setError(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_EXISTS', $file));
             $this->logCssOperation('CSS user override create skipped: target already exists "' . $file . '"', Log::WARNING);
             return false;
@@ -446,7 +450,10 @@ class JemModelCssmanager extends BaseDatabaseModel
         $activeCustom = $this->getActiveCustomCssMap($settings);
 
         // Handle the standard CSS files.
-        $files = Folder::files($path . '/css', '\.css$', false, false);
+        $files = array_values(array_filter(
+            Folder::files($path . '/css', '\.css$', false, false),
+            array('JemCssFilePolicy', 'isValidFileName')
+        ));
         sort($files, SORT_NATURAL | SORT_FLAG_CASE);
 
         foreach ($files as $file) {
@@ -455,9 +462,14 @@ class JemModelCssmanager extends BaseDatabaseModel
             $result['css'][] = $item;
         }
 
-        $customFiles = is_dir($path . 'css/custom') ? Folder::files($path . 'css/custom', '\.css$', false, false) : array();
+        $customFiles = is_dir($path . 'css/custom')
+            ? array_values(array_filter(
+                Folder::files($path . 'css/custom', '\.css$', false, false),
+                array('JemCssFilePolicy', 'isValidFileName')
+            ))
+            : array();
         foreach (array_keys($activeCustom) as $activeFile) {
-            if ($activeFile && !in_array($activeFile, $customFiles, true)) {
+            if (JemCssFilePolicy::isValidFileName($activeFile) && !in_array($activeFile, $customFiles, true)) {
                 $customFiles[] = $activeFile;
             }
         }
