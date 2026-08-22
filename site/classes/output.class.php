@@ -214,7 +214,7 @@ static public function lightbox() {
 
             $url = 'index.php?option=com_jem&task=event.add&return='.base64_encode($uri).'&a_id=0';
             $overlib = Text::_('COM_JEM_SUBMIT_EVENT_DESC');
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -249,7 +249,7 @@ static public function lightbox() {
 
             $url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
             $overlib = Text::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -285,7 +285,7 @@ static public function lightbox() {
 
             $url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
             $overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
-            // $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+            // $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
 
             $output= HTMLHelper::_(
@@ -342,7 +342,7 @@ static public function lightbox() {
             $url .= '&'.$urlparams;
         }
         $html  = '<div class="inline-button-right">';
-        $html .= HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), Text::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
+        $html .= HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), Text::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
         $html .= '</div>';
 
         return $html;
@@ -371,6 +371,14 @@ static public function lightbox() {
     static protected function getDefaultPdfViews()
     {
         return 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
+    }
+
+    /**
+     * Routes a link and escapes it for use in an HTML attribute.
+     */
+    static protected function escapeLinkAttribute($link)
+    {
+        return htmlspecialchars(Route::_((string) $link), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
     }
 
     /**
@@ -452,7 +460,7 @@ static public function lightbox() {
                 }
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -567,7 +575,7 @@ static public function lightbox() {
                 return; // we need at least url to generate useful output
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib));
 
             return $output;
         }
@@ -645,7 +653,7 @@ static public function lightbox() {
                 return; // we need at least url to generate useful output
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib));
 
             return $output;
         }
@@ -682,7 +690,7 @@ static public function lightbox() {
                 //button in view
                 $overlib = Text::_('COM_JEM_PRINT_DESC');
                 $text = Text::_('COM_JEM_PRINT');
-                $output = '<a href="' . Route::_($print_link) . '&tmpl=component" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+                $output = '<a href="' . self::escapeLinkAttribute($print_link . '&tmpl=component') . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
                         . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
             }
             return $output;
@@ -716,7 +724,7 @@ static public function lightbox() {
             $image = Text::_('COM_JEM_ANNUALCALENDAR_PDF');
         }
 
-        return HTMLHelper::_('link', Route::_($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
+        return HTMLHelper::_('link', self::escapeLinkAttribute($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
     }
 
     /**
@@ -741,7 +749,7 @@ static public function lightbox() {
 
         $text = Text::_('COM_JEM_TIMETABLE_TODAY');
 
-        return HTMLHelper::_('link', Route::_($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
+        return HTMLHelper::_('link', self::escapeLinkAttribute($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
     }
 
     /**
@@ -825,7 +833,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_ICAL');
 
             $url = 'index.php?option=com_jem&view=' . $view . '&id=' . ($slug??0) . ($task? '&task=' . $task : '') . '&format=raw&layout=ics';
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -851,7 +859,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_PUBLISH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -877,7 +885,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_TRASH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -903,7 +911,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_UNPUBLISH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -930,7 +938,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_EXPORT');
 
             $print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . Session::getFormToken() . '=1';
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -959,7 +967,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_BACK');
 
             $link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
-            $output = '<a href="' . Route::_($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -1564,7 +1572,7 @@ static public function lightbox() {
         $route = $entity === 'venue'
             ? JemHelperRoute::getTypevenuesRoute($typeRouteId)
             : JemHelperRoute::getTypeeventsRoute($typeRouteId);
-        $link = htmlspecialchars(Route::_($route), ENT_QUOTES, 'UTF-8');
+        $link = self::escapeLinkAttribute($route);
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
     }
@@ -1855,7 +1863,7 @@ static public function lightbox() {
         if (JemHelper::isValidDate($dateStart)) {
             $output .= '<span class="jem_date-1">';
             if ($showDayLink) {
-                $output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
+                $output .= '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')) . '">';
             }
             $output .= self::formatdate($dateStart, $dateFormat);
             if ($showDayLink) {
@@ -1872,7 +1880,7 @@ static public function lightbox() {
             if ($displayDateEnd) {
                 $output .= '<span class="jem_date2"> - ';
                 if ($showDayLink) {
-                    $output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
+                    $output .= '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')) . '">';
                 }
                 $output .= self::formatdate($dateEnd, $dateFormat);
                 if ($showDayLink) {
@@ -2134,7 +2142,7 @@ static public function lightbox() {
                                       $category->catname . '</a>';
                         $value .= '</span>';
                     } else {
-                        $value  = '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
+                        $value  = '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
                                       $category->catname . '</a>';
                     }
                 } else {
