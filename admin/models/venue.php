@@ -304,6 +304,13 @@ class JemModelVenue extends JemModelAdmin
         $backend     = (bool) $app->isClient('administrator');
         $new         = (bool) empty($data['id']);
         $policy      = JemFeaturePolicy::current();
+
+        // Frontend forms must never control record provenance. Existing rows
+        // retain their stored creator/date; new rows receive both in Table::store().
+        if (!$backend) {
+            unset($data['created'], $data['created_by']);
+        }
+
         $existingVenue = null;
         if (!$new) {
             $existingVenue = $this->getTable();

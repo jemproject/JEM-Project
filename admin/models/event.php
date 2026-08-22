@@ -529,6 +529,13 @@ class JemModelEvent extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
         $task    = $jinput->get('task', '', 'cmd');
+
+        // Frontend forms must never control record provenance. Existing rows
+        // retain their stored creator/date; new rows receive both in Table::store().
+        if (!$backend) {
+            unset($data['created'], $data['created_by']);
+        }
+
         $reminderSelectionSubmitted = array_key_exists('reminder_ids', $data)
             || array_key_exists('event_reminders_enabled', $data);
         $eventRemindersEnabled = !empty($data['event_reminders_enabled']);
