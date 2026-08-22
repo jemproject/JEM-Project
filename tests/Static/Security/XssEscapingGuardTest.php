@@ -48,7 +48,27 @@ final class XssEscapingGuardTest extends TestCase
         self::assertStringContainsString('htmlspecialchars($item->{$colorProperty}, ENT_QUOTES, \'UTF-8\')', $contents);
         self::assertStringContainsString('htmlspecialchars($item->{$iconProperty}, ENT_QUOTES, \'UTF-8\')', $contents);
         self::assertStringContainsString('JemHelperRoute::getTypeeventsRoute($typeRouteId)', $contents);
-        self::assertStringContainsString('htmlspecialchars(Route::_($route), ENT_QUOTES, \'UTF-8\')', $contents);
+        self::assertStringContainsString('self::escapeLinkAttribute($route)', $contents);
+    }
+
+    public function testFrontendOutputEscapesDynamicButtonLinksForHtmlAttributes(): void
+    {
+        $contents = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
+        $payload = 'index.php?option=com_jem&marker=" data-test="value';
+        $escaped = htmlspecialchars($payload, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+
+        self::assertStringContainsString(
+            "htmlspecialchars(Route::_((string) \$link), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false)",
+            $contents
+        );
+        self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$url)", $contents);
+        self::assertStringContainsString("self::escapeLinkAttribute(\$print_link . '&tmpl=component')", $contents);
+        self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$pdf_link)", $contents);
+        self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$today_link)", $contents);
+        self::assertDoesNotMatchRegularExpression("/HTMLHelper::_\\('link',\\s*Route::_\\(/", $contents);
+        self::assertStringNotContainsString("'<a href=\"' . Route::_", $contents);
+        self::assertStringNotContainsString('marker=" data-test=', $escaped);
+        self::assertStringContainsString('marker=&quot; data-test=', $escaped);
     }
 
     public function testSiteTemplatesEscapeCommonTextInputs(): void
