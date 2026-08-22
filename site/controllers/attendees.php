@@ -68,7 +68,7 @@ class JemControllerAttendees extends BaseController
 
         $user = JemFactory::getUser();
 
-        if (!$user->get('id') || !$user->can('edit', 'event', $event->id, $event->created_by)) {
+        if (!$model->canManageAttendees($user)) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
@@ -184,7 +184,8 @@ class JemControllerAttendees extends BaseController
             foreach ($events as $key => $row) {
 
                 $this->assertCanManageAttendees($row->id);
-                $regs = JemModelAttendees::getRegisteredUsers($row->id);
+                $modelAttendees->setId((int) $row->id);
+                $regs = $modelAttendees->getRegisteredUsers();
                 $skip = $error = $changed = 0;
                 $transitions = array();
                 $releasedCapacityForEvent = false;

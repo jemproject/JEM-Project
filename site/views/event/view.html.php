@@ -101,7 +101,10 @@ class JemViewEvent extends JemView
         $registers_array = array();
         if($this->regs['all'])
         {
-            if($userId){
+            $showAttendeeNames = (int) $this->settings->get('event_show_attendeenames', 2);
+            $isAttending = is_object($registration) && (int) $registration->status === 1;
+
+            if($userId && ($showAttendeeNames !== 2 || $isAttending)){
                 if ($this->settings->get('event_show_more_attendeedetails', '0'))
                 {
                     $this->registers = $this->regs['all'];
