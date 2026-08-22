@@ -32,6 +32,17 @@ class JemViewAttendees extends JemView
             return false;
         }
 
+        $model = $this->getModel();
+        $event = $model->getEvent();
+
+        if (!$event) {
+            throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+        }
+
+        if (!$model->canManageAttendees($user)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->settings    = JemHelper::globalattribs();
         $this->jemsettings = JemHelper::config();
 
@@ -72,7 +83,6 @@ class JemViewAttendees extends JemView
         // Get data from the model
         $rows          = $this->get('Data');
         $pagination = $this->get('Pagination');
-        $event         = $this->get('Event');
 
         // Merge params.
         // Because this view is not useable for menu item we always overwrite $params.

@@ -135,7 +135,7 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                     }
                     break;
                 case 2: // show to registered
-                    if ($this->user->get('guest')) {
+                    if ($this->user->get('guest') || !is_object($this->registration) || (int) $this->registration->status !== 1) {
                         $showAttendenenames = 0;
                     }
                     break;
@@ -211,6 +211,7 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                             echo '<li class="' . ($this->user->id==$register->uid? 'jem-registered-user-owner':'jem-registered-user') . '">' . jem_getStatusIcon($register->status);
                             $text = '';
                             $registedplaces = '';
+                            $displayName = $this->escape((string) $register->name);
                             // is a plugin catching this ?
                             if ($res = $this->dispatcher->triggerEvent('onAttendeeDisplay', array($register->uid, &$text))) :
                                 echo $text;
@@ -250,21 +251,21 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                                         } else {
                                             $useravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
                                         }
-                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $register->name . '</span></a>' . $registedplaces;
+                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') . '">' . $useravatar . ' <span class="username">' . $displayName . '</span></a>' . $registedplaces;
 
                                     // User has no avatar
                                     else :
                                         $nouseravatar = empty($noimg) ? '' : HTMLHelper::image($noimg, $register->name);
-                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $register->name . '</span></a>'. $registedplaces;
+                                        echo '<a style="text-decoration: none;" href="' . Route::_($cntlink) . '" title = "' . Text::_('COM_JEM_SHOW_USER_PROFILE') .'">' . $nouseravatar . ' <span class="username">' . $displayName . '</span></a>'. $registedplaces;
                                     endif;
                                 else :
                                     // only show the username with link to profile
-                                    echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_($cntlink) . '">' . $register->name . '</a></span>' . $registedplaces;
+                                    echo '<span class="username"><a style="text-decoration: none;" href="' . Route::_($cntlink) . '">' . $displayName . '</a></span>' . $registedplaces;
                                 endif;
                             // if CB end - if not CB than only name
                             else :
                                 // no communitycomponent is set so only show the username
-                                echo '<span class="username">' . $register->name . '</span>' . $registedplaces;
+                                echo '<span class="username">' . $displayName . '</span>' . $registedplaces;
                             endif;
 
                             echo '</li>';

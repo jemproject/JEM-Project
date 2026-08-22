@@ -62,9 +62,9 @@ use Joomla\CMS\HTML\HTMLHelper;
         ?>
         <tr class="<?php echo "row$k"; ?>">
             <td><?php echo ++$i; ?></td>
-            <td><?php echo $regname ? $row->name : $row->username; ?></td>
+            <td><?php echo $this->escape($regname ? $row->name : $row->username); ?></td>
             <?php if ($this->enableemailaddress == 1) : ?>
-            <td><?php echo $row->email; ?></td>
+            <td><?php echo $this->escape($row->email); ?></td>
             <?php endif; ?>
             <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
             <?php
@@ -83,9 +83,9 @@ use Joomla\CMS\HTML\HTMLHelper;
                 break;
             endswitch; ?>
             <td><?php echo Text::_($text); ?></td>
-            <td><?php echo $row->places; ?></td>
+            <td><?php echo (int) $row->places; ?></td>
             <?php if (!empty($this->jemsettings->regallowcomments)) : ?>
-            <td><?php echo (strlen($row->comment) > 256) ? (substr($row->comment, 0, 254).'&hellip;') : $row->comment; ?></td>
+            <td><?php echo $this->escape((string) $row->comment); ?></td>
             <?php endif; ?>
         </tr>
         <?php $k = 1 - $k;
