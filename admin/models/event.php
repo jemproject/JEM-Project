@@ -483,6 +483,13 @@ class JemModelEvent extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
         $task    = $jinput->get('task', '', 'cmd');
+
+        // Frontend forms must never control record provenance. Existing rows
+        // retain their stored creator/date; new rows receive both in Table::store().
+        if (!$backend) {
+            unset($data['created'], $data['created_by']);
+        }
+
         $previousArticleContentEvent = !$new ? $this->getAssociatedArticleSyncEventData((int) $data['id']) : array();
         $customSeriesRequested = (int) ($data['recurrence_type'] ?? 0) === 7 && $task !== 'save2copy';
         $customSeriesScope = $jinput->post->getCmd('custom_series_scope', 'occurrence');

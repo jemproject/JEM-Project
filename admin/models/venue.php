@@ -292,6 +292,12 @@ class JemModelVenue extends JemModelAdmin
         $backend = (bool)$app->isClient('administrator');
         $new     = (bool)empty($data['id']);
 
+        // Frontend forms must never control record provenance. Existing rows
+        // retain their stored creator/date; new rows receive both in Table::store().
+        if (!$backend) {
+            unset($data['created'], $data['created_by']);
+        }
+
         // Store IP of author only.
         if ($new) {
             $author_ip = $jinput->get('author_ip', '', 'string');

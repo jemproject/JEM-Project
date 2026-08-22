@@ -113,6 +113,16 @@ final class FrontendEditorAccessTest extends TestCase
         }
     }
 
+    public function testFrontendSavesDiscardSubmittedRecordProvenance(): void
+    {
+        foreach (array('/admin/models/event.php', '/admin/models/venue.php') as $path) {
+            $save = $this->method($this->read($path), 'save');
+
+            self::assertStringContainsString('if (!$backend)', $save, $path);
+            self::assertStringContainsString("unset(\$data['created'], \$data['created_by']);", $save, $path);
+        }
+    }
+
     public function testNoMenuRouterHasNoCopiedDebugScaffolding(): void
     {
         $noMenuRule = $this->read('/site/services/JemNomenuRules.php');
