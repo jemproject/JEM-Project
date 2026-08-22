@@ -95,11 +95,12 @@ class JemControllerEvent extends JemControllerForm
      */
     public function updateAssociatedArticle()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $app = Factory::getApplication();
-        $id = $app->input->getInt('id', 0);
-        $fields = $app->input->getString('fields', '');
+        $input = $app->input->post;
+        $id = $input->getInt('id', 0);
+        $fields = $input->getString('fields', '');
         $model = $this->getModel();
         $redirect = Route::_('index.php?option=com_jem&view=event&layout=edit&id=' . $id, false);
 
@@ -168,10 +169,16 @@ class JemControllerEvent extends JemControllerForm
         }
 
         $token = Session::getFormToken();
-        $updateUrl = Route::_('index.php?option=com_jem&task=event.updateAssociatedArticle&id=' . $eventId . '&fields=' . rawurlencode($fields) . '&' . $token . '=1', false);
+        $updateUrl = Route::_('index.php?option=com_jem', false);
         $dismissUrl = Route::_('index.php?option=com_jem&view=event&layout=edit&id=' . $eventId, false);
         $message = Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_NOTICE', htmlspecialchars($labels, ENT_QUOTES, 'UTF-8'))
-            . ' <a class="btn btn-sm btn-primary" href="' . $updateUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</a>'
+            . ' <form class="d-inline" method="post" action="' . htmlspecialchars($updateUrl, ENT_QUOTES, 'UTF-8') . '">'
+            . '<input type="hidden" name="task" value="event.updateAssociatedArticle">'
+            . '<input type="hidden" name="id" value="' . $eventId . '">'
+            . '<input type="hidden" name="fields" value="' . htmlspecialchars($fields, ENT_QUOTES, 'UTF-8') . '">'
+            . '<input type="hidden" name="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '" value="1">'
+            . '<button class="btn btn-sm btn-primary" type="submit">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</button>'
+            . '</form>'
             . ' <a class="btn btn-sm btn-secondary" href="' . $dismissUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_DISMISS') . '</a>';
 
         Factory::getApplication()->enqueueMessage($message, 'notice');

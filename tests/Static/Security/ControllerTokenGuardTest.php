@@ -13,6 +13,7 @@ final class ControllerTokenGuardTest extends TestCase
         'cancel',
         'cleanupCatsEventRelations',
         'create',
+        'createAssociatedArticle',
         'delete',
         'delreguser',
         'export',
@@ -31,6 +32,7 @@ final class ControllerTokenGuardTest extends TestCase
         'truncateAllData',
         'unfeatured',
         'unpublish',
+        'updateAssociatedArticle',
         'uploadimage',
         'userregister',
     );
