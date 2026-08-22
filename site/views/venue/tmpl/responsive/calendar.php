@@ -212,9 +212,9 @@ use Joomla\CMS\Factory;
 
             // Attach category color in front of the catname
             if ($category->color) {
-                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$this->escape($category->catname);
             } else {
-                $multicatname .= $category->catname;
+                $multicatname .= $this->escape($category->catname);
             }
 
             $ix++;
@@ -512,7 +512,7 @@ use Joomla\CMS\Factory;
                                     $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
                                     echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
                                 }
-                                echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+                                echo $this->escape($cat->catname) . ' (' . (int) $countcatevents[$cat->id] . ')';
                                 ?>
                             </button>
                             <?php
@@ -586,7 +586,7 @@ echo $this->cal->showMonth();
 
                                     $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
                                     $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                                    echo '<span class="' . $textClass . '">' . $text . '</span>';
+                                    echo '<span class="' . $textClass . '">' . $this->escape($text) . '</span>';
                                     ?>
                                 </button>
                                 <?php

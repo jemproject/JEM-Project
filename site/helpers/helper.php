@@ -33,6 +33,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -3995,7 +3996,9 @@ class JemHelper
             $file = (string) $settings->get('css_' . $configKey . '_customfile', '');
             $file = $file ? preg_replace('%^/([^/]*)%', '$1', $file) : '';
 
-            if ($file && File::getExt($file) === 'css' && is_file(JPATH_SITE . '/media/com_jem/css/custom/' . $file)) {
+            $customPath = JPATH_SITE . '/media/com_jem/css/custom/' . $file;
+
+            if (JemCssFilePolicy::isValidFileName($file) && is_file($customPath) && !is_link($customPath)) {
                 $styleUri = 'media/com_jem/css/custom/' . $file;
             }
 

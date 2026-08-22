@@ -19,6 +19,8 @@ use Joomla\CMS\Client\ClientHelper;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/cssfilepolicy.class.php';
+
 /**
  * Source Model
  */
@@ -70,7 +72,9 @@ class JemModelSource extends AdminModel
         $custom = stripos($fileName, 'custom#:') === 0;
         $file   = $custom ? substr($fileName, strlen('custom#:')) : $fileName;
 
-        if ($file === '' || $file !== InputFilter::getInstance()->clean($file, 'path')) {
+        if ($file === ''
+            || $file !== InputFilter::getInstance()->clean($file, 'path')
+            || !JemCssFilePolicy::isValidFileName($file)) {
             $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
             return false;
         }
@@ -85,10 +89,26 @@ class JemModelSource extends AdminModel
             return false;
         }
 
+        if (!is_file($filePath) || is_link($filePath)) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            return false;
+        }
+
+        $realBase = realpath($basePath);
+        $realFile = realpath($filePath);
+        $realBaseCheck = $realBase === false ? '' : rtrim(strtolower(Path::clean($realBase)), '\\/') . DIRECTORY_SEPARATOR;
+        $realFileCheck = $realFile === false ? '' : strtolower(Path::clean($realFile));
+
+        if ($realBaseCheck === '' || $realFileCheck === '' || strpos($realFileCheck, $realBaseCheck) !== 0) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            return false;
+        }
+
         return (object) array(
             'custom' => $custom,
             'file'   => $file,
-            'path'   => $filePath,
+            'path'   => $realFile,
+            'base'   => $realBase,
         );
     }
 
@@ -365,6 +385,25 @@ class JemModelSource extends AdminModel
 
         $file = $source->file;
         $filePath = $source->path;
+
+        if (!is_file($filePath) || is_link($filePath)) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            $this->logCssOperation('CSS file save rejected: invalid source file "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        $realBase = realpath($source->base);
+        $realFile = realpath($filePath);
+        $baseCheck = $realBase === false ? '' : rtrim(strtolower(Path::clean($realBase)), '\\/') . DIRECTORY_SEPARATOR;
+        $fileCheck = $realFile === false ? '' : strtolower(Path::clean($realFile));
+
+        if ($baseCheck === '' || $fileCheck === '' || strpos($fileCheck, $baseCheck) !== 0) {
+            $this->setError(Text::_('COM_JEM_CSSMANAGER_ERROR_SOURCE_FILE_NOT_FOUND'));
+            $this->logCssOperation('CSS file save rejected: source outside the allowed folder "' . $file . '"', Log::WARNING);
+            return false;
+        }
+
+        $filePath = $realFile;
 
         // Include the extension plugins for the save events.
         PluginHelper::importPlugin('extension');
