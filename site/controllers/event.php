@@ -351,18 +351,19 @@ class JemControllerEvent extends JemControllerForm
      */
     public function updateAssociatedArticle()
     {
-        $this->checkToken('get');
+        $this->checkToken();
 
         if (!$this->requireFrontendUser()) {
             return false;
         }
 
         $app = Factory::getApplication();
-        $id = $this->getFrontendRecordId(true);
+        $input = $app->input->post;
+        $id = JemFrontendAccess::normaliseRecordId($input, true);
         $item = $this->getFrontendItemOrFail($id, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
         $this->assertFrontendCanEdit('event', $item);
-        $fields = $app->input->getString('fields', '');
-        $return = $app->input->getBase64('return', '');
+        $fields = $input->getString('fields', '');
+        $return = $input->getBase64('return', '');
         $model = $this->getModel();
         $redirect = $this->getReturnPage();
 
@@ -492,10 +493,17 @@ class JemControllerEvent extends JemControllerForm
 
         $return = base64_encode($this->getReturnPage());
         $token = Session::getFormToken();
-        $updateUrl = Route::_('index.php?option=com_jem&task=event.updateAssociatedArticle&a_id=' . $eventId . '&fields=' . rawurlencode($fields) . '&return=' . $return . '&' . $token . '=1', false);
+        $updateUrl = Route::_('index.php?option=com_jem', false);
         $dismissUrl = $this->getReturnPage();
         $message = Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_NOTICE', htmlspecialchars($labels, ENT_QUOTES, 'UTF-8'))
-            . ' <a class="btn btn-sm btn-primary" href="' . $updateUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</a>'
+            . ' <form class="d-inline" method="post" action="' . htmlspecialchars($updateUrl, ENT_QUOTES, 'UTF-8') . '">'
+            . '<input type="hidden" name="task" value="event.updateAssociatedArticle">'
+            . '<input type="hidden" name="a_id" value="' . $eventId . '">'
+            . '<input type="hidden" name="fields" value="' . htmlspecialchars($fields, ENT_QUOTES, 'UTF-8') . '">'
+            . '<input type="hidden" name="return" value="' . htmlspecialchars($return, ENT_QUOTES, 'UTF-8') . '">'
+            . '<input type="hidden" name="' . htmlspecialchars($token, ENT_QUOTES, 'UTF-8') . '" value="1">'
+            . '<button class="btn btn-sm btn-primary" type="submit">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_UPDATE') . '</button>'
+            . '</form>'
             . ' <a class="btn btn-sm btn-secondary" href="' . $dismissUrl . '">' . Text::_('COM_JEM_EVENT_ARTICLE_SYNC_DISMISS') . '</a>';
 
         Factory::getApplication()->enqueueMessage($message, 'notice');

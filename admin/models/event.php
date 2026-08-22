@@ -2670,7 +2670,6 @@ class JemModelEvent extends JemModelAdmin
         $categoryAccess = 1;
         $eventId = (int) $eventId;
         $articleText = $this->getAssociatedArticleInitialText($eventData);
-        $hasArticleText = trim(strip_tags((string) $articleText['introtext'] . ' ' . (string) $articleText['fulltext'])) !== '';
 
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -2694,7 +2693,7 @@ class JemModelEvent extends JemModelAdmin
             'alias'       => $this->buildAssociatedArticleAlias($eventTitle, $eventId),
             'introtext'   => $articleText['introtext'],
             'fulltext'    => $articleText['fulltext'],
-            'state'       => $hasArticleText ? 1 : 0,
+            'state'       => 0,
             'access'      => $articleAccess,
             'language'    => !empty($eventData['language']) ? $eventData['language'] : '*',
             'created_by'  => (int) $user->id,
@@ -3077,24 +3076,23 @@ class JemModelEvent extends JemModelAdmin
             || ($user->authorise('core.edit.own', $articleAsset)
                 && (int) $article->created_by === (int) $user->id);
 
-        if (!$canEditArticle) {
+        if ((int) $user->id < 1 || $user->get('guest', 0) || !$canEditArticle) {
             $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NO_PERMISSION'));
 
             return false;
         }
 
-        $update = (object) array(
-            'id'    => $articleId,
-            'state' => $user->authorise('core.edit.state', $articleAsset)
-                ? 1
-                : (int) $article->state,
-        );
-        $nullDate = $db->getNullDate();
-        $publishUp = trim((string) ($eventData['publish_up'] ?? ''));
-        $publishDown = trim((string) ($eventData['publish_down'] ?? ''));
+        if ((int) ($article->checked_out ?? 0) > 0
+            && (int) $article->checked_out !== (int) $user->id) {
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH'));
 
-        $update->publish_up = ($publishUp !== '' && $publishUp !== $nullDate) ? $publishUp : Factory::getDate()->toSql();
-        $update->publish_down = ($publishDown !== '' && $publishDown !== $nullDate) ? $publishDown : null;
+            return false;
+        }
+
+        // Content synchronisation must never publish, unpublish, reschedule, move,
+        // reassign, or mutate business fields outside the explicit allowlist below.
+        // Audit metadata is updated separately after the content changes are built.
+        $update = (object) array('id' => $articleId);
 
         if (in_array('title', $fields, true)) {
             $update->title = $this->buildAssociatedArticleTitle($eventData, $eventId);
@@ -3123,6 +3121,9 @@ class JemModelEvent extends JemModelAdmin
         if (array_intersect(array('datimage', 'fullimage', 'image_path'), $fields)) {
             $update->images = $this->mergeAssociatedArticleImagesFromEvent((string) ($article->images ?? ''), $eventData);
         }
+
+        $update->modified = Factory::getDate()->toSql();
+        $update->modified_by = (int) $user->id;
 
         try {
             $db->updateObject('#__content', $update, 'id');

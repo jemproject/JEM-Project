@@ -154,10 +154,60 @@ final class FrontendEditorAccessTest extends TestCase
     public function testAssociatedArticleUpdatesRequireJoomlaArticleAcl(): void
     {
         $model = $this->read('/admin/models/event.php');
+        $sync = $this->method($model, 'updateAssociatedArticleFromEvent');
+        $create = $this->method($model, 'createAssociatedContentArticle');
+        $siteController = $this->method($this->read('/site/controllers/event.php'), 'updateAssociatedArticle');
+        $adminController = $this->method($this->read('/admin/controllers/event.php'), 'updateAssociatedArticle');
 
         self::assertStringContainsString("authorise('core.edit', \$articleAsset)", $model);
         self::assertStringContainsString("authorise('core.edit.own', \$articleAsset)", $model);
         self::assertStringContainsString('COM_JEM_EVENT_ARTICLE_SYNC_NO_PERMISSION', $model);
+        self::assertStringContainsString("\$user->get('guest', 0)", $sync);
+        self::assertStringContainsString('checked_out', $sync);
+        self::assertStringContainsString("Text::_('JLIB_APPLICATION_ERROR_CHECKIN_USER_MISMATCH')", $sync);
+        self::assertStringNotContainsString("authorise('core.edit.state'", $sync);
+        self::assertStringNotContainsString("'state' =>", $sync);
+        self::assertStringNotContainsString('$update->state', $sync);
+        self::assertStringNotContainsString('$update->publish_up', $sync);
+        self::assertStringNotContainsString('$update->publish_down', $sync);
+        self::assertStringContainsString("'state'       => 0", $create);
+        self::assertStringNotContainsString('$hasArticleText ? 1 : 0', $create);
+
+        self::assertStringContainsString('$this->checkToken();', $siteController);
+        self::assertStringNotContainsString("checkToken('get')", $siteController);
+        self::assertStringContainsString('$app->input->post', $siteController);
+        self::assertStringContainsString("\$this->assertFrontendCanEdit('event'", $siteController);
+        self::assertStringContainsString('Session::checkToken()', $adminController);
+        self::assertStringNotContainsString("checkToken('get')", $adminController);
+        self::assertStringContainsString('$app->input->post', $adminController);
+        self::assertStringContainsString('$this->allowEdit(', $adminController);
+    }
+
+    public function testAssociatedArticleSyncActionsArePostForms(): void
+    {
+        foreach (array('/site/controllers/event.php', '/admin/controllers/event.php') as $path) {
+            $notice = $this->method($this->read($path), 'handleAssociatedArticleSyncNotice');
+
+            self::assertStringContainsString('method="post"', $notice, $path);
+            self::assertStringContainsString('name="task" value="event.updateAssociatedArticle"', $notice, $path);
+            self::assertStringContainsString('Session::getFormToken()', $notice, $path);
+            self::assertStringNotContainsString('&task=event.updateAssociatedArticle', $notice, $path);
+        }
+    }
+
+    public function testRelatedFrontendMutationsAuthoriseStoredResources(): void
+    {
+        foreach (array('/site/models/myevents.php' => 'event', '/site/models/myvenues.php' => 'venue') as $path => $type) {
+            $publish = $this->method($this->read($path), 'publish');
+
+            self::assertStringContainsString("->select(array('id', 'created_by'))", $publish, $path);
+            self::assertStringContainsString("\$user->can('publish', '" . $type . "'", $publish, $path);
+        }
+
+        $attendees = $this->read('/site/controllers/attendees.php');
+        foreach (array('attendeeadd', 'attendeeremove', 'attendeetoggle', 'export') as $method) {
+            self::assertStringContainsString('assertCanManageAttendees(', $this->method($attendees, $method), $method);
+        }
     }
 
     private function method(string $php, string $name): string
