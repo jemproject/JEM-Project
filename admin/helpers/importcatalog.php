@@ -7,7 +7,7 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Http\HttpFactory;
+require_once __DIR__ . '/remotesource.php';
 
 /**
  * Helper for the remote JEM import catalog XML.
@@ -120,43 +120,18 @@ class JemImportCatalogHelper
 
     protected static function downloadCatalogXml($url)
     {
-        $url = trim((string) $url);
-
-        if ($url === '') {
-            return '';
-        }
-
         try {
-            if (class_exists(HttpFactory::class)) {
-                $http = HttpFactory::getHttp();
-                $response = $http->get($url, array(), 10);
+            $download = JemRemoteSourceHelper::download(
+                $url,
+                array('xml'),
+                'xml',
+                self::MAX_CATALOG_SIZE
+            );
 
-                if ((int) $response->code >= 200 && (int) $response->code < 300) {
-                    return (string) $response->body;
-                }
-            }
-        } catch (\Throwable $e) {
-            // Fall through to the stream fallback below.
-        }
-
-        if (!ini_get('allow_url_fopen')) {
+            return $download['body'];
+        } catch (\Throwable $exception) {
             return '';
         }
-
-        $context = stream_context_create(array(
-            'http' => array(
-                'timeout' => 10,
-                'user_agent' => 'JEM import catalog',
-            ),
-            'ssl' => array(
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ),
-        ));
-
-        $data = @file_get_contents($url, false, $context);
-
-        return is_string($data) ? $data : '';
     }
 
     protected static function parseCatalogXml($xmlSource)

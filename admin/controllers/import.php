@@ -20,6 +20,7 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/remotesource.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importxlsx.php';
@@ -3883,66 +3884,38 @@ class JemControllerImport extends BaseController
 
     protected function downloadExternalImportSource($url, array $allowedExtensions, $preferredExtension = '')
     {
-        $url = trim((string) $url);
-        $parts = parse_url($url);
+        try {
+            $download = JemRemoteSourceHelper::download(
+                $url,
+                $allowedExtensions,
+                $preferredExtension,
+                JemRemoteSourceHelper::DEFAULT_MAX_BYTES
+            );
+        } catch (\Throwable $exception) {
+            $message = $exception instanceof RuntimeException ? $exception->getMessage() : '';
+            $languageKey = in_array($message, JemRemoteSourceHelper::getErrorLanguageKeys(), true)
+                ? $message
+                : JemRemoteSourceHelper::ERROR_DOWNLOAD_FAILED;
 
-        if (!$parts || !in_array(strtolower((string) ($parts['scheme'] ?? '')), array('http', 'https'), true)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        if (!empty($parts['user']) || !empty($parts['pass']) || empty($parts['host'])) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        $extension = strtolower(pathinfo((string) ($parts['path'] ?? ''), PATHINFO_EXTENSION));
-        $preferredExtension = strtolower(trim((string) $preferredExtension));
-
-        if ($extension === '' && $preferredExtension !== '') {
-            $extension = $preferredExtension;
-        }
-
-        if (!in_array($extension, $allowedExtensions, true)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_UNSUPPORTED'));
-        }
-
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        $context = stream_context_create(array(
-            'http' => array(
-                'follow_location' => 3,
-                'ignore_errors' => false,
-                'method' => 'GET',
-                'timeout' => 20,
-                'user_agent' => 'JEM import catalog',
-            ),
-            'ssl' => array(
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ),
-        ));
-        $content = @file_get_contents($url, false, $context, 0, 10485761);
-
-        if ($content === false || trim((string) $content) === '') {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_DOWNLOAD_FAILED'));
-        }
-
-        if (strlen($content) > 10485760) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_TOO_LARGE'));
+            throw new RuntimeException(Text::_($languageKey));
         }
 
         $tmp = tempnam(sys_get_temp_dir(), 'jem-import-');
 
-        if (!$tmp || file_put_contents($tmp, $content) === false) {
+        if (!$tmp) {
+            throw new RuntimeException(Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        if (file_put_contents($tmp, $download['body']) === false) {
+            @unlink($tmp);
             throw new RuntimeException(Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
         }
 
         return array(
-            'name' => basename((string) ($parts['path'] ?? 'catalog-source.' . $extension)) ?: ('catalog-source.' . $extension),
+            'name' => $download['name'],
             'tmp_name' => $tmp,
             'error' => 0,
-            'size' => strlen($content),
+            'size' => strlen($download['body']),
             'type' => '',
         );
     }
