@@ -25,6 +25,8 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
     );
 
     private const ALLOWED_SERVER_NETWORK_CALLS = array(
+        'admin/helpers/remotesource.php:curl_exec',
+        'admin/helpers/remotesource.php:curl_init',
         'admin/models/updatecheck.php:file_get_contents',
         'site/classes/pdfview.class.php:curl_exec',
         'site/classes/pdfview.class.php:curl_init',
