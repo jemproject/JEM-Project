@@ -505,31 +505,18 @@ class JemHelper
         }
 
         $mode = (int) ($event->registra ?? 0);
-        if ($mode === 1) {
-            return 'open';
-        }
-
-        if ($mode !== 2) {
-            return 'disabled';
-        }
 
         if (empty($event->dates)) {
-            return 'open';
+            return in_array($mode, array(1, 2), true) ? 'open' : 'disabled';
         }
 
-        $now   = $now === null ? time() : (int) $now;
-        $from  = self::getUtcTimestamp($event->registra_from ?? '');
-        $until = self::getUtcTimestamp($event->registra_until ?? '');
-
-        if ($from && $now < $from) {
-            return 'not_started';
-        }
-
-        if ($until && $now >= $until) {
-            return 'closed';
-        }
-
-        return 'open';
+        return JemRegistrationAccessPolicy::registrationWindowState(
+            $mode,
+            self::getEventStartTimestamp($event),
+            self::getUtcTimestamp($event->registra_from ?? ''),
+            self::getUtcTimestamp($event->registra_until ?? ''),
+            $now === null ? time() : (int) $now
+        );
     }
 
     /**
@@ -561,22 +548,13 @@ class JemHelper
         }
 
         $mode = (int) ($event->unregistra ?? 0);
-        if ($mode === 1) {
-            return 'open';
-        }
 
-        if ($mode !== 2) {
-            return 'disabled';
-        }
-
-        if (empty($event->dates)) {
-            return 'open';
-        }
-
-        $now   = $now === null ? time() : (int) $now;
-        $until = self::getUtcTimestamp($event->unregistra_until ?? '');
-
-        return $until && $now < $until ? 'open' : 'closed';
+        return JemRegistrationAccessPolicy::unregistrationWindowState(
+            $mode,
+            self::getEventStartTimestamp($event),
+            self::getUtcTimestamp($event->unregistra_until ?? ''),
+            $now === null ? time() : (int) $now
+        );
     }
 
     /**
@@ -590,6 +568,63 @@ class JemHelper
     static public function isEventUnregistrationOpen($event, $now = null)
     {
         return self::getEventUnregistrationWindowState($event, $now) === 'open';
+    }
+
+    /**
+     * Return the effective cancellation deadline in UTC.
+     *
+     * The configured limit can shorten the window. It can never move the
+     * deadline beyond the event start, which is the default when no earlier
+     * limit was selected.
+     */
+    static public function getEventUnregistrationDeadline($event)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event) || !in_array((int) ($event->unregistra ?? 0), array(1, 2), true)) {
+            return 0;
+        }
+
+        $start = self::getEventStartTimestamp($event);
+        $configured = (int) ($event->unregistra ?? 0) === 2
+            ? self::getUtcTimestamp($event->unregistra_until ?? '')
+            : 0;
+
+        if ($start > 0 && $configured > 0) {
+            return min($start, $configured);
+        }
+
+        return $configured > 0 ? $configured : $start;
+    }
+
+    /**
+     * Return an event's start as a UTC timestamp.
+     *
+     * Cached UTC data is preferred. The local date/time fallback keeps legacy
+     * rows safe until their derived UTC columns have been backfilled.
+     */
+    static public function getEventStartTimestamp($event)
+    {
+        $event = is_array($event) ? (object) $event : $event;
+        if (!is_object($event) || empty($event->dates)) {
+            return 0;
+        }
+
+        $start = self::getUtcTimestamp($event->start_utc ?? '');
+        if ($start > 0) {
+            return $start;
+        }
+
+        $date = trim((string) $event->dates);
+        $time = trim((string) ($event->times ?? '')) ?: '00:00:00';
+
+        try {
+            return (new \DateTimeImmutable(
+                $date . ' ' . $time,
+                new \DateTimeZone(self::getEventTimeZoneName($event))
+            ))->getTimestamp();
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 
     /**

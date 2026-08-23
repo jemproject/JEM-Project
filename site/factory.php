@@ -13,6 +13,7 @@ use Joomla\CMS\User\User;
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/registrationaccesspolicy.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationtransition.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/waitinglistpromotion.class.php');
 

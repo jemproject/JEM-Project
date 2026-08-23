@@ -1426,7 +1426,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
             <?php
             $timeNow = time();
-            $showCancellationInfo = (!$this->user->get('guest') && $this->isregistered !== false) || !empty($this->permissions->canEditAttendees);
+            $showCancellationInfo = (int) $this->item->unregistra > 0 && $this->dateUnregistationUntil;
 
             switch ($this->e_reg) {
                 case 0:

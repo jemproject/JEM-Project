@@ -300,7 +300,7 @@ class JemViewEvent extends JemView
         $timeNow = time();
         $this->dateRegistationFrom    = JemHelper::getUtcTimestamp($item->registra_from ?? '');
         $this->dateRegistationUntil   = JemHelper::getUtcTimestamp($item->registra_until ?? '');
-        $this->dateUnregistationUntil = JemHelper::getUtcTimestamp($item->unregistra_until ?? '');
+        $this->dateUnregistationUntil = JemHelper::getEventUnregistrationDeadline($item);
         $this->registrationWindowState   = JemHelper::getEventRegistrationWindowState($item, $timeNow);
         $this->unregistrationWindowState = JemHelper::getEventUnregistrationWindowState($item, $timeNow);
         $this->allowRegistration         = $this->registrationWindowState === 'open';

@@ -941,6 +941,94 @@ class JemModelEvent extends ItemModel
     }
 
     /**
+     * Reload every selected occurrence through getItem() so the current user's
+     * publication, category, type, venue and view-level decisions are present.
+     * The recurrence query is a selector only and must never authorise writes.
+     *
+     * @param   array   $candidates    Events selected by the registration form.
+     * @param   object  $primaryEvent  Fully loaded event used to render the form.
+     *
+     * @return array|false
+     */
+    protected function getAuthoritativeRegistrationEvents(array $candidates, $primaryEvent, $userId = 0, $allowOwnedCancellation = false)
+    {
+        $events = array();
+        $seen = array();
+        $primaryId = is_object($primaryEvent) ? (int) ($primaryEvent->id ?? 0) : 0;
+
+        foreach ($candidates as $candidate) {
+            $candidateId = is_object($candidate) ? (int) ($candidate->id ?? 0) : 0;
+            if ($candidateId < 1 || isset($seen[$candidateId])) {
+                continue;
+            }
+            $seen[$candidateId] = true;
+
+            if ($allowOwnedCancellation) {
+                $event = $this->getOwnedCancellationEvent($candidateId, (int) $userId);
+                if (!$event) {
+                    continue;
+                }
+            } elseif ($candidateId === $primaryId) {
+                $event = $primaryEvent;
+            } else {
+                // getListRecurrenceEventsbyId() may populate this cache with a
+                // partial row. Never reuse it for an authorisation decision.
+                if (is_array($this->_item)) {
+                    unset($this->_item[$candidateId]);
+                }
+                $event = $this->getItem($candidateId);
+            }
+
+            if (!is_object($event) || (int) ($event->id ?? 0) !== $candidateId) {
+                return false;
+            }
+
+            $events[] = $event;
+        }
+
+        return $events ?: false;
+    }
+
+    /**
+     * Load only the fields needed to release an existing registration which
+     * belongs to the current user. This deliberately bypasses view visibility
+     * without exposing protected event content.
+     */
+    protected function getOwnedCancellationEvent($eventId, $userId)
+    {
+        $eventId = (int) $eventId;
+        $userId = (int) $userId;
+        if ($eventId < 1 || $userId < 1) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'e.id', 'e.id AS did', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
+                'e.timezone_mode', 'e.timezone', 'e.start_utc', 'e.end_utc',
+                'e.registra', 'e.registra_from', 'e.registra_until',
+                'e.unregistra', 'e.unregistra_until', 'e.reginvitedonly',
+                'e.recurrence_type', 'e.recurrence_first_id', 'e.series_id',
+                'e.seriesbooking', 'e.singlebooking', 'e.maxbookeduser',
+                'e.maxplaces', 'e.reservedplaces', 'e.waitinglist',
+                'v.timezone AS venue_timezone',
+            ))
+            ->from($db->quoteName('#__jem_events', 'e'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.event = e.id AND r.uid = ' . $userId)
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+            ->where('e.id = ' . $eventId);
+        $db->setQuery($query, 0, 1);
+
+        try {
+            return $db->loadObject() ?: false;
+        } catch (RuntimeException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Internal helper to store registration on database
      *
      * @param  int     $eventId  id of event
@@ -971,6 +1059,10 @@ class JemModelEvent extends ItemModel
             // some gently error handling
         catch (Exception $e) {
             $event = false;
+        }
+
+        if (!$event && $status < 0 && is_object($registration)) {
+            $event = $this->getOwnedCancellationEvent($eventId, $uid);
         }
 
         if (empty($event)) {
@@ -1079,11 +1171,20 @@ class JemModelEvent extends ItemModel
             $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
             return false;
         }
+
+        if ($uid < 1) {
+            $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+            return false;
+        }
         try {
             $event = $this->getItem($eventId);
         }
         catch (Exception $e) {
             $event = false;
+        }
+
+        if (!$event && $status < 0) {
+            $event = $this->getOwnedCancellationEvent($eventId, $uid);
         }
 
         if (!$event) {
@@ -1103,24 +1204,48 @@ class JemModelEvent extends ItemModel
             $events [] = clone $event;
         }
 
+        $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $status < 0);
+        if ($events === false) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+            return false;
+        }
+
         // Validate every selected event before writing any series registration.
-        // This avoids partially updating a series when one event is outside its window.
+        // Cancellation skips absent rows so a partial series can be released
+        // without creating forged "not attending" registrations.
         $registrations = array();
+        $authorisedEvents = array();
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
+
+            if ($status < 0 && !is_object($reg)) {
+                continue;
+            }
+
+            $decision = JemRegistrationAccessPolicy::decide(
+                $user,
+                $e,
+                $jemsettings,
+                $reg,
+                $status,
+                JemHelper::isEventPublishedNow($e),
+                JemHelper::isEventRegistrationOpen($e),
+                JemHelper::isEventUnregistrationOpen($e)
+            );
+            if (!$decision->isAllowed()) {
+                $this->setError(Text::_($decision->getMessageKey()));
+                return false;
+            }
+
             $registrations[(int) $e->id] = $reg;
-            $hasActiveRegistration = is_object($reg) && in_array((int) $reg->status, array(1, 2), true);
-
-            if ($status > 0 && !JemHelper::isEventRegistrationOpen($e)) {
-                $this->setError(Text::_('COM_JEM_EVENT_REGISTRATION_CLOSED') . ' [id: ' . (int) $e->id . ']');
-                return false;
-            }
-
-            if ($status <= 0 && $hasActiveRegistration && !JemHelper::isEventUnregistrationOpen($e)) {
-                $this->setError(Text::_('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED') . ' [id: ' . (int) $e->id . ']');
-                return false;
-            }
+            $authorisedEvents[] = $e;
         }
+
+        if (!$authorisedEvents) {
+            $this->setError(Text::_('COM_JEM_REGISTRATION_NOT_FOUND'));
+            return false;
+        }
+        $events = $authorisedEvents;
 
         foreach ($events as $e) {
             $reg = $registrations[(int) $e->id];
@@ -1170,12 +1295,6 @@ class JemModelEvent extends ItemModel
                 if ($places > $e->maxbookeduser) {
                     $places = $e->maxbookeduser;
                 }
-            }
-
-            // Must be logged in
-            if ($uid < 1) {
-                Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-                return;
             }
 
             // IP

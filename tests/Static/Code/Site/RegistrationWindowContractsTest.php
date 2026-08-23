@@ -38,11 +38,12 @@ final class RegistrationWindowContractsTest extends TestCase
     public function testDirectRegistrationRequestsEnforceServerSideWindows(): void
     {
         $model = $this->read('/site/models/event.php');
+        $policy = $this->read('/site/classes/registrationaccesspolicy.class.php');
 
         self::assertStringContainsString('JemHelper::isEventRegistrationOpen($e)', $model);
         self::assertStringContainsString('JemHelper::isEventUnregistrationOpen($e)', $model);
-        self::assertStringContainsString('COM_JEM_EVENT_REGISTRATION_CLOSED', $model);
-        self::assertStringContainsString('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED', $model);
+        self::assertStringContainsString('COM_JEM_EVENT_REGISTRATION_CLOSED', $policy);
+        self::assertStringContainsString('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED', $policy);
         self::assertStringContainsString('Validate every selected event before writing any series registration', $model);
 
         $preflight = strpos($model, 'Validate every selected event before writing any series registration');
@@ -61,6 +62,27 @@ final class RegistrationWindowContractsTest extends TestCase
         self::assertStringContainsString('self::getUtcTimestamp($event->registra_until', $helper);
         self::assertStringContainsString('function getEventUnregistrationWindowState', $helper);
         self::assertStringContainsString('self::getUtcTimestamp($event->unregistra_until', $helper);
+        self::assertStringContainsString('self::getEventStartTimestamp($event)', $helper);
+        self::assertStringContainsString('function getEventUnregistrationDeadline', $helper);
+        self::assertStringContainsString('JemRegistrationAccessPolicy::registrationWindowState(', $helper);
+        self::assertStringContainsString('JemRegistrationAccessPolicy::unregistrationWindowState(', $helper);
+    }
+
+    public function testEffectiveCancellationDeadlineIsAlwaysShownWhenAvailable(): void
+    {
+        $view = $this->read('/site/views/event/view.html.php');
+        self::assertStringContainsString('getEventUnregistrationDeadline($item)', $view);
+
+        foreach (array(
+            '/site/views/event/tmpl/default.php',
+            '/site/views/event/tmpl/responsive/default.php',
+        ) as $layout) {
+            $source = $this->read($layout);
+            self::assertStringContainsString(
+                '$showCancellationInfo = (int) $this->item->unregistra > 0 && $this->dateUnregistationUntil;',
+                $source
+            );
+        }
     }
 
     private function read(string $relativePath): string
