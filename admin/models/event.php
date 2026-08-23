@@ -988,11 +988,8 @@ class JemModelEvent extends JemModelAdmin
 
             // Store as copy - reset creation date, modification fields, hit counter, version
             if ($task == 'save2copy') {
-                list($data['title'], $data['alias']) = $this->generateCopyTitleAndAlias(
-                    $data['title'] ?? '',
-                    $data['alias'] ?? '',
-                    'title'
-                );
+                // Event copies represent another occurrence of the same event concept.
+                // Keep the title and alias; the new record ID distinguishes the copy.
                 unset($data['created']);
                 unset($data['modified']);
                 unset($data['modified_by']);
