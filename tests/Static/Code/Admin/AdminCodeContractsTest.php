@@ -242,6 +242,24 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString('$row->last_visit', $code);
     }
 
+    public function testCopiedEventsPreserveTheirTitleAndAliasWhileVenueCopiesRemainUnique(): void
+    {
+        $helper = self::read(JEM_TEST_ROOT . '/admin/models/admin.php');
+        $event = self::read(JEM_TEST_ROOT . '/admin/models/event.php');
+        $venue = self::read(JEM_TEST_ROOT . '/admin/models/venue.php');
+
+        self::assertStringContainsString(
+            "protected function generateCopyTitleAndAlias(\$title, \$alias, \$titleField = 'title')",
+            $helper
+        );
+        self::assertStringNotContainsString('generateCopyTitleAndAlias(', $event);
+        self::assertStringContainsString('Keep the title and alias; the new record ID distinguishes the copy.', $event);
+        self::assertMatchesRegularExpression(
+            '/generateCopyTitleAndAlias\(\s*\$data\[\'venue\'\].*?\'venue\'\s*\)/s',
+            $venue
+        );
+    }
+
     /**
      * @return iterable<string, array{string}>
      */
