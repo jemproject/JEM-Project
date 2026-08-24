@@ -1256,21 +1256,22 @@ class JemPdfView
             return '';
         }
 
-        $image = JemImage::flyercreator($imageFile, $type, $folderPath);
+        $image = false;
 
-        if (!is_array($image)) {
-            return '';
+        if (strpos($imageFile, '/') === false && strpos($imageFile, '\\') === false) {
+            $image = JemImage::flyercreator($imageFile, $type, $folderPath);
         }
 
-        $source = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb'])
-            ? $image['thumb']
-            : ($image['original'] ?? '');
+        $source = is_array($image) ? ($image['thumb'] ?? $image['original'] ?? '') : $imageFile;
+        $path = JemPdfImagePolicy::resolveLocalImage((string) $source, $type, JPATH_SITE, (string) Uri::root(true));
 
-        if ($source === '' || !is_file(JPATH_SITE . '/' . $source)) {
-            return '';
+        if ($path === '' && is_array($image) && !empty($image['original'])) {
+            $path = JemPdfImagePolicy::resolveLocalImage((string) $image['original'], $type, JPATH_SITE, (string) Uri::root(true));
         }
 
-        $path = JPATH_SITE . '/' . $source;
+        if ($path === '') {
+            return '';
+        }
         $size = @getimagesize($path);
         $width = $maxWidth;
         $height = 0;
