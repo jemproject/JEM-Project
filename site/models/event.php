@@ -1292,19 +1292,7 @@ class JemModelEvent extends ItemModel
             $status = JemRegistrationTransition::WAITING_LIST;
         }
 
-        if ($status == 1 && $status != $oldstat) {
-            if ($respectPlaces && ($event->maxplaces > 0)) {    // there is a max
-                // check if the user should go on waiting list
-                if (((int) $event->booked + (int) $event->reservedplaces + max(1, (int) $places)) > (int) $event->maxplaces) {
-                    if (!$event->waitinglist) {
-                        $this->setError(Text::_('COM_JEM_EVENT_FULL_NOTICE'));
-                        return false;
-                    }
-                    $onwaiting = 1;
-                }
-            }
-        }
-        elseif ($status == 2) {
+        if ($status == 2) {
             if ($respectPlaces && !$event->waitinglist) {
                 $errMsg = Text::_('COM_JEM_NO_WAITINGLIST');
                 return false;
@@ -1504,18 +1492,6 @@ class JemModelEvent extends ItemModel
                         }
                     } else {
                         $places = $addplaces;
-                    }
-                    //Detect if the reserve go to waiting list
-                    $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if (!$reg || $reg->status != 0) {
-                        if ($e->maxplaces) {
-                            $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                            if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $eventStatus = 2;
-                            }
-                        } else {
-                            $eventStatus = 1;
-                        }
                     }
                 } else {
                     $places = 0;

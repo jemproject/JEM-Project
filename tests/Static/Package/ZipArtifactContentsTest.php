@@ -391,6 +391,22 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testCurrentPackageContainsTransactionalRegistrationCapacityWriter(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            $service = $this->componentEntryContents($zipFile, 'site/classes/registrationservice.class.php');
+
+            self::assertStringContainsString('transactionStart()', $service);
+            self::assertStringContainsString("' FOR UPDATE'", $service);
+            self::assertStringContainsString('SUM(GREATEST(', $service);
+            self::assertStringContainsString('saveMany(', $service);
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
