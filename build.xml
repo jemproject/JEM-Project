@@ -62,6 +62,7 @@
             <exclude name=".agents/**" />
             <exclude name=".claude/**" />
             <exclude name=".codex/**" />
+            <exclude name=".codex-skill-staging/**" />
             <exclude name=".cursor/**" />
             <exclude name=".github/copilot/**" />
             <exclude name=".env" />
