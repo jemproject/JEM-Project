@@ -188,7 +188,7 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|memories|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.codex-skill-staging|\.cursor|\.github/copilot|3rd|build|docs|memories|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 

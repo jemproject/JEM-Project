@@ -30,6 +30,7 @@ final class BuildPackageExcludesTest extends TestCase
             '.agents/**',
             '.claude/**',
             '.codex/**',
+            '.codex-skill-staging/**',
             '.cursor/**',
             '.github/copilot/**',
             'memories/**',
