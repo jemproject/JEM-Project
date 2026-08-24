@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
+require_once __DIR__ . '/registrationquantity.class.php';
+
 /**
  * Authoritative transactional writer for JEM registrations.
  */
@@ -155,6 +157,7 @@ final class JemRegistrationService
         if (is_object($before) && (int) ($before->event ?? 0) !== (int) $after->event) {
             throw new RuntimeException('A registration cannot be moved to another event.');
         }
+        $this->assertQuantityPolicy($after);
         $after = $this->applyCapacityPolicy($before, $after, $options);
         $capacity = $this->prepareCapacityAllocations($before, $after, $options);
         $oldStatus = is_object($before) ? JemRegistrationTransition::logicalStatus($before) : null;
@@ -538,7 +541,7 @@ final class JemRegistrationService
 
         $after->event = (int) ($after->event ?? 0);
         $after->uid = (int) ($after->uid ?? 0);
-        $after->places = max(0, (int) ($after->places ?? 1));
+        $after->places = JemRegistrationQuantity::parse($after->places ?? 1);
         $after->status = (int) ($after->status ?? JemRegistrationTransition::ATTENDING);
         $after->waiting = !empty($after->waiting) ? 1 : 0;
         $after->uregdate = (string) ($after->uregdate ?? '');
@@ -745,6 +748,25 @@ final class JemRegistrationService
     }
 
     /**
+     * Enforce per-user quantity rules while the event row is locked.
+     */
+    private function assertQuantityPolicy($registration)
+    {
+        $query = $this->db->getQuery(true)
+            ->select(array('minbookeduser', 'maxbookeduser'))
+            ->from($this->db->quoteName('#__jem_events'))
+            ->where($this->db->quoteName('id') . ' = ' . (int) $registration->event);
+        $this->db->setQuery($query);
+        $event = $this->db->loadObject();
+
+        if (!$event) {
+            throw new RuntimeException('Registration event does not exist.');
+        }
+
+        JemRegistrationQuantity::assertStoredRow($registration, $event);
+    }
+
+    /**
      * Return the immutable capacity catalogue and live availability used by
      * both site and administrator registration forms.
      */
@@ -934,13 +956,13 @@ final class JemRegistrationService
             if (ctype_digit($key)) {
                 $key = 'area:' . $key;
             }
+            $quantity = JemRegistrationQuantity::parseOptional($value);
             if (!isset($catalogue[$key])) {
-                if ((int) $value > 0) {
+                if ($quantity > 0) {
                     throw new RuntimeException('An invalid capacity area was selected.');
                 }
                 continue;
             }
-            $quantity = max(0, (int) $value);
             if ($quantity > (int) $catalogue[$key]['capacity']) {
                 throw new RuntimeException('A capacity area quantity exceeds its configured limit.');
             }
