@@ -245,12 +245,18 @@ class JemModelAttendee extends BaseDatabaseModel
                 return false;
             }
 
-            if (!$row->store()) {
-                Factory::getApplication()->enqueueMessage($row->getError(), 'error');
+            try {
+                $result = (new JemRegistrationService($db))->save($row, array(
+                    'respectPlaces'   => true,
+                    'requireExisting' => true,
+                ));
+            } catch (Throwable $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
                 return false;
             }
 
-            return $row;
+            $this->_data = $result->after;
+            return $result->after;
         } else {
             if ($row->status === 0) {
                 // todo: add "invited" field to store such timestamps?
@@ -305,7 +311,7 @@ class JemModelAttendee extends BaseDatabaseModel
                 $events [] = clone $event;
             }
 
-            $storedRow = null;
+            $pendingRows = array();
             foreach ($events as $e) {
 
                 // Check if user is registered to each series event
@@ -325,57 +331,30 @@ class JemModelAttendee extends BaseDatabaseModel
                 $row_aux= clone $row;
                 $row_aux->event = $e->id;
 
-                // Get register information of the event
-                $query = $db->getQuery(true);
-                $query->select(array('COUNT(id) AS registered', 'COALESCE(SUM(waiting), 0) AS waiting'));
-                $query->from('#__jem_register');
-                $query->where('status = 1 AND event = ' . $db->quote($e->id));
-
-                $db->setQuery($query);
-                $register = $db->loadObject();
-
-                // If no one is registered yet, $register is null!
-                if (is_null($register)) {
-                    $register = new stdClass;
-                    $register->registered = 0;
-                    $register->waiting = 0;
-                    $register->booked = 0;
-                } else {
-                    $register->booked = $register->registered + $register->waiting;
-                }
-
-                // put on waiting list ?
-                if (($event->maxplaces > 0) && ($status == 1)) // there is a max and user will attend
-                {
-                    // check if the user should go on waiting list
-                    if ($register->booked >= $event->maxplaces) {
-                        if (!$event->waitinglist) {
-                            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
-                            return false;
-                        } else {
-                            $row_aux->waiting = 1;
-                        }
-                    }else{
-                        $row_aux->status = $status;
-                    }
-                }else{
-                    $row_aux->status = $status;
-                }
-
                 // Make sure the data is valid
                 if (!$row_aux->check()) {
                     $this->setError($row->getError());
                     return false;
                 }
 
-                // Store it in the db
-                if (!$row_aux->store()) {
-                    Factory::getApplication()->enqueueMessage($row->getError(), 'error');
-                    return false;
-                }
+                $pendingRows[] = $row_aux;
+            }
 
-                if ($storedRow === null || (int) $e->id === $eventid) {
-                    $storedRow = $row_aux;
+            try {
+                $stored = (new JemRegistrationService($db))->saveMany($pendingRows, array(
+                    'respectPlaces' => true,
+                    'allowWaiting'  => true,
+                    'requireNew'    => true,
+                ));
+            } catch (Throwable $e) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+                return false;
+            }
+
+            $storedRow = null;
+            foreach ($stored as $result) {
+                if ($storedRow === null || (int) $result->after->event === $eventid) {
+                    $storedRow = $result->after;
                 }
             }
 

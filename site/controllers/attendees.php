@@ -104,33 +104,21 @@ class JemControllerAttendees extends BaseController
         $msg     = '';
         $placesByUser = array();
 
-        if ($input->get('task', 0,'string')=="attendeeadd") {
-            $placesRaw = $input->getString('places', '0');
-            $places = (int) $placesRaw;
-
-            if (strpos($placesRaw, ':') !== false) {
-                foreach (explode(',', $placesRaw) as $placePair) {
-                    $placePair = trim($placePair);
-
-                    if ($placePair === '' || strpos($placePair, ':') === false) {
-                        continue;
-                    }
-
-                    list($placeUid, $placeValue) = array_map('trim', explode(':', $placePair, 2));
-                    $placeUid = (int) $placeUid;
-                    $placeValue = max(0, (int) $placeValue);
-
-                    if ($placeUid > 0) {
-                        $placesByUser[$placeUid] = $placeValue;
-                    }
-                }
-            }
-        } else {
-            if ($status == 1) {
-                $places = $input->getInt('addplaces', 0);
+        try {
+            $task = $input->getCmd('task', '');
+            if (in_array($task, array('attendeeadd', 'attendees.attendeeadd'), true)) {
+                $selection = JemRegistrationQuantity::parseManagerSelection(
+                    $input->get('places', '0', 'raw'),
+                    $uids
+                );
+                $places = $selection->places;
+                $placesByUser = $selection->byUser;
             } else {
-                $places = $input->getInt('cancelplaces', 0);
+                $field = $status === JemRegistrationTransition::ATTENDING ? 'addplaces' : 'cancelplaces';
+                $places = JemRegistrationQuantity::parseOptional($input->get($field, null, 'raw'));
             }
+        } catch (InvalidArgumentException $e) {
+            throw new Exception(Text::_('COM_JEM_ERROR_REGISTRATION'), 400);
         }
 
         if ($checkseries == "on") {

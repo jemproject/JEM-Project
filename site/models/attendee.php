@@ -179,8 +179,6 @@ class JemModelAttendee extends BaseDatabaseModel
      */
     public function store($data)
     {
-        $eventid = $data['event'];
-
         $row = $this->getTable('jem_register', '');
 
         // bind it to the table
@@ -195,29 +193,6 @@ class JemModelAttendee extends BaseDatabaseModel
         // Are we saving from an item edit?
         if (!$row->id) {
             $row->uregdate = gmdate('Y-m-d H:i:s');
-
-            $query = ' SELECT e.maxplaces, e.waitinglist, COUNT(r.id) as booked '
-                   . ' FROM #__jem_events AS e '
-                   . ' INNER JOIN #__jem_register AS r ON r.event = e.id '
-                   . ' WHERE e.id = ' . $this->_db->Quote($eventid)
-                   . '   AND r.status = 1 AND r.waiting = 0 '
-                   . ' GROUP BY e.id ';
-            $this->_db->setQuery($query);
-            $details = $this->_db->loadObject();
-
-            // put on waiting list ?
-            if ($details->maxplaces > 0) // there is a max
-            {
-                // check if the user should go on waiting list
-                if ($details->booked >= $details->maxplaces)
-                {
-                    if (!$details->waitinglist) {
-                        Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_REGISTER_EVENT_IS_FULL'), 'warning');
-                        return false;
-                    }
-                    $row->waiting = 1;
-                }
-            }
         }
 
         // Make sure the data is valid
@@ -226,13 +201,21 @@ class JemModelAttendee extends BaseDatabaseModel
             return false;
         }
 
-        // Store it in the db
-        if (!$row->store()) {
-            Factory::getApplication()->enqueueMessage($this->_db->getErrorMsg(), 'error');
+        try {
+            $result = (new JemRegistrationService($this->_db))->save($row, array(
+                'respectPlaces'  => true,
+                'allowWaiting'   => !$row->id,
+                'requireExisting'=> (bool) $row->id,
+                'requireNew'     => !$row->id,
+            ));
+        } catch (Throwable $e) {
+            $this->setError($e->getMessage());
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
             return false;
         }
 
-        return $row;
+        $this->_data = $result->after;
+        return $result->after;
     }
 }
 ?>

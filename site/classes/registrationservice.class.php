@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 
+require_once __DIR__ . '/registrationquantity.class.php';
+
 /**
  * Transactional writer for capacity-sensitive registrations.
  */
@@ -120,6 +122,7 @@ final class JemRegistrationService
             throw new RuntimeException('A registration cannot be reassigned.');
         }
 
+        $this->assertQuantityPolicy($after);
         $after = $this->applyCapacityPolicy($before, $after, $options);
         $stored = (object) array(
             'event'    => (int) $after->event,
@@ -165,7 +168,7 @@ final class JemRegistrationService
         $after->uip = (string) ($after->uip ?? '');
         $after->waiting = !empty($after->waiting) ? 1 : 0;
         $after->status = (int) ($after->status ?? JemRegistrationTransition::ATTENDING);
-        $after->places = (int) ($after->places ?? 0);
+        $after->places = JemRegistrationQuantity::parse($after->places ?? 0);
         $after->comment = (string) ($after->comment ?? '');
 
         if ($after->status === JemRegistrationTransition::WAITING_LIST) {
@@ -242,6 +245,25 @@ final class JemRegistrationService
         }
 
         throw new RuntimeException('Event capacity would be exceeded.');
+    }
+
+    /**
+     * Enforce per-user quantity rules while the event row is locked.
+     */
+    private function assertQuantityPolicy($registration)
+    {
+        $query = $this->db->getQuery(true)
+            ->select(array('minbookeduser', 'maxbookeduser'))
+            ->from($this->db->quoteName('#__jem_events'))
+            ->where($this->db->quoteName('id') . ' = ' . (int) $registration->event);
+        $this->db->setQuery($query);
+        $event = $this->db->loadObject();
+
+        if (!$event) {
+            throw new RuntimeException('Registration event does not exist.');
+        }
+
+        JemRegistrationQuantity::assertStoredRow($registration, $event);
     }
 
     private function loadForUpdate($row)

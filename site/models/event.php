@@ -1149,8 +1149,13 @@ class JemModelEvent extends ItemModel
         $comment = $app->input->getString('reg_comment', '');
         $comment = OutputFilter::cleanText($comment);
         $regid   = $app->input->getInt('regid', 0);
-        $addplaces = $app->input->getInt('addplaces', 0);
-        $cancelplaces = $app->input->getInt('cancelplaces', 0);
+        try {
+            $addplaces = JemRegistrationQuantity::parseOptional($app->input->get('addplaces', null, 'raw'));
+            $cancelplaces = JemRegistrationQuantity::parseOptional($app->input->get('cancelplaces', null, 'raw'));
+        } catch (InvalidArgumentException $e) {
+            $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+            return false;
+        }
         $checkseries = $app->input->getString('reg_check_series', '0');
         $checkseries = ($checkseries === 'true' || $checkseries === 'on' || $checkseries === '1');
         $uid = (int) $user->get('id');
@@ -1249,37 +1254,21 @@ class JemModelEvent extends ItemModel
             $reg = $registrations[(int) $e->id];
             $eventStatus = $status;
 
-            if ($eventStatus > 0) {
-                if ($addplaces > 0) {
-                    if ($reg) {
-                        if ($reg->status > 0) {
-                            $places = $addplaces + $reg->places;
-                        } else {
-                            $places = $addplaces;
-                        }
-                    } else {
-                        $places = $addplaces;
-                    }
-                } else {
-                    $places = 0;
-                }
-            } else {
-                if ($reg) {
-                    $places = $reg->places - $cancelplaces;
-                    if ($reg->status >= 0 && $places > 0) {
-                        $eventStatus = $reg->status;
-                    }
-                } else {
-                    $places = 0;
-                }
+            try {
+                $quantity = JemRegistrationQuantity::resolveResponse(
+                    $eventStatus,
+                    $addplaces,
+                    $cancelplaces,
+                    $reg,
+                    $e
+                );
+            } catch (InvalidArgumentException $exception) {
+                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+                return false;
             }
 
-            //Review max places per user
-            if ($e->maxbookeduser) {
-                if ($places > $e->maxbookeduser) {
-                    $places = $e->maxbookeduser;
-                }
-            }
+            $places = $quantity->places;
+            $eventStatus = $quantity->status;
 
             if (is_object($reg)
                 && JemRegistrationTransition::logicalStatus($reg) === JemRegistrationTransition::WAITING_LIST

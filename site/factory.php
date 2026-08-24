@@ -14,6 +14,7 @@ use Joomla\CMS\User\User;
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationaccesspolicy.class.php');
+require_once (JPATH_SITE.'/components/com_jem/classes/registrationquantity.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationservice.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/registrationtransition.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/waitinglistpromotion.class.php');
