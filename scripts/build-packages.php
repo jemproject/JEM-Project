@@ -186,7 +186,7 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 
@@ -227,6 +227,7 @@ final class JemPackageBuilder
         if (version_compare($version, '5.0.1rc1', '>=')) {
             $requiredComponentEntries[] = 'site/classes/eventslistmenupolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/pdfimagepolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/registrationservice.class.php';
         }
 
         foreach ($requiredComponentEntries as $entry) {

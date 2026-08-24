@@ -11,7 +11,7 @@ final class RegistrationAccessSecurityTest extends TestCase
         $model = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/event.php');
         $method = $this->method($model, 'userregister');
         $decision = strpos($method, 'JemRegistrationAccessPolicy::decide(');
-        $write = strpos($method, '_doRegister(');
+        $write = strpos($method, 'saveMany(');
 
         self::assertNotFalse($decision);
         self::assertNotFalse($write);
@@ -47,6 +47,7 @@ final class RegistrationAccessSecurityTest extends TestCase
         $factory = (string) file_get_contents(JEM_TEST_ROOT . '/site/factory.php');
 
         self::assertStringContainsString('classes/registrationaccesspolicy.class.php', $factory);
+        self::assertStringContainsString('classes/registrationservice.class.php', $factory);
     }
 
     private function method(string $source, string $name): string

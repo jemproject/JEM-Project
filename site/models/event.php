@@ -1082,19 +1082,7 @@ class JemModelEvent extends ItemModel
             $status = JemRegistrationTransition::WAITING_LIST;
         }
 
-        if ($status == 1 && $status != $oldstat) {
-            if ($respectPlaces && ($event->maxplaces > 0)) {    // there is a max
-                // check if the user should go on waiting list
-                if (((int) $event->booked + (int) $event->reservedplaces + max(1, (int) $places)) > (int) $event->maxplaces) {
-                    if (!$event->waitinglist) {
-                        $this->setError(Text::_('COM_JEM_EVENT_FULL_NOTICE'));
-                        return false;
-                    }
-                    $onwaiting = 1;
-                }
-            }
-        }
-        elseif ($status == 2) {
+        if ($status == 2) {
             if ($respectPlaces && !$event->waitinglist) {
                 $errMsg = Text::_('COM_JEM_NO_WAITINGLIST');
                 return false;
@@ -1117,18 +1105,25 @@ class JemModelEvent extends ItemModel
         $obj->uip = $uip;
         $obj->comment = $comment;
 
-        $result = false;
         try {
             if ($regid) {
                 $obj->id = $regid;
-                $this->_db->updateObject('#__jem_register', $obj, 'id');
-                $result = $regid;
-            } else {
-                $this->_db->insertObject('#__jem_register', $obj);
-                $result = $this->_db->insertid();
             }
+
+            $options = array(
+                'respectPlaces' => (bool) $respectPlaces,
+                'allowWaiting'  => (bool) $respectPlaces,
+            );
+            if ($regid) {
+                $options['requireExisting'] = true;
+            } elseif (!is_object($registration)) {
+                $options['requireNew'] = true;
+            }
+
+            $stored = (new JemRegistrationService($this->_db))->save($obj, $options);
+            $result = (int) $stored->after->id;
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
             // we have a unique user-event key so registering twice will fail
             $errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $eventId  .']';
             return false;
@@ -1247,11 +1242,12 @@ class JemModelEvent extends ItemModel
         }
         $events = $authorisedEvents;
 
+        $pending = array();
+        $uip = JemHelper::getStoredIP();
+
         foreach ($events as $e) {
             $reg = $registrations[(int) $e->id];
-            $errMsg = '';
             $eventStatus = $status;
-
 
             if ($eventStatus > 0) {
                 if ($addplaces > 0) {
@@ -1263,18 +1259,6 @@ class JemModelEvent extends ItemModel
                         }
                     } else {
                         $places = $addplaces;
-                    }
-                    //Detect if the reserve go to waiting list
-                    $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if (!$reg || $reg->status != 0) {
-                        if ($e->maxplaces) {
-                            $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                            if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $eventStatus = 2;
-                            }
-                        } else {
-                            $eventStatus = 1;
-                        }
                     }
                 } else {
                     $places = 0;
@@ -1297,17 +1281,54 @@ class JemModelEvent extends ItemModel
                 }
             }
 
-            // IP
-            $uip = JemHelper::getStoredIP();
-
-            $regid = $reg ? (int) $reg->id : 0;
-            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
-            if (!$result) {
-                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
-            } else {
-                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
+            if (is_object($reg)
+                && JemRegistrationTransition::logicalStatus($reg) === JemRegistrationTransition::WAITING_LIST
+                && $eventStatus === JemRegistrationTransition::ATTENDING) {
+                $eventStatus = JemRegistrationTransition::WAITING_LIST;
             }
+
+            $row = (object) array(
+                'event'    => (int) $e->id,
+                'uid'      => $uid,
+                'places'   => (int) $places,
+                'uregdate' => gmdate('Y-m-d H:i:s'),
+                'uip'      => $uip,
+                'comment'  => $comment,
+            );
+            JemRegistrationTransition::applyLogicalStatus($row, $eventStatus);
+
+            if ($reg) {
+                $row->id = (int) $reg->id;
+            }
+
+            $pending[] = $row;
         }
+
+        try {
+            $stored = (new JemRegistrationService($this->_db))->saveMany($pending, array(
+                'respectPlaces' => true,
+                'allowWaiting'  => true,
+            ));
+        } catch (Throwable $e) {
+            $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+            return false;
+        }
+
+        $result = 0;
+        foreach ($stored as $storedRegistration) {
+            if ((int) $storedRegistration->after->event === $eventId || !$result) {
+                $result = (int) $storedRegistration->after->id;
+            }
+
+            $logicalStatus = JemRegistrationTransition::logicalStatus($storedRegistration->after);
+            Factory::getApplication()->enqueueMessage(
+                $logicalStatus === JemRegistrationTransition::NOT_ATTENDING
+                    ? Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')
+                    : Text::_('COM_JEM_REGISTERED_USER_IN_EVENT'),
+                'info'
+            );
+        }
+
         return $result;
     }
 
