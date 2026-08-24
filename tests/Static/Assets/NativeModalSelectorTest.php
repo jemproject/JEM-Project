@@ -82,6 +82,38 @@ final class NativeModalSelectorTest extends TestCase
         }
     }
 
+    public function testContactSelectorEntryPointsRemainAvailableInFrontendAndBackend(): void
+    {
+        $frontendField = $this->read('site/models/fields/modal/contact.php');
+        self::assertStringContainsString('layout=choosecontact', $frontendField);
+        self::assertStringContainsString('Session::getFormToken()', $frontendField);
+        self::assertStringContainsString("con.access", $frontendField);
+        self::assertStringContainsString("cat.access", $frontendField);
+
+        foreach (array(
+            'site/views/editevent/tmpl/choosecontact.php',
+            'site/views/editevent/tmpl/responsive/choosecontact.php',
+        ) as $relativePath) {
+            $code = $this->read($relativePath);
+
+            self::assertStringContainsString('layout=choosecontact', $code, $relativePath);
+            self::assertStringContainsString('Session::getFormToken()', $code, $relativePath);
+            self::assertStringContainsString('jemGetSelectedContacts();', $code, $relativePath);
+        }
+
+        $backendField = $this->read('admin/models/fields/modal/contact.php');
+        self::assertStringContainsString('view=contactelement', $backendField);
+        self::assertStringContainsString('Session::getFormToken()', $backendField);
+
+        $backendView = $this->read('admin/views/contactelement/tmpl/default.php');
+        self::assertStringContainsString('view=contactelement', $backendView);
+        self::assertStringContainsString('jemGetSelectedContacts();', $backendView);
+
+        foreach (array('admin/models/forms/event.xml', 'admin/models/forms/category.xml') as $relativePath) {
+            self::assertStringContainsString('type="modal_contact"', $this->read($relativePath), $relativePath);
+        }
+    }
+
     public function testAttendeeViewsDoNotCallRemovedSqueezeBoxApi(): void
     {
         foreach (array(

@@ -39,14 +39,16 @@ namespace {
 
         public function testCanonicalEditorIdOverridesAnUnrelatedRoutedItemId(): void
         {
-            $input = new FrontendAccessInputStub(array(
-                'a_id' => '13',
-                'id' => '12:source-event',
-            ));
+            foreach (array('12:source-event', 'menu-route-value') as $routedId) {
+                $input = new FrontendAccessInputStub(array(
+                    'a_id' => '13',
+                    'id' => $routedId,
+                ));
 
-            self::assertSame(13, JemFrontendAccess::normaliseRecordId($input, true));
-            self::assertSame(13, $input->value('a_id'));
-            self::assertSame(13, $input->value('id'));
+                self::assertSame(13, JemFrontendAccess::normaliseRecordId($input, true));
+                self::assertSame(13, $input->value('a_id'));
+                self::assertSame(13, $input->value('id'));
+            }
         }
 
         public function testMalformedAndMissingEditorIdsAreRejected(): void
@@ -73,6 +75,35 @@ namespace {
             $this->expectExceptionCode(400);
 
             JemFrontendAccess::readId($input, array('a_id', 'id'), true);
+        }
+
+        public function testSelectorRecordReaderIgnoresAnUnrelatedMenuId(): void
+        {
+            $menuOnly = new FrontendAccessInputStub(array('id' => 'menu-route-value'));
+            self::assertSame(0, JemFrontendAccess::readSelectorRecordId($menuOnly));
+
+            $emptyEditorId = new FrontendAccessInputStub(array(
+                'a_id' => '',
+                'id' => 'menu-route-value',
+            ));
+            self::assertSame(0, JemFrontendAccess::readSelectorRecordId($emptyEditorId));
+
+            $explicit = new FrontendAccessInputStub(array(
+                'a_id' => '17',
+                'id' => 'menu-route-value',
+            ));
+            self::assertSame(17, JemFrontendAccess::readSelectorRecordId($explicit));
+            self::assertSame('menu-route-value', $explicit->value('id'));
+        }
+
+        public function testSelectorRecordReaderRejectsAMalformedExplicitEditorId(): void
+        {
+            $input = new FrontendAccessInputStub(array('a_id' => '17invalid'));
+
+            $this->expectException(Exception::class);
+            $this->expectExceptionCode(400);
+
+            JemFrontendAccess::readSelectorRecordId($input);
         }
 
         public function testEventCreatePermissionReceivesSelectedCategories(): void

@@ -10,12 +10,15 @@ final class FrontendEditorAccessTest extends TestCase
     public function testSharedPolicyPrioritisesCanonicalEditorIdsAndRejectsAmbiguousGenericIds(): void
     {
         $policy = $this->read('/site/classes/frontendaccess.class.php');
+        $selectorReader = $this->method($policy, 'readSelectorRecordId');
 
         self::assertStringContainsString("\$input->exists('a_id') ? array('a_id') : array('id')", $policy);
         self::assertStringContainsString('count($ids) > 1', $policy);
         self::assertStringContainsString('COM_JEM_ERROR_INVALID_RECORD_ID', $policy);
         self::assertStringContainsString('getAuthorisedViewLevels()', $policy);
         self::assertStringContainsString("getUserState('com_jem.edit.event.id'", $policy);
+        self::assertStringContainsString("self::readId(\$input, array('a_id'))", $selectorReader);
+        self::assertStringNotContainsString("array('a_id', 'id')", $selectorReader);
     }
 
     public function testMainControllerGatesEditorsAndSelectorsBeforeViewCreation(): void
@@ -28,9 +31,35 @@ final class FrontendEditorAccessTest extends TestCase
         self::assertNotFalse($view);
         self::assertLessThan($view, $guard);
         self::assertStringContainsString("array('choosevenue', 'choosecontact', 'choosearticle', 'chooseusers')", $controller);
+        self::assertStringContainsString(
+            '? JemFrontendAccess::readSelectorRecordId($jinput)',
+            $controller
+        );
         self::assertStringContainsString("\$this->checkToken('request')", $controller);
         self::assertStringContainsString("\$jinput->exists('from_id')", $controller);
         self::assertStringContainsString("'com_jem.edit.' . \$type", $controller);
+
+        $selectorReader = strpos($controller, '? JemFrontendAccess::readSelectorRecordId($jinput)');
+        $recordGuard = strpos($controller, 'if ($id > 0)', $selectorReader === false ? 0 : $selectorReader);
+        $selectorFallback = strpos(
+            $controller,
+            'elseif ($isEventSelector)',
+            $recordGuard === false ? 0 : $recordGuard
+        );
+
+        self::assertNotFalse($selectorReader);
+        self::assertNotFalse($recordGuard);
+        self::assertNotFalse($selectorFallback);
+        self::assertLessThan($recordGuard, $selectorReader);
+        self::assertLessThan($selectorFallback, $recordGuard);
+
+        $positiveIdGuard = substr($controller, $recordGuard, $selectorFallback - $recordGuard);
+        self::assertStringContainsString('$model->getItem($id)', $positiveIdGuard);
+        self::assertStringContainsString('JemFrontendAccess::decideEdit($user, $type, $item)', $positiveIdGuard);
+        self::assertStringContainsString("\$this->checkEditId('com_jem.edit.' . \$type, \$id)", $positiveIdGuard);
+
+        $selectorAccess = substr($controller, $selectorFallback, 500);
+        self::assertStringContainsString('JemFrontendAccess::canUseEventSelectors($app, $user, $model)', $selectorAccess);
     }
 
     public function testGuestGateRunsBeforeEventSelectorLayouts(): void
