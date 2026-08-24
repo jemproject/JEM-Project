@@ -99,6 +99,35 @@ abstract class JemFrontendAccess
     }
 
     /**
+     * Read the explicit event id carried by an auxiliary selector request.
+     *
+     * Selector URLs can inherit route values from the active Joomla menu.
+     * A missing or empty editor id means that selector access must be decided
+     * from create permission or the checked-out event held in the user state.
+     * Non-empty editor ids still use the strict record-id validation.
+     *
+     * @param  object  $input  Joomla input object.
+     *
+     * @return integer
+     *
+     * @throws Exception For a malformed explicit editor id.
+     */
+    public static function readSelectorRecordId($input)
+    {
+        if (!$input->exists('a_id')) {
+            return 0;
+        }
+
+        $raw = $input->get('a_id', null, 'raw');
+
+        if ($raw === null || (is_string($raw) && trim($raw) === '')) {
+            return 0;
+        }
+
+        return self::readId($input, array('a_id'));
+    }
+
+    /**
      * Read an integer id from one or more request keys.
      *
      * @param  object   $input     Joomla input object.

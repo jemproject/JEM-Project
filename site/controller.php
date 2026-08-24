@@ -58,7 +58,18 @@ class JemController extends BaseController
                 return false;
             }
 
-            $id    = JemFrontendAccess::normaliseRecordId($jinput);
+            $isEventSelector = ($viewName === 'editevent') && in_array(
+                $layoutName,
+                array('choosevenue', 'choosecontact', 'choosearticle', 'chooseusers'),
+                true
+            );
+
+            // Selector layouts are auxiliary requests, not editor record routes.
+            // Only their explicit editor id is relevant; a generic id may belong
+            // to the active Joomla menu item and must not be treated as an event.
+            $id = $isEventSelector
+                ? JemFrontendAccess::readSelectorRecordId($jinput)
+                : JemFrontendAccess::normaliseRecordId($jinput);
             $type  = ($viewName === 'editevent') ? 'event' : 'venue';
             $model = $this->getModel($viewName);
 
@@ -80,12 +91,6 @@ class JemController extends BaseController
 
                 JemFrontendAccess::enforce(JemFrontendAccess::decideEdit($user, $type, $source));
             }
-
-            $isEventSelector = ($viewName === 'editevent') && in_array(
-                $layoutName,
-                array('choosevenue', 'choosecontact', 'choosearticle', 'chooseusers'),
-                true
-            );
 
             if ($isEventSelector) {
                 $this->checkToken('request');
