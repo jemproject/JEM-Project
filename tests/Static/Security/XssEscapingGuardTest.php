@@ -58,9 +58,10 @@ final class XssEscapingGuardTest extends TestCase
         $escaped = htmlspecialchars($payload, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
 
         self::assertStringContainsString(
-            "htmlspecialchars(Route::_((string) \$link), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false)",
+            "htmlspecialchars((string) \$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false)",
             $contents
         );
+        self::assertStringContainsString('return self::escapeHtmlAttribute(Route::_((string) $link));', $contents);
         self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$url)", $contents);
         self::assertStringContainsString("self::escapeLinkAttribute(\$print_link . '&tmpl=component')", $contents);
         self::assertStringContainsString("HTMLHelper::_('link', self::escapeLinkAttribute(\$pdf_link)", $contents);
@@ -69,6 +70,39 @@ final class XssEscapingGuardTest extends TestCase
         self::assertStringNotContainsString("'<a href=\"' . Route::_", $contents);
         self::assertStringNotContainsString('marker=" data-test=', $escaped);
         self::assertStringContainsString('marker=&quot; data-test=', $escaped);
+    }
+
+    public function testEventDetailEscapesStoredTextAndLinkAttributes(): void
+    {
+        foreach (array('/site/views/event/tmpl/default.php', '/site/views/event/tmpl/responsive/default.php') as $path) {
+            $contents = (string) file_get_contents(JEM_TEST_ROOT . $path);
+
+            self::assertStringContainsString(
+                '$author = $this->escape((string) ($this->item->created_by_alias ?: $this->item->author));',
+                $contents,
+                $path
+            );
+            self::assertStringContainsString('JemOutput::escapeHtmlAttribute($link)', $contents, $path);
+            self::assertGreaterThanOrEqual(
+                3,
+                substr_count($contents, 'JemOutput::escapeHtmlAttribute($this->item->url)'),
+                $path
+            );
+            self::assertStringNotContainsString('href="<?php echo $this->item->url; ?>"', $contents, $path);
+            self::assertStringNotContainsString('href="' . "' . \$this->item->url . '" . '">', $contents, $path);
+        }
+
+        $table = (string) file_get_contents(JEM_TEST_ROOT . '/admin/tables/event.php');
+        $form = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/forms/event.xml');
+
+        self::assertStringContainsString(
+            "\$this->created_by_alias = trim(strip_tags((string) (\$this->created_by_alias ?? '')));",
+            $table
+        );
+        self::assertMatchesRegularExpression(
+            '/<field\s+name="created_by_alias"[^>]*filter="string"/s',
+            $form
+        );
     }
 
     public function testSiteTemplatesEscapeCommonTextInputs(): void

@@ -232,6 +232,7 @@
             label="COM_JEM_FIELD_CREATED_BY_ALIAS_LABEL"
             description="COM_JEM_FIELD_CREATED_BY_ALIAS_DESC"
             class="inputbox"
+            filter="string"
             size="20"
     />
         <field name="published" type="list"

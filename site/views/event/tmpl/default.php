@@ -233,7 +233,7 @@ $renderEventCategoryLinks = function () use ($params) {
 };
 $renderVenueName = function () use ($params) {
     if (($params->get('event_show_detlinkvenue') == 1) && !empty($this->item->url)) {
-        $venueName = '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+        $venueName = '<a target="_blank" href="' . JemOutput::escapeHtmlAttribute($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
     } elseif (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
         $venueName = '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
     } else {
@@ -340,7 +340,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     }
 
     if (!empty($this->item->url)) {
-        $links[] = '<a class="venue_weblink" target="_blank" href="' . $this->escape($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+        $links[] = '<a class="venue_weblink" target="_blank" href="' . JemOutput::escapeHtmlAttribute($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
     }
 
     if (!empty($this->item->email)) {
@@ -668,7 +668,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 <dt class="where"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                 <dd class="where"><?php
                     if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
-                        ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
+                        ?><a target="_blank" href="<?php echo JemOutput::escapeHtmlAttribute($this->item->url); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                         ?><a href="<?php echo $this->escape(Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug))); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                     else :
@@ -732,7 +732,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             <?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
                 <dt class="createdby"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
                 <dd class="createdby">
-                    <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
+                    <?php $author = $this->escape((string) ($this->item->created_by_alias ?: $this->item->author)); ?>
                     <?php if (JemHelper::isContactComponentEnabled() && !empty($this->item->contactid2) && $params->get('event_link_author') == true) :
                         $concatid = null;
 
@@ -753,7 +753,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                             $mItem = $menu->getItems('link', $needle, true);
                             $link = Route::_($needle . (!empty($mItem) ? '&Itemid=' . $mItem->id : ''));
                             ?>
-                            <a href="<?php echo $link; ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
+                            <a href="<?php echo JemOutput::escapeHtmlAttribute($link); ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
                                 <?php echo $author; ?> <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
                             </a>
                         <?php } else {
@@ -1274,7 +1274,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     endif;
                     echo ' ' . JemOutput::typedEntityBadge($this->item, 'venue_type_', 'venue');
                     if (!empty($this->item->url)) :
-                        echo '&nbsp;-&nbsp;<a target="_blank" href="' . $this->item->url . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+                        echo '&nbsp;-&nbsp;<a target="_blank" href="' . JemOutput::escapeHtmlAttribute($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
                     endif;
                     echo $venueaccess;
                     ?>

@@ -118,6 +118,7 @@ class JemTableEvent extends Table
         $this->parent_event_id = empty($this->parent_event_id) ? null : (int) $this->parent_event_id;
         $this->event_tree_order = max(0, (int) ($this->event_tree_order ?? 0));
         $this->show_in_calendar = isset($this->show_in_calendar) ? (int) (bool) $this->show_in_calendar : 0;
+        $this->created_by_alias = trim(strip_tags((string) ($this->created_by_alias ?? '')));
 
         if ($this->parent_event_id !== null) {
             if ((int) $this->id === $this->parent_event_id
