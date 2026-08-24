@@ -62,7 +62,7 @@ final class JemPackageBuilder
 
             $package = $buildDir . '/pkg_jem_v' . $version . '.zip';
             $this->zipPackage($root, $buildDir, $package);
-            $this->validate($package);
+            $this->validate($package, $version);
 
             $target = $root . '/pkg_jem_v' . $version . '.zip';
             if (is_file($target)) {
@@ -193,7 +193,7 @@ final class JemPackageBuilder
         return !preg_match('#(^|/)(pkg_jem_v.*\.zip.*|update_pkg_.*\.xml|composer\.(json|lock)|phpunit(\.progress)?\.xml(\.dist)?|build\..*|\.env(\..*)?|.*\.(pem|key|crt|pfx)|.*\.code-workspace)$#', $relative);
     }
 
-    private function validate(string $package): void
+    private function validate(string $package, string $version): void
     {
         $outer = new ZipArchive();
         if ($outer->open($package) !== true) {
@@ -222,7 +222,13 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate component archive in ' . $package);
         }
 
-        foreach (['jem.xml', 'script.php', 'admin/jem.php', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'] as $entry) {
+        $requiredComponentEntries = ['jem.xml', 'script.php', 'admin/jem.php', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'];
+
+        if (version_compare($version, '5.0.1rc1', '>=')) {
+            $requiredComponentEntries[] = 'site/classes/eventslistmenupolicy.class.php';
+        }
+
+        foreach ($requiredComponentEntries as $entry) {
             if ($component->locateName($entry) === false) {
                 $component->close();
                 @unlink($tmpComponent);

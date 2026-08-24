@@ -90,9 +90,6 @@ class JemViewEventslist extends JemView
             $document->setMetaData('robots', 'noindex, nofollow');
         }
 
-        // get variables
-        $filter_order_DirDefault = 'ASC';
-
         //Text filter
         $filter_type = $app->getUserStateFromRequest(
             'com_jem.eventslist.' . $itemid . '.filter_type',
@@ -118,74 +115,12 @@ class JemViewEventslist extends JemView
             $this->getModel()->setState('filter.featured', 1);
         }
 
-        //Get initial order by menu item
-        $tableInitialorderby = $params->get('tableorderby', '0');
-        if ($tableInitialorderby) {
-            switch ($tableInitialorderby) {
-                case 0:
-                    $tableInitialorderby = 'a.dates';
-                    break;
-                case 1:
-                    $tableInitialorderby = 'a.title';
-                    break;
-                case 2:
-                    $tableInitialorderby = 'l.venue';
-                    break;
-                case 3:
-                    $tableInitialorderby = 'l.city';
-                    break;
-                case 4:
-                    $tableInitialorderby = 'l.state';
-                    break;
-                case 5:
-                    $tableInitialorderby = 'c.catname';
-                    break;
-            }
-            $filter_order = $app->getUserStateFromRequest(
-                'com_jem.eventslist.' . $itemid . '.filter_order',
-                'filter_order',
-                $tableInitialorderby,
-                'cmd',
-            );
-        } else {
-            $filter_order = $app->getUserStateFromRequest(
-                'com_jem.eventslist.' . $itemid . '.filter_order',
-                'filter_order',
-                'a.dates',
-                'cmd',
-            );
-        }
-        $tableInitialDirectionOrder = $params->get(
-            'tabledirectionorder',
-            'ASC',
-        );
-        if ($tableInitialDirectionOrder) {
-            $filter_order_Dir = $app->getUserStateFromRequest(
-                'com_jem.eventslist.' . $itemid . '.filter_order_Dir',
-                'filter_order_Dir',
-                $tableInitialDirectionOrder,
-                'word',
-            );
-        } else {
-            $filter_order_Dir = $app->getUserStateFromRequest(
-                'com_jem.eventslist.' . $itemid . '.filter_order_Dir',
-                'filter_order_Dir',
-                $filter_order_DirDefault,
-                'word',
-            );
-        }
-
-        // Reverse default order for dates in archive mode
-        if ($task == 'archive' && $filter_order == 'a.dates') {
-            $filter_order_Dir = 'DESC';
-        }
-
-        // table ordering
-        $lists['order_Dir'] = $filter_order_Dir;
-        $lists['order'] = $filter_order;
-
         // Get data from model
         $rows = $this->get('Items');
+
+        // Keep the table headers aligned with the validated model ordering.
+        $lists['order_Dir'] = $model->getState('list.direction', 'ASC');
+        $lists['order'] = $model->getState('list.ordering', 'a.dates');
 
         // Are events available?
         $noevents = !$rows ? 1 : 0;

@@ -90,4 +90,31 @@ final class FrontendMenuParameterContractsTest extends TestCase
             ),
         );
     }
+
+    public function testEventsListDateWindowFieldsPreserveEmptyAndZeroAsDifferentValues(): void
+    {
+        $xml = new DOMDocument();
+        self::assertTrue($xml->load(JEM_TEST_ROOT . '/site/views/eventslist/tmpl/default.xml'));
+
+        $xpath = new DOMXPath($xml);
+
+        foreach (array('tablefiltereventfrom', 'tablefiltereventuntil') as $fieldName) {
+            $nodes = $xpath->query('//fields[@name="params"]//field[@name="' . $fieldName . '"]');
+
+            self::assertInstanceOf(DOMNodeList::class, $nodes);
+            self::assertSame(1, $nodes->length, $fieldName . ' must be declared exactly once.');
+
+            $field = $nodes->item(0);
+            self::assertInstanceOf(DOMElement::class, $field);
+            self::assertSame('text', $field->getAttribute('type'));
+            self::assertSame('', $field->getAttribute('default'));
+            self::assertFalse($field->hasAttribute('filter'), $fieldName . ' must not coerce an empty value to zero.');
+            self::assertSame('numeric', $field->getAttribute('inputmode'));
+            self::assertSame('[0-9]*', $field->getAttribute('pattern'));
+        }
+
+        $direction = $xpath->query('//fields[@name="params"]//field[@name="tabledirectionorder"]');
+        self::assertInstanceOf(DOMNodeList::class, $direction);
+        self::assertSame(1, $direction->length, 'The Events List direction field must be declared exactly once.');
+    }
 }

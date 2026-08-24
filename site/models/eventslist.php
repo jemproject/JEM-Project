@@ -17,6 +17,7 @@ use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/eventslistmenupolicy.class.php');
 
 /**
  * Model-Eventslist
@@ -222,39 +223,32 @@ class JemModelEventslist extends ListModel
         # Search - Filter by setting menu
         $today = new Date('now', $app->get('offset'));
 
-        // Use 'all' as a fallback if the parameter is missing or empty
-        $filterDaysBefore = $params->get('tablefiltereventfrom', 'all');
-        if ($filterDaysBefore === '') { $filterDaysBefore = 'all'; }
-
-        $filterDaysAfter = $params->get('tablefiltereventuntil', 'all');
-        if ($filterDaysAfter === '') { $filterDaysAfter = 'all'; }
+        $dateWindow = JemEventslistMenuPolicy::dateWindow(
+            $params->get('tablefiltereventfrom', ''),
+            $params->get('tablefiltereventuntil', ''),
+            $today
+        );
+        $filterDaysBefore = $dateWindow['from_days'];
+        $filterDaysAfter  = $dateWindow['until_days'];
 
         // Persist these values in the User State for pagination
         $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventfrom', $filterDaysBefore);
         $app->setUserState('com_jem.eventslist.' . $itemid . '.tablefiltereventuntil', $filterDaysAfter);
+        $this->setState('filter.tablefiltereventfrom', $filterDaysBefore);
+        $this->setState('filter.tablefiltereventuntil', $filterDaysAfter);
 
         // Define From logic
         $where_from = '';
-        if ($filterDaysBefore !== 'all') {
-            $daysBefore = (int)$filterDaysBefore;
-            $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
-            $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom) . ')';
+        if ($dateWindow['from_date'] !== null) {
+            $where_from = '(COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateWindow['from_date']) . ')';
         }
         $this->setState('filter.calendar_from', $where_from);
 
         $whereTo = '';
-        if ($filterDaysAfter !== 'all') {
-            $daysAfter = (int)$filterDaysAfter;
-            $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
-            $whereTo = '(a.dates <= ' . $db->quote($dateTo) . ')';
+        if ($dateWindow['until_date'] !== null) {
+            $whereTo = '(a.dates <= ' . $db->quote($dateWindow['until_date']) . ')';
         }
-        $this->setState('filter.calendar_to', (!empty($whereTo) ? $whereTo : null));
-
-        if (!empty($whereTo)) {
-            $this->setState('filter.calendar_to', $whereTo);
-        } else {
-            $this->setState('filter.calendar_to', null);
-        }
+        $this->setState('filter.calendar_to', $whereTo ?: null);
 
         # publish state
         $this->_populatePublishState($task);
@@ -272,64 +266,59 @@ class JemModelEventslist extends ListModel
         ## ORDER ##
         ###########
 
-        $filter_order = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order', 'filter_order', 'a.dates', 'cmd');
-        $filter_order_DirDefault = 'ASC';
-        // Reverse default order for dates in archive mode
-        if ($task == 'archive' && $filter_order == 'a.dates') {
+        $isArchive = $task == 'archive';
+        $tableInitialorderby = JemEventslistMenuPolicy::orderField($params->get('tableorderby', '0'));
+        $filter_order_DirDefault = JemEventslistMenuPolicy::orderDirection(
+            $params->get('tabledirectionorder', 'ASC')
+        );
+
+        if ($isArchive && $tableInitialorderby === 'a.dates') {
             $filter_order_DirDefault = 'DESC';
         }
 
-        $tableInitialorderby = $params->get('tableorderby', '0');
-
-        if (empty($app->input->get('filter_type')) && $tableInitialorderby) {
-
-            switch ($tableInitialorderby) {
-                case 0:
-                    $tableInitialorderby = 'a.dates';
-                    break;
-                case 1:
-                    $tableInitialorderby = 'a.title';
-                    break;
-                case 2:
-                    $tableInitialorderby = 'l.venue';
-                    break;
-                case 3:
-                    $tableInitialorderby = 'l.city';
-                    break;
-                case 4:
-                    $tableInitialorderby = 'l.state';
-                    break;
-                case 5:
-                    $tableInitialorderby = 'c.catname';
-                    break;
-                default:
-                    $tableInitialorderby = 'a.dates';
-            }
-            $filter_order = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order', 'filter_order', $tableInitialorderby, 'cmd');
-
-            $tableInitialDirectionOrder = $params->get('tabledirectionorder', 'ASC');
-            if ($tableInitialDirectionOrder) {
-                $filter_order_DirDefault = $tableInitialDirectionOrder;
-            }
-        }
+        $orderContext = JemEventslistMenuPolicy::orderContext(
+            $itemid,
+            $tableInitialorderby,
+            $filter_order_DirDefault,
+            $isArchive
+        );
+        $filter_order = $app->getUserStateFromRequest(
+            $orderContext . '.filter_order',
+            'filter_order',
+            $tableInitialorderby,
+            'cmd'
+        );
 
         // Finalize order direction from request/session, falling back to determined default
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.filter_order_Dir', 'filter_order_Dir', $filter_order_DirDefault, 'word');
-        $filter_order_Dir = strtoupper($filter_order_Dir);
+        $filter_order_Dir = $app->getUserStateFromRequest(
+            $orderContext . '.filter_order_Dir',
+            'filter_order_Dir',
+            $filter_order_DirDefault,
+            'word'
+        );
 
         if (!in_array($filter_order, $this->filter_fields, true)) {
             $filter_order = 'a.dates';
         }
 
-        if (!in_array($filter_order_Dir, array('ASC', 'DESC'), true)) {
-            $filter_order_Dir = $filter_order_DirDefault;
+        $filter_order_Dir = JemEventslistMenuPolicy::orderDirection(
+            $filter_order_Dir,
+            $filter_order_DirDefault
+        );
+
+        if ($isArchive && $filter_order === 'a.dates') {
+            $filter_order_Dir = 'DESC';
         }
 
-        $default_order_Dir = ($task == 'archive') ? 'DESC' : 'ASC';
-
-        $orderby = array($filter_order . ' ' . $filter_order_Dir, 'a.dates ' . $default_order_Dir, 'a.times ' . $default_order_Dir, 'a.created ' . $default_order_Dir);
+        $orderby = JemEventslistMenuPolicy::buildOrderBy(
+            $filter_order,
+            $filter_order_Dir,
+            $isArchive
+        );
 
         $this->setState('filter.orderby', $orderby);
+        $this->setState('list.ordering', $filter_order);
+        $this->setState('list.direction', $filter_order_Dir);
 
         ################################
         ## EXCLUDE/INCLUDE CATEGORIES ##
@@ -771,16 +760,20 @@ class JemModelEventslist extends ListModel
                                 $filterDaysAfter = isset($params) ? $params->get('tablefiltereventuntil', '') : '';
                             }
 
+                            $dateWindow = JemEventslistMenuPolicy::dateWindow(
+                                $filterDaysBefore,
+                                $filterDaysAfter,
+                                $today
+                            );
+                            $filterDaysBefore = $dateWindow['from_days'];
+                            $filterDaysAfter  = $dateWindow['until_days'];
+
                             $taskValue = isset($task) ? $task : '';
 
                             // Apply from filter
                             if ($filterDaysBefore !== '') {
                                 if (empty($taskValue) || ($taskValue == 'archive' && (int)$filterDaysBefore > 0)) {
-                                    $daysBefore = (int)$filterDaysBefore;
-                                    // Handle 0 explicitly to avoid modify() issues
-                                    $dateFrom = ($daysBefore === 0) ? $today->format('Y-m-d') : (clone $today)->modify('-' . $daysBefore . ' days')->format('Y-m-d');
-
-                                    $where_from = 'COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateFrom);
+                                    $where_from = 'COALESCE(a.enddates, a.dates) >= ' . $db->quote($dateWindow['from_date']);
                                     if (!empty($opendates_query)) {
                                         $where_from = '(' . $where_from . ' AND ' . $opendates_query . ')';
                                     } else {
@@ -795,13 +788,9 @@ class JemModelEventslist extends ListModel
 
                             // Apply until filter
                             if ($filterDaysAfter !== '') {
-                                $daysAfter = (int)$filterDaysAfter;
-                                // Handle 0 explicitly to avoid modify() issues
-                                $dateTo = ($daysAfter === 0) ? $today->format('Y-m-d') : (clone $today)->modify('+' . $daysAfter . ' days')->format('Y-m-d');
-
-                                $where_to = 'a.dates <= ' . $db->quote($dateTo);
-                                if (!empty($openDatesCondition)) {
-                                    $where_to = '(' . $where_to . ' AND ' . $openDatesCondition . ')';
+                                $where_to = 'a.dates <= ' . $db->quote($dateWindow['until_date']);
+                                if (!empty($opendates_query)) {
+                                    $where_to = '(' . $where_to . ' AND ' . $opendates_query . ')';
                                 } else {
                                     $where_to = '(' . $where_to . ')';
                                 }
