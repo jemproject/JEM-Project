@@ -113,6 +113,7 @@ class JemTableEvent extends Table
     public function check()
     {
         $jinput = Factory::getApplication()->input;
+        $this->created_by_alias = trim(strip_tags((string) ($this->created_by_alias ?? '')));
 
         if (trim($this->title) == '') {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_NAME'));

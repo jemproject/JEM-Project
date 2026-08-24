@@ -374,11 +374,19 @@ static public function lightbox() {
     }
 
     /**
+     * Escapes a dynamic value for use in an HTML attribute.
+     */
+    static public function escapeHtmlAttribute($value)
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+    }
+
+    /**
      * Routes a link and escapes it for use in an HTML attribute.
      */
     static protected function escapeLinkAttribute($link)
     {
-        return htmlspecialchars(Route::_((string) $link), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+        return self::escapeHtmlAttribute(Route::_((string) $link));
     }
 
     /**
