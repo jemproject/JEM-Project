@@ -15,6 +15,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 
+require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+
 /**
  * JEM Component Export Controller
  */
@@ -203,10 +205,10 @@ class JemControllerExport extends AdminController
             fwrite($csv, "\xEF\xBB\xBF");
         }
 
-        fputcsv($csv, array_keys($items[0]), $separator, $delimiter, '\\');
+        JemCsv::putRow($csv, array_keys($items[0]), $separator, $delimiter, '\\');
 
         foreach ($items as $item) {
-            fputcsv($csv, JemCsv::protectFormulaRow(array_values($item)), $separator, $delimiter, '\\');
+            JemCsv::putRow($csv, array_values($item), $separator, $delimiter, '\\');
         }
 
         fclose($csv);
