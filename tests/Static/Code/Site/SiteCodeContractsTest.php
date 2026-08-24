@@ -149,6 +149,17 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringContainsString("\$pagination->setAdditionalUrlParam('Itemid', (int) \$menuitem->id);", $code);
     }
 
+    public function testVenueListPaginationKeepsItsRouteContext(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/venue/view.html.php');
+
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('option', 'com_jem');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('view', 'venue');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('layout', 'default');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('id', (string) \$venue->slug);", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('Itemid', (int) \$menuitem->id);", $code);
+    }
+
     public function testAttachmentClassUsesCmsInputFilterFactory(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/site/classes/attachment.class.php');

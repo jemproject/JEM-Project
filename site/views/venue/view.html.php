@@ -364,6 +364,14 @@ class JemViewVenue extends JemView
 
             // Create the pagination object
             $pagination = $this->get('Pagination');
+            $pagination->setAdditionalUrlParam('option', 'com_jem');
+            $pagination->setAdditionalUrlParam('view', 'venue');
+            $pagination->setAdditionalUrlParam('layout', 'default');
+            $pagination->setAdditionalUrlParam('id', (string) $venue->slug);
+
+            if ($menuitem && isset($menuitem->id)) {
+                $pagination->setAdditionalUrlParam('Itemid', (int) $menuitem->id);
+            }
 
             // filters
             $filters = array ();
