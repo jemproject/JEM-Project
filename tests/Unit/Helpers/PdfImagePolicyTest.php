@@ -33,6 +33,7 @@ final class PdfImagePolicyTest extends TestCase
         file_put_contents($this->siteRoot . '/private.png', $this->png);
         file_put_contents($this->root . '/outside/private.png', $this->png);
         file_put_contents($this->siteRoot . '/images/jem/events/not-image.txt', 'not an image');
+        file_put_contents($this->siteRoot . '/images/jem/events/oversized.png', $this->pngHeader(3841, 1));
     }
 
     protected function tearDown(): void
@@ -116,6 +117,19 @@ final class PdfImagePolicyTest extends TestCase
         self::assertSame('', JemPdfImagePolicy::resolveLocalImage('private.png', '', $this->siteRoot));
         self::assertSame('', JemPdfImagePolicy::resolveLocalImage('media/other_extension/denied.png', 'event', $this->siteRoot));
         self::assertSame('', JemPdfImagePolicy::resolveLocalImage('images/jem/events/not-image.txt', 'event', $this->siteRoot));
+        self::assertSame('', JemPdfImagePolicy::resolveLocalImage('images/jem/events/oversized.png', 'event', $this->siteRoot));
+    }
+
+    private function pngHeader(int $width, int $height): string
+    {
+        $header = pack('NNCCCCC', $width, $height, 8, 6, 0, 0, 0);
+
+        return "\x89PNG\r\n\x1A\n" . $this->pngChunk('IHDR', $header) . $this->pngChunk('IEND', '');
+    }
+
+    private function pngChunk(string $type, string $data): string
+    {
+        return pack('N', strlen($data)) . $type . $data . pack('H*', hash('crc32b', $type . $data));
     }
 
     public function testRejectsSymlinksThatEscapeAnAllowedRoot(): void
