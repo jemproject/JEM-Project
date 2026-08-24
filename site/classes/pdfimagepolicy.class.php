@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/imageresourcepolicy.class.php';
+
 /**
  * Resolves local raster images that may be passed to the PDF renderer.
  */
@@ -181,8 +183,17 @@ final class JemPdfImagePolicy
     {
         $info = @getimagesize($path);
 
-        return is_array($info)
-            && isset($info[2])
-            && in_array((int) $info[2], self::ALLOWED_IMAGE_TYPES, true);
+        if (!is_array($info) || !isset($info[2])
+            || !in_array((int) $info[2], self::ALLOWED_IMAGE_TYPES, true)) {
+            return false;
+        }
+
+        $resource = JemImageResourcePolicy::inspect(
+            $path,
+            strtolower(pathinfo($path, PATHINFO_EXTENSION)),
+            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION
+        );
+
+        return $resource['accepted'];
     }
 }

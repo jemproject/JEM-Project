@@ -226,6 +226,7 @@ final class JemPackageBuilder
 
         if (version_compare($version, '5.0.1rc1', '>=')) {
             $requiredComponentEntries[] = 'site/classes/eventslistmenupolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/imageresourcepolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/pdfimagepolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/registrationservice.class.php';
         }
