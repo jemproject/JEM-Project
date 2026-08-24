@@ -45,7 +45,13 @@ final class JemPdfImagePolicy
      * Resolve a stored source to an existing image contained by Joomla media roots.
      * Absolute HTTP(S) values are treated as path hints and are never downloaded.
      */
-    public static function resolveLocalImage(string $source, string $type, string $siteRoot, string $basePath = ''): string
+    public static function resolveLocalImage(
+        string $source,
+        string $type,
+        string $siteRoot,
+        string $basePath = '',
+        int $maxDimension = JemImageResourcePolicy::DEFAULT_MAX_DIMENSION
+    ): string
     {
         $source = trim(html_entity_decode($source, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
@@ -140,7 +146,7 @@ final class JemPdfImagePolicy
                 continue;
             }
 
-            if (!self::isContainedPath($candidate, $allowedRoot) || !self::isSupportedImage($candidate)) {
+            if (!self::isContainedPath($candidate, $allowedRoot) || !self::isSupportedImage($candidate, $maxDimension)) {
                 continue;
             }
 
@@ -179,7 +185,7 @@ final class JemPdfImagePolicy
         return strpos($candidate, $allowedRoot . '/') === 0;
     }
 
-    private static function isSupportedImage(string $path): bool
+    private static function isSupportedImage(string $path, int $maxDimension): bool
     {
         $info = @getimagesize($path);
 
@@ -191,7 +197,7 @@ final class JemPdfImagePolicy
         $resource = JemImageResourcePolicy::inspect(
             $path,
             strtolower(pathinfo($path, PATHINFO_EXTENSION)),
-            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION
+            JemImageResourcePolicy::normaliseConfiguredMaxDimension($maxDimension)
         );
 
         return $resource['accepted'];

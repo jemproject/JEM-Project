@@ -795,6 +795,7 @@ $this->document->addStyleDeclaration('
                                     <div class="jem-event-image-label">
                                         <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
                                         <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
+                                        <small><?php echo $this->escape($this->imageIntroSummary); ?></small>
                                     </div>
                                     <div class="jem-event-image-control">
                                         <?php echo $this->form->getInput('datimage'); ?>
@@ -804,6 +805,7 @@ $this->document->addStyleDeclaration('
                                     <div class="jem-event-image-label">
                                         <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
                                         <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_DESC'); ?></span>
+                                        <small><?php echo $this->escape($this->imageFullSummary); ?></small>
                                     </div>
                                     <div class="jem-event-image-control">
                                         <?php echo $this->form->getInput('fullimage'); ?>

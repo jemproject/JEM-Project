@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_COMPONENT_SITE . '/classes/imagepublicationpolicy.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -221,15 +223,26 @@ class JemViewEditevent extends JemView
         }
 
         // configure image field: show max. file size, and possibly mark field as required
-        $tip = Text::_('COM_JEM_UPLOAD_IMAGE');
+        $introTip = Text::_('COM_JEM_UPLOAD_IMAGE');
+        $fullTip = Text::_('COM_JEM_UPLOAD_IMAGE');
         if ((int)$jemsettings->sizelimit > 0) {
-            $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $fileSizeTip = ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
+            $introTip .= $fileSizeTip;
+            $fullTip .= $fileSizeTip;
         }
-        $this->form->setFieldAttribute('userfile', 'description', $tip);
-        $this->form->setFieldAttribute('fulluserfile', 'description', $tip);
+        $this->imageIntroSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_INTRO);
+        $this->imageFullSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_FULL);
+        $this->imageIntroRequired = JemImageProfilePolicy::isRequired($jemsettings, JemImageProfilePolicy::EVENT_INTRO);
+        $this->imageFullRequired = JemImageProfilePolicy::isRequired($jemsettings, JemImageProfilePolicy::EVENT_FULL);
+        $introTip .= ' <br>' . $this->imageIntroSummary;
+        $fullTip .= ' <br>' . $this->imageFullSummary;
+        $this->form->setFieldAttribute('userfile', 'description', $introTip);
+        $this->form->setFieldAttribute('fulluserfile', 'description', $fullTip);
         if ($jemsettings->imageenabled == 2) {
             $this->form->setFieldAttribute('userfile', 'required', 'true');
         }
+
+        JemImagePublicationPolicy::configureEditingForm($this->form, 'event', $jemsettings);
 
         // configure invited field
         if ($jemsettings->regallowinvitation == 1) {

@@ -212,7 +212,7 @@ $typeField = $this->form->getField('type_id');
                         <div class="accordion-body">
                             <fieldset class="panelform">
                                 <ul class="adminformlist jem-category-image-fields">
-                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div>
+                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div><small><?php echo $this->escape($this->imageProfileSummary); ?></small>
                                     </li>
                                     <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
                                 </ul>

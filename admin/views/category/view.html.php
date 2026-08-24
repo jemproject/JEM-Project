@@ -14,6 +14,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+
 /**
  * Category View
  */
@@ -55,6 +57,9 @@ class JemViewCategory extends JemAdminView
 
         $Lists['groups'] = HTMLHelper::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox form-select m-0'), 'value', 'text', $this->item->groupid);
         $this->Lists     = $Lists;
+        $this->imageProfileSummary = JemImage::profileSummary(JemHelper::config(), JemImageProfilePolicy::CATEGORY);
+
+        JemImagePublicationPolicy::configureEditingForm($this->form, 'category', JemHelper::config());
 
         parent::display($tpl);
 

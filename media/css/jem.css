@@ -3898,3 +3898,9 @@ div#jem .jem-editevent-field-cats .choices__list,
 div#jem .jem-editevent-field-cats .choices__item {
     text-align: left !important;
 }
+/* Required image roles are enforced only when the edited item is published. */
+.jem-image-required-invalid .choices__inner,
+.jem-image-required-invalid input.form-control,
+.jem-image-required-invalid input[type="file"] {
+    border-color: #dc3545;
+}

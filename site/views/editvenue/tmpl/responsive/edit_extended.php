@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 
 
 <!-- IMAGE -->
-<?php if ($this->item->locimage || $this->jemsettings->imageenabled != 0) : ?>
+<?php if ($this->item->locimage || $this->jemsettings->imageenabled != 0 || $this->imageProfileRequired) : ?>
     <fieldset class="jem_fldst_image jem-image-upload-panel">
         <legend><?php echo Text::_('COM_JEM_EDITVENUE_IMAGE_LEGEND'); ?></legend>
         <dl class="adminformlist jem-dl jem-image-upload-list">
@@ -29,6 +29,7 @@ use Joomla\CMS\Language\Text;
 
                 <?php if ($this->jemsettings->imageenabled != 0) : ?>
                     <div class="jem-image-file-control">
+                        <small><?php echo $this->escape($this->imageProfileSummary); ?></small>
                         <?php echo $this->form->getInput('userfile'); ?>
                     </div>
                     <div class="jem-image-selected-preview" hidden>
@@ -44,6 +45,8 @@ use Joomla\CMS\Language\Text;
                         <?php endif; ?>
                     </div>
                     <input type="hidden" name="removeimage" id="removeimage" value="0" />
+                <?php elseif ($this->imageProfileRequired) : ?>
+                    <span class="alert alert-warning d-block mb-0"><?php echo Text::_('COM_JEM_IMAGE_REQUIRED_FRONTEND_DISABLED'); ?></span>
                 <?php elseif (!$this->item->locimage) : ?>
                     <span class="jem-image-empty"><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                 <?php endif; ?>

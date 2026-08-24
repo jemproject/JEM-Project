@@ -13,6 +13,8 @@ use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+
 /**
  * View class: Venue
  */
@@ -50,6 +52,8 @@ class JemViewVenue extends JemAdminView
         $app            = Factory::getApplication();
         $this->document = $app->getDocument();
         $this->settings = JemAdmin::config();
+        $this->jemsettings = JemHelper::config();
+        $this->imageProfileSummary = JemImage::profileSummary($this->jemsettings, JemImageProfilePolicy::VENUE);
         $this->featurePolicy = JemFeaturePolicy::current();
         $this->showAdvancedData = !empty($this->item->parent_venue_id)
             || !empty($this->item->capacity_profile)
@@ -79,6 +83,8 @@ class JemViewVenue extends JemAdminView
 
         $access2 = JemHelper::getAccesslevelOptions();
         $this->access = $access2;
+
+        JemImagePublicationPolicy::configureEditingForm($this->form, 'venue', $this->jemsettings);
 
         $this->addToolbar();
         parent::display($tpl);

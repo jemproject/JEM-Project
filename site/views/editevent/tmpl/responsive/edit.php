@@ -954,7 +954,7 @@ $document->addStyleDeclaration('
             </fieldset>
 
             <!-- IMAGE -->
-            <?php if ($this->item->datimage || !empty($this->item->fullimage) || $this->jemsettings->imageenabled != 0) : ?>
+            <?php if ($this->item->datimage || !empty($this->item->fullimage) || $this->jemsettings->imageenabled != 0 || $this->imageIntroRequired || $this->imageFullRequired) : ?>
                 <fieldset class="jem_fldst_image">
                     <legend><?php echo Text::_('COM_JEM_IMAGE'); ?></legend>
                     <?php if ($this->jemsettings->imageenabled != 0) : ?>
@@ -964,6 +964,7 @@ $document->addStyleDeclaration('
                                     <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
                                     <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
                                     <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                    <small><?php echo $this->escape($this->imageIntroSummary); ?></small>
                                 </div>
                                 <div class="jem-editevent-image-control">
                                     <?php if ($this->item->datimage) : ?>
@@ -993,6 +994,7 @@ $document->addStyleDeclaration('
                                     <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
                                     <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_FE_DESC'); ?></span>
                                     <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
+                                    <small><?php echo $this->escape($this->imageFullSummary); ?></small>
                                 </div>
                                 <div class="jem-editevent-image-control">
                                     <?php if (!empty($this->item->fullimage)) : ?>
@@ -1024,6 +1026,8 @@ $document->addStyleDeclaration('
                                 </div>
                             </div>
                         </div>
+                    <?php else : ?>
+                        <div class="alert alert-warning mb-0"><?php echo Text::_('COM_JEM_IMAGE_REQUIRED_FRONTEND_DISABLED'); ?></div>
                     <?php endif; ?>
                 </fieldset>
             <?php endif; ?>

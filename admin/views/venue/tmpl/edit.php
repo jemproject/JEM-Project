@@ -1313,7 +1313,7 @@ Text::script('JCANCEL');
                             <div class="accordion-body">
                                 <fieldset class="panelform">
                                     <ul class="adminformlist jem-venue-image-fields">
-                                        <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div></li>
+                                        <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div><small><?php echo $this->escape($this->imageProfileSummary); ?></small></li>
                                         <li class="jem-venue-image-alt"><?php echo $this->form->renderField('locimage_alt'); ?></li>
                                     </ul>
                                     <?php echo $this->form->getInput('image_path'); ?>

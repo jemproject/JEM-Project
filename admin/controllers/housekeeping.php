@@ -132,6 +132,86 @@ class JemControllerHousekeeping extends BaseController
     }
 
     /**
+     * Audit assigned originals against the current image profiles without changing files.
+     */
+    public function auditImages() {
+        Session::checkToken('get') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $app = Factory::getApplication();
+        $app->setUserState('com_jem.housekeeping.image_profile_report', null);
+
+        $this->setRedirect(
+            'index.php?option=com_jem&view=housekeeping&imageaudit=1',
+            Text::_('COM_JEM_HOUSEKEEPING_IMAGE_AUDIT_DONE')
+        );
+    }
+
+    /**
+     * Normalise one controlled batch of assigned originals after explicit confirmation.
+     */
+    public function normaliseImages() {
+        Session::checkToken('post') or jexit('Invalid Token');
+        $this->allowHousekeeping();
+
+        $app = Factory::getApplication();
+        $model = $this->getModel('housekeeping');
+        $batchLimit = $model::IMAGE_NORMALISE_BATCH_LIMIT;
+        $selected = $app->input->post->get('image_candidates', array(), 'array');
+        $selected = is_array($selected) ? array_values($selected) : array();
+
+        if (!$selected) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=housekeeping&imageaudit=1',
+                Text::_('COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_NONE_SELECTED'),
+                'warning'
+            );
+            return;
+        }
+
+        if (count($selected) > $batchLimit) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=housekeeping&imageaudit=1',
+                Text::sprintf(
+                    'COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_LIMIT_EXCEEDED',
+                    $batchLimit
+                ),
+                'warning'
+            );
+            return;
+        }
+
+        try {
+            $run = $model->normaliseImageProfiles($selected);
+        } catch (InvalidArgumentException $exception) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=housekeeping&imageaudit=1',
+                Text::_('COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_INVALID_SELECTION'),
+                'warning'
+            );
+            return;
+        }
+
+        $type = (int) $run['failed'] > 0 ? 'warning' : 'message';
+        if ((int) $run['failed'] > 0) {
+            $app->enqueueMessage(
+                Text::sprintf('COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_ERRORS', (int) $run['failed']),
+                'warning'
+            );
+        }
+
+        $this->setRedirect(
+            'index.php?option=com_jem&view=housekeeping&imageaudit=1',
+            Text::sprintf(
+                'COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_DONE',
+                (int) $run['completed'],
+                (int) $run['skipped']
+            ),
+            $type
+        );
+    }
+
+    /**
      * Truncates JEM tables with exception of settings table
      */
     public function truncateAllData() {

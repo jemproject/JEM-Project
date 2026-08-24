@@ -316,14 +316,24 @@ class JemModelCategory extends AdminModel
             $srcPath = Path::clean(JPATH_ROOT . '/images/jem/categories/' . $catImage);
             $dstDir  = Path::clean(JPATH_ROOT . '/images/jem/events');
             $dstPath = Path::clean($dstDir . '/category_' . $catImage);
+            $dstThumb = Path::clean(JPATH_ROOT . '/images/jem/events/small/category_' . $catImage);
 
             if (is_file($srcPath)) {
                 if (!Folder::exists($dstDir)) {
                     Folder::create($dstDir);
                 }
 
-                if (Folder::exists($dstDir) && !File::exists($dstPath)) {
-                    File::copy($srcPath, $dstPath);
+                if (Folder::exists($dstDir) && !File::exists($dstPath)
+                    && !JemImage::copyForProfile(
+                        $srcPath,
+                        $dstPath,
+                        $dstThumb,
+                        JemHelper::config(),
+                        JemImageProfilePolicy::EVENT_INTRO
+                    )) {
+                    $this->setError(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'));
+
+                    return false;
                 }
             }
         }

@@ -575,6 +575,28 @@
             maxlength="10"
             required="false"
         />
+        <field name="image_max_dimension" type="number"
+            label="COM_JEM_IMAGE_MAX_DIMENSION"
+            description="COM_JEM_IMAGE_MAX_DIMENSION_DESC"
+            class="inputbox"
+            default="3840"
+            min="320"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
+        <field name="image_min_dimension" type="number"
+            label="COM_JEM_IMAGE_MIN_DIMENSION"
+            description="COM_JEM_IMAGE_MIN_DIMENSION_DESC"
+            class="inputbox"
+            default="64"
+            min="64"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
         <!-- @todo rename field -->
         <field name="imagehight" type="text"
             label="COM_JEM_IMAGE_HEIGHT"
@@ -591,6 +613,214 @@
             size="10"
             maxlength="10"
             required="false"
+        />
+        <field name="image_event_intro_mode" type="list"
+            label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
+            description="COM_JEM_IMAGE_ADJUSTMENT_MODE_DESC"
+            default="none"
+            required="true"
+            filter="cmd"
+        >
+            <option value="none">COM_JEM_IMAGE_ADJUSTMENT_NONE</option>
+            <option value="pad">COM_JEM_IMAGE_ADJUSTMENT_PAD</option>
+            <option value="crop">COM_JEM_IMAGE_ADJUSTMENT_CROP</option>
+        </field>
+        <field name="image_event_intro_required" type="radio"
+            label="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH"
+            description="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH_DESC"
+            class="btn-group btn-group-yesno"
+            default="0"
+            required="true"
+            filter="integer"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="image_event_intro_ratio" type="list"
+            label="COM_JEM_IMAGE_ASPECT_RATIO"
+            description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
+            default="16_9"
+            required="true"
+            filter="cmd"
+            showon="image_event_intro_mode!:none"
+        >
+            <option value="1_1">1:1</option>
+            <option value="4_3">4:3</option>
+            <option value="3_4">3:4</option>
+            <option value="3_2">3:2</option>
+            <option value="2_3">2:3</option>
+            <option value="8_5">8:5</option>
+            <option value="5_8">5:8</option>
+            <option value="16_9">16:9</option>
+            <option value="9_16">9:16</option>
+            <option value="21_9">21:9</option>
+            <option value="9_21">9:21</option>
+            <option value="custom">COM_JEM_IMAGE_ASPECT_RATIO_CUSTOM</option>
+        </field>
+        <field name="image_event_intro_custom_ratio" type="text"
+            label="COM_JEM_IMAGE_CUSTOM_RATIO"
+            description="COM_JEM_IMAGE_CUSTOM_RATIO_DESC"
+            default="16:9"
+            maxlength="9"
+            required="false"
+            filter="string"
+            showon="image_event_intro_mode!:none[AND]image_event_intro_ratio:custom"
+        />
+        <field name="image_event_full_mode" type="list"
+            label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
+            description="COM_JEM_IMAGE_ADJUSTMENT_MODE_DESC"
+            default="none"
+            required="true"
+            filter="cmd"
+        >
+            <option value="none">COM_JEM_IMAGE_ADJUSTMENT_NONE</option>
+            <option value="pad">COM_JEM_IMAGE_ADJUSTMENT_PAD</option>
+            <option value="crop">COM_JEM_IMAGE_ADJUSTMENT_CROP</option>
+        </field>
+        <field name="image_event_full_required" type="radio"
+            label="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH"
+            description="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH_DESC"
+            class="btn-group btn-group-yesno"
+            default="0"
+            required="true"
+            filter="integer"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="image_event_full_ratio" type="list"
+            label="COM_JEM_IMAGE_ASPECT_RATIO"
+            description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
+            default="16_9"
+            required="true"
+            filter="cmd"
+            showon="image_event_full_mode!:none"
+        >
+            <option value="1_1">1:1</option>
+            <option value="4_3">4:3</option>
+            <option value="3_4">3:4</option>
+            <option value="3_2">3:2</option>
+            <option value="2_3">2:3</option>
+            <option value="8_5">8:5</option>
+            <option value="5_8">5:8</option>
+            <option value="16_9">16:9</option>
+            <option value="9_16">9:16</option>
+            <option value="21_9">21:9</option>
+            <option value="9_21">9:21</option>
+            <option value="custom">COM_JEM_IMAGE_ASPECT_RATIO_CUSTOM</option>
+        </field>
+        <field name="image_event_full_custom_ratio" type="text"
+            label="COM_JEM_IMAGE_CUSTOM_RATIO"
+            description="COM_JEM_IMAGE_CUSTOM_RATIO_DESC"
+            default="16:9"
+            maxlength="9"
+            required="false"
+            filter="string"
+            showon="image_event_full_mode!:none[AND]image_event_full_ratio:custom"
+        />
+        <field name="image_venue_mode" type="list"
+            label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
+            description="COM_JEM_IMAGE_ADJUSTMENT_MODE_DESC"
+            default="none"
+            required="true"
+            filter="cmd"
+        >
+            <option value="none">COM_JEM_IMAGE_ADJUSTMENT_NONE</option>
+            <option value="pad">COM_JEM_IMAGE_ADJUSTMENT_PAD</option>
+            <option value="crop">COM_JEM_IMAGE_ADJUSTMENT_CROP</option>
+        </field>
+        <field name="image_venue_required" type="radio"
+            label="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH"
+            description="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH_DESC"
+            class="btn-group btn-group-yesno"
+            default="0"
+            required="true"
+            filter="integer"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="image_venue_ratio" type="list"
+            label="COM_JEM_IMAGE_ASPECT_RATIO"
+            description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
+            default="4_3"
+            required="true"
+            filter="cmd"
+            showon="image_venue_mode!:none"
+        >
+            <option value="1_1">1:1</option>
+            <option value="4_3">4:3</option>
+            <option value="3_4">3:4</option>
+            <option value="3_2">3:2</option>
+            <option value="2_3">2:3</option>
+            <option value="8_5">8:5</option>
+            <option value="5_8">5:8</option>
+            <option value="16_9">16:9</option>
+            <option value="9_16">9:16</option>
+            <option value="21_9">21:9</option>
+            <option value="9_21">9:21</option>
+            <option value="custom">COM_JEM_IMAGE_ASPECT_RATIO_CUSTOM</option>
+        </field>
+        <field name="image_venue_custom_ratio" type="text"
+            label="COM_JEM_IMAGE_CUSTOM_RATIO"
+            description="COM_JEM_IMAGE_CUSTOM_RATIO_DESC"
+            default="4:3"
+            maxlength="9"
+            required="false"
+            filter="string"
+            showon="image_venue_mode!:none[AND]image_venue_ratio:custom"
+        />
+        <field name="image_category_mode" type="list"
+            label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
+            description="COM_JEM_IMAGE_ADJUSTMENT_MODE_DESC"
+            default="none"
+            required="true"
+            filter="cmd"
+        >
+            <option value="none">COM_JEM_IMAGE_ADJUSTMENT_NONE</option>
+            <option value="pad">COM_JEM_IMAGE_ADJUSTMENT_PAD</option>
+            <option value="crop">COM_JEM_IMAGE_ADJUSTMENT_CROP</option>
+        </field>
+        <field name="image_category_required" type="radio"
+            label="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH"
+            description="COM_JEM_IMAGE_REQUIRED_TO_PUBLISH_DESC"
+            class="btn-group btn-group-yesno"
+            default="0"
+            required="true"
+            filter="integer"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="image_category_ratio" type="list"
+            label="COM_JEM_IMAGE_ASPECT_RATIO"
+            description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
+            default="1_1"
+            required="true"
+            filter="cmd"
+            showon="image_category_mode!:none"
+        >
+            <option value="1_1">1:1</option>
+            <option value="4_3">4:3</option>
+            <option value="3_4">3:4</option>
+            <option value="3_2">3:2</option>
+            <option value="2_3">2:3</option>
+            <option value="8_5">8:5</option>
+            <option value="5_8">5:8</option>
+            <option value="16_9">16:9</option>
+            <option value="9_16">9:16</option>
+            <option value="21_9">21:9</option>
+            <option value="9_21">9:21</option>
+            <option value="custom">COM_JEM_IMAGE_ASPECT_RATIO_CUSTOM</option>
+        </field>
+        <field name="image_category_custom_ratio" type="text"
+            label="COM_JEM_IMAGE_CUSTOM_RATIO"
+            description="COM_JEM_IMAGE_CUSTOM_RATIO_DESC"
+            default="1:1"
+            maxlength="9"
+            required="false"
+            filter="string"
+            showon="image_category_mode!:none[AND]image_category_ratio:custom"
         />
         <field name="pdf_imagewidth" type="number"
             label="COM_JEM_PDF_IMAGE_WIDTH"

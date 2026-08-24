@@ -18,6 +18,7 @@ use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
 /**
  * JEM Venue Table
  */
@@ -319,6 +320,7 @@ class JemTableVenue extends Table
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
         $image_to_delete = false;
+        $uploadedImage = array();
 
         // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
         if (!$backend) {
@@ -335,19 +337,17 @@ class JemTableVenue extends Table
                 }
 
                 if (!empty($file['name'])) {
-                    //check the image
-                    $check = JemImage::check($file, $jemsettings);
+                    $filename = JemImage::sanitize($image_dir, $file['name']);
+                    $filepath = $image_dir . $filename;
+                    $thumbnail = JemVenueImagePath::absoluteThumbFolder($this->image_path ?? '') . $filename;
 
-                    if ($check !== false) {
-                        //sanitize the image filename
-                        $filename = JemImage::sanitize($image_dir, $file['name']);
-                        $filepath = $image_dir . $filename;
-
-                        if (File::upload($file['tmp_name'], $filepath)) {
-                            $image_to_delete = $this->locimage; // delete previous image
-                            $this->locimage = $filename;
-                        }
+                    if (!JemImage::uploadProfileImage($file, $filepath, $thumbnail, $jemsettings, JemImageProfilePolicy::VENUE)) {
+                        return false;
                     }
+
+                    $uploadedImage = array($filepath, $thumbnail);
+                    $image_to_delete = $this->locimage; // delete previous image
+                    $this->locimage = $filename;
                 } elseif (!empty($removeimage)) {
                     // if removeimage is non-zero remove image from venue
                     // (file will be deleted later (e.g. housekeeping) if unused)
@@ -376,8 +376,27 @@ class JemTableVenue extends Table
             }
         }
 
+        $missingImages = JemImagePublicationPolicy::missingForRecord('venue', $this, $jemsettings);
+        if ($missingImages) {
+            foreach ($uploadedImage as $uploadedPath) {
+                if (File::exists($uploadedPath)) {
+                    File::delete($uploadedPath);
+                }
+            }
+            $this->setError(JemImagePublicationPolicy::recordFailureMessage((string) $this->venue, $missingImages));
+
+            return false;
+        }
+
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        if (!$ret) {
+            foreach ($uploadedImage as $uploadedPath) {
+                if (File::exists($uploadedPath)) {
+                    File::delete($uploadedPath);
+                }
+            }
+        }
         if ($ret) {
             JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
             $this->synchroniseChildVenueTimezones((int) $this->id, (string) $this->timezone);
@@ -509,6 +528,15 @@ class JemTableVenue extends Table
             } else {
                 // Nothing to set publishing state on, return false.
                 $this->setError(Text::_('JLIB_DATABASE_ERROR_NO_ROWS_SELECTED'));
+                return false;
+            }
+        }
+
+        if ($state === 1) {
+            $invalidImages = JemImagePublicationPolicy::invalidPublishRecords('venue', $pks, JemHelper::config());
+            if ($invalidImages) {
+                $this->setError(JemImagePublicationPolicy::failureMessage($invalidImages));
+
                 return false;
             }
         }

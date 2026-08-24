@@ -17,6 +17,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Path;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
 
 /**
  * JEM Component Imagehandler Controller
@@ -26,6 +27,24 @@ require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php'
  */
 class JemControllerImagehandler extends BaseController
 {
+    private function profileForTask($task, $requested)
+    {
+        $allowed = array(
+            'eventimgup' => array(JemImageProfilePolicy::EVENT_INTRO, JemImageProfilePolicy::EVENT_FULL),
+            'venueimgup' => array(JemImageProfilePolicy::VENUE),
+            'categoriesimgup' => array(JemImageProfilePolicy::CATEGORY),
+        );
+        $defaults = array(
+            'eventimgup' => JemImageProfilePolicy::EVENT_INTRO,
+            'venueimgup' => JemImageProfilePolicy::VENUE,
+            'categoriesimgup' => JemImageProfilePolicy::CATEGORY,
+        );
+
+        return isset($allowed[$task]) && in_array((string) $requested, $allowed[$task], true)
+            ? (string) $requested
+            : ($defaults[$task] ?? '');
+    }
+
     /**
      * Check whether the current user may add images for the requested resource.
      *
@@ -94,6 +113,7 @@ class JemControllerImagehandler extends BaseController
         $app = Factory::getApplication();
         $task = $app->input->getCmd('task', '');
         $recordId = $app->input->getInt('record_id', 0);
+        $profile = $this->profileForTask($task, $app->input->getCmd('image_profile', ''));
 
         if (!$this->canUploadForTask($task, $recordId)) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
@@ -107,6 +127,7 @@ class JemControllerImagehandler extends BaseController
             ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
             : JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
         $redirectPath = $imagePath !== '' ? '&image_path=' . rawurlencode($imagePath) : '';
+        $redirectPath .= $profile !== '' ? '&image_profile=' . rawurlencode($profile) : '';
 
         $directories = array(
             'venueimgup'      => JPATH_SITE . '/images/jem/venues/',
@@ -153,15 +174,6 @@ class JemControllerImagehandler extends BaseController
             return;
         }
 
-        //check the image
-        $check = JemImage::check($file, $jemsettings);
-
-        if ($check === false) {
-            $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
-            return;
-        }
-
         //sanitize the image filename
         $filename = JemImage::sanitize($base_Dir, $file['name']);
         $filepath = Path::clean($base_Dir . $filename);
@@ -172,17 +184,18 @@ class JemControllerImagehandler extends BaseController
             return;
         }
 
-        //upload the image
-        if (!File::upload($file['tmp_name'], $filepath)) {
+        if ($task === 'eventimgup') {
+            $thumbnail = Path::clean(JemEventImagePath::absoluteThumbFolder($imagePath) . $filename);
+        } elseif ($task === 'venueimgup') {
+            $thumbnail = Path::clean(JemVenueImagePath::absoluteThumbFolder($imagePath) . $filename);
+        } else {
+            $thumbnail = Path::clean(JPATH_SITE . '/images/jem/categories/small/' . $filename);
+        }
+
+        if (!JemImage::uploadProfileImage($file, $filepath, $thumbnail, $jemsettings, $profile)) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
             $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;
-        }
-
-        if ($task === 'eventimgup') {
-            JemEventImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
-        } elseif ($task === 'venueimgup') {
-            JemVenueImagePath::createThumbnail($imagePath, $filename, $filepath, $jemsettings);
         }
 
         echo '<script> alert(' . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . '); window.parent.SelectImage(' . json_encode($filename) . ', ' . json_encode($filename) . ', null, ' . json_encode(in_array($task, array('eventimgup', 'venueimgup'), true) ? $imagePath : '') . '); </script>' . "\n";

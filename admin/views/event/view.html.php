@@ -14,6 +14,8 @@ use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+
 /**
  * Event View
  */
@@ -82,7 +84,11 @@ class JemViewEvent extends JemAdminView
         $access2           = JemHelper::getAccesslevelOptions();
         $this->access      = $access2;
         $this->jemsettings = $jemsettings;
+        $this->imageIntroSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_INTRO);
+        $this->imageFullSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_FULL);
         $this->Lists       = $Lists;
+
+        JemImagePublicationPolicy::configureEditingForm($this->form, 'event', $jemsettings);
 
         $this->addToolbar();
         parent::display($tpl);

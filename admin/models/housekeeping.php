@@ -18,6 +18,10 @@ use Joomla\CMS\Client\ClientHelper;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+
 /**
  * Housekeeping-Model
  */
@@ -26,6 +30,8 @@ class JemModelHousekeeping extends BaseDatabaseModel
     const EVENTS = 1;
     const VENUES = 2;
     const CATEGORIES = 3;
+    const IMAGE_NORMALISE_BATCH_LIMIT = 25;
+    const IMAGE_CANDIDATE_PAGE_LIMIT = 50;
 
     /**
      * Map logical name to folder and db names
@@ -176,7 +182,13 @@ class JemModelHousekeeping extends BaseDatabaseModel
                     continue;
                 }
 
-                JemImage::thumb($source, $thumb, $width, $height);
+                JemImage::thumb(
+                    $source,
+                    $thumb,
+                    $width,
+                    $height,
+                    JemImageProfilePolicy::displayMaxDimension($jemsettings)
+                );
 
                 if (File::exists($thumb)) {
                     $count++;
@@ -185,6 +197,464 @@ class JemModelHousekeeping extends BaseDatabaseModel
         }
 
         return $count + $this->resizeLinkThumbnails();
+    }
+
+    /**
+     * Read-only audit of all assigned event, venue and category originals.
+     * Counters represent physical files, not database references.
+     */
+    public function auditImageProfiles($ordering = 'file', $direction = 'asc', $limitstart = 0, $limit = self::IMAGE_CANDIDATE_PAGE_LIMIT)
+    {
+        $settings = JemHelper::config();
+        $report = array(
+            'total' => 0,
+            'valid' => 0,
+            'pending' => 0,
+            'blocked' => 0,
+            'below_minimum' => 0,
+            'over_maximum' => 0,
+            'ratio_mismatch' => 0,
+            'invalid' => 0,
+            'animated' => 0,
+            'animated_blocked' => 0,
+            'conflicts' => 0,
+            'details' => array(),
+            'candidates' => array(),
+            'candidate_total' => 0,
+            'ordering' => 'file',
+            'direction' => 'asc',
+            'limitstart' => 0,
+            'limit' => self::IMAGE_CANDIDATE_PAGE_LIMIT,
+        );
+
+        foreach ($this->getImageProfileAssignments($settings) as $assignment) {
+            $report['total']++;
+            if ($assignment['conflict']) {
+                $report['conflicts']++;
+                $report['blocked']++;
+                $report['details'][] = $this->imageAuditDetail($assignment, 'conflict');
+                continue;
+            }
+
+            $analysis = JemImage::analyseStoredImage($assignment['source'], $settings, $assignment['profile'], true);
+            if (!$analysis['accepted']) {
+                $report['invalid']++;
+                $report['blocked']++;
+                $report['details'][] = $this->imageAuditDetail($assignment, 'invalid');
+                continue;
+            }
+
+            if ($analysis['minimum_not_met']) {
+                $report['below_minimum']++;
+            }
+            if ($analysis['max_exceeded']) {
+                $report['over_maximum']++;
+            }
+            if ($analysis['ratio_mismatch']) {
+                $report['ratio_mismatch']++;
+            }
+            if ((int) $analysis['frames'] > 1) {
+                $report['animated']++;
+            }
+
+            if ($analysis['minimum_not_met']) {
+                $report['blocked']++;
+                $report['details'][] = $this->imageAuditDetail($assignment, 'below_minimum');
+            } elseif ($analysis['needs_normalisation'] && (int) $analysis['frames'] > 1) {
+                $report['animated_blocked']++;
+                $report['blocked']++;
+                $report['details'][] = $this->imageAuditDetail($assignment, 'animated_skip');
+            } elseif ($analysis['needs_normalisation']
+                && !$this->isImageNormalisationCandidate($assignment, $analysis, $settings)) {
+                $report['blocked']++;
+                $report['details'][] = $this->imageAuditDetail($assignment, 'target_below_minimum');
+            } elseif ($analysis['needs_normalisation']) {
+                $report['pending']++;
+                $report['candidates'][] = $this->imageNormalisationCandidate($assignment, $analysis, $settings);
+            } else {
+                $report['valid']++;
+            }
+        }
+
+        $report['candidate_total'] = count($report['candidates']);
+        $report['pending'] = $report['candidate_total'];
+        $report['ordering'] = $this->normaliseImageCandidateOrdering($ordering);
+        $report['direction'] = strtolower((string) $direction) === 'desc' ? 'desc' : 'asc';
+        $this->sortImageCandidates($report['candidates'], $report['ordering'], $report['direction']);
+
+        $limit = max(1, min(100, (int) $limit));
+        $limitstart = max(0, (int) $limitstart);
+        if ($report['candidate_total'] > 0 && $limitstart >= $report['candidate_total']) {
+            $limitstart = (int) (floor(($report['candidate_total'] - 1) / $limit) * $limit);
+        }
+
+        $report['limit'] = $limit;
+        $report['limitstart'] = $limitstart;
+        $report['candidates'] = array_slice($report['candidates'], $limitstart, $limit);
+        $report['details'] = array_slice($report['details'], 0, 100);
+
+        return $report;
+    }
+
+    /**
+     * Normalise one explicitly selected batch. Existing references and filenames stay unchanged.
+     */
+    public function normaliseImageProfiles(array $selectedIdentifiers)
+    {
+        $settings = JemHelper::config();
+        $selectedIdentifiers = array_values(array_unique($selectedIdentifiers));
+
+        if (count($selectedIdentifiers) < 1 || count($selectedIdentifiers) > self::IMAGE_NORMALISE_BATCH_LIMIT) {
+            throw new InvalidArgumentException('Invalid image normalisation batch size.');
+        }
+
+        foreach ($selectedIdentifiers as $identifier) {
+            if (!is_string($identifier) || !preg_match('/^[a-f0-9]{64}$/D', $identifier)) {
+                throw new InvalidArgumentException('Invalid image normalisation identifier.');
+            }
+        }
+
+        $selected = array_fill_keys($selectedIdentifiers, true);
+        $result = array(
+            'selected' => count($selectedIdentifiers),
+            'attempted' => 0,
+            'completed' => 0,
+            'skipped' => 0,
+            'failed' => 0,
+            'failed_files' => array(),
+        );
+
+        foreach ($this->getImageProfileAssignments($settings) as $assignment) {
+            if (!$selected) {
+                break;
+            }
+
+            if ($assignment['conflict']) {
+                continue;
+            }
+
+            $analysis = JemImage::analyseStoredImage($assignment['source'], $settings, $assignment['profile'], true);
+            if (!$this->isImageNormalisationCandidate($assignment, $analysis, $settings)) {
+                continue;
+            }
+
+            $identifier = $this->imageCandidateIdentifier($assignment);
+            if (!isset($selected[$identifier])) {
+                continue;
+            }
+
+            unset($selected[$identifier]);
+            $analysis = JemImage::analyseStoredImage($assignment['source'], $settings, $assignment['profile'], true);
+            if (!$this->isImageNormalisationCandidate($assignment, $analysis, $settings)) {
+                $result['skipped']++;
+                continue;
+            }
+
+            $result['attempted']++;
+            if (JemImage::normaliseStoredImage(
+                $assignment['source'],
+                $assignment['thumbnail'],
+                $settings,
+                $assignment['profile']
+            )) {
+                $result['completed']++;
+            } else {
+                $result['failed']++;
+                $result['failed_files'][] = $this->imageRelativePath($assignment['source']);
+                JemHelper::addLogEntry(
+                    'Unable to normalise selected image: ' . $assignment['source'],
+                    __METHOD__,
+                    Log::WARNING
+                );
+            }
+        }
+
+        $result['skipped'] += count($selected);
+
+        return $result;
+    }
+
+    /**
+     * Resolve and deduplicate all database image references by physical source path.
+     */
+    private function getImageProfileAssignments($settings)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $assignments = array();
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'title', 'image_path', 'datimage', 'fullimage')))
+                ->from($db->quoteName('#__jem_events'))
+        );
+        foreach ((array) $db->loadObjectList() as $event) {
+            $folder = JemEventImagePath::normaliseRelativeFolder($event->image_path ?? '');
+            $this->addImageProfileAssignment(
+                $assignments,
+                'event',
+                (int) $event->id,
+                (string) $event->title,
+                (string) $event->datimage,
+                JemEventImagePath::absoluteImageFolder($folder),
+                JemEventImagePath::absoluteThumbFolder($folder),
+                JemImageProfilePolicy::EVENT_INTRO,
+                $settings
+            );
+            $this->addImageProfileAssignment(
+                $assignments,
+                'event',
+                (int) $event->id,
+                (string) $event->title,
+                (string) $event->fullimage,
+                JemEventImagePath::absoluteImageFolder($folder),
+                JemEventImagePath::absoluteThumbFolder($folder),
+                JemImageProfilePolicy::EVENT_FULL,
+                $settings
+            );
+        }
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'venue', 'image_path', 'locimage')))
+                ->from($db->quoteName('#__jem_venues'))
+        );
+        foreach ((array) $db->loadObjectList() as $venue) {
+            $folder = JemVenueImagePath::normaliseRelativeFolder($venue->image_path ?? '');
+            $this->addImageProfileAssignment(
+                $assignments,
+                'venue',
+                (int) $venue->id,
+                (string) $venue->venue,
+                (string) $venue->locimage,
+                JemVenueImagePath::absoluteImageFolder($folder),
+                JemVenueImagePath::absoluteThumbFolder($folder),
+                JemImageProfilePolicy::VENUE,
+                $settings
+            );
+        }
+
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'catname', 'image')))
+                ->from($db->quoteName('#__jem_categories'))
+                ->where($db->quoteName('id') . ' > 1')
+        );
+        foreach ((array) $db->loadObjectList() as $category) {
+            $this->addImageProfileAssignment(
+                $assignments,
+                'category',
+                (int) $category->id,
+                (string) $category->catname,
+                (string) $category->image,
+                Path::clean(JPATH_SITE . '/images/jem/categories'),
+                Path::clean(JPATH_SITE . '/images/jem/categories/small'),
+                JemImageProfilePolicy::CATEGORY,
+                $settings
+            );
+        }
+
+        return array_values($assignments);
+    }
+
+    private function addImageProfileAssignment(
+        array &$assignments,
+        $entity,
+        $id,
+        $title,
+        $filename,
+        $sourceFolder,
+        $thumbnailFolder,
+        $profile,
+        $settings
+    ) {
+        $filename = trim((string) $filename);
+        if ($filename === '' || File::makeSafe($filename) !== $filename) {
+            return;
+        }
+
+        $source = Path::clean(rtrim((string) $sourceFolder, '\\/') . '/' . $filename);
+        if (!is_file($source)) {
+            return;
+        }
+
+        $key = strtolower(str_replace('\\', '/', $source));
+        $signature = JemImageProfilePolicy::signature($settings, (string) $profile);
+        if (!isset($assignments[$key])) {
+            $assignments[$key] = array(
+                'source' => $source,
+                'thumbnail' => Path::clean(rtrim((string) $thumbnailFolder, '\\/') . '/' . $filename),
+                'profile' => (string) $profile,
+                'signature' => $signature,
+                'conflict' => false,
+                'uses' => array(),
+            );
+        } elseif ($assignments[$key]['signature'] !== $signature) {
+            $assignments[$key]['conflict'] = true;
+        }
+
+        $assignments[$key]['uses'][] = array(
+            'entity' => (string) $entity,
+            'id' => (int) $id,
+            'title' => (string) $title,
+            'profile' => (string) $profile,
+        );
+    }
+
+    private function imageAuditDetail(array $assignment, $status)
+    {
+        $use = reset($assignment['uses']);
+
+        return array(
+            'status' => (string) $status,
+            'entity' => (string) ($use['entity'] ?? ''),
+            'id' => (int) ($use['id'] ?? 0),
+            'title' => (string) ($use['title'] ?? ''),
+            'profile' => (string) ($use['profile'] ?? $assignment['profile']),
+            'file' => basename((string) $assignment['source']),
+        );
+    }
+
+    /**
+     * Build the display-only information for one eligible image.
+     */
+    private function imageNormalisationCandidate(array $assignment, array $analysis, $settings)
+    {
+        $use = reset($assignment['uses']);
+        $config = JemImageProfilePolicy::resolve($settings, (string) $assignment['profile']);
+        $geometry = JemImageProfilePolicy::geometry(
+            (int) $analysis['width'],
+            (int) $analysis['height'],
+            JemImageProfilePolicy::maxDimension($settings),
+            $config['mode'],
+            $config['ratio_width'],
+            $config['ratio_height']
+        );
+        $profiles = array_values(array_unique(array_map(static function ($assignedUse) {
+            return (string) ($assignedUse['profile'] ?? '');
+        }, $assignment['uses'])));
+        sort($profiles, SORT_STRING);
+
+        return array(
+            'identifier' => $this->imageCandidateIdentifier($assignment),
+            'file' => basename((string) $assignment['source']),
+            'path' => dirname($this->imageRelativePath($assignment['source'])),
+            'extension' => strtolower(File::getExt((string) $assignment['source'])),
+            'size' => max(0, (int) @filesize((string) $assignment['source'])),
+            'width' => (int) $analysis['width'],
+            'height' => (int) $analysis['height'],
+            'resolution' => (int) $analysis['width'] * (int) $analysis['height'],
+            'ratio' => $this->imageRatio((int) $analysis['width'], (int) $analysis['height']),
+            'target_width' => (int) $geometry['width'],
+            'target_height' => (int) $geometry['height'],
+            'target_ratio' => $this->imageRatio((int) $geometry['width'], (int) $geometry['height']),
+            'adjustment' => (string) $geometry['method'],
+            'profile' => implode(',', $profiles),
+            'profiles' => $profiles,
+            'entity' => (string) ($use['entity'] ?? ''),
+            'id' => (int) ($use['id'] ?? 0),
+            'title' => (string) ($use['title'] ?? ''),
+            'uses' => count($assignment['uses']),
+        );
+    }
+
+    private function isImageNormalisationCandidate(array $assignment, array $analysis, $settings)
+    {
+        if (empty($analysis['accepted'])
+            || !empty($analysis['minimum_not_met'])
+            || empty($analysis['needs_normalisation'])
+            || (int) ($analysis['frames'] ?? 1) !== 1) {
+            return false;
+        }
+
+        $config = JemImageProfilePolicy::resolve($settings, (string) $assignment['profile']);
+        $geometry = JemImageProfilePolicy::geometry(
+            (int) $analysis['width'],
+            (int) $analysis['height'],
+            JemImageProfilePolicy::maxDimension($settings),
+            $config['mode'],
+            $config['ratio_width'],
+            $config['ratio_height']
+        );
+        $minimum = JemImageProfilePolicy::minDimension($settings);
+
+        return (int) $geometry['width'] >= $minimum
+            && (int) $geometry['height'] >= $minimum;
+    }
+
+    /**
+     * Bind a submitted selection to the current file and profile without exposing a server path.
+     */
+    private function imageCandidateIdentifier(array $assignment)
+    {
+        $source = (string) $assignment['source'];
+        $payload = implode('|', array(
+            $this->imageRelativePath($source),
+            (string) $assignment['signature'],
+            (string) max(0, (int) @filesize($source)),
+            (string) max(0, (int) @filemtime($source)),
+        ));
+        $secret = (string) Factory::getApplication()->get('secret', '');
+
+        return hash_hmac('sha256', $payload, $secret !== '' ? $secret : __CLASS__);
+    }
+
+    private function imageRelativePath($source)
+    {
+        $source = str_replace('\\', '/', Path::clean((string) $source));
+        $root = rtrim(str_replace('\\', '/', Path::clean(JPATH_SITE)), '/');
+
+        if (strncasecmp($source, $root . '/', strlen($root) + 1) === 0) {
+            return ltrim(substr($source, strlen($root)), '/');
+        }
+
+        return basename($source);
+    }
+
+    private function imageRatio($width, $height)
+    {
+        $width = max(1, (int) $width);
+        $height = max(1, (int) $height);
+        $left = $width;
+        $right = $height;
+
+        while ($right !== 0) {
+            $remainder = $left % $right;
+            $left = $right;
+            $right = $remainder;
+        }
+
+        $divisor = max(1, $left);
+
+        return (int) ($width / $divisor) . ':' . (int) ($height / $divisor);
+    }
+
+    private function normaliseImageCandidateOrdering($ordering)
+    {
+        $allowed = array('file', 'path', 'profile', 'resolution', 'ratio', 'size', 'extension', 'adjustment');
+
+        return in_array((string) $ordering, $allowed, true) ? (string) $ordering : 'file';
+    }
+
+    private function sortImageCandidates(array &$candidates, $ordering, $direction)
+    {
+        $multiplier = $direction === 'desc' ? -1 : 1;
+
+        usort($candidates, static function ($left, $right) use ($ordering, $multiplier) {
+            if (in_array($ordering, array('resolution', 'size'), true)) {
+                $comparison = ((int) $left[$ordering]) <=> ((int) $right[$ordering]);
+            } else {
+                $comparison = strnatcasecmp((string) $left[$ordering], (string) $right[$ordering]);
+            }
+
+            if ($comparison === 0) {
+                $comparison = strnatcasecmp(
+                    (string) $left['path'] . '/' . (string) $left['file'],
+                    (string) $right['path'] . '/' . (string) $right['file']
+                );
+            }
+
+            return $comparison * $multiplier;
+        });
     }
 
     /**

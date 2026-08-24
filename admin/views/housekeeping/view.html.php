@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Pagination\Pagination;
 
 /**
  * Housekeeping-View
@@ -27,6 +28,41 @@ class JemViewHousekeeping extends JemAdminView
         }
 
         $this->totalcats = $this->get('Countcats');
+        $legacyReport = $app->getUserState('com_jem.housekeeping.image_profile_report', null);
+        $auditActive = $app->input->getInt('imageaudit', 0) === 1 || is_array($legacyReport);
+        $this->imageProfileReport = null;
+        $this->imagePagination = null;
+        $this->imageBatchLimit = 25;
+
+        if ($auditActive) {
+            $model = $this->getModel();
+            $ordering = $app->getUserStateFromRequest(
+                'com_jem.housekeeping.image_ordering',
+                'filter_order',
+                'file',
+                'cmd'
+            );
+            $direction = $app->getUserStateFromRequest(
+                'com_jem.housekeeping.image_direction',
+                'filter_order_Dir',
+                'asc',
+                'cmd'
+            );
+            $limitstart = $app->input->getInt('limitstart', 0);
+            $this->imageBatchLimit = $model::IMAGE_NORMALISE_BATCH_LIMIT;
+            $this->imageProfileReport = $model->auditImageProfiles(
+                $ordering,
+                $direction,
+                $limitstart,
+                $model::IMAGE_CANDIDATE_PAGE_LIMIT
+            );
+            $this->imagePagination = new Pagination(
+                (int) $this->imageProfileReport['candidate_total'],
+                (int) $this->imageProfileReport['limitstart'],
+                (int) $this->imageProfileReport['limit']
+            );
+            $app->setUserState('com_jem.housekeeping.image_profile_report', null);
+        }
 
         // add toolbar
         $this->addToolbar();

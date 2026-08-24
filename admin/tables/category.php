@@ -16,6 +16,8 @@ use Joomla\CMS\Table\Nested;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Registry\Registry;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+
 /**
  * Category Table
  */
@@ -229,7 +231,33 @@ class JemTableCategory extends Nested
             return false;
         }
 
+        $missingImages = JemImagePublicationPolicy::missingForRecord('category', $this, JemHelper::config());
+        if ($missingImages) {
+            $this->setError(JemImagePublicationPolicy::recordFailureMessage((string) $this->catname, $missingImages));
+
+            return false;
+        }
+
         return parent::store($updateNulls);
+    }
+
+    /**
+     * Enforce category image requirements for direct list-view publication.
+     */
+    public function publish($pks = null, $state = 1, $userId = 0)
+    {
+        $ids = is_array($pks) ? $pks : array($pks ?: $this->id);
+
+        if ((int) $state === 1) {
+            $invalidImages = JemImagePublicationPolicy::invalidPublishRecords('category', $ids, JemHelper::config());
+            if ($invalidImages) {
+                $this->setError(JemImagePublicationPolicy::failureMessage($invalidImages));
+
+                return false;
+            }
+        }
+
+        return parent::publish($pks, $state, $userId);
     }
 
     /**

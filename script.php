@@ -324,6 +324,7 @@ class com_jemInstallerScript
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
             $this->repair510MediaSchema();
+            $this->repair510ImageProfileSettings();
             $this->repair510OperatingProfile($type);
             $this->installCountryCurrencyCatalogue();
             $this->installEuropeanTaxRateCatalogue();
@@ -1981,6 +1982,43 @@ SQL;
                 )->execute();
                 $columns[strtolower($column)] = true;
             }
+        }
+    }
+
+    /**
+     * Ensure refreshed 5.1 prerelease packages receive the additive image
+     * defaults even when Joomla has already recorded schema version 5.1.0.
+     */
+    private function repair510ImageProfileSettings()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $defaults = array(
+            'image_min_dimension' => '64',
+            'image_max_dimension' => '3840',
+            'image_event_intro_mode' => 'none',
+            'image_event_intro_required' => '0',
+            'image_event_intro_ratio' => '16_9',
+            'image_event_intro_custom_ratio' => '16:9',
+            'image_event_full_mode' => 'none',
+            'image_event_full_required' => '0',
+            'image_event_full_ratio' => '16_9',
+            'image_event_full_custom_ratio' => '16:9',
+            'image_venue_mode' => 'none',
+            'image_venue_required' => '0',
+            'image_venue_ratio' => '4_3',
+            'image_venue_custom_ratio' => '4:3',
+            'image_category_mode' => 'none',
+            'image_category_required' => '0',
+            'image_category_ratio' => '1_1',
+            'image_category_custom_ratio' => '1:1',
+        );
+
+        foreach ($defaults as $key => $value) {
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_config'))
+                ->columns($db->quoteName(array('keyname', 'value')))
+                ->values($db->quote($key) . ', ' . $db->quote($value));
+            $db->setQuery(str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query))->execute();
         }
     }
 

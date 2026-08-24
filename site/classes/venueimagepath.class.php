@@ -12,6 +12,8 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
+require_once __DIR__ . '/imageprofilepolicy.class.php';
+
 /**
  * Resolves local Venue media paths using stable database identifiers.
  *
@@ -128,7 +130,13 @@ class JemVenueImagePath
 
         $target = Path::clean(JPATH_SITE . '/' . self::thumbPath($folder, $filename));
         if (!File::exists($target)) {
-            JemImage::thumb($sourcePath, $target, (int) $settings->imagewidth, (int) $settings->imagehight);
+            JemImage::thumb(
+                $sourcePath,
+                $target,
+                (int) $settings->imagewidth,
+                (int) $settings->imagehight,
+                JemImageProfilePolicy::displayMaxDimension($settings)
+            );
         }
 
         return File::exists($target);

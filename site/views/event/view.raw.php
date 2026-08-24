@@ -16,6 +16,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 
+require_once JPATH_COMPONENT_SITE . '/classes/imageprofilepolicy.class.php';
+
 /**
  * Event-Raw
  */
@@ -964,7 +966,13 @@ class JemViewEvent extends HtmlView
      */
     private function resolvePdfImagePath(string $image, string $type): string
     {
-        return JemPdfImagePolicy::resolveLocalImage($image, $type, JPATH_SITE, (string) Uri::root(true));
+        return JemPdfImagePolicy::resolveLocalImage(
+            $image,
+            $type,
+            JPATH_SITE,
+            (string) Uri::root(true),
+            JemImageProfilePolicy::displayMaxDimension(JemHelper::config())
+        );
     }
 
     /**

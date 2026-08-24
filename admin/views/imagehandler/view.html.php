@@ -156,6 +156,21 @@ class JemViewImagehandler extends HtmlView
 
         //get vars
         $task = Factory::getApplication()->input->get('task', '');
+        $requestedProfile = Factory::getApplication()->input->getCmd('image_profile', '');
+        $defaultProfiles = array(
+            'eventimg' => 'event_intro',
+            'venueimg' => 'venue',
+            'categoriesimg' => 'category',
+        );
+        $allowedProfiles = array(
+            'eventimg' => array('event_intro', 'event_full'),
+            'venueimg' => array('venue'),
+            'categoriesimg' => array('category'),
+        );
+        $baseTask = preg_replace('/up$/', '', (string) $task);
+        $imageProfile = isset($allowedProfiles[$baseTask]) && in_array($requestedProfile, $allowedProfiles[$baseTask], true)
+            ? $requestedProfile
+            : ($defaultProfiles[$baseTask] ?? 'event_intro');
         $imagePath = strpos((string) $task, 'venue') === 0
             ? JemVenueImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''))
             : JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
@@ -168,6 +183,7 @@ class JemViewImagehandler extends HtmlView
         $this->request_url = $uri;
         $this->ftp         = $ftp;
         $this->imagePath   = $imagePath;
+        $this->imageProfile = $imageProfile;
 
         parent::display($tpl);
     }

@@ -1991,6 +1991,7 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $target = Path::clean(JemEventImagePath::absoluteImageFolder($targetFolder) . $targetFilename);
+        $thumbnail = Path::clean(JemEventImagePath::absoluteThumbFolder($targetFolder) . $targetFilename);
         $basePath = Path::clean(JPATH_SITE . '/' . JemEventImagePath::BASE);
 
         if (!JemEventImagePath::isInsideBase($target, $basePath)) {
@@ -1999,13 +2000,17 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
-        if (!File::exists($target) && !File::copy($source, $target)) {
+        if (!File::exists($target) && !JemImage::copyForProfile(
+            $source,
+            $target,
+            $thumbnail,
+            JemHelper::config(),
+            JemImageProfilePolicy::EVENT_INTRO
+        )) {
             $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
 
             return false;
         }
-
-        JemEventImagePath::createThumbnail($targetFolder, $targetFilename, $target, JemHelper::config());
 
         return true;
     }

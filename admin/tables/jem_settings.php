@@ -103,9 +103,45 @@ class jem_settings extends Table
     /** @var int */
     public $sizelimit = '100';
     /** @var int */
+    public $image_min_dimension = '64';
+    /** @var int */
+    public $image_max_dimension = '3840';
+    /** @var int */
     public $imagehight = '100';
     /** @var int */
     public $imagewidth = '100';
+    /** @var string */
+    public $image_event_intro_mode = 'none';
+    /** @var int */
+    public $image_event_intro_required = '0';
+    /** @var string */
+    public $image_event_intro_ratio = '16_9';
+    /** @var string */
+    public $image_event_intro_custom_ratio = '16:9';
+    /** @var string */
+    public $image_event_full_mode = 'none';
+    /** @var int */
+    public $image_event_full_required = '0';
+    /** @var string */
+    public $image_event_full_ratio = '16_9';
+    /** @var string */
+    public $image_event_full_custom_ratio = '16:9';
+    /** @var string */
+    public $image_venue_mode = 'none';
+    /** @var int */
+    public $image_venue_required = '0';
+    /** @var string */
+    public $image_venue_ratio = '4_3';
+    /** @var string */
+    public $image_venue_custom_ratio = '4:3';
+    /** @var string */
+    public $image_category_mode = 'none';
+    /** @var int */
+    public $image_category_required = '0';
+    /** @var string */
+    public $image_category_ratio = '1_1';
+    /** @var string */
+    public $image_category_custom_ratio = '1:1';
     /** @var int */
     public $pdf_imagewidth = '40';
     /** @var int */

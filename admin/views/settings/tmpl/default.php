@@ -89,10 +89,10 @@ jQuery(document).ready(function($) {
                                     <?php echo $this->loadTemplate('basicdisplay'); ?>
                                     <?php echo $this->loadTemplate('basiclayout'); ?>
                                     <?php echo $this->loadTemplate('basiceventhandling'); ?>
+                                    <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
                                 <div class="w-50 fltrt">
                                     <?php echo $this->loadTemplate('basicimagehandling'); ?>
-                                    <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>

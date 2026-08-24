@@ -144,3 +144,24 @@ ALTER TABLE `#__jem_venue_layouts` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFA
 ALTER TABLE `#__jem_venue_layouts` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
 ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name` /** CAN FAIL **/;
 ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image_alt` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
+
+-- JEM 5.1.0: configurable upload and aspect-ratio profiles. Existing images
+-- remain untouched until an administrator runs the manual Housekeeping action.
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_min_dimension', '64');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_max_dimension', '3840');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_mode', 'none');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_required', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_ratio', '16_9');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_custom_ratio', '16:9');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_full_mode', 'none');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_full_required', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_full_ratio', '16_9');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_full_custom_ratio', '16:9');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_venue_mode', 'none');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_venue_required', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_venue_ratio', '4_3');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_venue_custom_ratio', '4:3');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_category_mode', 'none');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_category_required', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_category_ratio', '1_1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_category_custom_ratio', '1:1');

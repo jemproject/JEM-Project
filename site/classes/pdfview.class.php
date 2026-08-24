@@ -16,6 +16,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\String\StringHelper;
 
+require_once __DIR__ . '/imageprofilepolicy.class.php';
+
 /**
  * Shared PDF view helpers.
  */
@@ -1263,10 +1265,23 @@ class JemPdfView
         }
 
         $source = is_array($image) ? ($image['thumb'] ?? $image['original'] ?? '') : $imageFile;
-        $path = JemPdfImagePolicy::resolveLocalImage((string) $source, $type, JPATH_SITE, (string) Uri::root(true));
+        $displayMaxDimension = JemImageProfilePolicy::displayMaxDimension(JemHelper::config());
+        $path = JemPdfImagePolicy::resolveLocalImage(
+            (string) $source,
+            $type,
+            JPATH_SITE,
+            (string) Uri::root(true),
+            $displayMaxDimension
+        );
 
         if ($path === '' && is_array($image) && !empty($image['original'])) {
-            $path = JemPdfImagePolicy::resolveLocalImage((string) $image['original'], $type, JPATH_SITE, (string) Uri::root(true));
+            $path = JemPdfImagePolicy::resolveLocalImage(
+                (string) $image['original'],
+                $type,
+                JPATH_SITE,
+                (string) Uri::root(true),
+                $displayMaxDimension
+            );
         }
 
         if ($path === '') {

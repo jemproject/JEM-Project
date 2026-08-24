@@ -34,6 +34,7 @@ $imageTypes = [
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)), 'label' => Text::_('COM_JEM_GIF_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_GIF_SUPPORT')],
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_WEBP)), 'label' => Text::_('COM_JEM_WEBP_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_WEBP_SUPPORT')],
 ];
+$profileSummary = JemImage::profileSummary($this->jemsettings, $this->imageProfile ?? 'event_intro');
 ?>
 
 <style>
@@ -197,6 +198,8 @@ $imageTypes = [
                 <dd><?php echo $targetDirectory; ?></dd>
                 <dt><?php echo Text::_('COM_JEM_IMAGE_FILESIZE'); ?></dt>
                 <dd><?php echo (int) $this->jemsettings->sizelimit; ?> kb</dd>
+                <dt><?php echo Text::_('COM_JEM_IMAGE_PROFILE_RULES'); ?></dt>
+                <dd><?php echo htmlspecialchars($profileSummary, ENT_QUOTES, 'UTF-8'); ?></dd>
             </dl>
             <ul class="jem-upload-format-list">
                 <?php foreach ($imageTypes as $type): ?>
@@ -220,6 +223,7 @@ $imageTypes = [
 <?php echo HTMLHelper::_('form.token'); ?>
 <input type="hidden" name="option" value="com_jem" />
 <input type="hidden" name="task" value="<?php echo $this->task;?>" />
+<input type="hidden" name="image_profile" value="<?php echo htmlspecialchars((string) ($this->imageProfile ?? ''), ENT_QUOTES, 'UTF-8'); ?>" />
 </form>
 
 <p class="copyright">

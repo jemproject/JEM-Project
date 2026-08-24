@@ -19,6 +19,7 @@ use Joomla\Registry\Registry;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
 
 /**
  * JEM Component Settings Model
@@ -188,6 +189,78 @@ class JemModelSettings extends AdminModel
         }
 
         // sanitize
+        $requestedMaxDimension = (int) ($data['image_max_dimension'] ?? JemImageResourcePolicy::DEFAULT_MAX_DIMENSION);
+        if ($requestedMaxDimension < JemImageResourcePolicy::MIN_CONFIGURED_DIMENSION
+            || $requestedMaxDimension > JemImageResourcePolicy::MAX_CONFIGURED_DIMENSION) {
+            $this->setError(Text::sprintf(
+                'COM_JEM_SETTINGS_IMAGE_MAX_DIMENSION_INVALID',
+                JemImageResourcePolicy::MIN_CONFIGURED_DIMENSION,
+                JemImageResourcePolicy::MAX_CONFIGURED_DIMENSION
+            ));
+
+            return false;
+        }
+        $data['image_max_dimension'] = $requestedMaxDimension;
+        $requestedMinDimension = (int) ($data['image_min_dimension'] ?? JemImageProfilePolicy::DEFAULT_MIN_DIMENSION);
+        if ($requestedMinDimension < JemImageProfilePolicy::MIN_CONFIGURED_MIN_DIMENSION
+            || $requestedMinDimension > $data['image_max_dimension']) {
+            $this->setError(Text::sprintf(
+                'COM_JEM_SETTINGS_IMAGE_MIN_DIMENSION_INVALID',
+                JemImageProfilePolicy::MIN_CONFIGURED_MIN_DIMENSION,
+                $data['image_max_dimension']
+            ));
+
+            return false;
+        }
+        $data['image_min_dimension'] = $requestedMinDimension;
+        $profileDefaults = array(
+            JemImageProfilePolicy::EVENT_INTRO => '16_9',
+            JemImageProfilePolicy::EVENT_FULL => '16_9',
+            JemImageProfilePolicy::VENUE => '4_3',
+            JemImageProfilePolicy::CATEGORY => '1_1',
+        );
+
+        foreach ($profileDefaults as $profile => $defaultRatio) {
+            $prefix = JemImageProfilePolicy::prefix($profile);
+            $data[$prefix . '_required'] = (int) !empty($data[$prefix . '_required']);
+            $data[$prefix . '_mode'] = JemImageProfilePolicy::normaliseMode(
+                (string) ($data[$prefix . '_mode'] ?? JemImageProfilePolicy::MODE_NONE)
+            );
+            $data[$prefix . '_ratio'] = JemImageProfilePolicy::normalisePreset(
+                (string) ($data[$prefix . '_ratio'] ?? $defaultRatio),
+                $defaultRatio
+            );
+            $customRatio = JemImageProfilePolicy::normaliseCustomRatio(
+                (string) ($data[$prefix . '_custom_ratio'] ?? '')
+            );
+
+            if ($data[$prefix . '_ratio'] === 'custom' && $customRatio === '') {
+                $this->setError(Text::_('COM_JEM_SETTINGS_IMAGE_CUSTOM_RATIO_INVALID'));
+
+                return false;
+            }
+
+            $data[$prefix . '_custom_ratio'] = $customRatio;
+            $resolvedProfile = JemImageProfilePolicy::resolve($data, $profile);
+            if ($resolvedProfile['mode'] !== JemImageProfilePolicy::MODE_NONE
+                && !JemImageProfilePolicy::ratioFitsBounds(
+                    $data['image_min_dimension'],
+                    $data['image_max_dimension'],
+                    $resolvedProfile['ratio_width'],
+                    $resolvedProfile['ratio_height']
+                )) {
+                $this->setError(Text::sprintf(
+                    'COM_JEM_SETTINGS_IMAGE_RATIO_OUTSIDE_DIMENSIONS',
+                    $resolvedProfile['ratio_width'],
+                    $resolvedProfile['ratio_height'],
+                    $data['image_min_dimension'],
+                    $data['image_max_dimension']
+                ));
+
+                return false;
+            }
+        }
+
         if (empty($data['imagewidth'])) {
             $data['imagewidth'] = 100;
         }

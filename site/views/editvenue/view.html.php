@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once JPATH_COMPONENT_SITE . '/classes/imagepublicationpolicy.class.php';
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -184,10 +186,15 @@ class JemViewEditvenue extends JemView
         if ((int)$jemsettings->sizelimit > 0) {
             $tip .= ' <br>' . Text::sprintf('COM_JEM_MAX_FILE_SIZE_1', (int)$jemsettings->sizelimit);
         }
+        $this->imageProfileSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::VENUE);
+        $this->imageProfileRequired = JemImageProfilePolicy::isRequired($jemsettings, JemImageProfilePolicy::VENUE);
+        $tip .= ' <br>' . $this->imageProfileSummary;
         $this->form->setFieldAttribute('userfile', 'description', $tip);
         if ($jemsettings->imageenabled == 2) {
             $this->form->setFieldAttribute('userfile', 'required', 'true');
         }
+
+        JemImagePublicationPolicy::configureEditingForm($this->form, 'venue', $jemsettings);
 
         $this->_prepareDocument();
         parent::display($tpl);

@@ -14,6 +14,8 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
+require_once __DIR__ . '/imageprofilepolicy.class.php';
+
 /**
  * Normalises and resolves event image subfolder paths.
  *
@@ -172,7 +174,13 @@ class JemEventImagePath
         $target = Path::clean(JPATH_SITE . '/' . self::thumbPath($folder, $filename));
 
         if (!File::exists($target)) {
-            JemImage::thumb($sourcePath, $target, (int) $settings->imagewidth, (int) $settings->imagehight);
+            JemImage::thumb(
+                $sourcePath,
+                $target,
+                (int) $settings->imagewidth,
+                (int) $settings->imagehight,
+                JemImageProfilePolicy::displayMaxDimension($settings)
+            );
         }
     }
 

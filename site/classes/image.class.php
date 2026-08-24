@@ -16,6 +16,7 @@ use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/imageresourcepolicy.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/imageprofilepolicy.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 
@@ -102,12 +103,12 @@ class JemImage
         return File::exists($thumbPath) ? $thumbRelative : $image;
     }
 
-    static public function thumb($name,$filename,$new_w,$new_h)
+    static public function thumb($name,$filename,$new_w,$new_h,$maxDimension = JemImageResourcePolicy::DEFAULT_MAX_DIMENSION)
     {
         $resource = JemImageResourcePolicy::inspect(
             (string) $name,
             strtolower(File::getExt((string) $name)),
-            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+            (int) $maxDimension,
             (int) $new_w,
             (int) $new_h
         );
@@ -186,6 +187,490 @@ class JemImage
         }
 
         return true;
+    }
+
+    /**
+     * Validate, optionally normalise and publish a newly uploaded profile image.
+     * The original and thumbnail become visible only after every processing step succeeds.
+     */
+    static public function uploadProfileImage($file, $target, $thumbnail, $jemsettings, $profile)
+    {
+        if (!JemImageProfilePolicy::isProfile((string) $profile)
+            || JemImage::check($file, $jemsettings, $profile) === false) {
+            return false;
+        }
+
+        $target = Path::clean((string) $target);
+        $thumbnail = trim((string) $thumbnail) !== '' ? Path::clean((string) $thumbnail) : '';
+        $targetFolder = dirname($target);
+
+        if ((!Folder::exists($targetFolder) && !Folder::create($targetFolder))
+            || ($thumbnail !== '' && !Folder::exists(dirname($thumbnail)) && !Folder::create(dirname($thumbnail)))) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'warning');
+
+            return false;
+        }
+
+        $working = self::temporaryImagePath($target, 'upload');
+        $thumbnailWorking = '';
+
+        try {
+            if (!File::upload((string) $file['tmp_name'], $working)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'warning');
+
+                return false;
+            }
+
+            $analysis = self::analyseStoredImage($working, $jemsettings, (string) $profile, false);
+            if (!$analysis['accepted'] || !self::prepareWorkingImage($working, $jemsettings, (string) $profile, $analysis)) {
+                return false;
+            }
+
+            $maxBytes = max(0, (int) ($jemsettings->sizelimit ?? 0)) * 1024;
+            $finalBytes = @filesize($working);
+            if ($finalBytes === false || $finalBytes < 1 || ($maxBytes > 0 && $finalBytes > $maxBytes)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILE_SIZE'), 'warning');
+
+                return false;
+            }
+
+            if (!self::validatePreparedImage($working, $jemsettings, (string) $profile)) {
+                return false;
+            }
+
+            if ($thumbnail !== '' && (int) ($jemsettings->gddisabled ?? 0) === 1) {
+                $thumbnailWorking = self::temporaryImagePath($thumbnail, 'thumb');
+                if (!self::thumb(
+                    $working,
+                    $thumbnailWorking,
+                    (int) ($jemsettings->imagewidth ?? 0),
+                    (int) ($jemsettings->imagehight ?? 0),
+                    JemImageProfilePolicy::displayMaxDimension($jemsettings)
+                )) {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'), 'warning');
+
+                    return false;
+                }
+            }
+
+            if (!File::move($working, $target)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'warning');
+
+                return false;
+            }
+            $working = '';
+
+            if ($thumbnailWorking !== '' && !File::move($thumbnailWorking, $thumbnail)) {
+                File::delete($target);
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'warning');
+
+                return false;
+            }
+            $thumbnailWorking = '';
+
+            return true;
+        } finally {
+            if ($working !== '' && File::exists($working)) {
+                File::delete($working);
+            }
+            if ($thumbnailWorking !== '' && File::exists($thumbnailWorking)) {
+                File::delete($thumbnailWorking);
+            }
+        }
+    }
+
+    /**
+     * Copy an existing image into another profile without modifying the source.
+     */
+    static public function copyForProfile($source, $target, $thumbnail, $jemsettings, $profile)
+    {
+        $source = Path::clean((string) $source);
+        $target = Path::clean((string) $target);
+
+        if (File::exists($target)) {
+            return true;
+        }
+
+        if (!File::exists($source) || !JemImageProfilePolicy::isProfile((string) $profile)) {
+            return false;
+        }
+
+        $working = self::temporaryImagePath($target, 'copy');
+
+        try {
+            if ((!Folder::exists(dirname($target)) && !Folder::create(dirname($target)))
+                || !File::copy($source, $working)) {
+                return false;
+            }
+
+            $analysis = self::analyseStoredImage($working, $jemsettings, (string) $profile, true);
+            if (!$analysis['accepted'] || $analysis['minimum_not_met']
+                || !self::prepareWorkingImage($working, $jemsettings, (string) $profile, $analysis)
+                || !self::validatePreparedImage($working, $jemsettings, (string) $profile)) {
+                return false;
+            }
+
+            return self::publishNormalisedImage($working, $target, (string) $thumbnail, $jemsettings);
+        } finally {
+            if (File::exists($working)) {
+                File::delete($working);
+            }
+        }
+    }
+
+    /**
+     * Analyse a stored image against one profile without modifying it.
+     *
+     * @return array{accepted: bool, reason: string, width: int, height: int, frames: int, minimum_not_met: bool, max_exceeded: bool, ratio_mismatch: bool, orientation: int, needs_normalisation: bool}
+     */
+    static public function analyseStoredImage($path, $jemsettings, $profile, $allowDimensionReduction = true)
+    {
+        $path = Path::clean((string) $path);
+        $extension = strtolower(File::getExt($path));
+        $inspectionLimit = $allowDimensionReduction
+            ? JemImageResourcePolicy::MAX_CONFIGURED_DIMENSION
+            : JemImageProfilePolicy::maxDimension($jemsettings);
+        $resource = JemImageResourcePolicy::inspect(
+            $path,
+            $extension,
+            $inspectionLimit,
+            (int) ($jemsettings->imagewidth ?? 0),
+            (int) ($jemsettings->imagehight ?? 0)
+        );
+
+        if (!$resource['accepted']) {
+            return array(
+                'accepted' => false,
+                'reason' => $resource['reason'],
+                'width' => (int) $resource['width'],
+                'height' => (int) $resource['height'],
+                'frames' => (int) $resource['frames'],
+                'minimum_not_met' => false,
+                'max_exceeded' => false,
+                'ratio_mismatch' => false,
+                'orientation' => 1,
+                'needs_normalisation' => false,
+            );
+        }
+
+        $orientation = self::imageOrientation($path, (int) $resource['type']);
+        $width = (int) $resource['width'];
+        $height = (int) $resource['height'];
+        if (in_array($orientation, array(5, 6, 7, 8), true)) {
+            $swap = $width;
+            $width = $height;
+            $height = $swap;
+        }
+
+        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $minDimension = JemImageProfilePolicy::minDimension($jemsettings);
+        $maxDimension = JemImageProfilePolicy::maxDimension($jemsettings);
+        $minimumNotMet = $width < $minDimension || $height < $minDimension;
+        $maxExceeded = $width > $maxDimension || $height > $maxDimension;
+        $ratioMismatch = $config['mode'] !== JemImageProfilePolicy::MODE_NONE
+            && !JemImageProfilePolicy::isExactRatio($width, $height, $config['ratio_width'], $config['ratio_height']);
+
+        return array(
+            'accepted' => true,
+            'reason' => JemImageResourcePolicy::ACCEPTED,
+            'width' => $width,
+            'height' => $height,
+            'frames' => (int) $resource['frames'],
+            'minimum_not_met' => $minimumNotMet,
+            'max_exceeded' => $maxExceeded,
+            'ratio_mismatch' => $ratioMismatch,
+            'orientation' => $orientation,
+            'needs_normalisation' => $maxExceeded || $ratioMismatch || $orientation !== 1,
+        );
+    }
+
+    /**
+     * Normalise one stored original in place and rebuild its thumbnail atomically.
+     */
+    static public function normaliseStoredImage($source, $thumbnail, $jemsettings, $profile)
+    {
+        $source = Path::clean((string) $source);
+        $analysis = self::analyseStoredImage($source, $jemsettings, (string) $profile, true);
+
+        if (!$analysis['accepted'] || $analysis['minimum_not_met']) {
+            return false;
+        }
+
+        if (!$analysis['needs_normalisation']) {
+            return true;
+        }
+
+        $working = self::temporaryImagePath($source, 'normalise');
+
+        try {
+            if (!File::copy($source, $working)
+                || !self::prepareWorkingImage($working, $jemsettings, (string) $profile, $analysis)
+                || !self::validatePreparedImage($working, $jemsettings, (string) $profile)) {
+                return false;
+            }
+
+            return self::replaceNormalisedImage($working, $source, (string) $thumbnail, $jemsettings);
+        } finally {
+            if (File::exists($working)) {
+                File::delete($working);
+            }
+        }
+    }
+
+    static public function profileSummary($jemsettings, $profile)
+    {
+        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $summary = Text::sprintf(
+            'COM_JEM_IMAGE_UPLOAD_DIMENSION_INFO',
+            JemImageProfilePolicy::minDimension($jemsettings),
+            JemImageProfilePolicy::maxDimension($jemsettings)
+        );
+
+        if ($config['mode'] !== JemImageProfilePolicy::MODE_NONE) {
+            $summary .= ' ' . Text::sprintf(
+                'COM_JEM_IMAGE_UPLOAD_RATIO_INFO',
+                $config['ratio_width'],
+                $config['ratio_height'],
+                Text::_('COM_JEM_IMAGE_ADJUSTMENT_' . strtoupper($config['mode']))
+            );
+        }
+
+        return $summary;
+    }
+
+    private static function prepareWorkingImage($working, $jemsettings, $profile, array $analysis)
+    {
+        if (!$analysis['needs_normalisation']) {
+            return true;
+        }
+
+        if ((int) $analysis['frames'] > 1) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_ANIMATED_ADJUSTMENT_UNSUPPORTED'), 'warning');
+
+            return false;
+        }
+
+        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $geometry = JemImageProfilePolicy::geometry(
+            (int) $analysis['width'],
+            (int) $analysis['height'],
+            JemImageProfilePolicy::maxDimension($jemsettings),
+            $config['mode'],
+            $config['ratio_width'],
+            $config['ratio_height']
+        );
+        $processed = self::temporaryImagePath((string) $working, 'processed');
+
+        try {
+            if (!self::transformImage((string) $working, $processed, $geometry)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'), 'warning');
+
+                return false;
+            }
+
+            if (!File::delete((string) $working) || !File::move($processed, (string) $working)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'), 'warning');
+
+                return false;
+            }
+
+            return true;
+        } finally {
+            if (File::exists($processed)) {
+                File::delete($processed);
+            }
+        }
+    }
+
+    private static function transformImage($source, $target, array $geometry)
+    {
+        $image = new \stefangabos\Zebra_Image\Zebra_Image();
+        $image->source_path = (string) $source;
+        $image->target_path = (string) $target;
+        $image->jpeg_quality = 95;
+        $image->preserve_aspect_ratio = true;
+        $image->enlarge_smaller_images = false;
+        $image->preserve_time = true;
+        $image->auto_handle_exif_orientation = function_exists('exif_read_data');
+
+        $method = ZEBRA_IMAGE_NOT_BOXED;
+        $background = -1;
+        if ($geometry['method'] === 'pad') {
+            $method = ZEBRA_IMAGE_BOXED;
+            $background = '#000000';
+        } elseif ($geometry['method'] === 'crop') {
+            $method = ZEBRA_IMAGE_CROP_CENTER;
+        }
+
+        return $image->resize((int) $geometry['width'], (int) $geometry['height'], $method, $background);
+    }
+
+    private static function validatePreparedImage($path, $jemsettings, $profile)
+    {
+        $resource = JemImageResourcePolicy::inspect(
+            (string) $path,
+            strtolower(File::getExt((string) $path)),
+            JemImageProfilePolicy::maxDimension($jemsettings),
+            (int) ($jemsettings->imagewidth ?? 0),
+            (int) ($jemsettings->imagehight ?? 0)
+        );
+        if (!$resource['accepted']) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'), 'warning');
+
+            return false;
+        }
+
+        $minimum = JemImageProfilePolicy::minDimension($jemsettings);
+        if ((int) $resource['width'] < $minimum || (int) $resource['height'] < $minimum) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_IMAGE_MIN_DIMENSION_NOT_MET', $minimum),
+                'warning'
+            );
+
+            return false;
+        }
+
+        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        if ($config['mode'] !== JemImageProfilePolicy::MODE_NONE
+            && !JemImageProfilePolicy::isExactRatio(
+                (int) $resource['width'],
+                (int) $resource['height'],
+                $config['ratio_width'],
+                $config['ratio_height']
+            )) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_PROCESSING_FAILED'), 'warning');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function publishNormalisedImage($working, $target, $thumbnail, $jemsettings)
+    {
+        $thumbnailWorking = '';
+
+        try {
+            if ($thumbnail !== '' && (int) ($jemsettings->gddisabled ?? 0) === 1) {
+                if (!Folder::exists(dirname($thumbnail)) && !Folder::create(dirname($thumbnail))) {
+                    return false;
+                }
+                $thumbnailWorking = self::temporaryImagePath($thumbnail, 'thumb');
+                if (!self::thumb(
+                    $working,
+                    $thumbnailWorking,
+                    (int) ($jemsettings->imagewidth ?? 0),
+                    (int) ($jemsettings->imagehight ?? 0),
+                    JemImageProfilePolicy::displayMaxDimension($jemsettings)
+                )) {
+                    return false;
+                }
+            }
+
+            if (!File::move($working, $target)) {
+                return false;
+            }
+
+            if ($thumbnailWorking !== '' && !File::move($thumbnailWorking, $thumbnail)) {
+                File::delete($target);
+
+                return false;
+            }
+
+            return true;
+        } finally {
+            if ($thumbnailWorking !== '' && File::exists($thumbnailWorking)) {
+                File::delete($thumbnailWorking);
+            }
+        }
+    }
+
+    private static function replaceNormalisedImage($working, $source, $thumbnail, $jemsettings)
+    {
+        $sourceBackup = self::temporaryImagePath($source, 'backup');
+        $thumbnailWorking = '';
+        $thumbnailBackup = '';
+
+        try {
+            if ($thumbnail !== '' && (int) ($jemsettings->gddisabled ?? 0) === 1) {
+                if (!Folder::exists(dirname($thumbnail)) && !Folder::create(dirname($thumbnail))) {
+                    return false;
+                }
+                $thumbnailWorking = self::temporaryImagePath($thumbnail, 'thumb');
+                if (!self::thumb(
+                    $working,
+                    $thumbnailWorking,
+                    (int) ($jemsettings->imagewidth ?? 0),
+                    (int) ($jemsettings->imagehight ?? 0),
+                    JemImageProfilePolicy::displayMaxDimension($jemsettings)
+                )) {
+                    return false;
+                }
+            }
+
+            if (!File::move($source, $sourceBackup)) {
+                return false;
+            }
+            if ($thumbnail !== '' && File::exists($thumbnail)) {
+                $thumbnailBackup = self::temporaryImagePath($thumbnail, 'backup');
+                if (!File::move($thumbnail, $thumbnailBackup)) {
+                    File::move($sourceBackup, $source);
+
+                    return false;
+                }
+            }
+
+            if (!File::move($working, $source)
+                || ($thumbnailWorking !== '' && !File::move($thumbnailWorking, $thumbnail))) {
+                if (File::exists($source)) {
+                    File::delete($source);
+                }
+                File::move($sourceBackup, $source);
+                if ($thumbnailBackup !== '') {
+                    if (File::exists($thumbnail)) {
+                        File::delete($thumbnail);
+                    }
+                    File::move($thumbnailBackup, $thumbnail);
+                }
+
+                return false;
+            }
+
+            File::delete($sourceBackup);
+            if ($thumbnailBackup !== '') {
+                File::delete($thumbnailBackup);
+            }
+
+            return true;
+        } finally {
+            foreach (array($sourceBackup, $thumbnailWorking, $thumbnailBackup) as $temporary) {
+                if ($temporary !== '' && File::exists($temporary)) {
+                    File::delete($temporary);
+                }
+            }
+        }
+    }
+
+    private static function imageOrientation($path, $imageType)
+    {
+        if ($imageType !== IMAGETYPE_JPEG || !function_exists('exif_read_data')) {
+            return 1;
+        }
+
+        $exif = @exif_read_data((string) $path, 'IFD0', true, false);
+        $orientation = is_array($exif)
+            ? (int) ($exif['IFD0']['Orientation'] ?? $exif['Orientation'] ?? 1)
+            : 1;
+
+        return $orientation >= 1 && $orientation <= 8 ? $orientation : 1;
+    }
+
+    private static function temporaryImagePath($target, $purpose)
+    {
+        $extension = strtolower(File::getExt((string) $target));
+        $suffix = $extension !== '' ? '.' . $extension : '';
+
+        return Path::clean(dirname((string) $target) . '/.jem-' . $purpose . '-' . bin2hex(random_bytes(8)) . $suffix);
     }
 
     /**
@@ -277,7 +762,7 @@ class JemImage
             $resource = JemImageResourcePolicy::inspect(
                 $filepath,
                 strtolower(File::getExt((string) $image)),
-                JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+                JemImageProfilePolicy::displayMaxDimension($settings),
                 (int) $settings->imagewidth,
                 (int) $settings->imagehight
             );
@@ -292,7 +777,13 @@ class JemImage
                 if (!Folder::exists($saveFolder)) {
                     Folder::create($saveFolder);
                 }
-                JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
+                JemImage::thumb(
+                    $filepath,
+                    $save,
+                    $settings->imagewidth,
+                    $settings->imagehight,
+                    JemImageProfilePolicy::displayMaxDimension($settings)
+                );
             }
 
             //set paths
@@ -338,7 +829,7 @@ class JemImage
         return false;
     }
 
-    static public function check($file, $jemsettings)
+    static public function check($file, $jemsettings, $profile = '')
     {
         $sizelimit = max(0, (int) ($jemsettings->sizelimit ?? 0)) * 1024; // size limit in KB
         $tmpName = (string) ($file['tmp_name'] ?? '');
@@ -367,10 +858,13 @@ class JemImage
             return false;
         }
 
+        $maxDimension = JemImageProfilePolicy::isProfile((string) $profile)
+            ? JemImageProfilePolicy::maxDimension($jemsettings)
+            : JemImageResourcePolicy::DEFAULT_MAX_DIMENSION;
         $resource = JemImageResourcePolicy::inspect(
             $tmpName,
             $fileext,
-            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+            $maxDimension,
             (int) ($jemsettings->imagewidth ?? 0),
             (int) ($jemsettings->imagehight ?? 0)
         );
@@ -380,12 +874,26 @@ class JemImage
                 $message = Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE');
             } elseif ($resource['reason'] === JemImageResourcePolicy::NOT_IMAGE) {
                 $message = Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE');
+            } elseif ($resource['reason'] === JemImageResourcePolicy::DIMENSIONS_EXCEEDED) {
+                $message = Text::sprintf('COM_JEM_IMAGE_MAX_DIMENSION_EXCEEDED', $maxDimension);
             } else {
                 $message = Text::_('COM_JEM_IMAGE_RESOURCE_LIMIT');
             }
 
             Factory::getApplication()->enqueueMessage($message.': '.$displayName, 'warning');
             return false;
+        }
+
+        if (JemImageProfilePolicy::isProfile((string) $profile)) {
+            $minDimension = JemImageProfilePolicy::minDimension($jemsettings);
+            if ((int) $resource['width'] < $minDimension || (int) $resource['height'] < $minDimension) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_IMAGE_MIN_DIMENSION_NOT_MET', $minDimension) . ': ' . $displayName,
+                    'warning'
+                );
+
+                return false;
+            }
         }
 
         //XSS check

@@ -38,6 +38,16 @@ class JFormFieldImageselect extends ListField
     {
         // ImageType
         $imagetype = $this->element['imagetype'];
+        $fieldName = (string) $this->fieldname;
+        if ($fieldName === 'fullimage') {
+            $imageProfile = 'event_full';
+        } elseif ($fieldName === 'datimage') {
+            $imageProfile = 'event_intro';
+        } elseif ($fieldName === 'locimage') {
+            $imageProfile = 'venue';
+        } else {
+            $imageProfile = 'category';
+        }
         $jemsettings = JemHelper::config();
         $previewWidth = max(1, (int) ($jemsettings->imagewidth ?? 100));
         $previewHeight = max(1, (int) ($jemsettings->imagehight ?? $previewWidth));
@@ -164,8 +174,9 @@ img.venue-image {
         $html = array();
         $recordId = (int) ($this->form ? $this->form->getValue('id') : 0);
         $recordQuery = '&amp;record_id=' . $recordId;
-        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $recordQuery;
-        $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component';
+        $profileQuery = '&amp;image_profile=' . rawurlencode($imageProfile);
+        $link = 'index.php?option=com_jem&amp;view=imagehandler&amp;layout=uploadimage&amp;task='.$task.'&amp;tmpl=component' . $recordQuery . $profileQuery;
+        $link2 = 'index.php?option=com_jem&amp;view=imagehandler&amp;task='.$taskselect.'&amp;tmpl=component' . $profileQuery;
         $folderHint = 'images/jem/' . $imagetype . ($imagePathValue !== '' ? '/' . $imagePathValue : '');
         $uploadPrepare = 'jemPrepareImageModal('
             . json_encode($uploadModalId) . ', '

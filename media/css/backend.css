@@ -4570,3 +4570,9 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
         flex-direction: column;
     }
 }
+/* Required image roles are enforced only when the edited item is published. */
+.jem-image-required-invalid .choices__inner,
+.jem-image-required-invalid .input-group,
+.jem-image-required-invalid input.form-control {
+    border-color: var(--danger, #dc3545);
+}
