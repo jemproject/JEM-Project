@@ -67,6 +67,14 @@ abstract class JemControllerForm extends FormController
     }
 
     /**
+     * Escape a dynamic value for an HTML attribute.
+     */
+    protected function escapeHtmlAttribute($value)
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+    }
+
+    /**
      * Function that allows child controller access to model data
      * after the data has been saved.
      *

@@ -205,6 +205,39 @@ final class FrontendEditorAccessTest extends TestCase
         }
     }
 
+    public function testAssociatedArticleNoticesEscapeDynamicHtmlAttributes(): void
+    {
+        $baseController = $this->method($this->read('/site/classes/controller.form.class.php'), 'escapeHtmlAttribute');
+
+        self::assertStringContainsString(
+            "htmlspecialchars((string) \$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false)",
+            $baseController
+        );
+
+        foreach (array('/site/controllers/event.php', '/admin/controllers/event.php') as $path) {
+            $controller = $this->read($path);
+            $notice = $this->method($controller, 'handleAssociatedArticleSyncNotice');
+            $createdArticle = $this->method($controller, 'handleCreatedArticleContentRedirect');
+
+            self::assertStringContainsString('$this->escapeHtmlAttribute($updateUrl)', $notice, $path);
+            self::assertStringContainsString('$this->escapeHtmlAttribute($fields)', $notice, $path);
+            self::assertStringContainsString('$this->escapeHtmlAttribute($token)', $notice, $path);
+            self::assertStringContainsString('$this->escapeHtmlAttribute($dismissUrl)', $notice, $path);
+            self::assertStringContainsString('$this->escapeHtmlAttribute($editUrl)', $createdArticle, $path);
+            self::assertStringNotContainsString('href="' . "' . \$dismissUrl . '" . '">', $notice, $path);
+            self::assertStringNotContainsString('href="' . "' . \$editUrl . '" . '">', $createdArticle, $path);
+        }
+
+        $siteNotice = $this->method($this->read('/site/controllers/event.php'), 'handleAssociatedArticleSyncNotice');
+        self::assertStringContainsString('$this->escapeHtmlAttribute($return)', $siteNotice);
+
+        $payload = 'index.php?option=com_jem&return=" data-security-marker="controlled';
+        $escaped = htmlspecialchars($payload, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+
+        self::assertStringNotContainsString('return=" data-security-marker', $escaped);
+        self::assertStringContainsString('return=&quot; data-security-marker', $escaped);
+    }
+
     public function testRelatedFrontendMutationsAuthoriseStoredResources(): void
     {
         foreach (array('/site/models/myevents.php' => 'event', '/site/models/myvenues.php' => 'venue') as $path => $type) {
