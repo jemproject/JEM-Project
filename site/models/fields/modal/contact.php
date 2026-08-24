@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Contact modal field for the front area.
@@ -83,9 +84,11 @@ class JFormFieldModal_Contact extends FormField
 
         $wa->addInlineScript(implode("\n", $script));
 
-        $link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
+        $eventId = $app->input->getInt('a_id', 0);
+        $link = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
             . '&function=jSelectContact_' . $this->id
             . '&selected=' . $currentValues
+            . ($eventId > 0 ? '&a_id=' . $eventId : '')
             . '&' . Session::getFormToken() . '=1';
 
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -134,7 +137,7 @@ class JFormFieldModal_Contact extends FormField
             'bootstrap.renderModal',
             $modalId,
             array(
-                'url'    => $link . '&' . Session::getFormToken() . '=1',
+                'url'    => $link,
                 'title'  => Text::_('COM_JEM_SELECT_CONTACT'),
                 'width'  => '800px',
                 'height' => '450px',
