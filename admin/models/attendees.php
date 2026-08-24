@@ -14,6 +14,9 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
 use Joomla\Utilities\ArrayHelper;
+
+require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+
 /**
  * Model: Attendees
  */
@@ -324,7 +327,7 @@ class JemModelAttendees extends ListModel
         }
         $header[] = Text::_('COM_JEM_ATTENDEES_REGID');
 
-        fputcsv($csv, $header, $separator, $delimiter, '', "\n");
+        JemCsv::putRow($csv, $header, $separator, $delimiter, '', "\n");
 
         foreach ($items as $item)
         {
@@ -362,7 +365,7 @@ class JemModelAttendees extends ListModel
             }
             $data[] = $item->uid;
 
-            fputcsv($csv, $data, $separator, $delimiter, '', "\n"); 
+            JemCsv::putRow($csv, $data, $separator, $delimiter, '', "\n");
         }
 
         return fclose($csv);

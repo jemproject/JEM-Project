@@ -195,7 +195,7 @@ class JemModelAttachments extends ListModel
         $items = $this->enrichItems($db->loadObjectList() ?: array());
 
         $csv = fopen('php://output', 'w');
-        fputcsv($csv, JemCsv::protectFormulaRow(array(
+        JemCsv::putRow($csv, array(
             'id',
             'file',
             'name',
@@ -215,12 +215,12 @@ class JemModelAttachments extends ListModel
             'last_download',
             'file_status',
             'file_size',
-        )), ';', '"', '\\');
+        ), ';', '"', '\\');
 
         foreach ($items as $item) {
             $fileStatus = !$item->file_path_safe ? 'unsafe' : ($item->file_exists ? 'exists' : 'missing');
 
-            fputcsv($csv, JemCsv::protectFormulaRow(array(
+            JemCsv::putRow($csv, array(
                 $item->id,
                 $item->file,
                 $item->name,
@@ -240,7 +240,7 @@ class JemModelAttachments extends ListModel
                 $item->last_download,
                 $fileStatus,
                 $item->file_size,
-            )), ';', '"', '\\');
+            ), ';', '"', '\\');
         }
 
         fclose($csv);

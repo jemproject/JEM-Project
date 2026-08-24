@@ -301,9 +301,7 @@ class JemModelExport extends ListModel
      */
     private function putCsv($handle, array $fields, $separator, $delimiter)
     {
-        $fields = JemCsv::protectFormulaRow($fields);
-
-        return fputcsv($handle, $fields, $separator, $delimiter, '\\');
+        return JemCsv::putRow($handle, $fields, $separator, $delimiter, '\\');
     }
 
     /**
