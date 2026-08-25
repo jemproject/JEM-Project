@@ -202,17 +202,22 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate package: ' . $package);
         }
 
-        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip', 'packages/plg_task_jem.zip', 'packages/plg_user_jem.zip'] as $entry) {
+        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip', 'packages/plg_content_jemembed.zip', 'packages/plg_task_jem.zip', 'packages/plg_user_jem.zip'] as $entry) {
             if ($outer->locateName($entry) === false) {
                 throw new RuntimeException($package . ' is missing ' . $entry);
             }
         }
 
         $componentData = $outer->getFromName('packages/com_jem.zip');
+        $embedData = $outer->getFromName('packages/plg_content_jemembed.zip');
         $outer->close();
 
         if ($componentData === false) {
             throw new RuntimeException($package . ' has no component archive');
+        }
+
+        if ($embedData === false) {
+            throw new RuntimeException($package . ' has no JEM Embed plugin archive');
         }
 
         $tmpComponent = tempnam(sys_get_temp_dir(), 'jem_component_');
@@ -264,6 +269,26 @@ final class JemPackageBuilder
 
         $component->close();
         @unlink($tmpComponent);
+
+        $tmpEmbed = tempnam(sys_get_temp_dir(), 'jem_embed_');
+        file_put_contents($tmpEmbed, $embedData);
+        $embed = new ZipArchive();
+
+        if ($embed->open($tmpEmbed) !== true) {
+            @unlink($tmpEmbed);
+            throw new RuntimeException('Could not validate JEM Embed plugin archive in ' . $package);
+        }
+
+        foreach (['jemembed.xml', 'jemembed.php', 'requestpolicy.php', 'media/files/jemevents.zip'] as $entry) {
+            if ($embed->locateName($entry) === false) {
+                $embed->close();
+                @unlink($tmpEmbed);
+                throw new RuntimeException($package . ':packages/plg_content_jemembed.zip is missing ' . $entry);
+            }
+        }
+
+        $embed->close();
+        @unlink($tmpEmbed);
     }
 
     private function openZip(string $target): ZipArchive

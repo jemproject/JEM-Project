@@ -11,6 +11,7 @@
     <description>PLG_CONTENT_JEMEMBED_XML_INSTRUCTION</description>
     <files>
         <filename plugin="jemembed">jemembed.php</filename>
+        <filename>requestpolicy.php</filename>
         <folder>language</folder>
     </files>
 
@@ -32,6 +33,8 @@
                 </field>
 
                 <field name="api_tokens" type="textarea" label="PLG_CONTENT_JEMEMBED_API_TOKENS_LABEL" description="PLG_CONTENT_JEMEMBED_API_TOKENS_DESC" rows="5" cols="30" />
+
+                <field name="base_url" type="url" label="PLG_CONTENT_JEMEMBED_BASE_URL_LABEL" description="PLG_CONTENT_JEMEMBED_BASE_URL_DESC" relative="false" />
             </fieldset>
         </fields>
     </config>
