@@ -361,12 +361,36 @@ class JemModelEventslist extends ListModel
 
 
     /**
+     * Resolve the view levels used by this model.
+     *
+     * Internal consumers such as public data feeds may explicitly constrain the
+     * model to guest levels without replacing Joomla's current session user.
+     */
+    protected function getViewAccessLevels(): array
+    {
+        $forcedLevels = $this->getState('filter.access_levels', null);
+
+        if ($forcedLevels !== null) {
+            $forcedLevels = is_array($forcedLevels) ? $forcedLevels : array($forcedLevels);
+            $forcedLevels = array_values(array_unique(array_filter(
+                array_map('intval', $forcedLevels),
+                static function ($level) {
+                    return $level > 0;
+                }
+            )));
+
+            return $forcedLevels ?: array(0);
+        }
+
+        return array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
+    }
+
+    /**
      * Method to get a all list of children categories (subtree) by $id category.
      */
     public function getListChildCat(int $id, bool $reset)
     {
-        $user     = JemFactory::getUser();
-        $levels   = $user->getAuthorisedViewLevels();
+        $levels   = $this->getViewAccessLevels();
         $settings = JemHelper::globalattribs();
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -464,6 +488,8 @@ class JemModelEventslist extends ListModel
         $id .= ':' . serialize($this->getState('filter.unpublished.events.on_groups'));
         $id .= ':' . $this->getState('filter.unpublished.venues');
         $id .= ':' . $this->getState('filter.unpublished.on_user');
+        $id .= ':' . serialize($this->getState('filter.access_levels'));
+        $id .= ':' . (int) $this->getState('filter.strict_access', false);
 
         return parent::getStoreId($id);
     }
@@ -479,8 +505,7 @@ class JemModelEventslist extends ListModel
         $params      = $app->getParams();
         $settings    = JemHelper::globalattribs();
         $jemsettings = JemHelper::config();
-        $user        = JemFactory::getUser();
-        $levels      = $user->getAuthorisedViewLevels();
+        $levels      = $this->getViewAccessLevels();
         $levelsList  = implode(',', array_map('intval', $levels));
 
         # Query
@@ -609,7 +634,9 @@ class JemModelEventslist extends ListModel
         ###################
 
         # Filter by access level - public or with access_level_locked_events active.
-        if ($jemsettings->access_level_locked_events != "[\"1\"]") {
+        $strictAccess = (bool) $this->getState('filter.strict_access', false);
+
+        if (!$strictAccess && $jemsettings->access_level_locked_events != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_events, true);
             $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('a.access IN (' . implode(',', $newlevels) . ')');
@@ -618,7 +645,7 @@ class JemModelEventslist extends ListModel
         }
 
         # Filter by venue access level - public or with access_level_locked_venues active.
-        if ($jemsettings->access_level_locked_venues != "[\"1\"]") {
+        if (!$strictAccess && $jemsettings->access_level_locked_venues != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_venues, true);
             $newlevels    = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('(l.id IS NULL OR l.access IN (' . implode(',', array_map('intval', $newlevels)) . '))');
@@ -959,7 +986,7 @@ class JemModelEventslist extends ListModel
         }
 
         $user = JemFactory::getUser();
-        $levels = $user->getAuthorisedViewLevels();
+        $levels = $this->getViewAccessLevels();
         $calendarMultiday = $this->getState('filter.calendar_multiday');
         $stateParams = $this->getState('params');
 
@@ -1013,7 +1040,7 @@ class JemModelEventslist extends ListModel
     {
         $app         = Factory::getApplication();
         $user        = JemFactory::getUser();
-        $levels      = $user->getAuthorisedViewLevels();
+        $levels      = $this->getViewAccessLevels();
         $settings    = JemHelper::globalattribs();
         $jemsettings = JemHelper::config();
         $params      = $app->getParams();
@@ -1055,7 +1082,8 @@ class JemModelEventslist extends ListModel
         ###################
 
         # Filter by access level - public or with access_level_locked_categories active.
-        if($jemsettings->access_level_locked_categories != "[\"1\"]") {
+        if (!(bool) $this->getState('filter.strict_access', false)
+            && $jemsettings->access_level_locked_categories != "[\"1\"]") {
             $accessLevels = json_decode($jemsettings->access_level_locked_categories, true);
             $newlevels = array_values(array_unique(array_merge($levels, $accessLevels ?? [])));
             $query->where('c.access IN ('.implode(',', $newlevels).')');
@@ -1324,7 +1352,8 @@ class JemModelEventslist extends ListModel
 
         # Filter by published state.
         $published = $this->getState('filter.published');
-        $show_archived_events = $this->getState('filter.show_archived_events');
+        $strictAccess = (bool) $this->getState('filter.strict_access', false);
+        $show_archived_events = $strictAccess ? false : $this->getState('filter.show_archived_events');
 
         if (is_numeric($published)) {
             $where_pub[] = '(' . $tbl . 'published ' . ($show_archived_events? '>=':'=') . (int)$published . ')';
@@ -1333,6 +1362,10 @@ class JemModelEventslist extends ListModel
             ArrayHelper::toInteger($published);
             $published = implode(',', $published);
             $where_pub[] = '(' . $tbl . 'published IN (' . $published . '))';
+        }
+
+        if ($strictAccess) {
+            return $where_pub;
         }
 
         # Filter by specific conditions
