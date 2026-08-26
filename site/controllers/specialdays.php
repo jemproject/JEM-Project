@@ -15,6 +15,7 @@ use Joomla\CMS\Session\Session;
 use Joomla\CMS\Table\Table;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/importencoding.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/importbudget.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
 Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jem/tables');
 
@@ -51,6 +52,13 @@ class JemControllerSpecialdays extends BaseController
             return;
         }
 
+        try {
+            JemImportBudgetHelper::assertFileSize($file['tmp_name']);
+        } catch (RuntimeException $e) {
+            $this->setRedirect($redirect, $e->getMessage(), 'error');
+            return;
+        }
+
         $jemconfig = JemConfig::getInstance()->toRegistry();
         $separator = $jemconfig->get('csv_separator', ';');
         $delimiter = $jemconfig->get('csv_delimiter', '"');
@@ -68,16 +76,16 @@ class JemControllerSpecialdays extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
 
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, (strncmp($firstChars, $bom, 3) === 0) ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, (strncmp($firstChars, $bom, 3) === 0) ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         }
 
         if ($header === false) {
@@ -87,6 +95,16 @@ class JemControllerSpecialdays extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
+        $totalValueBytes = 0;
+
+        try {
+            JemImportBudgetHelper::assertTabularRow($header, $totalValueBytes);
+        } catch (RuntimeException $e) {
+            fclose($handle);
+            $this->setRedirect($redirect, $e->getMessage(), 'error');
+            return;
+        }
+
         $fields = $this->normaliseSpecialDayCsvHeader($header);
 
         if (!$fields) {
@@ -98,8 +116,20 @@ class JemControllerSpecialdays extends BaseController
         $result = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'error' => 0);
         $now = Factory::getDate()->toSql();
         $userId = (int) $user->id;
+        $rowNumber = 1;
 
-        while (($row = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+        while (($row = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+            $rowNumber++;
+
+            try {
+                JemImportBudgetHelper::assertRecordCount($rowNumber - 1);
+                JemImportBudgetHelper::assertTabularRow($row, $totalValueBytes);
+            } catch (RuntimeException $e) {
+                fclose($handle);
+                $this->setRedirect($redirect, $e->getMessage(), 'error');
+                return;
+            }
+
             array_walk($row, 'jem_normalise_csv_utf8');
 
             if (count(array_filter($row, 'strlen')) === 0) {

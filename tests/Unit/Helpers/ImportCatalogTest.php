@@ -26,6 +26,25 @@ final class ImportCatalogTest extends TestCase
         self::assertSame('external_entities', $error);
     }
 
+    public function testCatalogParserRestoresLibxmlErrorMode(): void
+    {
+        $method = (new ReflectionClass(JemImportCatalogHelper::class))->getMethod('loadCatalogXml');
+        $error = '';
+        $arguments = array(
+            '<jem-import-catalog version="1.0" />',
+            &$error,
+        );
+        $original = libxml_use_internal_errors(false);
+
+        try {
+            self::assertInstanceOf(SimpleXMLElement::class, $method->invokeArgs(null, $arguments));
+            self::assertSame('', $error);
+            self::assertFalse(libxml_use_internal_errors());
+        } finally {
+            libxml_use_internal_errors($original);
+        }
+    }
+
     public function testCatalogRejectsUnsupportedSchemaVersion(): void
     {
         $xml = '<?xml version="1.0"?><jem-import-catalog version="2.0"><entry /></jem-import-catalog>';

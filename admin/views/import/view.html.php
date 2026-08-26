@@ -14,6 +14,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpreview.php';
 
@@ -99,6 +100,11 @@ class JemViewImport extends JemAdminView
             : array();
         $app->setUserState('com_jem.import.catalog.selected', null);
         $this->externalImportPreview = $activeImportPreview === 'events' ? $this->normaliseImportPreviewState('com_jem.import.external_import.preview') : null;
+        $this->externalImportPreview = $this->loadPagedImportPreview(
+            $this->externalImportPreview,
+            'event_preview_page',
+            'com_jem.import.external_import.preview'
+        );
         $this->externalCsvPreview = $this->externalImportPreview;
         $this->externalIcsPreview = null;
         $this->externalCategoryOptions = $this->getExternalCategoryOptions();
@@ -107,25 +113,20 @@ class JemViewImport extends JemAdminView
         $this->externalVenueOptions = $this->getExternalVenueOptions();
         $this->externalImportProfileOptions = $this->getExternalImportProfileOptions('events');
         $this->externalVenueImportPreview = $activeImportPreview === 'venues' ? $this->normaliseImportPreviewState('com_jem.import.external_venue_import.preview') : null;
-        if (!empty($this->externalVenueImportPreview['payload_token'])) {
-            try {
-                $this->externalVenueImportPreview = JemImportPreviewHelper::loadVenuePreviewPage(
-                    $this->externalVenueImportPreview,
-                    (int) $app->getIdentity()->id,
-                    $jinput->getInt('venue_preview_page', 1),
-                    JemImportPreviewHelper::PAGE_SIZE
-                );
-            } catch (RuntimeException $e) {
-                JemImportPreviewHelper::deleteVenuePreview($this->externalVenueImportPreview['payload_token'], (int) $app->getIdentity()->id);
-                $app->setUserState('com_jem.import.external_venue_import.preview', null);
-                $app->enqueueMessage(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAYLOAD_MISSING'), 'error');
-                $this->externalVenueImportPreview = null;
-            }
-        }
+        $this->externalVenueImportPreview = $this->loadPagedImportPreview(
+            $this->externalVenueImportPreview,
+            'venue_preview_page',
+            'com_jem.import.external_venue_import.preview'
+        );
         $this->externalVenueImportProfileOptions = $this->getExternalImportProfileOptions('venues');
         $this->externalLanguageOptions = HTMLHelper::_('contentlanguage.existing', true, true);
         $this->externalPublishUpDefault = Factory::getDate()->toSql();
         $this->specialDaysImportPreview = $activeImportPreview === 'specialdays' ? $this->normaliseImportPreviewState('com_jem.import.specialdays_import.preview') : null;
+        $this->specialDaysImportPreview = $this->loadPagedImportPreview(
+            $this->specialDaysImportPreview,
+            'specialdays_preview_page',
+            'com_jem.import.specialdays_import.preview'
+        );
         $this->specialDaysCsvPreview = $this->specialDaysImportPreview;
         $this->specialDaysIcsPreview = null;
         $this->specialDaysImportProfileOptions = $this->getExternalImportProfileOptions('specialdays');
@@ -185,6 +186,40 @@ class JemViewImport extends JemAdminView
         }
 
         return $preview;
+    }
+
+    /**
+     * Load one page from a private preview payload when server pagination is active.
+     *
+     * @param   array|null  $preview    Preview metadata.
+     * @param   string      $pageInput  Request parameter containing the page number.
+     * @param   string      $stateKey   Joomla user-state key.
+     *
+     * @return array|null
+     */
+    protected function loadPagedImportPreview($preview, $pageInput, $stateKey)
+    {
+        if (empty($preview['payload_token'])) {
+            return $preview;
+        }
+
+        $app = Factory::getApplication();
+        $userId = (int) $app->getIdentity()->id;
+
+        try {
+            return JemImportPreviewHelper::loadPreviewPage(
+                (array) $preview,
+                $userId,
+                $app->input->getInt($pageInput, 1),
+                JemImportPreviewHelper::PAGE_SIZE
+            );
+        } catch (RuntimeException $e) {
+            JemImportPreviewHelper::deletePreview((string) $preview['payload_token'], $userId);
+            $app->setUserState($stateKey, null);
+            $app->enqueueMessage(Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAYLOAD_MISSING'), 'error');
+
+            return null;
+        }
     }
 
     /**

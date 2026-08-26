@@ -314,14 +314,23 @@ class JemImportXlsxHelper
 
     private static function loadXml($content)
     {
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NONET | LIBXML_COMPACT);
-        libxml_clear_errors();
-
-        if (!$xml) {
-            throw new RuntimeException('The XLSX file contains invalid XML.');
+        if (preg_match('/<\s*!(?:DOCTYPE|ENTITY)\b/i', (string) $content)) {
+            throw new RuntimeException('XML DTD and entity declarations are not allowed in XLSX imports.');
         }
 
-        return $xml;
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NONET | LIBXML_COMPACT);
+
+            if ($xml === false) {
+                throw new RuntimeException('The XLSX file contains invalid XML.');
+            }
+
+            return $xml;
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
     }
 }
