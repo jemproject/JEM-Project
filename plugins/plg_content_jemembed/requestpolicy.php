@@ -19,6 +19,7 @@ final class JemEmbedRequestPolicy
     public const MAX_FILTER_LENGTH = 512;
     public const MAX_TITLE_LENGTH = 500;
     public const MAX_FORMAT_LENGTH = 64;
+    public const MAX_EMPTY_MESSAGE_LENGTH = 200;
     public const MAX_DESCRIPTION_LENGTH = 5000;
     public const MAX_QUERY_LENGTH = 4096;
     public const MAX_TOKEN_LENGTH = 512;
@@ -37,7 +38,7 @@ final class JemEmbedRequestPolicy
             array('today', 'unfinished', 'upcoming', 'ongoing', 'archived', 'newest', 'open', 'all'),
             'type'
         );
-        $parameters['show_featured'] = self::normaliseSwitch($parameters['show_featured'] ?? 'off', 'featured');
+        $parameters['show_featured'] = self::normaliseFeatured($parameters['show_featured'] ?? 'on');
 
         foreach (array('title', 'show_date', 'show_category', 'show_venue') as $name) {
             $parameters[$name] = self::normaliseDisplayMode($parameters[$name] ?? 'on', $name);
@@ -69,6 +70,11 @@ final class JemEmbedRequestPolicy
         $parameters['venueids'] = self::normaliseIdList($parameters['venueids'] ?? '', 'venueids');
         $parameters['date_format'] = self::normaliseFormat($parameters['date_format'] ?? '', 'dateformat');
         $parameters['time_format'] = self::normaliseFormat($parameters['time_format'] ?? '', 'timeformat');
+        $parameters['no_events_msg'] = self::normalisePlainText(
+            $parameters['no_events_msg'] ?? '',
+            'noeventsmsg',
+            self::MAX_EMPTY_MESSAGE_LENGTH
+        );
 
         return $parameters;
     }
@@ -257,6 +263,19 @@ final class JemEmbedRequestPolicy
         return self::normaliseEnum($value, array('on', 'off'), $name);
     }
 
+    private static function normaliseFeatured($value): string
+    {
+        if ((string) $value === '1') {
+            $value = 'on';
+        } elseif ((string) $value === '0') {
+            $value = 'off';
+        } elseif ((string) $value === '2') {
+            $value = 'only';
+        }
+
+        return self::normaliseEnum($value, array('on', 'off', 'only'), 'featured');
+    }
+
     private static function normaliseDisplayMode($value, string $name): string
     {
         if ((string) $value === '1') {
@@ -343,6 +362,23 @@ final class JemEmbedRequestPolicy
         $value = (string) $value;
 
         if (strlen($value) > self::MAX_FORMAT_LENGTH || preg_match('/[\x00-\x1f\x7f]/', $value)
+            || preg_match('//u', $value) !== 1) {
+            throw new InvalidArgumentException('Invalid ' . $name . ' parameter.');
+        }
+
+        return $value;
+    }
+
+    private static function normalisePlainText($value, string $name, int $maximumLength): string
+    {
+        if (!is_scalar($value)) {
+            throw new InvalidArgumentException('Invalid ' . $name . ' parameter.');
+        }
+
+        $value = trim((string) $value);
+        $length = function_exists('mb_strlen') ? mb_strlen($value, 'UTF-8') : strlen($value);
+
+        if ($length > $maximumLength || preg_match('/[\x00-\x1f\x7f]/', $value)
             || preg_match('//u', $value) !== 1) {
             throw new InvalidArgumentException('Invalid ' . $name . ' parameter.');
         }

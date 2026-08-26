@@ -888,14 +888,19 @@ class JemHelper
     /**
      * Apply associated Joomla article content to an event when the event opts in.
      *
-     * @param   object       $event     Event data.
-     * @param   array|null   $levels    Authorized view levels.
-     * @param   string|null  $language  Preferred language tag.
+     * @param   object       $event         Event data.
+     * @param   array|null   $levels        Authorized view levels.
+     * @param   string|null  $language      Preferred language tag.
+     * @param   int|null     $contentLimit  Maximum characters loaded per article text field.
      *
      * @return  object
      */
-    static public function applyAssociatedArticleEventContent($event, ?array $levels = null, ?string $language = null)
-    {
+    static public function applyAssociatedArticleEventContent(
+        $event,
+        ?array $levels = null,
+        ?string $language = null,
+        ?int $contentLimit = null
+    ) {
         if (empty($event) || empty($event->article_id)) {
             return $event;
         }
@@ -914,7 +919,7 @@ class JemHelper
         $levels = $levels ?: JemFactory::getUser()->getAuthorisedViewLevels();
         $globalAttribs = self::globalattribs();
         $fallback = (string) $globalAttribs->get('event_article_content_language_fallback', 'article');
-        $article = self::getAssociatedArticleForEventContent((int) $event->article_id, $levels, $language, $fallback);
+        $article = self::getAssociatedArticleForEventContent((int) $event->article_id, $levels, $language, $fallback, $contentLimit);
 
         if (empty($article)) {
             if ($fallback === 'blank') {
@@ -999,16 +1004,21 @@ class JemHelper
     /**
      * Apply associated Joomla article content to a list of events.
      *
-     * @param   array        $events    Event objects.
-     * @param   array|null   $levels    Authorized view levels.
-     * @param   string|null  $language  Preferred language tag.
+     * @param   array        $events        Event objects.
+     * @param   array|null   $levels        Authorized view levels.
+     * @param   string|null  $language      Preferred language tag.
+     * @param   int|null     $contentLimit  Maximum characters loaded per article text field.
      *
      * @return  array
      */
-    static public function applyAssociatedArticleEventContentToEvents(array $events, ?array $levels = null, ?string $language = null)
-    {
+    static public function applyAssociatedArticleEventContentToEvents(
+        array $events,
+        ?array $levels = null,
+        ?string $language = null,
+        ?int $contentLimit = null
+    ) {
         foreach ($events as $event) {
-            self::applyAssociatedArticleEventContent($event, $levels, $language);
+            self::applyAssociatedArticleEventContent($event, $levels, $language, $contentLimit);
 
             if (!empty($event->id)) {
                 $event->slug = !empty($event->alias) ? ((int) $event->id . ':' . $event->alias) : (int) $event->id;
@@ -1021,14 +1031,21 @@ class JemHelper
     /**
      * Resolve the best associated Joomla article for event content.
      *
-     * @param   int          $articleId  Base article id.
-     * @param   array        $levels     Authorized view levels.
-     * @param   string|null  $language   Preferred language tag.
+     * @param   int          $articleId    Base article id.
+     * @param   array        $levels       Authorized view levels.
+     * @param   string|null  $language     Preferred language tag.
+     * @param   string       $fallback     Language fallback policy.
+     * @param   int|null     $contentLimit  Maximum characters loaded per article text field.
      *
      * @return  object|null
      */
-    static public function getAssociatedArticleForEventContent(int $articleId, array $levels, ?string $language = null, string $fallback = 'article')
-    {
+    static public function getAssociatedArticleForEventContent(
+        int $articleId,
+        array $levels,
+        ?string $language = null,
+        string $fallback = 'article',
+        ?int $contentLimit = null
+    ) {
         if ($articleId <= 0 || (int) self::globalattribs()->get('event_use_associated_article', 1) !== 1) {
             return null;
         }
@@ -1070,14 +1087,25 @@ class JemHelper
 
         $associationIds = array_values(array_unique(array_filter($associationIds)));
 
+        $contentSelect = array(
+            $db->quoteName('a.introtext'),
+            $db->quoteName('a.fulltext'),
+        );
+
+        if ($contentLimit !== null && $contentLimit > 0) {
+            $contentLimit = min(10000, max(1, $contentLimit));
+            $contentSelect = array(
+                'LEFT(' . $db->quoteName('a.introtext') . ', ' . $contentLimit . ') AS ' . $db->quoteName('introtext'),
+                'LEFT(' . $db->quoteName('a.fulltext') . ', ' . $contentLimit . ') AS ' . $db->quoteName('fulltext'),
+            );
+        }
+
         $query = $db->getQuery(true)
             ->select(array(
                 $db->quoteName('a.id'),
                 $db->quoteName('a.title'),
                 $db->quoteName('a.alias'),
                 $db->quoteName('a.catid'),
-                $db->quoteName('a.introtext'),
-                $db->quoteName('a.fulltext'),
                 $db->quoteName('a.metakey'),
                 $db->quoteName('a.metadesc'),
                 $db->quoteName('a.metadata'),
@@ -1085,6 +1113,7 @@ class JemHelper
                 $db->quoteName('a.language'),
                 $db->quoteName('a.created_by')
             ))
+            ->select($contentSelect)
             ->from($db->quoteName('#__content', 'a'))
             ->join('INNER', $db->quoteName('#__categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('a.catid') . ' AND ' . $db->quoteName('c.extension') . ' = ' . $db->quote('com_content'))
             ->where($db->quoteName('a.id') . ' IN (' . implode(',', $associationIds) . ')')

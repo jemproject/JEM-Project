@@ -151,30 +151,59 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Preserve the list context while the explicit load-more task is running.
+     */
+    private function getEffectiveRequestTask(): string
+    {
+        $input = Factory::getApplication()->input;
+        $task = $input->getCmd('task', '');
+
+        if ($task === 'loadmore') {
+            return $input->getCmd('loadmore_context', '') === 'archive' ? 'archive' : '';
+        }
+
+        return $task;
+    }
+
+    /**
      * Get events for AJAX load more functionality
      */
     public function getEventsAjax(int $offset = 0, int $limit = 10)
     {
-        // Keep current filters and sorting
+        $offset = max(0, min(JemLoadMoreRequestPolicy::MAX_OFFSET, $offset));
+        $limit = max(1, min(JemLoadMoreRequestPolicy::MAX_LIMIT, $limit));
+
+        // Keep current filters and sorting.
         $currentStart = $this->getState('list.start', 0);
         $currentLimit = $this->getState('list.limit', 10);
 
-        // set temporary new values
+        // Fetch one additional row instead of executing a separate COUNT query.
         $this->setState('list.start', $offset);
-        $this->setState('list.limit', $limit);
+        $this->setState('list.limit', $limit + 1);
 
-        // load items
-        $items = $this->getItems();
-        $total = $this->getTotal();
+        try {
+            $items = (array) $this->getItems();
+        } finally {
+            $this->setState('list.start', $currentStart);
+            $this->setState('list.limit', $currentLimit);
+        }
 
-        // Restore original values
-        $this->setState('list.start', $currentStart);
-        $this->setState('list.limit', $currentLimit);
+        $hasMore = count($items) > $limit;
+
+        if ($hasMore) {
+            array_pop($items);
+        }
+
+        $nextOffset = $offset + $limit;
+
+        if ($nextOffset > JemLoadMoreRequestPolicy::MAX_OFFSET) {
+            $hasMore = false;
+        }
 
         return [
             'items' => $items,
-            'hasMore' => ($offset + $limit) < $total,
-            'total' => $total
+            'hasMore' => $hasMore,
+            'nextOffset' => $hasMore ? $nextOffset : null,
         ];
     }
 
@@ -185,7 +214,7 @@ class JemModelEventslist extends ListModel
     {
         $app         = Factory::getApplication();
         $jemsettings = JemHelper::config();
-        $task        = $app->input->getCmd('task', '');
+        $task        = $this->getEffectiveRequestTask();
         $format      = $app->input->getCmd('format', false);
         $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $activeMenu = $app->getMenu()->getActive();
@@ -492,6 +521,10 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.event_tree', 'calendar');
         $id .= ':' . serialize($this->getState('filter.access_levels'));
         $id .= ':' . (int) $this->getState('filter.strict_access', false);
+        $id .= ':' . serialize($this->getState('list.select'));
+        $id .= ':' . (int) $this->getState('list.compact_select', false);
+        $id .= ':' . (int) $this->getState('list.content_limit', 0);
+        $id .= ':' . (int) $this->getState('list.skip_attendee_numbers', false);
 
         return parent::getStoreId($id);
     }
@@ -502,7 +535,7 @@ class JemModelEventslist extends ListModel
     protected function getListQuery()
     {
         $app         = Factory::getApplication();
-        $task        = $app->input->getCmd('task', '');
+        $task        = $this->getEffectiveRequestTask();
         $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $params      = $app->getParams();
         $settings    = JemHelper::globalattribs();
@@ -511,6 +544,7 @@ class JemModelEventslist extends ListModel
         $levelsList  = implode(',', array_map('intval', $levels));
         $visibleUserVenueIds = JemHelper::getVisibleVenueHierarchyIds($levels);
         $visibleUserVenueList = $visibleUserVenueIds ? implode(',', $visibleUserVenueIds) : '0';
+        $compactSelect = (bool) $this->getState('list.compact_select', false);
 
         # Query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -534,10 +568,14 @@ class JemModelEventslist extends ListModel
         $query->join('LEFT', '#__users AS u on u.id = a.created_by');
 
         # Venue
-        $query->select(array('l.alias AS l_alias', 'l.color AS venuecolor', 'l.checked_out AS l_checked_out', 'l.checked_out_time AS l_checked_out_time', 'l.city', 'l.country', 'l.created AS l_created', 'l.created_by AS l_createdby'));
-        $query->select(array('l.custom1 AS l_custom1', 'l.custom2 AS l_custom2', 'l.custom3 AS l_custom3', 'l.custom4 AS l_custom4', 'l.custom5 AS l_custom5', 'l.custom6 AS l_custom6', 'l.custom7 AS l_custom7', 'l.custom8 AS l_custom8', 'l.custom9 AS l_custom9', 'l.custom10 AS l_custom10'));
-        $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.image_path AS venue_image_path', 'l.locimage_alt', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
-        $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.timezone AS venue_timezone', 'l.version AS l_version'));
+        if ($compactSelect) {
+            $query->select(array('l.alias AS l_alias', 'l.city', 'l.country', 'l.state', 'l.venue'));
+        } else {
+            $query->select(array('l.alias AS l_alias', 'l.color AS venuecolor', 'l.checked_out AS l_checked_out', 'l.checked_out_time AS l_checked_out_time', 'l.city', 'l.country', 'l.created AS l_created', 'l.created_by AS l_createdby'));
+            $query->select(array('l.custom1 AS l_custom1', 'l.custom2 AS l_custom2', 'l.custom3 AS l_custom3', 'l.custom4 AS l_custom4', 'l.custom5 AS l_custom5', 'l.custom6 AS l_custom6', 'l.custom7 AS l_custom7', 'l.custom8 AS l_custom8', 'l.custom9 AS l_custom9', 'l.custom10 AS l_custom10'));
+            $query->select(array('l.id AS l_id', 'l.latitude', 'l.locdescription', 'l.locimage', 'l.image_path AS venue_image_path', 'l.locimage_alt', 'l.longitude', 'l.map', 'l.meta_description AS l_meta_description', 'l.meta_keywords AS l_meta_keywords', 'l.modified AS l_modified', 'l.modified_by AS l_modified_by', 'l.postalCode'));
+            $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.timezone AS venue_timezone', 'l.version AS l_version'));
+        }
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
         
         
@@ -549,16 +587,18 @@ class JemModelEventslist extends ListModel
         # Type
         $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
         $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
-        $query->select(array(
-            'jt.name AS type_name',
-            'jt.icon AS type_icon',
-            'jt.color AS type_color',
-            'jt.alias AS type_alias',
-            'jt.description AS type_description',
-            'jt.base_language AS type_base_language',
-            'jt.translation_languages AS type_translation_languages',
-            'jt.translations AS type_translations',
-        ));
+        if (!$compactSelect) {
+            $query->select(array(
+                'jt.name AS type_name',
+                'jt.icon AS type_icon',
+                'jt.color AS type_color',
+                'jt.alias AS type_alias',
+                'jt.description AS type_description',
+                'jt.base_language AS type_base_language',
+                'jt.translation_languages AS type_translation_languages',
+                'jt.translations AS type_translations',
+            ));
+        }
         $query->join('LEFT', '#__jem_types AS jt ON jt.id = ' . $effectiveTypeId . ' AND jt.entity = 1 AND jt.published = 1 AND ' . $typeLanguageCondition);
 
         # the rest
@@ -1007,6 +1047,7 @@ class JemModelEventslist extends ListModel
         $levels = $this->getViewAccessLevels();
         $calendarMultiday = $this->getState('filter.calendar_multiday');
         $stateParams = $this->getState('params');
+        $contentLimit = (int) $this->getState('list.content_limit', 0);
 
         # Convert the parameter fields into objects.
         foreach ($items as $index => $item)
@@ -1022,7 +1063,12 @@ class JemModelEventslist extends ListModel
                 $item->params->merge($eventParams);
             }
 
-            JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
+            JemHelper::applyAssociatedArticleEventContentToEvents(
+                array($item),
+                $levels,
+                null,
+                $contentLimit > 0 ? $contentLimit : null
+            );
 
             # adding categories
             $item->categories = $this->getCategories($item->id);
@@ -1038,7 +1084,9 @@ class JemModelEventslist extends ListModel
         } // foreach
 
         if ($items) {
-            /*$items =*/ JemHelper::getAttendeesNumbers($items);
+            if (!(bool) $this->getState('list.skip_attendee_numbers', false)) {
+                /*$items =*/ JemHelper::getAttendeesNumbers($items);
+            }
 
             if ($calendarMultiday) {
                 $items = self::calendarMultiday($items);
