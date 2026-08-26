@@ -93,6 +93,15 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
+                <field name="log_mailto" type="radio"
+                    label="PLG_ACTIONLOG_JEM_FIELD_LOG_MAILTO"
+                    description="PLG_ACTIONLOG_JEM_FIELD_LOG_MAILTO_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
             </fieldset>
         </fields>
     </config>

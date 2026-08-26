@@ -8,6 +8,7 @@
                 filter="string"
                 required="true"
                 size="30"
+                maxlength="254"
                 validate="email"
                 autocomplete="email"
         />
@@ -19,6 +20,8 @@
                 filter="string"
                 required="true"
                 size="30"
+                maxlength="128"
+                readonly="true"
         />
 
         <field
@@ -28,6 +31,8 @@
                 filter="string"
                 required="true"
                 size="30"
+                maxlength="254"
+                readonly="true"
                 validate="email"
                 autocomplete="email"
         />
@@ -39,6 +44,7 @@
                 filter="string"
                 required="true"
                 size="30"
+                maxlength="255"
         />
 
         <field

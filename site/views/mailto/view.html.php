@@ -33,6 +33,13 @@ class JemViewMailto extends HtmlView
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
         $app         = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
+        $app->setHeader('X-Robots-Tag', 'noindex, nofollow', true);
+
+        if (!JemMailtoHelper::canCurrentUserSend($app)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $user        = JemFactory::getUser();
         $userId      = $user->get('id');
         $document    = $app->getDocument();
@@ -45,8 +52,13 @@ class JemViewMailto extends HtmlView
         $this->state = $this->get('State');
         $this->params = $this->state->get('params');
         $link = trim($app->input->getString('link', ''));
-        $resolvedLink = JemMailtoHelper::validateHash($link) ?: $link;
-        $this->link = ($resolvedLink && Uri::isInternal($resolvedLink)) ? $link : '';
+        $resolvedLink = JemMailtoHelper::validateHash($link);
+
+        if (!$resolvedLink || !Uri::isInternal($resolvedLink)) {
+            throw new Exception(Text::_('COM_JEM_MAILTO_LINK_IS_MISSING'), 400);
+        }
+
+        $this->link = $link;
 
         $layout = $app->input->get('layout', 'edit');
 
@@ -93,8 +105,6 @@ class JemViewMailto extends HtmlView
         }
         $this->document->setTitle($title);
 
-        // TODO: Is it useful to have meta data in an edit view?
-        //       Also shouldn't be "robots" set to "noindex, nofollow"?
         if ($this->params->get('menu-meta_description')) {
             $this->document->setDescription($this->params->get('menu-meta_description'));
         }
@@ -103,9 +113,7 @@ class JemViewMailto extends HtmlView
             $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
         }
 
-        if ($this->params->get('robots')) {
-            $this->document->setMetadata('robots', $this->params->get('robots'));
-        }
+        $this->document->setMetadata('robots', 'noindex, nofollow');
     }
 }
 ?>

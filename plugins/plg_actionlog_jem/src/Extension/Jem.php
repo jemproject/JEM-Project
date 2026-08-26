@@ -76,6 +76,30 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         ),
     );
 
+    private const MAIL_SHARE_CONTEXTS = array(
+        'event' => array(
+            'context' => 'com_jem.mailto.event',
+            'type' => 'PLG_ACTIONLOG_JEM_TYPE_EVENT',
+            'table' => '#__jem_events',
+            'title' => 'title',
+            'link' => 'index.php?option=com_jem&task=event.edit&id=%d',
+        ),
+        'venue' => array(
+            'context' => 'com_jem.mailto.venue',
+            'type' => 'PLG_ACTIONLOG_JEM_TYPE_VENUE',
+            'table' => '#__jem_venues',
+            'title' => 'venue',
+            'link' => 'index.php?option=com_jem&task=venue.edit&id=%d',
+        ),
+        'category' => array(
+            'context' => 'com_jem.mailto.category',
+            'type' => 'PLG_ACTIONLOG_JEM_TYPE_CATEGORY',
+            'table' => '#__jem_categories',
+            'title' => 'catname',
+            'link' => 'index.php?option=com_jem&task=category.edit&id=%d',
+        ),
+    );
+
     public static function getSubscribedEvents(): array
     {
         return array(
@@ -87,6 +111,7 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
             'onJemAfterAttendeeStatusChange' => 'onJemAfterAttendeeStatusChange',
             'onJemAfterAttachmentSave' => 'onJemAfterAttachmentSave',
             'onJemAfterAttachmentDelete' => 'onJemAfterAttachmentDelete',
+            'onJemMailtoSent' => 'onJemMailtoSent',
         );
     }
 
@@ -286,12 +311,57 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         );
     }
 
-    private function isEnabled(): bool
+    /**
+     * Record a successful frontend email share without recipient data.
+     *
+     * @param   Event  $event  JEM mail share event.
+     *
+     * @return  void
+     */
+    public function onJemMailtoSent(Event $event): void
     {
-        if (!$this->getApplication()->isClient('administrator')) {
-            return false;
+        if (!$this->isActionLogEnabled() || !$this->isFeatureEnabled('log_mailto')) {
+            return;
         }
 
+        $context = (array) $this->eventArgument($event, 0, array());
+        $view = strtolower(trim((string) ($context['view'] ?? '')));
+        $id = (int) ($context['id'] ?? 0);
+
+        if ($id < 1 || !isset(self::MAIL_SHARE_CONTEXTS[$view])) {
+            return;
+        }
+
+        $meta = self::MAIL_SHARE_CONTEXTS[$view];
+        $title = $this->loadMailShareTitle($meta, $id);
+        $message = array(
+            'action' => 'mailto',
+            'type' => $meta['type'],
+            'id' => $id,
+            'title' => $title,
+            'extension' => 'COM_JEM',
+            'itemlink' => sprintf($meta['link'], $id),
+        );
+
+        $this->addLog(
+            array($message),
+            'PLG_ACTIONLOG_JEM_MAIL_SHARED',
+            $meta['context']
+        );
+    }
+
+    private function isEnabled(): bool
+    {
+        return $this->getApplication()->isClient('administrator') && $this->isActionLogEnabled();
+    }
+
+    /**
+     * Check the JEM global User Actions Log switch for any application client.
+     *
+     * @return  boolean
+     */
+    private function isActionLogEnabled(): bool
+    {
         try {
             if (!class_exists('JemConfig')) {
                 require_once JPATH_SITE . '/components/com_jem/classes/config.class.php';
@@ -312,6 +382,32 @@ final class Jem extends ActionLogPlugin implements SubscriberInterface
         } catch (Throwable $e) {
             return false;
         }
+    }
+
+    /**
+     * Load the shared item title for a privacy-safe action log record.
+     *
+     * @param   array    $meta  Trusted table metadata.
+     * @param   integer  $id    JEM item identifier.
+     *
+     * @return  string
+     */
+    private function loadMailShareTitle(array $meta, int $id): string
+    {
+        $db = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName($meta['title']))
+            ->from($db->quoteName($meta['table']))
+            ->where($db->quoteName('id') . ' = ' . $id);
+        $db->setQuery($query, 0, 1);
+
+        try {
+            $title = trim((string) $db->loadResult());
+        } catch (RuntimeException $e) {
+            $title = '';
+        }
+
+        return $title !== '' ? $title : Text::_('PLG_ACTIONLOG_JEM_UNKNOWN_TITLE');
     }
 
     private function createMessage(string $context, object $item, string $action, bool $includeLink = true): array
