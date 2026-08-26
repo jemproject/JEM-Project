@@ -105,5 +105,32 @@ class JemViewMain extends JemAdminView
         </div>
         <?php
     }
+
+    /**
+     * Render a control-panel action as a token-protected POST form.
+     *
+     * @param  string  $task   Controller task.
+     * @param  string  $image  Path to image.
+     * @param  string  $text   Image description.
+     *
+     * @return void
+     */
+    protected function quickiconPostButton($task, $image, $text)
+    {
+        $lang = Factory::getApplication()->getLanguage();
+        ?>
+        <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
+            <form action="index.php?option=com_jem" method="post" class="jem-quickicon-form">
+                <div class="icon">
+                    <button type="submit" name="task" value="<?php echo htmlspecialchars($task, ENT_QUOTES, 'UTF-8'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>
+                        <span><?php echo $text; ?></span>
+                    </button>
+                </div>
+                <?php echo HTMLHelper::_('form.token'); ?>
+            </form>
+        </div>
+        <?php
+    }
 }
 ?>

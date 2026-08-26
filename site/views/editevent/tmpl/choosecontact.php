@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $app = Factory::getApplication();
 $function = $app->input->getCmd('function', 'jSelectContact');
@@ -177,7 +176,7 @@ if (!empty($filterBorder)) {
 <div id="jem" class="jem_select_contact">
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function)); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <select name="filter_type" id="filter_type" class="inputbox" onchange="this.form.submit()">
@@ -245,6 +244,7 @@ if (!empty($filterBorder)) {
         <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">

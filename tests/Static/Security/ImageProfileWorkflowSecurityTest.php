@@ -89,12 +89,13 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
     public function testHousekeepingIsManualGuardedSelectableAndBatchLimited(): void
     {
         $controller = $this->read('admin/controllers/housekeeping.php');
+        $helper = $this->read('site/helpers/helper.php');
         $model = $this->read('admin/models/housekeeping.php');
         $layout = $this->read('admin/views/housekeeping/tmpl/default.php');
 
-        self::assertStringContainsString('Session::checkToken', $controller);
+        self::assertStringContainsString('JemHelper::requirePostToken()', $controller);
         self::assertStringContainsString('$this->allowHousekeeping()', $controller);
-        self::assertStringContainsString("Session::checkToken('post')", $controller);
+        self::assertStringContainsString("Session::checkToken('post')", $helper);
         self::assertStringContainsString("post->get('image_candidates'", $controller);
         self::assertStringContainsString('IMAGE_NORMALISE_BATCH_LIMIT', $controller);
         self::assertStringContainsString('normaliseImageProfiles($selected)', $controller);

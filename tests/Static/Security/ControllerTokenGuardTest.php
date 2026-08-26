@@ -10,21 +10,29 @@ final class ControllerTokenGuardTest extends TestCase
         'apply',
         'attendeeadd',
         'attendeeremove',
+        'attendeetoggle',
         'cancel',
         'cleanupCatsEventRelations',
+        'cleanupUnusedAttachmentFiles',
+        'copycustom',
         'create',
+        'createusercss',
         'createAssociatedArticle',
         'delete',
+        'deletecustom',
         'delreguser',
         'export',
         'featured',
         'load',
+        'logCreatedImportOption',
+        'normaliseImages',
         'publish',
         'rebuild',
         'remove',
         'resizethumbs',
         'save',
         'saveorder',
+        'saveOrderAjax',
         'saveorderDisabled',
         'store',
         'trash',
@@ -51,6 +59,7 @@ final class ControllerTokenGuardTest extends TestCase
      */
     private const READ_ONLY_ACTIONS = array(
         'admin/controllers/cssmanager.php:cancel',
+        'site/controllers/attendees.php:export',
     );
 
     public function testSensitiveControllerMethodsValidateJoomlaToken(): void
@@ -75,7 +84,7 @@ final class ControllerTokenGuardTest extends TestCase
                     continue;
                 }
 
-                if (!preg_match('/(?:(?:Session|JSession)::checkToken|\$this->checkToken)\s*\(/', $body)) {
+                if (!preg_match('/(?:(?:Session|JSession)::checkToken|\$this->checkToken|JemHelper::requirePostToken)\s*\(/', $body)) {
                     $findings[] = $key;
                 }
             }

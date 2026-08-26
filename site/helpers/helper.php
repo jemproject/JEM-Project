@@ -41,6 +41,117 @@ require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 class JemHelper
 {
     /**
+     * Require an explicit POST request with a valid Joomla form token.
+     *
+     * Session::checkToken() also accepts the Joomla CSRF header, which keeps
+     * native AJAX requests compatible without placing the token in the URL.
+     *
+     * @return  void
+     *
+     * @throws  RuntimeException
+     */
+    static public function requirePostToken()
+    {
+        $app = Factory::getApplication();
+        $method = strtoupper((string) $app->input->server->getString('REQUEST_METHOD', ''));
+
+        if ($method !== 'POST') {
+            throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 405);
+        }
+
+        if (!Session::checkToken('post')) {
+            throw new RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+    }
+
+    /**
+     * Mark a protected response as private and non-cacheable.
+     *
+     * @return  void
+     */
+    static public function setNoStoreHeaders()
+    {
+        $app = Factory::getApplication();
+        $app->setHeader('Cache-Control', 'no-store, private', true);
+        $app->setHeader('Pragma', 'no-cache', true);
+        $app->setHeader('X-Content-Type-Options', 'nosniff', true);
+    }
+
+    /**
+     * Issue a short-lived, purpose-bound nonce for a sensitive action.
+     *
+     * @param   string   $purpose  Stable action identifier.
+     * @param   integer  $ttl      Lifetime in seconds.
+     *
+     * @return  string
+     */
+    static public function issueActionNonce($purpose, $ttl = 900)
+    {
+        $purpose = trim((string) $purpose);
+
+        if ($purpose === '') {
+            throw new InvalidArgumentException('An action nonce requires a purpose.');
+        }
+
+        $session = Factory::getApplication()->getSession();
+        $now = time();
+        $nonces = (array) $session->get('com_jem.action_nonces', array());
+
+        foreach ($nonces as $key => $expires) {
+            if ((int) $expires < $now) {
+                unset($nonces[$key]);
+            }
+        }
+
+        $nonce = bin2hex(random_bytes(32));
+        $key = hash('sha256', $purpose . "\0" . $nonce);
+        $nonces[$key] = $now + max(60, min(1800, (int) $ttl));
+
+        if (count($nonces) > 10) {
+            asort($nonces, SORT_NUMERIC);
+            $nonces = array_slice($nonces, -10, null, true);
+        }
+
+        $session->set('com_jem.action_nonces', $nonces);
+
+        return $nonce;
+    }
+
+    /**
+     * Consume a short-lived, purpose-bound nonce exactly once.
+     *
+     * @param   string  $purpose  Stable action identifier.
+     * @param   string  $nonce    Nonce received with the request body.
+     *
+     * @return  boolean
+     */
+    static public function consumeActionNonce($purpose, $nonce)
+    {
+        $purpose = trim((string) $purpose);
+        $nonce = trim((string) $nonce);
+
+        if ($purpose === '' || !preg_match('/^[a-f0-9]{64}$/i', $nonce)) {
+            return false;
+        }
+
+        $session = Factory::getApplication()->getSession();
+        $now = time();
+        $nonces = (array) $session->get('com_jem.action_nonces', array());
+        $key = hash('sha256', $purpose . "\0" . $nonce);
+        $valid = isset($nonces[$key]) && (int) $nonces[$key] >= $now;
+
+        foreach ($nonces as $storedKey => $expires) {
+            if ((int) $expires < $now || hash_equals((string) $storedKey, $key)) {
+                unset($nonces[$storedKey]);
+            }
+        }
+
+        $session->set('com_jem.action_nonces', $nonces);
+
+        return $valid;
+    }
+
+    /**
      * Component stylesheet assets loaded during the current request.
      *
      * The list is used as the dependency chain for jem-user-front.css so the

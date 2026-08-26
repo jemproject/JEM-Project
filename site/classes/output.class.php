@@ -14,7 +14,6 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
@@ -283,7 +282,7 @@ static public function lightbox() {
                 $image = Text::_('COM_JEM_ADD_USER_REGISTRATIONS');
             }
 
-            $url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
+            $url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid;
             $overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
             // $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
@@ -802,7 +801,7 @@ static public function lightbox() {
                 'bootstrap.renderModal',
                 'mailto-modal',
                 array(
-                    'url'    => $url.'&amp;'.Session::getFormToken().'=1',
+                    'url'    => $url,
                     'title'  => Text::_('COM_JEM_SELECT'),
                     'width'  => '800px',
                     'height' => '550px',
@@ -945,7 +944,7 @@ static public function lightbox() {
             $overlib = Text::_('COM_JEM_EXPORT_DESC');
             $text = Text::_('COM_JEM_EXPORT');
 
-            $print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . Session::getFormToken() . '=1';
+            $print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid;
             $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 

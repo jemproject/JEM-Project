@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 
 /**
  * Housekeeping-Controller
@@ -47,11 +46,10 @@ class JemControllerHousekeeping extends BaseController
      *
      */
     public function delete() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
-        $task = Factory::getApplication()->input->get('task', '');
+        $task = Factory::getApplication()->input->post->getCmd('task', '');
         $task = strpos($task, '.') !== false ? substr($task, strrpos($task, '.') + 1) : $task;
         $model = $this->getModel('housekeeping');
         $total = 0;
@@ -78,8 +76,7 @@ class JemControllerHousekeeping extends BaseController
      *
      */
     public function cleanupCatsEventRelations() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
@@ -95,8 +92,7 @@ class JemControllerHousekeeping extends BaseController
      * Deletes physical attachment files that have no matching database record.
      */
     public function cleanupUnusedAttachmentFiles() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
@@ -118,8 +114,7 @@ class JemControllerHousekeeping extends BaseController
      * Regenerates event, venue and category thumbnails using current image settings.
      */
     public function resizethumbs() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         $model = $this->getModel('housekeeping');
@@ -135,7 +130,7 @@ class JemControllerHousekeeping extends BaseController
      * Audit assigned originals against the current image profiles without changing files.
      */
     public function auditImages() {
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         $app = Factory::getApplication();
@@ -151,7 +146,7 @@ class JemControllerHousekeeping extends BaseController
      * Normalise one controlled batch of assigned originals after explicit confirmation.
      */
     public function normaliseImages() {
-        Session::checkToken('post') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         $app = Factory::getApplication();
@@ -215,13 +210,19 @@ class JemControllerHousekeeping extends BaseController
      * Truncates JEM tables with exception of settings table
      */
     public function truncateAllData() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
+        $app = Factory::getApplication();
+        $nonce = $app->input->post->getString('truncate_nonce', '');
+
+        if (!JemHelper::consumeActionNonce('housekeeping.truncateAllData', $nonce)) {
+            throw new \RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+        }
+
         $model = $this->getModel('housekeeping');
-        $deleteAttachmentFiles = (bool) Factory::getApplication()->input->getInt('deleteattachments', 0);
-        $deleteImageFiles = (bool) Factory::getApplication()->input->getInt('deleteimages', 0);
+        $deleteAttachmentFiles = (bool) $app->input->post->getInt('deleteattachments', 0);
+        $deleteImageFiles = (bool) $app->input->post->getInt('deleteimages', 0);
         $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
 
         $link = 'index.php?option=com_jem&view=housekeeping';
@@ -240,8 +241,7 @@ class JemControllerHousekeeping extends BaseController
      *
      */
     public function triggerarchive() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
         $this->allowHousekeeping();
 
         JemHelper::cleanup(1);

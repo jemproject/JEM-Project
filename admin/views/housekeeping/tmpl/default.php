@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $formatBytes = static function ($bytes) {
     $bytes = max(0, (int) $bytes);
@@ -149,9 +148,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleaneventimg&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleaneventimg';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleaneventimg.svg', Text::_('COM_JEM_HOUSEKEEPING_EVENT_IMG'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -163,9 +162,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleanvenueimg&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleanvenueimg';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanvenueimg.svg', Text::_('COM_JEM_HOUSEKEEPING_VENUE_IMG'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -177,9 +176,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleancategoryimg&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleancategoryimg';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancategoryimg.svg', Text::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -191,9 +190,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.auditImages&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.auditImages';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-statistics.svg', Text::_('COM_JEM_HOUSEKEEPING_IMAGE_AUDIT'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -204,9 +203,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.resizethumbs&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.resizethumbs';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-resizethumbs.svg', Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -218,9 +217,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.triggerarchive&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.triggerarchive';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-archive.svg', Text::_('COM_JEM_HOUSEKEEPING_TRIGGER_AUTOARCHIVE'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -232,9 +231,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleanupCatsEventRelations&amp;<?php echo Session::getFormToken(); ?>=1">
+                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleanupCatsEventRelations';">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancatseventrels.svg', Text::_('COM_JEM_HOUSEKEEPING_CATSEVENT_RELS'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -247,10 +246,10 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.cleanupUnusedAttachmentFiles&amp;<?php echo Session::getFormToken(); ?>=1"
-                               onclick="return confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>);">
+                            <button type="submit" class="jem-housekeeping-action"
+                               onclick="if (!confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) return false; this.form.task.value='housekeeping.cleanupUnusedAttachmentFiles'; return true;">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanattachmentfiles.svg', Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -262,9 +261,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <a href="index.php?option=com_jem&amp;task=housekeeping.truncateAllData&amp;<?php echo Session::getFormToken(); ?>=1" onclick="return jemConfirmTruncateAllData(this);">
+                            <button type="submit" class="jem-housekeeping-action" onclick="return jemConfirmTruncateAllData(this.form);">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-truncatealldata.svg', Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA'), NULL, true); ?>
-                            </a>
+                            </button>
                         </div>
                     </td>
                     <td>
@@ -276,11 +275,11 @@ $profileLabels = static function (array $profiles) {
                                 <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_IMAGES_OPTION'); ?></span>
                                 <span class="jem-housekeeping-file-choices">
                                     <label for="jem-delete-images-no">
-                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-no" value="0" checked>
+                                        <input type="radio" name="deleteimages" id="jem-delete-images-no" value="0" checked>
                                         <?php echo Text::_('JNO'); ?>
                                     </label>
                                     <label for="jem-delete-images-yes">
-                                        <input type="radio" name="jem_delete_images" id="jem-delete-images-yes" value="1">
+                                        <input type="radio" name="deleteimages" id="jem-delete-images-yes" value="1">
                                         <?php echo Text::_('JYES'); ?>
                                     </label>
                                 </span>
@@ -289,11 +288,11 @@ $profileLabels = static function (array $profiles) {
                                 <span class="jem-housekeeping-file-question"><?php echo Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_ATTACHMENTS_OPTION'); ?></span>
                                 <span class="jem-housekeeping-file-choices">
                                     <label for="jem-delete-attachments-no">
-                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-no" value="0" checked>
+                                        <input type="radio" name="deleteattachments" id="jem-delete-attachments-no" value="0" checked>
                                         <?php echo Text::_('JNO'); ?>
                                     </label>
                                     <label for="jem-delete-attachments-yes">
-                                        <input type="radio" name="jem_delete_attachments" id="jem-delete-attachments-yes" value="1">
+                                        <input type="radio" name="deleteattachments" id="jem-delete-attachments-yes" value="1">
                                         <?php echo Text::_('JYES'); ?>
                                     </label>
                                 </span>
@@ -307,6 +306,7 @@ $profileLabels = static function (array $profiles) {
             </div>
         <?php endif; ?>
         <input type="hidden" name="task" value="">
+        <input type="hidden" name="truncate_nonce" value="<?php echo htmlspecialchars($this->truncateNonce, ENT_QUOTES, 'UTF-8'); ?>">
         <input type="hidden" name="imageaudit" value="<?php echo is_array($this->imageProfileReport) ? 1 : 0; ?>">
         <input type="hidden" name="filter_order" value="<?php echo is_array($this->imageProfileReport) ? htmlspecialchars($this->imageProfileReport['ordering'], ENT_QUOTES, 'UTF-8') : 'file'; ?>">
         <input type="hidden" name="filter_order_Dir" value="<?php echo is_array($this->imageProfileReport) ? htmlspecialchars($this->imageProfileReport['direction'], ENT_QUOTES, 'UTF-8') : 'asc'; ?>">
@@ -314,19 +314,12 @@ $profileLabels = static function (array $profiles) {
         <?php echo HTMLHelper::_('form.token'); ?>
 </form>
 <script>
-    function jemConfirmTruncateAllData(link) {
+    function jemConfirmTruncateAllData(form) {
         if (!confirm(<?php echo json_encode(Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_CONFIRM')); ?>)) {
             return false;
         }
 
-        if (document.querySelector('input[name="jem_delete_images"]:checked').value === '1') {
-            link.href += '&deleteimages=1';
-        }
-
-        if (document.querySelector('input[name="jem_delete_attachments"]:checked').value === '1') {
-            link.href += '&deleteattachments=1';
-        }
-
+        form.task.value = 'housekeeping.truncateAllData';
         return true;
     }
 

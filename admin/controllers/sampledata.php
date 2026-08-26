@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 
 /**
  * JEM Component Sampledata Controller
@@ -30,7 +29,7 @@ class JemControllerSampledata extends BaseController
      * Process sampledata
      */
     public function load() {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);

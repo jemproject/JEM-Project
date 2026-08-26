@@ -8,7 +8,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Factory;
 
 require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
@@ -206,7 +205,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const assignmentIdsInput = document.getElementById('jform_venue_assignment_ids');
     const venueInput = document.getElementById('jform_locid_id');
     const reloadInput = document.getElementById('jform_reload_venue_capacity');
-    const ajaxToken = <?php echo json_encode(Session::getFormToken()); ?>;
     const eventId = <?php echo (int) ($this->item->id ?? 0); ?>;
     let configurationDirty = false;
     const advancedToggle = root.querySelector('.jem-price-advanced-toggle');
@@ -493,7 +491,6 @@ document.addEventListener('DOMContentLoaded', function () {
             venue_id: String(venueId),
             id: String(eventId)
         });
-        query.set(ajaxToken, '1');
         configurationFieldset.setAttribute('aria-busy', 'true');
         fetch('index.php?' + query.toString(), {headers: {'Accept': 'application/json'}})
             .then(function (response) {

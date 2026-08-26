@@ -1079,8 +1079,8 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     <?php
                                     $logFilePath = $this->importLogPath . DIRECTORY_SEPARATOR . $logFile['file'];
                                     $logExists = is_file($logFilePath) && is_readable($logFilePath);
-                                    $viewUrl = Route::_('index.php?option=com_jem&task=import.viewLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
-                                    $downloadUrl = Route::_('index.php?option=com_jem&task=import.downloadLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                                    $viewUrl = Route::_('index.php?option=com_jem&task=import.viewLog&log=' . $logFile['key'], false);
+                                    $downloadUrl = Route::_('index.php?option=com_jem&task=import.downloadLog&log=' . $logFile['key'], false);
                                     $modalId = 'jem-import-log-modal-' . preg_replace('/[^a-z0-9_-]/i', '-', $logFile['key']);
                                     ?>
                                     <tr>
@@ -2179,12 +2179,17 @@ function JemImportLogCreatedOption(selectId, label, value) {
         object: object,
         select: selectId,
         label: label || '',
-        value: value || '0',
-        '<?php echo Session::getFormToken(); ?>': '1'
+        value: value || '0'
     });
 
-    fetch('index.php?' + params.toString(), {
-        credentials: 'same-origin'
+    fetch('index.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'X-CSRF-Token': '<?php echo Session::getFormToken(); ?>'
+        },
+        body: params.toString()
     }).then(function () {
         window.location.reload();
     }).catch(function () {

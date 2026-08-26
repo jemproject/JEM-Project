@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
@@ -126,8 +125,8 @@ $logFiles = array(
                     <?php
                     $logFilePath = $logPath . '/' . $logFile['file'];
                     $logExists = is_file($logFilePath) && is_readable($logFilePath);
-                    $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
-                    $downloadUrl = Route::_('index.php?option=com_jem&task=settings.downloadLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                    $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'], false);
+                    $downloadUrl = Route::_('index.php?option=com_jem&task=settings.downloadLog&log=' . $logFile['key'], false);
                     $modalId = 'jem-log-modal-' . preg_replace('/[^a-z0-9_-]/i', '-', $logFile['key']);
                     ?>
                     <tr>

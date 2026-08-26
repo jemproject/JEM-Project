@@ -33,6 +33,7 @@ class JemViewHousekeeping extends JemAdminView
         $this->imageProfileReport = null;
         $this->imagePagination = null;
         $this->imageBatchLimit = 25;
+        $this->truncateNonce = JemHelper::issueActionNonce('housekeeping.truncateAllData');
 
         if ($auditActive) {
             $model = $this->getModel();

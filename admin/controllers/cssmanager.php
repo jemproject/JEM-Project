@@ -85,7 +85,7 @@ class JemControllerCssmanager extends AdminController
 
     public function copycustom()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
 
@@ -93,8 +93,8 @@ class JemControllerCssmanager extends AdminController
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $file = $app->input->getString('file', '');
-        $targetFile = $app->input->getString('customfile', '');
+        $file = $app->input->post->getString('file', '');
+        $targetFile = $app->input->post->getString('customfile', '');
         $model = $this->getModel();
 
         if (!$model->copyCustomFile($file, $targetFile)) {
@@ -112,7 +112,7 @@ class JemControllerCssmanager extends AdminController
 
     public function deletecustom()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
 
@@ -120,7 +120,7 @@ class JemControllerCssmanager extends AdminController
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $file = $app->input->getString('file', '');
+        $file = $app->input->post->getString('file', '');
         $model = $this->getModel();
 
         if (!$model->deleteCustomFile($file)) {
@@ -137,8 +137,6 @@ class JemControllerCssmanager extends AdminController
 
     public function downloadcustom()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
-
         $app = Factory::getApplication();
 
         if (!JemHelperBackend::canManage('jem.tools.manage')) {
@@ -159,11 +157,11 @@ class JemControllerCssmanager extends AdminController
             ob_end_clean();
         }
 
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
         header('Content-Type: text/css; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . str_replace('"', '', $download->name) . '"');
         header('Content-Length: ' . (int) $download->size);
-        header('Cache-Control: private, max-age=0, must-revalidate');
-        header('Pragma: public');
         readfile($download->path);
         $app->close();
 
@@ -172,7 +170,7 @@ class JemControllerCssmanager extends AdminController
 
     public function createusercss()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
 
@@ -180,7 +178,7 @@ class JemControllerCssmanager extends AdminController
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $file = $app->input->getString('file', '');
+        $file = $app->input->post->getString('file', '');
         $model = $this->getModel();
 
         if (!$model->createUserCssFile($file)) {

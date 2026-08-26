@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/attachmentdisplay.php';
 
@@ -66,7 +65,7 @@ $attachmentsFrameClass = JemAttachmentDisplayHelper::frameClass($attachmentsFram
                     $filename = $this->escape($file->name ? $file->name : $file->file);
                     $linkText = '<span class="file-name">' . $filename . '</span> <span class="fa fa-download" aria-hidden="true"></span>';
                     $attribs = array('class'=>'file-name');
-                    echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id.'&'.Session::getFormToken().'=1',$linkText,$attribs);
+                    echo HTMLHelper::_('link','index.php?option=com_jem&task=getfile&format=raw&file='.$file->id,$linkText,$attribs);
                     ?>
                 </span>
                         <?php if (!empty($file->description)) : ?>

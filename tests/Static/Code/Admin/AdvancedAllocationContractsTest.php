@@ -56,12 +56,13 @@ final class AdvancedAllocationContractsTest extends TestCase
         $controller = $this->read('/admin/controllers/event.php');
         $view = $this->read('/admin/views/event/tmpl/edit_capacity.php');
 
-        self::assertStringContainsString("Session::checkToken('get')", $controller);
+        self::assertStringNotContainsString("Session::checkToken('get')", $controller);
+        self::assertStringContainsString('JemHelper::setNoStoreHeaders()', $controller);
         self::assertStringContainsString('JemFeaturePolicy::FEATURE_VENUE_CAPACITY', $controller);
         self::assertStringContainsString('$this->allowEdit(', $controller);
         self::assertStringContainsString('$this->allowAdd()', $controller);
         self::assertStringContainsString("fetch('index.php?'", $view);
-        self::assertStringContainsString('query.set(ajaxToken', $view);
+        self::assertStringNotContainsString('ajaxToken', $view);
         self::assertStringNotContainsString("fetch('http", $view);
     }
 

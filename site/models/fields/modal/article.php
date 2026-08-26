@@ -13,7 +13,6 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 /**
  * Article modal field for the front area.
@@ -43,8 +42,7 @@ class JFormFieldModal_Article extends FormField
         $link = Route::_(
             'index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component'
             . '&function=jSelectArticle_' . $this->id
-            . '&selected=' . $value
-            . '&' . Session::getFormToken() . '=1',
+            . '&selected=' . $value,
             false
         );
 

@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
@@ -28,7 +27,7 @@ $isAreaCapacity = !$isPriced && !empty($this->capacity->enabled);
 $pricedUserLocked = $isPriced && !empty($this->row->id);
 $pricingEndpoint = Route::_(
     'index.php?option=com_jem&task=attendee.pricingOptions&format=json&event=' . (int) ($this->row->event ?: $this->event)
-    . '&id=' . (int) $this->row->id . '&' . Session::getFormToken() . '=1',
+    . '&id=' . (int) $this->row->id,
     false
 );
 
@@ -37,7 +36,7 @@ echo HTMLHelper::_(
     'bootstrap.renderModal',
     $userModalId,
     array(
-        'url'    => $selectuser_link.'&amp;'.Session::getFormToken().'=1',
+        'url'    => $selectuser_link,
         'title'  => Text::_('COM_JEM_SELECT'),
         'width'  => '800px',
         'height' => '450px',

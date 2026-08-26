@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\Form;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
@@ -242,7 +241,7 @@ if (!function_exists('jem_addusers_account_status')) {
 
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id.'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&function='.$this->escape($function).'&id='.$this->event->id); ?>" method="post" name="adminForm" id="adminForm">
 
         <?php if(1) : ?>
     <div class="jem-row valign-baseline">
@@ -357,13 +356,14 @@ if (!function_exists('jem_addusers_account_status')) {
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         <input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
 
     <div class="pagination">
         <?php echo $this->pagination->getPagesLinks(); ?>
     </div>
 
     <div class="jem-row jem-justify-end">
-        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm),document.adminForm.boxchecked.value,document.adminForm.status.value, checkPlaces(document.adminForm), <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value, '<?php echo Session::getFormToken(); ?>');">
+        <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>_newusers(checkList(document.adminForm),document.adminForm.boxchecked.value,document.adminForm.status.value, checkPlaces(document.adminForm), <?php echo $this->event->id; ?>, document.adminForm.seriesbooking.value);">
       <?php echo Text::_('COM_JEM_SAVE'); ?>
     </button>
     </div>

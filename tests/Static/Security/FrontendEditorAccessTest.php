@@ -35,7 +35,7 @@ final class FrontendEditorAccessTest extends TestCase
             '? JemFrontendAccess::readSelectorRecordId($jinput)',
             $controller
         );
-        self::assertStringContainsString("\$this->checkToken('request')", $controller);
+        self::assertStringNotContainsString("\$this->checkToken('request')", $controller);
         self::assertStringContainsString("\$jinput->exists('from_id')", $controller);
         self::assertStringContainsString("'com_jem.edit.' . \$type", $controller);
 

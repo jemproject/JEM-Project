@@ -73,9 +73,9 @@ class JemControllerEvent extends JemControllerForm
      */
     public function venueConfigurations()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
-
         $app = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
         require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
         if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);

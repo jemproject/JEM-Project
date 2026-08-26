@@ -14,7 +14,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
 
 use Joomla\Utilities\ArrayHelper;
@@ -79,16 +78,15 @@ class JemControllerAttendees extends BaseController
      * addtask
      */
     public function attendeeadd() {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
 
         $app     = Factory::getApplication();
         $input  = $app->getInput();
-        $eventid = $input->getInt('id', 0);
-        $status  = $input->getInt('status', 0);
-        $checkseries  = $input->getString('series', '');
+        $eventid = $input->post->getInt('id', 0);
+        $status  = $input->post->getInt('status', 0);
+        $checkseries  = $input->post->getString('series', '');
         $comment = '';
-        $fid     = $input->getInt('Itemid', 0);
+        $fid     = $input->post->getInt('Itemid', 0);
 
         $this->assertCanManageAttendees($eventid);
 
@@ -96,7 +94,7 @@ class JemControllerAttendees extends BaseController
             throw new Exception(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'), 400);
         }
 
-        $uids    = explode(',', $input->getString('uids', ''));
+        $uids    = explode(',', $input->post->getString('uids', ''));
         ArrayHelper::toInteger($uids);
         $uids    = array_filter($uids);
         $uids    = array_unique($uids);
@@ -105,17 +103,17 @@ class JemControllerAttendees extends BaseController
         $placesByUser = array();
 
         try {
-            $task = $input->getCmd('task', '');
+            $task = $input->post->getCmd('task', '');
             if (in_array($task, array('attendeeadd', 'attendees.attendeeadd'), true)) {
                 $selection = JemRegistrationQuantity::parseManagerSelection(
-                    $input->get('places', '0', 'raw'),
+                    $input->post->get('places', '0', 'raw'),
                     $uids
                 );
                 $places = $selection->places;
                 $placesByUser = $selection->byUser;
             } else {
                 $field = $status === JemRegistrationTransition::ATTENDING ? 'addplaces' : 'cancelplaces';
-                $places = JemRegistrationQuantity::parseOptional($input->get($field, null, 'raw'));
+                $places = JemRegistrationQuantity::parseOptional($input->post->get($field, null, 'raw'));
             }
         } catch (InvalidArgumentException $e) {
             throw new Exception(Text::_('COM_JEM_ERROR_REGISTRATION'), 400);
@@ -299,13 +297,12 @@ class JemControllerAttendees extends BaseController
      * removetask
      */
     public function attendeeremove() {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
 
         $input = Factory::getApplication()->input;
-        $cid    = $input->get('cid', array(), 'array');
-        $id     = $input->getInt('id', 0);
-        $fid    = $input->getInt('Itemid', 0);
+        $cid    = $input->post->get('cid', array(), 'array');
+        $id     = $input->post->getInt('id', 0);
+        $fid    = $input->post->getInt('Itemid', 0);
         $total  = is_array($cid) ? count($cid) : 0;
 
         $this->assertCanManageAttendees($id);
@@ -363,12 +360,11 @@ class JemControllerAttendees extends BaseController
      * toggletask
      */
     public function attendeetoggle() {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
 
         $input = Factory::getApplication()->input;
-        $id     = $input->getInt('id', 0);
-        $fid    = $input->getInt('Itemid', 0);
+        $id     = $input->post->getInt('attendee_id', 0);
+        $fid    = $input->post->getInt('Itemid', 0);
 
         $model = $this->getModel('attendee');
         $model->setId($id);
@@ -397,7 +393,7 @@ class JemControllerAttendees extends BaseController
             $promotion = JemWaitingListPromotion::promote((int) $attendee->event, array(
                 'mode' => JemWaitingListPromotion::MODE_MANUAL,
                 'registrationIds' => array((int) $attendee->id),
-                'notify' => Factory::getApplication()->input->getBool('waitinglist_notify', true),
+                'notify' => (bool) $input->post->getInt('waitinglist_notify', 0),
                 'actorId' => (int) Factory::getApplication()->getIdentity()->id,
                 'source' => 'site.attendees.manual',
             ));
@@ -440,9 +436,6 @@ class JemControllerAttendees extends BaseController
      * view: attendees
      */
     public function export() {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
-
         $app       = Factory::getApplication();
         $params    = $app->getParams();
         $jemconfig = JemConfig::getInstance()->toRegistry();
@@ -462,6 +455,8 @@ class JemControllerAttendees extends BaseController
         $event = $model->getEvent();
         $waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
         header('Content-Type: text/csv; charset=utf-8');
         header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         header('Content-Disposition: attachment; filename=attendees_event_' . $event->id . '.csv');

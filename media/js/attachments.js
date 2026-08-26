@@ -160,23 +160,28 @@
     }
 
     async function removeStoredAttachment(button) {
-        const match = button.id.match(/^attach-remove(\d+)(?::(.+))?$/);
+        const match = button.id.match(/^attach-remove(\d+)$/);
 
         if (!match) {
             button.style.cursor = 'not-allowed';
             return;
         }
 
-        const [, id, token] = match;
-        const tokenQuery = token ? `&${encodeURIComponent(token)}=1` : '';
-        const url = `index.php?option=com_jem&task=ajaxattachremove&format=raw&id=${encodeURIComponent(id)}${tokenQuery}`;
+        const [, id] = match;
+        const url = 'index.php?option=com_jem&task=ajaxattachremove&format=raw';
+        const data = new URLSearchParams({id});
 
         button.style.cursor = 'wait';
 
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                credentials: 'same-origin'
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                    'X-CSRF-Token': Joomla.getOptions('csrf.token', '')
+                },
+                body: data.toString()
             });
             const result = await response.text();
 

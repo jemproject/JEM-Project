@@ -9,7 +9,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 
 $requirements = (array) ($this->item->pricing_requirements ?? array());
 $venueExists = !empty($requirements['venue_exists']);
@@ -147,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const assignmentIdsInput = document.getElementById('jform_venue_assignment_ids');
     const venueInput = document.getElementById('jform_locid_id');
     const reloadInput = document.getElementById('jform_reload_venue_capacity');
-    const ajaxToken = <?php echo json_encode(Session::getFormToken()); ?>;
     const eventId = <?php echo (int) ($this->item->id ?? 0); ?>;
     const savedAssignmentIds = <?php echo json_encode(array_values(array_map('intval', $selectedAssignmentIds))); ?>;
     const savedSnapshotLabel = <?php echo json_encode(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION_SAVED')); ?>;
@@ -264,7 +262,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const loadVenueConfigurations = function () {
         const venueId = Number(venueInput ? venueInput.value : 0);
         const query = new URLSearchParams({option: 'com_jem', task: 'event.venueConfigurations', format: 'json', venue_id: String(venueId), id: String(eventId)});
-        query.set(ajaxToken, '1');
         fetch('index.php?' + query.toString(), {headers: {'Accept': 'application/json'}})
             .then(function (response) { if (!response.ok) { throw new Error('HTTP ' + response.status); } return response.json(); })
             .then(function (response) { if (!response.success || !response.data) { throw new Error(response.message || 'Invalid response'); } applyVenuePayload(response.data); })

@@ -22,7 +22,10 @@ final class PricedAttendeeOrderViewTest extends TestCase
         self::assertStringContainsString('new JemPricedRegistrationService($db)', $model);
         self::assertStringContainsString("'requestedStatus' => (int) \$status", $model);
         self::assertStringContainsString("\$data['places'] = 0", $model);
-        self::assertStringContainsString("Session::checkToken('get')", $controller);
+        self::assertStringNotContainsString("Session::checkToken('get')", $controller);
+        self::assertStringContainsString('JemHelper::setNoStoreHeaders()', $controller);
+        self::assertStringContainsString('$this->assertCanManageAttendees()', $controller);
+        self::assertStringNotContainsString('Session::getFormToken()', $template);
         self::assertStringContainsString('getPricingData($eventId, $userId, $registrationId)', $controller);
         self::assertStringContainsString('empty($this->pricing->is_priced)', $view);
         self::assertStringContainsString('commerceReadOnly', $view);

@@ -13,7 +13,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Log\Log;
 use Joomla\Utilities\ArrayHelper;
 
@@ -241,15 +240,21 @@ class JemHtml
                     : '';
                 $attr .= ' onclick="' . $confirmation . 'return Joomla.listItemTask(\'cb' . $i . '\',\'' . $state[2] . '\')"';
                 $url = '#';
+                $html = HTMLHelper::_('link', $url, $html, $attr);
             } else {
+                $confirmation = '';
+
                 if ((int) $value === 2) {
-                    $attr .= ' onclick="var notify = document.getElementById(\'jem-waitinglist-notify\'); '
-                        . 'if (notify && !notify.checked) { this.href = this.href.replace(\'waitinglist_notify=1\', \'waitinglist_notify=0\'); } '
-                        . 'return window.confirm(\'' . htmlspecialchars($confirm, ENT_QUOTES, 'UTF-8') . '\')"';
+                    $confirmation = 'if (!window.confirm(\'' . htmlspecialchars($confirm, ENT_QUOTES, 'UTF-8') . '\')) return false; ';
                 }
-                $url = Route::_('index.php?option=com_jem&view=attendees&amp;task=attendees.attendeetoggle&id='.$i.'&waitinglist_notify=1&'.Session::getFormToken().'=1');
+
+                $attr = str_replace('class="', 'class="btn btn-link p-0 ', $attr);
+                $attr .= ' type="submit" onclick="' . $confirmation
+                    . 'var form = document.getElementById(\'adminForm\'); '
+                    . 'form.querySelector(\'input[name=task]\').value = \'attendees.attendeetoggle\'; '
+                    . 'form.querySelector(\'input[name=attendee_id]\').value = \'' . (int) $i . '\'; return true;"';
+                $html = '<button ' . $attr . '>' . $html . '</button>';
             }
-            $html = HTMLHelper::_('link', $url, $html, $attr);
         } else {
             $html = jemhtml::icon('com_jem/'.$state[0], 'fa fa-fw fa-lg '.$state[1].' jem-attendance-status-'.$state[1], $state[3], $attr, $backend);
         }

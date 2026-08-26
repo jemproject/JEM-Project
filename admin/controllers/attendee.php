@@ -248,12 +248,13 @@ class JemControllerAttendee extends BaseController
      */
     public function pricingOptions()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
         $this->assertCanManageAttendees();
         if (!JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_PRICING)) {
             throw new Exception(Text::_('COM_JEM_PRICED_REGISTRATION_COMMERCE_READ_ONLY'), 403);
         }
         $app = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
         $eventId = $app->input->getInt('event', 0);
         $userId = $app->input->getInt('uid', 0);
         $registrationId = $app->input->getInt('id', 0);

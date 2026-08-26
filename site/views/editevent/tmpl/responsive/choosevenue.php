@@ -14,7 +14,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
 Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
@@ -217,7 +216,7 @@ if (!function_exists('jem_choosevenue_country')) {
 <div id="jem" class="jem_select_venue">
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&parent_venue_id='.(int) ($this->parentVenueId ?? 0).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&parent_venue_id='.(int) ($this->parentVenueId ?? 0)); ?>" method="post" name="adminForm" id="adminForm">
         <div class="jem-row valign-baseline">
             <div id="jem_filter" class="jem-form jem-row jem-justify-start"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
                 <div class="jem-choosevenue-label">
@@ -299,6 +298,7 @@ if (!function_exists('jem_choosevenue_country')) {
         <input type="hidden" name="parent_venue_id" value="<?php echo (int) ($this->parentVenueId ?? 0); ?>" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">

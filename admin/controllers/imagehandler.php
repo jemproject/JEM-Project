@@ -208,8 +208,7 @@ class JemControllerImagehandler extends BaseController
      * @return void
      */
     public function delete() {
-        // Check for request forgeries
-        Session::checkToken('get') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
         if (!JemHelperBackend::canManage('jem.tools.manage')) {
@@ -218,11 +217,11 @@ class JemControllerImagehandler extends BaseController
 
 
         // Get some data from the request
-        $images = Factory::getApplication()->input->get('rm', array(), 'array');
-        $folder = Factory::getApplication()->input->getCmd('folder', '');
+        $images = $app->input->post->get('rm', array(), 'array');
+        $folder = $app->input->post->getCmd('folder', '');
         $imagePath = $folder === 'venues'
-            ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
-            : JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+            ? JemVenueImagePath::normaliseRelativeFolder($app->input->post->getString('image_path', ''))
+            : JemEventImagePath::normaliseRelativeFolder($app->input->post->getString('image_path', ''));
         $allowedFolders = array('events', 'venues', 'categories');
 
         if (!in_array($folder, $allowedFolders, true)) {

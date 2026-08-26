@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $canAccessEvents = JemHelperBackend::can('event', 'access');
 $canCreateEvents = JemHelperBackend::can('event', 'create');
@@ -112,8 +111,7 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                 if ($canManageTools) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=import', 'icon-48-tableimport.svg', Text::_('COM_JEM_IMPORT_DATA'));
                     $this->quickiconButton('index.php?option=com_jem&amp;view=export', 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));
-                    $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
-                    $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
+                    $this->quickiconPostButton('sampledata.load', 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
                 }
             ?>
             </div>
@@ -123,8 +121,7 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                 <div class="jem-wei-group">
                 <?php
                     $this->quickiconButton('index.php?option=com_jem&amp;view=housekeeping', 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
-                    $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
-                    $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
+                    $this->quickiconPostButton('frontendmenu.create', 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
 
                     $icon = 'icon-48-update.svg';
                     if (!empty($this->updatedata) && isset($this->updatedata->current) && (int) $this->updatedata->current === -1) {
@@ -151,4 +148,5 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
             </div>
         </aside>
     </div>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>
