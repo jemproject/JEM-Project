@@ -42,7 +42,7 @@ class PlgContentJemembed extends CMSPlugin
     /** all options with their default values */
     protected static $optionDefaults = array(
         'type'              => 'unfinished',
-        'show_featured'     => 'off',
+        'show_featured'     => 'on',
         'title'             => 'on',
         'cut_title'         => 100,
         'show_date'         => 'on',
@@ -56,6 +56,7 @@ class PlgContentJemembed extends CMSPlugin
         'show_venue'        => 'on',
         'max_events'        => '100',
         'start'             => '0',
+        'no_events_msg'     => '',
     );
 
     private const RATE_WINDOW_SECONDS = 60;
@@ -124,7 +125,7 @@ class PlgContentJemembed extends CMSPlugin
      * 
      * Optional parameters:
      * - type: today, unfinished, upcoming, ongoing, archived, newest, open, all
-     * - featured: on or off
+     * - featured: on, off, only
      * - title: on, link, off
      * - date: on, link, off
      * - time: on, off
@@ -136,6 +137,7 @@ class PlgContentJemembed extends CMSPlugin
      * - max: maximum number of events to return (1-100)
      * - start: result offset (0-10000)
      * - cuttitle: maximum length of title before truncation
+     * - noeventsmsg: plain-text message shown by the supplied client when no events are returned
      */
     public function onAjaxJemembed()
     {
@@ -166,7 +168,8 @@ class PlgContentJemembed extends CMSPlugin
         $allowedRequestParameters = array(
             'option', 'plugin', 'group', 'format', 'type', 'featured', 'title',
             'cuttitle', 'date', 'time', 'enddatetime', 'catids', 'category',
-            'venueids', 'venue', 'max', 'start', 'dateformat', 'timeformat', 'lang',
+            'venueids', 'venue', 'max', 'start', 'dateformat', 'timeformat',
+            'noeventsmsg', 'lang',
         );
         $unknownParameters = array_diff(array_keys($app->input->getArray()), $allowedRequestParameters);
 
@@ -211,7 +214,8 @@ class PlgContentJemembed extends CMSPlugin
                 'max' => 'max_events',
                 'start' => 'start',
                 'dateformat' => 'date_format',
-                'timeformat' => 'time_format'
+                'timeformat' => 'time_format',
+                'noeventsmsg' => 'no_events_msg',
             ];
             
             // Get parameters from request
@@ -444,6 +448,18 @@ class PlgContentJemembed extends CMSPlugin
         $model->setState('filter.access_levels', $guest->getAuthorisedViewLevels());
         $model->setState('filter.strict_access', true);
 
+        // Keep the public feed query bounded before large text fields are loaded.
+        $contentLimit = JemEmbedRequestPolicy::MAX_DESCRIPTION_LENGTH + 1;
+        $model->setState(
+            'list.select',
+            'a.alias,a.article_id,a.attribs,a.created_by,a.dates,a.enddates,a.endtimes,a.featured,' .
+            'a.id,LEFT(a.introtext, ' . $contentLimit . ') AS introtext,' .
+            'LEFT(a.fulltext, ' . $contentLimit . ') AS fulltext,a.locid,a.times,a.title'
+        );
+        $model->setState('list.compact_select', true);
+        $model->setState('list.content_limit', $contentLimit);
+        $model->setState('list.skip_attendee_numbers', true);
+
         // Set max events limit
         $model->setState('list.limit', (int) $parameters['max_events']);
         $model->setState('list.start', (int) $parameters['start']);
@@ -472,13 +488,12 @@ class PlgContentJemembed extends CMSPlugin
         }
 
         // Filter by featured status
-        if ($parameters['show_featured'] == 'on' || $parameters['show_featured'] == '1') {
-            $model->setState('filter.featured', 1);
-        } elseif ($parameters['show_featured'] == 'off' || $parameters['show_featured'] == '0') {
-            // Explicitly show only non-featured events
+        if ($parameters['show_featured'] === 'off') {
             $model->setState('filter.featured', 0);
+        } elseif ($parameters['show_featured'] === 'only') {
+            $model->setState('filter.featured', 1);
         }
-        // If nothing specified, we show all events (featured and non-featured)
+        // The "on" value includes both featured and non-featured events.
 
         // Set type filters
         $type = isset($parameters['type']) ? $parameters['type'] : 'unfinished';

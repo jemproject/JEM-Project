@@ -52,6 +52,7 @@ final class JemEmbedRequestPolicyTest extends TestCase
             'venueids' => '8,9',
             'date_format' => 'd M Y',
             'time_format' => 'H:i',
+            'no_events_msg' => 'No upcoming events.',
         ));
 
         self::assertSame('upcoming', $parameters['type']);
@@ -62,6 +63,19 @@ final class JemEmbedRequestPolicyTest extends TestCase
         self::assertSame(120, $parameters['cut_title']);
         self::assertSame('3,1', $parameters['catids']);
         self::assertSame('8,9', $parameters['venueids']);
+        self::assertSame('No upcoming events.', $parameters['no_events_msg']);
+        self::assertSame(
+            'only',
+            JemEmbedRequestPolicy::normaliseParameters(array_merge(
+                $this->validParameters(),
+                array('show_featured' => '2')
+            ))['show_featured']
+        );
+    }
+
+    public function testFeaturedDefaultsToTheUnfilteredEventslistState(): void
+    {
+        self::assertSame('on', JemEmbedRequestPolicy::normaliseParameters(array())['show_featured']);
     }
 
     #[DataProvider('invalidParameterProvider')]
@@ -84,6 +98,10 @@ final class JemEmbedRequestPolicyTest extends TestCase
             'too many category ids' => array(array('catids' => implode(',', range(1, 51)))),
             'format too long' => array(array('date_format' => str_repeat('Y', 65))),
             'format control character' => array(array('time_format' => "H:i\n")),
+            'empty message too long' => array(array(
+                'no_events_msg' => str_repeat('x', JemEmbedRequestPolicy::MAX_EMPTY_MESSAGE_LENGTH + 1),
+            )),
+            'empty message control character' => array(array('no_events_msg' => "No events\nfound")),
         );
     }
 
@@ -147,6 +165,7 @@ final class JemEmbedRequestPolicyTest extends TestCase
             'venueids' => '',
             'date_format' => '',
             'time_format' => '',
+            'no_events_msg' => '',
         );
     }
 }

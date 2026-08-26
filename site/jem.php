@@ -22,6 +22,7 @@ require_once (JPATH_COMPONENT_SITE.'/helpers/countries.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/config.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/user.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/frontendaccess.class.php');
+require_once (JPATH_COMPONENT_SITE.'/classes/loadmorerequestpolicy.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/image.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/output.class.php');
 require_once (JPATH_COMPONENT_SITE.'/classes/view.class.php');

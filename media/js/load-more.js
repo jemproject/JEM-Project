@@ -8,115 +8,127 @@
 jQuery(document).ready(function($) {
     const $loadMoreBtn = $('#jem-load-more-btn');
     const $eventList = $('.eventlist');
-    let currentOffset = parseInt($loadMoreBtn.data('offset') || 0);
-    const limit = parseInt($loadMoreBtn.data('limit') || 10);
-    const textLoading = $loadMoreBtn.data('text-loading') || 'Loading...';
-    const textLoadMore = $loadMoreBtn.data('text-loadmore') || 'Load More';
+    let nextOffset = Number.parseInt($loadMoreBtn.attr('data-next-offset') || '0', 10);
+    const limit = Number.parseInt($loadMoreBtn.attr('data-limit') || '10', 10);
+    const endpoint = $loadMoreBtn.attr('data-endpoint') || '';
+    const context = $loadMoreBtn.attr('data-context') || '';
+    const textLoading = $loadMoreBtn.attr('data-text-loading') || 'Loading...';
+    const textLoadMore = $loadMoreBtn.attr('data-text-loadmore') || 'Load More';
+    let lastDisplayedMonth = $('.eventlist .row-month').last().text().trim();
     let isLoading = false;
-    
-    // Array for already displayed months
-    let displayedMonths = [];
-    
-    // Initialize displayed months by collecting already visible month rows on page load
-    function initDisplayedMonths() {
-        $('.eventlist .row-month').each(function() {
-            const monthText = $(this).text().trim();
-            if (monthText && !displayedMonths.includes(monthText)) {
-                displayedMonths.push(monthText);
-            }
-        });
-    }
-    
-    // Collect already visible months on page start
-    initDisplayedMonths();
 
-    // Function for animated fade-in of events
-    function animateEvents($newEvents, delay = 20) {
-        $newEvents.each(function(index) {
+    $(document).on('click', '[data-jem-event-url]', function(event) {
+        if ($(event.target).closest('a, button, input, select, textarea, label').length) {
+            return;
+        }
+
+        try {
+            const target = new URL($(this).attr('data-jem-event-url'), window.location.href);
+
+            if ((target.protocol === 'http:' || target.protocol === 'https:')
+                && target.origin === window.location.origin) {
+                window.location.assign(target.href);
+            }
+        } catch (error) {
+            // Ignore invalid navigation targets.
+        }
+    });
+
+    function animateEvents($events) {
+        $events.each(function(index) {
             const $event = $(this);
-            // Initially hide events
             $event.css({
                 'opacity': '0',
-                'transform': 'translateY(-40px)',
-                'transition': 'opacity 0.3s ease, transform 0.3s ease'
+                'transform': 'translateY(20px)',
+                'transition': 'opacity 0.4s ease, transform 0.4s ease'
             });
-            
-            // Fade in with delay
+
             setTimeout(function() {
                 $event.css({
                     'opacity': '1',
                     'transform': 'translateY(0)'
                 });
-            }, index * delay);
+            }, index * 150);
         });
     }
 
-    if ($loadMoreBtn.length) {
-        $loadMoreBtn.on('click', function(e) {
-            e.preventDefault();
-            
-            if (isLoading) return;
-            
-            isLoading = true;
-            $loadMoreBtn.text(textLoading).prop('disabled', true);
+    if (!$loadMoreBtn.length || !endpoint || !Number.isInteger(nextOffset)
+        || !Number.isInteger(limit) || nextOffset < 0 || limit < 1) {
+        return;
+    }
 
-            // Maintain current URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            urlParams.set('format', 'json');
-            urlParams.set('offset', currentOffset + limit);
-            urlParams.set('limit', limit);
-            
-            // Add already displayed months as parameters
-            displayedMonths.forEach(function(month, index) {
-                urlParams.append('displayedMonths[' + index + ']', month);
-            });
+    $loadMoreBtn.on('click', function(event) {
+        event.preventDefault();
 
-            $.ajax({
-                url: window.location.pathname + '?' + urlParams.toString(),
-                type: 'GET',
-                dataType: 'json',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    if (response.html && response.html.trim()) {
-                        // Convert HTML to jQuery object
-                        const $newEvents = $(response.html);
-                        
-                        // Add new events to list (initially hidden)
-                        $eventList.append($newEvents);
-                        
-                        // Animate events fade-in
-                        animateEvents($newEvents);
-                        
-                        currentOffset += limit;
-                        $loadMoreBtn.data('offset', currentOffset);
-                        
-                        // Update displayedMonths from server response
-                        if (response.displayedMonths) {
-                            displayedMonths = response.displayedMonths;
-                        }
-                        
-                        // Hide button if no more events available
-                        if (!response.hasMore) {
-                            // Hide button only after animation completes
-                            setTimeout(function() {
-                                $loadMoreBtn.hide();
-                            }, $newEvents.length * 150 + 200);
-                        }
-                    } else {
-                        $loadMoreBtn.hide();
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error loading more events:', error);
+        if (isLoading) {
+            return;
+        }
+
+        isLoading = true;
+        $loadMoreBtn.text(textLoading).prop('disabled', true);
+
+        let requestUrl;
+
+        try {
+            requestUrl = new URL(endpoint, window.location.href);
+            requestUrl.searchParams.set('offset', String(nextOffset));
+            requestUrl.searchParams.set('limit', String(limit));
+
+            if (lastDisplayedMonth) {
+                requestUrl.searchParams.set('lastDisplayedMonth', lastDisplayedMonth);
+            } else {
+                requestUrl.searchParams.delete('lastDisplayedMonth');
+            }
+
+            if (context === 'archive') {
+                requestUrl.searchParams.set('loadmore_context', 'archive');
+            } else {
+                requestUrl.searchParams.delete('loadmore_context');
+            }
+        } catch (error) {
+            $loadMoreBtn.hide();
+            isLoading = false;
+            return;
+        }
+
+        $.ajax({
+            url: requestUrl.toString(),
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                const payload = response && response.data ? response.data : response;
+
+                if (!payload || typeof payload !== 'object') {
                     $loadMoreBtn.hide();
-                },
-                complete: function() {
-                    isLoading = false;
-                    $loadMoreBtn.text(textLoadMore).prop('disabled', false);
+                    return;
                 }
-            });
+
+                if (typeof payload.html === 'string' && payload.html.trim()) {
+                    const $newEvents = $(payload.html);
+                    $eventList.append($newEvents);
+                    animateEvents($newEvents);
+                }
+
+                if (typeof payload.lastDisplayedMonth === 'string') {
+                    lastDisplayedMonth = payload.lastDisplayedMonth;
+                }
+
+                if (Number.isInteger(payload.nextOffset) && payload.nextOffset >= 0) {
+                    nextOffset = payload.nextOffset;
+                    $loadMoreBtn.attr('data-next-offset', String(nextOffset));
+                }
+
+                if (!payload.hasMore) {
+                    $loadMoreBtn.hide();
+                }
+            },
+            error: function() {
+                $loadMoreBtn.hide();
+            },
+            complete: function() {
+                isLoading = false;
+                $loadMoreBtn.text(textLoadMore).prop('disabled', false);
+            }
         });
-    }
+    });
 });
