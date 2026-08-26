@@ -760,7 +760,7 @@ static public function lightbox() {
     }
 
     /**
-     * Creates the email button
+     * Creates the email and public link sharing actions.
      *
      * @param object $slug
      * @param $view
@@ -771,46 +771,102 @@ static public function lightbox() {
      */
     static public function mailbutton($slug, $view, $params)
     {
-        $app         = Factory::getApplication();
-        $settings    = JemHelper::globalattribs();
+        $app = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
 
-        if ($settings->get('global_show_email_icon')) {
-            if ($app->input->get('print','','int')) {
-                return;
-            }
-
-            $uri      = Uri::getInstance();
-            $base     = $uri->toString(array('scheme', 'host', 'port'));
-            $template = Factory::getApplication()->getTemplate();
-            $link     = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
-
-            $url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
-            $status = 'width=400,height=350,menubar=yes,resizable=yes';
-
-            if ($settings->get('global_show_icons')) {
-                $image = jemhtml::icon( 'com_jem/emailButton.webp', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
-            } else {
-                $image = Text::_('COM_JEM_EMAIL');
-            }
-
-            $overlib = Text::_('COM_JEM_EMAIL_DESC');
-            $text = Text::_('COM_JEM_EMAIL');
-            $new_html = '';
-
-            $new_html.= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'mailto-modal',
-                array(
-                    'url'    => $url,
-                    'title'  => Text::_('COM_JEM_SELECT'),
-                    'width'  => '800px',
-                    'height' => '550px',
-                    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-                )
-            );
-            $new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
-            return $new_html;
+        if (!$settings->get('global_show_email_icon') || $app->input->get('print', '', 'int')) {
+            return;
         }
+
+        $uri = Uri::getInstance();
+        $base = $uri->toString(array('scheme', 'host', 'port'));
+        $link = $base . Route::_('index.php?option=com_jem&view=' . $view . '&id=' . $slug, false);
+        $shareHtml = self::shareLinkButton($link, $settings, $app);
+
+        if ($app->getIdentity()->guest) {
+            return $shareHtml;
+        }
+
+        $url = 'index.php?option=com_jem&tmpl=component&view=mailto&link=' . JemMailtoHelper::addLink(
+            $link,
+            array('view' => $view, 'id' => $slug)
+        );
+
+        if ($settings->get('global_show_icons')) {
+            $image = jemhtml::icon(
+                'com_jem/emailButton.webp',
+                'fa fa-fw fa-lg fa-envelope jem-mailbutton',
+                Text::_('COM_JEM_INVITE_BY_EMAIL'),
+                null,
+                !$app->isClient('site')
+            );
+        } else {
+            $image = Text::_('COM_JEM_INVITE_BY_EMAIL');
+        }
+
+        $overlib = Text::_('COM_JEM_INVITE_BY_EMAIL_DESC');
+        $text = Text::_('COM_JEM_INVITE_BY_EMAIL');
+        $html = HTMLHelper::_(
+            'bootstrap.renderModal',
+            'mailto-modal',
+            array(
+                'url' => $url,
+                'title' => Text::_('COM_JEM_SELECT'),
+                'width' => '800px',
+                'height' => '550px',
+                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+                    . Text::_('COM_JEM_CLOSE') . '</button>',
+            )
+        );
+        $html .= '<a href="' . self::escapeLinkAttribute($url)
+            . '" data-bs-toggle="modal" data-bs-target="#mailto-modal" '
+            . self::tooltip($text, $overlib, '', 'bottom') . '>' . $image . '</a>';
+        $html .= '<span class="gap">&nbsp;</span>' . $shareHtml;
+
+        return $html;
+    }
+
+    /**
+     * Build a local copy-link action without third-party requests.
+     *
+     * @param   string  $link      Absolute public link.
+     * @param   object  $settings  JEM global attributes.
+     * @param   object  $app       Joomla application.
+     *
+     * @return  string
+     */
+    static protected function shareLinkButton($link, $settings, $app)
+    {
+        $document = $app->getDocument();
+        $document->getWebAssetManager()->registerAndUseScript(
+            'com_jem.share-link',
+            'media/com_jem/js/share-link.js',
+            array(),
+            array('defer' => true)
+        );
+
+        $text = Text::_('COM_JEM_COPY_LINK');
+        $description = Text::_('COM_JEM_COPY_LINK_DESC');
+
+        if ($settings->get('global_show_icons')) {
+            $image = jemhtml::icon(
+                'com_jem/shareButton.svg',
+                'fa fa-fw fa-lg fa-share-alt jem-sharebutton',
+                $text,
+                null,
+                !$app->isClient('site')
+            );
+        } else {
+            $image = $text;
+        }
+
+        return '<a href="' . self::escapeHtmlAttribute($link) . '" data-jem-share-link="'
+            . self::escapeHtmlAttribute($link) . '" data-jem-share-success="'
+            . self::escapeHtmlAttribute(Text::_('COM_JEM_LINK_COPIED')) . '" data-jem-share-prompt="'
+            . self::escapeHtmlAttribute(Text::_('COM_JEM_COPY_LINK_PROMPT')) . '" aria-label="'
+            . self::escapeHtmlAttribute($text) . '" '
+            . self::tooltip($text, $description, 'jem-share-link', 'bottom') . '>' . $image . '</a>'
+            . '<span class="visually-hidden" data-jem-share-status aria-live="polite"></span>';
     }
 
     /**

@@ -86,7 +86,7 @@ final class NativeModalSelectorTest extends TestCase
     {
         $frontendField = $this->read('site/models/fields/modal/contact.php');
         self::assertStringContainsString('layout=choosecontact', $frontendField);
-        self::assertStringContainsString('Session::getFormToken()', $frontendField);
+        self::assertStringNotContainsString('Session::getFormToken()', $frontendField);
         self::assertStringContainsString("Uri::base() . 'index.php?option=com_jem", $frontendField);
         self::assertStringContainsString("\$app->input->getInt('a_id', 0)", $frontendField);
         self::assertStringContainsString("'&a_id=' . \$eventId", $frontendField);
@@ -102,7 +102,7 @@ final class NativeModalSelectorTest extends TestCase
             $code = $this->read($relativePath);
 
             self::assertStringContainsString('layout=choosecontact', $code, $relativePath);
-            self::assertStringContainsString('Session::getFormToken()', $code, $relativePath);
+            self::assertStringContainsString("HTMLHelper::_('form.token')", $code, $relativePath);
             self::assertStringContainsString('jemGetSelectedContacts();', $code, $relativePath);
         }
 
