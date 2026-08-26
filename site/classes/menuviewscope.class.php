@@ -43,7 +43,15 @@ class JemMenuViewScope
             return true;
         }
 
-        return $menuId === self::normaliseId($requestId);
+        $requestId = self::normaliseId($requestId);
+
+        // Joomla may store id=0 on list-view menu items while omitting the id
+        // from their canonical URL. Both forms identify the same menu view.
+        if ($menuId === '0' && $requestId === null) {
+            return true;
+        }
+
+        return $menuId === $requestId;
     }
 
     /**
