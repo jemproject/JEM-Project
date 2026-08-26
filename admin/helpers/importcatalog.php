@@ -239,11 +239,19 @@ class JemImportCatalogHelper
         }
 
         $previous = libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($xmlSource, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA);
-        libxml_clear_errors();
-        libxml_use_internal_errors($previous);
 
-        if (!$xml || $xml->getName() !== 'jem-import-catalog') {
+        try {
+            $xml = simplexml_load_string(
+                $xmlSource,
+                'SimpleXMLElement',
+                LIBXML_NONET | LIBXML_NOCDATA | LIBXML_COMPACT
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+
+        if ($xml === false || $xml->getName() !== 'jem-import-catalog') {
             $error = 'parse';
             return null;
         }

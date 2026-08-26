@@ -41,8 +41,11 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString('data-page-size="50"', $template);
         self::assertStringContainsString('data-page-size="100"', $template);
         self::assertStringContainsString('data-server-paginated=', $template);
-        self::assertStringContainsString('venue_preview_page=', $template);
+        self::assertStringContainsString("'event_preview_page'", $template);
+        self::assertStringContainsString("'venue_preview_page'", $template);
+        self::assertStringContainsString("'specialdays_preview_page'", $template);
         self::assertStringContainsString('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGE_STATUS', $template);
+        self::assertStringContainsString('COM_JEM_IMPORT_EXTERNAL_PREVIEW_LIMIT_NOTICE', $template);
         self::assertStringContainsString('JemImportCatalogHelper::getContext', $template);
         self::assertStringContainsString('jem-import-profile-first', $template);
         self::assertStringContainsString('jem-import-profile-summary', $template);
@@ -165,18 +168,21 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString("form->setValue('entity', null, \$requestedEntity)", $typeView);
     }
 
-    public function testLargeVenuePreviewsStayOutsideTheSessionAndImportInBatches(): void
+    public function testLargeImportPreviewsStayOutsideTheSessionAndImportInBatches(): void
     {
         $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
         $view = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/view.html.php');
         $helper = (string) file_get_contents(JEM_TEST_ROOT . '/admin/helpers/importpreview.php');
 
-        self::assertStringContainsString('EXTERNAL_IMPORT_BATCH_SIZE = 100', $controller);
-        self::assertStringContainsString('array_slice($preview[\'records\'], $offset, self::EXTERNAL_IMPORT_BATCH_SIZE)', $controller);
+        self::assertStringContainsString("storePreview(\$preview, (int) \$app->getIdentity()->id, 'events')", $controller);
+        self::assertStringContainsString("storePreview(\$preview, (int) \$app->getIdentity()->id, 'specialdays')", $controller);
+        self::assertStringContainsString("getPayloadBatches((array) \$preview, \$userId, \$payloadKey)", $controller);
         self::assertStringContainsString('JemImportPreviewHelper::storeVenuePreview', $controller);
-        self::assertStringContainsString('JemImportPreviewHelper::loadVenuePreviewPage', $view);
+        self::assertStringContainsString('JemImportPreviewHelper::loadPreviewPage', $view);
         self::assertStringContainsString('public const PAGE_SIZE = 100', $helper);
         self::assertStringContainsString('$preview[\'records\'] = array();', $helper);
+        self::assertStringContainsString('public const MAX_USER_PREVIEWS = 3', $helper);
+        self::assertStringContainsString('public const PAYLOAD_TTL = 86400', $helper);
     }
 
     public function testVenueMappingCanReloadAndRevalidateThePreview(): void

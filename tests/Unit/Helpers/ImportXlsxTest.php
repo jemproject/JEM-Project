@@ -45,4 +45,26 @@ final class ImportXlsxTest extends TestCase
         self::assertSame('Pza. Carlos I', $result['records'][0]['FUENTE']);
         self::assertSame('40.487657, -3.355224', $result['records'][0]['COORDENADAS']);
     }
+
+    public function testRejectsDtdDeclarationsInArchiveXml(): void
+    {
+        $method = (new ReflectionClass(JemImportXlsxHelper::class))->getMethod('loadXml');
+        $xml = '<!DOCTYPE worksheet [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><worksheet>&xxe;</worksheet>';
+
+        $this->expectException(RuntimeException::class);
+        $method->invoke(null, $xml);
+    }
+
+    public function testXmlReaderRestoresLibxmlErrorMode(): void
+    {
+        $method = (new ReflectionClass(JemImportXlsxHelper::class))->getMethod('loadXml');
+        $original = libxml_use_internal_errors(false);
+
+        try {
+            self::assertInstanceOf(SimpleXMLElement::class, $method->invoke(null, '<worksheet />'));
+            self::assertFalse(libxml_use_internal_errors());
+        } finally {
+            libxml_use_internal_errors($original);
+        }
+    }
 }

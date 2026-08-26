@@ -312,14 +312,30 @@ $renderCatalogSelectionNotice = function ($context) {
     <?php
 };
 
-$renderDynamicPreviewTable = function (array $preview, array $fallbackFields = array()) use ($renderImportStatus, $renderImportFieldValue) {
+$renderDynamicPreviewTable = function (array $preview, $context, array $fallbackFields = array()) use ($renderImportStatus, $renderImportFieldValue) {
     $recordFields = array_values(array_filter((array) ($preview['record_fields'] ?? $fallbackFields), 'strlen'));
     $rows = (array) ($preview['rows'] ?? array());
+    $paginationContexts = array(
+        'events' => array('event_preview_page', 'event-import'),
+        'venues' => array('venue_preview_page', 'venue-import'),
+        'specialdays' => array('specialdays_preview_page', 'special-days'),
+    );
+    $context = isset($paginationContexts[$context]) ? $context : 'events';
     ?>
     <div class="jem-import-data-heading">
         <hr>
         <h4><?php echo Text::_('COM_JEM_IMPORT_MAPPED_DATA_TITLE'); ?></h4>
     </div>
+    <?php if (!empty($preview['preview_limited'])) : ?>
+        <div class="alert alert-info" role="status">
+            <?php echo Text::sprintf(
+                'COM_JEM_IMPORT_EXTERNAL_PREVIEW_LIMIT_NOTICE',
+                (int) ($preview['preview_page_size'] ?? JemImportPreviewHelper::PAGE_SIZE),
+                (int) ($preview['total_count'] ?? 0),
+                JemImportBudgetHelper::MAX_RECORDS
+            ); ?>
+        </div>
+    <?php endif; ?>
     <div class="table-responsive jem-import-preview-table-wrap">
         <table class="adminlist table jem-import-paged-table jem-import-dynamic-preview" data-page-size="100" data-server-paginated="<?php echo !empty($preview['server_paginated']) ? '1' : '0'; ?>" data-preview-offset="<?php echo (int) ($preview['preview_offset'] ?? 0); ?>" data-source-records="<?php echo htmlspecialchars(json_encode($preview['source_records'] ?? array()), ENT_QUOTES, 'UTF-8'); ?>">
             <thead>
@@ -357,8 +373,10 @@ $renderDynamicPreviewTable = function (array $preview, array $fallbackFields = a
         $total = (int) ($preview['total_count'] ?? 0);
         $first = (int) ($preview['preview_offset'] ?? 0) + 1;
         $last = min($total, $first + max(0, (int) ($preview['displayed_count'] ?? 0) - 1));
-        $pageUrl = function ($targetPage) {
-            return 'index.php?option=com_jem&amp;view=import&amp;preview=venues&amp;venue_preview_page=' . (int) $targetPage . '#venue-import';
+        list($pageParameter, $anchor) = $paginationContexts[$context];
+        $pageUrl = function ($targetPage) use ($context, $pageParameter, $anchor) {
+            return 'index.php?option=com_jem&amp;view=import&amp;preview=' . $context . '&amp;'
+                . $pageParameter . '=' . (int) $targetPage . '#' . $anchor;
         };
         ?>
         <nav class="jem-import-pagination d-flex flex-wrap align-items-center gap-2 mt-2" aria-label="<?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAGINATION'); ?>">
@@ -730,7 +748,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         <p><?php echo htmlspecialchars($this->externalCsvPreview['summary'] ?? '', ENT_QUOTES, 'UTF-8'); ?></p>
                         <p><?php echo Text::sprintf('COM_JEM_IMPORT_DETECTED_FORMAT', strtoupper($this->externalCsvPreview['format'] ?? 'csv')); ?></p>
                         <?php $renderImportMappingBlock((array) $this->externalCsvPreview, 'external_import_mapping', $eventMappingFields, 'external_import_profile'); ?>
-                        <?php $renderDynamicPreviewTable((array) $this->externalCsvPreview); ?>
+                        <?php $renderDynamicPreviewTable((array) $this->externalCsvPreview, 'events'); ?>
                         <?php $renderPreviewActions('import.commitExternalImport', 'import.clearExternalImportPreview', 'event-import', $this->externalCsvPreview['valid_count'] ?? 0); ?>
                     </section>
                 <?php endif; ?>
@@ -889,7 +907,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         <div class="alert alert-warning d-none mt-3" data-venue-preview-dirty role="status">
                             <?php echo Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_MAPPING_CHANGED'); ?>
                         </div>
-                        <?php $renderDynamicPreviewTable((array) $this->externalVenueImportPreview); ?>
+                        <?php $renderDynamicPreviewTable((array) $this->externalVenueImportPreview, 'venues'); ?>
                         <?php $renderPreviewActions('import.commitExternalVenueImport', 'import.clearExternalVenueImportPreview', 'venue-import', $this->externalVenueImportPreview['valid_count'] ?? 0); ?>
                     </section>
                 <?php endif; ?>
@@ -1008,7 +1026,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     <p><?php echo Text::sprintf('COM_JEM_IMPORT_PROFILE_APPLIED', htmlspecialchars($specialDaysPreview['profile_title'], ENT_QUOTES, 'UTF-8')); ?></p>
                                 <?php endif; ?>
                                 <?php $renderImportMappingBlock((array) $specialDaysPreview, 'specialdays_import_mapping', $specialDaysMappingFields, 'specialdays_import_profile'); ?>
-                                <?php $renderDynamicPreviewTable((array) $specialDaysPreview); ?>
+                                <?php $renderDynamicPreviewTable((array) $specialDaysPreview, 'specialdays'); ?>
                                 <?php $renderPreviewActions('import.commitSpecialDaysImport', 'import.clearSpecialDaysImportPreview', 'special-days', $specialDaysPreview['valid_count'] ?? 0); ?>
                             <?php else : ?>
                                 <div class="table-responsive">
