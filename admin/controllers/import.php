@@ -1622,16 +1622,16 @@ class JemControllerImport extends BaseController
      */
     public function logCreatedImportOption()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
         $this->assertCanImport();
 
         $app = Factory::getApplication();
         $input = $app->input;
-        $source = $input->getCmd('source', 'external');
-        $object = $input->getCmd('object', 'option');
-        $value = $input->getInt('value', 0);
-        $label = trim($input->getString('label', ''));
-        $select = $input->getCmd('select', '');
+        $source = $input->post->getCmd('source', 'external');
+        $object = $input->post->getCmd('object', 'option');
+        $value = $input->post->getInt('value', 0);
+        $label = trim($input->post->getString('label', ''));
+        $select = $input->post->getCmd('select', '');
         $logKey = $source === 'ics' ? 'external_ics' : 'external_csv';
 
         $this->addImportLogEntry(
@@ -1664,7 +1664,6 @@ class JemControllerImport extends BaseController
      */
     public function viewLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
         $this->assertCanImport();
 
         $log = $this->getKnownImportLogFile();
@@ -1675,6 +1674,7 @@ class JemControllerImport extends BaseController
         }
 
         $app = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
         $app->setHeader('Content-Type', 'text/html; charset=utf-8', true)
             ->setHeader('X-Content-Type-Options', 'nosniff', true)
             ->sendHeaders();
@@ -1699,7 +1699,6 @@ class JemControllerImport extends BaseController
      */
     public function downloadLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
         $this->assertCanImport();
 
         $log = $this->getKnownImportLogFile();
@@ -1709,6 +1708,8 @@ class JemControllerImport extends BaseController
             throw new Exception(Text::_('COM_JEM_IMPORT_LOGS_EMPTY'), 404);
         }
 
+        JemHelper::setNoStoreHeaders();
+
         while (ob_get_level()) {
             ob_end_clean();
         }
@@ -1716,8 +1717,6 @@ class JemControllerImport extends BaseController
         $app->setHeader('Content-Type', 'application/octet-stream', true)
             ->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true)
             ->setHeader('Content-Length', (string) filesize($log['path']), true)
-            ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
-            ->setHeader('Pragma', 'public', true)
             ->setHeader('X-Content-Type-Options', 'nosniff', true)
             ->sendHeaders();
 

@@ -27,6 +27,7 @@ class JemViewHousekeeping extends JemAdminView
         }
 
         $this->totalcats = $this->get('Countcats');
+        $this->truncateNonce = JemHelper::issueActionNonce('housekeeping.truncateAllData');
 
         // add toolbar
         $this->addToolbar();

@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
@@ -124,8 +123,26 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
     }
 </script>
 <script>
-    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
+    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking) {
+        var form = document.getElementById('adminForm');
+        var values = {status: status, places: places, uids: ids, series: seriesbooking};
+
+        Object.keys(values).forEach(function (name) {
+            var input = form.querySelector('input[name="' + name + '"]');
+
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                form.appendChild(input);
+            }
+
+            input.value = values[name];
+        });
+
+        form.querySelector('input[name="id"]').value = eventid;
+        form.querySelector('input[name="task"]').value = 'attendees.attendeeadd';
+        form.submit();
     }
 </script>
 
@@ -195,7 +212,8 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                     <?php echo Text::_('COM_JEM_WAITINGLIST_MODE_MANUAL'); ?>
                 <?php endif; ?>
                 <label class="ms-3 mb-0">
-                    <input id="jem-waitinglist-notify" type="checkbox" checked="checked">
+                    <input type="hidden" name="waitinglist_notify" value="0">
+                    <input id="jem-waitinglist-notify" type="checkbox" name="waitinglist_notify" value="1" checked="checked">
                     <?php echo Text::_('COM_JEM_WAITINGLIST_NOTIFY_PROMOTED'); ?>
                 </label>
             </div>
@@ -219,8 +237,6 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         </div>
 
         <ul class="eventlist eventtable">
-            <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.Session::getFormToken().'=1';
-            ?>
             <?php if (empty($this->rows)) : ?>
                 <li class="jem-event jem-list-row jem-small-list row0">
                     <div class="jem-event-info-small jem-attendees-empty">
@@ -272,9 +288,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
 
                     <div class="jem-event-info-small jem-attendee-remove">
                         <div class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.(int) $row->id); ?>">
+                            <button type="submit" class="btn btn-link p-0" name="cid[]" value="<?php echo (int) $row->id; ?>" onclick="this.form.task.value='attendees.attendeeremove';">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </li>
@@ -285,6 +301,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         <input type="hidden" name="option" value="com_jem" />
         <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="attendee_id" value="0" />
         <input type="hidden" name="view" value="attendees" />
         <input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />
         <input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />

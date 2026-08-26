@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive');
@@ -123,7 +122,7 @@ $renderCustomColumn = function ($files, $callback) use ($sortCustomFiles) {
 $renderDownloadButton = function ($fileName) {
     $label = Text::_('COM_JEM_CSSMANAGER_DOWNLOAD');
     return '<a class="btn btn-outline-secondary btn-sm" title="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" aria-label="' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '" href="'
-        . Route::_('index.php?option=com_jem&task=cssmanager.downloadcustom&file=' . rawurlencode($fileName) . '&' . Session::getFormToken() . '=1')
+        . Route::_('index.php?option=com_jem&task=cssmanager.downloadcustom&file=' . rawurlencode($fileName))
         . '"><span class="icon-download" aria-hidden="true"></span></a>';
 };
 $hasReplacementCustomFiles = !empty($this->files['custom']);
@@ -199,11 +198,12 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                             <td class="text-muted"><?php echo $formatBytes($file->size ?? 0); ?></td>
                             <td class="jem-cssmanager-actions-cell">
                                 <?php if ($canManageTools) : ?>
-                                    <a class="btn btn-secondary btn-sm jem-copy-custom-btn"
-                                        href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.copycustom&file=' . rawurlencode($file->name) . '&' . Session::getFormToken() . '=1'); ?>"
-                                        onclick="var target = prompt('<?php echo htmlspecialchars($copyPrompt, ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars($file->name, ENT_QUOTES, 'UTF-8'); ?>'); if (!target) { return false; } this.href += '&customfile=' + encodeURIComponent(target);">
+                                    <button type="button" class="btn btn-secondary btn-sm jem-copy-custom-btn"
+                                        data-jem-css-task="cssmanager.copycustom"
+                                        data-jem-css-file="<?php echo htmlspecialchars($file->name, ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-jem-css-copy="1">
                                         <span><?php echo Text::_('COM_JEM_CSSMANAGER_COPY_AS_CUSTOM'); ?></span><span class="jem-copy-custom-arrow" aria-hidden="true"></span>
-                                    </a>
+                                    </button>
                                 <?php endif; ?>
                             </td>
                             <?php $customFiles = $customByStandard[$file->name] ?? array(); ?>
@@ -261,10 +261,10 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                     }
 
                                     if ($canManageTools && $customFile->exists) {
-                                        echo ' <a class="btn btn-danger btn-sm" href="'
-                                            . Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($customFile->name) . '&' . Session::getFormToken() . '=1')
-                                            . '" onclick="return confirm(\'' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '\');">'
-                                            . Text::_('JACTION_DELETE') . '</a>';
+                                        echo ' <button type="button" class="btn btn-danger btn-sm" data-jem-css-task="cssmanager.deletecustom" data-jem-css-file="'
+                                            . htmlspecialchars($customFile->name, ENT_QUOTES, 'UTF-8')
+                                            . '" data-jem-css-confirm="' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '">'
+                                            . Text::_('JACTION_DELETE') . '</button>';
                                     }
 
                                     if ($customFile->exists) {
@@ -323,10 +323,9 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                 <td class="text-muted"><?php echo $formatBytes($userFile->definitionSize ?? 0); ?></td>
                                 <td class="jem-cssmanager-actions-cell">
                                     <?php if ($canManageTools && !$userFile->exists) : ?>
-                                        <a class="btn btn-secondary btn-sm"
-                                            href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.createusercss&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>">
+                                        <button type="button" class="btn btn-secondary btn-sm" data-jem-css-task="cssmanager.createusercss" data-jem-css-file="<?php echo htmlspecialchars($userFile->name, ENT_QUOTES, 'UTF-8'); ?>">
                                             <?php echo Text::_('COM_JEM_CSSMANAGER_CREATE'); ?>
-                                        </a>
+                                        </button>
                                     <?php endif; ?>
                                 </td>
                                 <td>
@@ -350,10 +349,10 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                         </a>
                                     <?php endif; ?>
                                     <?php if ($canManageTools && $userFile->exists) : ?>
-                                        <a class="btn btn-danger btn-sm" href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($userFile->name) . '&' . Session::getFormToken() . '=1'); ?>"
-                                            onclick="return confirm('<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $userFile->name), ENT_QUOTES, 'UTF-8'); ?>');">
+                                        <button type="button" class="btn btn-danger btn-sm" data-jem-css-task="cssmanager.deletecustom" data-jem-css-file="<?php echo htmlspecialchars($userFile->name, ENT_QUOTES, 'UTF-8'); ?>"
+                                            data-jem-css-confirm="<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $userFile->name), ENT_QUOTES, 'UTF-8'); ?>">
                                             <?php echo Text::_('JACTION_DELETE'); ?>
-                                        </a>
+                                        </button>
                                     <?php endif; ?>
                                     <?php if ($userFile->exists) : ?>
                                         <?php echo $renderDownloadButton($userFile->name); ?>
@@ -398,10 +397,10 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                                     }
 
                                     if ($canManageTools && $customFile->exists) {
-                                        echo ' <a class="btn btn-danger btn-sm" href="'
-                                            . Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($customFile->name) . '&' . Session::getFormToken() . '=1')
-                                            . '" onclick="return confirm(\'' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '\');">'
-                                            . Text::_('JACTION_DELETE') . '</a>';
+                                        echo ' <button type="button" class="btn btn-danger btn-sm" data-jem-css-task="cssmanager.deletecustom" data-jem-css-file="'
+                                            . htmlspecialchars($customFile->name, ENT_QUOTES, 'UTF-8')
+                                            . '" data-jem-css-confirm="' . htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $customFile->name), ENT_QUOTES, 'UTF-8') . '">'
+                                            . Text::_('JACTION_DELETE') . '</button>';
                                     }
 
                                     if ($customFile->exists) {
@@ -417,6 +416,8 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
                 </table>
             </div>
             <input type="hidden" name="task" value="" />
+            <input type="hidden" name="file" value="" />
+            <input type="hidden" name="customfile" value="" />
         </fieldset>
     </div>
             <?php //if (isset($this->sidebar)) : ?>
@@ -425,6 +426,34 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
 </form>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('adminForm');
+
+    document.querySelectorAll('[data-jem-css-task]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var confirmation = button.getAttribute('data-jem-css-confirm');
+
+            if (confirmation && !window.confirm(confirmation)) {
+                return;
+            }
+
+            var source = button.getAttribute('data-jem-css-file') || '';
+            var target = '';
+
+            if (button.getAttribute('data-jem-css-copy') === '1') {
+                target = window.prompt(<?php echo json_encode($copyPrompt); ?>, source) || '';
+
+                if (!target) {
+                    return;
+                }
+            }
+
+            form.querySelector('input[name="file"]').value = source;
+            form.querySelector('input[name="customfile"]').value = target;
+            form.querySelector('input[name="task"]').value = button.getAttribute('data-jem-css-task');
+            form.submit();
+        });
+    });
+
     document.querySelectorAll('.jem-cssmanager-section-toggle').forEach(function (button) {
         var section = button.getAttribute('data-section');
         var forceOpen = button.getAttribute('data-force-open') === '1';

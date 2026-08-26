@@ -11,11 +11,20 @@ final class AttachmentRemovalSecurityTest extends TestCase
         $admin = $this->read('admin/controller.php');
         $site = $this->read('site/controller.php');
 
-        self::assertStringContainsString("Session::checkToken('request')", $admin);
+        self::assertStringContainsString('JemHelper::requirePostToken()', $admin);
         self::assertStringContainsString("JemHelperBackend::canAccessAttachment(\$attachment->object, 'edit')", $admin);
-        self::assertStringContainsString("\$this->checkToken('request')", $site);
+        self::assertStringContainsString('JemHelper::requirePostToken()', $site);
+        self::assertStringContainsString("->post->getInt('id', 0)", $admin);
+        self::assertStringContainsString("->post->getInt('id', 0)", $site);
         self::assertStringContainsString('JemAttachment::remove($id)', $admin);
         self::assertStringContainsString('JemAttachment::remove($id)', $site);
+
+        $javascript = $this->read('media/js/attachments.js');
+        self::assertStringContainsString("method: 'POST'", $javascript);
+        self::assertStringContainsString("'X-CSRF-Token'", $javascript);
+        self::assertStringContainsString('new URLSearchParams({id})', $javascript);
+        self::assertStringNotContainsString('tokenQuery', $javascript);
+        self::assertStringNotContainsString('&id=${encodeURIComponent(id)}', $javascript);
     }
 
     public function testEventAndVenueAttachmentRemovalAlwaysRequiresCurrentParentPermission(): void

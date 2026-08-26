@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
 ?>
 <form action="index.php" method="post" name="adminForm" id="adminForm" class="jem-imagehandler is-gallery">
     <style>
@@ -276,9 +275,7 @@ use Joomla\CMS\Session\Session;
                     $image = $this->images[$i];
                     $imageName = (string) $image->name;
                     $imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
-                    $folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
                     $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
-                    $deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
                     $modified = !empty($image->modified) ? HTMLHelper::_('date', $image->modified, Text::_('DATE_FORMAT_LC4')) : '-';
                     ?>
                     <tr>
@@ -297,10 +294,10 @@ use Joomla\CMS\Session\Session;
                         <td><?php echo htmlspecialchars($modified, ENT_QUOTES, 'UTF-8'); ?></td>
                         <td class="text-end">
                             <?php if ($this->canDeleteImages) : ?>
-                            <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
+                            <button type="button" class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" data-jem-image-name="<?php echo $imageNameAttr; ?>">
                                 <span class="icon-trash" aria-hidden="true"></span>
                                 <?php echo Text::_('COM_JEM_DELETE_IMAGE'); ?>
-                            </a>
+                            </button>
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -320,6 +317,8 @@ use Joomla\CMS\Session\Session;
     <input type="hidden" name="view" value="imagehandler" />
     <input type="hidden" name="tmpl" value="component" />
     <input type="hidden" name="task" value="<?php echo $this->task; ?>" />
+    <input type="hidden" name="folder" value="<?php echo htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8'); ?>" />
+    <input type="hidden" name="rm[]" value="" />
 </form>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -341,11 +340,16 @@ use Joomla\CMS\Session\Session;
             });
         });
 
-        document.querySelectorAll('.jem-imagehandler-delete').forEach(function (link) {
-            link.addEventListener('click', function (event) {
+        document.querySelectorAll('.jem-imagehandler-delete').forEach(function (button) {
+            button.addEventListener('click', function () {
                 if (!window.confirm(<?php echo json_encode(Text::_('COM_JEM_IMAGEHANDLER_CONFIRM_DELETE')); ?>)) {
-                    event.preventDefault();
+                    return;
                 }
+
+                var form = document.getElementById('adminForm');
+                form.querySelector('input[name="rm[]"]').value = button.getAttribute('data-jem-image-name') || '';
+                form.querySelector('input[name="task"]').value = 'imagehandler.delete';
+                form.submit();
             });
         });
     });

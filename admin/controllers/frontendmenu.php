@@ -12,7 +12,6 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Language\LanguageFactoryInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Table\Table;
 
 class JemControllerFrontendmenu extends BaseController
@@ -21,7 +20,7 @@ class JemControllerFrontendmenu extends BaseController
 
     public function create()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);

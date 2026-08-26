@@ -10,14 +10,11 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
 ?>
 <?php
 $imageName = (string) $this->_tmp_img->name;
 $imageNameAttr = htmlspecialchars($imageName, ENT_QUOTES, 'UTF-8');
-$folderAttr = htmlspecialchars((string) $this->folder, ENT_QUOTES, 'UTF-8');
 $imageUrl = '../images/jem/' . rawurlencode((string) $this->folder) . '/' . rawurlencode($imageName);
-$deleteUrl = 'index.php?option=com_jem&task=imagehandler.delete&tmpl=component&folder=' . $folderAttr . '&rm[]=' . rawurlencode($imageName) . '&' . Session::getFormToken() . '=1';
 $modified = !empty($this->_tmp_img->modified) ? HTMLHelper::_('date', $this->_tmp_img->modified, Text::_('DATE_FORMAT_LC4')) : '-';
 ?>
 <div class="item-image">
@@ -36,10 +33,10 @@ $modified = !empty($this->_tmp_img->modified) ? HTMLHelper::_('date', $this->_tm
         <span class="jem-imagehandler-card-size"><?php echo (int) $this->_tmp_img->width; ?> x <?php echo (int) $this->_tmp_img->height; ?> px</span>
         <span class="jem-imagehandler-card-date"><?php echo htmlspecialchars($modified, ENT_QUOTES, 'UTF-8'); ?></span>
         <?php if ($this->canDeleteImages) : ?>
-        <a class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" href="<?php echo htmlspecialchars($deleteUrl, ENT_QUOTES, 'UTF-8'); ?>">
+        <button type="button" class="btn btn-sm btn-danger jem-imagehandler-delete delete-item" data-jem-image-name="<?php echo $imageNameAttr; ?>">
             <span class="icon-times" aria-hidden="true"></span>
             <span class="jem-imagehandler-delete-label"><?php echo Text::_('COM_JEM_DELETE_IMAGE'); ?></span>
-        </a>
+        </button>
         <?php endif; ?>
     </div>
 </div>

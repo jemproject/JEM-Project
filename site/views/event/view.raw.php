@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 
 /**
@@ -1023,7 +1022,7 @@ class JemViewEvent extends HtmlView
             return '#';
         }
 
-        return $this->buildPdfAbsoluteUrl(Route::_('index.php?option=com_jem&task=getfile&format=raw&file=' . $id . '&' . Session::getFormToken() . '=1', false));
+        return $this->buildPdfAbsoluteUrl(Route::_('index.php?option=com_jem&task=getfile&format=raw&file=' . $id, false));
     }
 
     /**

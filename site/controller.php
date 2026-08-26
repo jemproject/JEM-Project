@@ -86,10 +86,6 @@ class JemController extends BaseController
                 JemFrontendAccess::enforce(JemFrontendAccess::decideEdit($user, $type, $source));
             }
 
-            if ($isEventSelector) {
-                $this->checkToken('request');
-            }
-
             if ($id > 0) {
                 $item = $model->getItem($id);
 
@@ -350,8 +346,6 @@ class JemController extends BaseController
      */
     public function getfile()
     {
-        $this->checkToken('request');
-
         $id = Factory::getApplication()->input->getInt('file', 0);
 
         try {
@@ -366,6 +360,8 @@ class JemController extends BaseController
              throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
+        JemHelper::setNoStoreHeaders();
+        $this->app->sendHeaders();
         header("Content-Type: application/octet-stream");
         header('Content-Disposition: attachment; filename="' . basename($path) . '"');
         header('Content-Length: ' . filesize($path));
@@ -390,13 +386,13 @@ class JemController extends BaseController
      */
     public function ajaxattachremove()
     {
-        $this->checkToken('request');
+        JemHelper::requirePostToken();
 
         $jemsettings = JemHelper::config();
         $res = 0;
 
         if ($jemsettings->attachmentenabled > 0) {
-            $id     = Factory::getApplication()->input->getInt('id', 0);
+            $id = Factory::getApplication()->input->post->getInt('id', 0);
             $res = JemAttachment::remove($id);
         } // else don't delete anything
 

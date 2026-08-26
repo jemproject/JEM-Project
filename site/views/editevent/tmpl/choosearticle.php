@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $input = Factory::getApplication()->input;
 $function = $input->getCmd('function', 'jSelectArticle');
@@ -173,7 +172,7 @@ if (!empty($filterBorder)) {
         <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component&function=' . $this->escape($function) . '&' . Session::getFormToken() . '=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component&function=' . $this->escape($function)); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter" class="floattext"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <?php

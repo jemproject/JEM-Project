@@ -52,8 +52,6 @@ class JemControllerAttachments extends AdminController
 
     public function download()
     {
-        Session::checkToken('request') or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
-
         $id = Factory::getApplication()->input->getInt('id', 0);
         $model = $this->getModel();
         $object = $model->getAttachmentObject($id);
@@ -69,6 +67,8 @@ class JemControllerAttachments extends AdminController
             throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
+        JemHelper::setNoStoreHeaders();
+        Factory::getApplication()->sendHeaders();
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($path) . '"');
         header('Content-Length: ' . filesize($path));

@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectUsers');
 $checked = 0;
@@ -80,7 +79,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
 
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=chooseusers&tmpl=component&function='.$this->escape($function)); ?>" method="post" name="adminForm" id="adminForm">
         <?php if(0) : ?>
             <div id="jem_filter" class="floattext">
                 <div class="jem_fleft">
@@ -158,6 +157,7 @@ HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         <input type="hidden" name="boxchecked" value="<?php echo $checked; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">

@@ -445,7 +445,9 @@ class JemControllerSettings extends BaseController
      */
     public function viewLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        if (!$this->allowEdit()) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
 
         $app = Factory::getApplication();
         $log = $this->getKnownLogFile();
@@ -455,6 +457,7 @@ class JemControllerSettings extends BaseController
             $content = Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY');
         }
 
+        JemHelper::setNoStoreHeaders();
         $app->setHeader('Content-Type', 'text/html; charset=utf-8', true)
             ->setHeader('X-Content-Type-Options', 'nosniff', true)
             ->sendHeaders();
@@ -479,7 +482,9 @@ class JemControllerSettings extends BaseController
      */
     public function downloadLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        if (!$this->allowEdit()) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
 
         $log = $this->getKnownLogFile();
         $app = Factory::getApplication();
@@ -488,6 +493,8 @@ class JemControllerSettings extends BaseController
             throw new \Exception(Text::_('COM_JEM_CONFIGINFO_LOG_EMPTY'), 404);
         }
 
+        JemHelper::setNoStoreHeaders();
+
         while (ob_get_level()) {
             ob_end_clean();
         }
@@ -495,8 +502,6 @@ class JemControllerSettings extends BaseController
         $app->setHeader('Content-Type', 'application/octet-stream', true)
             ->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true)
             ->setHeader('Content-Length', (string) filesize($log['path']), true)
-            ->setHeader('Cache-Control', 'private, max-age=0, must-revalidate', true)
-            ->setHeader('Pragma', 'public', true)
             ->setHeader('X-Content-Type-Options', 'nosniff', true)
             ->sendHeaders();
 

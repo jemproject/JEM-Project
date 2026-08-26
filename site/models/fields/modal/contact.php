@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Uri\Uri;
@@ -88,8 +87,7 @@ class JFormFieldModal_Contact extends FormField
         $link = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
             . '&function=jSelectContact_' . $this->id
             . '&selected=' . $currentValues
-            . ($eventId > 0 ? '&a_id=' . $eventId : '')
-            . '&' . Session::getFormToken() . '=1';
+            . ($eventId > 0 ? '&a_id=' . $eventId : '');
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $contactNames = array();

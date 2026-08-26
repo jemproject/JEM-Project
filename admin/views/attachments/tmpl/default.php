@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
@@ -203,7 +202,7 @@ $fileExtension = function ($filename) {
                 $link = $linkedUrl($item);
                 $title = $item->linked_title ?: $item->object;
                 $editUrl = Route::_('index.php?option=com_jem&task=attachment.edit&id=' . (int) $item->id);
-                $downloadUrl = Route::_('index.php?option=com_jem&task=attachments.download&id=' . (int) $item->id . '&' . Session::getFormToken() . '=1');
+                $downloadUrl = Route::_('index.php?option=com_jem&task=attachments.download&id=' . (int) $item->id);
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
                     <td class="center">

@@ -12,7 +12,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 use Joomla\String\StringHelper;
 
 $user        = JemFactory::getUser();
@@ -22,7 +21,7 @@ $listDirn    = $this->escape($this->state->get('list.direction'));
 $canOrder    = JemHelperBackend::can('venue', 'edit.state');
 $canAccessEvents = JemHelperBackend::can('event', 'access');
 $saveOrder    = $canOrder && $listOrder == 'a.ordering' && strtolower($listDirn) === 'asc';
-$saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');

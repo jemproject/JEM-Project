@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $stateLinks = array(
     'events' => array(
@@ -191,8 +190,7 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                         $link = 'index.php?option=com_jem&amp;view=export';
                                         $this->quickiconButton($link, 'icon-48-tableexport.svg', Text::_('COM_JEM_EXPORT_DATA'));
 
-                                        $link = 'index.php?option=com_jem&amp;task=sampledata.load&amp;' . Session::getFormToken() . '=1';
-                                        $this->quickiconButton($link, 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
+                                        $this->quickiconPostButton('sampledata.load', 'icon-48-sampledata.svg', Text::_('COM_JEM_MAIN_LOAD_SAMPLE_DATA'));
                                     ?>
                                     </div>
                                     <?php endif; ?>
@@ -204,8 +202,7 @@ $canConfigure = JemHelperBackend::canManage('core.options');
                                         $link = 'index.php?option=com_jem&amp;view=housekeeping';
                                         $this->quickiconButton($link, 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
 
-                                        $link = 'index.php?option=com_jem&amp;task=frontendmenu.create&amp;' . Session::getFormToken() . '=1';
-                                        $this->quickiconButton($link, 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
+                                        $this->quickiconPostButton('frontendmenu.create', 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
 
                                         $link = 'index.php?option=com_jem&amp;view=updatecheck';
                                         $icon = 'icon-48-update.svg';
@@ -396,4 +393,5 @@ $canConfigure = JemHelperBackend::canManage('core.options');
             </tr>
         </table>
     </div>
+    <?php echo HTMLHelper::_('form.token'); ?>
 </form>

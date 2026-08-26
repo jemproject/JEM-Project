@@ -512,7 +512,8 @@ input.button:focus { /*background-color:#......; */
     }
 }
 
-div.linkicon a {
+div.linkicon a,
+div.linkicon button.jem-housekeeping-action {
     display: block;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -521,14 +522,18 @@ div.linkicon a {
     padding: 10px;
     vertical-align: middle;
     text-decoration: none;
+    background: #fff;
+    cursor: pointer;
 }
 
-[data-bs-theme="dark"] div.linkicon a {
+[data-bs-theme="dark"] div.linkicon a,
+[data-bs-theme="dark"] div.linkicon button.jem-housekeeping-action {
     background-color: #00000055;
     border-color: #7295B166;
 }
 
-div.linkicon a:hover {
+div.linkicon a:hover,
+div.linkicon button.jem-housekeeping-action:hover {
     border-left: 1px solid #eee;
     border-top: 1px solid #eee;
     border-right: 1px solid #ccc;
@@ -536,7 +541,8 @@ div.linkicon a:hover {
     background-color: #f9f9f9;
 }
 
-[data-bs-theme="dark"] div.linkicon a:hover {
+[data-bs-theme="dark"] div.linkicon a:hover,
+[data-bs-theme="dark"] div.linkicon button.jem-housekeeping-action:hover {
     border-color: #F69D0099;
     background-color: #000;
 }
@@ -1609,7 +1615,9 @@ div.pagination ul li {
 }
 
 .cpanel div.icon a,
-#cpanel div.icon a {
+.cpanel div.icon button,
+#cpanel div.icon a,
+#cpanel div.icon button {
     background-color: #fff;
     background-position: -30px;
     display: block;
@@ -1625,10 +1633,15 @@ div.pagination ul li {
     border-radius: 5px;
     transition-property: background-position, border-bottom-left-radius, box-shadow, background, border-color;
     transition-duration: 0.8s;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
 }
 
 [data-bs-theme="dark"] .cpanel div.icon a,
-[data-bs-theme="dark"] #cpanel div.icon a {
+[data-bs-theme="dark"] .cpanel div.icon button,
+[data-bs-theme="dark"] #cpanel div.icon a,
+[data-bs-theme="dark"] #cpanel div.icon button {
     background-color: #00000055;
     color: #fff;
     border: 1px solid #7295B166; }
@@ -1636,9 +1649,15 @@ div.pagination ul li {
 #cpanel div.icon a:hover,
 #cpanel div.icon a:focus,
 #cpanel div.icon a:active,
+#cpanel div.icon button:hover,
+#cpanel div.icon button:focus,
+#cpanel div.icon button:active,
 .cpanel div.icon a:hover,
 .cpanel div.icon a:focus,
-.cpanel div.icon a:active {
+.cpanel div.icon a:active,
+.cpanel div.icon button:hover,
+.cpanel div.icon button:focus,
+.cpanel div.icon button:active {
     background-position: 0;
     border-bottom-left-radius: 50% 20px;
     box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
@@ -1649,9 +1668,15 @@ div.pagination ul li {
 [data-bs-theme="dark"] #cpanel div.icon a:hover,
 [data-bs-theme="dark"] #cpanel div.icon a:focus,
 [data-bs-theme="dark"] #cpanel div.icon a:active,
+[data-bs-theme="dark"] #cpanel div.icon button:hover,
+[data-bs-theme="dark"] #cpanel div.icon button:focus,
+[data-bs-theme="dark"] #cpanel div.icon button:active,
 [data-bs-theme="dark"] .cpanel div.icon a:hover,
 [data-bs-theme="dark"] .cpanel div.icon a:focus,
-[data-bs-theme="dark"] .cpanel div.icon a:active {
+[data-bs-theme="dark"] .cpanel div.icon a:active,
+[data-bs-theme="dark"] .cpanel div.icon button:hover,
+[data-bs-theme="dark"] .cpanel div.icon button:focus,
+[data-bs-theme="dark"] .cpanel div.icon button:active {
     box-shadow: none;
     background-color: #000;
     border-color: #F69D0099;

@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 
 $user      = JemFactory::getUser();
 $listOrder = $this->escape($this->state->get('list.ordering'));
@@ -19,7 +18,7 @@ $canEdit   = $user->authorise('core.edit', 'com_jem');
 $canEditState = $user->authorise('core.edit.state', 'com_jem');
 $activeEntityFilter = (int) $this->state->get('filter_entity');
 $saveOrder = $canEditState && $activeEntityFilter > 0;
-$saveOrderingUrl = Route::_('index.php?option=com_jem&task=types.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=types.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $showDayColumns = $activeEntityFilter === 4;
 $emptyColspan = $showDayColumns ? 15 : 13;

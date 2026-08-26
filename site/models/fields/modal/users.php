@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
-use Joomla\CMS\Session\Session;
 
 /**
  * Contact select
@@ -97,7 +96,7 @@ class JFormFieldModal_Users extends FormField
             'bootstrap.renderModal',
             $modalId,
             array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
+                'url'    => $link,
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',
                 'height' => '450px',

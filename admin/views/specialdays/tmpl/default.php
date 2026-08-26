@@ -10,7 +10,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\String\StringHelper;
 
 $user = JemFactory::getUser();
@@ -19,7 +18,7 @@ $listDirn = $this->escape($this->state->get('list.direction'));
 $canEdit = $user->authorise('core.edit', 'com_jem');
 $canEditState = $user->authorise('core.edit.state', 'com_jem');
 $saveOrder = $canEditState && $listOrder === 'a.ordering' && strtolower($listDirn) === 'asc';
-$saveOrderingUrl = Route::_('index.php?option=com_jem&task=specialdays.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=specialdays.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 
 $weekdayLabels = array(

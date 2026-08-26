@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
@@ -27,7 +26,7 @@ echo HTMLHelper::_(
     'bootstrap.renderModal',
     $userModalId,
     array(
-        'url'    => $selectuser_link.'&amp;'.Session::getFormToken().'=1',
+        'url'    => $selectuser_link,
         'title'  => Text::_('COM_JEM_SELECT'),
         'width'  => '800px',
         'height' => '450px',

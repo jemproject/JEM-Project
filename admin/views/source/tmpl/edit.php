@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 $app = Factory::getApplication();
@@ -290,17 +289,15 @@ $formatBytes = function ($bytes) {
                 <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=cssmanager'); ?>"><?php echo Text::_('COM_JEM_CSSMANAGER_TITLE'); ?></a>
                 <a class="btn btn-secondary" href="<?php echo Route::_('index.php?option=com_jem&view=settings#layout'); ?>"><?php echo Text::_('COM_JEM_SETTINGS_TITLE'); ?></a>
                 <?php if (!$this->source->custom) : ?>
-                    <a class="btn btn-primary jem-copy-custom-btn"
-                        href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.copycustom&file=' . rawurlencode($this->source->filename) . '&' . Session::getFormToken() . '=1'); ?>"
-                        onclick="var target = prompt('<?php echo htmlspecialchars(Text::_('COM_JEM_CSSMANAGER_COPY_AS_CUSTOM_PROMPT'), ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars($this->source->filename, ENT_QUOTES, 'UTF-8'); ?>'); if (!target) { return false; } this.href += '&customfile=' + encodeURIComponent(target);">
+                    <button type="button" class="btn btn-primary jem-copy-custom-btn"
+                        onclick="var target = prompt('<?php echo htmlspecialchars(Text::_('COM_JEM_CSSMANAGER_COPY_AS_CUSTOM_PROMPT'), ENT_QUOTES, 'UTF-8'); ?>', '<?php echo htmlspecialchars($this->source->filename, ENT_QUOTES, 'UTF-8'); ?>'); if (!target) { return false; } this.form.file.value='<?php echo htmlspecialchars($this->source->filename, ENT_QUOTES, 'UTF-8'); ?>'; this.form.customfile.value=target; this.form.task.value='cssmanager.copycustom'; this.form.submit();">
                         <span><?php echo Text::_('COM_JEM_CSSMANAGER_COPY_AS_CUSTOM'); ?></span><span class="jem-copy-custom-arrow" aria-hidden="true"></span>
-                    </a>
+                    </button>
                 <?php elseif ($details) : ?>
-                    <a class="btn btn-danger"
-                        href="<?php echo Route::_('index.php?option=com_jem&task=cssmanager.deletecustom&file=' . rawurlencode($this->source->filename) . '&' . Session::getFormToken() . '=1'); ?>"
-                        onclick="return confirm('<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $this->source->filename), ENT_QUOTES, 'UTF-8'); ?>');">
+                    <button type="button" class="btn btn-danger"
+                        onclick="if (!confirm('<?php echo htmlspecialchars(Text::sprintf('COM_JEM_CSSMANAGER_CUSTOM_FILE_DELETE_CONFIRM', $this->source->filename), ENT_QUOTES, 'UTF-8'); ?>')) return false; this.form.file.value='<?php echo htmlspecialchars($this->source->filename, ENT_QUOTES, 'UTF-8'); ?>'; this.form.task.value='cssmanager.deletecustom'; this.form.submit();">
                         <?php echo Text::_('JACTION_DELETE'); ?>
-                    </a>
+                    </button>
                 <?php endif; ?>
             </div>
         </div>
@@ -319,6 +316,8 @@ $formatBytes = function ($bytes) {
             </div>
         </div>
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="file" value="" />
+        <input type="hidden" name="customfile" value="" />
         <?php echo HTMLHelper::_('form.token'); ?>
     </fieldset>
 
