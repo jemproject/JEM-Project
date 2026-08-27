@@ -96,12 +96,14 @@ $canConfigure = JemHelperBackend::canManage('core.options');
     .jem-wei-menus .icon{
         text-align:center;
     }
-    .jem-wei-menus .icon a {
+    .jem-wei-menus .icon a,
+    .jem-wei-menus .icon button {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    .jem-wei-menus .icon a img {
+    .jem-wei-menus .icon a img,
+    .jem-wei-menus .icon button img {
         width: 65px;
     }
     .jem-main-stats {
