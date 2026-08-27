@@ -10,6 +10,11 @@ namespace Joomla\CMS\Language {
             {
                 return (string) $key;
             }
+
+            public static function sprintf($key, ...$values): string
+            {
+                return (string) $key . ':' . implode('|', array_map('strval', $values));
+            }
         }
     }
 }

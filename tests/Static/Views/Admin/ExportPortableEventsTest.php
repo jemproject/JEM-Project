@@ -30,7 +30,7 @@ final class ExportPortableEventsTest extends TestCase
         self::assertStringContainsString("array('csv', 'json', 'xml')", $controller);
         self::assertStringContainsString("new DOMDocument('1.0', 'UTF-8')", $controller);
         self::assertStringContainsString('JSON_PRETTY_PRINT', $controller);
-        self::assertStringContainsString("fputcsv(", $controller);
+        self::assertStringContainsString('JemCsv::putRow(', $controller);
     }
 
     public function testPortableExportUsesBoundedPreviewAndFilteredModelQuery(): void
