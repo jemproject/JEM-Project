@@ -471,6 +471,10 @@ final class ZipArtifactContentsTest extends TestCase
                 if ($file->isFile() && preg_match('/(?:pkg_jem|com_jem).*\.zip$/i', $file->getFilename()) === 1) {
                     $relative = $this->relativePath($file->getPathname());
 
+                    if (str_starts_with($relative, '.tmp/')) {
+                        continue;
+                    }
+
                     if (str_starts_with($relative, 'build/package-check/')) {
                         continue;
                     }

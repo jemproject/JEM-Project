@@ -44,7 +44,7 @@ final class Joomla6CompatibilityTest extends TestCase
             $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
 
             self::assertNotFalse($manifest);
-            self::assertSame('5.1.0beta1', (string) $manifest->version);
+            self::assertSame('5.1.0beta2', (string) $manifest->version);
             self::assertCount(36, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('profile-independent JSON-LD entity', (string) $manifest->notes);
             self::assertStringContainsString('parent event programmes and nested venue hierarchies', (string) $manifest->notes);
