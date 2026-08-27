@@ -41,4 +41,23 @@ final class MainControlPanelStyleTest extends TestCase
         self::assertStringNotContainsString("get('EventsData')", $view);
         self::assertStringNotContainsString("get('RegistrationData')", $view);
     }
+
+    public function testPostActionTilesReuseLinkLayoutAndIconSize(): void
+    {
+        $relativePath = 'admin/views/main/tmpl/default.php';
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
+
+        self::assertMatchesRegularExpression(
+            '/\.jem-wei-menus \.icon a,\s*\.jem-wei-menus \.icon button\s*\{'
+                . '[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*align-items:\s*center;/s',
+            $template,
+            $relativePath
+        );
+        self::assertMatchesRegularExpression(
+            '/\.jem-wei-menus \.icon a img,\s*\.jem-wei-menus \.icon button img\s*\{'
+                . '[^}]*width:\s*65px;/s',
+            $template,
+            $relativePath
+        );
+    }
 }
