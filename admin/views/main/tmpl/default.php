@@ -28,12 +28,14 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
     .jem-wei-menus .card { min-height: 126px; }
     .jem-wei-menus .card-body div:first-child { float: none !important; }
     .jem-wei-menus .icon { text-align: center; }
-    .jem-wei-menus .icon a {
+    .jem-wei-menus .icon a,
+    .jem-wei-menus .icon button {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-    .jem-wei-menus .icon a img { width: 65px; }
+    .jem-wei-menus .icon a img,
+    .jem-wei-menus .icon button img { width: 65px; }
 </style>
 <?php // Group titles, tile groups and the "Add" badge are defined in media/com_jem/css/backend.css. ?>
 <form action="<?php echo Route::_('index.php?option=com_jem'); ?>" id="application-form" method="post" name="adminForm" class="form-validate">
