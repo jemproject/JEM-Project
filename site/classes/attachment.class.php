@@ -20,6 +20,7 @@ use Joomla\CMS\Filter\InputFilter;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 
 /**
  * Holds the logic for attachments manipulation
@@ -103,6 +104,7 @@ class JemAttachment
             'cgi', 'pl', 'py', 'rb', 'asp', 'aspx', 'jsp',
             'sh', 'bash', 'cmd', 'bat', 'exe', 'dll', 'so',
             'js', 'mjs', 'html', 'htm', 'xhtml', 'svg',
+            'shtml', 'shtm', 'stm',
         );
 
         $parts = explode('.', strtolower((string) $filename));
@@ -237,11 +239,21 @@ class JemAttachment
             $fileext = self::getAllowedExtension($file, $allowed);
             if (!$fileext || self::hasUnsafeExtension($file)) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-EXT',
+                    'Rejected attachment upload: disallowed or unsafe extension',
+                    array('file' => $file, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
             if (!self::hasAllowedMime($rec['tmp_name'], $fileext)) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-MIME',
+                    'Rejected attachment upload: MIME type does not match extension',
+                    array('file' => $file, 'extension' => $fileext, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
@@ -275,6 +287,11 @@ class JemAttachment
             // but keep all other checks running
             if (!File::upload($rec['tmp_name'], $filepath, false, false, array('forbidden_ext_in_content' => true))) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-CONTENT',
+                    'Rejected attachment upload: file failed the safe-upload content check',
+                    array('file' => $file, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
