@@ -4283,7 +4283,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 }
 
 .jem-statistics-card .card-header {
-    background: var(--template-bg-light, var(--body-bg, #f4f6f8));
+    background: var(--card-header-bg, var(--secondary-bg, #f4f6f8));
 }
 
 .jem-statistics-kpis {
@@ -4390,7 +4390,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 
 .jem-statistics-detail-card .card-header {
     border-bottom: 1px solid var(--border-color, #dfe3e7);
-    background: var(--template-bg-light, var(--body-bg, #f4f6f8));
+    background: var(--card-header-bg, var(--secondary-bg, #f4f6f8));
 }
 
 .jem-statistics-detail-card th {
@@ -4407,7 +4407,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     padding: 0.85rem 1rem;
     border-left: 0.25rem solid var(--template-link-color, #2a69a5);
     border-radius: 0.25rem;
-    background: var(--template-bg-light, #f4f6f8);
+    background: var(--secondary-bg, #f4f6f8);
 }
 
 .jem-statistics-order-kpis span,
@@ -4439,7 +4439,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 }
 
 .jem-statistics-event-filters {
-    background: color-mix(in srgb, var(--template-bg-light, #f4f6f8) 55%, transparent);
+    background: color-mix(in srgb, var(--secondary-bg, #e8e8e8) 55%, transparent);
     margin-inline: -1rem;
     margin-bottom: -1rem;
     padding: 1rem;
@@ -4460,7 +4460,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 
 .jem-statistics-detail-card .progress {
     height: 1.35rem;
-    background: var(--template-bg-light, #e9ecef);
+    background: var(--progress-bg, var(--secondary-bg, #e9ecef));
 }
 
 .jem-statistics-detail-card .progress-bar {
@@ -4508,7 +4508,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     padding: 0.6rem 0.7rem;
     border: 1px solid var(--border-color, #d5d9dd);
     border-radius: 0.35rem;
-    background: var(--template-bg-light, #f4f6f8);
+    background: var(--secondary-bg, #f4f6f8);
     cursor: pointer;
 }
 
@@ -4575,7 +4575,7 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     padding: 0.85rem 1rem;
     border: 1px solid var(--border-color, #d5d9dd);
     border-radius: 0.35rem;
-    background: var(--template-bg-light, #f4f6f8);
+    background: var(--secondary-bg, #f4f6f8);
 }
 
 @media (max-width: 991.98px) {
