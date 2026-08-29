@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem';
@@ -36,7 +35,7 @@ require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+JemHelper::loadComponentLanguage();
 
 $list = ModJemHelper::getList($params);
 // check if any results returned

@@ -2,7 +2,7 @@
 <extension type="module" client="site" method="upgrade">
     <name>mod_jem_banner</name>
     <author>JEM Community</author>
-    <creationDate>27 August 2026 13:30</creationDate>
+    <creationDate>29 August 2026 13:21</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
@@ -18,8 +18,11 @@
         <filename>script.php</filename>
         <filename>index.html</filename>
         <folder>tmpl</folder>
-        <folder>language</folder>
     </files>
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jem_banner.sys.ini</language>
+    </languages>
     <help key="Modules" />
     <config>
         <fields name="params">

@@ -30,9 +30,9 @@ final class JemNotificationTemplateService
 
         $filename = $languageTag . '/plg_jem_mailer.ini';
         foreach (array(
+            JPATH_ADMINISTRATOR . '/language/' . $filename,
             JPATH_PLUGINS . '/jem/mailer/language/' . $filename,
             JPATH_SITE . '/language/' . $filename,
-            JPATH_ADMINISTRATOR . '/language/' . $filename,
         ) as $path) {
             if (is_file($path)) {
                 return true;
@@ -313,8 +313,9 @@ final class JemNotificationTemplateService
         $language = $factory->createLanguage($languageTag);
         $source = JPATH_PLUGINS . '/jem/mailer';
 
-        $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR, $languageTag, true, false);
-        $language->load('plg_jem_mailer', $source, $languageTag, true, false);
+        $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR, $languageTag, true, false)
+            || $language->load('plg_jem_mailer', $source, $languageTag, true, false)
+            || $language->load('plg_jem_mailer', JPATH_SITE, $languageTag, true, false);
 
         $languages[$languageTag] = $language;
 

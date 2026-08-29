@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem_teaser';
@@ -24,7 +23,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+JemHelper::loadComponentLanguage();
 
 switch($params->get('color')) {
     case 'red':

@@ -41,6 +41,88 @@ require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 class JemHelper
 {
     /**
+     * Load an extension language from its Joomla global location.
+     *
+     * A local extension path remains as a temporary fallback for sites that
+     * still have a JEM language pack installed with the pre-5.1 layout.
+     * Bundled English is loaded first so the requested language can override
+     * it without allowing an obsolete local file to override a global file.
+     *
+     * @param   string  $extension   Language extension key.
+     * @param   string  $globalPath  Joomla global language base path.
+     * @param   string  $legacyPath  Previous extension-local base path.
+     * @param   object  $language    Joomla language instance.
+     *
+     * @return  boolean  True when the requested language was loaded.
+     */
+    static public function loadExtensionLanguage($extension, $globalPath, $legacyPath = null, $language = null)
+    {
+        $language = $language ?: Factory::getApplication()->getLanguage();
+        $tag = (string) $language->getTag();
+        $paths = array($globalPath);
+
+        if ($legacyPath && $legacyPath !== $globalPath) {
+            $paths[] = $legacyPath;
+        }
+
+        if ($tag !== 'en-GB') {
+            foreach ($paths as $path) {
+                if ($language->load($extension, $path, 'en-GB', true, false)) {
+                    break;
+                }
+            }
+        }
+
+        foreach ($paths as $path) {
+            if ($language->load($extension, $path, $tag, true, false)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load the frontend and administrator JEM component language files.
+     *
+     * @param   object  $language  Joomla language instance.
+     *
+     * @return  boolean  True when either requested-language file was loaded.
+     */
+    static public function loadComponentLanguage($language = null)
+    {
+        $app = Factory::getApplication();
+        $language = $language ?: $app->getLanguage();
+        $isAdministrator = method_exists($app, 'isClient') && $app->isClient('administrator');
+        $loadAdmin = static function () use ($language) {
+            return self::loadExtensionLanguage(
+                'com_jem',
+                JPATH_ADMINISTRATOR,
+                JPATH_ADMINISTRATOR . '/components/com_jem',
+                $language
+            );
+        };
+        $loadSite = static function () use ($language) {
+            return self::loadExtensionLanguage(
+                'com_jem',
+                JPATH_SITE,
+                JPATH_SITE . '/components/com_jem',
+                $language
+            );
+        };
+
+        if ($isAdministrator) {
+            $siteLoaded = $loadSite();
+            $adminLoaded = $loadAdmin();
+        } else {
+            $adminLoaded = $loadAdmin();
+            $siteLoaded = $loadSite();
+        }
+
+        return $adminLoaded || $siteLoaded;
+    }
+
+    /**
      * Require an explicit POST request with a valid Joomla form token.
      *
      * Session::checkToken() also accepts the Joomla CSRF header, which keeps
@@ -3549,9 +3631,7 @@ class JemHelper
     static public function icalAddEvent(&$calendartool, $event)
     {
         $language = Factory::getApplication()->getLanguage();
-        $language->load('com_jem', JPATH_SITE . '/components/com_jem', null, true);
-        $language->load('com_jem', JPATH_ADMINISTRATOR . '/components/com_jem', null, true);
-        $language->load('com_jem', JPATH_SITE, null, false);
+        self::loadComponentLanguage($language);
 
         $jemsettings   = JemHelper::config();
         $timezone_name = JemHelper::getEventTimeZoneName($event);

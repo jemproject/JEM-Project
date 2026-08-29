@@ -516,8 +516,11 @@ class JemModelSettings extends AdminModel
                 return;
             }
 
-            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_ADMINISTRATOR);
-            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_PLUGINS . '/actionlog/jem');
+            JemHelper::loadExtensionLanguage(
+                'plg_actionlog_jem',
+                JPATH_ADMINISTRATOR,
+                JPATH_PLUGINS . '/actionlog/jem'
+            );
 
             $app = Factory::getApplication();
             $user = $app->getIdentity();

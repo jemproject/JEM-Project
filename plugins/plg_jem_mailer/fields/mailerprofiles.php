@@ -31,8 +31,15 @@ class JFormFieldMailerprofiles extends FormField
     protected function getInput()
     {
         $language = Factory::getApplication()->getLanguage();
-        $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR)
-            || $language->load('plg_jem_mailer', JPATH_PLUGINS . '/jem/mailer');
+        $languageTag = (string) $language->getTag();
+
+        if ($languageTag !== 'en-GB') {
+            $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR, 'en-GB', true, false)
+                || $language->load('plg_jem_mailer', JPATH_PLUGINS . '/jem/mailer', 'en-GB', true, false);
+        }
+
+        $language->load('plg_jem_mailer', JPATH_ADMINISTRATOR, $languageTag, true, false)
+            || $language->load('plg_jem_mailer', JPATH_PLUGINS . '/jem/mailer', $languageTag, true, false);
 
         $sections = array(
             'registration' => array(
