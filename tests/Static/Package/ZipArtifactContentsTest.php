@@ -407,10 +407,52 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testCurrentPackageContainsTheLanguageCatalogInstallerWithoutCatalogXmlFiles(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $entries = array(
+            'admin/controllers/languages.php',
+            'admin/helpers/languagecatalog.php',
+            'admin/models/languages.php',
+            'admin/views/languages/view.html.php',
+            'admin/views/languages/tmpl/default.php',
+            'media/images/icon-48-languages.svg',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+
+            foreach (array(
+                'media/data/language_catalog_jem.xml',
+                'media/import/language_catalog_jem.xml',
+                'media/import/import_catalog_jem.xml',
+                'media/languages/language_catalog_jem.xml',
+                'media/update/update_pkg_jem.xml',
+                'updatecheck/language_catalog_jem.xml',
+                'updatecheck/import_catalog_jem.xml',
+                'updatecheck/update_pkg_jem.xml',
+            ) as $catalogEntry) {
+                self::assertFalse(
+                    $this->componentEntryExists($zipFile, $catalogEntry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $catalogEntry . ' must not be packaged.'
+                );
+            }
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
-        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/update_pkg_jem.xml');
         self::assertNotFalse($manifest);
         self::assertNotFalse($updates);
 
@@ -586,6 +628,30 @@ final class ZipArtifactContentsTest extends TestCase
         return $contents;
     }
 
+    private function componentEntryExists(string $packageZipFile, string $entryName): bool
+    {
+        $zip = new ZipArchive();
+        self::assertTrue($zip->open($packageZipFile), $this->relativePath($packageZipFile) . ' should be readable as a ZIP file.');
+
+        $componentZip = $zip->getFromName('packages/com_jem.zip');
+        $zip->close();
+
+        self::assertNotFalse($componentZip, $this->relativePath($packageZipFile) . ':packages/com_jem.zip should exist.');
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem_component_');
+        self::assertIsString($temporary);
+        file_put_contents($temporary, $componentZip);
+
+        $component = new ZipArchive();
+        self::assertTrue($component->open($temporary), $this->relativePath($packageZipFile) . ':packages/com_jem.zip should be readable.');
+        $exists = $component->locateName($entryName) !== false;
+
+        $component->close();
+        unlink($temporary);
+
+        return $exists;
+    }
+
     private function componentNestedZipContains(string $packageZipFile, string $outerEntryName, string $innerEntryName): bool
     {
         $contents = $this->componentEntryContents($packageZipFile, $outerEntryName);
@@ -618,7 +684,7 @@ final class ZipArtifactContentsTest extends TestCase
         }
 
         return preg_match(
-            '#(^|/)(tests|tmp|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
+            '#(^|/)(tests|tmp|vendor|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|install_[^/]*|_old[^/]*|old[^/]*)(/|$)|(^|/)(composer\.json|composer\.lock|phpunit\.xml|phpunit(?:\.[^.]+)?\.xml\.dist|\.env(?:\..*)?|.*\.(?:pem|key|crt|pfx|bak|orig|log|code-workspace))$#i',
             $entry
         ) === 1;
     }

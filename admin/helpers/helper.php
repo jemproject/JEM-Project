@@ -234,6 +234,14 @@ class JemHelperBackend
             );
         }
 
+        if (Factory::getApplication()->getIdentity()->authorise('core.admin')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_LANGUAGES'),
+                'index.php?option=com_jem&view=languages',
+                $vName == 'languages'
+            );
+        }
+
         if (self::canManage('jem.tools.manage')) {
             JemSidebarHelper::addEntry(
                 Text::_('COM_JEM_HOUSEKEEPING'),

@@ -37,6 +37,20 @@ final class UpdateCheckModelContractTest extends TestCase
         self::assertStringNotContainsString('file_get_contents($updateFile)', $code);
     }
 
+    public function testLocalUpdateXmlOverridesTheOfficialSourceAndIsHardened(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/updatecheck.php');
+
+        self::assertStringContainsString("LOCAL_UPDATE_DIRECTORY = 'media/com_jem/update'", $code);
+        self::assertStringContainsString('$localUpdate      = self::hasLocalUpdateXml();', $code);
+        self::assertStringContainsString('$updateFile       = $localUpdate ? self::getLocalUpdatePath() : self::UPDATE_URL;', $code);
+        self::assertStringContainsString("preg_match('/<!DOCTYPE|<!ENTITY/i', \$source)", $code);
+        self::assertStringContainsString('LIBXML_NONET', $code);
+        self::assertStringContainsString('hash_equals(self::UPDATE_URL', $code);
+        self::assertStringContainsString("trim((string) \$xml['version']) !== '1.0'", $code);
+        self::assertStringContainsString("trim((string) \$xml['published'])", $code);
+    }
+
     public function testUpdatecheckProvidesStableAndBetaChangelogLinks(): void
     {
         $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/updatecheck.php');

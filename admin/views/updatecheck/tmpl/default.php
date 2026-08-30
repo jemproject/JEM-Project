@@ -110,6 +110,9 @@ $update->stablechangelog  = $update->stablechangelog ?? 'https://www.joomlaevent
 $update->betachangelog    = $update->betachangelog ?? 'https://www.joomlaeventmanager.net/project/changelog-jem/betas';
 $update->download         = $update->download ?? '';
 $update->updateurl        = $update->updateurl ?? 'https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml';
+$update->islocalupdate    = !empty($update->islocalupdate);
+$update->xmlversion       = $update->xmlversion ?? '';
+$update->xmlpublished     = $update->xmlpublished ?? '';
 $update->joomlaversion    = $update->joomlaversion ?? JVERSION;
 $update->targetplatform   = $update->targetplatform ?? '';
 $update->phpversion       = $update->phpversion ?? PHP_VERSION;
@@ -340,13 +343,24 @@ $changelogLabel = $isPrerelease
         <?php endif; ?>
 
         <div class="jem-updatecheck">
+            <?php if ($update->islocalupdate) : ?>
+                <div class="alert alert-warning" role="status">
+                    <?php echo Text::sprintf(
+                        'COM_JEM_UPDATECHECK_LOCAL_XML',
+                        htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'),
+                        htmlspecialchars((string) ($update->xmlversion ?: Text::_('JNOTAVAILABLE')), ENT_QUOTES, 'UTF-8'),
+                        htmlspecialchars((string) ($update->xmlpublished ?: Text::_('JNOTAVAILABLE')), ENT_QUOTES, 'UTF-8')
+                    ); ?>
+                </div>
+            <?php endif; ?>
+
             <div class="jem-updatecheck-status jem-updatecheck-status--<?php echo $statusClass; ?>">
                 <?php echo HTMLHelper::_('image', $statusIcon, '', array(), true); ?>
                 <div>
                     <h2><?php echo htmlspecialchars($statusText, ENT_QUOTES, 'UTF-8'); ?></h2>
                     <p class="jem-updatecheck-muted"><?php echo htmlspecialchars($statusDesc, ENT_QUOTES, 'UTF-8'); ?></p>
                 </div>
-                <?php if ((int) $update->current === -1) : ?>
+                <?php if ((int) $update->current === -1 && !$update->islocalupdate) : ?>
                     <div class="jem-updatecheck-status-action">
                         <a class="btn btn-success" href="<?php echo Route::_('index.php?option=com_installer&view=update&filter[search]=JEM', false); ?>">
                             <?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE'); ?>
@@ -377,7 +391,7 @@ $changelogLabel = $isPrerelease
                 </section>
 
                 <section class="jem-updatecheck-card">
-                    <h3><?php echo Text::_('COM_JEM_UPDATECHECK_SERVER_RELEASE'); ?></h3>
+                    <h3><?php echo Text::_($update->islocalupdate ? 'COM_JEM_UPDATECHECK_LOCAL_RELEASE' : 'COM_JEM_UPDATECHECK_SERVER_RELEASE'); ?></h3>
                     <?php if ((int) $update->failed === 0 && $update->current !== null) : ?>
                         <dl class="jem-updatecheck-list">
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_VERSION'); ?></dt>
@@ -393,7 +407,13 @@ $changelogLabel = $isPrerelease
                             <dd><?php echo htmlspecialchars((string) ($update->phpminimum ?: '-'), ENT_QUOTES, 'UTF-8'); ?></dd>
 
                             <dt><?php echo Text::_('COM_JEM_UPDATECHECK_UPDATE_SOURCE'); ?></dt>
-                            <dd class="jem-updatecheck-long-value"><a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a></dd>
+                            <dd class="jem-updatecheck-long-value">
+                                <?php if ($update->islocalupdate) : ?>
+                                    <?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>
+                                <?php else : ?>
+                                    <a href="<?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener noreferrer"><?php echo htmlspecialchars((string) $update->updateurl, ENT_QUOTES, 'UTF-8'); ?></a>
+                                <?php endif; ?>
+                            </dd>
                         </dl>
                     <?php else : ?>
                         <div class="p-3">

@@ -14,17 +14,20 @@
 defined ('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Filesystem\File;
-use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Version;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 /**
  * JEM package installer script.
  */
 class Pkg_JemInstallerScript
 {
+    /** SHA-256 of the catalog snapshot included by an earlier Beta 2 build. */
+    const LEGACY_BUNDLED_LANGUAGE_CATALOG_SHA256 = '2f9515c8b36e478438c4cef564ca6d7f26b00a1781caa31ed4a196f86602999a';
+
     /**
      * List of supported versions. Newest version first!
      * @var array
@@ -96,6 +99,8 @@ class Pkg_JemInstallerScript
         $this->normaliseJemModuleParams();
         $this->ensureJemNotificationTask();
         $this->removeLegacyLocalEnglishLanguageFiles();
+        $this->removeLegacyBundledLanguageCatalog();
+        $this->removeUnusedCatalogDirectories();
 
         return true;
     }
@@ -209,6 +214,64 @@ class Pkg_JemInstallerScript
 
         if ($entries !== false && count($entries) === 2) {
             Folder::delete($directory);
+        }
+    }
+
+    /**
+     * Remove only the known pre-release snapshot that was previously bundled.
+     * A different local catalog was placed manually and must be preserved.
+     */
+    protected function removeLegacyBundledLanguageCatalog()
+    {
+        $path = JPATH_ROOT . '/media/com_jem/data/language_catalog_jem.xml';
+
+        if (!is_file($path)) {
+            return;
+        }
+
+        $hash = hash_file('sha256', $path);
+
+        if (!is_string($hash)
+            || !hash_equals(self::LEGACY_BUNDLED_LANGUAGE_CATALOG_SHA256, strtolower($hash))) {
+            return;
+        }
+
+        if (!File::delete($path)) {
+            Factory::getApplication()->enqueueMessage(
+                'JEM could not remove the obsolete local language catalog: ' . $path,
+                'warning'
+            );
+
+            return;
+        }
+    }
+
+    /**
+     * Remove catalog directories left by pre-release packages only when they
+     * contain no user catalog or other custom file.
+     */
+    protected function removeUnusedCatalogDirectories()
+    {
+        foreach (array('data', 'import', 'languages', 'update') as $name) {
+            $directory = JPATH_ROOT . '/media/com_jem/' . $name;
+
+            if (!is_dir($directory)) {
+                continue;
+            }
+
+            $entries = scandir($directory);
+
+            if ($entries === false) {
+                continue;
+            }
+
+            $entries = array_values(array_diff($entries, array('.', '..')));
+
+            if ($entries === array('index.html')) {
+                File::delete($directory . '/index.html');
+            }
+
+            $this->removeDirectoryIfEmpty($directory);
         }
     }
 

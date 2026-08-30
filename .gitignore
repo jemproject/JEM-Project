@@ -177,4 +177,5 @@ pip-log.txt
 CODEX_PENDING_DIARY.md
 /docs
 /memories
+/install_*/
 /.agents/

@@ -17,6 +17,11 @@ use Joomla\Filesystem\File;
  */
 class JemModelUpdatecheck extends BaseDatabaseModel
 {
+    const UPDATE_FILE = 'update_pkg_jem.xml';
+    const UPDATE_URL = 'https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml';
+    const LOCAL_UPDATE_DIRECTORY = 'media/com_jem/update';
+    const MAX_UPDATE_SIZE = 1048576;
+
     protected $_updatedata = null;
 
     /**
@@ -38,13 +43,18 @@ class JemModelUpdatecheck extends BaseDatabaseModel
     public function getUpdatedata()
     {
         $installedversion = JemHelper::getParam(1, 'version', 1, 'com_jem');
-        $updateFile       = "https://www.joomlaeventmanager.net/updatecheck/update_pkg_jem.xml";
+        $localUpdate      = self::hasLocalUpdateXml();
+        $updateFile       = $localUpdate ? self::getLocalUpdatePath() : self::UPDATE_URL;
+        $updateSource     = $localUpdate ? self::getLocalUpdateSource() : self::UPDATE_URL;
         $updatedata       = new stdClass();
 
         $updatedata->failed           = 0;
         $updatedata->installedversion = $installedversion;
         $updatedata->current          = null;
-        $updatedata->updateurl        = $updateFile;
+        $updatedata->updateurl        = $updateSource;
+        $updatedata->islocalupdate    = $localUpdate;
+        $updatedata->xmlversion       = '';
+        $updatedata->xmlpublished     = '';
         $updatedata->joomlaversion    = JVERSION;
         $updatedata->phpversion       = PHP_VERSION;
         $updatedata->installeddate    = $this->getInstalledDate();
@@ -57,9 +67,11 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $updateXml = self::fetchUpdateXml($updateFile);
 
         if ($updateXml !== false) {
-            $xml = simplexml_load_string($updateXml);
+            $xml = self::loadUpdateXml($updateXml);
 
             if ($xml !== false && isset($xml->update)) {
+                $updatedata->xmlversion = trim((string) $xml['version']);
+                $updatedata->xmlpublished = trim((string) $xml['published']);
                 $jversion = JVERSION;
                 $selectedUpdate = null;
                 $highestPlatformUpdate = null;
@@ -143,6 +155,22 @@ class JemModelUpdatecheck extends BaseDatabaseModel
             return false;
         }
 
+        if (is_file($filename)) {
+            $size = @filesize($filename);
+
+            if ($size === false || $size < 1 || $size > self::MAX_UPDATE_SIZE) {
+                return false;
+            }
+
+            $contents = @file_get_contents($filename);
+
+            return ($contents === false || trim($contents) === '') ? false : $contents;
+        }
+
+        if (!hash_equals(self::UPDATE_URL, (string) $filename)) {
+            return false;
+        }
+
         $context = stream_context_create(array(
             'http' => array(
                 'timeout' => 5,
@@ -155,7 +183,98 @@ class JemModelUpdatecheck extends BaseDatabaseModel
 
         $contents = @file_get_contents($filename, false, $context);
 
-        return ($contents === false || trim($contents) === '') ? false : $contents;
+        return ($contents === false
+            || trim($contents) === ''
+            || strlen($contents) > self::MAX_UPDATE_SIZE)
+            ? false
+            : $contents;
+    }
+
+    protected static function loadUpdateXml($source)
+    {
+        $source = (string) $source;
+
+        if ($source === ''
+            || strlen($source) > self::MAX_UPDATE_SIZE
+            || preg_match('/<!DOCTYPE|<!ENTITY/i', $source)) {
+            return false;
+        }
+
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $xml = simplexml_load_string(
+                $source,
+                'SimpleXMLElement',
+                LIBXML_NONET | LIBXML_NOCDATA | LIBXML_COMPACT
+            );
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+
+        if ($xml === false
+            || $xml->getName() !== 'updates'
+            || trim((string) $xml['version']) !== '1.0'
+            || preg_match('/^\d{4}-\d{2}-\d{2}$/', trim((string) $xml['published'])) !== 1) {
+            return false;
+        }
+
+        foreach ($xml->update as $update) {
+            $downloadUrl = trim((string) $update->downloads->downloadurl);
+            $platform = trim((string) $update->targetplatform['version']);
+
+            if (trim((string) $update->element) !== 'pkg_jem'
+                || trim((string) $update->type) !== 'package'
+                || trim((string) $update->version) === ''
+                || trim((string) $update->targetplatform['name']) !== 'joomla'
+                || $platform === ''
+                || strlen($platform) > 128
+                || @preg_match('/^' . str_replace('/', '\\/', $platform) . '/', JVERSION) === false
+                || !self::isHttpsUrl($downloadUrl)) {
+                return false;
+            }
+
+            foreach (array('infourl', 'stablechangelog', 'betachangelog') as $urlNode) {
+                $url = trim((string) $update->{$urlNode});
+
+                if ($url !== '' && !self::isHttpsUrl($url)) {
+                    return false;
+                }
+            }
+        }
+
+        if (!isset($xml->update)) {
+            return false;
+        }
+
+        return $xml;
+    }
+
+    protected static function isHttpsUrl($url)
+    {
+        $parts = parse_url((string) $url);
+
+        return is_array($parts)
+            && strtolower((string) ($parts['scheme'] ?? '')) === 'https'
+            && !empty($parts['host']);
+    }
+
+    public static function getLocalUpdatePath()
+    {
+        return JPATH_ROOT . '/' . self::LOCAL_UPDATE_DIRECTORY . '/' . self::UPDATE_FILE;
+    }
+
+    public static function getLocalUpdateSource()
+    {
+        return self::LOCAL_UPDATE_DIRECTORY . '/' . self::UPDATE_FILE;
+    }
+
+    public static function hasLocalUpdateXml()
+    {
+        $path = self::getLocalUpdatePath();
+
+        return is_dir(dirname($path)) && is_file($path);
     }
 
     private function getInstalledDate()

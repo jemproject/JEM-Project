@@ -25,6 +25,7 @@ final class BuildPackageExcludesTest extends TestCase
         foreach (array(
             'tests/**',
             'tmp/**',
+            'updatecheck/**',
             'vendor/**',
             '.phpunit.cache/**',
             '.agents/**',
@@ -33,6 +34,7 @@ final class BuildPackageExcludesTest extends TestCase
             '.codex-skill-staging/**',
             '.cursor/**',
             '.github/copilot/**',
+            'install_*/**',
             'memories/**',
             '.env',
             '.env.*',
@@ -87,6 +89,21 @@ final class BuildPackageExcludesTest extends TestCase
         self::assertStringContainsString('/memories', $gitignore);
         self::assertStringContainsString('/memories/** export-ignore', $gitattributes);
         self::assertStringContainsString('|docs|memories|modules|', $builder);
+        self::assertStringContainsString('|install_[^/]*|', $builder);
+    }
+
+    public function testBuildNeverMapsCatalogXmlFilesIntoTheComponent(): void
+    {
+        $xml = new DOMDocument();
+        self::assertTrue($xml->load(JEM_TEST_ROOT . '/build.xml'));
+        $xpath = new DOMXPath($xml);
+        $filesets = $xpath->query('//target[@name="build_component"]//zipfileset[@dir="${cfg.comDir}/updatecheck"]');
+        $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');
+
+        self::assertCount(0, $filesets);
+        self::assertStringNotContainsString('addFileToZip(', $builder);
+        self::assertStringContainsString("'media/languages/language_catalog_jem.xml'", $builder);
+        self::assertStringContainsString("'media/update/update_pkg_jem.xml'", $builder);
     }
 
     public function testNoArgumentPhpBuilderOnlyPackagesItsOwnCheckout(): void

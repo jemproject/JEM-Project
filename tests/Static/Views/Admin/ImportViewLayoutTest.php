@@ -69,9 +69,12 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString("JemImportSubmit('import.uploadCatalog', 'download-lists')", $template);
         self::assertStringContainsString("JemImportSubmit('import.removeCustomCatalog', 'download-lists')", $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE', $template);
+        self::assertStringContainsString("if (!empty(\$catalogStatus['custom_file']))", $template);
+        self::assertStringContainsString("\$catalogStatus['version'] ?: Text::_('JNOTAVAILABLE')", $template);
+        self::assertStringContainsString("\$catalogStatus['published'] ?: Text::_('JNOTAVAILABLE')", $template);
         self::assertStringContainsString("<strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SELECTED_SOURCE'); ?>:</strong>", $template);
         self::assertStringNotContainsString("Text::sprintf('COM_JEM_IMPORT_CATALOG_SELECTED_PROFILE'", $template);
-        self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_OFFICIAL_ACTIVE', $template);
+        self::assertStringNotContainsString('COM_JEM_IMPORT_CATALOG_OFFICIAL_ACTIVE', $template);
         self::assertStringContainsString('COM_JEM_IMPORT_CATALOG_TABLE_ITEMS', $template);
         self::assertStringContainsString("entry['item_count']", $template);
         self::assertStringContainsString('id="jem-import-catalog-type"', $template);
@@ -152,8 +155,8 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString('Folder::create($directory)', $controller);
         self::assertStringContainsString('File::write($path, $xmlSource)', $controller);
         self::assertStringContainsString('File::delete($path)', $controller);
-        self::assertStringContainsString('<folder>import</folder>', $manifest);
-        self::assertFileExists(JEM_TEST_ROOT . '/media/import/index.html');
+        self::assertStringNotContainsString('<folder>import</folder>', $manifest);
+        self::assertFileDoesNotExist(JEM_TEST_ROOT . '/media/import/index.html');
     }
 
     public function testEventAndVenueImportsUseEntitySpecificTypeLists(): void

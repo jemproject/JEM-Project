@@ -1204,6 +1204,26 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                         $catalogStatusIcon = $catalogAvailable ? 'icon-check' : 'icon-times';
                         $catalogStatusText = $catalogAvailable ? Text::_('COM_JEM_IMPORT_CATALOG_AVAILABLE') : Text::_('COM_JEM_IMPORT_CATALOG_UNAVAILABLE');
                         ?>
+                        <?php if (!empty($catalogStatus['custom_file'])) : ?>
+                            <div class="alert alert-warning d-flex align-items-center justify-content-between gap-2" role="status">
+                                <span>
+                                    <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE'); ?></strong>
+                                    <span class="d-block"><code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code></span>
+                                    <span class="d-block">
+                                        <?php echo Text::sprintf(
+                                            'COM_JEM_IMPORT_CATALOG_STATUS_DESC',
+                                            htmlspecialchars((string) ($catalogStatus['version'] ?: Text::_('JNOTAVAILABLE')), ENT_QUOTES, 'UTF-8'),
+                                            htmlspecialchars((string) ($catalogStatus['published'] ?: Text::_('JNOTAVAILABLE')), ENT_QUOTES, 'UTF-8')
+                                        ); ?>
+                                    </span>
+                                </span>
+                                <?php if (!empty($this->canManageImportCatalog)) : ?>
+                                    <button type="button" class="btn btn-sm btn-danger" title="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" onclick="if (confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) { JemImportSubmit('import.removeCustomCatalog', 'download-lists'); }">
+                                        <span class="icon-times" aria-hidden="true"></span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="jem-import-catalog-meta">
                         <div class="jem-import-field jem-import-catalog-source-field">
                             <label><?php echo Text::_('COM_JEM_IMPORT_CATALOG_SOURCE'); ?></label>
@@ -1304,24 +1324,6 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                     <section class="jem-import-card jem-import-card-planned">
                         <h3><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CATALOG_TITLE'); ?></h3>
                         <p><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CATALOG_DESC'); ?></p>
-                        <?php if (!empty($catalogStatus['is_custom'])) : ?>
-                            <div class="alert alert-info d-flex align-items-center justify-content-between gap-2">
-                                <span>
-                                    <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_ACTIVE'); ?></strong>
-                                    <span class="d-block"><code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code></span>
-                                </span>
-                                <?php if (!empty($this->canManageImportCatalog)) : ?>
-                                    <button type="button" class="btn btn-sm btn-danger" title="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CUSTOM'), ENT_QUOTES, 'UTF-8'); ?>" onclick="if (confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_IMPORT_CATALOG_REMOVE_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) { JemImportSubmit('import.removeCustomCatalog', 'download-lists'); }">
-                                        <span class="icon-times" aria-hidden="true"></span>
-                                    </button>
-                                <?php endif; ?>
-                            </div>
-                        <?php else : ?>
-                            <div class="alert alert-light">
-                                <strong><?php echo Text::_('COM_JEM_IMPORT_CATALOG_OFFICIAL_ACTIVE'); ?></strong>
-                                <span class="d-block"><code><?php echo htmlspecialchars($this->importCatalogSource ?? '', ENT_QUOTES, 'UTF-8'); ?></code></span>
-                            </div>
-                        <?php endif; ?>
                         <ul class="jem-import-feature-list">
                             <li><?php echo !empty($catalogStatus['is_custom']) ? Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_CUSTOM_XML_SOURCE') : Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_XML_SOURCE'); ?></li>
                             <li><?php echo Text::_('COM_JEM_IMPORT_DOWNLOAD_LISTS_COUNTRY_FILTER'); ?></li>

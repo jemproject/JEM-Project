@@ -21,6 +21,7 @@ $canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.his
 $canManageNotificationTemplates = JemHelperBackend::canManage('jem.notifications.templates');
 $canViewNotificationHistory = JemHelperBackend::canManage('jem.notifications.history');
 $canConfigure = JemHelperBackend::canManage('core.options');
+$canInstallLanguages = $this->user->authorise('core.admin');
 $featurePolicy = $this->featurePolicy ?? JemFeaturePolicy::current();
 $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy->getProfile()));
 ?>
@@ -80,6 +81,10 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
             <?php
                 if ($canConfigure) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=settings', 'icon-48-settings.svg', Text::_('COM_JEM_MENU_SETTINGS'));
+                }
+
+                if ($canInstallLanguages) {
+                    $this->quickiconButton('index.php?option=com_jem&amp;view=languages', 'icon-48-languages.svg', Text::_('COM_JEM_LANGUAGES'));
                 }
 
                 if ($featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)

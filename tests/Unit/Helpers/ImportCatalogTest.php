@@ -8,9 +8,25 @@ require_once JEM_TEST_ROOT . '/admin/helpers/importcatalog.php';
 
 final class ImportCatalogTest extends TestCase
 {
+    public function testLocalCatalogHasAbsolutePriorityOverTheRemoteCatalog(): void
+    {
+        $helper = (string) file_get_contents(JEM_TEST_ROOT . '/admin/helpers/importcatalog.php');
+        $localStart = strpos($helper, "if (self::\$catalog['custom_file'])");
+        $remoteStart = strpos($helper, '$xmlSource = self::downloadCatalogXml');
+
+        self::assertNotFalse($localStart);
+        self::assertNotFalse($remoteStart);
+        self::assertGreaterThan($localStart, $remoteStart);
+
+        $localBranch = substr($helper, $localStart, $remoteStart - $localStart);
+
+        self::assertStringContainsString('return self::$catalog;', $localBranch);
+        self::assertStringNotContainsString('downloadCatalogXml', $localBranch);
+    }
+
     public function testRepositoryCatalogPassesCustomUploadValidation(): void
     {
-        $xml = (string) file_get_contents(JEM_TEST_ROOT . '/import_catalog_jem.xml');
+        $xml = (string) file_get_contents(JEM_TEST_ROOT . '/updatecheck/import_catalog_jem.xml');
         $error = '';
 
         self::assertTrue(JemImportCatalogHelper::validateCatalogXml($xml, $error), $error);
@@ -31,7 +47,7 @@ final class ImportCatalogTest extends TestCase
         $method = (new ReflectionClass(JemImportCatalogHelper::class))->getMethod('loadCatalogXml');
         $error = '';
         $arguments = array(
-            '<jem-import-catalog version="1.0" />',
+            '<jem-import-catalog version="1.0" published="2026-08-30" />',
             &$error,
         );
         $original = libxml_use_internal_errors(false);
@@ -54,10 +70,28 @@ final class ImportCatalogTest extends TestCase
         self::assertSame('unsupported_version', $error);
     }
 
+    public function testCatalogRejectsMissingOrInvalidPublishedDate(): void
+    {
+        $entry = '<entry id="test" type="events" format="ics"><title>Test</title><source url="https://example.org/events.ics" /></entry>';
+        $error = '';
+
+        self::assertFalse(JemImportCatalogHelper::validateCatalogXml(
+            '<jem-import-catalog version="1.0">' . $entry . '</jem-import-catalog>',
+            $error
+        ));
+        self::assertSame('invalid_published_date', $error);
+
+        self::assertFalse(JemImportCatalogHelper::validateCatalogXml(
+            '<jem-import-catalog version="1.0" published="today">' . $entry . '</jem-import-catalog>',
+            $error
+        ));
+        self::assertSame('invalid_published_date', $error);
+    }
+
     public function testCatalogRejectsDuplicateEntryIdentifiers(): void
     {
         $entry = '<entry id="duplicate" type="events" format="ics"><title>Test</title><source url="https://example.org/events.ics" /></entry>';
-        $xml = '<?xml version="1.0"?><jem-import-catalog version="1.0">' . $entry . $entry . '</jem-import-catalog>';
+        $xml = '<?xml version="1.0"?><jem-import-catalog version="1.0" published="2026-08-30">' . $entry . $entry . '</jem-import-catalog>';
         $error = '';
 
         self::assertFalse(JemImportCatalogHelper::validateCatalogXml($xml, $error));
@@ -90,7 +124,7 @@ final class ImportCatalogTest extends TestCase
 
     public function testCatalogRejectsInvalidItemCount(): void
     {
-        $xml = '<?xml version="1.0"?><jem-import-catalog version="1.0"><entry id="test" type="events" format="json"><title>Test</title><source url="https://example.org/events.json"/><items count="many"/></entry></jem-import-catalog>';
+        $xml = '<?xml version="1.0"?><jem-import-catalog version="1.0" published="2026-08-30"><entry id="test" type="events" format="json"><title>Test</title><source url="https://example.org/events.json"/><items count="many"/></entry></jem-import-catalog>';
         $error = '';
 
         self::assertFalse(JemImportCatalogHelper::validateCatalogXml($xml, $error));
@@ -99,7 +133,7 @@ final class ImportCatalogTest extends TestCase
 
     public function testAlcalaWaterFountainsUseXlsxVenueMapping(): void
     {
-        $xml = simplexml_load_file(JEM_TEST_ROOT . '/import_catalog_jem.xml');
+        $xml = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/import_catalog_jem.xml');
         self::assertNotFalse($xml);
         $entries = $xml->xpath('//entry[@id="es-madrid-alcala-water-fountains"]');
 

@@ -16,11 +16,13 @@ final class Joomla6CompatibilityTest extends TestCase
 
     public function testUpdateFeedTargetsJoomla54AndJoomla6WithPhp83(): void
     {
-        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/update_pkg_jem.xml');
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/jem.xml');
 
         self::assertNotFalse($updates);
         self::assertNotFalse($manifest);
+        self::assertSame('1.0', (string) $updates['version']);
+        self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', (string) $updates['published']);
 
         $expectedVersion = (string) $manifest->version;
 
@@ -45,7 +47,8 @@ final class Joomla6CompatibilityTest extends TestCase
 
             self::assertNotFalse($manifest);
             self::assertSame('5.1.0beta2', (string) $manifest->version);
-            self::assertCount(36, explode(';', (string) $manifest->notes));
+            self::assertCount(37, explode(';', (string) $manifest->notes));
+            self::assertStringContainsString('Issue #2320', (string) $manifest->notes);
             self::assertStringContainsString('profile-independent JSON-LD entity', (string) $manifest->notes);
             self::assertStringContainsString('parent event programmes and nested venue hierarchies', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2242', (string) $manifest->notes);
@@ -111,7 +114,7 @@ final class Joomla6CompatibilityTest extends TestCase
             }
         }
 
-        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/update_pkg_jem.xml');
         self::assertNotFalse($updates);
 
         foreach ($updates->update as $update) {
@@ -152,6 +155,16 @@ final class Joomla6CompatibilityTest extends TestCase
 
         self::assertSame(array(), $missingMinimum, "Installer scripts must require Joomla 5.4.0 or newer:\n" . implode("\n", $missingMinimum));
         self::assertSame(array(), $missingMaximum, "Installer scripts must reject Joomla 7 or newer until tested:\n" . implode("\n", $missingMaximum));
+    }
+
+    public function testPackageInstallerUsesJoomlaFrameworkFilesystemClasses(): void
+    {
+        $installer = (string) file_get_contents(JEM_TEST_ROOT . '/package/pkg_install.php');
+
+        self::assertStringContainsString('use Joomla\\Filesystem\\File;', $installer);
+        self::assertStringContainsString('use Joomla\\Filesystem\\Folder;', $installer);
+        self::assertStringNotContainsString('use Joomla\\CMS\\Filesystem\\File;', $installer);
+        self::assertStringNotContainsString('use Joomla\\CMS\\Filesystem\\Folder;', $installer);
     }
 
     public function testComponentInstallerAllowsFreshInstallWhenUpdatePreflightHasNoInstalledVersion(): void

@@ -188,7 +188,14 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.codex-skill-staging|\.cursor|\.github/copilot|3rd|build|docs|memories|modules|package|plugins|scripts|tests|tmp|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (in_array($relative, array(
+            'media/languages/language_catalog_jem.xml',
+            'media/update/update_pkg_jem.xml',
+        ), true)) {
+            return false;
+        }
+
+        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.codex-skill-staging|\.cursor|\.github/copilot|install_[^/]*|3rd|build|docs|memories|modules|package|plugins|scripts|tests|tmp|tools|updatecheck|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 
@@ -237,7 +244,7 @@ final class JemPackageBuilder
             }
         }
 
-        foreach (['import-catalog.xml', 'import_catalog_jem.xml', 'composer.json', 'composer.lock', 'vendor/autoload.php'] as $forbidden) {
+        foreach (['import-catalog.xml', 'import_catalog_jem.xml', 'media/data/language_catalog_jem.xml', 'media/import/language_catalog_jem.xml', 'media/languages/language_catalog_jem.xml', 'media/update/update_pkg_jem.xml', 'composer.json', 'composer.lock', 'vendor/autoload.php'] as $forbidden) {
             if ($component->locateName($forbidden) !== false) {
                 $component->close();
                 @unlink($tmpComponent);
@@ -260,6 +267,11 @@ final class JemPackageBuilder
 
         for ($i = 0; $i < $component->numFiles; $i++) {
             $name = $component->getNameIndex($i);
+            if (str_starts_with($name, 'updatecheck/')) {
+                $component->close();
+                @unlink($tmpComponent);
+                throw new RuntimeException($package . ':packages/com_jem.zip contains public update XML source ' . $name);
+            }
             if (basename($name) !== '' && str_starts_with(basename($name), '.')) {
                 $component->close();
                 @unlink($tmpComponent);

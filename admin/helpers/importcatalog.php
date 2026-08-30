@@ -33,7 +33,9 @@ class JemImportCatalogHelper
 
     public static function hasCustomCatalog()
     {
-        return is_file(self::getCatalogPath());
+        $path = self::getCatalogPath();
+
+        return is_dir(dirname($path)) && is_file($path);
     }
 
     public static function getCatalogSource()
@@ -81,28 +83,23 @@ class JemImportCatalogHelper
         );
 
         if (self::$catalog['custom_file']) {
+            self::$catalog['source'] = self::getCustomCatalogSource();
+            self::$catalog['is_custom'] = true;
             $path = self::getCatalogPath();
             $size = @filesize($path);
-            $xmlSource = $size !== false && $size <= self::MAX_CATALOG_SIZE
+            $xmlSource = $size !== false && $size > 0 && $size <= self::MAX_CATALOG_SIZE
                 ? @file_get_contents($path)
                 : '';
 
-            if (is_string($xmlSource) && $xmlSource !== '') {
-                self::$catalog['source'] = self::getCustomCatalogSource();
-                self::parseCatalogXml($xmlSource);
+            if (!is_string($xmlSource) || $xmlSource === '') {
+                self::$catalog['error'] = 'download';
 
-                if (self::$catalog['available']) {
-                    self::$catalog['is_custom'] = true;
-                    return self::$catalog;
-                }
+                return self::$catalog;
             }
 
-            self::$catalog['available'] = false;
-            self::$catalog['version'] = '';
-            self::$catalog['published'] = '';
-            self::$catalog['entries'] = array();
-            self::$catalog['error'] = '';
-            self::$catalog['source'] = self::getCatalogSource();
+            self::parseCatalogXml($xmlSource);
+
+            return self::$catalog;
         }
 
         $xmlSource = self::downloadCatalogXml(self::getCatalogSource());
@@ -258,6 +255,11 @@ class JemImportCatalogHelper
 
         if (trim((string) $xml['version']) !== '1.0') {
             $error = 'unsupported_version';
+            return null;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', trim((string) $xml['published'])) !== 1) {
+            $error = 'invalid_published_date';
             return null;
         }
 

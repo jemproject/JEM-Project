@@ -54,7 +54,7 @@ final class UpdateCheckViewContractTest extends TestCase
             $code
         );
         self::assertStringContainsString(
-            '<?php if ((int) $update->current === -1) : ?>',
+            '<?php if ((int) $update->current === -1 && !$update->islocalupdate) : ?>',
             $code
         );
 
@@ -65,6 +65,17 @@ final class UpdateCheckViewContractTest extends TestCase
             'COM_JEM_UPDATECHECK_UPDATE="Open Joomla Updates"',
             $language
         );
+    }
+
+    public function testLocalUpdateSourceIsClearlyIdentifiedAndNotLinked(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/updatecheck/tmpl/default.php');
+
+        self::assertStringContainsString('COM_JEM_UPDATECHECK_LOCAL_XML', $code);
+        self::assertStringContainsString("\$update->islocalupdate ? 'COM_JEM_UPDATECHECK_LOCAL_RELEASE'", $code);
+        self::assertStringContainsString('if ($update->islocalupdate)', $code);
+        self::assertStringContainsString('$update->xmlversion', $code);
+        self::assertStringContainsString('$update->xmlpublished', $code);
     }
 
     public function testInformationLinksUseSecondaryButtonStyle(): void
