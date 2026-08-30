@@ -138,6 +138,20 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
     }
 
+    public function testVenueViewAvoidsNullMetadataArguments(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/venue/view.html.php');
+
+        self::assertStringContainsString(
+            "\$document->setMetadata('keywords', (string) (\$venue->meta_keywords ?? ''));",
+            $code
+        );
+        self::assertStringContainsString(
+            "\$document->setDescription(strip_tags((string) (\$venue->meta_description ?? '')));",
+            $code
+        );
+    }
+
     public function testCategoryListPaginationKeepsItsRouteContext(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/site/views/category/view.html.php');

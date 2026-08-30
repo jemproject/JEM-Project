@@ -323,8 +323,8 @@ class JemViewVenue extends JemView
             // set Page title & Meta data
             $document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
-            $document->setMetadata('keywords', $venue->meta_keywords);
-            $document->setDescription(strip_tags($venue->meta_description));
+            $document->setMetadata('keywords', (string) ($venue->meta_keywords ?? ''));
+            $document->setDescription(strip_tags((string) ($venue->meta_description ?? '')));
 
             // Check if the user has permission to add things
             $permissions = new stdClass();
