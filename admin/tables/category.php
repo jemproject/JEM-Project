@@ -146,6 +146,8 @@ class JemTableCategory extends Nested
      */
     public function check()
     {
+        $this->image_path = JemCategoryImagePath::normaliseRelativeFolder($this->image_path ?? '');
+
         // Check for a title.
         if (trim($this->catname) == '') {
             $this->setError(Text::_('JLIB_DATABASE_ERROR_MUSTCONTAIN_A_TITLE_CATEGORY'));

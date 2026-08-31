@@ -135,7 +135,7 @@ final class SiteCodeContractsTest extends TestCase
         $code = self::read(JEM_TEST_ROOT . '/site/views/category/view.html.php');
 
         self::assertStringContainsString("\$document->setMetadata('keywords', (string) \$category->meta_keywords);", $code);
-        self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
+        self::assertStringContainsString("(string) (\$category->image_path ?? '')", $code);
     }
 
     public function testVenueViewAvoidsNullMetadataArguments(): void

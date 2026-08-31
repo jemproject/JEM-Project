@@ -153,7 +153,7 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
 
                             echo HTMLHelper::_('image', 'com_jem/noimage.webp', $row->catname, $imgattribs, true);
                         } else {
-                            $cimage = JemImage::flyercreator($row->image, 'category');
+                            $cimage = JemImage::flyercreator($row->image, 'category', $row->image_path ?? '');
                             echo JemOutput::flyer($row, $cimage, 'category');
                         }
                     ?>

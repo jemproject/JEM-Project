@@ -23,6 +23,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
@@ -1937,7 +1938,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'image', 'event_image_default_storage')))
+            ->select($db->quoteName(array('id', 'image', 'image_path', 'event_image_default_storage')))
             ->from($db->quoteName('#__jem_categories'))
             ->whereIn($db->quoteName('id'), $catIds)
             ->where($db->quoteName('image_as_default') . ' = 1')
@@ -1969,7 +1970,12 @@ class JemModelEvent extends JemModelAdmin
                 ? JemEventImagePath::normaliseRelativeFolder($data['image_path'] ?? JemEventImagePath::configuredFolderFromEvent($data))
                 : '';
 
-            if (!$this->copyCategoryDefaultImage($sourceFilename, $targetFilename, $targetFolder)) {
+            if (!$this->copyCategoryDefaultImage(
+                $sourceFilename,
+                $targetFilename,
+                $targetFolder,
+                (string) ($category->image_path ?? '')
+            )) {
                 return false;
             }
 
@@ -1982,17 +1988,23 @@ class JemModelEvent extends JemModelAdmin
         return true;
     }
 
-    protected function copyCategoryDefaultImage($sourceFilename, $targetFilename, $targetFolder)
+    protected function copyCategoryDefaultImage(
+        $sourceFilename,
+        $targetFilename,
+        $targetFolder,
+        $sourceFolder = ''
+    )
     {
         $sourceFilename = File::makeSafe((string) $sourceFilename);
         $targetFilename = File::makeSafe((string) $targetFilename);
         $targetFolder = JemEventImagePath::normaliseRelativeFolder($targetFolder);
+        $sourceFolder = JemCategoryImagePath::normaliseRelativeFolder($sourceFolder);
 
         if ($sourceFilename === '' || $targetFilename === '') {
             return true;
         }
 
-        $source = Path::clean(JPATH_SITE . '/images/jem/categories/' . $sourceFilename);
+        $source = Path::clean(JPATH_SITE . '/' . JemCategoryImagePath::imagePath($sourceFolder, $sourceFilename));
 
         if (!File::exists($source)) {
             return true;

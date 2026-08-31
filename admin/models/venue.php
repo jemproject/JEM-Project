@@ -569,8 +569,8 @@ class JemModelVenue extends JemModelAdmin
     }
 
     /**
-     * Move only new or replaced venue images into the stable ID path. Existing
-     * flat images are deliberately left untouched for compatibility.
+     * Resolve the configured main-image folder after a venue has an ID.
+     * Existing files are copied so legacy/shared references remain valid.
      */
     private function syncVenueImageStorage(int $venueId, bool $imageChanged): bool
     {
@@ -581,7 +581,10 @@ class JemModelVenue extends JemModelAdmin
         $db = Factory::getContainer()->get('DatabaseDriver');
         $db->setQuery(
             $db->getQuery(true)
-                ->select($db->quoteName(array('locimage', 'image_path')))
+                ->select($db->quoteName(array(
+                    'id', 'alias', 'created', 'type_id', 'city', 'state', 'country',
+                    'locimage', 'image_path',
+                )))
                 ->from($db->quoteName('#__jem_venues'))
                 ->where($db->quoteName('id') . ' = ' . $venueId)
         );
@@ -596,12 +599,13 @@ class JemModelVenue extends JemModelAdmin
             return true;
         }
 
-        if (!$imageChanged) {
+        $sourceFolder = JemVenueImagePath::normaliseRelativeFolder($current['image_path'] ?? '');
+        $targetFolder = JemVenueImagePath::configuredFolderFromVenue($current);
+
+        if (!$imageChanged && $sourceFolder === $targetFolder) {
             return true;
         }
 
-        $sourceFolder = JemVenueImagePath::normaliseRelativeFolder($current['image_path'] ?? '');
-        $targetFolder = JemVenueImagePath::venueFolder($venueId);
         if (!JemVenueImagePath::relocateImages(
             $sourceFolder,
             $targetFolder,

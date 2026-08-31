@@ -58,7 +58,7 @@ class JFormFieldImageselect extends ListField
         $uploadModalId = $fieldId . '_imageupload_modal';
         $selectModalId = $fieldId . '_imageselect_modal';
         $imagePathValue = '';
-        if (in_array((string) $imagetype, array('events', 'venues'), true) && $this->form) {
+        if (in_array((string) $imagetype, array('events', 'venues', 'categories'), true) && $this->form) {
             $imagePathValue = (string) $this->form->getValue('image_path', null, '');
         }
 
@@ -72,7 +72,7 @@ class JFormFieldImageselect extends ListField
         $script[] = '        preview: ' . json_encode($imagePreviewId) . ',';
         $script[] = '        uploadModal: ' . json_encode($uploadModalId) . ',';
         $script[] = '        selectModal: ' . json_encode($selectModalId) . ',';
-        $script[] = '        path: ' . json_encode(in_array((string) $imagetype, array('events', 'venues'), true) ? 'jform_image_path' : '') . ',';
+        $script[] = '        path: ' . json_encode(in_array((string) $imagetype, array('events', 'venues', 'categories'), true) ? 'jform_image_path' : '') . ',';
         $script[] = '        root: ' . json_encode('images/jem/' . $imagetype) . ',';
         $script[] = '        base: ' . json_encode('../images/jem/' . $imagetype . '/') . ',';
         $script[] = '        blank: ' . json_encode('../media/com_jem/images/blank.webp');
@@ -215,7 +215,7 @@ img.venue-image {
         $html[] = '<button type="button" class="btn btn-primary" onclick="' . htmlspecialchars($selectPrepare, ENT_QUOTES, 'UTF-8') . '" data-bs-toggle="modal" data-bs-target="#' . $selectModalId . '"><span class="icon-images" aria-hidden="true"></span> '.Text::_('COM_JEM_SELECTIMAGE').'</button>';
         $html[] = '<button type="button" class="btn btn-danger" onclick="SelectImage(\'\', ' . htmlspecialchars(json_encode(Text::_('COM_JEM_SELECTIMAGE')), ENT_QUOTES, 'UTF-8') . ', \'' . $fieldId . '\');"><span class="icon-times" aria-hidden="true"></span> '.Text::_('COM_JEM_RESET').'</button>';
         $html[] = '</div>';
-        if (in_array((string) $imagetype, array('events', 'venues'), true)) {
+        if (in_array((string) $imagetype, array('events', 'venues', 'categories'), true)) {
             $html[] = '<div class="small text-muted jem-event-image-folder-hint">'
                 . Text::_('COM_JEM_EVENT_IMAGE_FOLDER') . ': <code data-jem-image-folder-hint>'
                 . htmlspecialchars($folderHint, ENT_QUOTES, 'UTF-8') . '</code></div>';
@@ -225,7 +225,7 @@ img.venue-image {
         $html[] = "<script type=\"text/javascript\">";
         $html[] = "if (document.getElementById('" . $imageNameId . "').value!='') {";
         $html[] = "var imname = document.getElementById('" . $imageNameId . "').value;";
-        $html[] = "var imPath = " . json_encode(in_array((string) $imagetype, array('events', 'venues'), true)) . " && document.getElementById('jform_image_path') ? document.getElementById('jform_image_path').value.replace(/^\\/+|\\/+$/g, '') : '';";
+        $html[] = "var imPath = " . json_encode(in_array((string) $imagetype, array('events', 'venues', 'categories'), true)) . " && document.getElementById('jform_image_path') ? document.getElementById('jform_image_path').value.replace(/^\\/+|\\/+$/g, '') : '';";
         $html[] = "jsimg='../images/jem/$imagetype/' + (imPath ? imPath + '/' : '') + imname;";
         $html[] = "document.getElementById('" . $imagePreviewId . "').src= jsimg;";
         $html[] = "}";

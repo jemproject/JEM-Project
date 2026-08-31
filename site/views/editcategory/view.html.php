@@ -72,7 +72,11 @@ class JemViewEditcategory extends JemView
             $this->jemsettings,
             JemImageProfilePolicy::CATEGORY
         );
-        $this->cimage = JemImage::flyercreator((string) $this->item->image, 'category');
+        $this->cimage = JemImage::flyercreator(
+            (string) $this->item->image,
+            'category',
+            (string) ($this->item->image_path ?? '')
+        );
 
         JemImagePublicationPolicy::configureEditingForm($this->form, 'category', $this->jemsettings);
 

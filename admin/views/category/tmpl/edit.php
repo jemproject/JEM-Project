@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Filesystem\File;
 
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
+
 // Include the component HTML helpers.
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
@@ -74,7 +76,7 @@ $typeField = $this->form->getField('type_id');
                 $categoryImage = trim((string) ($this->item->image ?? ''));
                 $safeCategoryImage = File::makeSafe(basename($categoryImage));
                 $categoryImagePath = $categoryImage !== '' && $safeCategoryImage === $categoryImage
-                    ? 'images/jem/categories/' . $safeCategoryImage
+                    ? JemCategoryImagePath::imagePath($this->item->image_path ?? '', $safeCategoryImage)
                     : '';
                 echo LayoutHelper::render(
                     'image.editor',
@@ -107,6 +109,7 @@ $typeField = $this->form->getField('type_id');
             </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+            <?php echo $this->form->getInput('image_path'); ?>
         </div>
 
         <div class="col-md-5">

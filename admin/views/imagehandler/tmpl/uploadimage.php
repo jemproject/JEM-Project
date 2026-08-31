@@ -26,7 +26,11 @@ if ($this->task == 'venueimg') {
     $this->task = 'imagehandler.categoriesimgup';
 }
 
-if (!empty($this->imagePath) && in_array($this->task, array('imagehandler.venueimgup', 'imagehandler.eventimgup'), true)) {
+if (!empty($this->imagePath) && in_array($this->task, array(
+    'imagehandler.venueimgup',
+    'imagehandler.eventimgup',
+    'imagehandler.categoriesimgup',
+), true)) {
     $targetDirectory .= trim((string) $this->imagePath, '/') . '/';
 }
 

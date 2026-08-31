@@ -15,6 +15,7 @@ use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Factory;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 use Joomla\String\StringHelper;
 
 /**
@@ -95,10 +96,14 @@ class JemViewImagehandler extends HtmlView
         $redi   = $imageTasks[$task]['redi'];
 
         $baseFolder = $folder;
-        $imagePath = $folder === 'events'
-            ? JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''))
-            : ($folder === 'venues' ? JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', '')) : '');
-        if (in_array($folder, array('events', 'venues'), true) && $imagePath !== '') {
+        if ($folder === 'events') {
+            $imagePath = JemEventImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        } elseif ($folder === 'venues') {
+            $imagePath = JemVenueImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        } else {
+            $imagePath = JemCategoryImagePath::normaliseRelativeFolder($app->input->getString('image_path', ''));
+        }
+        if ($imagePath !== '') {
             $folder .= '/' . $imagePath;
         }
 
@@ -171,9 +176,19 @@ class JemViewImagehandler extends HtmlView
         $imageProfile = isset($allowedProfiles[$baseTask]) && in_array($requestedProfile, $allowedProfiles[$baseTask], true)
             ? $requestedProfile
             : ($defaultProfiles[$baseTask] ?? 'event_intro');
-        $imagePath = strpos((string) $task, 'venue') === 0
-            ? JemVenueImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''))
-            : JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
+        if (strpos((string) $task, 'venue') === 0) {
+            $imagePath = JemVenueImagePath::normaliseRelativeFolder(
+                Factory::getApplication()->input->getString('image_path', '')
+            );
+        } elseif (strpos((string) $task, 'categories') === 0) {
+            $imagePath = JemCategoryImagePath::normaliseRelativeFolder(
+                Factory::getApplication()->input->getString('image_path', '')
+            );
+        } else {
+            $imagePath = JemEventImagePath::normaliseRelativeFolder(
+                Factory::getApplication()->input->getString('image_path', '')
+            );
+        }
 
         $ftp = ClientHelper::setCredentialsFromRequest('ftp');
 

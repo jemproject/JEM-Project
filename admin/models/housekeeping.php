@@ -21,6 +21,7 @@ use Joomla\CMS\Filter\InputFilter;
 require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 
 /**
  * Housekeeping-Model
@@ -435,19 +436,20 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
         $db->setQuery(
             $db->getQuery(true)
-                ->select($db->quoteName(array('id', 'catname', 'image')))
+                ->select($db->quoteName(array('id', 'catname', 'image', 'image_path')))
                 ->from($db->quoteName('#__jem_categories'))
                 ->where($db->quoteName('id') . ' > 1')
         );
         foreach ((array) $db->loadObjectList() as $category) {
+            $folder = JemCategoryImagePath::normaliseRelativeFolder($category->image_path ?? '');
             $this->addImageProfileAssignment(
                 $assignments,
                 'category',
                 (int) $category->id,
                 (string) $category->catname,
                 (string) $category->image,
-                Path::clean(JPATH_SITE . '/images/jem/categories'),
-                Path::clean(JPATH_SITE . '/images/jem/categories/small'),
+                JemCategoryImagePath::absoluteImageFolder($folder),
+                JemCategoryImagePath::absoluteThumbFolder($folder),
                 JemImageProfilePolicy::CATEGORY,
                 $settings
             );
@@ -917,6 +919,10 @@ class JemModelHousekeeping extends BaseDatabaseModel
         } elseif ($type === JemModelHousekeeping::VENUES) {
             $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, ' . $this->_db->quote('') . '), locimage)'
                 . ' FROM #__jem_venues WHERE locimage <> ' . $this->_db->quote('');
+        } elseif ($type === JemModelHousekeeping::CATEGORIES) {
+            $query = 'SELECT CONCAT_WS(' . $this->_db->quote('/') . ', NULLIF(image_path, '
+                . $this->_db->quote('') . '), image)'
+                . ' FROM #__jem_categories WHERE image <> ' . $this->_db->quote('');
         } else {
             $query = 'SELECT '.$this->map[$type]['field'].' FROM #__jem_'.$this->map[$type]['table'];
         }

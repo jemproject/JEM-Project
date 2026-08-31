@@ -84,16 +84,20 @@ jQuery(document).ready(function($) {
 
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
                         <fieldset class="adminform">
-
-                                <div class="w-50 fltlft">
+                                <div class="w-100">
                                     <?php echo $this->loadTemplate('basicdisplay'); ?>
                                     <?php echo $this->loadTemplate('basiclayout'); ?>
                                     <?php echo $this->loadTemplate('basiceventhandling'); ?>
                                     <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
-                                <div class="w-50 fltrt">
-                                    <?php echo $this->loadTemplate('basicimagehandling'); ?>
-                                </div>
+                        </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'image-settings', Text::_('COM_JEM_IMAGE_SETTINGS')); ?>
+                        <fieldset class="adminform">
+                            <?php echo $this->loadTemplate('basicimagehandling'); ?>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>

@@ -131,6 +131,7 @@ ALTER TABLE `#__jem_countries` ADD COLUMN `currency` CHAR(3) CHARACTER SET ascii
 
 ALTER TABLE `#__jem_events` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage` /** CAN FAIL **/;
 ALTER TABLE `#__jem_categories` ADD COLUMN `event_image_default_storage` VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default` /** CAN FAIL **/;
+ALTER TABLE `#__jem_categories` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
 
 -- JEM 5.1.0: stable ID-based venue media paths. Empty image_path keeps the
 -- legacy flat images/jem/venues directory; no existing files are moved here.

@@ -146,7 +146,7 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
             <?php if ($row->user_has_access_category) : ?>
                 <?php if ($this->params->get('show_category_image', 1) && ($this->jemsettings->discatheader) && (!empty($row->image))) : ?>
                     <div class="jem-catimg">
-                        <?php $cimage = JemImage::flyercreator($row->image, 'category'); ?>
+                        <?php $cimage = JemImage::flyercreator($row->image, 'category', $row->image_path ?? ''); ?>
                         <?php    echo JemOutput::flyer($row, $cimage, 'category'); ?>
                     </div>
                 <?php endif; ?>

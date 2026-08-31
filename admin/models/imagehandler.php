@@ -17,6 +17,7 @@ use Joomla\Filesystem\Path;
 use Joomla\String\StringHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 
 /**
  * JEM Component Imagehandler Model
@@ -68,13 +69,23 @@ class JemModelImagehandler extends BaseDatabaseModel
             // Sanitize folder: only allow alphanumeric, hyphens, underscores and forward slashes.
             // This prevents path traversal attacks (e.g. ../../etc/passwd).
             $folder = Factory::getApplication()->input->getString('folder', '');
-            $imagePath = $folder === 'venues'
-                ? JemVenueImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''))
-                : JemEventImagePath::normaliseRelativeFolder(Factory::getApplication()->input->getString('image_path', ''));
+            if ($folder === 'venues') {
+                $imagePath = JemVenueImagePath::normaliseRelativeFolder(
+                    Factory::getApplication()->input->getString('image_path', '')
+                );
+            } elseif ($folder === 'categories') {
+                $imagePath = JemCategoryImagePath::normaliseRelativeFolder(
+                    Factory::getApplication()->input->getString('image_path', '')
+                );
+            } else {
+                $imagePath = JemEventImagePath::normaliseRelativeFolder(
+                    Factory::getApplication()->input->getString('image_path', '')
+                );
+            }
             $folder = preg_replace('/[^a-zA-Z0-9_\-\/]/', '', $folder);
             $folder = trim($folder, '/');
 
-            if (in_array($folder, array('events', 'venues'), true) && $imagePath !== '') {
+            if (in_array($folder, array('events', 'venues', 'categories'), true) && $imagePath !== '') {
                 $folder .= '/' . $imagePath;
             }
 

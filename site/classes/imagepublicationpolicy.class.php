@@ -15,6 +15,7 @@ use Joomla\Filesystem\Path;
 require_once __DIR__ . '/imageprofilepolicy.class.php';
 require_once __DIR__ . '/eventimagepath.class.php';
 require_once __DIR__ . '/venueimagepath.class.php';
+require_once __DIR__ . '/categoryimagepath.class.php';
 
 /**
  * Enforces optional image requirements at the publication boundary.
@@ -129,7 +130,7 @@ final class JemImagePublicationPolicy
         $definitions = array(
             'event' => array('#__jem_events', 'title', array('id', 'title', 'published', 'datimage', 'fullimage', 'image_path')),
             'venue' => array('#__jem_venues', 'venue', array('id', 'venue', 'published', 'locimage', 'image_path')),
-            'category' => array('#__jem_categories', 'catname', array('id', 'catname', 'published', 'image')),
+            'category' => array('#__jem_categories', 'catname', array('id', 'catname', 'published', 'image', 'image_path')),
         );
         if (!isset($definitions[$entity])) {
             return array();
@@ -259,8 +260,10 @@ final class JemImagePublicationPolicy
     private static function categoryImageExists($record): bool
     {
         $filename = self::safeFilename(self::value($record, 'image', ''));
+        $folder = JemCategoryImagePath::normaliseRelativeFolder(self::value($record, 'image_path', ''));
 
-        return $filename !== '' && is_file(Path::clean(JPATH_SITE . '/images/jem/categories/' . $filename));
+        return $filename !== ''
+            && is_file(Path::clean(JPATH_SITE . '/' . JemCategoryImagePath::imagePath($folder, $filename)));
     }
 
     private static function safeFilename($value): string

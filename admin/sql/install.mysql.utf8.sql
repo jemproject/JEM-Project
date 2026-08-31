@@ -418,6 +418,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `meta_keywords` text DEFAULT NULL,
     `meta_description` text DEFAULT NULL,
     `image` varchar(100) NOT NULL DEFAULT '',
+    `image_path` varchar(255) NOT NULL DEFAULT '',
     `color` varchar(20) NOT NULL DEFAULT '',
     `published` tinyint(1) NOT NULL DEFAULT '0',
     `checked_out` int(11) UNSIGNED NULL DEFAULT NULL,

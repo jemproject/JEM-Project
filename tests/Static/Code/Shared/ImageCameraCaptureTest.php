@@ -350,7 +350,8 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringContainsString('protected $imageRelativePath', $field);
         self::assertStringContainsString('class="jem-server-image-path"', $field);
         self::assertStringContainsString("Text::_('COM_JEM_SERVER_IMAGE_PATH')", $field);
-        self::assertStringContainsString("'images/jem/categories'", $categoryField);
+        self::assertStringContainsString('JemCategoryImagePath::normaliseRelativeFolder', $categoryField);
+        self::assertStringContainsString('JemCategoryImagePath::absoluteImageFolder', $categoryField);
         self::assertStringContainsString(
             'COM_JEM_SERVER_IMAGE_PATH="Server folder"',
             $this->read('/site/language/en-GB/com_jem.ini')

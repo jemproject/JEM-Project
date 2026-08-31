@@ -164,6 +164,7 @@ $isNew = empty($this->item->id);
         <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
         <?php echo $this->form->getInput('id'); ?>
+        <?php echo $this->form->getInput('image_path'); ?>
         <input type="hidden" name="task" value="">
         <input type="hidden" name="return" value="<?php echo $this->escape($this->return_page); ?>">
         <?php echo HTMLHelper::_('form.token'); ?>

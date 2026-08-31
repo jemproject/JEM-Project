@@ -13,6 +13,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\Folder;
 
 require_once __DIR__ . '/imageselectevent.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 
 /**
  * Searchable selector for images stored in the JEM category image folder.
@@ -26,9 +27,15 @@ class JFormFieldImageselectcategory extends JFormFieldImageselectevent
         $options = array(
             HTMLHelper::_('select.option', '', Text::_('COM_JEM_NO_IMAGE')),
         );
-        $path = JPATH_SITE . '/images/jem/categories';
-        $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/images/jem/categories/';
-        $this->imageRelativePath = 'images/jem/categories';
+        $relativeFolder = $this->form
+            ? (string) $this->form->getValue('image_path', null, '')
+            : '';
+        $relativeFolder = JemCategoryImagePath::normaliseRelativeFolder($relativeFolder);
+        $path = JemCategoryImagePath::absoluteImageFolder($relativeFolder);
+        $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/' . JemCategoryImagePath::BASE . '/'
+            . ($relativeFolder !== '' ? $relativeFolder . '/' : '');
+        $this->imageRelativePath = JemCategoryImagePath::BASE
+            . ($relativeFolder !== '' ? '/' . $relativeFolder : '');
 
         if (!is_dir($path)) {
             return $options;

@@ -23,6 +23,8 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
+
 /**
  * Category Model
  */
@@ -231,6 +233,12 @@ class JemModelCategory extends AdminModel
             $isNew = false;
         }
 
+        // A submitted path is never trusted. Existing files are resolved from
+        // the persisted path and new categories start in the legacy root.
+        $data['image_path'] = JemCategoryImagePath::normaliseRelativeFolder(
+            $isNew ? '' : ($table->image_path ?? '')
+        );
+
 
         // Set the new parent id if parent id not matched OR while New/Save as
         // Copy .
@@ -317,6 +325,12 @@ class JemModelCategory extends AdminModel
             return false;
         }
 
+        if (!$this->syncCategoryImageStorage($table)) {
+            return false;
+        }
+
+        $data['image_path'] = (string) ($table->image_path ?? '');
+
         // Copy category image to the shared events folder whenever it is used as
         // a shared default event image. Per-event folder copies are handled when
         // the new event is saved, because the target folder depends on event data.
@@ -325,7 +339,9 @@ class JemModelCategory extends AdminModel
         $catImage = File::makeSafe((string) ($data['image'] ?? ''));
 
         if ($newImageAsDefault === 1 && $defaultStorage !== 'event_folder' && $catImage !== '') {
-            $srcPath = Path::clean(JPATH_ROOT . '/images/jem/categories/' . $catImage);
+            $srcPath = Path::clean(
+                JPATH_ROOT . '/' . JemCategoryImagePath::imagePath($data['image_path'], $catImage)
+            );
             $dstDir  = Path::clean(JPATH_ROOT . '/images/jem/events');
             $dstPath = Path::clean($dstDir . '/category_' . $catImage);
             $dstThumb = Path::clean(JPATH_ROOT . '/images/jem/events/small/category_' . $catImage);
@@ -387,8 +403,9 @@ class JemModelCategory extends AdminModel
             $file = $nestedFiles['userfile'];
         }
 
-        $directory = Path::clean(JPATH_SITE . '/images/jem/categories');
-        $thumbnailDirectory = Path::clean($directory . '/small');
+        $imagePath = JemCategoryImagePath::normaliseRelativeFolder($data['image_path'] ?? '');
+        $directory = Path::clean(JemCategoryImagePath::absoluteImageFolder($imagePath));
+        $thumbnailDirectory = Path::clean(JemCategoryImagePath::absoluteThumbFolder($imagePath));
 
         if (!empty($file['name'])) {
             if ((!Folder::exists($directory) && !Folder::create($directory))
@@ -456,6 +473,56 @@ class JemModelCategory extends AdminModel
         }
 
         $data['image'] = $safeImage;
+
+        return true;
+    }
+
+    /**
+     * Copy the selected category image into its configured folder after the
+     * category has an ID and persist only the relative folder.
+     */
+    private function syncCategoryImageStorage($category): bool
+    {
+        $categoryId = (int) ($category->id ?? 0);
+
+        if ($categoryId < 1) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $filename = File::makeSafe((string) ($category->image ?? ''));
+
+        if ($filename === '') {
+            if ((string) ($category->image_path ?? '') !== '') {
+                $clear = (object) array('id' => $categoryId, 'image_path' => '');
+                $db->updateObject('#__jem_categories', $clear, 'id');
+                $category->image_path = '';
+            }
+
+            return true;
+        }
+
+        $sourceFolder = JemCategoryImagePath::normaliseRelativeFolder($category->image_path ?? '');
+        $targetFolder = JemCategoryImagePath::configuredFolderFromCategory($category);
+
+        if (!JemCategoryImagePath::relocateImages(
+            $sourceFolder,
+            $targetFolder,
+            array($filename),
+            JemHelper::config(),
+            false
+        )) {
+            $this->setError(Text::_('COM_JEM_CATEGORY_IMAGE_STORAGE_FAILED'));
+
+            return false;
+        }
+
+        if ($sourceFolder !== $targetFolder) {
+            $update = (object) array('id' => $categoryId, 'image_path' => $targetFolder);
+            $db->updateObject('#__jem_categories', $update, 'id');
+        }
+
+        $category->image_path = $targetFolder;
 
         return true;
     }

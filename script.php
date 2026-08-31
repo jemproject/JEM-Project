@@ -1940,6 +1940,7 @@ SQL;
                 'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage`",
             ),
             '#__jem_categories' => array(
+                'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
                 'event_image_default_storage' => "VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default`",
             ),
             '#__jem_venues' => array(

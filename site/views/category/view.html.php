@@ -369,7 +369,11 @@ class JemViewCategory extends JemView
                 $description = $category->text;
             }
 
-            $cimage = JemImage::flyercreator((string) $category->image,'category');
+            $cimage = JemImage::flyercreator(
+                (string) $category->image,
+                'category',
+                (string) ($category->image_path ?? '')
+            );
 
             $this->lists         = $lists;
             $this->action        = $uri->toString();

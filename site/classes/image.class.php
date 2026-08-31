@@ -21,6 +21,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/imageresourcepolicy.class.p
 require_once(JPATH_SITE.'/components/com_jem/classes/imageprofilepolicy.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php');
 
 /**
  * Holds the logic for image manipulation
@@ -814,6 +815,9 @@ class JemImage
             } else if (!$isSiteImagePath && $type === 'venue') {
                 $img_orig  = JemVenueImagePath::imagePath($folderPath, $image);
                 $img_thumb = JemVenueImagePath::thumbPath($folderPath, $image);
+            } else if (!$isSiteImagePath && $type === 'category') {
+                $img_orig  = JemCategoryImagePath::imagePath($folderPath, $image);
+                $img_thumb = JemCategoryImagePath::thumbPath($folderPath, $image);
             } else {
                 $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
                 $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;

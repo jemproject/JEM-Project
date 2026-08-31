@@ -1,5 +1,6 @@
 <?php
 /**
+ * @version    5.1.0
  * @package    JEM
  * @copyright  (C) 2013-2026 joomlaeventmanager.net
  * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
@@ -16,17 +17,11 @@ use Joomla\Filesystem\Path;
 require_once __DIR__ . '/imageprofilepolicy.class.php';
 
 /**
- * Resolves local Venue media paths using stable database identifiers.
- *
- * Original files and thumbnails use mirrored trees:
- * images/jem/venues/{object path}/{file}
- * images/jem/venues/small/{object path}/{file}
- *
- * An empty Venue image path preserves the JEM 5.0 flat-folder behaviour.
+ * Resolves category image paths below the fixed JEM category image root.
  */
-class JemVenueImagePath
+class JemCategoryImagePath
 {
-    public const BASE = 'images/jem/venues';
+    public const BASE = 'images/jem/categories';
     public const THUMB = 'small';
 
     public static function normaliseRelativeFolder($folder, $maxDepth = 0)
@@ -38,8 +33,10 @@ class JemVenueImagePath
         }
 
         $segments = array();
+
         foreach (explode('/', $folder) as $segment) {
             $segment = self::cleanSegment($segment);
+
             if ($segment !== '') {
                 $segments[] = $segment;
             }
@@ -52,69 +49,6 @@ class JemVenueImagePath
         }
 
         return implode('/', $segments);
-    }
-
-    public static function venueFolder($venueId)
-    {
-        $venueId = (int) $venueId;
-
-        return $venueId > 0 ? $venueId . '/venue' : '';
-    }
-
-    public static function isSubfoldersEnabled($attribs = null)
-    {
-        $attribs = $attribs ?: JemHelper::globalattribs();
-
-        return (int) $attribs->get('venue_image_subfolder_enabled', 0) === 1;
-    }
-
-    public static function configuredFolderFromVenue($venue, $attribs = null)
-    {
-        $attribs = $attribs ?: JemHelper::globalattribs();
-        $current = self::normaliseRelativeFolder(self::value($venue, 'image_path', ''));
-
-        if (!self::isSubfoldersEnabled($attribs)) {
-            return $current;
-        }
-
-        $preset = (string) $attribs->get('venue_image_subfolder_preset', 'root');
-        $pattern = self::patternFromPreset(
-            $preset,
-            (string) $attribs->get('venue_image_subfolder_pattern', '')
-        );
-        $maxDepth = max(1, min(8, (int) $attribs->get('venue_image_subfolder_max_depth', 3)));
-
-        return $pattern === ''
-            ? ''
-            : self::normaliseRelativeFolder(self::replaceTokens($pattern, $venue), $maxDepth);
-    }
-
-    public static function profileFolder($venueId, $profileId)
-    {
-        return self::idFolder($venueId, 'profiles', $profileId);
-    }
-
-    public static function spaceFolder($venueId, $spaceId)
-    {
-        return self::idFolder($venueId, 'spaces', $spaceId) . '/space';
-    }
-
-    public static function layoutFolder($venueId, $spaceId, $layoutId)
-    {
-        $base = self::idFolder($venueId, 'spaces', $spaceId);
-        $layoutId = (int) $layoutId;
-
-        return $base !== '' && $layoutId > 0 ? $base . '/layouts/' . $layoutId . '/layout' : '';
-    }
-
-    public static function areaFolder($venueId, $spaceId, $layoutId, $areaId)
-    {
-        $layout = self::layoutFolder($venueId, $spaceId, $layoutId);
-        $areaId = (int) $areaId;
-
-        return $layout !== '' && $areaId > 0
-            ? dirname(str_replace('\\', '/', $layout)) . '/areas/' . $areaId
-            : '';
     }
 
     public static function imagePath($folder, $filename)
@@ -130,22 +64,49 @@ class JemVenueImagePath
     public static function absoluteImageFolder($folder)
     {
         $folder = self::normaliseRelativeFolder($folder);
-        $relative = self::BASE . ($folder !== '' ? '/' . $folder : '');
 
-        return Path::clean(JPATH_SITE . '/' . $relative) . DIRECTORY_SEPARATOR;
+        return Path::clean(JPATH_SITE . '/' . self::BASE . ($folder !== '' ? '/' . $folder : ''))
+            . DIRECTORY_SEPARATOR;
     }
 
     public static function absoluteThumbFolder($folder)
     {
         $folder = self::normaliseRelativeFolder($folder);
-        $relative = self::BASE . '/' . self::THUMB . ($folder !== '' ? '/' . $folder : '');
 
-        return Path::clean(JPATH_SITE . '/' . $relative) . DIRECTORY_SEPARATOR;
+        return Path::clean(JPATH_SITE . '/' . self::BASE . '/' . self::THUMB . ($folder !== '' ? '/' . $folder : ''))
+            . DIRECTORY_SEPARATOR;
+    }
+
+    public static function isSubfoldersEnabled($attribs = null)
+    {
+        $attribs = $attribs ?: JemHelper::globalattribs();
+
+        return (int) $attribs->get('category_image_subfolder_enabled', 0) === 1;
+    }
+
+    public static function configuredFolderFromCategory($category, $attribs = null)
+    {
+        $attribs = $attribs ?: JemHelper::globalattribs();
+        $current = self::normaliseRelativeFolder(self::value($category, 'image_path', ''));
+
+        if (!self::isSubfoldersEnabled($attribs)) {
+            return $current;
+        }
+
+        $preset = (string) $attribs->get('category_image_subfolder_preset', 'root');
+        $pattern = self::patternFromPreset(
+            $preset,
+            (string) $attribs->get('category_image_subfolder_pattern', '')
+        );
+        $maxDepth = max(1, min(8, (int) $attribs->get('category_image_subfolder_max_depth', 3)));
+
+        return $pattern === ''
+            ? ''
+            : self::normaliseRelativeFolder(self::replaceTokens($pattern, $category), $maxDepth);
     }
 
     public static function ensureFolders($folder)
     {
-        $folder = self::normaliseRelativeFolder($folder);
         foreach (array(self::absoluteImageFolder($folder), self::absoluteThumbFolder($folder)) as $path) {
             if (!Folder::exists($path) && !Folder::create($path)) {
                 return false;
@@ -164,6 +125,7 @@ class JemVenueImagePath
         }
 
         $target = Path::clean(JPATH_SITE . '/' . self::thumbPath($folder, $filename));
+
         if (!File::exists($target)) {
             JemImage::thumb(
                 $sourcePath,
@@ -177,7 +139,7 @@ class JemVenueImagePath
         return File::exists($target);
     }
 
-    public static function relocateImages($fromFolder, $toFolder, array $filenames, $settings, $move = true)
+    public static function relocateImages($fromFolder, $toFolder, array $filenames, $settings, $move = false)
     {
         $fromFolder = self::normaliseRelativeFolder($fromFolder);
         $toFolder = self::normaliseRelativeFolder($toFolder);
@@ -185,6 +147,7 @@ class JemVenueImagePath
         if ($fromFolder === $toFolder) {
             return true;
         }
+
         if (!self::ensureFolders($toFolder)) {
             return false;
         }
@@ -198,14 +161,18 @@ class JemVenueImagePath
         foreach ($filenames as $filename) {
             $source = Path::clean(JPATH_SITE . '/' . self::imagePath($fromFolder, $filename));
             $target = Path::clean(JPATH_SITE . '/' . self::imagePath($toFolder, $filename));
+
             if (!self::isInsideBase($source, $base) || !self::isInsideBase($target, $base)) {
                 return false;
             }
+
             if (!File::exists($source)) {
                 continue;
             }
+
             if (!File::exists($target)) {
                 $ok = $move ? File::move($source, $target) : File::copy($source, $target);
+
                 if (!$ok) {
                     return false;
                 }
@@ -213,11 +180,14 @@ class JemVenueImagePath
 
             $sourceThumb = Path::clean(JPATH_SITE . '/' . self::thumbPath($fromFolder, $filename));
             $targetThumb = Path::clean(JPATH_SITE . '/' . self::thumbPath($toFolder, $filename));
+
             if (!self::isInsideBase($sourceThumb, $thumbBase) || !self::isInsideBase($targetThumb, $thumbBase)) {
                 return false;
             }
+
             if (File::exists($sourceThumb) && !File::exists($targetThumb)) {
                 $ok = $move ? File::move($sourceThumb, $targetThumb) : File::copy($sourceThumb, $targetThumb);
+
                 if (!$ok) {
                     return false;
                 }
@@ -237,27 +207,15 @@ class JemVenueImagePath
         return strpos($absolutePath . DIRECTORY_SEPARATOR, $basePath) === 0;
     }
 
-    private static function idFolder($venueId, $collection, $objectId)
-    {
-        $venueId = (int) $venueId;
-        $objectId = (int) $objectId;
-
-        return $venueId > 0 && $objectId > 0
-            ? $venueId . '/' . self::cleanSegment($collection) . '/' . $objectId
-            : '';
-    }
-
     private static function patternFromPreset($preset, $customPattern)
     {
         switch ($preset) {
-            case 'venue_id':
-                return '{venue_id}/venue';
-            case 'city_venue':
-                return '{city}/{venue_alias}';
-            case 'country_city_venue':
-                return '{country}/{city}/{venue_alias}';
-            case 'type_venue':
-                return '{type_alias}/{venue_alias}';
+            case 'category':
+                return '{category_alias}';
+            case 'parent_category':
+                return '{parent_category_alias}/{category_alias}';
+            case 'type_category':
+                return '{type_alias}/{category_alias}';
             case 'custom':
                 return trim((string) $customPattern);
             case 'root':
@@ -266,29 +224,30 @@ class JemVenueImagePath
         }
     }
 
-    private static function replaceTokens($pattern, $venue)
+    private static function replaceTokens($pattern, $category)
     {
-        $context = self::buildContext($venue);
+        $context = self::buildContext($category);
 
         return preg_replace_callback('/\{([a-z0-9_]+)\}/i', static function ($matches) use ($context) {
             return $context[strtolower($matches[1])] ?? '';
         }, $pattern);
     }
 
-    private static function buildContext($venue)
+    private static function buildContext($category)
     {
-        $created = self::value($venue, 'created', '');
+        $created = self::value($category, 'created_time', '');
         $timestamp = $created ? strtotime((string) $created) : false;
         $timestamp = $timestamp ?: time();
-        $typeId = (int) self::value($venue, 'type_id', 0);
+        $parentId = (int) self::value($category, 'parent_id', 0);
+        $typeId = (int) self::value($category, 'type_id', 0);
         $context = array(
             'year' => date('Y', $timestamp),
-            'venue_id' => (string) (int) self::value($venue, 'id', 0),
-            'venue_alias' => self::value($venue, 'alias', ''),
-            'city' => self::value($venue, 'city', ''),
-            'region' => self::value($venue, 'state', ''),
-            'country' => self::value($venue, 'country', ''),
-            'type_alias' => $typeId > 0 ? self::lookupTypeAlias($typeId) : '',
+            'category_id' => (string) (int) self::value($category, 'id', 0),
+            'category_alias' => self::value($category, 'alias', ''),
+            'parent_category_alias' => $parentId > 1
+                ? self::lookupValue('#__jem_categories', 'alias', $parentId)
+                : '',
+            'type_alias' => $typeId > 0 ? self::lookupValue('#__jem_types', 'alias', $typeId) : '',
         );
 
         foreach ($context as $key => $value) {
@@ -298,14 +257,14 @@ class JemVenueImagePath
         return $context;
     }
 
-    private static function lookupTypeAlias($typeId)
+    private static function lookupValue($table, $field, $id)
     {
         try {
             $db = Factory::getContainer()->get('DatabaseDriver');
             $query = $db->getQuery(true)
-                ->select($db->quoteName('alias'))
-                ->from($db->quoteName('#__jem_types'))
-                ->where($db->quoteName('id') . ' = ' . (int) $typeId);
+                ->select($db->quoteName($field))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . (int) $id);
             $db->setQuery($query, 0, 1);
 
             return (string) $db->loadResult();
@@ -314,14 +273,14 @@ class JemVenueImagePath
         }
     }
 
-    private static function value($venue, $field, $default = '')
+    private static function value($category, $field, $default = '')
     {
-        if (is_array($venue) && array_key_exists($field, $venue)) {
-            return $venue[$field];
+        if (is_array($category) && array_key_exists($field, $category)) {
+            return $category[$field];
         }
 
-        if (is_object($venue) && isset($venue->$field)) {
-            return $venue->$field;
+        if (is_object($category) && isset($category->$field)) {
+            return $category->$field;
         }
 
         return $default;
@@ -344,6 +303,7 @@ class JemVenueImagePath
     private static function buildPath($base, $folder, $filename)
     {
         $filename = File::makeSafe((string) $filename);
+
         if ($filename === '') {
             return '';
         }

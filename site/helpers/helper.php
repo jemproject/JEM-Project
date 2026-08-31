@@ -32,6 +32,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 
@@ -2981,9 +2982,9 @@ class JemHelper
         case 'category':
         case 'categories':
             $folder = 'categories';
-            $pathField = null;
+            $relativeFolder = JemCategoryImagePath::normaliseRelativeFolder($relativeFolder);
+            $pathField = 'image_path';
             $imageFields = array('image');
-            $relativeFolder = '';
             break;
         default:
             return false;

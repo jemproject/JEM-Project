@@ -13,6 +13,8 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Nested;
 
+require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
+
 /**
  * JEM categories Model class
  *
@@ -40,6 +42,8 @@ class jem_categories extends Nested
     public $meta_keywords = '';
     /** @var string */
     public $image = '';
+    /** @var string */
+    public $image_path = '';
     /** @var string */
     public $color = '';
     /** @var int */
@@ -77,6 +81,8 @@ class jem_categories extends Nested
      */
     public function check()
     {
+        $this->image_path = JemCategoryImagePath::normaliseRelativeFolder($this->image_path ?? '');
+
         // Not typed in a category name?
         if (trim($this->catname) == '') {
             $this->_error = Text::_('COM_JEM_ADD_NAME_CATEGORY');

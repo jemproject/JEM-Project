@@ -118,7 +118,7 @@ class JemModelEditcategory extends JemModelCategory
 
         $allowed = array_flip(array(
             'id', 'catname', 'alias', 'parent_id', 'type_id', 'color', 'description',
-            'image', 'image_as_default', 'event_image_default_storage', 'published',
+            'image', 'image_path', 'image_as_default', 'event_image_default_storage', 'published',
             'access', 'language', 'meta_keywords', 'meta_description',
         ));
         $data = array_intersect_key((array) $submittedData, $allowed);
@@ -129,6 +129,9 @@ class JemModelEditcategory extends JemModelCategory
         $data['meta_keywords'] = trim(strip_tags((string) ($data['meta_keywords'] ?? '')));
         $data['meta_description'] = trim(strip_tags((string) ($data['meta_description'] ?? '')));
         $data['color'] = trim((string) ($data['color'] ?? ''));
+        $data['image_path'] = JemCategoryImagePath::normaliseRelativeFolder(
+            $stored->image_path ?? ''
+        );
 
         if (strlen($data['catname']) > 100 || strlen($data['alias']) > 100) {
             $this->setError(Text::_('COM_JEM_CATEGORY_ERROR_INVALID_TEXT'));
@@ -198,19 +201,12 @@ class JemModelEditcategory extends JemModelCategory
             ? (int) $stored->created_user_id
             : (int) $user->id;
 
-        $uploadedPaths = array();
-
-        if (!$this->prepareImage($data, $uploadedPaths)) {
-            return false;
-        }
-
         $db = Factory::getContainer()->get('DatabaseDriver');
         $db->transactionStart();
 
         try {
             if (!parent::save($data)) {
                 $db->transactionRollback();
-                $this->removeUploadedPaths($uploadedPaths);
 
                 return false;
             }
@@ -220,7 +216,6 @@ class JemModelEditcategory extends JemModelCategory
             return true;
         } catch (Throwable $exception) {
             $db->transactionRollback();
-            $this->removeUploadedPaths($uploadedPaths);
             throw $exception;
         }
     }
@@ -344,10 +339,17 @@ class JemModelEditcategory extends JemModelCategory
 
         $hasUpload = !empty($file['name']);
         $removeImage = $app->input->post->getInt('removeimage', 0) === 1;
-        $directory = Path::clean(JPATH_SITE . '/images/jem/categories');
-        $thumbnailDirectory = Path::clean($directory . '/small');
+        $imagePath = JemCategoryImagePath::normaliseRelativeFolder($data['image_path'] ?? '');
+        $directory = Path::clean(JemCategoryImagePath::absoluteImageFolder($imagePath));
+        $thumbnailDirectory = Path::clean(JemCategoryImagePath::absoluteThumbFolder($imagePath));
 
         if ($hasUpload) {
+            if (!JemCategoryImagePath::ensureFolders($imagePath)) {
+                $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                return false;
+            }
+
             $filename = JemImage::sanitize($directory . DIRECTORY_SEPARATOR, (string) $file['name']);
             $target = Path::clean($directory . DIRECTORY_SEPARATOR . $filename);
             $thumbnail = Path::clean($thumbnailDirectory . DIRECTORY_SEPARATOR . $filename);
