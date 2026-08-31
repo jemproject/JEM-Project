@@ -41,6 +41,10 @@ $profiles = array(
         width: 8rem;
         max-width: 100%;
     }
+    .jem-image-settings-profile input[id$="_default_dimension"] {
+        width: 8rem;
+        max-width: 100%;
+    }
     .jem-image-settings-profile [hidden] {
         display: none !important;
     }
@@ -55,16 +59,18 @@ $profiles = array(
             var prefix = profile.dataset.jemImageProfile;
             var mode = document.getElementById('jform_' + prefix + '_mode');
             var ratio = document.getElementById('jform_' + prefix + '_ratio');
-            var ratioRow = profile.querySelector('[data-jem-image-ratio]');
+            var ratioRows = profile.querySelectorAll('[data-jem-image-ratio]');
             var customRatioRow = profile.querySelector('[data-jem-image-custom-ratio]');
 
-            if (!mode || !ratio || !ratioRow || !customRatioRow) {
+            if (!mode || !ratio || ratioRows.length === 0 || !customRatioRow) {
                 return;
             }
 
             var updateVisibility = function () {
                 var usesRatio = mode.value !== 'none';
-                ratioRow.hidden = !usesRatio;
+                ratioRows.forEach(function (ratioRow) {
+                    ratioRow.hidden = !usesRatio;
+                });
                 customRatioRow.hidden = !(usesRatio && ratio.value === 'custom');
             };
 
@@ -110,8 +116,10 @@ $profiles = array(
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_required'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_default_dimension'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_dimension_mandatory'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_mode'); ?></div></li>
                 <li data-jem-image-ratio<?php echo $modeValue === 'none' ? ' hidden' : ''; ?>><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_ratio'); ?></div></li>
+                <li data-jem-image-ratio<?php echo $modeValue === 'none' ? ' hidden' : ''; ?>><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_ratio_mandatory'); ?></div></li>
                 <li data-jem-image-custom-ratio<?php echo $modeValue !== 'none' && $ratioValue === 'custom' ? '' : ' hidden'; ?>><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_custom_ratio'); ?></div></li>
             </ul>
         </fieldset>

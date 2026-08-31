@@ -520,10 +520,14 @@ body.com_jem.body-overlayed {
 
 /* Frontend venue image editor */
 #jem .jem-image-upload-panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     margin: 0 0 1rem;
     padding: 0.25rem 0 0;
     border: 0;
     background: transparent;
+    box-sizing: border-box;
 }
 
 #jem .jem-image-upload-layout {
@@ -531,11 +535,15 @@ body.com_jem.body-overlayed {
     grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);
     gap: 1.25rem;
     align-items: start;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
 }
 
 #jem .jem-image-upload-list {
     display: grid;
     gap: 1rem;
+    min-width: 0;
     margin: 0;
     padding: 0;
 }
@@ -645,7 +653,7 @@ body.com_jem.body-overlayed {
     position: absolute;
     inset: 0.5rem;
     display: grid;
-    place-items: start center;
+    place-items: center;
     margin: 0;
 }
 
@@ -658,7 +666,7 @@ body.com_jem.body-overlayed {
 #jem .jem-image-preview-stage .flyermodal,
 #jem .jem-image-preview-stage .jem-image-current a {
     display: grid;
-    place-items: start center;
+    place-items: center;
     width: 100%;
     height: 100%;
     margin: 0;
@@ -675,48 +683,13 @@ body.com_jem.body-overlayed {
     border: 0;
     background: transparent;
     object-fit: contain;
-    object-position: center top;
+    object-position: center center;
 }
 
 #jem .jem-image-preview-empty {
     padding: 1rem;
     color: var(--secondary-color, #6c757d);
     text-align: center;
-}
-
-#jem .jem-image-preview-stage > .jem-camera-button {
-    position: absolute;
-    z-index: 2;
-    right: 0.65rem;
-    bottom: 0.65rem;
-    width: 2.65rem;
-    min-width: 2.65rem;
-    padding-right: 0.65rem;
-    padding-left: 0.65rem;
-}
-
-#jem .jem-image-preview-stage > .jem-camera-button span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-#jem .jem-image-preview-stage--has-image > .jem-camera-button--overlay {
-    border-color: rgb(255 255 255 / 80%);
-    background: rgb(255 255 255 / 78%);
-    color: #212529;
-    box-shadow: 0 0.2rem 0.65rem rgb(0 0 0 / 22%);
-    backdrop-filter: blur(3px);
-}
-
-#jem .jem-image-preview-stage--has-image > .jem-camera-button--overlay:hover,
-#jem .jem-image-preview-stage--has-image > .jem-camera-button--overlay:focus {
-    background: rgb(255 255 255 / 92%);
 }
 
 #jem .jem-image-upload-row--alt input[type="text"] {

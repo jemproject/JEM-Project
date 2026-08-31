@@ -29,6 +29,8 @@
     var cameraRequestSequence = 0;
     var capturedBlob = null;
     var capturedMime = '';
+    var capturedSourceBlob = null;
+    var capturedSourceMime = '';
     var capturedWidth = 0;
     var capturedHeight = 0;
     var editorModal = null;
@@ -44,6 +46,7 @@
     var editorOffsetX = 0;
     var editorOffsetY = 0;
     var editorPointer = null;
+    var editorKeepSelectionOnCancel = false;
     var editorSourceFiles = new WeakMap();
 
     var fallbacks = {
@@ -154,15 +157,17 @@
         var select = control.querySelector('[data-jem-image-ratio-select]');
         var option = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
 
-        if (!range || !number || !option) {
+        if (!option) {
             return config;
         }
 
-        var minimum = Math.max(1, Number(option.dataset.jemImageResolutionMin) || Number(range.min) || 1);
-        range.min = String(minimum);
-        number.min = String(minimum);
-        setResolutionControlValue(control, range.value);
-        refreshResolutionMarks(control);
+        if (range && number) {
+            var minimum = Math.max(1, Number(option.dataset.jemImageResolutionMin) || Number(range.min) || 1);
+            range.min = String(minimum);
+            number.min = String(minimum);
+            setResolutionControlValue(control, range.value);
+            refreshResolutionMarks(control);
+        }
 
         if (config) {
             config.mode = option.dataset.jemImageRatioMode || 'none';
@@ -179,6 +184,22 @@
             var number = control.querySelector('[data-jem-image-resolution-number]');
             var ratio = control.querySelector('[data-jem-image-ratio-select]');
 
+            if (ratio) {
+                ratio.addEventListener('change', function () {
+                    applyRatioSelection(control, null);
+                    control.dispatchEvent(new CustomEvent('jem:image-ratio-change', {bubbles: true}));
+                });
+            }
+            control.addEventListener('jem:image-resolution-reset', function () {
+                if (ratio && control.dataset.jemImageRatioDefault) {
+                    ratio.value = control.dataset.jemImageRatioDefault;
+                    applyRatioSelection(control, null);
+                }
+                if (range && number) {
+                    setResolutionControlValue(control, control.dataset.jemImageResolutionDefault);
+                }
+            });
+
             if (!range || !number) {
                 return;
             }
@@ -191,25 +212,12 @@
             number.addEventListener('change', function () {
                 setResolutionControlValue(control, number.value);
             });
-            if (ratio) {
-                ratio.addEventListener('change', function () {
-                    applyRatioSelection(control, null);
-                    control.dispatchEvent(new CustomEvent('jem:image-ratio-change', {bubbles: true}));
-                });
-            }
             control.addEventListener('click', function (event) {
                 var mark = event.target.closest('[data-jem-image-resolution-value]');
 
                 if (mark) {
                     setResolutionControlValue(control, mark.dataset.jemImageResolutionValue);
                 }
-            });
-            control.addEventListener('jem:image-resolution-reset', function () {
-                if (ratio && control.dataset.jemImageRatioDefault) {
-                    ratio.value = control.dataset.jemImageRatioDefault;
-                    applyRatioSelection(control, null);
-                }
-                setResolutionControlValue(control, control.dataset.jemImageResolutionDefault);
             });
         });
     }
@@ -460,6 +468,8 @@
         stopStream();
         capturedBlob = null;
         capturedMime = '';
+        capturedSourceBlob = null;
+        capturedSourceMime = '';
         livePanel.hidden = false;
         resultPanel.hidden = true;
         captureButton.hidden = false;
@@ -589,8 +599,23 @@
         };
     }
 
-    function createCapturedCanvas() {
-        var geometry = sourceAndOutputGeometry(video.videoWidth, video.videoHeight, activeConfig);
+    function createCameraSourceCanvas() {
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+
+        if (!context || video.videoWidth < 1 || video.videoHeight < 1) {
+            throw new Error('Invalid camera source');
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        return canvas;
+    }
+
+    function createCapturedCanvas(source) {
+        var geometry = sourceAndOutputGeometry(source.width, source.height, activeConfig);
         var canvas = document.createElement('canvas');
         var context = canvas.getContext('2d', {alpha: activeConfig.mode === 'pad'});
 
@@ -604,11 +629,11 @@
         if (activeConfig.mode === 'pad') {
             context.fillStyle = activeConfig.paddingColor || '#000000';
             context.fillRect(0, 0, canvas.width, canvas.height);
-            var containScale = Math.min(canvas.width / video.videoWidth, canvas.height / video.videoHeight);
-            var drawWidth = video.videoWidth * containScale;
-            var drawHeight = video.videoHeight * containScale;
+            var containScale = Math.min(canvas.width / source.width, canvas.height / source.height);
+            var drawWidth = source.width * containScale;
+            var drawHeight = source.height * containScale;
             context.drawImage(
-                video,
+                source,
                 (canvas.width - drawWidth) / 2,
                 (canvas.height - drawHeight) / 2,
                 drawWidth,
@@ -616,7 +641,7 @@
             );
         } else {
             context.drawImage(
-                video,
+                source,
                 geometry.sourceX,
                 geometry.sourceY,
                 geometry.sourceWidth,
@@ -766,6 +791,7 @@
     function dispatchAcceptedFile(input) {
         input.dataset.jemImageEditorAccepted = '1';
         input.dispatchEvent(new Event('change', {bubbles: true}));
+        syncPreviewEditorAvailability(input);
     }
 
     function assignSelectedFile(input, file) {
@@ -778,6 +804,45 @@
         return Array.prototype.find.call(document.querySelectorAll('.jem-camera-button'), function (button) {
             return button.dataset.jemCameraInput === input.id;
         }) || null;
+    }
+
+    function previewImageForInput(input) {
+        var panel = input ? input.closest('.jem-image-upload-panel') : null;
+        var preview = panel ? panel.querySelector('.jem-image-selected-preview img') : null;
+
+        return preview || null;
+    }
+
+    function syncPreviewEditorAvailability(input) {
+        var preview = previewImageForInput(input);
+        var config = uploadConfigForInput(input);
+        var available = Boolean(
+            preview
+            && input.files
+            && input.files[0]
+            && editorSourceFiles.get(input)
+            && config
+            && config.mode === 'crop'
+        );
+
+        if (!preview) {
+            return;
+        }
+
+        preview.classList.toggle('jem-image-preview-adjustable', available);
+
+        if (available) {
+            preview.setAttribute('role', 'button');
+            preview.setAttribute('tabindex', '0');
+            preview.setAttribute('title', text('COM_JEM_IMAGE_EDITOR_TITLE'));
+            preview.setAttribute('aria-label', text('COM_JEM_IMAGE_EDITOR_TITLE'));
+            return;
+        }
+
+        preview.removeAttribute('role');
+        preview.removeAttribute('tabindex');
+        preview.removeAttribute('title');
+        preview.removeAttribute('aria-label');
     }
 
     function uploadConfigForInput(input) {
@@ -990,13 +1055,14 @@
         });
     }
 
-    function openImageEditor(input, file, config, image) {
+    function openImageEditor(input, file, config, image, keepSelectionOnCancel) {
         ensureImageEditor();
         editorInput = input;
         editorFile = file;
         editorConfig = config;
         editorImage = image;
         editorPointer = null;
+        editorKeepSelectionOnCancel = Boolean(keepSelectionOnCancel);
 
         var ratio = Math.max(0.01, Number(config.ratioWidth) / Number(config.ratioHeight));
         var maximumWidth = 900;
@@ -1132,7 +1198,7 @@
     function closeImageEditor(clearSelection) {
         var input = editorInput;
 
-        if (clearSelection && input) {
+        if (clearSelection && input && !editorKeepSelectionOnCancel) {
             input.value = '';
             editorSourceFiles.delete(input);
         }
@@ -1143,12 +1209,13 @@
         editorImage = null;
         editorConfig = null;
         editorPointer = null;
-        if (clearSelection && input) {
+        editorKeepSelectionOnCancel = false;
+        if (clearSelection && input && !input.files.length) {
             dispatchAcceptedFile(input);
         }
     }
 
-    async function inspectSelectedFile(input, file) {
+    async function inspectSelectedFile(input, file, keepSelectionOnCancel) {
         var config = uploadConfigForInput(input);
 
         if (!config || config.mode === 'none'
@@ -1167,7 +1234,7 @@
                 return;
             }
 
-            openImageEditor(input, file, config, image);
+            openImageEditor(input, file, config, image, keepSelectionOnCancel);
         } catch (error) {
             assignSelectedFile(input, file);
             dispatchAcceptedFile(input);
@@ -1184,9 +1251,21 @@
         setStatus(text('COM_JEM_CAMERA_PROCESSING'), false);
 
         try {
-            var source = createCapturedCanvas();
+            var originalSource = createCameraSourceCanvas();
+            var source = createCapturedCanvas(originalSource);
             stopStream();
             var result = await compressCanvas(source, activeConfig, cameraFormatSelect.value);
+            capturedSourceMime = chooseMime(
+                originalSource,
+                activeConfig.mimeTypes,
+                cameraFormatSelect.value
+            ) || result.mime;
+            try {
+                capturedSourceBlob = await canvasToBlob(originalSource, capturedSourceMime, 0.95);
+            } catch (error) {
+                capturedSourceBlob = result.blob;
+                capturedSourceMime = result.mime;
+            }
             var resultContext = resultCanvas.getContext('2d');
             resultCanvas.width = result.canvas.width;
             resultCanvas.height = result.canvas.height;
@@ -1239,6 +1318,15 @@
         try {
             var filename = 'jem-camera-' + activeConfig.profile + '-' + Date.now() + '.' + fileExtension(capturedMime);
             var file = new File([capturedBlob], filename, {type: capturedMime, lastModified: Date.now()});
+            var sourceFilename = 'jem-camera-source-' + activeConfig.profile + '-' + Date.now()
+                + '.' + fileExtension(capturedSourceMime || capturedMime);
+            var sourceFile = capturedSourceBlob
+                ? new File(
+                    [capturedSourceBlob],
+                    sourceFilename,
+                    {type: capturedSourceMime || capturedMime, lastModified: Date.now()}
+                )
+                : file;
             var transfer = new DataTransfer();
             transfer.items.add(file);
 
@@ -1257,6 +1345,8 @@
 
             activeInput.files = transfer.files;
             activeInput.dispatchEvent(new Event('change', {bubbles: true}));
+            editorSourceFiles.set(activeInput, sourceFile);
+            syncPreviewEditorAvailability(activeInput);
 
             if (!activeInput.files || activeInput.files.length !== 1) {
                 throw new Error('File assignment failed');
@@ -1285,6 +1375,8 @@
         stopStream();
         capturedBlob = null;
         capturedMime = '';
+        capturedSourceBlob = null;
+        capturedSourceMime = '';
         capturedWidth = 0;
         capturedHeight = 0;
         if (resultCanvas) {
@@ -1368,7 +1460,7 @@
 
         event.stopImmediatePropagation();
         editorSourceFiles.set(input, input.files[0]);
-        inspectSelectedFile(input, input.files[0]);
+        inspectSelectedFile(input, input.files[0], false);
     }, true);
 
     document.addEventListener('jem:image-ratio-change', function (event) {
@@ -1387,13 +1479,53 @@
 
             if (resolutionField && resolutionField.closest('[data-jem-image-resolution-control]') === control
                 && input && sourceFile) {
-                inspectSelectedFile(input, sourceFile);
+                inspectSelectedFile(input, sourceFile, true);
             }
         });
     });
 
+    async function reopenImageEditor(preview) {
+        var panel = preview.closest('.jem-image-upload-panel');
+        var input = panel ? panel.querySelector('input[type="file"]') : null;
+        var sourceFile = input ? editorSourceFiles.get(input) : null;
+        var config = input ? uploadConfigForInput(input) : null;
+
+        if (!input || !input.files || !input.files[0] || !sourceFile
+            || !config || config.mode !== 'crop') {
+            if (input) {
+                syncPreviewEditorAvailability(input);
+            }
+            return;
+        }
+
+        try {
+            var image = await loadSelectedImage(sourceFile);
+            openImageEditor(input, sourceFile, config, image, true);
+        } catch (error) {
+            syncPreviewEditorAvailability(input);
+        }
+    }
+
+    document.addEventListener('keydown', function (event) {
+        var preview = event.target.closest('.jem-image-preview-adjustable');
+
+        if (!preview || (event.key !== 'Enter' && event.key !== ' ')) {
+            return;
+        }
+
+        event.preventDefault();
+        reopenImageEditor(preview);
+    });
+
     document.addEventListener('click', function (event) {
+        var preview = event.target.closest('.jem-image-preview-adjustable');
         var button = event.target.closest('.jem-camera-button');
+
+        if (preview) {
+            event.preventDefault();
+            reopenImageEditor(preview);
+            return;
+        }
 
         if (!button) {
             return;

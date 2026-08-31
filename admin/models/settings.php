@@ -231,6 +231,8 @@ class JemModelSettings extends AdminModel
         foreach ($profileDefaults as $profile => $defaultRatio) {
             $prefix = JemImageProfilePolicy::prefix($profile);
             $data[$prefix . '_required'] = (int) !empty($data[$prefix . '_required']);
+            $data[$prefix . '_dimension_mandatory'] = (int) !empty($data[$prefix . '_dimension_mandatory']);
+            $data[$prefix . '_ratio_mandatory'] = (int) !empty($data[$prefix . '_ratio_mandatory']);
             $data[$prefix . '_mode'] = JemImageProfilePolicy::normaliseMode(
                 (string) ($data[$prefix . '_mode'] ?? JemImageProfilePolicy::MODE_NONE)
             );

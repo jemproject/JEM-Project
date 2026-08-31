@@ -56,12 +56,43 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringNotContainsString('XMLHttpRequest', $script);
     }
 
-    public function testCameraButtonHasAVisibleCameraIconAndText(): void
+    public function testCameraButtonUsesAnAccessibleIconBesideTheFileInput(): void
     {
         $helper = $this->read('/site/classes/imagecamera.class.php');
+        $field = $this->read('/site/models/fields/jemimagefile.php');
+        $stylesheet = $this->read('/media/css/image-camera.css');
 
         self::assertStringContainsString('jem-camera-button__icon', $helper);
+        self::assertStringContainsString('class="btn jem-image-action-button jem-camera-button"', $helper);
+        self::assertStringNotContainsString('btn-secondary jem-image-action-button jem-camera-button', $helper);
         self::assertStringContainsString("Text::_('COM_JEM_CAMERA_TAKE_PHOTO')", $helper);
+        self::assertStringContainsString('<span class="visually-hidden">', $helper);
+        self::assertStringContainsString("'<div class=\"jem-image-source-controls\">'", $field);
+        self::assertStringContainsString("'<div class=\"jem-image-file-input\">'", $field);
+        self::assertStringContainsString('grid-template-columns: minmax(0, 1fr) auto;', $stylesheet);
+        self::assertStringContainsString('width: 2.5rem;', $stylesheet);
+        self::assertStringContainsString('justify-content: center;', $stylesheet);
+        self::assertStringContainsString('align-self: stretch;', $stylesheet);
+        self::assertStringContainsString('height: 100%;', $stylesheet);
+        self::assertStringContainsString('width: 1.5rem;', $stylesheet);
+        self::assertStringContainsString('height: 1.5rem;', $stylesheet);
+        self::assertStringContainsString('top: 50%;', $stylesheet);
+        self::assertStringContainsString('left: 50%;', $stylesheet);
+        self::assertStringContainsString('transform: translate(-50%, -50%);', $stylesheet);
+        self::assertStringContainsString(
+            '--bs-btn-color: var(--bs-body-color, var(--body-color, #212529));',
+            $stylesheet
+        );
+        self::assertStringContainsString(
+            '--bs-btn-hover-color: var(--bs-body-color, var(--body-color, #212529));',
+            $stylesheet
+        );
+        self::assertStringContainsString(
+            '--bs-btn-active-color: var(--bs-body-color, var(--body-color, #212529));',
+            $stylesheet
+        );
+        self::assertStringContainsString('color: var(--bs-btn-color) !important;', $stylesheet);
+        self::assertStringContainsString('fill: currentColor;', $stylesheet);
         self::assertStringContainsString('data-jem-camera-input', $helper);
         self::assertStringContainsString('$profile === JemImageProfilePolicy::CATEGORY', $helper);
         self::assertStringContainsString('array(128, 300, 600, 800, 1080, 1200, 1440, 1920, 2560, 3840)', $helper);
@@ -122,6 +153,46 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringContainsString("getCmd('image_ratio', '')", $imageHandler);
     }
 
+    public function testMandatoryProfileSettingsHideControlsAndRemainServerAuthoritative(): void
+    {
+        $policy = $this->read('/site/classes/imageprofilepolicy.class.php');
+        $helper = $this->read('/site/classes/imagecamera.class.php');
+        $script = $this->read('/media/js/image-camera.js');
+
+        self::assertStringContainsString('function isDimensionMandatory(', $policy);
+        self::assertStringContainsString('function isRatioMandatory(', $policy);
+        self::assertStringContainsString('self::isDimensionMandatory($settings, $profile)', $policy);
+        self::assertStringContainsString('self::isRatioMandatory($settings, $profile)', $policy);
+        self::assertStringContainsString('$showResolution = !JemImageProfilePolicy::isDimensionMandatory', $helper);
+        self::assertStringContainsString('$showRatio = !JemImageProfilePolicy::isRatioMandatory', $helper);
+        self::assertStringContainsString("if (!\$showResolution && !\$showRatio)", $helper);
+        self::assertStringContainsString('type="hidden" id="', $helper);
+        self::assertStringContainsString('mandatoryPolicySummary(', $helper);
+        self::assertStringContainsString('jem-image-resolution--policy-only', $helper);
+        self::assertStringContainsString('jem-image-resolution--ratio-only', $helper);
+        self::assertStringContainsString('jem-image-resolution--resolution-only', $helper);
+        self::assertStringContainsString('COM_JEM_IMAGE_POLICY_RESOLUTION', $helper);
+        self::assertStringContainsString('COM_JEM_IMAGE_POLICY_RATIO', $helper);
+        self::assertStringContainsString('COM_JEM_IMAGE_POLICY_MAX_SIZE', $helper);
+        self::assertStringContainsString('JemImage::formattedMaxUploadSize($settings)', $helper);
+        self::assertStringNotContainsString("return \$wrapper . ' hidden>'", $helper);
+        self::assertStringContainsString('.jem-image-resolution--policy-only', $this->read('/media/css/image-camera.css'));
+        self::assertStringContainsString('.jem-image-resolution--ratio-only', $this->read('/media/css/image-camera.css'));
+        self::assertStringContainsString('if (!range || !number)', $script);
+        self::assertStringContainsString('if (range && number)', $script);
+
+        foreach (array(
+            '/site/language/en-GB/com_jem.ini',
+            '/admin/language/en-GB/com_jem.ini',
+        ) as $path) {
+            $language = $this->read($path);
+            self::assertStringContainsString('COM_JEM_IMAGE_MANDATORY_POLICY=', $language);
+            self::assertStringContainsString('COM_JEM_IMAGE_POLICY_RESOLUTION=', $language);
+            self::assertStringContainsString('COM_JEM_IMAGE_POLICY_RATIO=', $language);
+            self::assertStringContainsString('COM_JEM_IMAGE_POLICY_MAX_SIZE=', $language);
+        }
+    }
+
     public function testMismatchedFilesUseTheInteractiveCropOrCentredPadEditor(): void
     {
         $script = $this->read('/media/js/image-camera.js');
@@ -137,6 +208,34 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringContainsString('.jem-image-editor__canvas--draggable', $stylesheet);
         self::assertStringContainsString('overflow: hidden;', $stylesheet);
         self::assertStringNotContainsString('fetch(', $script);
+    }
+
+    public function testProcessedUploadPreviewCanReopenTheCropEditorFromItsOriginalSource(): void
+    {
+        $script = $this->read('/media/js/image-camera.js');
+        $previewScript = $this->read('/media/js/other.js');
+        $stylesheet = $this->read('/media/css/image-camera.css');
+
+        self::assertStringContainsString('function reopenImageEditor(preview)', $script);
+        self::assertStringContainsString('editorSourceFiles.get(input)', $script);
+        self::assertStringContainsString(
+            'openImageEditor(input, sourceFile, config, image, true)',
+            $script
+        );
+        self::assertStringContainsString("config.mode === 'crop'", $script);
+        self::assertStringContainsString("preview.setAttribute('role', 'button')", $script);
+        self::assertStringContainsString("preview.setAttribute('tabindex', '0')", $script);
+        self::assertStringContainsString("event.key !== 'Enter' && event.key !== ' '", $script);
+        self::assertStringContainsString('editorKeepSelectionOnCancel', $script);
+        self::assertStringContainsString('createCameraSourceCanvas()', $script);
+        self::assertStringContainsString('editorSourceFiles.set(activeInput, sourceFile)', $script);
+        self::assertStringContainsString(
+            "fileInput.dispatchEvent(new Event('change', {bubbles: true}))",
+            $previewScript
+        );
+        self::assertStringContainsString('img.jem-image-preview-adjustable', $stylesheet);
+        self::assertStringContainsString('cursor: zoom-in;', $stylesheet);
+        self::assertStringContainsString(':focus-visible', $stylesheet);
     }
 
     public function testVenueImageLayoutsUseTheSameStructuredFullWidthComposition(): void
@@ -207,6 +306,9 @@ final class ImageCameraCaptureTest extends TestCase
         }
 
         $previewScript = $this->read('/media/js/other.js');
+        $legacyStylesheet = $this->read('/media/css/jem.css');
+        $responsiveStylesheet = $this->read('/media/css/jem-responsive.css');
+
         self::assertStringContainsString('.jem-image-upload-panel input[type="file"]', $previewScript);
         self::assertStringContainsString("previewWrap.querySelector('img')", $previewScript);
         self::assertStringContainsString("setServerImageValue(imageSelect, '');", $previewScript);
@@ -216,6 +318,14 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringContainsString("removeImage.value = '0';", $previewScript);
         self::assertStringNotContainsString("$('#jform_userfile').on('change'", $previewScript);
         self::assertStringNotContainsString('#jem-selected-venue-image-preview', $previewScript);
+        self::assertStringNotContainsString('stage.appendChild(cameraButton);', $previewScript);
+        self::assertStringNotContainsString('jem-camera-button--overlay', $previewScript);
+
+        foreach (array($legacyStylesheet, $responsiveStylesheet) as $stylesheet) {
+            self::assertStringContainsString('object-position: center center;', $stylesheet);
+            self::assertStringNotContainsString('object-position: center top;', $stylesheet);
+            self::assertStringNotContainsString('> .jem-camera-button', $stylesheet);
+        }
 
         $cameraScript = $this->read('/media/js/image-camera.js');
         self::assertStringContainsString('editorSourceFiles.delete(input);', $cameraScript);

@@ -12,6 +12,7 @@ final class ImageProfilePolicyTest extends TestCase
     {
         self::assertSame(2560, JemImageProfilePolicy::maxDimension(array()));
         self::assertSame(3840, JemImageProfilePolicy::displayMaxDimension(array()));
+        self::assertSame(400, JemImageProfilePolicy::DEFAULT_MAX_FILE_SIZE_KB);
     }
 
     public function testCustomRatiosAreValidatedAndReducedWithoutChangingOrientation(): void
@@ -193,6 +194,89 @@ final class ImageProfilePolicyTest extends TestCase
         self::assertSame('9_16', $unconfigured['preset']);
         self::assertSame(array(9, 16), array($unconfigured['ratio_width'], $unconfigured['ratio_height']));
         self::assertSame('crop', $settings['image_venue_mode']);
+    }
+
+    public function testMandatoryUploadSettingsIgnorePerUploadOverrides(): void
+    {
+        $settings = array(
+            'image_max_dimension' => 3840,
+            'image_min_dimension' => 64,
+            'image_event_intro_default_dimension' => 1200,
+            'image_event_intro_dimension_mandatory' => 1,
+            'image_event_intro_mode' => 'crop',
+            'image_event_intro_ratio' => '16_9',
+            'image_event_intro_ratio_mandatory' => 1,
+        );
+
+        self::assertTrue(JemImageProfilePolicy::isDimensionMandatory(
+            $settings,
+            JemImageProfilePolicy::EVENT_INTRO
+        ));
+        self::assertTrue(JemImageProfilePolicy::isRatioMandatory(
+            $settings,
+            JemImageProfilePolicy::EVENT_INTRO
+        ));
+        self::assertSame(1200, JemImageProfilePolicy::requestedMaxDimension(
+            $settings,
+            JemImageProfilePolicy::EVENT_INTRO,
+            2560,
+            0,
+            0,
+            '9_16'
+        ));
+
+        $resolved = JemImageProfilePolicy::resolveUpload(
+            $settings,
+            JemImageProfilePolicy::EVENT_INTRO,
+            '9_16'
+        );
+
+        self::assertSame('crop', $resolved['mode']);
+        self::assertSame('16_9', $resolved['preset']);
+        self::assertSame(array(16, 9), array($resolved['ratio_width'], $resolved['ratio_height']));
+    }
+
+    public function testMissingOrDisabledMandatorySettingsKeepCurrentOverrides(): void
+    {
+        $settings = array(
+            'image_max_dimension' => 3840,
+            'image_min_dimension' => 64,
+            'image_venue_default_dimension' => 1280,
+            'image_venue_dimension_mandatory' => 0,
+            'image_venue_mode' => 'crop',
+            'image_venue_ratio' => '4_3',
+            'image_venue_ratio_mandatory' => 0,
+        );
+
+        self::assertFalse(JemImageProfilePolicy::isDimensionMandatory(
+            $settings,
+            JemImageProfilePolicy::VENUE
+        ));
+        self::assertFalse(JemImageProfilePolicy::isRatioMandatory(
+            $settings,
+            JemImageProfilePolicy::VENUE
+        ));
+        self::assertSame(1920, JemImageProfilePolicy::requestedMaxDimension(
+            $settings,
+            JemImageProfilePolicy::VENUE,
+            1920
+        ));
+        self::assertSame('9_16', JemImageProfilePolicy::resolveUpload(
+            $settings,
+            JemImageProfilePolicy::VENUE,
+            '9_16'
+        )['preset']);
+
+        unset($settings['image_venue_dimension_mandatory'], $settings['image_venue_ratio_mandatory']);
+
+        self::assertFalse(JemImageProfilePolicy::isDimensionMandatory(
+            $settings,
+            JemImageProfilePolicy::VENUE
+        ));
+        self::assertFalse(JemImageProfilePolicy::isRatioMandatory(
+            $settings,
+            JemImageProfilePolicy::VENUE
+        ));
     }
 
     public function testPerUploadRatioKeepsConfiguredPaddingAndAdjustsTheMinimum(): void

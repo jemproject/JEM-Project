@@ -28,23 +28,14 @@ jQuery(document).ready(function ($) {
             return;
         }
 
-        var cameraButton = panel.querySelector('.jem-camera-button');
         var emptyMessage = stage.querySelector('.jem-image-preview-empty');
         var hasImage = hasVisibleImage(stage.querySelector('.jem-image-selected-preview'))
             || hasVisibleImage(stage.querySelector('.jem-image-current'));
 
-        if (cameraButton && cameraButton.parentNode !== stage) {
-            stage.appendChild(cameraButton);
-        }
-
         stage.classList.toggle('jem-image-preview-stage--has-image', hasImage);
 
-        if (cameraButton) {
-            cameraButton.classList.toggle('jem-camera-button--overlay', hasImage);
-        }
-
         if (emptyMessage) {
-            emptyMessage.hidden = hasImage || Boolean(cameraButton);
+            emptyMessage.hidden = hasImage;
         }
     }
 
@@ -96,6 +87,7 @@ jQuery(document).ready(function ($) {
 
         if (fileInput) {
             fileInput.value = '';
+            fileInput.dispatchEvent(new Event('change', {bubbles: true}));
         }
         if (imageSelect) {
             setServerImageValue(imageSelect, '');

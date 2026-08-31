@@ -101,7 +101,7 @@ class jem_settings extends Table
     /** @var int */
     public $locpubrec = '1';
     /** @var int */
-    public $sizelimit = '100';
+    public $sizelimit = '400';
     /** @var int */
     public $image_min_dimension = '64';
     /** @var int */
@@ -114,7 +114,11 @@ class jem_settings extends Table
     public $image_event_intro_mode = 'none';
     /** @var int */
     public $image_event_intro_required = '0';
+    /** @var int */
+    public $image_event_intro_dimension_mandatory = '0';
     public $image_event_intro_default_dimension = '1200';
+    /** @var int */
+    public $image_event_intro_ratio_mandatory = '0';
     /** @var string */
     public $image_event_intro_ratio = '16_9';
     /** @var string */
@@ -123,7 +127,11 @@ class jem_settings extends Table
     public $image_event_full_mode = 'none';
     /** @var int */
     public $image_event_full_required = '0';
+    /** @var int */
+    public $image_event_full_dimension_mandatory = '0';
     public $image_event_full_default_dimension = '1920';
+    /** @var int */
+    public $image_event_full_ratio_mandatory = '0';
     /** @var string */
     public $image_event_full_ratio = '16_9';
     /** @var string */
@@ -132,7 +140,11 @@ class jem_settings extends Table
     public $image_venue_mode = 'none';
     /** @var int */
     public $image_venue_required = '0';
+    /** @var int */
+    public $image_venue_dimension_mandatory = '0';
     public $image_venue_default_dimension = '1280';
+    /** @var int */
+    public $image_venue_ratio_mandatory = '0';
     /** @var string */
     public $image_venue_ratio = '4_3';
     /** @var string */
@@ -141,7 +153,11 @@ class jem_settings extends Table
     public $image_category_mode = 'none';
     /** @var int */
     public $image_category_required = '0';
+    /** @var int */
+    public $image_category_dimension_mandatory = '0';
     public $image_category_default_dimension = '800';
+    /** @var int */
+    public $image_category_ratio_mandatory = '0';
     /** @var string */
     public $image_category_ratio = '1_1';
     /** @var string */

@@ -89,6 +89,7 @@ final class JemImageCamera
             ? $profile
             : JemImageProfilePolicy::EVENT_INTRO;
         $resolved = JemImageProfilePolicy::resolve($settings, $profile);
+        $dimensionMandatory = JemImageProfilePolicy::isDimensionMandatory($settings, $profile);
         $allowed = array_filter(array_map(
             'trim',
             explode(',', strtolower((string) ($settings->image_filetypes ?? 'jpg,gif,png,webp')))
@@ -114,9 +115,16 @@ final class JemImageCamera
             'mode' => $resolved['mode'],
             'ratioWidth' => (int) $resolved['ratio_width'],
             'ratioHeight' => (int) $resolved['ratio_height'],
-            'maxDimension' => JemImageProfilePolicy::maxDimension($settings),
+            'maxDimension' => $dimensionMandatory
+                ? JemImageProfilePolicy::defaultUploadMaxDimension($settings, $profile)
+                : JemImageProfilePolicy::maxDimension($settings),
             'minDimension' => JemImageProfilePolicy::minDimension($settings),
-            'maxBytes' => max(1, (int) ($settings->sizelimit ?? 200)) * 1024,
+            'dimensionMandatory' => $dimensionMandatory,
+            'ratioMandatory' => JemImageProfilePolicy::isRatioMandatory($settings, $profile),
+            'maxBytes' => max(
+                1,
+                (int) ($settings->sizelimit ?? JemImageProfilePolicy::DEFAULT_MAX_FILE_SIZE_KB)
+            ) * 1024,
             'mimeTypes' => $mimeTypes,
             'extensions' => $extensions,
             'paddingColor' => '#000000',
@@ -167,11 +175,12 @@ final class JemImageCamera
             $attributeHtml .= ' ' . $name . '="' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '"';
         }
 
-        return '<button type="button" class="btn btn-secondary jem-image-action-button jem-camera-button"'
+        return '<button type="button" class="btn jem-image-action-button jem-camera-button"'
             . ' title="' . htmlspecialchars(Text::_('COM_JEM_CAMERA_TAKE_PHOTO'), ENT_QUOTES, 'UTF-8') . '"'
             . ' aria-label="' . htmlspecialchars(Text::_('COM_JEM_CAMERA_TAKE_PHOTO'), ENT_QUOTES, 'UTF-8') . '"'
             . $attributeHtml
-            . '>' . $icon . '<span>' . Text::_('COM_JEM_CAMERA_TAKE_PHOTO') . '</span></button>';
+            . '>' . $icon . '<span class="visually-hidden">'
+            . Text::_('COM_JEM_CAMERA_TAKE_PHOTO') . '</span></button>';
     }
 
     /**
@@ -189,6 +198,14 @@ final class JemImageCamera
         $minimum = JemImageProfilePolicy::minimumOutputMaxDimension($settings, $profile);
         $maximum = JemImageProfilePolicy::maxDimension($settings);
         $defaultDimension = JemImageProfilePolicy::defaultUploadMaxDimension($settings, $profile);
+        $showResolution = !JemImageProfilePolicy::isDimensionMandatory($settings, $profile);
+        $showRatio = !JemImageProfilePolicy::isRatioMandatory($settings, $profile);
+        $mandatoryPolicy = self::mandatoryPolicySummary(
+            $settings,
+            $profile,
+            !$showResolution,
+            !$showRatio
+        );
         $marks = $profile === JemImageProfilePolicy::CATEGORY
             ? array(128, 300, 600, 800, 1080, 1200, 1440, 1920, 2560, 3840)
             : array(300, 600, 800, 1080, 1200, 1440, 1920, 2560, 3840);
@@ -226,54 +243,148 @@ final class JemImageCamera
                 . '<span class="visually-hidden">' . $mark . ' px</span></button>';
         }
 
-        foreach (JemImageProfilePolicy::uploadRatioOptions($settings, $profile) as $preset => $ratio) {
-            $uploadConfig = JemImageProfilePolicy::resolveUpload($settings, $profile, $preset);
-            $label = $preset === JemImageProfilePolicy::UPLOAD_RATIO_ORIGINAL
-                ? Text::_('COM_JEM_IMAGE_PROFILE_ORIGINAL_RATIO')
-                : $ratio[0] . ':' . $ratio[1];
-            $ratioOptions .= '<option value="' . htmlspecialchars($preset, ENT_QUOTES, 'UTF-8') . '"'
-                . ' data-jem-image-ratio-mode="' . $uploadConfig['mode'] . '"'
-                . ' data-jem-image-ratio-width="' . $uploadConfig['ratio_width'] . '"'
-                . ' data-jem-image-ratio-height="' . $uploadConfig['ratio_height'] . '"'
-                . ' data-jem-image-resolution-min="'
-                . JemImageProfilePolicy::minimumOutputMaxDimension($settings, $profile, $preset) . '"'
-                . ($preset === $defaultRatio ? ' selected' : '') . '>'
-                . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</option>';
+        if ($showRatio) {
+            foreach (JemImageProfilePolicy::uploadRatioOptions($settings, $profile) as $preset => $ratio) {
+                $uploadConfig = JemImageProfilePolicy::resolveUpload($settings, $profile, $preset);
+                $label = $preset === JemImageProfilePolicy::UPLOAD_RATIO_ORIGINAL
+                    ? Text::_('COM_JEM_IMAGE_PROFILE_ORIGINAL_RATIO')
+                    : $ratio[0] . ':' . $ratio[1];
+                $ratioOptions .= '<option value="' . htmlspecialchars($preset, ENT_QUOTES, 'UTF-8') . '"'
+                    . ' data-jem-image-ratio-mode="' . $uploadConfig['mode'] . '"'
+                    . ' data-jem-image-ratio-width="' . $uploadConfig['ratio_width'] . '"'
+                    . ' data-jem-image-ratio-height="' . $uploadConfig['ratio_height'] . '"'
+                    . ' data-jem-image-resolution-min="'
+                    . JemImageProfilePolicy::minimumOutputMaxDimension($settings, $profile, $preset) . '"'
+                    . ($preset === $defaultRatio ? ' selected' : '') . '>'
+                    . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</option>';
+            }
         }
 
-        return '<div class="jem-image-resolution jem-image-resolution--leading" data-jem-image-resolution-control'
+        $wrapperClass = 'jem-image-resolution jem-image-resolution--leading';
+
+        if (!$showResolution && !$showRatio) {
+            $wrapperClass .= ' jem-image-resolution--policy-only';
+        } elseif (!$showResolution) {
+            $wrapperClass .= ' jem-image-resolution--ratio-only';
+        } elseif (!$showRatio) {
+            $wrapperClass .= ' jem-image-resolution--resolution-only';
+        }
+
+        $wrapper = '<div class="' . $wrapperClass . '"'
+            . ' data-jem-image-resolution-control'
             . ' data-jem-image-resolution-default="' . $defaultDimension . '"'
             . ' data-jem-image-ratio-default="'
-            . htmlspecialchars($defaultRatio, ENT_QUOTES, 'UTF-8') . '">'
+            . htmlspecialchars($defaultRatio, ENT_QUOTES, 'UTF-8') . '"';
+        $fixedResolution = '<input type="hidden" id="' . $safeId . '" name="' . $safeName . '"'
+            . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '">';
+
+        if (!$showResolution && !$showRatio) {
+            return $wrapper . '>'
+                . $fixedResolution
+                . '<small class="jem-image-mandatory-policy">'
+                . htmlspecialchars($mandatoryPolicy, ENT_QUOTES, 'UTF-8')
+                . '</small></div>';
+        }
+
+        $headingFor = $showResolution ? $safeId : $safeRatioId;
+        $headingText = $showResolution
+            ? Text::_('COM_JEM_IMAGE_RESOLUTION_LABEL')
+            : Text::_('COM_JEM_IMAGE_UPLOAD_RATIO_LABEL');
+        $inputsClass = 'jem-image-resolution-inputs';
+
+        if (!$showResolution) {
+            $inputsClass .= ' jem-image-resolution-inputs--ratio-only';
+        } elseif (!$showRatio) {
+            $inputsClass .= ' jem-image-resolution-inputs--resolution-only';
+        }
+
+        $resolutionInput = $fixedResolution;
+
+        if ($showResolution) {
+            $resolutionInput = '<div class="jem-image-resolution-range">'
+                . '<input type="range" id="' . $safeId . '" name="' . $safeName . '"'
+                . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '" step="1"'
+                . ' data-jem-image-resolution-range>'
+                . '<div class="jem-image-resolution-mark-track" aria-label="'
+                . htmlspecialchars(Text::_('COM_JEM_IMAGE_RESOLUTION_LABEL'), ENT_QUOTES, 'UTF-8') . '">'
+                . $buttons . '</div>'
+                . '</div>'
+                . '<label class="visually-hidden" for="' . $numberId . '">'
+                . Text::_('COM_JEM_IMAGE_RESOLUTION_NUMBER_LABEL') . '</label>'
+                . '<input type="number" class="form-control" id="' . $numberId . '"'
+                . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '" step="1"'
+                . ' inputmode="numeric" data-jem-image-resolution-number>';
+        }
+
+        $ratioInput = '';
+
+        if ($showRatio) {
+            $ratioInput = ($showResolution
+                    ? '<label class="jem-image-ratio-label" for="' . $safeRatioId . '">'
+                        . Text::_('COM_JEM_IMAGE_UPLOAD_RATIO_LABEL') . '</label>'
+                    : '')
+                . '<select class="form-select jem-image-ratio-select" id="' . $safeRatioId . '"'
+                . ' name="' . $safeRatioName . '" data-jem-image-ratio-select>'
+                . $ratioOptions . '</select>';
+        }
+
+        return $wrapper . '>'
             . '<div class="jem-image-resolution-heading">'
-            . '<label for="' . $safeId . '">' . Text::_('COM_JEM_IMAGE_RESOLUTION_LABEL') . '</label>'
+            . '<label for="' . $headingFor . '">' . $headingText . '</label>'
             . '</div>'
-            . '<div class="jem-image-resolution-inputs">'
-            . '<div class="jem-image-resolution-range">'
-            . '<input type="range" id="' . $safeId . '" name="' . $safeName . '"'
-            . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '" step="1"'
-            . ' data-jem-image-resolution-range>'
-            . '<div class="jem-image-resolution-mark-track" aria-label="'
-            . htmlspecialchars(Text::_('COM_JEM_IMAGE_RESOLUTION_LABEL'), ENT_QUOTES, 'UTF-8') . '">'
-            . $buttons . '</div>'
-            . '</div>'
-            . '<label class="visually-hidden" for="' . $numberId . '">'
-            . Text::_('COM_JEM_IMAGE_RESOLUTION_NUMBER_LABEL') . '</label>'
-            . '<input type="number" class="form-control" id="' . $numberId . '"'
-            . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '" step="1"'
-            . ' inputmode="numeric" data-jem-image-resolution-number>'
-            . '<label class="jem-image-ratio-label" for="' . $safeRatioId . '">'
-            . Text::_('COM_JEM_IMAGE_UPLOAD_RATIO_LABEL') . '</label>'
-            . '<select class="form-select jem-image-ratio-select" id="' . $safeRatioId . '"'
-            . ' name="' . $safeRatioName . '" data-jem-image-ratio-select>'
-            . $ratioOptions . '</select>'
+            . '<div class="' . $inputsClass . '">'
+            . $resolutionInput
+            . $ratioInput
             . '</div>'
             . '<div class="jem-image-resolution-meta">'
-            . '<small class="jem-image-resolution-help">' . Text::_('COM_JEM_IMAGE_RESOLUTION_HELP') . '</small>'
-            . '<small class="jem-image-profile-summary">'
-            . htmlspecialchars(JemImage::profileSummary($settings, $profile), ENT_QUOTES, 'UTF-8')
+            . ($showResolution
+                ? '<small class="jem-image-resolution-help">' . Text::_('COM_JEM_IMAGE_RESOLUTION_HELP') . '</small>'
+                : '')
+            . '<small class="' . ($mandatoryPolicy !== ''
+                ? 'jem-image-mandatory-policy'
+                : 'jem-image-profile-summary') . '">'
+            . htmlspecialchars(
+                $mandatoryPolicy !== '' ? $mandatoryPolicy : JemImage::profileSummary($settings, $profile),
+                ENT_QUOTES,
+                'UTF-8'
+            )
             . '</small>'
             . '</div>'
             . '</div>';
+    }
+
+    private static function mandatoryPolicySummary(
+        $settings,
+        string $profile,
+        bool $dimensionMandatory,
+        bool $ratioMandatory
+    ): string {
+        if (!$dimensionMandatory && !$ratioMandatory) {
+            return '';
+        }
+
+        $parts = array();
+
+        if ($dimensionMandatory) {
+            $parts[] = Text::sprintf(
+                'COM_JEM_IMAGE_POLICY_RESOLUTION',
+                JemImageProfilePolicy::defaultUploadMaxDimension($settings, $profile)
+            );
+        }
+
+        if ($ratioMandatory) {
+            $resolved = JemImageProfilePolicy::resolve($settings, $profile);
+            $ratio = $resolved['mode'] === JemImageProfilePolicy::MODE_NONE
+                ? Text::_('COM_JEM_IMAGE_PROFILE_ORIGINAL_RATIO')
+                : $resolved['ratio_width'] . ':' . $resolved['ratio_height'];
+            $parts[] = Text::sprintf('COM_JEM_IMAGE_POLICY_RATIO', $ratio);
+        }
+
+        $parts[] = Text::sprintf(
+            'COM_JEM_IMAGE_POLICY_MAX_SIZE',
+            JemImage::formattedMaxUploadSize($settings)
+        );
+
+        return Text::sprintf('COM_JEM_IMAGE_MANDATORY_POLICY', implode(' · ', $parts));
     }
 }

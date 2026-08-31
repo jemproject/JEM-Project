@@ -467,19 +467,26 @@ class JemImage
 
     static public function profileSummary($jemsettings, $profile)
     {
-        $jemMaxBytes = max(0, (int) ($jemsettings->sizelimit ?? 0)) * 1024;
+        return Text::sprintf(
+            'COM_JEM_IMAGE_PROFILE_SUMMARY',
+            JemImageProfilePolicy::maxDimension($jemsettings),
+            self::formattedMaxUploadSize($jemsettings)
+        );
+    }
+
+    static public function formattedMaxUploadSize($jemsettings)
+    {
+        $jemMaxBytes = max(
+            0,
+            (int) ($jemsettings->sizelimit ?? JemImageProfilePolicy::DEFAULT_MAX_FILE_SIZE_KB)
+        ) * 1024;
         $serverMaxBytes = Utility::getMaxUploadSize();
         $effectiveMaxBytes = $jemMaxBytes > 0
             ? min($jemMaxBytes, $serverMaxBytes)
             : $serverMaxBytes;
         $formattedMaxBytes = strip_tags((string) HTMLHelper::_('number.bytes', $effectiveMaxBytes));
-        $formattedMaxBytes = preg_replace('/\bkB\b/u', 'KB', $formattedMaxBytes) ?? $formattedMaxBytes;
 
-        return Text::sprintf(
-            'COM_JEM_IMAGE_PROFILE_SUMMARY',
-            JemImageProfilePolicy::maxDimension($jemsettings),
-            $formattedMaxBytes
-        );
+        return preg_replace('/\bkB\b/u', 'KB', $formattedMaxBytes) ?? $formattedMaxBytes;
     }
 
     private static function prepareWorkingImage(

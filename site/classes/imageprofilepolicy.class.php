@@ -16,6 +16,7 @@ final class JemImageProfilePolicy
 {
     public const DEFAULT_MIN_DIMENSION = 64;
     public const DEFAULT_CONFIGURED_MAX_DIMENSION = 2560;
+    public const DEFAULT_MAX_FILE_SIZE_KB = 400;
     public const MIN_CONFIGURED_MIN_DIMENSION = 64;
 
     public const EVENT_INTRO = 'event_intro';
@@ -154,6 +155,14 @@ final class JemImageProfilePolicy
         $minimum = self::minimumOutputMaxDimension($settings, $profile, $requestedRatio);
         $config = self::resolveUpload($settings, $profile, $requestedRatio);
 
+        if (self::isDimensionMandatory($settings, $profile)) {
+            $requested = self::setting(
+                $settings,
+                self::prefix($profile) . '_default_dimension',
+                self::DEFAULT_UPLOAD_DIMENSIONS[$profile]
+            );
+        }
+
         if ($config['mode'] === self::MODE_NONE && $sourceWidth > 0 && $sourceHeight > 0) {
             $shortSide = min($sourceWidth, $sourceHeight);
             $longSide = max($sourceWidth, $sourceHeight);
@@ -222,7 +231,7 @@ final class JemImageProfilePolicy
         $configured = self::resolve($settings, $profile);
         $requestedRatio = trim((string) $requestedRatio);
 
-        if ($requestedRatio === '') {
+        if ($requestedRatio === '' || self::isRatioMandatory($settings, $profile)) {
             return $configured;
         }
 
@@ -437,6 +446,24 @@ final class JemImageProfilePolicy
         }
 
         return (int) self::setting($settings, self::prefix($profile) . '_required', 0) === 1;
+    }
+
+    public static function isDimensionMandatory($settings, string $profile): bool
+    {
+        if (!self::isProfile($profile)) {
+            return false;
+        }
+
+        return (int) self::setting($settings, self::prefix($profile) . '_dimension_mandatory', 0) === 1;
+    }
+
+    public static function isRatioMandatory($settings, string $profile): bool
+    {
+        if (!self::isProfile($profile)) {
+            return false;
+        }
+
+        return (int) self::setting($settings, self::prefix($profile) . '_ratio_mandatory', 0) === 1;
     }
 
     private static function setting($settings, string $key, $default)

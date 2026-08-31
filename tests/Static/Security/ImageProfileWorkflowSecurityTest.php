@@ -12,8 +12,10 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
 
         foreach (array('event_intro', 'event_full', 'venue', 'category') as $profile) {
             self::assertStringContainsString('name="image_' . $profile . '_required"', $settings);
+            self::assertStringContainsString('name="image_' . $profile . '_dimension_mandatory"', $settings);
             self::assertStringContainsString('name="image_' . $profile . '_mode"', $settings);
             self::assertStringContainsString('name="image_' . $profile . '_ratio"', $settings);
+            self::assertStringContainsString('name="image_' . $profile . '_ratio_mandatory"', $settings);
             self::assertStringContainsString('name="image_' . $profile . '_custom_ratio"', $settings);
             self::assertStringContainsString('showon="image_' . $profile . '_mode!:none"', $settings);
             self::assertStringContainsString(
@@ -31,6 +33,7 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
             '/name="image_max_dimension"[\s\S]*?default="2560"/',
             $settings
         );
+        self::assertMatchesRegularExpression('/name="sizelimit"[\s\S]*?default="400"/', $settings);
     }
 
     public function testImageProfileControlsRetainInlineHelpAndConditionalCustomRatioUi(): void
@@ -44,6 +47,8 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
             'COM_JEM_IMAGE_ADJUSTMENT_MODE_DESC',
             'COM_JEM_IMAGE_ASPECT_RATIO_DESC',
             'COM_JEM_IMAGE_CUSTOM_RATIO_DESC',
+            'COM_JEM_IMAGE_RESOLUTION_MANDATORY_DESC',
+            'COM_JEM_IMAGE_RATIO_MANDATORY_DESC',
         ) as $descriptionKey) {
             self::assertStringContainsString('description="' . $descriptionKey . '"', $settings);
             self::assertStringContainsString($descriptionKey . '="', $language);
@@ -54,6 +59,9 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
         self::assertStringContainsString("ratio.value === 'custom'", $layout);
         self::assertStringContainsString('input[id$="_custom_ratio"]', $layout);
         self::assertStringContainsString('width: 8rem;', $layout);
+        self::assertStringContainsString('input[id$="_default_dimension"]', $layout);
+        self::assertStringContainsString("renderfield(\$profile['prefix'] . '_dimension_mandatory')", $layout);
+        self::assertStringContainsString("renderfield(\$profile['prefix'] . '_ratio_mandatory')", $layout);
     }
 
     public function testPublicationBoundaryIsEnforcedInFormsStoresAndDirectPublishActions(): void
@@ -122,21 +130,31 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
             $source = $this->read($path);
             self::assertStringContainsString('image_min_dimension', $source);
             self::assertStringContainsString("'image_max_dimension', '2560'", $source);
+            self::assertStringContainsString("'sizelimit', '400'", $source);
             self::assertStringContainsString('image_event_intro_required', $source);
             self::assertStringContainsString('image_event_intro_default_dimension', $source);
+            self::assertStringContainsString('image_event_intro_dimension_mandatory', $source);
+            self::assertStringContainsString('image_event_intro_ratio_mandatory', $source);
             self::assertStringContainsString('image_event_full_custom_ratio', $source);
             self::assertStringContainsString('image_category_ratio', $source);
             self::assertStringContainsString('image_category_default_dimension', $source);
+            self::assertStringContainsString('image_category_dimension_mandatory', $source);
+            self::assertStringContainsString('image_category_ratio_mandatory', $source);
         }
 
         $installer = $this->read('script.php');
         self::assertStringContainsString('image_min_dimension', $installer);
         self::assertStringContainsString("'image_max_dimension' => '2560'", $installer);
+        self::assertStringContainsString("'sizelimit' => '400'", $installer);
         self::assertStringContainsString('image_event_intro_required', $installer);
         self::assertStringContainsString('image_event_intro_default_dimension', $installer);
+        self::assertStringContainsString('image_event_intro_dimension_mandatory', $installer);
+        self::assertStringContainsString('image_event_intro_ratio_mandatory', $installer);
         self::assertStringContainsString('image_event_full_custom_ratio', $installer);
         self::assertStringContainsString('image_category_ratio', $installer);
         self::assertStringContainsString('image_category_default_dimension', $installer);
+        self::assertStringContainsString('image_category_dimension_mandatory', $installer);
+        self::assertStringContainsString('image_category_ratio_mandatory', $installer);
 
         $builder = $this->read('scripts/build-packages.php');
         self::assertStringContainsString("'site/classes/imageprofilepolicy.class.php'", $builder);
