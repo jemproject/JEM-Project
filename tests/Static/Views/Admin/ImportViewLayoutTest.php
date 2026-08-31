@@ -166,8 +166,10 @@ final class ImportViewLayoutTest extends TestCase
         $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
         $manifest = (string) file_get_contents(JEM_TEST_ROOT . '/jem.xml');
 
-        self::assertStringContainsString('use Joomla\\CMS\\Filesystem\\File;', $controller);
-        self::assertStringContainsString('use Joomla\\CMS\\Filesystem\\Folder;', $controller);
+        self::assertStringContainsString('use Joomla\\Filesystem\\File;', $controller);
+        self::assertStringContainsString('use Joomla\\Filesystem\\Folder;', $controller);
+        self::assertStringNotContainsString('use Joomla\\CMS\\Filesystem\\File;', $controller);
+        self::assertStringNotContainsString('use Joomla\\CMS\\Filesystem\\Folder;', $controller);
         self::assertStringContainsString('Folder::create($directory)', $controller);
         self::assertStringContainsString('File::write($path, $xmlSource)', $controller);
         self::assertStringContainsString('File::delete($path)', $controller);
