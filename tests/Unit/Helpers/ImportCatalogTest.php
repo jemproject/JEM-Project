@@ -24,6 +24,21 @@ final class ImportCatalogTest extends TestCase
         self::assertStringNotContainsString('downloadCatalogXml', $localBranch);
     }
 
+    public function testMissingLocalCatalogFallsBackToTheOfficialRemoteSource(): void
+    {
+        $helper = (string) file_get_contents(JEM_TEST_ROOT . '/admin/helpers/importcatalog.php');
+        $localStart = strpos($helper, "if (self::\$catalog['custom_file'])");
+        $remoteStart = strpos($helper, '$xmlSource = self::downloadCatalogXml', $localStart);
+        $remoteBranch = substr($helper, $remoteStart);
+
+        self::assertNotFalse($localStart);
+        self::assertNotFalse($remoteStart);
+        self::assertGreaterThan($localStart, $remoteStart);
+        self::assertStringContainsString('self::getCatalogSource()', $remoteBranch);
+        self::assertStringContainsString("self::\$catalog['error'] = 'download'", $remoteBranch);
+        self::assertStringContainsString('self::parseCatalogXml($xmlSource)', $remoteBranch);
+    }
+
     public function testRepositoryCatalogPassesCustomUploadValidation(): void
     {
         $xml = (string) file_get_contents(JEM_TEST_ROOT . '/updatecheck/import_catalog_jem.xml');
