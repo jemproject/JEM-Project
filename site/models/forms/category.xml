@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details" addfieldpath="/components/com_jem/models/fields">
+        <field name="id" type="hidden" default="0" filter="uint" />
+        <field name="catname" type="text"
+            class="inputbox form-control"
+            maxlength="100"
+            label="COM_JEM_CATEGORY"
+            description="COM_JEM_CATEGORY"
+            required="true"
+        />
+        <field name="alias" type="text"
+            class="inputbox form-control"
+            maxlength="100"
+            label="COM_JEM_ALIAS"
+            description="COM_JEM_ALIAS"
+            hint="JFIELD_ALIAS_PLACEHOLDER"
+        />
+        <field name="parent_id" type="categoryparent"
+            class="inputbox form-select"
+            label="COM_JEM_CATEGORY_FIELD_PARENT_LABEL"
+            description="COM_JEM_CATEGORY_FIELD_PARENT_DESC"
+            default="1"
+            filter="uint"
+            required="true"
+        />
+        <field name="type_id" type="jemtype"
+            class="form-select"
+            label="COM_JEM_TYPE_FIELD_TYPE"
+            description="COM_JEM_TYPE_FIELD_TYPE_DESC"
+            entity="2"
+            filter="uint"
+        />
+        <field name="color" type="color"
+            class="form-control"
+            label="COM_JEM_CATEGORY_COLOR"
+            description="COM_JEM_CATEGORY_COLOR"
+            default=""
+            size="8"
+        />
+        <field name="description" type="editor"
+            class="inputbox"
+            width="100%"
+            rows="10"
+            hide="pagebreak,readmore"
+            label="COM_JEM_CATEGORY_DESCRIPTION"
+            description="COM_JEM_CATEGORY_DESCRIPTION_DESC"
+            filter="\Joomla\CMS\Component\ComponentHelper::filterText"
+        />
+    </fieldset>
+
+    <fieldset name="image" addfieldpath="/components/com_jem/models/fields">
+        <field name="image" type="imageselectcategory"
+            class="inputbox form-select"
+            label="COM_JEM_SERVER_IMAGE"
+            description="COM_JEM_IMAGESELECT"
+        />
+        <field name="userfile" type="jemimagefile"
+            class="inputbox"
+            label="COM_JEM_UPLOAD_NEW_IMAGE"
+            description="COM_JEM_UPLOAD_IMAGE"
+            imageprofile="category"
+            clearselect="jform_image"
+            removefield="removeimage"
+            resolutionfield="jem-image-resolution-category"
+        />
+        <field name="image_as_default" type="radio"
+            class="btn-group btn-group-yesno"
+            label="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT"
+            description="COM_JEM_CATEGORY_IMAGE_AS_DEFAULT_DESC"
+            default="0"
+            filter="uint"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="event_image_default_storage" type="list"
+            class="inputbox form-select"
+            label="COM_JEM_CATEGORY_EVENT_IMAGE_DEFAULT_STORAGE"
+            description="COM_JEM_CATEGORY_EVENT_IMAGE_DEFAULT_STORAGE_DESC"
+            default="shared_root"
+            showon="image_as_default:1"
+        >
+            <option value="shared_root">COM_JEM_CATEGORY_EVENT_IMAGE_DEFAULT_STORAGE_SHARED_ROOT</option>
+            <option value="event_folder">COM_JEM_CATEGORY_EVENT_IMAGE_DEFAULT_STORAGE_EVENT_FOLDER</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="publishing">
+        <field name="published" type="list"
+            class="inputbox form-select"
+            label="JSTATUS"
+            description="JFIELD_PUBLISHED_DESC"
+            default="0"
+            filter="integer"
+        >
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+        </field>
+        <field name="access" type="accesslevel"
+            class="inputbox form-select"
+            label="JFIELD_ACCESS_LABEL"
+            description="JFIELD_ACCESS_DESC"
+            filter="uint"
+        />
+        <field name="language" type="contentlanguage"
+            class="inputbox form-select"
+            label="JFIELD_LANGUAGE_LABEL"
+            description="COM_CATEGORIES_FIELD_LANGUAGE_DESC"
+            default="*"
+        >
+            <option value="*">JALL</option>
+        </field>
+    </fieldset>
+
+    <fieldset name="meta">
+        <field name="meta_keywords" type="textarea"
+            class="inputbox form-control"
+            rows="3"
+            label="JFIELD_META_KEYWORDS_LABEL"
+            description="COM_JEM_FIELD_METAKEYWORDS_DESC"
+        />
+        <field name="meta_description" type="textarea"
+            class="inputbox form-control"
+            rows="3"
+            label="JFIELD_META_DESCRIPTION_LABEL"
+            description="COM_JEM_FIELD_METADESCRIPTION_DESC"
+        />
+    </fieldset>
+</form>

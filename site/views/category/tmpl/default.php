@@ -10,6 +10,18 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+
+$showPageHeading = (bool) $this->params->get('show_page_heading', 1);
+$pageHeading = $this->escape($this->params->get('page_heading'));
+$categoryTitle = $this->escape($this->category->title);
+$pageHeadingMatchesCategory = $showPageHeading && $pageHeading === $categoryTitle;
+$categoryEditButton = JemOutput::editbutton(
+    $this->category,
+    $this->params,
+    array(),
+    $this->canEditCategory,
+    'editcategory'
+);
 ?>
 <div id="jem" class="jem_category<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -21,19 +33,21 @@ use Joomla\CMS\HTML\HTMLHelper;
 
     <?php if ($this->params->get('show_page_heading', 1)) : ?>
     <h1 class='componentheading'>
-        <?php echo $this->escape($this->params->get('page_heading')); ?>
+        <?php echo $pageHeading; ?>
+        <?php echo $pageHeadingMatchesCategory ? $categoryEditButton : ''; ?>
     </h1>
     <?php endif; ?>
 
-    <?php $showPageHeading = (bool) $this->params->get('show_page_heading', 1); ?>
-    <?php if (!$showPageHeading || $this->escape($this->params->get('page_heading')) != $this->escape($this->category->title)) : ?>
+    <?php if (!$pageHeadingMatchesCategory) : ?>
         <?php if ($showPageHeading) : ?>
             <h2 class="jem-category-title">
-                <?php echo $this->escape($this->category->title); ?>
+                <?php echo $categoryTitle; ?>
+                <?php echo $categoryEditButton; ?>
             </h2>
         <?php else : ?>
             <h1 class="jem-category-title">
-                <?php echo $this->escape($this->category->title); ?>
+                <?php echo $categoryTitle; ?>
+                <?php echo $categoryEditButton; ?>
             </h1>
         <?php endif; ?>
     <?php endif; ?>

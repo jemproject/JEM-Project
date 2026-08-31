@@ -203,6 +203,10 @@ site/views/day/tmpl/timetable.xml|timetable_minimum_hours
 site/views/day/tmpl/timetable.xml|timetable_orientation
 site/views/day/tmpl/timetable.xml|timetable_range_end
 site/views/day/tmpl/timetable.xml|timetable_range_start
+site/views/editcategory/tmpl/edit.xml|footertext
+site/views/editcategory/tmpl/edit.xml|introtext
+site/views/editcategory/tmpl/edit.xml|showfootertext
+site/views/editcategory/tmpl/edit.xml|showintrotext
 site/views/editevent/tmpl/edit.xml|footertext
 site/views/editevent/tmpl/edit.xml|introtext
 site/views/editevent/tmpl/edit.xml|showfootertext

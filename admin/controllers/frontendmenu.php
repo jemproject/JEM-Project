@@ -77,6 +77,7 @@ class JemControllerFrontendmenu extends BaseController
             array(array('COM_JEM_FRONTEND_MENU_VENUES_MAP', 'COM_JEM_VENUESMAP_VIEW_DEFAULT_TITLE'), 'Venues Map', 'venues-map', 'index.php?option=com_jem&view=venuesmap', $groups['venues']),
             array(array('COM_JEM_FRONTEND_MENU_SUBMIT_VENUE', 'COM_JEM_EDITVENUE_VIEW_DEFAULT_TITLE'), 'Submit Venue', 'submit-venue', 'index.php?option=com_jem&view=editvenue', $groups['venues']),
             array(array('COM_JEM_FRONTEND_MENU_CATEGORIES', 'COM_JEM_CATEGORIES_VIEW_DEFAULT_TITLE'), 'Categories', 'categories-list', 'index.php?option=com_jem&view=categories', $groups['categories']),
+            array(array('COM_JEM_FRONTEND_MENU_SUBMIT_CATEGORY', 'COM_JEM_EDITCATEGORY_MENU_TITLE'), 'Submit Category', 'submit-category', 'index.php?option=com_jem&view=editcategory', $groups['categories']),
             array(array('COM_JEM_FRONTEND_MENU_SEARCH', 'COM_JEM_SEARCH_VIEW_DEFAULT_TITLE'), 'Search', 'search', 'index.php?option=com_jem&view=search', $groups['user']),
             array(array('COM_JEM_FRONTEND_MENU_SPECIAL_DAYS', 'COM_JEM_SPECIAL_DAYS_VIEW_DEFAULT_TITLE'), 'Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_SUBMIT_SPECIAL_DAY', 'COM_JEM_SPECIALDAY_VIEW_EDIT_TITLE'), 'Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),

@@ -133,6 +133,7 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
         <div class="jem cat_id<?php echo $row->id; ?>">
             <h2>
                 <?php echo HTMLHelper::_('link', Route::_($row->linktarget), $this->escape($row->catname)); ?>
+                <?php echo JemOutput::editbutton($row, null, null, !empty($row->canEditCategory), 'editcategory'); ?>
                 <?php echo $categoriesaccess; ?>
             </h2>
             <?php if ($this->params->get('show_category_type', 0) && !empty($row->type_id) && !empty($this->typeItems[(int) $row->type_id])) : ?>
@@ -171,6 +172,7 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
                                 <strong>
                                     <a href="<?php echo Route::_(JemHelperRoute::getCategoryRoute($sub->slug, $this->task)); ?>">
                                         <?php echo $this->escape($sub->catname); ?></a>
+                                    <?php echo JemOutput::editbutton($sub, null, null, !empty($sub->canEditCategory), 'editcategory'); ?>
                                 </strong> <?php echo '(' . ($sub->assignedevents != null ? $sub->assignedevents : 0) . (--$i ? '),' : ')'); ?>
                                 <?php echo $subcategoriesaccess; ?>
                             <?php endforeach; ?>

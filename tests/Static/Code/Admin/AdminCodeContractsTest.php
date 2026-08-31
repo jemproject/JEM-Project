@@ -114,6 +114,7 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("'Venues', 'venues-overview', 'index.php?option=com_jem&view=venues', \$groups['venues']", $code);
         self::assertStringContainsString("'My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', \$groups['user']", $code);
         self::assertStringContainsString("'My Attendances Timeline', 'my-attendances-timeline', 'index.php?option=com_jem&view=myattendances&layout=timeline', \$groups['user']", $code);
+        self::assertStringContainsString("'Submit Category', 'submit-category', 'index.php?option=com_jem&view=editcategory', \$groups['categories']", $code);
     }
 
     public function testFrontendMenuGeneratorAddsVenueCalendarLastWithSelectorEnabled(): void

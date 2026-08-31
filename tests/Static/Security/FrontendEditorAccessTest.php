@@ -109,9 +109,9 @@ final class FrontendEditorAccessTest extends TestCase
         $router = $this->read('/site/router.php');
         $noMenuRule = $this->read('/site/services/JemNomenuRules.php');
 
-        self::assertStringContainsString("foreach (array('editevent', 'editvenue') as \$viewName)", $router);
+        self::assertStringContainsString("foreach (array('editcategory', 'editevent', 'editvenue') as \$viewName)", $router);
         self::assertStringContainsString("\$viewConfig->setKey('a_id')", $router);
-        foreach (array('editevent', 'editvenue') as $viewName) {
+        foreach (array('editcategory', 'editevent', 'editvenue') as $viewName) {
             $case = strpos($noMenuRule, "case '" . $viewName . "':");
             $nextBreak = strpos($noMenuRule, 'break;', $case === false ? 0 : $case);
 
@@ -126,6 +126,7 @@ final class FrontendEditorAccessTest extends TestCase
                 'view=editevent&task=event.copy&a_id=',
                 'view=editvenue&task=venue.edit&a_id=',
                 'view=editvenue&task=venue.copy&a_id=',
+                'view=editcategory&task=category.edit&a_id=',
             ),
             '/site/classes/pdfview.class.php' => array('view=editvenue&task=venue.edit&a_id='),
             '/site/views/venuesmap/tmpl/default.php' => array('view=editvenue&task=venue.edit&a_id='),

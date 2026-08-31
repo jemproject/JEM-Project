@@ -17,9 +17,8 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
             self::assertStringContainsString('name="image_' . $profile . '_ratio"', $settings);
             self::assertStringContainsString('name="image_' . $profile . '_ratio_mandatory"', $settings);
             self::assertStringContainsString('name="image_' . $profile . '_custom_ratio"', $settings);
-            self::assertStringContainsString('showon="image_' . $profile . '_mode!:none"', $settings);
             self::assertStringContainsString(
-                'showon="image_' . $profile . '_mode!:none[AND]image_' . $profile . '_ratio:custom"',
+                'showon="image_' . $profile . '_ratio:custom"',
                 $settings
             );
         }
@@ -55,8 +54,9 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
         }
 
         self::assertStringContainsString('data-jem-image-profile=', $layout);
+        self::assertStringContainsString('<li data-jem-image-ratio>', $layout);
         self::assertStringContainsString('data-jem-image-custom-ratio', $layout);
-        self::assertStringContainsString("ratio.value === 'custom'", $layout);
+        self::assertStringContainsString("ratio.value !== 'custom'", $layout);
         self::assertStringContainsString('input[id$="_custom_ratio"]', $layout);
         self::assertStringContainsString('width: 8rem;', $layout);
         self::assertStringContainsString('input[id$="_default_dimension"]', $layout);

@@ -664,7 +664,6 @@
             default="16_9"
             required="true"
             filter="cmd"
-            showon="image_event_intro_mode!:none"
         >
             <option value="1_1">1:1</option>
             <option value="4_3">4:3</option>
@@ -686,7 +685,6 @@
             default="0"
             required="true"
             filter="integer"
-            showon="image_event_intro_mode!:none"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -698,7 +696,7 @@
             maxlength="9"
             required="false"
             filter="string"
-            showon="image_event_intro_mode!:none[AND]image_event_intro_ratio:custom"
+            showon="image_event_intro_ratio:custom"
         />
         <field name="image_event_full_mode" type="list"
             label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
@@ -749,7 +747,6 @@
             default="16_9"
             required="true"
             filter="cmd"
-            showon="image_event_full_mode!:none"
         >
             <option value="1_1">1:1</option>
             <option value="4_3">4:3</option>
@@ -771,7 +768,6 @@
             default="0"
             required="true"
             filter="integer"
-            showon="image_event_full_mode!:none"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -783,7 +779,7 @@
             maxlength="9"
             required="false"
             filter="string"
-            showon="image_event_full_mode!:none[AND]image_event_full_ratio:custom"
+            showon="image_event_full_ratio:custom"
         />
         <field name="image_venue_mode" type="list"
             label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
@@ -834,7 +830,6 @@
             default="4_3"
             required="true"
             filter="cmd"
-            showon="image_venue_mode!:none"
         >
             <option value="1_1">1:1</option>
             <option value="4_3">4:3</option>
@@ -856,7 +851,6 @@
             default="0"
             required="true"
             filter="integer"
-            showon="image_venue_mode!:none"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -868,7 +862,7 @@
             maxlength="9"
             required="false"
             filter="string"
-            showon="image_venue_mode!:none[AND]image_venue_ratio:custom"
+            showon="image_venue_ratio:custom"
         />
         <field name="image_category_mode" type="list"
             label="COM_JEM_IMAGE_ADJUSTMENT_MODE"
@@ -919,7 +913,6 @@
             default="1_1"
             required="true"
             filter="cmd"
-            showon="image_category_mode!:none"
         >
             <option value="1_1">1:1</option>
             <option value="4_3">4:3</option>
@@ -941,7 +934,6 @@
             default="0"
             required="true"
             filter="integer"
-            showon="image_category_mode!:none"
         >
             <option value="1">JYES</option>
             <option value="0">JNO</option>
@@ -953,7 +945,7 @@
             maxlength="9"
             required="false"
             filter="string"
-            showon="image_category_mode!:none[AND]image_category_ratio:custom"
+            showon="image_category_ratio:custom"
         />
         <field name="pdf_imagewidth" type="number"
             label="COM_JEM_PDF_IMAGE_WIDTH"

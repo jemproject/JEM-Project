@@ -997,6 +997,66 @@ div#jem .jem-image-upload-panel {
     box-sizing: border-box;
 }
 
+/* Frontend category editor */
+div#jem .jem-submit-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0 0 0.625rem;
+}
+
+div#jem .jem-category-editor-fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 1rem;
+    border: 0;
+}
+
+div#jem .jem-category-editor-fieldset > legend {
+    margin: 0 0 1rem;
+    padding: 0;
+    font-size: 1.35rem;
+}
+
+div#jem .jem-category-form-grid {
+    display: grid;
+    grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+    gap: 1rem 1.25rem;
+    align-items: center;
+}
+
+div#jem .jem-category-form-label label {
+    margin: 0;
+    font-weight: 700;
+}
+
+div#jem .jem-category-form-control,
+div#jem .jem-category-form-control > * {
+    min-width: 0;
+    max-width: 100%;
+}
+
+div#jem .jem-category-description-field {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+div#jem .jem-category-description-field > label {
+    font-weight: 700;
+}
+
+@media (max-width: 767.98px) {
+    div#jem .jem-category-form-grid {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    div#jem .jem-category-form-control {
+        margin-bottom: 0.65rem;
+    }
+}
+
 div#jem .jem-image-upload-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(13rem, 16rem);

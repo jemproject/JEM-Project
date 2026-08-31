@@ -150,6 +150,7 @@ ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image_alt` VARCHAR(255) NO
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_min_dimension', '64');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_max_dimension', '2560');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('sizelimit', '400');
+UPDATE `#__jem_config` SET `value` = '400' WHERE `keyname` = 'sizelimit' AND `value` = '200';
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_mode', 'none');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_required', '0');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_default_dimension', '1200');

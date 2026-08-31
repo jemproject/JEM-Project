@@ -115,6 +115,37 @@ class JemController extends BaseController
             }
         }
 
+        if ($viewName === 'editcategory') {
+            if (JemFrontendAccess::redirectGuestToLogin($app)) {
+                return false;
+            }
+
+            $id = JemFrontendAccess::normaliseRecordId($jinput);
+            $model = $this->getModel('editcategory');
+
+            if (!$model) {
+                throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 500);
+            }
+
+            if ($id > 0) {
+                $item = $model->getItem($id);
+
+                if (!$item || (int) $item->id !== $id) {
+                    throw new Exception(Text::_('COM_JEM_CATEGORY_ERROR_NOT_FOUND'), 404);
+                }
+
+                if (!JemFrontendCategoryAccess::canEdit($user, $item)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+
+                if (!$this->checkEditId('com_jem.edit.category', $id)) {
+                    throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 403);
+                }
+            } elseif (!JemFrontendCategoryAccess::canCreate($user, $jinput->getInt('parent_id', 1))) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+        }
+
         $view = $this->getView($viewName, $viewFormat);
         if ($view) {
             // Do any specific processing by view.
@@ -127,6 +158,7 @@ class JemController extends BaseController
                 case 'category':
                 case 'day':
                 case 'editevent':
+                case 'editcategory':
                 case 'editvenue':
                 case 'event':
                 case 'eventsblog':

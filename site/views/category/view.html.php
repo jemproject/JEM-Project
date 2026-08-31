@@ -390,6 +390,7 @@ class JemViewCategory extends JemView
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
             $this->maxLevel      = $params->get('maxLevel', -1);
             $this->category      = $category;
+            $this->canEditCategory = JemFrontendCategoryAccess::canEdit($user, $category);
             $this->children      = array($category->id => $children);
             $this->parent        = $parent;
             $this->user          = $user;

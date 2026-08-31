@@ -261,10 +261,14 @@ class JemModelCategory extends AdminModel
             unset($data['modified_user_id']);
         }
 
-        $groupid = $jinput->get('groupid', '', 'int');
+        $groupid = array_key_exists('groupid', $data)
+            ? (int) $data['groupid']
+            : $jinput->get('groupid', '', 'int');
         $table->groupid = $groupid;
 
-        $color = $jinput->get('color', '', 'html');
+        $color = array_key_exists('color', $data)
+            ? trim((string) $data['color'])
+            : $jinput->get('color', '', 'html');
 
         if (!preg_match('/^#[0-9A-Fa-f]{6}$/', $color)) {
             $color = '';

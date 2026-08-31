@@ -138,6 +138,15 @@ class JemViewCategories extends JemView
 
         $typeItems = $model->getTypeItems();
 
+        foreach ($rows as $row) {
+            $row->canEditCategory = !$print && JemFrontendCategoryAccess::canEdit($user, $row);
+
+            foreach ((array) ($row->subcats ?? array()) as $subCategory) {
+                $subCategory->canEditCategory = !$print
+                    && JemFrontendCategoryAccess::canEdit($user, $subCategory);
+            }
+        }
+
         if ($isGroupedTypeCategoryView && !empty($rows)) {
             $typeOrder = array();
             $position = 0;

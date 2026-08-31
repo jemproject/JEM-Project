@@ -483,7 +483,7 @@ static public function lightbox() {
      * @param string $view
      *
      * Views:
-     * Event, Venue
+     * Event, Venue, Category
      */
     static public function editbutton($item, $params, $attribs, $allowedtoedit, $view)
     {
@@ -575,6 +575,41 @@ static public function lightbox() {
                     $overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
                     $text = Text::_('COM_JEM_EDIT_VENUE');
                     $url = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    break;
+
+                case 'editcategory':
+                    if (property_exists($item, 'checked_out') && $item->checked_out > 0 && $item->checked_out != $userId) {
+                        $checkoutUser = Factory::getContainer()->get(UserFactoryInterface::class)->loadUserById($item->checked_out);
+                        $button = HTMLHelper::_('image', 'system/checked_out.webp', null, null, true);
+                        $date = HTMLHelper::_('date', $item->checked_out_time);
+
+                        return '<span ' . self::tooltip(
+                            Text::_('JLIB_HTML_CHECKED_OUT'),
+                            htmlspecialchars(
+                                Text::sprintf('COM_JEM_GLOBAL_CHECKED_OUT_BY', $checkoutUser->name) . ' <br> ' . $date,
+                                ENT_COMPAT,
+                                'UTF-8'
+                            )
+                        ) . '>' . $button . '</span>';
+                    }
+
+                    if ($showIcon) {
+                        $image = jemhtml::icon(
+                            'com_jem/calendar_edit.webp',
+                            'fa fa-fw fa-pen-square jem-editbutton',
+                            Text::_('COM_JEM_EDIT_CATEGORY'),
+                            null,
+                            !$app->isClient('site')
+                        );
+                    } else {
+                        $image = Text::_('COM_JEM_EDIT_CATEGORY');
+                    }
+
+                    $id = (int) $item->id;
+                    $overlib = Text::_('COM_JEM_EDIT_CATEGORY_DESC');
+                    $text = Text::_('COM_JEM_EDIT_CATEGORY');
+                    $url = 'index.php?option=com_jem&view=editcategory&task=category.edit&a_id=' . $id
+                        . '&return=' . base64_encode($uri);
                     break;
             }
 
