@@ -167,13 +167,21 @@
         </field>
     </fieldset>
 
-    <fieldset name="image" label="COM_JEM_IMAGE">
-        <field name="image" type="imageselect"
-            class="inputbox form-control"
+    <fieldset name="image" label="COM_JEM_IMAGE" addfieldpath="/components/com_jem/models/fields">
+        <field name="image" type="imageselectcategory"
+            class="inputbox form-select"
             size="40"
-            label="COM_JEM_IMAGESELECT"
-            imagetype="categories"
+            label="COM_JEM_SERVER_IMAGE"
             description="COM_JEM_IMAGESELECT"
+        />
+        <field name="userfile" type="jemimagefile"
+            class="inputbox"
+            label="COM_JEM_UPLOAD_NEW_IMAGE"
+            description="COM_JEM_UPLOAD_IMAGE"
+            imageprofile="category"
+            clearselect="jform_image"
+            removefield="removeimage"
+            resolutionfield="jem-image-resolution-category"
         />
         <field name="image_as_default" type="radio"
             class="btn-group btn-group-yesno"

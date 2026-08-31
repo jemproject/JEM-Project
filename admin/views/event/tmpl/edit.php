@@ -14,9 +14,11 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
 
@@ -96,60 +98,6 @@ $this->document->addStyleDeclaration('
     .jem-associated-article-picker > * {
         flex: 1 1 auto;
         min-width: 0;
-    }
-    .jem-event-image-fields {
-        display: grid;
-        gap: 1rem;
-        max-width: 980px;
-    }
-    .jem-event-image-field {
-        display: grid;
-        grid-template-columns: minmax(170px, 240px) minmax(0, 1fr);
-        align-items: start;
-        gap: 1rem;
-    }
-    .jem-event-image-label strong {
-        display: block;
-        margin-bottom: .2rem;
-    }
-    .jem-event-image-label span {
-        display: block;
-        color: #6c757d;
-        font-size: .875rem;
-        line-height: 1.25;
-    }
-    .jem-event-image-control {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: .5rem;
-        min-width: 0;
-    }
-    .jem-event-image-control .fltlft,
-    .jem-event-image-control .button2-left,
-    .jem-event-image-control .button2-left .blank {
-        float: none;
-        display: contents;
-    }
-    .jem-event-image-control input[type="text"] {
-        width: min(260px, 100%);
-    }
-    .jem-event-image-control .venue-image {
-        width: 76px;
-        height: 86px;
-        object-fit: contain;
-        margin: 0 0 0 .25rem;
-        background: #fff;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-    }
-    .jem-event-image-field--layout .jem-event-image-control select {
-        width: min(420px, 100%);
-    }
-    @media (max-width: 720px) {
-        .jem-event-image-field {
-            grid-template-columns: 1fr;
-        }
     }
 ');
 
@@ -539,14 +487,10 @@ $this->document->addStyleDeclaration('
         <div class="col-md-7">
 
             <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_EVENT_INFO_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_DETAILS')); ?>
 
             <!-- START OF LEFT FIELDSET -->
             <fieldset class="adminform">
-                <legend>
-                    <?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_EVENT') : Text::sprintf('COM_JEM_EVENT_DETAILS', $this->item->id); ?>
-                </legend>
-
                 <ul class="adminformlist">
                     <li><div class="label-form"><?php echo $this->form->renderfield('title'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
@@ -625,6 +569,62 @@ $this->document->addStyleDeclaration('
                 <?php echo $this->form->getInput('articletext'); ?>
                 <!-- END OF FIELDSET -->
             </fieldset>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'image', Text::_('COM_JEM_IMAGE')); ?>
+            <div class="jem-admin-image-tab">
+                <?php
+                $eventImageFolder = JemEventImagePath::normaliseRelativeFolder($this->item->image_path ?? '');
+                echo LayoutHelper::render(
+                    'image.editor',
+                    array(
+                        'form' => $this->form,
+                        'settings' => $this->jemsettings,
+                        'profile' => JemImageProfilePolicy::EVENT_INTRO,
+                        'selectField' => 'datimage',
+                        'fileField' => 'userfile',
+                        'removeField' => 'removeimage',
+                        'resolutionName' => 'image_max_dimension',
+                        'resolutionId' => 'jem-image-resolution-event-intro',
+                        'title' => Text::_('COM_JEM_EVENT_INTRO_IMAGE'),
+                        'description' => Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'),
+                        'currentImagePath' => JemEventImagePath::imagePath(
+                            $eventImageFolder,
+                            $this->item->datimage ?? ''
+                        ),
+                        'currentImageAlt' => $this->item->title ?? Text::_('COM_JEM_EVENT_INTRO_IMAGE'),
+                    ),
+                    JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
+                );
+                echo LayoutHelper::render(
+                    'image.editor',
+                    array(
+                        'form' => $this->form,
+                        'settings' => $this->jemsettings,
+                        'profile' => JemImageProfilePolicy::EVENT_FULL,
+                        'selectField' => 'fullimage',
+                        'fileField' => 'fulluserfile',
+                        'removeField' => 'removefullimage',
+                        'resolutionName' => 'fullimage_max_dimension',
+                        'resolutionId' => 'jem-image-resolution-event-full',
+                        'title' => Text::_('COM_JEM_EVENT_FULLIMAGE'),
+                        'description' => Text::_('COM_JEM_EVENT_FULLIMAGE_FE_DESC'),
+                        'currentImagePath' => JemEventImagePath::imagePath(
+                            $eventImageFolder,
+                            $this->item->fullimage ?? ''
+                        ),
+                        'currentImageAlt' => $this->item->title ?? Text::_('COM_JEM_EVENT_FULLIMAGE'),
+                        'extraRows' => array(
+                            array(
+                                'label' => $this->form->getLabel('fullimage_layout'),
+                                'input' => $this->form->getInput('fullimage_layout'),
+                            ),
+                        ),
+                    ),
+                    JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
+                );
+                echo $this->form->getInput('image_path');
+                ?>
+            </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'advanced', Text::_('COM_JEM_ADVANCED')); ?>
             <fieldset class="adminform">
@@ -781,50 +781,6 @@ $this->document->addStyleDeclaration('
                     </div>
                 </div>
                 <?php endif; ?>
-                <!-- START OF PANEL IMAGE -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="image-event-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#image-event" aria-expanded="true" aria-controls="image-event">
-                            <?php echo Text::_('COM_JEM_IMAGE'); ?>
-                        </button>
-                    </h2>
-
-                    <div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionEventForm">
-                        <div class="accordion-body">
-                            <div class="jem-event-image-fields">
-                                <div class="jem-event-image-field">
-                                    <div class="jem-event-image-label">
-                                        <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
-                                        <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
-                                        <small><?php echo $this->escape($this->imageIntroSummary); ?></small>
-                                    </div>
-                                    <div class="jem-event-image-control">
-                                        <?php echo $this->form->getInput('datimage'); ?>
-                                    </div>
-                                </div>
-                                <div class="jem-event-image-field">
-                                    <div class="jem-event-image-label">
-                                        <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
-                                        <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_DESC'); ?></span>
-                                        <small><?php echo $this->escape($this->imageFullSummary); ?></small>
-                                    </div>
-                                    <div class="jem-event-image-control">
-                                        <?php echo $this->form->getInput('fullimage'); ?>
-                                    </div>
-                                </div>
-                                <div class="jem-event-image-field jem-event-image-field--layout">
-                                    <div class="jem-event-image-label">
-                                        <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?></strong>
-                                        <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT_DESC'); ?></span>
-                                    </div>
-                                    <div class="jem-event-image-control">
-                                        <?php echo $this->form->getInput('fullimage_layout'); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="recurrence-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#recurrence" aria-expanded="true" aria-controls="recurrence">

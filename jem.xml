@@ -90,6 +90,7 @@
             <folder>classes</folder>
             <folder>help</folder>
             <folder>helpers</folder>
+            <folder>layouts</folder>
             <folder>views</folder>
             <folder>models</folder>
             <folder>controllers</folder>

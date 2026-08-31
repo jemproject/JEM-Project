@@ -11,8 +11,10 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('keepalive')
@@ -55,130 +57,6 @@ Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
 ?>
-<style>
-    #image-event .jem-venue-image-fields {
-        display: grid;
-        gap: .85rem;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    #image-event .jem-venue-image-fields > li,
-    #image-event .jem-venue-image-control .label-form,
-    #image-event .jem-venue-image-control .control-group,
-    #image-event .jem-venue-image-control .controls {
-        float: none;
-        clear: both;
-        width: 100%;
-        min-width: 0;
-        margin: 0;
-    }
-
-    #image-event .jem-venue-image-control .controls {
-        display: block;
-    }
-
-    #image-event .jem-venue-image-control .control-label,
-    #image-event .jem-venue-image-control label {
-        display: none;
-    }
-
-    #image-event .jem-venue-image-control .fltlft,
-    #image-event .jem-venue-image-control .button2-left,
-    #image-event .jem-venue-image-control .button2-left .blank {
-        float: none;
-        margin: 0;
-    }
-
-    #image-event .jem-venue-image-control .input-group {
-        display: grid;
-        grid-template-columns: minmax(8rem, 1fr) auto auto auto;
-        width: 100%;
-    }
-
-    #image-event .jem-venue-image-control .input-group > .form-control {
-        width: auto;
-        min-width: 0;
-    }
-
-    #image-event .jem-venue-image-control .input-group > .btn {
-        margin: 0;
-        white-space: nowrap;
-    }
-
-    #image-event .jem-event-image-folder-hint {
-        margin-top: .55rem;
-        overflow-wrap: anywhere;
-    }
-
-    #image-event .jem-venue-image-control img.venue-image {
-        display: block;
-        clear: both;
-        max-width: 100%;
-        object-fit: contain;
-        margin: .75rem 0 0;
-    }
-
-    #image-event .jem-venue-image-control img.venue-image[src$="blank.webp"] {
-        display: none;
-    }
-
-    #image-event .jem-venue-image-alt .control-group {
-        display: grid;
-        grid-template-columns: minmax(9rem, 40%) minmax(0, 1fr);
-        align-items: center;
-        gap: .75rem;
-        margin: 0;
-    }
-
-    #image-event .jem-venue-image-alt .control-label,
-    #image-event .jem-venue-image-alt .controls {
-        float: none;
-        width: auto;
-        min-width: 0;
-        margin: 0;
-    }
-
-    #image-event .jem-venue-image-alt input[type="text"] {
-        width: 100%;
-        max-width: none;
-    }
-
-    @media (max-width: 767.98px) {
-        #image-event .jem-venue-image-control .input-group {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: .45rem;
-        }
-
-        #image-event .jem-venue-image-control .input-group > .form-control {
-            grid-column: 1 / -1;
-            width: 100%;
-            margin: 0;
-            border-radius: var(--border-radius, .25rem);
-        }
-
-        #image-event .jem-venue-image-control .input-group > .btn {
-            width: 100%;
-            margin: 0;
-            border-radius: var(--border-radius, .25rem);
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 420px) {
-        #image-event .jem-venue-image-control .input-group,
-        #image-event .jem-venue-image-alt .control-group {
-            grid-template-columns: 1fr;
-        }
-
-        #image-event .jem-venue-image-control .input-group > .form-control {
-            grid-column: auto;
-        }
-    }
-</style>
-
 <script>
     (function () {
         var dirty = false;
@@ -1160,12 +1038,8 @@ Text::script('JCANCEL');
             <!-- <div class="width-55 fltlft"> -->
 
                 <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'info', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
-                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_VENUE_INFO_TAB')); ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'info', Text::_('COM_JEM_DETAILS')); ?>
                     <fieldset class="adminform">
-                        <legend>
-                            <?php echo empty($this->item->id) ? Text::_('COM_JEM_NEW_VENUE') : Text::sprintf('COM_JEM_VENUE_DETAILS', $this->item->id); ?>
-                        </legend>
-
                         <ul class="adminformlist jem-venue-identity-fields">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
@@ -1230,6 +1104,42 @@ Text::script('JCANCEL');
                             <?php echo $this->form->getInput('locdescription'); ?>
                         </div>
                     </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'image', Text::_('COM_JEM_IMAGE')); ?>
+                    <div class="jem-admin-image-tab">
+                        <?php
+                        echo LayoutHelper::render(
+                            'image.editor',
+                            array(
+                                'form' => $this->form,
+                                'settings' => $this->jemsettings,
+                                'profile' => JemImageProfilePolicy::VENUE,
+                                'selectField' => 'locimage',
+                                'fileField' => 'userfile',
+                                'removeField' => 'removeimage',
+                                'resolutionName' => 'image_max_dimension',
+                                'resolutionId' => 'jem-image-resolution-venue',
+                                'title' => Text::_('COM_JEM_IMAGE_PROFILE_VENUE'),
+                                'currentImagePath' => JemVenueImagePath::imagePath(
+                                    $this->item->image_path ?? '',
+                                    $this->item->locimage ?? ''
+                                ),
+                                'currentImageAlt' => $this->item->locimage_alt
+                                    ?? $this->item->venue
+                                    ?? Text::_('COM_JEM_IMAGE_PROFILE_VENUE'),
+                                'extraRows' => array(
+                                    array(
+                                        'label' => $this->form->getLabel('locimage_alt'),
+                                        'input' => $this->form->getInput('locimage_alt'),
+                                        'class' => 'jem-image-upload-row--alt',
+                                    ),
+                                ),
+                            ),
+                            JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
+                        );
+                        echo $this->form->getInput('image_path');
+                        ?>
+                    </div>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
                         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'capacity', Text::_('COM_JEM_VENUE_PROFILES_TAB')); ?>
@@ -1300,24 +1210,6 @@ Text::script('JCANCEL');
                                                 <?php echo $field->input; ?></li>
                                         <?php endforeach; ?>
                                     </ul>
-                                </fieldset>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="image-event-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#image-event" aria-expanded="true" aria-controls="image-event">
-                            <?php echo Text::_('COM_JEM_IMAGE'); ?>
-                        </button>
-                        </h2>
-                        <div id="image-event" class="accordion-collapse collapse" aria-labelledby="image-event-header" data-bs-parent="#accordionVenueForm">
-                            <div class="accordion-body">
-                                <fieldset class="panelform">
-                                    <ul class="adminformlist jem-venue-image-fields">
-                                        <li class="jem-venue-image-control"><div class="label-form"><?php echo $this->form->renderfield('locimage'); ?></div><small><?php echo $this->escape($this->imageProfileSummary); ?></small></li>
-                                        <li class="jem-venue-image-alt"><?php echo $this->form->renderField('locimage_alt'); ?></li>
-                                    </ul>
-                                    <?php echo $this->form->getInput('image_path'); ?>
                                 </fieldset>
                             </div>
                         </div>

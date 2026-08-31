@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
+use Joomla\Filesystem\File;
 
 // Include the component HTML helpers.
 HTMLHelper::addIncludePath(JPATH_COMPONENT.'/helpers/html');
@@ -22,83 +24,6 @@ $wa->useScript('keepalive')
 
 $typeField = $this->form->getField('type_id');
 ?>
-<style>
-    #category-image .jem-category-image-fields {
-        margin: 0;
-        padding: 0;
-    }
-
-    #category-image .jem-category-image-control .control-group,
-    #category-image .jem-category-image-control .controls {
-        margin: 0;
-    }
-
-    #category-image .jem-category-image-control .controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-start;
-        gap: 0.45rem;
-    }
-
-    #category-image .jem-category-image-control .control-label,
-    #category-image .jem-category-image-control label {
-        display: none;
-    }
-
-    #category-image .jem-category-image-control .fltlft,
-    #category-image .jem-category-image-control .button2-left,
-    #category-image .jem-category-image-control .button2-left .blank {
-        float: none;
-        margin: 0;
-    }
-
-    #category-image .jem-category-image-control input[type="text"] {
-        width: 13.5rem;
-    }
-
-    #category-image .jem-category-image-control .btn-margin {
-        margin: 0;
-        white-space: nowrap;
-    }
-
-    #category-image .jem-category-image-control .controls::after {
-        content: "";
-        flex: 0 0 100%;
-        order: 1;
-    }
-
-    #category-image .jem-category-image-control img.venue-image {
-        flex: 0 0 auto;
-        order: 2;
-        max-width: 100%;
-        object-fit: contain;
-        margin: 0.1rem 0 0;
-    }
-
-    #category-image .jem-category-image-fields > li + li {
-        margin-top: 1.5rem;
-    }
-
-    @media (max-width: 640px) {
-        #category-image .jem-category-image-control .controls {
-            display: grid;
-            grid-template-columns: 1fr;
-        }
-
-        #category-image .jem-category-image-control input[type="text"],
-        #category-image .jem-category-image-control .btn-margin {
-            width: 100%;
-        }
-
-        #category-image .jem-category-image-control .controls::after {
-            display: none;
-        }
-
-        #category-image .jem-category-image-control img.venue-image {
-            justify-self: start;
-        }
-    }
-</style>
 
 <script>
     Joomla.submitbutton = function(task)
@@ -114,11 +39,12 @@ $typeField = $this->form->getField('type_id');
     }
 </script>
 
-<form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate">
+<form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-7">
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'categoryTab', ['active' => 'details', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'categoryTab', 'details', Text::_('COM_JEM_DETAILS')); ?>
             <fieldset class="adminform">
-                <legend><?php echo Text::_('COM_JEM_CATEGORY_FIELDSET_DETAILS');?></legend>
                 <ul class="adminformlist">
                     <li><div class="label-form"><?php echo $this->form->renderfield('catname'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
@@ -141,6 +67,46 @@ $typeField = $this->form->getField('type_id');
                 <div class="clr"></div>
                 <?php echo $this->form->getInput('description'); ?>
             </fieldset>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'categoryTab', 'image', Text::_('COM_JEM_IMAGE')); ?>
+            <div class="jem-admin-image-tab">
+                <?php
+                $categoryImage = trim((string) ($this->item->image ?? ''));
+                $safeCategoryImage = File::makeSafe(basename($categoryImage));
+                $categoryImagePath = $categoryImage !== '' && $safeCategoryImage === $categoryImage
+                    ? 'images/jem/categories/' . $safeCategoryImage
+                    : '';
+                echo LayoutHelper::render(
+                    'image.editor',
+                    array(
+                        'form' => $this->form,
+                        'settings' => JemHelper::config(),
+                        'profile' => JemImageProfilePolicy::CATEGORY,
+                        'selectField' => 'image',
+                        'fileField' => 'userfile',
+                        'removeField' => 'removeimage',
+                        'resolutionName' => 'image_max_dimension',
+                        'resolutionId' => 'jem-image-resolution-category',
+                        'title' => Text::_('COM_JEM_IMAGE_PROFILE_CATEGORY'),
+                        'currentImagePath' => $categoryImagePath,
+                        'currentImageAlt' => $this->item->catname ?? Text::_('COM_JEM_IMAGE_PROFILE_CATEGORY'),
+                        'extraRows' => array(
+                            array(
+                                'label' => $this->form->getLabel('image_as_default'),
+                                'input' => $this->form->getInput('image_as_default'),
+                            ),
+                            array(
+                                'label' => $this->form->getLabel('event_image_default_storage'),
+                                'input' => $this->form->getInput('event_image_default_storage'),
+                            ),
+                        ),
+                    ),
+                    JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
+                );
+                ?>
+            </div>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
         </div>
 
         <div class="col-md-5">
@@ -198,25 +164,6 @@ $typeField = $this->form->getField('type_id');
                                 <li><label for="groups"> <?php echo Text::_('COM_JEM_GROUP').':'; ?></label>
                                 <?php echo $this->Lists['groups']; ?></li>
                             </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- START OF PANEL IMAGE -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="category-image-header">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#category-image" aria-expanded="true" aria-controls="category-image">
-                        <?php echo Text::_('COM_JEM_IMAGE'); ?>
-                    </button>
-                    </h2>
-                    <div id="category-image" class="accordion-collapse collapse" aria-labelledby="category-image-header" data-bs-parent="#accordionCategoriesForm">
-                        <div class="accordion-body">
-                            <fieldset class="panelform">
-                                <ul class="adminformlist jem-category-image-fields">
-                                    <li class="jem-category-image-control"><div class="label-form"><?php echo $this->form->renderfield('image'); ?></div><small><?php echo $this->escape($this->imageProfileSummary); ?></small>
-                                    </li>
-                                    <li><?php echo $this->form->renderfield('image_as_default'); ?></li>
-                                </ul>
-                            </fieldset>
                         </div>
                     </div>
                 </div>

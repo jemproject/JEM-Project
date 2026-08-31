@@ -30,7 +30,6 @@ $canOverrideConflict = Factory::getApplication()->getIdentity()->authorise('core
 
 <div class="jem-event-capacity" data-capacity-ready="<?php echo $capacityReady ? 1 : 0; ?>">
     <fieldset class="adminform">
-        <legend><?php echo Text::_('COM_JEM_EVENT_VENUE_CAPACITY_TAB'); ?></legend>
         <p class="text-muted"><?php echo Text::_('COM_JEM_EVENT_VENUE_CAPACITY_INTRO'); ?></p>
         <div class="jem-event-pricing-grid">
             <?php echo $this->form->renderField('venue_allocation_mode'); ?>

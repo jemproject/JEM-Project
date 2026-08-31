@@ -103,11 +103,11 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('class="col-md-8"', $edit);
         self::assertStringContainsString('class="col-md-4"', $edit);
         self::assertStringContainsString('data-role="configuration-overview"', $edit);
-        self::assertStringContainsString('class="jem-venue-image-alt"', $edit);
-        self::assertStringContainsString('#image-event .jem-venue-image-control .input-group', $edit);
-        self::assertStringContainsString('grid-template-columns: repeat(3, minmax(0, 1fr))', $edit);
-        self::assertStringContainsString('img.venue-image[src$="blank.webp"]', $edit);
-        self::assertStringContainsString('display: none;', $edit);
+        self::assertStringContainsString("'class' => 'jem-image-upload-row--alt'", $edit);
+        self::assertStringContainsString("'image.editor'", $edit);
+        self::assertStringContainsString('.jem-admin-image-tab .jem-image-upload-layout', $css);
+        self::assertStringContainsString('grid-template-columns: 1fr;', $css);
+        self::assertStringContainsString('object-fit: contain;', $css);
         self::assertStringNotContainsString('<aside class="card mt-3 jem-capacity-overview"', $capacity);
         self::assertStringContainsString(
             'document.querySelector(\'[data-role="configuration-overview"]\')',

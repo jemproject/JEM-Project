@@ -635,20 +635,18 @@ class JemModelEvent extends JemModelAdmin
         $registrationIntro    = $data['registration_intro'] ?? '';
         $registrationFooter   = $data['registration_footer'] ?? '';
 
-        if (!$backend && JemEventImagePath::isSubfoldersEnabled()) {
-            $eventFile = $jinput->files->get('userfile', array(), 'array');
-            $eventFullFile = $jinput->files->get('fulluserfile', array(), 'array');
+        $eventFile = $jinput->files->get('userfile', array(), 'array');
+        $eventFullFile = $jinput->files->get('fulluserfile', array(), 'array');
+        $formFiles = $jinput->files->get('jform', array(), 'array');
 
-            if (empty($eventFile)) {
-                $formFiles = $jinput->files->get('jform', array(), 'array');
-                $eventFile = $formFiles['userfile'] ?? $eventFile;
-                $eventFullFile = $formFiles['fulluserfile'] ?? $eventFullFile;
-            }
-
-            if (!empty($eventFile['name']) || !empty($eventFullFile['name'])) {
-                $data['image_path'] = JemEventImagePath::configuredFolderFromEvent($data);
-            }
+        if (empty($eventFile) && !empty($formFiles['userfile'])) {
+            $eventFile = $formFiles['userfile'];
         }
+        if (empty($eventFullFile) && !empty($formFiles['fulluserfile'])) {
+            $eventFullFile = $formFiles['fulluserfile'];
+        }
+
+        $hasEventImageUpload = !empty($eventFile['name']) || !empty($eventFullFile['name']);
 
         if (!is_array($data['attribs'])) {
             $registrationAttribs = new Registry((string) $data['attribs']);
@@ -719,7 +717,11 @@ class JemModelEvent extends JemModelAdmin
         }
 
         if (JemEventImagePath::isSubfoldersEnabled()) {
-            $data['image_path'] = JemEventImagePath::configuredFolderFromEvent($data);
+            $data['image_path'] = $hasEventImageUpload
+                ? JemEventImagePath::configuredFolderFromEvent($data)
+                : JemEventImagePath::normaliseRelativeFolder(
+                    $previousImageEvent['image_path'] ?? ($data['image_path'] ?? '')
+                );
         } elseif (array_key_exists('image_path', $data)) {
             $data['image_path'] = JemEventImagePath::normaliseRelativeFolder($data['image_path']);
         }

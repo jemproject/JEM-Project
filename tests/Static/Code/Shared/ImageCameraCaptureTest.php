@@ -334,6 +334,7 @@ final class ImageCameraCaptureTest extends TestCase
     public function testServerImageSelectorProvidesAVisibleSearchField(): void
     {
         $field = $this->read('/site/models/fields/imageselectevent.php');
+        $categoryField = $this->read('/site/models/fields/imageselectcategory.php');
 
         self::assertStringContainsString('search-placeholder=', $field);
         self::assertStringContainsString('min-term-length="1"', $field);
@@ -346,6 +347,22 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringContainsString('JemEventImagePath::absoluteImageFolder', $field);
         self::assertStringContainsString("Folder::files(\$path, '\\.(jpg|jpeg|png|gif|webp|svg)\$'", $field);
         self::assertStringContainsString('data-jem-image-base-url=', $field);
+        self::assertStringContainsString('protected $imageRelativePath', $field);
+        self::assertStringContainsString('class="jem-server-image-path"', $field);
+        self::assertStringContainsString("Text::_('COM_JEM_SERVER_IMAGE_PATH')", $field);
+        self::assertStringContainsString("'images/jem/categories'", $categoryField);
+        self::assertStringContainsString(
+            'COM_JEM_SERVER_IMAGE_PATH="Server folder"',
+            $this->read('/site/language/en-GB/com_jem.ini')
+        );
+        self::assertStringContainsString(
+            'COM_JEM_SERVER_IMAGE_PATH="Server folder"',
+            $this->read('/admin/language/en-GB/com_jem.ini')
+        );
+        self::assertStringContainsString(
+            '.jem-server-image-path {',
+            $this->read('/media/css/image-camera.css')
+        );
 
         $previewScript = $this->read('/media/js/other.js');
         self::assertStringContainsString(

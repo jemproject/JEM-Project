@@ -24,6 +24,8 @@ class JFormFieldImageselectevent extends ListField
 
     protected $imageBaseUrl = '';
 
+    protected $imageRelativePath = '';
+
     protected function getInput()
     {
         $this->size = 1;
@@ -61,7 +63,14 @@ class JFormFieldImageselectevent extends ListField
         $fancyAttr .= ' data-jem-image-base-url="'
             . htmlspecialchars($this->imageBaseUrl, ENT_QUOTES, 'UTF-8') . '"';
 
-        return '<joomla-field-fancy-select ' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>';
+        $path = '/' . trim($this->imageRelativePath, '/') . '/';
+        $pathHint = '<small class="jem-server-image-path">'
+            . '<span>' . htmlspecialchars(Text::_('COM_JEM_SERVER_IMAGE_PATH'), ENT_QUOTES, 'UTF-8') . ':</span> '
+            . '<code>' . htmlspecialchars($path, ENT_QUOTES, 'UTF-8') . '</code>'
+            . '</small>';
+
+        return '<joomla-field-fancy-select ' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>'
+            . $pathHint;
     }
 
     protected function getOptions()
@@ -89,6 +98,7 @@ class JFormFieldImageselectevent extends ListField
 
         $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/' . $relativeBase . '/'
             . ($relativeFolder !== '' ? $relativeFolder . '/' : '');
+        $this->imageRelativePath = $relativeBase . ($relativeFolder !== '' ? '/' . $relativeFolder : '');
 
         if (!is_dir($path)) {
             return array_merge(parent::getOptions(), $options);

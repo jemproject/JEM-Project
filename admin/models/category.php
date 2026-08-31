@@ -275,8 +275,14 @@ class JemModelCategory extends AdminModel
         }
         $table->color = $color;
 
+        $uploadedImagePaths = array();
+        if (!$this->prepareImage($data, $uploadedImagePaths)) {
+            return false;
+        }
+
         // Bind the data.
         if (!$table->bind($data)) {
+            $this->removeUploadedImagePaths($uploadedImagePaths);
             $this->setError($table->getError());
             return false;
         }
@@ -289,6 +295,7 @@ class JemModelCategory extends AdminModel
 
         // Check the data.
         if (!$table->check()) {
+            $this->removeUploadedImagePaths($uploadedImagePaths);
             $this->setError($table->getError());
             return false;
         }
@@ -298,13 +305,14 @@ class JemModelCategory extends AdminModel
         $result = $dispatcher->triggerEvent($this->event_before_save, array($this->option . '.' . $this->name, &$table, $isNew,''));
 
         if (in_array(false, $result, true)) {
+            $this->removeUploadedImagePaths($uploadedImagePaths);
             $this->setError($table->getError());
             return false;
         }
 
         // Store the data.
         if (!$table->store()) {
-
+            $this->removeUploadedImagePaths($uploadedImagePaths);
             $this->setError($table->getError());
             return false;
         }
@@ -363,6 +371,105 @@ class JemModelCategory extends AdminModel
         $this->cleanCache();
 
         return true;
+    }
+
+    /**
+     * Validate a selected category image or process a new profile-backed upload.
+     */
+    protected function prepareImage(array &$data, array &$uploadedPaths)
+    {
+        $app = Factory::getApplication();
+        $settings = JemHelper::config();
+        $file = $app->input->files->get('userfile', array(), 'array');
+        $nestedFiles = $app->input->files->get('jform', array(), 'array');
+
+        if (!empty($nestedFiles['userfile'])) {
+            $file = $nestedFiles['userfile'];
+        }
+
+        $directory = Path::clean(JPATH_SITE . '/images/jem/categories');
+        $thumbnailDirectory = Path::clean($directory . '/small');
+
+        if (!empty($file['name'])) {
+            if ((!Folder::exists($directory) && !Folder::create($directory))
+                || (!Folder::exists($thumbnailDirectory) && !Folder::create($thumbnailDirectory))) {
+                $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                return false;
+            }
+
+            $filename = JemImage::sanitize($directory . DIRECTORY_SEPARATOR, (string) $file['name']);
+            $target = Path::clean($directory . DIRECTORY_SEPARATOR . $filename);
+            $thumbnail = Path::clean($thumbnailDirectory . DIRECTORY_SEPARATOR . $filename);
+            $requestedDimension = $app->input->post->getInt(
+                'image_max_dimension',
+                JemImageProfilePolicy::defaultUploadMaxDimension($settings, JemImageProfilePolicy::CATEGORY)
+            );
+            $requestedRatio = $app->input->post->getCmd('image_ratio', '');
+
+            if (!JemImage::uploadProfileImage(
+                $file,
+                $target,
+                $thumbnail,
+                $settings,
+                JemImageProfilePolicy::CATEGORY,
+                $requestedDimension,
+                $requestedRatio
+            )) {
+                $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                return false;
+            }
+
+            $uploadedPaths = array($target, $thumbnail);
+            $data['image'] = $filename;
+
+            return true;
+        }
+
+        if ($app->input->post->getInt('removeimage', 0) === 1) {
+            $data['image'] = '';
+
+            return true;
+        }
+
+        $image = trim((string) ($data['image'] ?? ''));
+        if ($image === '') {
+            $data['image'] = '';
+
+            return true;
+        }
+
+        $safeImage = File::makeSafe(basename($image));
+        $extension = strtolower(File::getExt($safeImage));
+        $allowed = array_filter(array_map(
+            'trim',
+            explode(',', strtolower((string) ($settings->image_filetypes ?? 'jpg,gif,png,webp')))
+        ));
+
+        if ($safeImage !== $image
+            || !in_array($extension, $allowed, true)
+            || !is_file(Path::clean($directory . DIRECTORY_SEPARATOR . $safeImage))) {
+            $this->setError(Text::_('COM_JEM_CATEGORY_ERROR_INVALID_IMAGE'));
+
+            return false;
+        }
+
+        $data['image'] = $safeImage;
+
+        return true;
+    }
+
+    /**
+     * Remove only files created by an unsuccessful category save request.
+     */
+    protected function removeUploadedImagePaths(array $paths)
+    {
+        foreach ($paths as $path) {
+            if ($path !== '' && File::exists($path)) {
+                File::delete($path);
+            }
+        }
     }
 
     /**

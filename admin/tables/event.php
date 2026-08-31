@@ -509,131 +509,143 @@ class JemTableEvent extends Table
         $images_to_delete = array();
         $uploadedImages = array();
 
-        // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
-        if (!$backend) {
-            if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
-                $file = $jinput->files->get('userfile', array(), 'array');
-                $fullFile = $jinput->files->get('fulluserfile', array(), 'array');
-                $removeimage = $jinput->getInt('removeimage', 0);
-                $removefullimage = $jinput->getInt('removefullimage', 0);
-                $imageMaxDimension = $jinput->getInt(
-                    'image_max_dimension',
-                    JemImageProfilePolicy::maxDimension($jemsettings)
-                );
-                $fullImageMaxDimension = $jinput->getInt(
-                    'fullimage_max_dimension',
-                    JemImageProfilePolicy::maxDimension($jemsettings)
-                );
-                $imageRatio = $jinput->getCmd('image_ratio', '');
-                $fullImageRatio = $jinput->getCmd('fullimage_ratio', '');
-                $datimage = $jinput->getCmd('datimage', '');
-                $fullimage = $jinput->getCmd('fullimage', '');
+        // Process direct uploads in both editors. The frontend upload setting
+        // does not restrict authorised administrator image management.
+        if ($backend || $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) {
+            $file = $jinput->files->get('userfile', array(), 'array');
+            $fullFile = $jinput->files->get('fulluserfile', array(), 'array');
+            $removeimage = $jinput->getInt('removeimage', 0);
+            $removefullimage = $jinput->getInt('removefullimage', 0);
+            $imageMaxDimension = $jinput->getInt(
+                'image_max_dimension',
+                JemImageProfilePolicy::defaultUploadMaxDimension(
+                    $jemsettings,
+                    JemImageProfilePolicy::EVENT_INTRO
+                )
+            );
+            $fullImageMaxDimension = $jinput->getInt(
+                'fullimage_max_dimension',
+                JemImageProfilePolicy::defaultUploadMaxDimension(
+                    $jemsettings,
+                    JemImageProfilePolicy::EVENT_FULL
+                )
+            );
+            $imageRatio = $jinput->getCmd('image_ratio', '');
+            $fullImageRatio = $jinput->getCmd('fullimage_ratio', '');
+            $datimage = $jinput->getCmd('datimage', '');
+            $fullimage = $jinput->getCmd('fullimage', '');
 
-                if (empty($file)) {
-                    $file2 = $jinput->files->get('jform', array(), 'array');
-                    if (!empty($file2['userfile'])) {
-                        $file = $file2['userfile'];
-                    }
-                    if (!empty($file2['fulluserfile'])) {
-                        $fullFile = $file2['fulluserfile'];
-                    }
+            if (empty($file)) {
+                $file2 = $jinput->files->get('jform', array(), 'array');
+                if (!empty($file2['userfile'])) {
+                    $file = $file2['userfile'];
+                }
+                if (!empty($file2['fulluserfile'])) {
+                    $fullFile = $file2['fulluserfile'];
+                }
+            }
+
+            if (!empty($file['name']) || !empty($fullFile['name'])) {
+                $resolvedImagePath = JemEventImagePath::normaliseRelativeFolder($this->image_path ?? '');
+                $this->image_path = $resolvedImagePath !== '' ? $resolvedImagePath : JemEventImagePath::configuredFolderFromEvent($this);
+
+                if (!JemEventImagePath::ensureEventFolders($this->image_path)) {
+                    $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
+
+                    return false;
                 }
 
-                if (!empty($file['name']) || !empty($fullFile['name'])) {
-                    $resolvedImagePath = JemEventImagePath::normaliseRelativeFolder($this->image_path ?? '');
-                    $this->image_path = $resolvedImagePath !== '' ? $resolvedImagePath : JemEventImagePath::configuredFolderFromEvent($this);
-
-                    if (!JemEventImagePath::ensureEventFolders($this->image_path)) {
-                        $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
-
-                        return false;
-                    }
-
-                    $image_dir = JemEventImagePath::absoluteImageFolder($this->image_path);
-                }
-                if (!empty($file['name'])) {
-                    // only on first event, skip on recurrence events
-                    //if (empty($this->recurrence_first_id)) {
-                        $filename = JemImage::sanitize($image_dir, $file['name']);
-                        $filepath = $image_dir . $filename;
-                        $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
-
-                        if (!JemImage::uploadProfileImage(
-                            $file,
-                            $filepath,
-                            $thumbnail,
-                            $jemsettings,
-                            JemImageProfilePolicy::EVENT_INTRO,
-                            $imageMaxDimension,
-                            $imageRatio
-                        )) {
-                            return false;
-                        }
-
-                        $uploadedImages[] = array($filepath, $thumbnail);
-                        $images_to_delete[] = $this->datimage; // delete previous image
-                        $this->datimage = $filename;
-                    //}
-                } elseif (!empty($removeimage)) {
-                    // if removeimage is non-zero remove image from event
-                    // (file will be deleted later (e.g. housekeeping) if unused)
-                    $images_to_delete[] = $this->datimage;
-                    $this->datimage = '';
-                } elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
-                    // event is a copy so copy datimage too
-                    if (is_file($image_dir . $datimage)) {
-                        // if it's already within image folder it's safe
-                        $this->datimage = $datimage;
-                    }
-                }
-
-                if (!empty($fullFile['name'])) {
-                    $filename = JemImage::sanitize($image_dir, $fullFile['name']);
+                $image_dir = JemEventImagePath::absoluteImageFolder($this->image_path);
+            }
+            if (!empty($file['name'])) {
+                // only on first event, skip on recurrence events
+                //if (empty($this->recurrence_first_id)) {
+                    $filename = JemImage::sanitize($image_dir, $file['name']);
                     $filepath = $image_dir . $filename;
                     $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
 
                     if (!JemImage::uploadProfileImage(
-                        $fullFile,
+                        $file,
                         $filepath,
                         $thumbnail,
                         $jemsettings,
-                        JemImageProfilePolicy::EVENT_FULL,
-                        $fullImageMaxDimension,
-                        $fullImageRatio
+                        JemImageProfilePolicy::EVENT_INTRO,
+                        $imageMaxDimension,
+                        $imageRatio
                     )) {
-                        foreach ($uploadedImages as $uploadedImage) {
-                            foreach ($uploadedImage as $uploadedPath) {
-                                if (File::exists($uploadedPath)) {
-                                    File::delete($uploadedPath);
-                                }
-                            }
-                        }
-
                         return false;
                     }
 
                     $uploadedImages[] = array($filepath, $thumbnail);
-                    $images_to_delete[] = $this->fullimage;
-                    $this->fullimage = $filename;
-                } elseif (!empty($removefullimage)) {
-                    $images_to_delete[] = $this->fullimage;
-                    $this->fullimage = '';
-                } elseif (!$this->id && is_null($this->fullimage) && !empty($fullimage)) {
-                    if (is_file($image_dir . $fullimage)) {
-                        $this->fullimage = $fullimage;
-                    }
+                    $images_to_delete[] = $this->datimage; // delete previous image
+                    $this->datimage = $filename;
+                //}
+            } elseif (!empty($removeimage)) {
+                // if removeimage is non-zero remove image from event
+                // (file will be deleted later (e.g. housekeeping) if unused)
+                $images_to_delete[] = $this->datimage;
+                $this->datimage = '';
+            } elseif (!$this->id && is_null($this->datimage) && !empty($datimage)) {
+                // event is a copy so copy datimage too
+                if (is_file($image_dir . $datimage)) {
+                    // if it's already within image folder it's safe
+                    $this->datimage = $datimage;
                 }
-            } // end image if
-        } // if (!backend)
+            }
+
+            if (!empty($fullFile['name'])) {
+                $filename = JemImage::sanitize($image_dir, $fullFile['name']);
+                $filepath = $image_dir . $filename;
+                $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
+
+                if (!JemImage::uploadProfileImage(
+                    $fullFile,
+                    $filepath,
+                    $thumbnail,
+                    $jemsettings,
+                    JemImageProfilePolicy::EVENT_FULL,
+                    $fullImageMaxDimension,
+                    $fullImageRatio
+                )) {
+                    foreach ($uploadedImages as $uploadedImage) {
+                        foreach ($uploadedImage as $uploadedPath) {
+                            if (File::exists($uploadedPath)) {
+                                File::delete($uploadedPath);
+                            }
+                        }
+                    }
+
+                    return false;
+                }
+
+                $uploadedImages[] = array($filepath, $thumbnail);
+                $images_to_delete[] = $this->fullimage;
+                $this->fullimage = $filename;
+            } elseif (!empty($removefullimage)) {
+                $images_to_delete[] = $this->fullimage;
+                $this->fullimage = '';
+            } elseif (!$this->id && is_null($this->fullimage) && !empty($fullimage)) {
+                if (is_file($image_dir . $fullimage)) {
+                    $this->fullimage = $fullimage;
+                }
+            }
+        }
 
         foreach (array('datimage', 'fullimage') as $imageField) {
             if (!property_exists($this, $imageField)) {
                 continue;
             }
 
-            $format = File::getExt($image_dir . $this->$imageField);
-            if (!in_array($format, $allowable))
-            {
+            $image = trim((string) $this->$imageField);
+            $safeImage = File::makeSafe(basename($image));
+            $format = strtolower(File::getExt($safeImage));
+            $currentPath = $image_dir . $safeImage;
+            $previousPath = JemEventImagePath::absoluteImageFolder($previousImagePath) . $safeImage;
+
+            if ($image !== ''
+                && ($safeImage !== $image
+                    || !in_array($format, $allowable, true)
+                    || (!File::exists($currentPath) && !File::exists($previousPath)))) {
                 $this->$imageField = '';
             }
         }

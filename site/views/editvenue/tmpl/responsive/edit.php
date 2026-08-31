@@ -986,7 +986,7 @@ Text::script('JCANCEL');
             <!--  VENUE-DETAILS TAB -->
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_INFO_TAB'), 'venue-details'); ?>
             <?php echo HTMLHelper::_('uitab.startTabSet', 'jem-editvenue-tabs', ['active' => 'venue-details', 'recall' => true, 'breakpoint' => 768]); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-details', Text::_('COM_JEM_EDITVENUE_INFO_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-details', Text::_('COM_JEM_DETAILS')); ?>
 
             <fieldset class="jem-editvenue-section">
                 <legend><?php echo Text::_('COM_JEM_VENUE_DETAILS_OPTIONS'); ?></legend>

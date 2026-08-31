@@ -796,7 +796,7 @@ $document->addStyleDeclaration('
             <!-- DETAILS TAB -->
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab'); ?>
             <?php echo HTMLHelper::_('uitab.startTabSet', 'jem-editevent-tabs', ['active' => 'editevent-infotab', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-infotab', Text::_('COM_JEM_EDITEVENT_INFO_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-infotab', Text::_('COM_JEM_DETAILS')); ?>
 
             <fieldset class="jem-editevent-details-fieldset">
                 <legend><?php echo Text::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>

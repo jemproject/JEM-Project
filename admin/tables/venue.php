@@ -322,63 +322,70 @@ class JemTableVenue extends Table
         $image_to_delete = false;
         $uploadedImage = array();
 
-        // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
-        if (!$backend) {
-            if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
-                $file = $jinput->files->get('userfile', array(), 'array');
-                $removeimage = $jinput->getInt('removeimage', 0);
-                $imageMaxDimension = $jinput->getInt(
-                    'image_max_dimension',
-                    JemImageProfilePolicy::maxDimension($jemsettings)
-                );
-                $imageRatio = $jinput->getCmd('image_ratio', '');
-                $locimage = $jinput->getCmd('locimage', '');
+        // Process direct uploads in both editors. The frontend upload setting
+        // does not restrict authorised administrator image management.
+        if ($backend || $jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1) {
+            $file = $jinput->files->get('userfile', array(), 'array');
+            $removeimage = $jinput->getInt('removeimage', 0);
+            $imageMaxDimension = $jinput->getInt(
+                'image_max_dimension',
+                JemImageProfilePolicy::defaultUploadMaxDimension(
+                    $jemsettings,
+                    JemImageProfilePolicy::VENUE
+                )
+            );
+            $imageRatio = $jinput->getCmd('image_ratio', '');
+            $locimage = $jinput->getCmd('locimage', '');
 
-                if (empty($file)) {
-                    $file2 = $jinput->files->get('jform', array(), 'array');
-                    if (!empty($file2['userfile'])) {
-                        $file = $file2['userfile'];
-                    }
+            if (empty($file)) {
+                $file2 = $jinput->files->get('jform', array(), 'array');
+                if (!empty($file2['userfile'])) {
+                    $file = $file2['userfile'];
+                }
+            }
+
+            if (!empty($file['name'])) {
+                $filename = JemImage::sanitize($image_dir, $file['name']);
+                $filepath = $image_dir . $filename;
+                $thumbnail = JemVenueImagePath::absoluteThumbFolder($this->image_path ?? '') . $filename;
+
+                if (!JemImage::uploadProfileImage(
+                    $file,
+                    $filepath,
+                    $thumbnail,
+                    $jemsettings,
+                    JemImageProfilePolicy::VENUE,
+                    $imageMaxDimension,
+                    $imageRatio
+                )) {
+                    return false;
                 }
 
-                if (!empty($file['name'])) {
-                    $filename = JemImage::sanitize($image_dir, $file['name']);
-                    $filepath = $image_dir . $filename;
-                    $thumbnail = JemVenueImagePath::absoluteThumbFolder($this->image_path ?? '') . $filename;
-
-                    if (!JemImage::uploadProfileImage(
-                        $file,
-                        $filepath,
-                        $thumbnail,
-                        $jemsettings,
-                        JemImageProfilePolicy::VENUE,
-                        $imageMaxDimension,
-                        $imageRatio
-                    )) {
-                        return false;
-                    }
-
-                    $uploadedImage = array($filepath, $thumbnail);
-                    $image_to_delete = $this->locimage; // delete previous image
-                    $this->locimage = $filename;
-                } elseif (!empty($removeimage)) {
-                    // if removeimage is non-zero remove image from venue
-                    // (file will be deleted later (e.g. housekeeping) if unused)
-                    $image_to_delete = $this->locimage;
-                    $this->locimage = '';
-                } elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
-                    // venue is a copy so copy locimage too
-                    if (is_file($image_dir . $locimage)) {
-                        // if it's already within image folder it's safe
-                        $this->locimage = $locimage;
-                    }
+                $uploadedImage = array($filepath, $thumbnail);
+                $image_to_delete = $this->locimage; // delete previous image
+                $this->locimage = $filename;
+            } elseif (!empty($removeimage)) {
+                // if removeimage is non-zero remove image from venue
+                // (file will be deleted later (e.g. housekeeping) if unused)
+                $image_to_delete = $this->locimage;
+                $this->locimage = '';
+            } elseif (!$this->id && is_null($this->locimage) && !empty($locimage)) {
+                // venue is a copy so copy locimage too
+                if (is_file($image_dir . $locimage)) {
+                    // if it's already within image folder it's safe
+                    $this->locimage = $locimage;
                 }
-            } // end image if
-        } // if (!backend)
+            }
+        }
 
-        $format = File::getExt($image_dir . $this->locimage);
-        if (!in_array($format, $allowable))
-        {
+        $image = trim((string) $this->locimage);
+        $safeImage = File::makeSafe(basename($image));
+        $format = strtolower(File::getExt($safeImage));
+
+        if ($image !== ''
+            && ($safeImage !== $image
+                || !in_array($format, $allowable, true)
+                || !File::exists($image_dir . $safeImage))) {
             $this->locimage = '';
         }
 

@@ -70,6 +70,7 @@ class JemViewVenue extends JemAdminView
         // Load Scripts
         $wa->useScript('jquery');
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
+        $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
 
         $language = Factory::getApplication()->getLanguage();
         $language = $language->getTag();

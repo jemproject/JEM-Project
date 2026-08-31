@@ -31,6 +31,13 @@
         return !published || String(published.value) === '1';
     }
 
+    function isCancelTask(form) {
+        var task = form.querySelector('input[name="task"]');
+        var taskName = task ? String(task.value || '').toLowerCase() : '';
+
+        return /(^|\.)(cancel|close)$/.test(taskName);
+    }
+
     function hasImage(rule) {
         var selected = findFirst(rule.selectionIds || []);
         var upload = rule.uploadId ? document.getElementById(rule.uploadId) : null;
@@ -127,6 +134,10 @@
         }
 
         form.addEventListener('submit', function (event) {
+            if (isCancelTask(form)) {
+                return;
+            }
+
             if (!validate(options, true)) {
                 event.preventDefault();
                 event.stopImmediatePropagation();

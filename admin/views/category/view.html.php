@@ -37,6 +37,9 @@ class JemViewCategory extends JemAdminView
 
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
+        $wa = $this->document->getWebAssetManager();
+        $wa->useScript('jquery');
+        $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -87,7 +90,7 @@ class JemViewCategory extends JemAdminView
         $canSave2Copy      = !$isNew && $canDo->get('core.create');
         $cancelText        = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
-        $title = Text::_('COM_JEM_CATEGORY_BASE_'.($isNew?'ADD':'EDIT').'_TITLE');
+        $title = Text::_($isNew ? 'COM_JEM_ADD_CATEGORY' : 'COM_JEM_EDIT_CATEGORY');
         // Prepare the toolbar.
         ToolbarHelper::title($title, 'category-'.($isNew?'add':'edit').' -category-'.($isNew?'add':'edit'));
 

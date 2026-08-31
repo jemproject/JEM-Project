@@ -118,11 +118,11 @@
             value="1"
             checked="0"
         />
-        <field name="locimage" type="imageselect"
-            class="inputbox"
+        <field name="locimage" type="imageselectevent"
+            addfieldpath="/components/com_jem/models/fields"
+            class="inputbox form-select"
             size="40"
-            imagetype="venues"
-            label="COM_JEM_IMAGESELECT"
+            label="COM_JEM_SERVER_IMAGE"
             description="COM_JEM_IMAGESELECT"
         />
         <field name="image_path" type="hidden" filter="string" />
@@ -133,6 +133,17 @@
             label="COM_JEM_VENUE_IMAGE_ALT"
             description="COM_JEM_VENUE_IMAGE_ALT_DESC"
             filter="string"
+        />
+        <field name="userfile" type="jemimagefile"
+            addfieldpath="/components/com_jem/models/fields"
+            class="inputbox"
+            size="40"
+            label="COM_JEM_UPLOAD_NEW_IMAGE"
+            description="COM_JEM_UPLOAD_IMAGE"
+            imageprofile="venue"
+            clearselect="jform_locimage"
+            removefield="removeimage"
+            resolutionfield="jem-image-resolution-venue"
         />
         <field name="published" type="list"
             label="JSTATUS"

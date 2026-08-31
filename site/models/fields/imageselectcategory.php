@@ -28,6 +28,7 @@ class JFormFieldImageselectcategory extends JFormFieldImageselectevent
         );
         $path = JPATH_SITE . '/images/jem/categories';
         $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/images/jem/categories/';
+        $this->imageRelativePath = 'images/jem/categories';
 
         if (!is_dir($path)) {
             return $options;

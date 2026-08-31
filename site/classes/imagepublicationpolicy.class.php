@@ -36,7 +36,7 @@ final class JemImagePublicationPolicy
                 array(JemImageProfilePolicy::VENUE, array('jform_locimage', 'jform_locimage_image', 'locimage'), 'jform_userfile', 'removeimage'),
             ),
             'category' => array(
-                array(JemImageProfilePolicy::CATEGORY, array('jform_image', 'jform_image_image'), '', ''),
+                array(JemImageProfilePolicy::CATEGORY, array('jform_image', 'jform_image_image'), 'jform_userfile', 'removeimage'),
             ),
         );
 
