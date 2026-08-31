@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\Folder;
 
 /**
@@ -20,6 +21,8 @@ use Joomla\Filesystem\Folder;
 class JFormFieldImageselectevent extends ListField
 {
     protected $type = 'Imageselectevent';
+
+    protected $imageBaseUrl = '';
 
     protected function getInput()
     {
@@ -55,6 +58,8 @@ class JFormFieldImageselectevent extends ListField
         $fancyAttr .= ' search-placeholder="'
             . htmlspecialchars(Text::_('JSEARCH_FILTER'), ENT_QUOTES, 'UTF-8') . '"';
         $fancyAttr .= ' min-term-length="1"';
+        $fancyAttr .= ' data-jem-image-base-url="'
+            . htmlspecialchars($this->imageBaseUrl, ENT_QUOTES, 'UTF-8') . '"';
 
         return '<joomla-field-fancy-select ' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>';
     }
@@ -67,6 +72,7 @@ class JFormFieldImageselectevent extends ListField
 
         $folder = in_array((string) $this->fieldname, array('locimage'), true) ? 'venues' : 'events';
         $path = JPATH_SITE . '/images/jem/' . $folder;
+        $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/images/jem/' . $folder . '/';
 
         if (!is_dir($path)) {
             return array_merge(parent::getOptions(), $options);

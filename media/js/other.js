@@ -39,6 +39,23 @@ jQuery(document).ready(function ($) {
         }
     }
 
+    function setServerImageValue(imageSelect, value) {
+        if (!imageSelect) {
+            return;
+        }
+
+        var fancySelect = imageSelect.closest('joomla-field-fancy-select');
+
+        imageSelect.value = value;
+
+        if (fancySelect && fancySelect.choicesInstance) {
+            fancySelect.choicesInstance.removeActiveItems();
+            fancySelect.choicesInstance.setChoiceByValue(value);
+        }
+
+        imageSelect.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+
     $('.jem-image-upload-panel').each(function () {
         syncPreviewStage(this);
     });
@@ -65,7 +82,7 @@ jQuery(document).ready(function ($) {
             fileInput.value = '';
         }
         if (imageSelect) {
-            $(imageSelect).val('').trigger('change');
+            setServerImageValue(imageSelect, '');
         }
         if (currentPreview) {
             currentPreview.hidden = true;
@@ -94,6 +111,10 @@ jQuery(document).ready(function ($) {
         var previewWrap = panel ? panel.querySelector('.jem-image-selected-preview') : null;
         var previewImage = previewWrap ? previewWrap.querySelector('img') : null;
         var currentPreview = panel ? panel.querySelector('.jem-image-current') : null;
+        var imageSelect = panel
+            ? panel.querySelector('joomla-field-fancy-select[data-jem-image-base-url] select')
+            : null;
+        var removeImage = panel ? panel.querySelector('#removeimage, #removefullimage') : null;
 
         if (!previewWrap || !previewImage) {
             return;
@@ -113,6 +134,13 @@ jQuery(document).ready(function ($) {
             return;
         }
 
+        if (imageSelect && imageSelect.value) {
+            setServerImageValue(imageSelect, '');
+        }
+        if (removeImage) {
+            removeImage.value = '0';
+        }
+
         var reader = new FileReader();
         reader.onload = function (event) {
             previewImage.src = event.target.result;
@@ -125,6 +153,60 @@ jQuery(document).ready(function ($) {
             syncPreviewStage(panel);
         };
         reader.readAsDataURL(fileInput.files[0]);
+    });
+
+    $('.jem-image-upload-panel joomla-field-fancy-select[data-jem-image-base-url] select').on('change', function () {
+        var imageSelect = this;
+        var panel = imageSelect.closest('.jem-image-upload-panel');
+        var fancySelect = imageSelect.closest('joomla-field-fancy-select[data-jem-image-base-url]');
+        var previewWrap = panel ? panel.querySelector('.jem-image-selected-preview') : null;
+        var previewImage = previewWrap ? previewWrap.querySelector('img') : null;
+        var currentPreview = panel ? panel.querySelector('.jem-image-current') : null;
+        var clearButton = panel ? panel.querySelector('.jem-image-clear') : null;
+        var fileInputId = clearButton ? clearButton.dataset.jemImageFile : '';
+        var fileInput = fileInputId
+            ? document.getElementById(fileInputId)
+            : (panel ? panel.querySelector('input[type="file"]') : null);
+        var removeImage = panel ? panel.querySelector('#removeimage, #removefullimage') : null;
+        var filename = imageSelect.value || '';
+
+        if (!fancySelect || !previewWrap || !previewImage) {
+            return;
+        }
+
+        if (!filename) {
+            if (fileInput && fileInput.files && fileInput.files.length) {
+                syncPreviewStage(panel);
+                return;
+            }
+
+            previewImage.removeAttribute('src');
+            previewWrap.hidden = true;
+
+            if (currentPreview) {
+                currentPreview.hidden = false;
+            }
+
+            syncPreviewStage(panel);
+            return;
+        }
+
+        if (fileInput && (fileInput.value || (fileInput.files && fileInput.files.length))) {
+            fileInput.value = '';
+            fileInput.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+        if (removeImage) {
+            removeImage.value = '0';
+        }
+
+        previewImage.src = fancySelect.dataset.jemImageBaseUrl + encodeURIComponent(filename);
+        previewWrap.hidden = false;
+
+        if (currentPreview) {
+            currentPreview.hidden = true;
+        }
+
+        syncPreviewStage(panel);
     });
 });
 

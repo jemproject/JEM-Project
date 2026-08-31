@@ -470,30 +470,6 @@ $document->addStyleDeclaration('
 
 <script>
     jQuery(document).ready(function($) {
-        var imageConflictMessage = <?php echo json_encode(Text::_('COM_JEM_IMAGE_UPLOAD_CONFLICT')); ?>;
-
-        function resetSelect($select) {
-            if (!$select.length) {
-                return;
-            }
-
-            $select.val('').trigger('change');
-            var fancy = $select.closest('joomla-field-fancy-select').get(0);
-
-            if (fancy) {
-                fancy.dispatchEvent(new Event('change', {bubbles: true}));
-            }
-        }
-
-        function showImageConflictMessage() {
-            if (window.Joomla && typeof Joomla.renderMessages === 'function') {
-                Joomla.renderMessages({error: [imageConflictMessage]});
-                return;
-            }
-
-            window.alert(imageConflictMessage);
-        }
-
         $('.jem-editevent-image-upload').each(function() {
             $(this).contents().filter(function() {
                 return this.nodeType === 3 && /maximum upload size|upload size|max\.?\s*(image\s*)?filesize|file\s*size|tama[ñn]o m[aá]ximo|subida/i.test(this.nodeValue);
@@ -504,27 +480,6 @@ $document->addStyleDeclaration('
             }).remove();
         });
 
-        $('#jform_userfile, #jform_fulluserfile').on('change', function() {
-            var $file = $(this);
-            var selectId = this.id === 'jform_fulluserfile' ? 'jform_fullimage' : 'jform_datimage';
-            var removeId = this.id === 'jform_fulluserfile' ? 'removefullimage' : 'removeimage';
-
-            if ($file.val() && $('#' + selectId).val()) {
-                $file.val('');
-                showImageConflictMessage();
-                return;
-            }
-
-            if ($file.val()) {
-                $('#' + removeId).val('0');
-            }
-        });
-
-        $('#jform_datimage, #jform_fullimage').on('change', function() {
-            if (this.value) {
-                $('#' + (this.id === 'jform_fullimage' ? 'removefullimage' : 'removeimage')).val('0');
-            }
-        });
     });
 </script>
 

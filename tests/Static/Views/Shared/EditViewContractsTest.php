@@ -200,15 +200,21 @@ final class EditViewContractsTest extends TestCase
             self::assertGreaterThanOrEqual(2, substr_count($template, 'jem-image-preview-stage'), $path);
             self::assertStringContainsString("getInput('userfile')", $template);
             self::assertStringContainsString("getInput('fulluserfile')", $template);
+            self::assertStringNotContainsString('showImageConflictMessage', $template);
+            self::assertStringNotContainsString('COM_JEM_IMAGE_UPLOAD_CONFLICT', $template);
         }
 
         $previewScript = $this->read(JEM_TEST_ROOT . '/media/js/other.js');
         self::assertStringContainsString('.jem-image-upload-panel input[type="file"]', $previewScript);
+        self::assertStringContainsString("setServerImageValue(imageSelect, '');", $previewScript);
+        self::assertStringContainsString("fileInput.dispatchEvent(new Event('change', {bubbles: true}));", $previewScript);
+        self::assertStringContainsString("removeImage.value = '0';", $previewScript);
         self::assertStringNotContainsString("$('#jform_userfile').on('change'", $previewScript);
 
         $field = $this->read(JEM_TEST_ROOT . '/site/models/fields/imageselectevent.php');
         self::assertStringContainsString('search-placeholder=', $field);
         self::assertStringContainsString('min-term-length="1"', $field);
+        self::assertStringContainsString('data-jem-image-base-url=', $field);
     }
 
     public function testFrontendEditToolbarsKeepTenPixelSeparationFromTabs(): void
