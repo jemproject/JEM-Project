@@ -198,6 +198,8 @@ final class ImageCameraCaptureTest extends TestCase
             self::assertGreaterThanOrEqual(2, substr_count($template, 'jem-image-preview-stage'), $path);
             self::assertStringContainsString("getInput('userfile')", $template);
             self::assertStringContainsString("getInput('fulluserfile')", $template);
+            self::assertStringNotContainsString('showImageConflictMessage', $template);
+            self::assertStringNotContainsString('COM_JEM_IMAGE_UPLOAD_CONFLICT', $template);
             self::assertStringNotContainsString(
                 '.jem-editevent-image-upload > div:not(:first-child)',
                 $template
