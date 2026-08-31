@@ -285,9 +285,6 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
     <?php if ($this->escape($this->params->get('show_page_heading', 1))) : ?>
     <h1 class="componentheading">
         <span><?php echo $this->escape($this->params->get('page_heading')); ?></span>
-        <?php
-        echo JemOutput::editbutton($this->venue, $this->params, NULL, $this->permissions->canEditVenue, 'venue');
-        ?>
     </h1>
     <?php endif; ?>
 
@@ -301,6 +298,7 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
     <!--Venue-->
     <h2 class="jem">
         <?php echo $renderVenueHeading(); ?>
+        <?php echo JemOutput::editbutton($this->venue, $this->params, null, $this->permissions->canEditVenue, 'venue'); ?>
     </h2>
 
     <div class="jem-venue-overview-panel">
