@@ -6,6 +6,25 @@ use PHPUnit\Framework\TestCase;
 
 final class SqlConfigDefaultsTest extends TestCase
 {
+    public function testImageProfileUploadDefaultsAreInstallableAndUpgradeSafe(): void
+    {
+        $installSql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+        $updateSql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
+        $script = $this->read(JEM_TEST_ROOT . '/script.php');
+        $defaults = array(
+            'image_event_intro_default_dimension' => '1200',
+            'image_event_full_default_dimension' => '1920',
+            'image_venue_default_dimension' => '1280',
+            'image_category_default_dimension' => '800',
+        );
+
+        foreach ($defaults as $key => $value) {
+            self::assertStringContainsString("('" . $key . "', '" . $value . "')", $installSql);
+            self::assertStringContainsString("VALUES ('" . $key . "', '" . $value . "')", $updateSql);
+            self::assertStringContainsString("'" . $key . "' => '" . $value . "'", $script);
+        }
+    }
+
     public function testImportSecurityDefaultsAreMigratedWithoutOverwritingSavedValues(): void
     {
         $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');

@@ -52,6 +52,9 @@ class JFormFieldImageselectevent extends ListField
         $fancyAttr .= $this->required ? ' required aria-required="true"' : '';
         $fancyAttr .= $this->disabled ? ' disabled="disabled"' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';
+        $fancyAttr .= ' search-placeholder="'
+            . htmlspecialchars(Text::_('JSEARCH_FILTER'), ENT_QUOTES, 'UTF-8') . '"';
+        $fancyAttr .= ' min-term-length="1"';
 
         return '<joomla-field-fancy-select ' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>';
     }
@@ -126,8 +129,8 @@ joomla-field-fancy-select.jem-image-fancy-select .choices__list[aria-expanded] .
     max-width: 100%;
 }
 joomla-field-fancy-select.jem-image-fancy-select .choices__input--cloned {
-    min-width: 1ch !important;
-    width: 1ch !important;
+    min-width: 100% !important;
+    width: 100% !important;
     max-width: 100% !important;
 }
 joomla-field-fancy-select.jem-image-fancy-select .choices__list,

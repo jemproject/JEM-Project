@@ -9,36 +9,91 @@
  * this file manages the js script for adding/removing attachements in event
  */
 jQuery(document).ready(function ($) {
-    $('#userfile-remove').on('click', function (event) {
-        var di = document.getElementById('datimage');
-        if (di) {
-            di.style.display = 'none';
+    function hasVisibleImage(wrapper) {
+        var image = wrapper ? wrapper.querySelector('img') : null;
+
+        return Boolean(
+            wrapper
+            && !wrapper.hidden
+            && wrapper.style.display !== 'none'
+            && image
+            && image.getAttribute('src')
+        );
+    }
+
+    function syncPreviewStage(panel) {
+        var stage = panel ? panel.querySelector('.jem-image-preview-stage') : null;
+
+        if (!stage) {
+            return;
         }
-        var li = document.getElementById('locimage');
-        if (li) {
-            li.style.display = 'none';
+
+        var emptyMessage = stage.querySelector('.jem-image-preview-empty');
+        var hasImage = hasVisibleImage(stage.querySelector('.jem-image-selected-preview'))
+            || hasVisibleImage(stage.querySelector('.jem-image-current'));
+
+        stage.classList.toggle('jem-image-preview-stage--has-image', hasImage);
+
+        if (emptyMessage) {
+            emptyMessage.hidden = hasImage;
         }
-        var ufr = document.getElementById('userfile-remove');
-        if (ufr) {
-            var panel = ufr.closest('.jem-image-upload-panel');
-            if (panel) {
-                var preview = panel.querySelector('.jem-image-current');
-                if (preview) {
-                    preview.style.display = 'none';
-                }
-            }
-            ufr.style.display = 'none';
-        }
-        var ri = document.getElementById('removeimage');
-        if (ri) {
-            ri.value = '1';
-        }
+    }
+
+    $('.jem-image-upload-panel').each(function () {
+        syncPreviewStage(this);
     });
 
-    $('#jform_userfile').on('change', function () {
+    $('.jem-image-clear').on('click', function () {
+        var panel = this.closest('.jem-image-upload-panel');
+
+        if (!panel) {
+            return;
+        }
+
+        var fileInputId = this.dataset.jemImageFile || '';
+        var selectId = this.dataset.jemImageSelect || '';
+        var fileInput = fileInputId ? document.getElementById(fileInputId) : panel.querySelector('input[type="file"]');
+        var imageSelect = selectId ? document.getElementById(selectId) : null;
+        var currentPreview = panel.querySelector('.jem-image-current');
+        var selectedPreview = panel.querySelector('.jem-image-selected-preview');
+        var selectedImage = selectedPreview ? selectedPreview.querySelector('img') : null;
+        var storedImage = panel.querySelector('#locimage');
+        var alternativeText = panel.querySelector('#jform_locimage_alt, [id$="_alt"]');
+        var removeImage = panel.querySelector('#removeimage, #removefullimage');
+
+        if (fileInput) {
+            fileInput.value = '';
+        }
+        if (imageSelect) {
+            $(imageSelect).val('').trigger('change');
+        }
+        if (currentPreview) {
+            currentPreview.hidden = true;
+        }
+        if (selectedPreview) {
+            selectedPreview.hidden = true;
+        }
+        if (selectedImage) {
+            selectedImage.removeAttribute('src');
+        }
+        if (storedImage) {
+            storedImage.value = '';
+        }
+        if (alternativeText) {
+            alternativeText.value = '';
+        }
+        if (removeImage) {
+            removeImage.value = '1';
+        }
+        syncPreviewStage(panel);
+    });
+
+    $('.jem-image-upload-panel input[type="file"]').on('change', function () {
         var fileInput = this;
-        var previewWrap = document.querySelector('.jem-image-selected-preview');
-        var previewImage = document.getElementById('jem-selected-venue-image-preview');
+        var panel = fileInput.closest('.jem-image-upload-panel');
+        var previewWrap = panel ? panel.querySelector('.jem-image-selected-preview') : null;
+        var previewImage = previewWrap ? previewWrap.querySelector('img') : null;
+        var currentPreview = panel ? panel.querySelector('.jem-image-current') : null;
 
         if (!previewWrap || !previewImage) {
             return;
@@ -47,12 +102,14 @@ jQuery(document).ready(function ($) {
         if (!fileInput.files || !fileInput.files[0]) {
             previewImage.removeAttribute('src');
             previewWrap.hidden = true;
+            syncPreviewStage(panel);
             return;
         }
 
         if (!fileInput.files[0].type || fileInput.files[0].type.indexOf('image/') !== 0) {
             previewImage.removeAttribute('src');
             previewWrap.hidden = true;
+            syncPreviewStage(panel);
             return;
         }
 
@@ -60,9 +117,14 @@ jQuery(document).ready(function ($) {
         reader.onload = function (event) {
             previewImage.src = event.target.result;
             previewWrap.hidden = false;
+
+            if (currentPreview) {
+                currentPreview.hidden = true;
+            }
+
+            syncPreviewStage(panel);
         };
         reader.readAsDataURL(fileInput.files[0]);
     });
-
 });
 

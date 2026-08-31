@@ -4,6 +4,10 @@
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('globalattribs', '{"loglevel":"2"}');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('backend_events_order', 'a.dates');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('backend_events_direction', 'ASC');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_intro_default_dimension', '1200');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_event_full_default_dimension', '1920');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_venue_default_dimension', '1280');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_category_default_dimension', '800');
 UPDATE `#__jem_config` SET `value` = JSON_INSERT(`value`, '$.import_additional_blocked_tags', '', '$.import_allow_trusted_iframes', '0', '$.import_trusted_iframe_hosts', '') WHERE `keyname` = 'globalattribs';
 
 -- Keep each schema change in a separate Joomla-detectable statement so the

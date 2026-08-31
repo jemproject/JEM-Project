@@ -532,13 +532,23 @@ class com_jemInstallerScript
         $db->execute();
 
         if (in_array($db->replacePrefix('#__jem_config'), $existingTables, true)) {
-            $query = $db->getQuery(true)
-                ->insert($db->quoteName('#__jem_config'))
-                ->columns(array($db->quoteName('keyname'), $db->quoteName('value')))
-                ->values($db->quote('event_timezone_default') . ', ' . $db->quote('joomla'));
-            $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
-            $db->setQuery($query);
-            $db->execute();
+            $configDefaults = array(
+                'event_timezone_default' => 'joomla',
+                'image_event_intro_default_dimension' => '1200',
+                'image_event_full_default_dimension' => '1920',
+                'image_venue_default_dimension' => '1280',
+                'image_category_default_dimension' => '800',
+            );
+
+            foreach ($configDefaults as $key => $value) {
+                $query = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jem_config'))
+                    ->columns(array($db->quoteName('keyname'), $db->quoteName('value')))
+                    ->values($db->quote($key) . ', ' . $db->quote($value));
+                $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
+                $db->setQuery($query);
+                $db->execute();
+            }
         }
     }
 

@@ -179,6 +179,23 @@ class JemModelSettings extends AdminModel
         if (empty($data['imagehight'])) {
             $data['imagehight'] = 100;
         }
+        $imageProfileDefaults = array(
+            'image_event_intro_default_dimension' => 1200,
+            'image_event_full_default_dimension' => 1920,
+            'image_venue_default_dimension' => 1280,
+            'image_category_default_dimension' => 800,
+        );
+        foreach ($imageProfileDefaults as $key => $default) {
+            $value = filter_var($data[$key] ?? $default, FILTER_VALIDATE_INT);
+
+            if ($value === false || $value < 64 || $value > 8192) {
+                $this->setError(Text::_('COM_JEM_SETTINGS_IMAGE_DEFAULT_DIMENSION_INVALID'));
+
+                return false;
+            }
+
+            $data[$key] = (int) $value;
+        }
         if (empty($data['pdf_imagewidth'])) {
             $data['pdf_imagewidth'] = 40;
         }

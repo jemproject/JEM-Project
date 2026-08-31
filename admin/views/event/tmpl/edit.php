@@ -586,6 +586,7 @@ $this->document->addStyleDeclaration('
 
             <?php //echo HTMLHelper::_('tabs.end'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
             <!-- END OF LEFT DIV -->
         </div>
 

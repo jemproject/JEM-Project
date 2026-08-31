@@ -954,9 +954,10 @@ Text::script('JCANCEL');
 
         <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int)$this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
 
-            <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
-            <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
-
+            <div class="jem-editvenue-toolbar">
+                <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
+                <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+            </div>
 
             <?php if ($this->params->get('showintrotext')) : ?>
                 <div class="description no_space floattext">
@@ -970,41 +971,17 @@ Text::script('JCANCEL');
 
             <!--  VENUE-DETAILS TAB -->
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_INFO_TAB'), 'venue-details'); ?>
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'venue-details', 'recall' => true, 'breakpoint' => 768]); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-details', Text::_('COM_JEM_EDITVENUE_INFO_TAB')); ?>
-            <fieldset>
-                <legend><?php echo Text::_('COM_JEM_EDITVENUE_DETAILS_LEGEND'); ?></legend>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'jem-editvenue-tabs', ['active' => 'venue-details', 'recall' => true, 'breakpoint' => 768]); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-details', Text::_('COM_JEM_EDITVENUE_INFO_TAB')); ?>
+            <fieldset class="jem-editvenue-section">
+                <legend><?php echo Text::_('COM_JEM_VENUE_DETAILS_OPTIONS'); ?></legend>
                 <ul class="adminformlist">
                     <li><?php echo $this->form->getLabel('venue'); ?><?php echo $this->form->getInput('venue'); ?></li>
                     <?php if (is_null($this->item->id)) : ?>
                         <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
-                    <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
-                    <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
-                    <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
                     <li><?php echo $this->form->getLabel('level'); ?><?php echo $this->form->getInput('level'); ?></li>
                     <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
-                    <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
-                    <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
-                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
-                    <li class="jem-venue-geocode-actions">
-                        <label>&nbsp;</label>
-                        <div class="jem-geocode-toolbar">
-                            <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
-                            <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
-                        </div>
-                        <div class="alert alert-info d-none align-items-center gap-2 mt-2 mb-0" id="jem-suggested-address">
-                            <span id="jem-suggested-address-text"></span>
-                            <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
-                        </div>
-                    </li>
-                    <li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
-                    <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
-                    <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
-                    <li><?php echo $this->form->getLabel('email'); ?><?php echo $this->form->getInput('email'); ?></li>
-                    <li><?php echo $this->form->getLabel('phone'); ?><?php echo $this->form->getInput('phone'); ?></li>
-                    <li><?php echo $this->form->getLabel('mobile'); ?><?php echo $this->form->getInput('mobile'); ?></li>
                     <li>
                         <div class="row mb-3">
                             <div class="col-md-2">
@@ -1022,7 +999,48 @@ Text::script('JCANCEL');
                     <?php endif; ?>
                 </ul>
             </fieldset>
-            <p>&nbsp;</p>
+
+            <fieldset class="jem-editvenue-section">
+                <legend><?php echo Text::_('COM_JEM_ADDRESS'); ?></legend>
+                <ul class="adminformlist">
+                    <li><?php echo $this->form->getLabel('street'); ?><?php echo $this->form->getInput('street'); ?></li>
+                    <li><?php echo $this->form->getLabel('postalCode'); ?><?php echo $this->form->getInput('postalCode'); ?></li>
+                    <li><?php echo $this->form->getLabel('city'); ?><?php echo $this->form->getInput('city'); ?></li>
+                    <li><?php echo $this->form->getLabel('district'); ?><?php echo $this->form->getInput('district'); ?></li>
+                    <li><?php echo $this->form->getLabel('state'); ?><?php echo $this->form->getInput('state'); ?></li>
+                    <li><?php echo $this->form->getLabel('country'); ?><?php echo $this->form->getInput('country'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
+                </ul>
+            </fieldset>
+
+            <fieldset class="jem-editvenue-section">
+                <legend><?php echo Text::_('COM_JEM_COORDINATES'); ?></legend>
+                <ul class="adminformlist">
+                    <li class="jem-venue-geocode-actions">
+                        <label>&nbsp;</label>
+                        <div class="jem-geocode-toolbar">
+                            <button type="button" class="btn btn-secondary" id="jem-geocode-address"><span class="icon-arrow-down-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_COORDINATES'); ?></button>
+                            <button type="button" class="btn btn-secondary" id="jem-reverse-geocode"><span class="icon-arrow-up-4" aria-hidden="true"></span> <?php echo Text::_('COM_JEM_GEOCODE_GET_ADDRESS'); ?></button>
+                        </div>
+                        <div class="alert alert-info d-none align-items-center gap-2 mt-2 mb-0" id="jem-suggested-address">
+                            <span id="jem-suggested-address-text"></span>
+                            <button type="button" class="btn btn-sm btn-primary ms-auto" id="jem-apply-suggested-address" disabled="disabled"><?php echo Text::_('COM_JEM_GEOCODE_APPLY_SUGGESTED_ADDRESS'); ?></button>
+                        </div>
+                    </li>
+                    <li><?php echo $this->form->getLabel('latitude'); ?><?php echo $this->form->getInput('latitude'); ?></li>
+                    <li><?php echo $this->form->getLabel('longitude'); ?><?php echo $this->form->getInput('longitude'); ?></li>
+                </ul>
+            </fieldset>
+
+            <fieldset class="jem-editvenue-section">
+                <legend><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></legend>
+                <ul class="adminformlist">
+                    <li><?php echo $this->form->getLabel('url'); ?><?php echo $this->form->getInput('url'); ?></li>
+                    <li><?php echo $this->form->getLabel('email'); ?><?php echo $this->form->getInput('email'); ?></li>
+                    <li><?php echo $this->form->getLabel('phone'); ?><?php echo $this->form->getInput('phone'); ?></li>
+                    <li><?php echo $this->form->getLabel('mobile'); ?><?php echo $this->form->getInput('mobile'); ?></li>
+                </ul>
+            </fieldset>
 
             <!-- VENUE-GEODATA-->
             <?php
@@ -1094,33 +1112,34 @@ Text::script('JCANCEL');
 
             <!-- EXTENDED TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editvenue-extendedtab', Text::_('COM_JEM_EDITVENUE_EXTENDED_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'editvenue-extendedtab', Text::_('COM_JEM_IMAGE')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_EXTENDED_TAB'), 'editvenue-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
 
             <!-- PUBLISHING TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-publishtab', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-publishtab', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB'), 'venue-publishtab'); ?>
             <?php echo $this->loadTemplate('publish'); ?>
 
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-attachments', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB')); ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-attachments', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB')); ?>
                 <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachments'); ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
             <!-- OTHER TAB -->
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'venue-other', Text::_('COM_JEM_EDITVENUE_OTHER_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-other', Text::_('COM_JEM_EDITVENUE_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-other' ); ?>
             <?php echo $this->loadTemplate('other'); ?>
 
             <?php //echo HTMLHelper::_('tabs.end'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
             <div class="clearfix"></div>
             <input type="hidden" name="country" id="country" geo-data="country_short" value="">

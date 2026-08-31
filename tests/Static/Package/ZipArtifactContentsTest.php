@@ -249,6 +249,46 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testCurrentPackageContainsConventionalFrontendImageForms(): void
+    {
+        $entries = array(
+            'admin/models/forms/settings.xml',
+            'admin/models/settings.php',
+            'admin/sql/install.mysql.utf8.sql',
+            'admin/sql/updates/mysql/5.0.1.sql',
+            'admin/tables/jem_settings.php',
+            'media/js/other.js',
+            'script.php',
+            'site/models/fields/imageselectevent.php',
+            'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editvenue/tmpl/edit.php',
+            'site/views/editvenue/tmpl/responsive/edit.php',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+
+            foreach (array(
+                'media/css/image-camera.css',
+                'media/js/image-camera.js',
+                'site/classes/imagecamera.class.php',
+                'site/models/fields/jemimagefile.php',
+            ) as $cameraEntry) {
+                self::assertFalse(
+                    $this->componentEntryExists($zipFile, $cameraEntry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $cameraEntry . ' must remain exclusive to JEM 5.1.'
+                );
+            }
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
@@ -426,6 +466,30 @@ final class ZipArtifactContentsTest extends TestCase
         self::assertNotFalse($contents, $this->relativePath($packageZipFile) . ':packages/com_jem.zip:' . $entryName . ' should exist.');
 
         return $contents;
+    }
+
+    private function componentEntryExists(string $packageZipFile, string $entryName): bool
+    {
+        $zip = new ZipArchive();
+        self::assertTrue($zip->open($packageZipFile), $this->relativePath($packageZipFile) . ' should be readable as a ZIP file.');
+
+        $componentZip = $zip->getFromName('packages/com_jem.zip');
+        $zip->close();
+
+        self::assertNotFalse($componentZip, $this->relativePath($packageZipFile) . ':packages/com_jem.zip should exist.');
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem_component_');
+        self::assertIsString($temporary);
+        file_put_contents($temporary, $componentZip);
+
+        $component = new ZipArchive();
+        self::assertTrue($component->open($temporary), $this->relativePath($packageZipFile) . ':packages/com_jem.zip should be readable.');
+        $exists = $component->locateName($entryName) !== false;
+
+        $component->close();
+        unlink($temporary);
+
+        return $exists;
     }
 
     private function componentNestedZipContains(string $packageZipFile, string $outerEntryName, string $innerEntryName): bool
