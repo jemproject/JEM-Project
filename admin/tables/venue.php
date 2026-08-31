@@ -327,6 +327,11 @@ class JemTableVenue extends Table
             if (($jemsettings->imageenabled == 2 || $jemsettings->imageenabled == 1)) {
                 $file = $jinput->files->get('userfile', array(), 'array');
                 $removeimage = $jinput->getInt('removeimage', 0);
+                $imageMaxDimension = $jinput->getInt(
+                    'image_max_dimension',
+                    JemImageProfilePolicy::maxDimension($jemsettings)
+                );
+                $imageRatio = $jinput->getCmd('image_ratio', '');
                 $locimage = $jinput->getCmd('locimage', '');
 
                 if (empty($file)) {
@@ -341,7 +346,15 @@ class JemTableVenue extends Table
                     $filepath = $image_dir . $filename;
                     $thumbnail = JemVenueImagePath::absoluteThumbFolder($this->image_path ?? '') . $filename;
 
-                    if (!JemImage::uploadProfileImage($file, $filepath, $thumbnail, $jemsettings, JemImageProfilePolicy::VENUE)) {
+                    if (!JemImage::uploadProfileImage(
+                        $file,
+                        $filepath,
+                        $thumbnail,
+                        $jemsettings,
+                        JemImageProfilePolicy::VENUE,
+                        $imageMaxDimension,
+                        $imageRatio
+                    )) {
                         return false;
                     }
 

@@ -1240,6 +1240,7 @@ Text::script('JCANCEL');
 
                     <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
                 <!-- END OF LEFT DIV -->
             <!-- </div> -->

@@ -449,6 +449,65 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testCurrentPackageContainsProfileAwareCameraCapture(): void
+    {
+        $entries = array(
+            'admin/language/en-GB/com_jem.ini',
+            'admin/models/forms/settings.xml',
+            'admin/models/settings.php',
+            'admin/sql/install.mysql.utf8.sql',
+            'admin/sql/updates/mysql/5.1.0.sql',
+            'admin/tables/jem_settings.php',
+            'admin/models/event.php',
+            'admin/views/imagehandler/tmpl/uploadimage.php',
+            'media/css/image-camera.css',
+            'media/js/image-camera.js',
+            'script.php',
+            'media/js/other.js',
+            'site/classes/imagecamera.class.php',
+            'site/classes/imageprofilepolicy.class.php',
+            'site/language/en-GB/com_jem.ini',
+            'site/models/fields/imageselectevent.php',
+            'site/models/fields/jemimagefile.php',
+            'site/models/forms/event.xml',
+            'site/models/forms/venue.xml',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+        }
+    }
+
+    public function testCurrentPackageContainsClosedEventAndVenueTabSets(): void
+    {
+        $entries = array(
+            'admin/views/event/tmpl/edit.php',
+            'admin/views/venue/tmpl/edit.php',
+            'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editvenue/tmpl/edit.php',
+            'site/views/editvenue/tmpl/edit_extended.php',
+            'site/views/editvenue/tmpl/responsive/edit.php',
+            'site/views/editvenue/tmpl/responsive/edit_extended.php',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');

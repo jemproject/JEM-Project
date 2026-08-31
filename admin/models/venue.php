@@ -590,7 +590,8 @@ class JemModelVenue extends JemModelAdmin
 
         if ($filename === '') {
             if ((string) ($current['image_path'] ?? '') !== '') {
-                $db->updateObject('#__jem_venues', (object) array('id' => $venueId, 'image_path' => ''), 'id');
+                $clearImagePath = (object) array('id' => $venueId, 'image_path' => '');
+                $db->updateObject('#__jem_venues', $clearImagePath, 'id');
             }
             return true;
         }
@@ -612,11 +613,8 @@ class JemModelVenue extends JemModelAdmin
             return false;
         }
 
-        $db->updateObject(
-            '#__jem_venues',
-            (object) array('id' => $venueId, 'image_path' => $targetFolder),
-            'id'
-        );
+        $updateImagePath = (object) array('id' => $venueId, 'image_path' => $targetFolder);
+        $db->updateObject('#__jem_venues', $updateImagePath, 'id');
 
         return true;
     }

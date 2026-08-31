@@ -184,7 +184,11 @@ final class JemPackageBuilder
             return false;
         }
 
-        if ($basename === 'CODEX_PENDING_DIARY.md' || $basename === 'import-catalog.xml' || $basename === 'import_catalog_jem.xml') {
+        if (in_array($basename, array(
+            'CODEX_PENDING_DIARY.md',
+            'import-catalog.xml',
+            'import_catalog_jem.xml',
+        ), true)) {
             return false;
         }
 
@@ -236,7 +240,39 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate component archive in ' . $package);
         }
 
-        foreach (['jem.xml', 'script.php', 'admin/jem.php', 'admin/data/currencies/country-currencies.json', 'admin/data/taxrates/eu-vat-rates.json', 'admin/classes/venuecapacity.class.php', 'admin/classes/eventpricingcapacity.class.php', 'admin/views/venue/tmpl/edit_capacity.php', 'admin/views/event/tmpl/edit_pricing.php', 'site/jem.php', 'site/classes/eventimagepath.class.php', 'site/classes/eventslistmenupolicy.class.php', 'site/classes/eventstructureddata.class.php', 'site/classes/imageresourcepolicy.class.php', 'site/classes/imageprofilepolicy.class.php', 'site/classes/imagepublicationpolicy.class.php', 'site/classes/loadmorerequestpolicy.class.php', 'site/classes/pdfimagepolicy.class.php', 'site/classes/registrationservice.class.php', 'site/classes/venueimagepath.class.php', 'site/classes/icalcreator/autoload.php', 'site/common/views/tmpl/responsive/default_jem_eventslist_item.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'] as $entry) {
+        $requiredComponentEntries = [
+            'jem.xml',
+            'script.php',
+            'admin/jem.php',
+            'admin/data/currencies/country-currencies.json',
+            'admin/data/taxrates/eu-vat-rates.json',
+            'admin/classes/venuecapacity.class.php',
+            'admin/classes/eventpricingcapacity.class.php',
+            'admin/views/venue/tmpl/edit_capacity.php',
+            'admin/views/event/tmpl/edit_pricing.php',
+            'site/jem.php',
+            'site/classes/eventimagepath.class.php',
+            'site/classes/eventslistmenupolicy.class.php',
+            'site/classes/eventstructureddata.class.php',
+            'site/classes/imagecamera.class.php',
+            'site/classes/imageresourcepolicy.class.php',
+            'site/classes/imageprofilepolicy.class.php',
+            'site/classes/imagepublicationpolicy.class.php',
+            'site/classes/loadmorerequestpolicy.class.php',
+            'site/classes/pdfimagepolicy.class.php',
+            'site/classes/registrationservice.class.php',
+            'site/classes/venueimagepath.class.php',
+            'site/classes/icalcreator/autoload.php',
+            'site/models/fields/jemimagefile.php',
+            'site/common/views/tmpl/responsive/default_jem_eventslist_item.php',
+            'media/css/image-camera.css',
+            'media/js/image-camera.js',
+            'media/index.html',
+            'media/vendor/index.html',
+            'admin/assets/sampledata.zip',
+        ];
+
+        foreach ($requiredComponentEntries as $entry) {
             if ($component->locateName($entry) === false) {
                 $component->close();
                 @unlink($tmpComponent);

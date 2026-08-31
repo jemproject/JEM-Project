@@ -1915,6 +1915,18 @@ class JemModelEvent extends JemModelAdmin
             return true;
         }
 
+        // A selected or camera-generated upload is the event image. Do not copy
+        // a category default that would immediately be replaced during store().
+        $jinput = Factory::getApplication()->input;
+        $pendingImage = $jinput->files->get('userfile', array(), 'array');
+        if (empty($pendingImage)) {
+            $formFiles = $jinput->files->get('jform', array(), 'array');
+            $pendingImage = $formFiles['userfile'] ?? array();
+        }
+        if (!empty($pendingImage['name'])) {
+            return true;
+        }
+
         $catIds = array_values(array_filter(array_map('intval', $categories)));
 
         if (!$catIds) {

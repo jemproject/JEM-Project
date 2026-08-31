@@ -579,7 +579,7 @@
             label="COM_JEM_IMAGE_MAX_DIMENSION"
             description="COM_JEM_IMAGE_MAX_DIMENSION_DESC"
             class="inputbox"
-            default="3840"
+            default="2560"
             min="320"
             max="8192"
             step="1"
@@ -636,6 +636,16 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="image_event_intro_default_dimension" type="number"
+            label="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION"
+            description="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION_DESC"
+            default="1200"
+            min="64"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
         <field name="image_event_intro_ratio" type="list"
             label="COM_JEM_IMAGE_ASPECT_RATIO"
             description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
@@ -688,6 +698,16 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="image_event_full_default_dimension" type="number"
+            label="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION"
+            description="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION_DESC"
+            default="1920"
+            min="64"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
         <field name="image_event_full_ratio" type="list"
             label="COM_JEM_IMAGE_ASPECT_RATIO"
             description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
@@ -740,6 +760,16 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="image_venue_default_dimension" type="number"
+            label="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION"
+            description="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION_DESC"
+            default="1280"
+            min="64"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
         <field name="image_venue_ratio" type="list"
             label="COM_JEM_IMAGE_ASPECT_RATIO"
             description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"
@@ -792,6 +822,16 @@
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
+        <field name="image_category_default_dimension" type="number"
+            label="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION"
+            description="COM_JEM_IMAGE_DEFAULT_UPLOAD_DIMENSION_DESC"
+            default="800"
+            min="64"
+            max="8192"
+            step="1"
+            required="true"
+            filter="integer"
+        />
         <field name="image_category_ratio" type="list"
             label="COM_JEM_IMAGE_ASPECT_RATIO"
             description="COM_JEM_IMAGE_ASPECT_RATIO_DESC"

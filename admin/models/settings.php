@@ -189,7 +189,9 @@ class JemModelSettings extends AdminModel
         }
 
         // sanitize
-        $requestedMaxDimension = (int) ($data['image_max_dimension'] ?? JemImageResourcePolicy::DEFAULT_MAX_DIMENSION);
+        $requestedMaxDimension = (int) (
+            $data['image_max_dimension'] ?? JemImageProfilePolicy::DEFAULT_CONFIGURED_MAX_DIMENSION
+        );
         if ($requestedMaxDimension < JemImageResourcePolicy::MIN_CONFIGURED_DIMENSION
             || $requestedMaxDimension > JemImageResourcePolicy::MAX_CONFIGURED_DIMENSION) {
             $this->setError(Text::sprintf(
@@ -218,6 +220,12 @@ class JemModelSettings extends AdminModel
             JemImageProfilePolicy::EVENT_FULL => '16_9',
             JemImageProfilePolicy::VENUE => '4_3',
             JemImageProfilePolicy::CATEGORY => '1_1',
+        );
+        $profileDefaultDimensions = array(
+            JemImageProfilePolicy::EVENT_INTRO => 1200,
+            JemImageProfilePolicy::EVENT_FULL => 1920,
+            JemImageProfilePolicy::VENUE => 1280,
+            JemImageProfilePolicy::CATEGORY => 800,
         );
 
         foreach ($profileDefaults as $profile => $defaultRatio) {
@@ -259,6 +267,21 @@ class JemModelSettings extends AdminModel
 
                 return false;
             }
+
+            $defaultDimension = (int) ($data[$prefix . '_default_dimension']
+                ?? $profileDefaultDimensions[$profile]);
+            $minimumDefaultDimension = JemImageProfilePolicy::minimumOutputMaxDimension($data, $profile);
+            if ($defaultDimension < $minimumDefaultDimension
+                || $defaultDimension > $data['image_max_dimension']) {
+                $this->setError(Text::sprintf(
+                    'COM_JEM_SETTINGS_IMAGE_DEFAULT_DIMENSION_INVALID',
+                    $minimumDefaultDimension,
+                    $data['image_max_dimension']
+                ));
+
+                return false;
+            }
+            $data[$prefix . '_default_dimension'] = $defaultDimension;
         }
 
         if (empty($data['imagewidth'])) {

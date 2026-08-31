@@ -15,6 +15,7 @@ require_once __DIR__ . '/imageresourcepolicy.class.php';
 final class JemImageProfilePolicy
 {
     public const DEFAULT_MIN_DIMENSION = 64;
+    public const DEFAULT_CONFIGURED_MAX_DIMENSION = 2560;
     public const MIN_CONFIGURED_MIN_DIMENSION = 64;
 
     public const EVENT_INTRO = 'event_intro';
@@ -25,6 +26,7 @@ final class JemImageProfilePolicy
     public const MODE_NONE = 'none';
     public const MODE_PAD = 'pad';
     public const MODE_CROP = 'crop';
+    public const UPLOAD_RATIO_ORIGINAL = 'original';
 
     /** @var array<string, string> */
     private const PREFIXES = array(
@@ -40,6 +42,14 @@ final class JemImageProfilePolicy
         self::EVENT_FULL  => '16_9',
         self::VENUE       => '4_3',
         self::CATEGORY    => '1_1',
+    );
+
+    /** @var array<string, int> */
+    private const DEFAULT_UPLOAD_DIMENSIONS = array(
+        self::EVENT_INTRO => 1200,
+        self::EVENT_FULL  => 1920,
+        self::VENUE       => 1280,
+        self::CATEGORY    => 800,
     );
 
     /** @var array<string, array{0: int, 1: int}> */
@@ -78,7 +88,7 @@ final class JemImageProfilePolicy
     public static function maxDimension($settings): int
     {
         return JemImageResourcePolicy::normaliseConfiguredMaxDimension(
-            (int) self::setting($settings, 'image_max_dimension', JemImageResourcePolicy::DEFAULT_MAX_DIMENSION)
+            (int) self::setting($settings, 'image_max_dimension', self::DEFAULT_CONFIGURED_MAX_DIMENSION)
         );
     }
 
@@ -90,6 +100,76 @@ final class JemImageProfilePolicy
             self::MIN_CONFIGURED_MIN_DIMENSION,
             min($value, self::maxDimension($settings))
         );
+    }
+
+    public static function defaultUploadMaxDimension($settings, string $profile): int
+    {
+        $profile = self::isProfile($profile) ? $profile : self::EVENT_INTRO;
+        $configured = (int) self::setting(
+            $settings,
+            self::prefix($profile) . '_default_dimension',
+            self::DEFAULT_UPLOAD_DIMENSIONS[$profile]
+        );
+
+        return self::requestedMaxDimension($settings, $profile, $configured);
+    }
+
+    /**
+     * Minimum longest-side target that can still satisfy the configured
+     * minimum dimensions for a fixed-ratio profile.
+     */
+    public static function minimumOutputMaxDimension(
+        $settings,
+        string $profile,
+        ?string $requestedRatio = null
+    ): int
+    {
+        $minimum = self::minDimension($settings);
+        $config = self::resolveUpload($settings, $profile, $requestedRatio);
+
+        if ($config['mode'] === self::MODE_NONE) {
+            return $minimum;
+        }
+
+        $shortRatio = min($config['ratio_width'], $config['ratio_height']);
+        $longRatio = max($config['ratio_width'], $config['ratio_height']);
+        $ratioUnit = (int) ceil($minimum / max(1, $shortRatio));
+
+        return min(self::maxDimension($settings), $longRatio * max(1, $ratioUnit));
+    }
+
+    /**
+     * Clamp an untrusted per-upload target to the active profile policy.
+     */
+    public static function requestedMaxDimension(
+        $settings,
+        string $profile,
+        $requested,
+        int $sourceWidth = 0,
+        int $sourceHeight = 0,
+        ?string $requestedRatio = null
+    ): int
+    {
+        $maximum = self::maxDimension($settings);
+        $minimum = self::minimumOutputMaxDimension($settings, $profile, $requestedRatio);
+        $config = self::resolveUpload($settings, $profile, $requestedRatio);
+
+        if ($config['mode'] === self::MODE_NONE && $sourceWidth > 0 && $sourceHeight > 0) {
+            $shortSide = min($sourceWidth, $sourceHeight);
+            $longSide = max($sourceWidth, $sourceHeight);
+            $minimum = min(
+                $maximum,
+                (int) ceil(self::minDimension($settings) * $longSide / max(1, $shortSide))
+            );
+        }
+
+        $value = filter_var($requested, FILTER_VALIDATE_INT);
+
+        if ($value === false) {
+            return $maximum;
+        }
+
+        return max($minimum, min($maximum, (int) $value));
     }
 
     /**
@@ -129,6 +209,82 @@ final class JemImageProfilePolicy
             'ratio_width' => $ratio[0],
             'ratio_height' => $ratio[1],
         );
+    }
+
+    /**
+     * Resolve the policy for one new upload without modifying global Settings.
+     * Unknown values fall back to the configured profile policy.
+     *
+     * @return array{profile: string, mode: string, preset: string, custom: string, ratio_width: int, ratio_height: int}
+     */
+    public static function resolveUpload($settings, string $profile, ?string $requestedRatio = null): array
+    {
+        $configured = self::resolve($settings, $profile);
+        $requestedRatio = trim((string) $requestedRatio);
+
+        if ($requestedRatio === '') {
+            return $configured;
+        }
+
+        if ($requestedRatio === self::UPLOAD_RATIO_ORIGINAL) {
+            $configured['mode'] = self::MODE_NONE;
+            $configured['preset'] = self::UPLOAD_RATIO_ORIGINAL;
+            $configured['custom'] = '';
+            $configured['ratio_width'] = 1;
+            $configured['ratio_height'] = 1;
+
+            return $configured;
+        }
+
+        if ($requestedRatio === 'custom' && $configured['preset'] === 'custom') {
+            return $configured;
+        }
+
+        if (!isset(self::PRESET_RATIOS[$requestedRatio])) {
+            return $configured;
+        }
+
+        $configured['mode'] = $configured['mode'] === self::MODE_NONE
+            ? self::MODE_CROP
+            : $configured['mode'];
+        $configured['preset'] = $requestedRatio;
+        $configured['custom'] = '';
+        $configured['ratio_width'] = self::PRESET_RATIOS[$requestedRatio][0];
+        $configured['ratio_height'] = self::PRESET_RATIOS[$requestedRatio][1];
+
+        return $configured;
+    }
+
+    /**
+     * Return the ratios that may be selected for one upload.
+     *
+     * @return array<string, array{0: int, 1: int}>
+     */
+    public static function uploadRatioOptions($settings, string $profile): array
+    {
+        $configured = self::resolve($settings, $profile);
+        $options = array_merge(
+            array(self::UPLOAD_RATIO_ORIGINAL => array(0, 0)),
+            self::PRESET_RATIOS
+        );
+
+        if ($configured['preset'] === 'custom') {
+            $options['custom'] = array(
+                $configured['ratio_width'],
+                $configured['ratio_height'],
+            );
+        }
+
+        return $options;
+    }
+
+    public static function defaultUploadRatio($settings, string $profile): string
+    {
+        $configured = self::resolve($settings, $profile);
+
+        return $configured['mode'] === self::MODE_NONE
+            ? self::UPLOAD_RATIO_ORIGINAL
+            : $configured['preset'];
     }
 
     public static function normaliseMode(string $mode): string

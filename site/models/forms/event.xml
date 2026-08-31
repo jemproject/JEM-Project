@@ -311,11 +311,15 @@
             label="COM_JEM_EDITEVENT_FIELD_IMAGESELECT"
             description="COM_JEM_EDITEVENT_FIELD_IMAGESELECT_DESC"
         />
-        <field name="userfile" type="file"
+        <field name="userfile" type="jemimagefile"
             class="inputbox"
             size="40"
             label="COM_JEM_IMAGE"
             description="COM_JEM_UPLOAD_IMAGE"
+            imageprofile="event_intro"
+            clearselect="jform_datimage"
+            removefield="removeimage"
+            resolutionfield="jem-image-resolution-event-intro"
         />
         <field name="fullimage" type="imageselectevent"
             class="inputbox"
@@ -323,11 +327,15 @@
             label="COM_JEM_EVENT_FULLIMAGE"
             description="COM_JEM_EVENT_FULLIMAGE_DESC"
         />
-        <field name="fulluserfile" type="file"
+        <field name="fulluserfile" type="jemimagefile"
             class="inputbox"
             size="40"
             label="COM_JEM_EVENT_FULLIMAGE"
             description="COM_JEM_EVENT_FULLIMAGE_UPLOAD_DESC"
+            imageprofile="event_full"
+            clearselect="jform_fullimage"
+            removefield="removefullimage"
+            resolutionfield="jem-image-resolution-event-full"
         />
         <field name="fullimage_layout" type="list"
             class="inputbox form-select"

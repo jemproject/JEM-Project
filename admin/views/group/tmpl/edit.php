@@ -112,6 +112,7 @@ $params = $params->toArray();
                         </div>
                     </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
                 <!-- </div> -->
             </div>
             <div class="col-md-5">

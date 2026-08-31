@@ -27,6 +27,10 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
         }
         self::assertStringContainsString('name="image_min_dimension"', $settings);
         self::assertStringContainsString('name="image_max_dimension"', $settings);
+        self::assertMatchesRegularExpression(
+            '/name="image_max_dimension"[\s\S]*?default="2560"/',
+            $settings
+        );
     }
 
     public function testImageProfileControlsRetainInlineHelpAndConditionalCustomRatioUi(): void
@@ -114,13 +118,25 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
 
     public function testUpgradeDefaultsAndPackageValidationCoverTheFeature(): void
     {
-        foreach (array('admin/sql/install.mysql.utf8.sql', 'admin/sql/updates/mysql/5.1.0.sql', 'script.php') as $path) {
+        foreach (array('admin/sql/install.mysql.utf8.sql', 'admin/sql/updates/mysql/5.1.0.sql') as $path) {
             $source = $this->read($path);
             self::assertStringContainsString('image_min_dimension', $source);
+            self::assertStringContainsString("'image_max_dimension', '2560'", $source);
             self::assertStringContainsString('image_event_intro_required', $source);
+            self::assertStringContainsString('image_event_intro_default_dimension', $source);
             self::assertStringContainsString('image_event_full_custom_ratio', $source);
             self::assertStringContainsString('image_category_ratio', $source);
+            self::assertStringContainsString('image_category_default_dimension', $source);
         }
+
+        $installer = $this->read('script.php');
+        self::assertStringContainsString('image_min_dimension', $installer);
+        self::assertStringContainsString("'image_max_dimension' => '2560'", $installer);
+        self::assertStringContainsString('image_event_intro_required', $installer);
+        self::assertStringContainsString('image_event_intro_default_dimension', $installer);
+        self::assertStringContainsString('image_event_full_custom_ratio', $installer);
+        self::assertStringContainsString('image_category_ratio', $installer);
+        self::assertStringContainsString('image_category_default_dimension', $installer);
 
         $builder = $this->read('scripts/build-packages.php');
         self::assertStringContainsString("'site/classes/imageprofilepolicy.class.php'", $builder);

@@ -192,7 +192,21 @@ class JemControllerImagehandler extends BaseController
             $thumbnail = Path::clean(JPATH_SITE . '/images/jem/categories/small/' . $filename);
         }
 
-        if (!JemImage::uploadProfileImage($file, $filepath, $thumbnail, $jemsettings, $profile)) {
+        $imageMaxDimension = $app->input->post->getInt(
+            'image_max_dimension',
+            JemImageProfilePolicy::maxDimension($jemsettings)
+        );
+        $imageRatio = $app->input->post->getCmd('image_ratio', '');
+
+        if (!JemImage::uploadProfileImage(
+            $file,
+            $filepath,
+            $thumbnail,
+            $jemsettings,
+            $profile,
+            $imageMaxDimension,
+            $imageRatio
+        )) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
             $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component' . $redirectPath);
             return;

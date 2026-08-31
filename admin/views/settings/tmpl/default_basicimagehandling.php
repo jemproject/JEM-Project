@@ -109,6 +109,7 @@ $profiles = array(
             <legend><?php echo Text::_($profile['title']); ?></legend>
             <ul class="adminformlist">
                 <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_required'); ?></div></li>
+                <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_default_dimension'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_mode'); ?></div></li>
                 <li data-jem-image-ratio<?php echo $modeValue === 'none' ? ' hidden' : ''; ?>><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_ratio'); ?></div></li>
                 <li data-jem-image-custom-ratio<?php echo $modeValue !== 'none' && $ratioValue === 'custom' ? '' : ' hidden'; ?>><div class="label-form"><?php echo $this->form->renderfield($profile['prefix'] . '_custom_ratio'); ?></div></li>

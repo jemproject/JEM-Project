@@ -178,6 +178,8 @@ jQuery(document).ready(function($) {
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>
 
+                    <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+
                 </div>
             </div>
 

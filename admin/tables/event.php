@@ -516,6 +516,16 @@ class JemTableEvent extends Table
                 $fullFile = $jinput->files->get('fulluserfile', array(), 'array');
                 $removeimage = $jinput->getInt('removeimage', 0);
                 $removefullimage = $jinput->getInt('removefullimage', 0);
+                $imageMaxDimension = $jinput->getInt(
+                    'image_max_dimension',
+                    JemImageProfilePolicy::maxDimension($jemsettings)
+                );
+                $fullImageMaxDimension = $jinput->getInt(
+                    'fullimage_max_dimension',
+                    JemImageProfilePolicy::maxDimension($jemsettings)
+                );
+                $imageRatio = $jinput->getCmd('image_ratio', '');
+                $fullImageRatio = $jinput->getCmd('fullimage_ratio', '');
                 $datimage = $jinput->getCmd('datimage', '');
                 $fullimage = $jinput->getCmd('fullimage', '');
 
@@ -548,7 +558,15 @@ class JemTableEvent extends Table
                         $filepath = $image_dir . $filename;
                         $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
 
-                        if (!JemImage::uploadProfileImage($file, $filepath, $thumbnail, $jemsettings, JemImageProfilePolicy::EVENT_INTRO)) {
+                        if (!JemImage::uploadProfileImage(
+                            $file,
+                            $filepath,
+                            $thumbnail,
+                            $jemsettings,
+                            JemImageProfilePolicy::EVENT_INTRO,
+                            $imageMaxDimension,
+                            $imageRatio
+                        )) {
                             return false;
                         }
 
@@ -574,7 +592,15 @@ class JemTableEvent extends Table
                     $filepath = $image_dir . $filename;
                     $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
 
-                    if (!JemImage::uploadProfileImage($fullFile, $filepath, $thumbnail, $jemsettings, JemImageProfilePolicy::EVENT_FULL)) {
+                    if (!JemImage::uploadProfileImage(
+                        $fullFile,
+                        $filepath,
+                        $thumbnail,
+                        $jemsettings,
+                        JemImageProfilePolicy::EVENT_FULL,
+                        $fullImageMaxDimension,
+                        $fullImageRatio
+                    )) {
                         foreach ($uploadedImages as $uploadedImage) {
                             foreach ($uploadedImage as $uploadedPath) {
                                 if (File::exists($uploadedPath)) {

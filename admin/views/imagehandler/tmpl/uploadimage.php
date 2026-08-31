@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
+
 $targetDirectory = '/images/jem/events/';
 
 if ($this->task == 'venueimg') {
@@ -34,7 +36,15 @@ $imageTypes = [
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_GIF)), 'label' => Text::_('COM_JEM_GIF_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_GIF_SUPPORT')],
     ['supported' => ($this->jemsettings->gddisabled == 0 || (imagetypes() & IMG_WEBP)), 'label' => Text::_('COM_JEM_WEBP_SUPPORT'), 'missing' => Text::_('COM_JEM_NO_WEBP_SUPPORT')],
 ];
-$profileSummary = JemImage::profileSummary($this->jemsettings, $this->imageProfile ?? 'event_intro');
+$cameraButton = JemImageCamera::button(
+    'userfile',
+    $this->imageProfile ?? 'event_intro',
+    $this->jemsettings,
+    '',
+    '',
+    'adminForm',
+    'jem-image-resolution-upload'
+);
 ?>
 
 <style>
@@ -124,6 +134,12 @@ $profileSummary = JemImage::profileSummary($this->jemsettings, $this->imageProfi
         color: #344054;
     }
 
+    #jem.jem-image-upload > .jem-image-resolution {
+        max-width: 58rem;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
     #jem.jem-image-upload .jem-upload-note strong {
         display: block;
         margin-bottom: 0.25rem;
@@ -180,11 +196,19 @@ $profileSummary = JemImage::profileSummary($this->jemsettings, $this->imageProfi
         </fieldset>
     <?php endif; ?>
 
+    <?php echo JemImageCamera::resolutionControl(
+        'image_max_dimension',
+        'jem-image-resolution-upload',
+        $this->imageProfile ?? 'event_intro',
+        $this->jemsettings
+    ); ?>
+
     <div class="jem-upload-panel">
         <section class="jem-upload-card">
             <h2><?php echo Text::_('COM_JEM_SELECT_IMAGE_UPLOAD'); ?></h2>
             <div class="jem-upload-file">
-                <input class="inputbox" name="userfile" id="userfile" type="file" />
+                <input class="inputbox" name="userfile" id="userfile" type="file" accept="image/*" />
+                <?php echo $cameraButton; ?>
             </div>
             <div class="jem-upload-actions">
                 <input class="btn btn-primary" type="submit" value="<?php echo Text::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
@@ -198,8 +222,6 @@ $profileSummary = JemImage::profileSummary($this->jemsettings, $this->imageProfi
                 <dd><?php echo $targetDirectory; ?></dd>
                 <dt><?php echo Text::_('COM_JEM_IMAGE_FILESIZE'); ?></dt>
                 <dd><?php echo (int) $this->jemsettings->sizelimit; ?> kb</dd>
-                <dt><?php echo Text::_('COM_JEM_IMAGE_PROFILE_RULES'); ?></dt>
-                <dd><?php echo htmlspecialchars($profileSummary, ENT_QUOTES, 'UTF-8'); ?></dd>
             </dl>
             <ul class="jem-upload-format-list">
                 <?php foreach ($imageTypes as $type): ?>

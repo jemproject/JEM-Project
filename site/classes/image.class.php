@@ -9,6 +9,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Utility\Utility;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -193,7 +195,15 @@ class JemImage
      * Validate, optionally normalise and publish a newly uploaded profile image.
      * The original and thumbnail become visible only after every processing step succeeds.
      */
-    static public function uploadProfileImage($file, $target, $thumbnail, $jemsettings, $profile)
+    static public function uploadProfileImage(
+        $file,
+        $target,
+        $thumbnail,
+        $jemsettings,
+        $profile,
+        $requestedMaxDimension = null,
+        $requestedRatio = null
+    )
     {
         if (!JemImageProfilePolicy::isProfile((string) $profile)
             || JemImage::check($file, $jemsettings, $profile) === false) {
@@ -221,8 +231,30 @@ class JemImage
                 return false;
             }
 
-            $analysis = self::analyseStoredImage($working, $jemsettings, (string) $profile, false);
-            if (!$analysis['accepted'] || !self::prepareWorkingImage($working, $jemsettings, (string) $profile, $analysis)) {
+            $targetMaxDimension = JemImageProfilePolicy::requestedMaxDimension(
+                $jemsettings,
+                (string) $profile,
+                $requestedMaxDimension,
+                0,
+                0,
+                $requestedRatio
+            );
+            $analysis = self::analyseStoredImage(
+                $working,
+                $jemsettings,
+                (string) $profile,
+                false,
+                $targetMaxDimension,
+                $requestedRatio
+            );
+            if (!$analysis['accepted'] || !self::prepareWorkingImage(
+                $working,
+                $jemsettings,
+                (string) $profile,
+                $analysis,
+                $targetMaxDimension,
+                $requestedRatio
+            )) {
                 return false;
             }
 
@@ -234,7 +266,7 @@ class JemImage
                 return false;
             }
 
-            if (!self::validatePreparedImage($working, $jemsettings, (string) $profile)) {
+            if (!self::validatePreparedImage($working, $jemsettings, (string) $profile, $requestedRatio)) {
                 return false;
             }
 
@@ -323,7 +355,14 @@ class JemImage
      *
      * @return array{accepted: bool, reason: string, width: int, height: int, frames: int, minimum_not_met: bool, max_exceeded: bool, ratio_mismatch: bool, orientation: int, needs_normalisation: bool}
      */
-    static public function analyseStoredImage($path, $jemsettings, $profile, $allowDimensionReduction = true)
+    static public function analyseStoredImage(
+        $path,
+        $jemsettings,
+        $profile,
+        $allowDimensionReduction = true,
+        $requestedMaxDimension = null,
+        $requestedRatio = null
+    )
     {
         $path = Path::clean((string) $path);
         $extension = strtolower(File::getExt($path));
@@ -362,9 +401,18 @@ class JemImage
             $height = $swap;
         }
 
-        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $config = JemImageProfilePolicy::resolveUpload($jemsettings, (string) $profile, $requestedRatio);
         $minDimension = JemImageProfilePolicy::minDimension($jemsettings);
-        $maxDimension = JemImageProfilePolicy::maxDimension($jemsettings);
+        $maxDimension = $requestedMaxDimension === null
+            ? JemImageProfilePolicy::maxDimension($jemsettings)
+            : JemImageProfilePolicy::requestedMaxDimension(
+                $jemsettings,
+                (string) $profile,
+                $requestedMaxDimension,
+                $width,
+                $height,
+                $requestedRatio
+            );
         $minimumNotMet = $width < $minDimension || $height < $minDimension;
         $maxExceeded = $width > $maxDimension || $height > $maxDimension;
         $ratioMismatch = $config['mode'] !== JemImageProfilePolicy::MODE_NONE
@@ -419,26 +467,29 @@ class JemImage
 
     static public function profileSummary($jemsettings, $profile)
     {
-        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
-        $summary = Text::sprintf(
-            'COM_JEM_IMAGE_UPLOAD_DIMENSION_INFO',
-            JemImageProfilePolicy::minDimension($jemsettings),
-            JemImageProfilePolicy::maxDimension($jemsettings)
+        $jemMaxBytes = max(0, (int) ($jemsettings->sizelimit ?? 0)) * 1024;
+        $serverMaxBytes = Utility::getMaxUploadSize();
+        $effectiveMaxBytes = $jemMaxBytes > 0
+            ? min($jemMaxBytes, $serverMaxBytes)
+            : $serverMaxBytes;
+        $formattedMaxBytes = strip_tags((string) HTMLHelper::_('number.bytes', $effectiveMaxBytes));
+        $formattedMaxBytes = preg_replace('/\bkB\b/u', 'KB', $formattedMaxBytes) ?? $formattedMaxBytes;
+
+        return Text::sprintf(
+            'COM_JEM_IMAGE_PROFILE_SUMMARY',
+            JemImageProfilePolicy::maxDimension($jemsettings),
+            $formattedMaxBytes
         );
-
-        if ($config['mode'] !== JemImageProfilePolicy::MODE_NONE) {
-            $summary .= ' ' . Text::sprintf(
-                'COM_JEM_IMAGE_UPLOAD_RATIO_INFO',
-                $config['ratio_width'],
-                $config['ratio_height'],
-                Text::_('COM_JEM_IMAGE_ADJUSTMENT_' . strtoupper($config['mode']))
-            );
-        }
-
-        return $summary;
     }
 
-    private static function prepareWorkingImage($working, $jemsettings, $profile, array $analysis)
+    private static function prepareWorkingImage(
+        $working,
+        $jemsettings,
+        $profile,
+        array $analysis,
+        $requestedMaxDimension = null,
+        $requestedRatio = null
+    )
     {
         if (!$analysis['needs_normalisation']) {
             return true;
@@ -450,11 +501,21 @@ class JemImage
             return false;
         }
 
-        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $config = JemImageProfilePolicy::resolveUpload($jemsettings, (string) $profile, $requestedRatio);
+        $maxDimension = $requestedMaxDimension === null
+            ? JemImageProfilePolicy::maxDimension($jemsettings)
+            : JemImageProfilePolicy::requestedMaxDimension(
+                $jemsettings,
+                (string) $profile,
+                $requestedMaxDimension,
+                (int) $analysis['width'],
+                (int) $analysis['height'],
+                $requestedRatio
+            );
         $geometry = JemImageProfilePolicy::geometry(
             (int) $analysis['width'],
             (int) $analysis['height'],
-            JemImageProfilePolicy::maxDimension($jemsettings),
+            $maxDimension,
             $config['mode'],
             $config['ratio_width'],
             $config['ratio_height']
@@ -505,7 +566,7 @@ class JemImage
         return $image->resize((int) $geometry['width'], (int) $geometry['height'], $method, $background);
     }
 
-    private static function validatePreparedImage($path, $jemsettings, $profile)
+    private static function validatePreparedImage($path, $jemsettings, $profile, $requestedRatio = null)
     {
         $resource = JemImageResourcePolicy::inspect(
             (string) $path,
@@ -530,7 +591,7 @@ class JemImage
             return false;
         }
 
-        $config = JemImageProfilePolicy::resolve($jemsettings, (string) $profile);
+        $config = JemImageProfilePolicy::resolveUpload($jemsettings, (string) $profile, $requestedRatio);
         if ($config['mode'] !== JemImageProfilePolicy::MODE_NONE
             && !JemImageProfilePolicy::isExactRatio(
                 (int) $resource['width'],

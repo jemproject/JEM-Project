@@ -1,0 +1,548 @@
+/**
+ * @package    JEM
+ * @copyright  (C) 2013-2026 joomlaeventmanager.net
+ * @license    https://www.gnu.org/licenses/gpl-3.0 GNU/GPL
+ */
+
+.jem-image-source-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: start;
+    min-width: 0;
+}
+
+.jem-image-file-input {
+    min-width: 0;
+    color: var(--secondary-color, #6c757d);
+    font-size: 0.875rem;
+    line-height: 1.45;
+}
+
+.jem-image-file-input input[type="file"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 2.5rem;
+    margin: 0 0 0.35rem;
+    box-sizing: border-box;
+    color: var(--body-color, #212529);
+    font-size: 1rem;
+}
+
+.jem-image-file-input br {
+    display: none;
+}
+
+.jem-image-action-button,
+.jem-camera-action-button {
+    border-color: var(--bs-border-color, #ced4da);
+    background-color: var(--bs-tertiary-bg, #f1f3f5);
+    color: var(--body-color, #212529);
+}
+
+.jem-image-action-button:hover,
+.jem-image-action-button:focus,
+.jem-camera-action-button:hover,
+.jem-camera-action-button:focus {
+    border-color: var(--bs-secondary-border-subtle, #adb5bd);
+    background-color: var(--bs-secondary-bg, #e2e6ea);
+    color: var(--body-color, #212529);
+}
+
+.jem-camera-button {
+    display: inline-flex;
+    gap: 0.65rem;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    white-space: nowrap;
+}
+
+.jem-camera-button__icon {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: 0 0 auto;
+}
+
+.jem-image-resolution {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+    gap: 0.45rem 1.25rem;
+    align-items: center;
+    margin-top: 0.9rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--bs-border-color, #ced4da);
+}
+
+.jem-image-resolution--leading {
+    margin: 0 0 0.9rem;
+    padding: 0 0 0.9rem;
+    border-top: 0;
+    border-bottom: 1px solid var(--bs-border-color, #ced4da);
+}
+
+.jem-image-resolution-heading {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.jem-image-resolution-heading label {
+    margin: 0;
+    font-weight: 400;
+}
+
+.jem-image-resolution-inputs {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: minmax(8rem, 1fr) 6rem auto minmax(7.5rem, 10rem);
+    gap: 0.6rem;
+    align-items: center;
+}
+
+.jem-image-resolution-range {
+    position: relative;
+    min-width: 0;
+    padding-top: 0.95rem;
+    padding-bottom: 1.45rem;
+}
+
+.jem-image-resolution-range input[type="range"] {
+    --jem-resolution-progress: 0%;
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 1.5rem;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+}
+
+.jem-image-resolution-range input[type="range"]::-webkit-slider-runnable-track {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: linear-gradient(
+        to right,
+        var(--bs-primary, #0d6efd) 0 var(--jem-resolution-progress),
+        var(--bs-border-color, #ced4da) var(--jem-resolution-progress) 100%
+    );
+}
+
+.jem-image-resolution-range input[type="range"]::-webkit-slider-thumb {
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-top: -0.3rem;
+    appearance: none;
+    border: 2px solid var(--bs-primary, #0d6efd);
+    border-radius: 50%;
+    background: var(--bs-body-bg, #fff);
+    box-shadow: 0 0 0 1px var(--bs-border-color, #adb5bd);
+}
+
+.jem-image-resolution-range input[type="range"]::-moz-range-track {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: var(--bs-border-color, #ced4da);
+}
+
+.jem-image-resolution-range input[type="range"]::-moz-range-progress {
+    height: 0.3rem;
+    border-radius: 999px;
+    background: var(--bs-primary, #0d6efd);
+}
+
+.jem-image-resolution-range input[type="range"]::-moz-range-thumb {
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid var(--bs-primary, #0d6efd);
+    border-radius: 50%;
+    background: var(--bs-body-bg, #fff);
+    box-shadow: 0 0 0 1px var(--bs-border-color, #adb5bd);
+}
+
+.jem-image-resolution-inputs input[type="number"] {
+    width: 100%;
+}
+
+.jem-image-ratio-label {
+    margin: 0;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.jem-image-ratio-select {
+    min-width: 0;
+    width: 100%;
+}
+
+.jem-image-resolution-mark-track {
+    position: absolute;
+    z-index: 2;
+    top: 0.95rem;
+    right: 0.5rem;
+    left: 0.5rem;
+    height: 1.5rem;
+    pointer-events: none;
+}
+
+.jem-image-resolution-meta {
+    display: flex;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 0.55rem;
+}
+
+.jem-image-resolution-help,
+.jem-image-resolution-meta .jem-image-profile-summary {
+    color: var(--secondary-color, #6c757d);
+    line-height: 1.4;
+}
+
+.jem-image-resolution-mark {
+    position: absolute;
+    top: 0.75rem;
+    left: var(--jem-resolution-position, 0%);
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    transform: translate(-50%, -50%);
+    border: 0;
+    background: transparent;
+    color: var(--body-color, #212529);
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.jem-image-resolution-mark::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 0.7rem;
+    transform: translate(-50%, -50%);
+    background: var(--bs-secondary-color, #6c757d);
+    content: "";
+}
+
+.jem-image-resolution-mark::after {
+    position: absolute;
+    top: calc(100% + 0.05rem);
+    left: 50%;
+    transform: translateX(var(--jem-resolution-label-offset, -50%));
+    color: var(--secondary-color, #6c757d);
+    content: attr(data-jem-image-resolution-label);
+    font-size: 0.72rem;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.jem-image-resolution-mark:nth-child(even)::after {
+    top: auto;
+    bottom: calc(100% + 0.05rem);
+}
+
+.jem-image-resolution-mark:hover::before,
+.jem-image-resolution-mark:focus-visible::before,
+.jem-image-resolution-mark--active::before {
+    width: 3px;
+    height: 0.85rem;
+    background: var(--bs-primary, #0d6efd);
+}
+
+.jem-image-resolution-mark:focus-visible {
+    outline: 0;
+}
+
+.jem-camera-modal[hidden],
+.jem-camera-live[hidden],
+.jem-camera-result[hidden],
+.jem-camera-modal [hidden] {
+    display: none !important;
+}
+
+.jem-camera-modal {
+    position: fixed;
+    z-index: 11000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+}
+
+.jem-camera-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(15 23 42 / 82%);
+}
+
+.jem-camera-modal__dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(96vw, 64rem);
+    max-height: 96vh;
+    overflow: hidden;
+    border: 1px solid #65758b;
+    border-radius: 0.5rem;
+    background: var(--body-bg, #fff);
+    color: var(--body-color, #1f2937);
+    box-shadow: 0 1.25rem 3rem rgb(0 0 0 / 35%);
+}
+
+.jem-camera-modal__header,
+.jem-camera-modal__footer {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-color: #d3dae3;
+}
+
+.jem-camera-modal__header {
+    justify-content: space-between;
+    border-bottom: 1px solid #d3dae3;
+}
+
+.jem-camera-modal__header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.jem-camera-modal__close {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.jem-camera-modal__body {
+    min-height: 0;
+    overflow: auto;
+    padding: 1rem;
+}
+
+.jem-camera-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 1.25rem;
+    align-items: start;
+    margin: 0 0 0.85rem;
+}
+
+.jem-camera-device,
+.jem-camera-format {
+    display: grid;
+    grid-template-columns: auto minmax(14rem, 28rem);
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.jem-camera-device label,
+.jem-camera-format label {
+    margin: 0;
+    font-weight: 700;
+}
+
+.jem-camera-device select,
+.jem-camera-format select {
+    min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+    .jem-camera-options {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-camera-device,
+    .jem-camera-format {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+}
+
+.jem-camera-modal__footer {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    border-top: 1px solid #d3dae3;
+}
+
+.jem-camera-frame {
+    position: relative;
+    width: min(100%, 56rem, calc(68vh * var(--jem-camera-ratio, 1.3333)));
+    margin: 0 auto;
+    overflow: hidden;
+    border: 3px solid #f5a000;
+    border-radius: 0.25rem;
+    background: #000;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 70%);
+}
+
+.jem-camera-frame video {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.jem-camera-live-label {
+    position: absolute;
+    top: 0.65rem;
+    left: 0.65rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.2rem;
+    background: rgb(0 0 0 / 72%);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.jem-camera-result canvas {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 68vh;
+    margin: 0 auto;
+    border: 1px solid #65758b;
+    background: #000;
+}
+
+.jem-camera-result__summary,
+.jem-camera-status {
+    margin: 0.75rem 0 0;
+    text-align: center;
+}
+
+.jem-camera-result__summary {
+    font-weight: 700;
+}
+
+.jem-image-editor__stage {
+    display: grid;
+    min-height: 12rem;
+    max-width: 100%;
+    margin: 0 auto;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid var(--bs-border-color, #65758b);
+    border-radius: 0.25rem;
+    background: #111827;
+}
+
+.jem-image-editor__stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.jem-image-editor__canvas--draggable {
+    cursor: grab;
+    touch-action: none;
+}
+
+.jem-image-editor__canvas--draggable:active {
+    cursor: grabbing;
+}
+
+.jem-image-editor__zoom {
+    display: grid;
+    grid-template-columns: auto minmax(12rem, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 0.85rem;
+}
+
+.jem-image-editor__zoom label {
+    margin: 0;
+    font-weight: 600;
+}
+
+.jem-image-editor__zoom input {
+    width: 100%;
+}
+
+.jem-camera-status--error {
+    color: #b42318;
+    font-weight: 700;
+}
+
+body.jem-camera-open {
+    overflow: hidden;
+}
+
+@media (max-width: 575.98px) {
+    .jem-image-source-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .jem-camera-button {
+        width: 100%;
+    }
+
+    .jem-camera-modal {
+        padding: 0;
+    }
+
+    .jem-camera-modal__dialog {
+        width: 100vw;
+        max-height: 100vh;
+        min-height: 100vh;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .jem-camera-modal__footer .btn {
+        flex: 1 1 auto;
+    }
+
+    .jem-camera-device {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+
+    .jem-image-resolution-inputs {
+        grid-template-columns: minmax(0, 1fr) 5.5rem;
+    }
+
+    .jem-image-ratio-label {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .jem-image-ratio-select {
+        grid-column: 2;
+        grid-row: 2;
+    }
+}
+
+@media (max-width: 700px) {
+    .jem-image-resolution {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.45rem;
+    }
+
+    .jem-image-resolution-heading,
+    .jem-image-resolution-inputs,
+    .jem-image-resolution-meta {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .jem-image-resolution-meta {
+        display: grid;
+        justify-content: stretch;
+    }
+
+    .jem-image-resolution-mark:nth-child(even):not(:last-child)::after {
+        content: none;
+    }
+}
