@@ -142,6 +142,25 @@ final class ImportViewLayoutTest extends TestCase
         self::assertStringContainsString("'source_records' => \$sourceRecords", $controller);
     }
 
+    public function testStoredIcsPreviewRefreshUsesPersistedSourceRecords(): void
+    {
+        $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
+
+        self::assertStringContainsString("if (!\$hasUpload && \$sourceMode !== 'url') {", $controller);
+        self::assertStringNotContainsString(
+            "if (!\$hasUpload && \$sourceMode !== 'url' && \$extension !== 'ics') {",
+            $controller
+        );
+        self::assertStringContainsString(
+            "(array) (\$existingPreview['source_records'] ?? array())",
+            $controller
+        );
+        self::assertStringContainsString(
+            "(array) (\$existingPreview['source_fields'] ?? array())",
+            $controller
+        );
+    }
+
     public function testCustomCatalogUploadImportsJoomlaFilesystemClasses(): void
     {
         $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
