@@ -761,7 +761,7 @@ class JemControllerImport extends BaseController
         $options['language_label'] = $this->getLanguageLabel($options['language']);
 
         try {
-            if (!$hasUpload && $sourceMode !== 'url' && $extension !== 'ics') {
+            if (!$hasUpload && $sourceMode !== 'url') {
                 $preview = $this->buildExternalStructuredPreviewFromRecords(
                     (array) ($existingPreview['source_records'] ?? array()),
                     $options,
