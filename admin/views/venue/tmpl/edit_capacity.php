@@ -481,6 +481,22 @@ document.addEventListener('DOMContentLoaded', function () {
     function setProfileConfigured(configured) {
         profileConfigured = Boolean(configured);
         editor.dataset.profileConfigured = profileConfigured ? '1' : '0';
+
+        [profileNameInput, profileCapacityInput].forEach(function (input) {
+            if (!input) {
+                return;
+            }
+
+            input.required = profileConfigured;
+            input.classList.toggle('required', profileConfigured);
+            if (profileConfigured) {
+                input.setAttribute('aria-required', 'true');
+            } else {
+                input.removeAttribute('aria-required');
+                input.setCustomValidity('');
+            }
+        });
+
         if (emptyState) {
             emptyState.hidden = profileConfigured;
         }

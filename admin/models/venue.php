@@ -216,6 +216,31 @@ class JemModelVenue extends JemModelAdmin
     }
 
     /**
+     * Validate venue data without requiring an inactive capacity profile.
+     *
+     * @param  object  $form   The form to validate against.
+     * @param  array   $data   The submitted form data.
+     * @param  string  $group  The field group to validate.
+     *
+     * @return array|boolean
+     */
+    public function validate($form, $data, $group = null)
+    {
+        $capacityProfileRequired = !empty($data['capacity_configuration_submitted'])
+            && JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY);
+
+        foreach (array('capacity_profile_name', 'capacity_profile_capacity') as $fieldName) {
+            $form->setFieldAttribute(
+                $fieldName,
+                'required',
+                $capacityProfileRequired ? 'true' : 'false'
+            );
+        }
+
+        return parent::validate($form, $data, $group);
+    }
+
+    /**
      * Method to get a single record.
      *
      * @param  integer The id of the primary key.

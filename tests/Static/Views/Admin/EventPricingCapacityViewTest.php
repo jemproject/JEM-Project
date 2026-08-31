@@ -11,6 +11,7 @@ final class EventPricingCapacityViewTest extends TestCase
         $edit = $this->read('/admin/views/venue/tmpl/edit.php');
         $capacity = $this->read('/admin/views/venue/tmpl/edit_capacity.php');
         $form = $this->read('/admin/models/forms/venue.xml');
+        $model = $this->read('/admin/models/venue.php');
         $view = $this->read('/admin/views/venue/view.html.php');
         $css = $this->read('/media/css/backend.css');
 
@@ -25,6 +26,10 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('data-role="profile-empty-state"', $capacity);
         self::assertStringContainsString('data-role="profile-configuration"', $capacity);
         self::assertStringContainsString("profileSubmittedInput.value = profileConfigured ? '1' : '0'", $capacity);
+        self::assertStringContainsString('input.required = profileConfigured', $capacity);
+        self::assertStringContainsString("input.classList.toggle('required', profileConfigured)", $capacity);
+        self::assertStringContainsString("input.removeAttribute('aria-required')", $capacity);
+        self::assertStringContainsString("input.setCustomValidity('')", $capacity);
         self::assertStringContainsString("profileCapacityInput.value = String(integer(venueCapacityInput ? venueCapacityInput.value : 0))", $capacity);
         self::assertStringContainsString('ToolbarHelper::inlinehelp()', $view);
         self::assertStringContainsString(
@@ -156,7 +161,10 @@ final class EventPricingCapacityViewTest extends TestCase
         );
         self::assertStringNotContainsString('name="capacity_profile_name" type="text"\n            readonly="true"', $form);
         self::assertStringContainsString('name="capacity_configuration_submitted" type="hidden" default="0"', $form);
-        self::assertStringNotContainsString('JemVenueCapacityService::ensureDefaultProfile((int) $pk);', $this->read('/admin/models/venue.php'));
+        self::assertStringContainsString('public function validate($form, $data, $group = null)', $model);
+        self::assertStringContainsString("!empty(\$data['capacity_configuration_submitted'])", $model);
+        self::assertStringContainsString("\$capacityProfileRequired ? 'true' : 'false'", $model);
+        self::assertStringNotContainsString('JemVenueCapacityService::ensureDefaultProfile((int) $pk);', $model);
         self::assertStringContainsString('saveProfileConfiguration', $this->read('/admin/classes/venuecapacity.class.php'));
         self::assertStringContainsString('.jem-venue-capacity-editor', $css);
         self::assertStringContainsString('.jem-venue-location-card', $css);
