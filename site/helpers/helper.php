@@ -1976,7 +1976,7 @@ class JemHelper
                 } catch (Exception $e) {
                     continue;
                 }
-            } elseif (empty($row->weekdays) || ($isDatedRule && trim((string) $row->weekdays) === '0')) {
+            } elseif (empty($row->weekdays)) {
                 $rangeEnd = $rangeStart;
             }
 
@@ -1986,13 +1986,9 @@ class JemHelper
 
             $weekdays = array_filter(array_map('trim', explode(',', (string) $row->weekdays)), 'strlen');
             $weekdays = array_map('intval', $weekdays);
-            $hasMultiDayDatedRange = $rowStartDate instanceof DateTimeImmutable
-                && $rowEndDate instanceof DateTimeImmutable
-                && $rowEndDate > $rowStartDate;
-            $ignoreDefaultWeekday = $isDatedRule && !$hasMultiDayDatedRange && trim((string) $row->weekdays) === '0';
 
             for ($date = $rangeStart; $date <= $rangeEnd; $date = $date->modify('+1 day')) {
-                if (!$ignoreDefaultWeekday && $weekdays && !in_array((int) $date->format('w'), $weekdays, true)) {
+                if ($weekdays && !in_array((int) $date->format('w'), $weekdays, true)) {
                     continue;
                 }
 

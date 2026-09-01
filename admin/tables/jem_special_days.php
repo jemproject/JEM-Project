@@ -53,10 +53,8 @@ class jem_special_days extends Table
             unset($array['link']);
         }
 
-        if (isset($array['weekdays']) && is_array($array['weekdays'])) {
-            $array['weekdays'] = implode(',', array_filter(array_map('intval', $array['weekdays']), static function ($weekday) {
-                return $weekday >= 0 && $weekday <= 6;
-            }));
+        if (isset($array['weekdays'])) {
+            $array['weekdays'] = $this->normaliseWeekdays($array['weekdays']);
         }
 
         if (isset($array['country']) && is_array($array['country'])) {
@@ -99,9 +97,7 @@ class jem_special_days extends Table
             return false;
         }
 
-        $this->weekdays = implode(',', array_values(array_unique(array_filter(array_map('intval', explode(',', (string) $this->weekdays)), static function ($weekday) {
-            return $weekday >= 0 && $weekday <= 6;
-        }))));
+        $this->weekdays = $this->normaliseWeekdays($this->weekdays);
 
         $this->start_date = $this->normaliseDate($this->start_date);
         $this->end_date = $this->normaliseDate($this->end_date);
@@ -196,6 +192,30 @@ class jem_special_days extends Table
         }
 
         return preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ? $date : null;
+    }
+
+    private function normaliseWeekdays($weekdays)
+    {
+        $values = is_array($weekdays) ? $weekdays : explode(',', (string) $weekdays);
+        $normalised = array();
+
+        foreach ($values as $weekday) {
+            $weekday = trim((string) $weekday);
+
+            if ($weekday === '' || !ctype_digit($weekday)) {
+                continue;
+            }
+
+            $weekday = (int) $weekday;
+
+            if ($weekday > 6 || in_array($weekday, $normalised, true)) {
+                continue;
+            }
+
+            $normalised[] = $weekday;
+        }
+
+        return implode(',', $normalised);
     }
 
     private function normaliseLink($link)
