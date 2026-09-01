@@ -47,6 +47,29 @@ final class EventTimezoneContractsTest extends TestCase
         }
     }
 
+    public function testFrontendEventTimezoneSelectorOnlyShowsForCustomMode(): void
+    {
+        foreach (array(
+            '/site/views/editevent/tmpl/edit.php',
+            '/site/views/editevent/tmpl/responsive/edit.php',
+        ) as $path) {
+            $template = $this->read($path);
+
+            self::assertStringContainsString("->useScript('showon')", $template, $path);
+            self::assertStringContainsString(
+                "FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')",
+                $template,
+                $path
+            );
+            self::assertStringContainsString('$showWhenCustomTimezoneAttribute', $template, $path);
+            self::assertMatchesRegularExpression(
+                '/<(?:li|dt)[^>]*<\?php echo \$showWhenCustomTimezoneAttribute; \?>[^>]*>.*getLabel\(\'timezone\'\)/s',
+                $template,
+                $path
+            );
+        }
+    }
+
     public function testSharedEventQueryUsesUtcPublicationHelper(): void
     {
         $model = $this->read('/site/models/eventslist.php');

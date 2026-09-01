@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -17,7 +18,8 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useScript('form.validate');
+    ->useScript('form.validate')
+    ->useScript('showon');
 
 // Create shortcut to parameters.
 $params        = $this->params;
@@ -27,6 +29,11 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+$showWhenCustomTimezoneAttribute = " data-showon='" . htmlspecialchars(
+    json_encode(FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')),
+    ENT_QUOTES,
+    'UTF-8'
+) . "'";
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 $articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
 $articleCategoryRules = array();
@@ -846,8 +853,8 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
                     <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
                     <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
-                    <dd><?php echo $this->form->getInput('timezone'); ?></dd>
+                    <dt<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
