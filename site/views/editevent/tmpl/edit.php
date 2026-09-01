@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -19,7 +20,8 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useScript('form.validate');
+    ->useScript('form.validate')
+    ->useScript('showon');
 // Create shortcut to parameters.
 $params        = $this->params;
 // $settings    = json_decode($this->item->attribs);
@@ -28,6 +30,11 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+$showWhenCustomTimezoneAttribute = " data-showon='" . htmlspecialchars(
+    json_encode(FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')),
+    ENT_QUOTES,
+    'UTF-8'
+) . "'";
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 $articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
 $articleCategoryRules = array();
@@ -805,12 +812,6 @@ $document->addStyleDeclaration('
                     <?php if (is_null($this->item->id)):?>
                         <li><?php echo $this->form->getLabel('alias'); ?><?php echo $this->form->getInput('alias'); ?></li>
                     <?php endif; ?>
-                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('dates'); ?><?php echo $this->form->getInput('dates'); ?></li>
-                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
-                    <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
-                    <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
-                    <li><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
-                    <li><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PROGRAMMES)) : ?>
                         <li><?php echo $this->form->getLabel('parent_event_id'); ?><?php echo $this->form->getInput('parent_event_id'); ?></li>
                         <li class="jem-event-parent-dependent">
@@ -822,6 +823,12 @@ $document->addStyleDeclaration('
                         <li><?php echo $this->form->getLabel('event_tree_order'); ?><?php echo $this->form->getInput('event_tree_order'); ?></li>
                         <li><?php echo $this->form->getLabel('show_in_calendar'); ?><?php echo $this->form->getInput('show_in_calendar'); ?></li>
                     <?php endif; ?>
+                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('dates'); ?><?php echo $this->form->getInput('dates'); ?></li>
+                    <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
+                    <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
+                    <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
+                    <li><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
+                    <li<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

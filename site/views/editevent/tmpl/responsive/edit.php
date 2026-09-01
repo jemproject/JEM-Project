@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -19,7 +20,8 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useScript('form.validate');
+    ->useScript('form.validate')
+    ->useScript('showon');
 
 // Create shortcut to parameters.
 $params        = $this->params;
@@ -29,6 +31,11 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+$showWhenCustomTimezoneAttribute = " data-showon='" . htmlspecialchars(
+    json_encode(FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')),
+    ENT_QUOTES,
+    'UTF-8'
+) . "'";
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 $articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
 $articleCategoryRules = array();
@@ -823,18 +830,6 @@ $document->addStyleDeclaration('
                         <dt><?php echo $this->form->getLabel('alias'); ?></dt>
                         <dd><?php echo $this->form->getInput('alias'); ?></dd>
                     <?php endif; ?>
-                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('dates'); ?></dt>
-                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('dates'); ?></dd>
-                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('enddates'); ?></dt>
-                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('enddates'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('times'); ?></dt>
-                    <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
-                    <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
-                    <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('timezone'); ?></dt>
-                    <dd><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PROGRAMMES)) : ?>
                         <dt><?php echo $this->form->getLabel('parent_event_id'); ?></dt>
                         <dd><?php echo $this->form->getInput('parent_event_id'); ?></dd>
@@ -850,6 +845,18 @@ $document->addStyleDeclaration('
                         <dt class="jem-event-parent-dependent"><?php echo $this->form->getLabel('show_in_calendar'); ?></dt>
                         <dd class="jem-event-parent-dependent"><?php echo $this->form->getInput('show_in_calendar'); ?></dd>
                     <?php endif; ?>
+                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('dates'); ?></dt>
+                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('dates'); ?></dd>
+                    <dt class="jem-editevent-field-date-label"><?php echo $this->form->getLabel('enddates'); ?></dt>
+                    <dd class="jem-editevent-field-date"><?php echo $this->form->getInput('enddates'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('times'); ?></dt>
+                    <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
+                    <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
+                    <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
+                    <dt<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

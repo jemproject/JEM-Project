@@ -62,8 +62,7 @@ $globalGroup = 'globalattribs';
     .jem-image-settings-general input[id="jform_image_min_dimension"],
     .jem-image-settings-general input[id="jform_image_max_dimension"],
     .jem-image-settings-general input[id="jform_imagewidth"],
-    .jem-image-settings-general input[id="jform_imagehight"],
-    .jem-image-settings-storage input[id$="_max_depth"] {
+    .jem-image-settings-general input[id="jform_imagehight"] {
         width: 8rem;
         max-width: 100%;
     }
@@ -169,7 +168,6 @@ $globalGroup = 'globalattribs';
                     <li><div class="label-form"><?php echo $this->form->renderfield($storageProfile['prefix'] . '_enabled', $globalGroup); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield($storageProfile['prefix'] . '_preset', $globalGroup); ?></div></li>
                     <li data-jem-image-custom-pattern<?php echo $storagePreset === 'custom' ? '' : ' hidden'; ?>><div class="label-form"><?php echo $this->form->renderfield($storageProfile['prefix'] . '_pattern', $globalGroup); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield($storageProfile['prefix'] . '_max_depth', $globalGroup); ?></div></li>
                 </ul>
             </fieldset>
         <?php endforeach; ?>

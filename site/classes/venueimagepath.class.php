@@ -14,6 +14,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 require_once __DIR__ . '/imageprofilepolicy.class.php';
+require_once __DIR__ . '/imagefolderpolicy.class.php';
 
 /**
  * Resolves local Venue media paths using stable database identifiers.
@@ -29,7 +30,7 @@ class JemVenueImagePath
     public const BASE = 'images/jem/venues';
     public const THUMB = 'small';
 
-    public static function normaliseRelativeFolder($folder, $maxDepth = 0)
+    public static function normaliseRelativeFolder($folder)
     {
         $folder = trim(str_replace('\\', '/', (string) $folder), '/');
 
@@ -43,12 +44,6 @@ class JemVenueImagePath
             if ($segment !== '') {
                 $segments[] = $segment;
             }
-        }
-
-        $maxDepth = (int) $maxDepth;
-
-        if ($maxDepth > 0 && count($segments) > $maxDepth) {
-            $segments = array_slice($segments, 0, $maxDepth);
         }
 
         return implode('/', $segments);
@@ -82,11 +77,13 @@ class JemVenueImagePath
             $preset,
             (string) $attribs->get('venue_image_subfolder_pattern', '')
         );
-        $maxDepth = max(1, min(8, (int) $attribs->get('venue_image_subfolder_max_depth', 3)));
+        if ($pattern === '') {
+            return '';
+        }
 
-        return $pattern === ''
-            ? ''
-            : self::normaliseRelativeFolder(self::replaceTokens($pattern, $venue), $maxDepth);
+        $folder = self::normaliseRelativeFolder(self::replaceTokens($pattern, $venue));
+
+        return JemImageFolderPolicy::resolvedFolderOrRoot($folder);
     }
 
     public static function profileFolder($venueId, $profileId)

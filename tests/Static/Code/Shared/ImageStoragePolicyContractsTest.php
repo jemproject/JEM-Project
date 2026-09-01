@@ -40,10 +40,7 @@ final class ImageStoragePolicyContractsTest extends TestCase
             '.jem-image-settings-storage input[id$="_pattern"]',
             $imageSettings
         );
-        self::assertStringContainsString(
-            '.jem-image-settings-storage input[id$="_max_depth"]',
-            $imageSettings
-        );
+        self::assertStringNotContainsString('_max_depth', $imageSettings);
         self::assertStringContainsString('data-jem-image-custom-pattern', $imageSettings);
         self::assertStringContainsString("preset.value !== 'custom'", $imageSettings);
 
@@ -69,12 +66,17 @@ final class ImageStoragePolicyContractsTest extends TestCase
         $settings = $this->read('admin/models/forms/settings.xml');
 
         foreach (array('event', 'venue', 'category') as $object) {
-            foreach (array('enabled', 'preset', 'pattern', 'max_depth') as $field) {
+            foreach (array('enabled', 'preset', 'pattern') as $field) {
                 self::assertStringContainsString(
                     'name="' . $object . '_image_subfolder_' . $field . '"',
                     $settings
                 );
             }
+
+            self::assertStringNotContainsString(
+                'name="' . $object . '_image_subfolder_max_depth"',
+                $settings
+            );
         }
 
         self::assertStringNotContainsString('type_image_subfolder_', $settings);
@@ -103,12 +105,17 @@ final class ImageStoragePolicyContractsTest extends TestCase
                 $settings,
                 $object
             );
-            self::assertMatchesRegularExpression(
-                '/name="' . $object . '_image_subfolder_max_depth"[\s\S]+?default="3"/',
-                $settings,
-                $object
-            );
         }
+
+        $settingsModel = $this->read('admin/models/settings.php');
+        $folderPolicy = $this->read('site/classes/imagefolderpolicy.class.php');
+
+        self::assertStringContainsString('public const MAX_DEPTH = 8;', $folderPolicy);
+        self::assertStringContainsString('validateImageFolderPatterns($data)', $settingsModel);
+        self::assertStringContainsString(
+            'JemImageFolderPolicy::isWithinMaximumDepth($pattern)',
+            $settingsModel
+        );
 
         foreach (array('event', 'venue', 'category') as $object) {
             $resolver = $this->read('site/classes/' . $object . 'imagepath.class.php');
@@ -122,11 +129,8 @@ final class ImageStoragePolicyContractsTest extends TestCase
                 $resolver,
                 $object
             );
-            self::assertStringContainsString(
-                "get('{$object}_image_subfolder_max_depth', 3)",
-                $resolver,
-                $object
-            );
+            self::assertStringNotContainsString("{$object}_image_subfolder_max_depth", $resolver, $object);
+            self::assertStringContainsString('JemImageFolderPolicy::resolvedFolderOrRoot', $resolver, $object);
         }
     }
 

@@ -2681,17 +2681,6 @@
                 required="false"
                 showon="event_image_subfolder_enabled:1[AND]event_image_subfolder_preset:custom"
             />
-            <field name="event_image_subfolder_max_depth" type="number"
-                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH"
-                description="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH_DESC"
-                class="inputbox"
-                default="3"
-                min="1"
-                max="8"
-                step="1"
-                required="false"
-                showon="event_image_subfolder_enabled:1"
-            />
             <field name="venue_image_subfolder_enabled" type="radio"
                 label="COM_JEM_VENUE_IMAGE_SUBFOLDER_ENABLED"
                 description="COM_JEM_VENUE_IMAGE_SUBFOLDER_ENABLED_DESC"
@@ -2725,17 +2714,6 @@
                 required="false"
                 showon="venue_image_subfolder_enabled:1[AND]venue_image_subfolder_preset:custom"
             />
-            <field name="venue_image_subfolder_max_depth" type="number"
-                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH"
-                description="COM_JEM_VENUE_IMAGE_SUBFOLDER_MAX_DEPTH_DESC"
-                class="inputbox"
-                default="3"
-                min="1"
-                max="8"
-                step="1"
-                required="false"
-                showon="venue_image_subfolder_enabled:1"
-            />
             <field name="category_image_subfolder_enabled" type="radio"
                 label="COM_JEM_CATEGORY_IMAGE_SUBFOLDER_ENABLED"
                 description="COM_JEM_CATEGORY_IMAGE_SUBFOLDER_ENABLED_DESC"
@@ -2767,17 +2745,6 @@
                 default="{category_alias}"
                 required="false"
                 showon="category_image_subfolder_enabled:1[AND]category_image_subfolder_preset:custom"
-            />
-            <field name="category_image_subfolder_max_depth" type="number"
-                label="COM_JEM_EVENT_IMAGE_SUBFOLDER_MAX_DEPTH"
-                description="COM_JEM_CATEGORY_IMAGE_SUBFOLDER_MAX_DEPTH_DESC"
-                class="inputbox"
-                default="3"
-                min="1"
-                max="8"
-                step="1"
-                required="false"
-                showon="category_image_subfolder_enabled:1"
             />
         </fieldset>
 

@@ -15,6 +15,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 require_once __DIR__ . '/imageprofilepolicy.class.php';
+require_once __DIR__ . '/imagefolderpolicy.class.php';
 
 /**
  * Resolves category image paths below the fixed JEM category image root.
@@ -24,7 +25,7 @@ class JemCategoryImagePath
     public const BASE = 'images/jem/categories';
     public const THUMB = 'small';
 
-    public static function normaliseRelativeFolder($folder, $maxDepth = 0)
+    public static function normaliseRelativeFolder($folder)
     {
         $folder = trim(str_replace('\\', '/', (string) $folder), '/');
 
@@ -40,12 +41,6 @@ class JemCategoryImagePath
             if ($segment !== '') {
                 $segments[] = $segment;
             }
-        }
-
-        $maxDepth = (int) $maxDepth;
-
-        if ($maxDepth > 0 && count($segments) > $maxDepth) {
-            $segments = array_slice($segments, 0, $maxDepth);
         }
 
         return implode('/', $segments);
@@ -98,11 +93,13 @@ class JemCategoryImagePath
             $preset,
             (string) $attribs->get('category_image_subfolder_pattern', '')
         );
-        $maxDepth = max(1, min(8, (int) $attribs->get('category_image_subfolder_max_depth', 3)));
+        if ($pattern === '') {
+            return '';
+        }
 
-        return $pattern === ''
-            ? ''
-            : self::normaliseRelativeFolder(self::replaceTokens($pattern, $category), $maxDepth);
+        $folder = self::normaliseRelativeFolder(self::replaceTokens($pattern, $category));
+
+        return JemImageFolderPolicy::resolvedFolderOrRoot($folder);
     }
 
     public static function ensureFolders($folder)

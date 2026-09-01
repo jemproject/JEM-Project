@@ -19,6 +19,7 @@ use Joomla\Registry\Registry;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefolderpolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
 
 /**
@@ -286,6 +287,10 @@ class JemModelSettings extends AdminModel
             $data[$prefix . '_default_dimension'] = $defaultDimension;
         }
 
+        if (!$this->validateImageFolderPatterns($data)) {
+            return false;
+        }
+
         if (empty($data['imagewidth'])) {
             $data['imagewidth'] = 100;
         }
@@ -470,6 +475,44 @@ class JemModelSettings extends AdminModel
         }
 
         $this->logSettingsAction($data);
+
+        return true;
+    }
+
+    /**
+     * Reject custom image folder patterns that exceed the internal safety limit.
+     *
+     * @param   array  $data  Validated settings data.
+     *
+     * @return  bool
+     */
+    private function validateImageFolderPatterns(array $data): bool
+    {
+        $global = $data['globalattribs'] ?? array();
+
+        if (is_object($global)) {
+            $global = get_object_vars($global);
+        }
+
+        foreach (array('event', 'venue', 'category') as $object) {
+            $prefix = $object . '_image_subfolder';
+
+            if ((int) ($global[$prefix . '_enabled'] ?? 0) !== 1
+                || (string) ($global[$prefix . '_preset'] ?? 'root') !== 'custom') {
+                continue;
+            }
+
+            $pattern = (string) ($global[$prefix . '_pattern'] ?? '');
+
+            if (!JemImageFolderPolicy::isWithinMaximumDepth($pattern)) {
+                $this->setError(Text::sprintf(
+                    'COM_JEM_SETTINGS_IMAGE_FOLDER_PATTERN_TOO_DEEP',
+                    JemImageFolderPolicy::MAX_DEPTH
+                ));
+
+                return false;
+            }
+        }
 
         return true;
     }

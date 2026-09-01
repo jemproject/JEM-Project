@@ -15,6 +15,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 require_once __DIR__ . '/imageprofilepolicy.class.php';
+require_once __DIR__ . '/imagefolderpolicy.class.php';
 
 /**
  * Normalises and resolves event image subfolder paths.
@@ -27,7 +28,7 @@ class JemEventImagePath
     public const BASE = 'images/jem/events';
     public const THUMB = 'small';
 
-    public static function normaliseRelativeFolder($folder, $maxDepth = 0)
+    public static function normaliseRelativeFolder($folder)
     {
         $folder = trim(str_replace('\\', '/', (string) $folder));
         $folder = trim($folder, '/');
@@ -44,11 +45,6 @@ class JemEventImagePath
             if ($segment !== '') {
                 $segments[] = $segment;
             }
-        }
-
-        $maxDepth = (int) $maxDepth;
-        if ($maxDepth > 0 && count($segments) > $maxDepth) {
-            $segments = array_slice($segments, 0, $maxDepth);
         }
 
         return implode('/', $segments);
@@ -117,13 +113,13 @@ class JemEventImagePath
 
         $preset  = (string) $attribs->get('event_image_subfolder_preset', 'root');
         $pattern = self::patternFromPreset($preset, (string) $attribs->get('event_image_subfolder_pattern', ''));
-        $maxDepth = max(1, min(8, (int) $attribs->get('event_image_subfolder_max_depth', 3)));
-
         if ($pattern === '') {
             return '';
         }
 
-        return self::normaliseRelativeFolder(self::replaceTokens($pattern, $event), $maxDepth);
+        $folder = self::normaliseRelativeFolder(self::replaceTokens($pattern, $event));
+
+        return JemImageFolderPolicy::resolvedFolderOrRoot($folder);
     }
 
     public static function ensureEventFolders($folder)

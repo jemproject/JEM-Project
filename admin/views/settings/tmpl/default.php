@@ -84,12 +84,16 @@ jQuery(document).ready(function($) {
 
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'settings-basic', Text::_('COM_JEM_BASIC_SETTINGS')); ?>
                         <fieldset class="adminform">
-                                <div class="w-100">
+                            <div class="row g-0 align-items-start">
+                                <div class="col-12 col-xl-6">
                                     <?php echo $this->loadTemplate('basicdisplay'); ?>
                                     <?php echo $this->loadTemplate('basiclayout'); ?>
+                                </div>
+                                <div class="col-12 col-xl-6">
                                     <?php echo $this->loadTemplate('basiceventhandling'); ?>
                                     <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
+                            </div>
                         </fieldset>
                     <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <div class="clr"></div>

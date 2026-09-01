@@ -125,6 +125,24 @@ final class EditViewContractsTest extends TestCase
         self::assertStringContainsString('COM_JEM_VENUE_TIMEZONE_INHERITED_DESC', $template);
     }
 
+    public function testFrontendEventHierarchyPrecedesScheduleFields(): void
+    {
+        foreach (array(
+            JEM_TEST_ROOT . '/site/views/editevent/tmpl/edit.php',
+            JEM_TEST_ROOT . '/site/views/editevent/tmpl/responsive/edit.php',
+        ) as $path) {
+            $template = $this->read($path);
+            $alias = strpos($template, "getInput('alias')");
+            $parentEvent = strpos($template, "getInput('parent_event_id')");
+            $startDate = strpos($template, "getInput('dates')");
+
+            self::assertNotFalse($alias, $path);
+            self::assertNotFalse($parentEvent, $path);
+            self::assertNotFalse($startDate, $path);
+            self::assertTrue($alias < $parentEvent && $parentEvent < $startDate, $path);
+        }
+    }
+
     public function testFrontendEventImageControlsUseTheirOwnTab(): void
     {
         foreach (array(
