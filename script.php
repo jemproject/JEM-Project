@@ -316,6 +316,7 @@ class com_jemInstallerScript
 
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
             $this->removeObsoleteAdminHelpMenuItem();
+            $this->repairAdminMenuQuickTasks();
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
             $this->rebuildEventUtcDates();
@@ -1002,6 +1003,77 @@ class com_jemInstallerScript
 
         $db->setQuery($query);
         $db->execute();
+    }
+
+    /**
+     * Add Joomla administrator quick-create links to JEM manager menu items.
+     */
+    private function repairAdminMenuQuickTasks()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        if ($componentId <= 0) {
+            return;
+        }
+
+        $quickTasks = array(
+            'index.php?option=com_jem&view=events' => array(
+                'link'  => 'index.php?option=com_jem&task=event.add',
+                'title' => 'COM_JEM_MENU_ADD_EVENT',
+            ),
+            'index.php?option=com_jem&view=venues' => array(
+                'link'  => 'index.php?option=com_jem&task=venue.add',
+                'title' => 'COM_JEM_MENU_ADD_VENUE',
+            ),
+            'index.php?option=com_jem&view=categories' => array(
+                'link'  => 'index.php?option=com_jem&task=category.add',
+                'title' => 'COM_JEM_MENU_ADD_CATEGORY',
+            ),
+            'index.php?option=com_jem&view=types' => array(
+                'link'  => 'index.php?option=com_jem&task=type.add',
+                'title' => 'COM_JEM_MENU_ADD_TYPE',
+            ),
+        );
+
+        foreach ($quickTasks as $menuLink => $quickTask) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'params')))
+                ->from($db->quoteName('#__menu'))
+                ->where($db->quoteName('client_id') . ' = 1')
+                ->where($db->quoteName('component_id') . ' = ' . $componentId)
+                ->where($db->quoteName('link') . ' = ' . $db->quote($menuLink));
+
+            $db->setQuery($query);
+            $items = $db->loadObjectList() ?: array();
+
+            foreach ($items as $item) {
+                try {
+                    $params = new Registry((string) $item->params);
+                } catch (RuntimeException $e) {
+                    $params = new Registry();
+                }
+
+                $params->set('menu-quicktask', $quickTask['link']);
+                $params->set('menu-quicktask-title', $quickTask['title']);
+                $params->set('menu-quicktask-icon', 'plus');
+
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__menu'))
+                    ->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))
+                    ->where($db->quoteName('id') . ' = ' . (int) $item->id);
+
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
     }
 
     /**
