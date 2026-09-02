@@ -22,6 +22,9 @@ class JemViewCategories extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     /**
      * Display the view
@@ -31,6 +34,24 @@ class JemViewCategories extends JemAdminView
         $this->state        = $this->get('State');
         $this->items        = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total         = $this->get('Total');
+
+        foreach (array('category_type_id', 'access', 'level') as $filter) {
+            if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
+                unset($this->activeFilters[$filter]);
+            }
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
         $this->app          = Factory::getApplication();
         $this->document     = $this->app->getDocument();
         // Check for errors.
@@ -44,33 +65,6 @@ class JemViewCategories extends JemAdminView
         foreach ($this->items as &$item) {
             $this->ordering[$item->parent_id][] = $item->id;
         }
-
-        // Levels filter.
-        $options    = array();
-        $options[]    = HTMLHelper::_('select.option', '1', Text::_('J1'));
-        $options[]    = HTMLHelper::_('select.option', '2', Text::_('J2'));
-        $options[]    = HTMLHelper::_('select.option', '3', Text::_('J3'));
-        $options[]    = HTMLHelper::_('select.option', '4', Text::_('J4'));
-        $options[]    = HTMLHelper::_('select.option', '5', Text::_('J5'));
-        $options[]    = HTMLHelper::_('select.option', '6', Text::_('J6'));
-        $options[]    = HTMLHelper::_('select.option', '7', Text::_('J7'));
-        $options[]    = HTMLHelper::_('select.option', '8', Text::_('J8'));
-        $options[]    = HTMLHelper::_('select.option', '9', Text::_('J9'));
-        $options[]    = HTMLHelper::_('select.option', '10', Text::_('J10'));
-
-        $this->f_levels = $options;
-        $lists = array();
-        $lists['category_type_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getTypeFilterOptions(2, 'COM_JEM_TYPE_FILTER_CATEGORY'),
-            'filter_category_type_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter.category_type_id'),
-            'filter_category_type_id'
-        );
-        $this->lists = $lists;
 
         $this->addToolbar();
         parent::display($tpl);

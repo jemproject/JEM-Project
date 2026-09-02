@@ -24,6 +24,9 @@ class JemViewEvents extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     public function display($tpl = null)
     {
@@ -41,6 +44,24 @@ class JemViewEvents extends JemAdminView
         $this->items        = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
         $this->state        = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total         = $this->get('Total');
+
+        foreach (array('search_type', 'category_id', 'event_type_id', 'venue_id', 'access') as $filter) {
+            if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
+                unset($this->activeFilters[$filter]);
+            }
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         // Retrieving params
         $params = $this->state->get('params');
@@ -70,37 +91,7 @@ class JemViewEvents extends JemAdminView
             $this->document->addStyleDeclaration($style);
         }
 
-        // add filter selection for the search
-        $filters = array();
-        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_EVENT_TITLE'));
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
-        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
-        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
-        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
-        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
-        $filters[] = HTMLHelper::_('select.option', '7', Text::_('COM_JEM_AUTHOR'));
-        $filters[] = HTMLHelper::_('select.option', '8', Text::_('JALL'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select m-0','onChange'=>"this.form.submit()"), 'value', 'text', $this->state->get('filter_type'));
-        $lists['event_type_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getTypeFilterOptions(1, 'COM_JEM_TYPE_FILTER_EVENT'),
-            'filter_event_type_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter_event_type_id'),
-            'filter_event_type_id'
-        );
-        $lists['category_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getCategoryFilterOptions(),
-            'filter_category_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter_category_id'),
-            'filter_category_id'
-        );
+        $lists = array();
         $lists['batch_category'] = HTMLHelper::_(
             'select.genericlist',
             $this->getCategoryMoveOptions(),

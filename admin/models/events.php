@@ -43,6 +43,9 @@ class JemModelEvents extends ListModel
                     'featured', 'a.featured',
                     'author', 'u.name',
                     'access', 'a.access', 'access_level',
+                    'search', 'published', 'search_type',
+                    'category_id', 'event_type_id', 'venue_id',
+                    'begin', 'end',
             );
         }
 
@@ -56,31 +59,46 @@ class JemModelEvents extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
+
         $search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
         $this->setState('filter_search', $search);
+        $this->setState('filter.search', $search);
 
         $published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
         $this->setState('filter_state', $published);
+        $this->setState('filter.published', $published);
 
         $filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filterfield);
+        $this->setState('filter.search_type', $filterfield);
 
         $categoryId = $this->getUserStateFromRequest($this->context.'.filter_category_id', 'filter_category_id', 0, 'int');
         $this->setState('filter_category_id', $categoryId);
+        $this->setState('filter.category_id', $categoryId);
 
         $eventTypeId = $this->getUserStateFromRequest($this->context.'.filter_event_type_id', 'filter_event_type_id', 0, 'int');
         $this->setState('filter_event_type_id', $eventTypeId);
+        $this->setState('filter.event_type_id', $eventTypeId);
 
         $venueId = $this->getUserStateFromRequest($this->context.'.filter_venue_id', 'filter_venue_id', 0, 'int');
         $this->setState('filter_venue_id', $venueId);
+        $this->setState('filter.venue_id', $venueId);
 
         $begin = $this->getUserStateFromRequest($this->context.'.filter_begin', 'filter_begin', '', 'string');
         $this->setState('filter_begin', $begin);
+        $this->setState('filter.begin', $begin);
 
         $end = $this->getUserStateFromRequest($this->context.'.filter_end', 'filter_end', '', 'string');
         $this->setState('filter_end', $end);
+        $this->setState('filter.end', $end);
+
+        $featured = $this->getUserStateFromRequest($this->context.'.filter_featured', 'filter_featured', '', 'string');
+        $this->setState('filter_featured', $featured);
+        $this->setState('filter.featured', $featured);
 
         $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter_access', $access);
         $this->setState('filter.access', $access);
 
         // Load the parameters.
@@ -101,6 +119,8 @@ class JemModelEvents extends ListModel
         }
 
         parent::populateState($defaultOrdering, $defaultDirection);
+
+        $this->syncLegacyFilterState($app);
     }
 
     /**
@@ -124,6 +144,7 @@ class JemModelEvents extends ListModel
         $id .= ':' . $this->getState('filter_venue_id');
         $id .= ':' . $this->getState('filter_begin');
         $id .= ':' . $this->getState('filter_end');
+        $id .= ':' . $this->getState('filter_featured');
         $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
@@ -183,6 +204,11 @@ class JemModelEvents extends ListModel
             $query->where('a.published = '.(int) $published);
         } elseif ($published === '') {
             $query->where('(a.published IN (0, 1))');
+        }
+
+        $featured = $this->getState('filter_featured');
+        if ($featured !== '' && is_numeric($featured)) {
+            $query->where('a.featured = ' . (int) $featured);
         }
 
         // Filter by access level.
@@ -297,6 +323,41 @@ class JemModelEvents extends ListModel
         $query->order($db->escape($orderCol.' '.$orderDirn));
 
         return $query;
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search'        => array('filter_search', 'filter_search', ''),
+            'published'     => array('filter_state', 'filter_state', ''),
+            'search_type'   => array('filter_type', 'filter_type', 0),
+            'category_id'   => array('filter_category_id', 'filter_category_id', 0),
+            'event_type_id' => array('filter_event_type_id', 'filter_event_type_id', 0),
+            'venue_id'      => array('filter_venue_id', 'filter_venue_id', 0),
+            'begin'         => array('filter_begin', 'filter_begin', ''),
+            'end'           => array('filter_end', 'filter_end', ''),
+            'featured'      => array('filter_featured', 'filter_featured', ''),
+            'access'        => array('filter_access', 'filter_access', 0),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     /**

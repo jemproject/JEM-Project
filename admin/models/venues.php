@@ -40,7 +40,9 @@ class JemModelVenues extends ListModel
                     'ordering', 'a.ordering',
                     'created', 'a.created',
                     'author', 'u.name',
-                    'assignedevents'
+                    'access', 'a.access', 'access_level',
+                    'assignedevents',
+                    'search', 'published', 'search_type', 'venue_type_id',
             );
         }
 
@@ -54,25 +56,34 @@ class JemModelVenues extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
+
         $search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
         $this->setState('filter_search', $search);
+        $this->setState('filter.search', $search);
 
         $published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
         $this->setState('filter_state', $published);
+        $this->setState('filter.published', $published);
 
         $filter_type = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
         $this->setState('filter_type', $filter_type);
+        $this->setState('filter.search_type', $filter_type);
 
         $venueTypeId = $this->getUserStateFromRequest($this->context.'.filter_venue_type_id', 'filter_venue_type_id', 0, 'int');
         $this->setState('filter_venue_type_id', $venueTypeId);
+        $this->setState('filter.venue_type_id', $venueTypeId);
 
         $access = $this->getUserStateFromRequest($this->context.'.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter_access', $access);
         $this->setState('filter.access', $access);
 
         $params = ComponentHelper::getParams('com_jem');
         $this->setState('params', $params);
 
         parent::populateState('a.venue', 'asc');
+
+        $this->syncLegacyFilterState($app);
     }
 
     /**
@@ -95,6 +106,36 @@ class JemModelVenues extends ListModel
         $id .= ':' . $this->getState('filter.access');
 
         return parent::getStoreId($id);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search'        => array('filter_search', 'filter_search', ''),
+            'published'     => array('filter_state', 'filter_state', ''),
+            'search_type'   => array('filter_type', 'filter_type', 0),
+            'venue_type_id' => array('filter_venue_type_id', 'filter_venue_type_id', 0),
+            'access'        => array('filter_access', 'filter_access', 0),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     /**
