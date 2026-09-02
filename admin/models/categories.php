@@ -40,10 +40,12 @@ class JemModelCategories extends ListModel
                 'author_name', 'ua.name',
                 'article_category_id', 'a.article_category_id',
                 'article_create_mode', 'a.article_create_mode',
+                'group_name', 'gr.name',
                 'lft', 'a.lft',
                 'rgt', 'a.rgt',
                 'level', 'a.level',
                 'path', 'a.path',
+                'search', 'category_type_id',
             );
         }
 
@@ -78,18 +80,23 @@ class JemModelCategories extends ListModel
         $this->setState('filter.section', (count($parts) > 1) ? $parts[1] : null);
 
         $search = $this->getUserStateFromRequest($context.'.search', 'filter_search');
+        $this->setState('filter_search', $search);
         $this->setState('filter.search', $search);
 
         $level = $this->getUserStateFromRequest($context.'.filter.level', 'filter_level', 0, 'int');
+        $this->setState('filter_level', $level);
         $this->setState('filter.level', $level);
 
         $access = $this->getUserStateFromRequest($context.'.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter_access', $access);
         $this->setState('filter.access', $access);
 
         $published = $this->getUserStateFromRequest($context.'.filter.published', 'filter_published', '');
+        $this->setState('filter_published', $published);
         $this->setState('filter.published', $published);
 
         $categoryTypeId = $this->getUserStateFromRequest($context.'.filter.category_type_id', 'filter_category_type_id', 0, 'int');
+        $this->setState('filter_category_type_id', $categoryTypeId);
         $this->setState('filter.category_type_id', $categoryTypeId);
 
         $language = $this->getUserStateFromRequest($context.'.filter.language', 'filter_language', '');
@@ -97,6 +104,8 @@ class JemModelCategories extends ListModel
 
         // List state information.
         parent::populateState('a.lft', 'asc');
+
+        $this->syncLegacyFilterState($app);
     }
 
     /**
@@ -117,9 +126,41 @@ class JemModelCategories extends ListModel
         $id .= ':'.$this->getState('filter.extension');
         $id .= ':'.$this->getState('filter.published');
         $id .= ':'.$this->getState('filter.category_type_id');
+        $id .= ':'.$this->getState('filter.access');
+        $id .= ':'.$this->getState('filter.level');
         $id .= ':'.$this->getState('filter.language');
 
         return parent::getStoreId($id);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search'           => array('filter_search', 'filter_search', ''),
+            'level'            => array('filter_level', 'filter_level', 0),
+            'access'           => array('filter_access', 'filter_access', 0),
+            'published'        => array('filter_published', 'filter_published', ''),
+            'category_type_id' => array('filter_category_type_id', 'filter_category_type_id', 0),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     /**

@@ -6,31 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 final class EventsFilterLayoutTest extends TestCase
 {
-    public function testFullHdFiltersStayOnOneLineWithActionsBelowOnTheRight(): void
+    public function testEventsUseJoomlaResponsiveSearchTools(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/events/tmpl/default.php');
         $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/backend.css');
 
-        self::assertStringContainsString('jem-admin-filter-bar jem-events-admin-filter-bar', $template);
-        self::assertStringContainsString('class="jem-admin-filter-actions jem-events-table-actions"', $template);
-        self::assertStringContainsString('id="jem-events-column-selector"', $template);
-        self::assertStringContainsString("target.appendChild(selector);", $template);
-        self::assertStringContainsString("selector.classList.remove('float-end', 'pb-2');", $template);
-        self::assertMatchesRegularExpression(
-            '/@media \(min-width: 1600px\)[\s\S]+\.jem-events-admin-filter-bar\s*\{[\s\S]+flex-wrap: nowrap;/',
-            $css
-        );
-        self::assertStringContainsString('.jem-admin-filter-actions {', $css);
-        self::assertStringContainsString('.jem-admin-filter-columns:empty {', $css);
-        self::assertStringContainsString('.jem-events-table-actions {', $css);
-
-        $filterEnd = strpos($template, '</fieldset>');
-        $tableActions = strpos($template, 'jem-events-table-actions');
-        $table = strpos($template, '<div class="table">');
-
-        self::assertIsInt($filterEnd);
-        self::assertIsInt($tableActions);
-        self::assertIsInt($table);
-        self::assertTrue($filterEnd < $tableActions && $tableActions < $table);
+        self::assertStringContainsString("LayoutHelper::render('joomla.searchtools.default'", $template);
+        self::assertStringContainsString('$this->filterForm->renderControlFields()', $template);
+        self::assertStringNotContainsString('jem-events-admin-filter-bar', $template);
+        self::assertStringNotContainsString('jem-events-table-actions', $template);
+        self::assertStringNotContainsString('jem-events-column-selector', $template);
+        self::assertStringNotContainsString('moveColumnSelector', $template);
+        self::assertStringNotContainsString('.jem-events-admin-filter-bar', $css);
+        self::assertStringNotContainsString('.jem-events-table-actions', $css);
+        self::assertStringNotContainsString('.jem-admin-filter-columns', $css);
     }
 }

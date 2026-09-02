@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
 
 $user      = JemFactory::getUser();
 $listOrder = $this->escape($this->state->get('list.ordering'));
@@ -17,9 +19,15 @@ $listDirn  = $this->escape($this->state->get('list.direction'));
 $canEdit   = $user->authorise('core.edit', 'com_jem');
 $canEditState = $user->authorise('core.edit.state', 'com_jem');
 $activeEntityFilter = (int) $this->state->get('filter_entity');
-$saveOrder = $canEditState && $activeEntityFilter > 0;
+$saveOrder = $canEditState
+    && $activeEntityFilter > 0
+    && $listOrder === 'a.ordering'
+    && strtolower($listDirn) === 'asc';
 $saveOrderingUrl = Route::_('index.php?option=com_jem&task=types.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
+$wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+$wa->useScript('table.columns');
+$wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 $showDayColumns = $activeEntityFilter === 4;
 $emptyColspan = $showDayColumns ? 15 : 13;
 
@@ -191,15 +199,6 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
         color: inherit;
     }
 
-    .jem-types-admin-filter-bar .jem-admin-filter-search,
-    .jem-types-admin-filter-bar .jem-admin-filter-item {
-        flex: 0 0 auto;
-    }
-
-    .jem-types-admin-filter-bar .jem-admin-filter-search {
-        width: min(100%, 28rem);
-    }
-
     #typeList .jem-types-description {
         color: #6c757d;
         display: -webkit-box;
@@ -219,50 +218,7 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
 <form action="<?php echo Route::_('index.php?option=com_jem&view=types'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
 
-        <!-- Filter bar -->
-        <fieldset id="filter-bar" class="mb-3">
-            <div class="jem-admin-filter-bar jem-types-admin-filter-bar">
-                <div class="jem-admin-filter-search">
-                    <div class="input-group">
-                        <input type="text" name="filter_search" id="filter_search" class="form-control"
-                               placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>"
-                               value="<?php echo $this->escape($this->state->get('filter_search')); ?>"
-                               onchange="document.adminForm.submit();" />
-                        <button type="submit" class="btn btn-primary">
-                            <span class="icon-search" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-primary"
-                                onclick="document.getElementById('filter_search').value='';this.form.filter_access.value='0';this.form.submit();">
-                            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                        </button>
-                    </div>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_state" class="form-select" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true);?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_entity" class="form-select" onchange="this.form.submit()">
-                        <option value="0"><?php echo Text::_('COM_JEM_TYPE_FILTER_ENTITY'); ?></option>
-                        <option value="1" <?php echo $this->state->get('filter_entity') == 1 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_EVENT'); ?></option>
-                        <option value="2" <?php echo $this->state->get('filter_entity') == 2 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_CATEGORY'); ?></option>
-                        <option value="3" <?php echo $this->state->get('filter_entity') == 3 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_VENUE'); ?></option>
-                        <option value="4" <?php echo $this->state->get('filter_entity') == 4 ? 'selected' : ''; ?>><?php echo Text::_('COM_JEM_TYPE_ENTITY_DAY'); ?></option>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_access" class="form-select" onchange="this.form.submit()">
-                        <option value="0"><?php echo Text::_('JOPTION_SELECT_ACCESS'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access')); ?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-limit">
-                    <?php echo $this->pagination->getLimitBox(); ?>
-                </div>
-            </div>
-        </fieldset>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 
         <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="typeList">
             <thead>
@@ -273,19 +229,19 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                                onclick="Joomla.checkAll(this)" />
                     </th>
                     <th class="center jem-list-order-heading jem-types-order-heading<?php echo $saveOrder ? '' : ' is-disabled'; ?>">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
                     </th>
                     <th class="center jem-list-status">
-                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                     <th class="title">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_NAME', 'a.name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_TYPE_FIELD_NAME', 'a.name', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:18%">
                         <?php echo Text::_('JGLOBAL_DESCRIPTION'); ?>
                     </th>
                     <th style="width:12%">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_TYPE', 'a.entity', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_TYPE_FIELD_TYPE', 'a.entity', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:6%" class="center">
                         <?php echo Text::_('COM_JEM_TYPE_FIELD_ICON'); ?>
@@ -306,16 +262,16 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
                         <?php echo $renderEventStateHeader(); ?>
                     </th>
                     <th style="width:10%">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
                     </th>
                     <th data-jem-default-hidden>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                     </th>
                     <th class="center nowrap">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:5%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                 </tr>
             </thead>
@@ -400,8 +356,7 @@ $renderTypeRelatedCounts = static function ($item) use ($renderEventStateCounts)
 
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />
-        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <?php echo $this->filterForm->renderControlFields(); ?>
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>

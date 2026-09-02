@@ -231,12 +231,12 @@ final class AdminCodeContractsTest extends TestCase
         $code = self::read(JEM_TEST_ROOT . '/admin/views/events/tmpl/default.php');
 
         self::assertStringContainsString(
-            "HTMLHelper::_('grid.sort', 'COM_JEM_HITS', 'a.hits', \$listDirn, \$listOrder)",
+            "HTMLHelper::_('searchtools.sort', 'COM_JEM_HITS', 'a.hits', \$listDirn, \$listOrder)",
             $code
         );
         self::assertStringContainsString('<?php echo (int) $row->hits; ?>', $code);
         self::assertStringContainsString(
-            "HTMLHelper::_('grid.sort', 'COM_JEM_LAST_VISIT', 'a.last_visit', \$listDirn, \$listOrder)",
+            "HTMLHelper::_('searchtools.sort', 'COM_JEM_LAST_VISIT', 'a.last_visit', \$listDirn, \$listOrder)",
             $code
         );
         self::assertStringContainsString('$row->last_visit', $code);
