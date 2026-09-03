@@ -64,12 +64,6 @@ class JemViewEvent extends JemAdminView
         $uri            = Uri::getInstance();
         $url            = $uri->root();
 
-        $categories     = JemCategories::getCategoriesTree(1);
-        $selectedcats   = $this->get('Catsselected');
-
-        $Lists = array();
-        $Lists['category'] = JemCategories::buildcatselect($categories, 'cid[]', $selectedcats, 0, 'multiple="multiple" size="8"');
-
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
         JemHelper::loadCss('jem-attachments');
@@ -87,8 +81,6 @@ class JemViewEvent extends JemAdminView
         $this->jemsettings = $jemsettings;
         $this->imageIntroSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_INTRO);
         $this->imageFullSummary = JemImage::profileSummary($jemsettings, JemImageProfilePolicy::EVENT_FULL);
-        $this->Lists       = $Lists;
-
         JemImagePublicationPolicy::configureEditingForm($this->form, 'event', $jemsettings);
 
         $this->addToolbar();

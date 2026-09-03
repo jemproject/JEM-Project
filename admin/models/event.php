@@ -292,6 +292,7 @@ class JemModelEvent extends JemModelAdmin
             $item->articletext = ($item->fulltext && trim($item->fulltext) != '') ? $item->introtext . "<hr id=\"system-readmore\" />" . $item->fulltext : $item->introtext;
 
             $db = Factory::getContainer()->get('DatabaseDriver');
+            $item->cats = $this->getEventCategoryIds((int) $item->id);
 
             $query = $db->getQuery(true);
             $query->select('SUM(places)');
@@ -623,7 +624,13 @@ class JemModelEvent extends JemModelAdmin
         }
 
         // Variables
-        $cats                 = $data['cats'];
+        $cats                 = $this->normaliseEventCategoryIds($data['cats'] ?? array());
+        if (empty($cats) || !$this->validateEventCategoryIds($cats, $backend, $new)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
+
+            return false;
+        }
+        $data['cats']         = $cats;
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
@@ -1801,20 +1808,20 @@ class JemModelEvent extends JemModelAdmin
             return array();
         }
 
-        $event['cats'] = $this->getEventImageCategoryIds($eventId);
+        $event['cats'] = $this->getEventCategoryIds($eventId);
         $event['image_path'] = JemEventImagePath::normaliseRelativeFolder($event['image_path'] ?? '');
 
         return $event;
     }
 
     /**
-     * Return ordered category ids used by an event image-folder pattern.
+     * Return the ordered category ids assigned to an event.
      *
      * @param   integer  $eventId  Event id.
      *
      * @return  array
      */
-    protected function getEventImageCategoryIds($eventId)
+    protected function getEventCategoryIds($eventId)
     {
         $eventId = (int) $eventId;
 
@@ -1836,6 +1843,57 @@ class JemModelEvent extends JemModelAdmin
         } catch (Throwable $e) {
             return array();
         }
+    }
+
+    /**
+     * Normalize category ids received from an event form.
+     *
+     * @param   mixed  $categories  Submitted category ids.
+     *
+     * @return  array
+     */
+    protected function normaliseEventCategoryIds($categories)
+    {
+        $categories = is_array($categories)
+            ? $categories
+            : preg_split('/\s*,\s*/', (string) $categories, -1, PREG_SPLIT_NO_EMPTY);
+        $categories = array_map('intval', $categories ?: array());
+
+        return array_values(array_unique(array_filter($categories, static function ($categoryId) {
+            return $categoryId > 0;
+        })));
+    }
+
+    /**
+     * Validate submitted category ids against the categories available to the actor.
+     *
+     * @param   array    $categories  Submitted category ids.
+     * @param   boolean  $backend     True for administrator requests.
+     * @param   boolean  $new         True when creating an event.
+     *
+     * @return  boolean
+     */
+    protected function validateEventCategoryIds(array $categories, $backend, $new)
+    {
+        if ($backend) {
+            $allowedCategories = JemCategories::getCategoriesTree();
+            $allowedIds = array();
+
+            foreach ($allowedCategories as $category) {
+                if (isset($category->id)) {
+                    $allowedIds[] = (int) $category->id;
+                }
+            }
+        } else {
+            $user = JemFactory::getUser();
+            $allowedCategories = $user->getJemCategories(
+                $new ? array('add') : array('add', 'edit'),
+                'event'
+            );
+            $allowedIds = array_map('intval', array_keys((array) $allowedCategories));
+        }
+
+        return empty(array_diff($categories, array_unique($allowedIds)));
     }
 
     /**
