@@ -118,10 +118,16 @@ $periods = array(
                 $location = implode(', ', array_filter(array($row->venue ?? '', $row->city ?? '')));
                 $hasRegistration = (int) ($row->registra ?? 0) > 0;
                 $canRegister = $hasRegistration && $row->registrationOpen && $row->availabilityState !== 'soldout';
+                $blogImage = '<img class="jem-eventsblog-image" src="'
+                    . htmlspecialchars($row->blogImage, ENT_QUOTES, 'UTF-8')
+                    . '" alt="" loading="lazy">';
+                if (!empty($row->blogHasImage)) {
+                    $blogImage = JemOutput::eventStatusImage($row, $blogImage, 'jem-eventsblog-status-image');
+                }
                 ?>
                 <article class="jem-eventsblog-card<?php echo !empty($row->featured) ? ' is-featured' : ''; ?>" itemscope itemtype="https://schema.org/Event">
                     <a class="jem-eventsblog-image-link" href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>" tabindex="-1" aria-hidden="true">
-                        <img class="jem-eventsblog-image" src="<?php echo htmlspecialchars($row->blogImage, ENT_QUOTES, 'UTF-8'); ?>" alt="" loading="lazy">
+                        <?php echo $blogImage; ?>
                     </a>
                     <div class="jem-eventsblog-card-body">
                         <div class="jem-eventsblog-date">

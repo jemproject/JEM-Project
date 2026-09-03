@@ -21,6 +21,10 @@
 
     <fields name="params">
         <fieldset name="basic">
+            <field name="show_status_indicators" type="radio" default="0" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="usecat" type="radio"
                 default="1"
                 label="COM_JEM_DISPLAYCHILDS"

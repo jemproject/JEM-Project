@@ -115,6 +115,7 @@ site/views/category/tmpl/default.xml|footertext
 site/views/category/tmpl/default.xml|id
 site/views/category/tmpl/default.xml|includechildevents
 site/views/category/tmpl/default.xml|introtext
+site/views/category/tmpl/default.xml|show_status_indicators
 site/views/category/tmpl/default.xml|showemptychilds
 site/views/category/tmpl/default.xml|showfootertext
 site/views/category/tmpl/default.xml|showintrotext
@@ -125,6 +126,7 @@ site/views/day/tmpl/default.xml|days
 site/views/day/tmpl/default.xml|footertext
 site/views/day/tmpl/default.xml|introtext
 site/views/day/tmpl/default.xml|onlyfeatured
+site/views/day/tmpl/default.xml|show_status_indicators
 site/views/day/tmpl/default.xml|showfootertext
 site/views/day/tmpl/default.xml|showintrotext
 site/views/day/tmpl/default.xml|timeline_filter_countries
@@ -136,6 +138,7 @@ site/views/day/tmpl/timeline.xml|days
 site/views/day/tmpl/timeline.xml|footertext
 site/views/day/tmpl/timeline.xml|introtext
 site/views/day/tmpl/timeline.xml|onlyfeatured
+site/views/day/tmpl/timeline.xml|show_status_indicators
 site/views/day/tmpl/timeline.xml|show_week_navigation
 site/views/day/tmpl/timeline.xml|showfootertext
 site/views/day/tmpl/timeline.xml|showintrotext
@@ -209,6 +212,7 @@ site/views/event/tmpl/default.xml|event_venue_heading_display
 site/views/event/tmpl/default.xml|footertext
 site/views/event/tmpl/default.xml|id
 site/views/event/tmpl/default.xml|introtext
+site/views/event/tmpl/default.xml|show_status_indicators
 site/views/event/tmpl/default.xml|showfootertext
 site/views/event/tmpl/default.xml|showintrotext
 site/views/eventsblog/tmpl/default.xml|blog_columns
@@ -229,6 +233,7 @@ site/views/eventsblog/tmpl/default.xml|blog_show_type_filter
 site/views/eventsblog/tmpl/default.xml|blog_show_venue_filter
 site/views/eventsblog/tmpl/default.xml|footertext
 site/views/eventsblog/tmpl/default.xml|introtext
+site/views/eventsblog/tmpl/default.xml|show_status_indicators
 site/views/eventsblog/tmpl/default.xml|showfootertext
 site/views/eventsblog/tmpl/default.xml|showintrotext
 site/views/eventslist/tmpl/default.xml|categoryswitch
@@ -240,6 +245,7 @@ site/views/eventslist/tmpl/default.xml|onlyfeatured
 site/views/eventslist/tmpl/default.xml|show_archived_events
 site/views/eventslist/tmpl/default.xml|show_introtext_events
 site/views/eventslist/tmpl/default.xml|show_more_button
+site/views/eventslist/tmpl/default.xml|show_status_indicators
 site/views/eventslist/tmpl/default.xml|showfootertext
 site/views/eventslist/tmpl/default.xml|showiconsineventdata
 site/views/eventslist/tmpl/default.xml|showiconsineventtitle
@@ -337,6 +343,7 @@ site/views/search/tmpl/default.xml|filter_show_venue
 site/views/search/tmpl/default.xml|footertext
 site/views/search/tmpl/default.xml|introtext
 site/views/search/tmpl/default.xml|show_search_title
+site/views/search/tmpl/default.xml|show_status_indicators
 site/views/search/tmpl/default.xml|showfootertext
 site/views/search/tmpl/default.xml|showintrotext
 site/views/search/tmpl/default.xml|template_suffix
@@ -354,6 +361,7 @@ site/views/typeevents/tmpl/default.xml|footertext
 site/views/typeevents/tmpl/default.xml|id
 site/views/typeevents/tmpl/default.xml|introtext
 site/views/typeevents/tmpl/default.xml|show_introtext_events
+site/views/typeevents/tmpl/default.xml|show_status_indicators
 site/views/typeevents/tmpl/default.xml|showfootertext
 site/views/typeevents/tmpl/default.xml|showintrotext
 site/views/typeevents/tmpl/default.xml|showmonthrow
@@ -404,6 +412,7 @@ site/views/venue/tmpl/calendar.xml|usefeaturedborder
 site/views/venue/tmpl/default.xml|footertext
 site/views/venue/tmpl/default.xml|id
 site/views/venue/tmpl/default.xml|introtext
+site/views/venue/tmpl/default.xml|show_status_indicators
 site/views/venue/tmpl/default.xml|showfootertext
 site/views/venue/tmpl/default.xml|showintrotext
 site/views/venue/tmpl/default.xml|venue_heading_display
