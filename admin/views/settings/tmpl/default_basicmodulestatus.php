@@ -12,6 +12,7 @@ use Joomla\CMS\Language\Text;
 $behaviourFields = array(
     'module_status_ribbons',
     'module_status_ribbon_position',
+    'module_status_ribbon_scale',
     'module_status_ribbon_side_margin',
     'module_status_last_places_threshold',
     'module_status_new_days',

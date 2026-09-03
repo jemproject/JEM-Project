@@ -1854,6 +1854,7 @@ static public function lightbox() {
             false
         );
         $sideMargin = min(200, max(0, (int) ($settings->module_status_ribbon_side_margin ?? 0)));
+        $ribbonScale = min(200, max(50, (int) ($settings->module_status_ribbon_scale ?? 100)));
         $label = Text::_($status['label']);
         $labelLength = min(40, max(1, mb_strlen($label)));
         $fontSize = max(0.58, min(0.85, 1.06 - (max(0, $labelLength - 8) * 0.022)));
@@ -1861,12 +1862,24 @@ static public function lightbox() {
             . ';--jem-module-status-color:' . $textColor
             . ';--jem-module-status-side-margin:' . $sideMargin . 'px'
             . ';--jem-module-status-font-size:' . number_format($fontSize, 2, '.', '') . 'rem;';
-        $baseClass = $mode === 'ribbon'
-            ? 'jem-module-event-status-ribbon jem-module-event-status-ribbon--' . str_replace('_', '-', $position)
-            : 'jem-event-state-badge jem-module-event-status-badge';
+        $statusClass = str_replace('_', '-', $statusName);
+        if ($mode === 'ribbon') {
+            $baseClass = 'jem-module-event-status jem-module-event-status-ribbon'
+                . ' jem-module-event-status-ribbon--' . str_replace('_', '-', $position)
+                . ' jem-module-event-status--' . $statusClass
+                . ' jem-module-event-status-ribbon--' . $statusClass;
+            $dataAttributes = ' data-jem-module-status-scale="' . $ribbonScale . '"'
+                . ' data-jem-module-status-base-font-size="'
+                . number_format($fontSize, 2, '.', '') . '"';
+        } else {
+            $baseClass = 'jem-event-state-badge jem-module-event-status jem-module-event-status-badge'
+                . ' jem-module-event-status--' . $statusClass
+                . ' jem-module-event-status-badge--' . $statusClass;
+            $dataAttributes = '';
+        }
 
         return '<span class="' . $baseClass . ' ' . htmlspecialchars($status['class'], ENT_QUOTES, 'UTF-8')
-            . '" style="' . $style . '">'
+            . '"' . $dataAttributes . ' style="' . $style . '">'
             . htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
             . '</span>';
     }

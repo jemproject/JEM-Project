@@ -41,7 +41,8 @@
     position: absolute;
     z-index: 2;
     display: block;
-    padding: .35rem .65rem;
+    padding: var(--jem-module-status-padding-block, .35rem)
+        var(--jem-module-status-padding-inline, .65rem);
     pointer-events: none;
 }
 
@@ -54,7 +55,7 @@
 }
 
 .jem-module-event-status-ribbon--horizontal-top {
-    top: .45rem;
+    top: var(--jem-module-status-horizontal-offset, .45rem);
 }
 
 .jem-module-event-status-ribbon--horizontal-center {
@@ -63,23 +64,24 @@
 }
 
 .jem-module-event-status-ribbon--horizontal-bottom {
-    bottom: .45rem;
+    bottom: var(--jem-module-status-horizontal-offset, .45rem);
 }
 
 .jem-module-event-status-ribbon--diagonal-ascending,
 .jem-module-event-status-ribbon--diagonal-descending {
-    top: 1.2rem;
-    min-width: 9.6rem;
+    top: var(--jem-module-status-diagonal-top, 1.2rem);
+    width: var(--jem-module-status-diagonal-width, 9.6rem);
+    min-width: 0;
     white-space: nowrap;
 }
 
 .jem-module-event-status-ribbon--diagonal-ascending {
-    left: calc(-2.6rem + var(--jem-module-status-side-margin, 0));
+    left: calc(var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0));
     transform: rotate(-45deg);
 }
 
 .jem-module-event-status-ribbon--diagonal-descending {
-    right: calc(-2.6rem + var(--jem-module-status-side-margin, 0));
+    right: calc(var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0));
     transform: rotate(45deg);
 }
 
@@ -95,15 +97,15 @@
 @media (max-width: 480px) {
     .jem-module-event-status-ribbon--diagonal-ascending,
     .jem-module-event-status-ribbon--diagonal-descending {
-        top: .9rem;
-        min-width: 8rem;
+        top: var(--jem-module-status-diagonal-top, .9rem);
+        width: var(--jem-module-status-diagonal-width, 8rem);
     }
 
     .jem-module-event-status-ribbon--diagonal-ascending {
-        left: calc(-2.2rem + var(--jem-module-status-side-margin, 0));
+        left: calc(var(--jem-module-status-diagonal-offset, -2.2rem) + var(--jem-module-status-side-margin, 0));
     }
 
     .jem-module-event-status-ribbon--diagonal-descending {
-        right: calc(-2.2rem + var(--jem-module-status-side-margin, 0));
+        right: calc(var(--jem-module-status-diagonal-offset, -2.2rem) + var(--jem-module-status-side-margin, 0));
     }
 }

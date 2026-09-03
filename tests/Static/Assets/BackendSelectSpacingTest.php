@@ -12,6 +12,11 @@ final class BackendSelectSpacingTest extends TestCase
 
         self::assertStringContainsString('select.inputbox {', $css);
         self::assertStringContainsString('padding-inline-end: 2.5rem;', $css);
+        self::assertStringContainsString(
+            '.control-group select.inputbox:not([multiple]):not([size]) {',
+            $css
+        );
+        self::assertStringContainsString('padding-inline-end: calc(2.5rem + 5px);', $css);
         self::assertStringNotContainsString('select.inputbox, textarea.inputbox {', $css);
     }
 

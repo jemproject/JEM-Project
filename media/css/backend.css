@@ -2599,6 +2599,10 @@ select.inputbox {
     padding-inline-end: 2.5rem;
 }
 
+.control-group select.inputbox:not([multiple]):not([size]) {
+    padding-inline-end: calc(2.5rem + 5px);
+}
+
 textarea.inputbox {
     padding: .5rem;
 }
