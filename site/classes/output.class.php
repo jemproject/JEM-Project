@@ -24,6 +24,7 @@ use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/map.php');
+require_once __DIR__ . '/venuemappolicy.class.php';
 
 // HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
@@ -1140,11 +1141,30 @@ static public function lightbox() {
     }
 
     /**
-     * Creates the map button
+     * Resolves the effective map presentation and provider for a venue detail page.
      *
-     * @param obj $data
+     * @param   string   $display            Menu-item display preference
+     * @param   integer  $globalMapService   Global JEM map service
+     * @param   boolean  $allowMenuOverride  Whether the active menu owns the venue page
+     *
+     * @return  array
      */
-    static public function mapicon($data, $view, $params)
+    static public function resolveVenueMapConfiguration($display, $globalMapService, $allowMenuOverride = true)
+    {
+        return JemVenueMapPolicy::resolve($display, $globalMapService, $allowMenuOverride);
+    }
+
+    /**
+     * Creates the map output.
+     *
+     * @param   object  $data          Venue data
+     * @param   string  $view          Rendering context
+     * @param   mixed   $params        Map settings
+     * @param   string  $presentation  Optional venue link presentation
+     *
+     * @return  string|null
+     */
+    static public function mapicon($data, $view, $params, $presentation = '')
     {
         $app = Factory::getApplication();
         $settings = JemHelper::globalattribs();
@@ -1201,8 +1221,28 @@ static public function lightbox() {
             $mapserv = $paramGet($params, 'global_show_mapserv');
         }
 
+        $presentation = in_array($presentation, array('link_text', 'link_button'), true) ? $presentation : '';
+
         //Link to map
         $mapimage = jemhtml::icon( 'com_jem/map_icon.webp', 'fa fa-map', Text::_('COM_JEM_MAP'), 'class="jem-mapicon"');
+        $renderVenueMapLink = static function ($url, $label) use ($mapimage, $presentation) {
+            if ($presentation === '') {
+                return null;
+            }
+
+            $class = $presentation === 'link_button'
+                ? 'jem-venue-map-button btn btn-primary'
+                : 'jem-venue-map-text-link';
+            $safeUrl = htmlspecialchars(
+                html_entity_decode((string) $url, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+
+            return '<a class="' . $class . '" title="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8')
+                . '" target="_blank" rel="noopener" href="' . $safeUrl . '">'
+                . $mapimage . '&nbsp;' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';
+        };
 
         //set var
         $output = null;
@@ -1229,9 +1269,13 @@ static public function lightbox() {
                 } else {
                 $url = 'https://www.google.'.$paramGet($params, $tld, 'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$paramGet($params, $lg, 'en').'+('.$data->venue.')'; }
 
-                $message = Text::_('COM_JEM_MAP').':';
-                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
+                $label = Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue);
+                $output = $renderVenueMapLink($url, $label);
+                if ($output === null) {
+                    $message = Text::_('COM_JEM_MAP').':';
+                    $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                    $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.$label.'</a></dd>';
+                }
                 break;
 
             case 2:
@@ -1314,9 +1358,13 @@ static public function lightbox() {
                     $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
                 }
 
-                $message = Text::_('COM_JEM_MAP') . ':';
-                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+                $label = Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue);
+                $output = $renderVenueMapLink($url, $label);
+                if ($output === null) {
+                    $message = Text::_('COM_JEM_MAP') . ':';
+                    $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                    $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . $label . '</a></dd>';
+                }
 
                 break;
 

@@ -47,16 +47,18 @@ $renderVenueHeading = function () use ($venueHeadingDisplay) {
     return $label;
 };
 $venueShowStatus = (int) $this->params->get('venue_show_status', 1) === 1;
-$venueMapDisplay = (string) $this->params->get('venue_map_display', 'link_button');
-if ($venueMapDisplay === 'hide') {
-    $venueMapDisplay = 'none';
-} elseif ($venueMapDisplay === 'global' || $venueMapDisplay === 'link') {
-    $venueMapDisplay = 'link_button';
+$venueMapConfiguration = JemOutput::resolveVenueMapConfiguration(
+    $this->params->get('venue_map_display', 'global'),
+    $this->settings->get('global_show_mapserv', 0),
+    JemHelper::isActiveMenuView('venue', (int) $this->venue->id)
+);
+$venueMapDisplay = $venueMapConfiguration['display'];
+$venueMapService = $venueMapConfiguration['service'];
+$venueMapSettings = $this->settings;
+if ($venueMapService !== (int) $this->settings->get('global_show_mapserv', 0)) {
+    $venueMapSettings = clone $this->settings;
+    $venueMapSettings->set('global_show_mapserv', $venueMapService);
 }
-if (!in_array($venueMapDisplay, array('none', 'link_text', 'link_button', 'map'), true)) {
-    $venueMapDisplay = 'link_button';
-}
-
 $venueShowMapLinkInDetails = in_array($venueMapDisplay, array('link_text', 'link_button'), true);
 $venueShowMapBlock = $venueMapDisplay === 'map';
 $venueShowMapSection = $venueShowMapLinkInDetails || $venueShowMapBlock;
@@ -67,54 +69,6 @@ $venueShowDescription = (int) $this->params->get('venue_show_description', 1) ==
     && trim((string) $this->venuedescription) !== '<br>';
 $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
     && $this->settings->get('global_show_listevents', 1);
-
-$venueMapLatitude = null;
-$venueMapLongitude = null;
-$venueMapExternalUrl = '';
-$venueMarker = $this->params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp');
-$venueTypeIcon = (string) ($this->venue->type_icon ?? '');
-$venueTypeColor = (string) ($this->venue->type_color ?? '');
-if (is_numeric($this->venue->latitude ?? null) && is_numeric($this->venue->longitude ?? null)) {
-    $lat = (float) $this->venue->latitude;
-    $lon = (float) $this->venue->longitude;
-    if ($lat >= -90.0 && $lat <= 90.0 && $lon >= -180.0 && $lon <= 180.0) {
-        $venueMapLatitude = $lat;
-        $venueMapLongitude = $lon;
-        $venueMapExternalUrl = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
-    }
-}
-$renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venueMapLongitude, $venueMapExternalUrl, $venueMarker, $venueTypeIcon, $venueTypeColor) {
-    if ($venueMapExternalUrl === '') {
-        return '';
-    }
-
-    $modalId = 'jem-venue-map-' . (int) $this->venue->id;
-    $title = Text::_('COM_JEM_MAP') . ': ' . $this->escape($this->venue->venue);
-    $mapCanvas = JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '560px', 16, $modalId . '-canvas', '', $venueMarker, $venueTypeIcon, $venueTypeColor);
-    $modal = $mapCanvas !== '' ? HTMLHelper::_(
-            'bootstrap.renderModal',
-            $modalId,
-            array(
-                'title'  => $title,
-                'width'  => '900px',
-                'height' => '560px',
-                'footer' => '<a class="btn btn-primary" href="' . htmlspecialchars($venueMapExternalUrl, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_MAP') . '</a>'
-                    . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>',
-            ),
-            $mapCanvas
-        ) : '';
-
-    $label = '<i class="fa fa-map-marker" aria-hidden="true"></i> ' . Text::_('COM_JEM_VIEW_MAP');
-    if ($mode === 'text' || $mapCanvas === '') {
-        $linkAttrs = $mapCanvas !== ''
-            ? 'href="#" data-bs-toggle="modal" data-bs-target="#' . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '"'
-            : 'href="' . htmlspecialchars($venueMapExternalUrl, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener"';
-
-        return $modal . '<a class="jem-venue-map-text-link" ' . $linkAttrs . '>' . $label . '</a>';
-    }
-
-    return $modal . '<button type="button" class="jem-venue-map-button btn btn-primary" data-bs-toggle="modal" data-bs-target="#' . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '">' . $label . '</button>';
-};
 
 ?>
 <div id="jem" class="jem_venue<?php echo $this->pageclass_sfx . ' venue_id' . (int) $this->venue->id; ?>" itemscope="itemscope" itemtype="https://schema.org/Place">
@@ -376,8 +330,8 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
           <?php endif; ?>
 
           <?php if ($venueShowMapLinkInDetails) : ?>
-          <?php $venueMapLinkHtml = $renderVenueMapLink($venueMapDisplay === 'link_text' ? 'text' : 'button'); ?>
-          <?php if ($venueMapLinkHtml !== '') : ?>
+          <?php $venueMapLinkHtml = JemOutput::mapicon($this->venue, null, $venueMapSettings, $venueMapDisplay); ?>
+          <?php if (!empty($venueMapLinkHtml)) : ?>
           <dt class="venue_mapicon hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_MAP'); ?>"><?php echo Text::_('COM_JEM_MAP'); ?>:</dt>
           <dd class="venue_mapicon"><?php echo $venueMapLinkHtml; ?></dd>
           <?php endif; ?>
@@ -449,12 +403,19 @@ $renderVenueMapLink = function ($mode = 'button') use ($venueMapLatitude, $venue
 
     <?php if ($venueShowMapSection) : ?>
         <div class="jem-venue-map-section">
-            <?php if ($venueShowMapBlock && $venueMapLatitude !== null && $venueMapLongitude !== null) : ?>
-                <?php echo JemOutput::osmMapCanvas($venueMapLatitude, $venueMapLongitude, '350px', 16, 'jem-venue-inline-map-' . (int) $this->venue->id, '', $venueMarker, $venueTypeIcon, $venueTypeColor); ?>
+            <?php if ($venueShowMapBlock && in_array($venueMapService, array(2, 5), true)) : ?>
+                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
             <?php endif; ?>
 
-            <?php if ($venueShowMapBlock && ($venueMapLatitude === null || $venueMapLongitude === null) && $venueMapExternalUrl !== '') : ?>
-                <p><a class="jem-venue-map-text-link" href="<?php echo htmlspecialchars($venueMapExternalUrl, ENT_QUOTES, 'UTF-8'); ?>" target="_blank" rel="noopener"><?php echo Text::_('COM_JEM_VIEW_MAP'); ?></a></p>
+            <?php if ($venueShowMapBlock && $venueMapService === 3) : ?>
+                <input type="hidden" id="latitude" value="<?php echo $this->escape($this->venue->latitude); ?>">
+                <input type="hidden" id="longitude" value="<?php echo $this->escape($this->venue->longitude); ?>">
+                <input type="hidden" id="venue" value="<?php echo $this->escape($this->venue->venue); ?>">
+                <input type="hidden" id="street" value="<?php echo $this->escape($this->venue->street); ?>">
+                <input type="hidden" id="city" value="<?php echo $this->escape($this->venue->city); ?>">
+                <input type="hidden" id="state" value="<?php echo $this->escape($this->venue->state); ?>">
+                <input type="hidden" id="postalCode" value="<?php echo $this->escape($this->venue->postalCode); ?>">
+                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>

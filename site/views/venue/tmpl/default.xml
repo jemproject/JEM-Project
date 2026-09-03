@@ -76,11 +76,12 @@
                 <option value="0">JNO</option>
             </field>
             <field name="venue_map_display" type="list"
-                default="link_button"
+                default="global"
                 label="COM_JEM_VENUE_MAP_DISPLAY"
                 description="COM_JEM_VENUE_MAP_DISPLAY_DESC"
                 class="form-select w-auto jem-options-width-auto"
             >
+                <option value="global">JGLOBAL_USE_GLOBAL</option>
                 <option value="none">COM_JEM_HIDE</option>
                 <option value="link_text">COM_JEM_MAP_LINK_TEXT</option>
                 <option value="link_button">COM_JEM_MAP_LINK_BUTTON</option>
