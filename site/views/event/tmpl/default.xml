@@ -21,6 +21,10 @@
     <!-- Add fields to the parameters object for the layout. -->
     <fields name="params">
         <fieldset name="basic">
+            <field name="show_status_indicators" type="radio" default="0" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field type="spacer" name="event_headings_spacer"
                 label="COM_JEM_EVENT_HEADINGS_OPTIONS"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"

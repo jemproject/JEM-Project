@@ -222,6 +222,14 @@ $getVenueImage = static function ($row) {
     return $source !== '' ? $source : '';
 };
 
+$renderTimelineImage = static function ($row, $source, $alternativeText, $showStatus) {
+    $image = HTMLHelper::image($source, $alternativeText, array('loading' => 'lazy'));
+
+    return $showStatus
+        ? JemOutput::eventStatusImage($row, $image, 'jem-module-event-status-image--inline jem-day-timeline-status-image')
+        : $image;
+};
+
 $truncateText = static function ($text, $limit) {
     $text = trim(preg_replace('/\s+/', ' ', strip_tags((string) $text)));
     $limit = max(0, (int) $limit);
@@ -1444,6 +1452,9 @@ document.addEventListener('keydown', function (event) {
                                 $typeTextColor = $getContrastColor($typeColor);
                                 $eventImage = $showEventImage ? $getEventImage($row) : '';
                                 $venueImage = $showVenueImage ? $getVenueImage($row) : '';
+                                if (!empty($row->event_status_indicators_prepared)) {
+                                    $row->event_status_indicator_image_available = $eventImage !== '' || $venueImage !== '';
+                                }
                                 $hasLeadingEventMedia = $eventImage !== '' && $eventImagePosition === 'left';
                                 $hasTrailingEventMedia = $eventImage !== '' && $eventImagePosition === 'right';
                                 $hasLeadingVenueMedia = $venueImage !== '' && $venueImagePosition === 'left';
@@ -1484,12 +1495,12 @@ document.addEventListener('keydown', function (event) {
                                             <div class="jem-day-timeline-media jem-day-timeline-leading-media">
                                                 <?php if ($hasLeadingEventMedia) : ?>
                                                     <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                        <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                        <?php echo $renderTimelineImage($row, $eventImage, $this->escape($row->title), true); ?>
                                                     </a>
                                                 <?php endif; ?>
                                                 <?php if ($hasLeadingVenueMedia) : ?>
                                                     <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                        <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                        <?php echo $renderTimelineImage($row, $venueImage, $this->escape($row->venue ?: $row->title), $eventImage === ''); ?>
                                                     </a>
                                                 <?php endif; ?>
                                             </div>
@@ -1503,7 +1514,7 @@ document.addEventListener('keydown', function (event) {
                                                             <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>">
                                                                 <span><?php echo $this->escape($row->title); ?></span>
                                                             </a>
-                                                            <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                                            <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row) . JemOutput::eventStatusFallbackBadge($row); ?>
                                                         </span>
                                                     </div>
                                                     <?php if ($categoryOutput !== '') : ?>
@@ -1536,7 +1547,7 @@ document.addEventListener('keydown', function (event) {
                                                     <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>" aria-label="<?php echo $buildTooltip($row, Text::_('COM_JEM_TIMETABLE_ALL_DAY')); ?>">
                                                         <span><?php echo $this->escape($row->title); ?></span>
                                                     </a>
-                                                    <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                                    <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row) . JemOutput::eventStatusFallbackBadge($row); ?>
                                                 </h3>
                                                 <div class="jem-day-timeline-meta">
                                                     <?php if ($categoryOutput !== '') : ?>
@@ -1559,12 +1570,12 @@ document.addEventListener('keydown', function (event) {
                                             <div class="jem-day-timeline-media jem-day-timeline-venue-media">
                                                 <?php if ($hasTrailingEventMedia) : ?>
                                                     <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                        <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                        <?php echo $renderTimelineImage($row, $eventImage, $this->escape($row->title), true); ?>
                                                     </a>
                                                 <?php endif; ?>
                                                 <?php if ($hasTrailingVenueMedia) : ?>
                                                     <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                        <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                        <?php echo $renderTimelineImage($row, $venueImage, $this->escape($row->venue ?: $row->title), $eventImage === ''); ?>
                                                     </a>
                                                 <?php endif; ?>
                                             </div>
@@ -1667,6 +1678,9 @@ document.addEventListener('keydown', function (event) {
                     $typeTextColor = $getContrastColor($typeColor);
                     $eventImage = $showEventImage ? $getEventImage($row) : '';
                     $venueImage = $showVenueImage ? $getVenueImage($row) : '';
+                    if (!empty($row->event_status_indicators_prepared)) {
+                        $row->event_status_indicator_image_available = $eventImage !== '' || $venueImage !== '';
+                    }
                     $hasLeadingEventMedia = $eventImage !== '' && $eventImagePosition === 'left';
                     $hasTrailingEventMedia = $eventImage !== '' && $eventImagePosition === 'right';
                     $hasLeadingVenueMedia = $venueImage !== '' && $venueImagePosition === 'left';
@@ -1715,12 +1729,12 @@ document.addEventListener('keydown', function (event) {
                                     <div class="jem-day-timeline-media jem-day-timeline-leading-media">
                                         <?php if ($hasLeadingEventMedia) : ?>
                                             <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                <?php echo $renderTimelineImage($row, $eventImage, $this->escape($row->title), true); ?>
                                             </a>
                                         <?php endif; ?>
                                         <?php if ($hasLeadingVenueMedia) : ?>
                                             <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                <?php echo $renderTimelineImage($row, $venueImage, $this->escape($row->venue ?: $row->title), $eventImage === ''); ?>
                                             </a>
                                         <?php endif; ?>
                                     </div>
@@ -1734,7 +1748,7 @@ document.addEventListener('keydown', function (event) {
                                                     <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>">
                                                         <span><?php echo $this->escape($row->title); ?></span>
                                                     </a>
-                                                    <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                                    <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row) . JemOutput::eventStatusFallbackBadge($row); ?>
                                                 </span>
                                             </div>
                                             <?php if ($categoryOutput !== '') : ?>
@@ -1767,7 +1781,7 @@ document.addEventListener('keydown', function (event) {
                                             <a href="<?php echo $eventUrl; ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>">
                                                 <span><?php echo $this->escape($row->title); ?></span>
                                             </a>
-                                            <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row); ?>
+                                            <?php echo JemOutput::recurrenceicon($row) . JemOutput::publishstateicon($row) . JemOutput::eventStatusFallbackBadge($row); ?>
                                         </h3>
                                         <div class="jem-day-timeline-meta">
                                             <?php if ($categoryOutput !== '') : ?>
@@ -1790,12 +1804,12 @@ document.addEventListener('keydown', function (event) {
                                     <div class="jem-day-timeline-media jem-day-timeline-venue-media">
                                         <?php if ($hasTrailingEventMedia) : ?>
                                             <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                <?php echo HTMLHelper::image($eventImage, $this->escape($row->title), array('loading' => 'lazy')); ?>
+                                                <?php echo $renderTimelineImage($row, $eventImage, $this->escape($row->title), true); ?>
                                             </a>
                                         <?php endif; ?>
                                         <?php if ($hasTrailingVenueMedia) : ?>
                                             <a class="jem-day-timeline-image" href="<?php echo $eventUrl; ?>" aria-hidden="true" tabindex="-1">
-                                                <?php echo HTMLHelper::image($venueImage, $this->escape($row->venue ?: $row->title), array('loading' => 'lazy')); ?>
+                                                <?php echo $renderTimelineImage($row, $venueImage, $this->escape($row->venue ?: $row->title), $eventImage === ''); ?>
                                             </a>
                                         <?php endif; ?>
                                     </div>

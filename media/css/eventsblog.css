@@ -80,6 +80,11 @@
     overflow: hidden;
 }
 
+.jem-eventsblog-image-link > .jem-eventsblog-status-image {
+    height: 100%;
+    width: 100%;
+}
+
 .jem-eventsblog-image {
     height: 100%;
     object-fit: cover;

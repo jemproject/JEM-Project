@@ -178,7 +178,69 @@ class JemView extends HtmlView
             $this->params->set('showfootertext', 0);
         }
 
+        $this->prepareEventStatusIndicators();
+
         parent::display($tpl);
+    }
+
+    /**
+     * Prepare configurable event status indicators for supported frontend views.
+     *
+     * The menu option only applies to its own view. This prevents, for example,
+     * an Events Blog option from leaking into an event detail opened below that
+     * menu item.
+     *
+     * @return void
+     */
+    protected function prepareEventStatusIndicators()
+    {
+        $view = strtolower((string) $this->getName());
+        $supportedViews = array(
+            'category',
+            'day',
+            'event',
+            'eventsblog',
+            'eventslist',
+            'search',
+            'typeevents',
+            'venue',
+        );
+
+        if (!in_array($view, $supportedViews, true)
+            || !is_object($this->params)
+            || !method_exists($this->params, 'get')) {
+            return;
+        }
+
+        $default = $view === 'eventsblog' ? 1 : 0;
+        $enabled = JemHelper::isActiveMenuView($view)
+            ? (int) $this->params->get('show_status_indicators', $default)
+            : $default;
+
+        if ($enabled !== 1) {
+            return;
+        }
+
+        $settings = JemHelper::config();
+        if (!(int) ($settings->module_status_ribbons ?? 1)) {
+            return;
+        }
+
+        $candidates = $view === 'event'
+            ? (isset($this->item) && is_object($this->item) ? array($this->item) : array())
+            : (isset($this->rows) && is_array($this->rows) ? $this->rows : array());
+        $events = array_values(array_filter($candidates, static function ($candidate) {
+            return is_object($candidate)
+                && property_exists($candidate, 'title')
+                && (property_exists($candidate, 'event_status') || property_exists($candidate, 'dates'));
+        }));
+
+        if ($events === array()) {
+            return;
+        }
+
+        JemOutput::prepareModuleEventStatuses($events, $settings);
+        JemHelper::loadModuleStatusAssets();
     }
 
     /**

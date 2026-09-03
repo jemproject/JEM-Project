@@ -22,7 +22,7 @@ final class BackendSelectSpacingTest extends TestCase
 
     public function testBackendListFiltersUseJoomlaSelectStyling(): void
     {
-        foreach (array('events', 'venues', 'categories', 'types') as $view) {
+        foreach (array('events', 'venues', 'categories', 'types', 'groups') as $view) {
             $layout = $this->read('admin/views/' . $view . '/tmpl/default.php');
 
             self::assertStringContainsString(
@@ -31,9 +31,6 @@ final class BackendSelectSpacingTest extends TestCase
                 $view
             );
         }
-
-        $groups = $this->read('admin/views/groups/tmpl/default.php');
-        self::assertStringContainsString('form-select', $groups, 'groups');
     }
 
     private function read(string $relativePath): string

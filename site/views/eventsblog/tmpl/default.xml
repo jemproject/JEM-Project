@@ -5,6 +5,10 @@
     </layout>
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="show_status_indicators" type="radio" default="1" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="blog_columns" type="list" default="4" label="COM_JEM_EVENTSBLOG_COLUMNS" description="COM_JEM_EVENTSBLOG_COLUMNS_DESC" class="form-select w-auto">
                 <option value="3">3</option>
                 <option value="4">4</option>
