@@ -54,6 +54,7 @@ use Joomla\CMS\Factory;
         }
 
         if ($this->filterForm) {
+            $this->filterForm->setValue('filter_type', null, $this->state->get('filter.search_type'));
             $this->filterForm->setValue(
                 'fullordering',
                 'list',

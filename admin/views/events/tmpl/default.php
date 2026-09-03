@@ -61,8 +61,7 @@ $ticketAvailabilityOptions = array(
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=events'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
-        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
-        <div class="table">
+        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this, 'options' => array('selectorFieldName' => 'filter_type'))); ?>
             <table class="table table-striped itemList" id="eventList">
                 <thead>
                 <tr>
@@ -295,7 +294,6 @@ $ticketAvailabilityOptions = array(
             <?php if (JemHelperBackend::can('event', 'edit') || $user->authorise('jem.events.edit.own', 'com_jem')) : ?>
                 <template id="joomla-dialog-batch"><?php echo $this->loadTemplate('batch_body'); ?></template>
             <?php endif; ?>
-        </div>
     </div>
     <?php //if (isset($this->sidebar)) : ?>
     <?php //endif; ?>

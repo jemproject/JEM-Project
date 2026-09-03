@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
+    <field
+        name="filter_type"
+        type="list"
+        label="COM_JEM_FILTER_SEARCH_IN"
+        filtermode="selector"
+        class="js-select-submit-on-change"
+        validate="options"
+    >
+        <option value="0">JALL</option>
+        <option value="1">COM_JEM_VENUE</option>
+        <option value="2">COM_JEM_CITY</option>
+        <option value="3">COM_JEM_STATE</option>
+        <option value="4">COM_JEM_COUNTRY</option>
+    </field>
+
     <fields name="filter">
         <field
             name="search"
@@ -8,20 +23,6 @@
             label="COM_JEM_SEARCH"
             hint="JSEARCH_FILTER"
         />
-
-        <field
-            name="search_type"
-            type="list"
-            label="COM_JEM_FILTER_SEARCH_IN"
-            class="js-select-submit-on-change"
-            validate="options"
-        >
-            <option value="0">JALL</option>
-            <option value="1">COM_JEM_VENUE</option>
-            <option value="2">COM_JEM_CITY</option>
-            <option value="3">COM_JEM_STATE</option>
-            <option value="4">COM_JEM_COUNTRY</option>
-        </field>
 
         <field
             name="published"

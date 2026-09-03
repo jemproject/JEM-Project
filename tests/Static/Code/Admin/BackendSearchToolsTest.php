@@ -66,6 +66,40 @@ final class BackendSearchToolsTest extends TestCase
         }
     }
 
+    public function testSearchScopeRemainsVisibleAndWideEventsTableIsNotClipped(): void
+    {
+        foreach (array('events', 'venues') as $name) {
+            $template = (string) file_get_contents(
+                JEM_TEST_ROOT . '/admin/views/' . $name . '/tmpl/default.php'
+            );
+            $view = (string) file_get_contents(
+                JEM_TEST_ROOT . '/admin/views/' . $name . '/view.html.php'
+            );
+            $form = simplexml_load_file(
+                JEM_TEST_ROOT . '/admin/models/forms/filter_' . $name . '.xml'
+            );
+            $searchType = $form->xpath('/form/field[@name="filter_type"]');
+
+            self::assertStringContainsString("'selectorFieldName' => 'filter_type'", $template, $name);
+            self::assertNotEmpty($searchType, $name);
+            self::assertSame('selector', (string) $searchType[0]['filtermode'], $name);
+            self::assertStringContainsString(
+                "\$this->filterForm->setValue('filter_type', null, \$this->state->get('filter.search_type'));",
+                $view,
+                $name
+            );
+            self::assertEmpty(
+                $form->xpath('/form/fields[@name="filter"]/field[@name="search_type"]'),
+                $name
+            );
+        }
+
+        $events = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/events/tmpl/default.php');
+
+        self::assertStringNotContainsString('<div class="table">', $events);
+        self::assertStringContainsString('<table class="table table-striped itemList"', $events);
+    }
+
     public function testViewsProvideSearchToolsStateAndKeepTheDisplayedOrderingSynchronized(): void
     {
         foreach ($this->listViews() as $name => $paths) {
