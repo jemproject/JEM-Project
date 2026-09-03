@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form>
+    <field
+        name="filter_type"
+        type="list"
+        label="COM_JEM_FILTER_SEARCH_IN"
+        filtermode="selector"
+        class="js-select-submit-on-change"
+        validate="options"
+    >
+        <option value="0">COM_JEM_FILTER_SEARCH_DEFAULT</option>
+        <option value="1">COM_JEM_EVENT_TITLE</option>
+        <option value="2">COM_JEM_VENUE</option>
+        <option value="3">COM_JEM_CITY</option>
+        <option value="4">COM_JEM_CATEGORY</option>
+        <option value="5">COM_JEM_STATE</option>
+        <option value="6">COM_JEM_COUNTRY</option>
+        <option value="7">COM_JEM_AUTHOR</option>
+        <option value="8">JALL</option>
+    </field>
+
     <fields name="filter">
         <field
             name="search"
@@ -8,24 +27,6 @@
             label="COM_JEM_SEARCH"
             hint="JSEARCH_FILTER"
         />
-
-        <field
-            name="search_type"
-            type="list"
-            label="COM_JEM_FILTER_SEARCH_IN"
-            class="js-select-submit-on-change"
-            validate="options"
-        >
-            <option value="0">COM_JEM_FILTER_SEARCH_DEFAULT</option>
-            <option value="1">COM_JEM_EVENT_TITLE</option>
-            <option value="2">COM_JEM_VENUE</option>
-            <option value="3">COM_JEM_CITY</option>
-            <option value="4">COM_JEM_CATEGORY</option>
-            <option value="5">COM_JEM_STATE</option>
-            <option value="6">COM_JEM_COUNTRY</option>
-            <option value="7">COM_JEM_AUTHOR</option>
-            <option value="8">JALL</option>
-        </field>
 
         <field
             name="begin"
