@@ -46,7 +46,7 @@ final class EventStatusIndicatorTest extends TestCase
         self::assertStringContainsString('JemOutput::prepareModuleEventStatuses($events);', $helper);
         self::assertStringContainsString('$row->module_event_status ?? null', $helper);
         self::assertStringContainsString("get('show_status_indicators', 1)", $entry);
-        self::assertStringContainsString("JemHelper::loadCss('jem-module-status');", $entry);
+        self::assertStringContainsString('JemHelper::loadModuleStatusAssets();', $entry);
         self::assertStringContainsString('name="status_indicator_spacer_before"', $manifest);
         self::assertStringContainsString('name="status_indicator_spacer_after"', $manifest);
         self::assertLessThan(
@@ -157,6 +157,9 @@ final class EventStatusIndicatorTest extends TestCase
             JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_basicmodulestatus.php'
         );
         $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/jem-module-status.css');
+        $script = (string) file_get_contents(JEM_TEST_ROOT . '/media/js/jem-module-status.js');
+        $helper = (string) file_get_contents(JEM_TEST_ROOT . '/site/helpers/helper.php');
+        $output = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
         $installSql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
         $updateSql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.0.1.sql');
         $installer = (string) file_get_contents(JEM_TEST_ROOT . '/script.php');
@@ -164,6 +167,7 @@ final class EventStatusIndicatorTest extends TestCase
         foreach (array(
             'module_status_ribbons',
             'module_status_ribbon_position',
+            'module_status_ribbon_scale',
             'module_status_ribbon_side_margin',
             'module_status_last_places_threshold',
             'module_status_new_days',
@@ -220,5 +224,16 @@ final class EventStatusIndicatorTest extends TestCase
         self::assertStringContainsString('text-transform: uppercase;', $css);
         self::assertStringContainsString('jem-module-event-status-ribbon--diagonal-ascending', $css);
         self::assertStringContainsString('jem-module-event-status-ribbon--horizontal-center', $css);
+        self::assertStringContainsString('--jem-module-status-diagonal-width', $css);
+        self::assertStringContainsString('static public function loadModuleStatusAssets()', $helper);
+        self::assertStringContainsString("'media/com_jem/js/jem-module-status.js'", $helper);
+        self::assertStringContainsString("'module_status_ribbon_scale' => '100'", $installer);
+        self::assertStringContainsString("max(50, (int) (\$data['module_status_ribbon_scale'] ?? 100))", $model);
+        self::assertStringContainsString("'ResizeObserver' in window", $script);
+        self::assertStringContainsString('image.getBoundingClientRect().width', $script);
+        self::assertStringContainsString('jemModuleStatusScale', $script);
+        self::assertStringContainsString("' jem-module-event-status-ribbon--' . \$statusClass", $output);
+        self::assertStringContainsString("' jem-module-event-status-badge--' . \$statusClass", $output);
+        self::assertStringContainsString('max(50, (int) ($settings->module_status_ribbon_scale ?? 100))', $output);
     }
 }

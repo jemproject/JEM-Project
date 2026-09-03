@@ -205,6 +205,10 @@ class JemModelSettings extends AdminModel
             200,
             max(0, (int) ($data['module_status_ribbon_side_margin'] ?? 0))
         );
+        $data['module_status_ribbon_scale'] = min(
+            200,
+            max(50, (int) ($data['module_status_ribbon_scale'] ?? 100))
+        );
         $data['module_status_last_places_threshold'] = min(
             9999,
             max(1, (int) ($data['module_status_last_places_threshold'] ?? 10))

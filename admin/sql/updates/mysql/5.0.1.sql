@@ -47,6 +47,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_str
 -- JEM 5.0.1: shared event status indicators for event modules.
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbons', '1');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_position', 'diagonal_ascending');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_scale', '100');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_side_margin', '0');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_last_places_threshold', '10');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_new_days', '7');

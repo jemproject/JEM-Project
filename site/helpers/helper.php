@@ -4003,6 +4003,30 @@ class JemHelper
     }
 
     /**
+     * Load the shared presentation and proportional sizing used by module status ribbons.
+     *
+     * @return void
+     */
+    static public function loadModuleStatusAssets()
+    {
+        self::loadCss('jem-module-status');
+
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+        $asset = 'com_jem.frontend.module-status';
+
+        if ($wa->assetExists('script', $asset)) {
+            $wa->useScript($asset);
+        } else {
+            $wa->registerAndUseScript(
+                $asset,
+                'media/com_jem/js/jem-module-status.js',
+                array(),
+                array('defer' => true)
+            );
+        }
+    }
+
+    /**
      * Load the optional frontend user override stylesheet once.
      *
      * This file is an additive override layer. It is loaded after the normal

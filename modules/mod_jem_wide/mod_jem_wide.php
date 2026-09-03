@@ -39,7 +39,7 @@ $iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
 if ((int) $params->get('show_status_indicators', 1) === 1) {
-    JemHelper::loadCss('jem-module-status');
+    JemHelper::loadModuleStatusAssets();
 }
 
 // load icon font if needed

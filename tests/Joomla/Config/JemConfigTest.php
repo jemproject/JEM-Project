@@ -57,6 +57,7 @@ final class JemConfigTest extends JoomlaTestCase
             'csv_separator',
             'csv_delimiter',
             'csv_bom',
+            'module_status_ribbon_scale',
         ) as $key) {
             self::assertNotNull($this->configValue($key), '#__jem_config should define ' . $key . '.');
         }
