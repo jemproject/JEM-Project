@@ -39,6 +39,19 @@ final class AdminImageEditorTabTest extends TestCase
         self::assertStringContainsString('name="image" type="imageselectcategory"', $category);
         self::assertStringContainsString('name="userfile" type="jemimagefile"', $category);
         self::assertStringContainsString('enctype="multipart/form-data"', $this->read('/admin/views/category/tmpl/edit.php'));
+
+        foreach (array($event, $venue, $category) as $form) {
+            self::assertStringNotContainsString('addfieldpath="/components/com_jem/models/fields"', $form);
+        }
+
+        foreach (array('imageselectevent', 'imageselectcategory', 'jemimagefile') as $field) {
+            $bridge = $this->read('/admin/models/fields/' . $field . '.php');
+
+            self::assertStringContainsString(
+                "JPATH_SITE . '/components/com_jem/models/fields/" . $field . ".php'",
+                $bridge
+            );
+        }
     }
 
     public function testBackendSaveUsesTheProfileValidatorsAndExclusiveSources(): void
@@ -49,6 +62,7 @@ final class AdminImageEditorTabTest extends TestCase
         $layout = $this->read('/admin/layouts/image/editor.php');
 
         self::assertStringContainsString('if ($backend || $jemsettings->imageenabled == 2', $event);
+        self::assertStringContainsString("\$db          = Factory::getContainer()->get('DatabaseDriver');", $event);
         self::assertStringContainsString('JemImageProfilePolicy::EVENT_INTRO', $event);
         self::assertStringContainsString('JemImageProfilePolicy::EVENT_FULL', $event);
         self::assertStringContainsString('if ($backend || $jemsettings->imageenabled == 2', $venue);

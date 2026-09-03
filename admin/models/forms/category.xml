@@ -167,7 +167,7 @@
         </field>
     </fieldset>
 
-    <fieldset name="image" label="COM_JEM_IMAGE" addfieldpath="/components/com_jem/models/fields">
+    <fieldset name="image" label="COM_JEM_IMAGE" addfieldpath="/administrator/components/com_jem/models/fields">
         <field name="image_path" type="hidden" filter="string" />
         <field name="image" type="imageselectcategory"
             class="inputbox form-select"

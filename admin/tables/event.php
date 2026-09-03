@@ -463,6 +463,7 @@ class JemTableEvent extends Table
         $app         = Factory::getApplication();
         $jinput      = $app->input;
         $jemsettings = JemHelper::config();
+        $db          = Factory::getContainer()->get('DatabaseDriver');
 
         // Check if we're in the front or back
         if ($app->isClient('administrator')) {

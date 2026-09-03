@@ -119,7 +119,7 @@
             checked="0"
         />
         <field name="locimage" type="imageselectevent"
-            addfieldpath="/components/com_jem/models/fields"
+            addfieldpath="/administrator/components/com_jem/models/fields"
             class="inputbox form-select"
             size="40"
             label="COM_JEM_SERVER_IMAGE"
@@ -135,7 +135,7 @@
             filter="string"
         />
         <field name="userfile" type="jemimagefile"
-            addfieldpath="/components/com_jem/models/fields"
+            addfieldpath="/administrator/components/com_jem/models/fields"
             class="inputbox"
             size="40"
             label="COM_JEM_UPLOAD_NEW_IMAGE"

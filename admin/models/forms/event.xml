@@ -338,7 +338,7 @@
 
     <fieldset name="image"
               label="COM_JEM_IMAGE"
-              addfieldpath="/components/com_jem/models/fields"
+              addfieldpath="/administrator/components/com_jem/models/fields"
     >
         <field name="datimage" type="imageselectevent"
             class="inputbox form-select"
