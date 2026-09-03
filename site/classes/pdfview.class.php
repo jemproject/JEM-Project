@@ -521,15 +521,13 @@ class JemPdfView
         $showEvents = !$params || !method_exists($params, 'get') || (int) $params->get('venue_show_events', 1) === 1;
         $venueHeadingDisplay = $params && method_exists($params, 'get') ? (string) $params->get('venue_heading_display', 'label_name') : 'label_name';
         $venueHeadingDisplay = in_array($venueHeadingDisplay, array('label', 'label_name', 'name'), true) ? $venueHeadingDisplay : 'label_name';
-        $mapDisplay = $params && method_exists($params, 'get') ? (string) $params->get('venue_map_display', 'link_button') : 'link_button';
-        if ($mapDisplay === 'hide') {
-            $mapDisplay = 'none';
-        } elseif ($mapDisplay === 'global' || $mapDisplay === 'link') {
-            $mapDisplay = 'link_button';
-        }
-        $mapDisplay = in_array($mapDisplay, array('none', 'link_text', 'link_button', 'map'), true) ? $mapDisplay : 'link_button';
         $globalMapService = (int) ($settings->global_show_mapserv ?? 0);
-        $showMapLink = $mapDisplay !== 'none' && ($mapDisplay !== 'link_button' || in_array($globalMapService, array(0, 1, 2, 3, 4, 5), true));
+        $mapConfiguration = JemOutput::resolveVenueMapConfiguration(
+            $params && method_exists($params, 'get') ? $params->get('venue_map_display', 'global') : 'global',
+            $globalMapService,
+            JemHelper::isActiveMenuView('venue', (int) ($venue->id ?? 0))
+        );
+        $showMapLink = !empty($venue->map) && $mapConfiguration['service'] !== 0;
         $imageHtml = $showImage ? self::buildTimelinePdfImage((string) ($venue->locimage ?? ''), 'venue', (string) ($venue->venue ?? $title), $venueImageWidth, $venueImageHeight, (string) ($venue->image_path ?? '')) : '';
         $description = $showDescription ? self::normaliseEditorHtmlForPdf((string) $venue->locdescription) : '';
         $html = array();
@@ -573,7 +571,7 @@ class JemPdfView
         $rowsHtml[] = !empty($venue->country) ? self::buildPdfSummaryRow(Text::_('COM_JEM_COUNTRY'), htmlspecialchars((string) $venue->country, ENT_COMPAT, 'UTF-8')) : '';
 
         if ($showMapLink) {
-            $map = self::buildPdfMapLink($venue, 'osm');
+            $map = self::buildPdfMapLink($venue, $mapConfiguration['provider']);
             if (!empty($map['html'])) {
                 $rowsHtml[] = self::buildPdfSummaryRow(Text::_('COM_JEM_MAP'), $map['html']);
             }
