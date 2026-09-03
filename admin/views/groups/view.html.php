@@ -26,6 +26,9 @@ class JemViewGroups extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     public function display($tpl = null)
     {
@@ -36,6 +39,18 @@ class JemViewGroups extends JemAdminView
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total      = $this->get('Total');
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         // assign data to template
         $this->user         = $user;

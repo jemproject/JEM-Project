@@ -3077,19 +3077,6 @@ fieldset.jem-specialdays-import #replace_specialdays {
     line-height: 1;
 }
 
-#specialDayList thead th {
-    background-color: #f1f3f5;
-    border-bottom: 2px solid #adb5bd;
-    color: #212529;
-    font-weight: 700;
-    vertical-align: middle;
-}
-
-#specialDayList thead th a {
-    color: inherit;
-    font-weight: 700;
-}
-
 #specialDayList .jem-specialdays-location-heading,
 #specialDayList .jem-specialdays-location-cell {
     text-align: center;

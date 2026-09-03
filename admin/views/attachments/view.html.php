@@ -19,6 +19,9 @@ class JemViewAttachments extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
     public $canModifyAny = false;
 
     public function display($tpl = null)
@@ -26,6 +29,31 @@ class JemViewAttachments extends JemAdminView
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total      = $this->get('Total');
+
+        if (isset($this->activeFilters['access']) && (string) $this->activeFilters['access'] === '0') {
+            unset($this->activeFilters['access']);
+        }
+
+        if ($this->filterForm) {
+            $typeField = $this->filterForm->getField('type', 'filter');
+            if (JemHelperBackend::can('event', 'access')) {
+                $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_EVENT'), array('value' => 'event'));
+            }
+            if (JemHelperBackend::can('venue', 'access')) {
+                $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_VENUE'), array('value' => 'venue'));
+            }
+            $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_CATEGORY'), array('value' => 'category'));
+
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         foreach ($this->items as $item) {
             $item->canEdit = JemHelperBackend::canAccessAttachment($item->object, 'edit');

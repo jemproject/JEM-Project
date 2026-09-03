@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" inputmode="search" label="COM_JEM_SEARCH" hint="JSEARCH_FILTER" />
+        <field name="year" type="list" label="COM_JEM_SPECIAL_DAY_FILTER_YEAR" class="js-select-submit-on-change" validate="options">
+            <option value="">COM_JEM_SPECIAL_DAY_FILTER_YEAR</option>
+        </field>
+        <field name="state" type="list" label="JSTATUS" class="js-select-submit-on-change" validate="options">
+            <option value="">JOPTION_SELECT_PUBLISHED</option>
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+        <field name="day_type" type="list" label="COM_JEM_SPECIAL_DAY_FIELD_TYPE" class="js-select-submit-on-change" validate="options">
+            <option value="">COM_JEM_SPECIAL_DAY_FILTER_TYPE</option>
+        </field>
+    </fields>
+    <fields name="list">
+        <field name="fullordering" type="list" label="JGLOBAL_SORT_BY" class="js-select-submit-on-change" default="a.ordering ASC" validate="options">
+            <option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+            <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+            <option value="a.published ASC">JSTATUS_ASC</option>
+            <option value="a.published DESC">JSTATUS_DESC</option>
+            <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+            <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.day_type_id ASC">COM_JEM_FILTER_TYPE_ASC</option>
+            <option value="a.day_type_id DESC">COM_JEM_FILTER_TYPE_DESC</option>
+            <option value="a.show_dates ASC">COM_JEM_FILTER_SHOW_DATES_ASC</option>
+            <option value="a.show_dates DESC">COM_JEM_FILTER_SHOW_DATES_DESC</option>
+            <option value="a.article_id ASC">COM_JEM_FILTER_ARTICLE_ID_ASC</option>
+            <option value="a.article_id DESC">COM_JEM_FILTER_ARTICLE_ID_DESC</option>
+            <option value="a.url ASC">COM_JEM_FILTER_URL_ASC</option>
+            <option value="a.url DESC">COM_JEM_FILTER_URL_DESC</option>
+            <option value="u.name ASC">JAUTHOR_ASC</option>
+            <option value="u.name DESC">JAUTHOR_DESC</option>
+            <option value="access_level ASC">JGRID_HEADING_ACCESS_ASC</option>
+            <option value="access_level DESC">JGRID_HEADING_ACCESS_DESC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+        <field name="limit" type="limitbox" label="JGLOBAL_LIST_LIMIT" class="js-select-submit-on-change" />
+    </fields>
+</form>

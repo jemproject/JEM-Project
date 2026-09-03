@@ -32,6 +32,33 @@ INSERT INTO `#__jem_types` (`name`, `alias`, `description`, `entity`, `icon`, `c
 ('All Ages', 'all-ages', 'Categories suitable for mixed audiences and all-age events.', 2, 'fa-solid fa-people-group', '#d35400', 1, 6, 1, '*', NOW(), 62),
 ('Museum', 'museum', 'Museums, galleries, and science centres.', 3, 'fa-solid fa-landmark', '#245c4a', 1, 1, 1, '*', NOW(), 62);
 
+-- Keep the default recurring weekend available when Sample Data is loaded
+-- after a reset or an upgrade test that did not preserve system defaults.
+INSERT INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `published`, `ordering`, `access`, `language`, `created`, `attribs`)
+SELECT 'Weekend', 'weekend', 4, '#d1d5db', 1, 1, 1, '*', NOW(), '{"block_events":0}'
+WHERE NOT EXISTS (
+    SELECT 1 FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4
+);
+
+INSERT INTO `#__jem_special_days` (`title`, `alias`, `day_type_id`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`)
+SELECT
+    'Saturday and Sunday',
+    'weekend',
+    (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1),
+    'Weekend',
+    '2026-01-01',
+    '2030-12-31',
+    '0,6',
+    'Regular weekend days',
+    0,
+    1,
+    1,
+    1,
+    NOW()
+WHERE NOT EXISTS (
+    SELECT 1 FROM `#__jem_special_days` WHERE `alias` = 'weekend'
+);
+
 UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'young-adults' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 2;
 UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'adults' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 3;
 UPDATE `#__jem_categories` SET `type_id` = (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'teens' AND `entity` = 2 ORDER BY `id` DESC LIMIT 1) WHERE `id` = 4;

@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\String\StringHelper;
 
@@ -141,55 +142,7 @@ $renderUrl = function ($url) {
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=specialdays'); ?>" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
     <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class="mb-3">
-            <div class="jem-admin-filter-bar jem-specialdays-admin-filter-bar">
-                <div class="jem-admin-filter-search">
-                    <div class="input-group">
-                        <input type="text" name="filter_search" id="filter_search" class="form-control"
-                               placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>"
-                               value="<?php echo $this->escape($this->state->get('filter.search')); ?>"
-                               onchange="document.adminForm.submit();" />
-                        <button type="submit" class="btn btn-primary">
-                            <span class="icon-search" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-primary"
-                                onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';this.form.filter_day_type.value='';if(this.form.filter_year.options.length){this.form.filter_year.selectedIndex=0;}this.form.submit();">
-                            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                        </button>
-                    </div>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <label for="filter_year" class="visually-hidden"><?php echo Text::_('COM_JEM_SPECIAL_DAY_FILTER_YEAR'); ?></label>
-                    <select name="filter_year" id="filter_year" class="form-select" onchange="this.form.submit()">
-                        <?php foreach ((array) $this->years as $year) : ?>
-                            <option value="<?php echo (int) $year; ?>"<?php echo (int) $this->state->get('filter.year') === (int) $year ? ' selected' : ''; ?>>
-                                <?php echo (int) $year; ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_state" class="form-select" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter.state'), true); ?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_day_type" class="form-select" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('COM_JEM_SPECIAL_DAY_FILTER_TYPE'); ?></option>
-                        <?php foreach ($this->dayTypes as $type) : ?>
-                            <?php $typeValue = !empty($type['id']) ? (string) (int) $type['id'] : (string) $type['name']; ?>
-                            <option value="<?php echo $this->escape($typeValue); ?>"<?php echo (string) $this->state->get('filter.day_type') === $typeValue ? ' selected' : ''; ?>>
-                                <?php echo $this->escape($type['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-limit">
-                    <?php echo $this->pagination->getLimitBox(); ?>
-                </div>
-            </div>
-        </fieldset>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 
         <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="specialDayList">
             <thead>
@@ -198,16 +151,16 @@ $renderUrl = function ($url) {
                         <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
                     </th>
                     <th class="center jem-list-order-heading">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
                     </th>
                     <th class="center jem-list-status">
-                        <?php echo HTMLHelper::_('grid.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                     <th>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TITLE', 'a.title', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TITLE', 'a.title', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:12%">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type_id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_SPECIAL_DAY_FIELD_TYPE', 'a.day_type_id', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:22%">
                         <?php echo Text::_('COM_JEM_SPECIAL_DAY_RULE'); ?>
@@ -216,22 +169,22 @@ $renderUrl = function ($url) {
                         <?php echo Text::_('COM_JEM_SPECIAL_DAY_LOCATION'); ?>
                     </th>
                     <th style="width:6%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES', 'a.show_dates', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_SPECIAL_DAY_FIELD_SHOW_DATES', 'a.show_dates', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:6%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ARTICLE_ID', 'a.article_id', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:16%">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_SPECIAL_DAY_FIELD_URL', 'a.url', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_SPECIAL_DAY_FIELD_URL', 'a.url', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:10%" data-jem-default-hidden>
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:8%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'access_level', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width:5%" class="center">
-                        <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ID', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                 </tr>
             </thead>
@@ -313,8 +266,7 @@ $renderUrl = function ($url) {
 
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />
-        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <?php echo $this->filterForm->renderControlFields(); ?>
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>
