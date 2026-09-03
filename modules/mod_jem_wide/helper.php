@@ -114,6 +114,9 @@ abstract class ModJemWideHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         # Loop through the result rows and prepare data
@@ -141,6 +144,8 @@ abstract class ModJemWideHelper
 
             $lists[++$i]            = new stdClass();
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             list($lists[$i]->date,

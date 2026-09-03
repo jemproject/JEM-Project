@@ -406,6 +406,127 @@
         </field>
     </fieldset>
 
+    <fieldset name="modulestatus" label="COM_JEM_MODULE_STATUS_SETTINGS">
+        <field name="module_status_ribbons" type="radio"
+            label="COM_JEM_MODULE_STATUS_RIBBONS"
+            description="COM_JEM_MODULE_STATUS_RIBBONS_DESC"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+            required="true"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_ribbon_position" type="list"
+            label="COM_JEM_MODULE_STATUS_RIBBON_POSITION"
+            description="COM_JEM_MODULE_STATUS_RIBBON_POSITION_DESC"
+            class="inputbox form-select w-auto"
+            default="diagonal_ascending"
+            filter="cmd"
+            validate="options"
+            showon="module_status_ribbons:1"
+        >
+            <option value="horizontal_top">COM_JEM_MODULE_STATUS_POSITION_HORIZONTAL_TOP</option>
+            <option value="horizontal_center">COM_JEM_MODULE_STATUS_POSITION_HORIZONTAL_CENTER</option>
+            <option value="horizontal_bottom">COM_JEM_MODULE_STATUS_POSITION_HORIZONTAL_BOTTOM</option>
+            <option value="diagonal_ascending">COM_JEM_MODULE_STATUS_POSITION_DIAGONAL_ASCENDING</option>
+            <option value="diagonal_descending">COM_JEM_MODULE_STATUS_POSITION_DIAGONAL_DESCENDING</option>
+        </field>
+        <field name="module_status_ribbon_side_margin" type="number"
+            label="COM_JEM_MODULE_STATUS_RIBBON_SIDE_MARGIN"
+            description="COM_JEM_MODULE_STATUS_RIBBON_SIDE_MARGIN_DESC"
+            class="inputbox form-control w-auto"
+            default="0"
+            min="0"
+            max="200"
+            filter="integer"
+            showon="module_status_ribbons:1"
+        />
+        <field name="module_status_last_places_threshold" type="number"
+            label="COM_JEM_MODULE_STATUS_LAST_PLACES_THRESHOLD"
+            description="COM_JEM_MODULE_STATUS_LAST_PLACES_THRESHOLD_DESC"
+            class="inputbox form-control w-auto"
+            default="10"
+            min="1"
+            max="9999"
+            filter="integer"
+            showon="module_status_ribbons:1[AND]module_status_active_last_places:1"
+        />
+        <field name="module_status_new_days" type="number"
+            label="COM_JEM_MODULE_STATUS_NEW_DAYS"
+            description="COM_JEM_MODULE_STATUS_NEW_DAYS_DESC"
+            class="inputbox form-control w-auto"
+            default="7"
+            min="1"
+            max="365"
+            filter="integer"
+            showon="module_status_ribbons:1[AND]module_status_active_new:1"
+        />
+        <field name="module_status_active_cancelled" type="radio"
+            class="inputbox btn-group btn-group-yesno"
+            default="1"
+        >
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_postponed" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_rescheduled" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_moved_online" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_preorder" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_soldout" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_waitinglist" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_last_places" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_new" type="radio" class="inputbox btn-group btn-group-yesno" default="1">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_active_open" type="radio" class="inputbox btn-group btn-group-yesno" default="0">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+        <field name="module_status_color_cancelled_bg" type="text" default="#b3261ee6" filter="string" maxlength="9" />
+        <field name="module_status_color_cancelled_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_postponed_bg" type="text" default="#b55b00e6" filter="string" maxlength="9" />
+        <field name="module_status_color_postponed_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_rescheduled_bg" type="text" default="#2456a5e6" filter="string" maxlength="9" />
+        <field name="module_status_color_rescheduled_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_moved_online_bg" type="text" default="#247a3de6" filter="string" maxlength="9" />
+        <field name="module_status_color_moved_online_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_preorder_bg" type="text" default="#b55b00e6" filter="string" maxlength="9" />
+        <field name="module_status_color_preorder_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_soldout_bg" type="text" default="#b3261ee6" filter="string" maxlength="9" />
+        <field name="module_status_color_soldout_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_waitinglist_bg" type="text" default="#b55b00e6" filter="string" maxlength="9" />
+        <field name="module_status_color_waitinglist_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_last_places_bg" type="text" default="#b55b00e6" filter="string" maxlength="9" />
+        <field name="module_status_color_last_places_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_new_bg" type="text" default="#2456a5e6" filter="string" maxlength="9" />
+        <field name="module_status_color_new_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+        <field name="module_status_color_open_bg" type="text" default="#247a3de6" filter="string" maxlength="9" />
+        <field name="module_status_color_open_text" type="text" default="#ffffff" filter="string" maxlength="7" />
+    </fieldset>
+
     <fieldset name="usercontrol"
               label="COM_JEM_USER_CONTROL"
     >

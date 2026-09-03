@@ -50,12 +50,16 @@ $wa->addInlineStyle($css);
         <?php $i = count($list); ?>
         <?php if ($i > 0) : ?>
         <?php foreach ($list as $item) : ?>
+        <?php $hasEventImage = $showflyer === 1 && !empty($item->eventimage); ?>
         <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
             <h2 class="event-title" itemprop="name">
                 <?php if ($item->eventlink) : ?>
                     <a href="<?php echo $item->eventlink; ?>" title="<?php echo $item->fulltitle; ?>" itemprop="url"><?php echo $item->title; ?></a>
                 <?php else : ?>
                     <?php echo $item->title; ?>
+                <?php endif; ?>
+                <?php if (!$hasEventImage) : ?>
+                    <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                 <?php endif; ?>
             </h2>
             <div class="jem-row-banner <?php echo $banneralignment; ?>">
@@ -94,12 +98,13 @@ $wa->addInlineStyle($css);
                         <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                             <div>
                                 <div class="banner-jem">
-                                    <div>
+                                    <div class="jem-module-event-status-image jem-module-event-status-image--inline">
                                         <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                         <?php if ($flyer_link_type != 3) : ?>
                                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="banner-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
                                             <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                             <?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
+                                        <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,109 @@
+/**
+ * Shared status indicators for JEM event modules.
+ */
+
+.jem-module-event-status-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.jem-module-event-status-image--inline {
+    display: inline-block;
+    width: fit-content;
+    max-width: 100%;
+    align-self: flex-start;
+    vertical-align: top;
+}
+
+.jem-module-event-status-image--float-end {
+    float: right;
+}
+
+.jem-module-event-status-image > img,
+.jem-module-event-status-image > a > img {
+    display: block;
+    float: none !important;
+}
+
+.jem-module-event-status-ribbon,
+.jem-module-event-status-badge {
+    box-sizing: border-box;
+    color: var(--jem-module-status-color, #fff);
+    background: var(--jem-module-status-background, #b3261ee6);
+    font-size: var(--jem-module-status-font-size, .75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.jem-module-event-status-ribbon {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    padding: .35rem .65rem;
+    pointer-events: none;
+}
+
+.jem-module-event-status-ribbon--horizontal-top,
+.jem-module-event-status-ribbon--horizontal-center,
+.jem-module-event-status-ribbon--horizontal-bottom {
+    right: var(--jem-module-status-side-margin, 0);
+    left: var(--jem-module-status-side-margin, 0);
+    white-space: normal;
+}
+
+.jem-module-event-status-ribbon--horizontal-top {
+    top: .45rem;
+}
+
+.jem-module-event-status-ribbon--horizontal-center {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.jem-module-event-status-ribbon--horizontal-bottom {
+    bottom: .45rem;
+}
+
+.jem-module-event-status-ribbon--diagonal-ascending,
+.jem-module-event-status-ribbon--diagonal-descending {
+    top: 1.2rem;
+    min-width: 9.6rem;
+    white-space: nowrap;
+}
+
+.jem-module-event-status-ribbon--diagonal-ascending {
+    left: calc(-2.6rem + var(--jem-module-status-side-margin, 0));
+    transform: rotate(-45deg);
+}
+
+.jem-module-event-status-ribbon--diagonal-descending {
+    right: calc(-2.6rem + var(--jem-module-status-side-margin, 0));
+    transform: rotate(45deg);
+}
+
+.jem-module-event-status-badge {
+    display: inline-block;
+    margin-inline-start: .45rem;
+    padding: .22rem .5rem;
+    border-radius: .2rem;
+    vertical-align: .08em;
+    white-space: normal;
+}
+
+@media (max-width: 480px) {
+    .jem-module-event-status-ribbon--diagonal-ascending,
+    .jem-module-event-status-ribbon--diagonal-descending {
+        top: .9rem;
+        min-width: 8rem;
+    }
+
+    .jem-module-event-status-ribbon--diagonal-ascending {
+        left: calc(-2.2rem + var(--jem-module-status-side-margin, 0));
+    }
+
+    .jem-module-event-status-ribbon--diagonal-descending {
+        right: calc(-2.2rem + var(--jem-module-status-side-margin, 0));
+    }
+}

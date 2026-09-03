@@ -62,6 +62,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                 <?php if (!empty($item->featured)) :?>
                     <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                 <?php endif; ?>
+                <?php echo JemOutput::moduleEventStatusBadge($item); ?>
             <?php endif; ?>
         </div>
 
@@ -78,6 +79,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                 <?php if (!empty($item->featured)) :?>
                     <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                 <?php endif; ?>
+                <?php echo JemOutput::moduleEventStatusBadge($item); ?>
             </div>
         <?php endif; ?>
 

@@ -83,6 +83,7 @@ jQuery(document).ready(function($) {
                                 </div>
                                 <div class="w-50 fltrt">
                                     <?php echo $this->loadTemplate('basicimagehandling'); ?>
+                                    <?php echo $this->loadTemplate('basicmodulestatus'); ?>
                                     <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
                         </fieldset>

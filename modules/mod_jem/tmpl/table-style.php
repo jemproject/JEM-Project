@@ -48,7 +48,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                         $flagHtml = '<img src="' . $flagfile . '" alt="' . $item->country . ' ' . Text::_('MOD_JEM_SHOW_FLAG_ICON') . '" style="max-width: 25px; margin-right: 5px; vertical-align: middle;">';
                     }
                     $titleContent = ($linkdet == 2) ? '<a href="'.$item->link.'">'.$item->title.'</a>' : $item->title;
-                    $colTitle = '<td style="padding: 8px 4px; vertical-align: middle;"><span class="event-title">' . $flagHtml . $titleContent . '</span></td>';
+                    $colTitle = '<td style="padding: 8px 4px; vertical-align: middle;"><span class="event-title">' . $flagHtml . $titleContent . JemOutput::moduleEventStatusBadge($item) . '</span></td>';
                 }
 
                 // Column: Date

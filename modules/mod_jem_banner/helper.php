@@ -187,6 +187,16 @@ abstract class ModJemBannerHelper
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
         $registrationTotals = self::getRegistrationTotals($events);
 
+        foreach ($events as $event) {
+            $eventId = (int) ($event->id ?? 0);
+            $event->regCount = (int) ($registrationTotals[$eventId]->booked ?? 0);
+            $event->waiting = (int) ($registrationTotals[$eventId]->waiting ?? 0);
+        }
+
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
+
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
         $fallback_color_is_dark = self::_is_dark($fallback_color);
@@ -242,6 +252,8 @@ abstract class ModJemBannerHelper
             }
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');

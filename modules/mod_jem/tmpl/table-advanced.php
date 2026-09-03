@@ -95,6 +95,7 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
                                 <?php else : ?>
                                     <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
                                 <?php endif; ?>
+                                <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                         </span>
                     </td>
                     <td>

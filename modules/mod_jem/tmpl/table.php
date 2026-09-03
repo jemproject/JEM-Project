@@ -44,7 +44,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                 $colTitle = '';
                 if ($showtitle) {
                     $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'">'.$item->title.'</a>' : $item->title;
-                    $colTitle = '<td style="padding: 10px 5px; vertical-align: middle;"><div class="event-title">' . $contentTitle . '</div></td>';
+                    $colTitle = '<td style="padding: 10px 5px; vertical-align: middle;"><div class="event-title">' . $contentTitle . JemOutput::moduleEventStatusBadge($item) . '</div></td>';
                 }
 
                 // Column: Date

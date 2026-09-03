@@ -92,6 +92,15 @@ $document->addStyleDeclaration($css);
                     // show a closed lock icon
                     $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 }
+                $hasEventImage = !empty($item->showimageevent)
+                    && !empty($item->eventimage)
+                    && strpos($item->eventimage, '/media/com_jem/images/blank.webp') === false
+                    && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent');
+                $hasVenueImage = !empty($item->showimagevenue)
+                    && !empty($item->venueimage)
+                    && strpos($item->venueimage, '/media/com_jem/images/blank.webp') === false
+                    && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue');
+                $statusOnVenueImage = !$hasEventImage && $hasVenueImage;
                 ?>
                 <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <?php echo $titletag; ?>
@@ -101,6 +110,9 @@ $document->addStyleDeclaration($css);
                         <?php echo $item->title; ?>
                     <?php endif; ?>
                     <?php echo $eventaccess; ?>
+                    <?php if (!$hasEventImage && !$hasVenueImage) : ?>
+                        <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                    <?php endif; ?>
                     <?php echo $titleendtag; ?>
 
                     <div class="jem-row-teaser jem-teaser-event">
@@ -168,7 +180,7 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                                             <?php if(!empty($item->eventimage)) : ?>
-                                                <div class="jem-eventimg-teaser">
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image">
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->eventimageorig) {
                                                     $image = $item->eventimageorig;
@@ -189,6 +201,7 @@ $document->addStyleDeclaration($css);
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
+                                                <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                                 </div>
                                             <?php endif; ?>
                                         <?php endif; ?>
@@ -199,7 +212,7 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                                             <?php if(!empty($item->venueimage)) : ?>
-                                                <div class="jem-eventimg-teaser">
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image">
 
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->venueimageorig) {
@@ -210,6 +223,9 @@ $document->addStyleDeclaration($css);
                                                         <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
+                                                <?php endif; ?>
+                                                <?php if ($statusOnVenueImage) : ?>
+                                                    <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                                 <?php endif; ?>
                                                 </div>
                                             <?php endif; ?>

@@ -319,8 +319,70 @@ class com_jemInstallerScript
             $this->repairAdminMenuQuickTasks();
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
+            $this->repairModuleStatusSettings();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
+        }
+    }
+
+    /**
+     * Ensure event status module defaults exist when a prerelease update has
+     * already recorded the current numeric schema version.
+     *
+     * @return void
+     */
+    private function repairModuleStatusSettings()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_config'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $defaults = array(
+            'module_status_ribbons' => '1',
+            'module_status_ribbon_position' => 'diagonal_ascending',
+            'module_status_ribbon_side_margin' => '0',
+            'module_status_last_places_threshold' => '10',
+            'module_status_new_days' => '7',
+            'module_status_active_cancelled' => '1',
+            'module_status_active_postponed' => '1',
+            'module_status_active_rescheduled' => '1',
+            'module_status_active_moved_online' => '1',
+            'module_status_active_preorder' => '1',
+            'module_status_active_soldout' => '1',
+            'module_status_active_waitinglist' => '1',
+            'module_status_active_last_places' => '1',
+            'module_status_active_new' => '1',
+            'module_status_active_open' => '0',
+            'module_status_color_cancelled_bg' => '#b3261ee6',
+            'module_status_color_cancelled_text' => '#ffffff',
+            'module_status_color_postponed_bg' => '#b55b00e6',
+            'module_status_color_postponed_text' => '#ffffff',
+            'module_status_color_rescheduled_bg' => '#2456a5e6',
+            'module_status_color_rescheduled_text' => '#ffffff',
+            'module_status_color_moved_online_bg' => '#247a3de6',
+            'module_status_color_moved_online_text' => '#ffffff',
+            'module_status_color_preorder_bg' => '#b55b00e6',
+            'module_status_color_preorder_text' => '#ffffff',
+            'module_status_color_soldout_bg' => '#b3261ee6',
+            'module_status_color_soldout_text' => '#ffffff',
+            'module_status_color_waitinglist_bg' => '#b55b00e6',
+            'module_status_color_waitinglist_text' => '#ffffff',
+            'module_status_color_last_places_bg' => '#b55b00e6',
+            'module_status_color_last_places_text' => '#ffffff',
+            'module_status_color_new_bg' => '#2456a5e6',
+            'module_status_color_new_text' => '#ffffff',
+            'module_status_color_open_bg' => '#247a3de6',
+            'module_status_color_open_text' => '#ffffff',
+        );
+
+        foreach ($defaults as $key => $value) {
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_config'))
+                ->columns($db->quoteName(array('keyname', 'value')))
+                ->values($db->quote($key) . ', ' . $db->quote($value));
+            $db->setQuery(str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query))->execute();
         }
     }
 

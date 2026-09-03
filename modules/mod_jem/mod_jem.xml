@@ -2,12 +2,12 @@
 <extension type="module" client="site" method="upgrade">
     <name>JEM - Basic Module</name>
     <author>JEM Community</author>
-    <creationDate>27 August 2026 13:30</creationDate>
+    <creationDate>3 September 2026 01:42</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.1rc3</version>
+    <version>5.0.1rc4</version>
     <description>MOD_JEM_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
@@ -284,6 +284,17 @@
                         validate="moduleLayout"
                         default="_:default"
                 />
+                <field name="status_indicator_spacer_before" type="spacer" label="" hr="true" />
+                <field name="show_status_indicators" type="radio"
+                       default="1"
+                       label="MOD_JEM_SHOW_STATUS_INDICATORS"
+                       description="MOD_JEM_SHOW_STATUS_INDICATORS_DESC"
+                       class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="status_indicator_spacer_after" type="spacer" label="" hr="true" />
                 <field
                         name="moduleclass_sfx"
                         type="textarea"

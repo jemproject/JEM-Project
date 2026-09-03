@@ -1534,6 +1534,333 @@ static public function lightbox() {
         return 'instock';
     }
 
+    /**
+     * Add the effective module status presentation to event rows.
+     *
+     * Registration totals are loaded once for the complete result set when
+     * availability indicators are enabled.
+     *
+     * @param array       $events   Event rows
+     * @param object|null $settings JEM settings, mainly for tests
+     * @param int|null    $now      Current timestamp, mainly for tests
+     *
+     * @return void
+     */
+    static public function prepareModuleEventStatuses(&$events, $settings = null, $now = null)
+    {
+        if (!is_array($events) || $events === array()) {
+            return;
+        }
+
+        $settings = $settings ?: JemHelper::config();
+        if (!(int) ($settings->module_status_ribbons ?? 1)) {
+            return;
+        }
+
+        $needsRegistrationTotals = false;
+        foreach (array('soldout', 'waitinglist', 'last_places', 'open') as $status) {
+            if (self::isModuleStatusActive($settings, $status)) {
+                $needsRegistrationTotals = true;
+                break;
+            }
+        }
+
+        if ($needsRegistrationTotals) {
+            $hasRegistrationTotals = true;
+
+            foreach ($events as $event) {
+                if (!isset($event->regCount)) {
+                    $hasRegistrationTotals = false;
+                    break;
+                }
+            }
+
+            if (!$hasRegistrationTotals) {
+                JemHelper::getAttendeesNumbers($events);
+            }
+        }
+
+        foreach ($events as $event) {
+            $event->module_event_status = self::getModuleEventStatus($event, $settings, $now);
+        }
+    }
+
+    /**
+     * Resolve the single status indicator shown by event modules.
+     *
+     * @param object      $event    Event row
+     * @param object|null $settings JEM settings, mainly for tests
+     * @param int|null    $now      Current timestamp, mainly for tests
+     *
+     * @return array|null
+     */
+    static public function getModuleEventStatus($event, $settings = null, $now = null)
+    {
+        if (!is_object($event)) {
+            return null;
+        }
+
+        $settings = $settings ?: JemHelper::config();
+        if (!(int) ($settings->module_status_ribbons ?? 1)) {
+            return null;
+        }
+
+        $eventStatus = self::getEventStatusPresentation($event);
+        if ($eventStatus['status'] !== 'scheduled'
+            && self::isModuleStatusActive($settings, $eventStatus['status'])) {
+            return $eventStatus;
+        }
+
+        $availabilityStatuses = array('preorder', 'soldout', 'waitinglist', 'last_places');
+        $hasActiveAvailabilityStatus = false;
+        foreach ($availabilityStatuses as $status) {
+            if (self::isModuleStatusActive($settings, $status)) {
+                $hasActiveAvailabilityStatus = true;
+                break;
+            }
+        }
+
+        if ($hasActiveAvailabilityStatus) {
+            $registrationOpen = JemHelper::isEventRegistrationOpen($event, $now);
+            $ticketAvailability = strtolower(trim((string) ($event->ticket_availability ?? 'instock')));
+
+            if ($ticketAvailability === 'soldout'
+                && self::isModuleStatusActive($settings, 'soldout')) {
+                return self::getModuleStatusPresentation('soldout');
+            }
+
+            if ($ticketAvailability === 'preorder'
+                && self::isModuleStatusActive($settings, 'preorder')) {
+                return self::getModuleStatusPresentation('preorder');
+            }
+
+            if ($registrationOpen) {
+                $maxPlaces = max(0, (int) ($event->maxplaces ?? 0));
+                $registeredPlaces = max(0, (int) ($event->regCount ?? $event->booked ?? 0));
+                $reservedPlaces = max(0, (int) ($event->reservedplaces ?? $event->reserved ?? 0));
+                $availablePlaces = $maxPlaces > 0
+                    ? max(0, $maxPlaces - $registeredPlaces - $reservedPlaces)
+                    : null;
+
+                if ($availablePlaces === 0) {
+                    if (!empty($event->waitinglist)
+                        && self::isModuleStatusActive($settings, 'waitinglist')) {
+                        return self::getModuleStatusPresentation('waitinglist');
+                    }
+
+                    if (self::isModuleStatusActive($settings, 'soldout')) {
+                        return self::getModuleStatusPresentation('soldout');
+                    }
+                }
+
+                $lastPlacesThreshold = max(1, (int) ($settings->module_status_last_places_threshold ?? 10));
+                if (self::isModuleStatusActive($settings, 'last_places')
+                    && $availablePlaces !== null
+                    && $availablePlaces < $lastPlacesThreshold) {
+                    return self::getModuleStatusPresentation('last_places');
+                }
+            }
+        }
+
+        if (self::isModuleStatusActive($settings, 'new')) {
+            $created = strtotime((string) ($event->created ?? ''));
+            $newDays = max(1, (int) ($settings->module_status_new_days ?? 7));
+            $now = $now === null ? time() : (int) $now;
+
+            if ($created !== false && $created <= $now && $created >= ($now - ($newDays * 86400))) {
+                return self::getModuleStatusPresentation('new');
+            }
+        }
+
+        if (self::isModuleStatusActive($settings, 'open')
+            && JemHelper::isEventRegistrationOpen($event, $now)) {
+            return self::getModuleStatusPresentation('open');
+        }
+
+        return null;
+    }
+
+    /**
+     * Check whether one module status is enabled in the global policy.
+     *
+     * @param object $settings JEM settings
+     * @param string $status   Internal module status name
+     *
+     * @return bool
+     */
+    static protected function isModuleStatusActive($settings, $status)
+    {
+        $property = 'module_status_active_' . $status;
+        $default = $status === 'open' ? 0 : 1;
+
+        return (int) ($settings->{$property} ?? $default) === 1;
+    }
+
+    /**
+     * Render a module status as an image ribbon.
+     *
+     * @param object $event Prepared module event item
+     *
+     * @return string
+     */
+    static public function moduleEventStatusRibbon($event)
+    {
+        return self::renderModuleEventStatus($event, 'ribbon');
+    }
+
+    /**
+     * Render a module status as a badge beside the event title.
+     *
+     * @param object $event Prepared module event item
+     *
+     * @return string
+     */
+    static public function moduleEventStatusBadge($event)
+    {
+        return self::renderModuleEventStatus($event, 'badge');
+    }
+
+    /**
+     * Return the normalized presentation for a public event status.
+     *
+     * @param object $event Event row
+     *
+     * @return array
+     */
+    protected static function getEventStatusPresentation($event)
+    {
+        $status = strtolower(trim((string) ($event->event_status ?? 'scheduled')));
+        $validStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
+
+        return self::getModuleStatusPresentation(in_array($status, $validStatuses, true) ? $status : 'scheduled');
+    }
+
+    /**
+     * Return a whitelisted module status presentation.
+     *
+     * @param string $status Status identifier
+     *
+     * @return array|null
+     */
+    protected static function getModuleStatusPresentation($status)
+    {
+        $options = array(
+            'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled'),
+            'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled'),
+            'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed'),
+            'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled'),
+            'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online'),
+            'preorder'     => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder'),
+            'soldout'      => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout'),
+            'waitinglist'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist'),
+            'last_places'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES', 'class' => 'jem-event-state-badge--last-places'),
+            'new'          => array('label' => 'COM_JEM_EVENT_STATUS_NEW', 'class' => 'jem-event-state-badge--new'),
+            'open'         => array('label' => 'COM_JEM_EVENT_AVAILABILITY_OPEN', 'class' => 'jem-event-state-badge--available'),
+        );
+
+        if (!isset($options[$status])) {
+            return null;
+        }
+
+        return array(
+            'status' => $status,
+            'label'  => $options[$status]['label'],
+            'class'  => $options[$status]['class'],
+        );
+    }
+
+    /**
+     * Render prepared and whitelisted module status markup.
+     *
+     * @param object $event Event module item
+     * @param string $mode  ribbon or badge
+     *
+     * @return string
+     */
+    protected static function renderModuleEventStatus($event, $mode)
+    {
+        $status = is_object($event) ? ($event->module_event_status ?? null) : null;
+        if (!is_array($status) || empty($status['status']) || empty($status['label']) || empty($status['class'])) {
+            return '';
+        }
+
+        $settings = JemHelper::config();
+        $position = (string) ($settings->module_status_ribbon_position ?? 'diagonal_ascending');
+        $validPositions = array(
+            'horizontal_top',
+            'horizontal_center',
+            'horizontal_bottom',
+            'diagonal_ascending',
+            'diagonal_descending',
+        );
+        if (!in_array($position, $validPositions, true)) {
+            $position = 'diagonal_ascending';
+        }
+
+        $defaultColors = array(
+            'cancelled'    => array('#b3261ee6', '#ffffff'),
+            'postponed'    => array('#b55b00e6', '#ffffff'),
+            'rescheduled'  => array('#2456a5e6', '#ffffff'),
+            'moved_online' => array('#247a3de6', '#ffffff'),
+            'preorder'     => array('#b55b00e6', '#ffffff'),
+            'soldout'      => array('#b3261ee6', '#ffffff'),
+            'waitinglist'  => array('#b55b00e6', '#ffffff'),
+            'last_places'  => array('#b55b00e6', '#ffffff'),
+            'new'          => array('#2456a5e6', '#ffffff'),
+            'open'         => array('#247a3de6', '#ffffff'),
+        );
+        $statusName = (string) $status['status'];
+        if (!isset($defaultColors[$statusName])) {
+            return '';
+        }
+
+        $backgroundKey = 'module_status_color_' . $statusName . '_bg';
+        $textKey = 'module_status_color_' . $statusName . '_text';
+        $background = self::normaliseModuleStatusColor(
+            $settings->{$backgroundKey} ?? '',
+            $defaultColors[$statusName][0],
+            true
+        );
+        $textColor = self::normaliseModuleStatusColor(
+            $settings->{$textKey} ?? '',
+            $defaultColors[$statusName][1],
+            false
+        );
+        $sideMargin = min(200, max(0, (int) ($settings->module_status_ribbon_side_margin ?? 0)));
+        $label = Text::_($status['label']);
+        $labelLength = min(40, max(1, mb_strlen($label)));
+        $fontSize = max(0.58, min(0.85, 1.06 - (max(0, $labelLength - 8) * 0.022)));
+        $style = '--jem-module-status-background:' . $background
+            . ';--jem-module-status-color:' . $textColor
+            . ';--jem-module-status-side-margin:' . $sideMargin . 'px'
+            . ';--jem-module-status-font-size:' . number_format($fontSize, 2, '.', '') . 'rem;';
+        $baseClass = $mode === 'ribbon'
+            ? 'jem-module-event-status-ribbon jem-module-event-status-ribbon--' . str_replace('_', '-', $position)
+            : 'jem-event-state-badge jem-module-event-status-badge';
+
+        return '<span class="' . $baseClass . ' ' . htmlspecialchars($status['class'], ENT_QUOTES, 'UTF-8')
+            . '" style="' . $style . '">'
+            . htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
+            . '</span>';
+    }
+
+    /**
+     * Normalize a configurable module status color before using it in CSS.
+     *
+     * @param string $value       Configured color
+     * @param string $fallback    Trusted fallback color
+     * @param bool   $allowAlpha  Whether #RRGGBBAA is accepted
+     *
+     * @return string
+     */
+    protected static function normaliseModuleStatusColor($value, $fallback, $allowAlpha)
+    {
+        $pattern = $allowAlpha ? '/^#[0-9a-f]{8}$/i' : '/^#[0-9a-f]{6}$/i';
+        $value = trim((string) $value);
+
+        return preg_match($pattern, $value) ? strtolower($value) : $fallback;
+    }
+
     static public function eventStateBadges($event, $includeMicrodata = true, $showAvailabilityText = false)
     {
         if (empty($event)) {

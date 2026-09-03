@@ -47,6 +47,9 @@ if (empty($list) && !$params->get('show_no_events')) {
 $layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
+if ((int) $params->get('show_status_indicators', 1) === 1) {
+    JemHelper::loadCss('jem-module-status');
+}
 
 // load icon font if needed
 JemHelper::loadIconFont();

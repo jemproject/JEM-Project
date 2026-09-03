@@ -173,6 +173,73 @@ class JemModelSettings extends AdminModel
         }
 
         // sanitize
+        $moduleStatusBooleanFields = array(
+            'module_status_ribbons',
+            'module_status_active_cancelled',
+            'module_status_active_postponed',
+            'module_status_active_rescheduled',
+            'module_status_active_moved_online',
+            'module_status_active_preorder',
+            'module_status_active_soldout',
+            'module_status_active_waitinglist',
+            'module_status_active_last_places',
+            'module_status_active_new',
+            'module_status_active_open',
+        );
+        foreach ($moduleStatusBooleanFields as $fieldName) {
+            $data[$fieldName] = (int) !empty($data[$fieldName]);
+        }
+
+        $moduleStatusPositions = array(
+            'horizontal_top',
+            'horizontal_center',
+            'horizontal_bottom',
+            'diagonal_ascending',
+            'diagonal_descending',
+        );
+        $moduleStatusPosition = (string) ($data['module_status_ribbon_position'] ?? 'diagonal_ascending');
+        $data['module_status_ribbon_position'] = in_array($moduleStatusPosition, $moduleStatusPositions, true)
+            ? $moduleStatusPosition
+            : 'diagonal_ascending';
+        $data['module_status_ribbon_side_margin'] = min(
+            200,
+            max(0, (int) ($data['module_status_ribbon_side_margin'] ?? 0))
+        );
+        $data['module_status_last_places_threshold'] = min(
+            9999,
+            max(1, (int) ($data['module_status_last_places_threshold'] ?? 10))
+        );
+        $data['module_status_new_days'] = min(365, max(1, (int) ($data['module_status_new_days'] ?? 7)));
+
+        $moduleStatusColorFields = array(
+            'cancelled'    => 'COM_JEM_EVENT_STATUS_CANCELLED',
+            'postponed'    => 'COM_JEM_EVENT_STATUS_POSTPONED',
+            'rescheduled'  => 'COM_JEM_EVENT_STATUS_RESCHEDULED',
+            'moved_online' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE',
+            'preorder'     => 'COM_JEM_EVENT_AVAILABILITY_PREORDER',
+            'soldout'      => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT',
+            'waitinglist'  => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST',
+            'last_places'  => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES',
+            'new'          => 'COM_JEM_EVENT_STATUS_NEW',
+            'open'         => 'COM_JEM_EVENT_AVAILABILITY_OPEN',
+        );
+        foreach ($moduleStatusColorFields as $status => $label) {
+            $backgroundKey = 'module_status_color_' . $status . '_bg';
+            $textKey = 'module_status_color_' . $status . '_text';
+            $background = trim((string) ($data[$backgroundKey] ?? ''));
+            $textColor = trim((string) ($data[$textKey] ?? ''));
+
+            if (!preg_match('/^#[0-9a-f]{8}$/i', $background)
+                || !preg_match('/^#[0-9a-f]{6}$/i', $textColor)) {
+                $this->setError(Text::sprintf('COM_JEM_SETTINGS_MODULE_STATUS_COLOR_INVALID', Text::_($label)));
+
+                return false;
+            }
+
+            $data[$backgroundKey] = strtolower($background);
+            $data[$textKey] = strtolower($textColor);
+        }
+
         if (empty($data['imagewidth'])) {
             $data['imagewidth'] = 100;
         }

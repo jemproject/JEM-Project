@@ -43,3 +43,40 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_str
 -- change values
 
 -- update values
+
+-- JEM 5.0.1: shared event status indicators for event modules.
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbons', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_position', 'diagonal_ascending');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_side_margin', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_last_places_threshold', '10');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_new_days', '7');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_cancelled', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_postponed', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_rescheduled', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_moved_online', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_preorder', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_soldout', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_waitinglist', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_last_places', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_new', '1');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_active_open', '0');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_cancelled_bg', '#b3261ee6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_cancelled_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_postponed_bg', '#b55b00e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_postponed_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_rescheduled_bg', '#2456a5e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_rescheduled_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_moved_online_bg', '#247a3de6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_moved_online_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_preorder_bg', '#b55b00e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_preorder_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_soldout_bg', '#b3261ee6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_soldout_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_waitinglist_bg', '#b55b00e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_waitinglist_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_last_places_bg', '#b55b00e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_last_places_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_new_bg', '#2456a5e6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_new_text', '#ffffff');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_open_bg', '#247a3de6');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_open_text', '#ffffff');
