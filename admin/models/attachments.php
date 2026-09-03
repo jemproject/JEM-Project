@@ -7,6 +7,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Filesystem\Path;
 
@@ -42,19 +43,56 @@ class JemModelAttachments extends ListModel
 
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
+
         $search = $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search');
         $this->setState('filter_search', $search);
+        $this->setState('filter.search', $search);
 
         $type = $this->getUserStateFromRequest($this->context . '.filter_type', 'filter_type', '', 'cmd');
         $this->setState('filter_type', $type);
+        $this->setState('filter.type', $type);
 
         $frontend = $this->getUserStateFromRequest($this->context . '.filter_frontend', 'filter_frontend', '', 'string');
         $this->setState('filter_frontend', $frontend);
+        $this->setState('filter.frontend', $frontend);
 
         $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter_access', $access);
         $this->setState('filter.access', $access);
 
         parent::populateState('a.created', 'desc');
+
+        $this->syncLegacyFilterState($app);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search'   => array('filter_search', 'filter_search', ''),
+            'type'     => array('filter_type', 'filter_type', ''),
+            'frontend' => array('filter_frontend', 'filter_frontend', ''),
+            'access'   => array('filter_access', 'filter_access', 0),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     protected function getStoreId($id = '')

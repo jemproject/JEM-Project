@@ -113,6 +113,20 @@ final class SampleDataSqlTest extends TestCase
         }
     }
 
+    public function testSampleDataIncludesTheDefaultWeekendSpecialDayIdempotently(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertMatchesRegularExpression(
+            '/SELECT\s+\'Weekend\',\s+\'weekend\',\s+4,\s+\'#d1d5db\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_types` WHERE `alias` = \'weekend\' AND `entity` = 4/s',
+            $sql
+        );
+        self::assertMatchesRegularExpression(
+            '/INSERT INTO `#__jem_special_days`[\s\S]+?\'Saturday and Sunday\'[\s\S]+?\'2026-01-01\'[\s\S]+?\'2030-12-31\'[\s\S]+?\'0,6\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_special_days` WHERE `alias` = \'weekend\'/s',
+            $sql
+        );
+    }
+
     public function testSampleDataArchiveContainsJem5ImageAndAttachmentAssets(): void
     {
         if (!class_exists(ZipArchive::class)) {

@@ -36,6 +36,24 @@ final class BackendSearchToolsTest extends TestCase
                 'form'     => 'admin/models/forms/filter_types.xml',
                 'model'    => 'admin/models/types.php',
             ),
+            'specialdays' => array(
+                'template' => 'admin/views/specialdays/tmpl/default.php',
+                'view'     => 'admin/views/specialdays/view.html.php',
+                'form'     => 'admin/models/forms/filter_specialdays.xml',
+                'model'    => 'admin/models/specialdays.php',
+            ),
+            'groups' => array(
+                'template' => 'admin/views/groups/tmpl/default.php',
+                'view'     => 'admin/views/groups/view.html.php',
+                'form'     => 'admin/models/forms/filter_groups.xml',
+                'model'    => 'admin/models/groups.php',
+            ),
+            'attachments' => array(
+                'template' => 'admin/views/attachments/tmpl/default.php',
+                'view'     => 'admin/views/attachments/view.html.php',
+                'form'     => 'admin/models/forms/filter_attachments.xml',
+                'model'    => 'admin/models/attachments.php',
+            ),
         );
     }
 
@@ -144,6 +162,31 @@ final class BackendSearchToolsTest extends TestCase
         self::assertStringContainsString("'venue_id'      => array('filter_venue_id'", $model);
         self::assertStringContainsString("a.featured = ' . (int) \$featured", $model);
         self::assertStringContainsString("a.locid = ' . \$venueId", $model);
+    }
+
+    public function testDynamicFiltersPreserveDomainAndPermissionRules(): void
+    {
+        $specialDays = (string) file_get_contents(
+            JEM_TEST_ROOT . '/admin/views/specialdays/view.html.php'
+        );
+        $attachments = (string) file_get_contents(
+            JEM_TEST_ROOT . '/admin/views/attachments/view.html.php'
+        );
+
+        self::assertStringContainsString("getField('year', 'filter')", $specialDays);
+        self::assertStringContainsString("getField('day_type', 'filter')", $specialDays);
+        self::assertStringContainsString("get('filter.default_year')", $specialDays);
+        self::assertStringContainsString("JemHelperBackend::can('event', 'access')", $attachments);
+        self::assertStringContainsString("JemHelperBackend::can('venue', 'access')", $attachments);
+        self::assertStringContainsString("getField('type', 'filter')", $attachments);
+        self::assertStringNotContainsString("activeFilters['frontend']", $attachments);
+    }
+
+    public function testSpecialDaysTableHeaderUsesJoomlaAdministratorColours(): void
+    {
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/backend.css');
+
+        self::assertStringNotContainsString('#specialDayList thead th {', $css);
     }
 
     public function testOrderingOptionsAreWhitelistedByTheirListModels(): void

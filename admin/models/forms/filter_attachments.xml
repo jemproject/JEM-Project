@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fields name="filter">
+        <field
+            name="search"
+            type="text"
+            inputmode="search"
+            label="COM_JEM_SEARCH"
+            hint="JSEARCH_FILTER"
+        />
+
+        <field
+            name="type"
+            type="list"
+            label="COM_JEM_ATTACHMENT_OBJECT_TYPE"
+            class="js-select-submit-on-change"
+            validate="options"
+        >
+            <option value="">COM_JEM_ATTACHMENT_FILTER_OBJECT_TYPE</option>
+        </field>
+
+        <field
+            name="access"
+            type="accesslevel"
+            label="JGRID_HEADING_ACCESS"
+            class="js-select-submit-on-change"
+        >
+            <option value="0">JOPTION_SELECT_ACCESS</option>
+        </field>
+
+        <field
+            name="frontend"
+            type="list"
+            label="COM_JEM_ATTACHMENT_FRONTEND"
+            class="js-select-submit-on-change"
+            validate="options"
+        >
+            <option value="">COM_JEM_ATTACHMENT_FILTER_FRONTEND</option>
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+    </fields>
+
+    <fields name="list">
+        <field
+            name="fullordering"
+            type="list"
+            label="JGLOBAL_SORT_BY"
+            class="js-select-submit-on-change"
+            default="a.created DESC"
+            validate="options"
+        >
+            <option value="a.created ASC">COM_JEM_FILTER_CREATED_ASC</option>
+            <option value="a.created DESC">COM_JEM_FILTER_CREATED_DESC</option>
+            <option value="a.file ASC">COM_JEM_FILTER_FILE_ASC</option>
+            <option value="a.file DESC">COM_JEM_FILTER_FILE_DESC</option>
+            <option value="object_type ASC">COM_JEM_FILTER_TYPE_ASC</option>
+            <option value="object_type DESC">COM_JEM_FILTER_TYPE_DESC</option>
+            <option value="linked_title ASC">COM_JEM_FILTER_LINKED_ITEM_ASC</option>
+            <option value="linked_title DESC">COM_JEM_FILTER_LINKED_ITEM_DESC</option>
+            <option value="linked_published ASC">JSTATUS_ASC</option>
+            <option value="linked_published DESC">JSTATUS_DESC</option>
+            <option value="access_level ASC">JGRID_HEADING_ACCESS_ASC</option>
+            <option value="access_level DESC">JGRID_HEADING_ACCESS_DESC</option>
+            <option value="a.frontend ASC">COM_JEM_FILTER_FRONTEND_ASC</option>
+            <option value="a.frontend DESC">COM_JEM_FILTER_FRONTEND_DESC</option>
+            <option value="a.downloads ASC">COM_JEM_FILTER_DOWNLOADS_ASC</option>
+            <option value="a.downloads DESC">COM_JEM_FILTER_DOWNLOADS_DESC</option>
+            <option value="a.last_download ASC">COM_JEM_FILTER_LAST_DOWNLOAD_ASC</option>
+            <option value="a.last_download DESC">COM_JEM_FILTER_LAST_DOWNLOAD_DESC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+        <field
+            name="limit"
+            type="limitbox"
+            label="JGLOBAL_LIST_LIMIT"
+            class="js-select-submit-on-change"
+        />
+    </fields>
+</form>
