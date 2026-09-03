@@ -121,10 +121,13 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
-                <?php $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname)); ?>
+                <?php
+                $showCategoryBadge = (((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats') && !empty($item->catname));
+                $hasEventImage = $showflyer === 1 && !empty($item->eventimage);
+                ?>
                 <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>">
                     <?php if ($showflyer == 1) : ?>
-                        <div class="event-media">
+                        <div class="event-media<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>">
                             <?php if (!empty($item->eventlink)) : ?>
                                 <a class="event-media-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                             <?php else : ?>
@@ -146,6 +149,10 @@ $wa->addInlineStyle($css);
                                 </div>
                             <?php endif; ?>
 
+                            <?php if ($hasEventImage) : ?>
+                                <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
+                            <?php endif; ?>
+
                             <?php if ($showCategoryBadge) : ?>
                                 <div class="event-badge"><span class="event-badge-content"><?php echo $item->catname; ?></span></div>
                             <?php endif; ?>
@@ -155,6 +162,9 @@ $wa->addInlineStyle($css);
                     <div class="event-content">
                         <h3 class="event-title">
                             <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'">'.$item->title.'</a>' : $item->title; ?>
+                            <?php if (!$hasEventImage) : ?>
+                                <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                            <?php endif; ?>
                         </h3>
 
                         <div class="event-date-container">

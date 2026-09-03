@@ -112,6 +112,7 @@ $wa->addInlineStyle($css);
     <div class="events-grid">
         <?php if (count($list) > 0) : ?>
             <?php foreach ($list as $item) : ?>
+                <?php $hasEventImage = $showflyer === 1 && !empty($item->eventimage); ?>
                 <div class="event-card">
                     <div class="event-header">
                         <?php if ($showcalendar == 1) : ?>
@@ -128,6 +129,9 @@ $wa->addInlineStyle($css);
                         <div class="event-heading">
                             <h3 class="event-title">
                                 <?php echo $item->eventlink ? '<a href="'.$item->eventlink.'" title="'.$item->fulltitle.'">'.$item->title.'</a>' : $item->title; ?>
+                                <?php if (!$hasEventImage) : ?>
+                                    <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                                <?php endif; ?>
                             </h3>
 
                             <div class="event-title-meta">
@@ -181,11 +185,12 @@ $wa->addInlineStyle($css);
                         </div>
 
                         <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
-                            <div class="event-image">
+                            <div class="event-image jem-module-event-status-image">
                                 <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
                                    title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>">
                                     <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
                                 </a>
+                                <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                             </div>
                         <?php endif; ?>
 

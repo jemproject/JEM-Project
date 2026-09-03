@@ -43,7 +43,8 @@ $showiconcountry    = (int) $params->get('showiconcountry');
             if ($showtitle) {
                 $flag = ($showiconcountry === 1 && $country !== '') ? '<span style="color: #666; font-size: 0.8em;">[' . $country . '] </span>' : '';
                 $titleContent = ($linkdet === 2 && $eventLink !== '') ? '<a href="'.$eventLink.'" style="color: #007bff; text-decoration: underline; font-weight: inherit;">'.$title.'</a>' : $title;
-                $blockTitle = '<p style="'.$textStyle.' margin: 0; font-size: 16px;">' . $flag . $titleContent . '</p>';
+                $blockTitle = '<p style="'.$textStyle.' margin: 0; font-size: 16px;">'
+                    . $flag . $titleContent . JemOutput::moduleEventStatusBadge($item) . '</p>';
             }
 
             // Block Date

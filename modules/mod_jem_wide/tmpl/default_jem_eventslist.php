@@ -82,6 +82,15 @@ $document->addStyleDeclaration($css);
     $isSafari  = (strpos($userAgent, 'Safari') !== false && strpos($userAgent, 'Chrome') === false);
     ?>
     <?php foreach ($list as $item) : ?>
+        <?php
+        $hasEventImage = !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')
+            && !empty($item->eventimage)
+            && strpos($item->eventimage, 'blank.webp') === false;
+        $hasVenueImage = !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')
+            && !empty($item->venueimage)
+            && strpos($item->venueimage, 'blank.webp') === false;
+        $statusOnVenueImage = !$hasEventImage && $hasVenueImage;
+        ?>
         <?php if (!empty($item->featured)) :   ?>
             <li class="jem-event jem-row jem-justify-start jem-featured <?php echo ' event_id'.$item->eventid; ?>" <?php if ($params->get('linkevent') == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.$item->eventlink.'\'"'; endif; ?> >
         <?php else : ?>
@@ -96,6 +105,9 @@ $document->addStyleDeclaration($css);
                     <?php if (!empty($item->featured)) :?>
                         <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
                     <?php endif; ?>
+                    <?php if (!$hasEventImage && !$hasVenueImage) : ?>
+                        <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                    <?php endif; ?>
                 </h4>
 
             <?php elseif ($params->get('linkevent') == 0) : //Display title as title of jem-event without link ?>
@@ -103,6 +115,9 @@ $document->addStyleDeclaration($css);
                     <?php echo $item->title . JemOutput::recurrenceicon($item) . JemOutput::publishstateicon($item); ?>
                     <?php if (!empty($item->featured)) :?>
                         <i class="jem-featured-icon fa fa-exclamation-circle" aria-hidden="true"></i>
+                    <?php endif; ?>
+                    <?php if (!$hasEventImage && !$hasVenueImage) : ?>
+                        <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                     <?php endif; ?>
                 </h4>
             <?php endif; ?>
@@ -166,7 +181,7 @@ $document->addStyleDeclaration($css);
         </div>
 
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.webp') === false)) : ?>
-            <div class="jem-list-img" >
+            <div class="jem-list-img jem-module-event-status-image" >
                 <?php if ($params->get('use_modal')) : ?>
             <?php if ($item->eventimageorig) {
                 $image = $item->eventimageorig;
@@ -187,11 +202,12 @@ $document->addStyleDeclaration($css);
                     <?php if ($params->get('use_modal')) : ?>
                 </a>
             <?php endif; ?>
+                <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
             </div>
         <?php endif; ?>
 
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue') && (strpos($item->venueimage, 'blank.webp') === false)) : ?>
-            <div class="jem-list-img" >
+            <div class="jem-list-img jem-module-event-status-image" >
                 <?php if ($params->get('use_modal')) : ?>
                 <a href="<?php echo $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>" title="<?php echo $item->venue; ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                     <?php endif; ?>
@@ -199,6 +215,9 @@ $document->addStyleDeclaration($css);
                     <?php if ($params->get('use_modal')) : ?>
                 </a>
             <?php endif; ?>
+                <?php if ($statusOnVenueImage) : ?>
+                    <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 

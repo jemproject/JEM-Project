@@ -91,6 +91,7 @@ jQuery(document).ready(function($) {
                                 </div>
                                 <div class="col-12 col-xl-6">
                                     <?php echo $this->loadTemplate('basiceventhandling'); ?>
+                                    <?php echo $this->loadTemplate('basicmodulestatus'); ?>
                                     <?php echo $this->loadTemplate('basicmetahandling'); ?>
                                 </div>
                             </div>

@@ -42,7 +42,7 @@ $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
                 $blockTitle = '';
                 if ($showtitle) {
                     $contentTitle = ($linkdet == 2) ? '<a href="'.$item->link.'" title="'.strip_tags($item->title).'">'.$item->title.'</a>' : $item->title;
-                    $blockTitle = '<div class="event-title">' . $contentTitle . '</div>';
+                    $blockTitle = '<div class="event-title">' . $contentTitle . JemOutput::moduleEventStatusBadge($item) . '</div>';
                 }
 
                 // Block: Date

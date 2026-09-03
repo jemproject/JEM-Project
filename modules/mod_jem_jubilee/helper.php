@@ -189,6 +189,9 @@ abstract class ModJemJubileeHelper
         # Retrieve the available Events
         ####
         $events = $model->getItems();
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $color = $params->get('color');
@@ -247,6 +250,8 @@ abstract class ModJemJubileeHelper
             }
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');

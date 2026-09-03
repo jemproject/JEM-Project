@@ -33,9 +33,10 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                 <?php
                 $location = trim(implode(', ', array_filter(array($item->venue, $item->city))));
                 $hasPlaces = ((int) $item->registra > 0) && ((int) $item->maxplaces > 0);
+                $hasEventImage = !empty($item->eventimageorig);
                 ?>
                 <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>">
-                    <div class="jem-banner-card-image">
+                    <div class="jem-banner-card-image<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>">
                         <?php if (!empty($item->eventlink)) : ?>
                             <a class="jem-banner-card-image-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                         <?php else : ?>
@@ -54,6 +55,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                         <?php else : ?>
                             </div>
                         <?php endif; ?>
+                        <?php if ($hasEventImage) : ?>
+                            <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
+                        <?php endif; ?>
                     </div>
 
                     <section class="jem-banner-card-panel jem-banner-card-main">
@@ -66,6 +70,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                                     <a href="<?php echo $item->eventlink; ?>"><?php echo $item->title; ?></a>
                                 <?php else : ?>
                                     <?php echo $item->title; ?>
+                                <?php endif; ?>
+                                <?php if (!$hasEventImage) : ?>
+                                    <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                                 <?php endif; ?>
                             </h3>
                         </div>
