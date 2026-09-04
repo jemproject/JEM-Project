@@ -30,6 +30,31 @@ final class VenueDetailMapServiceTest extends TestCase
         }
     }
 
+    public function testBothVenueLayoutsRenderEmbeddedMapsInsideTheOverviewCard(): void
+    {
+        foreach (array('default.php', 'responsive/default.php') as $template) {
+            $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venue/tmpl/' . $template);
+            $mapPosition = strpos($source, '<div class="jem-venue-map-section">');
+            $descriptionPosition = strpos($source, "if (\$venueCustomFieldsPosition === 'before_description')");
+
+            self::assertNotFalse($mapPosition);
+            self::assertNotFalse($descriptionPosition);
+            self::assertLessThan($descriptionPosition, $mapPosition);
+            self::assertSame(1, substr_count($source, '<div class="jem-venue-map-section">'));
+            self::assertStringNotContainsString('$venueShowMapSection', $source);
+        }
+
+        foreach (array('jem.css', 'jem-responsive.css') as $stylesheet) {
+            $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $stylesheet);
+
+            self::assertStringContainsString(
+                'div#jem.jem_venue .jem-venue-overview-panel > .jem-venue-map-section',
+                $css
+            );
+            self::assertStringContainsString('grid-column: 1 / -1;', $css);
+        }
+    }
+
     public function testVenuePdfUsesTheSamePolicyAndProvider(): void
     {
         $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/pdfview.class.php');

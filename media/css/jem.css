@@ -1257,9 +1257,15 @@ div#jem.jem_venue .jem-venue-section-separator {
     margin: 1.25rem 0 1.35rem;
 }
 
-div#jem.jem_venue .jem-venue-map-section {
-    margin: 1.25rem 0 1.5rem;
+div#jem.jem_venue .jem-venue-overview-panel > .jem-venue-map-section {
+    grid-column: 1 / -1;
+    margin: 1.25rem 0 0;
     text-align: center;
+    width: 100%;
+}
+
+div#jem.jem_venue .jem-venue-overview-panel > .jem-venue-map-section:only-child {
+    margin-top: 0;
 }
 
 div#jem.jem_venue .jem-venue-map-link-list {
