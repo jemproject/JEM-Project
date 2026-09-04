@@ -1,4 +1,4 @@
-project_id_env: 924715
+project_id_env: CROWDIN_PROJECT_ID
 api_token_env: CROWDIN_PERSONAL_TOKEN
 
 preserve_hierarchy: true
@@ -8,4 +8,5 @@ files:
     translation: /%original_path%/%locale%/%original_file_name%
     translation_replace:
       "en-GB/nl-NL": "nl-NL"
+
     
