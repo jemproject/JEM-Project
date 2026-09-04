@@ -1,5 +1,1 @@
-files:
-  - source: /admin/language/en-GB/
-    ignore:
-      - '*.html'
-    translation: /admin/language/%two_letters_code%/%original_file_name%
+files: []
