@@ -1,5 +1,11 @@
+project_id_env: 924715
+api_token_env: d3d283ac945207d36205b4a676637aae41bea604241c924fc723646920db93fd8cc6cae864a7cc05
+
+preserve_hierarchy: true
+
 files:
-  - source: /admin/language/en-GB/
-    ignore:
-      - '*.html'
-    translation: /admin/language/%two_letters_code%/%original_file_name%
+  - source: /**/language/en-GB/*.ini
+    translation: /%original_path%/%locale%/%original_file_name%
+    translation_replace:
+      "en-GB/nl-NL": "nl-NL"
+    
