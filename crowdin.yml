@@ -1,5 +1,5 @@
 project_id_env: 924715
-api_token_env: 
+api_token_env: CROWDIN_PERSONAL_TOKEN
 
 preserve_hierarchy: true
 
