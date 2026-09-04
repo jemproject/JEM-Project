@@ -91,13 +91,13 @@ class JemControllerFrontendmenu extends BaseController
 
         $event = $this->getRandomRecord('#__jem_events', 'published = 1', array('id', 'alias'));
         if ($event) {
-            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_EVENT', 'COM_JEM_EVENT_VIEW_DEFAULT_TITLE'), 'Sample Event', 'sample-event', 'index.php?option=com_jem&view=event&id=' . $this->slug($event), $groups['events']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_EVENT', 'COM_JEM_EVENT_VIEW_DEFAULT_TITLE'), 'Sample Event', 'event', 'index.php?option=com_jem&view=event&id=' . $this->slug($event), $groups['events']);
         }
 
         $venueCalendarItem = null;
         $venue = $this->getRandomRecord('#__jem_venues', 'published = 1', array('id', 'alias'));
         if ($venue) {
-            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_VENUE', 'COM_JEM_VENUE_VIEW_DEFAULT_TITLE'), 'Sample Venue', 'sample-venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_VENUE', 'COM_JEM_VENUE_VIEW_DEFAULT_TITLE'), 'Sample Venue', 'venue', 'index.php?option=com_jem&view=venue&id=' . $this->slug($venue), $groups['venues']);
             $venueCalendarItem = array(
                 array('COM_JEM_FRONTEND_MENU_VENUE_CALENDAR', 'COM_JEM_VENUE_CALENDAR_VIEW_DEFAULT_TITLE'),
                 'Venue Calendar',
@@ -109,15 +109,15 @@ class JemControllerFrontendmenu extends BaseController
                 array('show_venue_selector' => '1'),
             );
         } else {
-            $this->keepExistingGeneratedMenuItems($menutype, array('sample-venue', 'venue-calendar'));
+            $this->keepExistingGeneratedMenuItems($menutype, array('venue', 'venue-calendar'));
         }
 
         $category = $this->getRandomCategoryRecord();
         if ($category) {
-            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_CATEGORY', 'COM_JEM_CATEGORY_VIEW_DEFAULT_TITLE'), 'Sample Category', 'sample-category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
+            $items[] = array(array('COM_JEM_FRONTEND_MENU_SAMPLE_CATEGORY', 'COM_JEM_CATEGORY_VIEW_DEFAULT_TITLE'), 'Sample Category', 'category', 'index.php?option=com_jem&view=category&id=' . $this->slug($category), $groups['categories']);
             $items[] = array(array('COM_JEM_FRONTEND_MENU_CATEGORY_CALENDAR', 'COM_JEM_CATEGORY_CALENDAR_VIEW_DEFAULT_TITLE'), 'Category Calendar', 'category-calendar', 'index.php?option=com_jem&view=category&layout=calendar&id=' . $this->slug($category), $groups['calendars']);
         } else {
-            $this->keepExistingGeneratedMenuItems($menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));
+            $this->keepExistingGeneratedMenuItems($menutype, array('category', 'sample-category-calendar', 'category-calendar'));
         }
 
         // Keep Venue Calendar as the final entry in the Calendars group.

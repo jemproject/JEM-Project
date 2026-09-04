@@ -102,7 +102,11 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("->where(\$db->quoteName('id') . ' > 1')", $code);
         self::assertStringContainsString("->where(\$db->quoteName('alias') . ' <> ' . \$db->quote('root'))", $code);
         self::assertStringContainsString("->where(\$db->quoteName('catname') . ' <> ' . \$db->quote('root'))", $code);
-        self::assertStringContainsString("\$this->keepExistingGeneratedMenuItems(\$menutype, array('sample-category', 'sample-category-calendar', 'category-calendar'));", $code);
+        self::assertStringContainsString("'Sample Event', 'event', 'index.php?option=com_jem&view=event&id='", $code);
+        self::assertStringContainsString("'Sample Venue', 'venue', 'index.php?option=com_jem&view=venue&id='", $code);
+        self::assertStringContainsString("'Sample Category', 'category', 'index.php?option=com_jem&view=category&id='", $code);
+        self::assertStringContainsString("\$this->keepExistingGeneratedMenuItems(\$menutype, array('category', 'sample-category-calendar', 'category-calendar'));", $code);
+        self::assertStringNotContainsString('renameLegacyMenuAlias', $code);
         self::assertStringContainsString("'index.php?option=com_jem&view=category&layout=calendar&id=' . \$this->slug(\$category)", $code);
     }
 

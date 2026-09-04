@@ -61,7 +61,6 @@ if ($venueMapService !== (int) $this->settings->get('global_show_mapserv', 0)) {
 }
 $venueShowMapLinkInDetails = in_array($venueMapDisplay, array('link_text', 'link_button'), true);
 $venueShowMapBlock = $venueMapDisplay === 'map';
-$venueShowMapSection = $venueShowMapLinkInDetails || $venueShowMapBlock;
 $venueShowImage = (int) $this->params->get('venue_show_image', 1) === 1;
 $venueShowDescription = (int) $this->params->get('venue_show_description', 1) === 1
     && $this->settings->get('global_show_locdescription', 1)
@@ -388,8 +387,27 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
             <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
         </div>
         <?php endif; ?>
+
+        <?php if ($venueShowMapBlock) : ?>
+        <div class="jem-venue-map-section">
+            <?php if (in_array($venueMapService, array(2, 5), true)) : ?>
+                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
+            <?php endif; ?>
+
+            <?php if ($venueMapService === 3) : ?>
+                <input type="hidden" id="latitude" value="<?php echo $this->escape($this->venue->latitude); ?>">
+                <input type="hidden" id="longitude" value="<?php echo $this->escape($this->venue->longitude); ?>">
+                <input type="hidden" id="venue" value="<?php echo $this->escape($this->venue->venue); ?>">
+                <input type="hidden" id="street" value="<?php echo $this->escape($this->venue->street); ?>">
+                <input type="hidden" id="city" value="<?php echo $this->escape($this->venue->city); ?>">
+                <input type="hidden" id="state" value="<?php echo $this->escape($this->venue->state); ?>">
+                <input type="hidden" id="postalCode" value="<?php echo $this->escape($this->venue->postalCode); ?>">
+                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
     </div>
-    <?php if ($venueShowDescription || $venueShowMapSection || $venueShowEvents) : ?>
+    <?php if ($venueShowDescription || $venueShowEvents) : ?>
         <div class="jem-venue-section-separator"></div>
     <?php endif; ?>
 
@@ -408,25 +426,6 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
 
     <?php if ($venueCustomFieldsPosition === 'after_description') : ?>
         <?php echo $renderVenueCustomFieldsBlock(); ?>
-    <?php endif; ?>
-
-    <?php if ($venueShowMapSection) : ?>
-        <div class="jem-venue-map-section">
-            <?php if ($venueShowMapBlock && in_array($venueMapService, array(2, 5), true)) : ?>
-                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
-            <?php endif; ?>
-
-            <?php if ($venueShowMapBlock && $venueMapService === 3) : ?>
-                <input type="hidden" id="latitude" value="<?php echo $this->escape($this->venue->latitude); ?>">
-                <input type="hidden" id="longitude" value="<?php echo $this->escape($this->venue->longitude); ?>">
-                <input type="hidden" id="venue" value="<?php echo $this->escape($this->venue->venue); ?>">
-                <input type="hidden" id="street" value="<?php echo $this->escape($this->venue->street); ?>">
-                <input type="hidden" id="city" value="<?php echo $this->escape($this->venue->city); ?>">
-                <input type="hidden" id="state" value="<?php echo $this->escape($this->venue->state); ?>">
-                <input type="hidden" id="postalCode" value="<?php echo $this->escape($this->venue->postalCode); ?>">
-                <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
-            <?php endif; ?>
-        </div>
     <?php endif; ?>
 
     <?php if ($venueCustomFieldsPosition === 'after_links') : ?>

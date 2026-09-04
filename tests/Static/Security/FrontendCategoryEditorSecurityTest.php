@@ -13,6 +13,7 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
             'site/models/editcategory.php',
             'site/models/forms/category.xml',
             'site/views/editcategory/view.html.php',
+            'site/views/editcategory/tmpl/edit.xml',
             'site/views/editcategory/tmpl/edit.php',
             'site/views/editcategory/tmpl/responsive/edit.php',
         ) as $path) {
@@ -28,6 +29,23 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
         foreach (array('rules', 'groupid', 'created_user_id', 'modified_user_id', 'checked_out') as $field) {
             self::assertStringNotContainsString('name="' . $field . '"', $form);
         }
+    }
+
+    public function testEditorIsExposedAsAJoomlaMenuType(): void
+    {
+        $descriptor = simplexml_load_file(JEM_TEST_ROOT . '/site/views/editcategory/tmpl/edit.xml');
+
+        self::assertNotFalse($descriptor);
+        self::assertSame('COM_JEM_EDITCATEGORY_MENU_TITLE', (string) $descriptor->layout['title']);
+        self::assertSame('COM_JEM_EDITCATEGORY_MENU_TITLE', (string) $descriptor->layout['option']);
+        self::assertSame('COM_JEM_EDITCATEGORY_MENU_DESC', trim((string) $descriptor->layout->message));
+
+        $menu = $this->read('admin/controllers/frontendmenu.php');
+
+        self::assertStringContainsString(
+            "'Submit Category', 'submit-category', 'index.php?option=com_jem&view=editcategory', \$groups['categories']",
+            $menu
+        );
     }
 
     public function testControllerAndDisplayBoundaryRequireLoginTokenAndStoredRecordAcl(): void
