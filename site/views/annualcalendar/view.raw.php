@@ -653,10 +653,10 @@ class JemViewAnnualcalendar extends HtmlView
 
     private function buildEventMarkerLegendHtml(): string
     {
-        return '&#9679; 1-day events'
-            . '&nbsp;&nbsp; &#9632; 2 or 3 day events'
-            . '&nbsp;&nbsp; &#9650; 4 to 6 day events'
-            . '&nbsp;&nbsp; &#9733; 7 or more day events';
+        return '&#9679; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_ONE_DAY')
+            . '&nbsp;&nbsp; &#9632; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_TWO_THREE_DAYS')
+            . '&nbsp;&nbsp; &#9650; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_FOUR_SEVEN_DAYS')
+            . '&nbsp;&nbsp; &#9733; ' . Text::_('COM_JEM_ANNUALCALENDAR_EVENT_MARKER_EIGHT_PLUS_DAYS');
     }
 
     private function getPdfEventDurationMarker(int $durationDays, bool $filled): string
@@ -671,7 +671,7 @@ class JemViewAnnualcalendar extends HtmlView
             return $filled ? '&#9632;' : '&#9633;';
         }
 
-        if ($durationDays <= 6) {
+        if ($durationDays <= 7) {
             return '&#9650;';
         }
 
