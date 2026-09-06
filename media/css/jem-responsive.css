@@ -26,6 +26,22 @@ body.com_jem.body-overlayed {
     overflow: auto;
 }
 
+#jem .jem-calendar-contact-filter-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+    margin: 0 0 1rem;
+    padding: 0.65rem 0.85rem;
+    color: var(--body-color, #212529);
+    background-color: var(--body-bg, rgba(127, 127, 127, 0.08));
+    border: 1px solid var(--border-color, rgba(127, 127, 127, 0.35));
+    border-radius: 0.25rem;
+}
+
+#jem .jem-calendar-contact-filter-label {
+    font-weight: 700;
+}
+
 /* ----- */
 
 #jem h1.componentheading i.fa,

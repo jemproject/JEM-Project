@@ -65,6 +65,7 @@ class JEMViewContactelement extends HtmlView
         $this->pagination = $pagination;
 
         $this->selection = $app->input->getString('selection', '');
+        $this->contactCategoryId = $app->input->getInt('contact_category_id', 0);
 
         parent::display($tpl);
     }

@@ -140,6 +140,22 @@
                 label="COM_JEM_TIMELINE_FILTER_COUNTRIES_LABEL"
                 description="COM_JEM_TIMELINE_FILTER_COUNTRIES_DESC"
             />
+            <field name="calendar_contact_category" type="category"
+                extension="com_contact"
+                published="1"
+                default="0"
+                class="form-select w-auto jem-options-width-auto"
+                label="COM_JEM_CALENDAR_FILTER_CONTACT_CATEGORY_LABEL"
+                description="COM_JEM_CALENDAR_FILTER_CONTACT_CATEGORY_DESC"
+            >
+                <option value="0">JOPTION_SELECT_CATEGORY</option>
+            </field>
+            <field name="calendar_contacts" type="modal_contact"
+                categoryfield="calendar_contact_category"
+                default=""
+                label="COM_JEM_CALENDAR_FILTER_CONTACTS_LABEL"
+                description="COM_JEM_CALENDAR_FILTER_CONTACTS_DESC"
+            />
 
             <field type="spacer" name="spacer3" hr="true" />
             <field type="spacer" name="page_text_spacer"

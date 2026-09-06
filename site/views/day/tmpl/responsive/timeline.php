@@ -1377,6 +1377,8 @@ document.addEventListener('keydown', function (event) {
         </form>
     </nav>
 
+    <?php echo JemHelper::renderCalendarContactFilterContext($this->params); ?>
+
     <?php if ($this->params->get('showintrotext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('introtext'); ?>

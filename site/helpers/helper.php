@@ -994,6 +994,137 @@ class JemHelper
     }
 
     /**
+     * Resolve the fixed Joomla Contact filter context configured for a calendar menu item.
+     *
+     * @param   Registry|null  $params  Calendar menu parameters.
+     *
+     * @return  array
+     */
+    static public function getCalendarContactFilterContext($params = null)
+    {
+        $params = $params instanceof Registry ? $params : Factory::getApplication()->getParams('com_jem');
+        $categoryId = (int) $params->get('calendar_contact_category', 0);
+        $contactIds = $params->get('calendar_contacts', array());
+        $contactIds = is_array($contactIds) ? $contactIds : explode(',', (string) $contactIds);
+        $contactIds = array_values(array_unique(array_filter(array_map('intval', $contactIds))));
+
+        if ($categoryId < 1 && !$contactIds) {
+            return array();
+        }
+
+        $context = array();
+        $unavailable = Text::_('COM_JEM_CALENDAR_FILTER_UNAVAILABLE');
+
+        if (!self::isContactComponentEnabled()) {
+            if ($categoryId > 0) {
+                $context['category'] = $unavailable;
+            }
+
+            if ($contactIds) {
+                $context['contacts'] = $unavailable;
+            }
+
+            return $context;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $levels = array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
+        $levelsList = $levels ? implode(',', $levels) : '0';
+        $language = Factory::getApplication()->getLanguage()->getTag();
+
+        try {
+            if ($categoryId > 0) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('title'))
+                    ->from($db->quoteName('#__categories'))
+                    ->where($db->quoteName('id') . ' = ' . $categoryId)
+                    ->where($db->quoteName('extension') . ' = ' . $db->quote('com_contact'))
+                    ->where($db->quoteName('published') . ' = 1')
+                    ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
+                    ->where($db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+                $db->setQuery($query);
+                $context['category'] = $db->loadResult() ?: $unavailable;
+            }
+
+            if ($contactIds) {
+                $query = $db->getQuery(true)
+                    ->select(array($db->quoteName('contact.id'), $db->quoteName('contact.name')))
+                    ->from($db->quoteName('#__contact_details', 'contact'))
+                    ->join(
+                        'INNER',
+                        $db->quoteName('#__categories', 'contact_category')
+                        . ' ON ' . $db->quoteName('contact_category.id') . ' = ' . $db->quoteName('contact.catid')
+                        . ' AND ' . $db->quoteName('contact_category.extension') . ' = ' . $db->quote('com_contact')
+                    )
+                    ->where($db->quoteName('contact.id') . ' IN (' . implode(',', $contactIds) . ')')
+                    ->where($db->quoteName('contact.published') . ' = 1')
+                    ->where($db->quoteName('contact.access') . ' IN (' . $levelsList . ')')
+                    ->where($db->quoteName('contact.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
+                    ->where($db->quoteName('contact_category.published') . ' = 1')
+                    ->where($db->quoteName('contact_category.access') . ' IN (' . $levelsList . ')')
+                    ->where($db->quoteName('contact_category.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+                $db->setQuery($query);
+                $contactNames = $db->loadAssocList('id', 'name');
+                $orderedNames = array();
+
+                foreach ($contactIds as $contactId) {
+                    if (isset($contactNames[$contactId])) {
+                        $orderedNames[] = $contactNames[$contactId];
+                    }
+                }
+
+                $context['contacts'] = $orderedNames ? implode(', ', $orderedNames) : $unavailable;
+            }
+        } catch (RuntimeException $e) {
+            if ($categoryId > 0) {
+                $context['category'] = $unavailable;
+            }
+
+            if ($contactIds) {
+                $context['contacts'] = $unavailable;
+            }
+        }
+
+        return $context;
+    }
+
+    /**
+     * Render the fixed Joomla Contact filters configured for a calendar menu item.
+     *
+     * @param   Registry|null  $params  Calendar menu parameters.
+     *
+     * @return  string
+     */
+    static public function renderCalendarContactFilterContext($params = null)
+    {
+        $context = self::getCalendarContactFilterContext($params);
+
+        if (!$context) {
+            return '';
+        }
+
+        $labels = array(
+            'category' => Text::_('COM_JEM_CALENDAR_FILTER_CONTACT_CATEGORY_LABEL'),
+            'contacts' => Text::_('COM_JEM_CALENDAR_FILTER_CONTACTS_LABEL'),
+        );
+        $html = array(
+            '<div class="jem-calendar-contact-filter-context" role="note" aria-label="'
+            . htmlspecialchars(Text::_('COM_JEM_CALENDAR_CONTACT_FILTER_CONTEXT'), ENT_QUOTES, 'UTF-8') . '">',
+        );
+
+        foreach ($context as $key => $value) {
+            $html[] = '<span class="jem-calendar-contact-filter-item"><span class="jem-calendar-contact-filter-label">'
+                . htmlspecialchars($labels[$key], ENT_QUOTES, 'UTF-8') . ':</span> '
+                . '<span class="jem-calendar-contact-filter-value">'
+                . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</span></span>';
+        }
+
+        $html[] = '</div>';
+
+        return implode('', $html);
+    }
+
+    /**
      * Returns true when Community Builder is enabled and its profile table is available.
      *
      * @return boolean

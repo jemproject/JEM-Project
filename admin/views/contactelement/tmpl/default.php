@@ -130,6 +130,7 @@ $selectedIds = array_map('trim', $selectedIds);
     <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>"/>
     <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
+    <input type="hidden" name="contact_category_id" value="<?php echo (int) $this->contactCategoryId; ?>"/>
     <input type="hidden" id="selection_holder" name="selection" value="<?php echo htmlspecialchars($this->selection, ENT_QUOTES, 'UTF-8'); ?>"/>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>

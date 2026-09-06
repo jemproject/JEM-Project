@@ -148,6 +148,25 @@ class JemModelEventslist extends ListModel
             $this->setState('filter.country_id', $countries);
             $this->setState('filter.country_id.include', true);
         }
+
+        $this->applyMenuContactFilters($params);
+    }
+
+    /**
+     * Apply the predefined Joomla Contact filters used by calendar-style views.
+     */
+    protected function applyMenuContactFilters($params)
+    {
+        $contactCategoryId = (int) $params->get('calendar_contact_category', 0);
+        $contactIds = $this->normaliseParamIds($params->get('calendar_contacts', array()));
+
+        if ($contactCategoryId > 0) {
+            $this->setState('filter.contact_category_id', $contactCategoryId);
+        }
+
+        if ($contactIds) {
+            $this->setState('filter.contact_ids', $contactIds);
+        }
     }
 
     /**
@@ -500,6 +519,8 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.venue_id.include');
         $id .= ':' . serialize($this->getState('filter.country_id'));
         $id .= ':' . $this->getState('filter.country_id.include');
+        $id .= ':' . (int) $this->getState('filter.contact_category_id');
+        $id .= ':' . serialize($this->getState('filter.contact_ids'));
         $id .= ':' . $this->getState('filter.venue_state');
         $id .= ':' . $this->getState('filter.venue_state.mode');
         $id .= ':' . $this->getState('filter.filter_search');
@@ -727,6 +748,60 @@ class JemModelEventslist extends ListModel
             }
         } elseif (!empty($filterTypeId)) {
             $query->where($effectiveTypeId . ' = ' . (int) $filterTypeId);
+        }
+
+        ################################
+        ## FILTER - JOOMLA CONTACTS  ##
+        ################################
+
+        $contactCategoryId = (int) $this->getState('filter.contact_category_id', 0);
+        $contactIds = $this->getState('filter.contact_ids', array());
+        $contactIds = is_array($contactIds) ? $contactIds : explode(',', (string) $contactIds);
+        ArrayHelper::toInteger($contactIds);
+        $contactIds = array_values(array_unique(array_filter($contactIds)));
+
+        if ($contactCategoryId > 0 || $contactIds) {
+            if (!JemHelper::isContactComponentEnabled()) {
+                $query->where('1 = 0');
+            } else {
+                $contactLanguage = Factory::getApplication()->getLanguage()->getTag();
+                $contactQuery = $db->getQuery(true)
+                    ->select('1')
+                    ->from($db->quoteName('#__contact_details', 'jem_contact'))
+                    ->join(
+                        'INNER',
+                        $db->quoteName('#__categories', 'jem_contact_category')
+                        . ' ON ' . $db->quoteName('jem_contact_category.id') . ' = ' . $db->quoteName('jem_contact.catid')
+                        . ' AND ' . $db->quoteName('jem_contact_category.extension') . ' = ' . $db->quote('com_contact')
+                    )
+                    ->where('FIND_IN_SET(' . $db->quoteName('jem_contact.id') . ', REPLACE(' . $db->quoteName('a.contactid') . ', ' . $db->quote(' ') . ', ' . $db->quote('') . ')) > 0')
+                    ->where($db->quoteName('jem_contact.published') . ' = 1')
+                    ->where($db->quoteName('jem_contact.access') . ' IN (' . $levelsList . ')')
+                    ->where($db->quoteName('jem_contact.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')')
+                    ->where($db->quoteName('jem_contact_category.published') . ' = 1')
+                    ->where($db->quoteName('jem_contact_category.access') . ' IN (' . $levelsList . ')')
+                    ->where($db->quoteName('jem_contact_category.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')');
+
+                if ($contactIds) {
+                    $contactQuery->where($db->quoteName('jem_contact.id') . ' IN (' . implode(',', $contactIds) . ')');
+                }
+
+                if ($contactCategoryId > 0) {
+                    $contactQuery->join(
+                        'INNER',
+                        $db->quoteName('#__categories', 'jem_contact_root')
+                        . ' ON ' . $db->quoteName('jem_contact_root.id') . ' = ' . $contactCategoryId
+                        . ' AND ' . $db->quoteName('jem_contact_root.extension') . ' = ' . $db->quote('com_contact')
+                    )
+                        ->where($db->quoteName('jem_contact_root.published') . ' = 1')
+                        ->where($db->quoteName('jem_contact_root.access') . ' IN (' . $levelsList . ')')
+                        ->where($db->quoteName('jem_contact_root.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')')
+                        ->where($db->quoteName('jem_contact_category.lft') . ' >= ' . $db->quoteName('jem_contact_root.lft'))
+                        ->where($db->quoteName('jem_contact_category.rgt') . ' <= ' . $db->quoteName('jem_contact_root.rgt'));
+                }
+
+                $query->where('EXISTS (' . $contactQuery . ')');
+            }
         }
 
         ####################

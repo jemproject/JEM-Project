@@ -229,6 +229,8 @@ class JemModelDay extends JemModelEventslist
             $this->setState('filter.country_id', $timelineCountries);
             $this->setState('filter.country_id.include', true);
         }
+
+        $this->applyMenuContactFilters($params);
 ################################
         ## EXCLUDE/INCLUDE CATEGORIES ##
         ################################

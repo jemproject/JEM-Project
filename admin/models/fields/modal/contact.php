@@ -60,6 +60,12 @@ class JFormFieldModal_Contact extends FormField
     {
         $app = Factory::getApplication();
         $currentValues = $this->value ? $this->value : '';
+        $categoryFieldName = isset($this->element['categoryfield'])
+            ? trim((string) $this->element['categoryfield'])
+            : '';
+        $contactCategoryId = $categoryFieldName !== ''
+            ? (int) $this->form->getValue($categoryFieldName, $this->group, 0)
+            : 0;
 
         if (!$this->hasAvailableContacts()) {
             $emptyContactName = htmlspecialchars(Text::_('COM_JEM_SELECT_CONTACT'), ENT_QUOTES, 'UTF-8');
@@ -78,6 +84,7 @@ class JFormFieldModal_Contact extends FormField
         $document = $app->getDocument();
         $wa = $document->getWebAssetManager();
         $modalId = 'modal_' . $this->id;
+        $buttonId = $this->id . '_select';
 
         // Build the script
         $script = array();
@@ -87,6 +94,51 @@ class JFormFieldModal_Contact extends FormField
         $script[] = '        bootstrap.Modal.getInstance(document.getElementById("' . $modalId . '")).hide();';
         $script[] = '    }';
 
+        if ($categoryFieldName !== '') {
+            $categoryFieldId = preg_replace(
+                '/' . preg_quote($this->fieldname, '/') . '$/',
+                $categoryFieldName,
+                $this->id
+            );
+            $emptyContactName = Text::_('COM_JEM_SELECT_CONTACT');
+            $script[] = '    document.addEventListener("DOMContentLoaded", function () {';
+            $script[] = '        var categoryField = document.getElementById(' . json_encode($categoryFieldId) . ');';
+            $script[] = '        var selectButton = document.getElementById(' . json_encode($buttonId) . ');';
+            $script[] = '        var modal = document.getElementById(' . json_encode($modalId) . ');';
+            $script[] = '        var contactField = document.getElementById(' . json_encode($this->id . '_id') . ');';
+            $script[] = '        var baseUrl = ' . json_encode(
+                'index.php?option=com_jem&view=contactelement&tmpl=component'
+                . '&function=jSelectContact_' . $this->id
+                . '&' . Session::getFormToken() . '=1'
+            ) . ';';
+            $script[] = '        var updateModalUrl = function () {';
+            $script[] = '            if (!categoryField || !modal) {';
+            $script[] = '                return;';
+            $script[] = '            }';
+            $script[] = '            var url = baseUrl + "&selection=" + encodeURIComponent(contactField ? contactField.value : "");';
+            $script[] = '            if (parseInt(categoryField.value, 10) > 0) {';
+            $script[] = '                url += "&contact_category_id=" + encodeURIComponent(categoryField.value);';
+            $script[] = '            }';
+            $script[] = '            modal.dataset.url = url;';
+            $script[] = '            if (modal.dataset.iframe) {';
+            $script[] = '                var iframeUrl = url.replace(/&/g, "&amp;").replace(/"/g, "&quot;");';
+            $script[] = '                modal.dataset.iframe = modal.dataset.iframe.replace(/src="[^"]*"/, "src=\"" + iframeUrl + "\"");';
+            $script[] = '            }';
+            $script[] = '        };';
+            $script[] = '        if (selectButton) {';
+            $script[] = '            selectButton.addEventListener("click", updateModalUrl);';
+            $script[] = '        }';
+            $script[] = '        if (categoryField) {';
+            $script[] = '            categoryField.addEventListener("change", function () {';
+            $script[] = '                document.getElementById(' . json_encode($this->id . '_id') . ').value = "";';
+            $script[] = '                document.getElementById(' . json_encode($this->id . '_name') . ').value = ' . json_encode($emptyContactName) . ';';
+            $script[] = '                updateModalUrl();';
+            $script[] = '            });';
+            $script[] = '        }';
+            $script[] = '        updateModalUrl();';
+            $script[] = '    });';
+        }
+
         // Add to document head
         $wa->addInlineScript(implode("\n", $script));
 
@@ -94,7 +146,8 @@ class JFormFieldModal_Contact extends FormField
         $html = array();
         $link = 'index.php?option=com_jem&view=contactelement&tmpl=component'
             . '&function=jSelectContact_' . $this->id
-            . '&selection=' . $currentValues;
+            . '&selection=' . rawurlencode($currentValues)
+            . ($contactCategoryId > 0 ? '&contact_category_id=' . $contactCategoryId : '');
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $contactNames = array();
@@ -124,7 +177,7 @@ class JFormFieldModal_Contact extends FormField
         $html = array();
         $html[] = '<div class="input-group jem-contact-modal-field" style="width: auto; flex-grow: 1;">';
         $html[] = '  <input type="text" id="' . $this->id . '_name" class="form-control readonly" disabled="disabled" value="' . $contactNames . '" readonly size="35" />';
-        $html[] = '  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
+        $html[] = '  <button type="button" id="' . $buttonId . '" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#' . $modalId . '">';
         $html[] = '    <i class="icon-user"></i> ' . Text::_('COM_JEM_SELECT');
         $html[] = '  </button>';
         $html[] = '</div>';

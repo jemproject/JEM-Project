@@ -98,6 +98,7 @@ class JemModelContactelement extends BaseDatabaseModel
         $filter_type      = $app->getUserStateFromRequest('com_jem.contactelement.filter_type','filter_type',0,'int');
         $search           = $app->getUserStateFromRequest('com_jem.contactelement.filter_search','filter_search','','string');
         $search           = $this->_db->escape( trim(StringHelper::strtolower( $search ) ) );
+        $contactCategoryId = $app->input->getInt('contact_category_id', 0);
 
         // start query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -105,11 +106,29 @@ class JemModelContactelement extends BaseDatabaseModel
         $query->select(array('con.*'));
         $query->select($db->quoteName('cat.title', 'category_title'));
         $query->from('#__contact_details as con');
-        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid') . ' AND cat.extension = "com_contact"');
+        $query->join(
+            'INNER',
+            $db->quoteName('#__categories', 'cat')
+            . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid')
+            . ' AND ' . $db->quoteName('cat.extension') . ' = ' . $db->quote('com_contact')
+        );
 
         // where
         $where = array();
         $where[] = 'con.published = 1';
+        $where[] = 'cat.published = 1';
+
+        if ($contactCategoryId > 0) {
+            $query->join(
+                'INNER',
+                $db->quoteName('#__categories', 'cat_root')
+                . ' ON ' . $db->quoteName('cat_root.id') . ' = ' . $contactCategoryId
+                . ' AND ' . $db->quoteName('cat_root.extension') . ' = ' . $db->quote('com_contact')
+            );
+            $where[] = 'cat_root.published = 1';
+            $where[] = $db->quoteName('cat.lft') . ' >= ' . $db->quoteName('cat_root.lft');
+            $where[] = $db->quoteName('cat.rgt') . ' <= ' . $db->quoteName('cat_root.rgt');
+        }
 
         // search
         if ($search) {
