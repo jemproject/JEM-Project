@@ -382,6 +382,50 @@ static public function lightbox() {
     }
 
     /**
+     * Render a callable telephone number without exposing it in the static HTML.
+     *
+     * This deters basic address/telephone harvesters. It is not intended as a
+     * substitute for access control when the number must remain confidential.
+     */
+    static public function protectedTelephoneLink($telephone)
+    {
+        $label = trim(strip_tags((string) $telephone));
+        $label = preg_replace('/[\x00-\x1F\x7F]+/u', ' ', $label) ?? '';
+        $target = preg_replace('/[^0-9+*#,;]/', '', $label) ?? '';
+
+        if ($label === '' || $target === '') {
+            return '';
+        }
+
+        $payload = json_encode(
+            array('label' => $label, 'target' => $target),
+            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE
+        );
+        $encodedPayload = strrev(base64_encode((string) $payload));
+        $document = Factory::getApplication()->getDocument();
+
+        if (is_object($document) && method_exists($document, 'getWebAssetManager')) {
+            $wa = $document->getWebAssetManager();
+
+            if (!$wa->assetExists('script', 'com_jem.contact-protection')) {
+                $wa->registerScript(
+                    'com_jem.contact-protection',
+                    'media/com_jem/js/contact-protection.js',
+                    array(),
+                    array('defer' => true)
+                );
+            }
+
+            $wa->useScript('com_jem.contact-protection');
+        }
+
+        return '<span class="jem-protected-contact-link" data-jem-protected-contact="'
+            . self::escapeHtmlAttribute($encodedPayload) . '"><span class="jem-protected-contact-fallback">'
+            . self::escapeHtmlAttribute(Text::_('COM_JEM_CONTACT_PROTECTED_TELEPHONE'))
+            . '</span></span>';
+    }
+
+    /**
      * Routes a link and escapes it for use in an HTML attribute.
      */
     static protected function escapeLinkAttribute($link)

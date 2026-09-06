@@ -34,7 +34,7 @@ use Joomla\CMS\Router\Route;
                 <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
                 <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
                 <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                <button class="btn btn-secondary" type="button" data-jem-main-filters-clear<?php echo !empty($this->eventFilters['has_editable']) ? '' : ' onclick="document.getElementById(\'filter_search\').value=\'\';document.getElementById(\'filter_month\').value=\'\';this.form.submit();"'; ?>><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
             </div>
         <?php endif; ?>
 
@@ -47,10 +47,26 @@ use Joomla\CMS\Router\Route;
     </div>
 <?php endif; ?>
 
+<?php if (!empty($this->eventFilters['has_visible'])) : ?>
+    <?php echo $this->loadTemplate('event_filters'); ?>
+<?php endif; ?>
+
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
 <?php $showiconsineventtitle = $this->params->get('showiconsineventtitle',1); ?>
 <?php $showiconsineventdata = $this->params->get('showiconsineventdata',1); ?>
 <?php $showAvailabilityText = (bool) $this->params->get('event_show_availability',0); ?>
+<?php
+$itemDisplay = isset($this->itemDisplay) && is_array($this->itemDisplay)
+    ? $this->itemDisplay
+    : array(
+        'venue' => (int) $this->jemsettings->showlocate === 1,
+        'city' => (int) $this->jemsettings->showcity === 1,
+        'county' => (int) $this->jemsettings->showstate === 1,
+        'type' => true,
+        'category' => (int) $this->jemsettings->showcat === 1,
+        'contact' => false,
+    );
+?>
 
 <div class="table-responsive">
     <table class="eventtable table table-striped" style="width:<?php echo !empty($this->jemsettings->tablewidth) ? $this->jemsettings->tablewidth : '100%'; ?>;">
@@ -62,17 +78,20 @@ use Joomla\CMS\Router\Route;
             <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <col style="width:<?php echo $this->jemsettings->titlewidth; ?>" class="jem_col_title" />
             <?php endif; ?>
-            <?php if ($this->jemsettings->showlocate == 1) : ?>
+            <?php if ($itemDisplay['venue']) : ?>
                 <col style="width:<?php echo $this->jemsettings->locationwidth; ?>" class="jem_col_venue" />
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcity == 1) : ?>
+            <?php if ($itemDisplay['city']) : ?>
                 <col style="width:<?php echo $this->jemsettings->citywidth; ?>" class="jem_col_city" />
             <?php endif; ?>
-            <?php if ($this->jemsettings->showstate == 1) : ?>
+            <?php if ($itemDisplay['county']) : ?>
                 <col style="width:<?php echo $this->jemsettings->statewidth; ?>" class="jem_col_state" />
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcat == 1) : ?>
+            <?php if ($itemDisplay['category']) : ?>
                 <col style="width:<?php echo $this->jemsettings->catfrowidth; ?>" class="jem_col_category" />
+            <?php endif; ?>
+            <?php if ($itemDisplay['contact']) : ?>
+                <col class="jem_col_contact" />
             <?php endif; ?>
             <?php if ($this->jemsettings->showatte == 1) : ?>
                 <col style="width:<?php echo $this->jemsettings->attewidth; ?>" class="jem_col_attendees" />
@@ -90,17 +109,20 @@ use Joomla\CMS\Router\Route;
             <?php elseif ($this->params->get('show_introtext_events') == 1): ?>
                 <th id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-textt" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_DESCRIPTION', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></th>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showlocate == 1) : ?>
+            <?php if ($itemDisplay['venue']) : ?>
                 <th id="jem_location" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></th>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcity == 1) : ?>
+            <?php if ($itemDisplay['city']) : ?>
                 <th id="jem_city" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-building" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></th>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showstate == 1) : ?>
+            <?php if ($itemDisplay['county']) : ?>
                 <th id="jem_state" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></th>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcat == 1) : ?>
+            <?php if ($itemDisplay['category']) : ?>
                 <th id="jem_category" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-tag" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></th>
+            <?php endif; ?>
+            <?php if ($itemDisplay['contact']) : ?>
+                <th id="jem_contact" class="sectiontableheader"><?php echo ($paramShowIconsOrder ? '<i class="fa fa-address-book" aria-hidden="true"></i>&nbsp;' : ''); ?><?php echo Text::_('COM_JEM_EVENTSLIST_ITEM_CONTACT'); ?></th>
             <?php endif; ?>
             <?php if ($this->jemsettings->showatte == 1) : ?>
                 <th id="jem_attendees" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-user" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></th>
@@ -164,7 +186,7 @@ use Joomla\CMS\Router\Route;
                         endif;
                         echo $eventaccess;
                         echo JemOutput::eventStateBadges($row, false, $showAvailabilityText);
-                        echo JemOutput::typeBadge($row);
+                        echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : '';
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
@@ -185,7 +207,7 @@ use Joomla\CMS\Router\Route;
                         endif;
                         echo $eventaccess;
                         echo JemOutput::eventStateBadges($row, false, $showAvailabilityText);
-                        echo JemOutput::typeBadge($row);
+                        echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : '';
 
                         if ($this->params->get('show_introtext_events') == 1) : ?>
                             <div class="jem-event-intro">
@@ -198,7 +220,7 @@ use Joomla\CMS\Router\Route;
                     </td>
                 <?php endif; ?>
 
-                <?php if ($this->jemsettings->showlocate == 1) : ?>
+                <?php if ($itemDisplay['venue']) : ?>
                     <td headers="jem_location" class="header-td">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-map-marker" aria-hidden="true"></i>':''); ?>
                         <?php
@@ -215,24 +237,31 @@ use Joomla\CMS\Router\Route;
                     </td>
                 <?php endif; ?>
 
-                <?php if ($this->jemsettings->showcity == 1) : ?>
+                <?php if ($itemDisplay['city']) : ?>
                     <td headers="jem_city" class="header-td">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-building" aria-hidden="true"></i>':''); ?>
                         <?php echo !empty($row->city) ? $this->escape($row->city) : "-"; ?>
                     </td>
                 <?php endif; ?>
 
-                <?php if ($this->jemsettings->showstate == 1) : ?>
+                <?php if ($itemDisplay['county']) : ?>
                     <td headers="jem_state" class="header-td">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-map" aria-hidden="true"></i>':''); ?>
                         <?php echo !empty($row->state) ? $this->escape($row->state) : "-"; ?>
                     </td>
                 <?php endif; ?>
 
-                <?php if ($this->jemsettings->showcat == 1) : ?>
+                <?php if ($itemDisplay['category']) : ?>
                     <td headers="jem_category" class="header-td">
                         <?php echo ($showiconsineventdata? '<i class="fa fa-tag" aria-hidden="true"></i>':''); ?>
                         <?php echo implode(", ", JemOutput::getCategoryList($row->categories, $this->jemsettings->catlinklist)); ?>
+                    </td>
+                <?php endif; ?>
+
+                <?php if ($itemDisplay['contact']) : ?>
+                    <td headers="jem_contact" class="header-td">
+                        <?php echo ($showiconsineventdata ? '<i class="fa fa-address-book" aria-hidden="true"></i>' : ''); ?>
+                        <?php echo !empty($row->contact_labels) ? $this->escape($row->contact_labels) : '-'; ?>
                     </td>
                 <?php endif; ?>
 

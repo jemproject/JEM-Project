@@ -26,6 +26,50 @@
     font-weight: 700;
 }
 
+#jem .jem-event-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem 1rem;
+    margin: 0 0 1rem;
+    padding: 0.75rem 0.85rem;
+    color: var(--body-color, #212529);
+    background-color: var(--body-bg, rgba(127, 127, 127, 0.08));
+    border: 1px solid var(--border-color, rgba(127, 127, 127, 0.35));
+    border-radius: 0.25rem;
+}
+
+#jem .jem-event-filter-fields {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.65rem 1rem;
+}
+
+#jem .jem-event-filter-field {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 13rem;
+}
+
+#jem .jem-event-filter-readonly {
+    color: var(--bs-secondary-color, var(--body-color, #495057));
+    background-color: var(--bs-secondary-bg, rgba(127, 127, 127, 0.16));
+    cursor: default;
+    opacity: 1;
+}
+
+#jem .jem-event-filter-label,
+#jem .jem-event-filter-field label {
+    font-weight: 700;
+}
+
+#jem .jem-event-filter-field select,
+#jem .jem-event-filter-field input {
+    width: 100%;
+}
+
 #jem .jem-row {
     display: flex;
     flex-direction: row;

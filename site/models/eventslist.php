@@ -18,6 +18,8 @@ use Joomla\CMS\Date\Date;
 // ensure JemFactory is loaded (because model is used by modules too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventslistmenupolicy.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/eventfilterconfig.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/customfields.class.php');
 
 /**
  * Model-Eventslist
@@ -170,6 +172,211 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Apply the shared contact and custom-field configuration used by Eventslist.
+     *
+     * Only visible and editable rows may read visitor input. Fixed rows always
+     * use their configured preselection, including when a request attempts to
+     * replace it.
+     */
+    protected function applyConfiguredEventFilters($params, string $stateContext)
+    {
+        $configuration = JemEventFilterConfig::fromParams($params);
+        $enabledCustomFields = $this->getEnabledEventCustomFields();
+        $configuration['rows'] = array_values(array_filter(
+            $configuration['rows'],
+            static function (array $row) use ($enabledCustomFields): bool {
+                return !JemEventFilterConfig::isCustomKey($row['key'])
+                    || isset($enabledCustomFields[$row['key']]);
+            }
+        ));
+        $configuration = JemEventFilterConfig::normalise($configuration);
+        $fingerprint = JemEventFilterConfig::fingerprint($configuration);
+        $categoryRow = JemEventFilterConfig::row(
+            $configuration,
+            JemEventFilterConfig::CONTACT_CATEGORY
+        );
+        $contactRow = JemEventFilterConfig::row(
+            $configuration,
+            JemEventFilterConfig::CONTACT
+        );
+        $categoryId = (int) $this->resolveConfiguredFilterValue(
+            $categoryRow,
+            'filter_contact_category',
+            'com_jem.eventslist.' . $stateContext . '.' . $fingerprint . '.contact_category',
+            false
+        );
+        $contactIds = $this->resolveConfiguredFilterValue(
+            $contactRow,
+            'filter_contacts',
+            'com_jem.eventslist.' . $stateContext . '.' . $fingerprint . '.contacts',
+            true
+        );
+        $customFilters = $this->resolveConfiguredCustomFilters(
+            $configuration,
+            $enabledCustomFields,
+            $stateContext,
+            $fingerprint
+        );
+
+        $this->setState('filter.event_filter_config', $configuration);
+        $this->setState('filter.event_filter_fingerprint', $fingerprint);
+        $this->setState('filter.contact_category_id', $categoryId);
+        $this->setState('filter.contact_category.include_children', $categoryRow['condition'] === 'descendants');
+        $this->setState('filter.contact_ids', $contactIds);
+        $this->setState('filter.custom_fields', $customFilters);
+        $this->setState('filter.enabled_custom_fields', array_keys($enabledCustomFields));
+    }
+
+    /**
+     * Return globally enabled JEM event custom fields keyed by physical column.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    protected function getEnabledEventCustomFields(): array
+    {
+        $fields = array();
+
+        foreach (JemCustomFields::getOrderedFields('event') as $key) {
+            if (!JemEventFilterConfig::isCustomKey($key)) {
+                continue;
+            }
+
+            $config = JemCustomFields::getFieldConfig('event', $key);
+
+            if (empty($config['enabled'])) {
+                continue;
+            }
+
+            $fields[$key] = array(
+                'type' => (string) ($config['type'] ?? JemCustomFields::TYPE_TEXT),
+                'options' => JemCustomFields::parseOptions($config['options'] ?? ''),
+            );
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Resolve the effective values of the optional custom-field rows.
+     *
+     * @param   array<string, mixed>                        $configuration  Normalised filter configuration.
+     * @param   array<string, array<string, mixed>>         $definitions    Enabled custom fields.
+     * @param   string                                      $stateContext   Menu-specific state context.
+     * @param   string                                      $fingerprint    Configuration fingerprint.
+     *
+     * @return array<string, array{condition: string, value: string}>
+     */
+    protected function resolveConfiguredCustomFilters(
+        array $configuration,
+        array $definitions,
+        string $stateContext,
+        string $fingerprint
+    ): array {
+        $app = Factory::getApplication();
+        $requestExists = $app->input->exists('filter_custom');
+        $requestedValues = $requestExists
+            ? $app->input->get('filter_custom', array(), 'array')
+            : array();
+        $filters = array();
+
+        foreach ($configuration['rows'] as $row) {
+            $key = $row['key'];
+
+            if (!JemEventFilterConfig::isCustomKey($key) || !isset($definitions[$key])) {
+                continue;
+            }
+
+            $configured = $row['active']
+                ? $this->normaliseConfiguredCustomValue($row['value'], $definitions[$key])
+                : '';
+            $value = $configured;
+            $stateName = 'com_jem.eventslist.' . $stateContext . '.' . $fingerprint . '.' . $key;
+
+            if ($row['visible'] && $row['editable']) {
+                if ($requestExists) {
+                    $value = $this->normaliseConfiguredCustomValue(
+                        $requestedValues[$key] ?? '',
+                        $definitions[$key]
+                    );
+                    $app->setUserState($stateName, $value);
+                } else {
+                    $value = $this->normaliseConfiguredCustomValue(
+                        $app->getUserState($stateName, $configured),
+                        $definitions[$key]
+                    );
+                }
+            }
+
+            $filters[$key] = array(
+                'condition' => $definitions[$key]['type'] === JemCustomFields::TYPE_LIST
+                    ? 'exact'
+                    : $row['condition'],
+                'value' => $value,
+            );
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Validate one value against its configured event custom-field type.
+     *
+     * @param   mixed                 $value       Submitted or configured value.
+     * @param   array<string, mixed>  $definition  Enabled custom-field definition.
+     */
+    protected function normaliseConfiguredCustomValue($value, array $definition): string
+    {
+        $value = JemEventFilterConfig::normaliseCustomValue($value);
+
+        if ($definition['type'] !== JemCustomFields::TYPE_LIST) {
+            return $value;
+        }
+
+        return $value !== '' && array_key_exists($value, $definition['options']) ? $value : '';
+    }
+
+    /**
+     * Resolve a configured default or an authorised visitor override.
+     *
+     * @param   array<string, mixed>  $row          Normalised filter row.
+     * @param   string                $requestName  Frontend request field.
+     * @param   string                $stateName    Isolated user-state key.
+     * @param   bool                  $multiple     Whether the filter stores ids.
+     *
+     * @return int|array<int, int>
+     */
+    protected function resolveConfiguredFilterValue(
+        array $row,
+        string $requestName,
+        string $stateName,
+        bool $multiple
+    ) {
+        $empty = $multiple ? array() : 0;
+        $configured = $row['active'] ? $row['value'] : $empty;
+
+        if (!$row['visible'] || !$row['editable']) {
+            return $configured;
+        }
+
+        $app = Factory::getApplication();
+
+        if ($app->input->exists($requestName)) {
+            $requested = $multiple
+                ? $this->normaliseParamIds($app->input->get($requestName, array(), 'array'))
+                : max(0, $app->input->getInt($requestName, 0));
+            $app->setUserState($stateName, $requested);
+
+            return $requested;
+        }
+
+        $stored = $app->getUserState($stateName, $configured);
+
+        return $multiple
+            ? $this->normaliseParamIds($stored)
+            : max(0, (int) $stored);
+    }
+
+    /**
      * Preserve the list context while the explicit load-more task is running.
      */
     private function getEffectiveRequestTask(): string
@@ -245,6 +452,7 @@ class JemModelEventslist extends ListModel
         $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->setState('filter.show_archived_events', $this->show_archived_events);
         $this->setState('filter.event_tree', $params->get('event_tree_mode', 'calendar'));
+        $this->applyConfiguredEventFilters($params, $itemid);
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
@@ -521,6 +729,11 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.country_id.include');
         $id .= ':' . (int) $this->getState('filter.contact_category_id');
         $id .= ':' . serialize($this->getState('filter.contact_ids'));
+        $id .= ':' . (int) $this->getState('filter.contact_category.include_children', true);
+        $id .= ':' . $this->getState('filter.event_filter_fingerprint');
+        $id .= ':' . serialize($this->getState('filter.custom_fields'));
+        $id .= ':' . serialize($this->getState('filter.enabled_custom_fields'));
+        $id .= ':' . (int) $this->getState('filter.show_contact_names', false);
         $id .= ':' . $this->getState('filter.venue_state');
         $id .= ':' . $this->getState('filter.venue_state.mode');
         $id .= ':' . $this->getState('filter.filter_search');
@@ -604,6 +817,72 @@ class JemModelEventslist extends ListModel
         # Country
         $query->select(array('ct.name AS countryname'));
         $query->join('LEFT', '#__jem_countries AS ct ON ct.iso2 = l.country');
+
+        # Joomla Contacts displayed in event items
+        if ($this->getState('filter.show_contact_names', false) && JemHelper::isContactComponentEnabled()) {
+            $contactCategoryMode = min(2, max(0, (int) $this->getState('filter.contact_category_mode', 1)));
+            $contactLabel = $db->quoteName('jem_item_contact.name');
+            $contactOrder = $db->quoteName('jem_item_contact.name');
+
+            if ($contactCategoryMode === 1) {
+                $contactLabel = 'CONCAT('
+                    . $db->quoteName('jem_item_contact_category.title') . ', ' . $db->quote(': ') . ', '
+                    . $db->quoteName('jem_item_contact.name') . ')';
+                $contactOrder = $db->quoteName('jem_item_contact_category.title') . ', ' . $contactOrder;
+            } elseif ($contactCategoryMode === 2) {
+                $contactCategoryPathQuery = $db->getQuery(true)
+                    ->select(
+                        'GROUP_CONCAT(' . $db->quoteName('jem_item_contact_category_path.title')
+                        . ' ORDER BY ' . $db->quoteName('jem_item_contact_category_path.lft')
+                        . ' SEPARATOR ' . $db->quote(' / ') . ')'
+                    )
+                    ->from($db->quoteName('#__categories', 'jem_item_contact_category_path'))
+                    ->where($db->quoteName('jem_item_contact_category_path.extension') . ' = ' . $db->quote('com_contact'))
+                    ->where($db->quoteName('jem_item_contact_category_path.level') . ' > 0')
+                    ->where(
+                        $db->quoteName('jem_item_contact_category_path.lft')
+                        . ' <= ' . $db->quoteName('jem_item_contact_category.lft')
+                    )
+                    ->where(
+                        $db->quoteName('jem_item_contact_category_path.rgt')
+                        . ' >= ' . $db->quoteName('jem_item_contact_category.rgt')
+                    )
+                    ->where($db->quoteName('jem_item_contact_category_path.published') . ' = 1')
+                    ->where($db->quoteName('jem_item_contact_category_path.access') . ' IN (' . $levelsList . ')');
+                $contactLabel = 'CONCAT(('
+                    . $contactCategoryPathQuery . '), ' . $db->quote(': ') . ', '
+                    . $db->quoteName('jem_item_contact.name') . ')';
+                $contactOrder = $db->quoteName('jem_item_contact_category.title') . ', ' . $contactOrder;
+            }
+
+            $contactNamesQuery = $db->getQuery(true)
+                ->select(
+                    'GROUP_CONCAT(DISTINCT ' . $contactLabel
+                    . ' ORDER BY ' . $contactOrder
+                    . ' SEPARATOR ' . $db->quote(', ') . ')'
+                )
+                ->from($db->quoteName('#__contact_details', 'jem_item_contact'))
+                ->join(
+                    'INNER',
+                    $db->quoteName('#__categories', 'jem_item_contact_category')
+                    . ' ON ' . $db->quoteName('jem_item_contact_category.id')
+                    . ' = ' . $db->quoteName('jem_item_contact.catid')
+                    . ' AND ' . $db->quoteName('jem_item_contact_category.extension')
+                    . ' = ' . $db->quote('com_contact')
+                )
+                ->where(
+                    'FIND_IN_SET(' . $db->quoteName('jem_item_contact.id')
+                    . ', REPLACE(' . $db->quoteName('a.contactid') . ', '
+                    . $db->quote(' ') . ', ' . $db->quote('') . ')) > 0'
+                )
+                ->where($db->quoteName('jem_item_contact.published') . ' = 1')
+                ->where($db->quoteName('jem_item_contact.access') . ' IN (' . $levelsList . ')')
+                ->where($db->quoteName('jem_item_contact_category.published') . ' = 1')
+                ->where($db->quoteName('jem_item_contact_category.access') . ' IN (' . $levelsList . ')');
+            $query->select('(' . $contactNamesQuery . ') AS ' . $db->quoteName('contact_labels'));
+        } else {
+            $query->select($db->quote('') . ' AS ' . $db->quoteName('contact_labels'));
+        }
 
         # Type
         $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
@@ -755,6 +1034,10 @@ class JemModelEventslist extends ListModel
         ################################
 
         $contactCategoryId = (int) $this->getState('filter.contact_category_id', 0);
+        $includeContactCategoryChildren = (bool) $this->getState(
+            'filter.contact_category.include_children',
+            true
+        );
         $contactIds = $this->getState('filter.contact_ids', array());
         $contactIds = is_array($contactIds) ? $contactIds : explode(',', (string) $contactIds);
         ArrayHelper::toInteger($contactIds);
@@ -764,7 +1047,6 @@ class JemModelEventslist extends ListModel
             if (!JemHelper::isContactComponentEnabled()) {
                 $query->where('1 = 0');
             } else {
-                $contactLanguage = Factory::getApplication()->getLanguage()->getTag();
                 $contactQuery = $db->getQuery(true)
                     ->select('1')
                     ->from($db->quoteName('#__contact_details', 'jem_contact'))
@@ -777,16 +1059,14 @@ class JemModelEventslist extends ListModel
                     ->where('FIND_IN_SET(' . $db->quoteName('jem_contact.id') . ', REPLACE(' . $db->quoteName('a.contactid') . ', ' . $db->quote(' ') . ', ' . $db->quote('') . ')) > 0')
                     ->where($db->quoteName('jem_contact.published') . ' = 1')
                     ->where($db->quoteName('jem_contact.access') . ' IN (' . $levelsList . ')')
-                    ->where($db->quoteName('jem_contact.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')')
                     ->where($db->quoteName('jem_contact_category.published') . ' = 1')
-                    ->where($db->quoteName('jem_contact_category.access') . ' IN (' . $levelsList . ')')
-                    ->where($db->quoteName('jem_contact_category.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')');
+                    ->where($db->quoteName('jem_contact_category.access') . ' IN (' . $levelsList . ')');
 
                 if ($contactIds) {
                     $contactQuery->where($db->quoteName('jem_contact.id') . ' IN (' . implode(',', $contactIds) . ')');
                 }
 
-                if ($contactCategoryId > 0) {
+                if ($contactCategoryId > 0 && $includeContactCategoryChildren) {
                     $contactQuery->join(
                         'INNER',
                         $db->quoteName('#__categories', 'jem_contact_root')
@@ -795,12 +1075,48 @@ class JemModelEventslist extends ListModel
                     )
                         ->where($db->quoteName('jem_contact_root.published') . ' = 1')
                         ->where($db->quoteName('jem_contact_root.access') . ' IN (' . $levelsList . ')')
-                        ->where($db->quoteName('jem_contact_root.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($contactLanguage) . ')')
                         ->where($db->quoteName('jem_contact_category.lft') . ' >= ' . $db->quoteName('jem_contact_root.lft'))
                         ->where($db->quoteName('jem_contact_category.rgt') . ' <= ' . $db->quoteName('jem_contact_root.rgt'));
+                } elseif ($contactCategoryId > 0) {
+                    $contactQuery->where($db->quoteName('jem_contact.catid') . ' = ' . $contactCategoryId);
                 }
 
                 $query->where('EXISTS (' . $contactQuery . ')');
+            }
+        }
+
+        ################################
+        ## FILTER - EVENT CUSTOM DATA ##
+        ################################
+
+        $customFilters = $this->getState('filter.custom_fields', array());
+        $customFilters = is_array($customFilters) ? $customFilters : array();
+        $enabledCustomFields = $this->getState('filter.enabled_custom_fields', array());
+        $enabledCustomFields = array_fill_keys(
+            is_array($enabledCustomFields) ? $enabledCustomFields : array(),
+            true
+        );
+
+        foreach ($customFilters as $key => $customFilter) {
+            if (!JemEventFilterConfig::isCustomKey((string) $key)
+                || !isset($enabledCustomFields[$key])
+                || !is_array($customFilter)
+            ) {
+                continue;
+            }
+
+            $value = JemEventFilterConfig::normaliseCustomValue($customFilter['value'] ?? '');
+
+            if ($value === '') {
+                continue;
+            }
+
+            $column = $db->quoteName('a.' . $key);
+
+            if (($customFilter['condition'] ?? 'contains') === 'exact') {
+                $query->where($column . ' = ' . $db->quote($value));
+            } else {
+                $query->where($column . ' LIKE ' . $db->quote('%' . $db->escape($value, true) . '%', false));
             }
         }
 

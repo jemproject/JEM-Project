@@ -1030,7 +1030,6 @@ class JemHelper
         $db = Factory::getContainer()->get('DatabaseDriver');
         $levels = array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
         $levelsList = $levels ? implode(',', $levels) : '0';
-        $language = Factory::getApplication()->getLanguage()->getTag();
 
         try {
             if ($categoryId > 0) {
@@ -1040,8 +1039,7 @@ class JemHelper
                     ->where($db->quoteName('id') . ' = ' . $categoryId)
                     ->where($db->quoteName('extension') . ' = ' . $db->quote('com_contact'))
                     ->where($db->quoteName('published') . ' = 1')
-                    ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
-                    ->where($db->quoteName('language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+                    ->where($db->quoteName('access') . ' IN (' . $levelsList . ')');
                 $db->setQuery($query);
                 $context['category'] = $db->loadResult() ?: $unavailable;
             }
@@ -1059,10 +1057,8 @@ class JemHelper
                     ->where($db->quoteName('contact.id') . ' IN (' . implode(',', $contactIds) . ')')
                     ->where($db->quoteName('contact.published') . ' = 1')
                     ->where($db->quoteName('contact.access') . ' IN (' . $levelsList . ')')
-                    ->where($db->quoteName('contact.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')')
                     ->where($db->quoteName('contact_category.published') . ' = 1')
-                    ->where($db->quoteName('contact_category.access') . ' IN (' . $levelsList . ')')
-                    ->where($db->quoteName('contact_category.language') . ' IN (' . $db->quote('*') . ', ' . $db->quote($language) . ')');
+                    ->where($db->quoteName('contact_category.access') . ' IN (' . $levelsList . ')');
                 $db->setQuery($query);
                 $contactNames = $db->loadAssocList('id', 'name');
                 $orderedNames = array();
@@ -1086,6 +1082,125 @@ class JemHelper
         }
 
         return $context;
+    }
+
+    /**
+     * Resolve accessible labels for a Joomla Contact filter outside calendars.
+     *
+     * @param   int    $categoryId  Selected contact category.
+     * @param   array  $contactIds  Selected contact ids.
+     *
+     * @return array<string, string>
+     */
+    static public function getJoomlaContactFilterContext(int $categoryId, array $contactIds): array
+    {
+        $params = new Registry(array(
+            'calendar_contact_category' => $categoryId,
+            'calendar_contacts' => $contactIds,
+        ));
+
+        return self::getCalendarContactFilterContext($params);
+    }
+
+    /**
+     * Return published Joomla Contact categories visible to the current user.
+     *
+     * @return array<int, object>
+     */
+    static public function getJoomlaContactCategoryOptions(): array
+    {
+        if (!self::isContactComponentEnabled()) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $levels = array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
+        $levelsList = $levels ? implode(',', $levels) : '0';
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('id'),
+                $db->quoteName('title'),
+                $db->quoteName('level'),
+                $db->quoteName('lft'),
+                $db->quoteName('rgt'),
+            ))
+            ->from($db->quoteName('#__categories'))
+            ->where($db->quoteName('extension') . ' = ' . $db->quote('com_contact'))
+            ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('access') . ' IN (' . $levelsList . ')')
+            ->order($db->quoteName('lft') . ' ASC');
+
+        try {
+            $db->setQuery($query);
+
+            return (array) $db->loadObjectList();
+        } catch (RuntimeException $e) {
+            return array();
+        }
+    }
+
+    /**
+     * Return published contacts available inside an optional category branch.
+     *
+     * @param   int   $categoryId       Selected category, or zero for all.
+     * @param   bool  $includeChildren  Include descendant categories.
+     *
+     * @return array<int, object>
+     */
+    static public function getJoomlaContactOptions(int $categoryId = 0, bool $includeChildren = true): array
+    {
+        if (!self::isContactComponentEnabled()) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $levels = array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
+        $levelsList = $levels ? implode(',', $levels) : '0';
+        $query = $db->getQuery(true)
+            ->select(array(
+                $db->quoteName('contact.id'),
+                $db->quoteName('contact.name'),
+                $db->quoteName('contact.catid'),
+            ))
+            ->from($db->quoteName('#__contact_details', 'contact'))
+            ->join(
+                'INNER',
+                $db->quoteName('#__categories', 'contact_category')
+                . ' ON ' . $db->quoteName('contact_category.id') . ' = ' . $db->quoteName('contact.catid')
+                . ' AND ' . $db->quoteName('contact_category.extension') . ' = ' . $db->quote('com_contact')
+            )
+            ->where($db->quoteName('contact.published') . ' = 1')
+            ->where($db->quoteName('contact.access') . ' IN (' . $levelsList . ')')
+            ->where($db->quoteName('contact_category.published') . ' = 1')
+            ->where($db->quoteName('contact_category.access') . ' IN (' . $levelsList . ')');
+
+        if ($categoryId > 0 && $includeChildren) {
+            $query->join(
+                'INNER',
+                $db->quoteName('#__categories', 'contact_root')
+                . ' ON ' . $db->quoteName('contact_root.id') . ' = ' . $categoryId
+                . ' AND ' . $db->quoteName('contact_root.extension') . ' = ' . $db->quote('com_contact')
+            )
+                ->where($db->quoteName('contact_root.published') . ' = 1')
+                ->where($db->quoteName('contact_root.access') . ' IN (' . $levelsList . ')')
+                ->where($db->quoteName('contact_category.lft') . ' >= ' . $db->quoteName('contact_root.lft'))
+                ->where($db->quoteName('contact_category.rgt') . ' <= ' . $db->quoteName('contact_root.rgt'));
+        } elseif ($categoryId > 0) {
+            $query->where($db->quoteName('contact.catid') . ' = ' . $categoryId);
+        }
+
+        $query->order(array(
+            $db->quoteName('contact_category.lft') . ' ASC',
+            $db->quoteName('contact.name') . ' ASC',
+        ));
+
+        try {
+            $db->setQuery($query);
+
+            return (array) $db->loadObjectList();
+        } catch (RuntimeException $e) {
+            return array();
+        }
     }
 
     /**

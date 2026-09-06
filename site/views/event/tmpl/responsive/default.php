@@ -1061,35 +1061,24 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
 
         if (JemHelper::isContactComponentEnabled() && $params->get('event_show_contact') && !empty($this->contacts)) :
 
-            $displayGroups = array();
-            if ($showContactCategory) {
-                foreach ($this->contacts as $contact) {
-                    $catName = !empty($contact->category_name) ? $contact->category_name : Text::_('COM_JEM_NO_CATEGORY');
-                    $displayGroups[$catName][] = $contact;
-                }
-            } else {
-                $displayGroups['NO_CAT_HEADER'] = $this->contacts;
-            }
+            $displayGroups = array($this->contacts);
             ?>
 
             <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></h2>
 
             <div class="jem-contact-responsive">
-                <?php foreach ($displayGroups as $categoryTitle => $contactList) : ?>
+                <?php foreach ($displayGroups as $contactList) : ?>
 
                     <div class="contact-group-row d-flex flex-column flex-md-row mb-4" style="border-bottom: 1px solid #eee; padding-bottom: 15px;">
-
-                        <?php if ($showContactCategory) : ?>
-                            <div class="category-label mb-2 mb-md-0" style="flex: 0 0 25%; font-weight: bold; text-transform: uppercase; color: #444;">
-                                <i class="icon-users"></i> <?php echo $this->escape($categoryTitle); ?>
-                            </div>
-                        <?php endif; ?>
 
                         <div class="contacts-list" style="flex: 1;">
                             <?php foreach ($contactList as $contact) : ?>
                                 <div class="contact-entry mb-4" style="display: flex; flex-direction: column; border-bottom: 1px dashed #ddd; padding-bottom: 15px;">
 
                                     <div class="con_name" style="font-weight: 600; font-size: 1.1em; margin-bottom: 4px;">
+                                        <?php if ($showContactCategory) : ?>
+                                            <span class="con-category"><?php echo $this->escape($contact->category_name ?: Text::_('COM_JEM_NO_CATEGORY')); ?>:</span>
+                                        <?php endif; ?>
                                         <?php if ($params->get('event_show_contact_link', 0) && !empty($contact->conid)) : ?>
                                             <?php $link = Route::_('index.php?option=com_contact&view=contact&id=' . $contact->conid); ?>
                                             <a href="<?php echo $link; ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
@@ -1107,15 +1096,15 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                         <?php endif; ?>
 
                                         <?php if (in_array('phone', $selectedFields) && !empty($contact->contelephone)) : ?>
-                                            <span><i class="icon-phone"></i> <?php echo $this->escape($contact->contelephone); ?></span>
+                                            <span><i class="icon-phone"></i> <?php echo JemOutput::protectedTelephoneLink($contact->contelephone); ?></span>
                                         <?php endif; ?>
 
                                         <?php if (in_array('mobile', $selectedFields) && !empty($contact->conmobile)) : ?>
-                                            <span><i class="fas fa-mobile-alt"></i> <?php echo $this->escape($contact->conmobile); ?></span>
+                                            <span><i class="fas fa-mobile-alt"></i> <?php echo JemOutput::protectedTelephoneLink($contact->conmobile); ?></span>
                                         <?php endif; ?>
 
                                         <?php if (in_array('email', $selectedFields) && !empty($contact->conemail)) : ?>
-                                            <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail); ?></span>
+                                            <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail, true); ?></span>
                                         <?php endif; ?>
 
                                         <?php if (in_array('website', $selectedFields) && !empty($contact->conwebsite)) : ?>

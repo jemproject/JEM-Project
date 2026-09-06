@@ -14,6 +14,9 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
+require_once JPATH_SITE . '/components/com_jem/classes/eventfilterconfig.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+
 /**
  * Eventslist-View
  */
@@ -115,8 +118,30 @@ class JemViewEventslist extends JemView
             $this->getModel()->setState('filter.featured', 1);
         }
 
+        // Resolve menu-level item presentation before the model builds its query.
+        $itemDisplay = $this->prepareItemDisplay($params, $jemsettings);
+        $model->setState('filter.show_contact_names', $itemDisplay['contact']);
+        $model->setState('filter.contact_category_mode', $itemDisplay['contact_category']);
+
         // Get data from model
         $rows = $this->get('Items');
+
+        $eventFilters = $this->prepareEventFilters($model, $params);
+
+        if ($eventFilters['has_editable'] && method_exists($document, 'getWebAssetManager')) {
+            $wa = $document->getWebAssetManager();
+
+            if (!$wa->assetExists('script', 'com_jem.event-filters')) {
+                $wa->registerScript(
+                    'com_jem.event-filters',
+                    'media/com_jem/js/event-filters.js',
+                    array(),
+                    array('defer' => true)
+                );
+            }
+
+            $wa->useScript('com_jem.event-filters');
+        }
 
         // Keep the table headers aligned with the validated model ordering.
         $lists['order_Dir'] = $model->getState('list.direction', 'ASC');
@@ -285,6 +310,8 @@ class JemViewEventslist extends JemView
         $this->jemsettings   = $jemsettings;
         $this->settings      = $settings;
         $this->permissions   = $permissions;
+        $this->eventFilters  = $eventFilters;
+        $this->itemDisplay   = $itemDisplay;
         $this->pagetitle     = $pagetitle;
         $this->pageclass_sfx = $pageclass_sfx
             ? htmlspecialchars($pageclass_sfx)
@@ -292,6 +319,165 @@ class JemViewEventslist extends JemView
 
         $this->_prepareDocument();
         parent::display($tpl);
+    }
+
+    /**
+     * Prepare the shared frontend filter controls and read-only context.
+     *
+     * @param   object  $model   Eventslist model.
+     * @param   object  $params  Active menu parameters.
+     *
+     * @return array<string, mixed>
+     */
+    private function prepareEventFilters($model, $params): array
+    {
+        $configuration = $model->getState(
+            'filter.event_filter_config',
+            JemEventFilterConfig::fromParams($params)
+        );
+        $categoryId = (int) $model->getState('filter.contact_category_id', 0);
+        $contactIds = $model->getState('filter.contact_ids', array());
+        $contactIds = is_array($contactIds) ? array_values(array_map('intval', $contactIds)) : array();
+        $customValues = $model->getState('filter.custom_fields', array());
+        $customValues = is_array($customValues) ? $customValues : array();
+        $customFields = $this->getEnabledEventCustomFields();
+        $context = JemHelper::getJoomlaContactFilterContext($categoryId, $contactIds);
+        $visibleRows = array();
+        $hasEditable = false;
+        $needsCategoryOptions = false;
+        $needsContactOptions = false;
+        $includeChildren = true;
+
+        foreach ($configuration['rows'] as $row) {
+            if ($row['key'] === JemEventFilterConfig::CONTACT_CATEGORY) {
+                $includeChildren = $row['condition'] === 'descendants';
+            }
+
+            if (!$row['visible']) {
+                continue;
+            }
+
+            if ($row['key'] === JemEventFilterConfig::CONTACT_CATEGORY) {
+                $row['label'] = Text::_('COM_JEM_EVENT_FILTER_CONTACT_CATEGORY');
+                $row['effective_value'] = $categoryId;
+                $row['display_value'] = $context['category'] ?? '';
+            } elseif ($row['key'] === JemEventFilterConfig::CONTACT) {
+                $row['label'] = Text::_('COM_JEM_EVENT_FILTER_CONTACT');
+                $row['effective_value'] = $contactIds;
+                $row['display_value'] = $context['contacts'] ?? '';
+            } elseif (isset($customFields[$row['key']])) {
+                $definition = $customFields[$row['key']];
+                $value = (string) ($customValues[$row['key']]['value'] ?? '');
+                $row['label'] = $definition['label'];
+                $row['custom_type'] = $definition['type'];
+                $row['custom_options'] = $definition['options'];
+                $row['effective_value'] = $value;
+                $row['display_value'] = $definition['type'] === JemCustomFields::TYPE_LIST
+                    ? (string) ($definition['options'][$value] ?? $value)
+                    : $value;
+            } else {
+                continue;
+            }
+
+            $visibleRows[] = $row;
+            $hasEditable = $hasEditable || $row['editable'];
+            $needsCategoryOptions = $needsCategoryOptions
+                || ($row['key'] === JemEventFilterConfig::CONTACT_CATEGORY && $row['editable']);
+            $needsContactOptions = $needsContactOptions
+                || ($row['key'] === JemEventFilterConfig::CONTACT && $row['editable']);
+        }
+
+        return array(
+            'rows' => $visibleRows,
+            'has_visible' => !empty($visibleRows),
+            'has_editable' => $hasEditable,
+            'category_options' => $needsCategoryOptions
+                ? JemHelper::getJoomlaContactCategoryOptions()
+                : array(),
+            'contact_options' => $needsContactOptions
+                ? JemHelper::getJoomlaContactOptions($categoryId, $includeChildren)
+                : array(),
+            'category_id' => $categoryId,
+            'contact_ids' => $contactIds,
+        );
+    }
+
+    /**
+     * Return enabled event custom fields with their translated presentation.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    private function getEnabledEventCustomFields(): array
+    {
+        $fields = array();
+
+        foreach (JemCustomFields::getOrderedFields('event') as $key) {
+            if (!JemEventFilterConfig::isCustomKey($key)) {
+                continue;
+            }
+
+            $config = JemCustomFields::getFieldConfig('event', $key);
+
+            if (empty($config['enabled'])) {
+                continue;
+            }
+
+            $index = (int) substr($key, 6);
+            $fields[$key] = array(
+                'label' => JemCustomFields::getLabel(
+                    'event',
+                    $key,
+                    Text::_('COM_JEM_EVENT_CUSTOM_FIELD' . $index)
+                ),
+                'type' => (string) ($config['type'] ?? JemCustomFields::TYPE_TEXT),
+                'options' => JemCustomFields::parseOptions($config['options'] ?? ''),
+            );
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Resolve the metadata shown for every event row in this menu item.
+     *
+     * @param   object  $params       Active menu parameters.
+     * @param   object  $jemsettings  Global JEM settings.
+     *
+     * @return array<string, bool|int>
+     */
+    private function prepareItemDisplay($params, $jemsettings): array
+    {
+        return array(
+            'venue' => $this->resolveItemDisplayOption(
+                $params->get('eventlist_show_venue', -1),
+                (int) $jemsettings->showlocate === 1
+            ),
+            'city' => $this->resolveItemDisplayOption(
+                $params->get('eventlist_show_city', -1),
+                (int) $jemsettings->showcity === 1
+            ),
+            'county' => $this->resolveItemDisplayOption(
+                $params->get('eventlist_show_county', -1),
+                (int) $jemsettings->showstate === 1
+            ),
+            'type' => (int) $params->get('eventlist_show_type', 1) === 1,
+            'category' => $this->resolveItemDisplayOption(
+                $params->get('eventlist_show_category', -1),
+                (int) $jemsettings->showcat === 1
+            ),
+            'contact' => (int) $params->get('eventlist_show_contact', 0) === 1,
+            'contact_category' => min(2, max(0, (int) $params->get('eventlist_contact_category_mode', 1))),
+        );
+    }
+
+    /**
+     * Resolve a Show/Hide/Use Global menu option.
+     */
+    private function resolveItemDisplayOption($value, bool $global): bool
+    {
+        $value = (int) $value;
+
+        return $value === -1 ? $global : $value === 1;
     }
 
     /**

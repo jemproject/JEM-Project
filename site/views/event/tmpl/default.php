@@ -1136,33 +1136,22 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
         $selectedFields = array_map('trim', is_string($rawFields) ? explode(',', $rawFields) : (array) $rawFields);
 
         if (JemHelper::isContactComponentEnabled() && $params->get('event_show_contact') && !empty($this->contacts)) :
-            $displayGroups = array();
-            if ($showContactCategory) {
-                foreach ($this->contacts as $contact) {
-                    $catName = !empty($contact->category_name) ? $contact->category_name : Text::_('COM_JEM_NO_CATEGORY');
-                    $displayGroups[$catName][] = $contact;
-                }
-            } else {
-                $displayGroups['NO_CAT_HEADER'] = $this->contacts;
-            }
+            $displayGroups = array($this->contacts);
             ?>
 
             <h2 class="jem-contact"><?php echo Text::_('COM_JEM_CONTACT_INFO'); ?></h2>
 
             <div class="jem-contact-legacy">
-                <?php foreach ($displayGroups as $categoryTitle => $contactList) : ?>
+                <?php foreach ($displayGroups as $contactList) : ?>
 
                     <div class="contact-group">
-                        <?php if ($showContactCategory && $categoryTitle !== 'NO_CAT_HEADER') : ?>
-                            <h3 class="contact-category-title">
-                                <i class="icon-users"></i> <?php echo $this->escape($categoryTitle); ?>
-                            </h3>
-                        <?php endif; ?>
-
                         <?php foreach ($contactList as $contact) : ?>
                             <dl class="contact-item-wrapper">
                                 <dt class="con-main-info">
                                     <span class="con-name">
+                                        <?php if ($showContactCategory) : ?>
+                                            <span class="con-category"><?php echo $this->escape($contact->category_name ?: Text::_('COM_JEM_NO_CATEGORY')); ?>:</span>
+                                        <?php endif; ?>
                                         <?php if ($params->get('event_show_contact_link', 0) && !empty($contact->conid)) : ?>
                                             <a href="<?php echo Route::_('index.php?option=com_contact&view=contact&id=' . $contact->conid); ?>"
                                                title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
@@ -1180,15 +1169,15 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
 
                                 <dd class="con-details">
                                     <?php if (in_array('phone', $selectedFields) && !empty($contact->contelephone)) : ?>
-                                        <span><i class="icon-phone"></i> <?php echo $this->escape($contact->contelephone); ?></span>
+                                        <span><i class="icon-phone"></i> <?php echo JemOutput::protectedTelephoneLink($contact->contelephone); ?></span>
                                     <?php endif; ?>
 
                                     <?php if (in_array('mobile', $selectedFields) && !empty($contact->conmobile)) : ?>
-                                        <span><i class="fas fa-mobile-alt"></i> <?php echo $this->escape($contact->conmobile); ?></span>
+                                        <span><i class="fas fa-mobile-alt"></i> <?php echo JemOutput::protectedTelephoneLink($contact->conmobile); ?></span>
                                     <?php endif; ?>
 
                                     <?php if (in_array('email', $selectedFields) && !empty($contact->conemail)) : ?>
-                                        <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail); ?></span>
+                                        <span><i class="icon-envelope"></i> <?php echo HTMLHelper::_('email.cloak', $contact->conemail, true); ?></span>
                                     <?php endif; ?>
 
                                     <?php if (in_array('website', $selectedFields) && !empty($contact->conwebsite)) : ?>

@@ -1,0 +1,69 @@
+.jem-event-filter-editor {
+    max-width: 100%;
+}
+
+.jem-event-filter-table {
+    min-width: 920px;
+}
+
+.jem-event-filter-table th,
+.jem-event-filter-table td {
+    vertical-align: middle;
+}
+
+.jem-event-filter-table .jem-event-filter-order {
+    width: 2.75rem;
+}
+
+.jem-event-filter-table .jem-event-filter-actions {
+    width: 3.25rem;
+}
+
+.jem-event-filter-drag {
+    cursor: grab;
+    text-decoration: none;
+}
+
+.jem-event-filter-table tr.is-dragging {
+    opacity: 0.55;
+}
+
+.jem-event-filter-table [data-filter-value] .input-group {
+    min-width: 18rem;
+}
+
+.jem-event-filter-table [data-filter-value] .control-group,
+.jem-event-filter-table [data-filter-value] .controls {
+    margin: 0;
+}
+
+.jem-event-filter-table [data-filter-property="condition"] {
+    min-width: 11rem;
+}
+
+.jem-event-filter-table th[scope="row"] {
+    min-width: 12rem;
+}
+
+.jem-event-filter-remove {
+    align-items: center;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+    width: 2rem;
+}
+
+.jem-event-filter-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+    margin-top: .75rem;
+}
+
+.jem-event-filter-toolbar select {
+    width: auto;
+    min-width: 18rem;
+}

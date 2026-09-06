@@ -89,8 +89,10 @@ class JFormFieldModal_Contact extends FormField
         // Build the script
         $script = array();
         $script[] = '    function jSelectContact_' . $this->id . '(id, name, object) {';
-        $script[] = '        document.getElementById("' . $this->id . '_id").value = id;';
+        $script[] = '        var valueField = document.getElementById("' . $this->id . '_id");';
+        $script[] = '        valueField.value = id;';
         $script[] = '        document.getElementById("' . $this->id . '_name").value = name;';
+        $script[] = '        valueField.dispatchEvent(new Event("change", {bubbles: true}));';
         $script[] = '        bootstrap.Modal.getInstance(document.getElementById("' . $modalId . '")).hide();';
         $script[] = '    }';
 
@@ -130,8 +132,10 @@ class JFormFieldModal_Contact extends FormField
             $script[] = '        }';
             $script[] = '        if (categoryField) {';
             $script[] = '            categoryField.addEventListener("change", function () {';
-            $script[] = '                document.getElementById(' . json_encode($this->id . '_id') . ').value = "";';
+            $script[] = '                var valueField = document.getElementById(' . json_encode($this->id . '_id') . ');';
+            $script[] = '                valueField.value = "";';
             $script[] = '                document.getElementById(' . json_encode($this->id . '_name') . ').value = ' . json_encode($emptyContactName) . ';';
+            $script[] = '                valueField.dispatchEvent(new Event("change", {bubbles: true}));';
             $script[] = '                updateModalUrl();';
             $script[] = '            });';
             $script[] = '        }';

@@ -98,7 +98,19 @@ function jem_common_show_filter(&$obj)
     return false;
 }
 
-if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
+$filterBelow = JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow');
+$itemDisplay = isset($this->itemDisplay) && is_array($this->itemDisplay)
+    ? $this->itemDisplay
+    : array(
+        'venue' => (int) $this->jemsettings->showlocate === 1,
+        'city' => (int) $this->jemsettings->showcity === 1,
+        'county' => (int) $this->jemsettings->showstate === 1,
+        'type' => true,
+        'category' => (int) $this->jemsettings->showcat === 1,
+        'contact' => false,
+    );
+
+if (jem_common_show_filter($this) && !$filterBelow): ?>
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
         <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
             <?php echo $this->lists['filter']; ?>
@@ -110,7 +122,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
         </div>
         <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-secondary" type="button" data-jem-main-filters-clear<?php echo !empty($this->eventFilters['has_editable']) ? '' : ' onclick="document.getElementById(\'filter_search\').value=\'\';document.getElementById(\'filter_month\').value=\'\';this.form.submit();"'; ?>><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
         <?php if ($this->settings->get('global_display', 1)) : ?>
             <div class="jem-limit-smallest jem-events-filter-limit">
@@ -119,6 +131,10 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
             </div>
         <?php endif; ?>
     </div>
+<?php endif; ?>
+
+<?php if (!$filterBelow && !empty($this->eventFilters['has_visible'])) : ?>
+    <?php echo $this->loadTemplate('event_filters'); ?>
 <?php endif; ?>
 
 <?php $paramShowIconsOrder = $this->params->get('showiconsinorder',1); ?>
@@ -134,17 +150,20 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
             <?php if ($this->jemsettings->showtitle == 1) : ?>
                 <div id="jem_title" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-comment" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_TITLE', 'a.title', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showlocate == 1) : ?>
+            <?php if ($itemDisplay['venue']) : ?>
                 <div id="jem_location" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_LOCATION', 'l.venue', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcity == 1) : ?>
+            <?php if ($itemDisplay['city']) : ?>
                 <div id="jem_city" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-building" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CITY', 'l.city', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showstate == 1) : ?>
+            <?php if ($itemDisplay['county']) : ?>
                 <div id="jem_state" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-map" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_STATE', 'l.state', $this->lists['order_Dir'], $this->lists['order']); ?></div>
             <?php endif; ?>
-            <?php if ($this->jemsettings->showcat == 1) : ?>
+            <?php if ($itemDisplay['category']) : ?>
                 <div id="jem_category" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-tag" aria-hidden="true"></i>&nbsp;' : '');?><?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TABLE_CATEGORY', 'c.catname', $this->lists['order_Dir'], $this->lists['order']); ?></div>
+            <?php endif; ?>
+            <?php if ($itemDisplay['contact']) : ?>
+                <div id="jem_contact" class="sectiontableheader"><?php echo ($paramShowIconsOrder ? '<i class="fa fa-address-book" aria-hidden="true"></i>&nbsp;' : ''); ?><?php echo Text::_('COM_JEM_EVENTSLIST_ITEM_CONTACT'); ?></div>
             <?php endif; ?>
             <?php if ($this->jemsettings->showatte == 1) : ?>
                 <div id="jem_atte" class="sectiontableheader"><?php echo ($paramShowIconsOrder? '<i class="fa fa-user" aria-hidden="true"></i>&nbsp;' : '');?><?php echo Text::_('COM_JEM_TABLE_ATTENDEES'); ?></div>
@@ -202,6 +221,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                 'showIconsInEventData' => $showiconsineventdata,
                 'showAvailabilityText' => $showAvailabilityText,
                 'imagePathAware' => true,
+                'itemDisplay' => $itemDisplay,
             );
             require __DIR__ . '/default_jem_eventslist_item.php';
 
@@ -213,7 +233,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
         <?php endforeach; ?>
     <?php endif; ?>
 </ul>
-<?php if (jem_common_show_filter($this) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
+<?php if (jem_common_show_filter($this) && $filterBelow) : ?>
     <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-events-filter">
         <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-search">
             <?php echo $this->lists['filter']; ?>
@@ -221,9 +241,13 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
         </div>
         <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
             <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_month').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            <button class="btn btn-secondary" type="button" data-jem-main-filters-clear<?php echo !empty($this->eventFilters['has_editable']) ? '' : ' onclick="document.getElementById(\'filter_search\').value=\'\';document.getElementById(\'filter_month\').value=\'\';this.form.submit();"'; ?>><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
         </div>
     </div>
+<?php endif; ?>
+
+<?php if ($filterBelow && !empty($this->eventFilters['has_visible'])) : ?>
+    <?php echo $this->loadTemplate('event_filters'); ?>
 <?php endif;
 
 // Add Load More Button

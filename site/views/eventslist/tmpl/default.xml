@@ -12,27 +12,6 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="event_tree_mode" type="list" default="calendar" label="COM_JEM_EVENT_TREE_MODE" description="COM_JEM_EVENT_TREE_MODE_DESC" class="form-select w-auto">
-                <option value="calendar">COM_JEM_EVENT_TREE_MODE_CALENDAR</option><option value="parents">COM_JEM_EVENT_TREE_MODE_PARENTS</option><option value="children">COM_JEM_EVENT_TREE_MODE_CHILDREN</option><option value="all">COM_JEM_EVENT_TREE_MODE_ALL</option>
-            </field>
-            <field name="show_archived_events" type="radio"
-                   default="0"
-                   label="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS"
-                   description="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS_DESC"
-                   class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
-            <field name="onlyfeatured" type="radio"
-                default="0"
-                label="COM_JEM_DISPLAY_FEATUREDONLY"
-                description="COM_JEM_DISPLAY_FEATUREDONLY_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">JYES</option>
-                <option value="0">JNO</option>
-            </field>
             <field name="show_introtext_events" type="radio"
                 default="0"
                 label="COM_JEM_SHOW_INTROTEXT_EVENTS"
@@ -91,21 +70,6 @@
                 <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
                 <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
             </field>
-            <field name="tablefiltereventfrom" type="text"
-                   default=""
-                   inputmode="numeric"
-                   pattern="[0-9]*"
-                   label="COM_JEM_FILTER_EVENT_FROM"
-                   description="COM_JEM_FILTER_EVENT_FROM_DESC"
-                   class="w-auto" />
-
-            <field name="tablefiltereventuntil" type="text"
-                   default=""
-                   inputmode="numeric"
-                   pattern="[0-9]*"
-                   label="COM_JEM_FILTER_EVENT_UNTIL"
-                   description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
-                   class="w-auto" />
             <field name="showmonthrow" type="radio"
                 default="0"
                 label="COM_JEM_DISPLAY_MONTH_ROW"
@@ -125,39 +89,78 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field type="spacer" name="spacer1" hr="true" />
-            <field name="categoryswitch" type="radio"
-                default="0"
-                label="COM_JEM_CATEGORYSWITCH"
-                description="COM_JEM_CATEGORYSWITCH_DESC"
-                class="btn-group btn-group-yesno"
-            >
-                <option value="1">COM_JEM_INCLUDE</option>
-                <option value="0">COM_JEM_EXCLUDE</option>
-            </field>
-            <field name="categoryswitchcats" type="text"
-                default=""
-                label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
-                class="form-control w-auto"
+            <field type="spacer" name="event_item_information_spacer"
+                label="COM_JEM_EVENTSLIST_ITEM_INFORMATION"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
             />
-            <field name="includesubcategories" type="radio"
-                default="0"
-                label="COM_JEM_INCLUDE_SUBCATEGORIES"
-                description="COM_JEM_INCLUDE_SUBCATEGORIES_DESC"
+            <field name="eventlist_show_venue" type="list"
+                default="-1"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_VENUE"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_VENUE_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="-1">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+            <field name="eventlist_show_city" type="list"
+                default="-1"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_CITY"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_CITY_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="-1">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+            <field name="eventlist_show_county" type="list"
+                default="-1"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_COUNTY"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_COUNTY_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="-1">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+            <field name="eventlist_show_type" type="radio"
+                default="1"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_TYPE"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_TYPE_DESC"
                 class="btn-group btn-group-yesno"
             >
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="showopendates" type="list"
-                default="0"
-                label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
-                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC" class="form-select w-auto jem-options-width-auto"
+            <field name="eventlist_show_category" type="list"
+                default="-1"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_CATEGORY"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_CATEGORY_DESC"
+                class="form-select w-auto jem-options-width-auto"
             >
+                <option value="-1">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+            <field name="eventlist_show_contact" type="radio"
+                default="0"
+                label="COM_JEM_EVENTSLIST_ITEM_SHOW_CONTACT"
+                description="COM_JEM_EVENTSLIST_ITEM_SHOW_CONTACT_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
                 <option value="0">JNO</option>
-                <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
-                <option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
+            </field>
+            <field name="eventlist_contact_category_mode" type="list"
+                default="1"
+                label="COM_JEM_EVENTSLIST_ITEM_CONTACT_CATEGORY"
+                description="COM_JEM_EVENTSLIST_ITEM_CONTACT_CATEGORY_DESC"
+                class="form-select w-auto jem-options-width-auto"
+                showon="eventlist_show_contact:1"
+            >
+                <option value="0">COM_JEM_EVENTSLIST_ITEM_CONTACT_CATEGORY_HIDE</option>
+                <option value="1">COM_JEM_EVENTSLIST_ITEM_CONTACT_CATEGORY_PARENT</option>
+                <option value="2">COM_JEM_EVENTSLIST_ITEM_CONTACT_CATEGORY_PATH</option>
             </field>
             <field type="spacer" name="spacer3" hr="true" />
             <field type="spacer" name="page_text_spacer"
@@ -201,6 +204,98 @@
                 height="300px"
                 label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT"
                 description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC"
-            /></fieldset>
+            />
+        </fieldset>
+
+        <fieldset name="filters" label="COM_JEM_EVENT_FILTERS_TAB" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field type="spacer" name="filter_scope_spacer"
+                label="COM_JEM_EVENT_FILTERS_SCOPE"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="event_tree_mode" type="list" default="calendar" label="COM_JEM_EVENT_TREE_MODE" description="COM_JEM_EVENT_TREE_MODE_DESC" class="form-select w-auto">
+                <option value="calendar">COM_JEM_EVENT_TREE_MODE_CALENDAR</option>
+                <option value="parents">COM_JEM_EVENT_TREE_MODE_PARENTS</option>
+                <option value="children">COM_JEM_EVENT_TREE_MODE_CHILDREN</option>
+                <option value="all">COM_JEM_EVENT_TREE_MODE_ALL</option>
+            </field>
+            <field name="show_archived_events" type="radio"
+                default="0"
+                label="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS"
+                description="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="onlyfeatured" type="radio"
+                default="0"
+                label="COM_JEM_DISPLAY_FEATUREDONLY"
+                description="COM_JEM_DISPLAY_FEATUREDONLY_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="tablefiltereventfrom" type="text"
+                default=""
+                inputmode="numeric"
+                pattern="[0-9]*"
+                label="COM_JEM_FILTER_EVENT_FROM"
+                description="COM_JEM_FILTER_EVENT_FROM_DESC"
+                class="w-auto"
+            />
+            <field name="tablefiltereventuntil" type="text"
+                default=""
+                inputmode="numeric"
+                pattern="[0-9]*"
+                label="COM_JEM_FILTER_EVENT_UNTIL"
+                description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
+                class="w-auto"
+            />
+            <field name="categoryswitch" type="radio"
+                default="0"
+                label="COM_JEM_CATEGORYSWITCH"
+                description="COM_JEM_CATEGORYSWITCH_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
+            </field>
+            <field name="categoryswitchcats" type="text"
+                default=""
+                label="COM_JEM_CATEGORYSWITCHCATS"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                class="form-control w-auto"
+            />
+            <field name="includesubcategories" type="radio"
+                default="0"
+                label="COM_JEM_INCLUDE_SUBCATEGORIES"
+                description="COM_JEM_INCLUDE_SUBCATEGORIES_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showopendates" type="list"
+                default="0"
+                label="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES"
+                description="COM_JEM_GLOBAL_FIELD_SHOW_OPENDATES_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="0">JNO</option>
+                <option value="1">COM_JEM_SHOW_OPENDATES_TOO</option>
+                <option value="2">COM_JEM_SHOW_OPENDATES_ONLY</option>
+            </field>
+            <field type="spacer" name="event_filters_spacer"
+                label="COM_JEM_EVENT_FILTERS_VISITOR"
+                class="badge border px-3 py-2 fs-5 fw-bold text-body"
+            />
+            <field name="event_filters" type="eventfilters"
+                filter="raw"
+                hiddenLabel="true"
+                label="COM_JEM_EVENT_FILTERS_EDITOR"
+                description="COM_JEM_EVENT_FILTERS_EDITOR_DESC"
+            />
+        </fieldset>
     </fields>
 </metadata>

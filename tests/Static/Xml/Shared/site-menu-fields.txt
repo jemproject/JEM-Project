@@ -4,6 +4,8 @@ site/views/annualcalendar/tmpl/default.xml|annual_day_link_target
 site/views/annualcalendar/tmpl/default.xml|annual_marker_limit
 site/views/annualcalendar/tmpl/default.xml|annual_show_day_event_count
 site/views/annualcalendar/tmpl/default.xml|annual_start_month
+site/views/annualcalendar/tmpl/default.xml|calendar_contact_category
+site/views/annualcalendar/tmpl/default.xml|calendar_contacts
 site/views/annualcalendar/tmpl/default.xml|categoryColorMarker
 site/views/annualcalendar/tmpl/default.xml|categoryswitch
 site/views/annualcalendar/tmpl/default.xml|categoryswitchcats
@@ -32,6 +34,8 @@ site/views/attendeeregistrations/tmpl/default.xml|registration_columns
 site/views/attendeeregistrations/tmpl/default.xml|showfootertext
 site/views/attendeeregistrations/tmpl/default.xml|showintrotext
 site/views/calendar/tmpl/default.xml|calendar_display_mode
+site/views/calendar/tmpl/default.xml|calendar_contact_category
+site/views/calendar/tmpl/default.xml|calendar_contacts
 site/views/calendar/tmpl/default.xml|categoryColorMarker
 site/views/calendar/tmpl/default.xml|categoryswitch
 site/views/calendar/tmpl/default.xml|categoryswitchcats
@@ -82,6 +86,8 @@ site/views/categories/tmpl/default.xml|showintrotext
 site/views/categories/tmpl/default.xml|typeid
 site/views/categories/tmpl/default.xml|usecat
 site/views/category/tmpl/calendar.xml|calendar_display_mode
+site/views/category/tmpl/calendar.xml|calendar_contact_category
+site/views/category/tmpl/calendar.xml|calendar_contacts
 site/views/category/tmpl/calendar.xml|categoryColorMarker
 site/views/category/tmpl/calendar.xml|categoryswitch
 site/views/category/tmpl/calendar.xml|categoryswitchcats
@@ -124,6 +130,8 @@ site/views/category/tmpl/default.xml|showemptychilds
 site/views/category/tmpl/default.xml|showfootertext
 site/views/category/tmpl/default.xml|showintrotext
 site/views/category/tmpl/default.xml|usecat
+site/views/day/tmpl/default.xml|calendar_contact_category
+site/views/day/tmpl/default.xml|calendar_contacts
 site/views/day/tmpl/default.xml|categoryswitch
 site/views/day/tmpl/default.xml|categoryswitchcats
 site/views/day/tmpl/default.xml|days
@@ -137,6 +145,8 @@ site/views/day/tmpl/default.xml|showintrotext
 site/views/day/tmpl/default.xml|timeline_filter_countries
 site/views/day/tmpl/default.xml|timeline_filter_types
 site/views/day/tmpl/default.xml|timeline_filter_venues
+site/views/day/tmpl/timeline.xml|calendar_contact_category
+site/views/day/tmpl/timeline.xml|calendar_contacts
 site/views/day/tmpl/timeline.xml|categoryswitch
 site/views/day/tmpl/timeline.xml|categoryswitchcats
 site/views/day/tmpl/timeline.xml|days
@@ -185,6 +195,8 @@ site/views/day/tmpl/timeline.xml|timetable_grid_subinterval
 site/views/day/tmpl/timeline.xml|timetable_hour_display
 site/views/day/tmpl/timeline.xml|timetable_range_end
 site/views/day/tmpl/timeline.xml|timetable_range_start
+site/views/day/tmpl/timetable.xml|calendar_contact_category
+site/views/day/tmpl/timetable.xml|calendar_contacts
 site/views/day/tmpl/timetable.xml|categoryswitch
 site/views/day/tmpl/timetable.xml|categoryswitchcats
 site/views/day/tmpl/timetable.xml|days
@@ -251,6 +263,14 @@ site/views/eventsblog/tmpl/default.xml|showintrotext
 site/views/eventslist/tmpl/default.xml|categoryswitch
 site/views/eventslist/tmpl/default.xml|categoryswitchcats
 site/views/eventslist/tmpl/default.xml|event_tree_mode
+site/views/eventslist/tmpl/default.xml|event_filters
+site/views/eventslist/tmpl/default.xml|eventlist_contact_category_mode
+site/views/eventslist/tmpl/default.xml|eventlist_show_category
+site/views/eventslist/tmpl/default.xml|eventlist_show_city
+site/views/eventslist/tmpl/default.xml|eventlist_show_contact
+site/views/eventslist/tmpl/default.xml|eventlist_show_county
+site/views/eventslist/tmpl/default.xml|eventlist_show_type
+site/views/eventslist/tmpl/default.xml|eventlist_show_venue
 site/views/eventslist/tmpl/default.xml|footertext
 site/views/eventslist/tmpl/default.xml|includesubcategories
 site/views/eventslist/tmpl/default.xml|introtext
@@ -392,6 +412,8 @@ site/views/typevenues/tmpl/default.xml|showstate
 site/views/typevenues/tmpl/default.xml|showvenuecalendar
 site/views/typevenues/tmpl/default.xml|venue_event_filter
 site/views/venue/tmpl/calendar.xml|calendar_display_mode
+site/views/venue/tmpl/calendar.xml|calendar_contact_category
+site/views/venue/tmpl/calendar.xml|calendar_contacts
 site/views/venue/tmpl/calendar.xml|categoryColorMarker
 site/views/venue/tmpl/calendar.xml|categoryswitch
 site/views/venue/tmpl/calendar.xml|categoryswitchcats
@@ -491,6 +513,8 @@ site/views/venuesmap/tmpl/default.xml|showvenueimage
 site/views/venuesmap/tmpl/default.xml|venue_markerfile
 site/views/venuesmap/tmpl/default.xml|venues_order
 site/views/weekcal/tmpl/default.xml|calendar_display_mode
+site/views/weekcal/tmpl/default.xml|calendar_contact_category
+site/views/weekcal/tmpl/default.xml|calendar_contacts
 site/views/weekcal/tmpl/default.xml|categoryColorMarker
 site/views/weekcal/tmpl/default.xml|categoryswitch
 site/views/weekcal/tmpl/default.xml|categoryswitchcats

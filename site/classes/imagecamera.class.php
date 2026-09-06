@@ -226,6 +226,7 @@ final class JemImageCamera
         $buttons = '';
         $ratioOptions = '';
         $defaultRatio = JemImageProfilePolicy::defaultUploadRatio($settings, $profile);
+        $defaultUploadConfig = JemImageProfilePolicy::resolveUpload($settings, $profile, $defaultRatio);
 
         foreach ($marks as $mark) {
             $naturalPosition = $maximum > $minimum
@@ -274,7 +275,10 @@ final class JemImageCamera
             . ' data-jem-image-resolution-control'
             . ' data-jem-image-resolution-default="' . $defaultDimension . '"'
             . ' data-jem-image-ratio-default="'
-            . htmlspecialchars($defaultRatio, ENT_QUOTES, 'UTF-8') . '"';
+            . htmlspecialchars($defaultRatio, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-jem-image-ratio-mode="' . $defaultUploadConfig['mode'] . '"'
+            . ' data-jem-image-ratio-width="' . (int) $defaultUploadConfig['ratio_width'] . '"'
+            . ' data-jem-image-ratio-height="' . (int) $defaultUploadConfig['ratio_height'] . '"';
         $fixedResolution = '<input type="hidden" id="' . $safeId . '" name="' . $safeName . '"'
             . ' min="' . $minimum . '" max="' . $maximum . '" value="' . $defaultDimension . '">';
 

@@ -544,6 +544,13 @@ class JemModelEvent extends ItemModel
         }
 
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $levels = array_values(array_unique(array_filter(
+            array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()),
+            static function ($level) {
+                return $level > 0;
+            }
+        )));
+        $levelsList = $levels ? implode(',', $levels) : '0';
 
         // Get contacts of event
         $query = $db->getQuery(true);
@@ -560,11 +567,18 @@ class JemModelEvent extends ItemModel
         // Get data of contacts
         $query = $db->getQuery(true);
         $query->select('con.id AS conid, con.name AS conname, con.con_position AS conposition, con.catid AS concatid, con.telephone AS contelephone, con.mobile AS conmobile,con.email_to AS conemail, con.address AS conaddress, con.suburb AS concity, con.state AS constate, con.country AS concountry, con.webpage AS conwebsite, con.misc as condescription');
-        $query->select('cat.title AS category_name, cat.asset_id AS cat_ordering');
+        $query->select('cat.title AS category_name, cat.lft AS cat_ordering');
         $query->from($db->quoteName('#__contact_details', 'con'));
-        $query->join('LEFT', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid'));
-        $query->where('FIND_IN_SET(con.id, ' . $db->quote($contactIdsPath) . ')');
+        $query->join('INNER', $db->quoteName('#__categories', 'cat') . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid'));
+        $query->where(
+            'FIND_IN_SET(' . $db->quoteName('con.id') . ', REPLACE('
+            . $db->quote($contactIdsPath) . ', ' . $db->quote(' ') . ', ' . $db->quote('') . ')) > 0'
+        );
+        $query->where($db->quoteName('con.published') . ' = 1');
+        $query->where($db->quoteName('con.access') . ' IN (' . $levelsList . ')');
         $query->where($db->quoteName('cat.extension') . ' = ' . $db->quote('com_contact'));
+        $query->where($db->quoteName('cat.published') . ' = 1');
+        $query->where($db->quoteName('cat.access') . ' IN (' . $levelsList . ')');
         $query->order('cat_ordering ASC');
         $query->order('con.name ASC');
         $db->setQuery($query);

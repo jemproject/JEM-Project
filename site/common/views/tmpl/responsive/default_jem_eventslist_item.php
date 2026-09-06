@@ -19,6 +19,14 @@ $showIconsInEventTitle = (bool) $displayData['showIconsInEventTitle'];
 $showIconsInEventData = (bool) $displayData['showIconsInEventData'];
 $showAvailabilityText = (bool) $displayData['showAvailabilityText'];
 $imagePathAware = !empty($displayData['imagePathAware']);
+$itemDisplay = $displayData['itemDisplay'] ?? array(
+    'venue' => (int) $jemsettings->showlocate === 1,
+    'city' => (int) $jemsettings->showcity === 1,
+    'county' => (int) $jemsettings->showstate === 1,
+    'type' => true,
+    'category' => (int) $jemsettings->showcat === 1,
+    'contact' => false,
+);
 $escape = static function ($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 };
@@ -75,7 +83,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                 <?php endif; ?>
                 <?php echo $eventAccess; ?>
                 <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
-                <?php echo JemOutput::typeBadge($row); ?>
+                <?php echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : ''; ?>
             </h3>
         <?php elseif ((int) $jemsettings->showtitle === 1) : ?>
             <h4 title="<?php echo $escape(Text::_('COM_JEM_TABLE_TITLE') . ': ' . $row->title); ?>">
@@ -87,7 +95,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                 <?php endif; ?>
                 <?php echo $eventAccess; ?>
                 <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
-                <?php echo JemOutput::typeBadge($row); ?>
+                <?php echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : ''; ?>
             </h4>
         <?php elseif ((int) $jemsettings->showdetails === 1) : ?>
             <h4>
@@ -101,7 +109,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                 <?php endif; ?>
                 <?php echo $eventAccess; ?>
                 <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
-                <?php echo JemOutput::typeBadge($row); ?>
+                <?php echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : ''; ?>
             </h4>
         <?php else : ?>
             <h4>
@@ -113,7 +121,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                 <?php endif; ?>
                 <?php echo $eventAccess; ?>
                 <?php echo JemOutput::eventStateBadges($row, false, $showAvailabilityText); ?>
-                <?php echo JemOutput::typeBadge($row); ?>
+                <?php echo $itemDisplay['type'] ? JemOutput::typeBadge($row) : ''; ?>
             </h4>
         <?php endif; ?>
 
@@ -132,7 +140,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
             <?php endif; ?>
 
             <?php if (!empty($row->user_has_access_venue)) : ?>
-                <?php if ((int) $jemsettings->showlocate === 1 && !empty($row->locid)) : ?>
+                <?php if ($itemDisplay['venue'] && !empty($row->locid)) : ?>
                     <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_TABLE_LOCATION') . ': ' . $row->venue); ?>">
                         <?php echo $showIconsInEventData ? '<i class="fa fa-map-marker" aria-hidden="true"></i>' : ''; ?>
                         <?php if ((int) $jemsettings->showlinkvenue === 1) : ?>
@@ -143,14 +151,14 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                     </div>
                 <?php endif; ?>
 
-                <?php if ((int) $jemsettings->showcity === 1 && !empty($row->city)) : ?>
+                <?php if ($itemDisplay['city'] && !empty($row->city)) : ?>
                     <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_TABLE_CITY') . ': ' . $row->city); ?>">
                         <?php echo $showIconsInEventData ? '<i class="fa fa-building" aria-hidden="true"></i>' : ''; ?>
                         <?php echo $escape($row->city); ?>
                     </div>
                 <?php endif; ?>
 
-                <?php if ((int) $jemsettings->showstate === 1 && !empty($row->state)) : ?>
+                <?php if ($itemDisplay['county'] && !empty($row->state)) : ?>
                     <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_TABLE_STATE') . ': ' . $row->state); ?>">
                         <?php echo $showIconsInEventData ? '<i class="fa fa-map" aria-hidden="true"></i>' : ''; ?>
                         <?php echo $escape($row->state); ?>
@@ -158,11 +166,18 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
                 <?php endif; ?>
             <?php endif; ?>
 
-            <?php if ((int) $jemsettings->showcat === 1) : ?>
+            <?php if ($itemDisplay['category']) : ?>
                 <?php $categoryList = JemOutput::getCategoryList($row->categories, $jemsettings->catlinklist); ?>
                 <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_TABLE_CATEGORY') . ': ' . strip_tags(implode(', ', $categoryList))); ?>">
                     <?php echo $showIconsInEventData ? '<i class="fa fa-tag" aria-hidden="true"></i>' : ''; ?>
                     <?php echo implode(', ', $categoryList); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($itemDisplay['contact'] && !empty($row->contact_labels)) : ?>
+                <div class="jem-event-info" title="<?php echo $escape(Text::_('COM_JEM_EVENTSLIST_ITEM_CONTACT') . ': ' . $row->contact_labels); ?>">
+                    <?php echo $showIconsInEventData ? '<i class="fa fa-address-book" aria-hidden="true"></i>' : ''; ?>
+                    <?php echo $escape($row->contact_labels); ?>
                 </div>
             <?php endif; ?>
 

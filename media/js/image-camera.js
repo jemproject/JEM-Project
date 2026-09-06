@@ -151,6 +151,60 @@
         });
     }
 
+    function visiblePreviewImage(stage) {
+        var preview = stage.querySelector('.jem-image-selected-preview:not([hidden])');
+
+        if (!preview || preview.style.display === 'none') {
+            preview = stage.querySelector('.jem-image-current:not([hidden])');
+        }
+
+        if (!preview || preview.style.display === 'none') {
+            return null;
+        }
+
+        var image = preview.querySelector('img');
+
+        return image && image.getAttribute('src') ? image : null;
+    }
+
+    function syncPreviewStageRatio(control, option) {
+        var panel = control.closest('.jem-image-upload-panel');
+        var stage = panel ? panel.querySelector('.jem-image-preview-stage') : null;
+
+        if (!stage) {
+            return;
+        }
+
+        var mode = option
+            ? (option.dataset.jemImageRatioMode || 'none')
+            : (control.dataset.jemImageRatioMode || 'none');
+        var width = Number(option
+            ? option.dataset.jemImageRatioWidth
+            : control.dataset.jemImageRatioWidth);
+        var height = Number(option
+            ? option.dataset.jemImageRatioHeight
+            : control.dataset.jemImageRatioHeight);
+
+        if (mode === 'none') {
+            var image = visiblePreviewImage(stage);
+
+            if (image && image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) {
+                width = image.naturalWidth;
+                height = image.naturalHeight;
+            } else {
+                stage.style.removeProperty('aspect-ratio');
+
+                return;
+            }
+        }
+
+        if (Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0) {
+            stage.style.aspectRatio = width + ' / ' + height;
+        } else {
+            stage.style.removeProperty('aspect-ratio');
+        }
+    }
+
     function applyRatioSelection(control, config) {
         var range = control.querySelector('[data-jem-image-resolution-range]');
         var number = control.querySelector('[data-jem-image-resolution-number]');
@@ -158,6 +212,8 @@
         var option = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
 
         if (!option) {
+            syncPreviewStageRatio(control, null);
+
             return config;
         }
 
@@ -175,6 +231,8 @@
             config.ratioHeight = Math.max(1, Number(option.dataset.jemImageRatioHeight) || 1);
         }
 
+        syncPreviewStageRatio(control, option);
+
         return config;
     }
 
@@ -183,6 +241,7 @@
             var range = control.querySelector('[data-jem-image-resolution-range]');
             var number = control.querySelector('[data-jem-image-resolution-number]');
             var ratio = control.querySelector('[data-jem-image-ratio-select]');
+            var panel = control.closest('.jem-image-upload-panel');
 
             if (ratio) {
                 ratio.addEventListener('change', function () {
@@ -193,18 +252,29 @@
             control.addEventListener('jem:image-resolution-reset', function () {
                 if (ratio && control.dataset.jemImageRatioDefault) {
                     ratio.value = control.dataset.jemImageRatioDefault;
-                    applyRatioSelection(control, null);
                 }
+
+                applyRatioSelection(control, null);
+
                 if (range && number) {
                     setResolutionControlValue(control, control.dataset.jemImageResolutionDefault);
                 }
             });
 
+            if (panel) {
+                panel.querySelectorAll('.jem-image-preview-stage img').forEach(function (image) {
+                    image.addEventListener('load', function () {
+                        applyRatioSelection(control, null);
+                    });
+                });
+            }
+
+            applyRatioSelection(control, null);
+
             if (!range || !number) {
                 return;
             }
 
-            applyRatioSelection(control, null);
             setResolutionControlValue(control, range.value);
             range.addEventListener('input', function () {
                 setResolutionControlValue(control, range.value);

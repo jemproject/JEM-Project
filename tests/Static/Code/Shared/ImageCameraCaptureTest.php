@@ -138,13 +138,24 @@ final class ImageCameraCaptureTest extends TestCase
     public function testSelectedUploadRatioIsAppliedByTheClientAndServer(): void
     {
         $script = $this->read('/media/js/image-camera.js');
+        $helper = $this->read('/site/classes/imagecamera.class.php');
         $image = $this->read('/site/classes/image.class.php');
         $event = $this->read('/admin/tables/event.php');
         $venue = $this->read('/admin/tables/venue.php');
         $imageHandler = $this->read('/admin/controllers/imagehandler.php');
 
         self::assertStringContainsString('applyRatioSelection', $script);
-        self::assertStringContainsString('data-jem-image-ratio-mode', $this->read('/site/classes/imagecamera.class.php'));
+        self::assertStringContainsString('syncPreviewStageRatio', $script);
+        self::assertStringContainsString("stage.style.aspectRatio = width + ' / ' + height", $script);
+        self::assertStringContainsString('image.naturalWidth', $script);
+        self::assertStringContainsString("image.addEventListener('load'", $script);
+        self::assertStringContainsString('data-jem-image-ratio-mode', $helper);
+        self::assertStringContainsString('data-jem-image-ratio-width', $helper);
+        self::assertStringContainsString('data-jem-image-ratio-height', $helper);
+        self::assertStringContainsString(
+            '$defaultUploadConfig = JemImageProfilePolicy::resolveUpload',
+            $helper
+        );
         self::assertStringContainsString('JemImageProfilePolicy::resolveUpload', $image);
         self::assertStringContainsString("preg_replace('/\\bkB\\b/u', 'KB'", $image);
         self::assertStringContainsString("getCmd('image_ratio', '')", $event);
