@@ -1086,7 +1086,7 @@ Text::script('JCANCEL');
                     <div class="clr"></div>
                     <div id="mapdiv">
                         <input id="geocomplete" type="text" size="55" placeholder="<?php echo Text::_( 'COM_JEM_VENUE_ADDRPLACEHOLDER' ); ?>" value="" />
-                        <input id="find-left" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" />
+                        <input id="find-left" class="geobutton btn btn-primary" type="button" value="<?php echo Text::_('COM_JEM_VENUE_ADDR_FINDVENUEDATA'); ?>" />
                         <div class="clr"></div>
 
                         <div class="map_canvas"></div>
@@ -1121,10 +1121,10 @@ Text::script('JCANCEL');
                         </ul>
 
                         <div class="clr"></div>
-                        <input id="cp-all"     class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
-                        <input id="cp-address" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
-                        <input id="cp-venue"   class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
-                        <input id="cp-latlong" class="geobutton" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
+                        <input id="cp-all"     class="geobutton btn btn-primary" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_DATA'); ?>" style="margin-right: 3em;" />
+                        <input id="cp-address" class="geobutton btn btn-primary" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_ADDRESS'); ?>" />
+                        <input id="cp-venue"   class="geobutton btn btn-primary" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_VENUE'); ?>" />
+                        <input id="cp-latlong" class="geobutton btn btn-primary" type="button" value="<?php echo Text::_('COM_JEM_VENUE_COPY_COORDINATES'); ?>" />
                     </div>
                 </fieldset>
                 <p>&nbsp;</p>

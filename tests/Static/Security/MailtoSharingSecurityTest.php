@@ -106,6 +106,16 @@ final class MailtoSharingSecurityTest extends TestCase
         self::assertStringNotContainsString("PluginHelper::isEnabled('captcha', \$captcha)", $settings);
     }
 
+    public function testCaptchaSubmissionIsIncludedInValidatedMailtoData(): void
+    {
+        $model = $this->read('site/models/mailto.php');
+
+        self::assertStringContainsString(
+            "\$data['captcha']    = \$input->post->get('captcha', '', 'string');",
+            $model
+        );
+    }
+
     private function read(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 3) . '/' . $relativePath);

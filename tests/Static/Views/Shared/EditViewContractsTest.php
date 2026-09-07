@@ -203,6 +203,24 @@ final class EditViewContractsTest extends TestCase
         }
     }
 
+    public function testFrontendVenueGeodataActionsUseVisibleButtonVariants(): void
+    {
+        foreach (array(
+            JEM_TEST_ROOT . '/site/views/editvenue/tmpl/edit.php',
+            JEM_TEST_ROOT . '/site/views/editvenue/tmpl/responsive/edit.php',
+        ) as $path) {
+            $template = $this->read($path);
+
+            foreach (array('find-left', 'cp-all', 'cp-address', 'cp-venue', 'cp-latlong') as $id) {
+                self::assertMatchesRegularExpression(
+                    '/id="' . preg_quote($id, '/') . '"[^>]*class="[^"]*\\bbtn-primary\\b[^"]*"/',
+                    $template,
+                    $path . ' must render #' . $id . ' with a visible button variant.'
+                );
+            }
+        }
+    }
+
     public function testFrontendEditToolbarsKeepTenPixelSeparationFromTabs(): void
     {
         foreach (array(
