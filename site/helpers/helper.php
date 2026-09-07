@@ -35,6 +35,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/recurrencevalidator.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -2881,8 +2882,12 @@ class JemHelper
                     // the first day of the week is used for certain rules
                     $recurrence_row['weekstart'] = $weekstart;
 
-                    // calculate next occurence date
-                    $recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+                    // calculate next occurrence date
+                    $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
+                    if ($nextRecurrence === false) {
+                        continue;
+                    }
+                    $recurrence_row = $nextRecurrence;
 
                     switch ($recurrence_row["recurrence_type"]) {
                         case 1:
@@ -2945,7 +2950,11 @@ class JemHelper
                             }
                         }
 
-                        $recurrence_row = JemHelper::calculate_recurrence($recurrence_row);
+                        $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
+                        if ($nextRecurrence === false) {
+                            break;
+                        }
+                        $recurrence_row = $nextRecurrence;
                     }
                 }
 
@@ -3066,17 +3075,21 @@ class JemHelper
                 }
                 break;
             case "4": // weekday
-                // the selected weekdays
-                $selected = JemHelper::convert2CharsDaysToInt(explode(',', $recurrence_row['recurrence_byday']), 0);
+                $normalisedDays = JemRecurrenceValidator::normaliseWeekdays($recurrence_row['recurrence_byday'] ?? '');
+                if ($normalisedDays === false || $recurrence_number < 1 || $recurrence_number > 7) {
+                    JemHelper::addLogEntry(
+                        'Skipping invalid recurrence definition for event ID ' . (int) ($recurrence_row['id'] ?? 0)
+                        . ' (series root ID ' . (int) ($recurrence_row['first_id'] ?? 0) . ').',
+                        __METHOD__,
+                        Log::WARNING
+                    );
+
+                    return false;
+                }
+
+                $selected = JemHelper::convert2CharsDaysToInt($normalisedDays, 0);
                 $days_names = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
                 $litterals = array('first', 'second', 'third', 'fourth', 'fifth');
-                if (count($selected) == 0)
-                {
-                    // this shouldn't happen, but if it does, to prevent problem use the current weekday for the repetition.
-                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
-                    $current_weekday = (int) $date_array["weekday"];
-                    $selected = array($current_weekday);
-                }
 
                 $start_day = null;
                 foreach ($selected as $s)
@@ -3465,10 +3478,14 @@ class JemHelper
     static function convert2CharsDaysToInt($days, $firstday = 0)
     {
         $result = array();
-        foreach ($days as $day)
-        {
-            switch (strtoupper($day))
-            {
+        $normalisedDays = JemRecurrenceValidator::normaliseWeekdays($days);
+
+        if ($normalisedDays === false) {
+            return $result;
+        }
+
+        foreach ($normalisedDays as $day) {
+            switch ($day) {
                 case 'MO':
                     $result[] = 1 - $firstday;
                     break;
@@ -3490,8 +3507,6 @@ class JemHelper
                 case 'SU':
                     $result[] = (7 - $firstday) % 7;
                     break;
-                default:
-                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'), 'warning');
             }
         }
 

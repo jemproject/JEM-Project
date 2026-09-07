@@ -26,6 +26,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php'
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/spaceavailability.class.php';
 
@@ -635,6 +636,15 @@ class JemModelEvent extends JemModelAdmin
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
         $recurrencebylastday  = $jinput->get('recurrence_bylastday', '', 'string');
+        if ((int) ($data['recurrence_type'] ?? 0) === 4) {
+            $normalisedRecurrenceDays = JemRecurrenceValidator::normaliseWeekdays($recurrencebyday);
+            if ($normalisedRecurrenceDays === false || $recurrencenumber < 1 || $recurrencenumber > 7) {
+                $this->setError(Text::_('COM_JEM_WRONG_EVENTRECURRENCE_WEEKDAY'));
+
+                return false;
+            }
+            $recurrencebyday = implode(',', $normalisedRecurrenceDays);
+        }
         $metakeywords         = $jinput->get('meta_keywords', '', '');
         $metadescription      = $jinput->get('meta_description', '', '');
         $data['metadata']     = $data['metadata'] ?? '';
