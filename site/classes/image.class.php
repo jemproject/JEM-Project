@@ -807,7 +807,9 @@ class JemImage
         }
 
         if ($image) {
-            $isSiteImagePath = strpos($image, '/') !== false || strpos($image, '\\') !== false;
+            $image = ltrim(str_replace('\\', '/', trim((string) $image)), '/');
+            $isSiteImagePath = strpos($image, '/') !== false;
+            $isManagedSiteImagePath = false;
 
             if (!$isSiteImagePath && $type === 'event') {
                 $img_orig  = JemEventImagePath::imagePath($folderPath, $image);
@@ -819,12 +821,46 @@ class JemImage
                 $img_orig  = JemCategoryImagePath::imagePath($folderPath, $image);
                 $img_thumb = JemCategoryImagePath::thumbPath($folderPath, $image);
             } else {
-                $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
-                $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+                $img_orig = $isSiteImagePath ? $image : 'images/jem/'.$folder.'/'.$image;
+                $managedPrefix = 'images/jem/'.$folder.'/';
+                $managedThumbPrefix = $managedPrefix.'small/';
+
+                // Full site-relative paths may use JEM thumbnails only when their source is managed by JEM.
+                if ($isSiteImagePath
+                    && strpos($img_orig, $managedPrefix) === 0
+                    && strpos($img_orig, $managedThumbPrefix) !== 0
+                ) {
+                    $img_thumb = $managedThumbPrefix.substr($img_orig, strlen($managedPrefix));
+                    $isManagedSiteImagePath = true;
+                } else {
+                    $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+                }
             }
 
-            $filepath  = JPATH_SITE.'/'.$img_orig;
-            $save      = JPATH_SITE.'/'.$img_thumb;
+            $siteRoot = rtrim(Path::clean(JPATH_SITE), '\\/');
+            $sitePrefix = $siteRoot.DIRECTORY_SEPARATOR;
+            $filepath = Path::clean(JPATH_SITE.'/'.$img_orig);
+            $save = Path::clean(JPATH_SITE.'/'.$img_thumb);
+
+            if (strncasecmp($filepath, $sitePrefix, strlen($sitePrefix)) !== 0
+                || strncasecmp($save, $sitePrefix, strlen($sitePrefix)) !== 0
+            ) {
+                return false;
+            }
+
+            if ($isManagedSiteImagePath) {
+                $managedBasePath = rtrim(Path::clean(JPATH_SITE.'/images/jem/'.$folder), '\\/').DIRECTORY_SEPARATOR;
+                $managedThumbBasePath = rtrim(
+                    Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small'),
+                    '\\/'
+                ).DIRECTORY_SEPARATOR;
+
+                if (strncasecmp($filepath, $managedBasePath, strlen($managedBasePath)) !== 0
+                    || strncasecmp($save, $managedThumbBasePath, strlen($managedThumbBasePath)) !== 0
+                ) {
+                    return false;
+                }
+            }
 
             // At least original image must exist
             if (!file_exists($filepath)) {
@@ -844,7 +880,10 @@ class JemImage
             }
 
             //Create thumbnail if enabled and it does not exist already
-            if (!$isSiteImagePath && $settings->gddisabled == 1 && !file_exists($save)) {
+            if ((!$isSiteImagePath || $isManagedSiteImagePath)
+                && $settings->gddisabled == 1
+                && !file_exists($save)
+            ) {
                 $saveFolder = dirname($save);
                 if (!Folder::exists($saveFolder)) {
                     Folder::create($saveFolder);
@@ -858,9 +897,16 @@ class JemImage
                 );
             }
 
+            // Keep non-JEM images read-only and use their configured display dimensions as the fallback thumbnail.
+            if (!is_file($save)) {
+                $img_thumb = $img_orig;
+                $save = $filepath;
+            }
+
             //set paths
             $dimage['original'] = $img_orig;
             $dimage['thumb']    = $img_thumb;
+            $dimage['thumb_is_original'] = $img_thumb === $img_orig;
 
             $iminfo = array($resource['width'], $resource['height']);
 
@@ -881,9 +927,12 @@ class JemImage
                 $dimage['height'] = $iminfo[1];
             }
 
-            if (is_file(JPATH_SITE.'/'.$img_thumb)) {
+            if ($dimage['thumb_is_original']) {
+                $dimage['thumbwidth'] = $dimage['width'];
+                $dimage['thumbheight'] = $dimage['height'];
+            } elseif (is_file($save)) {
                 //get imagesize of the thumbnail
-                $thumbiminfo = @getimagesize(JPATH_SITE.'/'.$img_thumb);
+                $thumbiminfo = @getimagesize($save);
 
                 // Set dimensions if the image information is successfully retrieved
                 if (is_array($thumbiminfo)) {

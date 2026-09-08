@@ -2324,11 +2324,13 @@ static public function lightbox() {
         if (empty($imagefile) || empty($image)) {
             return;
         } else if(!$settings->flyer){
-            list($imagewidth, $imageheight) = getimagesize(JPATH_SITE . '/' . $image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize(JPATH_SITE . '/' . $image['thumb']) ?? [50, 50];
+            list($imagewidth, $imageheight) = @getimagesize(JPATH_SITE . '/' . $image['original']) ?: [100, 100];
+            $thumbInfo = @getimagesize(JPATH_SITE . '/' . $image['thumb']) ?: [50, 50];
+            $thumbwidth = max(1, (int) ($image['thumbwidth'] ?? $thumbInfo[0]));
+            $thumbheight = max(1, (int) ($image['thumbheight'] ?? $thumbInfo[1]));
         }
 
-        // Does a thumbnail exist?
+        // Does the resolved display image exist?
         if (!$settings->flyer){
             $thumbPath = $image['thumb'] ?? '';
 
@@ -2350,11 +2352,11 @@ static public function lightbox() {
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
                     $url = $uri->base().$image['original'];
                     $attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
-                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
                     $output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 
                 }
-                // If there is no thumbnail, then take the values for the original image specified in the settings
+                // If the resolved display image is unavailable, use the limited original image.
             } else {
                 $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
             }
