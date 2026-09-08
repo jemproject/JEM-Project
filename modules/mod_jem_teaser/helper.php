@@ -344,17 +344,29 @@ abstract class ModJemTeaserHelper
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';
                 $lists[$i]->eventimageorig = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimagewidth = 0;
+                $lists[$i]->eventimageheight = 0;
+                $lists[$i]->eventimagethumbfallback = false;
             } else {
                 $lists[$i]->eventimage     = Uri::base(true) . '/' . $dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true) . '/' . $dimage['original'];
+                $lists[$i]->eventimagewidth = (int) ($dimage['thumbwidth'] ?? $dimage['width'] ?? 0);
+                $lists[$i]->eventimageheight = (int) ($dimage['thumbheight'] ?? $dimage['height'] ?? 0);
+                $lists[$i]->eventimagethumbfallback = !empty($dimage['thumb_is_original']);
             }
 
             if ($limage == null) {
                 $lists[$i]->venueimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';
                 $lists[$i]->venueimageorig = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->venueimagewidth = 0;
+                $lists[$i]->venueimageheight = 0;
+                $lists[$i]->venueimagethumbfallback = false;
             } else {
                 $lists[$i]->venueimage     = Uri::base(true) . '/' . $limage['thumb'];
                 $lists[$i]->venueimageorig = Uri::base(true) . '/' . $limage['original'];
+                $lists[$i]->venueimagewidth = (int) ($limage['thumbwidth'] ?? $limage['width'] ?? 0);
+                $lists[$i]->venueimageheight = (int) ($limage['thumbheight'] ?? $limage['height'] ?? 0);
+                $lists[$i]->venueimagethumbfallback = !empty($limage['thumb_is_original']);
             }
 
             if ($max_desc_length != 1208) {

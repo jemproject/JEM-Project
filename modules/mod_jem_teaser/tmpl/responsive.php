@@ -180,6 +180,11 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                                             <?php if(!empty($item->eventimage)) : ?>
+                                                <?php
+                                                $eventImageStyle = !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0
+                                                    ? 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto'
+                                                    : '';
+                                                ?>
                                                 <div class="jem-eventimg-teaser jem-module-event-status-image">
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->eventimageorig) {
@@ -197,7 +202,7 @@ $document->addStyleDeclaration($css);
 
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview"<?php echo $eventImageStyle !== '' ? ' style="'.$eventImageStyle.'"' : ''; ?> src="<?php echo $item->eventimage; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
@@ -212,6 +217,11 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                                             <?php if(!empty($item->venueimage)) : ?>
+                                                <?php
+                                                $venueImageStyle = !empty($item->venueimagethumbfallback) && $item->venueimagewidth > 0
+                                                    ? 'width:'.(int) $item->venueimagewidth.'px;max-width:100%;height:auto'
+                                                    : '';
+                                                ?>
                                                 <div class="jem-eventimg-teaser jem-module-event-status-image">
 
                                                     <?php if ($params->get('use_modal')) : ?>
@@ -220,7 +230,7 @@ $document->addStyleDeclaration($css);
                                                 } ?>
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview"<?php echo $venueImageStyle !== '' ? ' style="'.$venueImageStyle.'"' : ''; ?> src="<?php echo $item->venueimage; ?>" width="<?php echo (int) $item->venueimagewidth; ?>" height="<?php echo (int) $item->venueimageheight; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
