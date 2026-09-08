@@ -34,13 +34,13 @@ final class VenueDetailMapServiceTest extends TestCase
     {
         foreach (array('default.php', 'responsive/default.php') as $template) {
             $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venue/tmpl/' . $template);
-            $mapPosition = strpos($source, '<div class="jem-venue-map-section">');
+            $mapPosition = strpos($source, '<div class="jem-venue-map-section jem-map">');
             $descriptionPosition = strpos($source, "if (\$venueCustomFieldsPosition === 'before_description')");
 
             self::assertNotFalse($mapPosition);
             self::assertNotFalse($descriptionPosition);
             self::assertLessThan($descriptionPosition, $mapPosition);
-            self::assertSame(1, substr_count($source, '<div class="jem-venue-map-section">'));
+            self::assertSame(1, substr_count($source, '<div class="jem-venue-map-section jem-map">'));
             self::assertStringNotContainsString('$venueShowMapSection', $source);
         }
 

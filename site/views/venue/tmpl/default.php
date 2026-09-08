@@ -389,7 +389,7 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
         <?php endif; ?>
 
         <?php if ($venueShowMapBlock) : ?>
-        <div class="jem-venue-map-section">
+        <div class="jem-venue-map-section jem-map">
             <?php if (in_array($venueMapService, array(2, 5), true)) : ?>
                 <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
             <?php endif; ?>
