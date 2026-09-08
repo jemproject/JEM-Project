@@ -252,18 +252,30 @@ final class ZipArtifactContentsTest extends TestCase
     public function testCurrentPackageContainsConventionalFrontendImageForms(): void
     {
         $entries = array(
+            'admin/models/forms/event.xml',
+            'admin/models/forms/venue.xml',
             'admin/models/forms/settings.xml',
             'admin/models/settings.php',
             'admin/sql/install.mysql.utf8.sql',
             'admin/sql/updates/mysql/5.0.1.sql',
             'admin/tables/jem_settings.php',
+            'admin/views/event/tmpl/edit.php',
+            'admin/views/venue/tmpl/edit.php',
+            'media/css/frontend-form-mode.css',
+            'media/js/frontend-form-mode.js',
             'media/js/other.js',
             'script.php',
+            'site/models/forms/event.xml',
+            'site/models/forms/venue.xml',
             'site/models/fields/imageselectevent.php',
             'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/edit_publish.php',
             'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editevent/tmpl/responsive/edit_publish.php',
             'site/views/editvenue/tmpl/edit.php',
+            'site/views/editvenue/tmpl/edit_publish.php',
             'site/views/editvenue/tmpl/responsive/edit.php',
+            'site/views/editvenue/tmpl/responsive/edit_publish.php',
         );
 
         foreach ($this->currentPackageZipFiles() as $zipFile) {

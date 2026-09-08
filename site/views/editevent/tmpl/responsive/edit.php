@@ -29,6 +29,13 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+JemHelper::loadCss('frontend-form-mode');
+$wa->registerAndUseScript(
+    'com_jem.frontend-form-mode',
+    'media/com_jem/js/frontend-form-mode.js',
+    array(),
+    array('defer' => true)
+);
 $showWhenCustomTimezoneAttribute = " data-showon='" . htmlspecialchars(
     json_encode(FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')),
     ENT_QUOTES,
@@ -128,7 +135,7 @@ $document->addStyleDeclaration('
     }
     .jem-associated-article-options .jem-dl {
         display: grid;
-        grid-template-columns: minmax(160px, 276px) minmax(14rem, 36rem);
+        grid-template-columns: minmax(160px, 276px) minmax(14rem, 1fr);
         align-items: center;
         column-gap: 0;
         margin-bottom: 0;
@@ -146,7 +153,7 @@ $document->addStyleDeclaration('
     }
     .jem-associated-article-options .alert {
         margin-top: .35rem !important;
-        width: min(100%, 36rem);
+        width: 100%;
     }
     .jem-associated-article-options .js-jem-article-usage select,
     .jem-associated-article-options .js-jem-article-usage .choices,
@@ -173,7 +180,7 @@ $document->addStyleDeclaration('
         align-items: stretch;
         grid-column: 2;
         max-width: 100%;
-        width: min(100%, 36rem);
+        width: 100%;
     }
     .jem-associated-article-picker > * {
         flex: 1 1 auto;
@@ -214,14 +221,14 @@ $document->addStyleDeclaration('
     .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
     .jem-editevent-field-cats .choices,
     .jem-editevent-field-cats select {
-        width: min(100%, 36rem) !important;
-        max-width: 36rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     .jem-editevent-field-cats .choices__list--dropdown,
     .jem-editevent-field-cats .choices__list[aria-expanded] {
         width: 100%;
         min-width: 100%;
-        max-width: 36rem;
+        max-width: 100%;
         overflow-x: hidden;
     }
     .jem-editevent-field-cats .choices__item {
@@ -796,11 +803,15 @@ $document->addStyleDeclaration('
             </h1>
         <?php endif; ?>
 
-        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" data-jem-form-mode>
 
             <div class="jem-editevent-toolbar">
                 <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+                <button type="button" class="btn btn-outline-secondary jem-form-mode-toggle" data-jem-form-mode-toggle aria-pressed="false">
+                    <?php echo Text::_('COM_JEM_ADVANCED'); ?>
+                    <span class="jem-form-mode-state-indicator" aria-hidden="true"></span>
+                </button>
             </div>
             <?php if ($this->item->recurrence_type > 0 && (int) $this->item->recurrence_type !== 7) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
@@ -851,10 +862,10 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
-                    <dt><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
-                    <dd><?php echo $this->form->getInput('timezone_mode'); ?></dd>
-                    <dt<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
-                    <dd<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
+                    <dt data-jem-advanced-field><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
+                    <dd data-jem-advanced-field><?php echo $this->form->getInput('timezone_mode'); ?></dd>
+                    <dt data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
@@ -866,8 +877,8 @@ $document->addStyleDeclaration('
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
                     <?php if ($showTypeField) : ?>
-                        <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
-                        <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                        <dt data-jem-advanced-field><?php echo $this->form->getLabel('type_id'); ?></dt>
+                        <dd data-jem-advanced-field><?php echo $this->form->getInput('type_id'); ?></dd>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
@@ -878,11 +889,22 @@ $document->addStyleDeclaration('
                         <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('featured'); ?></dt>
-                    <dd><?php echo $this->form->getInput('featured'); ?></dd>
+                    <dd class="jem-editevent-field-featured"><?php echo $this->form->getInput('featured'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('access'); ?></dt>
+                    <dd><?php
+                        echo HTMLHelper::_(
+                            'select.genericlist',
+                            $this->access,
+                            'jform[access]',
+                            array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access')
+                        );
+                        ?></dd>
+                    <dt><?php echo $this->form->getLabel('published'); ?></dt>
+                    <dd><?php echo $this->form->getInput('published'); ?></dd>
                 </dl>
             </fieldset>
             <?php if ($this->form->getField('article_id')) : ?>
-                <fieldset class="adminform jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>">
+                <fieldset class="adminform jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>" data-jem-advanced-field>
                     <dl class="jem-dl">
                         <dt class="js-jem-article-usage"><?php echo $this->form->getLabel('article_usage', 'attribs'); ?></dt>
                         <dd class="js-jem-article-usage"><?php echo $this->form->getInput('article_usage', 'attribs'); ?></dd>
@@ -1009,12 +1031,6 @@ $document->addStyleDeclaration('
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-            <!-- ADVANCED TAB -->
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_ADVANCED'), 'editevent-advancedtab'); ?>
-            <?php echo $this->loadTemplate('publish'); ?>
-
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
@@ -1024,15 +1040,20 @@ $document->addStyleDeclaration('
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
-            <!-- LINKS TAB -->
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
-            <?php echo $this->loadTemplate('links'); ?>
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
             <!-- OTHER TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other'); ?>
             <?php echo $this->loadTemplate('other'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <!-- ADVANCED TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED'))); ?>
+            <?php echo $this->loadTemplate('publish'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <!-- LINKS TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB'))); ?>
+            <?php echo $this->loadTemplate('links'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
             <?php //echo HTMLHelper::_('tabs.end'); ?>
@@ -1040,6 +1061,7 @@ $document->addStyleDeclaration('
             <input type="hidden" name="task" value="" />
             <input type="hidden" name="return" value="<?php echo $this->return_page; ?>" />
             <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+            <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
             <?php if ($this->params->get('enable_category', 0) == 1) : ?>
                 <input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1); ?>" />
             <?php endif; ?>

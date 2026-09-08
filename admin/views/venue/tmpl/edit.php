@@ -1270,6 +1270,7 @@ Text::script('JCANCEL');
                 </div>
                 <input type="hidden" name="task" value="" />
                 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+                <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
 
                 <!-- END RIGHT DIV -->
                 <?php echo HTMLHelper::_( 'form.token' ); ?>

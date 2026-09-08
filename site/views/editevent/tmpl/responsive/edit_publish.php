@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\HTML\HTMLHelper;
 
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 ?>
@@ -18,18 +17,6 @@ $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), 
     <legend><?php echo Text::_('COM_JEM_ADVANCED'); ?></legend>
     <dl class="jem-dl">
 
-        <dt><?php echo $this->form->getLabel('access'); ?></dt>
-        <dd><?php
-            echo HTMLHelper::_(
-                'select.genericlist',
-                $this->access,
-                'jform[access]',
-                array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access')
-            );
-            ?>
-        </dd>
-        <dt><?php echo $this->form->getLabel('published'); ?></dt>
-        <dd><?php echo $this->form->getInput('published'); ?></dd>
         <dt><?php echo $this->form->getLabel('event_status'); ?></dt>
         <dd><?php echo $this->form->getInput('event_status'); ?></dd>
         <dt><?php echo $this->form->getLabel('ticket_availability'); ?></dt>
