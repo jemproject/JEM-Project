@@ -19,12 +19,14 @@ require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
     <fieldset class="jem_fldst_image jem-image-upload-panel">
         <legend><?php echo Text::_('COM_JEM_EDITVENUE_IMAGE_LEGEND'); ?></legend>
         <?php if ($this->jemsettings->imageenabled != 0) : ?>
-            <?php echo JemImageCamera::resolutionControl(
-                'image_max_dimension',
-                'jem-image-resolution-venue',
-                'venue',
-                $this->jemsettings
-            ); ?>
+            <div class="jem-image-resolution-slot" data-jem-advanced-field>
+                <?php echo JemImageCamera::resolutionControl(
+                    'image_max_dimension',
+                    'jem-image-resolution-venue',
+                    'venue',
+                    $this->jemsettings
+                ); ?>
+            </div>
         <?php endif; ?>
         <div class="jem-image-upload-layout">
             <div class="jem-image-upload-list">

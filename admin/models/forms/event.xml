@@ -902,6 +902,12 @@
     </fieldset>
 
     <fields name="attribs">
+        <fieldset name="frontend_form_mode">
+            <field name="frontend_form_mode" type="hidden"
+                    default="easy"
+                    filter="cmd"
+            />
+        </fieldset>
         <fieldset name="basic"
                   label="COM_JEM_EVENT_FIELDSET_ATTRIBS_LABEL"
         >

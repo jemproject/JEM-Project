@@ -26,6 +26,13 @@ $params        = $this->item->params;
 $hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed_fields);
 $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+JemHelper::loadCss('frontend-form-mode');
+$wa->registerAndUseScript(
+    'com_jem.frontend-form-mode',
+    'media/com_jem/js/frontend-form-mode.js',
+    array(),
+    array('defer' => true)
+);
 $venueHierarchyEnabled = $this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY);
 $showWhenChildVenueAttribute = '';
 $showWhenTopLevelVenueAttribute = '';
@@ -970,11 +977,15 @@ Text::script('JCANCEL');
             </h1>
         <?php endif; ?>
 
-        <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int)$this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
+        <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int)$this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data" data-jem-form-mode>
 
             <div class="jem-editvenue-toolbar">
                 <button type="button" class="btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="button" class="btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+                <button type="button" class="btn btn-outline-secondary jem-form-mode-toggle" data-jem-form-mode-toggle aria-pressed="false">
+                    <?php echo Text::_('COM_JEM_ADVANCED'); ?>
+                    <span class="jem-form-mode-state-indicator" aria-hidden="true"></span>
+                </button>
             </div>
 
             <?php if ($this->params->get('showintrotext')) : ?>
@@ -1008,7 +1019,7 @@ Text::script('JCANCEL');
                         </li>
                         <li<?php echo $showWhenChildVenueAttribute; ?>><?php echo $this->form->getLabel('venue_tree_order'); ?><?php echo $this->form->getInput('venue_tree_order'); ?></li>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('level'); ?><?php echo $this->form->getInput('level'); ?></li>
+                    <li data-jem-advanced-field><?php echo $this->form->getLabel('level'); ?><?php echo $this->form->getInput('level'); ?></li>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
                         <li><?php echo $this->form->getLabel('capacity'); ?><?php echo $this->form->getInput('capacity'); ?></li>
                     <?php endif; ?>
@@ -1023,10 +1034,12 @@ Text::script('JCANCEL');
                         </div>
                     </li>
                     <?php if ($showTypeField) : ?>
-                        <li><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
+                        <li data-jem-advanced-field><?php echo $this->form->getLabel('type_id'); ?><?php echo $this->form->getInput('type_id'); ?></li>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
+                    <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
+                    <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
                 </ul>
             </fieldset>
 
@@ -1146,13 +1159,6 @@ Text::script('JCANCEL');
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_EXTENDED_TAB'), 'editvenue-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-
-            <!-- PUBLISHING TAB -->
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-publishtab', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB'), 'venue-publishtab'); ?>
-            <?php echo $this->loadTemplate('publish'); ?>
-
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
@@ -1166,8 +1172,11 @@ Text::script('JCANCEL');
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-other', Text::_('COM_JEM_EDITVENUE_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-other' ); ?>
             <?php echo $this->loadTemplate('other'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-            <?php //echo HTMLHelper::_('tabs.end'); ?>
+            <!-- ADVANCED TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-publishtab', Text::_('COM_JEM_ADVANCED'))); ?>
+            <?php echo $this->loadTemplate('publish'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
@@ -1176,6 +1185,7 @@ Text::script('JCANCEL');
             <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
             <input type="hidden" name="task" value="" />
             <input type="hidden" name="return" value="<?php echo $this->return_page; ?>" />
+            <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
             <?php echo HTMLHelper::_('form.token'); ?>
         </form>
     </div>

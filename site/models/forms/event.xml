@@ -650,6 +650,12 @@
     </fieldset>
 
     <fields name="attribs">
+        <fieldset name="frontend_form_mode">
+            <field name="frontend_form_mode" type="hidden"
+                    default="easy"
+                    filter="cmd"
+            />
+        </fieldset>
         <fieldset name="article_content_options">
             <field name="article_usage" type="list"
                     label="COM_JEM_EVENT_ARTICLE_USAGE"

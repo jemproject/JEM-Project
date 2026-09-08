@@ -26,6 +26,13 @@ $params        = $this->item->params;
 $hideEmptyManagedFields = !empty($this->jemsettings->frontend_hide_empty_managed_fields);
 $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
+JemHelper::loadCss('frontend-form-mode');
+$wa->registerAndUseScript(
+    'com_jem.frontend-form-mode',
+    'media/com_jem/js/frontend-form-mode.js',
+    array(),
+    array('defer' => true)
+);
 $venueHierarchyEnabled = $this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY);
 $showWhenChildVenueAttribute = '';
 $showWhenTopLevelVenueAttribute = '';
@@ -969,11 +976,15 @@ Text::script('JCANCEL');
             </h1>
         <?php endif; ?>
 
-        <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data">
+        <form action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" class="form-validate" method="post" name="adminForm" id="venue-form" enctype="multipart/form-data" data-jem-form-mode>
 
             <div class="jem-editvenue-toolbar">
                 <button type="submit" class="positive btn btn-primary" onclick="Joomla.submitbutton('venue.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="negative btn btn-secondary" onclick="Joomla.submitbutton('venue.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+                <button type="button" class="btn btn-outline-secondary jem-form-mode-toggle" data-jem-form-mode-toggle aria-pressed="false">
+                    <?php echo Text::_('COM_JEM_ADVANCED'); ?>
+                    <span class="jem-form-mode-state-indicator" aria-hidden="true"></span>
+                </button>
             </div>
             <?php if ($this->params->get('showintrotext')) : ?>
                 <div class="description no_space floattext">
@@ -1010,8 +1021,8 @@ Text::script('JCANCEL');
                         <dt<?php echo $showWhenChildVenueAttribute; ?>><?php echo $this->form->getLabel('venue_tree_order'); ?></dt>
                         <dd<?php echo $showWhenChildVenueAttribute; ?>><?php echo $this->form->getInput('venue_tree_order'); ?></dd>
                     <?php endif; ?>
-                    <dt><?php echo $this->form->getLabel('level'); ?></dt>
-                    <dd><?php echo $this->form->getInput('level'); ?></dd>
+                    <dt data-jem-advanced-field><?php echo $this->form->getLabel('level'); ?></dt>
+                    <dd data-jem-advanced-field><?php echo $this->form->getInput('level'); ?></dd>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY)) : ?>
                         <dt><?php echo $this->form->getLabel('capacity'); ?></dt>
                         <dd><?php echo $this->form->getInput('capacity'); ?></dd>
@@ -1019,11 +1030,15 @@ Text::script('JCANCEL');
                     <dt><?php echo $this->form->getLabel('color'); ?></dt>
                     <dd><?php echo $this->form->getInput('color'); ?></dd>
                     <?php if ($showTypeField) : ?>
-                        <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
-                        <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                        <dt data-jem-advanced-field><?php echo $this->form->getLabel('type_id'); ?></dt>
+                        <dd data-jem-advanced-field><?php echo $this->form->getInput('type_id'); ?></dd>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
+                    <dt><?php echo $this->form->getLabel('access'); ?></dt>
+                    <dd><?php echo $this->form->getInput('access'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('published'); ?></dt>
+                    <dd><?php echo $this->form->getInput('published'); ?></dd>
                 </dl>
             </fieldset>
 
@@ -1155,13 +1170,6 @@ Text::script('JCANCEL');
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_EXTENDED_TAB'), 'editvenue-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
 
-
-            <!-- PUBLISHING TAB -->
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-publishtab', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB')); ?>
-            <?php // echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_PUBLISH_TAB'), 'venue-publishtab'); ?>
-            <?php echo $this->loadTemplate('publish'); ?>
-
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
@@ -1175,8 +1183,11 @@ Text::script('JCANCEL');
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-other', Text::_('COM_JEM_EDITVENUE_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-othertab'); ?>
             <?php echo $this->loadTemplate('other'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-            <?php //echo HTMLHelper::_('tabs.end'); ?>
+            <!-- ADVANCED TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-publishtab', Text::_('COM_JEM_ADVANCED'))); ?>
+            <?php echo $this->loadTemplate('publish'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
@@ -1185,6 +1196,7 @@ Text::script('JCANCEL');
             <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
             <input type="hidden" name="task" value="" />
             <input type="hidden" name="return" value="<?php echo $this->return_page; ?>" />
+            <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
             <?php echo HTMLHelper::_('form.token'); ?>
         </form>
     </div>

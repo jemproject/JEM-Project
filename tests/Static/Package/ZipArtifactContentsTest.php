@@ -494,14 +494,24 @@ final class ZipArtifactContentsTest extends TestCase
     public function testCurrentPackageContainsClosedEventAndVenueTabSets(): void
     {
         $entries = array(
+            'admin/models/forms/event.xml',
+            'admin/models/forms/venue.xml',
             'admin/views/event/tmpl/edit.php',
             'admin/views/venue/tmpl/edit.php',
+            'media/css/frontend-form-mode.css',
+            'media/js/frontend-form-mode.js',
+            'site/models/forms/event.xml',
+            'site/models/forms/venue.xml',
             'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/edit_publish.php',
             'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editevent/tmpl/responsive/edit_publish.php',
             'site/views/editvenue/tmpl/edit.php',
             'site/views/editvenue/tmpl/edit_extended.php',
+            'site/views/editvenue/tmpl/edit_publish.php',
             'site/views/editvenue/tmpl/responsive/edit.php',
             'site/views/editvenue/tmpl/responsive/edit_extended.php',
+            'site/views/editvenue/tmpl/responsive/edit_publish.php',
         );
 
         foreach ($this->currentPackageZipFiles() as $zipFile) {

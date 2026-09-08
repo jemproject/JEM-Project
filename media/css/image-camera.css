@@ -136,6 +136,14 @@
     box-sizing: border-box;
 }
 
+.jem-image-resolution-slot {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
 .jem-image-resolution--leading {
     margin: 0 0 0.9rem;
     padding: 0 0 0.9rem;
