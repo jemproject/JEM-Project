@@ -49,8 +49,8 @@
 .jem-module-event-status-ribbon--horizontal-top,
 .jem-module-event-status-ribbon--horizontal-center,
 .jem-module-event-status-ribbon--horizontal-bottom {
-    right: var(--jem-module-status-side-margin, 0);
-    left: var(--jem-module-status-side-margin, 0);
+    right: calc(var(--jem-module-status-image-right, 0px) + var(--jem-module-status-side-margin, 0px));
+    left: calc(var(--jem-module-status-image-left, 0px) + var(--jem-module-status-side-margin, 0px));
     white-space: normal;
 }
 
@@ -76,12 +76,12 @@
 }
 
 .jem-module-event-status-ribbon--diagonal-ascending {
-    left: calc(var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0));
+    left: calc(var(--jem-module-status-image-left, 0px) + var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0px));
     transform: rotate(-45deg);
 }
 
 .jem-module-event-status-ribbon--diagonal-descending {
-    right: calc(var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0));
+    right: calc(var(--jem-module-status-image-right, 0px) + var(--jem-module-status-diagonal-offset, -2.6rem) + var(--jem-module-status-side-margin, 0px));
     transform: rotate(45deg);
 }
 

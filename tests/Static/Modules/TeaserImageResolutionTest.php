@@ -40,17 +40,28 @@ final class TeaserImageResolutionTest extends TestCase
         $helper = $this->read('modules/mod_jem_teaser/helper.php');
 
         self::assertStringContainsString('eventimagethumbfallback', $helper);
+        self::assertStringContainsString('eventimagecontainerstyle', $helper);
         self::assertStringContainsString('venueimagethumbfallback', $helper);
 
         foreach (array('default.php', 'responsive.php') as $layout) {
             $template = $this->read('modules/mod_jem_teaser/tmpl/' . $layout);
 
             self::assertStringContainsString('eventImageStyle', $template, $layout);
+            self::assertStringContainsString('eventimagecontainerstyle', $template, $layout);
             self::assertStringContainsString('venueImageStyle', $template, $layout);
             self::assertStringContainsString('max-width:100%;height:auto', $template, $layout);
             self::assertStringContainsString('eventimagewidth', $template, $layout);
             self::assertStringContainsString('venueimagewidth', $template, $layout);
         }
+
+        $defaultCss = $this->read('modules/mod_jem_teaser/tmpl/default.css');
+        self::assertStringContainsString('.teaser-jem > div:first-child', $defaultCss);
+        self::assertStringContainsString('align-items: flex-start;', $defaultCss);
+        self::assertStringContainsString('display: flex;', $defaultCss);
+
+        $responsiveCss = $this->read('modules/mod_jem_teaser/tmpl/responsive.css');
+        self::assertStringContainsString('align-items: flex-start;', $responsiveCss);
+        self::assertStringContainsString('flex: 0 0 100%;', $responsiveCss);
     }
 
     private function read(string $path): string

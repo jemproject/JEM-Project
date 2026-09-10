@@ -266,10 +266,7 @@
                        description="MOD_JEM_CAL_DEFAULT_ITEM_ID_DESC"
                        class="form-control w-auto"
                 />
-                <field type="spacer" name="module_text_spacer"
-                       label="MOD_JEM_CAL_MODULE_TEXT_BLOCK"
-                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
-                />
+                <field type="spacer" name="module_text_spacer" label="" hr="true" />
                 <field name="showintrotext" type="radio"
                        default="0"
                        label="MOD_JEM_CAL_SHOW_INTROTEXT"

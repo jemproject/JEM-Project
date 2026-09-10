@@ -113,10 +113,7 @@
                     <option value="0">JNO</option>
                     <option value="1">JYES</option>
                 </field>
-                <field type="spacer" name="module_text_spacer"
-                       label="MOD_JEM_TYPES_MODULE_TEXT_BLOCK"
-                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
-                />
+                <field type="spacer" name="module_text_spacer" label="" hr="true" />
                 <field name="showintrotext" type="radio"
                        default="0"
                        label="MOD_JEM_TYPES_SHOW_INTROTEXT"

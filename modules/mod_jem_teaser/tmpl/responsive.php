@@ -181,11 +181,12 @@ $document->addStyleDeclaration($css);
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                                             <?php if(!empty($item->eventimage)) : ?>
                                                 <?php
-                                                $eventImageStyle = !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0
-                                                    ? 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto'
-                                                    : '';
+                                                $eventImageStyle = $item->eventimagestyle;
+                                                if ($eventImageStyle === '' && !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0) {
+                                                    $eventImageStyle = 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto';
+                                                }
                                                 ?>
-                                                <div class="jem-eventimg-teaser jem-module-event-status-image">
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->eventimageorig) {
                                                     $image = $item->eventimageorig;
@@ -202,7 +203,7 @@ $document->addStyleDeclaration($css);
 
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview"<?php echo $eventImageStyle !== '' ? ' style="'.$eventImageStyle.'"' : ''; ?> src="<?php echo $item->eventimage; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview"<?php echo $eventImageStyle !== '' ? ' style="'.$eventImageStyle.'"' : ''; ?> src="<?php echo $item->eventimagedisplay; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
@@ -222,7 +223,7 @@ $document->addStyleDeclaration($css);
                                                     ? 'width:'.(int) $item->venueimagewidth.'px;max-width:100%;height:auto'
                                                     : '';
                                                 ?>
-                                                <div class="jem-eventimg-teaser jem-module-event-status-image">
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image jem-module-event-status-image--inline">
 
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->venueimageorig) {

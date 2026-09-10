@@ -162,6 +162,7 @@
                        description="MOD_JEM_JUBILEE_USER_COLOR_DESC"
                 />
 
+                <field name="event_image_options_start" type="spacer" label="" hr="true" />
                 <field name="showflyer" type="radio"
                        default="1"
                        label="MOD_JEM_JUBILEE_SHOWFLYER"
@@ -171,6 +172,50 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
+                <field name="event_image_source" type="list"
+                       default="intro"
+                       label="MOD_JEM_JUBILEE_EVENT_IMAGE_SOURCE"
+                       description="MOD_JEM_JUBILEE_EVENT_IMAGE_SOURCE_DESC"
+                       class="form-select w-auto"
+                       validate="options"
+                       showon="showflyer:1"
+                >
+                    <option value="intro">MOD_JEM_JUBILEE_EVENT_IMAGE_SOURCE_INTRO</option>
+                    <option value="full">MOD_JEM_JUBILEE_EVENT_IMAGE_SOURCE_FULL</option>
+                </field>
+                <field name="event_image_display" type="list"
+                       default="original_limited"
+                       label="MOD_JEM_JUBILEE_EVENT_IMAGE_DISPLAY"
+                       description="MOD_JEM_JUBILEE_EVENT_IMAGE_DISPLAY_DESC"
+                       class="form-select w-auto"
+                       validate="options"
+                       showon="showflyer:1"
+                >
+                    <option value="thumbnail">MOD_JEM_JUBILEE_EVENT_IMAGE_DISPLAY_THUMBNAIL</option>
+                    <option value="original_limited">MOD_JEM_JUBILEE_EVENT_IMAGE_DISPLAY_ORIGINAL_LIMITED</option>
+                </field>
+                <field name="event_image_max_width" type="number"
+                       default="800"
+                       min="1"
+                       max="4096"
+                       step="1"
+                       filter="integer"
+                       label="MOD_JEM_JUBILEE_EVENT_IMAGE_MAX_WIDTH"
+                       description="MOD_JEM_JUBILEE_EVENT_IMAGE_MAX_WIDTH_DESC"
+                       class="form-control w-auto"
+                       showon="showflyer:1[AND]event_image_display:original_limited"
+                />
+                <field name="event_image_max_height" type="number"
+                       default="800"
+                       min="1"
+                       max="4096"
+                       step="1"
+                       filter="integer"
+                       label="MOD_JEM_JUBILEE_EVENT_IMAGE_MAX_HEIGHT"
+                       description="MOD_JEM_JUBILEE_EVENT_IMAGE_MAX_HEIGHT_DESC"
+                       class="form-control w-auto"
+                       showon="showflyer:1[AND]event_image_display:original_limited"
+                />
                 <field name="flyer_link_type" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_FLYER_LINKS_TO"
@@ -182,6 +227,7 @@
                     <option value="2">MOD_JEM_JUBILEE_FLYER_LINK_EVENT_DETAILS</option>
                     <option value="3">COM_JEM_NO_LINK</option>
                 </field>
+                <field name="event_image_options_end" type="spacer" label="" hr="true" />
 
                 <field name="showdesc" type="radio"
                        default="1"
@@ -339,10 +385,7 @@
                     <option value="0">MOD_JEM_JUBILEE_STATE_MODE_EXACTMATCH</option>
                     <option value="1">MOD_JEM_JUBILEE_STATE_MODE_CONTAINS</option>
                 </field>
-                <field type="spacer" name="module_text_spacer"
-                       label="MOD_JEM_JUBILEE_MODULE_TEXT_BLOCK"
-                       class="badge border px-3 py-2 fs-5 fw-bold text-body"
-                />
+                <field type="spacer" name="module_text_spacer" label="" hr="true" />
                 <field name="showintrotext" type="radio"
                        default="0"
                        label="MOD_JEM_JUBILEE_SHOW_INTROTEXT"

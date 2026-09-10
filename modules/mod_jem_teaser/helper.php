@@ -186,7 +186,7 @@ abstract class ModJemTeaserHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = JemImage::getModuleEventImageData($row, $params, 'thumbnail');
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
 
             #################
@@ -344,12 +344,18 @@ abstract class ModJemTeaserHelper
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';
                 $lists[$i]->eventimageorig = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimagedisplay = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimagestyle = '';
+                $lists[$i]->eventimagecontainerstyle = '';
                 $lists[$i]->eventimagewidth = 0;
                 $lists[$i]->eventimageheight = 0;
                 $lists[$i]->eventimagethumbfallback = false;
             } else {
                 $lists[$i]->eventimage     = Uri::base(true) . '/' . $dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true) . '/' . $dimage['original'];
+                $lists[$i]->eventimagedisplay = Uri::base(true) . '/' . $dimage['display'];
+                $lists[$i]->eventimagestyle = $dimage['display_style'];
+                $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
                 $lists[$i]->eventimagewidth = (int) ($dimage['thumbwidth'] ?? $dimage['width'] ?? 0);
                 $lists[$i]->eventimageheight = (int) ($dimage['thumbheight'] ?? $dimage['height'] ?? 0);
                 $lists[$i]->eventimagethumbfallback = !empty($dimage['thumb_is_original']);

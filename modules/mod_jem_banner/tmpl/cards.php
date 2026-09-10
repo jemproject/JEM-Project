@@ -127,7 +127,7 @@ $wa->addInlineStyle($css);
                 ?>
                 <div class="event-card event_id<?php echo $item->eventid; ?><?php echo $showCategoryBadge ? ' has-event-badge' : ''; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <?php if ($showflyer == 1) : ?>
-                        <div class="event-media<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>">
+                        <div class="event-media<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>"<?php echo $hasEventImage && $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                             <?php if (!empty($item->eventlink)) : ?>
                                 <a class="event-media-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                             <?php else : ?>
@@ -135,7 +135,7 @@ $wa->addInlineStyle($css);
                             <?php endif; ?>
 
                                 <?php if (!empty($item->eventimage)) : ?>
-                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>">
+                                    <img src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->title; ?>">
                                 <?php else : ?>
                                     <span class="event-media-placeholder">
                                         <i class="far fa-image" aria-hidden="true"></i>

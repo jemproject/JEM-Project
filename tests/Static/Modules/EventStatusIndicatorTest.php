@@ -230,7 +230,12 @@ final class EventStatusIndicatorTest extends TestCase
         self::assertStringContainsString("'module_status_ribbon_scale' => '100'", $installer);
         self::assertStringContainsString("max(50, (int) (\$data['module_status_ribbon_scale'] ?? 100))", $model);
         self::assertStringContainsString("'ResizeObserver' in window", $script);
-        self::assertStringContainsString('image.getBoundingClientRect().width', $script);
+        self::assertStringContainsString('var containerRect = container.getBoundingClientRect();', $script);
+        self::assertStringContainsString('var imageRect = image.getBoundingClientRect();', $script);
+        self::assertStringContainsString("setPixels(ribbon, '--jem-module-status-image-left', imageLeft);", $script);
+        self::assertStringContainsString("setPixels(ribbon, '--jem-module-status-image-right', imageRight);", $script);
+        self::assertStringContainsString('--jem-module-status-image-left', $css);
+        self::assertStringContainsString('--jem-module-status-image-right', $css);
         self::assertStringContainsString('jemModuleStatusScale', $script);
         self::assertStringContainsString("' jem-module-event-status-ribbon--' . \$statusClass", $output);
         self::assertStringContainsString("' jem-module-event-status-badge--' . \$statusClass", $output);

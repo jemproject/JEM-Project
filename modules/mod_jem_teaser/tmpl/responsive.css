@@ -31,10 +31,15 @@ body.body-overlayed {
 }
 
 #jemmoduleteaser .jem-row-image-teaser {
+    align-items: flex-start;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-end;
+}
+
+#jemmoduleteaser .jem-row-image-teaser > .jem-description-teaser {
+    flex: 0 0 100%;
 }
 
 #jemmoduleteaser .jem-event-details-teaser {

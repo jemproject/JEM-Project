@@ -117,14 +117,17 @@ if ($params->get('use_modal', 0)) {
                                         <?php if ($item->showimageevent) : ?>
                                             <?php if (strpos($item->eventimage, '/media/com_jem/images/blank.webp') === false) : ?>
                                                 <?php
-                                                $eventImageStyle = !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0
-                                                    ? 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto'
-                                                    : 'height:auto';
+                                                $eventImageStyle = $item->eventimagestyle;
+                                                if ($eventImageStyle === '') {
+                                                    $eventImageStyle = !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0
+                                                        ? 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto'
+                                                        : 'height:auto';
+                                                }
                                                 ?>
-                                                <span class="jem-module-event-status-image jem-module-event-status-image--inline jem-module-event-status-image--float-end">
+                                                <span class="jem-module-event-status-image jem-module-event-status-image--inline jem-module-event-status-image--float-end"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                                 <a href="<?php echo $item->eventimageorig; ?>" class="teaser-flyerimage" rel="<?php echo $modal; ?>" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" title="<?php echo Text::_(
                                                     'COM_JEM_CLICK_TO_ENLARGE'
-                                                ); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') . ': ' . $item->fulltitle; ?>"><img class="float_right image-preview" style="<?php echo $eventImageStyle; ?>" src="<?php echo $item->eventimage; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
+                                                ); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') . ': ' . $item->fulltitle; ?>"><img class="float_right image-preview" style="<?php echo $eventImageStyle; ?>" src="<?php echo $item->eventimagedisplay; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" /></a>
                                                 <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                                 </span>
                                             <?php endif; ?>
