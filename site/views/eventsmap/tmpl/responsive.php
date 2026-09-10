@@ -35,6 +35,12 @@ $filterDate    = $this->filterDate;
 $isDateMode    = $filterDate !== null;
 $currentDate   = $isDateMode ? $filterDate : '';
 $youAreHere    = Text::_('COM_JEM_EVENTS_MAP_YOU_ARE_HERE');
+$encodeMapText = static function ($key) {
+    return json_encode(
+        Text::_($key),
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    );
+};
 $height        = $this->height;
 $centerLat     = (float) $this->centerLat;
 $centerLng     = (float) $this->centerLng;
@@ -552,7 +558,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -577,7 +583,7 @@ foreach ((array) $events as $event) {
 
         function locateUser() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return;
             }
 
@@ -586,7 +592,7 @@ foreach ((array) $events as $event) {
                 return;
             }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
             setTimeout(showPermissionInstructions, 1000);
@@ -632,16 +638,16 @@ foreach ((array) $events as $event) {
                     var errorMessage = '';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATION_ERROR') ?>;
                     }
                     showError(errorMessage);
                     locationRequested = false;
@@ -753,8 +759,8 @@ foreach ((array) $events as $event) {
         L.control
             .fullscreen({
                 position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
-                title: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT") ?>',
+                title: <?= $encodeMapText('COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE') ?>,
+                titleCancel: <?= $encodeMapText('COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT') ?>,
                 content: null,
                 forceSeparateButton: true
             })
@@ -769,7 +775,7 @@ foreach ((array) $events as $event) {
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return false;
             }
             return true;
@@ -780,7 +786,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -817,7 +823,7 @@ foreach ((array) $events as $event) {
                 return;
             }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
 
@@ -875,16 +881,16 @@ foreach ((array) $events as $event) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showError(errorMessage);

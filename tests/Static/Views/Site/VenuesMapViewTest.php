@@ -13,7 +13,7 @@ final class VenuesMapViewTest extends TestCase
         self::assertStringContainsString('class="jem-venuesmap-canvas"', $template);
         self::assertStringContainsString('min-height:300px', $template);
         self::assertStringContainsString("if (typeof L === 'undefined')", $template);
-        self::assertStringContainsString("Text::_('COM_JEM_VENUESMAP_MAP_UNAVAILABLE')", $template);
+        self::assertStringContainsString("\$encodeMapText('COM_JEM_VENUESMAP_MAP_UNAVAILABLE')", $template);
         self::assertStringContainsString('map.invalidateSize();', $template);
         self::assertStringContainsString("typeof L.heatLayer === 'function' && heatPoints.length", $template);
     }

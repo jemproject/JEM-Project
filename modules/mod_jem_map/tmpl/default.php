@@ -50,6 +50,12 @@ $map_id       = 'leafletmap-' . uniqid();
 $isDateMode  = isset($filterDate) && $filterDate !== null;
 $currentDate = $isDateMode ? $filterDate : '';
 $youAreHere  = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$encodeMapText = static function ($key) {
+    return json_encode(
+        Text::_($key),
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    );
+};
 
 $startLat    = (float) $params->get('map_center_lat', '0');
 $startLng    = (float) $params->get('map_center_lng', '0');
@@ -346,7 +352,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return false;
             }
             return true;
@@ -356,7 +362,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -388,7 +394,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             }
 
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
             setTimeout(showPermissionInstructions, 1000);
@@ -435,16 +441,16 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showError(errorMessage);
@@ -550,8 +556,8 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         L.control
             .fullscreen({
                 position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
-                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                title: <?= $encodeMapText('MOD_JEM_MAP_FULLSCREEN_TITLE') ?>,
+                titleCancel: <?= $encodeMapText('MOD_JEM_MAP_FULLSCREEN_EXIT') ?>,
                 content: null,
                 forceSeparateButton: true
             })
@@ -566,7 +572,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return false;
             }
             return true;
@@ -577,7 +583,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -609,7 +615,7 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
             // Show loading state
             var locateBtn = document.getElementById('locate-me-btn');
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
 
@@ -667,16 +673,16 @@ $buildMapActionsHtml = static function ($lat, $lng) use ($showDirectionsLink, $s
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showError(errorMessage);

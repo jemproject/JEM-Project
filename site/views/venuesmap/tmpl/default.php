@@ -23,6 +23,12 @@ JemHelper::loadIconFont();
 
 $map_id = 'leafletmap-' . uniqid();
 $youAreHere = Text::_('MOD_JEM_MAP_YOU_ARE_HERE');
+$encodeMapText = static function ($key) {
+    return json_encode(
+        Text::_($key),
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    );
+};
 $height = $this->height;
 $zoom = (int) $this->zoom;
 $heatMapLayer = (int) $this->heatMapLayer;
@@ -1053,7 +1059,7 @@ foreach (($this->venueslist ?? []) as $venue) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -1078,7 +1084,7 @@ foreach (($this->venueslist ?? []) as $venue) {
 
         function locateUser() {
             if (!navigator.geolocation) {
-                showLocationError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showLocationError(<?= $encodeMapText('MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return;
             }
 
@@ -1088,7 +1094,7 @@ foreach (($this->venueslist ?? []) as $venue) {
             }
 
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
             setTimeout(showPermissionInstructions, 1000);
@@ -1134,16 +1140,16 @@ foreach (($this->venueslist ?? []) as $venue) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showLocationError(errorMessage);
@@ -1234,7 +1240,7 @@ foreach (($this->venueslist ?? []) as $venue) {
         }
         <?php else : ?>
         if (typeof L === 'undefined') {
-            mapElement.innerHTML = '<div class="alert alert-warning"><?= Text::_('COM_JEM_VENUESMAP_MAP_UNAVAILABLE') ?></div>';
+            mapElement.innerHTML = '<div class="alert alert-warning">' + <?= $encodeMapText('COM_JEM_VENUESMAP_MAP_UNAVAILABLE') ?> + '</div>';
             return;
         }
 
@@ -1255,8 +1261,8 @@ foreach (($this->venueslist ?? []) as $venue) {
         if (L.control && typeof L.control.fullscreen === 'function') {
             L.control.fullscreen({
                 position: 'topleft',
-                title: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("MOD_JEM_MAP_FULLSCREEN_EXIT") ?>',
+                title: <?= $encodeMapText('MOD_JEM_MAP_FULLSCREEN_TITLE') ?>,
+                titleCancel: <?= $encodeMapText('MOD_JEM_MAP_FULLSCREEN_EXIT') ?>,
                 content: null,
                 forceSeparateButton: true
             }).addTo(map);
@@ -1271,7 +1277,7 @@ foreach (($this->venueslist ?? []) as $venue) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("MOD_JEM_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -1296,7 +1302,7 @@ foreach (($this->venueslist ?? []) as $venue) {
 
         function locateUser() {
             if (!navigator.geolocation) {
-                showLocationError('<?= Text::_("MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showLocationError(<?= $encodeMapText('MOD_JEM_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return;
             }
 
@@ -1306,7 +1312,7 @@ foreach (($this->venueslist ?? []) as $venue) {
             }
 
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("MOD_JEM_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('MOD_JEM_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
             setTimeout(showPermissionInstructions, 1000);
@@ -1353,16 +1359,16 @@ foreach (($this->venueslist ?? []) as $venue) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("MOD_JEM_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('MOD_JEM_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showLocationError(errorMessage);
