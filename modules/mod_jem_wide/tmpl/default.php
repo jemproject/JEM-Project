@@ -94,7 +94,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                     <?php endif; ?>
 
                     <td class="event-image-cell">
-                        <div class="jem-module-event-status-image">
+                        <div class="jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                         <?php if ($params->get('use_modal')) : ?>
                     <?php if ($item->eventimageorig) {
                         $image = $item->eventimageorig;
@@ -111,7 +111,7 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
 
                         <a href="<?= $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?= $item->eventid ?>"  data-title="<?= Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
                             <?php endif; ?>
-                            <img src="<?= $item->eventimage; ?>" alt="<?= $item->title; ?>" class="image-preview" title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
+                            <img src="<?= $item->eventimagedisplay; ?>" alt="<?= $item->title; ?>" class="image-preview"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                             <?php if ($params->get('use_modal')) : ?>
                         </a>
                     <?php endif; ?>

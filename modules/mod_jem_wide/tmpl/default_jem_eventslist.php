@@ -181,7 +181,7 @@ $document->addStyleDeclaration($css);
         </div>
 
         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent') && (strpos($item->eventimage, 'blank.webp') === false)) : ?>
-            <div class="jem-list-img jem-module-event-status-image" >
+            <div class="jem-list-img jem-module-event-status-image"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                 <?php if ($params->get('use_modal')) : ?>
             <?php if ($item->eventimageorig) {
                 $image = $item->eventimageorig;
@@ -198,7 +198,7 @@ $document->addStyleDeclaration($css);
 
                 <a href="<?php echo $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?php echo $item->eventid ?>"  data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
                     <?php endif; ?>
-                    <img src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
+                    <img src="<?php echo $item->eventimagedisplay; ?>" alt="<?php echo $item->fulltitle; ?>" class="image-preview"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" />
                     <?php if ($params->get('use_modal')) : ?>
                 </a>
             <?php endif; ?>

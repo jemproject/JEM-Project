@@ -779,6 +779,61 @@ class JemImage
     }
 
     /**
+     * Resolve the event image selected by a module and prepare its display data.
+     *
+     * @param   object  $event           Event row containing intro and full image fields.
+     * @param   object  $params          Module parameters registry.
+     * @param   string  $defaultDisplay  Legacy display mode used when the new option is absent.
+     *
+     * @return  array|false  Image data from flyercreator(), enriched for module rendering.
+     */
+    static public function getModuleEventImageData($event, $params, $defaultDisplay = 'thumbnail')
+    {
+        $source = strtolower(trim((string) $params->get('event_image_source', 'intro')));
+        if (!in_array($source, array('intro', 'full'), true)) {
+            $source = 'intro';
+        }
+
+        $image = ($source === 'full' && !empty($event->fullimage))
+            ? (string) $event->fullimage
+            : (string) ($event->datimage ?? '');
+
+        if ($image === '') {
+            return false;
+        }
+
+        $data = self::flyercreator($image, 'event', $event->image_path ?? '');
+        if (!$data) {
+            return false;
+        }
+
+        $configuredDisplay = $params->get('event_image_display', null);
+        $display = strtolower(trim((string) ($configuredDisplay ?? $defaultDisplay)));
+        if (!in_array($display, array('thumbnail', 'original_limited'), true)) {
+            $display = in_array($defaultDisplay, array('thumbnail', 'original_limited'), true)
+                ? $defaultDisplay
+                : 'thumbnail';
+        }
+
+        $data['display_mode'] = $display;
+        $data['display'] = $display === 'original_limited' ? $data['original'] : $data['thumb'];
+        $data['display_style'] = '';
+        $data['display_container_style'] = '';
+
+        // Missing parameters identify upgraded module instances. Keep their legacy styling unchanged.
+        if ($display === 'original_limited' && $configuredDisplay !== null) {
+            $maxWidth = (int) $params->get('event_image_max_width', 800);
+            $maxHeight = (int) $params->get('event_image_max_height', 800);
+            $maxWidth = $maxWidth > 0 ? min($maxWidth, 4096) : 800;
+            $maxHeight = $maxHeight > 0 ? min($maxHeight, 4096) : 800;
+            $data['display_style'] = 'max-width:min(100%,'.$maxWidth.'px);max-height:'.$maxHeight.'px;width:auto;height:auto;';
+            $data['display_container_style'] = 'max-width:min(100%,'.$maxWidth.'px);';
+        }
+
+        return $data;
+    }
+
+    /**
      * Creates image information of an image
      *
      * @param  string $image The image name

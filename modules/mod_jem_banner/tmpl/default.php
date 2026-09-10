@@ -97,11 +97,11 @@ $wa->addInlineStyle($css);
                         <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                             <div>
                                 <div class="banner-jem">
-                                    <div class="jem-module-event-status-image jem-module-event-status-image--inline">
+                                    <div class="jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                         <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                         <?php if ($flyer_link_type != 3) : ?>
                                         <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="banner-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
-                                            <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                            <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->title; ?>" />
                                             <?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
                                         <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                     </div>

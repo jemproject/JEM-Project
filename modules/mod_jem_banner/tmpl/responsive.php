@@ -209,11 +209,11 @@ $wa->addInlineStyle($css);
                             </div>
 
                             <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
-                                <div class="jem-eventimg-banner jem-module-event-status-image jem-module-event-status-image--inline">
+                                <div class="jem-eventimg-banner jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                     <?php $class = ($showcalendar == 1) ? 'image-preview' : 'image-preview2'; ?>
                                     <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" class="flyermodal" rel="<?php echo $modal;?>"
                                        title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?> " data-title="<?php echo $item->title; ?>">
-                                        <img class="<?php echo $class; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                        <img class="<?php echo $class; ?>" src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->title; ?>" />
                                     </a>
                                     <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                 </div>

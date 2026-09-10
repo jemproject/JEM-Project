@@ -36,14 +36,14 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                 $hasEventImage = !empty($item->eventimageorig);
                 ?>
                 <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>">
-                    <div class="jem-banner-card-image<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>">
+                    <div class="jem-banner-card-image<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>"<?php echo $hasEventImage && $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                         <?php if (!empty($item->eventlink)) : ?>
                             <a class="jem-banner-card-image-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                         <?php else : ?>
                             <div class="jem-banner-card-image-link">
                         <?php endif; ?>
                                 <?php if (!empty($item->eventimageorig)) : ?>
-                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->fulltitle; ?>">
+                                    <img src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->fulltitle; ?>">
                                 <?php else : ?>
                                     <span class="jem-banner-card-image-placeholder">
                                         <i class="far fa-image" aria-hidden="true"></i>

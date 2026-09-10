@@ -42,10 +42,17 @@
             return;
         }
 
-        var imageWidth = image.getBoundingClientRect().width;
+        var containerRect = container.getBoundingClientRect();
+        var imageRect = image.getBoundingClientRect();
+        var imageWidth = imageRect.width;
         if (!Number.isFinite(imageWidth) || imageWidth <= 0) {
             return;
         }
+
+        var imageLeft = Math.max(0, imageRect.left - containerRect.left);
+        var imageRight = Math.max(0, containerRect.right - imageRect.right);
+        setPixels(ribbon, '--jem-module-status-image-left', imageLeft);
+        setPixels(ribbon, '--jem-module-status-image-right', imageRight);
 
         var configuredScaleValue = parseInt(ribbon.dataset.jemModuleStatusScale || '100', 10);
         var baseFontSizeValue = parseFloat(ribbon.dataset.jemModuleStatusBaseFontSize || '0.75');

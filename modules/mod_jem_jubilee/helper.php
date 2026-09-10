@@ -222,7 +222,7 @@ abstract class ModJemJubileeHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event', $row->image_path ?? '') : null;
+            $dimage = JemImage::getModuleEventImageData($row, $params, 'original_limited');
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue', $row->venue_image_path ?? '') : null;
 
             #################
@@ -287,9 +287,15 @@ abstract class ModJemJubileeHelper
             if ($dimage == null) {
                 $lists[$i]->eventimage     = '';
                 $lists[$i]->eventimageorig = '';
+                $lists[$i]->eventimagedisplay = '';
+                $lists[$i]->eventimagestyle = '';
+                $lists[$i]->eventimagecontainerstyle = '';
             } else {
                 $lists[$i]->eventimage     = $uri->base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = $uri->base(true).'/'.$dimage['original'];
+                $lists[$i]->eventimagedisplay = $uri->base(true).'/'.$dimage['display'];
+                $lists[$i]->eventimagestyle = $dimage['display_style'];
+                $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
             }
 
             if ($limage == null) {
