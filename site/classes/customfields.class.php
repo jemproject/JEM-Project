@@ -832,13 +832,13 @@ class JemCustomFields
         $app = Factory::getApplication();
         $isAdmin = method_exists($app, 'isClient') ? $app->isClient('administrator') : $app->isAdmin();
 
-        $adminComponentIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
-        $adminComponentPlainIni = JPATH_ADMINISTRATOR . '/components/com_jem/language/' . $language . '/com_jem.ini';
-        $siteComponentIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/' . $language . '.com_jem.ini';
-        $siteComponentPlainIni = JPATH_SITE . '/components/com_jem/language/' . $language . '/com_jem.ini';
+        $adminIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/com_jem.ini';
+        $adminTaggedIni = JPATH_ADMINISTRATOR . '/language/' . $language . '/' . $language . '.com_jem.ini';
+        $siteIni = JPATH_SITE . '/language/' . $language . '/com_jem.ini';
+        $siteTaggedIni = JPATH_SITE . '/language/' . $language . '/' . $language . '.com_jem.ini';
         $files = $isAdmin
-            ? array($adminComponentIni, $adminComponentPlainIni, $siteComponentIni, $siteComponentPlainIni)
-            : array($siteComponentIni, $siteComponentPlainIni, $adminComponentIni, $adminComponentPlainIni);
+            ? array($adminIni, $adminTaggedIni, $siteIni, $siteTaggedIni)
+            : array($siteIni, $siteTaggedIni, $adminIni, $adminTaggedIni);
 
         foreach ($files as $file) {
             $strings = self::loadLegacyLanguageFile($file);

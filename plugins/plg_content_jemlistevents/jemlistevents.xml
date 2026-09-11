@@ -13,7 +13,6 @@
     <files>
         <filename plugin="jemlistevents">jemlistevents.php</filename>
         <filename>index.html</filename>
-        <folder>language</folder>
     </files>
     <media destination="plg_content_jemlistevents" folder="media">
         <folder>css</folder>

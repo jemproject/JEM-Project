@@ -73,7 +73,7 @@ class PlgContentJemembed extends CMSPlugin
     {
         parent::__construct($subject, $config);
         $this->loadLanguage();
-        $this->loadLanguage('com_jem', JPATH_ADMINISTRATOR.'/components/com_jem');
+        JemHelper::loadComponentLanguage();
     }
 
     /**

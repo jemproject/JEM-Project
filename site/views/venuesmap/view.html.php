@@ -44,7 +44,7 @@ class JemViewVenuesMap extends JemView
 
         // initialize variables
         $app         = Factory::getApplication();
-        $app->getLanguage()->load('mod_jem_map', JPATH_SITE . '/modules/mod_jem_map');
+        JemHelper::loadExtensionLanguage('mod_jem_map', JPATH_SITE, JPATH_SITE . '/modules/mod_jem_map');
         $document    = $app->getDocument();
         $wa          = $document->getWebAssetManager();
         $jemsettings = JemHelper::config();
