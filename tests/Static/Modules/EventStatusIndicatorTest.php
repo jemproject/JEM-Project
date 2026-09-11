@@ -239,6 +239,8 @@ final class EventStatusIndicatorTest extends TestCase
         self::assertStringContainsString('jemModuleStatusScale', $script);
         self::assertStringContainsString("' jem-module-event-status-ribbon--' . \$statusClass", $output);
         self::assertStringContainsString("' jem-module-event-status-badge--' . \$statusClass", $output);
-        self::assertStringContainsString('max(50, (int) ($settings->module_status_ribbon_scale ?? 100))', $output);
+        self::assertStringContainsString('static public function moduleStatusRibbonScale($params, $settings = null)', $output);
+        self::assertStringContainsString("get('status_ribbon_scale', 60)", $output);
+        self::assertStringContainsString('$event->module_status_ribbon_scale ?? $settings->module_status_ribbon_scale ?? 100', $output);
     }
 }

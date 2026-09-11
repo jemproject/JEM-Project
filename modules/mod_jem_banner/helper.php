@@ -211,6 +211,8 @@ abstract class ModJemBannerHelper
             array_splice($indices, $count);
         }
 
+        $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
+
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -255,6 +257,7 @@ abstract class ModJemBannerHelper
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->event_status = $row->event_status ?? 'scheduled';
             $lists[$i]->module_event_status = $row->module_event_status ?? null;
+            $lists[$i]->module_status_ribbon_scale = $moduleStatusRibbonScale;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');

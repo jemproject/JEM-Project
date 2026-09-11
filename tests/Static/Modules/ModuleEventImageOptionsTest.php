@@ -39,10 +39,10 @@ final class ModuleEventImageOptionsTest extends TestCase
         }
 
         $imageFields = array(
-            'mod_jem_teaser' => array('showimageevent', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'showimagevenue', 'use_modal'),
-            'mod_jem_wide' => array('event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'use_modal'),
-            'mod_jem_banner' => array('imageratio', 'showflyer', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'flyer_link_type'),
-            'mod_jem_jubilee' => array('showflyer', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'flyer_link_type'),
+            'mod_jem_teaser' => array('showimageevent', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'status_ribbon_scale', 'showimagevenue', 'use_modal'),
+            'mod_jem_wide' => array('event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'status_ribbon_scale', 'use_modal'),
+            'mod_jem_banner' => array('imageratio', 'showflyer', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'status_ribbon_scale', 'flyer_link_type'),
+            'mod_jem_jubilee' => array('showflyer', 'event_image_source', 'event_image_display', 'event_image_max_width', 'event_image_max_height', 'status_ribbon_scale', 'flyer_link_type'),
         );
         $fieldOrder = array_merge(
             array('event_image_options_start'),
@@ -71,11 +71,25 @@ final class ModuleEventImageOptionsTest extends TestCase
             );
         }
 
+        self::assertSame('jemribbonscale', $this->fieldAttribute($xml, 'status_ribbon_scale', 'type'));
+        self::assertSame('60', $this->fieldAttribute($xml, 'status_ribbon_scale', 'default'));
+        self::assertSame('50', $this->fieldAttribute($xml, 'status_ribbon_scale', 'min'));
+        self::assertSame('200', $this->fieldAttribute($xml, 'status_ribbon_scale', 'max'));
+        self::assertStringContainsString(
+            'event_image_display:original_limited',
+            $this->fieldAttribute($xml, 'status_ribbon_scale', 'showon')
+        );
+        self::assertStringContainsString(
+            'show_status_indicators:1',
+            $this->fieldAttribute($xml, 'status_ribbon_scale', 'showon')
+        );
+
         $language = $this->read('modules/' . $module . '/language/en-GB/' . $module . '.ini');
         $prefix = strtoupper($module) . '_EVENT_IMAGE_';
         foreach (array('SOURCE', 'DISPLAY', 'MAX_WIDTH', 'MAX_HEIGHT') as $suffix) {
             self::assertStringContainsString($prefix . $suffix . '="', $language);
         }
+        self::assertStringContainsString(strtoupper($module) . '_STATUS_RIBBON_SCALE="', $language);
     }
 
     public function testBannerReplacesTheLegacyWidthFieldWithoutLosingRuntimeCompatibility(): void
@@ -122,6 +136,17 @@ final class ModuleEventImageOptionsTest extends TestCase
         self::assertStringContainsString('eventimagedisplay', $helper);
         self::assertStringContainsString('eventimagestyle', $helper);
         self::assertStringContainsString('eventimagecontainerstyle', $helper);
+        self::assertStringContainsString('JemOutput::moduleStatusRibbonScale($params)', $helper);
+        self::assertStringContainsString('module_status_ribbon_scale', $helper);
+    }
+
+    public function testRibbonScaleFieldHonoursTheGlobalMasterSwitch(): void
+    {
+        $field = $this->read('admin/models/fields/jemribbonscale.php');
+
+        self::assertStringContainsString('extends NumberField', $field);
+        self::assertStringContainsString('$this->hidden = !$this->statusRibbonsEnabled();', $field);
+        self::assertStringContainsString('module_status_ribbons', $field);
     }
 
     public function testEveryBundledEventImageLayoutUsesTheSelectedDisplayImage(): void

@@ -119,6 +119,7 @@ abstract class ModJemWideHelper
             JemOutput::prepareModuleEventStatuses($events);
         }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
+        $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
 
         # Loop through the result rows and prepare data
         $i     = -1;
@@ -147,6 +148,7 @@ abstract class ModJemWideHelper
             $lists[$i]->eventid     = $row->id;
             $lists[$i]->event_status = $row->event_status ?? 'scheduled';
             $lists[$i]->module_event_status = $row->module_event_status ?? null;
+            $lists[$i]->module_status_ribbon_scale = $moduleStatusRibbonScale;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             list($lists[$i]->date,
