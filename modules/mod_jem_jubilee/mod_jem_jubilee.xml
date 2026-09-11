@@ -215,6 +215,17 @@
                        class="form-control w-auto"
                        showon="showflyer:1[AND]event_image_display:original_limited"
                 />
+                <field name="status_ribbon_scale" type="jemribbonscale"
+                       default="60"
+                       min="50"
+                       max="200"
+                       step="1"
+                       filter="integer"
+                       label="MOD_JEM_JUBILEE_STATUS_RIBBON_SCALE"
+                       description="MOD_JEM_JUBILEE_STATUS_RIBBON_SCALE_DESC"
+                       class="form-control w-auto"
+                       showon="showflyer:1[AND]event_image_display:original_limited[AND]show_status_indicators:1"
+                />
                 <field name="flyer_link_type" type="list"
                        default="0"
                        label="MOD_JEM_JUBILEE_FLYER_LINKS_TO"

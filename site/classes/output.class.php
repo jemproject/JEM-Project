@@ -1746,6 +1746,33 @@ static public function lightbox() {
     }
 
     /**
+     * Resolve the ribbon scale for one image-capable module instance.
+     *
+     * Thumbnail images use the component-wide scale. Original Limited images
+     * use the module override, whose compatible default is 60 percent.
+     *
+     * @param object      $params   Module parameters
+     * @param object|null $settings JEM settings, mainly for tests
+     *
+     * @return int
+     */
+    static public function moduleStatusRibbonScale($params, $settings = null)
+    {
+        $settings = $settings ?: JemHelper::config();
+        $globalScale = min(200, max(50, (int) ($settings->module_status_ribbon_scale ?? 100)));
+
+        if (!is_object($params)
+            || !method_exists($params, 'get')
+            || strtolower(trim((string) $params->get('event_image_display', 'thumbnail'))) !== 'original_limited') {
+            return $globalScale;
+        }
+
+        $moduleScale = filter_var($params->get('status_ribbon_scale', 60), FILTER_VALIDATE_INT);
+
+        return min(200, max(50, $moduleScale === false ? 60 : $moduleScale));
+    }
+
+    /**
      * Render a module status as an image ribbon.
      *
      * @param object $event Prepared module event item
@@ -1936,7 +1963,10 @@ static public function lightbox() {
             false
         );
         $sideMargin = min(200, max(0, (int) ($settings->module_status_ribbon_side_margin ?? 0)));
-        $ribbonScale = min(200, max(50, (int) ($settings->module_status_ribbon_scale ?? 100)));
+        $ribbonScale = min(
+            200,
+            max(50, (int) ($event->module_status_ribbon_scale ?? $settings->module_status_ribbon_scale ?? 100))
+        );
         $label = Text::_($status['label']);
         $labelLength = min(40, max(1, mb_strlen($label)));
         $fontSize = max(0.58, min(0.85, 1.06 - (max(0, $labelLength - 8) * 0.022)));
