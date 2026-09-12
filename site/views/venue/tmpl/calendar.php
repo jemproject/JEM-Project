@@ -193,6 +193,7 @@ use Joomla\CMS\Factory;
 
         //initialize variables
         $multicatname = '';
+        $color = '';
         $colorpic = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
