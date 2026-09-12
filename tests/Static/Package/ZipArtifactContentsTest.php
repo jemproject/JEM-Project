@@ -339,9 +339,11 @@ final class ZipArtifactContentsTest extends TestCase
 
         $version = (string) $manifest->version;
 
+        $expectedFilename = 'pkg_jem_v' . $version . '.zip';
+
         return array_values(array_filter(
             $this->packageZipFiles(),
-            static fn (string $path): bool => str_starts_with(basename($path), 'pkg_jem_v' . $version)
+            static fn (string $path): bool => basename($path) === $expectedFilename
         ));
     }
 
@@ -373,7 +375,7 @@ final class ZipArtifactContentsTest extends TestCase
                         continue;
                     }
 
-                    if (str_starts_with($relative, '_old builds/') || str_starts_with($relative, '_old packages/')) {
+                    if (preg_match('#(^|/)_?old(?:[ _-](?:builds|packages))?/#i', $relative) === 1) {
                         continue;
                     }
 

@@ -235,6 +235,23 @@ final class EditViewContractsTest extends TestCase
         }
     }
 
+    public function testVenueGeodataInitialisationIgnoresOptionalMissingFields(): void
+    {
+        foreach (array(
+            JEM_TEST_ROOT . '/admin/views/venue/tmpl/edit.php',
+            JEM_TEST_ROOT . '/site/views/editvenue/tmpl/edit.php',
+            JEM_TEST_ROOT . '/site/views/editvenue/tmpl/responsive/edit.php',
+        ) as $path) {
+            $template = $this->read($path);
+
+            self::assertStringContainsString('setGeoDataAttributes();', $template, $path);
+            self::assertStringContainsString('function setGeoDataAttributes()', $template, $path);
+            self::assertStringContainsString('var field = document.getElementById(id);', $template, $path);
+            self::assertStringContainsString("if (field) {\n", str_replace("\r\n", "\n", $template), $path);
+            self::assertStringNotContainsString('function setAttribute()', $template, $path);
+        }
+    }
+
     public function testFrontendEditToolbarsKeepTenPixelSeparationFromTabs(): void
     {
         foreach (array(

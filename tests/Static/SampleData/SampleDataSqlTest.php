@@ -127,6 +127,34 @@ final class SampleDataSqlTest extends TestCase
         );
     }
 
+    public function testRecurringSampleOccurrencesReferenceTheBalkanBeatzRoot(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertStringContainsString(
+            "UPDATE `#__jem_events` SET `recurrence_first_id` = 3 WHERE `id` IN (8, 9, 10)",
+            $sql
+        );
+    }
+
+    public function testSampleDataArchiveUsesTheCurrentSql(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect sampledata.zip.');
+        }
+
+        $zip = new ZipArchive();
+        self::assertTrue($zip->open(JEM_TEST_ROOT . '/admin/assets/sampledata.zip'));
+        $archivedSql = (string) $zip->getFromName('sampledata.sql');
+        $zip->close();
+        $normalise = static fn (string $value): string => str_replace("\r\n", "\n", $value);
+
+        self::assertSame(
+            $normalise((string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql')),
+            $normalise($archivedSql)
+        );
+    }
+
     public function testSampleDataArchiveContainsJem5ImageAndAttachmentAssets(): void
     {
         if (!class_exists(ZipArchive::class)) {

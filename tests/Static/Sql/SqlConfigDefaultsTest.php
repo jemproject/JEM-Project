@@ -36,6 +36,34 @@ final class SqlConfigDefaultsTest extends TestCase
         self::assertStringNotContainsString('JSON_SET(', $sql);
     }
 
+    public function testDatabaseAndImageUninstallCleanupAreIndependentOptInSettings(): void
+    {
+        $settings = $this->read(JEM_TEST_ROOT . '/admin/models/forms/settings.xml');
+        $installer = $this->read(JEM_TEST_ROOT . '/script.php');
+
+        self::assertStringContainsString('name="global_cleanup_db_on_uninstall"', $settings);
+        self::assertStringContainsString('name="global_cleanup_images_on_uninstall"', $settings);
+        self::assertStringContainsString('"global_cleanup_db_on_uninstall" => "0"', $installer);
+        self::assertStringContainsString('"global_cleanup_images_on_uninstall" => "0"', $installer);
+        self::assertStringContainsString("get('global_cleanup_db_on_uninstall', 0)", $installer);
+        self::assertStringContainsString("get('global_cleanup_images_on_uninstall', 0)", $installer);
+        self::assertStringContainsString("Path::clean(JPATH_SITE . '/images/jem')", $installer);
+    }
+
+    public function testLegacyRecurrenceRootRepairRequiresOneUniqueCompatibleRoot(): void
+    {
+        $installer = $this->read(JEM_TEST_ROOT . '/script.php');
+
+        self::assertStringContainsString('$this->repairLegacyRecurrenceRoots();', $installer);
+        self::assertStringContainsString('private function repairLegacyRecurrenceRoots()', $installer);
+        self::assertStringContainsString("if (count(\$candidateIds) !== 1)", $installer);
+        self::assertStringContainsString("'root.recurrence_first_id'", $installer);
+        self::assertStringContainsString("'root.recurrence_type'", $installer);
+        self::assertStringContainsString("'root.recurrence_number'", $installer);
+        self::assertStringContainsString("'root.title'", $installer);
+        self::assertStringContainsString("'root.alias'", $installer);
+    }
+
     public function testInstallSqlContainsAttachmentConfigDefaults(): void
     {
         $sql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
