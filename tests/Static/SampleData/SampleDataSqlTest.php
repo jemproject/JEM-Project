@@ -127,6 +127,16 @@ final class SampleDataSqlTest extends TestCase
         );
     }
 
+    public function testRecurringSampleOccurrencesReferenceTheBalkanBeatzRoot(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertStringContainsString(
+            "UPDATE `#__jem_events` SET `recurrence_first_id` = 3 WHERE `id` IN (8, 9, 10)",
+            $sql
+        );
+    }
+
     public function testSampleDataArchiveContainsJem5ImageAndAttachmentAssets(): void
     {
         if (!class_exists(ZipArchive::class)) {
