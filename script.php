@@ -177,7 +177,8 @@ class com_jemInstallerScript
             "global_show_mapserv" => "0",
             "global_tld" => "",
             "global_lg" => "",
-            "global_cleanup_db_on_uninstall" => "0"
+            "global_cleanup_db_on_uninstall" => "0",
+            "global_cleanup_images_on_uninstall" => "0"
         );
 
         $this->setGlobalAttribs($param_array);
@@ -199,18 +200,23 @@ class com_jemInstallerScript
 
         $this->useJemConfig = true; 
         $globalParams = $this->getGlobalParams();
-        $cleanup = $globalParams->get('global_cleanup_db_on_uninstall', 0);
-        if (!empty($cleanup)) {
-            // user decided to fully remove JEM - so do it!
+        $cleanupDatabase = $globalParams->get('global_cleanup_db_on_uninstall', 0);
+        $cleanupImages = $globalParams->get('global_cleanup_images_on_uninstall', 0);
+
+        if (!empty($cleanupDatabase)) {
+            // The administrator explicitly requested removal of JEM data.
             $this->removeJemMenuItems();
             $this->removeAllJemTables();
-            $imageDir = JPATH_SITE . '/images/jem';
-            if (is_dir($imageDir)) {
-                Folder::delete($imageDir);
-            }
         } else {
             // prevent dead links on frontend
             $this->disableJemMenuItems();
+        }
+
+        if (!empty($cleanupImages)) {
+            $imageDir = Path::clean(JPATH_SITE . '/images/jem');
+            if (is_dir($imageDir)) {
+                Folder::delete($imageDir);
+            }
         }
     }
 
@@ -320,6 +326,7 @@ class com_jemInstallerScript
             $this->repairGeneratedTypeMenuItems();
             $this->repair501SchemaFallback();
             $this->repairModuleStatusSettings();
+            $this->repairLegacyRecurrenceRoots();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
         }
@@ -388,13 +395,85 @@ class com_jemInstallerScript
     }
 
     /**
-     * Initialise the granular backend ACL without removing existing rules.
+     * Repair legacy recurrence instances which point to an unrelated event.
      *
-     * Updates preserve JEM's historical behaviour by granting the new backend
-     * actions to groups which could previously manage the component. Fresh
-     * installations map the matching Joomla core action instead. Existing
-     * explicit allow or deny rules for a new action are never overwritten, so
-     * the operation is safe to repeat after an interrupted installation.
+     * A root is changed only when one unique event matches the complete
+     * recurrence definition and stable event identity. Ambiguous or genuinely
+     * orphaned data is left untouched for an administrator to review.
+     *
+     * @return void
+     */
+    private function repairLegacyRecurrenceRoots()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_events'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                'child.id', 'child.locid', 'child.title', 'child.alias', 'child.created_by', 'child.dates',
+                'child.recurrence_number', 'child.recurrence_type', 'child.recurrence_limit_date',
+                'child.recurrence_byday', 'child.recurrence_bylastday',
+            ))
+            ->from($db->quoteName('#__jem_events', 'child'))
+            ->join(
+                'LEFT',
+                $db->quoteName('#__jem_events', 'parent')
+                . ' ON ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('child.recurrence_first_id')
+            )
+            ->where($db->quoteName('child.recurrence_first_id') . ' > 0')
+            ->where(
+                '(' . $db->quoteName('parent.id') . ' IS NULL'
+                . ' OR ' . $db->quoteName('parent.recurrence_first_id') . ' <> 0'
+                . ' OR ' . $db->quoteName('parent.recurrence_type') . ' = 0'
+                . ' OR ' . $db->quoteName('parent.recurrence_number') . ' = 0)'
+            );
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $child) {
+            $candidateQuery = $db->getQuery(true)
+                ->select($db->quoteName('root.id'))
+                ->from($db->quoteName('#__jem_events', 'root'))
+                ->where($db->quoteName('root.recurrence_first_id') . ' = 0')
+                ->where($db->quoteName('root.recurrence_type') . ' = ' . (int) $child->recurrence_type)
+                ->where($db->quoteName('root.recurrence_number') . ' = ' . (int) $child->recurrence_number)
+                ->where($db->quoteName('root.locid') . ' = ' . (int) $child->locid)
+                ->where($db->quoteName('root.created_by') . ' = ' . (int) $child->created_by)
+                ->where($db->quoteName('root.title') . ' = ' . $db->quote((string) $child->title))
+                ->where($db->quoteName('root.alias') . ' = ' . $db->quote((string) $child->alias))
+                ->where($db->quoteName('root.recurrence_byday') . ' = ' . $db->quote((string) $child->recurrence_byday))
+                ->where($db->quoteName('root.recurrence_bylastday') . ' = ' . $db->quote((string) $child->recurrence_bylastday))
+                ->where($db->quoteName('root.dates') . ' <= ' . $db->quote((string) $child->dates));
+
+            if ($child->recurrence_limit_date === null) {
+                $candidateQuery->where($db->quoteName('root.recurrence_limit_date') . ' IS NULL');
+            } else {
+                $candidateQuery->where(
+                    $db->quoteName('root.recurrence_limit_date') . ' = '
+                    . $db->quote((string) $child->recurrence_limit_date)
+                );
+            }
+
+            $db->setQuery($candidateQuery);
+            $candidateIds = array_map('intval', (array) $db->loadColumn());
+
+            if (count($candidateIds) !== 1) {
+                continue;
+            }
+
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('recurrence_first_id') . ' = ' . $candidateIds[0])
+                ->where($db->quoteName('id') . ' = ' . (int) $child->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Initialise the granular backend ACL without removing existing rules.
      *
      * @param   boolean  $preserveLegacyManage  True for an update.
      *

@@ -2315,6 +2315,16 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="global_cleanup_images_on_uninstall" type="radio"
+                label="COM_JEM_SETTINGS_FIELD_CLEANUP_IMAGES_ON_UNINSTALL"
+                description="COM_JEM_SETTINGS_FIELD_CLEANUP_IMAGES_ON_UNINSTALL_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default="0"
+                required="false"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
         </fieldset>
 
         <fieldset name="venues"
