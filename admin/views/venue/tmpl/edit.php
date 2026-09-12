@@ -855,21 +855,30 @@ Text::script('JCANCEL');
     });
 
     window.onload = function() {
-        setAttribute();
+        setGeoDataAttributes();
         test();
     }
 
-    function setAttribute(){
-        document.getElementById("tmp_form_postalCode").setAttribute("geo-data", "postal_code");
-        document.getElementById("tmp_form_city").setAttribute("geo-data", "locality");
-        document.getElementById("tmp_form_state").setAttribute("geo-data", "administrative_area_level_1");
-        document.getElementById("tmp_form_street").setAttribute("geo-data", "street_address");
-        document.getElementById("tmp_form_route").setAttribute("geo-data", "route");
-        document.getElementById("tmp_form_streetnumber").setAttribute("geo-data", "street_number");
-        document.getElementById("tmp_form_country").setAttribute("geo-data", "country_short");
-        document.getElementById("tmp_form_latitude").setAttribute("geo-data", "lat");
-        document.getElementById("tmp_form_longitude").setAttribute("geo-data", "lng");
-        document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");
+    function setGeoDataAttributes(){
+        var geoFields = {
+            tmp_form_postalCode: "postal_code",
+            tmp_form_city: "locality",
+            tmp_form_state: "administrative_area_level_1",
+            tmp_form_street: "street_address",
+            tmp_form_route: "route",
+            tmp_form_streetnumber: "street_number",
+            tmp_form_country: "country_short",
+            tmp_form_latitude: "lat",
+            tmp_form_longitude: "lng",
+            tmp_form_venue: "name"
+        };
+
+        Object.keys(geoFields).forEach(function (id) {
+            var field = document.getElementById(id);
+            if (field) {
+                field.setAttribute("geo-data", geoFields[id]);
+            }
+        });
     }
 
     function meta(){

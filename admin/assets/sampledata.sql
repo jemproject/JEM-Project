@@ -116,6 +116,7 @@ UPDATE `#__jem_events` SET `custom1` = 'Family', `custom2` = 'https://demo.jooml
 UPDATE `#__jem_venues` SET `capacity` = 250, `custom1` = 'Mon-Sat 18:00-02:00', `custom2` = 'https://www.douala.de', `custom3` = 'Indoor', `custom4` = 'Street parking', `custom5` = 'Main floor is step-free.', `custom6` = 'Tram stop within five minutes.', `custom7` = 'Main hall', `custom8` = 'Sound system', `custom9` = 'Front desk', `custom10` = 'No smoking inside.' WHERE `id` = 1;
 UPDATE `#__jem_venues` SET `capacity` = 120, `custom1` = 'Mon-Sat 10:00-20:00; Sun 10:00-19:00', `custom2` = 'https://www.museodelprado.es/', `custom3` = 'Indoor', `custom4` = 'Paid parking', `custom5` = 'Accessible entrance available.', `custom6` = 'Metro and bus nearby.', `custom7` = 'Lecture room', `custom8` = 'Projector', `custom9` = 'Visitor desk', `custom10` = 'Large bags must be checked.' WHERE `id` = 4;
 UPDATE `#__jem_venues` SET `capacity` = 80, `custom1` = 'Daily 09:00-18:00', `custom2` = 'https://www.louvre.fr/', `custom3` = 'Indoor', `custom4` = 'None', `custom5` = 'Lift access depends on route.', `custom6` = 'Use nearby metro stations.', `custom7` = 'Gallery wing', `custom8` = 'Wifi', `custom9` = 'Group entrance', `custom10` = 'Follow museum group rules.' WHERE `id` = 5;
+UPDATE `#__jem_events` SET `recurrence_first_id` = 3 WHERE `id` IN (8, 9, 10) AND `title` = 'Balkan Beatz' AND `recurrence_first_id` = 2;
 
 -- --------------------------------------------------------
 
