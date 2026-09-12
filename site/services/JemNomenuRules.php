@@ -220,6 +220,16 @@ class JemNomenuRules implements RulesInterface
                 }
                 break;
 
+            case 'registration':
+                {
+                    if ($count == 2) {
+                        $id = explode(':', $segments[1]);
+                        $vars['id'] = $id[0];
+                    }
+                    $vars['view'] = 'registration';
+                }
+                break;
+
             case 'attendees':
                 {
                     if(isset($segments[1])){

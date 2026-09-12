@@ -65,6 +65,7 @@ class JemRouter extends RouterView
             'myevents',
             'mytimeline',
             'myvenues',
+            'registration',
             'search',
             'specialday',
             'venue',
