@@ -26,6 +26,21 @@ function required(options, name) {
     return options[name];
 }
 
+function parseExpectedHttp(value = '') {
+    const expected = new Map();
+
+    for (const item of value.split(',').map((entry) => entry.trim()).filter(Boolean)) {
+        const match = item.match(/^(BE|FE):([a-z0-9_]+):([1-5][0-9]{2})$/i);
+        if (!match) {
+            throw new Error(`Invalid --expected-http entry: ${item}`);
+        }
+
+        expected.set(`${match[1].toUpperCase()}:${match[2].toLowerCase()}`, Number.parseInt(match[3], 10));
+    }
+
+    return expected;
+}
+
 function delay(milliseconds) {
     return new Promise((resolvePromise) => setTimeout(resolvePromise, milliseconds));
 }
@@ -156,12 +171,14 @@ function routeForView(area, view, ids) {
     const typeId = ids.types ?? 0;
     const specialdayId = ids.specialdays ?? 0;
     const registrationId = ids.registrations ?? 0;
+    const registrationEventId = ids.registration_events ?? eventId;
+    const registrationHistoryId = ids.registration_history ?? 0;
     const attachmentId = ids.attachments ?? 0;
 
     if (area === 'BE') {
         const parameters = {
             attachment: `view=attachment&layout=edit&id=${attachmentId}`,
-            attendee: `view=attendee&layout=edit&id=${registrationId}&eventid=${eventId}`,
+            attendee: `view=attendee&layout=edit&id=${registrationId}&eventid=${registrationEventId}`,
             attendees: `view=attendees&eventid=${eventId}`,
             category: `view=category&layout=edit&id=${categoryId}`,
             categoryelement: 'view=categoryelement&tmpl=component&object=jform_categories',
@@ -170,8 +187,13 @@ function routeForView(area, view, ids) {
             eventelement: 'view=eventelement&tmpl=component&object=jform_eventid',
             group: `view=group&layout=edit&id=${groupId}`,
             imagehandler: 'view=imagehandler&task=selecteventimg&tmpl=component&type=events',
+            notificationcontent: 'view=notificationcontent&section=footer&language=en-GB',
+            notificationtemplate: 'view=notificationtemplate&template_id=plg_jem_mailer.user_reg_body_9&language=en-GB',
+            registrationhistoryentry: `view=registrationhistoryentry&id=${registrationHistoryId}`,
+            reminder: 'view=reminder&layout=edit&id=0',
             source: 'view=source&layout=edit&id=0',
             specialday: `view=specialday&layout=edit&id=${specialdayId}`,
+            taxrate: 'view=taxrate&layout=edit&id=0',
             type: `view=type&layout=edit&id=${typeId}`,
             userelement: 'view=userelement&tmpl=component&object=jform_user',
             venue: `view=venue&layout=edit&id=${venueId}`,
@@ -186,10 +208,12 @@ function routeForView(area, view, ids) {
         attendees: `view=attendees&id=${eventId}&eventid=${eventId}`,
         category: `view=category&id=${categoryId}`,
         day: 'view=day&year=2026&month=09&day=14',
+        editcategory: 'view=editcategory&layout=edit&id=0&a_id=0',
         editevent: 'view=editevent&layout=edit&id=0&e_id=0',
         editvenue: 'view=editvenue&layout=edit&id=0&v_id=0',
         event: `view=event&id=${eventId}`,
         mailto: `view=mailto&tmpl=component&id=${eventId}`,
+        registration: `view=registration&id=${registrationId}`,
         specialday: `view=specialday&id=${specialdayId}`,
         typeevents: `view=typeevents&id=${typeId}`,
         typevenues: `view=typevenues&id=${typeId}`,
@@ -211,12 +235,18 @@ async function navigate(client, url, state) {
     await loaded;
     await delay(700);
 
-    return evaluate(client, `(() => ({
-        url: location.href,
-        title: document.title,
-        text: (document.body?.innerText || '').slice(0, 250000),
-        html: (document.documentElement?.outerHTML || '').slice(0, 500000)
-    }))()`);
+    return evaluate(client, `(() => {
+        const auditBody = document.body?.cloneNode(true);
+        auditBody?.querySelectorAll('code, pre, script, style, textarea').forEach((element) => element.remove());
+
+        return {
+            url: location.href,
+            title: document.title,
+            text: (document.body?.innerText || '').slice(0, 250000),
+            languageText: (auditBody?.innerText || '').slice(0, 250000),
+            html: (document.documentElement?.outerHTML || '').slice(0, 500000)
+        };
+    })()`);
 }
 
 async function waitForStableLocation(client, timeout = 10000) {
@@ -343,7 +373,7 @@ async function installPackage(client, baseUrl, packagePath, state) {
 }
 
 function analysePage(page, state, administrator) {
-    const languageKeys = unique(page.text.match(/\b(?:COM|MOD|PLG)_JEM_[A-Z0-9_]+\b/g) ?? []);
+    const languageKeys = unique((page.languageText ?? page.text).match(/\b(?:COM|MOD|PLG)_JEM_[A-Z0-9_]+\b/g) ?? []);
     const serverPatterns = [
         /PHP (?:Warning|Notice|Deprecated|Fatal error)/gi,
         /Fatal error:/gi,
@@ -411,8 +441,18 @@ async function main() {
     const requestedViews = options.views
         ? new Set(options.views.split(',').map((view) => view.trim()).filter(Boolean))
         : null;
+    const expectedHttp = parseExpectedHttp(options['expected-http']);
     if (options['attachment-id']) {
         ids.attachments = Number.parseInt(options['attachment-id'], 10);
+    }
+    if (options['registration-id']) {
+        ids.registrations = Number.parseInt(options['registration-id'], 10);
+    }
+    if (options['registration-event-id']) {
+        ids.registration_events = Number.parseInt(options['registration-event-id'], 10);
+    }
+    if (options['registration-history-id']) {
+        ids.registration_history = Number.parseInt(options['registration-history-id'], 10);
     }
     const chrome = options.chrome ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 
@@ -561,6 +601,24 @@ async function main() {
                 };
             }
 
+            const expectedStatus = expectedHttp.get(`${route.area}:${route.view}`);
+            if (expectedStatus !== undefined) {
+                if (result.http === expectedStatus) {
+                    result = {
+                        ...result,
+                        status: 'EXPECTED',
+                        expected_http: expectedStatus,
+                        observed_failures: result.failures,
+                        failures: [],
+                        warnings: [],
+                    };
+                } else {
+                    result.status = 'FAIL';
+                    result.expected_http = expectedStatus;
+                    result.failures.push(`expected HTTP ${expectedStatus}, received HTTP ${result.http ?? 'unknown'}`);
+                }
+            }
+
             results.push({ ...route, ...result });
             console.log(`[${route.area} ${String(index + 1).padStart(2, '0')}/${routes.length}] ${result.status} ${route.view} HTTP ${result.http ?? 'unknown'}`);
 
@@ -573,6 +631,7 @@ async function main() {
 
         const summary = {
             pass: results.filter((result) => result.status === 'PASS').length,
+            expected: results.filter((result) => result.status === 'EXPECTED').length,
             warning: results.filter((result) => result.status === 'WARNING').length,
             fail: results.filter((result) => result.status === 'FAIL').length,
         };
@@ -588,7 +647,7 @@ async function main() {
         };
         mkdirSync(dirname(output), { recursive: true });
         writeFileSync(output, JSON.stringify(report, null, 2));
-        console.log(`[View audit] PASS=${summary.pass} WARNING=${summary.warning} FAIL=${summary.fail}`);
+        console.log(`[View audit] PASS=${summary.pass} EXPECTED=${summary.expected} WARNING=${summary.warning} FAIL=${summary.fail}`);
         process.exitCode = summary.fail === 0 ? 0 : 1;
     } finally {
         client?.close();
