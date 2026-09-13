@@ -103,6 +103,7 @@
             <exclude name="tests/**" />
             <exclude name="tmp/**" />
             <exclude name="tools/**" />
+            <exclude name="updatecheck/**" />
             <exclude name="vendor/**" />
             <patternset refid="windows.junk.excludes" />
         </zip>

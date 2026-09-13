@@ -25,6 +25,7 @@ final class BuildPackageExcludesTest extends TestCase
         foreach (array(
             'tests/**',
             'tmp/**',
+            'updatecheck/**',
             'vendor/**',
             '.phpunit.cache/**',
             '.agents/**',

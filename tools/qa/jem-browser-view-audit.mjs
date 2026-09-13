@@ -385,6 +385,7 @@ function analysePage(page, state, administrator) {
         /Table ['`][^'`]+['`] doesn't exist/gi,
         /SQLSTATE\[[A-Z0-9]+\]/gi,
         /An error has occurred\.?/gi,
+        /Update server currently not available\. Please try again later!/gi,
     ];
     const serverErrors = unique(serverPatterns.flatMap((pattern) => page.text.match(pattern) ?? []));
     const redirectedToLogin = administrator

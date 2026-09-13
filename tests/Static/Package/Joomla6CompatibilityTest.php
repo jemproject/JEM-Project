@@ -14,28 +14,48 @@ final class Joomla6CompatibilityTest extends TestCase
         self::assertSame('5.0', (string) $manifest['version']);
     }
 
-    public function testUpdateFeedTargetsJoomla54AndJoomla6WithPhp83(): void
+    public function testSharedUpdateFeedContainsPublishedReleaseLines(): void
     {
-        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
-        $manifest = simplexml_load_file(JEM_TEST_ROOT . '/jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/update_pkg_jem.xml');
 
         self::assertNotFalse($updates);
-        self::assertNotFalse($manifest);
+        self::assertSame('1.0', (string) $updates['version']);
+        self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}$/', (string) $updates['published']);
 
-        $expectedVersion = (string) $manifest->version;
-
-        $current = null;
+        $expected = array(
+            '2.3.6' => array(
+                'platform' => '^(2\.5|3\.(?:[2-9]|10))$',
+                'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem2-tab',
+                'note_link' => '[JEM 2.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem2-tab)',
+            ),
+            '4.5.0' => array(
+                'platform' => '^(4\..*|5\..*)$',
+                'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab',
+                'note_link' => '[JEM 4.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab)',
+            ),
+            '5.0.0' => array(
+                'platform' => '^(5\.[4-9].*|6\..*)$',
+                'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab',
+                'note_link' => '[JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)',
+            ),
+        );
+        $found = array();
 
         foreach ($updates->update as $update) {
-            if ((string) $update->version === $expectedVersion) {
-                $current = $update;
-                break;
-            }
+            $version = (string) $update->version;
+
+            self::assertArrayHasKey($version, $expected, "Unexpected JEM $version update entry.");
+            self::assertSame($expected[$version]['platform'], (string) $update->targetplatform['version']);
+            self::assertSame($expected[$version]['changelog'], (string) $update->infourl);
+            self::assertSame($expected[$version]['changelog'], (string) $update->stablechangelog);
+            self::assertStringEndsWith($expected[$version]['note_link'], trim((string) $update->notes));
+            self::assertNotSame('', trim((string) $update->changes));
+
+            $found[] = $version;
         }
 
-        self::assertNotNull($current, "JEM $expectedVersion must be present in update_pkg_jem.xml.");
-        self::assertSame('^(5\.[4-9].*|6\..*)$', (string) $current->targetplatform['version']);
-        self::assertSame('8.3', (string) $current->php_minimum);
+        self::assertSame(array_keys($expected), $found);
+        self::assertSame('8.3', (string) $updates->update[2]->php_minimum);
     }
 
     public function testReleaseCandidateNotesAreStoredInTheComponentAndPackageManifests(): void
@@ -109,15 +129,6 @@ final class Joomla6CompatibilityTest extends TestCase
 
             if ((string) $manifest->version !== $expectedVersion) {
                 $wrong[] = $this->relativePath($path) . ':' . (string) $manifest->version;
-            }
-        }
-
-        $updates = simplexml_load_file(JEM_TEST_ROOT . '/update_pkg_jem.xml');
-        self::assertNotFalse($updates);
-
-        foreach ($updates->update as $update) {
-            if ((string) $update->element === 'pkg_jem' && (string) $update->version !== $expectedVersion) {
-                $wrong[] = 'update_pkg_jem.xml:' . (string) $update->version;
             }
         }
 
