@@ -319,6 +319,7 @@ class com_jemInstallerScript
             $this->removeObsoleteAdminHelpMenuItem();
             $this->repairAdminMenuQuickTasks();
             $this->repairGeneratedTypeMenuItems();
+            $this->repairDefaultWeekendRule();
             $this->repair501SchemaFallback();
             $this->repairModuleStatusSettings();
             $this->repair510HierarchySchemaFallback();
@@ -335,6 +336,40 @@ class com_jemInstallerScript
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
         }
+    }
+
+    /**
+     * Repair the shipped weekend rule when a prerelease already recorded the
+     * 5.1.0 schema or an older installation retained an undated default row.
+     *
+     * @return void
+     */
+    private function repairDefaultWeekendRule()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_special_days'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $startDate = $db->quoteName('start_date');
+        $endDate = $db->quoteName('end_date');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_special_days'))
+            ->set($startDate . ' = ' . $db->quote('1900-01-01'))
+            ->set($endDate . ' = ' . $db->quote('2100-12-31'))
+            ->where($db->quoteName('alias') . ' = ' . $db->quote('weekend'))
+            ->where($db->quoteName('weekdays') . ' IN (' . $db->quote('0,6') . ', ' . $db->quote('6,0') . ')')
+            ->where('('
+                . $startDate . ' IS NULL'
+                . ' OR ' . $startDate . ' = ' . $db->quote('0000-00-00')
+                . ' OR ' . $endDate . ' IS NULL'
+                . ' OR ' . $endDate . ' = ' . $db->quote('0000-00-00')
+                . ' OR (' . $startDate . ' = ' . $db->quote('2026-01-01')
+                    . ' AND ' . $endDate . ' = ' . $db->quote('2030-12-31') . ')'
+            . ')');
+        $db->setQuery($query);
+        $db->execute();
     }
 
     /**

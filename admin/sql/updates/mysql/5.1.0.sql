@@ -1,4 +1,7 @@
 -- JEM 5.1.0: event programmes and nested venue hierarchies.
+-- Keep the shipped weekend rule editable and useful for historical and future calendars.
+UPDATE `#__jem_special_days` SET `start_date` = '1900-01-01', `end_date` = '2100-12-31' WHERE `alias` = 'weekend' AND `weekdays` IN ('0,6', '6,0') AND (`start_date` IS NULL OR `start_date` = '0000-00-00' OR `end_date` IS NULL OR `end_date` = '0000-00-00' OR (`start_date` = '2026-01-01' AND `end_date` = '2030-12-31'));
+
 ALTER TABLE `#__jem_events` ADD COLUMN `parent_event_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `series_order` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `event_tree_order` INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `parent_event_id` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD COLUMN `show_in_calendar` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `event_tree_order` /** CAN FAIL **/;

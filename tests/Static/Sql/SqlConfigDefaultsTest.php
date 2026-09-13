@@ -195,6 +195,24 @@ final class SqlConfigDefaultsTest extends TestCase
         self::assertStringContainsString('KEY `idx_type` (`type_id`)', $sql);
     }
 
+    public function testDefaultWeekendRuleUsesAStableLongDateRange(): void
+    {
+        $installSql = $this->read(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql');
+        $updateSql = $this->read(JEM_TEST_ROOT . '/admin/sql/updates/mysql/5.1.0.sql');
+        $installer = $this->read(JEM_TEST_ROOT . '/script.php');
+
+        foreach (array($installSql, $updateSql, $installer) as $source) {
+            self::assertStringContainsString('1900-01-01', $source);
+            self::assertStringContainsString('2100-12-31', $source);
+        }
+
+        self::assertStringContainsString('$this->repairDefaultWeekendRule();', $installer);
+        self::assertStringContainsString('private function repairDefaultWeekendRule()', $installer);
+        self::assertStringContainsString("quote('weekend')", $installer);
+        self::assertStringContainsString("quote('0,6')", $installer);
+        self::assertStringContainsString("quote('6,0')", $installer);
+    }
+
     private function read(string $path): string
     {
         self::assertFileExists($path);
