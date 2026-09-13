@@ -4264,9 +4264,9 @@ class JemHelper
             $time = preg_replace('/(<br\s*\/?>\s*)+$/i', '', (string) $time);
             $eventText = ($time !== '' ? '<span class="jem-calendar-event-time">' . $time . '</span>' : '')
                 . '<span class="jem-calendar-event-title">' . $text . '</span>';
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$eventText.'</a></span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-custom-class="jem-calendar-tooltip" data-bs-original-title="'.$title.$tooltip.'"><a href="'.$href.'">'.$eventText.'</a></span>';
         } else {
-            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-original-title="'.$title.$tooltip.'">'.$text.'</span>';
+            $tip = '<span class="'.$class.'" data-bs-toggle="tooltip" data-bs-html="true" data-bs-custom-class="jem-calendar-tooltip" data-bs-original-title="'.$title.$tooltip.'">'.$text.'</span>';
         }
 
         return $tip;

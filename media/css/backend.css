@@ -2291,14 +2291,25 @@ input#replace_attachments1.inputbox {
     font-weight: 600;
 }
 
-.jem-import-mapping-panel {
-    background: transparent !important;
-    border: 0 !important;
+.jem-import-mapping-panel,
+.jem-import-static-panel {
+    border: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 16%, transparent) !important;
+    border-radius: .25rem;
     box-shadow: none !important;
-    padding: 0 !important;
+    padding: .75rem !important;
 }
 
-.jem-import-mapping-panel > summary {
+.jem-import-mapping-panel {
+    background: color-mix(in srgb, var(--body-bg, #fff) 94%, var(--body-color, #1f2933) 6%) !important;
+}
+
+.jem-import-static-panel {
+    background: color-mix(in srgb, var(--body-bg, #fff) 88%, var(--warning, #ffc107) 12%) !important;
+    border-color: color-mix(in srgb, var(--body-color, #1f2933) 18%, var(--warning, #ffc107) 32%) !important;
+}
+
+.jem-import-mapping-panel > summary,
+.jem-import-static-panel > summary {
     margin-bottom: .35rem;
 }
 

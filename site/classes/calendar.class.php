@@ -350,8 +350,13 @@ class JemCalendar
     {
         $labels = is_array($content) ? $content : array($content);
         $cleanLabels = array();
+        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
 
         foreach ($labels as $label) {
+            if (strpos((string) $label, 'data-bs-toggle="tooltip"') !== false) {
+                $this->calDayHasTooltip[$dayTime] = true;
+            }
+
             $label = trim(preg_replace('/\s+/', ' ', html_entity_decode(strip_tags((string) $label), ENT_QUOTES, 'UTF-8')));
 
             if ($label !== '' && !in_array($label, $cleanLabels, true)) {
@@ -359,11 +364,9 @@ class JemCalendar
             }
         }
 
-        if (!$cleanLabels) {
+        if (!$cleanLabels || !empty($this->calDayHasTooltip[$dayTime])) {
             return;
         }
-
-        $dayTime = $this->mkActiveTime(0, 0, 1, $month, $day, $year);
 
         if (!isset($this->calDayAttributes[$dayTime])) {
             $this->calDayAttributes[$dayTime] = array(
@@ -530,6 +533,7 @@ class JemCalendar
     var $calEventContentUrl=[];
     var $calEventContentId=[];
     var $calDayAttributes=[];
+    var $calDayHasTooltip=[];
     var $calInit=0;
     var $weekNum=false;
     var $weekUrl=false;
@@ -844,7 +848,7 @@ class JemCalendar
             $html .= ' style="' . htmlspecialchars((string) $attributes['style'], ENT_COMPAT, 'UTF-8') . '"';
         }
 
-        if (!empty($attributes['title'])) {
+        if (!empty($attributes['title']) && empty($this->calDayHasTooltip[$dayTime])) {
             $html .= ' title="' . htmlspecialchars((string) $attributes['title'], ENT_COMPAT, 'UTF-8') . '"';
         }
 

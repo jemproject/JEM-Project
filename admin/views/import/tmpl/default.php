@@ -133,6 +133,17 @@ $renderPreviewActions = function ($commitTask, $clearTask, $tabId, $validCount) 
     <?php
 };
 
+$renderSpecialDaysPreviewButton = function ($refresh = false) {
+    ?>
+    <div class="jem-import-actions jem-import-actions-row">
+        <button type="button" class="btn btn-primary" onclick="JemImportSubmit('import.previewSpecialDaysImport', 'special-days');">
+            <span class="icon-search" aria-hidden="true"></span>
+            <?php echo Text::_($refresh ? 'COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW' : 'COM_JEM_IMPORT_EXTERNAL_PREVIEW'); ?>
+        </button>
+    </div>
+    <?php
+};
+
 $renderImportMappingBlock = function (array $preview, $inputName, array $jemFields, $profileName) {
     $sourceFields = array_values(array_filter((array) ($preview['source_fields'] ?? array()), 'strlen'));
     $mapping = (array) ($preview['mapping'] ?? array());
@@ -1000,12 +1011,6 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <span class="jem-import-field-spacer" aria-hidden="true"></span>
                             </div>
                         </div>
-                        <div class="jem-import-actions jem-import-actions-row">
-                            <button type="button" class="btn btn-primary" onclick="JemImportSubmit('import.previewSpecialDaysImport', 'special-days');">
-                                <span class="icon-search" aria-hidden="true"></span>
-                                <?php echo empty($this->specialDaysImportPreview) ? Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW') : Text::_('COM_JEM_IMPORT_EXTERNAL_REFRESH_PREVIEW'); ?>
-                            </button>
-                        </div>
                         <details class="jem-import-columns">
                             <summary><?php echo Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_HELP_TITLE'); ?></summary>
                             <div class="mt-2">
@@ -1013,6 +1018,9 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                 <pre class="jem-import-example"><code><?php echo $this->escape(str_replace('\n', "\n", Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_EXAMPLE'))); ?></code></pre>
                             </div>
                         </details>
+                        <?php if (empty($this->specialDaysImportPreview)) : ?>
+                            <?php $renderSpecialDaysPreviewButton(); ?>
+                        <?php endif; ?>
                     </section>
                 </div>
                 <?php $specialDaysPreview = $this->specialDaysImportPreview ?? null; ?>
@@ -1026,9 +1034,11 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
                                     <p><?php echo Text::sprintf('COM_JEM_IMPORT_PROFILE_APPLIED', htmlspecialchars($specialDaysPreview['profile_title'], ENT_QUOTES, 'UTF-8')); ?></p>
                                 <?php endif; ?>
                                 <?php $renderImportMappingBlock((array) $specialDaysPreview, 'specialdays_import_mapping', $specialDaysMappingFields, 'specialdays_import_profile'); ?>
+                                <?php $renderSpecialDaysPreviewButton(true); ?>
                                 <?php $renderDynamicPreviewTable((array) $specialDaysPreview, 'specialdays'); ?>
                                 <?php $renderPreviewActions('import.commitSpecialDaysImport', 'import.clearSpecialDaysImportPreview', 'special-days', $specialDaysPreview['valid_count'] ?? 0); ?>
                             <?php else : ?>
+                                <?php $renderSpecialDaysPreviewButton(true); ?>
                                 <div class="table-responsive">
                                     <table class="adminlist table jem-import-paged-table" data-page-size="50">
                                         <thead>

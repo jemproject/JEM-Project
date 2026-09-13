@@ -913,6 +913,23 @@ div#jem .rowcolor {
     margin: 5px 0px 5px;
 }
 
+.jem-calendar-tooltip {
+    --bs-tooltip-max-width: min(26rem, calc(100vw - 2rem));
+}
+
+.jem-calendar-tooltip .tooltip-inner {
+    width: max-content;
+}
+
+.jem-calendar-tooltip .tooltip-inner .catname {
+    color: color-mix(in srgb, var(--bs-tooltip-color, #fff) 55%, var(--bs-primary, #0d6efd) 45%);
+    font-weight: 600;
+}
+
+.jem-calendar-tooltip .tooltip-inner .eventName {
+    font-weight: 700;
+}
+
 .custom-tip .location {
     text-align: left;
 }

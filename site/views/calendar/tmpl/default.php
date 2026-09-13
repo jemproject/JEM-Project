@@ -51,7 +51,9 @@ use Joomla\CMS\Factory;
         if ($this->params->get('showfootertext')) :
             echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
         endif;
-        echo JemOutput::footer();
+        echo '<div class="copyright">';
+        JemOutput::footer();
+        echo '</div>';
         echo '</div>';
         return;
     endif;
