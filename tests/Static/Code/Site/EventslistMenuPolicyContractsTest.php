@@ -6,6 +6,17 @@ use PHPUnit\Framework\TestCase;
 
 final class EventslistMenuPolicyContractsTest extends TestCase
 {
+    public function testEventsListStateContextHandlesJoomlaTagIdArrays(): void
+    {
+        $model = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/eventslist.php');
+
+        self::assertStringContainsString(
+            "JemEventslistMenuPolicy::requestIdStateKey(\$app->input->get('id', 0, 'raw'))",
+            $model
+        );
+        self::assertStringNotContainsString("input->getInt('id'", $model);
+    }
+
     public function testEventsListModelUsesOnePolicyForBothDateFilterPaths(): void
     {
         $model = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/eventslist.php');
