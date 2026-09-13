@@ -42,6 +42,35 @@ final class JemEventslistMenuPolicy
     }
 
     /**
+     * Build a stable user-state key from scalar JEM ids and Joomla tag-id arrays.
+     */
+    public static function requestIdStateKey($value): string
+    {
+        if (!is_array($value)) {
+            return is_scalar($value) ? (string) (int) $value : '0';
+        }
+
+        $ids = array();
+
+        foreach ($value as $id) {
+            if (!is_scalar($id)) {
+                continue;
+            }
+
+            $id = (int) $id;
+
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+
+        $ids = array_values(array_unique($ids));
+        sort($ids, SORT_NUMERIC);
+
+        return $ids ? 'tags-' . substr(hash('sha256', implode(',', $ids)), 0, 16) : '0';
+    }
+
+    /**
      * Resolve both sides of the date window against the same local day.
      *
      * @return array{from_days: int|string, until_days: int|string, from_date: ?string, until_date: ?string}

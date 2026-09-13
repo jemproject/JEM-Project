@@ -216,12 +216,12 @@ class JemModelEventslist extends ListModel
         $jemsettings = JemHelper::config();
         $task        = $this->getEffectiveRequestTask();
         $format      = $app->input->getCmd('format', false);
-        $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
+        $requestId   = JemEventslistMenuPolicy::requestIdStateKey($app->input->get('id', 0, 'raw'));
         $activeMenu = $app->getMenu()->getActive();
         $params = $activeMenu ? $activeMenu->getParams() : $app->getParams();
         $db = Factory::getContainer()->get('DatabaseDriver');
         $currentItemid = $activeMenu ? $activeMenu->id : $app->input->getInt('Itemid', 0);
-        $itemid        = $app->input->getInt('id', 0) . ':' . $currentItemid;
+        $itemid        = $requestId . ':' . $currentItemid;
 
         $this->show_archived_events = (bool) $params->get('show_archived_events', 0);
         $this->setState('filter.show_archived_events', $this->show_archived_events);
@@ -534,7 +534,6 @@ class JemModelEventslist extends ListModel
     {
         $app         = Factory::getApplication();
         $task        = $this->getEffectiveRequestTask();
-        $itemid      = $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0);
         $params      = $app->getParams();
         $settings    = JemHelper::globalattribs();
         $jemsettings = JemHelper::config();
