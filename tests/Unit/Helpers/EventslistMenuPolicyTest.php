@@ -36,6 +36,28 @@ final class EventslistMenuPolicyTest extends TestCase
         );
     }
 
+    #[DataProvider('requestIdStateKeyProvider')]
+    public function testRequestIdsProduceSafeStableStateKeys($input, string $expected): void
+    {
+        self::assertSame($expected, JemEventslistMenuPolicy::requestIdStateKey($input));
+    }
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function requestIdStateKeyProvider(): array
+    {
+        return array(
+            'integer JEM id' => array(42, '42'),
+            'routed JEM id' => array('42:event-alias', '42'),
+            'empty value' => array(null, '0'),
+            'single Joomla tag id' => array(array('7'), 'tags-7902699be42c8a8e'),
+            'multiple Joomla tag ids' => array(array('9', '3'), 'tags-f0ef0c371acf7acd'),
+            'duplicate tag ids' => array(array('7', 7), 'tags-7902699be42c8a8e'),
+            'invalid and nested tag ids' => array(array('invalid', array('8'), -2), '0'),
+        );
+    }
+
     #[DataProvider('dateWindowProvider')]
     public function testAllSupportedDateWindowScenarios(
         string $from,

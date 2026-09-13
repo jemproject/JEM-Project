@@ -132,6 +132,53 @@ final class ImportViewLayoutTest extends TestCase
         );
     }
 
+    public function testEventAndVenueRefreshButtonsFollowMappingAndPrecedeResultTables(): void
+    {
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/tmpl/default.php');
+        $eventStart = strpos($template, "'event-import'");
+        $venueStart = strpos($template, "'venue-import'", $eventStart + 1);
+        $migrationStart = strpos($template, "'jem-migration'", $venueStart + 1);
+
+        self::assertNotFalse($eventStart);
+        self::assertNotFalse($venueStart);
+        self::assertNotFalse($migrationStart);
+
+        $eventTab = substr($template, $eventStart, $venueStart - $eventStart);
+        $venueTab = substr($template, $venueStart, $migrationStart - $venueStart);
+        $eventInitial = strpos(
+            $eventTab,
+            "\$renderImportPreviewButton('import.previewExternalImport', 'event-import');"
+        );
+        $eventMapping = strpos($eventTab, "\$renderImportMappingBlock((array) \$this->externalCsvPreview");
+        $eventRefresh = strpos(
+            $eventTab,
+            "\$renderImportPreviewButton('import.previewExternalImport', 'event-import', true);"
+        );
+        $eventTable = strpos($eventTab, "\$renderDynamicPreviewTable((array) \$this->externalCsvPreview");
+        $venueInitial = strpos(
+            $venueTab,
+            "\$renderImportPreviewButton('import.previewExternalVenueImport', 'venue-import');"
+        );
+        $venueMapping = strpos($venueTab, "\$renderImportMappingBlock((array) \$this->externalVenueImportPreview");
+        $venueRefresh = strpos(
+            $venueTab,
+            "\$renderImportPreviewButton('import.previewExternalVenueImport', 'venue-import', true);"
+        );
+        $venueTable = strpos($venueTab, "\$renderDynamicPreviewTable((array) \$this->externalVenueImportPreview");
+
+        self::assertGreaterThan(strpos($eventTab, 'COM_JEM_IMPORT_EXTERNAL_EVENTS_CSV_HELP_TITLE'), $eventInitial);
+        self::assertGreaterThan($eventMapping, $eventRefresh);
+        self::assertGreaterThan($eventRefresh, $eventTable);
+        self::assertSame(2, substr_count(
+            $eventTab,
+            "\$renderImportPreviewButton('import.previewExternalImport', 'event-import', true);"
+        ));
+        self::assertGreaterThan(strpos($venueTab, 'COM_JEM_IMPORT_EXTERNAL_VENUES_CSV_HELP_TITLE'), $venueInitial);
+        self::assertGreaterThan($venueMapping, $venueRefresh);
+        self::assertGreaterThan($venueRefresh, $venueTable);
+        self::assertStringNotContainsString('$renderSpecialDaysPreviewButton', $template);
+    }
+
     public function testIcsCatalogPreviewExposesAutomaticFieldMapping(): void
     {
         $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/import.php');
