@@ -33,7 +33,7 @@ final class Joomla6CompatibilityTest extends TestCase
                 'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab',
                 'note_link' => '[JEM 4.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab)',
             ),
-            '5.0.0' => array(
+            '5.0.1' => array(
                 'platform' => '^(5\.[4-9].*|6\..*)$',
                 'changelog' => 'https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab',
                 'note_link' => '[JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)',
