@@ -860,4 +860,4 @@ INSERT IGNORE INTO `#__jem_types` (`name`, `alias`, `entity`, `color`, `publishe
 ('Public holiday', 'public-holiday', 4, '#e5e7eb', 1, 2, 1, '*', NOW(), '{"block_events":0}');
 
 INSERT IGNORE INTO `#__jem_special_days` (`id`, `title`, `alias`, `day_type_id`, `day_type`, `start_date`, `end_date`, `weekdays`, `description`, `show_dates`, `published`, `access`, `ordering`, `created`) VALUES
-(1, 'Saturday and Sunday', 'weekend', (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1), 'Weekend', '2026-01-01', '2030-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());
+(1, 'Saturday and Sunday', 'weekend', (SELECT `id` FROM `#__jem_types` WHERE `alias` = 'weekend' AND `entity` = 4 ORDER BY `id` ASC LIMIT 1), 'Weekend', '1900-01-01', '2100-12-31', '0,6', 'Regular weekend days', 0, 1, 1, 1, NOW());

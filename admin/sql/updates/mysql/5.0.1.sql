@@ -44,6 +44,9 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('waitinglist_str
 
 -- update values
 
+-- Keep the shipped weekend rule editable and useful for historical and future calendars.
+UPDATE `#__jem_special_days` SET `start_date` = '1900-01-01', `end_date` = '2100-12-31' WHERE `alias` = 'weekend' AND `weekdays` IN ('0,6', '6,0') AND (`start_date` IS NULL OR `start_date` = '0000-00-00' OR `end_date` IS NULL OR `end_date` = '0000-00-00' OR (`start_date` = '2026-01-01' AND `end_date` = '2030-12-31'));
+
 -- JEM 5.0.1: shared event status indicators for event modules.
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbons', '1');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_ribbon_position', 'diagonal_ascending');

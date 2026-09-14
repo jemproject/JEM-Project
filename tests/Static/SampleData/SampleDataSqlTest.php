@@ -122,7 +122,7 @@ final class SampleDataSqlTest extends TestCase
             $sql
         );
         self::assertMatchesRegularExpression(
-            '/INSERT INTO `#__jem_special_days`[\s\S]+?\'Saturday and Sunday\'[\s\S]+?\'2026-01-01\'[\s\S]+?\'2030-12-31\'[\s\S]+?\'0,6\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_special_days` WHERE `alias` = \'weekend\'/s',
+            '/INSERT INTO `#__jem_special_days`[\s\S]+?\'Saturday and Sunday\'[\s\S]+?\'1900-01-01\'[\s\S]+?\'2100-12-31\'[\s\S]+?\'0,6\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_special_days` WHERE `alias` = \'weekend\'/s',
             $sql
         );
     }
