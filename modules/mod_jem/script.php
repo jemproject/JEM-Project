@@ -63,11 +63,87 @@ class mod_jemInstallerScript
             return true;
         }
         if ($type === 'update') {
-            return true;
+            return $this->migrateLegacyModuleParams();
         }
         if ($type === 'uninstall') {
             return true;
         }
+    }
+
+    /**
+     * Migrates parameters stored by JEM 4.4.
+     */
+    private function migrateLegacyModuleParams(): bool
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $query = $db->getQuery(true)
+            ->select([
+                $db->quoteName('id'),
+                $db->quoteName('params'),
+            ])
+            ->from($db->quoteName('#__modules'))
+            ->where($db->quoteName('client_id') . ' = 0')
+            ->where($db->quoteName('module') . ' = ' . $db->quote($this->name));
+
+        $modules = $db->setQuery($query)->loadObjectList();
+
+        foreach ($modules as $module) {
+            $currentParams = json_decode((string) $module->params, true);
+
+            if (!is_array($currentParams)) {
+                continue;
+            }
+
+            $migratedParams = self::migrateLegacyParams($currentParams);
+
+            if ($migratedParams === $currentParams) {
+                continue;
+            }
+
+            $encodedParams = json_encode($migratedParams, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+            if ($encodedParams === false) {
+                return false;
+            }
+
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__modules'))
+                ->set($db->quoteName('params') . ' = ' . $db->quote($encodedParams))
+                ->where($db->quoteName('id') . ' = ' . (int) $module->id);
+
+            $db->setQuery($update)->execute();
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts the former exclusive title/venue selector to the independent JEM 5 options.
+     *
+     * @param array<string, mixed> $params Stored module parameters.
+     *
+     * @return array<string, mixed>
+     */
+    private static function migrateLegacyParams(array $params): array
+    {
+        if (!array_key_exists('showtitloc', $params)) {
+            return $params;
+        }
+
+        $legacyShowsTitle = (int) $params['showtitloc'] === 1;
+
+        if (!array_key_exists('showtitle', $params)) {
+            $params['showtitle'] = $legacyShowsTitle ? '1' : '0';
+        }
+
+        if (!array_key_exists('showvenue', $params)) {
+            $params['showvenue'] = $legacyShowsTitle ? '0' : '1';
+        }
+
+        unset($params['showtitloc']);
+
+        return $params;
     }
 
     /**

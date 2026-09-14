@@ -106,7 +106,7 @@ abstract class JemHelperAssociation
             return null;
         }
 
-        $event->params = JemHelper::globalattribs();
+        $event->params = clone JemHelper::globalattribs();
 
         $registry = new Registry;
         $registry->loadString((string) ($event->attribs ?? '{}'));

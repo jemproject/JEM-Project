@@ -12,6 +12,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Filesystem\Folder;
 
 /**
@@ -20,6 +21,8 @@ use Joomla\Filesystem\Folder;
 class JFormFieldImageselectevent extends ListField
 {
     protected $type = 'Imageselectevent';
+
+    protected $imageBaseUrl = '';
 
     protected function getInput()
     {
@@ -52,6 +55,11 @@ class JFormFieldImageselectevent extends ListField
         $fancyAttr .= $this->required ? ' required aria-required="true"' : '';
         $fancyAttr .= $this->disabled ? ' disabled="disabled"' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';
+        $fancyAttr .= ' search-placeholder="'
+            . htmlspecialchars(Text::_('JSEARCH_FILTER'), ENT_QUOTES, 'UTF-8') . '"';
+        $fancyAttr .= ' min-term-length="1"';
+        $fancyAttr .= ' data-jem-image-base-url="'
+            . htmlspecialchars($this->imageBaseUrl, ENT_QUOTES, 'UTF-8') . '"';
 
         return '<joomla-field-fancy-select ' . $fancyAttr . '>' . $html . '</joomla-field-fancy-select>';
     }
@@ -64,6 +72,7 @@ class JFormFieldImageselectevent extends ListField
 
         $folder = in_array((string) $this->fieldname, array('locimage'), true) ? 'venues' : 'events';
         $path = JPATH_SITE . '/images/jem/' . $folder;
+        $this->imageBaseUrl = rtrim(Uri::root(), '/') . '/images/jem/' . $folder . '/';
 
         if (!is_dir($path)) {
             return array_merge(parent::getOptions(), $options);
@@ -126,8 +135,8 @@ joomla-field-fancy-select.jem-image-fancy-select .choices__list[aria-expanded] .
     max-width: 100%;
 }
 joomla-field-fancy-select.jem-image-fancy-select .choices__input--cloned {
-    min-width: 1ch !important;
-    width: 1ch !important;
+    min-width: 100% !important;
+    width: 100% !important;
     max-width: 100% !important;
 }
 joomla-field-fancy-select.jem-image-fancy-select .choices__list,

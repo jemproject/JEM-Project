@@ -27,6 +27,14 @@ class JemViewEditevent extends JemView
      */
     public function display($tpl = null)
     {
+        $app  = Factory::getApplication();
+        $user = JemFactory::getUser();
+
+        // Fail closed before selector layouts can query venues, contacts, articles or users.
+        if (JemFrontendAccess::redirectGuestToLogin($app)) {
+            return false;
+        }
+
         if ($this->getLayout() == 'choosevenue') {
             $this->_displaychoosevenue($tpl);
             return;
@@ -50,9 +58,6 @@ class JemViewEditevent extends JemView
         // Initialise variables.
         $jemsettings = JemHelper::config();
         $settings    = JemHelper::globalattribs();
-        $app         = Factory::getApplication();
-        $user        = JemFactory::getUser();
-        $userId      = $user->get('id');
         $document    = $app->getDocument();
         $model       = $this->getModel();
         $menu        = $app->getMenu();
@@ -75,14 +80,7 @@ class JemViewEditevent extends JemView
 
         // check for data error
         if (empty($item)) {
-            $app->enqueueMessage(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
-            return false;
-        }
-
-        // check for guest
-        if ($userId == 0) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_AN_ERROR_HAS_OCCURRED'), 500);
         }
 
         if (empty($item->id)) {
@@ -97,8 +95,7 @@ class JemViewEditevent extends JemView
         $authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
 
         if ($authorised !== true) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-            return false;
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         // Decide which parameters should take priority
@@ -153,7 +150,7 @@ class JemViewEditevent extends JemView
             $tmp = new stdClass();
 
             // check for recurrence
-            if (($this->item->recurrence_type != 0) || ($this->item->recurrence_first_id != 0)) {
+            if (empty($this->item->series_id) && (($this->item->recurrence_type != 0) || ($this->item->recurrence_first_id != 0))) {
                 $tmp->recurrence_type = 0;
                 $tmp->recurrence_first_id = 0;
             }
@@ -188,7 +185,7 @@ class JemViewEditevent extends JemView
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.attachments', 'com_jem/jem-attachments.css')->useStyle('jem.attachments');
+        JemHelper::loadCss('jem-attachments');
 
         // Load scripts
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');

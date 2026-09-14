@@ -29,6 +29,10 @@ class JemViewSettings extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('core.options')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app         = Factory::getApplication();
         $document    = $app->getDocument();
         $form        = $this->get('Form');
@@ -43,8 +47,6 @@ class JemViewSettings extends JemAdminView
         // Load css
         $wa = $document->getWebAssetManager();
 
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
-        $wa->registerStyle('jem.colorpicker', 'com_jem/colorpicker.css')->useStyle('jem.colorpicker');
 
         $style = '
             div.current fieldset.radio input {
@@ -73,13 +75,6 @@ class JemViewSettings extends JemAdminView
         // Load Script
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->useScript('jquery');
-        $wa->registerScript('jem.colorpicker_js', 'com_jem/colorpicker.js')->useScript('jem.colorpicker_js');
-
-        if (!JemFactory::getUser()->authorise('core.manage', 'com_jem')) {
-            $app->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'warning');
-            $app->redirect('index.php?option=com_jem&view=main');
-            return false;
-        }
 
         // mapping variables
         $this->form        = $form;

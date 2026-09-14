@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="348" viewBox="0 0 600 348" role="img" aria-label="JEM Events for AcyMailing">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3f8"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="348" rx="24" fill="url(#background)"/>
+  <rect width="12" height="348" rx="6" fill="#f69d00"/>
+  <circle cx="558" cy="42" r="70" fill="#5e7899" opacity=".10"/>
+  <circle cx="42" cy="326" r="58" fill="#f69d00" opacity=".10"/>
+  <!-- AcyMailing shows the top 175px of this banner with overflow hidden. -->
+  <image x="144" y="38" width="312" height="91" xlink:href="../jem/icon.png" preserveAspectRatio="xMidYMid meet"/>
+  <text x="300" y="249" text-anchor="middle" fill="#24344d" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700">Events for AcyMailing 10</text>
+  <rect x="216" y="275" width="168" height="5" rx="2.5" fill="#f69d00"/>
+</svg>

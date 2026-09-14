@@ -38,14 +38,23 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
             </colgroup>
 
             <?php foreach ($list as $item) : ?>
+                <?php
+                $hasEventImage = !empty($item->eventimage) && strpos($item->eventimage, 'blank.webp') === false;
+                $hasVenueImage = !empty($item->venueimage) && strpos($item->venueimage, 'blank.webp') === false;
+                $statusOnVenueImage = !$hasEventImage && $hasVenueImage;
+                ?>
                 <tr class="event_id<?= $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <td>
                         <span itemprop="name" class="event-title<?= ($highlight_featured && $item->featured) ? ' highlight_featured' : '' ?>">
                         <?php if ($item->eventlink) : ?>
-                            <a href="<?= $item->eventlink; ?>" itemprop="url" title="<?= $item->fulltitle; ?>"><?= $item->title; ?></a></span>
+                            <a href="<?= $item->eventlink; ?>" itemprop="url" title="<?= $item->fulltitle; ?>"><?= $item->title; ?></a>
                         <?php else : ?>
-                            <?= $item->title; ?></span>
+                            <?= $item->title; ?>
                         <?php endif; ?>
+                        <?php if (!$hasEventImage && !$hasVenueImage) : ?>
+                            <?= JemOutput::moduleEventStatusBadge($item); ?>
+                        <?php endif; ?>
+                        </span>
                         <br>
                         <span class="date" title="<?= strip_tags($item->dateinfo); ?>"><?= $item->date; ?></span>
                         <?php if ($item->time && $params->get('datemethod', 1) == 1) :
@@ -92,11 +101,12 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                     <?php endif; ?>
 
                     <td class="event-image-cell">
+                        <div class="jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                         <?php if ($params->get('use_modal')) : ?>
                     <?php if ($item->eventimageorig) {
                         $image = $item->eventimageorig;
                         $document = Factory::getApplication()->getDocument();
-                        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+                        JemHelper::loadCss('lightbox.min');
                         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                         echo '<script>lightbox.option({
                             \'showImageNumberLabel\': false,
@@ -108,13 +118,18 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
 
                         <a href="<?= $image; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?= $item->eventid ?>"  data-title="<?= Text::_('COM_JEM_EVENT') .': ' . $item->title; ?>">
                             <?php endif; ?>
-                            <img src="<?= $item->eventimage; ?>" alt="<?= $item->title; ?>" class="image-preview" title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" itemprop="image" />
+                            <img src="<?= $item->eventimagedisplay; ?>" alt="<?= $item->title; ?>" class="image-preview"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> title="<?= Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" itemprop="image" />
                             <?php if ($params->get('use_modal')) : ?>
                         </a>
                     <?php endif; ?>
+                        <?php if ($hasEventImage) : ?>
+                            <?= JemOutput::moduleEventStatusRibbon($item); ?>
+                        <?php endif; ?>
+                        </div>
                     </td>
 
                     <td class="event-image-cell">
+                        <div class="jem-module-event-status-image">
                         <?php if ($params->get('use_modal')) : ?>
                         <a href="<?= $item->venueimageorig; ?>" class="flyermodal" rel="lightbox" data-lightbox="wide-flyerimage-<?= $item->eventid ?>" title="<?= $item->venue; ?>" data-title="<?= Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                             <?php endif; ?>
@@ -122,6 +137,10 @@ $showVenue = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemString
                             <?php if ($params->get('use_modal')) : ?>
                         </a>
                     <?php endif; ?>
+                        <?php if ($statusOnVenueImage) : ?>
+                            <?= JemOutput::moduleEventStatusRibbon($item); ?>
+                        <?php endif; ?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>

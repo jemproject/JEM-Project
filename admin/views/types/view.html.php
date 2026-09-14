@@ -17,12 +17,33 @@ class JemViewTypes extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     public function display($tpl = null)
     {
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total         = $this->get('Total');
+
+        foreach (array('entity', 'access') as $filter) {
+            if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
+                unset($this->activeFilters[$filter]);
+            }
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
@@ -31,8 +52,8 @@ class JemViewTypes extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->useScript('table.columns');
+        $wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
         $this->addToolbar();
         parent::display($tpl);

@@ -24,6 +24,27 @@ use Joomla\String\StringHelper;
  */
 class JemViewImagehandler extends HtmlView
 {
+    public $canDeleteImages = false;
+
+    /**
+     * The browser may expose only the image collection belonging to a resource
+     * the user is allowed to access. Category images remain an administrative
+     * tool until categories receive a dedicated resource policy.
+     */
+    private function canAccessTask($task)
+    {
+        if (in_array($task, array('selecteventimg', 'eventimg', 'eventimgup'), true)) {
+            return JemHelperBackend::can('event', 'access');
+        }
+
+        if (in_array($task, array('selectvenueimg', 'venueimg', 'venueimgup'), true)) {
+            return JemHelperBackend::can('venue', 'access');
+        }
+
+        return in_array($task, array('selectcategoriesimg', 'categoriesimg', 'categoriesimgup'), true)
+            && Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem');
+    }
+
 
     /**
      * Image selection List
@@ -32,6 +53,11 @@ class JemViewImagehandler extends HtmlView
     {
         $app    = Factory::getApplication();
         $option = $app->input->getString('option', 'com_jem');
+        $task   = $app->input->getCmd('task', '');
+
+        if (!$this->canAccessTask($task)) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
 
         if ($this->getLayout() == 'uploadimage') {
             $this->_displayuploadimage($tpl);
@@ -39,7 +65,6 @@ class JemViewImagehandler extends HtmlView
         }
 
         //get vars
-        $task   = $app->input->get('task', '');
         $search = $app->getUserStateFromRequest($option.'.filter_search', 'filter_search', '', 'string');
         $search = trim(StringHelper::strtolower($search));
 
@@ -68,13 +93,10 @@ class JemViewImagehandler extends HtmlView
         $redi   = $imageTasks[$task]['redi'];
 
         $app->input->set('folder', $folder);
+        $this->canDeleteImages = JemHelperBackend::canManage('jem.tools.manage');
 
         // Do not allow cache
         $app->allowCache(false);
-
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Get images
         $images = $this->get('images');
@@ -122,10 +144,6 @@ class JemViewImagehandler extends HtmlView
 
         //get vars
         $task = Factory::getApplication()->input->get('task', '');
-
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         $ftp = ClientHelper::setCredentialsFromRequest('ftp');
 

@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem';
@@ -17,13 +16,26 @@ $mod_name = 'mod_jem';
 // get module helper
 require_once __DIR__ . '/helper.php';
 
+// JEM 4.4 stored a single title/venue selector. Normalise legacy or incomplete
+// module instances at runtime as a safety net for copied or manually upgraded sites.
+$hasLegacyTitleVenueParam = $params->exists('showtitloc');
+$legacyShowsTitle = (int) $params->get('showtitloc', 1) === 1;
+
+if (!$params->exists('showtitle')) {
+    $params->set('showtitle', $hasLegacyTitleVenueParam ? ($legacyShowsTitle ? '1' : '0') : '1');
+}
+
+if (!$params->exists('showvenue')) {
+    $params->set('showvenue', $hasLegacyTitleVenueParam ? ($legacyShowsTitle ? '0' : '1') : '1');
+}
+
 //require needed component classes
 require_once(JPATH_SITE.'/components/com_jem/helpers/helper.php');
 require_once(JPATH_SITE.'/components/com_jem/helpers/route.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+JemHelper::loadComponentLanguage();
 
 $list = ModJemHelper::getList($params);
 // check if any results returned
@@ -31,9 +43,12 @@ if (empty($list) && !$params->get('show_no_events')) {
     return;
 }
 
-$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
+if ((int) $params->get('show_status_indicators', 1) === 1) {
+    JemHelper::loadModuleStatusAssets();
+}
 
 // load icon font if needed
 JemHelper::loadIconFont();

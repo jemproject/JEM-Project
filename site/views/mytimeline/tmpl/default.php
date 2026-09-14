@@ -231,8 +231,8 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
                         $endTime   = !empty($row->endtimes) ? JemOutput::formattime($row->endtimes) : '';
                         $timeText  = $startTime . ($endTime !== '' ? ' - ' . $endTime : '');
                     }
-                    $endDate = !empty($row->enddates) ? $row->enddates : $row->dates;
-                    $isPast = !empty($endDate) && strtotime($endDate . ' 23:59:59') < time();
+                    $endTimestamp = JemHelper::getUtcTimestamp($row->end_utc ?? $row->start_utc ?? '');
+                    $isPast = $endTimestamp && $endTimestamp < time();
                     $purposeLabels = array();
 
                     if ($showAllPurposes) {
@@ -320,7 +320,7 @@ $showDiaryNotes = $showAllPurposes || in_array('event_diary', $timelinePurposes,
                                 <p class="jem-mytimeline-diary"><?php echo $this->escape($diaryText); ?></p>
                             <?php endif; ?>
 
-                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes); ?>
+                            <?php echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row); ?>
                         </div>
                     </article>
                 <?php endforeach; ?>

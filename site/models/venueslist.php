@@ -70,6 +70,15 @@ class JemModelVenueslist extends ListModel
         $filterCountries = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.filter_country', 'filter_country', array(), 'array');
         $this->setState('filter.countries', $this->normaliseCountries($filterCountries));
 
+        $params = $app->getParams();
+        $eventMode = (int) $params->get('venue_event_filter', 0);
+        $eventMode = in_array($eventMode, array(0, 1, 2), true) ? $eventMode : 0;
+        $showControl = (bool) $params->get('show_venue_event_filter', 0) && $eventMode !== 0;
+        $showAll = $showControl && $jinput->getBool('show_all_venues', false);
+        $this->setState('filter.venue_event_mode', $showAll ? 0 : $eventMode);
+        $this->setState('filter.show_venue_event_filter', $showControl);
+        $this->setState('filter.show_all_venues', $showAll);
+
         ###########
         ## ORDER ##
         ###########
@@ -105,6 +114,8 @@ class JemModelVenueslist extends ListModel
         $id .= ':' . serialize($this->getState('filter.countries'));
         $id .= ':' . (int) $this->getState('filter.type_id');
         $id .= ':' . serialize($this->getState('filter.orderby'));
+        $id .= ':' . (int) $this->getState('filter.venue_event_mode');
+        $id .= ':' . (int) $this->getState('filter.show_all_venues');
 
         return parent::getStoreId($id);
     }
@@ -257,6 +268,11 @@ class JemModelVenueslist extends ListModel
 
         if ($typeId > 0) {
             $query->where('a.type_id = ' . $typeId);
+        }
+
+        $eventMode = (int) $this->getState('filter.venue_event_mode', 0);
+        if ($eventMode === 1 || $eventMode === 2) {
+            $query->where(JemHelper::getVenueEventExistsWhere('a', $eventMode === 1));
         }
 
         ####################

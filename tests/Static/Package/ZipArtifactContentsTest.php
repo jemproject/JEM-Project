@@ -84,6 +84,7 @@ final class ZipArtifactContentsTest extends TestCase
                 'admin/sql/uninstall.mysql.utf8.sql',
                 'admin/sql/updates/mysql/4.5.0.sql',
                 'admin/sql/updates/mysql/5.0.0.sql',
+                'admin/sql/updates/mysql/5.0.1.sql',
             ) as $entry) {
                 if ($component->locateName($entry) === false) {
                     $missing[] = $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry;
@@ -173,6 +174,163 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testExistingPackageArtifactsContainCustomDateSeries(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $zipFiles = $this->currentPackageZipFiles();
+
+        if ($zipFiles === array()) {
+            self::markTestSkipped('No current package ZIP artifacts found. Run the build before inspecting Custom dates.');
+        }
+
+        foreach ($zipFiles as $zipFile) {
+            $source = $this->relativePath($zipFile);
+            $zip = new ZipArchive();
+            self::assertTrue($zip->open($zipFile), $source . ' should be readable as a ZIP file.');
+            $packageManifest = $zip->getFromName('pkg_jem.xml');
+            $zip->close();
+
+            self::assertNotFalse($packageManifest, $source . ':pkg_jem.xml should exist.');
+            self::assertStringContainsString('Issue #2288', $packageManifest, $source . ' should publish the Custom dates release note.');
+            self::assertStringContainsString(
+                'final class JemEventSeriesSchedule',
+                $this->componentEntryContents($zipFile, 'site/classes/eventseries.class.php'),
+                $source . ' should include the custom-series schedule implementation.'
+            );
+            self::assertStringContainsString(
+                'custom_schedule_editor',
+                $this->componentEntryContents($zipFile, 'site/views/editevent/tmpl/edit_customschedule.php'),
+                $source . ' should include the frontend Custom dates editor.'
+            );
+            $recurrenceJavaScript = $this->componentEntryContents($zipFile, 'media/js/recurrence.js');
+            self::assertStringContainsString(
+                "if (\$select_value === '7')",
+                $recurrenceJavaScript,
+                $source . ' should include the Custom dates JavaScript mode.'
+            );
+            self::assertStringNotContainsString(
+                'custom_schedule_seed_row',
+                $recurrenceJavaScript,
+                $source . ' should keep the main event outside the additional-occurrence rows.'
+            );
+
+            $eventModel = $this->componentEntryContents($zipFile, 'admin/models/event.php');
+            self::assertStringContainsString('completeCustomSeriesSchedule', $eventModel);
+            self::assertStringContainsString('getCustomSeriesSchedule((int) $item->series_id, (int) $item->id)', $eventModel);
+            self::assertStringContainsString("\$customSeriesScope = \$customSeriesIsRoot ? 'all' : 'occurrence';", $eventModel);
+            self::assertStringContainsString("->select(\$db->quoteName('root_event_id'))", $eventModel);
+
+            $updateSql = $this->componentEntryContents($zipFile, 'admin/sql/updates/mysql/5.0.1.sql');
+            self::assertStringContainsString('ADD COLUMN `series_id`', $updateSql);
+            self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_event_series`', $updateSql);
+
+            $installer = $this->componentEntryContents($zipFile, 'script.php');
+            self::assertStringContainsString("'series_id'", $installer);
+            self::assertStringContainsString("'#__jem_event_series'", $installer);
+        }
+    }
+
+    public function testCurrentPackageContainsTransactionalRegistrationCapacityWriter(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            $service = $this->componentEntryContents($zipFile, 'site/classes/registrationservice.class.php');
+
+            self::assertStringContainsString('transactionStart()', $service);
+            self::assertStringContainsString("' FOR UPDATE'", $service);
+            self::assertStringContainsString('SUM(GREATEST(', $service);
+            self::assertStringContainsString('saveMany(', $service);
+        }
+    }
+
+    public function testCurrentPackageContainsConventionalFrontendImageForms(): void
+    {
+        $entries = array(
+            'admin/models/forms/event.xml',
+            'admin/models/forms/venue.xml',
+            'admin/models/forms/settings.xml',
+            'admin/models/settings.php',
+            'admin/sql/install.mysql.utf8.sql',
+            'admin/sql/updates/mysql/5.0.1.sql',
+            'admin/tables/jem_settings.php',
+            'admin/views/event/tmpl/edit.php',
+            'admin/views/venue/tmpl/edit.php',
+            'media/css/frontend-form-mode.css',
+            'media/js/frontend-form-mode.js',
+            'media/js/other.js',
+            'script.php',
+            'site/models/forms/event.xml',
+            'site/models/forms/venue.xml',
+            'site/models/fields/imageselectevent.php',
+            'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/edit_publish.php',
+            'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editevent/tmpl/responsive/edit_publish.php',
+            'site/views/editvenue/tmpl/edit.php',
+            'site/views/editvenue/tmpl/edit_publish.php',
+            'site/views/editvenue/tmpl/responsive/edit.php',
+            'site/views/editvenue/tmpl/responsive/edit_publish.php',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+
+            foreach (array(
+                'media/css/image-camera.css',
+                'media/js/image-camera.js',
+                'site/classes/imagecamera.class.php',
+                'site/models/fields/jemimagefile.php',
+            ) as $cameraEntry) {
+                self::assertFalse(
+                    $this->componentEntryExists($zipFile, $cameraEntry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $cameraEntry . ' must remain exclusive to JEM 5.1.'
+                );
+            }
+        }
+    }
+
+    public function testCurrentPackageHashesMatchUpdateMetadata(): void
+    {
+        $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');
+        $updates = simplexml_load_file(JEM_TEST_ROOT . '/updatecheck/update_pkg_jem.xml');
+        self::assertNotFalse($manifest);
+        self::assertNotFalse($updates);
+
+        $version = (string) $manifest->version;
+        $matchingUpdate = null;
+        foreach ($updates->update as $update) {
+            if ((string) $update->version === $version) {
+                $matchingUpdate = $update;
+                break;
+            }
+        }
+        if ($matchingUpdate === null) {
+            self::markTestSkipped('The current package version has not been published in the shared update feed.');
+        }
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach (array('sha256', 'sha384', 'sha512') as $algorithm) {
+                self::assertSame(
+                    strtolower(trim((string) $matchingUpdate->{$algorithm})),
+                    strtolower(hash_file($algorithm, $zipFile)),
+                    $this->relativePath($zipFile) . ' must match update_pkg_jem.xml ' . $algorithm . '.'
+                );
+            }
+        }
+    }
+
     /**
      * @return list<string>
      */
@@ -183,9 +341,11 @@ final class ZipArtifactContentsTest extends TestCase
 
         $version = (string) $manifest->version;
 
+        $expectedFilename = 'pkg_jem_v' . $version . '.zip';
+
         return array_values(array_filter(
             $this->packageZipFiles(),
-            static fn (string $path): bool => str_starts_with(basename($path), 'pkg_jem_v' . $version)
+            static fn (string $path): bool => basename($path) === $expectedFilename
         ));
     }
 
@@ -209,11 +369,15 @@ final class ZipArtifactContentsTest extends TestCase
                 if ($file->isFile() && preg_match('/(?:pkg_jem|com_jem).*\.zip$/i', $file->getFilename()) === 1) {
                     $relative = $this->relativePath($file->getPathname());
 
+                    if (str_starts_with($relative, '.tmp/')) {
+                        continue;
+                    }
+
                     if (str_starts_with($relative, 'build/package-check/')) {
                         continue;
                     }
 
-                    if (str_starts_with($relative, '_old builds/') || str_starts_with($relative, '_old packages/')) {
+                    if (preg_match('#(^|/)_?old(?:[ _-](?:builds|packages))?/#i', $relative) === 1) {
                         continue;
                     }
 
@@ -318,6 +482,30 @@ final class ZipArtifactContentsTest extends TestCase
         self::assertNotFalse($contents, $this->relativePath($packageZipFile) . ':packages/com_jem.zip:' . $entryName . ' should exist.');
 
         return $contents;
+    }
+
+    private function componentEntryExists(string $packageZipFile, string $entryName): bool
+    {
+        $zip = new ZipArchive();
+        self::assertTrue($zip->open($packageZipFile), $this->relativePath($packageZipFile) . ' should be readable as a ZIP file.');
+
+        $componentZip = $zip->getFromName('packages/com_jem.zip');
+        $zip->close();
+
+        self::assertNotFalse($componentZip, $this->relativePath($packageZipFile) . ':packages/com_jem.zip should exist.');
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem_component_');
+        self::assertIsString($temporary);
+        file_put_contents($temporary, $componentZip);
+
+        $component = new ZipArchive();
+        self::assertTrue($component->open($temporary), $this->relativePath($packageZipFile) . ':packages/com_jem.zip should be readable.');
+        $exists = $component->locateName($entryName) !== false;
+
+        $component->close();
+        unlink($temporary);
+
+        return $exists;
     }
 
     private function componentNestedZipContains(string $packageZipFile, string $outerEntryName, string $innerEntryName): bool

@@ -61,8 +61,6 @@ class JemRouter extends RouterView
             'category',
             'attendees',
             'day',
-            'editevent',
-            'editvenue',
             'myattendances',
             'myevents',
             'mytimeline',
@@ -85,8 +83,16 @@ class JemRouter extends RouterView
             $this->registerView($viewConfig);
         }
 
+        // Frontend form controllers use a_id to avoid collisions with routed item ids.
+        foreach (array('editevent', 'editvenue') as $viewName) {
+            $viewConfig = new RouterViewConfiguration($viewName);
+            $viewConfig->setKey('a_id');
+            $this->registerView($viewConfig);
+        }
+
         $this->registerView(new RouterViewConfiguration('specialdays'));
         $this->registerView(new RouterViewConfiguration('attendeeregistrations'));
+        $this->registerView(new RouterViewConfiguration('eventsblog'));
 
         parent::__construct($app, $menu);
 

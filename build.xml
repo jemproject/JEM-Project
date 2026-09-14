@@ -62,6 +62,7 @@
             <exclude name=".agents/**" />
             <exclude name=".claude/**" />
             <exclude name=".codex/**" />
+            <exclude name=".codex-skill-staging/**" />
             <exclude name=".cursor/**" />
             <exclude name=".github/copilot/**" />
             <exclude name=".env" />
@@ -100,7 +101,9 @@
             <exclude name="phpunit.progress.xml.dist" />
             <exclude name="plugins/**" />
             <exclude name="tests/**" />
+            <exclude name="tmp/**" />
             <exclude name="tools/**" />
+            <exclude name="updatecheck/**" />
             <exclude name="vendor/**" />
             <patternset refid="windows.junk.excludes" />
         </zip>
@@ -223,7 +226,14 @@
 
     <target name="build_3rd" description="packages any 3rd party plugins">
         <!-- add all 3rd party plugins directories here -->
-        <zip destfile="${cfg.buildVersionDir}/3rd/plg_tag${cfg.name}.zip" basedir="3rd/AcyMailingPlugin/tag${cfg.name}">
+        <zip destfile="${cfg.buildVersionDir}/3rd/acym_jem.zip">
+            <zipfileset dir="3rd/acymailing_jem" includes="files_acym_jem.xml" />
+            <zipfileset dir="3rd/acymailing_jem" includes="script.php" />
+            <zipfileset dir="3rd/acymailing_jem" includes="jem/**" />
+            <patternset refid="windows.junk.excludes" />
+        </zip>
+        <zip destfile="${cfg.buildVersionDir}/3rd/acym_jem_acyba.zip">
+            <zipfileset dir="3rd/acymailing_jem" includes="jem/**" />
             <patternset refid="windows.junk.excludes" />
         </zip>
         <zip destfile="${cfg.buildVersionDir}/3rd/plug_${cfg.name}myattending.zip" basedir="3rd/CBPlugins/plug_${cfg.name}myattending">

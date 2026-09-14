@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\String\StringHelper;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT_ADMINISTRATOR.'/helpers/html');
@@ -126,9 +125,26 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
     }
 </script>
 <script>
-    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking, token) {
-        document.location.href = 'index.php?option=com_jem&task=attendees.attendeeadd&id='+eventid+'&status='+status+'&places='+encodeURIComponent(places)+'&uids='+ids+'&series='+seriesbooking+'&'+token+'=1';
-        SqueezeBox.close();
+    function jSelectUsers_newusers(ids, count, status, places, eventid, seriesbooking) {
+        var form = document.getElementById('adminForm');
+        var values = {status: status, places: places, uids: ids, series: seriesbooking};
+
+        Object.keys(values).forEach(function (name) {
+            var input = form.querySelector('input[name="' + name + '"]');
+
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                form.appendChild(input);
+            }
+
+            input.value = values[name];
+        });
+
+        form.querySelector('input[name="id"]').value = eventid;
+        form.querySelector('input[name="task"]').value = 'attendees.attendeeadd';
+        form.submit();
     }
 </script>
 
@@ -163,7 +179,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             <tr>
                 <td style="width: 80%">
                     <b><?php echo Text::_('COM_JEM_TITLE').':'; ?></b>&nbsp;
-                    <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo $this->event->recurrence_type? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
+                    <a href="<?php echo $detaillink ; ?>"><?php echo $this->escape($this->event->title); ?></a> <?php echo ($this->event->recurrence_type || !empty($this->event->series_id)) ? '<i class="fa fa-fw fa-refresh jem-recurrenceicon"></i>':'' ;?>
                     <br>
                     <b><?php echo Text::_('COM_JEM_DATE').':'; ?></b>&nbsp;<?php
                         echo JemOutput::formatLongDateTime($this->event->dates, $this->event->times, $this->event->enddates, $this->event->endtimes, $this->settings->get('global_show_timedetails', 1)); ?>
@@ -190,7 +206,23 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
             </div>
         </div>
 
-        <?php $del_link = 'index.php?option=com_jem&view=attendees&task=attendees.attendeeremove&id='.$this->event->id.(!empty($this->item->id)?'&Itemid='.$this->item->id:'').'&'.Session::getFormToken().'=1'; ?>
+        <?php if ($this->event->waitinglist) : ?>
+            <div class="alert alert-info" role="status">
+                <?php echo Text::sprintf('COM_JEM_WAITINGLIST_CAPACITY_SUMMARY', (int) $this->waitingListStatus->availableBefore, (int) $this->waitingListStatus->waitingBefore); ?>
+                <?php if ((int) ($this->jemsettings->waitinglist_automatic ?? 1)) : ?>
+                    <?php echo ($this->jemsettings->waitinglist_strategy ?? 'strict') === 'fill'
+                        ? Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_FILL')
+                        : Text::_('COM_JEM_WAITINGLIST_MODE_AUTOMATIC_STRICT'); ?>
+                <?php else : ?>
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_MODE_MANUAL'); ?>
+                <?php endif; ?>
+                <label class="ms-3 mb-0">
+                    <input type="hidden" name="waitinglist_notify" value="0">
+                    <input id="jem-waitinglist-notify" type="checkbox" name="waitinglist_notify" value="1" checked="checked">
+                    <?php echo Text::_('COM_JEM_WAITINGLIST_NOTIFY_PROMOTED'); ?>
+                </label>
+            </div>
+        <?php endif; ?>
 
         <div class="table-responsive">
             <table class="eventtable table table-striped" style="margin: 20px 0 0 0;" id="articleList">
@@ -245,9 +277,9 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         <td><?php if (!empty($cmnt)) { echo HTMLHelper::_('tooltip', $this->escape($row->comment), null, null, $this->escape($cmnt), null, null); } ?></td>
                         <?php endif;?>
                         <td class="center">
-                            <a href="<?php echo Route::_($del_link.'&cid[]='.(int) $row->id); ?>">
+                            <button type="submit" class="btn btn-link p-0" name="cid[]" value="<?php echo (int) $row->id; ?>" onclick="this.form.task.value='attendees.attendeeremove';">
                                 <?php echo JemOutput::removebutton(Text::_('COM_JEM_ATTENDEES_DELETE'), array('title' => Text::_('COM_JEM_ATTENDEES_DELETE'), 'class' => 'hasTooltip')); ?>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 <?php endforeach; ?>
@@ -259,6 +291,7 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
         <input type="hidden" name="option" value="com_jem" />
         <input type="hidden" name="boxchecked" value="0" />
         <input type="hidden" name="task" value="" />
+        <input type="hidden" name="attendee_id" value="0" />
         <input type="hidden" name="view" value="attendees" />
         <input type="hidden" name="id" value="<?php echo $this->event->id; ?>" />
         <input type="hidden" name="Itemid" value="<?php echo $this->item->id;?>" />

@@ -46,6 +46,10 @@ class jem_attachments extends Table
     public $created = '';
     /** @var int */
     public $created_by = 0;
+    /** @var int */
+    public $downloads = 0;
+    /** @var string|null */
+    public $last_download = null;
 
 
     public function __construct(& $db)
@@ -77,6 +81,7 @@ class jem_attachments extends Table
         $this->access      = max(1, (int) $this->access);
         $this->ordering    = (int) $this->ordering;
         $this->created_by  = (int) $this->created_by;
+        $this->downloads   = max(0, (int) $this->downloads);
 
         if (empty($this->created)) {
             $this->created = Factory::getDate()->toSql();

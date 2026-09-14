@@ -18,6 +18,8 @@ use Joomla\CMS\Installer\Installer;
 use Joomla\CMS\Version;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Router\Route;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
 /**
  * JEM package installer script.
  */
@@ -90,6 +92,7 @@ class Pkg_JemInstallerScript
         $this->uninstallPlugin('search', 'jem');
         $this->uninstallModule('mod_jem_calajax');
         $this->normaliseJemModuleParams();
+        $this->removeLegacyLocalEnglishLanguageFiles();
 
         return true;
     }
@@ -140,6 +143,69 @@ class Pkg_JemInstallerScript
 
         $db->setQuery($query);
         $db->execute();
+    }
+
+    /**
+     * Remove bundled English files installed by the legacy local layout.
+     *
+     * Other language tags belong to separately installed JEM language packs.
+     * They remain available to the local fallback until a matching global
+     * language package is installed. Joomla override directories are never
+     * part of this cleanup.
+     */
+    protected function removeLegacyLocalEnglishLanguageFiles()
+    {
+        $locations = array(
+            JPATH_SITE . '/components/com_jem/language/en-GB' => 'com_jem',
+            JPATH_ADMINISTRATOR . '/components/com_jem/language/en-GB' => 'com_jem',
+            JPATH_SITE . '/modules/mod_jem/language/en-GB' => 'mod_jem',
+            JPATH_SITE . '/modules/mod_jem_banner/language/en-GB' => 'mod_jem_banner',
+            JPATH_SITE . '/modules/mod_jem_cal/language/en-GB' => 'mod_jem_cal',
+            JPATH_SITE . '/modules/mod_jem_jubilee/language/en-GB' => 'mod_jem_jubilee',
+            JPATH_SITE . '/modules/mod_jem_map/language/en-GB' => 'mod_jem_map',
+            JPATH_SITE . '/modules/mod_jem_teaser/language/en-GB' => 'mod_jem_teaser',
+            JPATH_SITE . '/modules/mod_jem_types/language/en-GB' => 'mod_jem_types',
+            JPATH_SITE . '/modules/mod_jem_wide/language/en-GB' => 'mod_jem_wide',
+            JPATH_PLUGINS . '/actionlog/jem/language/en-GB' => 'plg_actionlog_jem',
+            JPATH_PLUGINS . '/content/jemembed/language/en-GB' => 'plg_content_jemembed',
+            JPATH_PLUGINS . '/content/jemlistevents/language/en-GB' => 'plg_content_jemlistevents',
+            JPATH_PLUGINS . '/finder/jem/language/en-GB' => 'plg_finder_jem',
+            JPATH_PLUGINS . '/jem/comments/language/en-GB' => 'plg_jem_comments',
+            JPATH_PLUGINS . '/jem/mailer/language/en-GB' => 'plg_jem_mailer',
+            JPATH_PLUGINS . '/quickicon/jem/language/en-GB' => 'plg_quickicon_jem',
+        );
+
+        foreach ($locations as $directory => $extension) {
+            foreach (array($extension . '.ini', $extension . '.sys.ini', 'index.html') as $filename) {
+                $path = $directory . '/' . $filename;
+
+                if (is_file($path) && !File::delete($path)) {
+                    Factory::getApplication()->enqueueMessage(
+                        'JEM could not remove the obsolete local language file: ' . $path,
+                        'warning'
+                    );
+                }
+            }
+
+            $this->removeDirectoryIfEmpty($directory);
+            $this->removeDirectoryIfEmpty(dirname($directory));
+        }
+    }
+
+    /**
+     * Remove one known language directory only when it contains no files.
+     */
+    protected function removeDirectoryIfEmpty($directory)
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        $entries = scandir($directory);
+
+        if ($entries !== false && count($entries) === 2) {
+            Folder::delete($directory);
+        }
     }
 
     public function checkRequirements() {

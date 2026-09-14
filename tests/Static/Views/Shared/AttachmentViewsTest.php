@@ -68,6 +68,56 @@ final class AttachmentViewsTest extends TestCase
         self::assertStringContainsString('$attachmentsFrameClass', $template);
     }
 
+    public function testBackendAttachmentListShowsDownloadStatistics(): void
+    {
+        $template = $this->read(JEM_TEST_ROOT . '/admin/views/attachments/tmpl/default.php');
+        $model = $this->read(JEM_TEST_ROOT . '/admin/models/attachments.php');
+
+        self::assertStringContainsString("'COM_JEM_ATTACHMENT_DOWNLOADS', 'a.downloads'", $template);
+        self::assertStringContainsString("'COM_JEM_ATTACHMENT_LAST_DOWNLOAD', 'a.last_download'", $template);
+        self::assertStringContainsString('(int) $item->downloads', $template);
+        self::assertStringContainsString("'downloads', 'a.downloads'", $model);
+        self::assertStringContainsString("'last_download', 'a.last_download'", $model);
+    }
+
+    public function testBackendDownloadActionIsTheCompactLastColumn(): void
+    {
+        $template = $this->read(JEM_TEST_ROOT . '/admin/views/attachments/tmpl/default.php');
+        $css = $this->read(JEM_TEST_ROOT . '/media/css/backend.css');
+        $downloadsHeading = strpos($template, "'COM_JEM_ATTACHMENT_DOWNLOADS', 'a.downloads'");
+        $idHeading = strpos($template, "'JGRID_HEADING_ID', 'a.id'");
+        $actionHeading = strpos($template, 'class="center jem-attachment-download-action"');
+
+        self::assertIsInt($downloadsHeading);
+        self::assertIsInt($idHeading);
+        self::assertIsInt($actionHeading);
+        self::assertTrue($downloadsHeading < $idHeading && $idHeading < $actionHeading);
+        self::assertMatchesRegularExpression(
+            '/<th class="center jem-attachment-download-action">\s*<span class="visually-hidden">/',
+            $template
+        );
+        self::assertStringContainsString('#attachmentList .jem-attachment-download-action {', $css);
+        self::assertStringContainsString('width: 1%;', $css);
+    }
+
+    public function testSuccessfulFrontendAndBackendDeliveriesAreRecorded(): void
+    {
+        $frontendController = $this->read(JEM_TEST_ROOT . '/site/controller.php');
+        $backendController = $this->read(JEM_TEST_ROOT . '/admin/controllers/attachments.php');
+        $attachmentClass = $this->read(JEM_TEST_ROOT . '/site/classes/attachment.class.php');
+
+        foreach (array($frontendController, $backendController) as $controller) {
+            self::assertStringContainsString('$delivered = readfile($path);', $controller);
+            self::assertStringContainsString('if ($delivered !== false)', $controller);
+            self::assertStringContainsString('JemAttachment::recordDownload($id);', $controller);
+        }
+
+        self::assertStringContainsString('static public function recordDownload($id)', $attachmentClass);
+        self::assertStringContainsString("quoteName('downloads') . ' = ' . \$db->quoteName('downloads') . ' + 1'", $attachmentClass);
+        self::assertStringContainsString("quoteName('last_download')", $attachmentClass);
+        self::assertStringContainsString('static public function logDownloadError', $attachmentClass);
+    }
+
     private function read(string $path): string
     {
         self::assertFileExists($path);

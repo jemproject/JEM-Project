@@ -20,6 +20,7 @@ final class CsrfRequestGuardTest extends TestCase
 
         self::assertStringContainsString('Sensitive controller methods without a Joomla token check', $controllerGuard);
         self::assertStringContainsString('Session|JSession)::checkToken', $controllerGuard);
+        self::assertStringContainsString('JemHelper::requirePostToken', $controllerGuard);
     }
 
     public function testStateChangingControllersCallCheckTokenBeforeMutatingInput(): void
@@ -35,11 +36,18 @@ final class CsrfRequestGuardTest extends TestCase
                     continue;
                 }
 
-                $tokenPos = strpos($body, 'checkToken');
+                $tokenPositions = array_filter(
+                    array(strpos($body, 'checkToken'), strpos($body, 'requirePostToken')),
+                    static function ($position) {
+                        return $position !== false;
+                    }
+                );
 
-                if ($tokenPos === false) {
+                if (!$tokenPositions) {
                     continue;
                 }
+
+                $tokenPos = min($tokenPositions);
 
                 $mutationPos = $this->firstMutationPosition($body);
 
@@ -62,7 +70,7 @@ final class CsrfRequestGuardTest extends TestCase
     {
         $positions = array();
 
-        foreach (array('->input->', 'getInput()', 'getModel(', 'parent::save', 'parent::delete', 'File::upload', 'File::delete', 'setRedirect(') as $needle) {
+        foreach (array('->input->', '->post->', 'getInput()', 'getModel(', 'parent::save', 'parent::delete', 'File::upload', 'File::delete', 'setRedirect(') as $needle) {
             $pos = strpos($body, $needle);
 
             if ($pos !== false) {

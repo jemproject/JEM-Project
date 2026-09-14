@@ -11,7 +11,6 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
 
 $jemsettings      = JemHelper::config();
 $attachmentTypes  = array_filter(array_map('trim', explode(',', (string) $jemsettings->attachments_types)));
@@ -73,7 +72,7 @@ $attachments = is_array($this->item->attachments ?? null) ? $this->item->attachm
             <td class="center jem-attachment-actions">
                 <button type="button" class="btn btn-sm btn-primary attachment-move-up" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_UP'); ?>"><span class="icon-chevron-up" aria-hidden="true"></span></button>
                 <button type="button" class="btn btn-sm btn-primary attachment-move-down" aria-label="<?php echo Text::_('JLIB_HTML_MOVE_DOWN'); ?>"><span class="icon-chevron-down" aria-hidden="true"></span></button>
-                <button type="button" id="attach-remove<?php echo (int) $file->id; ?>:<?php echo Session::getFormToken(); ?>" class="btn btn-sm btn-danger attach-remove" title="<?php echo Text::_('COM_JEM_REMOVE_ATTACHEMENT'); ?>" aria-label="<?php echo Text::_('COM_JEM_REMOVE_ATTACHEMENT'); ?>"><span class="icon-minus icon-white" aria-hidden="true"></span></button>
+                <button type="button" id="attach-remove<?php echo (int) $file->id; ?>" class="btn btn-sm btn-danger attach-remove" title="<?php echo Text::_('COM_JEM_REMOVE_ATTACHEMENT'); ?>" aria-label="<?php echo Text::_('COM_JEM_REMOVE_ATTACHEMENT'); ?>"><span class="icon-minus icon-white" aria-hidden="true"></span></button>
             </td>
         </tr>
     <?php endforeach; ?>

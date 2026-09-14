@@ -9,7 +9,6 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
 $mod_name = 'mod_jem_jubilee';
@@ -24,7 +23,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/image.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/output.class.php');
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
-Factory::getApplication()->getLanguage()->load('com_jem', JPATH_SITE.'/components/com_jem');
+JemHelper::loadComponentLanguage();
 
 switch($params->get('color')) {
     case 'red':
@@ -50,12 +49,15 @@ if (empty($list) && !$params->get('show_no_events')) {
 
 $jemsettings = JemHelper::config();
 
-$layout = substr(strstr($params->get('layout', 'default'), ':'), 1);
+$layout = JemHelper::getModuleLayoutName($params->get('layout', 'default'));
 $iconcss =  ($jemsettings->useiconfont == 1 ? 'iconfont' : 'iconimg');
 
 JemHelper::loadModuleStyleSheet($mod_name, $layout);
 JemHelper::loadModuleStyleSheet($mod_name, $color);
 JemHelper::loadModuleStyleSheet($mod_name, $iconcss);
+if ((int) $params->get('show_status_indicators', 1) === 1) {
+    JemHelper::loadModuleStatusAssets();
+}
 
 // load icon font if needed
 JemHelper::loadIconFont();

@@ -79,12 +79,14 @@ abstract class ModJemHelper
         # upcoming or running events, on mistake default to upcoming events
         else {
             $model->setState('filter.published',1);
-            $model->setState('filter.orderby',array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby',array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
             $offset_minutes = 60 * $params->get('offset_hours', 0);
 
-            $cal_from = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
+            $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+            $cal_from .= ($type == 1)
+                ? ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')'
+                : ')';
         }
 
         $model->setState('filter.calendar_from',$cal_from);
@@ -110,6 +112,9 @@ abstract class ModJemHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         # Loop through the result rows and prepare data
@@ -132,6 +137,8 @@ abstract class ModJemHelper
             $lists[++$i]            = new stdClass();
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
             $lists[$i]->title       = htmlspecialchars($row->title ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->link        = $hasEventAccess ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params)) : Route::_('index.php?option=com_users&view=login');
             $lists[$i]->dates       = $row->dates;
@@ -139,11 +146,11 @@ abstract class ModJemHelper
             $lists[$i]->enddates    = $row->enddates;
             $lists[$i]->endtimes    = $row->endtimes;
             $lists[$i]->dateinfo    = JEMOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->catname     = implode(', ', JemOutput::getCategoryList($row->categories, $params->get('linkcategory', 1)));
-            $lists[$i]->text        = $params->get('showtitloc', 0) ? $lists[$i]->title : $lists[$i]->venue;
+            $lists[$i]->text        = $params->get('showtitle', $params->get('showtitloc', 1)) ? $lists[$i]->title : $lists[$i]->venue;
             $lists[$i]->city        = htmlspecialchars($row->city ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->postalCode  = htmlspecialchars($row->postalCode ?? '', ENT_COMPAT, 'UTF-8');
             $lists[$i]->street      = htmlspecialchars($row->street ?? '', ENT_COMPAT, 'UTF-8');

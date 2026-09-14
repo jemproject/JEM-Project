@@ -2,18 +2,17 @@
 <extension type="plugin" group="jem" method="upgrade">
     <name>plg_jem_comments</name>
     <author>JEM Community</author>
-    <creationDate>7 July 2026</creationDate>
+    <creationDate>14 September 2026 00:00</creationDate>
     <copyright>copyright (C) 2013-2026 joomlaeventmanager.net</copyright>
     <license>https://www.gnu.org/licenses/gpl-3.0 GNU/GPL</license>
     <authorEmail>info@joomlaeventmanager.net</authorEmail>
     <authorUrl>https://www.joomlaeventmanager.net</authorUrl>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <description>PLG_JEM_COMMENTS_XML_DESCRIPTION</description>
 
     <files>
         <filename plugin="comments">comments.php</filename>
         <filename>index.html</filename>
-        <folder>language</folder>
     </files>
     <languages>
         <language tag="en-GB">language/en-GB/plg_jem_comments.ini</language>

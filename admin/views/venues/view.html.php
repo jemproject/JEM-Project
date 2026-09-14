@@ -24,9 +24,16 @@ use Joomla\CMS\Factory;
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('venue', 'access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $user     = JemFactory::getUser();
         $app      = Factory::getApplication();
         $document = $app->getDocument();
@@ -36,6 +43,25 @@ use Joomla\CMS\Factory;
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total         = $this->get('Total');
+
+        foreach (array('search_type', 'venue_type_id', 'access') as $filter) {
+            if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
+                unset($this->activeFilters[$filter]);
+            }
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue('filter_type', null, $this->state->get('filter.search_type'));
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
         $this->settings   = $settings;
 
         $params = $this->state->get('params');
@@ -52,7 +78,6 @@ use Joomla\CMS\Factory;
 
         // Load css
         $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Add Scripts
         $wa->useScript('jquery');
@@ -63,27 +88,7 @@ use Joomla\CMS\Factory;
             $document->addStyleDeclaration($style);
         }
 
-        // add filter selection for the search
-        $filters = array();
-        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_VENUE'));
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_CITY'));
-        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_STATE'));
-        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_COUNTRY'));
-        $filters[] = HTMLHelper::_('select.option', '5', Text::_('JALL'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select'), 'value', 'text', $this->state->get('filter_type'));
-        $lists['venue_type_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getTypeFilterOptions(3, 'COM_JEM_TYPE_FILTER_VENUE'),
-            'filter_venue_type_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter_venue_type_id'),
-            'filter_venue_type_id'
-        );
-
-        //assign data to template
-        $this->lists = $lists;
+        // Assign data to template.
         $this->user  = $user;
 
         // add toolbar
@@ -126,17 +131,20 @@ use Joomla\CMS\Factory;
         $toolbar = Toolbar::getInstance('toolbar');
 
         $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
+        $canCreate = JemHelperBackend::can('venue', 'create');
+        $canEdit = JemHelperBackend::can('venue', 'edit')
+            || ($canDo->get('jem.venues.access') && $canDo->get('jem.venues.edit.own'));
+        $canChangeState = JemHelperBackend::can('venue', 'edit.state');
+        $canDelete = JemHelperBackend::can('venue', 'delete');
         $filterState = $this->state->get('filter_state');
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canCreate) {
             ToolbarHelper::addNew('venue.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canEdit) {
             ToolbarHelper::editList('venue.edit');
             ToolbarHelper::divider();
         }

@@ -138,12 +138,87 @@ final class SiteCodeContractsTest extends TestCase
         self::assertStringContainsString("JemImage::flyercreator((string) \$category->image,'category')", $code);
     }
 
+    public function testVenueViewAvoidsNullMetadataArguments(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/venue/view.html.php');
+
+        self::assertStringContainsString(
+            "\$document->setMetadata('keywords', (string) (\$venue->meta_keywords ?? ''));",
+            $code
+        );
+        self::assertStringContainsString(
+            "\$document->setDescription(strip_tags((string) (\$venue->meta_description ?? '')));",
+            $code
+        );
+    }
+
+    public function testVenueListPaginationKeepsItsRouteContext(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/views/venue/view.html.php');
+
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('option', 'com_jem');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('view', 'venue');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('layout', 'default');", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('id', (string) \$venue->slug);", $code);
+        self::assertStringContainsString("\$pagination->setAdditionalUrlParam('Itemid', (int) \$menuitem->id);", $code);
+    }
+
     public function testAttachmentClassUsesCmsInputFilterFactory(): void
     {
         $code = self::read(JEM_TEST_ROOT . '/site/classes/attachment.class.php');
 
         self::assertStringContainsString('use Joomla\CMS\Filter\InputFilter;', $code);
         self::assertStringNotContainsString('use Joomla\Filter\InputFilter;', $code);
+    }
+
+    public function testNominatimRequestsUseAStableIdentifyingUserAgent(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/output.class.php');
+
+        self::assertStringNotContainsString('JemHelper::config()->get(', $code);
+        self::assertSame(2, substr_count($code, '"header" => "User-Agent: " . self::nominatimUserAgent()'));
+        self::assertStringContainsString(
+            "return 'JEM (+https://www.joomlaeventmanager.net; site=' . Uri::root() . ')';",
+            $code
+        );
+    }
+
+    public function testPdfLinkBuilderDoesNotMutateTheSharedRequestUri(): void
+    {
+        $code = self::read(JEM_TEST_ROOT . '/site/classes/output.class.php');
+        $start = strpos($code, 'static protected function buildCurrentPdfLink()');
+        $end = strpos($code, 'static public function archivebutton', $start);
+
+        self::assertNotFalse($start);
+        self::assertNotFalse($end);
+
+        $method = substr($code, $start, $end - $start);
+
+        self::assertStringContainsString('$uri = clone Uri::getInstance();', $method);
+        self::assertStringNotContainsString('$uri = Uri::getInstance();', $method);
+    }
+
+    public function testMergedGlobalAttributesAreClonedPerItem(): void
+    {
+        $expectedCloneCounts = array(
+            '/site/helpers/association.php' => 1,
+            '/site/models/event.php' => 4,
+            '/site/models/venue.php' => 1,
+            '/site/views/event/view.raw.php' => 1,
+        );
+
+        foreach ($expectedCloneCounts as $path => $expectedCount) {
+            $code = self::read(JEM_TEST_ROOT . $path);
+
+            self::assertSame(
+                $expectedCount,
+                substr_count($code, 'clone JemHelper::globalattribs()'),
+                $path . ' must clone the shared Registry before merging item-specific parameters.'
+            );
+        }
+
+        $rawView = self::read(JEM_TEST_ROOT . '/site/views/event/view.raw.php');
+        self::assertStringContainsString('$row->params = clone $row->params;', $rawView);
     }
 
     /**

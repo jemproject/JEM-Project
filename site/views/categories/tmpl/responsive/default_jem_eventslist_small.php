@@ -138,8 +138,7 @@ if (empty($this->catrow->events)) { return; }
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                  $row->enddates, $row->endtimes);
+                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
               ?>
                <?php if ($this->jemsettings->showtitle == 0) : ?>
                 <?php echo JemOutput::recurrenceicon($row); ?>

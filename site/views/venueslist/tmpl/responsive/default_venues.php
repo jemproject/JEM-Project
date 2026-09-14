@@ -56,14 +56,18 @@ $uri = Uri::getInstance();
   }
 
   .modal[id^="jem-venueslist-map-"] .modal-body {
+      position: relative;
+      height: var(--jem-venueslist-map-height, 70vh);
+      min-height: 0;
       padding: 0;
+      overflow: hidden;
   }
 
-  .modal[id^="jem-venueslist-map-"] iframe {
+  .modal[id^="jem-venueslist-map-"] .jem-osm-map {
       display: block;
       width: 100%;
       height: 100%;
-      min-height: 22rem;
+      min-height: 0;
       border: 0;
   }
 
@@ -74,6 +78,9 @@ $uri = Uri::getInstance();
 function jem_common_show_filter(&$obj) {
   if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
     return false;
+  }
+  if (!empty($obj->lists['show_venue_event_filter'])) {
+    return true;
   }
   if ((int) $obj->params->get('showcountryfilter', 1)) {
     return true;
@@ -142,7 +149,7 @@ if (!function_exists('jem_venueslist_responsive_venue_calendar_link')) {
 if (!function_exists('jem_venueslist_responsive_venue_edit_link')) {
     function jem_venueslist_responsive_venue_edit_link($row)
     {
-        return Route::_('index.php?option=com_jem&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
+        return Route::_('index.php?option=com_jem&view=editvenue&task=venue.edit&a_id=' . (int) $row->id . '&return=' . base64_encode(Uri::getInstance()->toString()));
     }
 }
 
@@ -201,25 +208,36 @@ if (!function_exists('jem_venueslist_responsive_venue_map')) {
         $modalHeight = max(25, min(95, (int) $params->get('venuemap_popup_height', 70)));
         $lat = (float) $row->latitude;
         $lon = (float) $row->longitude;
-        $bbox = ($lon - 0.005) . ',' . ($lat - 0.003) . ',' . ($lon + 0.005) . ',' . ($lat + 0.003);
-        $src = 'https://www.openstreetmap.org/export/embed.html?bbox=' . rawurlencode($bbox) . '&layer=mapnik&marker=' . rawurlencode($lat . ',' . $lon);
+        if ($lat < -90.0 || $lat > 90.0 || $lon < -180.0 || $lon > 180.0) {
+            return '';
+        }
+
         $external = 'https://www.openstreetmap.org/?mlat=' . rawurlencode((string) $lat) . '&mlon=' . rawurlencode((string) $lon) . '#map=16/' . rawurlencode((string) $lat) . '/' . rawurlencode((string) $lon);
         $title = htmlspecialchars((string) ($row->venue ?? Text::_('COM_JEM_MAP')), ENT_QUOTES, 'UTF-8');
         $modalId = 'jem-venueslist-map-responsive-' . (int) ($row->id ?? 0);
+        $marker = $params->get('venue_markerfile', 'media/com_jem/images/marker-red.webp');
+        $mapCanvas = JemOutput::osmMapCanvas($lat, $lon, '100%', 16, $modalId . '-canvas', '', $marker, $row->type_icon ?? '', $row->type_color ?? '');
 
         $output = HTMLHelper::_(
             'bootstrap.renderModal',
             $modalId,
             array(
-                'url'    => $src,
                 'title'  => Text::_('COM_JEM_MAP') . ': ' . $title,
-                'width'  => $modalWidth . '%',
-                'height' => $modalHeight . 'vh',
+                'width'  => '100%',
+                'height' => '100%',
                 'modalWidth' => $modalWidth,
                 'bodyHeight' => $modalHeight,
                 'footer' => '<a class="btn btn-primary" href="' . htmlspecialchars($external, ENT_QUOTES, 'UTF-8') . '" target="_blank" rel="noopener">' . Text::_('COM_JEM_OPEN_MAP') . '</a>'
                     . '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>',
-            )
+            ),
+            $mapCanvas
+        );
+
+        $modalRoot = 'id="' . $modalId . '"';
+        $output = str_replace(
+            $modalRoot,
+            $modalRoot . ' style="--jem-venueslist-map-height:' . $modalHeight . 'vh"',
+            $output
         );
 
         $output .= '<button type="button" class="btn btn-sm btn-outline-primary jem-venueslist-map-button" data-bs-toggle="modal" data-bs-target="#' . htmlspecialchars($modalId, ENT_QUOTES, 'UTF-8') . '" title="' . $title . '">'
@@ -384,6 +402,13 @@ if ($showEditColumn) {
       <?php echo $this->lists['country_filter']; ?>
     </div>
     <?php endif; ?>
+    <?php if (!empty($this->lists['show_venue_event_filter'])) : ?>
+    <label class="jem-row jem-align-center jem-nowrap">
+      <input type="hidden" name="show_all_venues" value="0">
+      <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+      <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+    </label>
+    <?php endif; ?>
     <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-actions">
       <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
       <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
@@ -543,6 +568,16 @@ if ($showEditColumn) {
             <?php endforeach; ?>
   <?php endif; ?>
 </ul>
+
+<?php if (!empty($this->lists['show_venue_event_filter']) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
+<div class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
+    <label class="jem-row jem-align-center jem-nowrap">
+        <input type="hidden" name="show_all_venues" value="0">
+        <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
+        <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
+    </label>
+</div>
+<?php endif; ?>
 
 <div class="pagination">
     <?php echo $this->pagination->getPagesLinks(); ?>

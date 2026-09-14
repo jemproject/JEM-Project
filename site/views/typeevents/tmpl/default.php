@@ -25,6 +25,12 @@ use Joomla\CMS\Language\Text;
         </h1>
     <?php endif; ?>
 
+    <?php if ($this->params->get('showintrotext')) : ?>
+        <div class="description no_space floattext">
+            <?php echo $this->params->get('introtext'); ?>
+        </div>
+    <?php endif; ?>
+
     <?php if (!$this->type) : ?>
         <div class="alert alert-info">
             <?php echo !empty($this->missingTypeId) ? Text::sprintf('COM_JEM_TYPEEVENTS_TYPE_NOT_FOUND', (int) $this->missingTypeId) : Text::_('COM_JEM_TYPEEVENTS_NO_TYPES'); ?>

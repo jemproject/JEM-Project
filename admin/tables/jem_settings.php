@@ -107,6 +107,14 @@ class jem_settings extends Table
     /** @var int */
     public $imagewidth = '100';
     /** @var int */
+    public $image_event_intro_default_dimension = '1200';
+    /** @var int */
+    public $image_event_full_default_dimension = '1920';
+    /** @var int */
+    public $image_venue_default_dimension = '1280';
+    /** @var int */
+    public $image_category_default_dimension = '800';
+    /** @var int */
     public $pdf_imagewidth = '40';
     /** @var int */
     public $pdf_imageheight = '40';

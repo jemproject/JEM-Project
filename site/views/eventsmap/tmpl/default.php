@@ -16,12 +16,11 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 $app         = Factory::getApplication();
 $document    = $app->getDocument();
 $wa          = $document->getWebAssetManager();
-$wa->registerAndUseStyle('com_jem.eventsmap', 'media/com_jem/css/eventsmap.css');
-
 $jemsettings  = JemHelper::config();
 $map_id        = 'leafletmap-' . uniqid();
 $showDateFilter = (int) $this->showDateFilter;
@@ -36,6 +35,12 @@ $filterDate    = $this->filterDate;
 $isDateMode    = $filterDate !== null;
 $currentDate   = $isDateMode ? $filterDate : '';
 $youAreHere    = Text::_('COM_JEM_EVENTS_MAP_YOU_ARE_HERE');
+$encodeMapText = static function ($key) {
+    return json_encode(
+        Text::_($key),
+        JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    );
+};
 $height        = $this->height;
 $centerLat     = (float) $this->centerLat;
 $centerLng     = (float) $this->centerLng;
@@ -44,6 +49,24 @@ $mylocMarker   = $this->mylocMarker;
 $jemItemid     = (int) $this->jemItemid;
 $events        = $this->eventslist ?? [];
 
+if (!function_exists('jem_eventsmap_normalise_icon_class')) {
+    function jem_eventsmap_normalise_icon_class($icon)
+    {
+        $icon = trim((string) $icon);
+
+        return $icon !== '' && preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $icon) ? $icon : '';
+    }
+}
+
+if (!function_exists('jem_eventsmap_normalise_color')) {
+    function jem_eventsmap_normalise_color($color, $fallback = '#d9ddb5')
+    {
+        $color = trim((string) $color);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $color) ? strtolower($color) : $fallback;
+    }
+}
+
 $startLat      = (float) $this->params->get('map_center_lat', '54.526');
 $startLng      = (float) $this->params->get('map_center_lng', '15.255');
 $startZoom     = (int)   $this->params->get('map_zoom', '4');
@@ -51,7 +74,7 @@ $mapProvider   = (string) $this->params->get('map_provider', 'osm');
 $mapProvider   = $mapProvider === 'google' ? 'google' : 'osm';
 $autoCenter    = (int)   $this->params->get('map_auto_center', '1');
 $heatMapLayer  = (int)  $this->params->get('heat_layer', '1');
-$fullScreenMap = (int)  $this->params->get('full_screen_map', '0');
+$fullScreenMap = (int)  $this->params->get('full_screen_map', '1');
 $showDirectionsLink = (int) $this->params->get('show_directions_link', '1');
 $showFullMapLink = (int) $this->params->get('show_full_map_link', '1');
 $showEventsTable = (int) $this->params->get('show_events_table', '1');
@@ -64,9 +87,7 @@ if ($mapProvider === 'google' && $googleApiKey !== '') {
     $wa->registerAndUseScript('jem.googlemaps.api', 'https://maps.googleapis.com/maps/api/js?key=' . rawurlencode($googleApiKey) . '&libraries=visualization');
 } else {
     $wa->registerAndUseScript('leaflet', 'media/com_jem/js/leaflet.js');
-    $wa->registerAndUseStyle('mod_jem.leaflet', 'media/com_jem/css/leaflet.css');
     $wa->registerAndUseScript('leaflet.fullscreen', 'media/com_jem/js/leaflet-fullscreen.js');
-    $wa->registerAndUseStyle('leaflet.fullscreen', 'media/com_jem/css/leaflet-fullscreen.css');
     $wa->registerAndUseScript('leaflet.heat', 'media/com_jem/js/leaflet-heat.js');
 }
 
@@ -160,8 +181,37 @@ foreach ((array) $events as $event) {
             'city' => htmlspecialchars((string) $event->city, ENT_QUOTES, 'UTF-8'),
             'country' => $country,
             'countryFlag' => $countryFlagFile,
+            'venue_type_name' => (string) ($event->venue_type_name ?? ''),
+            'venue_type_color' => (string) ($event->venue_type_color ?? ''),
+            'marker_icon' => (string) ($event->venue_type_icon ?? ''),
+            'marker_color' => (string) ($event->venue_type_color ?? ''),
+            'marker_priority' => !empty($event->venue_type_icon) ? 1 : 0,
             'events' => [],
         ];
+    }
+
+    $candidateIcon = '';
+    $candidateColor = '';
+    $candidatePriority = 0;
+
+    if (!empty($event->event_type_icon)) {
+        $candidateIcon = (string) $event->event_type_icon;
+        $candidateColor = (string) ($event->event_type_color ?? '');
+        $candidatePriority = 3;
+    } elseif (!empty($event->category_type_icon)) {
+        $candidateIcon = (string) $event->category_type_icon;
+        $candidateColor = (string) ($event->category_type_color ?? '');
+        $candidatePriority = 2;
+    } elseif (!empty($event->venue_type_icon)) {
+        $candidateIcon = (string) $event->venue_type_icon;
+        $candidateColor = (string) ($event->venue_type_color ?? '');
+        $candidatePriority = 1;
+    }
+
+    if ($candidatePriority > $eventMarkers[$key]['marker_priority']) {
+        $eventMarkers[$key]['marker_icon'] = $candidateIcon;
+        $eventMarkers[$key]['marker_color'] = $candidateColor;
+        $eventMarkers[$key]['marker_priority'] = $candidatePriority;
     }
 
     $link = $buildEventLink($event);
@@ -420,6 +470,60 @@ foreach ((array) $events as $event) {
             return;
         }
 
+        function getTypeIconDetails(iconClass) {
+            var probe = document.createElement('span');
+            probe.className = iconClass;
+            probe.style.position = 'absolute';
+            probe.style.visibility = 'hidden';
+            document.body.appendChild(probe);
+            var pseudoStyle = window.getComputedStyle(probe, '::before');
+            var content = pseudoStyle.content || '';
+            var details = {
+                glyph: content.replace(/^['"]|['"]$/g, ''),
+                fontFamily: pseudoStyle.fontFamily,
+                fontWeight: pseudoStyle.fontWeight
+            };
+            probe.remove();
+
+            return details.glyph && details.glyph !== 'none' && details.glyph !== 'normal' ? details : null;
+        }
+
+        function getGoogleTypeMarker(iconClass, color, iconColor) {
+            var iconDetails = getTypeIconDetails(iconClass);
+
+            return {
+                icon: {
+                    path: 'M16 0C7.16 0 0 7.16 0 16c0 12 16 28 16 28s16-16 16-28C32 7.16 24.84 0 16 0z',
+                    fillColor: color,
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeOpacity: 1,
+                    strokeWeight: 2,
+                    anchor: new google.maps.Point(16, 44),
+                    labelOrigin: new google.maps.Point(16, 16)
+                },
+                label: iconDetails ? {
+                    text: iconDetails.glyph,
+                    color: iconColor,
+                    fontFamily: iconDetails.fontFamily,
+                    fontSize: '15px',
+                    fontWeight: iconDetails.fontWeight
+                } : null
+            };
+        }
+
+        function getLeafletTypeMarker(iconClass, color, iconColor) {
+            return L.divIcon({
+                className: '',
+                html: '<span style="display:flex;width:34px;height:34px;align-items:center;justify-content:center;border:2px solid #fff;border-radius:50%;box-sizing:border-box;background:' +
+                    color + ';color:' + iconColor + ';box-shadow:0 1px 4px rgba(0,0,0,.45)">' +
+                    '<i class="' + iconClass + '" aria-hidden="true"></i></span>',
+                iconSize: [34, 34],
+                iconAnchor: [17, 17],
+                popupAnchor: [0, -17]
+            });
+        }
+
         <?php if ($mapProvider === 'google' && $googleApiKey !== '') : ?>
         if (typeof google === 'undefined' || !google.maps) {
             return;
@@ -454,7 +558,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -479,7 +583,7 @@ foreach ((array) $events as $event) {
 
         function locateUser() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return;
             }
 
@@ -488,7 +592,7 @@ foreach ((array) $events as $event) {
                 return;
             }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
             setTimeout(showPermissionInstructions, 1000);
@@ -534,16 +638,16 @@ foreach ((array) $events as $event) {
                     var errorMessage = '';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATION_ERROR') ?>;
                     }
                     showError(errorMessage);
                     locationRequested = false;
@@ -588,7 +692,12 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
-        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+        $markerIcon = jem_eventsmap_normalise_icon_class($marker['marker_icon']);
+        $markerColor = jem_eventsmap_normalise_color($marker['marker_color']);
+        $markerIconColor = JemHelper::getContrastTextColor($markerColor) ?: '#ffffff';
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
+        $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<strong>' . $marker['venue'] . '</strong>'
             . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
@@ -596,10 +705,14 @@ foreach ((array) $events as $event) {
         ?>
         (function() {
             var position = {lat: <?= (float) $marker['lat'] ?>, lng: <?= (float) $marker['lng'] ?>};
+            var typeMarker = <?= json_encode($markerIcon) ?>
+                ? getGoogleTypeMarker(<?= json_encode($markerIcon) ?>, <?= json_encode($markerColor) ?>, <?= json_encode($markerIconColor) ?>)
+                : null;
             var marker = new google.maps.Marker({
                 position: position,
                 map: map,
-                icon: venueIcon
+                icon: typeMarker ? typeMarker.icon : venueIcon,
+                label: typeMarker ? typeMarker.label : null
             });
             marker.addListener('click', function() {
                 infoWindow.setContent(<?= json_encode($popupHtml) ?>);
@@ -646,8 +759,8 @@ foreach ((array) $events as $event) {
         L.control
             .fullscreen({
                 position: 'topleft', // change the position: topleft, topright, bottomright or bottomleft, default topleft
-                title: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE") ?>',
-                titleCancel: '<?= Text::_("COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT") ?>',
+                title: <?= $encodeMapText('COM_JEM_EVENTS_MAP_FULLSCREEN_TITLE') ?>,
+                titleCancel: <?= $encodeMapText('COM_JEM_EVENTS_MAP_FULLSCREEN_EXIT') ?>,
                 content: null,
                 forceSeparateButton: true
             })
@@ -662,7 +775,7 @@ foreach ((array) $events as $event) {
         // Check geolocation support and permissions
         function checkGeolocationSupport() {
             if (!navigator.geolocation) {
-                showError('<?= Text::_("COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED") ?>');
+                showError(<?= $encodeMapText('COM_JEM_EVENTS_MAP_GEOLOCATION_NOT_SUPPORTED') ?>);
                 return false;
             }
             return true;
@@ -673,7 +786,7 @@ foreach ((array) $events as $event) {
             alert(message);
             var locateBtn = document.getElementById('locate-me-btn');
             if (locateBtn) {
-                locateBtn.innerHTML = '<i class="icon-location"></i> <?= Text::_("COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION") ?>';
+                locateBtn.innerHTML = '<i class="icon-location"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_SHOW_MY_LOCATION') ?>;
                 locateBtn.disabled = false;
             }
         }
@@ -710,7 +823,7 @@ foreach ((array) $events as $event) {
                 return;
             }
             var originalText = locateBtn.innerHTML;
-            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> <?= Text::_("COM_JEM_EVENTS_MAP_LOCATING") ?>';
+            locateBtn.innerHTML = '<i class="icon-spinner icon-spin"></i> ' + <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATING') ?>;
             locateBtn.disabled = true;
             locationRequested = true;
 
@@ -768,16 +881,16 @@ foreach ((array) $events as $event) {
 
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_PERMISSION_DENIED") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_PERMISSION_DENIED') ?>;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_POSITION_UNAVAILABLE') ?>;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_TIMEOUT") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_TIMEOUT') ?>;
                             break;
                         default:
-                            errorMessage = '<?= Text::_("COM_JEM_EVENTS_MAP_LOCATION_ERROR") ?>';
+                            errorMessage = <?= $encodeMapText('COM_JEM_EVENTS_MAP_LOCATION_ERROR') ?>;
                     }
 
                     showError(errorMessage);
@@ -824,14 +937,21 @@ foreach ((array) $events as $event) {
         }
 
         $mapActionsHtml = $buildMapActionsHtml($marker['lat'], $marker['lng']);
-        $popupHtml = '<strong>' . $marker['venue'] . '</strong>'
+        $markerIcon = jem_eventsmap_normalise_icon_class($marker['marker_icon']);
+        $markerColor = jem_eventsmap_normalise_color($marker['marker_color']);
+        $markerIconColor = JemHelper::getContrastTextColor($markerColor) ?: '#ffffff';
+        $venueTypeBadge = JemMapHelper::typeBadgeHtml($marker['venue_type_name'], $marker['venue_type_color']);
+        $popupHtml = $venueTypeBadge . ($venueTypeBadge !== '' ? '<br>' : '')
+            . '<strong>' . $marker['venue'] . '</strong>'
             . ($marker['city'] ? ', ' . $marker['city'] : '') . '<br>'
             . ($marker['countryFlag'] ? '<img src="' . $marker['countryFlag'] . '" style="width:40px" alt="' . $marker['country'] . '"/><br>' : '')
             . '<ul class="jem-eventsmap-popup-events">' . implode('', $popupEvents) . '</ul>'
             . $mapActionsHtml;
         ?>
         L.marker([<?= (float) $marker['lat'] ?>, <?= (float) $marker['lng'] ?>], {
-            icon: L.icon({
+            icon: <?= json_encode($markerIcon) ?>
+                ? getLeafletTypeMarker(<?= json_encode($markerIcon) ?>, <?= json_encode($markerColor) ?>, <?= json_encode($markerIconColor) ?>)
+                : L.icon({
                 iconUrl: "<?= addslashes($venueMarker) ?>",
                 iconSize: [32,32], iconAnchor:[16,32], popupAnchor:[0,-32]
             })

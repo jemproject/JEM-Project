@@ -29,8 +29,6 @@ $flagPathRaw = $settings->flagicons_path;
 $flagPath    = $flagPathRaw . (str_ends_with($flagPathRaw, '/') ? '' : '/');
 $flagExt     = substr($flagPath, strrpos($flagPath, "-") + 1, -1);
 
-$linkStyle = 'style="color: inherit; text-decoration: none; font-weight: inherit;"';
-
 // --- PREPARE TABLE HEADERS ---
 $headerTitle = '<th style="text-align: left;"><i class="fa-solid fa-calendar-days"></i> '.Text::_('COM_JEM_EVENT').'</th>';
 $headerDate  = '<th><i class="fa-solid fa-calendar-check"></i> '.Text::_('COM_JEM_DATE').'</th>'; // Simplified Date Header
@@ -78,19 +76,26 @@ function renderOrderedRow($order, $colT, $colD, $colV) {
                                     $flagfile = Uri::getInstance()->base() . $flagpath . strtolower($item->country) . '.' . $flagext;
                                     echo '<img src="' . $flagfile . '" alt="' . $item->country . ' ' , Text::_('MOD_JEM_SHOW_FLAG_ICON') . '">' ?>
                                 <?php endif; ?>
-                                <?php if ($showtitloc == 0 && $linkloc == 1) : ?>
-                                    <a href="<?php echo $item->venueurl; ?>">
-                                    <?php echo $item->text; ?>
-                                </a>
-                                <?php elseif ($showtitloc == 1 && $linkdet == 2) : ?>
-                                    <a href="<?php echo $item->link; ?>">
-                                    <?php echo $item->text; ?>
-                                </a>
-                                <?php
-                                else :
-                                    echo $item->text;
-                                endif;
-                                ?>
+                                <?php if ($showtitle) : ?>
+                                    <?php if ($linkdet == 2) : ?>
+                                        <a href="<?php echo $item->link; ?>">
+                                            <?php echo $item->title; ?>
+                                        </a>
+                                    <?php else : ?>
+                                        <?php echo $item->title; ?>
+                                    <?php endif; ?>
+                                <?php elseif ($showvenue && !empty($item->venue)) : ?>
+                                    <?php if ($linkloc == 1 && !empty($item->venueurl)) : ?>
+                                        <a href="<?php echo $item->venueurl; ?>">
+                                            <?php echo $item->venue; ?>
+                                        </a>
+                                    <?php else : ?>
+                                        <?php echo $item->venue; ?>
+                                    <?php endif; ?>
+                                <?php else : ?>
+                                    <i class="fas fa-minus" title="<?php echo Text::_('MOD_JEM_NO_LINK'); ?>"></i>
+                                <?php endif; ?>
+                                <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                         </span>
                     </td>
                     <td>

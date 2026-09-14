@@ -86,6 +86,104 @@ img[src^="icon-48"] {
     width: 48px;
 }
 
+/** cpanel groups **/
+.jem-wei-group-title {
+    color: color-mix(in srgb, var(--body-color, #1f2933) 74%, var(--body-bg, #fff) 26%);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    margin: 1.25rem 0 .5rem;
+    text-transform: uppercase;
+}
+
+.jem-wei-group-title:first-child {
+    margin-top: 0;
+}
+
+.jem-wei-group {
+    border-bottom: 1px solid color-mix(in srgb, var(--body-color, #1f2933) 15%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    padding-bottom: .5rem;
+}
+
+.jem-wei-group:last-child {
+    border-bottom: none;
+}
+
+.jem-wei-menus .icon {
+    position: relative;
+}
+
+/* higher specificity than .cpanel div.icon a / :hover further down this file,
+   so the badge stays a small absolutely-positioned circle instead of
+   inheriting the 137x115 tile styling and float:left */
+.cpanel div.icon a.jem-wei-add,
+#cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add {
+    align-items: center;
+    background-color: #fff;
+    background-position: 0 0;
+    border: 2px solid #45A12C;
+    border-radius: 50%;
+    box-shadow: none;
+    color: #45A12C;
+    display: flex;
+    float: none;
+    font-size: 1.2rem;
+    height: 20px;
+    justify-content: center;
+    line-height: 1;
+    margin: 0;
+    position: absolute;
+    right: -4px;
+    text-decoration: none;
+    bottom: -4px;
+    transition: background-color .15s ease;
+    width: 20px;
+    z-index: 20;
+}
+
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add {
+    background-color: #000;}
+
+
+
+.cpanel div.icon a.jem-wei-add:hover,
+.cpanel div.icon a.jem-wei-add:focus,
+.cpanel div.icon a.jem-wei-add:active,
+#cpanel div.icon a.jem-wei-add:hover,
+#cpanel div.icon a.jem-wei-add:focus,
+#cpanel div.icon a.jem-wei-add:active,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:hover,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:focus,
+[data-bs-theme="dark"] .cpanel div.icon a.jem-wei-add:active,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:hover,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:focus,
+[data-bs-theme="dark"] #cpanel div.icon a.jem-wei-add:active {
+    border-radius: 50%;
+    border: 2px solid #45D92C;
+    box-shadow: none;
+    color: #fff;
+    float: none;
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    z-index: 6;
+}
+
+.cpanel div.icon a.jem-wei-add:hover,
+.cpanel div.icon a.jem-wei-add:focus,
+.cpanel div.icon a.jem-wei-add:active,
+#cpanel div.icon a.jem-wei-add:hover,
+#cpanel div.icon a.jem-wei-add:focus,
+#cpanel div.icon a.jem-wei-add:active {
+    background-color: #45D92C;}
+
 /** linkicons **/
 div.linkicon {
     text-align: center;
@@ -101,21 +199,6 @@ input.button {
 }
 
 input.button:focus { /*background-color:#......; */
-}
-
-input#clear {
-    background: url('../images/clear.webp') no-repeat scroll left center;
-    border: none;
-    cursor: pointer;
-    caret-color: transparent;
-}
-
-input#clear:focus {
-    cursor: pointer;
-}
-
-.colorpicker {
-    border: 1px solid grey;
 }
 
 .label-button-line li label {
@@ -429,7 +512,8 @@ input#clear:focus {
     }
 }
 
-div.linkicon a {
+div.linkicon a,
+div.linkicon button.jem-housekeeping-action {
     display: block;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -438,14 +522,18 @@ div.linkicon a {
     padding: 10px;
     vertical-align: middle;
     text-decoration: none;
+    background: #fff;
+    cursor: pointer;
 }
 
-[data-bs-theme="dark"] div.linkicon a {
+[data-bs-theme="dark"] div.linkicon a,
+[data-bs-theme="dark"] div.linkicon button.jem-housekeeping-action {
     background-color: #00000055;
     border-color: #7295B166;
 }
 
-div.linkicon a:hover {
+div.linkicon a:hover,
+div.linkicon button.jem-housekeeping-action:hover {
     border-left: 1px solid #eee;
     border-top: 1px solid #eee;
     border-right: 1px solid #ccc;
@@ -453,7 +541,8 @@ div.linkicon a:hover {
     background-color: #f9f9f9;
 }
 
-[data-bs-theme="dark"] div.linkicon a:hover {
+[data-bs-theme="dark"] div.linkicon a:hover,
+[data-bs-theme="dark"] div.linkicon button.jem-housekeeping-action:hover {
     border-color: #F69D0099;
     background-color: #000;
 }
@@ -504,13 +593,59 @@ img.venue-image {
     padding: 3px;
 }
 
-div.controls {
+div.item-image div.controls {
      text-align:left;
      line-height:20px;
 }
 
-div.controls img {
+div.item-image div.controls img {
     vertical-align: middle;
+}
+
+/* Backend event Permissions tab: aligned rows on desktop, stacked on mobile. */
+.jem-event-settings-tab .jem-event-settings-grid > li {
+    display: grid;
+    grid-template-columns: minmax(14rem, 19rem) minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 .75rem;
+    padding: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > label {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > select,
+.jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+    width: 100%;
+    min-width: 0;
+    max-width: 32rem;
+}
+
+.jem-event-settings-tab .jem-event-settings-grid > li > fieldset,
+.jem-event-settings-tab .jem-event-settings-grid > li > .btn-group {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+}
+
+@media (max-width: 767.98px) {
+    .jem-event-settings-tab .jem-event-settings-grid > li {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-event-settings-tab .jem-event-settings-grid > li > select,
+    .jem-event-settings-tab .jem-event-settings-grid > li > .form-select {
+        max-width: 100%;
+    }
 }
 
 div.imageinfo {
@@ -646,6 +781,24 @@ input#replace_attachments1.inputbox {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: .65rem;
     align-items: stretch;
+}
+
+.jem-import-grid > hr {
+    display: none;
+}
+
+.jem-import-grid > div {
+    min-width: 0;
+}
+
+.jem-import-grid > div > fieldset.adminform {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.jem-import-grid input[type="file"] {
+    max-width: 100%;
 }
 
 .jem-import-card {
@@ -802,15 +955,18 @@ input#replace_attachments1.inputbox {
 
 .jem-import-mapping-table th:last-child,
 .jem-import-mapping-table td:last-child {
-    min-width: 13rem;
-    width: 17rem;
+    min-width: 28rem;
+    width: max-content;
 }
 
 .jem-import-mapping-table .jem-import-mapping-select {
+    field-sizing: content;
     min-height: 1.85rem;
+    min-width: 28rem;
+    max-width: none;
     padding-top: .12rem;
     padding-bottom: .12rem;
-    width: 16rem;
+    width: max-content;
 }
 
 .jem-import-status {
@@ -938,8 +1094,63 @@ input#replace_attachments1.inputbox {
 
 .jem-import-source-choice,
 .jem-import-source-url,
-.jem-import-source-file {
+.jem-import-source-file,
+.jem-import-profile-control {
     grid-column: 2 / -1;
+}
+
+.jem-import-profile-control {
+    display: grid;
+    gap: .35rem;
+    min-width: 0;
+}
+
+.jem-import-profile-control .form-select {
+    max-width: 100%;
+    width: 100%;
+}
+
+.jem-import-profile-first {
+    align-items: center;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(10rem, 13rem) minmax(0, 36rem);
+    margin-bottom: 1rem;
+}
+
+.jem-import-profile-first label {
+    font-weight: 600;
+    margin: 0;
+}
+
+.jem-import-profile-first .form-select {
+    max-width: 36rem;
+    width: 100%;
+}
+
+.jem-import-profile-summary {
+    background: #f4f7fb;
+    border-left: .25rem solid #2f5f9f;
+    margin: -.35rem 0 1rem;
+    padding: .75rem 1rem;
+}
+
+.jem-import-profile-summary-content {
+    display: grid;
+    gap: .35rem;
+    margin-top: .35rem;
+}
+
+.jem-import-profile-summary-content code {
+    white-space: normal;
+    word-break: break-word;
+}
+
+.jem-import-profile-separator {
+    border: 0;
+    border-top: 1px solid #c9d2dd;
+    margin: 0 0 1rem;
+    opacity: 1;
 }
 
 .jem-import-source-choice {
@@ -1078,7 +1289,39 @@ input#replace_attachments1.inputbox {
 }
 
 .jem-import-catalog-controls {
-    grid-template-columns: 1fr;
+    display: grid;
+    gap: .75rem;
+}
+
+.jem-import-catalog-filters {
+    align-items: end;
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.jem-import-catalog-filters .jem-import-field {
+    align-items: stretch;
+    display: grid;
+    gap: .3rem;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+}
+
+.jem-import-catalog-filters .form-select {
+    max-width: none;
+    width: 100%;
+}
+
+.jem-import-catalog-meta {
+    align-items: end;
+    display: grid;
+    gap: .75rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.jem-import-catalog-meta > .jem-import-actions {
+    margin-left: 0;
 }
 
 .jem-import-catalog-source-field code {
@@ -1126,12 +1369,25 @@ input#replace_attachments1.inputbox {
         grid-template-columns: 1fr;
     }
 
+    .jem-import-profile-first {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+    }
+
     .jem-import-row {
         grid-template-columns: 1fr;
     }
 
     .jem-import-field {
         grid-template-columns: 1fr;
+    }
+
+    .jem-import-source-choice,
+    .jem-import-source-url,
+    .jem-import-source-file,
+    .jem-import-source-note,
+    .jem-import-profile-control {
+        grid-column: 1 / -1;
     }
 
     .jem-import-field > select,
@@ -1165,9 +1421,21 @@ input#replace_attachments1.inputbox {
     .jem-import-catalog-controls {
         grid-template-columns: 1fr;
     }
+
+    .jem-import-catalog-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .jem-import-catalog-meta {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 600px) {
+    .jem-import-catalog-filters {
+        grid-template-columns: 1fr;
+    }
+
     .jem-import-columns {
         padding: .45rem;
     }
@@ -1238,6 +1506,8 @@ input#replace_attachments1.inputbox {
     }
 
     .jem-import-mapping-table .jem-import-mapping-select {
+        min-width: 0;
+        max-width: 100%;
         width: 100%;
     }
 
@@ -1279,6 +1549,19 @@ table#el-attachments input {
 
 table#el-attachments select.inputbox {
     width: auto;
+}
+
+select.inputbox {
+    padding: .5rem;
+    padding-inline-end: 2.5rem;
+}
+
+.control-group select.inputbox:not([multiple]):not([size]) {
+    padding-inline-end: calc(2.5rem + 5px);
+}
+
+textarea.inputbox {
+    padding: .5rem;
 }
 
 table#el-attachments {
@@ -1336,7 +1619,9 @@ div.pagination ul li {
 }
 
 .cpanel div.icon a,
-#cpanel div.icon a {
+.cpanel div.icon button,
+#cpanel div.icon a,
+#cpanel div.icon button {
     background-color: #fff;
     background-position: -30px;
     display: block;
@@ -1352,10 +1637,15 @@ div.pagination ul li {
     border-radius: 5px;
     transition-property: background-position, border-bottom-left-radius, box-shadow, background, border-color;
     transition-duration: 0.8s;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
 }
 
 [data-bs-theme="dark"] .cpanel div.icon a,
-[data-bs-theme="dark"] #cpanel div.icon a {
+[data-bs-theme="dark"] .cpanel div.icon button,
+[data-bs-theme="dark"] #cpanel div.icon a,
+[data-bs-theme="dark"] #cpanel div.icon button {
     background-color: #00000055;
     color: #fff;
     border: 1px solid #7295B166; }
@@ -1363,9 +1653,15 @@ div.pagination ul li {
 #cpanel div.icon a:hover,
 #cpanel div.icon a:focus,
 #cpanel div.icon a:active,
+#cpanel div.icon button:hover,
+#cpanel div.icon button:focus,
+#cpanel div.icon button:active,
 .cpanel div.icon a:hover,
 .cpanel div.icon a:focus,
-.cpanel div.icon a:active {
+.cpanel div.icon a:active,
+.cpanel div.icon button:hover,
+.cpanel div.icon button:focus,
+.cpanel div.icon button:active {
     background-position: 0;
     border-bottom-left-radius: 50% 20px;
     box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
@@ -1376,9 +1672,15 @@ div.pagination ul li {
 [data-bs-theme="dark"] #cpanel div.icon a:hover,
 [data-bs-theme="dark"] #cpanel div.icon a:focus,
 [data-bs-theme="dark"] #cpanel div.icon a:active,
+[data-bs-theme="dark"] #cpanel div.icon button:hover,
+[data-bs-theme="dark"] #cpanel div.icon button:focus,
+[data-bs-theme="dark"] #cpanel div.icon button:active,
 [data-bs-theme="dark"] .cpanel div.icon a:hover,
 [data-bs-theme="dark"] .cpanel div.icon a:focus,
-[data-bs-theme="dark"] .cpanel div.icon a:active {
+[data-bs-theme="dark"] .cpanel div.icon a:active,
+[data-bs-theme="dark"] .cpanel div.icon button:hover,
+[data-bs-theme="dark"] .cpanel div.icon button:focus,
+[data-bs-theme="dark"] .cpanel div.icon button:active {
     box-shadow: none;
     background-color: #000;
     border-color: #F69D0099;
@@ -2226,10 +2528,6 @@ div.current fieldset.checkbox input[type="checkbox"] {
     /* margin-top: 8px; */
 }
 
-fieldset.adminform input#clear {
-    width: auto;
-}
-
 fieldset.adminform .jem-options-width-auto,
 fieldset.adminform joomla-field-fancy-select.jem-options-width-auto,
 fieldset.adminform .jem-options-width-auto + .choices,
@@ -2415,9 +2713,81 @@ a.label:focus {
     align-items: center;
 }
 
-.select-time {
-    padding: 5px;
-    margin-top: 10px;
+/* Settings rows must grow with tall controls such as Contact Fields. */
+.jem-settings-form ul.adminformlist > li {
+    display: flow-root;
+    clear: both;
+}
+
+.jem-settings-form .label-form {
+    display: block;
+    float: none;
+    width: 100%;
+    min-width: 0;
+}
+
+.jem-settings-form .label-form > .control-group {
+    display: grid;
+    grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+    gap: .75rem 1rem;
+    align-items: center;
+    margin: 0;
+}
+
+.jem-settings-form .label-form .control-label,
+.jem-settings-form .label-form .controls {
+    float: none;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.jem-settings-form .label-form .controls {
+    height: auto;
+    line-height: normal;
+    text-align: left;
+    border-top: 0;
+}
+
+.jem-settings-form .label-form select[multiple] {
+    display: block;
+    width: min(100%, 20rem);
+    min-height: 10.5rem;
+    height: auto;
+    overflow: auto;
+}
+
+@media (max-width: 767.98px) {
+    .jem-settings-form .label-form > .control-group {
+        grid-template-columns: minmax(0, 1fr);
+        gap: .35rem;
+        align-items: start;
+    }
+
+    .jem-settings-form .label-form select[multiple] {
+        width: 100%;
+    }
+}
+
+.jem-time-select {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    max-width: 100%;
+}
+
+.jem-time-select .select-time {
+    width: auto;
+    min-width: 4rem;
+    margin: 0;
+}
+
+#event-form joomla-field-fancy-select,
+#event-form joomla-field-fancy-select .choices,
+#event-form joomla-field-fancy-select .choices__inner,
+#event-form joomla-field-fancy-select .choices__list,
+#event-form joomla-field-fancy-select .choices__item {
+    text-align: left;
 }
 
 /* --- ALERT CODE ---- */
@@ -2741,6 +3111,12 @@ table.itemList .jem-list-order-heading {
 table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"] {
     justify-content: center;
     width: 100%;
+}
+
+#attachmentList .jem-attachment-download-action {
+    min-width: 3rem;
+    white-space: nowrap;
+    width: 1%;
 }
 
 table.itemList .jem-list-order-heading a[onclick*="Joomla.tableOrdering"]::after {

@@ -27,9 +27,7 @@ class JemControllerImportprofiles extends AdminController
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
         $app  = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.delete', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

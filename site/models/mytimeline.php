@@ -53,12 +53,12 @@ class JemModelMytimeline extends BaseDatabaseModel
         $where = $this->_buildWhere();
         $userId = (int) JemFactory::getUser()->get('id');
 
-        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.alias, a.created, a.created_by, a.locid, a.published,'
-            . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+        return 'SELECT DISTINCT a.id AS eventid, a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.alias, a.created, a.created_by, a.locid, a.published,'
+            . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
             . ' a.access, a.attribs, a.article_id, a.datimage, a.featured, a.registra, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
             . ' a.introtext, a.fulltext,'
             . ' a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces,'
-            . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+            . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.timezone AS venue_timezone, l.published AS l_published,'
             . ' l.alias AS l_alias, l.latitude, l.longitude,'
             . ' CASE WHEN a.created_by = ' . $userId . ' THEN 1 ELSE 0 END AS is_owner,'
             . ' CASE WHEN r.uid IS NULL THEN 0 ELSE 1 END AS is_registered,'
@@ -131,10 +131,13 @@ class JemModelMytimeline extends BaseDatabaseModel
         }
 
         $pastDays = max(0, (int) $pastDays);
+        $db = Factory::getContainer()->get('DatabaseDriver');
         $dateEnd = 'IF(a.enddates IS NOT NULL, a.enddates, a.dates)';
-        $recentOrFuture = '(a.dates IS NULL OR DATE_SUB(NOW(), INTERVAL ' . $pastDays . ' DAY) < ' . $dateEnd . ')';
-        $past = '(a.dates IS NOT NULL AND ' . $dateEnd . ' < CURDATE())';
-        $upcoming = '(a.dates IS NULL OR ' . $dateEnd . ' >= CURDATE())';
+        $today = $db->quote(JemHelper::getJoomlaDate());
+        $pastBoundary = $db->quote(JemHelper::getJoomlaDate(-$pastDays));
+        $recentOrFuture = '(a.dates IS NULL OR ' . $pastBoundary . ' < ' . $dateEnd . ')';
+        $past = '(a.dates IS NOT NULL AND ' . $dateEnd . ' < ' . $today . ')';
+        $upcoming = '(a.dates IS NULL OR ' . $dateEnd . ' >= ' . $today . ')';
         $conditions = array();
 
         if (in_array('personal_calendar', $purposes, true)) {

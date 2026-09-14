@@ -9,109 +9,69 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Form\FormHelper;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Session\Session;
-
-FormHelper::loadFieldClass('list');
 
 /**
- * Renders an event element
- *
- * @package JEM
- *
+ * Event selector using Joomla's native modal content-select field.
  */
-class JFormFieldEvent extends ListField
+class JFormFieldEvent extends ModalSelectField
 {
-    protected $type = 'title';
+    protected $type = 'Event';
 
-    /**
-     * Method to get the field input markup.
-     *
-     * @return    string    The field input markup.
-     *
-     */
     protected function getInput()
     {
-        // Build the script.
-        $script = array();
-        $script[] = '    function elSelectEvent(id, title, object) {';
-        $script[] = '        document.getElementById("'.$this->id.'_id").value = id;';
-        $script[] = '        document.getElementById("'.$this->id.'_name").value = title;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#event-modal").modal("hide");';
-        $script[] = '    }';
+        $function = 'jSelectEvent_' . preg_replace('/[^A-Za-z0-9_]/', '_', $this->id);
 
-        // Add the script to the document head.
-        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(implode("\n", $script));
+        $this->select      = true;
+        $this->clear       = false;
+        $this->urlSelect   = 'index.php?option=com_jem&view=eventelement&tmpl=component&function=' . $function;
+        $this->titleSelect = 'COM_JEM_SELECT_EVENT';
+        $this->iconSelect  = 'icon-calendar';
 
-        // Setup variables for display.
-        $html = array();
-        $link = 'index.php?option=com_jem&amp;view=eventelement&amp;tmpl=component&amp;object='.$this->id;
+        $this->addLegacyCallback($function);
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $db->setQuery(
-            'SELECT title' .
-            ' FROM #__jem_events' .
-            ' WHERE id = '.(int) $this->value
+        return parent::getInput();
+    }
+
+    protected function getValueTitle()
+    {
+        return $this->loadTitle('#__jem_events', 'title', 'COM_JEM_SELECT_EVENT');
+    }
+
+    private function addLegacyCallback(string $function): void
+    {
+        Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineScript(
+            'window.' . $function . ' = function (id, title) {' . "\n"
+            . '    var value = document.getElementById(' . json_encode($this->id . '_id') . ');' . "\n"
+            . '    var label = document.getElementById(' . json_encode($this->id) . ') || document.getElementById(' . json_encode($this->id . '_name') . ');' . "\n"
+            . '    if (value) { value.value = id; value.dispatchEvent(new CustomEvent("change", {bubbles: true})); }' . "\n"
+            . '    if (label) { label.value = title; }' . "\n"
+            . '    var dialog = document.querySelector("joomla-dialog.joomla-dialog-content-select-field");' . "\n"
+            . '    if (dialog && typeof dialog.close === "function") { dialog.close(); }' . "\n"
+            . '};'
         );
+    }
 
-        try
-        {
-            $title = $db->loadResult();
+    private function loadTitle(string $table, string $column, string $fallback): string
+    {
+        if (!$this->value) {
+            return Text::_($fallback);
         }
-        catch (RuntimeException $e)
-        {
+
+        try {
+            $db    = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select($db->quoteName($column))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . (int) $this->value);
+            $db->setQuery($query);
+
+            return $db->loadResult() ?: Text::_($fallback);
+        } catch (\Throwable $e) {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'warning');
+
+            return Text::_($fallback);
         }
-
-        if (empty($title)) {
-            $title = Text::_('COM_JEM_SELECT_EVENT');
-        }
-        $title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-
-        // The current user display field.
-        $html[] = '<div class="fltlft">';
-        $html[] = '  <input type="text" id="'.$this->id.'_name" value="'.$title.'" disabled="disabled" size="35" class="form-control valid form-control-success" />';
-        $html[] = '</div>';
-
-        // The user select button.
-        $html[] = '<div class="button2-left">';
-        $html[] = '  <div class="blank">';
-        $html[] = HTMLHelper::_(
-            'bootstrap.renderModal',
-            'event-modal',
-            array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
-                'title'  => Text::_('COM_JEM_SELECT_EVENT'),
-                'width'  => '800px',
-                'height' => '450px',
-                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-            )
-        );
-        $html[] ='<button type="button" class="btn btn-link" data-bs-toggle="modal"  data-bs-target="#event-modal">'.Text::_('COM_JEM_SELECT_EVENT').'
-</button>';
-        $html[] = '  </div>';
-        $html[] = '</div>';
-
-        // The active event-id field.
-        if (0 == (int)$this->value) {
-            $value = '';
-        } else {
-            $value = (int)$this->value;
-        }
-
-        // class='required' for client side validation
-        $class = '';
-        if ($this->required) {
-            $class = ' class="required modal-value"';
-        }
-
-        $html[] = '<input type="hidden" id="'.$this->id.'_id"'.$class.' name="'.$this->name.'" value="'.$value.'" />';
-
-        return implode("\n", $html);
     }
 }
-?>

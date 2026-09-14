@@ -24,9 +24,16 @@ class JemViewEvents extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('event', 'access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app            = Factory::getApplication();
         $document       = $app->getDocument();
         $user             = JemFactory::getUser();
@@ -37,6 +44,25 @@ class JemViewEvents extends JemAdminView
         $this->items        = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
         $this->state        = $this->get('State');
+        $this->filterForm    = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total         = $this->get('Total');
+
+        foreach (array('search_type', 'category_id', 'event_type_id', 'venue_id', 'access') as $filter) {
+            if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
+                unset($this->activeFilters[$filter]);
+            }
+        }
+
+        if ($this->filterForm) {
+            $this->filterForm->setValue('filter_type', null, $this->state->get('filter.search_type'));
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         // Retrieving params
         $params = $this->state->get('params');
@@ -53,7 +79,6 @@ class JemViewEvents extends JemAdminView
 
         // Load css
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Load Scripts
         $wa->useScript('jquery');
@@ -67,37 +92,7 @@ class JemViewEvents extends JemAdminView
             $this->document->addStyleDeclaration($style);
         }
 
-        // add filter selection for the search
-        $filters = array();
-        $filters[] = HTMLHelper::_('select.option', '1', Text::_('COM_JEM_EVENT_TITLE'));
-        $filters[] = HTMLHelper::_('select.option', '2', Text::_('COM_JEM_VENUE'));
-        $filters[] = HTMLHelper::_('select.option', '3', Text::_('COM_JEM_CITY'));
-        $filters[] = HTMLHelper::_('select.option', '4', Text::_('COM_JEM_CATEGORY'));
-        $filters[] = HTMLHelper::_('select.option', '5', Text::_('COM_JEM_STATE'));
-        $filters[] = HTMLHelper::_('select.option', '6', Text::_('COM_JEM_COUNTRY'));
-        $filters[] = HTMLHelper::_('select.option', '7', Text::_('COM_JEM_AUTHOR'));
-        $filters[] = HTMLHelper::_('select.option', '8', Text::_('JALL'));
-        $lists['filter'] = HTMLHelper::_('select.genericlist', $filters, 'filter_type', array('size'=>'1','class'=>'inputbox form-select m-0','onChange'=>"this.form.submit()"), 'value', 'text', $this->state->get('filter_type'));
-        $lists['event_type_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getTypeFilterOptions(1, 'COM_JEM_TYPE_FILTER_EVENT'),
-            'filter_event_type_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter_event_type_id'),
-            'filter_event_type_id'
-        );
-        $lists['category_filter'] = HTMLHelper::_(
-            'select.genericlist',
-            $this->getCategoryFilterOptions(),
-            'filter_category_id',
-            array('size'=>'1','class'=>'inputbox form-select wauto-minwmax m-0','onChange'=>"this.form.submit()"),
-            'value',
-            'text',
-            (int) $this->state->get('filter_category_id'),
-            'filter_category_id'
-        );
+        $lists = array();
         $lists['batch_category'] = HTMLHelper::_(
             'select.genericlist',
             $this->getCategoryMoveOptions(),
@@ -247,17 +242,20 @@ class JemViewEvents extends JemAdminView
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
+        $canCreate = JemHelperBackend::can('event', 'create');
+        $canEdit = JemHelperBackend::can('event', 'edit')
+            || ($canDo->get('jem.events.access') && $canDo->get('jem.events.edit.own'));
+        $canChangeState = JemHelperBackend::can('event', 'edit.state');
+        $canDelete = JemHelperBackend::can('event', 'delete');
         $showActionDropdown = $canChangeState;
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if ($canCreate) {
             ToolBarHelper::addNew('event.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if ($canEdit) {
             ToolBarHelper::editList('event.edit');
             ToolBarHelper::divider();
         }
@@ -292,7 +290,7 @@ class JemViewEvents extends JemAdminView
                 $childBar->checkin('events.checkin')->listCheck(true);
             }
 
-            if ($canDo->get('core.edit')) {
+            if ($canEdit) {
                 $childBar->popupButton('batch', 'JTOOLBAR_BATCH')
                     ->popupType('inline')
                     ->textHeader(Text::_('COM_JEM_EVENTS_BATCH_OPTIONS'))

@@ -21,6 +21,10 @@
 
     <fields name="params">
         <fieldset name="basic">
+            <field name="show_status_indicators" type="radio" default="0" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field type="spacer" name="venue_details_spacer"
                 label="COM_JEM_VENUE_DETAILS_OPTIONS"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"
@@ -72,11 +76,12 @@
                 <option value="0">JNO</option>
             </field>
             <field name="venue_map_display" type="list"
-                default="link_button"
+                default="global"
                 label="COM_JEM_VENUE_MAP_DISPLAY"
                 description="COM_JEM_VENUE_MAP_DISPLAY_DESC"
                 class="form-select w-auto jem-options-width-auto"
             >
+                <option value="global">JGLOBAL_USE_GLOBAL</option>
                 <option value="none">COM_JEM_HIDE</option>
                 <option value="link_text">COM_JEM_MAP_LINK_TEXT</option>
                 <option value="link_button">COM_JEM_MAP_LINK_BUTTON</option>

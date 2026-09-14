@@ -22,6 +22,10 @@ class JemViewAttendees extends JemAdminView
 {
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.attendees.manage')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -36,10 +40,6 @@ class JemViewAttendees extends JemAdminView
         $filter_type      = $app->getUserStateFromRequest('com_jem.attendees.filter_type',   'filter_type',    0, 'int');
         $filter_search    = $app->getUserStateFromRequest('com_jem.attendees.filter_search', 'filter_search', '', 'string');
         $filter_search    = $db->escape(trim(StringHelper::strtolower($filter_search)));
-
-        // Load css
-        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         // Get data from the model
         $event = $this->get('Event');
@@ -87,6 +87,8 @@ class JemViewAttendees extends JemAdminView
         //assign to template
         $this->lists         = $lists;
         $this->event         = $event;
+        $this->waitingListStatus = JemWaitingListPromotion::availability((int) $event->id);
+        $this->canForcePromotion = $app->getIdentity()->authorise('core.admin', 'com_jem');
 
         // add toolbar
         $this->addToolbar();
@@ -99,9 +101,6 @@ class JemViewAttendees extends JemAdminView
      */
     protected function _displayprint($tpl = null)
     {
-        // Load css
-        HTMLHelper::_('stylesheet', 'com_jem/backend.css', array(), true);
-
         $rows = $this->get('Items');
         $event = $this->get('Event');
 
@@ -132,6 +131,7 @@ class JemViewAttendees extends JemAdminView
         ToolbarHelper::custom('attendees.setAttending', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETATTENDING'), true);
         if ($this->event->waitinglist) {
             ToolbarHelper::custom('attendees.setWaitinglist', 'loop', 'loop', Text::_('COM_JEM_ATTENDEES_SETWAITINGLIST'), true);
+            ToolbarHelper::custom('attendees.promoteWaitingList', 'arrow-up', 'arrow-up', Text::_('COM_JEM_WAITINGLIST_PROMOTE_SELECTED'), true);
         }
         ToolbarHelper::custom('attendees.renotify', 'envelope', 'envelope', Text::_('COM_JEM_ATTENDEE_REGISTRATION_RENOTIFY_SELECTED'), true);
         ToolbarHelper::spacer();

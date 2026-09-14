@@ -41,13 +41,12 @@ https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=con
         </p>
         <hr />
         <h2>3. Example with Parameters</h2>
-        To the base URL can be added: 1) the security token (see section 4), 2) various optional paramters (see section 5).
+        Optional URL parameters can be added to select and format the public events. The security token is sent separately in the HTTP header; see section 4.
         <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json
-&token=YOUR_SECURITY_TOKEN 
 &max=10
 &venueids=1,2
-&category=2,3,5</pre>
-results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json<wbr><strong>&token=YOUR_SECURITY_TOKEN</strong><wbr><strong>&max=10</strong><wbr><strong>&venueids=1,2</strong><wbr><strong>&category=2,3,5</strong>
+&catids=2,3,5</pre>
+results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=jemembed<wbr>&group=content<wbr>&format=json<wbr><strong>&max=10</strong><wbr><strong>&venueids=1,2</strong><wbr><strong>&catids=2,3,5</strong>
 </pre>
         <p>
             When multiple parameters are used, only events that match <strong>all</strong> conditions will be returned.
@@ -59,13 +58,14 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
         </p>
         <ul>
             <li>The token is defined in the plugin settings.</li>
-            <li>Every request must include this token.</li>
+            <li>When token protection is enabled, every request must send a valid token in the <code>Authorization</code> header.</li>
+            <li>Tokens in URL query parameters are rejected and must not be placed in browser-side JavaScript.</li>
         </ul>
         <pre>
-&token=YOUR_SECURITY_TOKEN
+Authorization: Bearer YOUR_SECURITY_TOKEN
 </pre>
         <p>
-            Requests without a valid token will not work.
+            The supplied <code>jemevents.php</code> server-side proxy sends this header automatically. Direct integrations must add it to their HTTP request.
         </p>
         <hr />
         <h2>5. URL Parameters</h2>
@@ -88,6 +88,10 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
                 <td>Only future events</td>
             </tr>
             <tr>
+                <td><code>type=ongoing</code></td>
+                <td>Events in progress</td>
+            </tr>
+            <tr>
                 <td><code>type=archived</code></td>
                 <td>Past (archived) events</td>
             </tr>
@@ -96,8 +100,16 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
                 <td>Newest events</td>
             </tr>
             <tr>
+                <td><code>type=open</code></td>
+                <td>Events without a start and end date</td>
+            </tr>
+            <tr>
+                <td><code>type=all</code></td>
+                <td>Published and archived events</td>
+            </tr>
+            <tr>
                 <td><code>featured=on</code></td>
-                <td>Only featured events</td>
+                <td>Include featured and non-featured events</td>
             </tr>
             <tr>
                 <td><code>featured=off</code></td>
@@ -162,15 +174,23 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
             </tr>
             <tr>
                 <td><code>max=n</code></td>
-                <td>Maximum number of events</td>
+                <td>Maximum number of events, from 1 to 100</td>
+            </tr>
+            <tr>
+                <td><code>start=n</code></td>
+                <td>Result offset, from 0 to 10000. Use <code>meta.next_start</code> for the next page.</td>
             </tr>
             <tr>
                 <td><code>cuttitle=n</code></td>
-                <td>Maximum length of the event title</td>
+                <td>Maximum length of the event title, from 1 to 500</td>
+            </tr>
+            <tr>
+                <td><code>dateformat</code> / <code>timeformat</code></td>
+                <td>PHP date or time format, up to 64 characters</td>
             </tr>
             <tr>
                 <td><code>noeventsmsg=text</code></td>
-                <td>Message shown if no events are found</td>
+                <td>Plain-text message shown by the supplied client when no events are found, up to 200 characters</td>
             </tr>
         </table>
         <hr />
@@ -179,6 +199,8 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
             <li><code>n</code> must be a positive number</li>
             <li><code>|</code> means you can choose one option</li>
             <li>Do not use spaces in comma-separated lists</li>
+            <li><code>catids</code> and <code>venueids</code> accept up to 50 unique positive IDs</li>
+            <li>Unknown parameters and invalid values are rejected</li>
         </ul>
         <hr />
         <h2>7. Showing events on another website</h2>
@@ -212,6 +234,9 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
             <li>Your API token</li>
             <li>Default parameters if needed</li>
         </ul>
+        <p>
+            The proxy translates its configuration names to the public endpoint parameters and resolves relative event links against the configured Joomla source URL. Direct consumers should configure <strong>Canonical JEM URL</strong> in the plugin when they require absolute links.
+        </p>
         <h3>Step 4: Include the JavaScript file</h3>
         <p>
             Add this line before <code>&lt;/body&gt;</code>:
@@ -224,7 +249,7 @@ results in:     <pre>https://domain.com/index.php?option=com_ajax<wbr>&plugin=je
             Place this where the events should appear:
         </p>
         <pre>
-&lt;div id="jemevents-container"&gt;&lt;/div&gt;
+&lt;div id="feed-container"&gt;&lt;/div&gt;
 </pre>
         <p>
             The events will be loaded automatically.

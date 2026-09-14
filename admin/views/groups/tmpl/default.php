@@ -12,6 +12,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\Registry\Registry;
 
 $user      = JemFactory::getUser();
@@ -27,52 +28,9 @@ $wa->useScript('table.columns');
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=groups'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class=" mb-3">
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="row mb-12">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <input type="text" name="filter_search" id="filter_search" class="form-control"
-                            		placeholder="<?php echo Text::_('COM_JEM_SEARCH'); ?>" 
-                            		value="<?php echo $this->escape($this->state->get('filter_search')); ?>" inputmode="search" onChange="document.adminForm.submit();">
-                        		<button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                            		<span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                        		</button>
-                        		<button type="button" class="btn btn-primary" 
-                            		onclick="document.getElementById('filter_search').value='';this.form.filter_state.value='';this.form.submit();">
-                            		<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                        		</button>
-                    		</div>
-                		</div>
-                		<div class="col-md-1">
-                    		<div class="row">
-                        		<div class="wauto-minwmax">
-                            		<div class="float-end">
-                    					<select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
-                        					<option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED'); ?></option>
-                        					<?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true); ?>
-                    					</select>
-                					</div>
-                				</div>
-                			</div>
-                		</div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="row">
-                        <div class="wauto-minwmax">
-                            <div class="float-end">
-                                <?php echo $this->pagination->getLimitBox(); ?>
-                            </div>
-                		</div>
-                	</div>
-                </div>
-            </div>
-        </fieldset>
-        <div class="clr"> </div>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
 
-        <table class="table table-striped" id="articleList">
+        <table class="table table-striped itemList" id="groupList">
             <thead>
             <tr>
                     <th style="width: 5px" class="center">
@@ -81,16 +39,16 @@ $wa->useScript('table.columns');
                             onclick="Joomla.checkAll(this)" />
                     </th>
                     <th style="width: 30%" class="title">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_GROUP_NAME', 'a.name', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_GROUP_NAME', 'a.name', $listDirn, $listOrder); ?>
                     </th>
                     <th>
                         <?php echo Text::_('COM_JEM_DESCRIPTION'); ?>
                     </th>
                     <th style="width: 8%" class="center">
-                        <?php echo Text::_('JSTATUS'); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'JSTATUS', 'a.published', $listDirn, $listOrder); ?>
                     </th>
                     <th style="width: 1%" class="title">
-                        <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'id', $listDirn, $listOrder); ?>
+                        <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder); ?>
                     </th>
                 </tr>
             </thead>
@@ -140,8 +98,7 @@ $wa->useScript('table.columns');
     <div>
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />
-        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
+        <?php echo $this->filterForm->renderControlFields(); ?>
 
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>

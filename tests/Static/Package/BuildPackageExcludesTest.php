@@ -24,11 +24,14 @@ final class BuildPackageExcludesTest extends TestCase
 
         foreach (array(
             'tests/**',
+            'tmp/**',
+            'updatecheck/**',
             'vendor/**',
             '.phpunit.cache/**',
             '.agents/**',
             '.claude/**',
             '.codex/**',
+            '.codex-skill-staging/**',
             '.cursor/**',
             '.github/copilot/**',
             '.env',
@@ -73,6 +76,14 @@ final class BuildPackageExcludesTest extends TestCase
 
         self::assertStringContainsString('/*.code-workspace', $gitignore, 'Root VS Code workspace files should remain local and untracked.');
         self::assertStringContainsString('/*.code-workspace export-ignore', $gitattributes, 'Root VS Code workspace files should be excluded from Git archive/GitHub source archives.');
+    }
+
+    public function testNoArgumentPhpBuilderOnlyPackagesItsOwnCheckout(): void
+    {
+        $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');
+
+        self::assertStringContainsString('$roots = [dirname(__DIR__)];', $builder);
+        self::assertStringNotContainsString("dirname(__DIR__) . '/../JEM-Project-4.5'", $builder);
     }
 
     public function testPackageManifestFilesAreProducedByBuild(): void

@@ -28,8 +28,10 @@ class JemModelGroups extends ListModel
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
+                'id', 'a.id',
                 'name', 'a.name',
                 'published', 'a.published',
+                'search', 'state',
             );
         }
 
@@ -43,11 +45,15 @@ class JemModelGroups extends ListModel
      */
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
+
         $search = $this->getUserStateFromRequest($this->context.'.filter_search', 'filter_search');
         $this->setState('filter_search', $search);
+        $this->setState('filter.search', $search);
 
         $published = $this->getUserStateFromRequest($this->context.'.filter_state', 'filter_state', '', 'string');
         $this->setState('filter_state', $published);
+        $this->setState('filter.state', $published);
 
     //    $filterfield = $this->getUserStateFromRequest($this->context.'.filter_type', 'filter_type', 0, 'int');
     //    $this->setState('filter_type', $filterfield);
@@ -58,6 +64,35 @@ class JemModelGroups extends ListModel
 
         // List state information.
         parent::populateState('a.name', 'asc');
+
+        $this->syncLegacyFilterState($app);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search' => array('filter_search', 'filter_search', ''),
+            'state'  => array('filter_state', 'filter_state', ''),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     /**

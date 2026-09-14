@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updates version="1.0" published="2026-09-14">
+    <!-- Latest JEM 2 release for Joomla 2.5 and Joomla 3; required before migrating to JEM 4. -->
+    <update>
+        <name>JEM Package</name>
+        <description>Joomla! Event Manager Package</description>
+        <element>pkg_jem</element>
+        <type>package</type>
+        <client>0</client>
+        <version>2.3.6</version>
+        <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem#jem2-tab</infourl>
+        <stablechangelog>https://www.joomlaeventmanager.net/project/changelog-jem#jem2-tab</stablechangelog>
+        <downloads>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=81:jem-2-3-6-stable</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <maintainer>JEM Team</maintainer>
+        <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
+        <targetplatform name="joomla" version="^(2\.5|3\.(?:[2-9]|10))$"/>
+        <php_minimum>7.4</php_minimum>
+        <sha256>4ca826fd92842217c7b548130558cfce1476ac77ff29502895f90606aa882cb9</sha256>
+        <sha384>862bf9eed1be6df5bc73cd551fcd0f37d925b61d5760491399874e0974dea0cf303ffcdf411e9f98c90d73971b944937</sha384>
+        <sha512>75d36efada39d56c12bf40334c48f090d2415c3955070328d00de9c55de1bfcb560f2fceeedbbde7833af4d491af269ab4e1f49fd2d2222f3c7bb7eaa241044d</sha512>
+        <date>2023-05-11</date>
+        <notes>JEM 2.3.6 for Joomla! 2.5.24+ and Joomla! 3.2.7 through Joomla! 3.10. Upgrade older JEM installations to this release before migrating to Joomla 4 and JEM 4.x. [JEM 2.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem2-tab)</notes>
+        <changes>JEM 2.3.6 is the final JEM 2 release and the required migration baseline for legacy installations.</changes>
+    </update>
+    <!-- Latest JEM 4 stable release for Joomla 4 and Joomla 5; migration bridge from JEM 2.3.6. -->
+    <update>
+        <name>JEM Package</name>
+        <description>Joomla! Event Manager Package</description>
+        <element>pkg_jem</element>
+        <type>package</type>
+        <client>0</client>
+        <version>4.5.0</version>
+        <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab</infourl>
+        <stablechangelog>https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab</stablechangelog>
+        <downloads>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=140:jem-4-5-0-stable</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <maintainer>JEM Team</maintainer>
+        <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
+        <targetplatform name="joomla" version="^(4\..*|5\..*)$"/>
+        <php_minimum>8.1</php_minimum>
+        <sha256>c29989d3d4c56e6dc9f49244efd864d897113d761bad92a13269961c05e168fb</sha256>
+        <sha384>e11c27144594deae47d603b3fc4514b2927e7e381320d84bfcf8e13e459f3496f7b249f98ae52b958905404960f462e9</sha384>
+        <sha512>82d75a672de4eabf469a8d3c2f6c4c96bb27a57bcf2e3fbda781826278cf4ffc28e911a928838c99f935fe1b81378f9eb5ebb70abb187892c1efa8c74c329e76</sha512>
+        <date>2026-07-07</date>
+        <notes>JEM 4.5.0 for Joomla! 4.x and Joomla! 5.x. This is the bridge release for installations migrating from JEM 2.3.6. [JEM 4.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab)</notes>
+        <changes>JEM 4.5.0 is the latest stable JEM 4 release and supports migration from the JEM 2.3.6 baseline.</changes>
+    </update>
+    <!-- Latest published JEM 5 stable release for Joomla 5.4 or newer and Joomla 6. -->
+    <update>
+        <name>JEM Package</name>
+        <description>Joomla! Event Manager Package</description>
+        <element>pkg_jem</element>
+        <type>package</type>
+        <client>0</client>
+        <version>5.0.1</version>
+        <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab</infourl>
+        <stablechangelog>https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab</stablechangelog>
+        <downloads>
+            <downloadurl type="full" format="zip">https://www.joomlaeventmanager.net/download?download=139:jem-5-0-0-stable</downloadurl>
+        </downloads>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <maintainer>JEM Team</maintainer>
+        <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
+        <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
+        <php_minimum>8.3</php_minimum>
+        <sha256>21f47f9ef4545b294cff0d017f383c1ad428bc9e98a66209fc4d12c429decfff</sha256>
+        <sha384>0ebb1f933d217dfd9c9f61259a7fd1b14093fad9cc2b9852c40241e710e4dbd3399584617308c371b29dcdf6caa70ba8</sha384>
+        <sha512>02d6236b007505f137ab1fb8665d07ca3daa20a6f9651d8728120b62312f5532cab7c65e3a8fd265110bf5656d13d50464079aeea317b87853d6e2170c2b8a26</sha512>
+        <date>2026-09-14 00:00</date>
+        <notes>JEM 5.0.1 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer. [JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)</notes>
+        <changes>JEM 5.0.1 consolidates the maintenance, security, compatibility, module, image, language and frontend/backend corrections delivered after JEM 5.0.0.</changes>
+    </update>
+</updates>

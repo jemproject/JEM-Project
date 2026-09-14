@@ -29,6 +29,12 @@ class JemViewSpecialdays extends HtmlView
             return;
         }
 
+        $user = JemFactory::getUser();
+
+        if (!JemFrontendAccess::enforceViewAccess($user->authorise('core.manage', 'com_jem'), $app, 'JERROR_ALERTNOAUTHOR')) {
+            return;
+        }
+
         $model = $this->getModel();
         $model->setState('list.start', 0);
         $model->setState('list.limit', 0);

@@ -65,5 +65,13 @@
             With this button you can import Cat_Events from a CSV-formatted file.
             Please make sure you have prepared the file according the JEM file format (see info under 'Export Data').
         </p>
+        <h2>External import previews and limits</h2>
+        <p>External CSV, JSON, XML, ICS and XLSX sources are validated before import. Text sources may contain up to
+            10 MiB and an import may contain up to 10,000 records and 512 fields per record. Structured formats also
+            have fixed depth and node limits. Files exceeding a limit are rejected completely and are not truncated.</p>
+        <p>Large event, venue and Special Days previews show 100 records per page. The remaining validated records are
+            stored temporarily in private, user-bound files and are processed in batches when the import is confirmed.
+            The preview notice reports the visible page and complete record count. Temporary data is removed after
+            import or cancellation and expires automatically.</p>
     </body>
 </html>

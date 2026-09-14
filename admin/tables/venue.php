@@ -41,6 +41,12 @@ class JemTableVenue extends Table
             $array['type_id'] = null;
         }
 
+        if (array_key_exists('created_by', $array)) {
+            // 'created_by' is int(11) unsigned NOT NULL DEFAULT '0'; an empty
+            // "Created by" selector submits '' which strict SQL modes reject.
+            $array['created_by'] = (int) $array['created_by'];
+        }
+
         if (isset($array['attribs']) && is_array($array['attribs'])) {
             $registry = new Registry;
             $registry->loadArray($array['attribs']);
@@ -136,6 +142,25 @@ class JemTableVenue extends Table
             return false;
         }
 
+        $this->district = trim(strip_tags((string) $this->district));
+        if (StringHelper::strlen($this->district) > 100) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_DISTRICT'));
+            return false;
+        }
+
+        $this->level = trim(strip_tags((string) $this->level));
+        if (StringHelper::strlen($this->level) > 100) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_LEVEL'));
+            return false;
+        }
+
+        $this->capacity = ($this->capacity === '' || $this->capacity === null) ? 0 : $this->capacity;
+        if (filter_var($this->capacity, FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 4294967295))) === false) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_CAPACITY'));
+            return false;
+        }
+        $this->capacity = (int) $this->capacity;
+
         $this->state = strip_tags($this->state);
         if (StringHelper::strlen($this->state) > 50) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_STATE'));
@@ -146,6 +171,30 @@ class JemTableVenue extends Table
         if (StringHelper::strlen($this->country) > 2) {
             $this->setError(Text::_('COM_JEM_VENUE_ERROR_COUNTRY'));
             return false;
+        }
+
+        $this->timezone = trim(strip_tags((string) ($this->timezone ?? '')));
+        if ($this->timezone !== '' && !JemHelper::isValidTimeZone($this->timezone)) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_TIMEZONE'));
+            return false;
+        }
+
+        $this->email = trim(strip_tags((string) $this->email));
+        if (StringHelper::strlen($this->email) > 254) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_EMAIL_LENGTH'));
+            return false;
+        }
+        if ($this->email !== '' && filter_var($this->email, FILTER_VALIDATE_EMAIL) === false) {
+            $this->setError(Text::_('COM_JEM_VENUE_ERROR_EMAIL_FORMAT'));
+            return false;
+        }
+
+        foreach (array('phone', 'mobile') as $contactField) {
+            $this->{$contactField} = trim(strip_tags((string) $this->{$contactField}));
+            if (StringHelper::strlen($this->{$contactField}) > 50) {
+                $this->setError(Text::_($contactField === 'phone' ? 'COM_JEM_VENUE_ERROR_PHONE' : 'COM_JEM_VENUE_ERROR_MOBILE'));
+                return false;
+            }
         }
 
         return true;
@@ -249,6 +298,9 @@ class JemTableVenue extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        if ($ret) {
+            JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
+        }
         if ($ret && $image_to_delete) {
             JemHelper::delete_unused_image_files('venue', $image_to_delete);
         }

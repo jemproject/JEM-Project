@@ -27,7 +27,7 @@ class JemModelCalendar extends JemModelEventslist
     {
         parent::__construct();
 
-        $this->setdate(time());
+        $this->setdate(JemHelper::getJoomlaDate());
     }
 
     public function setdate($date)
@@ -60,17 +60,23 @@ class JemModelCalendar extends JemModelEventslist
         ###########
 
         #only select events within specified dates. (chosen month)
-        $monthstart = mktime(0, 0, 1, date('m', $this->_date), 1, date('Y', $this->_date));
-        $monthend   = mktime(0, 0, -1, date('m', $this->_date)+1, 1, date('Y', $this->_date));
+        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
+        $selectedDate = is_numeric($this->_date)
+            ? (new DateTimeImmutable('@' . (int) $this->_date))->setTimezone($timeZone)
+            : new DateTimeImmutable((string) $this->_date, $timeZone);
+        $monthstart = $selectedDate->modify('first day of this month')->format('Y-m-01');
+        $monthend   = $selectedDate->modify('last day of this month')->format('Y-m-d');
 
-        $filter_date_from = $this->_db->Quote(date('Y-m-d', $monthstart));
-        $filter_date_to   = $this->_db->Quote(date('Y-m-d', $monthend));
+        $filter_date_from = $this->_db->Quote($monthstart);
+        $filter_date_to   = $this->_db->Quote($monthend);
 
         $where = ' DATEDIFF(IF (a.enddates IS NOT NULL, a.enddates, a.dates), '. $filter_date_from .') >= 0';
         $this->setState('filter.calendar_from',$where);
+        $this->setState('filter.date.from', $monthstart);
 
         $where = ' DATEDIFF(a.dates, '. $filter_date_to .') <= 0';
         $this->setState('filter.calendar_to',$where);
+        $this->setState('filter.date.to', $monthend);
 
         ##################
         ## TOP-CATEGORY ##

@@ -13,7 +13,6 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 /**
  * Article modal field for the front area.
@@ -43,8 +42,7 @@ class JFormFieldModal_Article extends FormField
         $link = Route::_(
             'index.php?option=com_jem&view=editevent&layout=choosearticle&tmpl=component'
             . '&function=jSelectArticle_' . $this->id
-            . '&selected=' . $value
-            . '&' . Session::getFormToken() . '=1',
+            . '&selected=' . $value,
             false
         );
 
@@ -99,10 +97,13 @@ class JFormFieldModal_Article extends FormField
             $db = Factory::getContainer()->get('DatabaseDriver');
 
             try {
+                $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
                 $query = $db->getQuery(true)
                     ->select($db->quoteName('title'))
                     ->from($db->quoteName('#__content'))
-                    ->where($db->quoteName('id') . ' = ' . (int) $value);
+                    ->where($db->quoteName('id') . ' = ' . (int) $value)
+                    ->where($db->quoteName('state') . ' = 1')
+                    ->where($db->quoteName('access') . ' IN (' . implode(',', $levels) . ')');
 
                 $db->setQuery($query);
                 $title = $db->loadResult() ?: $title;

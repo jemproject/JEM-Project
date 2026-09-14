@@ -134,8 +134,7 @@ if (empty($this->catrow->events)) { return; }
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                  $row->enddates, $row->endtimes);
+                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
               ?>
               </a>
               <?php echo JemOutput::recurrenceicon($row); ?>
@@ -151,8 +150,7 @@ if (empty($this->catrow->events)) { return; }
               <?php
                 echo JemOutput::formatShortDateTime($row->dates, $row->times,
                   $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                  $row->enddates, $row->endtimes);
+                echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
               ?>
               <?php echo JemOutput::recurrenceicon($row); ?>
               <?php echo JemOutput::publishstateicon($row); ?>
@@ -172,8 +170,7 @@ if (empty($this->catrow->events)) { return; }
                   <?php
                     echo JemOutput::formatShortDateTime($row->dates, $row->times,
                       $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times,
-                      $row->enddates, $row->endtimes);
+                    echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                   ?>
                 </div>
               <?php endif; ?>

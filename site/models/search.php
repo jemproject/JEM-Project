@@ -151,12 +151,12 @@ class JemModelSearch extends BaseDatabaseModel
             $orderby = $this->_buildOrderBy();
 
             # Get Events from Database
-            $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
-                          . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+            $this->_query = 'SELECT a.id, a.dates, a.enddates, a.times, a.endtimes, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.title, a.created, a.created_by, a.created_by_alias, a.locid, a.published, a.access,'
+                          . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
                           . ' a.alias, a.attribs, a.article_id, a.checked_out ,a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.language, a.version,'
                           . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
                           . ' a.introtext, a.fulltext, a.registra, a.unregistra, a.maxplaces, a.waitinglist, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by,'
-                          . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+                          . ' l.id AS l_id, l.venue, l.street, l.postalCode, l.city, l.state, l.country, l.url, l.timezone AS venue_timezone, l.published AS l_published,'
                           . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                           . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                           . ' l.locdescription, l.locimage, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
@@ -234,7 +234,7 @@ class JemModelSearch extends BaseDatabaseModel
         if ($task == 'archive') {
             $where = ' WHERE a.published = 2';
         } else {
-            $where = ' WHERE a.published = 1';
+            $where = ' WHERE ' . JemHelper::getEventPublicationWhere('a');
         }
 
         // filter by user's access levels
@@ -422,7 +422,7 @@ class JemModelSearch extends BaseDatabaseModel
             ->where('t.access IN (' . implode(',', $levels) . ')');
 
         if ($needsLocation || $needsCategory) {
-            $query->join('INNER', $this->_db->quoteName('#__jem_events') . ' AS a ON a.type_id = t.id AND a.published = 1 AND a.access IN (' . implode(',', $levels) . ')');
+            $query->join('INNER', $this->_db->quoteName('#__jem_events') . ' AS a ON a.type_id = t.id AND ' . JemHelper::getEventPublicationWhere('a') . ' AND a.access IN (' . implode(',', $levels) . ')');
         }
 
         if ($needsLocation) {
@@ -457,7 +457,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' INNER JOIN #__jem_countries as c ON c.iso2 = l.country '
-               . ' WHERE c.published = 1 AND l.country = ' . $this->_db->Quote($country)
+               . ' WHERE ' . JemHelper::getEventPublicationWhere('a') . ' AND c.published = 1 AND l.country = ' . $this->_db->Quote($country)
                . ' ORDER BY l.city ';
 
         $this->_db->setQuery($query);
@@ -474,7 +474,7 @@ class JemModelSearch extends BaseDatabaseModel
                . ' FROM #__jem_events AS a'
                . ' INNER JOIN #__jem_venues AS l ON l.id = a.locid'
                . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
-               . ' WHERE a.published = 1 AND l.published = 1 AND c.published = 1';
+               . ' WHERE ' . JemHelper::getEventPublicationWhere('a') . ' AND l.published = 1 AND c.published = 1';
 
         if ($filter_continent) {
             $query .= ' AND c.continent = ' . $this->_db->Quote($filter_continent);

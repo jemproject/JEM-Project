@@ -12,19 +12,21 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\String\StringHelper;
 
 $user        = JemFactory::getUser();
 $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = $user->authorise('core.edit.state', 'com_jem');
+$canOrder    = JemHelperBackend::can('venue', 'edit.state');
+$canAccessEvents = JemHelperBackend::can('event', 'access');
 $saveOrder    = $canOrder && $listOrder == 'a.ordering' && strtolower($listDirn) === 'asc';
-$saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component&' . Session::getFormToken() . '=1', false);
+$saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
+$wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
 $eventStateColumns = array(
     'event_published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
@@ -103,39 +105,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
     <div id="j-main-container" class="j-main-container">
-        <fieldset id="filter-bar" class=" mb-3">
-            <div class="jem-admin-filter-bar">
-                <div class="jem-admin-filter-search">
-                    <div class="input-group">
-                        <input type="text" name="filter_search" id="filter_search" class="form-control" aria-describedby="filter_search-desc" placeholder="<?php echo Text::_('COM_JEM_SEARCH');?>" value="<?php echo $this->escape($this->state->get('filter_search')); ?>"  inputmode="search" onChange="document.adminForm.submit();" >
-
-                        <button type="submit" class="filter-search-bar__button btn btn-primary" aria-label="Search">
-                            <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-primary" onclick="document.getElementById('filter_search').value='';document.getElementById('filter_venue_type_id').value='0';this.form.filter_access.value='0';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                    </div>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <?php echo $this->lists['venue_type_filter']; ?>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_access" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
-                        <option value="0"><?php echo Text::_('JOPTION_SELECT_ACCESS');?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'));?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-item">
-                    <select name="filter_state" class="inputbox form-select wauto-minwmax" onchange="this.form.submit()">
-                        <option value=""><?php echo Text::_('JOPTION_SELECT_PUBLISHED');?></option>
-                        <?php echo HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions', array('all' => true)), 'value', 'text', $this->state->get('filter_state'), true); ?>
-                    </select>
-                </div>
-                <div class="jem-admin-filter-limit">
-                    <?php echo $this->pagination->getLimitBox(); ?>
-                </div>
-            </div>
-        </fieldset>
-        <div class="clr"> </div>
+        <?php echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this, 'options' => array('selectorFieldName' => 'filter_type'))); ?>
 
         <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList">
             <thead>
@@ -144,47 +114,49 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     <input type="checkbox" name="checkall-toggle" value="" title="<?php echo Text::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
                 </th>
                 <th class="center jem-list-order-heading">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_TYPE_FIELD_ORDER', 'a.ordering', $listDirn, $listOrder); ?>
                 </th>
                 <th class="center nowrap jem-list-status">
                     <?php echo Text::_('JSTATUS'); ?>
                 </th>
                 <th class="title">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:20%">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:5%" class="center" nowrap="nowrap">
                     <?php echo Text::_('COM_JEM_COLOR'); ?>
                 </th>
-                <th>
+                <th data-jem-default-hidden>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
                 </th>
                 <th style="width:10%">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_CITY', 'a.city', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_CITY', 'a.city', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:5%" class="center">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:5%" class="center">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder); ?>
                 </th>
+                <?php if ($canAccessEvents) : ?>
                 <th style="width:15%" class="center" nowrap="nowrap">
                     <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
                     <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
+                <?php endif; ?>
                 <th style="width:5%" class="center" nowrap="nowrap">
-                    <?php echo HTMLHelper::_('grid.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
-                <th>
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
+                <th data-jem-default-hidden>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                 </th>
                 <th class="center nowrap">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
                 </th>
                 <th style="width:1%" class="center" nowrap="nowrap">
-                    <?php echo HTMLHelper::_('grid.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder ); ?>
+                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder); ?>
                 </th>
             </tr>
             </thead>
@@ -194,11 +166,10 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
             $countItems = count($this->items);
             foreach ($this->items as $i => $item) :
                 $ordering    = ($listOrder == 'a.ordering');
-                $canCreate    = $user->authorise('core.create');
-                $canEdit    = $user->authorise('core.edit');
+                $canCreate    = JemHelperBackend::can('venue', 'create');
+                $canEdit      = JemHelperBackend::can('venue', 'edit', $item);
                 $canCheckin    = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-                $canEditOwn    = $user->authorise('core.edit.own') && $item->created_by == $userId;
-                $canChange    = $user->authorise('core.edit.state') && $canCheckin;
+                $canChange     = JemHelperBackend::can('venue', 'edit.state', $item) && $canCheckin;
                 $link         = 'index.php?option=com_jem&amp;task=venue.edit&amp;id='. $item->id;
                 $published     = HTMLHelper::_('jgrid.published', $item->published, $i, 'venues.', $canChange, 'cb', $item->publish_up, $item->publish_down);
                 ?>
@@ -215,7 +186,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <?php if ($item->checked_out) : ?>
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'venues.', $canCheckin); ?>
                         <?php endif; ?>
-                        <?php if ($canEdit || $canEditOwn) : ?>
+                        <?php if ($canEdit) : ?>
                             <a href="<?php echo Route::_('index.php?option=com_jem&task=venue.edit&id='.(int) $item->id); ?>">
                                 <?php echo $this->escape($item->venue); ?>
                             </a>
@@ -254,7 +225,9 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                     <td style="text-align:left" class="city"><?php echo $item->city ? $this->escape($item->city) : '-'; ?></td>
                     <td class="center state"><?php echo $item->state ? $this->escape($item->state) : '-'; ?></td>
                     <td class="center country"><?php echo $item->country ? $this->escape($item->country) : '-'; ?></td>
+                    <?php if ($canAccessEvents) : ?>
                     <td class="center"><?php echo $renderEventStateCounts($item); ?></td>
+                    <?php endif; ?>
                     <td class="center"> <?php echo $this->escape($item->access_level); ?></td>
                     <td>
                         <?php
@@ -290,9 +263,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
     <div>
         <input type="hidden" name="task" value="" />
         <input type="hidden" name="boxchecked" value="0" />
-        <input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>" />
-
+        <?php echo $this->filterForm->renderControlFields(); ?>
         <?php echo HTMLHelper::_('form.token'); ?>
     </div>
 </form>

@@ -8,6 +8,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
 class JemModelSpecialdays extends ListModel
@@ -30,6 +31,7 @@ class JemModelSpecialdays extends ListModel
                 'created_by', 'a.created_by',
                 'author_name', 'u.name',
                 'ordering', 'a.ordering',
+                'search', 'state', 'day_type', 'year',
             );
         }
 
@@ -38,15 +40,19 @@ class JemModelSpecialdays extends ListModel
 
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
         $params = ComponentHelper::getParams('com_jem');
 
         $search = $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search');
+        $this->setState('filter_search', $search);
         $this->setState('filter.search', $search);
 
         $published = $this->getUserStateFromRequest($this->context . '.filter_state', 'filter_state', '', 'string');
+        $this->setState('filter_state', $published);
         $this->setState('filter.state', $published);
 
         $dayType = $this->getUserStateFromRequest($this->context . '.filter_day_type', 'filter_day_type', '', 'string');
+        $this->setState('filter_day_type', $dayType);
         $this->setState('filter.day_type', $dayType);
 
         $availableYears = $this->getAvailableYears();
@@ -57,10 +63,52 @@ class JemModelSpecialdays extends ListModel
             $year = $defaultYear;
         }
 
+        $this->setState('filter_year', $year);
         $this->setState('filter.year', $year);
+        $this->setState('filter.default_year', $defaultYear);
         $this->setState('params', $params);
 
         parent::populateState('a.ordering', 'asc');
+
+        $this->syncLegacyFilterState($app, $defaultYear);
+
+        $year = (int) $this->state->get('filter.year', $defaultYear);
+        if (!empty($availableYears) && !isset($availableYears[$year])) {
+            $year = $defaultYear;
+            $this->setState('filter.year', $year);
+            $app->setUserState($this->context . '.filter.year', $year);
+        }
+        $this->setState('filter_year', $year);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app          Application object.
+     * @param  integer                                 $defaultYear  Default annual period.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app, $defaultYear)
+    {
+        $filters = array(
+            'search'   => array('filter_search', 'filter_search', ''),
+            'state'    => array('filter_state', 'filter_state', ''),
+            'day_type' => array('filter_day_type', 'filter_day_type', ''),
+            'year'     => array('filter_year', 'filter_year', $defaultYear),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     protected function getStoreId($id = '')

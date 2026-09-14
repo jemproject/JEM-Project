@@ -49,8 +49,10 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $updatedata->phpversion       = PHP_VERSION;
         $updatedata->installeddate    = $this->getInstalledDate();
         $updatedata->manifestpath     = JPATH_COMPONENT_ADMINISTRATOR . '/jem.xml';
-        $updatedata->localnotes       = array();
-        $updatedata->localdate        = '';
+        $updatedata->localnotes       = $this->getInstalledNotes();
+        $updatedata->localdate        = $updatedata->installeddate;
+        $updatedata->stablechangelog  = 'https://www.joomlaeventmanager.net/project/changelog-jem-5';
+        $updatedata->betachangelog    = 'https://www.joomlaeventmanager.net/project/changelog-jem/betas';
 
         $updateXml = self::fetchUpdateXml($updateFile);
 
@@ -92,9 +94,6 @@ class JemModelUpdatecheck extends BaseDatabaseModel
                     if ($installedUpdate !== null) {
                         $updatedata->localnotes = explode(';', (string) $installedUpdate->notes);
                         $updatedata->localdate  = JemOutput::formatdate($installedUpdate->date);
-                    } elseif ((int) $updatedata->current > 0) {
-                        $updatedata->localnotes = $updatedata->notes;
-                        $updatedata->localdate  = $updatedata->date;
                     }
                 }
             } else {
@@ -121,6 +120,12 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         $updatedata->versiondetail    = $version;
         $updatedata->date             = JemOutput::formatdate($updatexml->date);
         $updatedata->info             = (string) $updatexml->infourl;
+        $updatedata->stablechangelog  = isset($updatexml->stablechangelog)
+            ? (string) $updatexml->stablechangelog
+            : $updatedata->stablechangelog;
+        $updatedata->betachangelog    = isset($updatexml->betachangelog)
+            ? (string) $updatexml->betachangelog
+            : $updatedata->betachangelog;
         $updatedata->download         = (string) $updatexml->downloads->downloadurl;
         $updatedata->targetplatform   = (string) $updatexml->targetplatform['version'];
         $updatedata->phpminimum       = $this->getPhpMinimum($updatexml);
@@ -174,6 +179,26 @@ class JemModelUpdatecheck extends BaseDatabaseModel
         }
 
         return '';
+    }
+
+    private function getInstalledNotes()
+    {
+        $manifestPath = JPATH_COMPONENT_ADMINISTRATOR . '/jem.xml';
+
+        if (!File::exists($manifestPath)) {
+            return array();
+        }
+
+        $manifest = @simplexml_load_file($manifestPath);
+
+        if ($manifest === false || !isset($manifest->notes)) {
+            return array();
+        }
+
+        return array_values(array_filter(array_map(
+            'trim',
+            explode(';', (string) $manifest->notes)
+        )));
     }
 
     private function getPhpMinimum($updatexml)

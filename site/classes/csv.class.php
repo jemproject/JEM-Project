@@ -25,7 +25,7 @@ class JemCsv
             return $value;
         }
 
-        if ($value !== '' && preg_match('/^[\s]*[=+\-@]/', $value)) {
+        if ($value !== '' && preg_match('/^(?: *[\x09-\x0D]|\s*[=+\-@])/', $value)) {
             return "'" . $value;
         }
 
@@ -42,5 +42,29 @@ class JemCsv
     public static function protectFormulaRow(array $row)
     {
         return array_map(array(__CLASS__, 'protectFormulaValue'), $row);
+    }
+
+    /**
+     * Write a protected CSV row while preserving the caller's CSV format.
+     *
+     * @param   resource  $stream
+     * @param   array     $row
+     * @param   string    $separator
+     * @param   string    $enclosure
+     * @param   string    $escape
+     * @param   string    $eol
+     *
+     * @return  integer|false
+     */
+    public static function putRow($stream, array $row, $separator = ',', $enclosure = '"', $escape = '\\', $eol = "\n")
+    {
+        return fputcsv(
+            $stream,
+            self::protectFormulaRow($row),
+            $separator,
+            $enclosure,
+            $escape,
+            $eol
+        );
     }
 }

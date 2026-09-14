@@ -184,7 +184,7 @@ function jem_search_clear() {
                         <td headers="jem_date" style="text-align: left;">
                             <?php
                             echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime);
-                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                            echo JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                             ?>
                         </td>
 

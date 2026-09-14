@@ -40,12 +40,7 @@ defined('_JEXEC') or die;
     <?php echo $this->loadTemplate('venues'); ?>
 
     <!--footer-->
-
-    <div class="pagination">
-        <?php
-        echo $this->pagination->getPagesLinks(); ?>
-    </div>
-        <?php if ($this->params->get('showfootertext')) : ?>
+    <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>
         </div>

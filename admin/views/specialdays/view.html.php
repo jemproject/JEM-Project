@@ -19,6 +19,9 @@ class JemViewSpecialdays extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
     public $dayTypes;
     public $dayTypesById;
     public $years;
@@ -28,10 +31,38 @@ class JemViewSpecialdays extends JemAdminView
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total      = $this->get('Total');
         $this->dayTypes   = JemHelper::calendarSpecialDayTypes();
         $this->dayTypesById = JemHelper::calendarSpecialDayTypesById();
         $this->years      = $this->get('AvailableYears');
         ksort($this->years);
+
+        if (isset($this->activeFilters['year'])
+            && (int) $this->activeFilters['year'] === (int) $this->state->get('filter.default_year')) {
+            unset($this->activeFilters['year']);
+        }
+
+        if ($this->filterForm) {
+            $yearField = $this->filterForm->getField('year', 'filter');
+            foreach ((array) $this->years as $year) {
+                $yearField->addOption((string) $year, array('value' => (string) $year));
+            }
+
+            $dayTypeField = $this->filterForm->getField('day_type', 'filter');
+            foreach ($this->dayTypes as $type) {
+                $typeValue = !empty($type['id']) ? (string) (int) $type['id'] : (string) $type['name'];
+                $dayTypeField->addOption((string) $type['name'], array('value' => $typeValue));
+            }
+
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
 
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
@@ -40,8 +71,8 @@ class JemViewSpecialdays extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->useScript('table.columns');
+        $wa->registerAndUseScript('jem.admin-table-columns', 'media/com_jem/js/admin-table-columns.js', array('table.columns'), array('defer' => true));
 
         $this->addToolbar();
         parent::display($tpl);

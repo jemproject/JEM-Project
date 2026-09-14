@@ -51,15 +51,6 @@ $ticketAvailabilityOption = $ticketAvailabilityOptions[$ticketAvailability];
 $ticketAvailabilityText = Text::_($ticketAvailabilityOption['label']);
 $showTicketAvailabilityText = (bool) $params->get('event_show_availability', 0);
 $showTicketAvailabilityBadge = $showTicketAvailabilityText && $ticketAvailability !== 'instock';
-$eventImageRibbonText = '';
-$eventImageRibbonClass = '';
-if ($showEventStatusBadge) {
-    $eventImageRibbonText = $eventStatusText;
-    $eventImageRibbonClass = $eventStatusOption['class'];
-} elseif ($showTicketAvailabilityBadge) {
-    $eventImageRibbonText = $ticketAvailabilityText;
-    $eventImageRibbonClass = $ticketAvailabilityOption['class'];
-}
 
 // Add expiration date, if old events will be archived or removed
 if ($jemsettings->oldevent > 0) {
@@ -132,7 +123,17 @@ $detailImageHeaderClass = 'jem-event-detail-image--header jem-event-detail-image
 $detailImageHeaderStyle = $detailImageHeaderMaxHeight > 0
     ? '--jem-event-header-image-max-height: ' . $detailImageHeaderMaxHeight . 'px;'
     : '--jem-event-header-image-max-height: none; --jem-event-header-image-height: auto;';
-$renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginalImage = false) use ($eventImageRibbonText, $eventImageRibbonClass, $detailImageField) {
+if (!empty($this->item->event_status_indicators_prepared)) {
+    $hasEventStatusImage = $detailImageLayout !== 'hidden' && !empty($this->dimage['original']);
+    $hasVenueStatusImage = !empty($this->item->locid)
+        && !empty($this->item->venue)
+        && (bool) $params->get('event_show_venue', '1')
+        && !empty($this->limage['original']);
+    $this->item->event_status_indicator_image_available = $hasEventStatusImage || $hasVenueStatusImage;
+    $showEventStatusBadge = false;
+    $showTicketAvailabilityBadge = false;
+}
+$renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginalImage = false) use ($detailImageField) {
     if ($useOriginalImage && !empty($this->dimage['original'])) {
         $originalUrl = Uri::base() . ltrim((string) $this->dimage['original'], '/');
         $imageTitle  = $this->escape($this->item->title);
@@ -151,17 +152,12 @@ $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginal
         return '';
     }
 
+    $image = JemOutput::eventStatusImage($this->item, $image, 'jem-event-detail-status-image');
+
     $classes = trim('jem-img jem-event-overview-media ' . $layoutClass);
     $styleAttribute = trim((string) $style) !== '' ? ' style="' . $this->escape(trim((string) $style)) . '"' : '';
     $html = '<div class="' . $this->escape($classes) . '"' . $styleAttribute . '>';
-    if ($eventImageRibbonText) {
-        $html .= '<div class="jem-event-image-ribbon-wrap">'
-            . $image
-            . '<span class="jem-event-image-ribbon ' . $this->escape($eventImageRibbonClass) . '">' . $this->escape($eventImageRibbonText) . '</span>'
-            . '</div>';
-    } else {
-        $html .= $image;
-    }
+    $html .= $image;
     $html .= '</div>';
 
     return $html;
@@ -233,7 +229,7 @@ $renderEventCategoryLinks = function () use ($params) {
 };
 $renderVenueName = function () use ($params) {
     if (($params->get('event_show_detlinkvenue') == 1) && !empty($this->item->url)) {
-        $venueName = '<a target="_blank" href="' . $this->escape($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
+        $venueName = '<a target="_blank" href="' . JemOutput::escapeHtmlAttribute($this->item->url) . '">' . $this->escape($this->item->venue) . '</a>';
     } elseif (($params->get('event_show_detlinkvenue') == 2) && !empty($this->item->venueslug)) {
         $venueName = '<a href="' . Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug)) . '">' . $this->escape($this->item->venue) . '</a>';
     } else {
@@ -340,7 +336,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
     }
 
     if (!empty($this->item->url)) {
-        $links[] = '<a class="venue_weblink" target="_blank" href="' . $this->escape($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
+        $links[] = '<a class="venue_weblink" target="_blank" href="' . JemOutput::escapeHtmlAttribute($this->item->url) . '">' . Text::_('COM_JEM_WEBSITE') . '</a>';
     }
 
     if (!empty($this->item->email)) {
@@ -494,10 +490,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
         <?php if ($this->params->get('show_page_heading', 1)) : ?>
             <h1 class="componentheading">
                 <?php echo $this->escape($this->params->get('page_heading')); ?>
+                <?php echo JemOutput::eventStatusFallbackBadge($this->item); ?>
             </h1>
         <?php else : ?>
             <h1 class="componentheading">
                 <?php echo $this->escape($this->item->title); ?>
+                <?php echo JemOutput::eventStatusFallbackBadge($this->item); ?>
                 <?php if ($eventLayout !== 'compact' && ($showEventStatusBadge || $showTicketAvailabilityBadge)) : ?>
                     <span class="jem-event-badges">
                         <?php if ($showEventStatusBadge) : ?>
@@ -549,8 +547,11 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <div class="jem-event-compact-when">
                             <?php
                             echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
-                            echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
+                            echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes, true, $this->item);
                             ?>
+                            <?php if (!empty($this->item->times)) : ?>
+                                <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
+                            <?php endif; ?>
                         </div>
                         <?php if ($eventCustomFieldsPosition === 'details') : ?>
                             <?php echo $renderEventCustomFieldsBlock(); ?>
@@ -582,15 +583,19 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <span style="white-space: nowrap;">
               <?php
               echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
-              echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+              echo JemOutput::formatSchemaOrgDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes, true, $this->item);
               ?>
             </span>
                     </dd>
+                    <?php if (!empty($this->item->times)) : ?>
+                        <dt class="jem-timezone"><?php echo Text::_('COM_JEM_EVENT_TIMEZONE'); ?>:</dt>
+                        <dd class="jem-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></dd>
+                    <?php endif; ?>
                     <?php if ((!empty($this->item->locid)) && ($params->get('event_show_venue_name') == 1)) : ?>
                         <dt class="jem-where hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHERE'); ?>"><?php echo Text::_('COM_JEM_WHERE'); ?>:</dt>
                         <dd class="jem-where"><?php
                             if (($params->get('event_show_detlinkvenue') == 1) && (!empty($this->item->url))) :
-                                ?><a target="_blank" href="<?php echo $this->item->url; ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
+                                ?><a target="_blank" href="<?php echo JemOutput::escapeHtmlAttribute($this->item->url); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                             elseif (($params->get('event_show_detlinkvenue') == 2) && (!empty($this->item->venueslug))) :
                                 ?><a href="<?php echo $this->escape(Route::_(JemHelperRoute::getVenueRoute($this->item->venueslug))); ?>"><?php echo $this->escape($this->item->venue); ?></a><?php
                             else :
@@ -656,7 +661,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <?php if ($params->get('event_show_author') && !empty($this->item->author)) : ?>
                         <dt class="createdby hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>"><?php echo Text::_('COM_JEM_EVENT_CREATED_BY_LABEL'); ?>:</dt>
                         <dd class="createdby">
-                            <?php $author = $this->item->created_by_alias ? $this->item->created_by_alias : $this->item->author; ?>
+                            <?php $author = $this->escape((string) ($this->item->created_by_alias ?: $this->item->author)); ?>
                             <?php if (JemHelper::isContactComponentEnabled() && !empty($this->item->contactid2) && $params->get('event_link_author') == true) :
                                 $concatid = null;
 
@@ -677,7 +682,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                                     $mItem = $menu->getItems('link', $needle, true);
                                     $link = Route::_($needle . (!empty($mItem) ? '&Itemid=' . $mItem->id : ''));
                                     ?>
-                                    <a href="<?php echo $link; ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
+                                    <a href="<?php echo JemOutput::escapeHtmlAttribute($link); ?>" title="<?php echo Text::_('COM_JEM_EVENT_CONTACT_SEND_MESSAGE'); ?>">
                                         <?php echo $author; ?> <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i>
                                     </a>
                                 <?php } else {
@@ -1359,7 +1364,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <dl class="jem-dl floattext">
                 <?php
                 $timeNow = time();
-                $showCancellationInfo = (!$this->user->get('guest') && $this->isregistered !== false) || !empty($this->permissions->canEditAttendees);
+                $showCancellationInfo = (int) $this->item->unregistra > 0 && $this->dateUnregistationUntil;
 
                 switch ($this->e_reg) {
                     case 0:

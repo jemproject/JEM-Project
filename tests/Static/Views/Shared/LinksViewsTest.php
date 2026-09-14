@@ -33,9 +33,9 @@ final class LinksViewsTest extends TestCase
      */
     public static function editLinksAssetTemplateProvider(): iterable
     {
-        yield 'admin event links' => array(JEM_TEST_ROOT . '/admin/views/event/tmpl/edit_links.php', 'media/com_jem/css/jem-links.css');
-        yield 'site event links' => array(JEM_TEST_ROOT . '/site/views/editevent/tmpl/edit_links.php', 'media/com_jem/css/jem-links.css');
-        yield 'site responsive event links' => array(JEM_TEST_ROOT . '/site/views/editevent/tmpl/responsive/edit_links.php', 'media/com_jem/css/jem-link-responsive.css');
+        yield 'admin event links' => array(JEM_TEST_ROOT . '/admin/views/event/tmpl/edit_links.php', "JemHelper::loadCss('jem-links');");
+        yield 'site event links' => array(JEM_TEST_ROOT . '/site/views/editevent/tmpl/edit_links.php', "JemHelper::loadCss('jem-links');");
+        yield 'site responsive event links' => array(JEM_TEST_ROOT . '/site/views/editevent/tmpl/responsive/edit_links.php', "JemHelper::loadCss('jem-link-responsive');");
     }
 
     #[DataProvider('editLinksAssetTemplateProvider')]
@@ -44,6 +44,7 @@ final class LinksViewsTest extends TestCase
         $template = $this->read($path);
 
         self::assertStringContainsString($expectedCss, $template);
+        self::assertStringNotContainsString('media/com_jem/css/', $template);
         self::assertStringContainsString('media/com_jem/js/jem-links.js', $template);
     }
 

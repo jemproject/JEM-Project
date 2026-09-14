@@ -10,7 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Session\Session;
+use Joomla\CMS\Table\Table;
 
 /**
  * JEM Component Controller
@@ -59,10 +59,16 @@ class JemController extends BaseController
      */
     public function ajaxattachremove()
     {
-        // Check for request forgeries
-        Session::checkToken('request') or jexit('Invalid Token');
+        JemHelper::requirePostToken();
 
-        $id = Factory::getApplication()->input->getInt('id', 0);
+        $id = Factory::getApplication()->input->post->getInt('id', 0);
+
+        $attachment = Table::getInstance('jem_attachments', '');
+        if (!$id || !$attachment->load($id)
+            || !JemHelperBackend::canAccessAttachment($attachment->object, 'edit')) {
+            echo 0;
+            jexit();
+        }
 
         $res = JemAttachment::remove($id);
         if (!$res) {

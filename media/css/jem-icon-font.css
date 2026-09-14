@@ -9,6 +9,7 @@ jem-editbutton
 jem-copybutton
 jem-printbutton
 jem-mailbutton
+jem-sharebutton
 jem-icalbutton
 jem-layoutbutton
 jem-publishbutton
@@ -54,6 +55,7 @@ jem-featuredicon
 #jem .jem-copybutton,
 #jem .jem-printbutton,
 #jem .jem-mailbutton,
+#jem .jem-sharebutton,
 #jem .jem-icalbutton,
 #jem .jem-layoutbutton,
 #jem .jem-exportbutton {

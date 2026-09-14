@@ -115,9 +115,25 @@ class JemModelAttendees extends BaseDatabaseModel
     public function setId($id)
     {
         // Set id and wipe data
-        $this->_id    = $id;
-        $this->_event = null;
-        $this->_data  = null;
+        $this->_id         = $id;
+        $this->_event      = null;
+        $this->_data       = null;
+        $this->_total      = null;
+        $this->_pagination = null;
+    }
+
+    /**
+     * Check whether the current event's attendee data may be managed.
+     */
+    public function canManageAttendees($user = null)
+    {
+        $user = $user ?: JemFactory::getUser();
+        $event = $this->getEvent();
+
+        return is_object($event)
+            && !empty($event->id)
+            && !empty($user->get('id'))
+            && $user->can('edit', 'event', (int) $event->id, (int) $event->created_by);
     }
 
     /**
@@ -226,6 +242,12 @@ class JemModelAttendees extends BaseDatabaseModel
         $filter_order     = InputFilter::getinstance()->clean($filter_order,     'cmd');
         $filter_order_Dir = InputFilter::getinstance()->clean($filter_order_Dir, 'word');
 
+        $allowedOrders = array('u.name', 'u.username', 'r.uregdate', 'r.status', 'r.places');
+        if (!in_array($filter_order, $allowedOrders, true)) {
+            $filter_order = 'r.uregdate';
+        }
+        $filter_order_Dir = strtoupper($filter_order_Dir) === 'DESC' ? 'DESC' : 'ASC';
+
         if ($filter_order == 'r.status') {
             $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', r.waiting '.$filter_order_Dir.', u.name';
         //    $orderby = ' ORDER BY CASE WHEN r.status < 0 THEN r.status * (-3) WHEN r.status = 1 AND r.waiting > 0 THEN r.status + 1 ELSE r.status END '.$filter_order_Dir.', u.name';
@@ -248,7 +270,7 @@ class JemModelAttendees extends BaseDatabaseModel
         $user = JemFactory::getUser();
         // Support Joomla access levels instead of single group id
         $levels = $user->getAuthorisedViewLevels();
-        $canEdit = $user->can('edit', 'event', $this->_id, $user->id); // where cluase ensures user is the event owner
+        $canManage = $this->canManageAttendees($user);
 
         $filter         = $app->getUserStateFromRequest('com_jem.attendees.filter',        'filter',         0, 'int');
         $filter_status  = $app->getUserStateFromRequest('com_jem.attendees.filter_status', 'filter_status', -2, 'int');
@@ -267,8 +289,8 @@ class JemModelAttendees extends BaseDatabaseModel
         }
 
         // First thing we need to do is to select only needed events
-        if (!$canEdit) {
-            $where[] = ' a.published = 1';
+        if (!$canManage) {
+            $where[] = '1 = 0';
         }
         $where[] = ' c.published = 1';
         $where[] = ' a.access  IN (' . implode(',', $levels) . ')';
@@ -303,7 +325,7 @@ class JemModelAttendees extends BaseDatabaseModel
         if (empty($this->_event)) {
             $query = 'SELECT a.id, a.alias, a.title, a.article_id, a.dates, a.enddates, a.times, a.endtimes, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking,'
                    . ' a.published, a.created, a.created_by, a.created_by_alias, a.locid, a.registra, a.unregistra,'
-                   . ' a.recurrence_type, a.recurrence_first_id, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
+                   . ' a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number,'
                    . ' a.access, a.attribs, a.checked_out, a.checked_out_time, a.contactid, a.datimage, a.featured, a.hits, a.version,'
                    . ' a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10,'
                    . ' a.introtext, a.fulltext, a.language, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by'
@@ -365,6 +387,10 @@ class JemModelAttendees extends BaseDatabaseModel
      */
     public function getUsers()
     {
+        if (!$this->canManageAttendees()) {
+            return array();
+        }
+
         $query      = $this->_buildQueryUsers();
         $pagination = $this->getUsersPagination();
         $rows       = $this->_getList($query, $pagination->limitstart, $pagination->limit);
@@ -411,16 +437,17 @@ class JemModelAttendees extends BaseDatabaseModel
     /**
      * Get users registered on given event
      */
-    static public function getRegisteredUsers($eventId)
+    public function getRegisteredUsers()
     {
-        if (empty($eventId)) {
+        if (!$this->canManageAttendees()) {
             return array();
         }
 
+        $eventId = (int) $this->_id;
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
         // #__jem_register (id, event, uid, waiting, status, comment)
-        $query->select(array('reg.uid, reg.status, reg.waiting, reg.id'));
+        $query->select(array('reg.uid, reg.status, reg.waiting, reg.places, reg.id'));
         $query->from('#__jem_register As reg');
         $query->where('reg.event = ' . $eventId);
         $db->setQuery($query);
@@ -474,6 +501,10 @@ class JemModelAttendees extends BaseDatabaseModel
 
         // where
         $where = array();
+
+        if (!$this->canManageAttendees()) {
+            $where[] = '1 = 0';
+        }
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {

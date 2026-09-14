@@ -16,7 +16,6 @@ $showtime        = (int)$params->get('showtime', 0);
 $showcalendar    = (int)$params->get('showcalendar', 1);
 $showCategory    = ((int) $params->get('showcategory', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-nocats');
 $showVenue       = ((int) $params->get('showvenue', 1) === 1) && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-novenue');
-$introtext       = $params->get('introtext', '');
 $showflyer       = (int)$params->get('showflyer', 1);
 $flyer_link_type = (int)$params->get('flyer_link_type', 0);
 
@@ -63,12 +62,6 @@ if ($flyer_link_type == 1) {
                 </div>
                 <?php endif; ?>
 
-                <?php if (!empty($introtext)) :?>
-                    <div class="intro">
-                        <?php echo $introtext; ?>
-                    </div>
-                <?php endif; ?>
-
                 <?php $i = count($list); ?>
                 <?php if ($i == 0) : ?>
                     <div class="clr"></div>
@@ -76,6 +69,7 @@ if ($flyer_link_type == 1) {
                     <p><?php echo Text::_('MOD_JEM_JUBILEE_NO_EVENTS'); ?></p>
                 <?php else : ?>
                     <?php foreach ($list as $item) : ?>
+                        <?php $hasEventImage = $showflyer === 1 && !empty($item->eventimage); ?>
                         <div class="clr"></div>
                         <div class="hr"><hr /></div>
                         <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
@@ -86,16 +80,20 @@ if ($flyer_link_type == 1) {
                                 <?php else : ?>
                                     <?php echo $item->title; ?>
                                 <?php endif; ?>
+                                <?php if (!$hasEventImage) : ?>
+                                    <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                                <?php endif; ?>
                             </h2>
 
                             <div>
                                 <?php if (($showflyer == 1) && !empty($item->eventimage)) : ?>
                                     <div>
-                                        <div class="banner-jem">
+                                        <div class="banner-jem jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                             <?php if ($flyer_link_type != 3) : ?>
                                             <a href="<?php echo ($flyer_link_type == 2) ? $item->eventlink : $item->eventimageorig; ?>" rel="<?php echo $modal;?>" class="jubilee-flyerimage" title="<?php echo ($flyer_link_type == 2) ? $item->fulltitle : Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo $item->title; ?>"><?php endif; ?>
-                                                <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->title; ?>" />
+                                                <img class="float_right <?php echo 'image-preview2'; ?>" src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->title; ?>" />
                                                 <?php if ($flyer_link_type != 3) { echo '</a>'; } ?>
+                                            <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                         </div>
                                     </div>
                                     <div class="clr"></div>

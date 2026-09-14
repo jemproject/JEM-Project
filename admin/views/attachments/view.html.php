@@ -19,12 +19,46 @@ class JemViewAttachments extends JemAdminView
     public $items;
     public $pagination;
     public $state;
+    public $filterForm;
+    public $activeFilters;
+    public $total;
+    public $canModifyAny = false;
 
     public function display($tpl = null)
     {
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        $this->total      = $this->get('Total');
+
+        if (isset($this->activeFilters['access']) && (string) $this->activeFilters['access'] === '0') {
+            unset($this->activeFilters['access']);
+        }
+
+        if ($this->filterForm) {
+            $typeField = $this->filterForm->getField('type', 'filter');
+            if (JemHelperBackend::can('event', 'access')) {
+                $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_EVENT'), array('value' => 'event'));
+            }
+            if (JemHelperBackend::can('venue', 'access')) {
+                $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_VENUE'), array('value' => 'venue'));
+            }
+            $typeField->addOption(Text::_('COM_JEM_ATTACHMENT_OBJECT_CATEGORY'), array('value' => 'category'));
+
+            $this->filterForm->setValue(
+                'fullordering',
+                'list',
+                $this->state->get('list.ordering') . ' ' . $this->state->get('list.direction')
+            );
+            $this->filterForm->setValue('limit', 'list', $this->state->get('list.limit'));
+        }
+
+        foreach ($this->items as $item) {
+            $item->canEdit = JemHelperBackend::canAccessAttachment($item->object, 'edit');
+            $this->canModifyAny = $this->canModifyAny || $item->canEdit;
+        }
 
         $errors = $this->get('Errors');
         if (is_array($errors) && count($errors)) {
@@ -33,7 +67,6 @@ class JemViewAttachments extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
         $wa->useScript('table.columns');
 
         $this->addToolbar();
@@ -45,16 +78,16 @@ class JemViewAttachments extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_ATTACHMENTS'), 'attachment');
         $toolbar = $this->getToolbarInstance();
 
-        $canDo = JemHelperBackend::getActions(0);
-        $canEdit = $canDo->get('core.edit');
-        $canDelete = $canDo->get('core.delete');
+        $canEdit = $this->canModifyAny;
+        $canDelete = $this->canModifyAny;
+        $canExport = JemHelperBackend::canManage('jem.tools.manage');
 
         if ($canEdit) {
             ToolbarHelper::editList('attachment.edit');
             ToolbarHelper::divider();
         }
 
-        if (($canDelete || $canDo->get('core.manage')) && $this->supportsToolbarDropdown($toolbar)) {
+        if (($canDelete || $canExport) && $this->supportsToolbarDropdown($toolbar)) {
             $dropdown = $toolbar->dropdownButton('attachment-actions')
                 ->text('JTOOLBAR_ACTIONS')
                 ->toggleSplit(false)
@@ -72,7 +105,7 @@ class JemViewAttachments extends JemAdminView
                     ->listCheck(true);
             }
 
-            if ($canDo->get('core.manage')) {
+            if ($canExport) {
                 $childBar->standardButton('export')
                     ->text('COM_JEM_EXPORT')
                     ->task('attachments.export')
@@ -85,7 +118,7 @@ class JemViewAttachments extends JemAdminView
                 ToolbarHelper::custom('attachments.deleteFiles', 'delete', 'delete', 'COM_JEM_ATTACHMENTS_DELETE_RECORDS_AND_FILES', true);
             }
 
-            if ($canDo->get('core.manage')) {
+            if ($canExport) {
                 ToolbarHelper::custom('attachments.export', 'download', 'download', 'COM_JEM_EXPORT', true);
             }
         }

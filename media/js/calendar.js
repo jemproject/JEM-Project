@@ -1,4 +1,3 @@
-// window.addEvent('domready', function() {
 jQuery(document).ready(function ($) {
     var allHidden = false;
 

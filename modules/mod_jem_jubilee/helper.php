@@ -188,6 +188,9 @@ abstract class ModJemJubileeHelper
         # Retrieve the available Events
         ####
         $events = $model->getItems();
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $color = $params->get('color');
@@ -204,6 +207,8 @@ abstract class ModJemJubileeHelper
             array_splice($indices, $count);
         }
 
+        $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
+
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -218,7 +223,7 @@ abstract class ModJemJubileeHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = JemImage::getModuleEventImageData($row, $params, 'original_limited');
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
 
             #################
@@ -246,6 +251,9 @@ abstract class ModJemJubileeHelper
             }
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
+            $lists[$i]->module_status_ribbon_scale = $moduleStatusRibbonScale;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
@@ -277,14 +285,20 @@ abstract class ModJemJubileeHelper
             list($lists[$i]->date,
                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix, $showtime);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = '';
                 $lists[$i]->eventimageorig = '';
+                $lists[$i]->eventimagedisplay = '';
+                $lists[$i]->eventimagestyle = '';
+                $lists[$i]->eventimagecontainerstyle = '';
             } else {
                 $lists[$i]->eventimage     = $uri->base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = $uri->base(true).'/'.$dimage['original'];
+                $lists[$i]->eventimagedisplay = $uri->base(true).'/'.$dimage['display'];
+                $lists[$i]->eventimagestyle = $dimage['display_style'];
+                $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
             }
 
             if ($limage == null) {

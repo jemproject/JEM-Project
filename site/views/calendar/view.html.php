@@ -85,7 +85,9 @@ class JemViewCalendar extends JemView
 
         // get data from model and set the month
         $model = $this->getModel();
-        $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+        // Pass the selected civil month, not a PHP-default-timezone timestamp.
+        // The model interprets this value in Joomla's configured timezone.
+        $model->setDate(sprintf('%04d-%02d-01', $year, $month));
 
         $rows = $this->get('Items');
 

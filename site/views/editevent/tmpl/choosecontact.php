@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 $app = Factory::getApplication();
 $function = $app->input->getCmd('function', 'jSelectContact');
@@ -177,7 +176,7 @@ if (!empty($filterBorder)) {
 <div id="jem" class="jem_select_contact">
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component&function='.$this->escape($function)); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <select name="filter_type" id="filter_type" class="inputbox" onchange="this.form.submit()">
@@ -194,6 +193,9 @@ if (!empty($filterBorder)) {
                 <button type="button" class="btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 <button type="button" class="btn-save-selection" onclick="jemGetSelectedContacts();">
                     <?php echo Text::_('COM_JEM_SELECT_CHECKED'); ?>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="jemClearSelectedContacts();">
+                    <?php echo Text::_('COM_JEM_NOCONTACT'); ?>
                 </button>
                 <span class="jem-contact-footer">
                     <label for="limit">#</label>
@@ -242,6 +244,7 @@ if (!empty($filterBorder)) {
         <input type="hidden" name="function" value="<?php echo $this->escape($function); ?>" />
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">
@@ -270,6 +273,15 @@ if (!empty($filterBorder)) {
             window.parent.<?php echo $this->escape($function); ?>(ids.join(','), names.join(', '));
         } else {
             alert("<?php echo Text::_('JLIB_HTML_PLEASE_MAKE_A_SELECTION_FROM_THE_LIST'); ?>");
+        }
+    }
+
+    function jemClearSelectedContacts() {
+        var callbackName = <?php echo json_encode($function); ?>;
+        var emptyLabel = <?php echo json_encode(Text::_('COM_JEM_SELECT_CONTACT')); ?>;
+
+        if (window.parent && typeof window.parent[callbackName] === 'function') {
+            window.parent[callbackName]('', emptyLabel);
         }
     }
 

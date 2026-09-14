@@ -114,6 +114,7 @@ class JemModelMailto extends FormModel
         $data['sender']     = $input->post->get('sender', '', 'string');
         $data['emailfrom']  = $input->post->get('emailfrom', '', 'string');
         $data['subject']    = $input->post->get('subject', '', 'string');
+        $data['captcha']    = $input->post->get('captcha', '', 'string');
         $data['consentbox'] = $input->post->get('consentbox', '', 'string');
 
         return $data;

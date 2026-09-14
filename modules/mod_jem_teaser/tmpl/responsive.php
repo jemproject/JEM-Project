@@ -92,6 +92,15 @@ $document->addStyleDeclaration($css);
                     // show a closed lock icon
                     $eventaccess = ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
                 }
+                $hasEventImage = !empty($item->showimageevent)
+                    && !empty($item->eventimage)
+                    && strpos($item->eventimage, '/media/com_jem/images/blank.webp') === false
+                    && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent');
+                $hasVenueImage = !empty($item->showimagevenue)
+                    && !empty($item->venueimage)
+                    && strpos($item->venueimage, '/media/com_jem/images/blank.webp') === false
+                    && !JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue');
+                $statusOnVenueImage = !$hasEventImage && $hasVenueImage;
                 ?>
                 <div class="event_id<?php echo $item->eventid; ?>" itemprop="event" itemscope itemtype="https://schema.org/Event">
                     <?php echo $titletag; ?>
@@ -101,6 +110,9 @@ $document->addStyleDeclaration($css);
                         <?php echo $item->title; ?>
                     <?php endif; ?>
                     <?php echo $eventaccess; ?>
+                    <?php if (!$hasEventImage && !$hasVenueImage) : ?>
+                        <?php echo JemOutput::moduleEventStatusBadge($item); ?>
+                    <?php endif; ?>
                     <?php echo $titleendtag; ?>
 
                     <div class="jem-row-teaser jem-teaser-event">
@@ -168,12 +180,18 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->eventimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimageevent')) : ?>
                                             <?php if(!empty($item->eventimage)) : ?>
-                                                <div class="jem-eventimg-teaser">
+                                                <?php
+                                                $eventImageStyle = $item->eventimagestyle;
+                                                if ($eventImageStyle === '' && !empty($item->eventimagethumbfallback) && $item->eventimagewidth > 0) {
+                                                    $eventImageStyle = 'width:'.(int) $item->eventimagewidth.'px;max-width:100%;height:auto';
+                                                }
+                                                ?>
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image jem-module-event-status-image--inline"<?php echo $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->eventimageorig) {
                                                     $image = $item->eventimageorig;
                                                     $document = Factory::getApplication()->getDocument();
-                                                    $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+                                                    JemHelper::loadCss('lightbox.min');
                                                     $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
                                                     echo '<script>lightbox.option({
                             \'showImageNumberLabel\': false,
@@ -185,10 +203,11 @@ $document->addStyleDeclaration($css);
 
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_EVENT') .': ' . $item->fulltitle; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->eventimage; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview"<?php echo $eventImageStyle !== '' ? ' style="'.$eventImageStyle.'"' : ''; ?> src="<?php echo $item->eventimagedisplay; ?>" width="<?php echo (int) $item->eventimagewidth; ?>" height="<?php echo (int) $item->eventimageheight; ?>" alt="<?php echo $item->title; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
                                                 <?php endif; ?>
+                                                <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                                 </div>
                                             <?php endif; ?>
                                         <?php endif; ?>
@@ -199,7 +218,12 @@ $document->addStyleDeclaration($css);
                                     <?php if(strpos($item->venueimage,'/media/com_jem/images/blank.webp') === false) : ?>
                                         <?php if (!JemHelper::jemStringContains($params->get('moduleclass_sfx'), 'jem-noimagevenue')) : ?>
                                             <?php if(!empty($item->venueimage)) : ?>
-                                                <div class="jem-eventimg-teaser">
+                                                <?php
+                                                $venueImageStyle = !empty($item->venueimagethumbfallback) && $item->venueimagewidth > 0
+                                                    ? 'width:'.(int) $item->venueimagewidth.'px;max-width:100%;height:auto'
+                                                    : '';
+                                                ?>
+                                                <div class="jem-eventimg-teaser jem-module-event-status-image jem-module-event-status-image--inline">
 
                                                     <?php if ($params->get('use_modal')) : ?>
                                                 <?php if ($item->venueimageorig) {
@@ -207,9 +231,12 @@ $document->addStyleDeclaration($css);
                                                 } ?>
                                                     <a href="<?php echo $image; ?>" class="teaser-flyerimage" data-lightbox="teaser-flyerimage-<?php echo $item->eventid; ?>" rel="<?php echo $modal;?>" title="<?php echo Text::_('COM_JEM_CLICK_TO_ENLARGE'); ?>" data-title="<?php echo Text::_('COM_JEM_VENUE') .': ' . $item->venue; ?>">
                                                         <?php endif; ?>
-                                                        <img class="float_right image-preview" src="<?php echo $item->venueimage; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
+                                                        <img class="float_right image-preview"<?php echo $venueImageStyle !== '' ? ' style="'.$venueImageStyle.'"' : ''; ?> src="<?php echo $item->venueimage; ?>" width="<?php echo (int) $item->venueimagewidth; ?>" height="<?php echo (int) $item->venueimageheight; ?>" alt="<?php echo $item->venue; ?>" itemprop="image" />
                                                         <?php if ($params->get('use_modal')) : ?>
                                                     </a>
+                                                <?php endif; ?>
+                                                <?php if ($statusOnVenueImage) : ?>
+                                                    <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                                                 <?php endif; ?>
                                                 </div>
                                             <?php endif; ?>

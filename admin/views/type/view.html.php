@@ -26,6 +26,13 @@ class JemViewType extends JemAdminView
         $this->form  = $this->get('Form');
         $this->item  = $this->get('Item');
         $this->state = $this->get('State');
+
+        $requestedEntity = Factory::getApplication()->input->getInt('entity', 0);
+        if (empty($this->item->id) && in_array($requestedEntity, array(1, 2, 3, 4), true)) {
+            $this->form->setValue('entity', null, $requestedEntity);
+            $this->item->entity = $requestedEntity;
+        }
+
         $this->prepareTypeTranslations();
 
         $errors = $this->get('Errors');
@@ -35,7 +42,6 @@ class JemViewType extends JemAdminView
         }
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         if (version_compare(JVERSION, '5.0.0', '>=')) {
             $wa->registerAndUseStyle('com_jem.fontawesome', 'com_jem/vendor/fontawesome-free/css/all.min.css');

@@ -123,6 +123,26 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="venue_event_filter" type="list"
+                default="0"
+                label="COM_JEM_VENUE_EVENT_FILTER"
+                description="COM_JEM_VENUE_EVENT_FILTER_DESC"
+                class="form-select w-auto jem-options-width-auto"
+            >
+                <option value="0">COM_JEM_VENUE_EVENT_FILTER_ALL</option>
+                <option value="1">COM_JEM_VENUE_EVENT_FILTER_WITH_EVENTS</option>
+                <option value="2">COM_JEM_VENUE_EVENT_FILTER_WITHOUT_EVENTS</option>
+            </field>
+            <field name="show_venue_event_filter" type="radio"
+                default="0"
+                label="COM_JEM_SHOW_VENUE_EVENT_FILTER"
+                description="COM_JEM_SHOW_VENUE_EVENT_FILTER_DESC"
+                class="btn-group btn-group-yesno"
+                showon="venue_event_filter!:0"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field type="spacer" name="page_text_spacer"
                 label="COM_JEM_TIMELINE_BLOCK_PAGE_TEXT"
                 class="badge border px-3 py-2 fs-5 fw-bold text-body"

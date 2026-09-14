@@ -82,10 +82,12 @@ abstract class ModJemTeaserHelper
             $offset_minutes = $offset_hours * 60;
 
             $model->setState('filter.published', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = "(a.dates IS NULL OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= ($type == 1) ? " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) " : ") ";
+            $cal_from = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes, 'a', true);
+            $cal_from .= ($type == 1)
+                ? ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')'
+                : ')';
         }
 
         # archived events only
@@ -100,9 +102,10 @@ abstract class ModJemTeaserHelper
             $offset_days = (int)round($offset_hours / 24);
 
             $model->setState('filter.published', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from = " ((DATEDIFF(a.dates, CURDATE()) <= $offset_days) AND (DATEDIFF(IFNULL(a.enddates,a.dates), CURDATE()) >= $offset_days))";
+            $targetDate = $db->quote(JemHelper::getJoomlaDate($offset_days));
+            $cal_from = ' (a.dates <= ' . $targetDate . ' AND IFNULL(a.enddates,a.dates) >= ' . $targetDate . ')';
         }
 
         # featured
@@ -110,10 +113,10 @@ abstract class ModJemTeaserHelper
             $offset_minutes = $offset_hours * 60;
 
             $model->setState('filter.featured', 1);
-            $model->setState('filter.orderby', array('a.dates ASC', 'a.times ASC', 'a.created ASC'));
+            $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $cal_from  = "((TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-            $cal_from .= " OR (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates,a.dates),' ',IFNULL(a.endtimes,'23:59:59'))) > $offset_minutes)) ";
+            $cal_from  = '(' . JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+            $cal_from .= ' OR ' . JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes) . ')';
         }
 
         $model->setState('filter.calendar_from', $cal_from);
@@ -160,6 +163,9 @@ abstract class ModJemTeaserHelper
 
         # Retrieve the available Events
         $events = $model->getItems();
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
 
         $module_color = $params->get('color');
@@ -169,6 +175,7 @@ abstract class ModJemTeaserHelper
         $linkvenue = $params->get('linkvenue', 0);
         $module_catcolorMode = $params->get('catcolor', 'none'); // none, text, background
         $module_venuecolorMode = $params->get('venuecolor', 'none'); // none, text, background
+        $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
 
         # Loop through the result rows and prepare data
         $lists = array();
@@ -180,7 +187,7 @@ abstract class ModJemTeaserHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = JemImage::getModuleEventImageData($row, $params, 'thumbnail');
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
 
             #################
@@ -296,6 +303,9 @@ abstract class ModJemTeaserHelper
             }
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
+            $lists[$i]->module_status_ribbon_scale = $moduleStatusRibbonScale;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
@@ -331,22 +341,40 @@ abstract class ModJemTeaserHelper
             list($lists[$i]->date,
                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';
                 $lists[$i]->eventimageorig = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimagedisplay = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->eventimagestyle = '';
+                $lists[$i]->eventimagecontainerstyle = '';
+                $lists[$i]->eventimagewidth = 0;
+                $lists[$i]->eventimageheight = 0;
+                $lists[$i]->eventimagethumbfallback = false;
             } else {
                 $lists[$i]->eventimage     = Uri::base(true) . '/' . $dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true) . '/' . $dimage['original'];
+                $lists[$i]->eventimagedisplay = Uri::base(true) . '/' . $dimage['display'];
+                $lists[$i]->eventimagestyle = $dimage['display_style'];
+                $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
+                $lists[$i]->eventimagewidth = (int) ($dimage['thumbwidth'] ?? $dimage['width'] ?? 0);
+                $lists[$i]->eventimageheight = (int) ($dimage['thumbheight'] ?? $dimage['height'] ?? 0);
+                $lists[$i]->eventimagethumbfallback = !empty($dimage['thumb_is_original']);
             }
 
             if ($limage == null) {
                 $lists[$i]->venueimage     = Uri::base(true) . '/media/com_jem/images/blank.webp';
                 $lists[$i]->venueimageorig = Uri::base(true) . '/media/com_jem/images/blank.webp';
+                $lists[$i]->venueimagewidth = 0;
+                $lists[$i]->venueimageheight = 0;
+                $lists[$i]->venueimagethumbfallback = false;
             } else {
                 $lists[$i]->venueimage     = Uri::base(true) . '/' . $limage['thumb'];
                 $lists[$i]->venueimageorig = Uri::base(true) . '/' . $limage['original'];
+                $lists[$i]->venueimagewidth = (int) ($limage['thumbwidth'] ?? $limage['width'] ?? 0);
+                $lists[$i]->venueimageheight = (int) ($limage['thumbheight'] ?? $limage['height'] ?? 0);
+                $lists[$i]->venueimagethumbfallback = !empty($limage['thumb_is_original']);
             }
 
             if ($max_desc_length != 1208) {

@@ -33,16 +33,17 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                 <?php
                 $location = trim(implode(', ', array_filter(array($item->venue, $item->city))));
                 $hasPlaces = ((int) $item->registra > 0) && ((int) $item->maxplaces > 0);
+                $hasEventImage = !empty($item->eventimageorig);
                 ?>
                 <article class="jem-banner-card-place event_id<?php echo (int) $item->eventid; ?>" itemscope itemtype="https://schema.org/Event">
-                    <div class="jem-banner-card-image">
+                    <div class="jem-banner-card-image<?php echo $hasEventImage ? ' jem-module-event-status-image' : ''; ?>"<?php echo $hasEventImage && $item->eventimagecontainerstyle !== '' ? ' style="'.$item->eventimagecontainerstyle.'"' : ''; ?>>
                         <?php if (!empty($item->eventlink)) : ?>
                             <a class="jem-banner-card-image-link" href="<?php echo $item->eventlink; ?>" aria-label="<?php echo $item->fulltitle; ?>">
                         <?php else : ?>
                             <div class="jem-banner-card-image-link">
                         <?php endif; ?>
                                 <?php if (!empty($item->eventimageorig)) : ?>
-                                    <img src="<?php echo $item->eventimageorig; ?>" alt="<?php echo $item->fulltitle; ?>" itemprop="image">
+                                    <img src="<?php echo $item->eventimagedisplay; ?>"<?php echo $item->eventimagestyle !== '' ? ' style="'.$item->eventimagestyle.'"' : ''; ?> alt="<?php echo $item->fulltitle; ?>" itemprop="image">
                                 <?php else : ?>
                                     <span class="jem-banner-card-image-placeholder">
                                         <i class="far fa-image" aria-hidden="true"></i>
@@ -53,6 +54,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                             </a>
                         <?php else : ?>
                             </div>
+                        <?php endif; ?>
+                        <?php if ($hasEventImage) : ?>
+                            <?php echo JemOutput::moduleEventStatusRibbon($item); ?>
                         <?php endif; ?>
                     </div>
 
@@ -66,6 +70,9 @@ Factory::getApplication()->getDocument()->getWebAssetManager()->addInlineStyle('
                                     <a href="<?php echo $item->eventlink; ?>" itemprop="url"><?php echo $item->title; ?></a>
                                 <?php else : ?>
                                     <?php echo $item->title; ?>
+                                <?php endif; ?>
+                                <?php if (!$hasEventImage) : ?>
+                                    <?php echo JemOutput::moduleEventStatusBadge($item); ?>
                                 <?php endif; ?>
                             </h3>
                         </div>

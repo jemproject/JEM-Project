@@ -39,7 +39,7 @@ class JemControllerCategories extends AdminController
 
     public function saveOrderAjax()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
         $user = $app->getIdentity();
@@ -49,8 +49,8 @@ class JemControllerCategories extends AdminController
             $app->close();
         }
 
-        $cid = $app->input->get('cid', array(), 'array');
-        $order = $app->input->get('order', array(), 'array');
+        $cid = $app->input->post->get('cid', array(), 'array');
+        $order = $app->input->post->get('order', array(), 'array');
         ArrayHelper::toInteger($cid);
         ArrayHelper::toInteger($order);
 

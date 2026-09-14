@@ -1,21 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jem-import-catalog version="1.0" published="2026-07-03">
-    <entry id="es-aeat-tax-calendar-iva" country="ES" country_name="Spain" county="" city="" type="events" format="ics" profile="AEAT tax calendar - IVA">
-        <title>AEAT tax calendar - IVA</title>
-        <description>Official AEAT iCalendar feed for IVA due dates. Import as events and choose the destination category in JEM.</description>
-        <source provider="AEAT" url="https://www.google.com/calendar/ical/517mcuhcis0lldnp9b7c0nk2q8%40group.calendar.google.com/public/basic.ics" />
+<jem-import-catalog version="1.0" published="2026-07-15">
+    <entry id="es-madrid-labor-calendar-2026" country="ES" country_name="Spain" county="Comunidad de Madrid" city="" type="events" format="ics" profile="Calendario laboral 2026">
+        <title>Calendario laboral 2026</title>
+        <description>Official iCalendar feed for the 2026 public holidays in Madrid. Import as events and choose the destination category in JEM.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/300082-0-calendario_laboral/resource/300082-2-calendario_laboral-ics/download/300082-2-calendario_laboral-ics.ics" />
+        <items count="14" checked="2026-07-15" />
         <category rule="admin-selects-destination-category" />
         <defaults>
             <default name="language" value="es-ES" />
             <default name="published" value="1" />
         </defaults>
-        <updated>2026-06-29</updated>
-        <license>Official public administration calendar</license>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
     </entry>
-    <entry id="es-madrid-venues-culture-rooms" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Madrid cultural rooms - JSON">
-        <title>Madrid cultural rooms</title>
-        <description>Madrid open-data venue list for cinemas, cultural rooms and similar locations. The mapping preloads JEM venue fields.</description>
-        <source provider="datos.madrid.es" url="https://datos.madrid.es/egob/catalogo/208862-7-ocio_salas-json.json" />
+    <entry id="es-madrid-public-activities-events" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="events" format="json" profile="Actividades y eventos públicos">
+        <title>Actividades y eventos públicos</title>
+        <description>Official public agenda for Madrid. The JSON mapping preloads event titles, dates, times and descriptions; choose the destination category and fallback venue in JEM.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/300107-0-agenda-actividades-eventos/resource/300107-5-agenda-actividades-eventos-json/download/300107-5-agenda-actividades-eventos-json.json" />
+        <items count="940" checked="2026-07-15" />
+        <category rule="admin-selects-destination-category" />
+        <mapping>
+            <field source="title" target="title" />
+            <field source="dtstart" target="start_datetime" />
+            <field source="dtend" target="end_datetime" />
+            <field source="description" target="introtext" />
+        </mapping>
+        <defaults>
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-library-free-activities-60-days" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="events" format="json" profile="Actividades gratuitas en bibliotecas municipales - próximos 60 días">
+        <title>Actividades gratuitas en bibliotecas municipales - próximos 60 días</title>
+        <description>Official agenda of free activities in Madrid municipal libraries for the next 60 days. The JSON mapping preloads event titles, dates, times and descriptions; choose the destination category and fallback venue in JEM.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/206717-0-agenda-eventos-bibliotecas/resource/206717-1-agenda-eventos-bibliotecas-json/download/206717-1-agenda-eventos-bibliotecas-json.json" />
+        <items count="34" checked="2026-07-15" />
+        <category rule="admin-selects-destination-category" />
+        <mapping>
+            <field source="title" target="title" />
+            <field source="dtstart" target="start_datetime" />
+            <field source="dtend" target="end_datetime" />
+            <field source="description" target="introtext" />
+        </mapping>
+        <defaults>
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-alcala-water-fountains" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Alcalá de Henares" type="venues" format="xlsx" profile="Fuentes de agua de Alcalá de Henares">
+        <title>Fuentes de agua de Alcalá de Henares</title>
+        <description>Official list of public drinking-water fountains in Alcalá de Henares. The XLSX mapping uses the fountain description as the venue name and splits the combined coordinates into latitude and longitude.</description>
+        <source provider="Portal de Datos Abiertos de Alcalá de Henares" url="https://opendata.ayto-alcaladehenares.es/dataset/46da3ad3-3200-4c77-bdca-e65c9fec7163/resource/5e6c2d5b-44a9-4d17-af6c-a09802e9879e/download/relacion-fuentes-2024.xlsx" />
+        <items count="24" checked="2026-07-15" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="FUENTE" target="venue" />
+            <field source="COORDENADAS" target="coordinates" />
+        </mapping>
+        <defaults>
+            <default name="city" value="Alcalá de Henares" />
+            <default name="state" value="Comunidad de Madrid" />
+            <default name="country" value="ES" />
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open Data Commons Attribution License</license>
+    </entry>
+    <entry id="es-madrid-auditoriums-concert-halls" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="xml" profile="Auditorios y salas de conciertos">
+        <title>Auditorios y salas de conciertos</title>
+        <description>Official open-data list of auditoriums and concert halls in Madrid. The XML mapping preloads the corresponding JEM venue fields.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/208862-7650046-ocio_salas/resource/208862-9-ocio_salas-xml/download/208862-9-ocio_salas-xml.xml" />
+        <items count="39" checked="2026-07-15" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="NOMBRE" target="venue" />
+            <field source="CONTENT-URL" target="url" />
+            <field source="DESCRIPCION-ENTIDAD" target="locdescription" />
+            <field source="NOMBRE-VIA" target="street" />
+            <field source="LOCALIDAD" target="city" />
+            <field source="PROVINCIA" target="state" />
+            <field source="CODIGO-POSTAL" target="postalCode" />
+            <field source="LATITUD" target="latitude" />
+            <field source="LONGITUD" target="longitude" />
+        </mapping>
+        <defaults>
+            <default name="country" value="ES" />
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-theatres" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="xml" profile="Teatros">
+        <title>Teatros</title>
+        <description>Official open-data list of theatres in Madrid. The XML mapping preloads the corresponding JEM venue fields.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/208862-7650046-ocio_salas/resource/208862-14-ocio_salas-xml/download/208862-14-ocio_salas-xml.xml" />
+        <items count="12" checked="2026-07-15" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="NOMBRE" target="venue" />
+            <field source="CONTENT-URL" target="url" />
+            <field source="DESCRIPCION-ENTIDAD" target="locdescription" />
+            <field source="NOMBRE-VIA" target="street" />
+            <field source="LOCALIDAD" target="city" />
+            <field source="PROVINCIA" target="state" />
+            <field source="CODIGO-POSTAL" target="postalCode" />
+            <field source="LATITUD" target="latitude" />
+            <field source="LONGITUD" target="longitude" />
+        </mapping>
+        <defaults>
+            <default name="country" value="ES" />
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-universities-residences" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="xml" profile="Universidades y residencias">
+        <title>Universidades y residencias</title>
+        <description>Official open-data list of universities, colleges, university residences and related centres in Madrid. The XML mapping preloads the corresponding JEM venue fields.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/203166-0-universidades-educacion/resource/203166-2-universidades-educacion-xml/download/203166-2-universidades-educacion-xml.xml" />
+        <items count="22" checked="2026-07-15" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="NOMBRE" target="venue" />
+            <field source="CONTENT-URL" target="url" />
+            <field source="DESCRIPCION" target="locdescription" />
+            <field source="NOMBRE-VIA" target="street" />
+            <field source="LOCALIDAD" target="city" />
+            <field source="PROVINCIA" target="state" />
+            <field source="CODIGO-POSTAL" target="postalCode" />
+            <field source="LATITUD" target="latitude" />
+            <field source="LONGITUD" target="longitude" />
+        </mapping>
+        <defaults>
+            <default name="country" value="ES" />
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-health-centres-hospitals" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="xml" profile="Centros de salud y hospitales">
+        <title>Centros de salud y hospitales</title>
+        <description>Official open-data list of municipal health centres and specialised healthcare facilities in Madrid. The XML mapping preloads the corresponding JEM venue fields.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/201544-0-centros-salud/resource/201544-1-centros-salud-xml/download/201544-1-centros-salud-xml.xml" />
+        <items count="37" checked="2026-07-15" />
+        <category rule="venue-types-from-default-or-file" />
+        <mapping>
+            <field source="NOMBRE" target="venue" />
+            <field source="CONTENT-URL" target="url" />
+            <field source="DESCRIPCION-ENTIDAD" target="locdescription" />
+            <field source="NOMBRE-VIA" target="street" />
+            <field source="LOCALIDAD" target="city" />
+            <field source="PROVINCIA" target="state" />
+            <field source="CODIGO-POSTAL" target="postalCode" />
+            <field source="LATITUD" target="latitude" />
+            <field source="LONGITUD" target="longitude" />
+        </mapping>
+        <defaults>
+            <default name="country" value="ES" />
+            <default name="language" value="es-ES" />
+            <default name="published" value="1" />
+        </defaults>
+        <updated>2026-07-15</updated>
+        <license>Open data source</license>
+    </entry>
+    <entry id="es-madrid-police-stations" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="venues" format="json" profile="Comisarías de policía">
+        <title>Comisarías de policía</title>
+        <description>Official open-data list of police stations in Madrid. The JSON mapping preloads the corresponding JEM venue fields.</description>
+        <source provider="Datos Abiertos Madrid" url="https://datos.madrid.es/dataset/300600-0-comisaria/resource/300600-0-comisaria-json/download/300600-0-comisaria-json.json" />
+        <items count="43" checked="2026-07-15" />
         <category rule="venue-types-from-default-or-file" />
         <mapping>
             <field source="title" target="venue" />
@@ -28,10 +188,11 @@
             <field source="location.longitude" target="longitude" />
         </mapping>
         <defaults>
+            <default name="country" value="ES" />
             <default name="language" value="es-ES" />
             <default name="published" value="1" />
         </defaults>
-        <updated>2026-06-29</updated>
+        <updated>2026-07-15</updated>
         <license>Open data source</license>
     </entry>
     <entry id="es-madrid-specialdays-school" country="ES" country_name="Spain" county="Comunidad de Madrid" city="Madrid" type="specialdays" format="csv" profile="Madrid school special days - CSV">

@@ -48,7 +48,6 @@ class JemControllerEvents extends AdminController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Initialise variables.
-        $user   = JemFactory::getUser();
         $ids    = Factory::getApplication()->input->get('cid', array(), 'array');
         ArrayHelper::toInteger($ids);
         $ids = array_filter($ids);
@@ -56,15 +55,8 @@ class JemControllerEvents extends AdminController
         $task   = $this->getTask();
         $value  = ArrayHelper::getValue($values, $task, 0, 'int');
 
-        $glob_auth = $user->can('publish', 'event'); // general permission for all events
-
-        // Access checks.
-        foreach ($ids as $i => $id) {
-            if (!$glob_auth && !$user->can('publish', 'event', (int)$id)) {
-                // Prune items that you can't change.
-                unset($ids[$i]);
-                Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDITSTATE_NOT_PERMITTED'), 'notice');
-            }
+        if (!JemHelperBackend::can('event', 'edit.state')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         if (empty($ids)) {
@@ -90,16 +82,18 @@ class JemControllerEvents extends AdminController
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         $app = Factory::getApplication();
-        $user = JemFactory::getUser();
         $ids = $app->input->get('cid', array(), 'array');
         ArrayHelper::toInteger($ids);
         $ids = array_values(array_filter($ids));
         $batch = $app->input->get('batch', array(), 'array');
 
-        $globAuth = $user->can('edit', 'event');
+        $model = $this->getModel();
+        $globAuth = JemHelperBackend::can('event', 'edit');
 
         foreach ($ids as $i => $id) {
-            if (!$globAuth && !$user->can('edit', 'event', (int) $id)) {
+            $record = $model->getItem((int) $id);
+
+            if (!$globAuth && (!is_object($record) || !JemHelperBackend::can('event', 'edit', $record))) {
                 unset($ids[$i]);
                 $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'notice');
             }
@@ -108,7 +102,6 @@ class JemControllerEvents extends AdminController
         if (empty($ids)) {
             $app->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
         } else {
-            $model = $this->getModel();
             $operations = array(
                 'assetgroup_id' => array('method' => 'changeAccess', 'message' => 'COM_JEM_EVENTS_BATCH_ACCESS_CHANGED'),
                 'category_id'   => array('method' => 'moveToCategory', 'message' => 'COM_JEM_EVENTS_MOVED_TO_CATEGORY'),
@@ -138,6 +131,29 @@ class JemControllerEvents extends AdminController
         }
 
         $this->setRedirect('index.php?option=com_jem&view=events');
+    }
+
+    /**
+     * Check-in changes record lock state, so every selected event must be
+     * editable by the current user (global edit or stored-owner edit-own).
+     */
+    public function checkin()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        $ids = Factory::getApplication()->input->get('cid', array(), 'array');
+        ArrayHelper::toInteger($ids);
+        $model = $this->getModel();
+
+        foreach (array_filter($ids) as $id) {
+            $record = $model->getItem((int) $id);
+
+            if (!is_object($record) || !JemHelperBackend::can('event', 'edit', $record)) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+        }
+
+        return parent::checkin();
     }
 
     /**

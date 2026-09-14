@@ -519,15 +519,13 @@ class JemPdfView
         $showEvents = !$params || !method_exists($params, 'get') || (int) $params->get('venue_show_events', 1) === 1;
         $venueHeadingDisplay = $params && method_exists($params, 'get') ? (string) $params->get('venue_heading_display', 'label_name') : 'label_name';
         $venueHeadingDisplay = in_array($venueHeadingDisplay, array('label', 'label_name', 'name'), true) ? $venueHeadingDisplay : 'label_name';
-        $mapDisplay = $params && method_exists($params, 'get') ? (string) $params->get('venue_map_display', 'link_button') : 'link_button';
-        if ($mapDisplay === 'hide') {
-            $mapDisplay = 'none';
-        } elseif ($mapDisplay === 'global' || $mapDisplay === 'link') {
-            $mapDisplay = 'link_button';
-        }
-        $mapDisplay = in_array($mapDisplay, array('none', 'link_text', 'link_button', 'map'), true) ? $mapDisplay : 'link_button';
         $globalMapService = (int) ($settings->global_show_mapserv ?? 0);
-        $showMapLink = $mapDisplay !== 'none' && ($mapDisplay !== 'link_button' || in_array($globalMapService, array(0, 1, 2, 3, 4, 5), true));
+        $mapConfiguration = JemOutput::resolveVenueMapConfiguration(
+            $params && method_exists($params, 'get') ? $params->get('venue_map_display', 'global') : 'global',
+            $globalMapService,
+            JemHelper::isActiveMenuView('venue', (int) ($venue->id ?? 0))
+        );
+        $showMapLink = !empty($venue->map) && $mapConfiguration['service'] !== 0;
         $imageHtml = $showImage ? self::buildTimelinePdfImage((string) ($venue->locimage ?? ''), 'venue', (string) ($venue->venue ?? $title), $venueImageWidth, $venueImageHeight) : '';
         $description = $showDescription ? self::normaliseEditorHtmlForPdf((string) $venue->locdescription) : '';
         $html = array();
@@ -571,7 +569,7 @@ class JemPdfView
         $rowsHtml[] = !empty($venue->country) ? self::buildPdfSummaryRow(Text::_('COM_JEM_COUNTRY'), htmlspecialchars((string) $venue->country, ENT_COMPAT, 'UTF-8')) : '';
 
         if ($showMapLink) {
-            $map = self::buildPdfMapLink($venue, 'osm');
+            $map = self::buildPdfMapLink($venue, $mapConfiguration['provider']);
             if (!empty($map['html'])) {
                 $rowsHtml[] = self::buildPdfSummaryRow(Text::_('COM_JEM_MAP'), $map['html']);
             }
@@ -1256,21 +1254,22 @@ class JemPdfView
             return '';
         }
 
-        $image = JemImage::flyercreator($imageFile, $type);
+        $image = false;
 
-        if (!is_array($image)) {
-            return '';
+        if (strpos($imageFile, '/') === false && strpos($imageFile, '\\') === false) {
+            $image = JemImage::flyercreator($imageFile, $type);
         }
 
-        $source = !empty($image['thumb']) && is_file(JPATH_SITE . '/' . $image['thumb'])
-            ? $image['thumb']
-            : ($image['original'] ?? '');
+        $source = is_array($image) ? ($image['thumb'] ?? $image['original'] ?? '') : $imageFile;
+        $path = JemPdfImagePolicy::resolveLocalImage((string) $source, $type, JPATH_SITE, (string) Uri::root(true));
 
-        if ($source === '' || !is_file(JPATH_SITE . '/' . $source)) {
-            return '';
+        if ($path === '' && is_array($image) && !empty($image['original'])) {
+            $path = JemPdfImagePolicy::resolveLocalImage((string) $image['original'], $type, JPATH_SITE, (string) Uri::root(true));
         }
 
-        $path = JPATH_SITE . '/' . $source;
+        if ($path === '') {
+            return '';
+        }
         $size = @getimagesize($path);
         $width = $maxWidth;
         $height = 0;
@@ -3445,7 +3444,7 @@ class JemPdfView
             $createdBy = (int) ($row->created_by ?? 0);
 
             if ($user && method_exists($user, 'can') && $user->can('edit', 'venue', $venueId, $createdBy)) {
-                $editRoute = 'index.php?option=com_jem&task=venue.edit&a_id=' . $venueId;
+                $editRoute = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id=' . $venueId;
                 $links[] = '<a href="' . htmlspecialchars(self::absoluteUrl(Route::_($editRoute, false)), ENT_COMPAT, 'UTF-8') . '">' . Text::_('COM_JEM_EDIT_VENUE') . '</a>';
             }
         }
@@ -3575,7 +3574,13 @@ class JemPdfView
         $showKey = $position === 'footer' ? 'showfootertext' : 'showintrotext';
         $textKey = $position === 'footer' ? 'footertext' : 'introtext';
         $class = $position === 'footer' ? 'jem-pdf-view-footer-text' : 'jem-pdf-view-intro';
-        $params = Factory::getApplication()->getParams();
+        $app = Factory::getApplication();
+
+        if (!JemHelper::isActiveMenuView($app->input->getCmd('view', ''))) {
+            return '';
+        }
+
+        $params = $app->getParams();
 
         if (!$params || !$params->get($showKey)) {
             return '';

@@ -43,7 +43,6 @@ class ModJemTypesHelper
         $levelsList = implode(',', $levels);
         $date   = new Date('now', $app->get('offset'));
         $today  = $date->format('Y-m-d');
-        $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
         $filterLanguage = Multilanguage::isEnabled();
         $eventLanguageCondition = $filterLanguage ? ' AND ' . self::languageFilter($db, $db->quoteName('a.language'), $language) : '';
@@ -60,11 +59,9 @@ class ModJemTypesHelper
             ->join('LEFT',
                 $db->quoteName('#__jem_events', 'a') . ' ON ' .
                 $effectiveTypeId . ' = ' . $db->quoteName('t.id') .
-                ' AND ' . $db->quoteName('a.published') . ' = 1' .
+                ' AND ' . JemHelper::getEventPublicationWhere('a') .
                 ' AND ' . $db->quoteName('a.access') . ' IN (' . $levelsList . ')' .
                 $eventLanguageCondition .
-                ' AND ' . $db->quoteName('a.publish_up') . ' <= ' . $db->quote($now) .
-                ' AND (' . $db->quoteName('a.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName('a.publish_down') . ' IS NULL)' .
                 ' AND (COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today) . ')'
             )
             ->join('LEFT', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
@@ -118,7 +115,6 @@ class ModJemTypesHelper
         $levelsList = implode(',', $levels);
         $date   = new Date('now', $app->get('offset'));
         $today  = $date->format('Y-m-d');
-        $now    = $date->toSql();
         $language = $app->getLanguage()->getTag();
         $filterLanguage = Multilanguage::isEnabled();
         $n      = max(1, (int) $params->get('top_n', 3));
@@ -167,10 +163,8 @@ class ModJemTypesHelper
                 ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('rel.catid'))
                 ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('a.locid'))
                 ->where($effectiveTypeId . ' = ' . (int) $type->id)
-                ->where($db->quoteName('a.published') . ' = 1')
+                ->where(JemHelper::getEventPublicationWhere('a'))
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
-                ->where($db->quoteName('a.publish_up') . ' <= ' . $db->quote($now))
-                ->where('(' . $db->quoteName('a.publish_down') . ' > ' . $db->quote($now) . ' OR ' . $db->quoteName('a.publish_down') . ' IS NULL)')
                 ->where('COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today))
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')

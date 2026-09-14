@@ -21,6 +21,10 @@ $gdv = JEMImage::gdVersion();
             <li><div class="label-form"><?php echo $this->form->renderfield('sizelimit'); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('imagehight'); ?></div></li>
             <li><div class="label-form"><?php echo $this->form->renderfield('imagewidth'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('image_event_intro_default_dimension'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('image_event_full_default_dimension'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('image_venue_default_dimension'); ?></div></li>
+            <li><div class="label-form"><?php echo $this->form->renderfield('image_category_default_dimension'); ?></div></li>
             <?php if ($gdv && $gdv >= 2) : //is the gd library installed on the server and its version > 2? ?>
                 <li><div class="label-form"><?php echo $this->form->renderfield('gddisabled'); ?></div></li>
             <?php endif; ?>

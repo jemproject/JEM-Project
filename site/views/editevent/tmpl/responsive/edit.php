@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
@@ -17,7 +18,8 @@ $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
 $wa->useScript('keepalive')
-    ->useScript('form.validate');
+    ->useScript('form.validate')
+    ->useScript('showon');
 
 // Create shortcut to parameters.
 $params        = $this->params;
@@ -27,6 +29,18 @@ $typeField = $this->form->getField('type_id');
 $showTypeField = !$hideEmptyManagedFields || !$typeField || !method_exists($typeField, 'hasAvailableTypes') || $typeField->hasAvailableTypes();
 $contactField = $this->form->getField('contactid');
 $showContactField = $contactField && (!method_exists($contactField, 'hasAvailableContacts') || $contactField->hasAvailableContacts());
+JemHelper::loadCss('frontend-form-mode');
+$wa->registerAndUseScript(
+    'com_jem.frontend-form-mode',
+    'media/com_jem/js/frontend-form-mode.js',
+    array(),
+    array('defer' => true)
+);
+$showWhenCustomTimezoneAttribute = " data-showon='" . htmlspecialchars(
+    json_encode(FormHelper::parseShowOnConditions('timezone_mode:custom', 'jform')),
+    ENT_QUOTES,
+    'UTF-8'
+) . "'";
 $articleAutoInfo = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO'), ENT_QUOTES, 'UTF-8');
 $articleAutoInfoCategory = htmlspecialchars(Text::_('COM_JEM_EVENT_ARTICLE_AUTO_INFO_CATEGORY'), ENT_QUOTES, 'UTF-8');
 $articleCategoryRules = array();
@@ -96,12 +110,6 @@ $document->addStyleDeclaration('
     #jem.jem_editevent .jem-editevent-details-fieldset {
         margin-bottom: 0;
     }
-    #jem.jem_editevent .jem-editevent-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem;
-        margin: 0 0 1rem;
-    }
     #jem.jem_editevent .nav-tabs,
     #jem.jem_editevent joomla-tab > div[role="tablist"] {
         border-bottom: 1px solid #c8d0da;
@@ -127,7 +135,7 @@ $document->addStyleDeclaration('
     }
     .jem-associated-article-options .jem-dl {
         display: grid;
-        grid-template-columns: minmax(160px, 276px) minmax(14rem, 36rem);
+        grid-template-columns: minmax(160px, 276px) minmax(14rem, 1fr);
         align-items: center;
         column-gap: 0;
         margin-bottom: 0;
@@ -145,7 +153,7 @@ $document->addStyleDeclaration('
     }
     .jem-associated-article-options .alert {
         margin-top: .35rem !important;
-        width: min(100%, 36rem);
+        width: 100%;
     }
     .jem-associated-article-options .js-jem-article-usage select,
     .jem-associated-article-options .js-jem-article-usage .choices,
@@ -172,7 +180,7 @@ $document->addStyleDeclaration('
         align-items: stretch;
         grid-column: 2;
         max-width: 100%;
-        width: min(100%, 36rem);
+        width: 100%;
     }
     .jem-associated-article-picker > * {
         flex: 1 1 auto;
@@ -213,14 +221,14 @@ $document->addStyleDeclaration('
     .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
     .jem-editevent-field-cats .choices,
     .jem-editevent-field-cats select {
-        width: min(100%, 36rem) !important;
-        max-width: 36rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
     .jem-editevent-field-cats .choices__list--dropdown,
     .jem-editevent-field-cats .choices__list[aria-expanded] {
         width: 100%;
         min-width: 100%;
-        max-width: 36rem;
+        max-width: 100%;
         overflow-x: hidden;
     }
     .jem-editevent-field-cats .choices__item {
@@ -241,6 +249,9 @@ $document->addStyleDeclaration('
     .jem-editevent-image-field {
         display: grid;
         grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+        grid-template-areas:
+            "copy copy"
+            "control control";
         gap: .75rem 1rem;
         align-items: center;
         min-width: 0;
@@ -249,6 +260,17 @@ $document->addStyleDeclaration('
         padding: .75rem 1rem;
         background: #fff;
         box-sizing: border-box;
+    }
+    .jem-editevent-image-copy {
+        grid-area: copy;
+        border-bottom: 1px solid #d9dee7;
+        padding-bottom: .65rem;
+    }
+    .jem-editevent-image-control {
+        grid-area: control;
+    }
+    .jem-editevent-image-field > .jem-image-upload-layout {
+        grid-area: control;
     }
     .jem-editevent-image-copy strong,
     .jem-editevent-image-copy span {
@@ -325,8 +347,7 @@ $document->addStyleDeclaration('
         display: none;
     }
     .jem-editevent-image-upload .form-text,
-    .jem-editevent-image-upload small,
-    .jem-editevent-image-upload > div:not(:first-child) {
+    .jem-editevent-image-upload small {
         display: none;
     }
     .jem-editevent-image-control input[type="file"] {
@@ -358,7 +379,6 @@ $document->addStyleDeclaration('
         justify-self: start;
     }
     .jem-editevent-image-layout-choice {
-        grid-column: 1 / 4;
         border-top: 1px solid #d9dee7;
         margin-top: .25rem;
         padding-top: .75rem;
@@ -415,6 +435,9 @@ $document->addStyleDeclaration('
         }
         .jem-editevent-image-field {
             grid-template-columns: 1fr;
+            grid-template-areas:
+                "copy"
+                "control";
         }
         .jem-editevent-image-control {
             display: grid;
@@ -461,36 +484,6 @@ $document->addStyleDeclaration('
 
 <script>
     jQuery(document).ready(function($) {
-        var imageConflictMessage = <?php echo json_encode(Text::_('COM_JEM_IMAGE_UPLOAD_CONFLICT')); ?>;
-
-        function resetSelect($select) {
-            if (!$select.length) {
-                return;
-            }
-
-            $select.val('').trigger('change');
-            var fancy = $select.closest('joomla-field-fancy-select').get(0);
-
-            if (fancy) {
-                fancy.dispatchEvent(new Event('change', {bubbles: true}));
-            }
-        }
-
-        function showImageConflictMessage() {
-            if (window.Joomla && typeof Joomla.renderMessages === 'function') {
-                Joomla.renderMessages({error: [imageConflictMessage]});
-                return;
-            }
-
-            window.alert(imageConflictMessage);
-        }
-
-        $('.jem-editevent-image-clear').on('click', function() {
-            var $button = $(this);
-            resetSelect($('#' + $button.data('jemImageSelect')));
-            $('#' + $button.data('jemImageFile')).val('').trigger('change');
-        });
-
         $('.jem-editevent-image-upload').each(function() {
             $(this).contents().filter(function() {
                 return this.nodeType === 3 && /maximum upload size|upload size|max\.?\s*(image\s*)?filesize|file\s*size|tama[ñn]o m[aá]ximo|subida/i.test(this.nodeValue);
@@ -501,15 +494,6 @@ $document->addStyleDeclaration('
             }).remove();
         });
 
-        $('#jform_userfile, #jform_fulluserfile').on('change', function() {
-            var $file = $(this);
-            var selectId = this.id === 'jform_fulluserfile' ? 'jform_fullimage' : 'jform_datimage';
-
-            if ($file.val() && $('#' + selectId).val()) {
-                $file.val('');
-                showImageConflictMessage();
-            }
-        });
     });
 </script>
 
@@ -755,7 +739,6 @@ $document->addStyleDeclaration('
     }
 </script>
 <script>
-    // window.addEvent('domready', function(){
     jQuery(document).ready(function($){
 
         var showUnregistraUntil = function(){
@@ -820,13 +803,17 @@ $document->addStyleDeclaration('
             </h1>
         <?php endif; ?>
 
-        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate">
+        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" data-jem-form-mode>
 
             <div class="jem-editevent-toolbar">
                 <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
                 <button type="cancel" class="btn btn-secondary" onclick="Joomla.submitbutton('event.cancel')"><?php echo Text::_('JCANCEL') ?></button>
+                <button type="button" class="btn btn-outline-secondary jem-form-mode-toggle" data-jem-form-mode-toggle aria-pressed="false">
+                    <?php echo Text::_('COM_JEM_ADVANCED'); ?>
+                    <span class="jem-form-mode-state-indicator" aria-hidden="true"></span>
+                </button>
             </div>
-            <?php if ($this->item->recurrence_type > 0) : ?>
+            <?php if ($this->item->recurrence_type > 0 && (int) $this->item->recurrence_type !== 7) : ?>
                 <div class="description warningrecurrence" style="clear: both;">
                     <div style="float:left;">
                         <?php echo JemOutput::recurrenceicon($this->item, false, false); ?>
@@ -855,8 +842,8 @@ $document->addStyleDeclaration('
 
             <!-- DETAILS TAB -->
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_INFO_TAB'), 'editevent-infotab'); ?>
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'editevent-infotab', 'recall' => true, 'breakpoint' => 768]); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-infotab', Text::_('COM_JEM_EDITEVENT_INFO_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'jem-editevent-tabs', ['active' => 'editevent-infotab', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-infotab', Text::_('COM_JEM_EDITEVENT_INFO_TAB')); ?>
 
             <fieldset class="adminform">
                 <legend><?php echo Text::_('COM_JEM_EDITEVENT_DETAILS_LEGEND'); ?></legend>
@@ -875,6 +862,10 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dt data-jem-advanced-field><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
+                    <dd data-jem-advanced-field><?php echo $this->form->getInput('timezone_mode'); ?></dd>
+                    <dt data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
+                    <dd data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>
@@ -886,8 +877,8 @@ $document->addStyleDeclaration('
                     <dt><?php echo $this->form->getLabel('locid'); ?></dt>
                     <dd><?php echo $this->form->getInput('locid'); ?></dd>
                     <?php if ($showTypeField) : ?>
-                        <dt><?php echo $this->form->getLabel('type_id'); ?></dt>
-                        <dd><?php echo $this->form->getInput('type_id'); ?></dd>
+                        <dt data-jem-advanced-field><?php echo $this->form->getLabel('type_id'); ?></dt>
+                        <dd data-jem-advanced-field><?php echo $this->form->getInput('type_id'); ?></dd>
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
@@ -898,11 +889,22 @@ $document->addStyleDeclaration('
                         <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
                     <dt><?php echo $this->form->getLabel('featured'); ?></dt>
-                    <dd><?php echo $this->form->getInput('featured'); ?></dd>
+                    <dd class="jem-editevent-field-featured"><?php echo $this->form->getInput('featured'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('access'); ?></dt>
+                    <dd><?php
+                        echo HTMLHelper::_(
+                            'select.genericlist',
+                            $this->access,
+                            'jform[access]',
+                            array('list.attr' => ' class="form-select inputbox" size="1"', 'list.select' => $this->item->access, 'option.attr' => 'disabled', 'id' => 'access')
+                        );
+                        ?></dd>
+                    <dt><?php echo $this->form->getLabel('published'); ?></dt>
+                    <dd><?php echo $this->form->getInput('published'); ?></dd>
                 </dl>
             </fieldset>
             <?php if ($this->form->getField('article_id')) : ?>
-                <fieldset class="adminform jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>">
+                <fieldset class="adminform jem-associated-article-options" data-has-article="<?php echo !empty($this->item->article_id) ? 1 : 0; ?>" data-jem-advanced-field>
                     <dl class="jem-dl">
                         <dt class="js-jem-article-usage"><?php echo $this->form->getLabel('article_usage', 'attribs'); ?></dt>
                         <dd class="js-jem-article-usage"><?php echo $this->form->getInput('article_usage', 'attribs'); ?></dd>
@@ -929,73 +931,92 @@ $document->addStyleDeclaration('
                 </div>
             </fieldset>
 
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-imagetab', Text::_('COM_JEM_IMAGE')); ?>
+
             <!-- IMAGE -->
             <?php if ($this->item->datimage || !empty($this->item->fullimage) || $this->jemsettings->imageenabled != 0) : ?>
                 <fieldset class="jem_fldst_image">
                     <legend><?php echo Text::_('COM_JEM_IMAGE'); ?></legend>
                     <?php if ($this->jemsettings->imageenabled != 0) : ?>
                         <div class="jem-editevent-image-fields">
-                            <div class="jem-editevent-image-field">
+                            <div class="jem-editevent-image-field jem-image-upload-panel">
                                 <div class="jem-editevent-image-copy">
                                     <strong><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE'); ?></strong>
                                     <span><?php echo Text::_('COM_JEM_EVENT_INTRO_IMAGE_DESC'); ?></span>
                                     <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
                                 </div>
-                                <div class="jem-editevent-image-control">
-                                    <?php if ($this->item->datimage) : ?>
-                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--intro">
-                                            <?php echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
+                                <div class="jem-image-upload-layout">
+                                    <div class="jem-image-upload-list">
+                                        <div class="jem-image-upload-row">
+                                            <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></div>
+                                            <div class="jem-image-upload-control"><?php echo $this->form->getInput('datimage'); ?></div>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="jem-editevent-image-choice">
-                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
-                                        <?php echo $this->form->getInput('datimage'); ?>
+                                        <div class="jem-image-upload-row">
+                                            <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></div>
+                                            <div class="jem-image-upload-control jem-editevent-image-upload">
+                                                <div class="jem-image-file-control"><?php echo $this->form->getInput('userfile'); ?></div>
+                                            </div>
+                                        </div>
+                                        <div class="jem-image-actions jem-image-actions--last">
+                                            <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                        </div>
+                                        <input type="hidden" name="removeimage" id="removeimage" value="0" />
                                     </div>
-                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
-                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
-                                    <?php echo $this->form->getInput('userfile'); ?>
+                                    <div class="jem-image-preview-stage<?php echo $this->item->datimage ? ' jem-image-preview-stage--has-image' : ''; ?>">
+                                        <?php if ($this->item->datimage) : ?>
+                                            <div class="jem-image-current">
+                                                <div class="visually-hidden"><?php echo Text::_('COM_JEM_CURRENT_IMAGE'); ?></div>
+                                                <?php echo JEMOutput::flyer($this->item, $this->dimage, 'event', 'datimage'); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="jem-image-selected-preview" hidden>
+                                            <div class="visually-hidden"><?php echo Text::_('COM_JEM_SELECTED_IMAGE_PREVIEW'); ?></div>
+                                            <img src="" alt="<?php echo Text::_('COM_JEM_SELECTED_IMAGE_PREVIEW'); ?>" />
+                                        </div>
+                                        <span class="jem-image-preview-empty"<?php echo $this->item->datimage ? ' hidden' : ''; ?>><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                                     </div>
-                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                                    <?php if ($this->item->datimage) : ?>
-                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removeimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
-                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    <input type="hidden" name="removeimage" id="removeimage" value="0" />
                                 </div>
                             </div>
-                            <div class="jem-editevent-image-field">
+                            <div class="jem-editevent-image-field jem-image-upload-panel">
                                 <div class="jem-editevent-image-copy">
                                     <strong><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE'); ?></strong>
                                     <span><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_FE_DESC'); ?></span>
                                     <small class="jem-editevent-image-maxsize"><?php echo Text::_('COM_JEM_MAXIMUM_UPLOAD_SIZE'); ?> <strong><?php echo $uploadLimit; ?></strong></small>
                                 </div>
-                                <div class="jem-editevent-image-control">
-                                    <?php if (!empty($this->item->fullimage)) : ?>
-                                        <div class="jem-editevent-image-preview jem-editevent-image-preview--detail">
-                                            <?php echo JEMOutput::flyer($this->item, $this->dfullimage, 'event', 'fullimage'); ?>
+                                <div class="jem-image-upload-layout">
+                                    <div class="jem-image-upload-list">
+                                        <div class="jem-image-upload-row">
+                                            <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></div>
+                                            <div class="jem-image-upload-control"><?php echo $this->form->getInput('fullimage'); ?></div>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="jem-editevent-image-choice">
-                                        <span><?php echo Text::_('COM_JEM_SERVER_IMAGE'); ?></span>
-                                        <?php echo $this->form->getInput('fullimage'); ?>
+                                        <div class="jem-image-upload-row">
+                                            <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></div>
+                                            <div class="jem-image-upload-control jem-editevent-image-upload">
+                                                <div class="jem-image-file-control"><?php echo $this->form->getInput('fulluserfile'); ?></div>
+                                            </div>
+                                        </div>
+                                        <div class="jem-image-upload-row jem-editevent-image-layout-choice">
+                                            <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?></div>
+                                            <div class="jem-image-upload-control"><?php echo $this->form->getInput('fullimage_layout'); ?></div>
+                                        </div>
+                                        <div class="jem-image-actions jem-image-actions--last">
+                                            <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                                        </div>
+                                        <input type="hidden" name="removefullimage" id="removefullimage" value="0" />
                                     </div>
-                                    <div class="jem-editevent-image-choice jem-editevent-image-upload">
-                                        <span><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></span>
-                                    <?php echo $this->form->getInput('fulluserfile'); ?>
-                                    </div>
-                                    <button type="button" class="button3 btn btn-secondary jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                                    <?php if (!empty($this->item->fullimage)) : ?>
-                                        <button type="button" class="button3 btn btn-secondary jem-editevent-image-remove" onclick="document.getElementById('removefullimage').value = '1'; var preview = this.closest('.jem-editevent-image-field').querySelector('.jem-editevent-image-preview'); if (preview) preview.style.display = 'none'; this.style.display = 'none';">
-                                            <?php echo Text::_('COM_JEM_REMOVE_IMAGE'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    <input type="hidden" name="removefullimage" id="removefullimage" value="0" />
-                                    <div class="jem-editevent-image-choice jem-editevent-image-layout-choice">
-                                        <span class="jem-editevent-image-layout-copy">
-                                            <?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?>
-                                        </span>
-                                        <?php echo $this->form->getInput('fullimage_layout'); ?>
+                                    <div class="jem-image-preview-stage<?php echo !empty($this->item->fullimage) ? ' jem-image-preview-stage--has-image' : ''; ?>">
+                                        <?php if (!empty($this->item->fullimage)) : ?>
+                                            <div class="jem-image-current">
+                                                <div class="visually-hidden"><?php echo Text::_('COM_JEM_CURRENT_IMAGE'); ?></div>
+                                                <?php echo JEMOutput::flyer($this->item, $this->dfullimage, 'event', 'fullimage'); ?>
+                                            </div>
+                                        <?php endif; ?>
+                                        <div class="jem-image-selected-preview" hidden>
+                                            <div class="visually-hidden"><?php echo Text::_('COM_JEM_SELECTED_IMAGE_PREVIEW'); ?></div>
+                                            <img src="" alt="<?php echo Text::_('COM_JEM_SELECTED_IMAGE_PREVIEW'); ?>" />
+                                        </div>
+                                        <span class="jem-image-preview-empty"<?php echo !empty($this->item->fullimage) ? ' hidden' : ''; ?>><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                                     </div>
                                 </div>
                             </div>
@@ -1006,40 +1027,41 @@ $document->addStyleDeclaration('
 
             <!-- EXTENDED TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-extendedtab', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-extendedtab', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITEVENT_EXTENDED_TAB'), 'editevent-extendedtab'); ?>
             <?php echo $this->loadTemplate('extended'); ?>
-
-            <!-- ADVANCED TAB -->
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_ADVANCED'), 'editevent-advancedtab'); ?>
-            <?php echo $this->loadTemplate('publish'); ?>
 
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
-                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
                 <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
-            <!-- LINKS TAB -->
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB')); ?>
-            <?php echo $this->loadTemplate('links'); ?>
-            <?php echo HTMLHelper::_('uitab.endTab'); ?>
-
             <!-- OTHER TAB -->
-            <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other'); ?>
             <?php echo $this->loadTemplate('other'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <!-- ADVANCED TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'editevent-advancedtab', Text::_('COM_JEM_ADVANCED'))); ?>
+            <?php echo $this->loadTemplate('publish'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+            <!-- LINKS TAB -->
+            <?php echo str_replace('<joomla-tab-element ', '<joomla-tab-element data-jem-advanced-field ', HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-links', Text::_('COM_JEM_EVENT_LINKS_TAB'))); ?>
+            <?php echo $this->loadTemplate('links'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
             <?php //echo HTMLHelper::_('tabs.end'); ?>
 
             <input type="hidden" name="task" value="" />
             <input type="hidden" name="return" value="<?php echo $this->return_page; ?>" />
             <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+            <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
             <?php if ($this->params->get('enable_category', 0) == 1) : ?>
                 <input type="hidden" name="jform[catid]" value="<?php echo $this->params->get('catid', 1); ?>" />
             <?php endif; ?>

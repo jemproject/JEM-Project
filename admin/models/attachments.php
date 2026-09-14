@@ -7,6 +7,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Filesystem\Path;
 
@@ -32,6 +33,8 @@ class JemModelAttachments extends ListModel
                 'frontend', 'a.frontend',
                 'created', 'a.created',
                 'created_by_name',
+                'downloads', 'a.downloads',
+                'last_download', 'a.last_download',
             );
         }
 
@@ -40,19 +43,56 @@ class JemModelAttachments extends ListModel
 
     protected function populateState($ordering = null, $direction = null)
     {
+        $app = Factory::getApplication();
+
         $search = $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search');
         $this->setState('filter_search', $search);
+        $this->setState('filter.search', $search);
 
         $type = $this->getUserStateFromRequest($this->context . '.filter_type', 'filter_type', '', 'cmd');
         $this->setState('filter_type', $type);
+        $this->setState('filter.type', $type);
 
         $frontend = $this->getUserStateFromRequest($this->context . '.filter_frontend', 'filter_frontend', '', 'string');
         $this->setState('filter_frontend', $frontend);
+        $this->setState('filter.frontend', $frontend);
 
         $access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
+        $this->setState('filter_access', $access);
         $this->setState('filter.access', $access);
 
         parent::populateState('a.created', 'desc');
+
+        $this->syncLegacyFilterState($app);
+    }
+
+    /**
+     * Keep existing flat filter URLs compatible with Joomla Search Tools.
+     *
+     * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
+     *
+     * @return void
+     */
+    private function syncLegacyFilterState($app)
+    {
+        $filters = array(
+            'search'   => array('filter_search', 'filter_search', ''),
+            'type'     => array('filter_type', 'filter_type', ''),
+            'frontend' => array('filter_frontend', 'filter_frontend', ''),
+            'access'   => array('filter_access', 'filter_access', 0),
+        );
+
+        foreach ($filters as $name => $filter) {
+            [$legacyState, $requestName, $default] = $filter;
+
+            if ($app->getInput()->exists($requestName)) {
+                $value = $this->state->get($legacyState, $default);
+                $this->setState('filter.' . $name, $value);
+                $app->setUserState($this->context . '.filter.' . $name, $value);
+            }
+
+            $this->setState($legacyState, $this->state->get('filter.' . $name, $default));
+        }
     }
 
     protected function getStoreId($id = '')
@@ -101,6 +141,26 @@ class JemModelAttachments extends ListModel
             ->join('LEFT', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('a.object') . ' = CONCAT(' . $db->quote('category') . ', ' . $db->quoteName('c.id') . ')')
             ->join('LEFT', $db->quoteName('#__viewlevels', 'vl') . ' ON ' . $db->quoteName('vl.id') . ' = ' . $db->quoteName('a.access'))
             ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
+
+        $allowedObjects = array($db->quoteName('a.object') . ' LIKE ' . $db->quote('category%'));
+
+        if (JemHelperBackend::can('event', 'access')) {
+            $allowedObjects[] = $db->quoteName('a.object') . ' LIKE ' . $db->quote('event%');
+        }
+
+        if (JemHelperBackend::can('venue', 'access')) {
+            $allowedObjects[] = $db->quoteName('a.object') . ' LIKE ' . $db->quote('venue%');
+        }
+
+        if (JemHelperBackend::canManage('jem.tools.manage')) {
+            $allowedObjects[] = '('
+                . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('event%')
+                . ' AND ' . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('venue%')
+                . ' AND ' . $db->quoteName('a.object') . ' NOT LIKE ' . $db->quote('category%')
+                . ')';
+        }
+
+        $query->where('(' . implode(' OR ', $allowedObjects) . ')');
 
         if ($applyFilters) {
             $search = $this->getState('filter_search');
@@ -173,7 +233,7 @@ class JemModelAttachments extends ListModel
         $items = $this->enrichItems($db->loadObjectList() ?: array());
 
         $csv = fopen('php://output', 'w');
-        fputcsv($csv, JemCsv::protectFormulaRow(array(
+        JemCsv::putRow($csv, array(
             'id',
             'file',
             'name',
@@ -189,14 +249,16 @@ class JemModelAttachments extends ListModel
             'created',
             'created_by',
             'created_by_name',
+            'downloads',
+            'last_download',
             'file_status',
             'file_size',
-        )), ';', '"', '\\');
+        ), ';', '"', '\\');
 
         foreach ($items as $item) {
             $fileStatus = !$item->file_path_safe ? 'unsafe' : ($item->file_exists ? 'exists' : 'missing');
 
-            fputcsv($csv, JemCsv::protectFormulaRow(array(
+            JemCsv::putRow($csv, array(
                 $item->id,
                 $item->file,
                 $item->name,
@@ -212,9 +274,11 @@ class JemModelAttachments extends ListModel
                 $item->created,
                 $item->created_by,
                 $item->created_by_name,
+                $item->downloads,
+                $item->last_download,
                 $fileStatus,
                 $item->file_size,
-            )), ';', '"', '\\');
+            ), ';', '"', '\\');
         }
 
         fclose($csv);

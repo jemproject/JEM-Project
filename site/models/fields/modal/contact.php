@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Contact modal field for the front area.
@@ -83,9 +83,11 @@ class JFormFieldModal_Contact extends FormField
 
         $wa->addInlineScript(implode("\n", $script));
 
-        $link = 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
+        $eventId = $app->input->getInt('a_id', 0);
+        $link = Uri::base() . 'index.php?option=com_jem&view=editevent&layout=choosecontact&tmpl=component'
             . '&function=jSelectContact_' . $this->id
-            . '&selected=' . $currentValues;
+            . '&selected=' . $currentValues
+            . ($eventId > 0 ? '&a_id=' . $eventId : '');
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $contactNames = array();
@@ -95,10 +97,20 @@ class JFormFieldModal_Contact extends FormField
             $ids = explode(',', $this->value);
             $ids = array_map('intval', $ids);
 
+            $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
             $query = $db->getQuery(true)
-                ->select($db->quoteName('name'))
-                ->from($db->quoteName('#__contact_details'))
-                ->where($db->quoteName('id') . ' IN (' . implode(',', $ids) . ')');
+                ->select($db->quoteName('con.name'))
+                ->from($db->quoteName('#__contact_details', 'con'))
+                ->join(
+                    'INNER',
+                    $db->quoteName('#__categories', 'cat')
+                    . ' ON ' . $db->quoteName('cat.id') . ' = ' . $db->quoteName('con.catid')
+                )
+                ->where($db->quoteName('con.id') . ' IN (' . implode(',', $ids) . ')')
+                ->where($db->quoteName('con.published') . ' = 1')
+                ->where($db->quoteName('con.access') . ' IN (' . implode(',', $levels) . ')')
+                ->where($db->quoteName('cat.published') . ' = 1')
+                ->where($db->quoteName('cat.access') . ' IN (' . implode(',', $levels) . ')');
 
             try {
                 $db->setQuery($query);
@@ -123,7 +135,7 @@ class JFormFieldModal_Contact extends FormField
             'bootstrap.renderModal',
             $modalId,
             array(
-                'url'    => $link . '&' . Session::getFormToken() . '=1',
+                'url'    => $link,
                 'title'  => Text::_('COM_JEM_SELECT_CONTACT'),
                 'width'  => '800px',
                 'height' => '450px',

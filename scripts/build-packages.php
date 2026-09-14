@@ -62,7 +62,7 @@ final class JemPackageBuilder
 
             $package = $buildDir . '/pkg_jem_v' . $version . '.zip';
             $this->zipPackage($root, $buildDir, $package);
-            $this->validate($package);
+            $this->validate($package, $version);
 
             $target = $root . '/pkg_jem_v' . $version . '.zip';
             if (is_file($target)) {
@@ -186,31 +186,36 @@ final class JemPackageBuilder
             return false;
         }
 
-        if (preg_match('#^(\.git|\.settings|\.tmp|\.phpunit\.cache|\.agents|\.claude|\.codex|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tools|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
+        if (preg_match('#^(\.git|\.settings|\.tmp[^/]*|\.phpunit\.cache|\.agents|\.claude|\.codex|\.codex-skill-staging|\.cursor|\.github/copilot|3rd|build|docs|modules|package|plugins|scripts|tests|tmp|tools|updatecheck|vendor|_old[^/]*|old[^/]*)(/|$)#', $relative)) {
             return false;
         }
 
         return !preg_match('#(^|/)(pkg_jem_v.*\.zip.*|update_pkg_.*\.xml|composer\.(json|lock)|phpunit(\.progress)?\.xml(\.dist)?|build\..*|\.env(\..*)?|.*\.(pem|key|crt|pfx)|.*\.code-workspace)$#', $relative);
     }
 
-    private function validate(string $package): void
+    private function validate(string $package, string $version): void
     {
         $outer = new ZipArchive();
         if ($outer->open($package) !== true) {
             throw new RuntimeException('Could not validate package: ' . $package);
         }
 
-        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip'] as $entry) {
+        foreach (['pkg_jem.xml', 'pkg_install.php', 'packages/com_jem.zip', 'packages/mod_jem_types.zip', 'packages/plg_actionlog_jem.zip', 'packages/plg_content_jemembed.zip'] as $entry) {
             if ($outer->locateName($entry) === false) {
                 throw new RuntimeException($package . ' is missing ' . $entry);
             }
         }
 
         $componentData = $outer->getFromName('packages/com_jem.zip');
+        $embedData = $outer->getFromName('packages/plg_content_jemembed.zip');
         $outer->close();
 
         if ($componentData === false) {
             throw new RuntimeException($package . ' has no component archive');
+        }
+
+        if ($embedData === false) {
+            throw new RuntimeException($package . ' has no JEM Embed plugin archive');
         }
 
         $tmpComponent = tempnam(sys_get_temp_dir(), 'jem_component_');
@@ -222,7 +227,18 @@ final class JemPackageBuilder
             throw new RuntimeException('Could not validate component archive in ' . $package);
         }
 
-        foreach (['jem.xml', 'script.php', 'admin/jem.php', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'] as $entry) {
+        $requiredComponentEntries = ['jem.xml', 'script.php', 'admin/jem.php', 'site/jem.php', 'site/classes/icalcreator/autoload.php', 'media/index.html', 'media/vendor/index.html', 'admin/assets/sampledata.zip'];
+
+        if (version_compare($version, '5.0.1rc1', '>=')) {
+            $requiredComponentEntries[] = 'site/classes/eventslistmenupolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/imageresourcepolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/loadmorerequestpolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/pdfimagepolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/registrationservice.class.php';
+            $requiredComponentEntries[] = 'site/common/views/tmpl/responsive/default_jem_eventslist_item.php';
+        }
+
+        foreach ($requiredComponentEntries as $entry) {
             if ($component->locateName($entry) === false) {
                 $component->close();
                 @unlink($tmpComponent);
@@ -262,6 +278,26 @@ final class JemPackageBuilder
 
         $component->close();
         @unlink($tmpComponent);
+
+        $tmpEmbed = tempnam(sys_get_temp_dir(), 'jem_embed_');
+        file_put_contents($tmpEmbed, $embedData);
+        $embed = new ZipArchive();
+
+        if ($embed->open($tmpEmbed) !== true) {
+            @unlink($tmpEmbed);
+            throw new RuntimeException('Could not validate JEM Embed plugin archive in ' . $package);
+        }
+
+        foreach (['jemembed.xml', 'jemembed.php', 'requestpolicy.php', 'media/files/jemevents.zip'] as $entry) {
+            if ($embed->locateName($entry) === false) {
+                $embed->close();
+                @unlink($tmpEmbed);
+                throw new RuntimeException($package . ':packages/plg_content_jemembed.zip is missing ' . $entry);
+            }
+        }
+
+        $embed->close();
+        @unlink($tmpEmbed);
     }
 
     private function openZip(string $target): ZipArchive
@@ -307,10 +343,10 @@ final class JemPackageBuilder
 
 $roots = array_slice($argv, 1);
 if (!$roots) {
-    $roots = [
-        dirname(__DIR__),
-        dirname(__DIR__) . '/../JEM-Project-4.5',
-    ];
+    // A no-argument build must only package the checkout that owns this
+    // script. Other release branches can still be supplied explicitly, but
+    // must never be rebuilt implicitly with this branch's validation rules.
+    $roots = [dirname(__DIR__)];
 }
 
 $builder = new JemPackageBuilder();

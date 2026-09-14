@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Access;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 use Joomla\Registry\Registry;
@@ -175,7 +177,8 @@ class com_jemInstallerScript
             "global_show_mapserv" => "0",
             "global_tld" => "",
             "global_lg" => "",
-            "global_cleanup_db_on_uninstall" => "0"
+            "global_cleanup_db_on_uninstall" => "0",
+            "global_cleanup_images_on_uninstall" => "0"
         );
 
         $this->setGlobalAttribs($param_array);
@@ -197,18 +200,23 @@ class com_jemInstallerScript
 
         $this->useJemConfig = true; 
         $globalParams = $this->getGlobalParams();
-        $cleanup = $globalParams->get('global_cleanup_db_on_uninstall', 0);
-        if (!empty($cleanup)) {
-            // user decided to fully remove JEM - so do it!
+        $cleanupDatabase = $globalParams->get('global_cleanup_db_on_uninstall', 0);
+        $cleanupImages = $globalParams->get('global_cleanup_images_on_uninstall', 0);
+
+        if (!empty($cleanupDatabase)) {
+            // The administrator explicitly requested removal of JEM data.
             $this->removeJemMenuItems();
             $this->removeAllJemTables();
-            $imageDir = JPATH_SITE . '/images/jem';
-            if (is_dir($imageDir)) {
-                Folder::delete($imageDir);
-            }
         } else {
             // prevent dead links on frontend
             $this->disableJemMenuItems();
+        }
+
+        if (!empty($cleanupImages)) {
+            $imageDir = Path::clean(JPATH_SITE . '/images/jem');
+            if (is_dir($imageDir)) {
+                Folder::delete($imageDir);
+            }
         }
     }
 
@@ -261,7 +269,7 @@ class com_jemInstallerScript
             // Installed component version
             $this->oldRelease = $this->getParam('version');
 
-            $minUpgradeVersion = '4.4.2';
+            $minUpgradeVersion = '4.4.0';
 
             if ($this->oldRelease !== '' && version_compare($this->oldRelease, $minUpgradeVersion, 'lt')) {
                 $app->enqueueMessage(Text::sprintf('COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION', $minUpgradeVersion, $this->oldRelease), 'error');
@@ -314,7 +322,511 @@ class com_jemInstallerScript
 
         if (in_array($type, array('install', 'update', 'discover_install'), true)) {
             $this->removeObsoleteAdminHelpMenuItem();
+            $this->repairAdminMenuQuickTasks();
             $this->repairGeneratedTypeMenuItems();
+            $this->repairDefaultWeekendRule();
+            $this->repair501SchemaFallback();
+            $this->repairModuleStatusSettings();
+            $this->repairLegacyRecurrenceRoots();
+            $this->rebuildEventUtcDates();
+            $this->migrateBackendAcl($type === 'update');
+        }
+    }
+
+    /**
+     * Repair the shipped weekend rule when a prerelease already recorded the
+     * 5.0.1 schema or an older installation retained an undated default row.
+     *
+     * @return void
+     */
+    private function repairDefaultWeekendRule()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_special_days'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $startDate = $db->quoteName('start_date');
+        $endDate = $db->quoteName('end_date');
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_special_days'))
+            ->set($startDate . ' = ' . $db->quote('1900-01-01'))
+            ->set($endDate . ' = ' . $db->quote('2100-12-31'))
+            ->where($db->quoteName('alias') . ' = ' . $db->quote('weekend'))
+            ->where($db->quoteName('weekdays') . ' IN (' . $db->quote('0,6') . ', ' . $db->quote('6,0') . ')')
+            ->where('('
+                . $startDate . ' IS NULL'
+                . ' OR ' . $startDate . ' = ' . $db->quote('0000-00-00')
+                . ' OR ' . $endDate . ' IS NULL'
+                . ' OR ' . $endDate . ' = ' . $db->quote('0000-00-00')
+                . ' OR (' . $startDate . ' = ' . $db->quote('2026-01-01')
+                    . ' AND ' . $endDate . ' = ' . $db->quote('2030-12-31') . ')'
+            . ')');
+        $db->setQuery($query);
+        $db->execute();
+    }
+
+    /**
+     * Ensure event status module defaults exist when a prerelease update has
+     * already recorded the current numeric schema version.
+     *
+     * @return void
+     */
+    private function repairModuleStatusSettings()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_config'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $defaults = array(
+            'module_status_ribbons' => '1',
+            'module_status_ribbon_position' => 'diagonal_ascending',
+            'module_status_ribbon_scale' => '100',
+            'module_status_ribbon_side_margin' => '0',
+            'module_status_last_places_threshold' => '10',
+            'module_status_new_days' => '7',
+            'module_status_active_cancelled' => '1',
+            'module_status_active_postponed' => '1',
+            'module_status_active_rescheduled' => '1',
+            'module_status_active_moved_online' => '1',
+            'module_status_active_preorder' => '1',
+            'module_status_active_soldout' => '1',
+            'module_status_active_waitinglist' => '1',
+            'module_status_active_last_places' => '1',
+            'module_status_active_new' => '1',
+            'module_status_active_open' => '0',
+            'module_status_color_cancelled_bg' => '#b3261ee6',
+            'module_status_color_cancelled_text' => '#ffffff',
+            'module_status_color_postponed_bg' => '#b55b00e6',
+            'module_status_color_postponed_text' => '#ffffff',
+            'module_status_color_rescheduled_bg' => '#2456a5e6',
+            'module_status_color_rescheduled_text' => '#ffffff',
+            'module_status_color_moved_online_bg' => '#247a3de6',
+            'module_status_color_moved_online_text' => '#ffffff',
+            'module_status_color_preorder_bg' => '#b55b00e6',
+            'module_status_color_preorder_text' => '#ffffff',
+            'module_status_color_soldout_bg' => '#b3261ee6',
+            'module_status_color_soldout_text' => '#ffffff',
+            'module_status_color_waitinglist_bg' => '#b55b00e6',
+            'module_status_color_waitinglist_text' => '#ffffff',
+            'module_status_color_last_places_bg' => '#b55b00e6',
+            'module_status_color_last_places_text' => '#ffffff',
+            'module_status_color_new_bg' => '#2456a5e6',
+            'module_status_color_new_text' => '#ffffff',
+            'module_status_color_open_bg' => '#247a3de6',
+            'module_status_color_open_text' => '#ffffff',
+        );
+
+        foreach ($defaults as $key => $value) {
+            $query = $db->getQuery(true)
+                ->insert($db->quoteName('#__jem_config'))
+                ->columns($db->quoteName(array('keyname', 'value')))
+                ->values($db->quote($key) . ', ' . $db->quote($value));
+            $db->setQuery(str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query))->execute();
+        }
+    }
+
+    /**
+     * Repair legacy recurrence instances which point to an unrelated event.
+     *
+     * A root is changed only when one unique event matches the complete
+     * recurrence definition and stable event identity. Ambiguous or genuinely
+     * orphaned data is left untouched for an administrator to review.
+     *
+     * @return void
+     */
+    private function repairLegacyRecurrenceRoots()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_events'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                'child.id', 'child.locid', 'child.title', 'child.alias', 'child.created_by', 'child.dates',
+                'child.recurrence_number', 'child.recurrence_type', 'child.recurrence_limit_date',
+                'child.recurrence_byday', 'child.recurrence_bylastday',
+            ))
+            ->from($db->quoteName('#__jem_events', 'child'))
+            ->join(
+                'LEFT',
+                $db->quoteName('#__jem_events', 'parent')
+                . ' ON ' . $db->quoteName('parent.id') . ' = ' . $db->quoteName('child.recurrence_first_id')
+            )
+            ->where($db->quoteName('child.recurrence_first_id') . ' > 0')
+            ->where(
+                '(' . $db->quoteName('parent.id') . ' IS NULL'
+                . ' OR ' . $db->quoteName('parent.recurrence_first_id') . ' <> 0'
+                . ' OR ' . $db->quoteName('parent.recurrence_type') . ' = 0'
+                . ' OR ' . $db->quoteName('parent.recurrence_number') . ' = 0)'
+            );
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $child) {
+            $candidateQuery = $db->getQuery(true)
+                ->select($db->quoteName('root.id'))
+                ->from($db->quoteName('#__jem_events', 'root'))
+                ->where($db->quoteName('root.recurrence_first_id') . ' = 0')
+                ->where($db->quoteName('root.recurrence_type') . ' = ' . (int) $child->recurrence_type)
+                ->where($db->quoteName('root.recurrence_number') . ' = ' . (int) $child->recurrence_number)
+                ->where($db->quoteName('root.locid') . ' = ' . (int) $child->locid)
+                ->where($db->quoteName('root.created_by') . ' = ' . (int) $child->created_by)
+                ->where($db->quoteName('root.title') . ' = ' . $db->quote((string) $child->title))
+                ->where($db->quoteName('root.alias') . ' = ' . $db->quote((string) $child->alias))
+                ->where($db->quoteName('root.recurrence_byday') . ' = ' . $db->quote((string) $child->recurrence_byday))
+                ->where($db->quoteName('root.recurrence_bylastday') . ' = ' . $db->quote((string) $child->recurrence_bylastday))
+                ->where($db->quoteName('root.dates') . ' <= ' . $db->quote((string) $child->dates));
+
+            if ($child->recurrence_limit_date === null) {
+                $candidateQuery->where($db->quoteName('root.recurrence_limit_date') . ' IS NULL');
+            } else {
+                $candidateQuery->where(
+                    $db->quoteName('root.recurrence_limit_date') . ' = '
+                    . $db->quote((string) $child->recurrence_limit_date)
+                );
+            }
+
+            $db->setQuery($candidateQuery);
+            $candidateIds = array_map('intval', (array) $db->loadColumn());
+
+            if (count($candidateIds) !== 1) {
+                continue;
+            }
+
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('recurrence_first_id') . ' = ' . $candidateIds[0])
+                ->where($db->quoteName('id') . ' = ' . (int) $child->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Initialise the granular backend ACL without removing existing rules.
+     *
+     * @param   boolean  $preserveLegacyManage  True for an update.
+     *
+     * @return void
+     */
+    private function migrateBackendAcl($preserveLegacyManage)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $asset = Table::getInstance('Asset');
+
+        if (!$asset->loadByName('com_jem')) {
+            return;
+        }
+
+        $rules = new Rules((string) $asset->rules);
+        $rulesData = $rules->getData();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__usergroups'));
+        $db->setQuery($query);
+        $groupIds = array_map('intval', (array) $db->loadColumn());
+
+        $sourceActions = array(
+            'core.options'          => 'core.options',
+            'jem.events.access'     => 'core.manage',
+            'jem.events.create'     => 'core.create',
+            'jem.events.delete'     => 'core.delete',
+            'jem.events.edit'         => 'core.edit',
+            'jem.events.edit.state'   => 'core.edit.state',
+            'jem.events.edit.own'     => 'core.edit.own',
+            'jem.events.edit.created' => 'core.edit',
+            'jem.venues.access'       => 'core.manage',
+            'jem.venues.create'       => 'core.create',
+            'jem.venues.delete'       => 'core.delete',
+            'jem.venues.edit'         => 'core.edit',
+            'jem.venues.edit.state'   => 'core.edit.state',
+            'jem.venues.edit.own'     => 'core.edit.own',
+            'jem.venues.edit.created' => 'core.edit',
+            'jem.attendees.manage'  => 'core.edit',
+            'jem.tools.manage'      => 'core.admin',
+        );
+        $changed = false;
+
+        foreach ($groupIds as $groupId) {
+            $legacyManager = $preserveLegacyManage
+                && Access::checkGroup($groupId, 'core.manage', 'com_jem');
+
+            foreach ($sourceActions as $targetAction => $sourceAction) {
+                $existing = isset($rulesData[$targetAction])
+                    ? $rulesData[$targetAction]->allow($groupId)
+                    : null;
+
+                if ($existing !== null) {
+                    continue;
+                }
+
+                if (!$legacyManager && !Access::checkGroup($groupId, $sourceAction, 'com_jem')) {
+                    continue;
+                }
+
+                $rules->mergeAction($targetAction, array($groupId => true));
+                $changed = true;
+            }
+        }
+
+        if (!$changed) {
+            return;
+        }
+
+        $asset->rules = (string) $rules;
+
+        if (!$asset->check() || !$asset->store()) {
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_INSTALL_BACKEND_ACL_MIGRATION_FAILED'),
+                'warning'
+            );
+
+            return;
+        }
+
+        Access::clearStatics();
+        Factory::getApplication()->enqueueMessage(
+            Text::_($preserveLegacyManage
+                ? 'COM_JEM_INSTALL_BACKEND_ACL_MIGRATED'
+                : 'COM_JEM_INSTALL_BACKEND_ACL_INITIALISED'),
+            'notice'
+        );
+    }
+
+    /**
+     * Secondary repair for a partially restored JEM 5.0.1 schema.
+     *
+     * Joomla owns the normal schema lifecycle through jem.xml,
+     * install.mysql.utf8.sql and the versioned update SQL files. This fallback
+     * only restores missing 5.0.1 fields when Joomla already has that schema
+     * version recorded and therefore does not execute 5.0.1.sql again.
+     *
+     * @return void
+     */
+    private function repair501SchemaFallback()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $existingTables = $db->getTableList();
+        $definitionsByTable = array(
+            '#__jem_events' => array(
+                'timezone_mode' => "VARCHAR(10) NOT NULL DEFAULT 'joomla' AFTER `endtimes`",
+                'timezone'      => "VARCHAR(64) NOT NULL DEFAULT '' AFTER `timezone_mode`",
+                'start_utc'     => "DATETIME NULL DEFAULT NULL AFTER `timezone`",
+                'end_utc'       => "DATETIME NULL DEFAULT NULL AFTER `start_utc`",
+                'last_visit'    => "DATETIME NULL DEFAULT NULL AFTER `hits`",
+                'series_id'     => "INT(11) UNSIGNED NULL DEFAULT NULL AFTER `recurrence_bylastday`",
+                'series_order'  => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `series_id`",
+            ),
+            '#__jem_venues' => array(
+                'district' => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `city`",
+                'level'    => "VARCHAR(100) NOT NULL DEFAULT '' AFTER `district`",
+                'capacity' => "INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `level`",
+                'timezone' => "VARCHAR(64) NOT NULL DEFAULT '' AFTER `country`",
+                'email'    => "VARCHAR(254) NOT NULL DEFAULT '' AFTER `timezone`",
+                'phone'    => "VARCHAR(50) NOT NULL DEFAULT '' AFTER `email`",
+                'mobile'   => "VARCHAR(50) NOT NULL DEFAULT '' AFTER `phone`",
+            ),
+            '#__jem_attachments' => array(
+                'downloads'     => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `created_by`",
+                'last_download' => "DATETIME NULL DEFAULT NULL AFTER `downloads`",
+            ),
+        );
+
+        foreach ($definitionsByTable as $table => $definitions) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $existingTables, true)) {
+                continue;
+            }
+
+            $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+            foreach ($definitions as $column => $definition) {
+                if (!isset($columns[$column])) {
+                    $db->setQuery(
+                        'ALTER TABLE ' . $db->quoteName($table)
+                        . ' ADD COLUMN ' . $db->quoteName($column) . ' ' . $definition
+                    );
+                    $db->execute();
+                }
+            }
+        }
+
+        $eventTable = $db->replacePrefix('#__jem_events');
+        if (in_array($eventTable, $existingTables, true)) {
+            $keys = $db->getTableKeys($eventTable);
+            $keyNames = array();
+            foreach ((array) $keys as $name => $key) {
+                if (is_string($name)) {
+                    $keyNames[] = $name;
+                }
+                if (is_object($key)) {
+                    foreach (array('Key_name', 'key_name', 'name') as $property) {
+                        if (isset($key->$property)) {
+                            $keyNames[] = (string) $key->$property;
+                        }
+                    }
+                }
+            }
+            if (!in_array('idx_start_utc', $keyNames, true)) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events') . ' ADD INDEX ' . $db->quoteName('idx_start_utc') . ' (' . $db->quoteName('start_utc') . ')');
+                $db->execute();
+            }
+            if (!in_array('idx_end_utc', $keyNames, true)) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events') . ' ADD INDEX ' . $db->quoteName('idx_end_utc') . ' (' . $db->quoteName('end_utc') . ')');
+                $db->execute();
+            }
+            if (!in_array('idx_series', $keyNames, true)) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName('#__jem_events')
+                    . ' ADD INDEX ' . $db->quoteName('idx_series')
+                    . ' (' . $db->quoteName('series_id') . ', ' . $db->quoteName('series_order') . ')'
+                );
+                $db->execute();
+            }
+        }
+
+        $db->setQuery(
+            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_event_series')
+            . ' ('
+            . $db->quoteName('id') . ' INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,'
+            . $db->quoteName('root_event_id') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('title') . " VARCHAR(255) NOT NULL DEFAULT '',"
+            . $db->quoteName('series_type') . " VARCHAR(20) NOT NULL DEFAULT 'custom',"
+            . $db->quoteName('created') . ' DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,'
+            . $db->quoteName('created_by') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('modified') . ' DATETIME NULL DEFAULT NULL,'
+            . $db->quoteName('modified_by') . " INT(11) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('published') . " TINYINT(1) NOT NULL DEFAULT '1',"
+            . ' PRIMARY KEY (' . $db->quoteName('id') . '),'
+            . ' KEY ' . $db->quoteName('idx_root_event') . ' (' . $db->quoteName('root_event_id') . '),'
+            . ' KEY ' . $db->quoteName('idx_created_by') . ' (' . $db->quoteName('created_by') . '),'
+            . ' KEY ' . $db->quoteName('idx_published') . ' (' . $db->quoteName('published') . ')'
+            . ') ENGINE=InnoDB'
+        );
+        $db->execute();
+
+        if (in_array($db->replacePrefix('#__jem_config'), $existingTables, true)) {
+            $configDefaults = array(
+                'event_timezone_default' => 'joomla',
+                'image_event_intro_default_dimension' => '1200',
+                'image_event_full_default_dimension' => '1920',
+                'image_venue_default_dimension' => '1280',
+                'image_category_default_dimension' => '800',
+            );
+
+            foreach ($configDefaults as $key => $value) {
+                $query = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jem_config'))
+                    ->columns(array($db->quoteName('keyname'), $db->quoteName('value')))
+                    ->values($db->quote($key) . ', ' . $db->quote($value));
+                $query = str_replace('INSERT INTO', 'INSERT IGNORE INTO', (string) $query);
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
+    }
+
+    /**
+     * Backfill canonical UTC event boundaries after install or update.
+     *
+     * @return void
+     */
+    private function rebuildEventUtcDates()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $tables = $db->getTableList();
+
+        if (!in_array($db->replacePrefix('#__jem_events'), $tables, true)
+            || !in_array($db->replacePrefix('#__jem_venues'), $tables, true)) {
+            return;
+        }
+
+        $joomlaTimeZone = trim((string) Factory::getConfig()->get('offset', 'UTC'));
+        try {
+            new \DateTimeZone($joomlaTimeZone);
+        } catch (\Exception $e) {
+            $joomlaTimeZone = 'UTC';
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array(
+                'a.id', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes',
+                'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone',
+            ))
+            ->from($db->quoteName('#__jem_events', 'a'))
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'l') . ' ON ' . $db->quoteName('l.id') . ' = ' . $db->quoteName('a.locid'));
+        $db->setQuery($query);
+
+        foreach ((array) $db->loadObjectList() as $event) {
+            $startUtc = null;
+            $endUtc = null;
+
+            if (!empty($event->dates) && $event->dates !== '0000-00-00') {
+                $timeZoneName = $joomlaTimeZone;
+                if ($event->timezone_mode === 'custom' && $this->isValidTimeZone($event->timezone)) {
+                    $timeZoneName = $event->timezone;
+                } elseif ($event->timezone_mode === 'venue' && $this->isValidTimeZone($event->venue_timezone)) {
+                    $timeZoneName = $event->venue_timezone;
+                }
+
+                try {
+                    $timeZone = new \DateTimeZone($timeZoneName);
+                    $utc = new \DateTimeZone('UTC');
+                    $start = new \DateTimeImmutable(
+                        $event->dates . ' ' . ($event->times ?: '00:00:00'),
+                        $timeZone
+                    );
+                    $end = new \DateTimeImmutable(
+                        ($event->enddates ?: $event->dates) . ' ' . ($event->endtimes ?: '23:59:59'),
+                        $timeZone
+                    );
+                    $startUtc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
+                    $endUtc = $end->setTimezone($utc)->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    $startUtc = null;
+                    $endUtc = null;
+                }
+            }
+
+            $update = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_events'))
+                ->set($db->quoteName('start_utc') . ' = ' . ($startUtc === null ? 'NULL' : $db->quote($startUtc)))
+                ->set($db->quoteName('end_utc') . ' = ' . ($endUtc === null ? 'NULL' : $db->quote($endUtc)))
+                ->where($db->quoteName('id') . ' = ' . (int) $event->id);
+            $db->setQuery($update);
+            $db->execute();
+        }
+    }
+
+    /**
+     * Validate a timezone identifier during installation.
+     *
+     * @param   string  $timeZone  Timezone identifier.
+     *
+     * @return boolean
+     */
+    private function isValidTimeZone($timeZone)
+    {
+        $timeZone = trim((string) $timeZone);
+
+        if ($timeZone === '') {
+            return false;
+        }
+
+        if (!in_array($timeZone, \DateTimeZone::listIdentifiers(\DateTimeZone::ALL_WITH_BC), true)) {
+            return false;
+        }
+
+        try {
+            new \DateTimeZone($timeZone);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 
@@ -668,6 +1180,77 @@ class com_jemInstallerScript
 
         $db->setQuery($query);
         $db->execute();
+    }
+
+    /**
+     * Add Joomla administrator quick-create links to JEM manager menu items.
+     */
+    private function repairAdminMenuQuickTasks()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('extension_id'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+
+        $db->setQuery($query);
+        $componentId = (int) $db->loadResult();
+
+        if ($componentId <= 0) {
+            return;
+        }
+
+        $quickTasks = array(
+            'index.php?option=com_jem&view=events' => array(
+                'link'  => 'index.php?option=com_jem&task=event.add',
+                'title' => 'COM_JEM_MENU_ADD_EVENT',
+            ),
+            'index.php?option=com_jem&view=venues' => array(
+                'link'  => 'index.php?option=com_jem&task=venue.add',
+                'title' => 'COM_JEM_MENU_ADD_VENUE',
+            ),
+            'index.php?option=com_jem&view=categories' => array(
+                'link'  => 'index.php?option=com_jem&task=category.add',
+                'title' => 'COM_JEM_MENU_ADD_CATEGORY',
+            ),
+            'index.php?option=com_jem&view=types' => array(
+                'link'  => 'index.php?option=com_jem&task=type.add',
+                'title' => 'COM_JEM_MENU_ADD_TYPE',
+            ),
+        );
+
+        foreach ($quickTasks as $menuLink => $quickTask) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'params')))
+                ->from($db->quoteName('#__menu'))
+                ->where($db->quoteName('client_id') . ' = 1')
+                ->where($db->quoteName('component_id') . ' = ' . $componentId)
+                ->where($db->quoteName('link') . ' = ' . $db->quote($menuLink));
+
+            $db->setQuery($query);
+            $items = $db->loadObjectList() ?: array();
+
+            foreach ($items as $item) {
+                try {
+                    $params = new Registry((string) $item->params);
+                } catch (RuntimeException $e) {
+                    $params = new Registry();
+                }
+
+                $params->set('menu-quicktask', $quickTask['link']);
+                $params->set('menu-quicktask-title', $quickTask['title']);
+                $params->set('menu-quicktask-icon', 'plus');
+
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__menu'))
+                    ->set($db->quoteName('params') . ' = ' . $db->quote($params->toString()))
+                    ->where($db->quoteName('id') . ' = ' . (int) $item->id);
+
+                $db->setQuery($query);
+                $db->execute();
+            }
+        }
     }
 
     /**
@@ -1096,7 +1679,7 @@ class com_jemInstallerScript
             foreach ($files as $file) {
                 $version = basename($file, '.sql');
 
-                if (preg_match('/^\d+(?:\.\d+)+$/', $version) && version_compare($version, '4.5.0', 'lt')) {
+                if (preg_match('/^\d+(?:\.\d+)+$/', $version) && version_compare($version, '4.4.1', 'lt')) {
                     File::delete($file);
                 }
             }

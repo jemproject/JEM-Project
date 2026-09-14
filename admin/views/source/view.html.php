@@ -31,6 +31,10 @@ class JemViewSource extends JemAdminView
      */
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         // Initialise variables.
         $this->form     = $this->get('Form');
         $this->ftp      = ClientHelper::setCredentialsFromRequest('ftp');
@@ -58,13 +62,9 @@ class JemViewSource extends JemAdminView
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
 
-        $user  = JemFactory::getUser();
-        $canDo = JemHelperBackend::getActions(0);
-
         ToolbarHelper::title(Text::_('COM_JEM_CSSMANAGER_EDIT_FILE'), 'thememanager');
 
-        // Can save the item.
-        if ($canDo->get('core.edit')) {
+        if (JemHelperBackend::canManage('jem.tools.manage')) {
             ToolbarHelper::apply('source.apply');
             ToolbarHelper::save('source.save');
         }

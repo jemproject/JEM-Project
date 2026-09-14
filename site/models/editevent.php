@@ -26,6 +26,11 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditevent extends JemModelEvent
 {
+    protected function canEditCustomSeriesOccurrence($event, $backend)
+    {
+        return JemFactory::getUser()->can('edit', 'event', (int) $event->id, (int) $event->created_by);
+    }
+
     /**
      * Create a placeholder Joomla article from the front-end article selector and
      * return it so the event form can store the associated article id.
@@ -163,8 +168,11 @@ class JemModelEditevent extends JemModelEvent
         $return = $table->load($itemId);
 
         // Check for a table object error.
-        if ($return === false && $table->getError()) {
-            $this->setError($table->getError());
+        if ($return === false) {
+            if ($table->getError()) {
+                $this->setError($table->getError());
+            }
+
             return false;
         }
 
@@ -184,6 +192,8 @@ class JemModelEditevent extends JemModelEvent
             $value->recurrence_type = 0;
             $value->recurrence_first_id = 0;
             $value->recurrence_counter = 0;
+            $value->series_id = null;
+            $value->series_order = 0;
         }
 
         // Backup current recurrence values
@@ -193,6 +203,12 @@ class JemModelEditevent extends JemModelEvent
                 if (strncmp('recurrence_', $k, 11) === 0) {
                     $value->recurr_bak->$k = $v;
                 }
+            }
+
+            if (!empty($value->series_id)) {
+                $value->recurrence_type = 7;
+                $value->custom_series_is_root = $this->isCustomSeriesRoot((int) $value->series_id, (int) $value->id);
+                $value->custom_schedule_json = json_encode($this->getCustomSeriesSchedule((int) $value->series_id, (int) $value->id));
             }
         }
 
@@ -235,6 +251,9 @@ class JemModelEditevent extends JemModelEvent
             $catid = (int) $this->getState('event.catid');
             $locid = (int) $this->getState('event.locid');
             $date  = $this->getState('event.date');
+            $value->timezone_mode = in_array(($jemsettings->event_timezone_default ?? 'joomla'), array('joomla', 'venue'), true)
+                ? $jemsettings->event_timezone_default
+                : 'joomla';
 
             if (empty($value->catid) && !empty($catid)) {
                 $value->catid = $catid;
@@ -366,6 +385,7 @@ class JemModelEditevent extends JemModelEvent
     {
         $app              = Factory::getApplication();
         $params           = JemHelper::globalattribs();
+        $levels           = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
 
         $filter_order     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order', 'filter_order', 'l.venue', 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectvenue.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
@@ -380,12 +400,13 @@ class JemModelEditevent extends JemModelEvent
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
-        $query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering'));
+        $query->select(array('l.id','l.state','l.city','l.country','l.published','l.venue','l.ordering','l.access'));
         $query->from('#__jem_venues as l');
 
         // where
         $where = array();
         $where[] = 'l.published = 1';
+        $where[] = 'l.access IN (' . implode(',', $levels) . ')';
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {
@@ -501,6 +522,7 @@ class JemModelEditevent extends JemModelEvent
     {
         $app              = Factory::getApplication();
         $jemsettings      = JemHelper::config();
+        $levels           = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
 
         $filter_order     = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order', 'filter_order', 'con.ordering', 'cmd');
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
@@ -523,6 +545,9 @@ class JemModelEditevent extends JemModelEvent
         // where
         $where = array();
         $where[] = 'con.published = 1';
+        $where[] = 'con.access IN (' . implode(',', $levels) . ')';
+        $where[] = 'cat.published = 1';
+        $where[] = 'cat.access IN (' . implode(',', $levels) . ')';
 
         /* something to search for? (we like to search for "0" too) */
         if ($search || ($search === "0")) {

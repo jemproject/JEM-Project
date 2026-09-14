@@ -107,8 +107,18 @@ class JemViewVenue extends JemView
 
             // get data from model and set the month
             $model = $this->getModel('VenueCal');
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $rows = $this->get('Items','VenueCal');
+
+            $showVenueSelector = (bool) $params->get('show_venue_selector', 0);
+            $venueOptions = $showVenueSelector ? $this->get('VenueOptions') : array();
+            $useFancyVenueSelector = $showVenueSelector && !$print && count($venueOptions) >= 8;
+
+            if ($useFancyVenueSelector) {
+                $document->getWebAssetManager()
+                    ->usePreset('choicesjs')
+                    ->useScript('webcomponent.field-fancy-select');
+            }
 
             // Set Page title
             $pagetitle = $params->def('page_title', $menuitem->title);
@@ -163,6 +173,10 @@ class JemViewVenue extends JemView
 
             // map variables
             $this->rows          = $rows;
+            $this->venue         = $venue;
+            $this->venueOptions  = $venueOptions;
+            $this->showVenueSelector = $showVenueSelector;
+            $this->useFancyVenueSelector = $useFancyVenueSelector;
             $this->locid         = $venueID;
             $this->params        = $params;
             $this->jemsettings   = $jemsettings;
@@ -307,8 +321,8 @@ class JemViewVenue extends JemView
             // set Page title & Meta data
             $document->setTitle($pagetitle);
             $document->setMetaData('title', $pagetitle);
-            $document->setMetadata('keywords', $venue->meta_keywords);
-            $document->setDescription(strip_tags($venue->meta_description));
+            $document->setMetadata('keywords', (string) ($venue->meta_keywords ?? ''));
+            $document->setDescription(strip_tags((string) ($venue->meta_description ?? '')));
 
             // Check if the user has permission to add things
             $permissions = new stdClass();
@@ -348,6 +362,14 @@ class JemViewVenue extends JemView
 
             // Create the pagination object
             $pagination = $this->get('Pagination');
+            $pagination->setAdditionalUrlParam('option', 'com_jem');
+            $pagination->setAdditionalUrlParam('view', 'venue');
+            $pagination->setAdditionalUrlParam('layout', 'default');
+            $pagination->setAdditionalUrlParam('id', (string) $venue->slug);
+
+            if ($menuitem && isset($menuitem->id)) {
+                $pagination->setAdditionalUrlParam('Itemid', (int) $menuitem->id);
+            }
 
             // filters
             $filters = array ();

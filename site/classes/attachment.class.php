@@ -13,12 +13,14 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Filter\InputFilter;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 
 /**
  * Holds the logic for attachments manipulation
@@ -102,6 +104,7 @@ class JemAttachment
             'cgi', 'pl', 'py', 'rb', 'asp', 'aspx', 'jsp',
             'sh', 'bash', 'cmd', 'bat', 'exe', 'dll', 'so',
             'js', 'mjs', 'html', 'htm', 'xhtml', 'svg',
+            'shtml', 'shtm', 'stm',
         );
 
         $parts = explode('.', strtolower((string) $filename));
@@ -236,11 +239,21 @@ class JemAttachment
             $fileext = self::getAllowedExtension($file, $allowed);
             if (!$fileext || self::hasUnsafeExtension($file)) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-EXT',
+                    'Rejected attachment upload: disallowed or unsafe extension',
+                    array('file' => $file, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
             if (!self::hasAllowedMime($rec['tmp_name'], $fileext)) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHEMENT_EXTENSION_NOT_ALLOWED').': '.$file, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-MIME',
+                    'Rejected attachment upload: MIME type does not match extension',
+                    array('file' => $file, 'extension' => $fileext, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
@@ -274,6 +287,11 @@ class JemAttachment
             // but keep all other checks running
             if (!File::upload($rec['tmp_name'], $filepath, false, false, array('forbidden_ext_in_content' => true))) {
                 Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_COULD_NOT_CREATE_FOLDER').': '.$object, 'warning');
+                JemLog::warning(
+                    'JEM-W-ATTACH-CONTENT',
+                    'Rejected attachment upload: file failed the safe-upload content check',
+                    array('file' => $file, 'object' => $object, 'user_id' => (int) $user->id)
+                );
                 continue;
             }
 
@@ -455,6 +473,50 @@ class JemAttachment
             throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
         }
 
+        // A direct frontend download must not bypass the parent event/venue ACL.
+        if (!Factory::getApplication()->isClient('administrator')) {
+            if (preg_match('/^event(\d+)$/i', (string) $res->object, $matches)) {
+                $type = 'event';
+                $itemId = (int) $matches[1];
+                $table = '#__jem_events';
+                $fields = array('id', 'created_by', 'access', 'published', 'publish_up', 'publish_down');
+            } elseif (preg_match('/^venue(\d+)$/i', (string) $res->object, $matches)) {
+                $type = 'venue';
+                $itemId = (int) $matches[1];
+                $table = '#__jem_venues';
+                $fields = array('id', 'created_by', 'access', 'published');
+            } else {
+                $type = '';
+            }
+
+            if ($type !== '') {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName($fields))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('id') . ' = ' . $itemId);
+                $db->setQuery($query);
+                $item = $db->loadObject();
+
+                if (!$item) {
+                    throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
+                }
+
+                if (!in_array((int) $item->access, array_map('intval', $levels), true)) {
+                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+                }
+
+                $canPreview = $user->can('edit', $type, $itemId, (int) $item->created_by)
+                    || $user->can('publish', $type, $itemId, (int) $item->created_by);
+                $isVisible = ($type === 'event')
+                    ? (JemHelper::isEventPublishedNow($item) || (int) $item->published === 2)
+                    : ((int) $item->published === 1);
+
+                if (!$isVisible && !$canPreview) {
+                    throw new Exception(Text::_('COM_JEM_NO_ACCESS'), 403);
+                }
+            }
+        }
+
         $path = self::getSafeAttachmentPath($res->object, $res->file);
         if (!$path) {
             throw new Exception(Text::_('COM_JEM_FILE_NOT_FOUND'), 404);
@@ -465,6 +527,67 @@ class JemAttachment
         }
 
         return $path;
+    }
+
+    /**
+     * Record a successfully delivered attachment download.
+     *
+     * The counter update is atomic so concurrent downloads are not lost. A
+     * statistics failure must not invalidate a file that was already sent.
+     *
+     * @param  int $id Attachment id
+     * @return boolean
+     */
+    static public function recordDownload($id)
+    {
+        $id = (int) $id;
+
+        if ($id < 1) {
+            return false;
+        }
+
+        try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_attachments'))
+                ->set($db->quoteName('downloads') . ' = ' . $db->quoteName('downloads') . ' + 1')
+                ->set($db->quoteName('last_download') . ' = ' . $db->quote(Factory::getDate()->toSql()))
+                ->where($db->quoteName('id') . ' = ' . $id);
+            $db->setQuery($query);
+
+            return (bool) $db->execute();
+        } catch (\RuntimeException $e) {
+            JemHelper::addLogEntry(
+                'Unable to record attachment download for id ' . $id . ': ' . $e->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+
+            return false;
+        }
+    }
+
+    /**
+     * Write a failed attachment delivery to JEM's log without exposing paths.
+     *
+     * @param int    $id      Attachment id
+     * @param string $channel Download channel (frontend or backend)
+     * @param string $reason  Failure reason
+     * @return void
+     */
+    static public function logDownloadError($id, $channel, $reason)
+    {
+        $userId = (int) JemFactory::getUser()->get('id');
+        $reason = trim(preg_replace('/\s+/', ' ', (string) $reason));
+
+        JemHelper::addLogEntry(
+            'Attachment download failed; id=' . (int) $id
+            . '; user=' . $userId
+            . '; channel=' . preg_replace('/[^a-z]/i', '', (string) $channel)
+            . '; reason=' . $reason,
+            __METHOD__,
+            Log::WARNING
+        );
     }
 
     /**
@@ -497,29 +620,36 @@ class JemAttachment
 
         $attachment = $res;
 
-        // check permission
-        if (empty($userid) || ($userid != $res->created_by)) {
-            if (strncasecmp($res->object, 'event', 5) == 0) {
-                $type = 'event';
-                $itemid = (int)substr($res->object, 5);
-                $table = '#__jem_events';
-            } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
-                $type = 'venue';
-                $itemid = (int)substr($res->object, 5);
-                $table = '#__jem_venues';
-            } else {
-                return false;
-            }
+        // Event and venue attachments always follow the current record ACL. Being
+        // the attachment uploader must not bypass permissions removed later.
+        if (strncasecmp($res->object, 'event', 5) == 0) {
+            $type = 'event';
+            $itemid = (int)substr($res->object, 5);
+            $table = '#__jem_events';
+        } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
+            $type = 'venue';
+            $itemid = (int)substr($res->object, 5);
+            $table = '#__jem_venues';
+        } else {
+            $type = '';
+        }
 
-            // get item owner
-            $query = 'SELECT created_by FROM ' . $table . ' WHERE id = ' . $db->Quote($itemid);
+        if ($type !== '') {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('created_by', 'access')))
+                ->from($db->quoteName($table))
+                ->where($db->quoteName('id') . ' = ' . $itemid);
             $db->setQuery($query);
-            $created_by = $db->loadResult();
+            $item = $db->loadObject();
 
-            if (!$user->can('edit', $type, $itemid, $created_by)) {
+            if (!$item
+                || !in_array((int) $item->access, array_map('intval', $levels), true)
+                || !$user->can('edit', $type, $itemid, (int) $item->created_by)) {
                 JemHelper::addLogEntry("User {$userid} is not permitted to remove attachment " . $res->object, __METHOD__);
                 return false;
             }
+        } elseif (empty($userid) || ($userid != $res->created_by)) {
+            return false;
         }
 
         JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);

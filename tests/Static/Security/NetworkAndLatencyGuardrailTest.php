@@ -13,6 +13,7 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
         'admin/views/types/tmpl/default.php:fetch',
         'admin/views/venue/tmpl/edit.php:fetch',
         'admin/views/venues/tmpl/default.php:fetch',
+        'media/js/attachments.js:fetch',
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',
@@ -21,6 +22,8 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
     );
 
     private const ALLOWED_SERVER_NETWORK_CALLS = array(
+        'admin/helpers/remotesource.php:curl_exec',
+        'admin/helpers/remotesource.php:curl_init',
         'admin/models/updatecheck.php:file_get_contents',
         'site/classes/pdfview.class.php:curl_exec',
         'site/classes/pdfview.class.php:curl_init',

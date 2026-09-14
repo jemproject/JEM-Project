@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
@@ -18,7 +19,9 @@ class JemModelAttachment extends JemModelAdmin
 {
     protected function canDelete($record)
     {
-        return !empty($record->id) && JemFactory::getUser()->authorise('core.delete', 'com_jem');
+        return !empty($record->id)
+            && !empty($record->object)
+            && JemHelperBackend::canAccessAttachment($record->object, 'edit');
     }
 
     public function getTable($name = 'jem_attachments', $prefix = '', $options = array())
@@ -65,6 +68,10 @@ class JemModelAttachment extends JemModelAdmin
             $table = $this->getTable();
 
             if ($table->load((int) $data['id'])) {
+                if (!JemHelperBackend::canAccessAttachment($table->object, 'edit')) {
+                    throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+
                 $data['object'] = (string) $table->object;
                 $data['file'] = (string) $table->file;
             }
@@ -170,8 +177,21 @@ class JemModelAttachment extends JemModelAdmin
 
     public function deleteWithFiles(array $pks)
     {
+        $paths = array();
+
         foreach ($pks as $pk) {
-            $path = $this->getAttachmentPath((int) $pk);
+            $table = $this->getTable();
+
+            if (!$table->load((int) $pk)
+                || !JemHelperBackend::canAccessAttachment($table->object, 'edit')) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+                return false;
+            }
+
+            $paths[(int) $pk] = $this->getAttachmentPath((int) $pk);
+        }
+
+        foreach ($paths as $path) {
 
             if ($path && is_file($path) && !File::delete($path)) {
                 return false;
@@ -190,6 +210,13 @@ class JemModelAttachment extends JemModelAdmin
         }
 
         return $this->resolveAttachmentPath($table->object, $table->file);
+    }
+
+    public function getAttachmentObject($id)
+    {
+        $table = $this->getTable();
+
+        return $id && $table->load((int) $id) ? (string) $table->object : null;
     }
 
     private function resolveAttachmentPath($object, $file)

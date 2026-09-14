@@ -74,6 +74,53 @@ final class FormValidationContractsTest extends TestCase
         $this->assertFieldAttribute($xpath, 'formathour', 'filter', 'string', $path);
     }
 
+    public function testAssociatedArticleTitleFormatsRejectInvalidPlaceholders(): void
+    {
+        $path = JEM_TEST_ROOT . '/admin/models/forms/settings.xml';
+        $xpath = $this->xpath($path);
+
+        $titleField = $this->field($xpath, 'event_associated_article_title_format', $path);
+        $recurrenceField = $this->field($xpath, 'event_associated_article_recurrence_title_format', $path);
+
+        foreach (array($titleField, $recurrenceField) as $field) {
+            self::assertSame('string', $field->getAttribute('filter'));
+            self::assertSame('regex', $field->getAttribute('validate'));
+            self::assertSame($field->getAttribute('validate_regex'), $field->getAttribute('pattern'));
+            self::assertNotSame('', $field->getAttribute('message'));
+            self::assertSame($field->getAttribute('message'), $field->getAttribute('validationtext'));
+        }
+
+        $titleRegex = $titleField->getAttribute('validate_regex');
+        $recurrenceRegex = $recurrenceField->getAttribute('validate_regex');
+
+        foreach (array(
+            '',
+            '{title}',
+            '{title}, {id}, {date}, {time}, {lang}',
+            'Event {title} ({date})',
+        ) as $validFormat) {
+            self::assertMatchesRegularExpression($this->phpRegex($titleRegex), $validFormat);
+        }
+
+        foreach (array(
+            '{lang',
+            'lang}',
+            '{language}',
+            '{{title}}',
+            '{#}',
+        ) as $invalidFormat) {
+            self::assertDoesNotMatchRegularExpression($this->phpRegex($titleRegex), $invalidFormat);
+        }
+
+        foreach (array('{title} {#}', '{title} {##}', '{date} {###}') as $validFormat) {
+            self::assertMatchesRegularExpression($this->phpRegex($recurrenceRegex), $validFormat);
+        }
+
+        foreach (array('{title} {##', '{counter}', '{title}}') as $invalidFormat) {
+            self::assertDoesNotMatchRegularExpression($this->phpRegex($recurrenceRegex), $invalidFormat);
+        }
+    }
+
     public function testVenueTableKeepsRuntimeUrlValidation(): void
     {
         $contents = (string) file_get_contents(JEM_TEST_ROOT . '/admin/tables/venue.php');
@@ -116,6 +163,22 @@ final class FormValidationContractsTest extends TestCase
         }
 
         self::fail($this->relativePath($path) . ' field ' . $field . ' should define ' . $attribute . '="' . $expected . '".');
+    }
+
+    private function field(DOMXPath $xpath, string $field, string $path): DOMElement
+    {
+        $nodes = $xpath->query('//field[@name="' . $field . '"]');
+
+        self::assertNotFalse($nodes);
+        self::assertSame(1, $nodes->length, $this->relativePath($path) . ' should define one field ' . $field . '.');
+        self::assertInstanceOf(DOMElement::class, $nodes->item(0));
+
+        return $nodes->item(0);
+    }
+
+    private function phpRegex(string $regex): string
+    {
+        return chr(1) . $regex . chr(1) . 'u';
     }
 
     private function relativePath(string $path): string

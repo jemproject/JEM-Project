@@ -88,11 +88,11 @@ class JemModelEvent extends ItemModel
                     $this->getState('item.select',
                         'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, a.contactid,' .
                         'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
-                        'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
+                        'a.created, a.created_by, a.published, a.publish_up, a.publish_down, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, a.reginvitedonly, ' .
                         'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                        'a.hits, a.language, a.event_status, a.ticket_availability, a.recurrence_type, a.recurrence_first_id, a.type_id'));
+                        'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id'));
                 $query->from('#__jem_events AS a');
 
                 # Author
@@ -106,7 +106,7 @@ class JemModelEvent extends ItemModel
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                     'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
                 # Join over the category tables
@@ -193,7 +193,7 @@ class JemModelEvent extends ItemModel
                 }
 
                 # Types have their own ACL; events assigned to an inaccessible or unpublished type are hidden.
-                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR jt.id IS NULL OR jt.access IN ('.implode(',', $levels).'))');
+                $query->where('(a.type_id IS NULL OR a.type_id = 0 OR (jt.id IS NOT NULL AND jt.access IN ('.implode(',', $levels).')))');
 
                 # Filter by published state ==> later.
                 //  It would result in too complicated query.
@@ -229,7 +229,7 @@ class JemModelEvent extends ItemModel
                 # Convert parameter fields to objects.
                 $registry = new Registry;
                 $registry->loadString($data->attribs);
-                $data->params = JemHelper::globalattribs(); // returns Registry object
+                $data->params = clone JemHelper::globalattribs(); // returns Registry object
                 $data->params->merge($registry);
 
                 $registry = new Registry;
@@ -240,15 +240,15 @@ class JemModelEvent extends ItemModel
 
                 $registry = new Registry;
                 $registry->loadString($data->venue_attribs ?? '{}');
-                $data->venue_params = JemHelper::globalattribs();
+                $data->venue_params = clone JemHelper::globalattribs();
                 $data->venue_params->merge($registry);
 
                 $data->categories = $this->getCategories($pk);
 
                 # Compute selected asset permissions.
                 $access_edit = $user->can('edit', 'event', $data->id, $data->created_by);
-                $access_view = (($data->published == 1) || ($data->published == 2) ||          // published and archived event
-                    (($data->published == 0) && $access_edit) ||                   // unpublished for editors,
+                $access_view = (JemHelper::isEventPublishedNow($data) || ($data->published == 2) || // active and archived event
+                    ((in_array((int) $data->published, array(0, 1), true)) && $access_edit) || // unpublished/scheduled for editors,
                     $user->can('publish', 'event', $data->id, $data->created_by)); // all for publishers
 
                 $data->params->set('access-edit', $access_edit);
@@ -411,11 +411,11 @@ class JemModelEvent extends ItemModel
                 $this->getState('item.select',
                     'a.id, a.id AS did, a.title, a.alias, a.dates, a.enddates, a.times, a.endtimes, a.access, a.attribs, a.metadata, ' .
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
-                    'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
+                    'a.created, a.created_by, a.published, a.publish_up, a.publish_down, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
                     'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.fullimage_layout, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
-                    'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
+                    'a.hits, a.language, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, a.type_id' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');
 
             # Author
@@ -437,7 +437,7 @@ class JemModelEvent extends ItemModel
                 'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, ' .
                 'l.attribs AS venue_attribs, ' .
                 'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.type_id AS venue_type_id');
+                'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id');
             $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
 
             # Join over the category tables
@@ -483,10 +483,25 @@ class JemModelEvent extends ItemModel
                 $query->select('0 AS contactid2');
             }
 
-            $dateFrom = date('Y-m-d', $datetimeFrom);
-            $timeFrom = date('H:i:s', $datetimeFrom);
-            $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
-            $query->where("(a.dates > '" . $dateFrom . "' OR a.dates = '" . $dateFrom . "' AND dates >= '" . $timeFrom . "')");
+            $dateFrom = gmdate('Y-m-d', $datetimeFrom);
+            $timeFrom = gmdate('H:i:s', $datetimeFrom);
+            $utcFrom = gmdate('Y-m-d H:i:s', $datetimeFrom);
+            $seriesLookup = $db->getQuery(true)
+                ->select($db->quoteName('series_id'))
+                ->from($db->quoteName('#__jem_events'))
+                ->where($db->quoteName('id') . ' = ' . (int) $id);
+            $db->setQuery($seriesLookup);
+            $seriesId = (int) $db->loadResult();
+            if ($seriesId > 0) {
+                $query->where('a.series_id = ' . $seriesId);
+            } else {
+                $query->where('((a.recurrence_first_id = 0 AND a.id = ' . (int)($pk?$pk:$id) . ') OR a.recurrence_first_id = ' . (int)($pk?$pk:$id) . ')');
+            }
+            $query->where(
+                '((a.start_utc IS NOT NULL AND a.start_utc >= ' . $db->quote($utcFrom) . ')' .
+                ' OR (a.start_utc IS NULL AND (a.dates > ' . $db->quote($dateFrom) .
+                ' OR (a.dates = ' . $db->quote($dateFrom) . ' AND (a.times IS NULL OR a.times >= ' . $db->quote($timeFrom) . ')))))'
+            );
             $query->order('a.dates ASC');
 
             try
@@ -511,7 +526,7 @@ class JemModelEvent extends ItemModel
             # Convert parameter fields to objects.
             $registry = new Registry;
             $registry->loadString($data[0]->attribs);
-            $data[0]->params = JemHelper::globalattribs(); // returns Registry object
+            $data[0]->params = clone JemHelper::globalattribs(); // returns Registry object
             $data[0]->params->merge($registry);
 
             $registry = new Registry;
@@ -522,15 +537,15 @@ class JemModelEvent extends ItemModel
 
             $registry = new Registry;
             $registry->loadString($data[0]->venue_attribs ?? '{}');
-            $data[0]->venue_params = JemHelper::globalattribs();
+            $data[0]->venue_params = clone JemHelper::globalattribs();
             $data[0]->venue_params->merge($registry);
 
             $data[0]->categories = $this->getCategories($pk);
 
             # Compute selected asset permissions.
             $access_edit = $user->can('edit', 'event', $data[0]->id, $data[0]->created_by);
-            $access_view = (($data[0]->published == 1) || ($data[0]->published == 2) ||          // published and archived event
-                (($data[0]->published == 0) && $access_edit) ||                   // unpublished for editors,
+            $access_view = (JemHelper::isEventPublishedNow($data[0]) || ($data[0]->published == 2) || // active and archived event
+                ((in_array((int) $data[0]->published, array(0, 1), true)) && $access_edit) || // unpublished/scheduled for editors,
                 $user->can('publish', 'event', $data[0]->id, $data[0]->created_by)); // all for publishers
 
             $data[0]->params->set('access-edit', $access_edit);
@@ -599,7 +614,11 @@ class JemModelEvent extends ItemModel
             $pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
             $db = Factory::getContainer()->get('DatabaseDriver');
 
-            $db->setQuery('UPDATE #__jem_events' . ' SET hits = hits + 1' . ' WHERE id = ' . (int) $pk);
+            $db->setQuery(
+                'UPDATE #__jem_events'
+                . ' SET hits = hits + 1, last_visit = ' . $db->quote(Factory::getDate()->toSql())
+                . ' WHERE id = ' . (int) $pk
+            );
 
             try {
                 if ($db->execute() === false) {
@@ -649,6 +668,11 @@ class JemModelEvent extends ItemModel
         $query->select(array('DISTINCT c.id','c.catname','c.access','c.checked_out AS cchecked_out','c.color',$case_when_c,'c.groupid'));
         $query->from('#__jem_categories as c');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.catid = c.id');
+
+        $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
+        $typeLanguageCondition = '(ct.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR ct.base_language <> ' . $db->quote('') . ' OR ct.translation_languages IS NOT NULL)';
+        $query->select(array('ct.icon AS type_icon', 'ct.color AS type_color'));
+        $query->join('LEFT', '#__jem_types AS ct ON ct.id = c.type_id AND ct.entity = 2 AND ct.published = 1 AND ct.access IN (' . implode(',', array_map('intval', $levels)) . ') AND ' . $typeLanguageCondition);
 
         $query->select(array('a.id AS multi'));
         $query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
@@ -917,6 +941,94 @@ class JemModelEvent extends ItemModel
     }
 
     /**
+     * Reload every selected occurrence through getItem() so the current user's
+     * publication, category, type, venue and view-level decisions are present.
+     * The recurrence query is a selector only and must never authorise writes.
+     *
+     * @param   array   $candidates    Events selected by the registration form.
+     * @param   object  $primaryEvent  Fully loaded event used to render the form.
+     *
+     * @return array|false
+     */
+    protected function getAuthoritativeRegistrationEvents(array $candidates, $primaryEvent, $userId = 0, $allowOwnedCancellation = false)
+    {
+        $events = array();
+        $seen = array();
+        $primaryId = is_object($primaryEvent) ? (int) ($primaryEvent->id ?? 0) : 0;
+
+        foreach ($candidates as $candidate) {
+            $candidateId = is_object($candidate) ? (int) ($candidate->id ?? 0) : 0;
+            if ($candidateId < 1 || isset($seen[$candidateId])) {
+                continue;
+            }
+            $seen[$candidateId] = true;
+
+            if ($allowOwnedCancellation) {
+                $event = $this->getOwnedCancellationEvent($candidateId, (int) $userId);
+                if (!$event) {
+                    continue;
+                }
+            } elseif ($candidateId === $primaryId) {
+                $event = $primaryEvent;
+            } else {
+                // getListRecurrenceEventsbyId() may populate this cache with a
+                // partial row. Never reuse it for an authorisation decision.
+                if (is_array($this->_item)) {
+                    unset($this->_item[$candidateId]);
+                }
+                $event = $this->getItem($candidateId);
+            }
+
+            if (!is_object($event) || (int) ($event->id ?? 0) !== $candidateId) {
+                return false;
+            }
+
+            $events[] = $event;
+        }
+
+        return $events ?: false;
+    }
+
+    /**
+     * Load only the fields needed to release an existing registration which
+     * belongs to the current user. This deliberately bypasses view visibility
+     * without exposing protected event content.
+     */
+    protected function getOwnedCancellationEvent($eventId, $userId)
+    {
+        $eventId = (int) $eventId;
+        $userId = (int) $userId;
+        if ($eventId < 1 || $userId < 1) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select(array(
+                'e.id', 'e.id AS did', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
+                'e.timezone_mode', 'e.timezone', 'e.start_utc', 'e.end_utc',
+                'e.registra', 'e.registra_from', 'e.registra_until',
+                'e.unregistra', 'e.unregistra_until', 'e.reginvitedonly',
+                'e.recurrence_type', 'e.recurrence_first_id', 'e.series_id',
+                'e.seriesbooking', 'e.singlebooking', 'e.maxbookeduser',
+                'e.maxplaces', 'e.reservedplaces', 'e.waitinglist',
+                'v.timezone AS venue_timezone',
+            ))
+            ->from($db->quoteName('#__jem_events', 'e'))
+            ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                . ' ON r.event = e.id AND r.uid = ' . $userId)
+            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+            ->where('e.id = ' . $eventId);
+        $db->setQuery($query, 0, 1);
+
+        try {
+            return $db->loadObject() ?: false;
+        } catch (RuntimeException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Internal helper to store registration on database
      *
      * @param  int     $eventId  id of event
@@ -949,25 +1061,28 @@ class JemModelEvent extends ItemModel
             $event = false;
         }
 
+        if (!$event && $status < 0 && is_object($registration)) {
+            $event = $this->getOwnedCancellationEvent($eventId, $uid);
+        }
+
         if (empty($event)) {
             $errMsg = Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId  .']';
             return false;
         }
 
-        $oldstat = is_object($registration) ? $registration->status : 0;
-        if ($status == 1 && $status != $oldstat) {
-            if ($respectPlaces && ($event->maxplaces > 0)) {    // there is a max
-                // check if the user should go on waiting list
-                if ($event->booked >= $event->maxplaces) {
-                    if (!$event->waitinglist) {
-                        $this->setError(Text::_('COM_JEM_EVENT_FULL_NOTICE'));
-                        return false;
-                    }
-                    $onwaiting = 1;
-                }
-            }
+        $oldstat = is_object($registration)
+            ? JemRegistrationTransition::logicalStatus($registration)
+            : 0;
+
+        // A waiting attendee cannot promote their own registration by posting
+        // the attending value rendered by the response form. Keep the row on
+        // the waiting list; only the central automatic/manual policy promotes it.
+        if ($oldstat === JemRegistrationTransition::WAITING_LIST
+            && $status === JemRegistrationTransition::ATTENDING) {
+            $status = JemRegistrationTransition::WAITING_LIST;
         }
-        elseif ($status == 2) {
+
+        if ($status == 2) {
             if ($respectPlaces && !$event->waitinglist) {
                 $errMsg = Text::_('COM_JEM_NO_WAITINGLIST');
                 return false;
@@ -990,18 +1105,25 @@ class JemModelEvent extends ItemModel
         $obj->uip = $uip;
         $obj->comment = $comment;
 
-        $result = false;
         try {
             if ($regid) {
                 $obj->id = $regid;
-                $this->_db->updateObject('#__jem_register', $obj, 'id');
-                $result = $regid;
-            } else {
-                $this->_db->insertObject('#__jem_register', $obj);
-                $result = $this->_db->insertid();
             }
+
+            $options = array(
+                'respectPlaces' => (bool) $respectPlaces,
+                'allowWaiting'  => (bool) $respectPlaces,
+            );
+            if ($regid) {
+                $options['requireExisting'] = true;
+            } elseif (!is_object($registration)) {
+                $options['requireNew'] = true;
+            }
+
+            $stored = (new JemRegistrationService($this->_db))->save($obj, $options);
+            $result = (int) $stored->after->id;
         }
-        catch (Exception $e) {
+        catch (Throwable $e) {
             // we have a unique user-event key so registering twice will fail
             $errMsg = Text::_(($e->getCode() == 1062) ? 'COM_JEM_ALREADY_REGISTERED' : 'COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $eventId  .']';
             return false;
@@ -1027,18 +1149,42 @@ class JemModelEvent extends ItemModel
         $comment = $app->input->getString('reg_comment', '');
         $comment = OutputFilter::cleanText($comment);
         $regid   = $app->input->getInt('regid', 0);
-        $addplaces = $app->input->getInt('addplaces', 0);
-        $cancelplaces = $app->input->getInt('cancelplaces', 0);
+        try {
+            $addplaces = JemRegistrationQuantity::parseOptional($app->input->get('addplaces', null, 'raw'));
+            $cancelplaces = JemRegistrationQuantity::parseOptional($app->input->get('cancelplaces', null, 'raw'));
+        } catch (InvalidArgumentException $e) {
+            $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+            return false;
+        }
         $checkseries = $app->input->getString('reg_check_series', '0');
         $checkseries = ($checkseries === 'true' || $checkseries === 'on' || $checkseries === '1');
         $uid = (int) $user->get('id');
         $eventId = (int) $this->_registerid;
         $events = array();
+
+        // A visitor can only submit the two choices rendered by the event form.
+        // Waiting-list state is calculated by JEM and invitation state is set by a manager.
+        if (!in_array($status, array(
+            JemRegistrationTransition::NOT_ATTENDING,
+            JemRegistrationTransition::ATTENDING,
+        ), true)) {
+            $this->setError(Text::_('COM_JEM_ATTENDEES_STATUS_UNKNOWN'));
+            return false;
+        }
+
+        if ($uid < 1) {
+            $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+            return false;
+        }
         try {
             $event = $this->getItem($eventId);
         }
         catch (Exception $e) {
             $event = false;
+        }
+
+        if (!$event && $status < 0) {
+            $event = $this->getOwnedCancellationEvent($eventId, $uid);
         }
 
         if (!$event) {
@@ -1047,7 +1193,7 @@ class JemModelEvent extends ItemModel
         }
 
         // If event has 'seriesbooking' active and $checkseries is true then get all recurrence events of series from now (register or unregister)
-        if($event->recurrence_type){
+        if($event->recurrence_type || !empty($event->series_id)){
 
             if(($event->seriesbooking && !$event->singlebooking) || ($event->singlebooking && $checkseries)) {
                 $events = $this->getListRecurrenceEventsbyId($event->id, $event->recurrence_first_id, time());
@@ -1058,73 +1204,120 @@ class JemModelEvent extends ItemModel
             $events [] = clone $event;
         }
 
+        $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $status < 0);
+        if ($events === false) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+            return false;
+        }
+
+        // Validate every selected event before writing any series registration.
+        // Cancellation skips absent rows so a partial series can be released
+        // without creating forged "not attending" registrations.
+        $registrations = array();
+        $authorisedEvents = array();
         foreach ($events as $e) {
             $reg = $this->getUserRegistration($e->id);
-            $errMsg = '';
+
+            if ($status < 0 && !is_object($reg)) {
+                continue;
+            }
+
+            $decision = JemRegistrationAccessPolicy::decide(
+                $user,
+                $e,
+                $jemsettings,
+                $reg,
+                $status,
+                JemHelper::isEventPublishedNow($e),
+                JemHelper::isEventRegistrationOpen($e),
+                JemHelper::isEventUnregistrationOpen($e)
+            );
+            if (!$decision->isAllowed()) {
+                $this->setError(Text::_($decision->getMessageKey()));
+                return false;
+            }
+
+            $registrations[(int) $e->id] = $reg;
+            $authorisedEvents[] = $e;
+        }
+
+        if (!$authorisedEvents) {
+            $this->setError(Text::_('COM_JEM_REGISTRATION_NOT_FOUND'));
+            return false;
+        }
+        $events = $authorisedEvents;
+
+        $pending = array();
+        $uip = JemHelper::getStoredIP();
+
+        foreach ($events as $e) {
+            $reg = $registrations[(int) $e->id];
             $eventStatus = $status;
 
-
-            if ($eventStatus > 0) {
-                if ($addplaces > 0) {
-                    if ($reg) {
-                        if ($reg->status > 0) {
-                            $places = $addplaces + $reg->places;
-                        } else {
-                            $places = $addplaces;
-                        }
-                    } else {
-                        $places = $addplaces;
-                    }
-                    //Detect if the reserve go to waiting list
-                    $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                    if (!$reg || $reg->status != 0) {
-                        if ($e->maxplaces) {
-                            $placesavailableevent = $e->maxplaces - $e->reservedplaces - $e->booked;
-                            if ($e->waitinglist && $placesavailableevent <= 0) {
-                                $eventStatus = 2;
-                            }
-                        } else {
-                            $eventStatus = 1;
-                        }
-                    }
-                } else {
-                    $places = 0;
-                }
-            } else {
-                if ($reg) {
-                    $places = $reg->places - $cancelplaces;
-                    if ($reg->status >= 0 && $places > 0) {
-                        $eventStatus = $reg->status;
-                    }
-                } else {
-                    $places = 0;
-                }
+            try {
+                $quantity = JemRegistrationQuantity::resolveResponse(
+                    $eventStatus,
+                    $addplaces,
+                    $cancelplaces,
+                    $reg,
+                    $e
+                );
+            } catch (InvalidArgumentException $exception) {
+                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+                return false;
             }
 
-            //Review max places per user
-            if ($e->maxbookeduser) {
-                if ($places > $e->maxbookeduser) {
-                    $places = $e->maxbookeduser;
-                }
+            $places = $quantity->places;
+            $eventStatus = $quantity->status;
+
+            if (is_object($reg)
+                && JemRegistrationTransition::logicalStatus($reg) === JemRegistrationTransition::WAITING_LIST
+                && $eventStatus === JemRegistrationTransition::ATTENDING) {
+                $eventStatus = JemRegistrationTransition::WAITING_LIST;
             }
 
-            // Must be logged in
-            if ($uid < 1) {
-                Factory::getApplication()->enqueueMessage(Text::_('JERROR_ALERTNOAUTHOR'), 'error');
-                return;
+            $row = (object) array(
+                'event'    => (int) $e->id,
+                'uid'      => $uid,
+                'places'   => (int) $places,
+                'uregdate' => gmdate('Y-m-d H:i:s'),
+                'uip'      => $uip,
+                'comment'  => $comment,
+            );
+            JemRegistrationTransition::applyLogicalStatus($row, $eventStatus);
+
+            if ($reg) {
+                $row->id = (int) $reg->id;
             }
 
-            // IP
-            $uip = JemHelper::getStoredIP();
-
-            $regid = $reg ? (int) $reg->id : 0;
-            $result = $this->_doRegister($e->id, $uid, $uip, $eventStatus, $places, $comment, $errMsg, $regid);
-            if (!$result) {
-                $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION') . ' [id: ' . $e->id . ']');
-            } else {
-                Factory::getApplication()->enqueueMessage(($eventStatus==1? Text::_('COM_JEM_REGISTERED_USER_IN_EVENT') : Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')), 'info');
-            }
+            $pending[] = $row;
         }
+
+        try {
+            $stored = (new JemRegistrationService($this->_db))->saveMany($pending, array(
+                'respectPlaces' => true,
+                'allowWaiting'  => true,
+            ));
+        } catch (Throwable $e) {
+            $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
+            return false;
+        }
+
+        $result = 0;
+        foreach ($stored as $storedRegistration) {
+            if ((int) $storedRegistration->after->event === $eventId || !$result) {
+                $result = (int) $storedRegistration->after->id;
+            }
+
+            $logicalStatus = JemRegistrationTransition::logicalStatus($storedRegistration->after);
+            Factory::getApplication()->enqueueMessage(
+                $logicalStatus === JemRegistrationTransition::NOT_ATTENDING
+                    ? Text::_('COM_JEM_UNREGISTERED_USER_IN_EVENT')
+                    : Text::_('COM_JEM_REGISTERED_USER_IN_EVENT'),
+                'info'
+            );
+        }
+
         return $result;
     }
 

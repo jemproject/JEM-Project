@@ -8,6 +8,10 @@
 
     <fields name="params">
         <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="show_status_indicators" type="radio" default="0" label="COM_JEM_SHOW_STATUS_INDICATORS" description="COM_JEM_SHOW_STATUS_INDICATORS_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
             <field name="show_archived_events" type="radio"
                    default="0"
                    label="COM_JEM_SHOW_ONLY_ARCHIVED_EVENTS"
@@ -75,25 +79,27 @@
                 <option value="4">COM_JEM_STATE</option>
                 <option value="5">COM_JEM_CATEGORY</option>
             </field>
-        <field name="tabledirectionorder" type="radio"
-            default="ASC"
-            label="COM_JEM_TABLE_DIRECTION_ORDER"
-            description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
-            class="btn-group "
-        >
-            <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
-            <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
-        </field>
+            <field name="tabledirectionorder" type="radio"
+                default="ASC"
+                label="COM_JEM_TABLE_DIRECTION_ORDER"
+                description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
+                class="btn-group "
+            >
+                <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
+                <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+            </field>
             <field name="tablefiltereventfrom" type="text"
                    default=""
-                   filter="integer"
+                   inputmode="numeric"
+                   pattern="[0-9]*"
                    label="COM_JEM_FILTER_EVENT_FROM"
                    description="COM_JEM_FILTER_EVENT_FROM_DESC"
                    class="w-auto" />
 
             <field name="tablefiltereventuntil" type="text"
                    default=""
-                   filter="integer"
+                   inputmode="numeric"
+                   pattern="[0-9]*"
                    label="COM_JEM_FILTER_EVENT_UNTIL"
                    description="COM_JEM_FILTER_EVENT_UNTIL_DESC"
                    class="w-auto" />
@@ -116,20 +122,21 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
-            <field name="tabledirectionorder" type="radio"
-                default="ASC"
-                label="COM_JEM_TABLE_DIRECTION_ORDER"
-                description="COM_JEM_TABLE_DIRECTION_ORDER_DESC"
-                class="btn-group "
+            <field type="spacer" name="spacer1" hr="true" />
+            <field name="categoryswitch" type="radio"
+                default="0"
+                label="COM_JEM_CATEGORYSWITCH"
+                description="COM_JEM_CATEGORYSWITCH_DESC"
+                class="btn-group btn-group-yesno"
             >
-                <option value="ASC">COM_JEM_ORDER_ASCENDING</option>
-                <option value="DESC">COM_JEM_ORDER_DESCENDING</option>
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
             </field>
-      <field type="spacer" name="spacer1" hr="true" />
-<field name="categoryswitchcats" type="text"
+            <field name="categoryswitchcats" type="text"
                 default=""
                 label="COM_JEM_CATEGORYSWITCHCATS"
-                description="COM_JEM_CATEGORYSWITCHCATS_DESC" class="form-control w-auto"
+                description="COM_JEM_CATEGORYSWITCHCATS_DESC"
+                class="form-control w-auto"
             />
             <field name="includesubcategories" type="radio"
                 default="0"

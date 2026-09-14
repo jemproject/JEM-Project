@@ -1,0 +1,45 @@
+#jem form.jem-form-mode--ready:not(.jem-form-mode--advanced) [data-jem-advanced-field] {
+    display: none !important;
+}
+
+#jem [data-jem-form-mode] [data-showon].hidden {
+    display: none !important;
+}
+
+#jem .jem-form-mode-toggle {
+    --bs-btn-color: var(--body-color, #212529);
+    --bs-btn-hover-color: var(--btn-hover-color, #fff);
+    --bs-btn-active-color: var(--btn-active-color, #fff);
+    align-items: center;
+    display: inline-flex;
+    gap: 0.4rem;
+    margin-inline-start: auto;
+}
+
+#jem .jem-form-mode-toggle[aria-pressed="false"]:focus:not(:hover):not(:focus-visible) {
+    color: var(--body-color, #212529) !important;
+}
+
+#jem .jem-form-mode-state-indicator {
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    display: inline-block;
+    height: 0.6rem;
+    opacity: 0.55;
+    width: 0.6rem;
+}
+
+#jem .jem-form-mode-toggle[aria-pressed="true"] .jem-form-mode-state-indicator {
+    background: #f59e0b;
+    border-color: #f59e0b;
+    opacity: 1;
+}
+
+#jem .jem-editevent-field-featured select,
+#jem .jem-editevent-field-featured .form-select {
+    flex: 0 0 auto;
+    min-width: 6.5rem;
+    padding-inline-end: 2.75rem;
+    width: auto !important;
+}

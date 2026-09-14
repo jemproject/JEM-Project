@@ -15,8 +15,7 @@ use Joomla\CMS\Language\Text;
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 
 $wa = $this->document->getWebAssetManager();
-        $wa->useStyle('jem.geostyle')
-            ->useScript('keepalive')
+$wa->useScript('keepalive')
             ->useScript('form.validate')
             ->useScript('jem.attachments')
             ->useScript('inlinehelp')
@@ -51,6 +50,7 @@ Text::script('COM_JEM_GEOCODE_INVALID_RESULT_SELECTION');
 Text::script('COM_JEM_STREET');
 Text::script('COM_JEM_ZIP');
 Text::script('COM_JEM_CITY');
+Text::script('COM_JEM_DISTRICT');
 Text::script('COM_JEM_STATE');
 Text::script('COM_JEM_COUNTRY');
 Text::script('JCANCEL');
@@ -322,6 +322,7 @@ Text::script('JCANCEL');
                 street: getFieldValue('jform_street'),
                 postalcode: getFieldValue('jform_postalCode'),
                 city: getFieldValue('jform_city'),
+                district: getFieldValue('jform_district'),
                 state: getFieldValue('jform_state'),
                 country: countryCode && countryCode !== '0' ? getFieldText('jform_country') : '',
                 countryCode: countryCode
@@ -335,6 +336,7 @@ Text::script('JCANCEL');
                 address.street,
                 address.postalcode,
                 address.city,
+                address.district,
                 address.state,
                 address.country
             ].filter(Boolean).join(', ');
@@ -427,6 +429,7 @@ Text::script('JCANCEL');
                 street: [road, houseNumber].filter(Boolean).join(' '),
                 postalCode: getAddressPart(address, ['postcode']),
                 city: city,
+                district: getAddressPart(address, ['city_district', 'borough', 'suburb', 'quarter']),
                 state: getAddressPart(address, ['state', 'region']),
                 countryCode: address.country_code ? address.country_code.toUpperCase() : ''
             };
@@ -436,6 +439,7 @@ Text::script('JCANCEL');
             setFieldValue('jform_street', osmAddress.street);
             setFieldValue('jform_postalCode', osmAddress.postalCode);
             setFieldValue('jform_city', osmAddress.city);
+            setFieldValue('jform_district', osmAddress.district);
             setFieldValue('jform_state', osmAddress.state);
             setCountryFieldValue(osmAddress.countryCode);
         }
@@ -447,6 +451,7 @@ Text::script('JCANCEL');
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STREET') : 'Street', current: getFieldValue('jform_street'), suggested: osmAddress.street, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_ZIP') : 'Post code', current: getFieldValue('jform_postalCode'), suggested: osmAddress.postalCode, relaxed: false},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_CITY') : 'City', current: getFieldValue('jform_city'), suggested: osmAddress.city, relaxed: false},
+                {label: Joomla.Text ? Joomla.Text._('COM_JEM_DISTRICT') : 'District', current: getFieldValue('jform_district'), suggested: osmAddress.district, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_STATE') : 'County', current: getFieldValue('jform_state'), suggested: osmAddress.state, relaxed: true},
                 {label: Joomla.Text ? Joomla.Text._('COM_JEM_COUNTRY') : 'Country', current: getFieldValue('jform_country'), suggested: osmAddress.countryCode, relaxed: false}
             ];
@@ -849,23 +854,31 @@ Text::script('JCANCEL');
         }
     });
 
-    // window.addEvent('domready', function() {
     window.onload = function() {
-        setAttribute();
+        setGeoDataAttributes();
         test();
     }
 
-    function setAttribute(){
-        document.getElementById("tmp_form_postalCode").setAttribute("geo-data", "postal_code");
-        document.getElementById("tmp_form_city").setAttribute("geo-data", "locality");
-        document.getElementById("tmp_form_state").setAttribute("geo-data", "administrative_area_level_1");
-        document.getElementById("tmp_form_street").setAttribute("geo-data", "street_address");
-        document.getElementById("tmp_form_route").setAttribute("geo-data", "route");
-        document.getElementById("tmp_form_streetnumber").setAttribute("geo-data", "street_number");
-        document.getElementById("tmp_form_country").setAttribute("geo-data", "country_short");
-        document.getElementById("tmp_form_latitude").setAttribute("geo-data", "lat");
-        document.getElementById("tmp_form_longitude").setAttribute("geo-data", "lng");
-        document.getElementById("tmp_form_venue").setAttribute("geo-data", "name");
+    function setGeoDataAttributes(){
+        var geoFields = {
+            tmp_form_postalCode: "postal_code",
+            tmp_form_city: "locality",
+            tmp_form_state: "administrative_area_level_1",
+            tmp_form_street: "street_address",
+            tmp_form_route: "route",
+            tmp_form_streetnumber: "street_number",
+            tmp_form_country: "country_short",
+            tmp_form_latitude: "lat",
+            tmp_form_longitude: "lng",
+            tmp_form_venue: "name"
+        };
+
+        Object.keys(geoFields).forEach(function (id) {
+            var field = document.getElementById(id);
+            if (field) {
+                field.setAttribute("geo-data", geoFields[id]);
+            }
+        });
     }
 
     function meta(){
@@ -1046,8 +1059,12 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('district'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('level'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('capacity'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('state'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('country'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                             <li>
                                 <div class="label-form">
                                     <div class="control-group">
@@ -1068,6 +1085,9 @@ Text::script('JCANCEL');
                             <li><div class="label-form"><?php echo $this->form->renderfield('latitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('longitude'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('url'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('email'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('phone'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('mobile'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('color'); ?></div></li>
                             <?php if ($typeField) : ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('type_id'); ?></div></li>
@@ -1088,6 +1108,7 @@ Text::script('JCANCEL');
 
                     <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
                 <!-- END OF LEFT DIV -->
             <!-- </div> -->
@@ -1258,6 +1279,7 @@ Text::script('JCANCEL');
                 </div>
                 <input type="hidden" name="task" value="" />
                 <input type="hidden" name="author_ip" value="<?php echo $this->item->author_ip; ?>" />
+                <?php echo $this->form->getInput('frontend_form_mode', 'attribs'); ?>
 
                 <!-- END RIGHT DIV -->
                 <?php echo HTMLHelper::_( 'form.token' ); ?>

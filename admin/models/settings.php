@@ -173,11 +173,99 @@ class JemModelSettings extends AdminModel
         }
 
         // sanitize
+        $moduleStatusBooleanFields = array(
+            'module_status_ribbons',
+            'module_status_active_cancelled',
+            'module_status_active_postponed',
+            'module_status_active_rescheduled',
+            'module_status_active_moved_online',
+            'module_status_active_preorder',
+            'module_status_active_soldout',
+            'module_status_active_waitinglist',
+            'module_status_active_last_places',
+            'module_status_active_new',
+            'module_status_active_open',
+        );
+        foreach ($moduleStatusBooleanFields as $fieldName) {
+            $data[$fieldName] = (int) !empty($data[$fieldName]);
+        }
+
+        $moduleStatusPositions = array(
+            'horizontal_top',
+            'horizontal_center',
+            'horizontal_bottom',
+            'diagonal_ascending',
+            'diagonal_descending',
+        );
+        $moduleStatusPosition = (string) ($data['module_status_ribbon_position'] ?? 'diagonal_ascending');
+        $data['module_status_ribbon_position'] = in_array($moduleStatusPosition, $moduleStatusPositions, true)
+            ? $moduleStatusPosition
+            : 'diagonal_ascending';
+        $data['module_status_ribbon_side_margin'] = min(
+            200,
+            max(0, (int) ($data['module_status_ribbon_side_margin'] ?? 0))
+        );
+        $data['module_status_ribbon_scale'] = min(
+            200,
+            max(50, (int) ($data['module_status_ribbon_scale'] ?? 100))
+        );
+        $data['module_status_last_places_threshold'] = min(
+            9999,
+            max(1, (int) ($data['module_status_last_places_threshold'] ?? 10))
+        );
+        $data['module_status_new_days'] = min(365, max(1, (int) ($data['module_status_new_days'] ?? 7)));
+
+        $moduleStatusColorFields = array(
+            'cancelled'    => 'COM_JEM_EVENT_STATUS_CANCELLED',
+            'postponed'    => 'COM_JEM_EVENT_STATUS_POSTPONED',
+            'rescheduled'  => 'COM_JEM_EVENT_STATUS_RESCHEDULED',
+            'moved_online' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE',
+            'preorder'     => 'COM_JEM_EVENT_AVAILABILITY_PREORDER',
+            'soldout'      => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT',
+            'waitinglist'  => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST',
+            'last_places'  => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES',
+            'new'          => 'COM_JEM_EVENT_STATUS_NEW',
+            'open'         => 'COM_JEM_EVENT_AVAILABILITY_OPEN',
+        );
+        foreach ($moduleStatusColorFields as $status => $label) {
+            $backgroundKey = 'module_status_color_' . $status . '_bg';
+            $textKey = 'module_status_color_' . $status . '_text';
+            $background = trim((string) ($data[$backgroundKey] ?? ''));
+            $textColor = trim((string) ($data[$textKey] ?? ''));
+
+            if (!preg_match('/^#[0-9a-f]{8}$/i', $background)
+                || !preg_match('/^#[0-9a-f]{6}$/i', $textColor)) {
+                $this->setError(Text::sprintf('COM_JEM_SETTINGS_MODULE_STATUS_COLOR_INVALID', Text::_($label)));
+
+                return false;
+            }
+
+            $data[$backgroundKey] = strtolower($background);
+            $data[$textKey] = strtolower($textColor);
+        }
+
         if (empty($data['imagewidth'])) {
             $data['imagewidth'] = 100;
         }
         if (empty($data['imagehight'])) {
             $data['imagehight'] = 100;
+        }
+        $imageProfileDefaults = array(
+            'image_event_intro_default_dimension' => 1200,
+            'image_event_full_default_dimension' => 1920,
+            'image_venue_default_dimension' => 1280,
+            'image_category_default_dimension' => 800,
+        );
+        foreach ($imageProfileDefaults as $key => $default) {
+            $value = filter_var($data[$key] ?? $default, FILTER_VALIDATE_INT);
+
+            if ($value === false || $value < 64 || $value > 8192) {
+                $this->setError(Text::_('COM_JEM_SETTINGS_IMAGE_DEFAULT_DIMENSION_INVALID'));
+
+                return false;
+            }
+
+            $data[$key] = (int) $value;
         }
         if (empty($data['pdf_imagewidth'])) {
             $data['pdf_imagewidth'] = 40;
@@ -345,8 +433,11 @@ class JemModelSettings extends AdminModel
                 return;
             }
 
-            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_ADMINISTRATOR);
-            Factory::getLanguage()->load('plg_actionlog_jem', JPATH_PLUGINS . '/actionlog/jem');
+            JemHelper::loadExtensionLanguage(
+                'plg_actionlog_jem',
+                JPATH_ADMINISTRATOR,
+                JPATH_PLUGINS . '/actionlog/jem'
+            );
 
             $app = Factory::getApplication();
             $user = $app->getIdentity();
@@ -578,11 +669,11 @@ class JemModelSettings extends AdminModel
         // Get info about all JEM parts
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(['name', 'type', 'enabled', 'manifest_cache'])
+            ->select(['name', 'element', 'type', 'enabled', 'manifest_cache'])
             ->from('#__extensions')
-            ->where('name LIKE "%jem%"');
+            ->where('(name LIKE "%jem%" OR element = ' . $db->quote('files_acym_jem') . ')');
         $db->setQuery($query);
-        $extensions = $db->loadObjectList('name');
+        $extensions = $db->loadObjectList();
 
         $known_extensions = array('pkg_jem', 'com_jem', 'mod_jem', 'mod_jem_cal',
                                   'mod_jem_banner', 'mod_jem_jubilee', 'mod_jem_teaser', 'mod_jem_wide', 'mod_jem_map', 'mod_jem_types',
@@ -590,10 +681,15 @@ class JemModelSettings extends AdminModel
                                   'plg_finder_jem',
                                   'plg_quickicon_jem', 'Quick Icon - JEM',
                                   'plg_jem_comments', 'plg_jem_mailer', 'plg_jem_demo',
-                                  'AcyMailing Tag : insert events from JEM 2.1+');
+                                  'AcyMailing Tag : insert events from JEM 2.1+',
+                                  'files_acym_jem');
 
-        foreach ($extensions as $name => $extension) {
-            if (in_array($name, $known_extensions)) {
+        foreach ($extensions as $extension) {
+            $name = $extension->element === 'files_acym_jem'
+                ? 'files_acym_jem'
+                : $extension->name;
+
+            if (in_array($name, $known_extensions, true)) {
                 $manifest = json_decode($extension->manifest_cache, true);
                 $extension->version      = (!empty($manifest) && array_key_exists('version',      $manifest)) ? $manifest['version']      : '?';
                 $extension->creationDate = (!empty($manifest) && array_key_exists('creationDate', $manifest)) ? $manifest['creationDate'] : '?';

@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 
+require_once __DIR__ . '/accessdecision.class.php';
+
 /**
  * JEM user class with additional functions.
  * Because User::getInstance has different paramters on different versions
@@ -373,186 +375,406 @@ abstract class JemUserAbstract extends User
     }
 
     /**
-     * Checks if user is allowed to do actions on objects.
-     * Respects Joomla and JEM group permissions.
+     * Return the detailed result of a JEM permission evaluation.
      *
-     * @param  $action      mixed  One or array of 'add', 'edit', 'publish', 'delete'
-     * @param  $type        string One of 'event', 'venue'
-     * @param  $id          mixed  The event or venue id or false (default)
-     * @param  $created_by  mixed  User id of creator or false (default)
-     * @param  $categoryIds mixed  List of category IDs to limit for or false (default)
-     * @return true if allowed, false otherwise
-     * @note   If nno categoryIds are given this functions checks if there is any potential way
-     *         to allow requested action. To prevent this check set categoryIds to 1 (root category)
+     * The evaluation order and allow/deny semantics intentionally match the
+     * historical can() method. Existing callers therefore keep the same result,
+     * while controllers and diagnostic tools can identify the stage and source
+     * which granted or blocked an event or venue operation.
+     *
+     * Multiple requested actions retain the historical ANY semantic: the result
+     * is allowed when at least one requested action is allowed.
+     *
+     * @param mixed $action      One action or an array of add, edit, publish, delete.
+     * @param string $type       event or venue.
+     * @param mixed $id          Record id, zero for a new record, or false.
+     * @param mixed $created_by  Stored creator id, or false.
+     * @param mixed $categoryIds Event category ids, or false.
+     *
+     * @return JemAccessDecision Structured result. See JemAccessDecision::toArray().
      */
-    public function can($action, $type, $id = false, $created_by = false, $categoryIds = false)
+    public function getAccessDecision($action, $type, $id = false, $created_by = false, $categoryIds = false)
     {
-        $userId = (int)$this->id;
+        $userId = (int) $this->id;
+        $actions = array_values(array_unique(array_map('strval', (array) $action)));
+        $resultAction = count($actions) === 1 ? $actions[0] : $actions;
+        $validActions = array('add', 'edit', 'publish', 'delete');
+        $recordId = ($id === false) ? 0 : (int) $id;
+        $reasons = array();
 
-        // guests are not allowed to do anything except looking
+        $reason = static function ($code, $stage, $source, $checkedAction = '', array $details = array()) {
+            return array(
+                'code'    => $code,
+                'stage'   => $stage,
+                'source'  => $source,
+                'action'  => $checkedAction,
+                'details' => $details,
+            );
+        };
+
+        // Guests are rejected before resource details are evaluated or queried.
         if (empty($userId) || $this->get('guest', 0)) {
-            return false;
+            return JemAccessDecision::deny(
+                JemAccessDecision::AUTHENTICATION_REQUIRED,
+                'authentication',
+                'joomla_identity',
+                $resultAction,
+                $type,
+                0
+            );
         }
 
-        $action = (array)$action;
+        if (!in_array($type, array('event', 'venue'), true)) {
+            return JemAccessDecision::deny(
+                JemAccessDecision::INVALID_RESOURCE_TYPE,
+                'request',
+                'jem',
+                $resultAction,
+                $type,
+                0,
+                array(),
+                array('requestedType' => $type)
+            );
+        }
+
+        if (!$actions || array_diff($actions, $validActions)) {
+            return JemAccessDecision::deny(
+                JemAccessDecision::INVALID_ACTION,
+                'request',
+                'jem',
+                $resultAction,
+                $type,
+                $recordId,
+                array(),
+                array('requestedActions' => $actions)
+            );
+        }
 
         if (!empty($categoryIds)) {
-            $categoryIds = (array)$categoryIds;
-            $catIds = array();
-            foreach ($categoryIds as $catId) {
-                if ((int)$catId > 0) {  // allow 'root' category with which caller can skip "potentially allowed" check
-                    $catIds[] = (int)$catId;
-                }
-            }
-            $categoryIds = $catIds; // non-zero integers
+            $categoryIds = array_values(array_unique(array_filter(array_map('intval', (array) $categoryIds))));
         } else {
             $categoryIds = array();
         }
 
-        $created_by  = (int)$created_by;
-        $id          = ($id === false) ? $id : (int)$id;
-        $asset       = 'com_jem';
+        $created_by = (int) $created_by;
+        $id = ($id === false) ? $id : (int) $id;
+        $asset = 'com_jem';
         $jemsettings = JemHelper::config();
 
-        switch ($type) {
-            case 'event':
-                $create   = ($jemsettings->delivereventsyes == -1);
-                $edit     = ($jemsettings->eventedit == -1);
-                $edit_own = ($jemsettings->eventowner == 1);
-                $autopubl = ($jemsettings->autopubl == -1); // auto-publish new events
-                // not supported yet
-                //if (!empty($id)) {
-                //    $asset .= '.event.' . $id;
-                //}
-                break;
-            case 'venue':
-                $create   = ($jemsettings->deliverlocsyes == -1);
-                $edit     = ($jemsettings->venueedit == -1);
-                $edit_own = ($jemsettings->venueowner == 1);
-                $autopubl = ($jemsettings->autopublocate == -1); // auto-publish new venues
-                // not supported yet
-                //if (!empty($id)) {
-                //    $asset .= '.venue.' . $id;
-                //}
-                break;
-            default:
-                $create = $edit = $edit_own = $autopubl = false;
-                break;
+        if ($type === 'event') {
+            $create = ($jemsettings->delivereventsyes == -1);
+            $edit = ($jemsettings->eventedit == -1);
+            $edit_own = ($jemsettings->eventowner == 1);
+            $autopubl = ($jemsettings->autopubl == -1);
+        } else {
+            $create = ($jemsettings->deliverlocsyes == -1);
+            $edit = ($jemsettings->venueedit == -1);
+            $edit_own = ($jemsettings->venueowner == 1);
+            $autopubl = ($jemsettings->autopublocate == -1);
         }
-        $assets[] = $asset;
-        // not supported yet
-        //foreach($categoryIds as $catId) {
-        //    $assets[] = 'com_jem.category.'.$catId;
-        //}
 
-        // Joomla ACL system, JEM global settings
+        // Preserve the existing component-level Joomla ACL behaviour. Category
+        // assets are not added here until JEM defines their multi-category policy.
+        if ($this->authorise('core.manage', $asset)) {
+            return JemAccessDecision::allow(
+                'component_acl',
+                'joomla_core_manage',
+                $resultAction,
+                $type,
+                $recordId,
+                $reasons,
+                array('grantedPermission' => 'core.manage')
+            );
+        }
 
-        $authorised = false;
-        foreach ($assets as $asset) {
-            if ($authorised) { break; }
-            $authorised |= (bool)$this->authorise('core.manage', $asset);
+        $ownerGrantMismatch = false;
 
-            foreach ($action as $act) {
-                if ($authorised) { break; }
-                switch ($act) {
-                    case 'add':
-                        $authorised |= $create || $this->authorise('core.create', $asset);
-                        break;
-                    case 'edit':
-                        $authorised |= $this->authorise('core.edit', $asset); // $edit is limited to events not attached to jem groups
-                        // user is owner and edit-own is enabled
-                        $authorised |= ($edit_own || $this->authorise('core.edit.own', $asset)) &&
-                            !empty($created_by) && ($userId == $created_by);
-                        break;
-                    case 'publish':
-                        $authorised |= $this->authorise('core.edit.state', $asset);
-                        // user is creator of new item and auto-publish is enabled
-                        $authorised |= $autopubl && ($id === 0) &&
-                            (empty($created_by) || ($userId == $created_by));
-                        // user is creator, can edit this item and auto-publish is enabled
-                        // (that's because we allowed user to not publish new item with auto-puplish enabled)
-                        $authorised |= $autopubl && ($edit || $edit_own) && ($id !== 0) &&
-                            !empty($created_by) && ($userId == $created_by);
-                        break;
-                    case 'delete':
-                        $authorised |= $this->authorise('core.delete', $asset);
-                        break;
-                }
+        // Joomla component ACL and JEM User Control keep the historical OR
+        // relationship. The first grant wins, while failed checks are retained
+        // in reasons for administrator diagnostics.
+        foreach ($actions as $act) {
+            switch ($act) {
+                case 'add':
+                    if ($create) {
+                        return JemAccessDecision::allow(
+                            'user_control',
+                            'jem_global_setting',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('setting' => $type === 'event' ? 'delivereventsyes' : 'deliverlocsyes')
+                        );
+                    }
+                    $reasons[] = $reason('JEM_GLOBAL_CREATE_NOT_GRANTED', 'user_control', 'jem_global_setting', $act);
+
+                    if ($this->authorise('core.create', $asset)) {
+                        return JemAccessDecision::allow(
+                            'component_acl',
+                            'joomla_acl',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('grantedPermission' => 'core.create')
+                        );
+                    }
+                    $reasons[] = $reason('JOOMLA_CREATE_NOT_GRANTED', 'component_acl', 'joomla_acl', $act);
+                    break;
+
+                case 'edit':
+                    if ($this->authorise('core.edit', $asset)) {
+                        return JemAccessDecision::allow(
+                            'component_acl',
+                            'joomla_acl',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('grantedPermission' => 'core.edit')
+                        );
+                    }
+                    $reasons[] = $reason('JOOMLA_EDIT_NOT_GRANTED', 'component_acl', 'joomla_acl', $act);
+
+                    $joomlaEditOwn = (bool) $this->authorise('core.edit.own', $asset);
+                    if ($edit_own || $joomlaEditOwn) {
+                        if (!empty($created_by) && ($userId === $created_by)) {
+                            return JemAccessDecision::allow(
+                                'ownership',
+                                $joomlaEditOwn ? 'joomla_acl' : 'jem_global_setting',
+                                $act,
+                                $type,
+                                $recordId,
+                                $reasons,
+                                array(
+                                    'grantedPermission' => $joomlaEditOwn ? 'core.edit.own' : 'edit_own',
+                                    'ownerId' => $created_by,
+                                )
+                            );
+                        }
+
+                        $ownerGrantMismatch = true;
+                        $reasons[] = $reason(
+                            JemAccessDecision::NOT_RECORD_OWNER,
+                            'ownership',
+                            $joomlaEditOwn ? 'joomla_acl' : 'jem_global_setting',
+                            $act
+                        );
+                    } else {
+                        $reasons[] = $reason('EDIT_OWN_NOT_GRANTED', 'ownership', 'joomla_and_jem', $act);
+                    }
+                    break;
+
+                case 'publish':
+                    if ($this->authorise('core.edit.state', $asset)) {
+                        return JemAccessDecision::allow(
+                            'component_acl',
+                            'joomla_acl',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('grantedPermission' => 'core.edit.state')
+                        );
+                    }
+                    $reasons[] = $reason('JOOMLA_EDIT_STATE_NOT_GRANTED', 'component_acl', 'joomla_acl', $act);
+
+                    $canAutopublishNew = $autopubl && ($id === 0)
+                        && (empty($created_by) || ($userId === $created_by));
+                    $canAutopublishOwned = $autopubl && ($edit || $edit_own) && ($id !== 0)
+                        && !empty($created_by) && ($userId === $created_by);
+
+                    if ($canAutopublishNew || $canAutopublishOwned) {
+                        return JemAccessDecision::allow(
+                            'user_control',
+                            'jem_autopublish',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('setting' => $type === 'event' ? 'autopubl' : 'autopublocate')
+                        );
+                    }
+                    $reasons[] = $reason('JEM_AUTOPUBLISH_NOT_GRANTED', 'user_control', 'jem_autopublish', $act);
+                    break;
+
+                case 'delete':
+                    if ($this->authorise('core.delete', $asset)) {
+                        return JemAccessDecision::allow(
+                            'component_acl',
+                            'joomla_acl',
+                            $act,
+                            $type,
+                            $recordId,
+                            $reasons,
+                            array('grantedPermission' => 'core.delete')
+                        );
+                    }
+                    $reasons[] = $reason('JOOMLA_DELETE_NOT_GRANTED', 'component_acl', 'joomla_acl', $act);
+                    break;
             }
         }
 
-        // JEM User groups
-        if (!$authorised) {
-            if (($type == 'event') || ($type == 'venue')) {
-                $fields = array();
-                foreach ($action as $act) {
-                    switch ($act) {
-                        case 'add':
-                        case 'edit':
-                        case 'publish':
-                            $fields[] = $act.$type;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                // Get all JEM groups with requested permissions and user is member of.
-                $jemgroups = empty($fields) ? array() : $this->getJemGroups($fields);
-                // If registered users are generally allowed (by JEM Settings) to edit events/venues
-                // add JEM group 0 and make category check
-                if ($edit && (in_array('edit', $action))) {
-                    $jemgroups[0] = true;
-                }
-                if (!empty($jemgroups)) {
-                    if (empty($categoryIds) && (($type != 'event') || (empty($id) && (!in_array('publish', $action))))) {
-                        $authorised = true; // new events and venues have no limiting categories, so generally authorised
-                    } else { // we have a valid event object so check event's categories against jem groups
-                        $whereCats = empty($categoryIds) ? '' : ' AND c.id IN ('.implode(',', $categoryIds).')';
-
-                        $levels = $this->getAuthorisedViewLevels();
-                        // We have to check ALL categories, also those not seen by user.
-                        $db = Factory::getContainer()->get('DatabaseDriver');
-                        $query  = 'SELECT DISTINCT c.id, c.groupid, c.access'
-                            . ' FROM #__jem_categories AS c';
-                        if (!empty($id)) {
-                            $query .= ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-                                . ' WHERE rel.itemid = ' . $id
-                                . ' AND c.published = 1';
-                        } else {
-                            $query .= ' WHERE c.published = 1';
-                        }
-                        $query .= $whereCats;
-                        $db->setQuery( $query );
-                        $cats = $db->loadObjectList();
-                    }
-
-                    if (!empty($cats)) {
-                        $unspecific = in_array('publish', $action) ? -1 : 0; // publish requires jemgroup
-                        foreach($cats as $cat) {
-                            if (empty($cat->groupid)) {
-                                if ($unspecific === 0) {
-                                    $unspecific = 1;
-                                }
-                            } else {
-                                $unspecific = -1; // at least one group assigned so group permissions take precedence
-                                if (in_array($cat->access, $levels) && array_key_exists($cat->groupid, $jemgroups)) {
-                                    // user can "see" this category and is member of connected jem group granting permission
-                                    $authorised = true;
-                                    break; // foreach cats
-                                }
-                            }
-                        }
-                        if ($unspecific === 1) {
-                            // only categories without connected JEM group found, so user is authorised
-                            $authorised = true;
-                        }
-                    }
-                }
+        // JEM groups are the final historical grant path for add/edit/publish.
+        $fields = array();
+        foreach ($actions as $act) {
+            if (in_array($act, array('add', 'edit', 'publish'), true)) {
+                $fields[] = $act . $type;
             }
         }
 
-        return (bool)$authorised;
+        $jemgroups = empty($fields) ? array() : (array) $this->getJemGroups($fields);
+        if ($edit && in_array('edit', $actions, true)) {
+            $jemgroups[0] = true;
+        }
+
+        if (empty($jemgroups)) {
+            $code = $ownerGrantMismatch
+                ? JemAccessDecision::NOT_RECORD_OWNER
+                : (empty($fields) ? JemAccessDecision::ACTION_NOT_ALLOWED : JemAccessDecision::JEM_GROUP_ACTION_DENIED);
+
+            return JemAccessDecision::deny(
+                $code,
+                $ownerGrantMismatch ? 'ownership' : (empty($fields) ? 'component_acl' : 'jem_group'),
+                $ownerGrantMismatch ? 'ownership' : (empty($fields) ? 'joomla_acl' : 'jem_group'),
+                $resultAction,
+                $type,
+                $recordId,
+                $reasons,
+                array('requiredGroupFields' => $fields)
+            );
+        }
+
+        if (empty($categoryIds) && (($type !== 'event') || (empty($id) && !in_array('publish', $actions, true)))) {
+            return JemAccessDecision::allow(
+                'jem_group',
+                array_keys($jemgroups) === array(0) ? 'jem_global_setting' : 'jem_group',
+                $resultAction,
+                $type,
+                $recordId,
+                $reasons,
+                array('groupIds' => array_keys($jemgroups))
+            );
+        }
+
+        $whereCats = empty($categoryIds) ? '' : ' AND c.id IN (' . implode(',', $categoryIds) . ')';
+        $levels = array_map('intval', $this->getAuthorisedViewLevels());
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = 'SELECT DISTINCT c.id, c.groupid, c.access FROM #__jem_categories AS c';
+
+        if (!empty($id)) {
+            $query .= ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
+                . ' WHERE rel.itemid = ' . $id
+                . ' AND c.published = 1';
+        } else {
+            $query .= ' WHERE c.published = 1';
+        }
+
+        $query .= $whereCats;
+        $db->setQuery($query);
+        $cats = (array) $db->loadObjectList();
+
+        if (empty($cats)) {
+            $reasons[] = $reason(JemAccessDecision::CATEGORY_NOT_FOUND, 'category', 'jem_category', $resultAction);
+
+            return JemAccessDecision::deny(
+                JemAccessDecision::CATEGORY_NOT_FOUND,
+                'category',
+                'jem_category',
+                $resultAction,
+                $type,
+                $recordId,
+                $reasons,
+                array('categoryIds' => $categoryIds)
+            );
+        }
+
+        $unspecific = in_array('publish', $actions, true) ? -1 : 0;
+        $restrictedCategory = false;
+        $inaccessibleCategory = false;
+
+        foreach ($cats as $cat) {
+            if (empty($cat->groupid)) {
+                if ($unspecific === 0) {
+                    $unspecific = 1;
+                }
+                continue;
+            }
+
+            $restrictedCategory = true;
+            $unspecific = -1;
+
+            if (!in_array((int) $cat->access, $levels, true)) {
+                $inaccessibleCategory = true;
+                $reasons[] = $reason(
+                    JemAccessDecision::CATEGORY_VIEW_DENIED,
+                    'category_view_level',
+                    'joomla_view_level',
+                    $resultAction,
+                    array('categoryId' => (int) $cat->id)
+                );
+                continue;
+            }
+
+            if (array_key_exists((int) $cat->groupid, $jemgroups)) {
+                return JemAccessDecision::allow(
+                    'category_group',
+                    'jem_group',
+                    $resultAction,
+                    $type,
+                    $recordId,
+                    $reasons,
+                    array(
+                        'categoryId' => (int) $cat->id,
+                        'groupId' => (int) $cat->groupid,
+                    )
+                );
+            }
+        }
+
+        if ($unspecific === 1) {
+            return JemAccessDecision::allow(
+                'category_group',
+                'jem_unrestricted_category',
+                $resultAction,
+                $type,
+                $recordId,
+                $reasons,
+                array('categoryIds' => array_map(static function ($cat) { return (int) $cat->id; }, $cats))
+            );
+        }
+
+        $code = $inaccessibleCategory
+            ? JemAccessDecision::CATEGORY_VIEW_DENIED
+            : ($restrictedCategory ? JemAccessDecision::JEM_GROUP_REQUIRED : JemAccessDecision::JEM_GROUP_ACTION_DENIED);
+
+        $reasons[] = $reason($code, 'category_group', 'jem_group', $resultAction);
+
+        return JemAccessDecision::deny(
+            $code,
+            $inaccessibleCategory ? 'category_view_level' : 'category_group',
+            $inaccessibleCategory ? 'joomla_view_level' : 'jem_group',
+            $resultAction,
+            $type,
+            $recordId,
+            $reasons,
+            array(
+                'categoryIds' => array_map(static function ($cat) { return (int) $cat->id; }, $cats),
+                'groupIds' => array_keys($jemgroups),
+            )
+        );
+    }
+
+    /**
+     * Backwards-compatible boolean permission API.
+     *
+     * All existing JEM, module and plugin calls keep the same signature and a
+     * strict boolean result. New code that needs the blocking reason should call
+     * getAccessDecision() instead.
+     */
+    public function can($action, $type, $id = false, $created_by = false, $categoryIds = false)
+    {
+        return $this->getAccessDecision($action, $type, $id, $created_by, $categoryIds)->isAllowed();
     }
 
 }

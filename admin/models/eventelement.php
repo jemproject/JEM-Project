@@ -157,13 +157,34 @@ class JemModelEventelement extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
 
-        $filter_order     = $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order', 'filter_order', 'a.dates', 'cmd' );
-        $filter_order_Dir = $app->getUserStateFromRequest( 'com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', '', 'word' );
+        $allowedOrderings = array('a.dates', 'a.times', 'a.title', 'loc.venue');
+        $jemConfig        = JemConfig::getInstance()->toRegistry();
+        $defaultOrdering  = (string) $jemConfig->get('backend_events_order', 'a.dates');
+        $defaultDirection = strtoupper((string) $jemConfig->get('backend_events_direction', 'ASC'));
+
+        if (!in_array($defaultOrdering, $allowedOrderings, true)) {
+            $defaultOrdering = 'a.dates';
+        }
+
+        if (!in_array($defaultDirection, array('ASC', 'DESC'), true)) {
+            $defaultDirection = 'ASC';
+        }
+
+        $filter_order     = $app->getUserStateFromRequest('com_jem.eventelement.filter_order', 'filter_order', $defaultOrdering, 'cmd');
+        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.eventelement.filter_order_Dir', 'filter_order_Dir', $defaultDirection, 'word');
 
         $filter_order     = InputFilter::getInstance()->clean($filter_order, 'cmd');
-        $filter_order_Dir = InputFilter::getInstance()->clean($filter_order_Dir, 'word');
+        $filter_order_Dir = strtoupper(InputFilter::getInstance()->clean($filter_order_Dir, 'word'));
 
-        $orderby = ' ORDER BY '.$filter_order.' '.$filter_order_Dir.', a.dates';
+        if (!in_array($filter_order, $allowedOrderings, true)) {
+            $filter_order = $defaultOrdering;
+        }
+
+        if (!in_array($filter_order_Dir, array('ASC', 'DESC'), true)) {
+            $filter_order_Dir = $defaultDirection;
+        }
+
+        $orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', a.dates ASC';
 
         return $orderby;
     }

@@ -15,6 +15,7 @@ use Joomla\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 
 require_once(JPATH_SITE.'/components/com_jem/classes/Zebra_Image.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/imageresourcepolicy.class.php');
 
 /**
  * Holds the logic for image manipulation
@@ -64,15 +65,23 @@ class JemImage
             return $image;
         }
 
-        if (!@getimagesize($source)) {
-            return $image;
-        }
-
         $extension = strtolower(File::getExt($image));
         $basename = File::makeSafe(pathinfo($image, PATHINFO_FILENAME));
 
         if ($extension === '' || $basename === '') {
             return $image;
+        }
+
+        $resource = JemImageResourcePolicy::inspect(
+            $source,
+            $extension,
+            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+            $maxWidth,
+            $maxHeight
+        );
+
+        if (!$resource['accepted']) {
+            return '';
         }
 
         $thumbName = sha1($image . '|' . $maxWidth . '|' . $maxHeight) . '-' . $basename . '.' . $extension;
@@ -93,6 +102,18 @@ class JemImage
 
     static public function thumb($name,$filename,$new_w,$new_h)
     {
+        $resource = JemImageResourcePolicy::inspect(
+            (string) $name,
+            strtolower(File::getExt((string) $name)),
+            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+            (int) $new_w,
+            (int) $new_h
+        );
+
+        if (!$resource['accepted']) {
+            return false;
+        }
+
         // load the image manipulation class
         //require 'path/to/Zebra_Image.php';
 
@@ -158,7 +179,11 @@ class JemImage
                     break;
                 }
             }
+
+            return false;
         }
+
+        return true;
     }
 
     /**
@@ -198,6 +223,61 @@ class JemImage
     }
 
     /**
+     * Resolve the event image selected by a module and prepare its display data.
+     *
+     * @param   object  $event           Event row containing intro and full image fields.
+     * @param   object  $params          Module parameters registry.
+     * @param   string  $defaultDisplay  Legacy display mode used when the new option is absent.
+     *
+     * @return  array|false  Image data from flyercreator(), enriched for module rendering.
+     */
+    static public function getModuleEventImageData($event, $params, $defaultDisplay = 'thumbnail')
+    {
+        $source = strtolower(trim((string) $params->get('event_image_source', 'intro')));
+        if (!in_array($source, array('intro', 'full'), true)) {
+            $source = 'intro';
+        }
+
+        $image = ($source === 'full' && !empty($event->fullimage))
+            ? (string) $event->fullimage
+            : (string) ($event->datimage ?? '');
+
+        if ($image === '') {
+            return false;
+        }
+
+        $data = self::flyercreator($image, 'event');
+        if (!$data) {
+            return false;
+        }
+
+        $configuredDisplay = $params->get('event_image_display', null);
+        $display = strtolower(trim((string) ($configuredDisplay ?? $defaultDisplay)));
+        if (!in_array($display, array('thumbnail', 'original_limited'), true)) {
+            $display = in_array($defaultDisplay, array('thumbnail', 'original_limited'), true)
+                ? $defaultDisplay
+                : 'thumbnail';
+        }
+
+        $data['display_mode'] = $display;
+        $data['display'] = $display === 'original_limited' ? $data['original'] : $data['thumb'];
+        $data['display_style'] = '';
+        $data['display_container_style'] = '';
+
+        // Missing parameters identify upgraded module instances. Keep their legacy styling unchanged.
+        if ($display === 'original_limited' && $configuredDisplay !== null) {
+            $maxWidth = (int) $params->get('event_image_max_width', 800);
+            $maxHeight = (int) $params->get('event_image_max_height', 800);
+            $maxWidth = $maxWidth > 0 ? min($maxWidth, 4096) : 800;
+            $maxHeight = $maxHeight > 0 ? min($maxHeight, 4096) : 800;
+            $data['display_style'] = 'max-width:min(100%,'.$maxWidth.'px);max-height:'.$maxHeight.'px;width:auto;height:auto;';
+            $data['display_container_style'] = 'max-width:min(100%,'.$maxWidth.'px);';
+        }
+
+        return $data;
+    }
+
+    /**
      * Creates image information of an image
      *
      * @param  string $image The image name
@@ -226,34 +306,91 @@ class JemImage
         }
 
         if ($image) {
-            $isSiteImagePath = strpos($image, '/') !== false || strpos($image, '\\') !== false;
-            $img_orig  = $isSiteImagePath ? ltrim(str_replace('\\', '/', $image), '/') : 'images/jem/'.$folder.'/'.$image;
-            $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+            $image = ltrim(str_replace('\\', '/', trim((string) $image)), '/');
+            $isSiteImagePath = strpos($image, '/') !== false;
+            $isManagedSiteImagePath = false;
+            $img_orig = $isSiteImagePath ? $image : 'images/jem/'.$folder.'/'.$image;
+            $managedPrefix = 'images/jem/'.$folder.'/';
+            $managedThumbPrefix = $managedPrefix.'small/';
 
-            $filepath  = JPATH_SITE.'/'.$img_orig;
-            $save      = JPATH_SITE.'/'.$img_thumb;
+            // Full site-relative paths may use JEM thumbnails only when their source is managed by JEM.
+            if ($isSiteImagePath
+                && strpos($img_orig, $managedPrefix) === 0
+                && strpos($img_orig, $managedThumbPrefix) !== 0
+            ) {
+                $img_thumb = $managedThumbPrefix.substr($img_orig, strlen($managedPrefix));
+                $isManagedSiteImagePath = true;
+            } else {
+                $img_thumb = $isSiteImagePath ? $img_orig : 'images/jem/'.$folder.'/small/'.$image;
+            }
+
+            $siteRoot = rtrim(Path::clean(JPATH_SITE), '\\/');
+            $sitePrefix = $siteRoot.DIRECTORY_SEPARATOR;
+            $filepath = Path::clean(JPATH_SITE.'/'.$img_orig);
+            $save = Path::clean(JPATH_SITE.'/'.$img_thumb);
+
+            if (strncasecmp($filepath, $sitePrefix, strlen($sitePrefix)) !== 0
+                || strncasecmp($save, $sitePrefix, strlen($sitePrefix)) !== 0
+            ) {
+                return false;
+            }
+
+            if ($isManagedSiteImagePath) {
+                $managedBasePath = rtrim(Path::clean(JPATH_SITE.'/images/jem/'.$folder), '\\/').DIRECTORY_SEPARATOR;
+                $managedThumbBasePath = rtrim(
+                    Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small'),
+                    '\\/'
+                ).DIRECTORY_SEPARATOR;
+
+                if (strncasecmp($filepath, $managedBasePath, strlen($managedBasePath)) !== 0
+                    || strncasecmp($save, $managedThumbBasePath, strlen($managedThumbBasePath)) !== 0
+                ) {
+                    return false;
+                }
+            }
 
             // At least original image must exist
             if (!file_exists($filepath)) {
                 return false;
             }
 
+            $resource = JemImageResourcePolicy::inspect(
+                $filepath,
+                strtolower(File::getExt((string) $image)),
+                JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+                (int) $settings->imagewidth,
+                (int) $settings->imagehight
+            );
+
+            if (!$resource['accepted']) {
+                return false;
+            }
+
             //Create thumbnail if enabled and it does not exist already
-            if (!$isSiteImagePath && $settings->gddisabled == 1 && !file_exists($save)) {
+            if ((!$isSiteImagePath || $isManagedSiteImagePath)
+                && $settings->gddisabled == 1
+                && !file_exists($save)
+            ) {
+                $saveFolder = dirname($save);
+                if (!Folder::exists($saveFolder)) {
+                    Folder::create($saveFolder);
+                }
+
                 JemImage::thumb($filepath, $save, $settings->imagewidth, $settings->imagehight);
+            }
+
+            // Keep non-JEM images read-only and use their configured display dimensions as the fallback thumbnail.
+            if (!is_file($save)) {
+                $img_thumb = $img_orig;
+                $save = $filepath;
             }
 
             //set paths
             $dimage['original'] = $img_orig;
             $dimage['thumb']    = $img_thumb;
+            $dimage['thumb_is_original'] = $img_thumb === $img_orig;
 
-            //get imagesize of the original
-            $iminfo = @getimagesize($filepath);
-
-            // and it should be an image
-            if (!is_array($iminfo) || count($iminfo) < 2) {
-                return false;
-            }
+            $iminfo = array($resource['width'], $resource['height']);
 
             //if the width or height is too large this formula will resize them accordingly
             if (($iminfo[0] > $settings->imagewidth) || ($iminfo[1] > $settings->imagehight)) {
@@ -272,9 +409,12 @@ class JemImage
                 $dimage['height'] = $iminfo[1];
             }
 
-            if (is_file(JPATH_SITE.'/'.$img_thumb)) {
+            if ($dimage['thumb_is_original']) {
+                $dimage['thumbwidth'] = $dimage['width'];
+                $dimage['thumbheight'] = $dimage['height'];
+            } elseif (is_file($save)) {
                 //get imagesize of the thumbnail
-                $thumbiminfo = @getimagesize(JPATH_SITE.'/'.$img_thumb);
+                $thumbiminfo = @getimagesize($save);
 
                 // Set dimensions if the image information is successfully retrieved
                 if (is_array($thumbiminfo)) {
@@ -294,35 +434,61 @@ class JemImage
 
     static public function check($file, $jemsettings)
     {
-        $sizelimit = $jemsettings->sizelimit*1024; //size limit in kb
-        $imagesize = $file['size'];
-        $filetypes = $jemsettings->image_filetypes ?: 'jpg,gif,png,webp';
+        $sizelimit = max(0, (int) ($jemsettings->sizelimit ?? 0)) * 1024; // size limit in KB
+        $tmpName = (string) ($file['tmp_name'] ?? '');
+        $imagesize = $tmpName !== '' ? @filesize($tmpName) : false;
+        $filetypes = ($jemsettings->image_filetypes ?? '') ?: 'jpg,gif,png,webp';
+        $displayName = htmlspecialchars((string) ($file['name'] ?? ''), ENT_COMPAT, 'UTF-8');
 
-        //check if the upload is an image...getimagesize will return false if not
-        if (!getimagesize($file['tmp_name'])) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+        if ((int) ($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK || $imagesize === false || $imagesize < 1) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.$displayName, 'warning');
+            return false;
+        }
+
+        // Trust the temporary file on disk, not the client-supplied size.
+        if ($imagesize > $sizelimit) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILE_SIZE').': '.$displayName, 'warning');
             return false;
         }
 
         //check if the imagefiletype is valid
-        $fileext = strtolower(File::getExt($file['name']));
+        $fileext = strtolower(File::getExt((string) ($file['name'] ?? '')));
 
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
-        if (!in_array($fileext, $allowable)) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+        if (!in_array($fileext, $allowable, true)) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE').': '.$displayName, 'warning');
             return false;
         }
 
-        //Check filesize
-        if ($imagesize > $sizelimit) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILE_SIZE').': '.htmlspecialchars($file['name'], ENT_COMPAT, 'UTF-8'), 'warning');
+        $resource = JemImageResourcePolicy::inspect(
+            $tmpName,
+            $fileext,
+            JemImageResourcePolicy::DEFAULT_MAX_DIMENSION,
+            (int) ($jemsettings->imagewidth ?? 0),
+            (int) ($jemsettings->imagehight ?? 0)
+        );
+
+        if (!$resource['accepted']) {
+            if ($resource['reason'] === JemImageResourcePolicy::FORMAT_MISMATCH) {
+                $message = Text::_('COM_JEM_WRONG_IMAGE_FILE_TYPE');
+            } elseif ($resource['reason'] === JemImageResourcePolicy::NOT_IMAGE) {
+                $message = Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE');
+            } else {
+                $message = Text::_('COM_JEM_IMAGE_RESOURCE_LIMIT');
+            }
+
+            Factory::getApplication()->enqueueMessage($message.': '.$displayName, 'warning');
             return false;
         }
 
         //XSS check
         //$xss_check = File::read($file['tmp_name'], false, 256);
-        $xss_check = file_get_contents($file['tmp_name'], false, NULL, 0, 256);
+        $xss_check = file_get_contents($tmpName, false, NULL, 0, 256);
+        if ($xss_check === false) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED_NOT_AN_IMAGE').': '.$displayName, 'warning');
+            return false;
+        }
         $html_tags = array('abbr','acronym','address','applet','area','audioscope','base','basefont','bdo','bgsound','big','blackface','blink','blockquote','body','bq','br','button','caption','center','cite','code','col','colgroup','comment','custom','dd','del','dfn','dir','div','dl','dt','em','embed','fieldset','fn','font','form','frame','frameset','h1','h2','h3','h4','h5','h6','head','hr','html','iframe','ilayer','img','input','ins','isindex','keygen','kbd','label','layer','legend','li','limittext','link','listing','map','marquee','menu','meta','multicol','nobr','noembed','noframes','noscript','nosmartquotes','object','ol','optgroup','option','param','plaintext','pre','rt','ruby','s','samp','script','select','server','shadow','sidebar','small','spacer','span','strike','strong','style','sub','sup','table','tbody','td','textarea','tfoot','th','thead','title','tr','tt','ul','var','wbr','xml','xmp','!DOCTYPE', '!--');
         foreach ($html_tags as $tag) {
             // A tag is '<tagname ', so we need to add < and a space or '<tagname>'
@@ -364,11 +530,9 @@ class JemImage
         //if it is already taken keep trying till success
         //$now = time();
 
-        $now = rand();
-
-        while (is_file($base_Dir . $beforedot . '_' . $now . '.' . $afterdot)) {
-            $now++;
-        }
+        do {
+            $now = bin2hex(random_bytes(8));
+        } while (is_file($base_Dir . $beforedot . '_' . $now . '.' . $afterdot));
 
         //create out of the seperated parts the new filename
         $filename = $beforedot . '_' . $now . '.' . $afterdot;

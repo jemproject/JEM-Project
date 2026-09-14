@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\Uri\Uri;
 
 /**
@@ -44,6 +43,10 @@ class JemViewEvent extends HtmlView
                 return;
             }
 
+            if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), $app)) {
+                return;
+            }
+
             $row->categories = $this->get('Categories');
             $row->id         = $row->did;
             $row->slug       = $row->alias ? ($row->id.':'.$row->alias) : $row->id;
@@ -56,7 +59,7 @@ class JemViewEvent extends HtmlView
                 $filename = "event" . $row->did . ".ics";
                 JemHelper::icalAddEvent($vcal, $row);
                 // generate and redirect output to user browser
-                $vcal->returnCalendar(false, false, true, $filename);
+                JemHelper::sendCalendar($vcal, $filename);
             }
         }
     }
@@ -77,6 +80,10 @@ class JemViewEvent extends HtmlView
         if (empty($row)) {
             Factory::getApplication()->close();
 
+            return;
+        }
+
+        if (!JemFrontendAccess::enforceViewAccess((bool) $row->params->get('access-view'), Factory::getApplication())) {
             return;
         }
 
@@ -379,10 +386,11 @@ class JemViewEvent extends HtmlView
             && (int) $menuitem->query['id'] === (int) $row->id);
 
         if (empty($row->params) || !is_object($row->params) || !method_exists($row->params, 'merge')) {
-            $row->params = JemHelper::globalattribs();
+            $row->params = clone JemHelper::globalattribs();
         }
 
         if ($useMenuItemParams) {
+            $row->params = clone $row->params;
             $row->params->merge($params);
 
             return;
@@ -722,12 +730,16 @@ class JemViewEvent extends HtmlView
      */
     private function buildPdfImageHtml(string $image, string $type, string $alt, int $maxWidth, int $maxHeight): string
     {
-        $flyer = JemImage::flyercreator($image, $type);
+        $flyer = false;
+
+        if (strpos($image, '/') === false && strpos($image, '\\') === false) {
+            $flyer = JemImage::flyercreator($image, $type);
+        }
 
         if (!empty($flyer['original'])) {
-            $path = JPATH_SITE . '/' . $flyer['original'];
+            $path = $this->resolvePdfImagePath((string) $flyer['original'], $type);
 
-            if (is_file($path)) {
+            if ($path !== '') {
                 return $this->buildPdfImageTag($path, $alt, $maxWidth, $maxHeight);
             }
         }
@@ -845,66 +857,7 @@ class JemViewEvent extends HtmlView
      */
     private function resolvePdfImagePath(string $image, string $type): string
     {
-        $image = trim(html_entity_decode($image, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-
-        if ($image === '' || stripos($image, 'data:') === 0) {
-            return '';
-        }
-
-        $path = $image;
-        $parts = parse_url($image);
-
-        if (is_array($parts) && !empty($parts['scheme'])) {
-            if (!in_array(strtolower((string) $parts['scheme']), array('http', 'https'), true)) {
-                return '';
-            }
-
-            $host = strtolower((string) ($parts['host'] ?? ''));
-            $siteHost = strtolower(Uri::getInstance()->getHost());
-
-            $localHosts = array('localhost', '127.0.0.1', '::1');
-
-            if ($host !== '' && $siteHost !== '' && $host !== $siteHost && !in_array($host, $localHosts, true)) {
-                return '';
-            }
-
-            $path = (string) ($parts['path'] ?? '');
-        }
-
-        $path = rawurldecode(str_replace('\\', '/', $path));
-        $basePath = trim((string) Uri::root(true), '/');
-
-        if ($basePath !== '' && strpos(ltrim($path, '/'), $basePath . '/') === 0) {
-            $path = substr(ltrim($path, '/'), strlen($basePath) + 1);
-        }
-
-        $path = ltrim($path, '/');
-
-        if ($path !== '' && is_file(JPATH_SITE . '/' . $path)) {
-            return JPATH_SITE . '/' . $path;
-        }
-
-        $imagesPos = strpos($path, 'images/');
-
-        if ($imagesPos !== false && $imagesPos > 0) {
-            $imagePath = substr($path, $imagesPos);
-
-            if (is_file(JPATH_SITE . '/' . $imagePath)) {
-                return JPATH_SITE . '/' . $imagePath;
-            }
-        }
-
-        $folders = array(
-            'event' => 'events',
-            'venue' => 'venues',
-            'category' => 'categories',
-        );
-
-        if (strpos($path, '/') === false && isset($folders[$type]) && is_file(JPATH_SITE . '/images/jem/' . $folders[$type] . '/' . $path)) {
-            return JPATH_SITE . '/images/jem/' . $folders[$type] . '/' . $path;
-        }
-
-        return '';
+        return JemPdfImagePolicy::resolveLocalImage($image, $type, JPATH_SITE, (string) Uri::root(true));
     }
 
     /**
@@ -1041,16 +994,18 @@ class JemViewEvent extends HtmlView
             return '';
         }
 
-        $thumb = JemImage::linkThumbnail($image, 120, 60, true);
+        $sourcePath = $this->resolvePdfImagePath($image, 'event');
 
-        if ($thumb === '' || preg_match('#^(?:https?:)?//#i', $thumb)) {
+        if ($sourcePath === '') {
             return '';
         }
 
-        $path = JPATH_SITE . '/' . ltrim($thumb, '/\\');
+        $thumb = JemImage::linkThumbnail($image, 120, 60, true);
 
-        if (!is_file($path)) {
-            return '';
+        $path = $thumb !== '' ? $this->resolvePdfImagePath($thumb, 'event') : '';
+
+        if ($path === '') {
+            $path = $sourcePath;
         }
 
         return '<img class="jem-pdf-link-image" src="' . htmlspecialchars(str_replace('\\', '/', $path), ENT_COMPAT, 'UTF-8') . '" width="15mm" alt="' . htmlspecialchars($alt, ENT_COMPAT, 'UTF-8') . '" />';
@@ -1067,7 +1022,7 @@ class JemViewEvent extends HtmlView
             return '#';
         }
 
-        return $this->buildPdfAbsoluteUrl(Route::_('index.php?option=com_jem&task=getfile&format=raw&file=' . $id . '&' . Session::getFormToken() . '=1', false));
+        return $this->buildPdfAbsoluteUrl(Route::_('index.php?option=com_jem&task=getfile&format=raw&file=' . $id, false));
     }
 
     /**

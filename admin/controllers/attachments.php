@@ -31,12 +31,6 @@ class JemControllerAttachments extends AdminController
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
         $app = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.delete', 'com_jem')) {
-            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
-
         $cid = $app->input->get('cid', array(), 'array');
         ArrayHelper::toInteger($cid);
         $cid = array_filter($cid);
@@ -58,27 +52,37 @@ class JemControllerAttachments extends AdminController
 
     public function download()
     {
-        Session::checkToken('request') or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
+        $id = Factory::getApplication()->input->getInt('id', 0);
+        $model = $this->getModel();
+        $object = $model->getAttachmentObject($id);
 
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if ($object === null || !JemHelperBackend::canAccessAttachment($object, 'access')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $id = Factory::getApplication()->input->getInt('id', 0);
-        $model = $this->getModel();
         $path = $model->getAttachmentPath($id);
 
         if (!$path || !is_file($path)) {
+            JemAttachment::logDownloadError($id, 'backend', 'File not found');
             throw new \Exception(Text::_('JGLOBAL_RESOURCE_NOT_FOUND'), 404);
         }
 
+        JemHelper::setNoStoreHeaders();
+        Factory::getApplication()->sendHeaders();
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . basename($path) . '"');
         header('Content-Length: ' . filesize($path));
         while (ob_get_level()) {
             ob_end_clean();
         }
-        readfile($path);
+        $delivered = readfile($path);
+
+        if ($delivered !== false) {
+            JemAttachment::recordDownload($id);
+        } else {
+            JemAttachment::logDownloadError($id, 'backend', 'File delivery failed');
+        }
+
         Factory::getApplication()->close();
     }
 
@@ -88,7 +92,7 @@ class JemControllerAttachments extends AdminController
 
         $app = Factory::getApplication();
 
-        if (!$app->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

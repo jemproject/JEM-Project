@@ -13,16 +13,6 @@ use Joomla\CMS\Language\Text;
 //$max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields', -1); // default to All
 ?>
 
-<fieldset>
-    <legend><?php echo Text::_('COM_JEM_EDITVENUE_PUBLISHING_LEGEND'); ?></legend>
-    <dl class="adminformlist jem-dl">
-        <dt><?php echo $this->form->getLabel('published'); ?></dt>
-        <dd><?php echo $this->form->getInput('published'); ?></dd>
-        <dt><?php echo $this->form->getLabel('access'); ?></dt>
-        <dd><?php echo $this->form->getInput('access'); ?></dd>
-    </dl>
-</fieldset>
-
 <!-- META -->
 <fieldset class="">
     <legend><?php echo Text::_('COM_JEM_METADATA'); ?></legend>

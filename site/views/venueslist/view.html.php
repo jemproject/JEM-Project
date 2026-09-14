@@ -82,6 +82,8 @@ class JemViewVenueslist extends JemView
         $search           = $app->getUserStateFromRequest('com_jem.venueslist.filter_search', 'filter_search', '', 'string');
         $state            = $this->get('State');
         $filterCountries  = (array) $state->get('filter.countries', array());
+        $lists['show_venue_event_filter'] = (bool) $state->get('filter.show_venue_event_filter', false);
+        $lists['show_all_venues'] = (bool) $state->get('filter.show_all_venues', false);
 
         // search filter
         $filters = array();

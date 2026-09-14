@@ -35,6 +35,13 @@ class JemViewCategories extends HtmlView
         $model->setState('limit', 0);
 
         $categoryType = $model->getType();
+
+        if ($model->isTypeFilterRequested()
+            && $categoryType
+            && !JemFrontendAccess::enforceViewAccess(!empty($categoryType->user_has_access_type), $app)) {
+            return;
+        }
+
         $title = Text::_('COM_JEM_CATEGORIES');
 
         if ($model->isTypeFilterRequested() && $categoryType && trim((string) ($categoryType->name ?? '')) !== '') {

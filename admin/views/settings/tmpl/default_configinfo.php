@@ -12,7 +12,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 
 require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
@@ -73,6 +72,7 @@ $logFiles = array(
                                          ,'plg_quickicon_jemquickicon' => 'COM_JEM_MAIN_CONFIG_VS_PLG_QUICKICON'
                                          ,'AcyMailing Tag : insert events from JEM 2.1+'
                                                               => 'COM_JEM_MAIN_CONFIG_VS_PLG_ACYMAILING_TAGJEM'
+                                         ,'files_acym_jem'     => 'COM_JEM_MAIN_CONFIG_VS_ACYMAILING_JEM'
                                          );
                 ?>
                 <tr>
@@ -125,8 +125,8 @@ $logFiles = array(
                     <?php
                     $logFilePath = $logPath . '/' . $logFile['file'];
                     $logExists = is_file($logFilePath) && is_readable($logFilePath);
-                    $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
-                    $downloadUrl = Route::_('index.php?option=com_jem&task=settings.downloadLog&log=' . $logFile['key'] . '&' . Session::getFormToken() . '=1', false);
+                    $viewUrl = Route::_('index.php?option=com_jem&task=settings.viewLog&log=' . $logFile['key'], false);
+                    $downloadUrl = Route::_('index.php?option=com_jem&task=settings.downloadLog&log=' . $logFile['key'], false);
                     $modalId = 'jem-log-modal-' . preg_replace('/[^a-z0-9_-]/i', '-', $logFile['key']);
                     ?>
                     <tr>
@@ -151,7 +151,7 @@ $logFiles = array(
                                 <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#<?php echo $modalId; ?>">
                                     <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_VIEW'); ?>
                                 </button>
-                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $downloadUrl; ?>">
+                                <a class="btn btn-sm btn-outline-primary" href="<?php echo $downloadUrl; ?>" download="<?php echo htmlspecialchars($logFile['file'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <span class="icon-download" aria-hidden="true"></span>
                                     <?php echo Text::_('COM_JEM_CONFIGINFO_LOG_DOWNLOAD'); ?>
                                 </a>

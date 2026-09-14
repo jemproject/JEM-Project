@@ -14,15 +14,17 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
 use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Date\Date;
 use Joomla\String\StringHelper;
+use Joomla\Component\Jem\Site\Helper\JemMapHelper;
 
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/administrator/components/com_jem/helpers/html/jemhtml.php');
+require_once(JPATH_SITE.'/components/com_jem/helpers/map.php');
+require_once __DIR__ . '/venuemappolicy.class.php';
 
 // HTMLHelper::addIncludePath(JPATH_SITE . '/administrator/components/com_jem/helpers/html');
 
@@ -54,7 +56,7 @@ static public function lightbox() {
     if ($settings->lightbox == 1) {
         $document = Factory::getApplication()->getDocument();
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('jquery');
-        $document->addStyleSheet(Uri::base() .'media/com_jem/css/lightbox.min.css');
+        JemHelper::loadCss('lightbox.min');
         $document->addScript(Uri::base() . 'media/com_jem/js/lightbox.min.js');
         echo '<script>lightbox.option({
                       \'showImageNumberLabel\': false,
@@ -212,7 +214,7 @@ static public function lightbox() {
 
             $url = 'index.php?option=com_jem&task=event.add&return='.base64_encode($uri).'&a_id=0';
             $overlib = Text::_('COM_JEM_SUBMIT_EVENT_DESC');
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -247,7 +249,7 @@ static public function lightbox() {
 
             $url = 'index.php?option=com_jem&task=venue.add&return='.base64_encode($uri).'&a_id=0';
             $overlib = Text::_('COM_JEM_DELIVER_NEW_VENUE_DESC');
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_VENUE'), $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -281,9 +283,9 @@ static public function lightbox() {
                 $image = Text::_('COM_JEM_ADD_USER_REGISTRATIONS');
             }
 
-            $url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid.'&'.Session::getFormToken().'=1';
+            $url = 'index.php?option=com_jem&view=attendees&layout=addusers&tmpl=component&return='.base64_encode($uri).'&id='.$eventid;
             $overlib = Text::_('COM_JEM_ADD_USER_REGISTRATIONS_DESC');
-            // $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
+            // $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_ADD_USER_REGISTRATIONS'), $overlib, 'flyermodal', 'bottom').' rel="{handler: \'iframe\', size: {x:800, y:450}}"');
 
 
             $output= HTMLHelper::_(
@@ -340,7 +342,7 @@ static public function lightbox() {
             $url .= '&'.$urlparams;
         }
         $html  = '<div class="inline-button-right">';
-        $html .= HTMLHelper::_('link', Route::_($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), Text::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
+        $html .= HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip(Text::_('COM_JEM_DELIVER_NEW_EVENT'), Text::_('COM_JEM_SUBMIT_EVENT_DESC'), '', 'bottom'));
         $html .= '</div>';
 
         return $html;
@@ -372,11 +374,29 @@ static public function lightbox() {
     }
 
     /**
+     * Escapes a dynamic value for use in an HTML attribute.
+     */
+    static public function escapeHtmlAttribute($value)
+    {
+        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false);
+    }
+
+    /**
+     * Routes a link and escapes it for use in an HTML attribute.
+     */
+    static protected function escapeLinkAttribute($link)
+    {
+        return self::escapeHtmlAttribute(Route::_((string) $link));
+    }
+
+    /**
      * Builds a PDF link from the current request.
      */
     static protected function buildCurrentPdfLink()
     {
-        $uri = Uri::getInstance();
+        // Uri::getInstance() is shared. Mutating it here would contaminate
+        // edit/add return URLs rendered after the PDF button.
+        $uri = clone Uri::getInstance();
         $query = $uri->getQuery(true);
         $query['format'] = 'raw';
         $query['layout'] = 'pdf';
@@ -448,7 +468,7 @@ static public function lightbox() {
                 }
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($title, $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -517,7 +537,7 @@ static public function lightbox() {
                         $text = Text::_('COM_JEM_EDIT_EVENT');
                     }
                     $id = isset($item->did) ? $item->did : $item->id;
-                    $url = 'index.php?option=com_jem&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editevent&task=event.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'editvenue':
@@ -536,7 +556,7 @@ static public function lightbox() {
                     $id = $item->locid;
                     $overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
                     $text = Text::_('COM_JEM_EDIT_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'venue':
@@ -555,7 +575,7 @@ static public function lightbox() {
                     $id = $item->id;
                     $overlib = Text::_('COM_JEM_EDIT_VENUE_DESC');
                     $text = Text::_('COM_JEM_EDIT_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.edit&a_id='.$id.'&return='.base64_encode($uri);
                     break;
             }
 
@@ -563,7 +583,7 @@ static public function lightbox() {
                 return; // we need at least url to generate useful output
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib));
 
             return $output;
         }
@@ -609,7 +629,7 @@ static public function lightbox() {
                     $id = isset($item->did) ? $item->did : $item->id;
                     $overlib = Text::_('COM_JEM_COPY_EVENT_DESC');
                     $text = Text::_('COM_JEM_COPY_EVENT');
-                    $url = 'index.php?option=com_jem&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editevent&task=event.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'editvenue':
@@ -621,7 +641,7 @@ static public function lightbox() {
                     $id = $item->locid;
                     $overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
                     $text = Text::_('COM_JEM_COPY_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
 
                 case 'venue':
@@ -633,7 +653,7 @@ static public function lightbox() {
                     $id = $item->id;
                     $overlib = Text::_('COM_JEM_COPY_VENUE_DESC');
                     $text = Text::_('COM_JEM_COPY_VENUE');
-                    $url = 'index.php?option=com_jem&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
+                    $url = 'index.php?option=com_jem&view=editvenue&task=venue.copy&a_id='.$id.'&return='.base64_encode($uri);
                     break;
             }
 
@@ -641,7 +661,7 @@ static public function lightbox() {
                 return; // we need at least url to generate useful output
             }
 
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib));
 
             return $output;
         }
@@ -678,7 +698,7 @@ static public function lightbox() {
                 //button in view
                 $overlib = Text::_('COM_JEM_PRINT_DESC');
                 $text = Text::_('COM_JEM_PRINT');
-                $output = '<a href="' . Route::_($print_link) . '&tmpl=component" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
+                $output = '<a href="' . self::escapeLinkAttribute($print_link . '&tmpl=component') . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom')
                         . ' onclick="window.open(this.href,\'win2\',\'' . $status . '\'); return false;">' . $image . '</a>';
             }
             return $output;
@@ -712,7 +732,7 @@ static public function lightbox() {
             $image = Text::_('COM_JEM_ANNUALCALENDAR_PDF');
         }
 
-        return HTMLHelper::_('link', Route::_($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
+        return HTMLHelper::_('link', self::escapeLinkAttribute($pdf_link), $image, self::tooltip(Text::_('COM_JEM_ANNUALCALENDAR_PDF'), Text::_('COM_JEM_ANNUALCALENDAR_DOWNLOAD_PDF'), '', 'bottom'));
     }
 
     /**
@@ -737,11 +757,11 @@ static public function lightbox() {
 
         $text = Text::_('COM_JEM_TIMETABLE_TODAY');
 
-        return HTMLHelper::_('link', Route::_($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
+        return HTMLHelper::_('link', self::escapeLinkAttribute($today_link), $image, self::tooltip($text, $text, '', 'bottom'));
     }
 
     /**
-     * Creates the email button
+     * Creates the email and public link sharing actions.
      *
      * @param object $slug
      * @param $view
@@ -752,46 +772,102 @@ static public function lightbox() {
      */
     static public function mailbutton($slug, $view, $params)
     {
-        $app         = Factory::getApplication();
-        $settings    = JemHelper::globalattribs();
+        $app = Factory::getApplication();
+        $settings = JemHelper::globalattribs();
 
-        if ($settings->get('global_show_email_icon')) {
-            if ($app->input->get('print','','int')) {
-                return;
-            }
-
-            $uri      = Uri::getInstance();
-            $base     = $uri->toString(array('scheme', 'host', 'port'));
-            $template = Factory::getApplication()->getTemplate();
-            $link     = $base.Route::_('index.php?option=com_jem&view='.$view.'&id='.$slug, false);
-
-            $url = 'index.php?option=com_jem&tmpl=component&view=mailto&link='.JemMailtoHelper::addLink($link);
-            $status = 'width=400,height=350,menubar=yes,resizable=yes';
-
-            if ($settings->get('global_show_icons')) {
-                $image = jemhtml::icon( 'com_jem/emailButton.webp', 'fa fa-fw fa-lg fa-envelope jem-mailbutton', Text::_('JGLOBAL_EMAIL'), NULL, !$app->isClient('site'));
-            } else {
-                $image = Text::_('COM_JEM_EMAIL');
-            }
-
-            $overlib = Text::_('COM_JEM_EMAIL_DESC');
-            $text = Text::_('COM_JEM_EMAIL');
-            $new_html = '';
-
-            $new_html.= HTMLHelper::_(
-                'bootstrap.renderModal',
-                'mailto-modal',
-                array(
-                    'url'    => $url.'&amp;'.Session::getFormToken().'=1',
-                    'title'  => Text::_('COM_JEM_SELECT'),
-                    'width'  => '800px',
-                    'height' => '550px',
-                    'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
-                )
-            );
-            $new_html.='<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mailto-modal" ' . self::tooltip($text, $overlib, '', 'bottom'). '>' . $image . '</a>';
-            return $new_html;
+        if (!$settings->get('global_show_email_icon') || $app->input->get('print', '', 'int')) {
+            return;
         }
+
+        $uri = Uri::getInstance();
+        $base = $uri->toString(array('scheme', 'host', 'port'));
+        $link = $base . Route::_('index.php?option=com_jem&view=' . $view . '&id=' . $slug, false);
+        $shareHtml = self::shareLinkButton($link, $settings, $app);
+
+        if ($app->getIdentity()->guest) {
+            return $shareHtml;
+        }
+
+        $url = 'index.php?option=com_jem&tmpl=component&view=mailto&link=' . JemMailtoHelper::addLink(
+            $link,
+            array('view' => $view, 'id' => $slug)
+        );
+
+        if ($settings->get('global_show_icons')) {
+            $image = jemhtml::icon(
+                'com_jem/emailButton.webp',
+                'fa fa-fw fa-lg fa-envelope jem-mailbutton',
+                Text::_('COM_JEM_INVITE_BY_EMAIL'),
+                null,
+                !$app->isClient('site')
+            );
+        } else {
+            $image = Text::_('COM_JEM_INVITE_BY_EMAIL');
+        }
+
+        $overlib = Text::_('COM_JEM_INVITE_BY_EMAIL_DESC');
+        $text = Text::_('COM_JEM_INVITE_BY_EMAIL');
+        $html = HTMLHelper::_(
+            'bootstrap.renderModal',
+            'mailto-modal',
+            array(
+                'url' => $url,
+                'title' => Text::_('COM_JEM_SELECT'),
+                'width' => '800px',
+                'height' => '550px',
+                'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">'
+                    . Text::_('COM_JEM_CLOSE') . '</button>',
+            )
+        );
+        $html .= '<a href="' . self::escapeLinkAttribute($url)
+            . '" data-bs-toggle="modal" data-bs-target="#mailto-modal" '
+            . self::tooltip($text, $overlib, '', 'bottom') . '>' . $image . '</a>';
+        $html .= '<span class="gap">&nbsp;</span>' . $shareHtml;
+
+        return $html;
+    }
+
+    /**
+     * Build a local copy-link action without third-party requests.
+     *
+     * @param   string  $link      Absolute public link.
+     * @param   object  $settings  JEM global attributes.
+     * @param   object  $app       Joomla application.
+     *
+     * @return  string
+     */
+    static protected function shareLinkButton($link, $settings, $app)
+    {
+        $document = $app->getDocument();
+        $document->getWebAssetManager()->registerAndUseScript(
+            'com_jem.share-link',
+            'media/com_jem/js/share-link.js',
+            array(),
+            array('defer' => true)
+        );
+
+        $text = Text::_('COM_JEM_COPY_LINK');
+        $description = Text::_('COM_JEM_COPY_LINK_DESC');
+
+        if ($settings->get('global_show_icons')) {
+            $image = jemhtml::icon(
+                'com_jem/shareButton.svg',
+                'fa fa-fw fa-lg fa-share-alt jem-sharebutton',
+                $text,
+                null,
+                !$app->isClient('site')
+            );
+        } else {
+            $image = $text;
+        }
+
+        return '<a href="' . self::escapeHtmlAttribute($link) . '" data-jem-share-link="'
+            . self::escapeHtmlAttribute($link) . '" data-jem-share-success="'
+            . self::escapeHtmlAttribute(Text::_('COM_JEM_LINK_COPIED')) . '" data-jem-share-prompt="'
+            . self::escapeHtmlAttribute(Text::_('COM_JEM_COPY_LINK_PROMPT')) . '" aria-label="'
+            . self::escapeHtmlAttribute($text) . '" '
+            . self::tooltip($text, $description, 'jem-share-link', 'bottom') . '>' . $image . '</a>'
+            . '<span class="visually-hidden" data-jem-share-status aria-live="polite"></span>';
     }
 
     /**
@@ -821,7 +897,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_ICAL');
 
             $url = 'index.php?option=com_jem&view=' . $view . '&id=' . ($slug??0) . ($task? '&task=' . $task : '') . '&format=raw&layout=ics';
-            $output = HTMLHelper::_('link', Route::_($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
+            $output = HTMLHelper::_('link', self::escapeLinkAttribute($url), $image, self::tooltip($text, $overlib, '', 'bottom'));
 
             return $output;
         }
@@ -847,7 +923,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_PUBLISH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".publish'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -873,7 +949,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_TRASH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".trash'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -899,7 +975,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_UNPUBLISH');
 
             $print_link = "javascript:void(Joomla.submitbutton('" . $prefix . ".unpublish'));";
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -925,8 +1001,8 @@ static public function lightbox() {
             $overlib = Text::_('COM_JEM_EXPORT_DESC');
             $text = Text::_('COM_JEM_EXPORT');
 
-            $print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid . '&' . Session::getFormToken() . '=1';
-            $output = '<a href="' . Route::_($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $print_link = 'index.php?option=com_jem&view=attendees&task=attendees.export&tmpl=raw&id=' . $eventid;
+            $output = '<a href="' . self::escapeLinkAttribute($print_link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -955,7 +1031,7 @@ static public function lightbox() {
             $text = Text::_('COM_JEM_BACK');
 
             $link = 'index.php?option=com_jem&view='.$view.'&id='.$id.'&Itemid='.$fid.'&task='.$view.'.back';
-            $output = '<a href="' . Route::_($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
+            $output = '<a href="' . self::escapeLinkAttribute($link) . '" ' . self::tooltip($text, $overlib, 'editlinktip', 'bottom') . '>' . $image . '</a>';
         }
 
         return $output;
@@ -983,11 +1059,112 @@ static public function lightbox() {
     }
 
     /**
-     * Creates the map button
+     * Build an identifying User-Agent for Nominatim requests.
      *
-     * @param obj $data
+     * @return string
      */
-    static public function mapicon($data, $view, $params)
+    static protected function nominatimUserAgent()
+    {
+        return 'JEM (+https://www.joomlaeventmanager.net; site=' . Uri::root() . ')';
+    }
+
+    /**
+     * Render an OpenStreetMap canvas using JEM's local Leaflet assets.
+     *
+     * The map is initialised by osm-map.js when it is visible. This also supports
+     * maps inside Bootstrap modals, whose dimensions are not available until the
+     * modal has been opened.
+     *
+     * @param float  $latitude  Marker latitude
+     * @param float  $longitude Marker longitude
+     * @param string $height    CSS height including its unit
+     * @param int    $zoom      Initial Leaflet zoom level
+     * @param string $id        Optional unique element id
+     * @param string $class     Optional additional CSS classes
+     * @param string $marker    Configured fallback marker image
+     * @param string $typeIcon  Optional type icon CSS class
+     * @param string $typeColor Optional type marker background colour
+     *
+     * @return string
+     */
+    static public function osmMapCanvas($latitude, $longitude, $height = '250px', $zoom = 15, $id = '', $class = '', $marker = '', $typeIcon = '', $typeColor = '')
+    {
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        if ($latitude < -90.0 || $latitude > 90.0 || $longitude < -180.0 || $longitude > 180.0) {
+            return '';
+        }
+
+        $height = preg_match('/^\d+(?:\.\d+)?(?:px|vh|vw|rem|%)$/', (string) $height)
+            ? (string) $height
+            : '250px';
+        $zoom = max(1, min(19, (int) $zoom));
+        $id = preg_replace('/[^A-Za-z0-9_-]/', '', (string) $id);
+        $class = trim(preg_replace('/[^A-Za-z0-9 _-]/', '', (string) $class));
+        $marker = JemMapHelper::resolveMarkerUrl($marker, 'media/com_jem/images/marker-red.webp');
+        $typeIcon = trim((string) $typeIcon);
+        $typeIcon = preg_match('/^[a-zA-Z0-9_-]+(?:\s+[a-zA-Z0-9_-]+)*$/', $typeIcon) ? $typeIcon : '';
+        $typeColor = trim((string) $typeColor);
+        $typeColor = preg_match('/^#[0-9a-fA-F]{6}$/', $typeColor) ? strtolower($typeColor) : '#d9ddb5';
+        $typeIconColor = JemHelper::getContrastTextColor($typeColor) ?: '#ffffff';
+
+        if ($id === '') {
+            static $mapNumber = 0;
+            $id = 'jem-osm-map-' . ++$mapNumber;
+        }
+
+        $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
+
+        JemHelper::loadCss('leaflet');
+        if (!$wa->assetExists('script', 'leaflet')) {
+            $wa->registerScript('leaflet', 'media/com_jem/js/leaflet.js');
+        }
+        if (!$wa->assetExists('script', 'jem.osm-map')) {
+            $wa->registerScript('jem.osm-map', 'media/com_jem/js/osm-map.js', array(), array('defer' => true), array('leaflet'));
+        }
+
+        $wa->useScript('leaflet');
+        $wa->useScript('jem.osm-map');
+
+        return '<div id="' . htmlspecialchars($id, ENT_QUOTES, 'UTF-8') . '"'
+            . ' class="jem-osm-map' . ($class !== '' ? ' ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') : '') . '"'
+            . ' style="width:100%;height:' . htmlspecialchars($height, ENT_QUOTES, 'UTF-8') . ';min-height:1px"'
+            . ' data-latitude="' . htmlspecialchars((string) $latitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-longitude="' . htmlspecialchars((string) $longitude, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-zoom="' . $zoom . '"'
+            . ' data-marker="' . htmlspecialchars($marker, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon="' . htmlspecialchars($typeIcon, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-color="' . htmlspecialchars($typeColor, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-type-icon-color="' . htmlspecialchars($typeIconColor, ENT_QUOTES, 'UTF-8') . '"'
+            . ' role="region" aria-label="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8') . '"></div>';
+    }
+
+    /**
+     * Resolves the effective map presentation and provider for a venue detail page.
+     *
+     * @param   string   $display            Menu-item display preference
+     * @param   integer  $globalMapService   Global JEM map service
+     * @param   boolean  $allowMenuOverride  Whether the active menu owns the venue page
+     *
+     * @return  array
+     */
+    static public function resolveVenueMapConfiguration($display, $globalMapService, $allowMenuOverride = true)
+    {
+        return JemVenueMapPolicy::resolve($display, $globalMapService, $allowMenuOverride);
+    }
+
+    /**
+     * Creates the map output.
+     *
+     * @param   object  $data          Venue data
+     * @param   string  $view          Rendering context
+     * @param   mixed   $params        Map settings
+     * @param   string  $presentation  Optional venue link presentation
+     *
+     * @return  string|null
+     */
+    static public function mapicon($data, $view, $params, $presentation = '')
     {
         $app = Factory::getApplication();
         $settings = JemHelper::globalattribs();
@@ -1044,8 +1221,28 @@ static public function lightbox() {
             $mapserv = $paramGet($params, 'global_show_mapserv');
         }
 
+        $presentation = in_array($presentation, array('link_text', 'link_button'), true) ? $presentation : '';
+
         //Link to map
         $mapimage = jemhtml::icon( 'com_jem/map_icon.webp', 'fa fa-map', Text::_('COM_JEM_MAP'), 'class="jem-mapicon"');
+        $renderVenueMapLink = static function ($url, $label) use ($mapimage, $presentation) {
+            if ($presentation === '') {
+                return null;
+            }
+
+            $class = $presentation === 'link_button'
+                ? 'jem-venue-map-button btn btn-primary'
+                : 'jem-venue-map-text-link';
+            $safeUrl = htmlspecialchars(
+                html_entity_decode((string) $url, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                ENT_QUOTES,
+                'UTF-8'
+            );
+
+            return '<a class="' . $class . '" title="' . htmlspecialchars(Text::_('COM_JEM_MAP'), ENT_QUOTES, 'UTF-8')
+                . '" target="_blank" rel="noopener" href="' . $safeUrl . '">'
+                . $mapimage . '&nbsp;' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . '</a>';
+        };
 
         //set var
         $output = null;
@@ -1072,9 +1269,13 @@ static public function lightbox() {
                 } else {
                 $url = 'https://www.google.'.$paramGet($params, $tld, 'com').'/maps/place/'.htmlentities($data->street.',+'.$data->postalCode.'+'.$data->city.'+'.$data->country).'?hl='.$paramGet($params, $lg, 'en').'+('.$data->venue.')'; }
 
-                $message = Text::_('COM_JEM_MAP').':';
-                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue) .'</a></dd>';
+                $label = Text::sprintf('COM_JEM_LINK_TO_GOOGLE_MAP', $data->venue);
+                $output = $renderVenueMapLink($url, $label);
+                if ($output === null) {
+                    $message = Text::_('COM_JEM_MAP').':';
+                    $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                    $output = '<dt class="venue_mapicon">'.$message.'</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="'.Text::_('COM_JEM_MAP').'" target="_blank" href="'.$url.'"'.$attributes.'>'.$mapimage.'&nbsp;'.$label.'</a></dd>';
+                }
                 break;
 
             case 2:
@@ -1135,12 +1336,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($address) . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in Seconds
                     ]
                 ];
@@ -1159,9 +1358,13 @@ static public function lightbox() {
                     $url = 'https://nominatim.openstreetmap.org/ui/search.html?' . $address; // Handle the case when coordinates are not found
                 }
 
-                $message = Text::_('COM_JEM_MAP') . ':';
-                $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
-                $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue) . '</a></dd>';
+                $label = Text::sprintf('COM_JEM_LINK_TO_OSM', $data->venue);
+                $output = $renderVenueMapLink($url, $label);
+                if ($output === null) {
+                    $message = Text::_('COM_JEM_MAP') . ':';
+                    $attributes = ' rel="{handler: \'iframe\', size: {x: 800, y: 500}}" latitude="" longitude=""';
+                    $output = '<dt class="venue_mapicon">' . $message . '</dt><dd class="venue_mapicon"><a class="flyermodal mapicon jem-map-button" title="' . Text::_('COM_JEM_MAP') . '" target="_blank" href="' . $url . '"' . $attributes . '>' . $mapimage . '&nbsp;' . $label . '</a></dd>';
+                }
 
                 break;
 
@@ -1173,12 +1376,10 @@ static public function lightbox() {
                 } else {
                 $address = 'street=' . urlencode($data->street) . '&city=' . urlencode($data->city) . '&country=' . urlencode($data->country) . '&postalcode=' . urlencode($data->postalCode);
                 $search_url = "https://nominatim.openstreetmap.org/search?" . $address . "&format=jsonv2";
-                $websiteUrl = Joomla\CMS\Uri\Uri::root(true); // Retrieve Joomla website URL
-
                 $httpOptions = [
                     "http" => [
                         "method" => "GET",
-                        "header" => "User-Agent: JEM " . JemHelper::config()->get('version', '5.0.0') . " on " . $websiteUrl,
+                        "header" => "User-Agent: " . self::nominatimUserAgent(),
                         "timeout" => 10 // Timeout in seconds
                     ]
                 ];
@@ -1191,12 +1392,35 @@ static public function lightbox() {
                 $lng = $decoded[0]["lon"] ?? null;
                 }
 
-                $wa = $app->getDocument()->getWebAssetManager();
-                $wa->registerScript('jem.osmreload', 'com_jem/osmreload.js')->useScript('jem.osmreload');
-
                 if ($lat && $lng) {
-                    $zoom = 15; // Adjust the zoom level as per your requirement
-                    $output = '<iframe width="500" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.openstreetmap.org/export/embed.html?bbox=' . htmlentities(($lng - 0.001)) . ',' . htmlentities(($lat - 0.001)) . ',' . htmlentities(($lng + 0.001)) . ',' . htmlentities(($lat + 0.001)) . '&amp;layer=mapnik&amp;zoom=' . $zoom . '&amp;marker=' . htmlentities($lat) . ',' . htmlentities($lng) . '"></iframe>';
+                    $typeIcon = '';
+                    $typeColor = '';
+
+                    if ($view === 'event') {
+                        $typeIcon = (string) ($data->type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? '');
+
+                        if ($typeIcon === '' && !empty($data->categories)) {
+                            foreach ((array) $data->categories as $category) {
+                                if (!empty($category->type_icon)) {
+                                    $typeIcon = (string) $category->type_icon;
+                                    $typeColor = (string) ($category->type_color ?? '');
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($typeIcon === '') {
+                            $typeIcon = (string) ($data->venue_type_icon ?? '');
+                            $typeColor = (string) ($data->venue_type_color ?? '');
+                        }
+                    } else {
+                        $typeIcon = (string) ($data->type_icon ?? $data->venue_type_icon ?? '');
+                        $typeColor = (string) ($data->type_color ?? $data->venue_type_color ?? '');
+                    }
+
+                    $marker = $paramGet($params, 'venue_markerfile', 'media/com_jem/images/marker-red.webp');
+                    $output = self::osmMapCanvas($lat, $lng, '250px', 15, '', '', $marker, $typeIcon, $typeColor);
                 } else {
                     $fallback_url = "https://nominatim.openstreetmap.org/ui/search.html?" . $address;
                     $output = '<p>' . Text::sprintf('COM_JEM_OSM_NO_MAP', $fallback_url) . '</p>';
@@ -1220,14 +1444,16 @@ static public function lightbox() {
         $item = empty($event->recurr_bak) ? $event : $event->recurr_bak;
 
         //stop if disabled
-        if (empty($item->recurrence_number) && empty($item->recurrence_type)) {
+        if (empty($item->recurrence_number) && empty($item->recurrence_type) && empty($item->series_id)) {
             return null;
         }
 
         $iconRecurrenceFirst = 'fa fa-fw fa-refresh jem-recurrencefirsticon';
         $iconRecurrence      = 'fa fa-fw fa-refresh jem-recurrenceicon';
 
-        $first = !empty($item->recurrence_type) && empty($item->recurrence_first_id);
+        $first = !empty($item->series_id)
+            ? ((int) ($item->series_order ?? 0) === 1)
+            : (!empty($item->recurrence_type) && empty($item->recurrence_first_id));
 
         $image = $first
             ? 'com_jem/icon-32-recurrence-first.svg'
@@ -1356,10 +1582,447 @@ static public function lightbox() {
         return 'instock';
     }
 
+    /**
+     * Add the effective module status presentation to event rows.
+     *
+     * Registration totals are loaded once for the complete result set when
+     * availability indicators are enabled.
+     *
+     * @param array       $events   Event rows
+     * @param object|null $settings JEM settings, mainly for tests
+     * @param int|null    $now      Current timestamp, mainly for tests
+     *
+     * @return void
+     */
+    static public function prepareModuleEventStatuses(&$events, $settings = null, $now = null)
+    {
+        if (!is_array($events) || $events === array()) {
+            return;
+        }
+
+        $settings = $settings ?: JemHelper::config();
+        if (!(int) ($settings->module_status_ribbons ?? 1)) {
+            return;
+        }
+
+        $needsRegistrationTotals = false;
+        foreach (array('soldout', 'waitinglist', 'last_places', 'open') as $status) {
+            if (self::isModuleStatusActive($settings, $status)) {
+                $needsRegistrationTotals = true;
+                break;
+            }
+        }
+
+        if ($needsRegistrationTotals) {
+            $hasRegistrationTotals = true;
+
+            foreach ($events as $event) {
+                if (!isset($event->regCount)) {
+                    $hasRegistrationTotals = false;
+                    break;
+                }
+            }
+
+            if (!$hasRegistrationTotals) {
+                JemHelper::getAttendeesNumbers($events);
+            }
+        }
+
+        foreach ($events as $event) {
+            $event->event_status_indicators_prepared = true;
+            $event->module_event_status = self::getModuleEventStatus($event, $settings, $now);
+        }
+    }
+
+    /**
+     * Resolve the single status indicator shown by event modules.
+     *
+     * @param object      $event    Event row
+     * @param object|null $settings JEM settings, mainly for tests
+     * @param int|null    $now      Current timestamp, mainly for tests
+     *
+     * @return array|null
+     */
+    static public function getModuleEventStatus($event, $settings = null, $now = null)
+    {
+        if (!is_object($event)) {
+            return null;
+        }
+
+        $settings = $settings ?: JemHelper::config();
+        if (!(int) ($settings->module_status_ribbons ?? 1)) {
+            return null;
+        }
+
+        $eventStatus = self::getEventStatusPresentation($event);
+        if ($eventStatus['status'] !== 'scheduled'
+            && self::isModuleStatusActive($settings, $eventStatus['status'])) {
+            return $eventStatus;
+        }
+
+        $availabilityStatuses = array('preorder', 'soldout', 'waitinglist', 'last_places');
+        $hasActiveAvailabilityStatus = false;
+        foreach ($availabilityStatuses as $status) {
+            if (self::isModuleStatusActive($settings, $status)) {
+                $hasActiveAvailabilityStatus = true;
+                break;
+            }
+        }
+
+        if ($hasActiveAvailabilityStatus) {
+            $registrationOpen = JemHelper::isEventRegistrationOpen($event, $now);
+            $ticketAvailability = strtolower(trim((string) ($event->ticket_availability ?? 'instock')));
+
+            if ($ticketAvailability === 'soldout'
+                && self::isModuleStatusActive($settings, 'soldout')) {
+                return self::getModuleStatusPresentation('soldout');
+            }
+
+            if ($ticketAvailability === 'preorder'
+                && self::isModuleStatusActive($settings, 'preorder')) {
+                return self::getModuleStatusPresentation('preorder');
+            }
+
+            if ($registrationOpen) {
+                $maxPlaces = max(0, (int) ($event->maxplaces ?? 0));
+                $registeredPlaces = max(0, (int) ($event->regCount ?? $event->booked ?? 0));
+                $reservedPlaces = max(0, (int) ($event->reservedplaces ?? $event->reserved ?? 0));
+                $availablePlaces = $maxPlaces > 0
+                    ? max(0, $maxPlaces - $registeredPlaces - $reservedPlaces)
+                    : null;
+
+                if ($availablePlaces === 0) {
+                    if (!empty($event->waitinglist)
+                        && self::isModuleStatusActive($settings, 'waitinglist')) {
+                        return self::getModuleStatusPresentation('waitinglist');
+                    }
+
+                    if (self::isModuleStatusActive($settings, 'soldout')) {
+                        return self::getModuleStatusPresentation('soldout');
+                    }
+                }
+
+                $lastPlacesThreshold = max(1, (int) ($settings->module_status_last_places_threshold ?? 10));
+                if (self::isModuleStatusActive($settings, 'last_places')
+                    && $availablePlaces !== null
+                    && $availablePlaces < $lastPlacesThreshold) {
+                    return self::getModuleStatusPresentation('last_places');
+                }
+            }
+        }
+
+        if (self::isModuleStatusActive($settings, 'new')) {
+            $created = strtotime((string) ($event->created ?? ''));
+            $newDays = max(1, (int) ($settings->module_status_new_days ?? 7));
+            $now = $now === null ? time() : (int) $now;
+
+            if ($created !== false && $created <= $now && $created >= ($now - ($newDays * 86400))) {
+                return self::getModuleStatusPresentation('new');
+            }
+        }
+
+        if (self::isModuleStatusActive($settings, 'open')
+            && JemHelper::isEventRegistrationOpen($event, $now)) {
+            return self::getModuleStatusPresentation('open');
+        }
+
+        return null;
+    }
+
+    /**
+     * Check whether one module status is enabled in the global policy.
+     *
+     * @param object $settings JEM settings
+     * @param string $status   Internal module status name
+     *
+     * @return bool
+     */
+    static protected function isModuleStatusActive($settings, $status)
+    {
+        $property = 'module_status_active_' . $status;
+        $default = $status === 'open' ? 0 : 1;
+
+        return (int) ($settings->{$property} ?? $default) === 1;
+    }
+
+    /**
+     * Resolve the ribbon scale for one image-capable module instance.
+     *
+     * Thumbnail images use the component-wide scale. Original Limited images
+     * use the module override, whose compatible default is 60 percent.
+     *
+     * @param object      $params   Module parameters
+     * @param object|null $settings JEM settings, mainly for tests
+     *
+     * @return int
+     */
+    static public function moduleStatusRibbonScale($params, $settings = null)
+    {
+        $settings = $settings ?: JemHelper::config();
+        $globalScale = min(200, max(50, (int) ($settings->module_status_ribbon_scale ?? 100)));
+
+        if (!is_object($params)
+            || !method_exists($params, 'get')
+            || strtolower(trim((string) $params->get('event_image_display', 'thumbnail'))) !== 'original_limited') {
+            return $globalScale;
+        }
+
+        $moduleScale = filter_var($params->get('status_ribbon_scale', 60), FILTER_VALIDATE_INT);
+
+        return min(200, max(50, $moduleScale === false ? 60 : $moduleScale));
+    }
+
+    /**
+     * Render a module status as an image ribbon.
+     *
+     * @param object $event Prepared module event item
+     *
+     * @return string
+     */
+    static public function moduleEventStatusRibbon($event)
+    {
+        return self::renderModuleEventStatus($event, 'ribbon');
+    }
+
+    /**
+     * Render a module status as a badge beside the event title.
+     *
+     * @param object $event Prepared module event item
+     *
+     * @return string
+     */
+    static public function moduleEventStatusBadge($event)
+    {
+        return self::renderModuleEventStatus($event, 'badge');
+    }
+
+    /**
+     * Wrap a rendered event or venue image with its configured status ribbon.
+     *
+     * Only the first eligible image for an event receives the indicator.
+     *
+     * @param object $event     Prepared event row
+     * @param string $imageHtml Trusted image markup generated by JEM
+     * @param string $classes   Additional internal wrapper classes
+     *
+     * @return string
+     */
+    static public function eventStatusImage($event, $imageHtml, $classes = '')
+    {
+        $imageHtml = (string) $imageHtml;
+        if ($imageHtml === ''
+            || !is_object($event)
+            || empty($event->event_status_indicators_prepared)
+            || !empty($event->event_status_indicator_on_image)) {
+            return $imageHtml;
+        }
+
+        $ribbon = self::moduleEventStatusRibbon($event);
+        if ($ribbon === '') {
+            return $imageHtml;
+        }
+
+        $classes = trim((string) preg_replace('/[^A-Za-z0-9 _-]/', '', (string) $classes));
+        $event->event_status_indicator_image_available = true;
+        $event->event_status_indicator_on_image = true;
+
+        return '<div class="jem-event-status-image jem-module-event-status-image'
+            . ($classes !== '' ? ' ' . $classes : '') . '">'
+            . $imageHtml . $ribbon . '</div>';
+    }
+
+    /**
+     * Render one configured status badge when no image can carry the ribbon.
+     *
+     * @param object $event Prepared event row
+     *
+     * @return string
+     */
+    static public function eventStatusFallbackBadge($event)
+    {
+        if (!is_object($event)
+            || empty($event->event_status_indicators_prepared)
+            || !empty($event->event_status_indicator_image_available)
+            || !empty($event->event_status_indicator_on_image)
+            || !empty($event->event_status_indicator_badge_rendered)) {
+            return '';
+        }
+
+        $badge = self::moduleEventStatusBadge($event);
+        if ($badge !== '') {
+            $event->event_status_indicator_badge_rendered = true;
+        }
+
+        return $badge;
+    }
+
+    /**
+     * Return the normalized presentation for a public event status.
+     *
+     * @param object $event Event row
+     *
+     * @return array
+     */
+    protected static function getEventStatusPresentation($event)
+    {
+        $status = strtolower(trim((string) ($event->event_status ?? 'scheduled')));
+        $validStatuses = array('scheduled', 'cancelled', 'postponed', 'rescheduled', 'moved_online');
+
+        return self::getModuleStatusPresentation(in_array($status, $validStatuses, true) ? $status : 'scheduled');
+    }
+
+    /**
+     * Return a whitelisted module status presentation.
+     *
+     * @param string $status Status identifier
+     *
+     * @return array|null
+     */
+    protected static function getModuleStatusPresentation($status)
+    {
+        $options = array(
+            'scheduled'    => array('label' => 'COM_JEM_EVENT_STATUS_SCHEDULED', 'class' => 'jem-event-state-badge--scheduled'),
+            'cancelled'    => array('label' => 'COM_JEM_EVENT_STATUS_CANCELLED', 'class' => 'jem-event-state-badge--cancelled'),
+            'postponed'    => array('label' => 'COM_JEM_EVENT_STATUS_POSTPONED', 'class' => 'jem-event-state-badge--postponed'),
+            'rescheduled'  => array('label' => 'COM_JEM_EVENT_STATUS_RESCHEDULED', 'class' => 'jem-event-state-badge--rescheduled'),
+            'moved_online' => array('label' => 'COM_JEM_EVENT_STATUS_MOVED_ONLINE', 'class' => 'jem-event-state-badge--moved-online'),
+            'preorder'     => array('label' => 'COM_JEM_EVENT_AVAILABILITY_PREORDER', 'class' => 'jem-event-state-badge--preorder'),
+            'soldout'      => array('label' => 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT', 'class' => 'jem-event-state-badge--soldout'),
+            'waitinglist'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_WAITINGLIST', 'class' => 'jem-event-state-badge--waitinglist'),
+            'last_places'  => array('label' => 'COM_JEM_EVENT_AVAILABILITY_LAST_PLACES', 'class' => 'jem-event-state-badge--last-places'),
+            'new'          => array('label' => 'COM_JEM_EVENT_STATUS_NEW', 'class' => 'jem-event-state-badge--new'),
+            'open'         => array('label' => 'COM_JEM_EVENT_AVAILABILITY_OPEN', 'class' => 'jem-event-state-badge--available'),
+        );
+
+        if (!isset($options[$status])) {
+            return null;
+        }
+
+        return array(
+            'status' => $status,
+            'label'  => $options[$status]['label'],
+            'class'  => $options[$status]['class'],
+        );
+    }
+
+    /**
+     * Render prepared and whitelisted module status markup.
+     *
+     * @param object $event Event module item
+     * @param string $mode  ribbon or badge
+     *
+     * @return string
+     */
+    protected static function renderModuleEventStatus($event, $mode)
+    {
+        $status = is_object($event) ? ($event->module_event_status ?? null) : null;
+        if (!is_array($status) || empty($status['status']) || empty($status['label']) || empty($status['class'])) {
+            return '';
+        }
+
+        $settings = JemHelper::config();
+        $position = (string) ($settings->module_status_ribbon_position ?? 'diagonal_ascending');
+        $validPositions = array(
+            'horizontal_top',
+            'horizontal_center',
+            'horizontal_bottom',
+            'diagonal_ascending',
+            'diagonal_descending',
+        );
+        if (!in_array($position, $validPositions, true)) {
+            $position = 'diagonal_ascending';
+        }
+
+        $defaultColors = array(
+            'cancelled'    => array('#b3261ee6', '#ffffff'),
+            'postponed'    => array('#b55b00e6', '#ffffff'),
+            'rescheduled'  => array('#2456a5e6', '#ffffff'),
+            'moved_online' => array('#247a3de6', '#ffffff'),
+            'preorder'     => array('#b55b00e6', '#ffffff'),
+            'soldout'      => array('#b3261ee6', '#ffffff'),
+            'waitinglist'  => array('#b55b00e6', '#ffffff'),
+            'last_places'  => array('#b55b00e6', '#ffffff'),
+            'new'          => array('#2456a5e6', '#ffffff'),
+            'open'         => array('#247a3de6', '#ffffff'),
+        );
+        $statusName = (string) $status['status'];
+        if (!isset($defaultColors[$statusName])) {
+            return '';
+        }
+
+        $backgroundKey = 'module_status_color_' . $statusName . '_bg';
+        $textKey = 'module_status_color_' . $statusName . '_text';
+        $background = self::normaliseModuleStatusColor(
+            $settings->{$backgroundKey} ?? '',
+            $defaultColors[$statusName][0],
+            true
+        );
+        $textColor = self::normaliseModuleStatusColor(
+            $settings->{$textKey} ?? '',
+            $defaultColors[$statusName][1],
+            false
+        );
+        $sideMargin = min(200, max(0, (int) ($settings->module_status_ribbon_side_margin ?? 0)));
+        $ribbonScale = min(
+            200,
+            max(50, (int) ($event->module_status_ribbon_scale ?? $settings->module_status_ribbon_scale ?? 100))
+        );
+        $label = Text::_($status['label']);
+        $labelLength = min(40, max(1, mb_strlen($label)));
+        $fontSize = max(0.58, min(0.85, 1.06 - (max(0, $labelLength - 8) * 0.022)));
+        $style = '--jem-module-status-background:' . $background
+            . ';--jem-module-status-color:' . $textColor
+            . ';--jem-module-status-side-margin:' . $sideMargin . 'px'
+            . ';--jem-module-status-font-size:' . number_format($fontSize, 2, '.', '') . 'rem;';
+        $statusClass = str_replace('_', '-', $statusName);
+        if ($mode === 'ribbon') {
+            $baseClass = 'jem-event-status jem-event-status-ribbon jem-module-event-status jem-module-event-status-ribbon'
+                . ' jem-event-status--' . $statusClass
+                . ' jem-module-event-status-ribbon--' . str_replace('_', '-', $position)
+                . ' jem-module-event-status--' . $statusClass
+                . ' jem-module-event-status-ribbon--' . $statusClass;
+            $dataAttributes = ' data-jem-module-status-scale="' . $ribbonScale . '"'
+                . ' data-jem-module-status-base-font-size="'
+                . number_format($fontSize, 2, '.', '') . '"';
+        } else {
+            $baseClass = 'jem-event-state-badge jem-event-status jem-event-status-badge jem-module-event-status jem-module-event-status-badge'
+                . ' jem-event-status--' . $statusClass
+                . ' jem-module-event-status--' . $statusClass
+                . ' jem-module-event-status-badge--' . $statusClass;
+            $dataAttributes = '';
+        }
+
+        return '<span class="' . $baseClass . ' ' . htmlspecialchars($status['class'], ENT_QUOTES, 'UTF-8')
+            . '"' . $dataAttributes . ' style="' . $style . '">'
+            . htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
+            . '</span>';
+    }
+
+    /**
+     * Normalize a configurable module status color before using it in CSS.
+     *
+     * @param string $value       Configured color
+     * @param string $fallback    Trusted fallback color
+     * @param bool   $allowAlpha  Whether #RRGGBBAA is accepted
+     *
+     * @return string
+     */
+    protected static function normaliseModuleStatusColor($value, $fallback, $allowAlpha)
+    {
+        $pattern = $allowAlpha ? '/^#[0-9a-f]{8}$/i' : '/^#[0-9a-f]{6}$/i';
+        $value = trim((string) $value);
+
+        return preg_match($pattern, $value) ? strtolower($value) : $fallback;
+    }
+
     static public function eventStateBadges($event, $includeMicrodata = true, $showAvailabilityText = false)
     {
         if (empty($event)) {
             return '';
+        }
+
+        if (!empty($event->event_status_indicators_prepared)) {
+            return self::eventStatusFallbackBadge($event);
         }
 
         $eventStatusOptions = array(
@@ -1457,7 +2120,7 @@ static public function lightbox() {
         $route = $entity === 'venue'
             ? JemHelperRoute::getTypevenuesRoute($typeRouteId)
             : JemHelperRoute::getTypeeventsRoute($typeRouteId);
-        $link = htmlspecialchars(Route::_($route), ENT_QUOTES, 'UTF-8');
+        $link = self::escapeLinkAttribute($route);
 
         return '<a href="' . $link . '" class="jem-type-badge"' . $style . $attributes . '>' . $inner . '</a>';
     }
@@ -1615,17 +2278,23 @@ static public function lightbox() {
                 break;
         }
 
+        $info = htmlspecialchars((string) $info, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
         // Do we have an image?
         if (empty($imagefile) || empty($image)) {
             return;
         } else if(!$settings->flyer){
-            list($imagewidth, $imageheight) = getimagesize(JPATH_SITE . '/' . $image['original']) ?? [100, 100];
-            list($thumbwidth, $thumbheight) = getimagesize(JPATH_SITE . '/' . $image['thumb']) ?? [50, 50];
+            list($imagewidth, $imageheight) = @getimagesize(JPATH_SITE . '/' . $image['original']) ?: [100, 100];
+            $thumbInfo = @getimagesize(JPATH_SITE . '/' . $image['thumb']) ?: [50, 50];
+            $thumbwidth = max(1, (int) ($image['thumbwidth'] ?? $thumbInfo[0]));
+            $thumbheight = max(1, (int) ($image['thumbheight'] ?? $thumbInfo[1]));
         }
 
-        // Does a thumbnail exist?
+        // Does the resolved display image exist?
         if (!$settings->flyer){
-            if (is_file(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$imagefile)) {
+            $thumbPath = $image['thumb'] ?? '';
+
+            if ($thumbPath !== '' && is_file(JPATH_SITE . '/' . $thumbPath)) {
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
@@ -1643,17 +2312,26 @@ static public function lightbox() {
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
                     $url = $uri->base().$image['original'];
                     $attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
-                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
                     $output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 
                 }
-                // If there is no thumbnail, then take the values for the original image specified in the settings
+                // If the resolved display image is unavailable, use the limited original image.
             } else {
                 $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
             }
         }else{
             $output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$info.'" />';
         }
+
+        if (($type === 'event' || $type === 'venue') && is_object($data)) {
+            $output = self::eventStatusImage(
+                $data,
+                $output,
+                'jem-module-event-status-image--inline jem-event-status-image--' . $type
+            );
+        }
+
         return $output;
     }
 
@@ -1748,7 +2426,7 @@ static public function lightbox() {
         if (JemHelper::isValidDate($dateStart)) {
             $output .= '<span class="jem_date-1">';
             if ($showDayLink) {
-                $output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')).'">';
+                $output .= '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getRoute(str_replace('-', '', $dateStart), 'day')) . '">';
             }
             $output .= self::formatdate($dateStart, $dateFormat);
             if ($showDayLink) {
@@ -1765,7 +2443,7 @@ static public function lightbox() {
             if ($displayDateEnd) {
                 $output .= '<span class="jem_date2"> - ';
                 if ($showDayLink) {
-                    $output .= '<a href="'.Route::_(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')).'">';
+                    $output .= '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getRoute(str_replace('-', '', $dateEnd), 'day')) . '">';
                 }
                 $output .= self::formatdate($dateEnd, $dateFormat);
                 if ($showDayLink) {
@@ -1907,10 +2585,10 @@ static public function lightbox() {
         }
     }
 
-    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true)
+    static public function formatSchemaOrgDateTime($dateStart, $timeStart = '', $dateEnd = '', $timeEnd = '', $showTime = true, $event = null)
     {
         if (is_array($dateStart)) {
-            foreach (array('timeStart','dateEnd','timeEnd','showTime') as $param) {
+            foreach (array('timeStart','dateEnd','timeEnd','showTime','event') as $param) {
                 if (isset($dateStart[$param])) {
                     $$param = $dateStart[$param];
                 }
@@ -1922,37 +2600,49 @@ static public function lightbox() {
         $formatD = 'Y-m-d';
         $formatT = 'H:i';
 
-        if (JemHelper::isValidDate($dateStart)) {
-            $content = self::formatdate($dateStart, $formatD);
+        // Schema.org Event startDate/endDate only accept Date or DateTime.
+        // An open-date event may retain its visible times in JEM, but those
+        // times cannot be emitted as standalone temporal metadata.
+        if (!JemHelper::isValidDate($dateStart)) {
+            return $output;
+        }
 
-            if ($showTime && $timeStart) {
+        $timeZoneName = JemHelper::getEventTimeZoneName($event ?: (object) array('timezone_mode' => 'joomla'));
+        $timeZone = new \DateTimeZone($timeZoneName);
+
+        $content = self::formatdate($dateStart, $formatD);
+
+        if ($showTime && JemHelper::isValidTime($timeStart)) {
+            try {
+                $content = (new \DateTimeImmutable($dateStart . ' ' . $timeStart, $timeZone))->format('Y-m-d\TH:iP');
+            } catch (\Exception $e) {
                 $content .= 'T'.self::formattime($timeStart, $formatT, false);
             }
-            $output .= '<meta itemprop="startDate" content="'.$content.'" />';
+        }
+        $output .= '<meta itemprop="startDate" content="'.$content.'" />';
 
-            if (JemHelper::isValidDate($dateEnd)) {
-                $content = self::formatdate($dateEnd, $formatD);
+        $effectiveEndDate = JemHelper::isValidDate($dateEnd) ? $dateEnd : '';
 
-                if ($showTime && $timeEnd) {
+        // JEM treats an end time without an explicit end date as ending on
+        // the start date. Preserve that meaning in the structured metadata.
+        if ($effectiveEndDate === '' && $showTime
+            && JemHelper::isValidTime($timeStart) && JemHelper::isValidTime($timeEnd)) {
+            $effectiveEndDate = $dateStart;
+        }
+
+        if ($effectiveEndDate !== '') {
+            $content = self::formatdate($effectiveEndDate, $formatD);
+
+            if ($showTime && JemHelper::isValidTime($timeEnd)) {
+                try {
+                    $content = (new \DateTimeImmutable($effectiveEndDate . ' ' . $timeEnd, $timeZone))->format('Y-m-d\TH:iP');
+                } catch (\Exception $e) {
                     $content .= 'T'.self::formattime($timeEnd, $formatT, false);
                 }
-                $output .= '<meta itemprop="endDate" content="'.$content.'" />';
             }
-        } else {
-            // Open date
-
-            if ($showTime) {
-                if ($timeStart) {
-                    $content = self::formattime($timeStart, $formatT, false);
-                    $output .= '<meta itemprop="startDate" content="'.$content.'" />';
-                }
-                // Display end time only when both times are set
-                if ($timeStart && $timeEnd) {
-                    $content .= self::formattime($timeEnd, $formatT, false);
-                    $output .= '<meta itemprop="endDate" content="'.$content.'" />';
-                }
-            }
+            $output .= '<meta itemprop="endDate" content="'.$content.'" />';
         }
+
         return $output;
     }
 
@@ -2005,21 +2695,22 @@ static public function lightbox() {
             function ($category) use ($doLink, $backend) {
                 $hasAccess = !isset($category->user_has_access_category) || (bool) $category->user_has_access_category;
                 $lockIcon  = $hasAccess ? '' : ' <span class="icon-lock jem-lockicon" aria-hidden="true"></span>';
+                $categoryName = htmlspecialchars((string) ($category->catname ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
                 if ($doLink && $hasAccess) {
                     if ($backend) {
                         $path = $category->path;
                         $path = str_replace('/', ' &#187; ', $path);
                         $value  = '<span ' . self::tooltip(Text::_('COM_JEM_EDIT_CATEGORY'), $path, 'editlinktip') . '>';
-                        $value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . $category->id . '">' .
-                                      $category->catname . '</a>';
+                        $value .= '<a href="index.php?option=com_jem&amp;task=category.edit&amp;id=' . (int) $category->id . '">' .
+                                      $categoryName . '</a>';
                         $value .= '</span>';
                     } else {
-                        $value  = '<a href="' . Route::_(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
-                                      $category->catname . '</a>';
+                        $value  = '<a href="' . self::escapeLinkAttribute(JemHelperRoute::getCategoryRoute($category->catslug)) . '">' .
+                                      $categoryName . '</a>';
                     }
                 } else {
-                    $value = $category->catname;
+                    $value = $categoryName;
                 }
                 return $value . $lockIcon;
             },

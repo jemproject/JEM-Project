@@ -35,14 +35,26 @@ class JemViewVenue extends HtmlView
         $layout = $jinput->getCmd('layout', '');
 
         if ($layout === 'pdf' && $jinput->getBool('venue_calendar_pdf', false)) {
+            $venue = $this->get('Venue');
+
+            if (empty($venue)) {
+                $app->close();
+
+                return;
+            }
+
+            if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {
+                return;
+            }
+
             $model = $this->getModel('VenueCal');
             $model->setState('list.start', 0);
             $model->setState('list.limit', 0);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $venueid = $jinput->getInt('id');
 
             JemPdfView::renderMonthlyCalendar(
-                Text::_('COM_JEM_VENUE') . ' ' . $venueid . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
+                (string) $venue->venue . ' - ' . $year . '-' . str_pad((string) $month, 2, '0', STR_PAD_LEFT),
                 (array) $model->getItems(),
                 'jem-venue-' . $venueid . '-' . $year . str_pad((string) $month, 2, '0', STR_PAD_LEFT) . '.pdf',
                 $year,
@@ -65,16 +77,8 @@ class JemViewVenue extends HtmlView
                 return;
             }
 
-            $user = JemFactory::getUser();
-            if (empty($venue->user_has_access_venue)) {
-                if ($user->get('guest') || !$user->get('id')) {
-                    $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
-                    $app->redirect(Route::_('index.php?option=com_users&view=login&return=' . base64_encode($app->input->server->getString('REQUEST_URI')), false));
-
-                    return;
-                }
-
-                throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {
+                return;
             }
 
             if (trim((string) $venue->locdescription) !== '' && trim((string) $venue->locdescription) !== '<br>') {
@@ -106,11 +110,23 @@ class JemViewVenue extends HtmlView
         }
 
         if ($settings2->get('global_show_ical_icon','0')==1) {
+            $venue = $this->get('Venue');
+
+            if (empty($venue)) {
+                $app->close();
+
+                return;
+            }
+
+            if (!JemFrontendAccess::enforceViewAccess(!empty($venue->user_has_access_venue), $app)) {
+                return;
+            }
+
             // Get data from the model
             $model = $this->getModel('VenueCal');
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
-            $model->setDate(mktime(0, 0, 1, $month, 1, $year));
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $rows = $model->getItems();
             $venueid = $jinput->getInt('id');
 
@@ -125,7 +141,7 @@ class JemViewVenue extends HtmlView
             }
 
             // generate and redirect output to user browser
-            $vcal->returnCalendar(false, false, true, $filename);
+            JemHelper::sendCalendar($vcal, $filename);
         }
     }
 }

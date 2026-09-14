@@ -14,10 +14,20 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
+use Joomla\Filesystem\File;
+use Joomla\Filesystem\Folder;
+use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/remotesource.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importxlsx.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importvenue.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpreview.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/csvmetadata.php';
 
 /**
  * JEM Component Import Controller
@@ -28,6 +38,8 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 class JemControllerImport extends BaseController
 {
     protected static $importLoggers = array();
+    protected $externalSourceWarnings = array();
+    protected $externalSourceWarningCount = 0;
 
     /**
      * Constructor
@@ -65,7 +77,13 @@ class JemControllerImport extends BaseController
                 $entry['format'],
                 $entry['profile'],
                 (array) $entry['mapping'],
-                array('static_values' => (array) ($entry['static_values'] ?? array()))
+                array(
+                    'static_values' => (array) ($entry['static_values'] ?? array()),
+                    'source_mode' => 'url',
+                    'source_url' => (string) ($entry['source'] ?? ''),
+                    'source_name' => (string) ($entry['source'] ?? ''),
+                    '_preserve_existing' => true,
+                )
             );
 
             if ($profile) {
@@ -90,7 +108,89 @@ class JemControllerImport extends BaseController
             ? Text::sprintf('COM_JEM_IMPORT_CATALOG_LOADED_WITH_PROFILE', $entry['title'], $entry['profile'])
             : Text::sprintf('COM_JEM_IMPORT_CATALOG_LOADED', $entry['title']);
 
-        $this->setRedirect('index.php?option=com_jem&view=import#' . $tab, $message);
+        $this->setRedirect('index.php?option=com_jem&view=import&profile_selection=1#' . $tab, $message);
+    }
+
+    /**
+     * Validate and activate a custom Import Catalog XML file.
+     *
+     * @return void
+     */
+    public function uploadCatalog()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $file = $app->input->files->get('FileImportCatalog', array(), 'array');
+
+        if (empty($file['name']) || !empty($file['error']) || !is_uploaded_file($file['tmp_name'] ?? '')) {
+            $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_UPLOAD_ERROR'), 'error');
+            return;
+        }
+
+        if (strtolower(pathinfo((string) $file['name'], PATHINFO_EXTENSION)) !== 'xml'
+            || (int) ($file['size'] ?? 0) <= 0
+            || (int) ($file['size'] ?? 0) > JemImportCatalogHelper::MAX_CATALOG_SIZE) {
+            $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_FILE_INVALID'), 'error');
+            return;
+        }
+
+        $xmlSource = @file_get_contents($file['tmp_name']);
+        $validationError = '';
+
+        if (!is_string($xmlSource) || !JemImportCatalogHelper::validateCatalogXml($xmlSource, $validationError)) {
+            JemHelper::addLogEntry('Custom Import Catalog rejected: ' . ($validationError ?: 'invalid XML'), __METHOD__, Log::WARNING);
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#download-lists',
+                Text::sprintf('COM_JEM_IMPORT_CATALOG_CUSTOM_VALIDATION_ERROR', $validationError ?: 'invalid_xml'),
+                'error'
+            );
+            return;
+        }
+
+        $path = JemImportCatalogHelper::getCatalogPath();
+        $directory = dirname($path);
+
+        if ((!is_dir($directory) && !Folder::create($directory)) || !File::write($path, $xmlSource)) {
+            $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_SAVE_ERROR'), 'error');
+            return;
+        }
+
+        JemHelper::addLogEntry('Custom Import Catalog activated: ' . JemImportCatalogHelper::getCustomCatalogSource(), __METHOD__, Log::INFO);
+        $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_LOADED'));
+    }
+
+    /**
+     * Remove the custom catalog and return to the official server catalog.
+     *
+     * @return void
+     */
+    public function removeCustomCatalog()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $path = JemImportCatalogHelper::getCatalogPath();
+
+        if (is_file($path) && !File::delete($path)) {
+            $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_CUSTOM_REMOVE_ERROR'), 'error');
+            return;
+        }
+
+        JemHelper::addLogEntry('Custom Import Catalog removed; official server catalog restored.', __METHOD__, Log::INFO);
+        $this->setRedirect('index.php?option=com_jem&view=import#download-lists', Text::_('COM_JEM_IMPORT_CATALOG_OFFICIAL_RESTORED'));
     }
 
     /**
@@ -100,7 +200,7 @@ class JemControllerImport extends BaseController
      */
     private function assertCanImport()
     {
-        if (!Factory::getApplication()->getIdentity()->authorise('core.manage', 'com_jem')) {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
     }
@@ -127,6 +227,122 @@ class JemControllerImport extends BaseController
 
     public function csvtypesimport() {
         $this->CsvImport('types', 'types');
+    }
+
+    /**
+     * Validate and save the policy shared by all JEM import operations.
+     *
+     * @return void
+     */
+    public function saveSecuritySettings()
+    {
+        Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+        $this->assertCanImport();
+
+        $app = Factory::getApplication();
+
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $posted = $app->input->post->get('import_security', array(), 'array');
+        $invalidTags = array();
+        $normalisedTags = JemImportSecurityHelper::normaliseTagList(
+            $posted['additional_blocked_tags'] ?? '',
+            $invalidTags
+        );
+
+        if ($invalidTags) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::sprintf('COM_JEM_SETTINGS_SECURITY_INVALID_TAGS', implode(', ', $invalidTags)),
+                'error'
+            );
+            return;
+        }
+
+        $additionalTags = $normalisedTags === '' ? array() : preg_split('/,\s*/', $normalisedTags);
+        $additionalTags = array_values(array_diff($additionalTags, JemImportSecurityHelper::getCoreBlockedTags()));
+
+        if (in_array('iframe', $additionalTags, true)) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_SETTINGS_SECURITY_IFRAME_POLICY_ERROR'),
+                'error'
+            );
+            return;
+        }
+
+        $invalidHosts = array();
+        $trustedHosts = JemImportSecurityHelper::normaliseHostList(
+            $posted['trusted_iframe_hosts'] ?? '',
+            $invalidHosts
+        );
+
+        if ($invalidHosts) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::sprintf('COM_JEM_SETTINGS_SECURITY_INVALID_HOSTS', implode(', ', $invalidHosts)),
+                'error'
+            );
+            return;
+        }
+
+        $allowTrustedIframes = !empty($posted['allow_trusted_iframes']) ? 1 : 0;
+
+        if ($allowTrustedIframes && $trustedHosts === '') {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_SETTINGS_SECURITY_TRUSTED_HOSTS_REQUIRED'),
+                'error'
+            );
+            return;
+        }
+
+        $config = JemConfig::getInstance();
+        $configRegistry = $config->toRegistry();
+        $global = new Registry($configRegistry->get('globalattribs', array()));
+        $previous = array(
+            'additional_blocked_tags' => (string) $global->get('import_additional_blocked_tags', ''),
+            'allow_trusted_iframes' => (int) $global->get('import_allow_trusted_iframes', 0),
+            'trusted_iframe_hosts' => (string) $global->get('import_trusted_iframe_hosts', ''),
+        );
+        $current = array(
+            'additional_blocked_tags' => implode(', ', $additionalTags),
+            'allow_trusted_iframes' => $allowTrustedIframes,
+            'trusted_iframe_hosts' => $trustedHosts,
+        );
+
+        $global->set('import_additional_blocked_tags', $current['additional_blocked_tags']);
+        $global->set('import_allow_trusted_iframes', $current['allow_trusted_iframes']);
+        $global->set('import_trusted_iframe_hosts', $current['trusted_iframe_hosts']);
+        $configRegistry->set('globalattribs', $global->toArray());
+
+        if (!$config->store()) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=import#import-security',
+                Text::_('COM_JEM_IMPORT_SECURITY_SETTINGS_SAVE_ERROR'),
+                'error'
+            );
+            return;
+        }
+
+        JemImportSecurityHelper::resetPolicyCache();
+
+        if ($previous !== $current) {
+            JemHelper::addLogEntry(
+                'Import security settings updated: additional_tags=[' . $current['additional_blocked_tags']
+                . '], trusted_iframes=' . ($current['allow_trusted_iframes'] ? 'enabled' : 'disabled')
+                . ', trusted_hosts=[' . str_replace(array("\r", "\n"), ',', $current['trusted_iframe_hosts']) . ']',
+                __METHOD__,
+                Log::INFO
+            );
+        }
+
+        $this->setRedirect(
+            'index.php?option=com_jem&view=import#import-security',
+            Text::_('COM_JEM_IMPORT_SECURITY_SETTINGS_SAVED')
+        );
     }
 
     /**
@@ -174,6 +390,7 @@ class JemControllerImport extends BaseController
 
         try {
             $preview = $this->buildExternalCsvPreview($file, $options);
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'events');
         } catch (RuntimeException $e) {
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
@@ -190,7 +407,7 @@ class JemControllerImport extends BaseController
         );
 
         $app->setUserState('com_jem.import.active_preview', 'events');
-        $this->setRedirect('index.php?option=com_jem&view=import#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
+        $this->setRedirect('index.php?option=com_jem&view=import&profile_selection=1#event-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
     /**
@@ -205,6 +422,16 @@ class JemControllerImport extends BaseController
 
         $app = Factory::getApplication();
         $preview = $app->getUserState('com_jem.import.external_csv.preview', null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
+
+        if ($payloadToken !== '') {
+            try {
+                $preview = JemImportPreviewHelper::loadPreview((array) $preview, $userId);
+            } catch (RuntimeException $e) {
+                $preview = null;
+            }
+        }
 
         if (empty($preview['records'])) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_NO_PREVIEW');
@@ -250,9 +477,13 @@ class JemControllerImport extends BaseController
             : $this->getExternalEventRecordFields();
         $records = $preview['records'];
         $model = $this->getModel('import');
+        $result = $this->emptyExternalImportResult();
         ob_start();
         try {
-            $result = $model->eventsimport($fields, $records, false);
+            foreach (array_chunk($records, JemImportPreviewHelper::PAGE_SIZE) as $batch) {
+                $batchResult = $model->eventsimport($fields, $batch, false);
+                $this->mergeExternalImportResult($result, $batchResult);
+            }
         } catch (RuntimeException $e) {
             ob_end_clean();
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
@@ -262,6 +493,7 @@ class JemControllerImport extends BaseController
         }
         $importOutput = trim((string) ob_get_clean());
         $app->setUserState('com_jem.import.external_csv.preview', null);
+        JemImportPreviewHelper::deletePreview($payloadToken, $userId);
 
         $msg = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_COMMIT_RESULT', (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
         $this->addImportLogEntry(
@@ -283,7 +515,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.external_csv.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.external_csv.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.external_csv.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#event-import');
     }
 
@@ -332,6 +567,7 @@ class JemControllerImport extends BaseController
 
         try {
             $preview = $this->buildExternalIcsPreview($file, $options);
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'events');
         } catch (RuntimeException $e) {
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_ics', $msg, Log::WARNING);
@@ -363,6 +599,16 @@ class JemControllerImport extends BaseController
 
         $app = Factory::getApplication();
         $preview = $app->getUserState('com_jem.import.external_ics.preview', null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
+
+        if ($payloadToken !== '') {
+            try {
+                $preview = JemImportPreviewHelper::loadPreview((array) $preview, $userId);
+            } catch (RuntimeException $e) {
+                $preview = null;
+            }
+        }
 
         if (empty($preview['records'])) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_ICS_NO_PREVIEW');
@@ -372,9 +618,13 @@ class JemControllerImport extends BaseController
 
         $fields = array('title', 'dates', 'enddates', 'times', 'endtimes', 'introtext', 'fulltext', 'metadata', 'published', 'publish_up', 'type_id', 'locid', 'language', 'categories');
         $model = $this->getModel('import');
+        $result = $this->emptyExternalImportResult();
         ob_start();
         try {
-            $result = $model->eventsimport($fields, $preview['records'], false);
+            foreach (array_chunk($preview['records'], JemImportPreviewHelper::PAGE_SIZE) as $batch) {
+                $batchResult = $model->eventsimport($fields, $batch, false);
+                $this->mergeExternalImportResult($result, $batchResult);
+            }
         } catch (RuntimeException $e) {
             ob_end_clean();
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
@@ -384,6 +634,7 @@ class JemControllerImport extends BaseController
         }
         $importOutput = trim((string) ob_get_clean());
         $app->setUserState('com_jem.import.external_ics.preview', null);
+        JemImportPreviewHelper::deletePreview($payloadToken, $userId);
 
         $msg = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_ICS_COMMIT_RESULT', (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
         $this->addImportLogEntry(
@@ -405,7 +656,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.external_ics.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.external_ics.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.external_ics.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#event-import');
     }
 
@@ -425,7 +679,8 @@ class JemControllerImport extends BaseController
         $file = $input->files->get('FileExternalImport', array(), 'array');
         $sourceMode = $input->post->getCmd('external_import_source_mode', 'file');
         $catalogEntry = $this->getSelectedImportCatalogEntry('events');
-        $catalogSource = $sourceMode === 'url' ? (string) ($catalogEntry['source'] ?? '') : '';
+        $postedSourceUrl = trim($input->post->getString('external_import_source_url', ''));
+        $catalogSource = $sourceMode === 'url' ? ($postedSourceUrl ?: (string) ($catalogEntry['source'] ?? '')) : '';
         $downloadedFile = '';
         $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
         $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
@@ -452,6 +707,21 @@ class JemControllerImport extends BaseController
         }
 
         $existingPreview = $app->getUserState('com_jem.import.external_import.preview', null);
+        $previousPayloadToken = (string) ($existingPreview['payload_token'] ?? '');
+
+        if (!$hasUpload && $sourceMode !== 'url' && !empty($existingPreview['payload_token'])) {
+            try {
+                $existingPreview = JemImportPreviewHelper::loadPreview(
+                    (array) $existingPreview,
+                    (int) $app->getIdentity()->id
+                );
+            } catch (RuntimeException $e) {
+                JemImportPreviewHelper::deletePreview($previousPayloadToken, (int) $app->getIdentity()->id);
+                $existingPreview = null;
+                $app->setUserState('com_jem.import.external_import.preview', null);
+            }
+        }
+
         if (!$hasUpload && $sourceMode !== 'url' && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
             $extension = strtolower((string) $existingPreview['format']);
         }
@@ -472,8 +742,13 @@ class JemControllerImport extends BaseController
             'published' => $input->post->getInt('external_import_published', 1),
             'publish_up' => $this->normaliseExternalPublishUp($input->post->getString('external_import_publish_up', '')),
             'language' => $input->post->getCmd('external_import_language', '*'),
+            'source_mode' => $sourceMode === 'url' ? 'url' : 'file',
+            'source_url' => $catalogSource,
+            'source_name' => $catalogSource !== '' ? $catalogSource : ($hasUpload ? basename((string) ($file['name'] ?? '')) : basename((string) ($existingPreview['source_name'] ?? ''))),
         );
-        $profile = $this->getExternalImportProfile($input->post->getInt('external_import_profile_id', 0), $extension, 'events');
+        $selectedProfileId = $input->post->getInt('external_import_profile_id', 0);
+        $app->setUserState('com_jem.import.external_import.selected_profile_id', $selectedProfileId);
+        $profile = $this->getExternalImportProfile($selectedProfileId, $extension, 'events');
         $postedMapping = $this->getPostedImportMapping('external_import_mapping');
         $postedStaticValues = $this->getPostedImportStaticValues('external_import_static_values');
         $options['mapping'] = $postedMapping ?: ($profile['mapping'] ?? array());
@@ -486,7 +761,7 @@ class JemControllerImport extends BaseController
         $options['language_label'] = $this->getLanguageLabel($options['language']);
 
         try {
-            if (!$hasUpload && $sourceMode !== 'url' && $extension !== 'ics') {
+            if (!$hasUpload && $sourceMode !== 'url') {
                 $preview = $this->buildExternalStructuredPreviewFromRecords(
                     (array) ($existingPreview['source_records'] ?? array()),
                     $options,
@@ -526,19 +801,32 @@ class JemControllerImport extends BaseController
         $preview['profile_title'] = (string) $options['profile_title'];
 
         $profileTitle = $input->post->getString('external_import_profile_title', '');
-        if ($extension !== 'ics' && ($input->post->getInt('external_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+        if ($extension !== 'ics' && $input->post->getInt('external_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'events',
                 $extension,
                 $profileTitle,
                 (array) $preview['mapping'],
-                array('static_values' => (array) ($preview['static_values'] ?? array()))
+                array_merge($options, array('static_values' => (array) ($preview['static_values'] ?? array())))
             );
 
             if ($savedProfile) {
                 $preview['profile_id'] = (int) $savedProfile['id'];
                 $preview['profile_title'] = (string) $savedProfile['title'];
             }
+        }
+
+        try {
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'events');
+        } catch (RuntimeException $e) {
+            $msg = $e->getMessage();
+            $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
+            return;
+        }
+
+        if ($previousPayloadToken !== '' && $previousPayloadToken !== (string) ($preview['payload_token'] ?? '')) {
+            JemImportPreviewHelper::deletePreview($previousPayloadToken, (int) $app->getIdentity()->id);
         }
 
         $app->setUserState('com_jem.import.external_import.preview', $preview);
@@ -570,8 +858,18 @@ class JemControllerImport extends BaseController
 
         $app = Factory::getApplication();
         $preview = $app->getUserState('com_jem.import.external_import.preview', null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
 
-        if (empty($preview['records'])) {
+        try {
+            $recordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'records');
+            $sourceRecordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'source_records');
+        } catch (RuntimeException $e) {
+            $recordCount = 0;
+            $sourceRecordCount = 0;
+        }
+
+        if ($recordCount <= 0) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_NO_PREVIEW');
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
             return;
@@ -583,8 +881,9 @@ class JemControllerImport extends BaseController
         $rawPostedMapping = $input->post->get('external_import_mapping', null, 'array');
         $postedStaticValues = $this->getPostedImportStaticValues('external_import_static_values');
         $rawPostedStaticValues = $input->post->get('external_import_static_values', null, 'array');
+        $remapOptions = null;
 
-        if ($format !== 'ics' && (is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && !empty($preview['source_records'])) {
+        if ($format !== 'ics' && (is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && $sourceRecordCount > 0) {
             $options = array(
                 'catid' => $input->post->getInt('external_import_catid', (int) ($preview['catid'] ?? 0)),
                 'category_label' => $preview['category_label'] ?? '',
@@ -601,25 +900,32 @@ class JemControllerImport extends BaseController
             $options['venue_label'] = $this->getVenueLabel($options['locid']);
             $options['language_label'] = $this->getLanguageLabel($options['language']);
             $options['record_fields'] = $this->getExternalEventRecordFields($postedMapping);
-            try {
-                $preview = $this->buildExternalStructuredPreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
-                $preview['format'] = $format;
-            } catch (RuntimeException $e) {
-                $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
-                $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
-                $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
-                return;
-            }
+            $remapOptions = $options;
+            $preview['mapping'] = $postedMapping;
+            $preview['static_values'] = $postedStaticValues;
+            $preview['record_fields'] = $options['record_fields'];
         }
 
         $profileTitle = $input->post->getString('external_import_profile_title', '');
-        if ($format !== 'ics' && ($input->post->getInt('external_import_profile_save', 0) || trim((string) $profileTitle) !== '')) {
+        if ($format !== 'ics' && $input->post->getInt('external_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'events',
                 $format,
                 $profileTitle,
                 (array) ($preview['mapping'] ?? $postedMapping),
-                array('static_values' => (array) ($preview['static_values'] ?? $postedStaticValues))
+                array(
+                    'static_values' => (array) ($preview['static_values'] ?? $postedStaticValues),
+                    'catid' => $input->post->getInt('external_import_catid', (int) ($preview['catid'] ?? 0)),
+                    'mode' => $input->post->getCmd('external_import_mode', (string) ($preview['mode'] ?? 'standard')),
+                    'type_id' => $input->post->getInt('external_import_type_id', (int) ($preview['type_id'] ?? 0)),
+                    'locid' => $input->post->getInt('external_import_locid', (int) ($preview['locid'] ?? 0)),
+                    'published' => $input->post->getInt('external_import_published', (int) ($preview['published'] ?? 1)),
+                    'publish_up' => $input->post->getString('external_import_publish_up', (string) ($preview['publish_up'] ?? '')),
+                    'language' => $input->post->getCmd('external_import_language', (string) ($preview['language'] ?? '*')),
+                    'source_mode' => $input->post->getCmd('external_import_source_mode', (string) ($preview['source_mode'] ?? 'file')),
+                    'source_url' => $input->post->getString('external_import_source_url', (string) ($preview['source_url'] ?? '')),
+                    'source_name' => (string) ($preview['source_name'] ?? ''),
+                )
             );
 
             if ($savedProfile) {
@@ -632,9 +938,35 @@ class JemControllerImport extends BaseController
             ? $preview['record_fields']
             : $this->getExternalEventRecordFields();
         $model = $this->getModel('import');
+        $result = $this->emptyExternalImportResult();
+        $skippedCount = $remapOptions === null ? (int) ($preview['skipped_count'] ?? 0) : 0;
         ob_start();
         try {
-            $result = $model->eventsimport($fields, $preview['records'], false);
+            $payloadKey = $remapOptions === null ? 'records' : 'source_records';
+            $sourceOffset = 0;
+
+            foreach (JemImportPreviewHelper::getPayloadBatches((array) $preview, $userId, $payloadKey) as $batch) {
+                if ($remapOptions !== null) {
+                    $batchOptions = $remapOptions;
+                    $batchOptions['source_line_offset'] = $sourceOffset;
+                    $batchPreview = $this->buildExternalStructuredPreviewFromRecords(
+                        $batch,
+                        $batchOptions,
+                        (array) ($preview['source_fields'] ?? array())
+                    );
+                    $batch = (array) ($batchPreview['records'] ?? array());
+                    $skippedCount += (int) ($batchPreview['skipped_count'] ?? 0);
+                    $sourceOffset += count((array) ($batchPreview['source_records'] ?? array()));
+                }
+
+                if (!$batch) {
+                    continue;
+                }
+
+                $batchResult = $model->eventsimport($fields, $batch, false);
+                $this->mergeExternalImportResult($result, $batchResult);
+                unset($batchOptions, $batchPreview, $batchResult);
+            }
         } catch (RuntimeException $e) {
             ob_end_clean();
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
@@ -644,9 +976,10 @@ class JemControllerImport extends BaseController
         }
         $importOutput = trim((string) ob_get_clean());
         $app->setUserState('com_jem.import.external_import.preview', null);
+        JemImportPreviewHelper::deletePreview($payloadToken, $userId);
 
         $msgKey = $format === 'ics' ? 'COM_JEM_IMPORT_EXTERNAL_ICS_COMMIT_RESULT' : 'COM_JEM_IMPORT_EXTERNAL_COMMIT_RESULT';
-        $msg = Text::sprintf($msgKey, (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
+        $msg = Text::sprintf($msgKey, (int) $result['added'], (int) $result['error'], $skippedCount);
         $this->addImportLogEntry(
             $format === 'ics' ? 'external_ics' : 'external_csv',
             'External ' . strtoupper($format) . ' import committed. ' . strip_tags($msg)
@@ -667,7 +1000,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.external_import.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.external_import.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.external_import.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#event-import');
     }
 
@@ -686,14 +1022,15 @@ class JemControllerImport extends BaseController
         $file = $input->files->get('FileExternalVenueImport', array(), 'array');
         $sourceMode = $input->post->getCmd('external_venue_import_source_mode', 'file');
         $catalogEntry = $this->getSelectedImportCatalogEntry('venues');
-        $catalogSource = $sourceMode === 'url' ? (string) ($catalogEntry['source'] ?? '') : '';
+        $postedSourceUrl = trim($input->post->getString('external_venue_import_source_url', ''));
+        $catalogSource = $sourceMode === 'url' ? ($postedSourceUrl ?: (string) ($catalogEntry['source'] ?? '')) : '';
         $downloadedFile = '';
         $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
         $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
 
         if ($catalogSource !== '') {
             try {
-                $file = $this->downloadExternalImportSource($catalogSource, array('csv', 'json', 'xml'), (string) ($catalogEntry['format'] ?? ''));
+                $file = $this->downloadExternalImportSource($catalogSource, array('csv', 'json', 'xml', 'xlsx'), (string) ($catalogEntry['format'] ?? ''));
                 $downloadedFile = (string) $file['tmp_name'];
                 $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
                 $hasUpload = true;
@@ -706,18 +1043,31 @@ class JemControllerImport extends BaseController
         }
 
         $existingPreview = $app->getUserState('com_jem.import.external_venue_import.preview', null);
+        $previousPayloadToken = (string) ($existingPreview['payload_token'] ?? '');
+
+        if (!$hasUpload && $sourceMode !== 'url' && !empty($existingPreview['payload_token'])) {
+            try {
+                $existingPreview = $this->loadExternalVenuePreviewPayload((array) $existingPreview);
+            } catch (RuntimeException $e) {
+                $this->deleteExternalVenuePreviewPayload((string) $existingPreview['payload_token']);
+                $existingPreview = null;
+                $app->setUserState('com_jem.import.external_venue_import.preview', null);
+            }
+        }
         if (!$hasUpload && $sourceMode !== 'url' && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
             $extension = strtolower((string) $existingPreview['format']);
         }
 
-        if ((!$hasUpload && empty($existingPreview['source_records'])) || !in_array($extension, array('csv', 'json', 'xml'), true)) {
+        if ((!$hasUpload && empty($existingPreview['source_records'])) || !in_array($extension, array('csv', 'json', 'xml', 'xlsx'), true)) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_UNSUPPORTED_VENUE_FILE');
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
             return;
         }
 
-        $profile = $this->getExternalImportProfile($input->post->getInt('external_venue_import_profile_id', 0), $extension, 'venues');
+        $selectedProfileId = $input->post->getInt('external_venue_import_profile_id', 0);
+        $app->setUserState('com_jem.import.external_venue_import.selected_profile_id', $selectedProfileId);
+        $profile = $this->getExternalImportProfile($selectedProfileId, $extension, 'venues');
         $postedMapping = $this->getPostedImportMapping('external_venue_import_mapping');
         $postedStaticValues = $this->getPostedImportStaticValues('external_venue_import_static_values');
         $options = array(
@@ -728,6 +1078,9 @@ class JemControllerImport extends BaseController
             'static_values' => $postedStaticValues ?: ($profile['options']['static_values'] ?? array()),
             'profile_id' => (int) ($profile['id'] ?? 0),
             'profile_title' => (string) ($profile['title'] ?? ''),
+            'source_mode' => $sourceMode === 'url' ? 'url' : 'file',
+            'source_url' => $catalogSource,
+            'source_name' => $catalogSource !== '' ? $catalogSource : ($hasUpload ? basename((string) ($file['name'] ?? '')) : basename((string) ($existingPreview['source_name'] ?? ''))),
         );
         $options['type_label'] = $this->getTypeLabel($options['type_id']);
         $options['language_label'] = $this->getLanguageLabel($options['language']);
@@ -744,6 +1097,8 @@ class JemControllerImport extends BaseController
                 $preview = $this->buildExternalJsonVenuePreview($file, $options);
             } elseif ($extension === 'xml') {
                 $preview = $this->buildExternalXmlVenuePreview($file, $options);
+            } elseif ($extension === 'xlsx') {
+                $preview = $this->buildExternalXlsxVenuePreview($file, $options);
             } else {
                 $preview = $this->buildExternalCsvVenuePreview($file, $options);
             }
@@ -772,19 +1127,45 @@ class JemControllerImport extends BaseController
         $preview['profile_title'] = (string) $options['profile_title'];
 
         $profileTitle = $input->post->getString('external_venue_import_profile_title', '');
-        if ($input->post->getInt('external_venue_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+        if ($input->post->getInt('external_venue_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'venues',
                 $extension,
                 $profileTitle,
                 (array) $preview['mapping'],
-                array('static_values' => (array) ($preview['static_values'] ?? array()))
+                array_merge($options, array('static_values' => (array) ($preview['static_values'] ?? array())))
             );
 
             if ($savedProfile) {
                 $preview['profile_id'] = (int) $savedProfile['id'];
                 $preview['profile_title'] = (string) $savedProfile['title'];
+                $app->setUserState('com_jem.import.external_venue_import.selected_profile_id', (int) $savedProfile['id']);
             }
+        }
+
+        if ($this->externalSourceWarningCount > 0) {
+            $preview['source_warnings'] = $this->externalSourceWarnings;
+            $preview['source_warning_count'] = $this->externalSourceWarningCount;
+            $warningMessage = Text::sprintf('COM_JEM_IMPORT_SOURCE_VALUES_IGNORED', $this->externalSourceWarningCount);
+            $app->enqueueMessage($warningMessage, 'warning');
+            $this->addImportLogEntry(
+                'external_csv',
+                $warningMessage . ' ' . implode(' | ', array_slice($this->externalSourceWarnings, 0, 20)),
+                Log::WARNING
+            );
+        }
+
+        try {
+            $preview = $this->storeExternalVenuePreviewPayload($preview);
+        } catch (RuntimeException $e) {
+            $msg = $e->getMessage();
+            $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
+            return;
+        }
+
+        if ($previousPayloadToken !== '' && $previousPayloadToken !== (string) ($preview['payload_token'] ?? '')) {
+            $this->deleteExternalVenuePreviewPayload($previousPayloadToken);
         }
 
         $app->setUserState('com_jem.import.external_venue_import.preview', $preview);
@@ -798,7 +1179,7 @@ class JemControllerImport extends BaseController
         );
 
         $app->setUserState('com_jem.import.active_preview', 'venues');
-        $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
+        $this->setRedirect('index.php?option=com_jem&view=import&profile_selection=1#venue-import', $preview['summary'], $preview['error_count'] ? 'warning' : 'message');
     }
 
     /**
@@ -813,8 +1194,20 @@ class JemControllerImport extends BaseController
 
         $app = Factory::getApplication();
         $preview = $app->getUserState('com_jem.import.external_venue_import.preview', null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
 
-        if (empty($preview['records'])) {
+        try {
+            $recordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'records');
+            $sourceRecordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'source_records');
+        } catch (RuntimeException $e) {
+            $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_PREVIEW_PAYLOAD_MISSING');
+            $app->setUserState('com_jem.import.external_venue_import.preview', null);
+            $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
+            return;
+        }
+
+        if ($recordCount <= 0) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_NO_PREVIEW');
             $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
             return;
@@ -825,7 +1218,8 @@ class JemControllerImport extends BaseController
         $rawPostedMapping = $input->post->get('external_venue_import_mapping', null, 'array');
         $postedStaticValues = $this->getPostedImportStaticValues('external_venue_import_static_values');
         $rawPostedStaticValues = $input->post->get('external_venue_import_static_values', null, 'array');
-        if ((is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && !empty($preview['source_records'])) {
+        $remapOptions = null;
+        if ((is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && $sourceRecordCount > 0) {
             $options = array(
                 'type_id' => $input->post->getInt('external_venue_import_type_id', (int) ($preview['type_id'] ?? 0)),
                 'published' => $input->post->getInt('external_venue_import_published', 1),
@@ -836,26 +1230,28 @@ class JemControllerImport extends BaseController
             $options['type_label'] = $this->getTypeLabel($options['type_id']);
             $options['language_label'] = $this->getLanguageLabel($options['language']);
             $options['record_fields'] = $this->getExternalVenueRecordFields($postedMapping);
-            $previousFormat = strtolower((string) ($preview['format'] ?? 'csv'));
-            try {
-                $preview = $this->buildExternalVenuePreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
-                $preview['format'] = $previousFormat;
-            } catch (RuntimeException $e) {
-                $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
-                $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
-                $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
-                return;
-            }
+            $remapOptions = $options;
+            $preview['mapping'] = $postedMapping;
+            $preview['static_values'] = $postedStaticValues;
+            $preview['record_fields'] = $options['record_fields'];
         }
 
         $profileTitle = $input->post->getString('external_venue_import_profile_title', '');
-        if ($input->post->getInt('external_venue_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+        if ($input->post->getInt('external_venue_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'venues',
                 strtolower((string) ($preview['format'] ?? 'csv')),
                 $profileTitle,
                 (array) ($preview['mapping'] ?? $postedMapping),
-                array('static_values' => (array) ($preview['static_values'] ?? $postedStaticValues))
+                array(
+                    'static_values' => (array) ($preview['static_values'] ?? $postedStaticValues),
+                    'type_id' => $input->post->getInt('external_venue_import_type_id', (int) ($preview['type_id'] ?? 0)),
+                    'published' => $input->post->getInt('external_venue_import_published', (int) ($preview['published'] ?? 1)),
+                    'language' => $input->post->getCmd('external_venue_import_language', (string) ($preview['language'] ?? '*')),
+                    'source_mode' => $input->post->getCmd('external_venue_import_source_mode', (string) ($preview['source_mode'] ?? 'file')),
+                    'source_url' => $input->post->getString('external_venue_import_source_url', (string) ($preview['source_url'] ?? '')),
+                    'source_name' => (string) ($preview['source_name'] ?? ''),
+                )
             );
 
             if ($savedProfile) {
@@ -868,9 +1264,35 @@ class JemControllerImport extends BaseController
             ? $preview['record_fields']
             : $this->getExternalVenueRecordFields();
         $model = $this->getModel('import');
+        $result = $this->emptyExternalImportResult();
+        $skippedCount = $remapOptions === null ? (int) ($preview['skipped_count'] ?? 0) : 0;
         ob_start();
         try {
-            $result = $model->venuesimport($fields, $preview['records'], false);
+            $payloadKey = $remapOptions === null ? 'records' : 'source_records';
+            $sourceOffset = 0;
+
+            foreach (JemImportPreviewHelper::getPayloadBatches((array) $preview, $userId, $payloadKey) as $batch) {
+                if ($remapOptions !== null) {
+                    $batchOptions = $remapOptions;
+                    $batchOptions['source_line_offset'] = $sourceOffset;
+                    $batchPreview = $this->buildExternalVenuePreviewFromRecords(
+                        $batch,
+                        $batchOptions,
+                        (array) ($preview['source_fields'] ?? array())
+                    );
+                    $batch = (array) ($batchPreview['records'] ?? array());
+                    $skippedCount += (int) ($batchPreview['skipped_count'] ?? 0);
+                    $sourceOffset += count((array) ($batchPreview['source_records'] ?? array()));
+                }
+
+                if (!$batch) {
+                    continue;
+                }
+
+                $batchResult = $model->venuesimport($fields, $batch, false);
+                $this->mergeExternalImportResult($result, $batchResult);
+                unset($batchOptions, $batchPreview, $batchResult);
+            }
         } catch (RuntimeException $e) {
             ob_end_clean();
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
@@ -880,8 +1302,9 @@ class JemControllerImport extends BaseController
         }
         $importOutput = trim((string) ob_get_clean());
         $app->setUserState('com_jem.import.external_venue_import.preview', null);
+        $this->deleteExternalVenuePreviewPayload($payloadToken);
 
-        $msg = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_VENUES_COMMIT_RESULT', (int) $result['added'], (int) $result['error'], (int) $preview['skipped_count']);
+        $msg = Text::sprintf('COM_JEM_IMPORT_EXTERNAL_VENUES_COMMIT_RESULT', (int) $result['added'], (int) $result['error'], $skippedCount);
         $this->addImportLogEntry(
             'external_csv',
             'External venue import committed. ' . strip_tags($msg) . $this->formatExternalImportLogDetails($preview, $result, $importOutput),
@@ -901,8 +1324,29 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.external_venue_import.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.external_venue_import.preview', array());
+        $this->deleteExternalVenuePreviewPayload((string) ($preview['payload_token'] ?? ''));
+        $app->setUserState('com_jem.import.external_venue_import.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#venue-import');
+    }
+
+    protected function storeExternalVenuePreviewPayload(array $preview)
+    {
+        $userId = (int) Factory::getApplication()->getIdentity()->id;
+        return JemImportPreviewHelper::storeVenuePreview($preview, $userId);
+    }
+
+    protected function loadExternalVenuePreviewPayload(array $preview)
+    {
+        $userId = (int) Factory::getApplication()->getIdentity()->id;
+        return JemImportPreviewHelper::loadVenuePreview($preview, $userId);
+    }
+
+    protected function deleteExternalVenuePreviewPayload($token)
+    {
+        $userId = (int) Factory::getApplication()->getIdentity()->id;
+        JemImportPreviewHelper::deleteVenuePreview($token, $userId);
     }
 
     /**
@@ -934,12 +1378,20 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        $preview = $this->buildSpecialDaysCsvPreview($file, array(
-            'day_type' => $dayType,
-            'replace' => $input->post->getInt('replace_specialdays_csv', 0),
-            'source' => 'csv',
-            'title' => Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_PREVIEW_TITLE'),
-        ));
+        try {
+            $preview = $this->buildSpecialDaysCsvPreview($file, array(
+                'day_type' => $dayType,
+                'replace' => $input->post->getInt('replace_specialdays_csv', 0),
+                'source' => 'csv',
+                'title' => Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_CSV_PREVIEW_TITLE'),
+            ));
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'specialdays');
+        } catch (RuntimeException $e) {
+            $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
+            $this->addImportLogEntry('special_days', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
+            return;
+        }
 
         $app->setUserState('com_jem.import.specialdays_csv.preview', $preview);
         $this->addImportLogEntry(
@@ -976,7 +1428,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.specialdays_csv.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.specialdays_csv.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.specialdays_csv.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#special-days');
     }
 
@@ -1009,12 +1464,20 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        $preview = $this->buildSpecialDaysIcsPreview($file, array(
-            'day_type' => $dayType,
-            'replace' => $input->post->getInt('replace_specialdays_ics', 0),
-            'source' => 'ics',
-            'title' => Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_ICS_PREVIEW_TITLE'),
-        ));
+        try {
+            $preview = $this->buildSpecialDaysIcsPreview($file, array(
+                'day_type' => $dayType,
+                'replace' => $input->post->getInt('replace_specialdays_ics', 0),
+                'source' => 'ics',
+                'title' => Text::_('COM_JEM_SPECIAL_DAYS_IMPORT_ICS_PREVIEW_TITLE'),
+            ));
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'specialdays');
+        } catch (RuntimeException $e) {
+            $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
+            $this->addImportLogEntry('special_days', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
+            return;
+        }
 
         $app->setUserState('com_jem.import.specialdays_ics.preview', $preview);
         $this->addImportLogEntry(
@@ -1051,7 +1514,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.specialdays_ics.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.specialdays_ics.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.specialdays_ics.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#special-days');
     }
 
@@ -1084,6 +1550,21 @@ class JemControllerImport extends BaseController
         $hasUpload = !empty($file['name']) && empty($file['error']) && is_uploaded_file($file['tmp_name']);
 
         $existingPreview = $app->getUserState('com_jem.import.specialdays_import.preview', null);
+        $previousPayloadToken = (string) ($existingPreview['payload_token'] ?? '');
+
+        if (!$hasUpload && !empty($existingPreview['payload_token'])) {
+            try {
+                $existingPreview = JemImportPreviewHelper::loadPreview(
+                    (array) $existingPreview,
+                    (int) $app->getIdentity()->id
+                );
+            } catch (RuntimeException $e) {
+                JemImportPreviewHelper::deletePreview($previousPayloadToken, (int) $app->getIdentity()->id);
+                $existingPreview = null;
+                $app->setUserState('com_jem.import.specialdays_import.preview', null);
+            }
+        }
+
         if (!$hasUpload && !empty($existingPreview['source_records']) && !empty($existingPreview['format'])) {
             $extension = strtolower((string) $existingPreview['format']);
         }
@@ -1149,7 +1630,7 @@ class JemControllerImport extends BaseController
         $preview['profile_title'] = (string) ($options['profile_title'] ?? '');
 
         $profileTitle = $input->post->getString('specialdays_import_profile_title', '');
-        if ($input->post->getInt('specialdays_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+        if ($input->post->getInt('specialdays_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'specialdays',
                 $extension,
@@ -1162,6 +1643,19 @@ class JemControllerImport extends BaseController
                 $preview['profile_id'] = (int) $savedProfile['id'];
                 $preview['profile_title'] = (string) $savedProfile['title'];
             }
+        }
+
+        try {
+            $preview = JemImportPreviewHelper::storePreview($preview, (int) $app->getIdentity()->id, 'specialdays');
+        } catch (RuntimeException $e) {
+            $msg = $e->getMessage();
+            $this->addImportLogEntry('special_days', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
+            return;
+        }
+
+        if ($previousPayloadToken !== '' && $previousPayloadToken !== (string) ($preview['payload_token'] ?? '')) {
+            JemImportPreviewHelper::deletePreview($previousPayloadToken, (int) $app->getIdentity()->id);
         }
 
         $app->setUserState('com_jem.import.specialdays_import.preview', $preview);
@@ -1192,8 +1686,18 @@ class JemControllerImport extends BaseController
         $app = Factory::getApplication();
         $input = $app->input;
         $preview = $app->getUserState('com_jem.import.specialdays_import.preview', null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
 
-        if (empty($preview['records'])) {
+        try {
+            $recordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'records');
+            $sourceRecordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'source_records');
+        } catch (RuntimeException $e) {
+            $recordCount = 0;
+            $sourceRecordCount = 0;
+        }
+
+        if ($recordCount <= 0) {
             $msg = Text::_('COM_JEM_IMPORT_EXTERNAL_NO_PREVIEW');
             $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
             return;
@@ -1211,6 +1715,7 @@ class JemControllerImport extends BaseController
         );
         $replaceSpecialDays = $input->post->getInt('replace_specialdays_import', (int) ($specialDaysFormState['replace'] ?? ($preview['replace'] ?? 0)));
         $showDatesSpecialDays = $input->post->getInt('specialdays_import_show_dates', (int) ($specialDaysFormState['show_dates'] ?? ($preview['show_dates'] ?? 1)));
+        $remapOptions = null;
 
         $app->setUserState('com_jem.import.specialdays_import.form', array(
             'profile_id' => $input->post->getInt('specialdays_import_profile_id', (int) ($preview['profile_id'] ?? ($specialDaysFormState['profile_id'] ?? 0))),
@@ -1219,7 +1724,7 @@ class JemControllerImport extends BaseController
             'show_dates' => $showDatesSpecialDays,
         ));
 
-        if ((is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && !empty($preview['source_records'])) {
+        if ((is_array($rawPostedMapping) || is_array($rawPostedStaticValues)) && $sourceRecordCount > 0) {
             $selectedDayType = $this->resolveSpecialDaysImportType($selectedTypeValue);
             $options = array(
                 'day_type' => (string) ($selectedDayType['name'] ?? ($preview['day_type'] ?? '')),
@@ -1232,19 +1737,14 @@ class JemControllerImport extends BaseController
                 'static_values' => $postedStaticValues,
                 'profile_title' => $preview['profile_title'] ?? '',
             );
-            try {
-                $preview = $this->buildSpecialDaysPreviewFromRecords((array) $preview['source_records'], $options, (array) ($preview['source_fields'] ?? array()));
-                $preview['format'] = $format;
-            } catch (RuntimeException $e) {
-                $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
-                $this->addImportLogEntry('special_days', $msg, Log::WARNING);
-                $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
-                return;
-            }
+            $remapOptions = $options;
+            $preview['mapping'] = $postedMapping;
+            $preview['static_values'] = $postedStaticValues;
+            $preview['record_fields'] = $this->getSpecialDaysRecordFields($postedMapping);
         }
 
         $profileTitle = $input->post->getString('specialdays_import_profile_title', '');
-        if ($input->post->getInt('specialdays_import_profile_save', 0) || trim((string) $profileTitle) !== '') {
+        if ($input->post->getInt('specialdays_import_profile_save', 0)) {
             $savedProfile = $this->saveExternalImportProfile(
                 'specialdays',
                 $format,
@@ -1259,8 +1759,63 @@ class JemControllerImport extends BaseController
             }
         }
 
-        $app->setUserState('com_jem.import.specialdays_import.preview', $preview);
-        $this->commitSpecialDaysPreview('com_jem.import.specialdays_import.preview', strtoupper($format));
+        $result = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'error' => 0);
+
+        try {
+            $payloadKey = $remapOptions === null ? 'records' : 'source_records';
+            $sourceOffset = 0;
+
+            foreach (JemImportPreviewHelper::getPayloadBatches((array) $preview, $userId, $payloadKey) as $batch) {
+                if ($remapOptions !== null) {
+                    $batchOptions = $remapOptions;
+                    $batchOptions['source_line_offset'] = $sourceOffset;
+                    $batchPreview = $this->buildSpecialDaysPreviewFromRecords(
+                        $batch,
+                        $batchOptions,
+                        (array) ($preview['source_fields'] ?? array())
+                    );
+                    $batch = (array) ($batchPreview['records'] ?? array());
+                    $sourceOffset += count((array) ($batchPreview['source_records'] ?? array()));
+                }
+
+                if (!$batch) {
+                    continue;
+                }
+
+                $batchResult = $this->storeSpecialDaysRecords($batch, (bool) $replaceSpecialDays);
+
+                foreach (array_keys($result) as $key) {
+                    $result[$key] += (int) ($batchResult[$key] ?? 0);
+                }
+
+                unset($batchOptions, $batchPreview, $batchResult);
+            }
+        } catch (RuntimeException $e) {
+            $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
+            $this->addImportLogEntry('special_days', $msg, Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
+            return;
+        }
+
+        $app->setUserState('com_jem.import.specialdays_import.preview', null);
+        JemImportPreviewHelper::deletePreview($payloadToken, $userId);
+
+        $msg = Text::sprintf(
+            'COM_JEM_SPECIAL_DAYS_IMPORT_RESULT',
+            $result['added'],
+            $result['updated'],
+            $result['ignored'],
+            $result['error']
+        );
+        $this->addImportLogEntry(
+            'special_days',
+            'Special Days ' . strtoupper($format) . ' import committed. Type of day: ' . ($preview['day_type'] ?? '-')
+            . '. Added: ' . $result['added'] . ', updated: ' . $result['updated']
+            . ', ignored: ' . $result['ignored'] . ', errors: ' . $result['error']
+            . '. Preview rows: ' . (int) ($preview['total_count'] ?? count($preview['rows'] ?? array())) . '.',
+            $result['error'] ? Log::WARNING : Log::INFO
+        );
+        $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, $result['error'] ? 'warning' : 'message');
     }
 
     /**
@@ -1273,7 +1828,10 @@ class JemControllerImport extends BaseController
         Session::checkToken() or jexit('Invalid Token');
         $this->assertCanImport();
 
-        Factory::getApplication()->setUserState('com_jem.import.specialdays_import.preview', null);
+        $app = Factory::getApplication();
+        $preview = (array) $app->getUserState('com_jem.import.specialdays_import.preview', array());
+        JemImportPreviewHelper::deletePreview((string) ($preview['payload_token'] ?? ''), (int) $app->getIdentity()->id);
+        $app->setUserState('com_jem.import.specialdays_import.preview', null);
         $this->setRedirect('index.php?option=com_jem&view=import#special-days');
     }
 
@@ -1284,16 +1842,16 @@ class JemControllerImport extends BaseController
      */
     public function logCreatedImportOption()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
+        JemHelper::requirePostToken();
         $this->assertCanImport();
 
         $app = Factory::getApplication();
         $input = $app->input;
-        $source = $input->getCmd('source', 'external');
-        $object = $input->getCmd('object', 'option');
-        $value = $input->getInt('value', 0);
-        $label = trim($input->getString('label', ''));
-        $select = $input->getCmd('select', '');
+        $source = $input->post->getCmd('source', 'external');
+        $object = $input->post->getCmd('object', 'option');
+        $value = $input->post->getInt('value', 0);
+        $label = trim($input->post->getString('label', ''));
+        $select = $input->post->getCmd('select', '');
         $logKey = $source === 'ics' ? 'external_ics' : 'external_csv';
 
         $this->addImportLogEntry(
@@ -1306,11 +1864,15 @@ class JemControllerImport extends BaseController
             Log::INFO
         );
 
-        if ($source === 'ics') {
-            $app->setUserState('com_jem.import.external_ics.preview', null);
-        } else {
-            $app->setUserState('com_jem.import.external_csv.preview', null);
-        }
+        $previewStateKey = $source === 'ics'
+            ? 'com_jem.import.external_ics.preview'
+            : 'com_jem.import.external_csv.preview';
+        $preview = (array) $app->getUserState($previewStateKey, array());
+        JemImportPreviewHelper::deletePreview(
+            (string) ($preview['payload_token'] ?? ''),
+            (int) $app->getIdentity()->id
+        );
+        $app->setUserState($previewStateKey, null);
 
         $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         echo json_encode(array('success' => true));
@@ -1326,7 +1888,6 @@ class JemControllerImport extends BaseController
      */
     public function viewLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
         $this->assertCanImport();
 
         $log = $this->getKnownImportLogFile();
@@ -1337,7 +1898,10 @@ class JemControllerImport extends BaseController
         }
 
         $app = Factory::getApplication();
-        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true);
+        JemHelper::setNoStoreHeaders();
+        $app->setHeader('Content-Type', 'text/html; charset=utf-8', true)
+            ->setHeader('X-Content-Type-Options', 'nosniff', true)
+            ->sendHeaders();
 
         echo '<!doctype html><html><head><meta charset="utf-8"><title>'
             . htmlspecialchars($log['name'], ENT_QUOTES, 'UTF-8')
@@ -1359,7 +1923,6 @@ class JemControllerImport extends BaseController
      */
     public function downloadLog()
     {
-        Session::checkToken('get') or jexit(Text::_('JINVALID_TOKEN'));
         $this->assertCanImport();
 
         $log = $this->getKnownImportLogFile();
@@ -1369,9 +1932,17 @@ class JemControllerImport extends BaseController
             throw new Exception(Text::_('COM_JEM_IMPORT_LOGS_EMPTY'), 404);
         }
 
-        $app->setHeader('Content-Type', 'text/plain; charset=utf-8', true);
-        $app->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true);
-        $app->setHeader('Content-Length', (string) filesize($log['path']), true);
+        JemHelper::setNoStoreHeaders();
+
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        $app->setHeader('Content-Type', 'application/octet-stream', true)
+            ->setHeader('Content-Disposition', 'attachment; filename="' . basename($log['name']) . '"', true)
+            ->setHeader('Content-Length', (string) filesize($log['path']), true)
+            ->setHeader('X-Content-Type-Options', 'nosniff', true)
+            ->sendHeaders();
 
         readfile($log['path']);
         $app->close();
@@ -1462,6 +2033,8 @@ class JemControllerImport extends BaseController
         }
 
         $msg = '';
+        $sourceJemVersion = '';
+        $sourceVersionConflict = false;
         $file = Factory::getApplication()->input->files->get('File'.$type, array(), 'array');
 
         if (empty($file['name'])) {
@@ -1480,6 +2053,15 @@ class JemControllerImport extends BaseController
 
         if (strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)) !== 'csv' || !is_uploaded_file($file['tmp_name'])) {
             $msg = Text::_('COM_JEM_IMPORT_PARSE_ERROR');
+            $this->addImportLogEntry($logKey, $msg . ' File: ' . $file['name'], Log::WARNING);
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
+            return;
+        }
+
+        try {
+            JemImportBudgetHelper::assertFileSize($file['tmp_name']);
+        } catch (RuntimeException $e) {
+            $msg = $e->getMessage();
             $this->addImportLogEntry($logKey, $msg . ' File: ' . $file['name'], Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
             return;
@@ -1505,7 +2087,17 @@ class JemControllerImport extends BaseController
 
             // get fields, on first row of the file
             $fields = array();
-            if (($data = fgetcsv($handle, 1000, $separator, $delimiter)) !== false) {
+            $versionColumn = null;
+            $totalValueBytes = 0;
+            if (($data = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+                try {
+                    JemImportBudgetHelper::assertTabularRow($data, $totalValueBytes);
+                } catch (RuntimeException $e) {
+                    fclose($handle);
+                    $this->setRedirect('index.php?option=com_jem&view=import', $e->getMessage(), 'error');
+                    return;
+                }
+
                 $numfields = count($data);
 
                 // normalise to utf-8; UTF-8 without BOM must not be converted again
@@ -1513,6 +2105,7 @@ class JemControllerImport extends BaseController
                     $msg .= "<p>".Text::_('COM_JEM_IMPORT_BOM_NOT_FOUND')."</p>\n";
                 }
                 array_walk($data, 'jem_normalise_csv_utf8');
+                $versionColumn = JemCsvMetadataHelper::findVersionColumn($data);
 
                 for ($c = 0; $c < $numfields; $c++) {
                     // here, we make sure that the field match one of the fields of jem_venues table or special fields,
@@ -1540,7 +2133,16 @@ class JemControllerImport extends BaseController
             $records = array();
             $row = 1;
 
-            while (($data = fgetcsv($handle, 10000, $separator, $delimiter)) !== FALSE) {
+            while (($data = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== FALSE) {
+                try {
+                    JemImportBudgetHelper::assertRecordCount($row);
+                    JemImportBudgetHelper::assertTabularRow($data, $totalValueBytes);
+                } catch (RuntimeException $e) {
+                    fclose($handle);
+                    $this->setRedirect('index.php?option=com_jem&view=import', $e->getMessage(), 'error');
+                    return;
+                }
+
                 $num = count($data);
 
                 if ($numfields != $num) {
@@ -1548,18 +2150,41 @@ class JemControllerImport extends BaseController
                 } else {
                     // normalise to utf-8; UTF-8 without BOM must not be converted again
                     array_walk($data, 'jem_normalise_csv_utf8');
+                    $rowJemVersion = JemCsvMetadataHelper::extractVersion($data, $versionColumn);
+                    if ($rowJemVersion !== '') {
+                        if ($sourceJemVersion === '') {
+                            $sourceJemVersion = $rowJemVersion;
+                        } elseif ($sourceJemVersion !== $rowJemVersion) {
+                            $sourceVersionConflict = true;
+                        }
+                    }
 
                     $r = array();
                     // only extract columns with validated header, from previous step.
                     foreach ($fields as $k => $v) {
                         $r[$k] = $this->_formatcsvfield($v, $data[$k]);
                     }
+                    $r['_jem_source_line'] = $row + 1;
                     $records[] = $r;
                 }
                 $row++;
             }
 
             fclose($handle);
+            $localJemVersion = $this->getInstalledJemVersion();
+            $versionMessage = $this->buildJemVersionImportMessage(
+                $sourceJemVersion,
+                $localJemVersion,
+                $sourceVersionConflict
+            );
+            $msg .= '<p>' . htmlspecialchars($versionMessage, ENT_QUOTES, 'UTF-8') . "</p>\n";
+            $this->addImportLogEntry(
+                $logKey,
+                $versionMessage . ' File: ' . $file['name'],
+                ($sourceVersionConflict || ($sourceJemVersion !== '' && $localJemVersion !== '' && $sourceJemVersion !== $localJemVersion))
+                    ? Log::WARNING
+                    : Log::INFO
+            );
             $msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_FOUND', count($records))."</p>\n";
 
             // database update
@@ -1630,6 +2255,44 @@ class JemControllerImport extends BaseController
         );
 
         return $map[$type] ?? 'jem_events';
+    }
+
+    /**
+     * Read the installed JEM component version from Joomla's manifest cache.
+     */
+    protected function getInstalledJemVersion()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('component'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $manifest = json_decode((string) $db->loadResult(), true);
+
+        return JemCsvMetadataHelper::normaliseVersion($manifest['version'] ?? '');
+    }
+
+    /**
+     * Describe JEM-to-JEM version context without treating a difference as incompatible.
+     */
+    protected function buildJemVersionImportMessage($sourceVersion, $localVersion, $conflict = false)
+    {
+        $hasSourceVersion = $sourceVersion !== '';
+        $hasLocalVersion = $localVersion !== '';
+        $sourceVersion = $sourceVersion !== '' ? $sourceVersion : Text::_('COM_JEM_IMPORT_JEM_VERSION_UNKNOWN');
+        $localVersion = $localVersion !== '' ? $localVersion : Text::_('COM_JEM_IMPORT_JEM_VERSION_UNKNOWN');
+
+        if ($conflict) {
+            return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_CONFLICT', $sourceVersion, $localVersion);
+        }
+
+        if ($hasSourceVersion && $hasLocalVersion && $sourceVersion !== $localVersion) {
+            return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_DIFFERENT', $sourceVersion, $localVersion);
+        }
+
+        return Text::sprintf('COM_JEM_IMPORT_JEM_VERSION_INFO', $sourceVersion, $localVersion);
     }
 
     /**
@@ -1750,6 +2413,50 @@ class JemControllerImport extends BaseController
      *
      * @return string
      */
+    /**
+     * Create an empty result accumulator for batched event and venue imports.
+     *
+     * @return array
+     */
+    protected function emptyExternalImportResult()
+    {
+        return array(
+            'added' => 0,
+            'updated' => 0,
+            'ignored' => 0,
+            'ignoredids' => '',
+            'duplicated' => 0,
+            'duplicatedids' => '',
+            'replaced' => 0,
+            'replacedids' => '',
+            'error' => 0,
+            'errorids' => '',
+        );
+    }
+
+    /**
+     * Merge one bounded import batch result into the operation totals.
+     *
+     * @param   array  $result       Accumulated result.
+     * @param   array  $batchResult  Current batch result.
+     *
+     * @return void
+     */
+    protected function mergeExternalImportResult(array &$result, array $batchResult)
+    {
+        foreach (array('added', 'updated', 'ignored', 'duplicated', 'replaced', 'error') as $key) {
+            $result[$key] += (int) ($batchResult[$key] ?? 0);
+        }
+
+        foreach (array('ignoredids', 'duplicatedids', 'replacedids', 'errorids') as $key) {
+            $ids = trim((string) ($batchResult[$key] ?? ''), ',');
+
+            if ($ids !== '') {
+                $result[$key] .= ($result[$key] !== '' ? ',' : '') . $ids;
+            }
+        }
+    }
+
     protected function formatExternalImportLogDetails(array $preview, array $result, $importOutput)
     {
         $details = array(
@@ -1792,6 +2499,7 @@ class JemControllerImport extends BaseController
      */
     protected function buildExternalCsvPreview(array $file, array $options)
     {
+        JemImportBudgetHelper::assertFileSize($file['tmp_name']);
         $rows = array();
         $records = array();
         $sourceRecords = array();
@@ -1835,15 +2543,15 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         }
 
         if ($header === false) {
@@ -1872,6 +2580,8 @@ class JemControllerImport extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
+        $totalValueBytes = 0;
+        JemImportBudgetHelper::assertTabularRow($header, $totalValueBytes);
         $effectiveMapping = $this->getEffectiveExternalMapping($header, $options['mapping'] ?? array(), 'events');
         $fields = $this->normaliseExternalSourceFields($header, $effectiveMapping, 'events');
         $staticValues = $this->normaliseImportStaticValues($options['static_values'] ?? array());
@@ -1881,8 +2591,10 @@ class JemControllerImport extends BaseController
         $rowOptions['record_fields'] = $this->mergeImportRecordFields($this->getExternalEventRecordFields($effectiveMapping), $staticValues);
         $line = 1;
 
-        while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
             $line++;
+            JemImportBudgetHelper::assertRecordCount($line - 1);
+            JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
             if (count(array_filter($raw, 'strlen')) === 0) {
@@ -1892,13 +2604,13 @@ class JemControllerImport extends BaseController
             $data = array();
             $sourceRecord = array();
             foreach ($header as $index => $sourceField) {
-                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source');
+                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source', $line);
                 $field = $fields[$sourceField] ?? null;
 
                 if ($field === null) {
                     continue;
                 }
-                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
             $sourceRecords[] = $sourceRecord;
@@ -1956,17 +2668,8 @@ class JemControllerImport extends BaseController
      */
     protected function buildExternalJsonPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        $json = json_decode($content, true);
-
-        if (!is_array($json)) {
-            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $json = JemImportBudgetHelper::decodeJson($content);
 
         $records = $this->findExternalStructuredRecords($json);
 
@@ -1983,19 +2686,8 @@ class JemControllerImport extends BaseController
      */
     protected function buildExternalXmlPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-        if (!$xml) {
-            libxml_clear_errors();
-            return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $xml = JemImportBudgetHelper::loadXml($content);
 
         $records = $this->extractExternalXmlRecords($xml);
 
@@ -2004,6 +2696,8 @@ class JemControllerImport extends BaseController
 
     protected function buildExternalStructuredPreviewFromRecords(array $records, array $options, array $sourceFields = array())
     {
+        JemImportBudgetHelper::assertRecordList($records);
+
         if (!$records) {
             return $this->emptyExternalPreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
         }
@@ -2024,7 +2718,7 @@ class JemControllerImport extends BaseController
         $rowOptions['mapping'] = $effectiveMapping;
         $rowOptions['static_values'] = $staticValues;
         $rowOptions['record_fields'] = $this->mergeImportRecordFields($this->getExternalEventRecordFields($effectiveMapping), $staticValues);
-        $line = 0;
+        $line = (int) ($options['source_line_offset'] ?? 0);
 
         foreach ($records as $record) {
             $line++;
@@ -2035,7 +2729,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2109,6 +2803,7 @@ class JemControllerImport extends BaseController
 
     protected function buildExternalCsvVenuePreview(array $file, array $options)
     {
+        JemImportBudgetHelper::assertFileSize($file['tmp_name']);
         $handle = fopen($file['tmp_name'], 'r');
 
         if (!$handle) {
@@ -2126,16 +2821,7 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, 10000, $separator, $delimiter);
-        if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
-            $separator = ',';
-            fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
-        } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
-            $separator = ';';
-            fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
-        }
+        list($separator, $header) = $this->detectExternalCsvSeparator($handle, $hasBom ? 3 : 0, $separator, $delimiter);
 
         if ($header === false) {
             fclose($handle);
@@ -2143,9 +2829,15 @@ class JemControllerImport extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
+        $totalValueBytes = 0;
+        JemImportBudgetHelper::assertTabularRow($header, $totalValueBytes);
         $sourceRecords = array();
 
-        while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+        $line = 1;
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
+            $line++;
+            JemImportBudgetHelper::assertRecordCount($line - 1);
+            JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
             if (count(array_filter($raw, 'strlen')) === 0) {
@@ -2154,9 +2846,9 @@ class JemControllerImport extends BaseController
 
             $record = array();
             foreach ($header as $index => $field) {
-                $record[$field] = JemImportSecurityHelper::sanitiseValue($field, $raw[$index] ?? '', 'source');
+                $record[$field] = $raw[$index] ?? '';
             }
-            $sourceRecords[] = $record;
+            $sourceRecords[] = $this->sanitiseExternalSourceRecord($record, 'source_csv', $line);
         }
 
         fclose($handle);
@@ -2164,19 +2856,54 @@ class JemControllerImport extends BaseController
         return $this->buildExternalVenuePreviewFromRecords($sourceRecords, $options, $header);
     }
 
+    protected function detectExternalCsvSeparator($handle, $offset, $configuredSeparator, $delimiter)
+    {
+        $configuredSeparator = (string) $configuredSeparator;
+        $delimiter = strlen((string) $delimiter) === 1 ? (string) $delimiter : '"';
+        $candidates = array_values(array_unique(array_filter(array($configuredSeparator, ';', ',', "\t"), static fn($value) => strlen($value) === 1)));
+        $bestSeparator = $candidates[0] ?? ';';
+        $bestHeader = false;
+        $bestColumns = 0;
+
+        foreach ($candidates as $candidate) {
+            fseek($handle, (int) $offset);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $candidate, $delimiter);
+            $columns = is_array($header) ? count($header) : 0;
+
+            if ($columns > $bestColumns) {
+                $bestSeparator = $candidate;
+                $bestHeader = $header;
+                $bestColumns = $columns;
+            }
+        }
+
+        fseek($handle, (int) $offset);
+        $bestHeader = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $bestSeparator, $delimiter);
+
+        return array($bestSeparator, $bestHeader);
+    }
+
+    protected function buildExternalXlsxVenuePreview(array $file, array $options)
+    {
+        $worksheet = JemImportXlsxHelper::readRecords($file['tmp_name']);
+
+        if (empty($worksheet['records'])) {
+            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
+        }
+
+        $records = array();
+
+        foreach ((array) $worksheet['records'] as $index => $record) {
+            $records[] = $this->sanitiseExternalSourceRecord((array) $record, 'source_xlsx', $index + 2);
+        }
+
+        return $this->buildExternalVenuePreviewFromRecords($records, $options, (array) $worksheet['fields']);
+    }
+
     protected function buildExternalJsonVenuePreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        $json = json_decode($content, true);
-
-        if (!is_array($json)) {
-            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $json = JemImportBudgetHelper::decodeJson($content);
 
         $records = $this->findExternalStructuredRecords($json);
 
@@ -2185,25 +2912,16 @@ class JemControllerImport extends BaseController
 
     protected function buildExternalXmlVenuePreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-        if (!$xml) {
-            libxml_clear_errors();
-            return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $xml = JemImportBudgetHelper::loadXml($content);
 
         return $this->buildExternalVenuePreviewFromRecords($this->extractExternalXmlRecords($xml), $options);
     }
 
     protected function buildExternalVenuePreviewFromRecords(array $records, array $options, array $sourceFields = array())
     {
+        JemImportBudgetHelper::assertRecordList($records);
+
         if (!$records) {
             return $this->emptyExternalVenuePreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
         }
@@ -2224,7 +2942,7 @@ class JemControllerImport extends BaseController
         $valid = 0;
         $errors = 0;
         $skipped = 0;
-        $line = 0;
+        $line = (int) ($options['source_line_offset'] ?? 0);
 
         foreach ($records as $record) {
             $line++;
@@ -2235,7 +2953,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$source] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$source] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2303,7 +3021,7 @@ class JemControllerImport extends BaseController
      */
     protected function buildExternalIcsPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
 
         if ($content === false || trim($content) === '') {
             return array(
@@ -2353,10 +3071,21 @@ class JemControllerImport extends BaseController
 
         $rows = array();
         $records = array();
+        $sourceRecords = $this->buildExternalIcsEventSourceRecords($events);
+        $sourceFields = array('SUMMARY', 'DTSTART', 'DTEND', 'DESCRIPTION', 'LOCATION', 'URL', 'UID');
+        $mapping = array(
+            'SUMMARY' => 'title',
+            'DTSTART' => 'start_datetime',
+            'DTEND' => 'end_datetime',
+            'DESCRIPTION' => 'introtext',
+            'LOCATION' => '',
+            'URL' => '',
+            'UID' => '',
+        );
         $valid = 0;
         $errors = 0;
         $skipped = 0;
-        $line = 0;
+        $line = (int) ($options['source_line_offset'] ?? 0);
 
         foreach ($events as $event) {
             $line++;
@@ -2391,8 +3120,35 @@ class JemControllerImport extends BaseController
             'venue_label' => $options['venue_label'],
             'language_label' => $options['language_label'],
             'publish_up_label' => $options['publish_up'],
+            'source_fields' => $sourceFields,
+            'source_records' => $sourceRecords,
+            'mapping' => $mapping,
+            'static_values' => $this->normaliseImportStaticValues($options['static_values'] ?? array()),
+            'record_fields' => $this->getExternalEventRecordFields($mapping),
+            'profile_title' => $options['profile_title'] ?? '',
             'summary' => Text::sprintf('COM_JEM_IMPORT_EXTERNAL_PREVIEW_SUMMARY', $valid, $errors),
         );
+    }
+
+    protected function buildExternalIcsEventSourceRecords(array $events)
+    {
+        $records = array();
+
+        foreach ($events as $event) {
+            $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
+            $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
+            $records[] = array(
+                'SUMMARY' => (string) $this->getExternalIcsValue($event, 'SUMMARY'),
+                'DTSTART' => trim((string) ($start['date'] ?? '') . ' ' . (string) ($start['time'] ?? '')),
+                'DTEND' => trim((string) ($end['date'] ?? '') . ' ' . (string) ($end['time'] ?? '')),
+                'DESCRIPTION' => (string) $this->getExternalIcsValue($event, 'DESCRIPTION'),
+                'LOCATION' => (string) $this->getExternalIcsValue($event, 'LOCATION'),
+                'URL' => (string) $this->getExternalIcsValue($event, 'URL'),
+                'UID' => (string) $this->getExternalIcsValue($event, 'UID'),
+            );
+        }
+
+        return JemImportSecurityHelper::sanitiseRecordList($records, 'source');
     }
 
     /**
@@ -2405,6 +3161,7 @@ class JemControllerImport extends BaseController
      */
     protected function buildSpecialDaysCsvPreview(array $file, array $options)
     {
+        JemImportBudgetHelper::assertFileSize($file['tmp_name']);
         $rows = array();
         $records = array();
         $valid = 0;
@@ -2427,15 +3184,15 @@ class JemControllerImport extends BaseController
             fseek($handle, 0);
         }
 
-        $header = fgetcsv($handle, 10000, $separator, $delimiter);
+        $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         if (is_array($header) && count($header) === 1 && strpos((string) $header[0], ',') !== false && $separator !== ',') {
             $separator = ',';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         } elseif (is_array($header) && count($header) === 1 && strpos((string) $header[0], ';') !== false && $separator !== ';') {
             $separator = ';';
             fseek($handle, $hasBom ? 3 : 0);
-            $header = fgetcsv($handle, 10000, $separator, $delimiter);
+            $header = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter);
         }
 
         if ($header === false) {
@@ -2444,6 +3201,8 @@ class JemControllerImport extends BaseController
         }
 
         array_walk($header, 'jem_normalise_csv_utf8');
+        $totalValueBytes = 0;
+        JemImportBudgetHelper::assertTabularRow($header, $totalValueBytes);
         $sourceRecords = array();
         $effectiveMapping = $this->getEffectiveSpecialDaysMapping($header, $options['mapping'] ?? array());
         $fields = $this->normaliseSpecialDaysCsvHeader($header, $effectiveMapping);
@@ -2461,8 +3220,10 @@ class JemControllerImport extends BaseController
 
         $line = 1;
 
-        while (($raw = fgetcsv($handle, 10000, $separator, $delimiter)) !== false) {
+        while (($raw = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
             $line++;
+            JemImportBudgetHelper::assertRecordCount($line - 1);
+            JemImportBudgetHelper::assertTabularRow($raw, $totalValueBytes);
             array_walk($raw, 'jem_normalise_csv_utf8');
 
             if (count(array_filter($raw, 'strlen')) === 0) {
@@ -2473,13 +3234,13 @@ class JemControllerImport extends BaseController
             $sourceRecord = array();
             foreach ($fields as $index => $field) {
                 $sourceField = $header[$index] ?? (string) $index;
-                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source');
+                $sourceRecord[$sourceField] = JemImportSecurityHelper::sanitiseValue($sourceField, $raw[$index] ?? '', 'source', $line);
 
                 if ($field === null) {
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '');
+                $this->addExternalMappedValue($data, $field, $raw[$index] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
             $sourceRecords[] = $sourceRecord;
@@ -2522,6 +3283,8 @@ class JemControllerImport extends BaseController
 
     protected function buildSpecialDaysPreviewFromRecords(array $records, array $options, array $sourceFields = array())
     {
+        JemImportBudgetHelper::assertRecordList($records);
+
         if (!$records) {
             return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_EXTERNAL_STRUCTURED_NO_RECORDS'));
         }
@@ -2542,7 +3305,7 @@ class JemControllerImport extends BaseController
         $valid = 0;
         $errors = 0;
         $skipped = 0;
-        $line = 0;
+        $line = (int) ($options['source_line_offset'] ?? 0);
 
         foreach ($records as $record) {
             $line++;
@@ -2555,7 +3318,7 @@ class JemControllerImport extends BaseController
                     continue;
                 }
 
-                $this->addExternalMappedValue($data, $field, $record[$sourceField] ?? '');
+                $this->addExternalMappedValue($data, $field, $record[$sourceField] ?? '', $line);
             }
             $this->applyImportStaticValues($data, $staticValues);
 
@@ -2595,17 +3358,8 @@ class JemControllerImport extends BaseController
 
     protected function buildSpecialDaysJsonPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        $json = json_decode($content, true);
-
-        if (!is_array($json)) {
-            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $json = JemImportBudgetHelper::decodeJson($content);
 
         $records = $this->findExternalStructuredRecords($json);
 
@@ -2614,19 +3368,8 @@ class JemControllerImport extends BaseController
 
     protected function buildSpecialDaysXmlPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
-
-        libxml_use_internal_errors(true);
-        $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOCDATA);
-
-        if (!$xml) {
-            libxml_clear_errors();
-            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_PARSE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
+        $xml = JemImportBudgetHelper::loadXml($content);
 
         return $this->buildSpecialDaysPreviewFromRecords($this->extractExternalXmlRecords($xml), $options);
     }
@@ -2641,11 +3384,7 @@ class JemControllerImport extends BaseController
      */
     protected function buildSpecialDaysIcsPreview(array $file, array $options)
     {
-        $content = file_get_contents($file['tmp_name']);
-
-        if ($content === false || trim($content) === '') {
-            return $this->emptySpecialDaysPreview($options, 1, Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
-        }
+        $content = JemImportBudgetHelper::readTextFile($file['tmp_name']);
 
         $events = $this->parseExternalIcsEvents($content);
 
@@ -2775,15 +3514,31 @@ class JemControllerImport extends BaseController
     {
         $app = Factory::getApplication();
         $preview = $app->getUserState($stateKey, null);
+        $userId = (int) $app->getIdentity()->id;
+        $payloadToken = (string) ($preview['payload_token'] ?? '');
 
-        if (empty($preview['records'])) {
+        try {
+            $recordCount = JemImportPreviewHelper::getPayloadCount((array) $preview, $userId, 'records');
+        } catch (RuntimeException $e) {
+            $recordCount = 0;
+        }
+
+        if ($recordCount <= 0) {
             $msg = Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_NO_PREVIEW');
             $this->setRedirect('index.php?option=com_jem&view=import#special-days', $msg, 'error');
             return;
         }
 
+        $result = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'error' => 0);
+
         try {
-            $result = $this->storeSpecialDaysRecords($preview['records'], !empty($preview['replace']));
+            foreach (JemImportPreviewHelper::getPayloadBatches((array) $preview, $userId, 'records') as $batch) {
+                $batchResult = $this->storeSpecialDaysRecords($batch, !empty($preview['replace']));
+
+                foreach (array_keys($result) as $key) {
+                    $result[$key] += (int) ($batchResult[$key] ?? 0);
+                }
+            }
         } catch (RuntimeException $e) {
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('special_days', $msg, Log::WARNING);
@@ -2791,6 +3546,7 @@ class JemControllerImport extends BaseController
             return;
         }
         $app->setUserState($stateKey, null);
+        JemImportPreviewHelper::deletePreview($payloadToken, $userId);
 
         $msg = Text::sprintf('COM_JEM_SPECIAL_DAYS_IMPORT_RESULT', $result['added'], $result['updated'], $result['ignored'], $result['error']);
         $this->addImportLogEntry(
@@ -2798,7 +3554,7 @@ class JemControllerImport extends BaseController
             'Special Days ' . $format . ' import committed. Type of day: ' . ($preview['day_type'] ?? '-')
             . '. Added: ' . $result['added'] . ', updated: ' . $result['updated']
             . ', ignored: ' . $result['ignored'] . ', errors: ' . $result['error']
-            . '. Preview rows: ' . count($preview['rows'] ?? array()) . '.',
+            . '. Preview rows: ' . (int) ($preview['total_count'] ?? count($preview['rows'] ?? array())) . '.',
             $result['error'] ? Log::WARNING : Log::INFO
         );
 
@@ -2814,8 +3570,10 @@ class JemControllerImport extends BaseController
      */
     protected function parseExternalIcsEvents($content)
     {
+        JemImportBudgetHelper::assertIcs($content);
         $content = str_replace(array("\r\n", "\r"), "\n", (string) $content);
         $content = preg_replace("/\n[ \t]/", '', $content);
+        JemImportBudgetHelper::assertIcs($content);
         $lines = explode("\n", $content);
         $events = array();
         $current = null;
@@ -2835,6 +3593,7 @@ class JemControllerImport extends BaseController
             if (strcasecmp($line, 'END:VEVENT') === 0) {
                 if ($current !== null) {
                     $events[] = $current;
+                    JemImportBudgetHelper::assertRecordCount(count($events));
                 }
                 $current = null;
                 continue;
@@ -2888,10 +3647,10 @@ class JemControllerImport extends BaseController
         $description = trim((string) $this->getExternalIcsValue($event, 'DESCRIPTION'));
         $location = trim((string) $this->getExternalIcsValue($event, 'LOCATION'));
         $uid = trim((string) $this->getExternalIcsValue($event, 'UID'));
-        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'events');
-        $description = JemImportSecurityHelper::sanitiseValue('introtext', $description, 'events');
-        $location = JemImportSecurityHelper::sanitiseValue('location', $location, 'events');
-        $uid = JemImportSecurityHelper::sanitiseValue('uid', $uid, 'events');
+        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'events', $line);
+        $description = JemImportSecurityHelper::sanitiseValue('introtext', $description, 'events', $line);
+        $location = JemImportSecurityHelper::sanitiseValue('location', $location, 'events', $line);
+        $uid = JemImportSecurityHelper::sanitiseValue('uid', $uid, 'events', $line);
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
@@ -3123,6 +3882,7 @@ class JemControllerImport extends BaseController
             'name' => 'venue',
             'nombre' => 'venue',
             'nombre_entidad' => 'venue',
+            'fuente' => 'venue',
             'url' => 'url',
             'link' => 'url',
             'relation' => 'url',
@@ -3139,16 +3899,47 @@ class JemControllerImport extends BaseController
             'locality' => 'city',
             'address_locality' => 'city',
             'localidad' => 'city',
+            'district' => 'district',
+            'district_name' => 'district',
+            'city_district' => 'district',
+            'borough' => 'district',
+            'distrito' => 'district',
+            'level' => 'level',
+            'classification' => 'level',
+            'rating' => 'level',
+            'nivel' => 'level',
+            'capacity' => 'capacity',
+            'maximum_capacity' => 'capacity',
+            'max_capacity' => 'capacity',
+            'aforo' => 'capacity',
             'state' => 'state',
             'province' => 'state',
             'provincia' => 'state',
             'country' => 'country',
+            'email' => 'email',
+            'e_mail' => 'email',
+            'correo' => 'email',
+            'correo_electronico' => 'email',
+            'phone' => 'phone',
+            'telephone' => 'phone',
+            'telefono' => 'phone',
+            'mobile' => 'mobile',
+            'mobile_phone' => 'mobile',
+            'movil' => 'mobile',
             'latitude' => 'latitude',
             'latitud' => 'latitude',
             'location_latitude' => 'latitude',
             'longitude' => 'longitude',
             'longitud' => 'longitude',
             'location_longitude' => 'longitude',
+            'coordinates' => 'coordinates',
+            'coordenadas' => 'coordinates',
+            'coordinate' => 'coordinates',
+            'coords' => 'coordinates',
+            'gps' => 'coordinates',
+            'latlng' => 'coordinates',
+            'lat_long' => 'coordinates',
+            'geo_point_2d' => 'coordinates',
             'description' => 'locdescription',
             'descripcion' => 'locdescription',
             'descripcion_entidad' => 'locdescription',
@@ -3205,10 +3996,10 @@ class JemControllerImport extends BaseController
         return $effective;
     }
 
-    protected function addExternalMappedValue(array &$data, $field, $value)
+    protected function addExternalMappedValue(array &$data, $field, $value, $sourceLine = null)
     {
         $field = trim((string) $field);
-        $value = JemImportSecurityHelper::sanitiseValue($field, $value, 'external');
+        $value = JemImportSecurityHelper::sanitiseValue($field, $value, 'external', $sourceLine);
         $value = trim((string) $value);
 
         if ($field === '' || $value === '') {
@@ -3273,10 +4064,17 @@ class JemControllerImport extends BaseController
             'street',
             'postalCode',
             'city',
+            'district',
+            'level',
+            'capacity',
             'state',
             'country',
+            'email',
+            'phone',
+            'mobile',
             'latitude',
             'longitude',
+            'coordinates',
             'locdescription',
             'meta_keywords',
             'meta_description',
@@ -3338,8 +4136,8 @@ class JemControllerImport extends BaseController
 
     protected function getExternalVenueRecordFields(array $mapping = array())
     {
-        $required = array('venue', 'alias', 'url', 'street', 'postalCode', 'city', 'state', 'country', 'latitude', 'longitude', 'locdescription', 'published', 'type_id', 'language', 'map');
-        $mapped = $this->getMappedExternalFields($mapping, $this->getExternalVenueAllowedFields());
+        $required = array('venue', 'alias', 'url', 'street', 'postalCode', 'city', 'district', 'level', 'capacity', 'state', 'country', 'email', 'phone', 'mobile', 'latitude', 'longitude', 'locdescription', 'published', 'type_id', 'language', 'map');
+        $mapped = array_values(array_diff($this->getMappedExternalFields($mapping, $this->getExternalVenueAllowedFields()), array('coordinates')));
 
         return array_values(array_unique(array_merge($required, $mapped)));
     }
@@ -3357,66 +4155,38 @@ class JemControllerImport extends BaseController
 
     protected function downloadExternalImportSource($url, array $allowedExtensions, $preferredExtension = '')
     {
-        $url = trim((string) $url);
-        $parts = parse_url($url);
+        try {
+            $download = JemRemoteSourceHelper::download(
+                $url,
+                $allowedExtensions,
+                $preferredExtension,
+                JemRemoteSourceHelper::DEFAULT_MAX_BYTES
+            );
+        } catch (\Throwable $exception) {
+            $message = $exception instanceof RuntimeException ? $exception->getMessage() : '';
+            $languageKey = in_array($message, JemRemoteSourceHelper::getErrorLanguageKeys(), true)
+                ? $message
+                : JemRemoteSourceHelper::ERROR_DOWNLOAD_FAILED;
 
-        if (!$parts || !in_array(strtolower((string) ($parts['scheme'] ?? '')), array('http', 'https'), true)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        if (!empty($parts['user']) || !empty($parts['pass']) || empty($parts['host'])) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        $extension = strtolower(pathinfo((string) ($parts['path'] ?? ''), PATHINFO_EXTENSION));
-        $preferredExtension = strtolower(trim((string) $preferredExtension));
-
-        if ($extension === '' && $preferredExtension !== '') {
-            $extension = $preferredExtension;
-        }
-
-        if (!in_array($extension, $allowedExtensions, true)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_UNSUPPORTED'));
-        }
-
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_INVALID'));
-        }
-
-        $context = stream_context_create(array(
-            'http' => array(
-                'follow_location' => 3,
-                'ignore_errors' => false,
-                'method' => 'GET',
-                'timeout' => 20,
-                'user_agent' => 'JEM import catalog',
-            ),
-            'ssl' => array(
-                'verify_peer' => true,
-                'verify_peer_name' => true,
-            ),
-        ));
-        $content = @file_get_contents($url, false, $context, 0, 10485761);
-
-        if ($content === false || trim((string) $content) === '') {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_DOWNLOAD_FAILED'));
-        }
-
-        if (strlen($content) > 10485760) {
-            throw new RuntimeException(Text::_('COM_JEM_IMPORT_EXTERNAL_URL_TOO_LARGE'));
+            throw new RuntimeException(Text::_($languageKey));
         }
 
         $tmp = tempnam(sys_get_temp_dir(), 'jem-import-');
 
-        if (!$tmp || file_put_contents($tmp, $content) === false) {
+        if (!$tmp) {
+            throw new RuntimeException(Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
+        }
+
+        if (file_put_contents($tmp, $download['body']) === false) {
+            @unlink($tmp);
             throw new RuntimeException(Text::_('COM_JEM_IMPORT_OPEN_FILE_ERROR'));
         }
 
         return array(
-            'name' => basename((string) ($parts['path'] ?? 'catalog-source.' . $extension)) ?: ('catalog-source.' . $extension),
+            'name' => $download['name'],
             'tmp_name' => $tmp,
             'error' => 0,
-            'size' => strlen($content),
+            'size' => strlen($download['body']),
             'type' => '',
         );
     }
@@ -3525,12 +4295,61 @@ class JemControllerImport extends BaseController
             $clean['static_values'] = $staticValues;
         }
 
+        foreach (array('catid', 'type_id', 'locid') as $key) {
+            if (array_key_exists($key, $options)) {
+                $clean[$key] = max(0, (int) $options[$key]);
+            }
+        }
+
+        if (array_key_exists('published', $options)) {
+            $clean['published'] = empty($options['published']) ? 0 : 1;
+        }
+
+        if (isset($options['mode']) && in_array((string) $options['mode'], array('standard', 'openday'), true)) {
+            $clean['mode'] = (string) $options['mode'];
+        }
+
+        if (isset($options['language']) && preg_match('/^(?:\*|[a-z]{2,3}-[A-Z]{2})$/', (string) $options['language'])) {
+            $clean['language'] = (string) $options['language'];
+        }
+
+        if (isset($options['publish_up'])) {
+            $publishUp = trim((string) $options['publish_up']);
+
+            if ($publishUp === '' || preg_match('/^\d{4}-\d{2}-\d{2}(?: \d{2}:\d{2}:\d{2})?$/', $publishUp)) {
+                $clean['publish_up'] = $publishUp;
+            }
+        }
+
+        if (isset($options['source_mode']) && in_array((string) $options['source_mode'], array('url', 'file'), true)) {
+            $clean['source_mode'] = (string) $options['source_mode'];
+        }
+
+        if (!empty($options['source_url'])) {
+            $sourceUrl = trim((string) $options['source_url']);
+
+            if (strlen($sourceUrl) <= 2048 && filter_var($sourceUrl, FILTER_VALIDATE_URL)
+                && in_array(strtolower((string) parse_url($sourceUrl, PHP_URL_SCHEME)), array('http', 'https'), true)) {
+                $clean['source_url'] = $sourceUrl;
+            }
+        }
+
+        if (!empty($options['source_name'])) {
+            $sourceName = trim(strip_tags((string) $options['source_name']));
+
+            if ($sourceName !== '' && strlen($sourceName) <= 2048) {
+                $clean['source_name'] = $sourceName;
+            }
+        }
+
         return $clean;
     }
 
     protected function saveExternalImportProfile($context, $format, $title, array $mapping, array $options = array())
     {
         $title = trim((string) $title);
+        $preserveExisting = !empty($options['_preserve_existing']);
+        unset($options['_preserve_existing']);
         $options = $this->normaliseImportProfileOptions($options);
 
         if ($title === '' || (!$mapping && !$options)) {
@@ -3543,15 +4362,21 @@ class JemControllerImport extends BaseController
 
         try {
             $query = $db->getQuery(true)
-                ->select($db->quoteName('id'))
+                ->select(array($db->quoteName('id'), $db->quoteName('options')))
                 ->from($db->quoteName('#__jem_import_profiles'))
                 ->where($db->quoteName('context') . ' = ' . $db->quote((string) $context))
                 ->where($db->quoteName('source_format') . ' = ' . $db->quote(strtolower((string) $format)))
                 ->where($db->quoteName('title') . ' = ' . $db->quote($title));
             $db->setQuery($query);
-            $existingId = (int) $db->loadResult();
+            $existing = $db->loadAssoc();
+            $existingId = (int) ($existing['id'] ?? 0);
 
             if ($existingId > 0) {
+                if ($preserveExisting) {
+                    $existingOptions = json_decode((string) ($existing['options'] ?? ''), true);
+                    $options = array_replace(is_array($existingOptions) ? $existingOptions : array(), $options);
+                }
+
                 $query = $db->getQuery(true)
                     ->update($db->quoteName('#__jem_import_profiles'))
                     ->set($db->quoteName('mapping') . ' = ' . $db->quote(json_encode($mapping)))
@@ -3666,7 +4491,14 @@ class JemControllerImport extends BaseController
     protected function findExternalStructuredRecords(array $data)
     {
         if ($this->isExternalRecordList($data)) {
-            return array_map(array($this, 'flattenExternalStructuredRecord'), $data);
+            $records = array();
+
+            foreach ($data as $index => $record) {
+                $flat = $this->flattenExternalStructuredRecord($record);
+                $records[] = $this->sanitiseExternalSourceRecord($flat, 'source_json', $index + 1);
+            }
+
+            return $records;
         }
 
         foreach ($data as $value) {
@@ -3680,6 +4512,23 @@ class JemControllerImport extends BaseController
         }
 
         return array();
+    }
+
+    protected function sanitiseExternalSourceRecord(array $record, $context, $sourceLine)
+    {
+        $warnings = array();
+        $record = JemImportSecurityHelper::sanitiseSourceRecord($record, $context, $sourceLine, $warnings);
+
+        if ($warnings) {
+            $this->externalSourceWarningCount += count($warnings);
+            $remaining = max(0, 100 - count($this->externalSourceWarnings));
+
+            if ($remaining > 0) {
+                $this->externalSourceWarnings = array_merge($this->externalSourceWarnings, array_slice($warnings, 0, $remaining));
+            }
+        }
+
+        return $record;
     }
 
     protected function isExternalRecordList(array $data)
@@ -3712,9 +4561,6 @@ class JemControllerImport extends BaseController
                 $flat[$path] = is_scalar($value) ? (string) $value : '';
             }
 
-            if (array_key_exists($path, $flat)) {
-                $flat[$path] = JemImportSecurityHelper::sanitiseValue($path, $flat[$path], 'source');
-            }
         }
 
         return $flat;
@@ -3865,7 +4711,7 @@ class JemControllerImport extends BaseController
                 $recordData[$field] = $value;
             }
         }
-        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'events');
+        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'events', $line);
 
         return array(
             'valid' => $valid,
@@ -3888,10 +4734,23 @@ class JemControllerImport extends BaseController
         $street = trim((string) ($data['street'] ?? ''));
         $postalCode = trim((string) ($data['postalCode'] ?? ''));
         $city = trim((string) ($data['city'] ?? ''));
+        $district = trim((string) ($data['district'] ?? ''));
+        $level = trim((string) ($data['level'] ?? ''));
+        $capacityRaw = trim((string) ($data['capacity'] ?? ''));
+        $capacity = $capacityRaw === '' ? 0 : filter_var($capacityRaw, FILTER_VALIDATE_INT, array('options' => array('min_range' => 0, 'max_range' => 4294967295)));
         $state = trim((string) ($data['state'] ?? ''));
         $country = strtoupper(trim((string) ($data['country'] ?? 'ES')));
+        $email = trim((string) ($data['email'] ?? ''));
+        $phone = trim((string) ($data['phone'] ?? ''));
+        $mobile = trim((string) ($data['mobile'] ?? ''));
         $latitude = $this->normaliseExternalVenueCoordinate($data['latitude'] ?? '');
         $longitude = $this->normaliseExternalVenueCoordinate($data['longitude'] ?? '');
+        $combinedCoordinates = JemImportVenueHelper::normaliseCoordinatePair($data['coordinates'] ?? '');
+
+        if ($combinedCoordinates !== null) {
+            $latitude = $latitude ?? $combinedCoordinates['latitude'];
+            $longitude = $longitude ?? $combinedCoordinates['longitude'];
+        }
         $description = trim((string) ($data['locdescription'] ?? ''));
         $url = trim((string) ($data['url'] ?? ''));
 
@@ -3907,6 +4766,17 @@ class JemControllerImport extends BaseController
 
         $valid = true;
 
+        if (StringHelper::strlen($level) > 100) {
+            $valid = false;
+            $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_ERROR_LEVEL_TOO_LONG');
+        }
+
+        if ($capacity === false) {
+            $valid = false;
+            $capacity = 0;
+            $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_ERROR_CAPACITY_INVALID');
+        }
+
         if ($venue === '') {
             $valid = false;
             $notes[] = Text::_('COM_JEM_IMPORT_EXTERNAL_VENUES_ERROR_MISSING_VENUE');
@@ -3921,8 +4791,14 @@ class JemControllerImport extends BaseController
             'street' => $street,
             'postalCode' => $postalCode,
             'city' => $city,
+            'district' => $district,
+            'level' => $level,
+            'capacity' => (int) $capacity,
             'state' => $state,
             'country' => $country,
+            'email' => $email,
+            'phone' => $phone,
+            'mobile' => $mobile,
             'latitude' => $latitude,
             'longitude' => $longitude,
             'locdescription' => $description,
@@ -3937,7 +4813,7 @@ class JemControllerImport extends BaseController
                 $recordData[$field] = $value;
             }
         }
-        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'venues');
+        $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'venues', $line);
 
         return array(
             'valid' => $valid,
@@ -3970,6 +4846,18 @@ class JemControllerImport extends BaseController
         $date = trim((string) $date);
 
         if ($date === '' || strtoupper($date) === 'NULL' || $date === '0000-00-00') {
+            return null;
+        }
+
+        if (preg_match('/^\d{1,2}[\/-]\d{1,2}[\/-]\d{4}$/', $date)) {
+            $format = strpos($date, '/') !== false ? '!d/m/Y' : '!d-m-Y';
+            $dateValue = \DateTime::createFromFormat($format, $date);
+            $errors = \DateTime::getLastErrors();
+
+            if ($dateValue && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0))) {
+                return $dateValue->format('Y-m-d');
+            }
+
             return null;
         }
 
@@ -4208,7 +5096,7 @@ class JemControllerImport extends BaseController
             'access' => isset($data['access']) && trim((string) $data['access']) !== '' ? max(1, (int) $data['access']) : 1,
             'ordering' => isset($data['ordering']) ? (int) $data['ordering'] : 0,
         );
-        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays');
+        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays', $line);
 
         return array(
             'valid' => $valid,
@@ -4263,8 +5151,8 @@ class JemControllerImport extends BaseController
         $notes = array();
         $title = trim((string) $this->getExternalIcsValue($event, 'SUMMARY'));
         $description = trim((string) $this->getExternalIcsValue($event, 'DESCRIPTION'));
-        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'specialdays');
-        $description = JemImportSecurityHelper::sanitiseValue('description', $description, 'specialdays');
+        $title = JemImportSecurityHelper::sanitiseValue('title', $title, 'specialdays', $line);
+        $description = JemImportSecurityHelper::sanitiseValue('description', $description, 'specialdays', $line);
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
@@ -4322,7 +5210,7 @@ class JemControllerImport extends BaseController
             'access' => 1,
             'ordering' => 0,
         );
-        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays');
+        $record = JemImportSecurityHelper::sanitiseRecord($record, 'specialdays', $line);
 
         return array(
             'valid' => $valid,

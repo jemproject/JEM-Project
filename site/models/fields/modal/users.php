@@ -12,7 +12,6 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
-use Joomla\CMS\Session\Session;
 
 /**
  * Contact select
@@ -34,14 +33,18 @@ class JFormFieldModal_Users extends FormField
         $app      = Factory::getApplication();
         $document = $app->getDocument();
         $wa       = $document->getWebAssetManager();
+        $modalId  = preg_replace('/[^A-Za-z0-9_-]/', '_', $this->id) . '_users_modal';
 
         // Build the script
         $script = array();
         $script[] = '    function jSelectUsers_'.$this->id.'(ids, count, object) {';
         $script[] = '        document.getElementById("'.$this->id.'_ids").value = ids;';
         $script[] = '        document.getElementById("'.$this->id.'_count").value = count;';
-        // $script[] = '        SqueezeBox.close();';
-        $script[] = '        $("#user-modal").modal("hide");';
+        $script[] = '        var modal = document.getElementById(' . json_encode($modalId) . ');';
+        $script[] = '        if (modal && window.bootstrap && bootstrap.Modal) {';
+        $script[] = '            var instance = bootstrap.Modal.getInstance(modal);';
+        $script[] = '            if (instance) { instance.hide(); }';
+        $script[] = '        }';
         $script[] = '    }';
 
         // Add to document head
@@ -89,25 +92,21 @@ class JFormFieldModal_Users extends FormField
     //    }
     //    $count = htmlspecialchars($count, ENT_QUOTES, 'UTF-8');
 
-        // The current contact input field
-        $html[] = '  <input type="text" id="'.$this->id.'_count" value="'.$count.'" disabled="disabled" size="4" />';
-
-        // The contact select button
-        // $html[] = '    <a class="flyermodal" title="'.Text::_('COM_JEM_SELECT').'" href="'.$link.'&amp;'.Session::getFormToken().'=1" rel="{handler: \'iframe\', size: {x:800, y:450}}">'.
-        //             Text::_('COM_JEM_SELECT').'</a>';
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
-            'user-modal',
+            $modalId,
             array(
-                'url'    => $link.'&amp;'.Session::getFormToken().'=1',
+                'url'    => $link,
                 'title'  => Text::_('COM_JEM_SELECT'),
                 'width'  => '800px',
                 'height' => '450px',
                 'footer' => '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . Text::_('COM_JEM_CLOSE') . '</button>'
             )
         );
-        $html[] ='<button type="button" class="btn btn-link" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#user-modal">'.Text::_('COM_JEM_SELECT').'
-        </button>';
+        $html[] = '<div class="input-group">';
+        $html[] = '  <input type="text" id="'.$this->id.'_count" value="'.$count.'" disabled="disabled" size="4" class="form-control" />';
+        $html[] = '  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#'.$modalId.'"><span class="icon-users" aria-hidden="true"></span> '.Text::_('COM_JEM_SELECT').'</button>';
+        $html[] = '</div>';
 
         // class='required' for client side validation
         $class = '';

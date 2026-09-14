@@ -21,6 +21,10 @@ class JemViewCssmanager extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->files = $this->get('Files');
         $this->statusLinenumber = $this->get('StatusLinenumber');
 
@@ -36,10 +40,6 @@ class JemViewCssmanager extends JemAdminView
         // initialise variables
         $this->document = $app->getDocument();
         $user = JemFactory::getUser();
-
-        // Load css
-        $wa = $app->getDocument()->getWebAssetManager();
-        $wa->registerStyle('jem.backend', 'com_jem/backend.css')->useStyle('jem.backend');
 
         $this->addToolbar();
 

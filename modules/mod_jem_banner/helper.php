@@ -97,8 +97,8 @@ abstract class ModJemBannerHelper
         # create type dependent filter rules
         switch ($type) {
             case 1: # unfinished events
-                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(IFNULL(a.enddates, a.dates), ' ', IFNULL(a.endtimes, '23:59:59'))) > $offset_minutes) ";
-                $cal_to   = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates, ' ', IFNULL(a.times, '00:00:00'))) < $max_minutes) " : '';
+                $cal_from = JemHelper::getEventDateTimeWhere('end', '>', $offset_minutes);
+                $cal_to   = $max_minutes ? JemHelper::getEventDateTimeWhere('start', '<', $max_minutes) : '';
                 break;
 
             case 2: # archived events
@@ -107,7 +107,7 @@ abstract class ModJemBannerHelper
                 break;
 
             case 3: # running events (one day)
-                $target_date = "DATE_ADD(CURDATE(), INTERVAL $offset_days DAY)";
+                $target_date = $db->quote(JemHelper::getJoomlaDate($offset_days));
                 $cal_from = " (a.dates <= $target_date AND IFNULL(a.enddates, a.dates) >= $target_date) ";
                 $cal_to = "";
                 break;
@@ -121,13 +121,13 @@ abstract class ModJemBannerHelper
             //        # fall through
             case 0: # upcoming events
             default:
-                $cal_from = " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) > $offset_minutes) ";
-                $cal_to = $max_minutes ? " (TIMESTAMPDIFF(MINUTE, NOW(), CONCAT(a.dates,' ',IFNULL(a.times,'00:00:00'))) < $max_minutes) " : '';
+                $cal_from = JemHelper::getEventDateTimeWhere('start', '>', $offset_minutes);
+                $cal_to = $max_minutes ? JemHelper::getEventDateTimeWhere('start', '<', $max_minutes) : '';
                 break;
         }
 
         $model->setState('filter.published', $published);
-        $model->setState('filter.orderby', array('a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
+        $model->setState('filter.orderby', array('a.start_utc '.$orderdir, 'a.dates '.$orderdir, 'a.times '.$orderdir, 'a.created '.$orderdir));
         if (!empty($cal_from)) {
             $model->setState('filter.calendar_from', $cal_from);
         }
@@ -187,6 +187,16 @@ abstract class ModJemBannerHelper
         $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);
         $registrationTotals = self::getRegistrationTotals($events);
 
+        foreach ($events as $event) {
+            $eventId = (int) ($event->id ?? 0);
+            $event->regCount = (int) ($registrationTotals[$eventId]->booked ?? 0);
+            $event->waiting = (int) ($registrationTotals[$eventId]->waiting ?? 0);
+        }
+
+        if ((int) $params->get('show_status_indicators', 1) === 1) {
+            JemOutput::prepareModuleEventStatuses($events);
+        }
+
         $color = $params->get('color');
         $fallback_color = $params->get('fallbackcolor', '#EEEEEE');
         $fallback_color_is_dark = self::_is_dark($fallback_color);
@@ -199,6 +209,8 @@ abstract class ModJemBannerHelper
             }
             array_splice($indices, $count);
         }
+
+        $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
 
         # Loop through the result rows and prepare data
         $lists = array();
@@ -214,7 +226,7 @@ abstract class ModJemBannerHelper
             $hasVenueAccess = !isset($row->user_has_access_venue) || (bool) $row->user_has_access_venue;
 
             # create thumbnails if needed and receive imagedata
-            $dimage = $row->datimage ? JemImage::flyercreator($row->datimage, 'event') : null;
+            $dimage = JemImage::getModuleEventImageData($row, $params, 'original_limited');
             $limage = $row->locimage ? JemImage::flyercreator($row->locimage, 'venue') : null;
 
             #################
@@ -242,6 +254,9 @@ abstract class ModJemBannerHelper
             }
 
             $lists[$i]->eventid     = $row->id;
+            $lists[$i]->event_status = $row->event_status ?? 'scheduled';
+            $lists[$i]->module_event_status = $row->module_event_status ?? null;
+            $lists[$i]->module_status_ribbon_scale = $moduleStatusRibbonScale;
             $lists[$i]->title       = $title;
             $lists[$i]->fulltitle   = $fulltitle;
             $lists[$i]->venue       = htmlspecialchars($row->venue ?? '', ENT_COMPAT, 'UTF-8');
@@ -286,14 +301,20 @@ abstract class ModJemBannerHelper
             list($lists[$i]->date,
                 $lists[$i]->time)  = self::_format_date_time($row, $params->get('datemethod', 1), $dateFormat, $timeFormat, $addSuffix);
             $lists[$i]->dateinfo    = JemOutput::formatDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $dateFormat, $timeFormat, $addSuffix);
-            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true);
+            $lists[$i]->dateschema  = JEMOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showTime = true, $row);
 
             if ($dimage == null) {
                 $lists[$i]->eventimage     = '';
                 $lists[$i]->eventimageorig = '';
+                $lists[$i]->eventimagedisplay = '';
+                $lists[$i]->eventimagestyle = '';
+                $lists[$i]->eventimagecontainerstyle = '';
             } else {
                 $lists[$i]->eventimage     = Uri::base(true).'/'.$dimage['thumb'];
                 $lists[$i]->eventimageorig = Uri::base(true).'/'.$dimage['original'];
+                $lists[$i]->eventimagedisplay = Uri::base(true).'/'.$dimage['display'];
+                $lists[$i]->eventimagestyle = $dimage['display_style'];
+                $lists[$i]->eventimagecontainerstyle = $dimage['display_container_style'];
             }
 
             if ($limage == null) {

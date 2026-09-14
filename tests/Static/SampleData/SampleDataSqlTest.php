@@ -55,6 +55,42 @@ final class SampleDataSqlTest extends TestCase
         );
     }
 
+    public function testSampleDataVenueInsertsDeclareColumns(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertDoesNotMatchRegularExpression(
+            '/INSERT\s+INTO\s+`#__jem_venues`\s+VALUES\s*\(/i',
+            $sql,
+            'Sample venue inserts must declare columns so the timezone column cannot shift legacy values.'
+        );
+        self::assertMatchesRegularExpression(
+            '/INSERT\s+INTO\s+`#__jem_venues`\s*\([^)]*`country`[^)]*`type_id`[^)]*\)\s+VALUES\s*\(/i',
+            $sql
+        );
+    }
+
+    public function testSampleDataDemonstratesAllTimezoneModes(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        foreach (array(
+            "WHEN 1 THEN 'Europe/Berlin'",
+            "WHEN 4 THEN 'Europe/Madrid'",
+            "WHEN 5 THEN 'Europe/Paris'",
+            "WHEN 6 THEN 'Europe/London'",
+            "SET `timezone_mode` = 'venue'",
+            "SET `timezone_mode` = 'custom', `timezone` = 'Europe/Berlin'",
+        ) as $expected) {
+            self::assertStringContainsString($expected, $sql);
+        }
+
+        self::assertStringContainsString(
+            '`timezone_mode` varchar(10) NOT NULL DEFAULT \'joomla\'',
+            (string) file_get_contents(JEM_TEST_ROOT . '/admin/sql/install.mysql.utf8.sql')
+        );
+    }
+
     public function testSampleDataContainsJem5TypesLinksAttachmentsAndMuseumExamples(): void
     {
         $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
@@ -75,6 +111,48 @@ final class SampleDataSqlTest extends TestCase
         ) as $expected) {
             self::assertStringContainsString($expected, $sql);
         }
+    }
+
+    public function testSampleDataIncludesTheDefaultWeekendSpecialDayIdempotently(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertMatchesRegularExpression(
+            '/SELECT\s+\'Weekend\',\s+\'weekend\',\s+4,\s+\'#d1d5db\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_types` WHERE `alias` = \'weekend\' AND `entity` = 4/s',
+            $sql
+        );
+        self::assertMatchesRegularExpression(
+            '/INSERT INTO `#__jem_special_days`[\s\S]+?\'Saturday and Sunday\'[\s\S]+?\'1900-01-01\'[\s\S]+?\'2100-12-31\'[\s\S]+?\'0,6\'[\s\S]+?WHERE NOT EXISTS\s*\(\s*SELECT 1 FROM `#__jem_special_days` WHERE `alias` = \'weekend\'/s',
+            $sql
+        );
+    }
+
+    public function testRecurringSampleOccurrencesReferenceTheBalkanBeatzRoot(): void
+    {
+        $sql = (string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql');
+
+        self::assertStringContainsString(
+            "UPDATE `#__jem_events` SET `recurrence_first_id` = 3 WHERE `id` IN (8, 9, 10)",
+            $sql
+        );
+    }
+
+    public function testSampleDataArchiveUsesTheCurrentSql(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect sampledata.zip.');
+        }
+
+        $zip = new ZipArchive();
+        self::assertTrue($zip->open(JEM_TEST_ROOT . '/admin/assets/sampledata.zip'));
+        $archivedSql = (string) $zip->getFromName('sampledata.sql');
+        $zip->close();
+        $normalise = static fn (string $value): string => str_replace("\r\n", "\n", $value);
+
+        self::assertSame(
+            $normalise((string) file_get_contents(JEM_TEST_ROOT . '/admin/assets/sampledata.sql')),
+            $normalise($archivedSql)
+        );
     }
 
     public function testSampleDataArchiveContainsJem5ImageAndAttachmentAssets(): void
@@ -121,6 +199,39 @@ final class SampleDataSqlTest extends TestCase
             '/if\s*\(!empty\(\$columns\)\s*&&\s*!isset\(\$columns\[\'type_id\'\]\)\)\s*\{/',
             $code,
             'The schema guard should add type_id only when the table exists and the column is missing.'
+        );
+    }
+
+    public function testSampleDataModelPreparesDatesAndRebuildsUtcBoundaries(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$buffer = $this->prepareDateExpressions($buffer);', $code);
+        self::assertStringContainsString('JemHelper::getJoomlaDate()', $code);
+        self::assertStringContainsString('Factory::getDate()->toSql()', $code);
+        self::assertStringContainsString('$this->rebuildEventUtcDates();', $code);
+        self::assertStringContainsString('JemHelper::setEventUtcDates($event, $event->venue_timezone);', $code);
+        self::assertStringContainsString("'v.timezone AS venue_timezone'", $code);
+        self::assertStringContainsString("'start_utc'", $code);
+        self::assertStringContainsString("'end_utc'", $code);
+    }
+
+    public function testSampleDataModelEnsuresTimezoneColumnsBeforeLoadingSql(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/sampledata.php');
+
+        self::assertStringContainsString('$this->ensureTimezoneSchema();', $code);
+        self::assertStringContainsString(
+            "'timezone_mode' => \"`timezone_mode` VARCHAR(10) NOT NULL DEFAULT 'joomla' AFTER `endtimes`\"",
+            $code
+        );
+        self::assertStringContainsString(
+            "'start_utc'     => \"`start_utc` DATETIME NULL DEFAULT NULL AFTER `timezone`\"",
+            $code
+        );
+        self::assertStringContainsString(
+            "\"ALTER TABLE `#__jem_venues` ADD COLUMN `timezone` VARCHAR(64) NOT NULL DEFAULT '' AFTER `country`\"",
+            $code
         );
     }
 }

@@ -150,6 +150,7 @@ use Joomla\CMS\Factory;
 
         //initialize variables
         $multicatname = '';
+        $color = '';
         $colorpic = '';
         $nr = is_array($row->categories) ? count($row->categories) : 0;
         $ix = 0;
@@ -169,9 +170,9 @@ use Joomla\CMS\Factory;
 
             // Attach category color in front of the catname
             if ($category->color) {
-                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$category->catname;
+                $multicatname .= '<span class="colorpicblock" style="background-color: '.$category->color.';"></span>&nbsp;'.$this->escape($category->catname);
             } else {
-                $multicatname .= $category->catname;
+                $multicatname .= $this->escape($category->catname);
             }
 
             $ix++;
@@ -342,19 +343,19 @@ use Joomla\CMS\Factory;
         switch ($multi_mode) {
             case 1:  // first day
                 $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
-                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                 break;
             case 2:  // middle day
                 $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
-                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, true, $row);
                 break;
             case 3:  // last day
                 $multidaydate .= JemOutput::formatShortDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, $showtime);
-                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->multistartdate, $row->times, $row->multienddate, $row->endtimes, true, $row);
                 break;
             default: // single day
                 $multidaydate .= JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $showtime);
-                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes);
+                $multidaydate .= JemOutput::formatSchemaOrgDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, true, $row);
                 break;
         }
         $multidaydate .= '</div>';
@@ -471,7 +472,7 @@ use Joomla\CMS\Factory;
                                             $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
                                             echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
                                         }
-                                        echo $cat->catname.' ('.$countcatevents[$cat->id].')';
+                                        echo $this->escape($cat->catname) . ' (' . (int) $countcatevents[$cat->id] . ')';
                                         ?>
                                     </div>
                                     <?php
@@ -545,7 +546,7 @@ use Joomla\CMS\Factory;
 
                                         $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
                                         $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                                        echo '<span class="' . $textClass . '">' . $text . '</span>';
+                                        echo '<span class="' . $textClass . '">' . $this->escape($text) . '</span>';
                                         ?>
                                     </div>
                                     <?php

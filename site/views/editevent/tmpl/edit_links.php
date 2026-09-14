@@ -12,7 +12,7 @@ use Joomla\CMS\Factory;
 
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-$wa->registerAndUseStyle('com_jem.jem-links', 'media/com_jem/css/jem-links.css');
+JemHelper::loadCss('jem-links');
 $wa->registerAndUseScript('com_jem.jem-links', 'media/com_jem/js/jem-links.js');
 ?>
 

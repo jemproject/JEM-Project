@@ -14,9 +14,9 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Session\Session;
 
 $function = Factory::getApplication()->input->getCmd('function', 'jSelectVenue');
+Factory::getApplication()->getDocument()->getWebAssetManager()->useScript('modal-content-select');
 Factory::getDocument()->setTitle(Text::_('COM_JEM_SELECT_VENUE'));
 $cssSettings = JemHelper::retrieveCss();
 $filterBackground = $cssSettings->get('css_color_bg_filter');
@@ -183,7 +183,7 @@ if (!function_exists('jem_choosevenue_country')) {
 <div id="jem" class="jem_select_venue">
     <div class="clr"></div>
 
-    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function).'&'.Session::getFormToken().'=1'); ?>" method="post" name="adminForm" id="adminForm">
+    <form action="<?php echo Route::_('index.php?option=com_jem&view=editevent&layout=choosevenue&tmpl=component&function='.$this->escape($function)); ?>" method="post" name="adminForm" id="adminForm">
         <div id="jem_filter" class="floattext"<?php echo $filterStyle ? ' style="' . implode('; ', $filterStyle) . '"' : ''; ?>>
             <div class="jem_fleft">
                 <?php
@@ -193,7 +193,7 @@ if (!function_exists('jem_choosevenue_country')) {
                 <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->filter, ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 <button type="submit" class="pointer btn btn-primary"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
                 <button type="button" class="pointer btn btn-secondary" onclick="document.getElementById('filter_search').value='';this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                <button type="button" class="pointer btn btn-primary" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('', '<?php echo Text::_('COM_JEM_SELECT_VENUE') ?>');"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
+                <button type="button" class="pointer btn btn-danger" data-content-select data-content-type="com_jem.venue" data-id="" data-title="<?php echo $this->escape(Text::_('COM_JEM_SELECT_VENUE')); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo Text::_('COM_JEM_NOVENUE')?></button>
             </div>
             <div class="jem_fright">
                 <?php
@@ -221,7 +221,7 @@ if (!function_exists('jem_choosevenue_country')) {
                     <tr class="row<?php echo $i % 2; ?>">
                         <td class="jem-venue-number"><?php echo $this->pagination->getRowOffset( $i ); ?></td>
                         <td style="text-align: left;">
-                            <a class="pointer" onclick="if (window.parent) window.parent.<?php echo $this->escape($function);?>('<?php echo $row->id; ?>', '<?php echo $this->escape(addslashes($row->venue)); ?>');"><?php echo $this->escape($row->venue); ?></a>
+                            <a href="#" class="pointer" data-content-select data-content-type="com_jem.venue" data-id="<?php echo (int) $row->id; ?>" data-title="<?php echo htmlspecialchars($row->venue, ENT_QUOTES, 'UTF-8'); ?>" onclick="if (window.parent && !window.parent.JoomlaExpectingPostMessage) window.parent[<?php echo json_encode($function); ?>](this.dataset.id, this.dataset.title);"><?php echo $this->escape($row->venue); ?></a>
                         </td>
                         <td style="text-align: left;"><?php echo $this->escape($row->city); ?></td>
                         <td style="text-align: left;"><?php echo $this->escape($row->state); ?></td>
@@ -240,6 +240,7 @@ if (!function_exists('jem_choosevenue_country')) {
             <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
             <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
         </p>
+        <?php echo HTMLHelper::_('form.token'); ?>
     </form>
 
     <div class="pagination">
