@@ -61,7 +61,7 @@
         <element>pkg_jem</element>
         <type>package</type>
         <client>0</client>
-        <version>5.0.0</version>
+        <version>5.0.1</version>
         <infourl title="JEM Package">https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab</infourl>
         <stablechangelog>https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab</stablechangelog>
         <downloads>
@@ -74,11 +74,11 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(5\.[4-9].*|6\..*)$"/>
         <php_minimum>8.3</php_minimum>
-        <sha256>7c09a6926090dd9ad638a7804607c98fa5e29148144421699cc14895945208df</sha256>
-        <sha384>3d3d376d44308b93acc3b0878b2d293d74ba0067a6d0ea2d6dfefe9f9ce76d7e4077f70066668fe297e68d7b0748854a</sha384>
-        <sha512>903c3e3a23082cc51e104d603ddf2417282e68a6155be0d60fd19f961795baaafb33b14b1b99661b033378415100225da93fc104472109e3d04c6104650873b</sha512>
-        <date>2026-07-05 10:00</date>
-        <notes>JEM 5.0.0 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer. [JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)</notes>
-        <changes>JEM 5.0.0 adds Joomla 5.4 compatibility to the JEM 5 release line and keeps Joomla 6 support, import workflows, Special Days, PDF calendar refinements, modules and media handling fixes.</changes>
+        <sha256>21f47f9ef4545b294cff0d017f383c1ad428bc9e98a66209fc4d12c429decfff</sha256>
+        <sha384>0ebb1f933d217dfd9c9f61259a7fd1b14093fad9cc2b9852c40241e710e4dbd3399584617308c371b29dcdf6caa70ba8</sha384>
+        <sha512>02d6236b007505f137ab1fb8665d07ca3daa20a6f9651d8728120b62312f5532cab7c65e3a8fd265110bf5656d13d50464079aeea317b87853d6e2170c2b8a26</sha512>
+        <date>2026-09-14 00:00</date>
+        <notes>JEM 5.0.1 for Joomla! 5.4.x and Joomla! 6.x. Requires PHP 8.3 or newer. [JEM 5.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem5-tab)</notes>
+        <changes>JEM 5.0.1 consolidates the maintenance, security, compatibility, module, image, language and frontend/backend corrections delivered after JEM 5.0.0.</changes>
     </update>
 </updates>
