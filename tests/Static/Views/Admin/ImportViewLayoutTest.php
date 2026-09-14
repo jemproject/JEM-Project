@@ -135,9 +135,20 @@ final class ImportViewLayoutTest extends TestCase
     public function testEventAndVenueRefreshButtonsFollowMappingAndPrecedeResultTables(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/import/tmpl/default.php');
-        $eventStart = strpos($template, "'event-import'");
-        $venueStart = strpos($template, "'venue-import'", $eventStart + 1);
-        $migrationStart = strpos($template, "'jem-migration'", $venueStart + 1);
+        $eventStart = strpos(
+            $template,
+            "HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'event-import'"
+        );
+        $venueStart = strpos(
+            $template,
+            "HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'venue-import'",
+            $eventStart + 1
+        );
+        $migrationStart = strpos(
+            $template,
+            "HTMLHelper::_('uitab.addTab', 'jem-import-tabs', 'jem-migration'",
+            $venueStart + 1
+        );
 
         self::assertNotFalse($eventStart);
         self::assertNotFalse($venueStart);
