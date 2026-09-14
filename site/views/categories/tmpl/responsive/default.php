@@ -40,6 +40,16 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
 
     return '<div class="jem-type-section-header"><h2 class="jem-type-section-title">' . Text::_('COM_JEM_TYPECATEGORIES_UNASSIGNED') . '</h2></div>';
 };
+
+$categoriesMenuItemId = (
+    !empty($this->item->id)
+    && (($this->item->query['option'] ?? '') === 'com_jem')
+    && (($this->item->query['view'] ?? '') === 'categories')
+) ? (int) $this->item->id : 0;
+
+$categoriesFilterAction = $categoriesMenuItemId > 0
+    ? Route::_('index.php?Itemid=' . $categoriesMenuItemId)
+    : Route::_('index.php?option=com_jem&view=categories&id=' . (int) $this->id);
 ?>
 <div id="jem" class="jem_categories<?php echo $this->pageclass_sfx;?>">
     <div class="buttons">
@@ -86,7 +96,7 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
     <?php endif; ?>
 
     <?php if ($this->params->get('show_categories_filter', 1)) : ?>
-        <form action="<?php echo Route::_('index.php?option=com_jem&view=categories&id=' . (int) $this->id); ?>" method="get" name="adminForm" id="adminForm">
+        <form action="<?php echo $categoriesFilterAction; ?>" method="get" name="adminForm" id="adminForm">
             <div id="jem_filter" class="floattext">
                 <div class="jem_fleft">
                     <label for="filter_search"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
@@ -105,6 +115,9 @@ $renderTypeSectionHeader = function ($type) use ($buildTypeBadge) {
             <input type="hidden" name="option" value="com_jem" />
             <input type="hidden" name="view" value="categories" />
             <input type="hidden" name="id" value="<?php echo (int) $this->id; ?>" />
+            <?php if ($categoriesMenuItemId > 0) : ?>
+                <input type="hidden" name="Itemid" value="<?php echo $categoriesMenuItemId; ?>" />
+            <?php endif; ?>
             <?php if ($this->isTypeCategoryView) : ?>
                 <input type="hidden" name="typeid" value="<?php echo (int) $this->model->getRequestedTypeId(); ?>" />
             <?php endif; ?>
