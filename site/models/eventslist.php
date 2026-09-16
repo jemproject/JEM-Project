@@ -397,7 +397,11 @@ class JemModelEventslist extends ListModel
      */
     protected function getViewAccessLevels(): array
     {
-        $forcedLevels = $this->getState('filter.access_levels', null);
+        // This helper is also called while populateState() expands menu category filters.
+        // Read only state explicitly set by internal consumers to avoid re-entering populateState().
+        $forcedLevels = $this->state !== null
+            ? $this->state->get('filter.access_levels', null)
+            : null;
 
         if ($forcedLevels !== null) {
             $forcedLevels = is_array($forcedLevels) ? $forcedLevels : array($forcedLevels);
