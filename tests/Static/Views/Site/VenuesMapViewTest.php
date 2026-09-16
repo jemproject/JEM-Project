@@ -25,6 +25,27 @@ final class VenuesMapViewTest extends TestCase
         self::assertStringContainsString('COM_JEM_VENUESMAP_MAP_UNAVAILABLE=', $language);
     }
 
+    public function testFilterFormPreservesOnlyMatchingActiveMenuContext(): void
+    {
+        $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');
+
+        self::assertStringContainsString('($activeMenuItem->query[\'option\'] ?? \'\') === \'com_jem\'', $source);
+        self::assertStringContainsString('($activeMenuItem->query[\'view\'] ?? \'\') === \'venuesmap\'', $source);
+        self::assertStringContainsString('Route::_(\'index.php?Itemid=\' . $venuesMapMenuItemId)', $source);
+        self::assertStringContainsString('Route::_(\'index.php?option=com_jem&view=venuesmap\')', $source);
+
+        $formStart = strpos($source, '<form action="<?php echo $venuesMapFilterAction; ?>"');
+        self::assertNotFalse($formStart);
+        $formEnd = strpos($source, '</form>', $formStart);
+        self::assertNotFalse($formEnd);
+        $form = substr($source, $formStart, $formEnd - $formStart);
+
+        self::assertStringContainsString('name="option" value="com_jem"', $form);
+        self::assertStringContainsString('name="view" value="venuesmap"', $form);
+        self::assertStringContainsString('if ($venuesMapMenuItemId > 0)', $form);
+        self::assertStringContainsString('name="Itemid" value="<?php echo $venuesMapMenuItemId; ?>"', $form);
+    }
+
     public function testVenueButtonsUseSharedContrastColorForAllBootstrapStates(): void
     {
         $template = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/venuesmap/tmpl/default.php');

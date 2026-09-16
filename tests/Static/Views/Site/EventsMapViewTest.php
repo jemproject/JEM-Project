@@ -38,6 +38,29 @@ final class EventsMapViewTest extends TestCase
         }
     }
 
+    public function testFilterFormPreservesOnlyMatchingActiveMenuContext(): void
+    {
+        foreach (array('default.php', 'responsive.php') as $template) {
+            $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/eventsmap/tmpl/' . $template);
+
+            self::assertStringContainsString('($activeMenuItem->query[\'option\'] ?? \'\') === \'com_jem\'', $source);
+            self::assertStringContainsString('($activeMenuItem->query[\'view\'] ?? \'\') === \'eventsmap\'', $source);
+            self::assertStringContainsString('Route::_(\'index.php?Itemid=\' . $eventsMapMenuItemId)', $source);
+            self::assertStringContainsString('Route::_(\'index.php?option=com_jem&view=eventsmap\')', $source);
+
+            $formStart = strpos($source, '<form action="<?php echo $eventsMapFilterAction; ?>"');
+            self::assertNotFalse($formStart);
+            $formEnd = strpos($source, '</form>', $formStart);
+            self::assertNotFalse($formEnd);
+            $form = substr($source, $formStart, $formEnd - $formStart);
+
+            self::assertStringContainsString('name="option" value="com_jem"', $form);
+            self::assertStringContainsString('name="view" value="eventsmap"', $form);
+            self::assertStringContainsString('if ($eventsMapMenuItemId > 0)', $form);
+            self::assertStringContainsString('name="Itemid" value="<?php echo $eventsMapMenuItemId; ?>"', $form);
+        }
+    }
+
     public function testVenueTypeBadgeStartsEachEventMapPopup(): void
     {
         $helper = (string) file_get_contents(JEM_TEST_ROOT . '/site/helpers/map.php');
