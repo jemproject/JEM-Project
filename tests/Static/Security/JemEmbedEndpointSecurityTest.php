@@ -34,11 +34,30 @@ final class JemEmbedEndpointSecurityTest extends TestCase
         self::assertStringContainsString('$guest = JemFactory::getUser(0);', $plugin);
         self::assertStringContainsString("setState('filter.access_levels', \$guest->getAuthorisedViewLevels())", $plugin);
         self::assertStringContainsString("setState('filter.strict_access', true)", $plugin);
-        self::assertStringContainsString("getState('filter.access_levels', null)", $model);
+        self::assertStringContainsString("\$this->state->get('filter.access_levels', null)", $model);
         self::assertStringContainsString("getState('filter.strict_access', false)", $model);
         self::assertStringContainsString('if (!$strictAccess && $jemsettings->access_level_locked_events', $model);
         self::assertStringContainsString('if (!$strictAccess && $jemsettings->access_level_locked_venues', $model);
         self::assertStringContainsString('if ($strictAccess) {', $model);
+    }
+
+    public function testEventslistAccessLevelsDoNotReenterStatePopulation(): void
+    {
+        $model = $this->read('site/models/eventslist.php');
+
+        self::assertSame(
+            1,
+            preg_match(
+                '/protected function getViewAccessLevels\(\): array\s*\{(?<body>.*?)\n    \}/s',
+                $model,
+                $matches
+            )
+        );
+        self::assertStringContainsString(
+            "\$this->state->get('filter.access_levels', null)",
+            $matches['body']
+        );
+        self::assertStringNotContainsString('$this->getState(', $matches['body']);
     }
 
     public function testEndpointBoundsDatabaseContentBeforeHydration(): void
