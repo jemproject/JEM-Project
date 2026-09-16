@@ -52,3 +52,24 @@ div#jemmodulewide .image-preview {
     background-color: white;
     margin: 3px;
 }
+
+@media (max-width: 480px) {
+    div#jemmodulewide .eventset {
+        table-layout: fixed;
+        box-sizing: border-box;
+    }
+
+    div#jemmodulewide .eventset td {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    div#jemmodulewide .image-preview {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        box-sizing: border-box;
+        margin: 3px auto;
+    }
+}
