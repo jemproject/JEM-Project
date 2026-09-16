@@ -45,6 +45,15 @@ $showCategoryFilter = (int) ($this->showCategoryFilter ?? 1);
 $selectedCountry = (string) ($this->selectedCountry ?? '');
 $selectedCity = (string) ($this->selectedCity ?? '');
 $selectedCategoryId = (int) ($this->selectedCategoryId ?? 0);
+$activeMenuItem = $app->getMenu()->getActive();
+$venuesMapMenuItemId = (
+    !empty($activeMenuItem->id)
+    && (($activeMenuItem->query['option'] ?? '') === 'com_jem')
+    && (($activeMenuItem->query['view'] ?? '') === 'venuesmap')
+) ? (int) $activeMenuItem->id : 0;
+$venuesMapFilterAction = $venuesMapMenuItemId > 0
+    ? Route::_('index.php?Itemid=' . $venuesMapMenuItemId)
+    : Route::_('index.php?option=com_jem&view=venuesmap');
 $startLat = (float) $this->params->get('map_center_lat', '54.526');
 $startLng = (float) $this->params->get('map_center_lng', '15.255');
 $startZoom = (int) $this->params->get('map_zoom', '4');
@@ -649,7 +658,12 @@ foreach (($this->venueslist ?? []) as $venue) {
         </div>
     <?php endif; ?>
 
-    <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+    <form action="<?php echo $venuesMapFilterAction; ?>" method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <input type="hidden" name="option" value="com_jem">
+        <input type="hidden" name="view" value="venuesmap">
+        <?php if ($venuesMapMenuItemId > 0) : ?>
+            <input type="hidden" name="Itemid" value="<?php echo $venuesMapMenuItemId; ?>">
+        <?php endif; ?>
         <?php if ($showCountryFilter) : ?>
             <label for="jem-map-filter-country-<?= $map_id ?>" class="form-label mb-0">
                 <?= Text::_('COM_JEM_COUNTRY') ?>
