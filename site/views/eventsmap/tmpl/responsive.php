@@ -48,6 +48,15 @@ $venueMarker   = $this->venueMarker;
 $mylocMarker   = $this->mylocMarker;
 $jemItemid     = (int) $this->jemItemid;
 $events        = $this->eventslist ?? [];
+$activeMenuItem = $app->getMenu()->getActive();
+$eventsMapMenuItemId = (
+    !empty($activeMenuItem->id)
+    && (($activeMenuItem->query['option'] ?? '') === 'com_jem')
+    && (($activeMenuItem->query['view'] ?? '') === 'eventsmap')
+) ? (int) $activeMenuItem->id : 0;
+$eventsMapFilterAction = $eventsMapMenuItemId > 0
+    ? Route::_('index.php?Itemid=' . $eventsMapMenuItemId)
+    : Route::_('index.php?option=com_jem&view=eventsmap');
 
 if (!function_exists('jem_eventsmap_normalise_icon_class')) {
     function jem_eventsmap_normalise_icon_class($icon)
@@ -254,7 +263,12 @@ foreach ((array) $events as $event) {
 
 
     <?php if ($showControls): ?>
-        <form method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+        <form action="<?php echo $eventsMapFilterAction; ?>" method="get" class="jem-date-filter d-flex flex-wrap align-items-center gap-2 mb-3">
+            <input type="hidden" name="option" value="com_jem">
+            <input type="hidden" name="view" value="eventsmap">
+            <?php if ($eventsMapMenuItemId > 0) : ?>
+                <input type="hidden" name="Itemid" value="<?php echo $eventsMapMenuItemId; ?>">
+            <?php endif; ?>
             <?php if (!empty($showCountryFilter)): ?>
                 <label for="jem-map-filter-country-<?= $map_id ?>" class="visually-hidden">
                     <?= Text::_('COM_JEM_EVENTS_MAP_COUNTRY_FILTER') ?>
