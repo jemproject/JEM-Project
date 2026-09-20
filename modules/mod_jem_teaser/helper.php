@@ -177,6 +177,10 @@ abstract class ModJemTeaserHelper
         $module_venuecolorMode = $params->get('venuecolor', 'none'); // none, text, background
         $moduleStatusRibbonScale = JemOutput::moduleStatusRibbonScale($params);
 
+        # Read More must open the full event in one action, even when the title uses Compact.
+        $readMoreParams = clone $params;
+        $readMoreParams->set('event_link_event_layout', 'details');
+
         # Loop through the result rows and prepare data
         $lists = array();
         $i     = -1; // it's easier to increment first
@@ -199,7 +203,7 @@ abstract class ModJemTeaserHelper
             # check view access
             if ($hasEventAccess) {
                 # We know that user has the privilege to view the event
-                $lists[$i]->link = Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $params));
+                $lists[$i]->link = Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($row->slug), $readMoreParams));
                 $lists[$i]->linkText = Text::_('MOD_JEM_TEASER_READMORE');
             } else {
                 $lists[$i]->link = Route::_('index.php?option=com_users&view=login');
