@@ -15,6 +15,7 @@ use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 
 /**
  * Category View
@@ -34,12 +35,21 @@ class JemViewCategory extends JemAdminView
         $this->item        = $this->get('Item');
         $this->state    = $this->get('State');
         $this->canDo    = JemHelperBackend::getActions($this->state->get('category.component'));
+        $this->featurePolicy = JemFeaturePolicy::current();
 
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
         $wa = $this->document->getWebAssetManager();
         $wa->useScript('jquery');
         $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
+        if ($this->featurePolicy->isAdvanced()) {
+            $wa->registerAndUseScript(
+                'com_jem.category-custom-fields',
+                'media/com_jem/js/categorycustomfields.js',
+                array(),
+                array('defer' => true)
+            );
+        }
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -61,6 +71,29 @@ class JemViewCategory extends JemAdminView
         $Lists['groups'] = HTMLHelper::_('select.genericlist', $grouplist, 'groupid', array('size'=>'1','class'=>'inputbox form-select m-0'), 'value', 'text', $this->item->groupid);
         $this->Lists     = $Lists;
         $this->imageProfileSummary = JemImage::profileSummary(JemHelper::config(), JemImageProfilePolicy::CATEGORY);
+        if ($this->featurePolicy->isAdvanced()) {
+            $this->categoryCustomFields = JemCategoryCustomFields::normaliseConfiguration($this->item->custom_fields ?? '');
+            $this->legacyEventCustomFields = array();
+
+            foreach (JemCustomFields::getOrderedFields('event') as $fieldName) {
+                $fieldId = (int) substr($fieldName, 6);
+                $fieldConfig = JemCustomFields::getFieldConfig('event', $fieldName);
+
+                if (empty($fieldConfig['enabled'])) {
+                    continue;
+                }
+
+                $this->legacyEventCustomFields[] = (object) array(
+                    'id'          => $fieldId,
+                    'name'        => $fieldName,
+                    'label'       => JemCustomFields::getLabel('event', $fieldName, Text::_('COM_JEM_EVENT_CUSTOM_FIELD' . $fieldId)),
+                    'description' => JemCustomFields::getDescription('event', $fieldName, Text::_('COM_JEM_EVENT_CUSTOM_FIELD' . $fieldId . '_DESC')),
+                );
+            }
+
+            $this->joomlaEventCustomFields = array_values(JemCategoryCustomFields::getJoomlaEventFieldsById());
+            $this->joomlaEventFieldGroups = JemCategoryCustomFields::getJoomlaEventFieldGroupsById();
+        }
 
         JemImagePublicationPolicy::configureEditingForm($this->form, 'category', JemHelper::config());
 

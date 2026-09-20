@@ -14,6 +14,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
+
 $app = Factory::getApplication();
 $document = $app->getDocument();
 $wa = $document->getWebAssetManager();
@@ -1181,6 +1183,7 @@ Text::script('JCANCEL');
 
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo JemCategoryCustomFields::renderJoomlaFormTabs($this->form, 'jem-editvenue-tabs', 'venue-fields', 'venue'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
                 <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-attachments', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB')); ?>
                 <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_ATTACHMENTS_TAB'), 'venue-attachmentstab'); ?>
@@ -1188,9 +1191,8 @@ Text::script('JCANCEL');
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
-            <!-- MORE TAB -->
+            <!-- CUSTOM FIELDS TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-editvenue-tabs', 'venue-other', Text::_('COM_JEM_EDITVENUE_OTHER_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EDITVENUE_OTHER_TAB'), 'venue-othertab'); ?>
             <?php echo $this->loadTemplate('other'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
 

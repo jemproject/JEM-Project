@@ -724,6 +724,21 @@ document.addEventListener('DOMContentLoaded', function () {
     </button>
 </div>
 
+<div class="card border-secondary shadow-sm mb-3">
+    <div class="card-header bg-light">
+        <strong><?php echo Text::_('COM_JEM_CUSTOM_FIELDS_PRESENTATION'); ?></strong>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <?php foreach ($this->form->getFieldset('customfieldspresentation') as $field) : ?>
+                <div class="col-12 col-lg-6">
+                    <?php echo $field->renderField(); ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
+
 <?php echo HTMLHelper::_('uitab.startTabSet', 'custom-fields-pane', array('active' => 'custom-fields-events', 'recall' => true, 'breakpoint' => 768)); ?>
 
 <?php echo HTMLHelper::_('uitab.addTab', 'custom-fields-pane', 'custom-fields-events', Text::_('COM_JEM_EVENTS')); ?>

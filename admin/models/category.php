@@ -24,6 +24,7 @@ use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 
 /**
  * Category Model
@@ -251,6 +252,12 @@ class JemModelCategory extends AdminModel
         $data['path'] = $data['path'] ?? '';
         $data['metadata'] = $data['metadata'] ?? '';
 
+        if (array_key_exists('custom_fields', $data)) {
+            $data['custom_fields'] = JemCategoryCustomFields::encodeConfiguration($data['custom_fields']);
+        } elseif (!$isNew) {
+            $data['custom_fields'] = (string) ($table->custom_fields ?? '');
+        }
+
         if ((int) ($data['article_create_mode'] ?? 0) === 1 && empty($data['article_category_id'])) {
             $this->setError(Text::_('COM_JEM_CATEGORY_ARTICLE_AUTO_REQUIRES_CATEGORY'));
 
@@ -324,6 +331,8 @@ class JemModelCategory extends AdminModel
             $this->setError($table->getError());
             return false;
         }
+
+        JemCategoryCustomFields::clearCache();
 
         if (!$this->syncCategoryImageStorage($table)) {
             return false;

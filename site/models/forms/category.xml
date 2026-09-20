@@ -2,6 +2,7 @@
 <form>
     <fieldset name="details" addfieldpath="/components/com_jem/models/fields">
         <field name="id" type="hidden" default="0" filter="uint" />
+        <field name="custom_fields" type="hidden" filter="raw" />
         <field name="catname" type="text"
             class="inputbox form-control"
             maxlength="100"

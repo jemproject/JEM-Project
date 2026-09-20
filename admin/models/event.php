@@ -22,6 +22,7 @@ use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
@@ -229,6 +230,7 @@ class JemModelEvent extends JemModelAdmin
 
         $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
         JemCustomFields::applyFormLabels($form, 'event', $scope);
+        JemCategoryCustomFields::prepareEventForm($form, $data);
 
         if ((int) JemHelper::globalattribs()->get('event_use_associated_article', 1) !== 1) {
             $form->removeField('article_id');
@@ -632,6 +634,7 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
         $data['cats']         = $cats;
+        JemCategoryCustomFields::filterEventData($data, $cats);
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');

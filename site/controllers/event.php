@@ -145,6 +145,23 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Reload the frontend event form after its category selection changes.
+     *
+     * @param   string  $key     Primary key name.
+     * @param   string  $urlVar  Frontend record-id variable.
+     *
+     * @return  boolean|void
+     */
+    public function reload($key = null, $urlVar = 'a_id')
+    {
+        if (!$this->requireFrontendUser()) {
+            return false;
+        }
+
+        parent::reload($key, $urlVar);
+    }
+
+    /**
      * Method to add a new record based on existing record.
      *
      * @return boolean True if the event can be added, false if not.

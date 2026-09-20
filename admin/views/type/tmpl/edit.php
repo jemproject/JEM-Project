@@ -23,7 +23,7 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id=' . (int) $this->item->id); ?>"
-      method="post" name="adminForm" id="adminForm" class="form-validate">
+      method="post" name="adminForm" id="adminForm" class="form-validate jem-edit-type-form">
 
     <div class="row">
         <div class="col-md-9">

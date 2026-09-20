@@ -43,3 +43,75 @@
     padding-inline-end: 2.75rem;
     width: auto !important;
 }
+
+#jem.jem_editevent form select:not([multiple]),
+#jem.jem_editvenue form select:not([multiple]),
+#jem.jem_editcategory form select:not([multiple]) {
+    display: inline-block;
+    max-width: 100%;
+    min-width: 0;
+    padding-inline-end: calc(2.25rem + 5px);
+    width: fit-content !important;
+}
+
+#jem .jem-event-notifications .jem-dl {
+    align-items: center;
+    column-gap: 1rem;
+    display: grid;
+    grid-template-columns: minmax(16rem, 22rem) minmax(8rem, 1fr);
+    row-gap: 0.5rem;
+}
+
+#jem .jem-event-notifications .jem-dl > dt,
+#jem .jem-event-notifications .jem-dl > dd {
+    float: none;
+    margin: 0;
+    min-width: 0;
+    overflow: visible;
+    padding: 0.25rem 0;
+    text-overflow: clip;
+    white-space: normal;
+    width: auto;
+}
+
+#jem .jem-event-notifications .btn-group-yesno {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    min-width: 7.5rem;
+    width: auto;
+}
+
+#jem .jem-event-notifications .btn-group-yesno > label {
+    min-width: 3.75rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+#jem .jem-event-notifications .form-check {
+    margin: 0;
+    min-height: 1.25rem;
+}
+
+#jem .jem-event-notifications .form-check-input {
+    border-color: var(--border-color, #6c757d);
+    height: 1.25rem;
+    margin-top: 0;
+    width: 1.25rem;
+}
+
+@media (max-width: 767.98px) {
+    #jem.jem_editevent form select:not([multiple]),
+    #jem.jem_editvenue form select:not([multiple]),
+    #jem.jem_editcategory form select:not([multiple]) {
+        width: 100% !important;
+    }
+
+    #jem .jem-event-notifications .jem-dl {
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: 0.25rem;
+    }
+
+    #jem .jem-event-notifications .jem-dl > dd {
+        padding-bottom: 0.75rem;
+    }
+}

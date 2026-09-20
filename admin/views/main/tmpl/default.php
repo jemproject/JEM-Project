@@ -21,6 +21,8 @@ $canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.his
 $canManageNotificationTemplates = JemHelperBackend::canManage('jem.notifications.templates');
 $canViewNotificationHistory = JemHelperBackend::canManage('jem.notifications.history');
 $canConfigure = JemHelperBackend::canManage('core.options');
+$canManageJoomlaFields = $this->user->authorise('core.manage', 'com_jem');
+$canCreateJoomlaFields = $this->user->authorise('core.create', 'com_jem');
 $canInstallLanguages = $this->user->authorise('core.admin');
 $featurePolicy = $this->featurePolicy ?? JemFeaturePolicy::current();
 $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy->getProfile()));
@@ -73,6 +75,32 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                 $this->quickiconButton('index.php?option=com_jem&amp;view=types', 'icon-48-types.svg', Text::_('COM_JEM_TYPES'), 0, 'index.php?option=com_jem&amp;task=type.add', Text::_('COM_JEM_ADD_TYPE'));
                 $this->quickiconButton('index.php?option=com_jem&amp;view=specialdays', 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'), 0, 'index.php?option=com_jem&amp;task=specialday.add', Text::_('COM_JEM_ADD_SPECIAL_DAYS'));
                 $this->quickiconButton('index.php?option=com_jem&amp;view=attachments', 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
+
+                if ($canManageJoomlaFields) {
+                    $addFieldLink = $canCreateJoomlaFields
+                        ? 'index.php?option=com_fields&amp;task=field.add&amp;context=com_jem.event'
+                        : null;
+                    $this->quickiconButton(
+                        'index.php?option=com_fields&amp;view=fields&amp;context=com_jem.event',
+                        'icon-48-fields.svg',
+                        Text::_('COM_JEM_MAIN_JOOMLA_FIELDS'),
+                        0,
+                        $addFieldLink,
+                        Text::_('COM_JEM_MAIN_ADD_JOOMLA_FIELD')
+                    );
+
+                    $addGroupLink = $canCreateJoomlaFields
+                        ? 'index.php?option=com_fields&amp;task=group.add&amp;context=com_jem.event'
+                        : null;
+                    $this->quickiconButton(
+                        'index.php?option=com_fields&amp;view=groups&amp;context=com_jem.event',
+                        'icon-48-fieldgroups.svg',
+                        Text::_('COM_JEM_MAIN_JOOMLA_FIELD_GROUPS'),
+                        0,
+                        $addGroupLink,
+                        Text::_('COM_JEM_MAIN_ADD_JOOMLA_FIELD_GROUP')
+                    );
+                }
             ?>
             </div>
 

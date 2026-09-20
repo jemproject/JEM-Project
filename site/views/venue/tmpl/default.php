@@ -12,19 +12,35 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 
 $venueCustomFieldsPosition = (string) $this->settings->get('global_venue_custom_fields_position', 'details');
 if (!in_array($venueCustomFieldsPosition, array('details', 'before_description', 'after_description', 'after_links'), true)) {
     $venueCustomFieldsPosition = 'details';
 }
 $venueCustomFieldsRows = JemCustomFields::renderDetailRows('venue', $this->venue, 'COM_JEM_VENUE_CUSTOM_FIELD', 'custom');
-$renderVenueCustomFieldsBlock = function () use ($venueCustomFieldsRows) {
-    if ($venueCustomFieldsRows === '') {
+$venueJoomlaCustomFields = JemCategoryCustomFields::getJoomlaVenueDetailPresentation($this->venue);
+$venueCustomFieldsParts = array(
+    'jem'    => $venueCustomFieldsRows,
+    'joomla' => $venueJoomlaCustomFields['rows'],
+    'groups' => $venueJoomlaCustomFields['cards'],
+);
+$venueCustomFieldsOrderedRows = JemCategoryCustomFields::renderOrderedDetailRows(
+    $venueCustomFieldsParts,
+    $this->settings->get('venue_custom_fields_order', 'jem_joomla_groups')
+);
+$venueCustomFieldsHtml = JemCategoryCustomFields::renderOrderedDetailSections(
+    $venueCustomFieldsParts,
+    $this->settings->get('venue_custom_fields_order', 'jem_joomla_groups'),
+    'location'
+);
+$renderVenueCustomFieldsBlock = function () use ($venueCustomFieldsHtml) {
+    if ($venueCustomFieldsHtml === '') {
         return '';
     }
 
     return '<div class="jem-custom-fields jem-venue-custom-fields">'
-        . '<dl class="location">' . $venueCustomFieldsRows . '</dl>'
+        . $venueCustomFieldsHtml
         . '</div>';
 };
 
@@ -368,17 +384,16 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
             </dd>
             <?php endif; ?>
 
-            <?php
-            if ($venueCustomFieldsPosition === 'details') {
-                echo $venueCustomFieldsRows;
-            }
-            endif; ?>
+            <?php endif; ?>
 
             <?php if (($this->settings->get('global_show_detlinkvenue', 1)) && (!empty($this->venue->url))) : ?>
             <dt class="venue"><?php echo Text::_('COM_JEM_WEBSITE'); ?>:</dt>
             <dd class="venue">
                 <a href="<?php echo $this->escape($this->venue->url); ?>" target="_blank" rel="noopener"><?php echo $this->escape($this->venue->urlclean); ?></a>
             </dd>
+            <?php endif; ?>
+            <?php if ($venueCustomFieldsPosition === 'details' && $venueCustomFieldsOrderedRows !== '') : ?>
+                <?php echo JemCategoryCustomFields::addDetailSeparator($venueCustomFieldsOrderedRows); ?>
             <?php endif; ?>
         </dl>
         </div>

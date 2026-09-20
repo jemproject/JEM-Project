@@ -3,6 +3,7 @@
     <config>
         <inlinehelp button="show"/>
     </config>
+    <field name="custom_fields" type="hidden" filter="raw" />
     <fieldset name="details"
         addfieldpath="/administrator/components/com_jem/models/fields"
     >

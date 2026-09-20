@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
@@ -35,6 +36,12 @@ JemHelper::loadCss('frontend-form-mode');
 $wa->registerAndUseScript(
     'com_jem.frontend-form-mode',
     'media/com_jem/js/frontend-form-mode.js',
+    array(),
+    array('defer' => true)
+);
+$wa->registerAndUseScript(
+    'com_jem.category-custom-fields',
+    'media/com_jem/js/categorycustomfields.js',
     array(),
     array('defer' => true)
 );
@@ -793,7 +800,7 @@ $document->addStyleDeclaration('
             </h1>
         <?php endif; ?>
 
-        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" data-jem-form-mode>
+        <form enctype="multipart/form-data" action="<?php echo Route::_('index.php?option=com_jem&a_id=' . (int) $this->item->id); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" data-jem-form-mode data-jem-category-custom-fields-form>
 
             <div class="jem-editevent-toolbar">
                 <button type="submit" class="btn btn-primary" onclick="Joomla.submitbutton('event.save')"><?php echo Text::_('JSAVE') ?></button>
@@ -1054,6 +1061,7 @@ $document->addStyleDeclaration('
 
             <!-- ATTACHMENTS TAB -->
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo JemCategoryCustomFields::renderJoomlaFormTabs($this->form, 'jem-editevent-tabs', 'event-fields', 'event'); ?>
             <?php if (!empty($this->item->attachments) || ($this->jemsettings->attachmentenabled != 0)) : ?>
                 <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
                 <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'event-attachments'); ?>
@@ -1061,9 +1069,8 @@ $document->addStyleDeclaration('
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
 
-            <!-- OTHER TAB -->
+            <!-- CUSTOM FIELDS TAB -->
             <?php echo HTMLHelper::_('uitab.addTab', 'jem-editevent-tabs', 'event-other', Text::_('COM_JEM_EVENT_OTHER_TAB')); ?>
-            <?php //echo HTMLHelper::_('tabs.panel', Text::_('COM_JEM_EVENT_OTHER_TAB'), 'event-other'); ?>
             <?php echo $this->loadTemplate('other'); ?>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
 

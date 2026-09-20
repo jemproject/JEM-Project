@@ -23,6 +23,18 @@ body.body-overlayed {
     overflow: auto;
 }
 
+#jemmoduleteaser {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#jemmoduleteaser .eventset {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    text-align: left;
+}
+
 #jemmoduleteaser .jem-row-teaser {
     display: flex;
     flex-direction: row;
@@ -67,6 +79,8 @@ body.body-overlayed {
     margin-left: 5px;
     margin-bottom: 5px;
     min-width: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 #jemmoduleteaser .jem-readmore,

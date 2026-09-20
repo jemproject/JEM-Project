@@ -94,17 +94,6 @@ class JemModelEditevent extends JemModelEvent
         );
     }
 
-    public function getForm($data = array(), $loadData = true)
-    {
-        $form = parent::getForm($data, $loadData);
-
-        if ($form) {
-            JemCustomFields::applyFormLabels($form, 'event', 'frontend_edit');
-        }
-
-        return $form;
-    }
-
     /**
      * Method to auto-populate the model state.
      *
@@ -178,6 +167,9 @@ class JemModelEditevent extends JemModelEvent
 
         $properties = $table->getProperties(1);
         $value = ArrayHelper::toObject($properties, 'stdClass');
+        $value->cats = $itemId > 0
+            ? $this->getEventCategoryIds($itemId)
+            : array_filter(array((int) $this->getState('event.catid')));
 
         if ($doCopy) {
             $value->id = 0;

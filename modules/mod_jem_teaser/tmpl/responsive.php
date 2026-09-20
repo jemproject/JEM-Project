@@ -58,6 +58,7 @@ $document = Factory::getApplication()->getDocument();
 $css = '
     #jemmoduleteaser .jem-eventimg-teaser img {
         width: 100%;
+        max-width: 100%;
         height: ' . $imageheight . ';
     }
 
@@ -66,6 +67,7 @@ $css = '
 
       #jemmoduleteaser .jem-eventimg-teaser img {
         width: ' . $imagewidth . ';
+        max-width: 100%;
         height: ' . $imageheight . ';
       }
     }

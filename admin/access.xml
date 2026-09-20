@@ -9,6 +9,7 @@
         <action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
         <action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_EDITSTATE_COMPONENT_DESC" />
         <action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN_COMPONENT_DESC" />
+        <action name="core.edit.value" title="JACTION_EDITVALUE" />
         <action name="jem.events.access" title="COM_JEM_ACL_EVENTS_ACCESS" description="COM_JEM_ACL_EVENTS_ACCESS_DESC" />
         <action name="jem.events.create" title="COM_JEM_ACL_EVENTS_CREATE" description="COM_JEM_ACL_EVENTS_CREATE_DESC" />
         <action name="jem.events.delete" title="COM_JEM_ACL_EVENTS_DELETE" description="COM_JEM_ACL_EVENTS_DELETE_DESC" />
@@ -36,5 +37,19 @@
         <action name="core.edit" title="JACTION_EDIT" description="COM_CATEGORIES_ACCESS_EDIT_DESC" />
         <action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CATEGORIES_ACCESS_EDITSTATE_DESC" />
         <action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CATEGORIES_ACCESS_EDITOWN_DESC" />
+    </section>
+    <section name="fieldgroup">
+        <action name="core.create" title="JACTION_CREATE" />
+        <action name="core.delete" title="JACTION_DELETE" />
+        <action name="core.edit" title="JACTION_EDIT" />
+        <action name="core.edit.state" title="JACTION_EDITSTATE" />
+        <action name="core.edit.own" title="JACTION_EDITOWN" />
+        <action name="core.edit.value" title="JACTION_EDITVALUE" />
+    </section>
+    <section name="field">
+        <action name="core.delete" title="JACTION_DELETE" />
+        <action name="core.edit" title="JACTION_EDIT" />
+        <action name="core.edit.state" title="JACTION_EDITSTATE" />
+        <action name="core.edit.value" title="JACTION_EDITVALUE" />
     </section>
 </access>

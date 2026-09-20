@@ -17,7 +17,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
 <!-- CUSTOM FIELDS -->
 
 <?php if ($max_custom_fields != 0) : ?>
-    <fieldset class="panelform">
+    <fieldset class="panelform" data-jem-event-custom-fields>
         <legend><?php echo Text::_('COM_JEM_EVENT_CUSTOMFIELDS_LEGEND'); ?></legend>
         <dl class="adminformlist jem-dl-long">
             <?php
@@ -25,7 +25,7 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
             foreach ($this->form->getFieldset('custom') as $field) {
                 $fields[$field->fieldname] = $field;
             }
-            $orderedFields = JemCustomFields::getOrderedFields('event', 'frontend_edit');
+            $orderedFields = $max_custom_fields == 0 ? array() : JemCustomFields::getOrderedFields('event', 'frontend_edit');
             if ($max_custom_fields < 0) :
                 $max_custom_fields = count($orderedFields);
             endif;
@@ -37,8 +37,8 @@ $max_custom_fields = $this->settings->get('global_editevent_maxnumcustomfields',
                 $field = $fields[$fieldName];
                 if (++$cnt <= $max_custom_fields) :
                     ?>
-                    <dt><?php echo $field->label; ?></dt>
-                    <dd><?php echo $field->input; ?></dd>
+                    <dt data-jem-event-legacy-field-id="<?php echo (int) substr($fieldName, 6); ?>"><?php echo $field->label; ?></dt>
+                    <dd data-jem-event-legacy-field-id="<?php echo (int) substr($fieldName, 6); ?>"><?php echo $field->input; ?></dd>
                 <?php
                 endif;
             endforeach;

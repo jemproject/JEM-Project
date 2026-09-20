@@ -4789,3 +4789,22 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
         gap: 0.35rem;
     }
 }
+#event-form select:not([multiple]),
+#venue-form select:not([multiple]),
+.jem-edit-category-form select:not([multiple]),
+.jem-edit-type-form select:not([multiple]) {
+    display: inline-block;
+    max-width: 100%;
+    min-width: 0;
+    padding-inline-end: calc(2.25rem + 5px);
+    width: fit-content !important;
+}
+
+@media (max-width: 767.98px) {
+    #event-form select:not([multiple]),
+    #venue-form select:not([multiple]),
+    .jem-edit-category-form select:not([multiple]),
+    .jem-edit-type-form select:not([multiple]) {
+        width: 100% !important;
+    }
+}

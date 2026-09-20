@@ -18,6 +18,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 
 $this->document->addScript(Uri::root(true) . '/media/com_jem/js/recurrence.js');
@@ -27,6 +28,12 @@ $wa->useScript('keepalive')
     ->useScript('form.validate')
     ->useScript('inlinehelp')
     ->useScript('multiselect');
+$wa->registerAndUseScript(
+    'com_jem.category-custom-fields',
+    'media/com_jem/js/categorycustomfields.js',
+    array(),
+    array('defer' => true)
+);
 
 // Create shortcut to parameters.
 $params = $this->state->get('params');
@@ -455,7 +462,8 @@ $this->document->addStyleDeclaration('
 </script>
 <form
         action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>"
-        class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data">
+        class="form-validate" method="post" name="adminForm" id="event-form" enctype="multipart/form-data"
+        data-jem-category-custom-fields-form>
 
     <config>
         <inlinehelp button="show"/>
@@ -646,6 +654,7 @@ $this->document->addStyleDeclaration('
                 <?php echo $this->loadTemplate('capacity'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
+            <?php echo JemCategoryCustomFields::renderJoomlaFormTabs($this->form, 'myTab', 'event-fields', 'event'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>
             <?php echo $this->loadTemplate('attachments'); ?>
@@ -674,14 +683,15 @@ $this->document->addStyleDeclaration('
             <?php //echo HTMLHelper::_('sliders.panel', Text::_('COM_JEM_FIELDSET_PUBLISHING'), 'publishing-details'); ?>
 
             <!-- RETRIEVING OF FIELDSET PUBLISHING -->
+            <?php $customFieldsAccordionOpen = true; ?>
             <div class="accordion" id="accordionEventForm">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="publishing-details-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#publishing-details" aria-expanded="true" aria-controls="publishing-details">
+                        <button class="accordion-button<?php echo $customFieldsAccordionOpen ? ' collapsed' : ''; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#publishing-details" aria-expanded="<?php echo $customFieldsAccordionOpen ? 'false' : 'true'; ?>" aria-controls="publishing-details">
                             <?php echo Text::_('COM_JEM_FIELDSET_PUBLISHING'); ?>
                         </button>
                     </h2>
-                    <div id="publishing-details" class="accordion-collapse collapse show" aria-labelledby="publishing-details-header" data-bs-parent="#accordionEventForm">
+                    <div id="publishing-details" class="accordion-collapse collapse<?php echo $customFieldsAccordionOpen ? '' : ' show'; ?>" aria-labelledby="publishing-details-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <ul class="adminformlist">
                                 <li><div class="label-form"><?php echo $this->form->renderfield('id'); ?></div></li>
@@ -694,13 +704,13 @@ $this->document->addStyleDeclaration('
                         </div>
                     </div>
                 </div>
-                <div class="accordion-item">
+                <div class="accordion-item" data-jem-event-custom-fields>
                     <h2 class="accordion-header" id="custom-header">
                         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#custom" aria-expanded="true" aria-controls="custom">
                             <?php echo Text::_('COM_JEM_CUSTOMFIELDS'); ?>
                         </button>
                     </h2>
-                    <div id="custom" class="accordion-collapse collapse" aria-labelledby="custom-header" data-bs-parent="#accordionEventForm">
+                    <div id="custom" class="accordion-collapse collapse show" aria-labelledby="custom-header" data-bs-parent="#accordionEventForm">
                         <div class="accordion-body">
                             <ul class="adminformlist">
                                 <?php
@@ -712,7 +722,7 @@ $this->document->addStyleDeclaration('
                                 <?php foreach(JemCustomFields::getOrderedFields('event', 'backend') as $fieldName): ?>
                                     <?php if (empty($customFields[$fieldName])) continue; ?>
                                     <?php $field = $customFields[$fieldName]; ?>
-                                    <li><?php echo $field->label; ?> <?php echo $field->input; ?>
+                                    <li data-jem-event-legacy-field-id="<?php echo (int) substr($fieldName, 6); ?>"><?php echo $field->label; ?> <?php echo $field->input; ?>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

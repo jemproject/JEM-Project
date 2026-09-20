@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 
 $wa = $this->document->getWebAssetManager();
@@ -1155,6 +1156,7 @@ Text::script('JCANCEL');
                         <?php echo $this->loadTemplate('capacity'); ?>
                         <?php echo HTMLHelper::_('uitab.endTab'); ?>
                     <?php endif; ?>
+                    <?php echo JemCategoryCustomFields::renderJoomlaFormTabs($this->form, 'myTab', 'venue-fields', 'venue'); ?>
                     <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
 
                     <?php echo $this->loadTemplate('attachments'); ?>

@@ -17,6 +17,7 @@ use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/venuecapacity.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
@@ -197,6 +198,7 @@ class JemModelVenue extends JemModelAdmin
 
         $scope = Factory::getApplication()->isClient('administrator') ? 'backend' : 'frontend_edit';
         JemCustomFields::applyFormLabels($form, 'venue', $scope);
+        JemCategoryCustomFields::prepareVenueForm($form, $data);
 
         if ($scope === 'backend') {
             if (!JemHelperBackend::can('venue', 'edit.state')) {
@@ -463,6 +465,8 @@ class JemModelVenue extends JemModelAdmin
         }
 
         $customFieldErrors = array();
+        JemCategoryCustomFields::filterVenueData($data);
+
         if (!JemCustomFields::validateAndSanitizeData('venue', $data, $customFieldErrors)) {
             $this->setError(implode('<br>', $customFieldErrors));
             return false;

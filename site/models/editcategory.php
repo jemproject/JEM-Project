@@ -116,11 +116,17 @@ class JemModelEditcategory extends JemModelCategory
             return false;
         }
 
-        $allowed = array_flip(array(
+        $allowedFields = array(
             'id', 'catname', 'alias', 'parent_id', 'type_id', 'color', 'description',
             'image', 'image_path', 'image_as_default', 'event_image_default_storage', 'published',
             'access', 'language', 'meta_keywords', 'meta_description',
-        ));
+        );
+
+        if (JemFeaturePolicy::current()->isAdvanced()) {
+            $allowedFields[] = 'custom_fields';
+        }
+
+        $allowed = array_flip($allowedFields);
         $data = array_intersect_key((array) $submittedData, $allowed);
         $data['id'] = $recordId;
         $data['catname'] = trim(strip_tags((string) ($data['catname'] ?? '')));

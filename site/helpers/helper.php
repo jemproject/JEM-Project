@@ -4971,6 +4971,38 @@ class JemHelper
     }
 
     /**
+     * Validate sections exposed to Joomla Custom Fields.
+     *
+     * @param   string  $section  Requested component section.
+     * @param   object  $item     Optional content item.
+     *
+     * @return string|null
+     */
+    static public function validateSection($section, $item = null)
+    {
+        return in_array($section, array('event', 'venue'), true) ? $section : null;
+    }
+
+    /**
+     * Return the Joomla Custom Fields contexts supported by JEM.
+     *
+     * @return array
+     */
+    static public function getContexts()
+    {
+        $language = Factory::getApplication()->getLanguage();
+
+        if ($language) {
+            self::loadComponentLanguage($language);
+        }
+
+        return array(
+            'com_jem.event' => Text::_('COM_JEM_EVENTS'),
+            'com_jem.venue' => Text::_('COM_JEM_VENUES'),
+        );
+    }
+
+    /**
      * This method returns true if a string is within another string.
      *
      * @param  string $masterstring

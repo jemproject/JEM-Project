@@ -2684,6 +2684,39 @@
             </field>
         </fieldset>
 
+        <fieldset name="customfieldspresentation"
+                  label="COM_JEM_CUSTOM_FIELDS_PRESENTATION"
+        >
+            <field name="event_custom_fields_order" type="list"
+                label="COM_JEM_EVENT_CUSTOM_FIELDS_ORDER"
+                description="COM_JEM_EVENT_CUSTOM_FIELDS_ORDER_DESC"
+                class="inputbox form-select"
+                default="jem_joomla_groups"
+                required="false"
+            >
+                <option value="jem_joomla_groups">COM_JEM_CUSTOM_FIELDS_ORDER_JEM_JOOMLA_GROUPS</option>
+                <option value="jem_groups_joomla">COM_JEM_CUSTOM_FIELDS_ORDER_JEM_GROUPS_JOOMLA</option>
+                <option value="joomla_jem_groups">COM_JEM_CUSTOM_FIELDS_ORDER_JOOMLA_JEM_GROUPS</option>
+                <option value="joomla_groups_jem">COM_JEM_CUSTOM_FIELDS_ORDER_JOOMLA_GROUPS_JEM</option>
+                <option value="groups_jem_joomla">COM_JEM_CUSTOM_FIELDS_ORDER_GROUPS_JEM_JOOMLA</option>
+                <option value="groups_joomla_jem">COM_JEM_CUSTOM_FIELDS_ORDER_GROUPS_JOOMLA_JEM</option>
+            </field>
+            <field name="venue_custom_fields_order" type="list"
+                label="COM_JEM_VENUE_CUSTOM_FIELDS_ORDER"
+                description="COM_JEM_VENUE_CUSTOM_FIELDS_ORDER_DESC"
+                class="inputbox form-select"
+                default="jem_joomla_groups"
+                required="false"
+            >
+                <option value="jem_joomla_groups">COM_JEM_CUSTOM_FIELDS_ORDER_JEM_JOOMLA_GROUPS</option>
+                <option value="jem_groups_joomla">COM_JEM_CUSTOM_FIELDS_ORDER_JEM_GROUPS_JOOMLA</option>
+                <option value="joomla_jem_groups">COM_JEM_CUSTOM_FIELDS_ORDER_JOOMLA_JEM_GROUPS</option>
+                <option value="joomla_groups_jem">COM_JEM_CUSTOM_FIELDS_ORDER_JOOMLA_GROUPS_JEM</option>
+                <option value="groups_jem_joomla">COM_JEM_CUSTOM_FIELDS_ORDER_GROUPS_JEM_JOOMLA</option>
+                <option value="groups_joomla_jem">COM_JEM_CUSTOM_FIELDS_ORDER_GROUPS_JOOMLA_JEM</option>
+            </field>
+        </fieldset>
+
         <fieldset name="venues"
                   label="COM_JEM_VENUES"
         >

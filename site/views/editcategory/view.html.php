@@ -11,6 +11,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 require_once JPATH_COMPONENT_SITE . '/classes/imagepublicationpolicy.class.php';
+require_once JPATH_COMPONENT_SITE . '/classes/categorycustomfields.class.php';
 
 /**
  * Frontend JEM category editor view.
@@ -51,6 +52,7 @@ class JemViewEditcategory extends JemView
 
         $this->jemsettings = JemHelper::config();
         $this->settings = JemHelper::globalattribs();
+        $this->featurePolicy = JemFeaturePolicy::current();
         $this->params = $this->state->get('params');
         $this->user = $user;
         $this->canEditState = JemFrontendCategoryAccess::canEditState(
@@ -80,13 +82,57 @@ class JemViewEditcategory extends JemView
 
         JemImagePublicationPolicy::configureEditingForm($this->form, 'category', $this->jemsettings);
 
+        if ($this->featurePolicy->isAdvanced()) {
+            $this->categoryCustomFields = JemCategoryCustomFields::normaliseConfiguration(
+                $this->item->custom_fields ?? ''
+            );
+            $this->legacyEventCustomFields = array();
+
+            foreach (JemCustomFields::getOrderedFields('event') as $fieldName) {
+                $fieldId = (int) substr($fieldName, 6);
+                $fieldConfig = JemCustomFields::getFieldConfig('event', $fieldName);
+
+                if (empty($fieldConfig['enabled'])) {
+                    continue;
+                }
+
+                $this->legacyEventCustomFields[] = (object) array(
+                    'id'          => $fieldId,
+                    'name'        => $fieldName,
+                    'label'       => JemCustomFields::getLabel(
+                        'event',
+                        $fieldName,
+                        Text::_('COM_JEM_EVENT_CUSTOM_FIELD' . $fieldId)
+                    ),
+                    'description' => JemCustomFields::getDescription(
+                        'event',
+                        $fieldName,
+                        Text::_('COM_JEM_EVENT_CUSTOM_FIELD' . $fieldId . '_DESC')
+                    ),
+                );
+            }
+
+            $this->joomlaEventCustomFields = array_values(JemCategoryCustomFields::getJoomlaEventFieldsById());
+            $this->joomlaEventFieldGroups = JemCategoryCustomFields::getJoomlaEventFieldGroupsById();
+        }
+
         JemHelper::loadCss('jem');
+        JemHelper::loadCss('frontend-form-mode');
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
 
         $wa = $app->getDocument()->getWebAssetManager();
         $wa->useScript('jquery');
         $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
+
+        if ($this->featurePolicy->isAdvanced()) {
+            $wa->registerAndUseScript(
+                'com_jem.category-custom-fields',
+                'media/com_jem/js/categorycustomfields.js',
+                array(),
+                array('defer' => true)
+            );
+        }
 
         $title = $isNew
             ? Text::_('COM_JEM_EDITCATEGORY_ADD_CATEGORY')

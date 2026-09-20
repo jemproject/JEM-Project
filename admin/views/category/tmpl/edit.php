@@ -41,7 +41,7 @@ $typeField = $this->form->getField('type_id');
     }
 </script>
 
-<form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate" enctype="multipart/form-data">
+<form action="<?php echo Route::_('index.php?option=com_jem&layout=edit&id='.(int) $this->item->id); ?>" method="post" name="adminForm" id="item-form" class="form-validate jem-edit-category-form" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-7">
             <?php echo HTMLHelper::_('uitab.startTabSet', 'categoryTab', ['active' => 'details', 'recall' => !empty($this->item->id), 'breakpoint' => 768]); ?>
@@ -108,6 +108,11 @@ $typeField = $this->form->getField('type_id');
                 ?>
             </div>
             <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php if ($this->featurePolicy->isAdvanced()) : ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'categoryTab', 'custom-fields', Text::_('COM_JEM_CATEGORY_CUSTOM_FIELDS')); ?>
+                <?php echo $this->loadTemplate('customfields'); ?>
+                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php endif; ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
             <?php echo $this->form->getInput('image_path'); ?>
         </div>

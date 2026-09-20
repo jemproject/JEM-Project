@@ -445,6 +445,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `emailacljl` tinyint(4) NOT NULL DEFAULT 0,
     `image_as_default` tinyint(1) NOT NULL DEFAULT '0',
     `event_image_default_storage` varchar(20) NOT NULL DEFAULT 'shared_root',
+    `custom_fields` mediumtext DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_article_category` (`article_category_id`),
     KEY `idx_parent` (`parent_id`),

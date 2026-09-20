@@ -992,7 +992,7 @@ div#jem .jem-event-compact .jem-custom-fields {
 div#jem.jem_event dl.event_info,
 div#jem.jem_event dl.jem-event-info-list,
 div#jem.jem_event div[class^="venue_id"] dl.location,
-div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] {
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl {
     display: grid;
     grid-template-columns: minmax(6.5rem, max-content) minmax(0, 1fr);
     column-gap: 1rem;
@@ -1005,8 +1005,8 @@ div#jem.jem_event dl.jem-event-info-list > dt,
 div#jem.jem_event dl.jem-event-info-list > dd,
 div#jem.jem_event div[class^="venue_id"] dl.location > dt,
 div#jem.jem_event div[class^="venue_id"] dl.location > dd,
-div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt,
-div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd {
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl > dt,
+div#jem.jem_event div[class^="venue_id"] dl.jem-dl > dd {
     float: none;
     margin: 0;
     min-width: 0;
@@ -4111,7 +4111,7 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
     div#jem.jem_event dl.event_info,
     div#jem.jem_event dl.jem-event-info-list,
     div#jem.jem_event div[class^="venue_id"] dl.location,
-    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"],
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl,
     div#jem div.register dl.jem-registration-summary {
         grid-template-columns: 1fr;
         row-gap: 0.15rem;
@@ -4120,7 +4120,7 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
     div#jem.jem_event dl.event_info > dt:not(:first-child),
     div#jem.jem_event dl.jem-event-info-list > dt:not(:first-child),
     div#jem.jem_event div[class^="venue_id"] dl.location > dt:not(:first-child),
-    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dt:not(:first-child),
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl > dt:not(:first-child),
     div#jem div.register dl.jem-registration-summary > dt:not(:first-child) {
         margin-top: 0.45rem;
     }
@@ -4128,7 +4128,7 @@ div#jem.jem_specialday_edit .jem-specialday-type-preview {
     div#jem.jem_event dl.event_info > dd,
     div#jem.jem_event dl.jem-event-info-list > dd,
     div#jem.jem_event div[class^="venue_id"] dl.location > dd,
-    div#jem.jem_event div[class^="venue_id"] dl.jem-dl[itemprop="address"] > dd,
+    div#jem.jem_event div[class^="venue_id"] dl.jem-dl > dd,
     div#jem div.register dl.jem-registration-summary > dd {
         padding-left: 0.35rem;
     }
@@ -4182,6 +4182,63 @@ div#jem .jem-editevent-field-cats .choices__list,
 div#jem .jem-editevent-field-cats .choices__item {
     text-align: left !important;
 }
+
+div#jem .jem-custom-fields-start {
+    border-top: 1px solid #d6dde8;
+    padding-top: .65rem !important;
+}
+
+div#jem .jem-custom-field-group-value {
+    align-self: start;
+}
+
+div#jem .jem-custom-field-group-card {
+    display: inline-block;
+    width: fit-content;
+    max-width: 100%;
+    padding: .3rem .6rem;
+    border: 1px solid #d6dde8;
+    border-radius: .25rem;
+    background: #f8fafc;
+    color: inherit;
+    font: inherit;
+}
+
+div#jem .jem-custom-field-group__list {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+    font: inherit;
+    line-height: inherit;
+}
+
+div#jem .jem-custom-field-group__field {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    line-height: inherit;
+}
+
+div#jem .jem-custom-field-group__field:not(:last-child) {
+    margin-bottom: .15rem;
+}
+
+div#jem .jem-custom-field-group__field-label {
+    font-weight: 600;
+}
+
+div#jem .jem-custom-field-group__field-value {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 22rem) {
+    div#jem dd.jem-custom-fields-start {
+        border-top: 0;
+        padding-top: 0 !important;
+    }
+}
+
 /* Required image roles are enforced only when the edited item is published. */
 .jem-image-required-invalid .choices__inner,
 .jem-image-required-invalid input.form-control,

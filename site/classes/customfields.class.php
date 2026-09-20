@@ -646,11 +646,21 @@ class JemCustomFields
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
 
-    public static function renderDetailRows($context, $source, $labelPrefix, $classPrefix = 'custom', $tooltip = false, $valuePrefix = 'custom')
+    public static function renderDetailRows(
+        $context,
+        $source,
+        $labelPrefix,
+        $classPrefix = 'custom',
+        $tooltip = false,
+        $valuePrefix = 'custom',
+        $fieldNames = null
+    )
     {
         $html = '';
 
-        foreach (self::getOrderedFields($context, 'detail') as $fieldName) {
+        $fieldNames = $fieldNames === null ? self::getOrderedFields($context, 'detail') : (array) $fieldNames;
+
+        foreach ($fieldNames as $fieldName) {
             $cr = (int) substr($fieldName, 6);
             $property = $valuePrefix . $cr;
             $currentRow = self::renderValue($context, $fieldName, $source->{$property} ?? '');

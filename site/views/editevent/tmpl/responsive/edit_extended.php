@@ -273,7 +273,7 @@ use Joomla\CMS\Date\Date;
 </fieldset>
 
 <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_NOTIFICATION_AUTOMATION)) : ?>
-    <fieldset class="adminform">
+    <fieldset class="adminform jem-event-notifications">
         <legend><?php echo Text::_('COM_JEM_EVENT_NOTIFICATIONS'); ?></legend>
         <dl class="jem-dl">
             <dt><?php echo $this->form->getLabel('event_reminders_enabled'); ?></dt>

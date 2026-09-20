@@ -16,6 +16,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Date\Date;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers');
 
@@ -185,14 +186,41 @@ $splitReadmoreText = function ($text) {
         'full'  => trim($parts[1] ?? ''),
     );
 };
-$eventCustomFieldsRows = JemCustomFields::renderDetailRows('event', $this->item, 'COM_JEM_EVENT_CUSTOM_FIELD', 'custom');
-$renderEventCustomFieldsBlock = function () use ($eventCustomFieldsRows) {
-    if ($eventCustomFieldsRows === '') {
+$eventCustomFieldCategoryIds = JemCategoryCustomFields::getCategoryIds($this->categories);
+$eventCustomFieldsRows = JemCustomFields::renderDetailRows(
+    'event',
+    $this->item,
+    'COM_JEM_EVENT_CUSTOM_FIELD',
+    'custom',
+    false,
+    'custom',
+    JemCategoryCustomFields::getLegacyFieldNamesForCategories($eventCustomFieldCategoryIds, 'detail')
+);
+$eventJoomlaCustomFields = JemCategoryCustomFields::getJoomlaEventDetailPresentation(
+    $this->item,
+    $eventCustomFieldCategoryIds
+);
+$eventCustomFieldsParts = array(
+    'jem'    => $eventCustomFieldsRows,
+    'joomla' => $eventJoomlaCustomFields['rows'],
+    'groups' => $eventJoomlaCustomFields['cards'],
+);
+$eventCustomFieldsOrderedRows = JemCategoryCustomFields::renderOrderedDetailRows(
+    $eventCustomFieldsParts,
+    $this->settings->get('event_custom_fields_order', 'jem_joomla_groups')
+);
+$eventCustomFieldsHtml = JemCategoryCustomFields::renderOrderedDetailSections(
+    $eventCustomFieldsParts,
+    $this->settings->get('event_custom_fields_order', 'jem_joomla_groups'),
+    'event_info'
+);
+$renderEventCustomFieldsBlock = function () use ($eventCustomFieldsHtml) {
+    if ($eventCustomFieldsHtml === '') {
         return '';
     }
 
     return '<div class="jem-custom-fields jem-event-custom-fields">'
-        . '<dl class="event_info">' . $eventCustomFieldsRows . '</dl>'
+        . $eventCustomFieldsHtml
         . '</div>';
 };
 $eventVenueCustomFieldsRows = '';
@@ -205,13 +233,35 @@ foreach (JemCustomFields::getOrderedFields('venue', 'detail') as $fieldName) {
             . '<dd class="custom' . $cr . '">' . $currentRow . '</dd>';
     }
 }
-$renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsRows) {
-    if ($eventVenueCustomFieldsRows === '') {
+$eventVenueJoomlaCustomFields = array('rows' => '', 'cards' => '');
+
+if ((int) $this->item->locid > 0) {
+    $eventVenueJoomlaCustomFields = JemCategoryCustomFields::getJoomlaVenueDetailPresentation(
+        (object) array('id' => (int) $this->item->locid)
+    );
+}
+
+$eventVenueCustomFieldsParts = array(
+    'jem'    => $eventVenueCustomFieldsRows,
+    'joomla' => $eventVenueJoomlaCustomFields['rows'],
+    'groups' => $eventVenueJoomlaCustomFields['cards'],
+);
+$eventVenueCustomFieldsHtml = JemCategoryCustomFields::renderOrderedDetailSections(
+    $eventVenueCustomFieldsParts,
+    $this->settings->get('venue_custom_fields_order', 'jem_joomla_groups'),
+    'location'
+);
+$eventVenueCustomFieldsOrderedRows = JemCategoryCustomFields::renderOrderedDetailRows(
+    $eventVenueCustomFieldsParts,
+    $this->settings->get('venue_custom_fields_order', 'jem_joomla_groups')
+);
+$renderEventVenueCustomFieldsBlock = function () use ($eventVenueCustomFieldsHtml) {
+    if ($eventVenueCustomFieldsHtml === '') {
         return '';
     }
 
     return '<div class="jem-custom-fields jem-venue-custom-fields">'
-        . '<dl class="location">' . $eventVenueCustomFieldsRows . '</dl>'
+        . $eventVenueCustomFieldsHtml
         . '</div>';
 };
 $renderEventCategoryLinks = function () use ($params) {
@@ -629,9 +679,6 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                         <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
                     <?php endif; ?>
                 </div>
-                <?php if ($eventCustomFieldsPosition === 'details') : ?>
-                    <?php echo $renderEventCustomFieldsBlock(); ?>
-                <?php endif; ?>
             </div>
         <?php else : ?>
         <dl class="event_info floattext jem-event-overview-details">
@@ -701,9 +748,6 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 echo '</dd>';
                 endif;
 
-                if ($eventCustomFieldsPosition === 'details') {
-                    echo $eventCustomFieldsRows;
-                }
                 ?>
 
             <?php if ($params->get('event_show_hits')) : ?>
@@ -776,7 +820,13 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     } ?>
                 </dd>
             <?php endif; ?>
+            <?php if ($eventCustomFieldsPosition === 'details' && $eventCustomFieldsOrderedRows !== '') : ?>
+                <?php echo JemCategoryCustomFields::addDetailSeparator($eventCustomFieldsOrderedRows); ?>
+            <?php endif; ?>
         </dl>
+        <?php endif; ?>
+        <?php if ($eventLayout === 'compact' && $eventCustomFieldsPosition === 'details') : ?>
+            <?php echo $renderEventCustomFieldsBlock(); ?>
         <?php endif; ?>
         </div>
 
@@ -1266,16 +1316,15 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     echo $venueaccess;
                     ?>
                 </dd>
+                <?php if (!$params->get('event_show_detailsadress', '1')
+                    && $this->item->user_has_access_venue
+                    && $venueCustomFieldsPosition === 'details'
+                    && $eventVenueCustomFieldsOrderedRows !== '') : ?>
+                    <?php echo JemCategoryCustomFields::addDetailSeparator($eventVenueCustomFieldsOrderedRows); ?>
+                <?php endif; ?>
             </dl>
             <?php endif; ?>
             <?php if($this->item->user_has_access_venue) : ?>
-                <?php if ($venueLayout === 'compact') : ?>
-                    <?php if ($venueCustomFieldsPosition === 'details') : ?>
-                        <?php echo $renderEventVenueCustomFieldsBlock(); ?>
-                    <?php endif; ?>
-
-                <?php endif; ?>
-
                 <?php if ($venueLayout !== 'compact' && $params->get('event_show_detailsadress', '1')) : ?>
                     <dl class="location floattext">
                         <?php if ($this->item->street) : ?>
@@ -1326,12 +1375,12 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                             </dd>
                         <?php endif; ?>
 
-                        <?php if ($venueCustomFieldsPosition === 'details') : ?>
-                            <?php echo $eventVenueCustomFieldsRows; ?>
-                        <?php endif; ?>
-
                         <?php if ($params->get('event_show_mapserv') == 1 || $params->get('event_show_mapserv') == 4) : ?>
                             <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
+                        <?php endif; ?>
+
+                        <?php if ($venueCustomFieldsPosition === 'details' && $eventVenueCustomFieldsOrderedRows !== '') : ?>
+                            <?php echo JemCategoryCustomFields::addDetailSeparator($eventVenueCustomFieldsOrderedRows); ?>
                         <?php endif; ?>
                     </dl>
 
@@ -1353,6 +1402,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                         <?php echo JemOutput::mapicon($this->item, 'event', $params); ?>
                     <?php endif; ?>
                 <?php endif; /* event_show_detailsadress */ ?>
+
+                <?php if ($venueLayout === 'compact' && $venueCustomFieldsPosition === 'details') : ?>
+                    <?php echo $renderEventVenueCustomFieldsBlock(); ?>
+                <?php endif; ?>
 
                 <?php if ($venueCustomFieldsPosition === 'before_description') : ?>
                     <?php echo $renderEventVenueCustomFieldsBlock(); ?>

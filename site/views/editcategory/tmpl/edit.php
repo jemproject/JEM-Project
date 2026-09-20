@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 require_once JPATH_COMPONENT_SITE . '/classes/imagecamera.class.php';
@@ -138,6 +139,22 @@ $isNew = empty($this->item->id);
                 </div>
             </fieldset>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+        <?php if ($this->featurePolicy->isAdvanced()) : ?>
+            <?php echo HTMLHelper::_('uitab.addTab', 'jem-editcategory-tabs', 'editcategory-custom-fields', Text::_('COM_JEM_CATEGORY_CUSTOM_FIELDS')); ?>
+                <?php echo LayoutHelper::render(
+                    'category.customfields',
+                    array(
+                        'form'          => $this->form,
+                        'configuration' => $this->categoryCustomFields,
+                        'legacyFields'  => $this->legacyEventCustomFields,
+                        'joomlaFields'  => $this->joomlaEventCustomFields,
+                        'joomlaGroups'  => $this->joomlaEventFieldGroups,
+                    ),
+                    JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
+                ); ?>
+            <?php echo HTMLHelper::_('uitab.endTab'); ?>
+        <?php endif; ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'jem-editcategory-tabs', 'editcategory-publishing', Text::_('COM_JEM_FIELDSET_PUBLISHING')); ?>
             <fieldset class="jem-category-editor-fieldset">
