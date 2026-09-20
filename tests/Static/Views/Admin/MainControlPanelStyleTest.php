@@ -60,4 +60,37 @@ final class MainControlPanelStyleTest extends TestCase
             $relativePath
         );
     }
+
+    public function testControlPanelLinksToJoomlaFieldsAndGroupsWithJemContexts(): void
+    {
+        $relativePath = 'admin/views/main/tmpl/default.php';
+        $template = (string) file_get_contents(JEM_TEST_ROOT . '/' . $relativePath);
+        $fieldsIcon = JEM_TEST_ROOT . '/media/images/icon-48-fields.svg';
+        $groupsIcon = JEM_TEST_ROOT . '/media/images/icon-48-fieldgroups.svg';
+
+        self::assertStringContainsString("authorise('core.manage', 'com_jem')", $template);
+        self::assertStringContainsString("authorise('core.create', 'com_jem')", $template);
+        self::assertStringContainsString(
+            'index.php?option=com_fields&amp;view=fields&amp;context=com_jem.event',
+            $template
+        );
+        self::assertStringContainsString(
+            'index.php?option=com_fields&amp;task=field.add&amp;context=com_jem.event',
+            $template
+        );
+        self::assertStringContainsString(
+            'index.php?option=com_fields&amp;view=groups&amp;context=com_jem.event',
+            $template
+        );
+        self::assertStringContainsString(
+            'index.php?option=com_fields&amp;task=group.add&amp;context=com_jem.event',
+            $template
+        );
+        self::assertStringContainsString('icon-48-fields.svg', $template);
+        self::assertStringContainsString('icon-48-fieldgroups.svg', $template);
+        self::assertFileExists($fieldsIcon);
+        self::assertFileExists($groupsIcon);
+        self::assertStringContainsString('<svg', (string) file_get_contents($fieldsIcon));
+        self::assertStringContainsString('<svg', (string) file_get_contents($groupsIcon));
+    }
 }

@@ -525,6 +525,74 @@ final class ZipArtifactContentsTest extends TestCase
         }
     }
 
+    public function testCurrentPackageContainsCategoryAwareJoomlaCustomFields(): void
+    {
+        $entries = array(
+            'jem.xml',
+            'admin/access.xml',
+            'admin/helpers/jem.php',
+            'admin/language/en-GB/com_jem.ini',
+            'admin/language/en-GB/com_jem.sys.ini',
+            'admin/layouts/category/customfields.php',
+            'admin/layouts/category/index.html',
+            'admin/models/category.php',
+            'admin/models/event.php',
+            'admin/models/forms/category.xml',
+            'admin/models/forms/settings.xml',
+            'admin/models/venue.php',
+            'admin/sql/install.mysql.utf8.sql',
+            'admin/sql/updates/mysql/5.1.0.sql',
+            'admin/views/category/tmpl/edit.php',
+            'admin/views/category/tmpl/edit_customfields.php',
+            'admin/views/category/view.html.php',
+            'admin/views/event/tmpl/edit.php',
+            'admin/views/main/tmpl/default.php',
+            'admin/views/settings/tmpl/default_customfields.php',
+            'admin/views/type/tmpl/edit.php',
+            'admin/views/venue/tmpl/edit.php',
+            'media/css/backend.css',
+            'media/css/frontend-form-mode.css',
+            'media/css/jem.css',
+            'media/images/icon-48-fieldgroups.svg',
+            'media/images/icon-48-fields.svg',
+            'media/js/categorycustomfields.js',
+            'script.php',
+            'site/classes/categorycustomfields.class.php',
+            'site/classes/customfields.class.php',
+            'site/controllers/event.php',
+            'site/helpers/category.php',
+            'site/helpers/helper.php',
+            'site/language/en-GB/com_jem.ini',
+            'site/models/editcategory.php',
+            'site/models/editevent.php',
+            'site/models/forms/category.xml',
+            'site/views/editcategory/tmpl/edit.php',
+            'site/views/editcategory/view.html.php',
+            'site/views/editevent/tmpl/edit.php',
+            'site/views/editevent/tmpl/edit_extended.php',
+            'site/views/editevent/tmpl/edit_other.php',
+            'site/views/editevent/tmpl/responsive/edit.php',
+            'site/views/editevent/tmpl/responsive/edit_extended.php',
+            'site/views/editevent/tmpl/responsive/edit_other.php',
+            'site/views/editvenue/tmpl/edit.php',
+            'site/views/editvenue/tmpl/responsive/edit.php',
+            'site/views/event/tmpl/default.php',
+            'site/views/event/tmpl/responsive/default.php',
+            'site/views/venue/tmpl/default.php',
+            'site/views/venue/tmpl/responsive/default.php',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+        }
+    }
+
     public function testCurrentPackageHashesMatchUpdateMetadata(): void
     {
         $manifest = simplexml_load_file(JEM_TEST_ROOT . '/package/pkg_jem.xml');

@@ -22,7 +22,7 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
 
         $form = $this->read('site/models/forms/category.xml');
 
-        foreach (array('catname', 'parent_id', 'type_id', 'description', 'image', 'userfile', 'published', 'access') as $field) {
+        foreach (array('catname', 'parent_id', 'type_id', 'description', 'image', 'userfile', 'published', 'access', 'custom_fields') as $field) {
             self::assertStringContainsString('name="' . $field . '"', $form);
         }
 
@@ -70,7 +70,7 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
     {
         $model = $this->read('site/models/editcategory.php');
 
-        self::assertStringContainsString('$allowed = array_flip(array(', $model);
+        self::assertStringContainsString('$allowed = array_flip($allowedFields);', $model);
         self::assertStringContainsString('validateParent(', $model);
         self::assertStringContainsString('$parentId === $recordId', $model);
         self::assertStringContainsString('$parent->lft >', $model);
@@ -83,7 +83,24 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
         self::assertStringContainsString('$db->transactionStart()', $model);
         self::assertStringContainsString('$db->transactionRollback()', $model);
         self::assertStringContainsString('removeUploadedPaths', $model);
+        self::assertStringContainsString("\$allowedFields[] = 'custom_fields';", $model);
+        self::assertStringContainsString('JemFeaturePolicy::current()->isAdvanced()', $model);
         self::assertStringNotContainsString("submittedData['rules']", $model);
+    }
+
+    public function testAdvancedCategoryEditorUsesTheSharedCustomFieldSelection(): void
+    {
+        $view = $this->read('site/views/editcategory/view.html.php');
+        $layout = $this->read('site/views/editcategory/tmpl/edit.php');
+        $shared = $this->read('admin/layouts/category/customfields.php');
+
+        self::assertStringContainsString('$this->featurePolicy->isAdvanced()', $view);
+        self::assertStringContainsString('$this->featurePolicy->isAdvanced()', $layout);
+        self::assertStringContainsString("'com_jem.category-custom-fields'", $view);
+        self::assertStringContainsString('LayoutHelper::render(', $layout);
+        self::assertStringContainsString("'category.customfields'", $layout);
+        self::assertStringContainsString('data-jem-category-custom-fields-editor', $shared);
+        self::assertStringContainsString('data-jem-joomla-group-id', $shared);
     }
 
     public function testImageTabRoutesAndCategoryListEditIconsAreIntegrated(): void

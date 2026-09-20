@@ -208,6 +208,27 @@ final class FrontendFormModeTest extends TestCase
             '/\.jem-editevent-field-featured select,.*?min-width:\s*6\.5rem;.*?padding-inline-end:\s*2\.75rem;/s',
             $style
         );
+        self::assertMatchesRegularExpression(
+            '/\.jem_editevent form select:not\(\[multiple\]\),.*?padding-inline-end:\s*calc\(2\.25rem \+ 5px\);.*?width:\s*fit-content !important;/s',
+            $style
+        );
+    }
+
+    public function testEventNotificationControlsDoNotOverlapTheirLabels(): void
+    {
+        $style = $this->read('/media/css/frontend-form-mode.css');
+
+        foreach (array(
+            '/site/views/editevent/tmpl/edit_extended.php',
+            '/site/views/editevent/tmpl/responsive/edit_extended.php',
+        ) as $template) {
+            self::assertStringContainsString('adminform jem-event-notifications', $this->read($template));
+        }
+
+        self::assertStringContainsString('.jem-event-notifications .jem-dl', $style);
+        self::assertStringContainsString('grid-template-columns: minmax(16rem, 22rem) minmax(8rem, 1fr)', $style);
+        self::assertStringContainsString('.jem-event-notifications .btn-group-yesno > label', $style);
+        self::assertStringContainsString('.jem-event-notifications .form-check-input', $style);
     }
 
     #[DataProvider('modeFormDefinitions')]
