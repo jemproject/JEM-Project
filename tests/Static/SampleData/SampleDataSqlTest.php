@@ -157,6 +157,7 @@ final class SampleDataSqlTest extends TestCase
             'venue-science-museum.webp',
             'attachment-event1-dj-night-lineup.txt',
             'attachment-event3-balkan-beatz-press-pack.zip',
+            'attachment-event24-jem-university-lab-course-outline.txt',
             'attachment-venue1-douala-house-rules.pdf',
         ) as $entry) {
             if ($zip->locateName($entry) === false) {

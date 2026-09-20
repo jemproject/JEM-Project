@@ -327,6 +327,7 @@ class com_jemInstallerScript
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
             $this->repair510MediaSchema();
+            $this->repair510CategoryCustomFieldsSchema();
             $this->repair510ImageProfileSettings();
             $this->repair510OperatingProfile($type);
             $this->installCountryCurrencyCatalogue();
@@ -2162,6 +2163,34 @@ SQL;
                 $columns[strtolower($column)] = true;
             }
         }
+    }
+
+    /**
+     * Add the category field-source configuration for installations which
+     * already recorded an earlier JEM 5.1.0 prerelease schema.
+     *
+     * @return void
+     */
+    private function repair510CategoryCustomFieldsSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $table = $db->replacePrefix('#__jem_categories');
+
+        if (!in_array($table, $db->getTableList(), true)) {
+            return;
+        }
+
+        $columns = array_change_key_case($db->getTableColumns($table, false), CASE_LOWER);
+
+        if (isset($columns['custom_fields'])) {
+            return;
+        }
+
+        $db->setQuery(
+            'ALTER TABLE ' . $db->quoteName('#__jem_categories')
+            . ' ADD COLUMN ' . $db->quoteName('custom_fields')
+            . ' MEDIUMTEXT NULL DEFAULT NULL AFTER ' . $db->quoteName('event_image_default_storage')
+        )->execute();
     }
 
     /**

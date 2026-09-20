@@ -92,7 +92,32 @@ final class Jem51SampleShowcaseTest extends TestCase
         self::assertMatchesRegularExpression("/\\(22, 10, .*?'Opening Keynote'.*?, 21, 1, 0,/", $sql);
         self::assertMatchesRegularExpression("/\\(23, 11, .*?'Space Scheduling Lab'.*?, 21, 2, 0,/", $sql);
         self::assertStringContainsString('an ordered child event contained within its parent programme and schedule.', $sql);
-        self::assertStringContainsString('"new_events":5,"programme_items":2', $sql);
+        self::assertStringContainsString('"new_events":6,"programme_items":2', $sql);
+    }
+
+    public function testUniversityTrainingCourseUsesOnlyCategorySelectedJemFields(): void
+    {
+        $sql = $this->sql();
+
+        foreach (array(
+            'JEM University Training',
+            'Northbridge University Innovation Lab',
+            'JEM University Lab: Designing Complex Events',
+            '"jem_field_ids":[1,2,4]',
+            '"joomla_field_ids":[]',
+            '"joomla_group_ids":[]',
+            "'Adults', 'https://www.joomlaeventmanager.net/documentation', 'Professional'",
+            "'event24', 'jem-university-lab-course-outline.txt'",
+            'https://github.com/jemproject/JEM-Project/issues/2352',
+            '"jem_field_examples":1',
+            '"joomla_field_examples":0',
+        ) as $expected) {
+            self::assertStringContainsString($expected, $sql);
+        }
+
+        self::assertStringNotContainsString('INSERT INTO `#__fields`', $sql);
+        self::assertStringNotContainsString('INSERT INTO `#__fields_groups`', $sql);
+        self::assertStringNotContainsString('INSERT INTO `#__fields_values`', $sql);
     }
 
     public function testThreeUniversityVenuesUseCitiesOutsideTheMuseumSet(): void
@@ -164,6 +189,7 @@ final class Jem51SampleShowcaseTest extends TestCase
             'attachment-event19-sample-classic-registration-checklist.txt',
             'attachment-event20-sample-configured-capacity.csv',
             'attachment-event21-sample-capacity-areas.csv',
+            'attachment-event24-jem-university-lab-course-outline.txt',
         );
 
         $missing = array_values(array_filter($required, static fn (string $entry): bool => $zip->locateName($entry) === false));

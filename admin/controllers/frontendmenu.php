@@ -13,6 +13,7 @@ use Joomla\CMS\Language\LanguageFactoryInterface;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
 
 class JemControllerFrontendmenu extends BaseController
 {
@@ -44,6 +45,7 @@ class JemControllerFrontendmenu extends BaseController
         $menutype    = 'jem-frontend-menu';
         $componentId = $this->getComponentId();
         $specialAccessId = $this->getAccessLevelId('Special', 3);
+        $administratorUrl = rtrim(Uri::root(true), '/') . '/administrator/index.php';
         $created     = 0;
 
         $this->ensureMenuType($menutype);
@@ -82,6 +84,8 @@ class JemControllerFrontendmenu extends BaseController
             array(array('COM_JEM_FRONTEND_MENU_SPECIAL_DAYS', 'COM_JEM_SPECIAL_DAYS_VIEW_DEFAULT_TITLE'), 'Special Days', 'special-days', 'index.php?option=com_jem&view=specialdays', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_SUBMIT_SPECIAL_DAY', 'COM_JEM_SPECIALDAY_VIEW_EDIT_TITLE'), 'Submit Special Day', 'submit-special-day', 'index.php?option=com_jem&view=specialday&layout=edit', $groups['management']),
             array(array('COM_JEM_FRONTEND_MENU_ATTENDEE_REGISTRATIONS', 'COM_JEM_ATTENDEE_REGISTRATIONS_VIEW_DEFAULT_TITLE'), 'Attendee Registrations', 'attendee-registrations', 'index.php?option=com_jem&view=attendeeregistrations', $groups['management']),
+            array(array('COM_JEM_FRONTEND_MENU_FIELDS', 'COM_JEM_MENU_FIELDS'), 'Fields', 'fields', $administratorUrl . '?option=com_fields&view=fields&context=com_jem.event', $groups['management'], 'url', 0),
+            array(array('COM_JEM_FRONTEND_MENU_FIELD_GROUPS', 'COM_JEM_MENU_FIELD_GROUPS'), 'Field Groups', 'field-groups', $administratorUrl . '?option=com_fields&view=groups&context=com_jem.event', $groups['management'], 'url', 0),
             array(array('COM_JEM_FRONTEND_MENU_MY_EVENTS', 'COM_JEM_MYEVENTS_VIEW_DEFAULT_TITLE'), 'My Events', 'my-events', 'index.php?option=com_jem&view=myevents', $groups['user']),
             array(array('COM_JEM_FRONTEND_MENU_MY_TIMELINE', 'COM_JEM_MY_TIMELINE_VIEW_DEFAULT_TITLE'), 'My Timeline', 'my-timeline', 'index.php?option=com_jem&view=mytimeline', $groups['user']),
             array(array('COM_JEM_FRONTEND_MENU_MY_VENUES', 'COM_JEM_MYVENUES_VIEW_DEFAULT_TITLE'), 'My Venues', 'my-venues', 'index.php?option=com_jem&view=myvenues', $groups['user']),
