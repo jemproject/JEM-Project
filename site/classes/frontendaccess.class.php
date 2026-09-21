@@ -258,6 +258,10 @@ abstract class JemFrontendAccess
             isset($item->created_by) ? (int) $item->created_by : 0,
         );
 
+        if ($type === 'event') {
+            $arguments[] = isset($item->cats) ? (array) $item->cats : false;
+        }
+
         if (method_exists($user, 'getAccessDecision')) {
             return $user->getAccessDecision(...$arguments);
         }

@@ -31,14 +31,21 @@ final class BackendAclJoomlaIntegrationTest extends JoomlaTestCase
 
         self::assertNotSame(array(), $managerGroups, 'The installed JEM component should have at least one backend manager group.');
         foreach ($managerGroups as $groupId) {
-            self::assertTrue(
-                Access::checkGroup($groupId, 'jem.notifications.templates', 'com_jem'),
-                'Backend manager group ' . $groupId . ' must be able to open Notifications.'
-            );
-            self::assertTrue(
-                Access::checkGroup($groupId, 'jem.registrations.history', 'com_jem'),
-                'Backend manager group ' . $groupId . ' must be able to open Registration History.'
-            );
+            foreach (array(
+                'jem.notifications.templates',
+                'jem.registrations.history',
+                'jem.categories.access',
+                'jem.types.access',
+                'jem.types.create',
+                'jem.types.edit',
+                'jem.types.edit.state',
+                'jem.types.delete',
+            ) as $action) {
+                self::assertTrue(
+                    Access::checkGroup($groupId, $action, 'com_jem'),
+                    'Backend manager group ' . $groupId . ' must retain ' . $action . '.'
+                );
+            }
         }
     }
 }

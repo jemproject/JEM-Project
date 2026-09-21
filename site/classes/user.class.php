@@ -10,8 +10,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
+use Joomla\CMS\Access\Access;
 
 require_once __DIR__ . '/accessdecision.class.php';
+require_once __DIR__ . '/resourceacl.class.php';
 
 /**
  * JEM user class with additional functions.
@@ -279,7 +281,8 @@ abstract class JemUserAbstract extends User
                         $all = (bool)$this->authorise('core.create', $asset);
                         break;
                     case 'edit':
-                        $all = (bool)$this->authorise('core.edit', $asset) || (bool)$this->authorise('core.edit.own', $asset);
+                        $all = (bool) $this->authorise('core.edit', $asset)
+                            || ($owner && (bool) $this->authorise('core.edit.own', $asset));
                         break;
                     case 'publish':
                         $all = (bool)$this->authorise('core.edit.state', $asset);
@@ -326,7 +329,7 @@ abstract class JemUserAbstract extends User
             }
 
             // Get all JEM groups with requested permissions and user is member of.
-            $jemgroups = empty($fields) ? array() : $this->getJemGroups($fields);
+            $jemgroups = empty($fields) ? array() : (array) $this->getJemGroups($fields);
             // If registered users are generally allowed (by JEM Settings) to edit events/venues
             // add JEM group 0 and make category check
             if (($create && in_array('add', $action)) || (($edit || $edit_own) && in_array('edit', $action))) {
@@ -336,14 +339,6 @@ abstract class JemUserAbstract extends User
 
         $disable = '';
         $where   = $ignore_access ? '' : ' AND c.access IN (' . implode(',', $this->getAuthorisedViewLevels()) . ')';
-
-        if (!empty($jemgroups)) {
-            if ($use_disable) {
-                $disable =  ', IF (c.groupid IN (' . implode(',', array_keys($jemgroups)) . '), 0, 1) AS disable';
-            } else {
-                $where .= ' AND c.groupid IN (' . implode(',', array_keys($jemgroups)) . ')';
-            }
-        }
 
         // We have to check ALL categories, also those not seen by user.
         $orderBy = $jemsettings->categories_order;
@@ -370,6 +365,34 @@ abstract class JemUserAbstract extends User
             . ' ORDER BY ' . $order;
         $db->setQuery( $query );
         $cats = $db->loadObjectList('id');
+
+        foreach ($cats as $categoryId => $category) {
+            $legacyAllowed = $all || array_key_exists((int) $category->groupid, $jemgroups);
+            $allowed = false;
+
+            foreach ($action as $act) {
+                $aclDecision = $this->getResourceAclDecision($type, $act, array((int) $categoryId));
+                $ownAclDecision = $act === 'edit' && $owner
+                    ? $this->getResourceAclDecision($type, 'edit.own', array((int) $categoryId))
+                    : null;
+
+                if ($aclDecision === true || $ownAclDecision === true) {
+                    $allowed = true;
+                    break;
+                }
+
+                if ($aclDecision === null && $ownAclDecision !== false && $legacyAllowed) {
+                    $allowed = true;
+                    break;
+                }
+            }
+
+            if ($use_disable) {
+                $category->disable = $allowed ? 0 : 1;
+            } elseif (!$allowed) {
+                unset($cats[$categoryId]);
+            }
+        }
 
         return $cats;
     }
@@ -456,6 +479,10 @@ abstract class JemUserAbstract extends User
             $categoryIds = array();
         }
 
+        if ($type === 'event' && empty($categoryIds) && $recordId > 0) {
+            $categoryIds = $this->getEventCategoryIdsForAcl($recordId);
+        }
+
         $created_by = (int) $created_by;
         $id = ($id === false) ? $id : (int) $id;
         $asset = 'com_jem';
@@ -473,26 +500,71 @@ abstract class JemUserAbstract extends User
             $autopubl = ($jemsettings->autopublocate == -1);
         }
 
-        // Preserve the existing component-level Joomla ACL behaviour. Category
-        // assets are not added here until JEM defines their multi-category policy.
-        if ($this->authorise('core.manage', $asset)) {
+        if ($this->authorise('core.admin', $asset)) {
             return JemAccessDecision::allow(
                 'component_acl',
-                'joomla_core_manage',
+                'joomla_core_admin',
                 $resultAction,
                 $type,
                 $recordId,
                 $reasons,
-                array('grantedPermission' => 'core.manage')
+                array('grantedPermission' => 'core.admin')
             );
         }
 
         $ownerGrantMismatch = false;
+        $legacyActions = array();
 
         // Joomla component ACL and JEM User Control keep the historical OR
         // relationship. The first grant wins, while failed checks are retained
         // in reasons for administrator diagnostics.
         foreach ($actions as $act) {
+            $aclDecision = $this->getResourceAclDecision($type, $act, $categoryIds);
+            $ownAclDecision = null;
+
+            if ($act === 'edit' && $created_by > 0 && $created_by === $userId) {
+                $ownAclDecision = $this->getResourceAclDecision($type, 'edit.own', $categoryIds);
+            }
+
+            if ($aclDecision === true || $ownAclDecision === true) {
+                return JemAccessDecision::allow(
+                    'resource_acl',
+                    'joomla_acl',
+                    $act,
+                    $type,
+                    $recordId,
+                    $reasons,
+                    array('grantedPermission' => $aclDecision === true
+                        ? JemResourceAclPolicy::getAction($type, $act)
+                        : JemResourceAclPolicy::getAction($type, 'edit.own'))
+                );
+            }
+
+            if ($aclDecision === false || $ownAclDecision === false) {
+                $reasons[] = $reason(
+                    JemAccessDecision::ACTION_NOT_ALLOWED,
+                    'resource_acl',
+                    'joomla_acl',
+                    $act,
+                    array('categoryIds' => $categoryIds)
+                );
+                continue;
+            }
+
+            $legacyActions[] = $act;
+
+            if ($this->authorise('core.manage', $asset)) {
+                return JemAccessDecision::allow(
+                    'component_acl',
+                    'joomla_core_manage',
+                    $act,
+                    $type,
+                    $recordId,
+                    $reasons,
+                    array('grantedPermission' => 'core.manage')
+                );
+            }
+
             switch ($act) {
                 case 'add':
                     if ($create) {
@@ -617,21 +689,21 @@ abstract class JemUserAbstract extends User
 
         // JEM groups are the final historical grant path for add/edit/publish.
         $fields = array();
-        foreach ($actions as $act) {
+        foreach ($legacyActions as $act) {
             if (in_array($act, array('add', 'edit', 'publish'), true)) {
                 $fields[] = $act . $type;
             }
         }
 
         $jemgroups = empty($fields) ? array() : (array) $this->getJemGroups($fields);
-        if ($edit && in_array('edit', $actions, true)) {
+        if ($edit && in_array('edit', $legacyActions, true)) {
             $jemgroups[0] = true;
         }
 
         if (empty($jemgroups)) {
             $code = $ownerGrantMismatch
                 ? JemAccessDecision::NOT_RECORD_OWNER
-                : (empty($fields) ? JemAccessDecision::ACTION_NOT_ALLOWED : JemAccessDecision::JEM_GROUP_ACTION_DENIED);
+                : (empty($legacyActions) || empty($fields) ? JemAccessDecision::ACTION_NOT_ALLOWED : JemAccessDecision::JEM_GROUP_ACTION_DENIED);
 
             return JemAccessDecision::deny(
                 $code,
@@ -645,7 +717,7 @@ abstract class JemUserAbstract extends User
             );
         }
 
-        if (empty($categoryIds) && (($type !== 'event') || (empty($id) && !in_array('publish', $actions, true)))) {
+        if (empty($categoryIds) && (($type !== 'event') || (empty($id) && !in_array('publish', $legacyActions, true)))) {
             return JemAccessDecision::allow(
                 'jem_group',
                 array_keys($jemgroups) === array(0) ? 'jem_global_setting' : 'jem_group',
@@ -775,6 +847,38 @@ abstract class JemUserAbstract extends User
     public function can($action, $type, $id = false, $created_by = false, $categoryIds = false)
     {
         return $this->getAccessDecision($action, $type, $id, $created_by, $categoryIds)->isAllowed();
+    }
+
+    /**
+     * Return the tri-state granular Joomla ACL result for one operation.
+     */
+    private function getResourceAclDecision($type, $operation, array $categoryIds)
+    {
+        $groups = array_map('intval', (array) $this->getAuthorisedGroups());
+
+        return JemResourceAclPolicy::decide(
+            $type,
+            $operation,
+            $categoryIds,
+            static function ($action, $asset) use ($groups) {
+                return Access::getAssetRules($asset, true, true)->allow($action, $groups);
+            }
+        );
+    }
+
+    /**
+     * Load authoritative category relations for an existing Event.
+     */
+    private function getEventCategoryIdsForAcl($eventId)
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__jem_cats_event_relations'))
+            ->where($db->quoteName('itemid') . ' = ' . (int) $eventId);
+        $db->setQuery($query);
+
+        return array_values(array_unique(array_filter(array_map('intval', (array) $db->loadColumn()))));
     }
 
 }

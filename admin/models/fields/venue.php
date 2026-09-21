@@ -13,6 +13,8 @@ use Joomla\CMS\Form\Field\ModalSelectField;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
+
 /**
  * Venue selector using Joomla's native modal content-select field.
  */
@@ -47,6 +49,10 @@ class JFormFieldVenue extends ModalSelectField
     protected function getValueTitle()
     {
         if (!$this->value) {
+            return Text::_('COM_JEM_SELECT_VENUE');
+        }
+
+        if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) $this->value)) {
             return Text::_('COM_JEM_SELECT_VENUE');
         }
 

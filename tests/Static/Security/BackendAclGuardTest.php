@@ -38,6 +38,12 @@ final class BackendAclGuardTest extends TestCase
             'jem.venues.edit.state',
             'jem.venues.edit.own',
             'jem.venues.edit.created',
+            'jem.categories.access',
+            'jem.types.access',
+            'jem.types.create',
+            'jem.types.delete',
+            'jem.types.edit',
+            'jem.types.edit.state',
             'jem.attendees.manage',
             'jem.tools.manage',
         );
@@ -50,12 +56,14 @@ final class BackendAclGuardTest extends TestCase
     public function testBackendEventAndVenueMutationsUseTheCentralPolicy(): void
     {
         $contracts = array(
-            'admin/controllers/event.php' => array("can('event', 'create')", "can('event', 'edit', \$record)"),
+            'admin/controllers/event.php' => array('canCreateEvent()', "can('event', 'edit', \$record)", 'canEventCategories'),
             'admin/controllers/venue.php' => array("can('venue', 'create')", "can('venue', 'edit', \$record)"),
             'admin/models/event.php' => array("can('event', 'delete'", "can('event', 'edit.state'", "can('event', 'edit.created'"),
             'admin/models/venue.php' => array("can('venue', 'delete'", "can('venue', 'edit.state'", "can('venue', 'edit.created'"),
             'admin/views/events/view.html.php' => array("can('event', 'access')"),
             'admin/views/venues/view.html.php' => array("can('venue', 'access')"),
+            'admin/controllers/type.php' => array("can('type', 'create')", "can('type', 'edit')"),
+            'admin/models/type.php' => array("can('type', 'delete'", "can('type', 'edit.state'"),
         );
 
         foreach ($contracts as $file => $needles) {
@@ -100,6 +108,8 @@ final class BackendAclGuardTest extends TestCase
         self::assertStringContainsString("'jem.tools.manage'", $script);
         self::assertStringContainsString("'jem.events.edit.created' => 'core.edit'", $script);
         self::assertStringContainsString("'jem.venues.edit.created' => 'core.edit'", $script);
+        self::assertStringContainsString("'jem.categories.access'", $script);
+        self::assertStringContainsString("'jem.types.access'", $script);
     }
 
     public function testEventAndVenueFormsGateTheAuthorFieldWithTheDedicatedPermissionOnly(): void

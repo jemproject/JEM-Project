@@ -32,6 +32,13 @@ final class JemBackendAclPolicy
             'edit.own'     => 'jem.venues.edit.own',
             'edit.created' => 'jem.venues.edit.created',
         ),
+        'type' => array(
+            'access'     => 'jem.types.access',
+            'create'     => 'jem.types.create',
+            'delete'     => 'jem.types.delete',
+            'edit'       => 'jem.types.edit',
+            'edit.state' => 'jem.types.edit.state',
+        ),
     );
 
     public static function getAction($type, $operation)
@@ -73,5 +80,56 @@ final class JemBackendAclPolicy
             && (int) $recordOwner > 0
             && (int) $recordOwner === (int) $userId
             && $authorise(self::getAction($type, 'edit.own'));
+    }
+
+    /**
+     * Evaluate a backend Event action against every stored or selected category.
+     *
+     * @param   string    $operation    create, delete, edit or edit.state.
+     * @param   array     $categoryIds  JEM category ids.
+     * @param   int|null  $recordOwner  Owner read from the stored Event.
+     * @param   int       $userId       Current Joomla user id.
+     * @param   callable  $authorise    fn(string $action, string $asset): bool.
+     */
+    public static function allowsEventCategories($operation, array $categoryIds, $recordOwner, $userId, callable $authorise)
+    {
+        $action = self::getAction('event', $operation);
+
+        if ($action === null || $operation === 'access' || $operation === 'edit.created') {
+            return false;
+        }
+
+        if ($authorise('core.admin', 'com_jem')) {
+            return true;
+        }
+
+        if (!$authorise(self::getAction('event', 'access'), 'com_jem')) {
+            return false;
+        }
+
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
+        $assets = $categoryIds
+            ? array_map(static function ($categoryId) { return 'com_jem.category.' . $categoryId; }, $categoryIds)
+            : array('com_jem');
+
+        $allowsEvery = static function ($permission) use ($assets, $authorise) {
+            foreach ($assets as $asset) {
+                if (!$authorise($permission, $asset)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        if ($allowsEvery($action)) {
+            return true;
+        }
+
+        return $operation === 'edit'
+            && $recordOwner !== null
+            && (int) $recordOwner > 0
+            && (int) $recordOwner === (int) $userId
+            && $allowsEvery(self::getAction('event', 'edit.own'));
     }
 }

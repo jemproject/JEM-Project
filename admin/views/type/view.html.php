@@ -27,6 +27,14 @@ class JemViewType extends JemAdminView
         $this->item  = $this->get('Item');
         $this->state = $this->get('State');
 
+        $allowed = !empty($this->item->id)
+            ? JemHelperBackend::can('type', 'edit')
+            : JemHelperBackend::can('type', 'create');
+
+        if (!$allowed) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $requestedEntity = Factory::getApplication()->input->getInt('entity', 0);
         if (empty($this->item->id) && in_array($requestedEntity, array(1, 2, 3, 4), true)) {
             $this->form->setValue('entity', null, $requestedEntity);
@@ -133,10 +141,9 @@ class JemViewType extends JemAdminView
         $user         = JemFactory::getUser();
         $isNew        = ($this->item->id == 0);
         $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-        $canDo        = JemHelperBackend::getActions();
-        $canSave      = !$checkedOut && ($canDo->get('core.edit') || $canDo->get('core.create'));
-        $canSave2New  = !$checkedOut && $canDo->get('core.create');
-        $canSave2Copy = !$isNew && $canDo->get('core.create');
+        $canSave      = !$checkedOut && ($isNew ? JemHelperBackend::can('type', 'create') : JemHelperBackend::can('type', 'edit'));
+        $canSave2New  = !$checkedOut && JemHelperBackend::can('type', 'create');
+        $canSave2Copy = !$isNew && JemHelperBackend::can('type', 'create');
         $cancelText   = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         ToolbarHelper::title($isNew ? Text::_('COM_JEM_ADD_TYPE') : Text::_('COM_JEM_TYPE_EDIT'), 'tag');

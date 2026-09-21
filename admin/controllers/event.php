@@ -47,7 +47,11 @@ class JemControllerEvent extends JemControllerForm
      */
     protected function allowAdd($data = array())
     {
-        return JemHelperBackend::can('event', 'create');
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', (array) ($data['cats'] ?? array())))));
+
+        return $categoryIds
+            ? JemHelperBackend::canEventCategories('create', $categoryIds)
+            : JemHelperBackend::canCreateEvent();
     }
 
     /**
@@ -89,6 +93,11 @@ class JemControllerEvent extends JemControllerForm
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
+        require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
+        if (!JemVenueAccess::canUse(JemFactory::getUser(), $venueId)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
         try {
             echo new JsonResponse(JemEventPricingCapacityService::getVenueConfigurationPayload($venueId));
@@ -108,8 +117,73 @@ class JemControllerEvent extends JemControllerForm
      */
     public function save($key = null, $urlVar = 'id')
     {
-        $result = parent::save($key, $urlVar);
+        $app = Factory::getApplication();
+        $data = $app->input->post->get('jform', array(), 'array');
+        $recordId = (int) ($data[$urlVar] ?? $data['id'] ?? $app->input->getInt($urlVar, 0));
+        $isCopy = $this->getTask() === 'save2copy';
+        $submittedCategories = array_values(array_unique(array_filter(array_map('intval', (array) ($data['cats'] ?? array())))));
         $model = $this->getModel();
+        $record = null;
+        $storedCategories = array();
+
+        if ($recordId > 0) {
+            $record = $model->getItem($recordId);
+            $storedCategories = is_object($record) ? array_map('intval', (array) ($record->cats ?? array())) : array();
+            $addedCategories = array_values(array_diff($submittedCategories, $storedCategories));
+
+            if ($isCopy && !JemHelperBackend::canEventCategories('create', $submittedCategories)) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+            if (!$isCopy && $addedCategories && !JemHelperBackend::canEventCategories('create', $addedCategories)) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+            if (!$isCopy && !$submittedCategories
+                && $storedCategories
+                && !JemHelperBackend::canEventCategories('create', array())) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+        } elseif (!JemHelperBackend::canEventCategories('create', $submittedCategories)) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $canEditState = JemHelperBackend::canEventCategories('edit.state', $submittedCategories, $record);
+        $categoriesChanged = $recordId > 0
+            && (array_values(array_diff($storedCategories, $submittedCategories)) !== array()
+                || array_values(array_diff($submittedCategories, $storedCategories)) !== array());
+
+        if (!$isCopy && $recordId > 0 && is_object($record) && (int) ($record->published ?? 0) !== 0
+            && $categoriesChanged && !$canEditState) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        if (!$canEditState) {
+            if (!$isCopy && $recordId > 0 && is_object($record)) {
+                foreach (array('published', 'featured', 'ordering', 'publish_up', 'publish_down') as $field) {
+                    if (isset($record->$field)) {
+                        $data[$field] = $record->$field;
+                    } else {
+                        unset($data[$field]);
+                    }
+                }
+            } else {
+                $data['published'] = 0;
+                $data['featured'] = 0;
+                unset($data['ordering'], $data['publish_up'], $data['publish_down']);
+            }
+        }
+
+        if (!JemHelperBackend::can('event', 'edit.created')) {
+            if (!$isCopy && $recordId > 0 && is_object($record)) {
+                $data['created_by'] = (int) ($record->created_by ?? 0);
+                $data['created'] = $record->created ?? null;
+            } else {
+                unset($data['created_by'], $data['created']);
+            }
+        }
+
+        $app->input->post->set('jform', $data);
+
+        $result = parent::save($key, $urlVar);
 
         if ($result && $model) {
             $this->handleCreatedArticleContentRedirect($model);

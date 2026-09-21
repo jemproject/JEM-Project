@@ -585,40 +585,30 @@ class JemModelCategories extends BaseDatabaseModel
         } elseif (($format == 'raw') || ($format == 'feed')) {
             $where_sub .= ' AND i.published = 1';
         } else {
-            $show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
-            if ($show_unpublished) {
-                // global editor or publisher permission
-                $where_sub .= ' AND i.published IN (0, 1)';
-            } else {
-                // no global permission but maybe on event level
-                $where_sub_or = array();
-                $where_sub_or[] = '(i.published = 1)';
+            $where_sub_or = array('(i.published = 1)');
 
-                $jemgroups = $user->getJemGroups(array('editevent', 'publishevent'));
-                if (($userId !== 0) && ($jemsettings->eventedit == -1)) {
-                    $jemgroups[0] = true; // we need key 0 to get unpublished events not attached to any jem group
+            if ($userId !== 0) {
+                $manageableCategories = array_map('intval', array_keys($user->getJemCategories(
+                    array('edit', 'publish'),
+                    'event'
+                )));
+
+                if ($manageableCategories) {
+                    $where_sub_or[] = $this->getCategoryPermissionWhere($manageableCategories);
                 }
-                // user permitted on that jem groups
-                if (is_array($jemgroups) && count($jemgroups)) {
-                    $on_groups = array_keys($jemgroups);
-                    // to allow only events with categories attached to allowed jemgroups use this line:
-                    //$where_sub_or[] = '(i.published = 0 AND c.groupid IN (' . implode(',', $on_groups) . '))';
-                    // to allow also events with categories not attached to disallowed jemgroups use this crazy block:
-                    $where_sub_or[] = '(i.published = 0 AND '
-                                    . ' i.id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
-                                    . '              INNER JOIN #__jem_cats_event_relations as rel3 '
-                                    . '              WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $on_groups) . ')'
-                                    . '              GROUP BY rel3.itemid)'
-                                    . ')';
-                    // hint: above it's a not not ;-)
-                    //       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
+
+                $ownedCategories = array_map('intval', array_keys($user->getJemCategories(
+                    'edit',
+                    'event',
+                    array('owner' => true)
+                )));
+
+                if ($ownedCategories) {
+                    $where_sub_or[] = $this->getCategoryPermissionWhere($ownedCategories, $userId);
                 }
-                // user permitted on own events
-                if (($userId !== 0) && ($user->authorise('core.edit.own', 'com_jem') || $jemsettings->eventowner)) {
-                    $where_sub_or[] = '(i.published = 0 AND i.created_by = ' . $userId . ')';
-                }
-                $where_sub .= ' AND (' . implode(' OR ', $where_sub_or) . ')';
             }
+
+            $where_sub .= ' AND (' . implode(' OR ', $where_sub_or) . ')';
         }
         if ($task !== 'archive') {
             $where_sub .= ' AND (' . JemHelper::getEventPublicationWhere('i', false) . ')';
@@ -680,6 +670,28 @@ class JemModelCategories extends BaseDatabaseModel
                ;
 
         return $query;
+    }
+
+    /**
+     * Require every category assigned to an unpublished event to be allowed.
+     */
+    private function getCategoryPermissionWhere(array $categoryIds, $ownerId = 0)
+    {
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
+
+        if (!$categoryIds) {
+            return '(1 = 0)';
+        }
+
+        $ownerWhere = $ownerId > 0 ? ' AND i.created_by = ' . (int) $ownerId : '';
+
+        return '(i.published = 0' . $ownerWhere
+            . ' AND EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS acl_rel'
+            . ' WHERE acl_rel.itemid = i.id)'
+            . ' AND NOT EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS acl_rel_denied'
+            . ' WHERE acl_rel_denied.itemid = i.id'
+            . ' AND acl_rel_denied.catid NOT IN (' . implode(',', $categoryIds) . '))'
+            . ')';
     }
 
     /**

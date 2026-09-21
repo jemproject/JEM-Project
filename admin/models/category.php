@@ -52,9 +52,7 @@ class JemModelCategory extends AdminModel
             if ($record->published != -2) {
                 return;
             }
-            $user = JemFactory::getUser();
-
-            return $user->authorise('core.delete', 'com_jem');
+            return JemHelperBackend::canCategory('delete', $record);
         }
     }
 
@@ -68,20 +66,7 @@ class JemModelCategory extends AdminModel
      */
     protected function canEditState($record)
     {
-        $user = JemFactory::getUser();
-
-        // Check for existing category.
-        if (!empty($record->id)) {
-            return $user->authorise('core.edit.state', 'com_jem' . '.category.' . (int) $record->id);
-        }
-        // New category, so check against the parent.
-        elseif (!empty($record->parent_id)) {
-            return $user->authorise('core.edit.state', 'com_jem' . '.category.' . (int) $record->parent_id);
-        }
-        // Default to component settings if neither category nor parent known.
-        else {
-            return $user->authorise('core.edit.state', 'com_jem');
-        }
+        return JemHelperBackend::canCategory('edit.state', $record, (int) ($record->parent_id ?? 1));
     }
 
     /**
@@ -204,6 +189,18 @@ class JemModelCategory extends AdminModel
         }
 
         return $data;
+    }
+
+    /**
+     * Only component administrators may change stored category ACL rules.
+     */
+    public function validate($form, $data, $group = null)
+    {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem')) {
+            unset($data['rules']);
+        }
+
+        return parent::validate($form, $data, $group);
     }
 
     /**
@@ -987,10 +984,27 @@ class JemModelCategory extends AdminModel
     public function delete(&$cids)
     {
         ArrayHelper::toInteger($cids);
+        $requestedIds = array_values(array_unique(array_filter($cids)));
+
+        if (!$requestedIds) {
+            return false;
+        }
 
         // Add all children to the list
-        foreach ($cids as $id) {
+        foreach ($requestedIds as $id) {
             $this->_addCategories($id, $cids);
+        }
+
+        $cids = array_values(array_unique(array_filter(array_map('intval', $cids))));
+
+        foreach ($cids as $id) {
+            $record = $this->getItem($id);
+
+            if (!is_object($record) || !JemHelperBackend::canCategory('delete', $record)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+                return false;
+            }
         }
 
         $cids = implode(',', $cids);
@@ -1026,16 +1040,20 @@ class JemModelCategory extends AdminModel
         }
 
         if (count($cid) && count($err) == 0) {
-            $cids = implode(',', $cid);
-            $query = 'DELETE FROM #__jem_categories'
-                   . ' WHERE id IN (' . $cids . ')';
+            foreach ($requestedIds as $id) {
+                $table = $this->getTable();
 
-            $this->_db->setQuery($query);
+                // A previously selected parent may already have removed this
+                // explicitly selected child and its asset subtree.
+                if (!$table->load($id)) {
+                    continue;
+                }
 
-            // TODO: use exception handling
-            if ($this->_db->execute() === false) {
-                $this->setError($this->_db->getError());
-                return false;
+                if (!$table->delete($id, true)) {
+                    $this->setError($table->getError());
+
+                    return false;
+                }
             }
         }
 
@@ -1049,6 +1067,21 @@ class JemModelCategory extends AdminModel
             $msg = Text::plural('COM_JEM_CATEGORIES_N_ITEMS_DELETED', $total);
             return $msg;
         }
+    }
+
+    /**
+     * Return selected categories and every descendant affected by deletion.
+     */
+    public function getDeleteCategoryIds(array $categoryIds)
+    {
+        ArrayHelper::toInteger($categoryIds);
+        $categoryIds = array_values(array_unique(array_filter($categoryIds)));
+
+        foreach (array_values($categoryIds) as $categoryId) {
+            $this->_addCategories($categoryId, $categoryIds);
+        }
+
+        return array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
     }
 
     /**

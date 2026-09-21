@@ -754,6 +754,8 @@ class JemModelEventslist extends ListModel
         $id .= ':' . $this->getState('filter.req_catid');
         $id .= ':' . $this->getState('filter.unpublished');
         $id .= ':' . serialize($this->getState('filter.unpublished.events.on_groups'));
+        $id .= ':' . serialize($this->getState('filter.unpublished.events.on_categories'));
+        $id .= ':' . serialize($this->getState('filter.unpublished.events.own_categories'));
         $id .= ':' . $this->getState('filter.unpublished.venues');
         $id .= ':' . $this->getState('filter.unpublished.on_user');
         $id .= ':' . $this->getState('filter.event_tree', 'calendar');
@@ -1758,7 +1760,6 @@ class JemModelEventslist extends ListModel
     protected function _populatePublishState($task)
     {
         $app         = Factory::getApplication();
-        $jemsettings = JemHelper::config();
         $user        = JemFactory::getUser();
         $userId      = $user->id ?? null;
 
@@ -1770,26 +1771,30 @@ class JemModelEventslist extends ListModel
         } elseif (($format == 'raw') || ($format == 'feed')) {
             $this->setState('filter.published', 1);
         } else {
-            $show_unpublished = $user->can(array('edit', 'publish'), 'event', false, false, 1);
-            if ($show_unpublished) {
-                // global editor or publisher permission
-                $publishedStates = $this->show_archived_events ? array(0, 1, 2) : array(0, 1);
-                $this->setState('filter.published', $publishedStates);
-            } else {
-                // no global permission but maybe on event level
-                $this->setState('filter.published', 1);
-                $this->setState('filter.unpublished', 0);
+            $this->setState('filter.published', 1);
+            $this->setState('filter.unpublished', 0);
 
-                $jemgroups = $user->getJemGroups(array('editevent', 'publishevent'));
-                if (($userId !== 0) && ($jemsettings->eventedit == -1)) {
-                    $jemgroups[0] = true; // we need key 0 to get unpublished events not attached to any jem group
+            // Apply the same ALL-category rule to list visibility as the
+            // controllers use for mutations. An explicit category ACL Deny
+            // must not be bypassed by a legacy JEM Group or Edit Own grant.
+            if ($userId !== 0) {
+                $manageableCategories = array_keys($user->getJemCategories(
+                    array('edit', 'publish'),
+                    'event'
+                ));
+
+                if ($manageableCategories) {
+                    $this->setState('filter.unpublished.events.on_categories', array_map('intval', $manageableCategories));
                 }
-                // user permitted on that jem groups
-                if (is_array($jemgroups) && count($jemgroups)) {
-                    $this->setState('filter.unpublished.events.on_groups', array_keys($jemgroups));
-                }
-                // user permitted on own events
-                if (($userId !== 0) && ($user->authorise('core.edit.own', 'com_jem') || $jemsettings->eventowner)) {
+
+                $ownedCategories = array_keys($user->getJemCategories(
+                    'edit',
+                    'event',
+                    array('owner' => true)
+                ));
+
+                if ($ownedCategories) {
+                    $this->setState('filter.unpublished.events.own_categories', array_map('intval', $ownedCategories));
                     $this->setState('filter.unpublished.on_user', $userId);
                 }
             }
@@ -1832,30 +1837,56 @@ class JemModelEventslist extends ListModel
         $unpublished = $this->getState('filter.unpublished');
         if (is_numeric($unpublished))
         {
-            // Is user member of jem groups allowing to see unpublished events?
-            $unpublished_on_groups = $this->getState('filter.unpublished.events.on_groups');
-            if (is_array($unpublished_on_groups) && !empty($unpublished_on_groups)) {
-                // to allow only events with categories attached to allowed jemgroups use this line:
-                //$where_pub[] = '(' . $tbl . '.published = ' . $unpublished . ' AND c.groupid IN (' . implode(',', $unpublished_on_groups) . '))';
-                // to allow also events with categories not attached to disallowed jemgroups use this crazy block:
-                $where_pub[] = '(' . $tbl . 'published = ' . $unpublished . ' AND '
-                    . $tbl . 'id NOT IN (SELECT rel3.itemid FROM #__jem_categories as c3 '
-                    . '                   INNER JOIN #__jem_cats_event_relations as rel3 '
-                    . '                   WHERE c3.id = rel3.catid AND c3.groupid NOT IN (0,' . implode(',', $unpublished_on_groups) . ')'
-                    . '                   GROUP BY rel3.itemid)'
-                    . ')';
-                // hint: above it's a not not ;-)
-                //       meaning: Show unpublished events not connected to a category which is not one of the allowed categories.
+            $manageableCategories = (array) $this->getState('filter.unpublished.events.on_categories', array());
+            ArrayHelper::toInteger($manageableCategories);
+
+            if ($manageableCategories) {
+                $where_pub[] = $this->getCategoryPermissionWhere(
+                    $tbl,
+                    (int) $unpublished,
+                    $manageableCategories
+                );
             }
 
-            // Is user allowed to see own unpublished events?
             $unpublished_on_user = (int)$this->getState('filter.unpublished.on_user');
-            if ($unpublished_on_user > 0) {
-                $where_pub[] = '(' . $tbl . 'published = ' . $unpublished . ' AND ' . $tbl . 'created_by = ' . $unpublished_on_user . ')';
+            $ownedCategories = (array) $this->getState('filter.unpublished.events.own_categories', array());
+            ArrayHelper::toInteger($ownedCategories);
+
+            if ($unpublished_on_user > 0 && $ownedCategories) {
+                $where_pub[] = $this->getCategoryPermissionWhere(
+                    $tbl,
+                    (int) $unpublished,
+                    $ownedCategories,
+                    $unpublished_on_user
+                );
             }
         }
 
         return $where_pub;
+    }
+
+    /**
+     * Build an unpublished-event clause which requires every assigned category
+     * to be in the effective permission set.
+     */
+    private function getCategoryPermissionWhere($tbl, $published, array $categoryIds, $ownerId = 0)
+    {
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
+
+        if (!$categoryIds) {
+            return '(1 = 0)';
+        }
+
+        $eventId = $tbl . 'id';
+        $ownerWhere = $ownerId > 0 ? ' AND ' . $tbl . 'created_by = ' . (int) $ownerId : '';
+
+        return '(' . $tbl . 'published = ' . (int) $published . $ownerWhere
+            . ' AND EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS acl_rel'
+            . ' WHERE acl_rel.itemid = ' . $eventId . ')'
+            . ' AND NOT EXISTS (SELECT 1 FROM #__jem_cats_event_relations AS acl_rel_denied'
+            . ' WHERE acl_rel_denied.itemid = ' . $eventId
+            . ' AND acl_rel_denied.catid NOT IN (' . implode(',', $categoryIds) . '))'
+            . ')';
     }
 }
 ?>

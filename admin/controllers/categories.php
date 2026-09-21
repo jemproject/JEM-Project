@@ -42,13 +42,6 @@ class JemControllerCategories extends AdminController
         JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
-            echo '0';
-            $app->close();
-        }
-
         $cid = $app->input->post->get('cid', array(), 'array');
         $order = $app->input->post->get('order', array(), 'array');
         ArrayHelper::toInteger($cid);
@@ -60,6 +53,16 @@ class JemControllerCategories extends AdminController
         }
 
         $model = $this->getModel('category');
+
+        foreach ($cid as $categoryId) {
+            $record = $model->getItem((int) $categoryId);
+
+            if (!is_object($record) || !JemHelperBackend::canCategory('edit.state', $record)) {
+                echo '0';
+                $app->close();
+            }
+        }
+
         echo $model->saveorder($cid, $order) ? '1' : '0';
         $app->close();
     }
@@ -71,6 +74,10 @@ class JemControllerCategories extends AdminController
      */
     public function rebuild() {
         Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
 
         $this->setRedirect(Route::_('index.php?option=com_jem&view=categories', false));
 
@@ -100,9 +107,6 @@ class JemControllerCategories extends AdminController
         Session::checkToken() or jexit('Invalid Token');
 
          $app = Factory::getApplication();
-         if (!$app->getIdentity()->authorise('core.delete', 'com_jem')) {
-             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-         }
 
          $cid = $app->input->post->get('cid', array(), 'array');
 
@@ -122,6 +126,14 @@ class JemControllerCategories extends AdminController
          }
 
          $model = $this->getModel('category');
+
+         foreach ($model->getDeleteCategoryIds($cid) as $categoryId) {
+             $record = $model->getItem((int) $categoryId);
+
+             if (!is_object($record) || !JemHelperBackend::canCategory('delete', $record)) {
+                 throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+             }
+         }
 
          $msg = $model->delete($cid);
 

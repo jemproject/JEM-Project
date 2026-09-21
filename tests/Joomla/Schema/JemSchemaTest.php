@@ -60,8 +60,8 @@ final class JemSchemaTest extends JoomlaTestCase
     public static function criticalColumnProvider(): iterable
     {
         yield 'events' => array('jem_events', array('id', 'title', 'dates', 'enddates', 'timezone_mode', 'timezone', 'start_utc', 'end_utc', 'last_visit', 'series_id', 'series_order', 'published', 'created_by', 'access', 'event_status', 'ticket_availability', 'type_id', 'pricing_mode', 'pricing_revision', 'currency', 'default_tax_rate_id', 'prices_include_tax', 'management_fee_mode', 'management_fee_value', 'management_fee_basis', 'management_fee_tax_rate_id', 'management_fee_refundable', 'attribs'));
-        yield 'venues' => array('jem_venues', array('id', 'venue', 'alias', 'url', 'district', 'level', 'capacity', 'timezone', 'email', 'phone', 'mobile', 'latitude', 'longitude', 'published', 'created_by', 'access', 'type_id', 'attribs'));
-        yield 'categories' => array('jem_categories', array('id', 'catname', 'alias', 'parent_id', 'published', 'access', 'type_id'));
+        yield 'venues' => array('jem_venues', array('id', 'asset_id', 'venue', 'alias', 'url', 'district', 'level', 'capacity', 'timezone', 'email', 'phone', 'mobile', 'latitude', 'longitude', 'published', 'created_by', 'access', 'type_id', 'attribs'));
+        yield 'categories' => array('jem_categories', array('id', 'asset_id', 'catname', 'alias', 'parent_id', 'published', 'access', 'type_id'));
         yield 'attachments' => array('jem_attachments', array('id', 'object', 'file', 'name', 'description', 'frontend', 'access', 'created_by', 'downloads', 'last_download'));
         yield 'links' => array('jem_links', array('id', 'event_id', 'type', 'title', 'description', 'url', 'params', 'state', 'created_by'));
         yield 'types' => array('jem_types', array('id', 'name', 'alias', 'entity', 'translations', 'published', 'access', 'language'));

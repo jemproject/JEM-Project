@@ -29,6 +29,7 @@ $params = $this->state->get('params');
 $params = $params->toArray();
 
 $typeField = $this->form->getField('type_id');
+$canEditPermissions = JemFactory::getUser()->authorise('core.admin', 'com_jem');
 
 # defining values for centering default-map
 $location = JemHelper::defineCenterMap($this->form);
@@ -1161,6 +1162,14 @@ Text::script('JCANCEL');
 
                     <?php echo $this->loadTemplate('attachments'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php if ($canEditPermissions && $this->form->getField('rules')) : ?>
+                    <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'permissions', Text::_('COM_JEM_VENUE_PERMISSIONS')); ?>
+                    <fieldset class="options-form jem-venue-permissions">
+                        <legend><?php echo Text::_('COM_JEM_VENUE_PERMISSIONS'); ?></legend>
+                        <?php echo $this->form->renderField('rules'); ?>
+                    </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php endif; ?>
                 <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
                 <!-- END OF LEFT DIV -->

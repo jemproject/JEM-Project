@@ -136,6 +136,10 @@ ALTER TABLE `#__jem_events` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAUL
 ALTER TABLE `#__jem_categories` ADD COLUMN `event_image_default_storage` VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default` /** CAN FAIL **/;
 ALTER TABLE `#__jem_categories` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `image` /** CAN FAIL **/;
 ALTER TABLE `#__jem_categories` ADD COLUMN `custom_fields` MEDIUMTEXT NULL DEFAULT NULL AFTER `event_image_default_storage` /** CAN FAIL **/;
+ALTER TABLE `#__jem_categories` ADD COLUMN `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `id` /** CAN FAIL **/;
+ALTER TABLE `#__jem_categories` ADD KEY `idx_asset_id` (`asset_id`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD COLUMN `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `id` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD KEY `idx_asset_id` (`asset_id`) /** CAN FAIL **/;
 
 -- JEM 5.1.0: stable ID-based venue media paths. Empty image_path keeps the
 -- legacy flat images/jem/venues directory; no existing files are moved here.

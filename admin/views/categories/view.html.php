@@ -31,6 +31,10 @@ class JemViewCategories extends JemAdminView
      */
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::canManage('jem.categories.access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->state        = $this->get('State');
         $this->items        = $this->get('Items');
         $this->pagination    = $this->get('Pagination');
@@ -104,16 +108,19 @@ class JemViewCategories extends JemAdminView
 
         ToolbarHelper::title(Text::_('COM_JEM_CATEGORIES'), 'elcategories');
 
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
+        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin')
+            || count(JemHelperBackend::getAuthorisedJemCategoryIds('core.edit.state')) > 0;
         $filterState = $this->state->get('filter.published');
 
         /* create */
-        if ($canDo->get('core.create')) {
+        if (JemHelperBackend::canCategory('create', null, 1)) {
             ToolbarHelper::addNew('category.add');
         }
 
         /* edit */
-        if ($canDo->get('core.edit') || $canDo->get('core.edit.own')) {
+        if ($canDo->get('core.edit') || $canDo->get('core.edit.own')
+            || count(JemHelperBackend::getAuthorisedJemCategoryIds('core.edit')) > 0
+            || count(JemHelperBackend::getAuthorisedJemCategoryIds('core.edit.own')) > 0) {
             ToolbarHelper::editList('category.edit');
             ToolbarHelper::divider();
         }

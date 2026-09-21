@@ -37,6 +37,14 @@ class JemViewCategory extends JemAdminView
         $this->canDo    = JemHelperBackend::getActions($this->state->get('category.component'));
         $this->featurePolicy = JemFeaturePolicy::current();
 
+        $allowed = !empty($this->item->id)
+            ? JemHelperBackend::canCategory('edit', $this->item)
+            : JemHelperBackend::canCategory('create', null, (int) ($this->item->parent_id ?? 1));
+
+        if (!$allowed) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $app = Factory::getApplication();
         $this->document = $app->getDocument();
         $wa = $this->document->getWebAssetManager();
@@ -116,11 +124,11 @@ class JemViewCategory extends JemAdminView
 
         // Get the results for each action.
         $canDo = JemHelperBackend::getActions();
-        $canCreateCategory = $canDo->get('core.create') || count($user->getAuthorisedCategories('com_jem', 'core.create')) > 0;
-        $canEditCategory   = !$checkedOut && ($canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_user_id == $userId));
+        $canCreateCategory = JemHelperBackend::canCategory('create', null, (int) ($this->item->parent_id ?? 1));
+        $canEditCategory   = !$checkedOut && JemHelperBackend::canCategory('edit', $this->item);
         $canSave           = ($isNew && $canCreateCategory) || (!$isNew && $canEditCategory);
-        $canSave2New       = ($isNew && $canCreateCategory) || (!$isNew && $canEditCategory && $canDo->get('core.create'));
-        $canSave2Copy      = !$isNew && $canDo->get('core.create');
+        $canSave2New       = ($isNew && $canCreateCategory) || (!$isNew && $canEditCategory && JemHelperBackend::canCategory('create', null, (int) ($this->item->parent_id ?? 1)));
+        $canSave2Copy      = !$isNew && JemHelperBackend::canCategory('create', null, (int) ($this->item->parent_id ?? 1));
         $cancelText        = $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE';
 
         $title = Text::_($isNew ? 'COM_JEM_ADD_CATEGORY' : 'COM_JEM_EDIT_CATEGORY');

@@ -28,6 +28,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.p
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/spaceavailability.class.php';
 
@@ -240,7 +241,26 @@ class JemModelEvent extends JemModelAdmin
         }
 
         if ($scope === 'backend') {
-            if (!JemHelperBackend::can('event', 'edit.state')) {
+            $recordId = (int) $form->getValue('id');
+            $categoryIds = array_values(array_unique(array_filter(array_map(
+                'intval',
+                (array) $form->getValue('cats')
+            ))));
+            $stateRecord = null;
+
+            if ($recordId > 0) {
+                $stateRecord = (object) array(
+                    'id' => $recordId,
+                    'created_by' => (int) $form->getValue('created_by'),
+                    'cats' => $categoryIds,
+                );
+            }
+
+            $canEditState = $recordId > 0
+                ? JemHelperBackend::canEventCategories('edit.state', $categoryIds, $stateRecord)
+                : JemHelperBackend::canManageAnyEvent('edit.state');
+
+            if (!$canEditState) {
                 foreach (array('featured', 'ordering', 'publish_up', 'publish_down', 'published') as $fieldName) {
                     $form->setFieldAttribute($fieldName, 'disabled', 'true');
                     $form->setFieldAttribute($fieldName, 'filter', 'unset');
@@ -634,6 +654,11 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
         $data['cats']         = $cats;
+        if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) ($data['locid'] ?? 0))) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_VENUE_NOT_ALLOWED'));
+
+            return false;
+        }
         JemCategoryCustomFields::filterEventData($data, $cats);
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
@@ -4250,6 +4275,11 @@ class JemModelEvent extends JemModelAdmin
 
         if ($venueId <= 0 || !$this->venueExists($venueId)) {
             $this->setError(Text::_('COM_JEM_EVENTS_MOVE_VENUE_SELECT'));
+            return false;
+        }
+
+        if (!JemVenueAccess::canUse(JemFactory::getUser(), $venueId)) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_VENUE_NOT_ALLOWED'));
             return false;
         }
 

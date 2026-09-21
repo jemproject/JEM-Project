@@ -230,6 +230,15 @@
         />
     </fieldset>
 
+    <field name="rules" type="rules"
+        id="rules"
+        label="COM_JEM_VENUE_PERMISSIONS"
+        filter="rules"
+        validate="rules"
+        component="com_jem"
+        section="venue"
+    />
+
     <fieldset name="capacity_configuration"
         label="COM_JEM_VENUE_CAPACITY_CONFIGURATION"
     >

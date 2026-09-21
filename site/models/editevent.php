@@ -405,6 +405,8 @@ class JemModelEditevent extends JemModelEvent
         $where = array();
         $where[] = 'l.published = 1';
         $where[] = 'l.access IN (' . implode(',', $levels) . ')';
+        $venueIds = JemVenueAccess::getAuthorisedIds(JemFactory::getUser(), true);
+        $where[] = 'l.id IN (' . (implode(',', $venueIds) ?: '0') . ')';
         $parentVenueId = $app->input->getInt('parent_venue_id', 0);
         if ($parentVenueId > 0) {
             $where[] = '(l.id = ' . $parentVenueId . ' OR l.parent_venue_id = ' . $parentVenueId . ')';

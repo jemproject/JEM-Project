@@ -14,6 +14,8 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\String\StringHelper;
 
+require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
+
 /**
  * Venueelement-Model
  */
@@ -120,6 +122,8 @@ class JemModelVenueelement extends BaseDatabaseModel
         // where
         $where = array();
         $where[] = 'l.published = 1';
+        $venueIds = JemVenueAccess::getAuthorisedIds(JemFactory::getUser(), true);
+        $where[] = 'l.id IN (' . (implode(',', $venueIds) ?: '0') . ')';
         $parentVenueId = $app->input->getInt('parent_venue_id', 0);
         if ($parentVenueId > 0) {
             $where[] = '(l.id = ' . $parentVenueId . ' OR l.parent_venue_id = ' . $parentVenueId . ')';

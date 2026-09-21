@@ -20,9 +20,9 @@ final class AuthorizationGuardTest extends TestCase
     public function testAdminDeleteControllersCheckTheResourceOrToolPermission(): void
     {
         $files = array(
-            'admin/controllers/categories.php' => 'core.delete',
+            'admin/controllers/categories.php' => "canCategory('delete'",
             'admin/controllers/groups.php' => 'core.delete',
-            'admin/controllers/types.php' => 'core.delete',
+            'admin/controllers/types.php' => "can('type', 'delete')",
             'admin/controllers/venues.php' => "JemHelperBackend::can('venue', 'delete')",
             'admin/controllers/imagehandler.php' => "canManage('jem.tools.manage')",
             'admin/controllers/housekeeping.php' => "canManage('jem.tools.manage')",
@@ -40,7 +40,8 @@ final class AuthorizationGuardTest extends TestCase
         $contracts = array(
             'admin/models/event.php' => array("JemHelperBackend::can('event', 'delete'", "JemHelperBackend::can('event', 'edit.state'", "JemHelperBackend::can('event', 'edit.created'"),
             'admin/models/venue.php' => array("JemHelperBackend::can('venue', 'delete'", "JemHelperBackend::can('venue', 'edit.state'", "JemHelperBackend::can('venue', 'edit.created'"),
-            'admin/models/category.php' => array("authorise('core.delete'", "authorise('core.edit.state'"),
+            'admin/models/category.php' => array("canCategory('delete'", "canCategory('edit.state'"),
+            'admin/models/type.php' => array("can('type', 'delete'", "can('type', 'edit.state'"),
         );
 
         foreach ($contracts as $file => $needles) {

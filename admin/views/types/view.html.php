@@ -23,6 +23,10 @@ class JemViewTypes extends JemAdminView
 
     public function display($tpl = null)
     {
+        if (!JemHelperBackend::can('type', 'access')) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $this->items      = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state      = $this->get('State');
@@ -63,18 +67,17 @@ class JemViewTypes extends JemAdminView
         ToolbarHelper::title(Text::_('COM_JEM_TYPES'), 'tag');
         $toolbar = Toolbar::getInstance('toolbar');
 
-        $canDo = JemHelperBackend::getActions(0);
-        $canChangeState = $canDo->get('core.edit.state') || $canDo->get('core.admin');
-        $canDelete = $canDo->get('core.delete');
+        $canChangeState = JemHelperBackend::can('type', 'edit.state');
+        $canDelete = JemHelperBackend::can('type', 'delete');
         $filterState = $this->state->get('filter_state');
 
         /* create */
-        if (($canDo->get('core.create'))) {
+        if (JemHelperBackend::can('type', 'create')) {
             ToolbarHelper::addNew('type.add');
         }
 
         /* edit */
-        if (($canDo->get('core.edit'))) {
+        if (JemHelperBackend::can('type', 'edit')) {
             ToolbarHelper::editList('type.edit');
             ToolbarHelper::divider();
         }

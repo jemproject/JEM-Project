@@ -25,6 +25,7 @@ $wa->useScript('keepalive')
             ->useScript('form.validate');
 
 $typeField = $this->form->getField('type_id');
+$canEditPermissions = JemFactory::getUser()->authorise('core.admin', 'com_jem');
 ?>
 
 <script>
@@ -111,6 +112,14 @@ $typeField = $this->form->getField('type_id');
             <?php if ($this->featurePolicy->isAdvanced()) : ?>
                 <?php echo HTMLHelper::_('uitab.addTab', 'categoryTab', 'custom-fields', Text::_('COM_JEM_CATEGORY_CUSTOM_FIELDS')); ?>
                 <?php echo $this->loadTemplate('customfields'); ?>
+                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php endif; ?>
+            <?php if ($canEditPermissions && $this->form->getField('rules')) : ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'categoryTab', 'permissions', Text::_('COM_JEM_CATEGORY_PERMISSIONS')); ?>
+                <fieldset class="options-form jem-category-permissions">
+                    <legend><?php echo Text::_('COM_JEM_CATEGORY_PERMISSIONS'); ?></legend>
+                    <?php echo $this->form->renderField('rules'); ?>
+                </fieldset>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
             <?php echo HTMLHelper::_('uitab.endTabSet'); ?>

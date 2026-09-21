@@ -66,6 +66,12 @@ class JemHelperBackend
         $user = JemFactory::getUser();
         $owner = is_object($record) && isset($record->created_by) ? (int) $record->created_by : null;
 
+        if ($type === 'event'
+            && is_object($record)
+            && in_array($operation, array('create', 'delete', 'edit', 'edit.state'), true)) {
+            return self::canEventCategories($operation, self::getEventCategoryIds($record), $record);
+        }
+
         return JemBackendAclPolicy::allows(
             $type,
             $operation,
@@ -75,6 +81,199 @@ class JemHelperBackend
                 return $user->authorise($action, self::$extension);
             }
         );
+    }
+
+    /**
+     * Check an Event operation in every applicable category.
+     */
+    public static function canEventCategories($operation, array $categoryIds, $record = null)
+    {
+        $user = JemFactory::getUser();
+        $owner = is_object($record) && isset($record->created_by) ? (int) $record->created_by : null;
+
+        return JemBackendAclPolicy::allowsEventCategories(
+            $operation,
+            $categoryIds,
+            $owner,
+            (int) $user->id,
+            static function ($action, $asset) use ($user) {
+                return $user->authorise($action, $asset);
+            }
+        );
+    }
+
+    /**
+     * Whether the current user can create an Event in at least one category.
+     */
+    public static function canCreateEvent(array $categoryIds = array())
+    {
+        if ($categoryIds) {
+            return self::canEventCategories('create', $categoryIds);
+        }
+
+        if (self::can('event', 'create')) {
+            return true;
+        }
+
+        return self::can('event', 'access')
+            && count(self::getAuthorisedJemCategoryIds('jem.events.create', true)) > 0;
+    }
+
+    /**
+     * Whether an Event action is available at component or category level.
+     *
+     * This method is intended for list toolbars only. Record mutations must
+     * still call can() with the stored Event so every category is evaluated.
+     */
+    public static function canManageAnyEvent($operation)
+    {
+        if (self::can('event', $operation)) {
+            return true;
+        }
+
+        if (!self::can('event', 'access')) {
+            return false;
+        }
+
+        $action = self::getResourceAction('event', $operation);
+
+        if ($action === null) {
+            return false;
+        }
+
+        if (count(self::getAuthorisedJemCategoryIds($action)) > 0) {
+            return true;
+        }
+
+        return $operation === 'edit'
+            && count(self::getAuthorisedJemCategoryIds('jem.events.edit.own')) > 0;
+    }
+
+    /**
+     * Return JEM category ids on which the current user may perform an action.
+     *
+     * Joomla's User::getAuthorisedCategories() reads #__categories and cannot
+     * be used because JEM stores its hierarchy in #__jem_categories.
+     */
+    public static function getAuthorisedJemCategoryIds($action, $publishedOnly = false)
+    {
+        $allowedActions = array(
+            'core.create',
+            'core.delete',
+            'core.edit',
+            'core.edit.state',
+            'core.edit.own',
+            'jem.events.create',
+            'jem.events.delete',
+            'jem.events.edit',
+            'jem.events.edit.state',
+            'jem.events.edit.own',
+        );
+
+        if (!in_array($action, $allowedActions, true)) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__jem_categories'))
+            ->where($db->quoteName('id') . ' > 1');
+
+        if ($publishedOnly) {
+            $query->where($db->quoteName('published') . ' = 1');
+        }
+
+        $db->setQuery($query);
+        $user = JemFactory::getUser();
+        $allowed = array();
+
+        foreach ((array) $db->loadColumn() as $categoryId) {
+            $categoryId = (int) $categoryId;
+
+            if ($user->authorise($action, self::$extension . '.category.' . $categoryId)) {
+                $allowed[] = $categoryId;
+            }
+        }
+
+        return $allowed;
+    }
+
+    /**
+     * Category-management decision using Joomla's category assets.
+     */
+    public static function canCategory($operation, $record = null, $parentId = 1)
+    {
+        $user = JemFactory::getUser();
+
+        if ($user->authorise('core.admin', self::$extension)) {
+            return true;
+        }
+
+        if (!$user->authorise('jem.categories.access', self::$extension)) {
+            return false;
+        }
+
+        $categoryId = is_object($record) ? (int) ($record->id ?? 0) : 0;
+        $owner = is_object($record) ? (int) ($record->created_user_id ?? 0) : 0;
+        $parentId = is_object($record) && !empty($record->parent_id)
+            ? (int) $record->parent_id
+            : (int) $parentId;
+
+        if ($operation === 'create') {
+            $asset = $parentId > 1 ? self::$extension . '.category.' . $parentId : self::$extension;
+
+            return $user->authorise('core.create', $asset);
+        }
+
+        if ($categoryId < 1) {
+            return false;
+        }
+
+        $asset = self::$extension . '.category.' . $categoryId;
+
+        if ($operation === 'edit') {
+            return $user->authorise('core.edit', $asset)
+                || ($owner > 0 && $owner === (int) $user->id && $user->authorise('core.edit.own', $asset));
+        }
+
+        $actions = array(
+            'delete'     => 'core.delete',
+            'edit.state' => 'core.edit.state',
+        );
+
+        return isset($actions[$operation]) && $user->authorise($actions[$operation], $asset);
+    }
+
+    /**
+     * Load stored Event category ids, preferring an already-loaded property.
+     */
+    private static function getEventCategoryIds($record)
+    {
+        if (isset($record->cats)) {
+            return array_values(array_unique(array_filter(array_map('intval', (array) $record->cats))));
+        }
+
+        if (isset($record->categories)) {
+            return array_values(array_unique(array_filter(array_map(static function ($category) {
+                return is_object($category) ? (int) ($category->id ?? 0) : (int) $category;
+            }, (array) $record->categories))));
+        }
+
+        $eventId = (int) ($record->id ?? 0);
+
+        if ($eventId < 1) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('catid'))
+            ->from($db->quoteName('#__jem_cats_event_relations'))
+            ->where($db->quoteName('itemid') . ' = ' . $eventId);
+        $db->setQuery($query);
+
+        return array_values(array_unique(array_filter(array_map('intval', (array) $db->loadColumn()))));
     }
 
     /**
@@ -99,6 +298,7 @@ class JemHelperBackend
             'jem.notifications.history',
             'jem.notifications.resend',
             'jem.tools.manage',
+            'jem.categories.access',
             'core.options',
         );
 
@@ -188,11 +388,13 @@ class JemHelperBackend
             );
         }
 
-        JemSidebarHelper::addEntry(
-            Text::_('COM_JEM_CATEGORIES'),
-            'index.php?option=com_jem&view=categories',
-            $vName == 'categories'
-        );
+        if (self::canManage('jem.categories.access')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_CATEGORIES'),
+                'index.php?option=com_jem&view=categories',
+                $vName == 'categories'
+            );
+        }
 
         JemSidebarHelper::addEntry(
             Text::_('COM_JEM_GROUPS'),
@@ -206,11 +408,13 @@ class JemHelperBackend
             $vName == 'attachments'
         );
 
-        JemSidebarHelper::addEntry(
-            Text::_('COM_JEM_TYPES'),
-            'index.php?option=com_jem&view=types',
-            $vName == 'types'
-        );
+        if (self::can('type', 'access')) {
+            JemSidebarHelper::addEntry(
+                Text::_('COM_JEM_TYPES'),
+                'index.php?option=com_jem&view=types',
+                $vName == 'types'
+            );
+        }
 
         JemSidebarHelper::addEntry(
             Text::_('COM_JEM_SPECIAL_DAYS'),

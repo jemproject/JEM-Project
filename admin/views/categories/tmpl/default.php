@@ -18,7 +18,8 @@ $user = JemFactory::getUser();
 $userId = $user->get('id');
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn = $this->escape($this->state->get('list.direction'));
-$canOrder = $user->authorise('core.edit.state', 'com_jem.category');
+$canOrder = $user->authorise('core.admin', 'com_jem')
+    || $user->authorise('core.edit.state', 'com_jem');
 $saveOrder = $canOrder && $listOrder == 'a.lft' && strtolower($listDirn) === 'asc';
 $saveOrderingUrl = Route::_('index.php?option=com_jem&task=categories.saveOrderAjax&tmpl=component', false);
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
@@ -161,12 +162,12 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
 
             foreach ($this->items as $i => $item) :
                 $ordering   = ($listOrder == 'a.lft');
-                $canCreate  = $user->authorise('core.create');
+                $canCreate  = JemHelperBackend::canCategory('create', null, (int) $item->id);
                 $orderkey   = array_search($item->id, $this->ordering[$item->parent_id]);
-                $canEdit    = $user->authorise('core.edit');
+                $canEdit    = JemHelperBackend::canCategory('edit', $item);
                 $canCheckin = $user->authorise('core.manage', 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-                $canEditOwn = $user->authorise('core.edit.own') && $item->created_user_id == $userId;
-                $canChange  = $user->authorise('core.edit.state') && $canCheckin;
+                $canEditOwn = $canEdit;
+                $canChange  = JemHelperBackend::canCategory('edit.state', $item) && $canCheckin;
                 $grouplink  = 'index.php?option=com_jem&amp;task=group.edit&amp;id=' . $item->groupid;
 
                 if ($item->level > 0) {
@@ -197,6 +198,14 @@ $renderEventStateCounts = static function ($counts, $categoryId) use ($eventStat
                                 <?php echo $this->escape($item->catname); ?></a>
                         <?php else : ?>
                             <?php echo $this->escape($item->catname); ?>
+                        <?php endif; ?>
+                        <?php if ($canCreate) : ?>
+                            <a class="btn btn-sm btn-outline-secondary ms-2"
+                               href="<?php echo Route::_('index.php?option=com_jem&task=category.add&parent_id=' . (int) $item->id); ?>"
+                               title="<?php echo $this->escape(Text::_('COM_JEM_CATEGORY_ADD_CHILD')); ?>">
+                                <span class="icon-plus" aria-hidden="true"></span>
+                                <span class="visually-hidden"><?php echo Text::_('COM_JEM_CATEGORY_ADD_CHILD'); ?></span>
+                            </a>
                         <?php endif; ?>
                         <p class="smallsub" title="<?php echo $this->escape($item->path); ?>">
                             <?php echo str_repeat('<span class="gtr">|&mdash;</span>', $repeat) ?>

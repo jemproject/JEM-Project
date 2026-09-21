@@ -214,6 +214,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_event_prices` (
 
 CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `id` int(11) unsigned NOT NULL auto_increment,
+    `asset_id` int(10) unsigned NOT NULL DEFAULT '0',
     `venue` varchar(100) NOT NULL DEFAULT '',
     `alias` varchar(100) NOT NULL DEFAULT '',
     `color` varchar(7) NOT NULL DEFAULT '',
@@ -268,6 +269,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `parent_venue_id` int(11) unsigned NULL DEFAULT NULL,
     `venue_tree_order` int(11) unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
+    KEY `idx_asset_id` (`asset_id`),
     KEY `idx_access` (`access`),
     KEY `idx_checkout` (`checked_out`),
     KEY `idx_pubstate` (`published`),
@@ -411,6 +413,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_areas` (
 
 CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+    `asset_id` int(10) unsigned NOT NULL DEFAULT '0',
     `parent_id` int(11) unsigned NOT NULL DEFAULT '0',
     `catname` varchar(100) NOT NULL DEFAULT '',
     `alias` varchar(100) NOT NULL DEFAULT '',
@@ -447,6 +450,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_categories` (
     `event_image_default_storage` varchar(20) NOT NULL DEFAULT 'shared_root',
     `custom_fields` mediumtext DEFAULT NULL,
     PRIMARY KEY (`id`),
+    KEY `idx_asset_id` (`asset_id`),
     KEY `idx_article_category` (`article_category_id`),
     KEY `idx_parent` (`parent_id`),
     KEY `idx_type` (`type_id`)

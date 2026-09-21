@@ -332,16 +332,53 @@ class JemControllerEvent extends JemControllerForm
         }
 
         $recordId = $this->getFrontendRecordId();
+        $item = null;
+        $storedCategories = array();
 
         if ($recordId > 0) {
             $item = $this->getFrontendItemOrFail($recordId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
             $this->assertFrontendCanEdit('event', $item);
+            $data = Factory::getApplication()->input->post->get('jform', array(), 'array');
+            $submittedCategories = array_values(array_unique(array_filter(array_map('intval', (array) ($data['cats'] ?? array())))));
+            $storedCategories = array_values(array_unique(array_filter(array_map('intval', (array) ($item->cats ?? array())))));
+            $addedCategories = array_values(array_diff($submittedCategories, $storedCategories));
+
+            if ($addedCategories) {
+                JemFrontendAccess::enforce(JemFrontendAccess::decideAdd(JemFactory::getUser(), 'event', $addedCategories));
+            }
+
+            if (!$submittedCategories && $storedCategories) {
+                JemFrontendAccess::enforce(JemFrontendAccess::decideAdd(JemFactory::getUser(), 'event'));
+            }
         } else {
             $data = Factory::getApplication()->input->post->get('jform', array(), 'array');
             $categories = !empty($data['cats'])
                 ? (array) $data['cats']
                 : array_filter(array(Factory::getApplication()->input->getInt('catid', 0)));
             $this->assertFrontendCanAdd('event', $categories);
+            $submittedCategories = array_values(array_unique(array_filter(array_map('intval', $categories))));
+        }
+
+        $user = JemFactory::getUser();
+        $canPublish = $user->can(
+            'publish',
+            'event',
+            $recordId,
+            $item ? (int) ($item->created_by ?? 0) : (int) $user->id,
+            $submittedCategories
+        );
+        $categoriesChanged = $recordId > 0
+            && (array_values(array_diff($storedCategories, $submittedCategories)) !== array()
+                || array_values(array_diff($submittedCategories, $storedCategories)) !== array());
+
+        if ($recordId > 0 && $item && (int) ($item->published ?? 0) !== 0
+            && $categoriesChanged && !$canPublish) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        if (!$canPublish) {
+            $data['published'] = $recordId > 0 && $item ? (int) ($item->published ?? 0) : 0;
+            Factory::getApplication()->input->post->set('jform', $data);
         }
 
         $result = parent::save($key, $urlVar);

@@ -21,13 +21,14 @@ abstract class JemFrontendCategoryAccess
             return false;
         }
 
-        if ($user->authorise('core.admin', 'com_jem') || $user->authorise('core.create', 'com_jem')) {
+        if ($user->authorise('core.admin', 'com_jem')) {
             return true;
         }
 
         $parentId = (int) $parentId;
+        $asset = $parentId > 1 ? 'com_jem.category.' . $parentId : 'com_jem';
 
-        return $parentId > 1 && $user->authorise('core.create', 'com_jem.category.' . $parentId);
+        return $user->authorise('core.create', $asset);
     }
 
     /**
@@ -43,14 +44,12 @@ abstract class JemFrontendCategoryAccess
         $asset = 'com_jem.category.' . $categoryId;
 
         if ($user->authorise('core.admin', 'com_jem')
-            || $user->authorise('core.edit', $asset)
-            || $user->authorise('core.edit', 'com_jem')) {
+            || $user->authorise('core.edit', $asset)) {
             return self::canView($user, $category);
         }
 
         $isOwner = (int) ($category->created_user_id ?? 0) === (int) $user->id;
-        $canEditOwn = $user->authorise('core.edit.own', $asset)
-            || $user->authorise('core.edit.own', 'com_jem');
+        $canEditOwn = $user->authorise('core.edit.own', $asset);
 
         return $isOwner && $canEditOwn && self::canView($user, $category);
     }
@@ -64,8 +63,7 @@ abstract class JemFrontendCategoryAccess
             return false;
         }
 
-        if ($user->authorise('core.admin', 'com_jem')
-            || $user->authorise('core.edit.state', 'com_jem')) {
+        if ($user->authorise('core.admin', 'com_jem')) {
             return true;
         }
 
@@ -73,8 +71,10 @@ abstract class JemFrontendCategoryAccess
             return $user->authorise('core.edit.state', 'com_jem.category.' . (int) $category->id);
         }
 
-        return (int) $parentId > 1
-            && $user->authorise('core.edit.state', 'com_jem.category.' . (int) $parentId);
+        $parentId = (int) $parentId;
+        $asset = $parentId > 1 ? 'com_jem.category.' . $parentId : 'com_jem';
+
+        return $user->authorise('core.edit.state', $asset);
     }
 
     /**

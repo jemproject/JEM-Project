@@ -60,8 +60,9 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
         self::assertStringContainsString('JemFrontendCategoryAccess::canEdit', $controller);
         self::assertStringContainsString("if (\$viewName === 'editcategory')", $display);
         self::assertStringContainsString("checkEditId('com_jem.edit.category'", $display);
-        self::assertStringContainsString("authorise('core.create', 'com_jem')", $policy);
-        self::assertStringContainsString("authorise('core.edit.own', 'com_jem')", $policy);
+        self::assertStringContainsString("'com_jem.category.' . \$parentId", $policy);
+        self::assertStringContainsString("authorise('core.edit.own', \$asset)", $policy);
+        self::assertStringNotContainsString("|| \$user->authorise('core.edit', 'com_jem')", $policy);
         self::assertStringContainsString('created_user_id', $policy);
         self::assertStringContainsString('getAuthorisedViewLevels', $policy);
     }

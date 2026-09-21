@@ -32,7 +32,7 @@ class JemViewEvent extends JemAdminView
 
         $isNew = empty($this->item->id);
         $allowed = $isNew
-            ? JemHelperBackend::can('event', 'create')
+            ? JemHelperBackend::canCreateEvent()
             : JemHelperBackend::can('event', 'edit', $this->item);
 
         if (!$allowed) {
@@ -99,7 +99,7 @@ class JemViewEvent extends JemAdminView
         $isNew        = ($this->item->id == 0);
         $checkedOut   = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
         $canEdit      = !$isNew && JemHelperBackend::can('event', 'edit', $this->item);
-        $canCreate    = JemHelperBackend::can('event', 'create');
+        $canCreate    = JemHelperBackend::canCreateEvent();
         $canSave      = !$checkedOut && (($isNew && $canCreate) || $canEdit);
         $canSave2New  = !$checkedOut && $canCreate;
         $canSave2Copy = !$checkedOut && !$isNew && $canEdit && $canCreate;

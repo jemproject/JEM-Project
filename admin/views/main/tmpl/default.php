@@ -13,9 +13,13 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
 $canAccessEvents = JemHelperBackend::can('event', 'access');
-$canCreateEvents = JemHelperBackend::can('event', 'create');
+$canCreateEvents = JemHelperBackend::canCreateEvent();
 $canAccessVenues = JemHelperBackend::can('venue', 'access');
 $canCreateVenues = JemHelperBackend::can('venue', 'create');
+$canAccessCategories = JemHelperBackend::canManage('jem.categories.access');
+$canCreateCategories = JemHelperBackend::canCategory('create');
+$canAccessTypes = JemHelperBackend::can('type', 'access');
+$canCreateTypes = JemHelperBackend::can('type', 'create');
 $canManageTools = JemHelperBackend::canManage('jem.tools.manage');
 $canViewRegistrationHistory = JemHelperBackend::canManage('jem.registrations.history');
 $canManageNotificationTemplates = JemHelperBackend::canManage('jem.notifications.templates');
@@ -70,9 +74,15 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                     $this->quickiconButton($link, 'icon-48-venues.svg', Text::_('COM_JEM_VENUES'), 0, $addLink, Text::_('COM_JEM_ADD_VENUE'));
                 }
 
-                $this->quickiconButton('index.php?option=com_jem&amp;view=categories', 'icon-48-categories.svg', Text::_('COM_JEM_CATEGORIES'), 0, 'index.php?option=com_jem&amp;task=category.add', Text::_('COM_JEM_ADD_CATEGORY'));
+                if ($canAccessCategories) {
+                    $addLink = $canCreateCategories ? 'index.php?option=com_jem&amp;task=category.add' : null;
+                    $this->quickiconButton('index.php?option=com_jem&amp;view=categories', 'icon-48-categories.svg', Text::_('COM_JEM_CATEGORIES'), 0, $addLink, Text::_('COM_JEM_ADD_CATEGORY'));
+                }
                 $this->quickiconButton('index.php?option=com_jem&amp;view=groups', 'icon-48-groups.svg', Text::_('COM_JEM_GROUPS'), 0, 'index.php?option=com_jem&amp;task=group.add', Text::_('COM_JEM_GROUP_ADD'));
-                $this->quickiconButton('index.php?option=com_jem&amp;view=types', 'icon-48-types.svg', Text::_('COM_JEM_TYPES'), 0, 'index.php?option=com_jem&amp;task=type.add', Text::_('COM_JEM_ADD_TYPE'));
+                if ($canAccessTypes) {
+                    $addLink = $canCreateTypes ? 'index.php?option=com_jem&amp;task=type.add' : null;
+                    $this->quickiconButton('index.php?option=com_jem&amp;view=types', 'icon-48-types.svg', Text::_('COM_JEM_TYPES'), 0, $addLink, Text::_('COM_JEM_ADD_TYPE'));
+                }
                 $this->quickiconButton('index.php?option=com_jem&amp;view=specialdays', 'icon-48-specialdays.svg', Text::_('COM_JEM_SPECIAL_DAYS'), 0, 'index.php?option=com_jem&amp;task=specialday.add', Text::_('COM_JEM_ADD_SPECIAL_DAYS'));
                 $this->quickiconButton('index.php?option=com_jem&amp;view=attachments', 'icon-48-attachments.svg', Text::_('COM_JEM_ATTACHMENTS'));
 

@@ -14,6 +14,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 use Joomla\Utilities\ArrayHelper;
+require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
 /**
  * Field: Venueoptions
  */
@@ -123,6 +124,8 @@ class JFormFieldVenueoptions extends ListField
 
         $query->select('l.id AS value, l.venue AS text, l.published');
         $query->from('#__jem_venues AS l');
+        $venueIds = JemVenueAccess::getAuthorisedIds(JemFactory::getUser(), false);
+        $query->where('l.id IN (' . (implode(',', $venueIds) ?: '0') . ')');
 
         // Filter on the published state
         if (is_numeric($published))

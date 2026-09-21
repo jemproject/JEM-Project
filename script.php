@@ -328,6 +328,8 @@ class com_jemInstallerScript
             $this->repair510PricingSchema();
             $this->repair510MediaSchema();
             $this->repair510CategoryCustomFieldsSchema();
+            $this->repair510CategoryAclSchema();
+            $this->repair510VenueAclSchema();
             $this->repair510ImageProfileSettings();
             $this->repair510OperatingProfile($type);
             $this->installCountryCurrencyCatalogue();
@@ -1927,6 +1929,12 @@ SQL;
             'jem.venues.edit.state'   => 'core.edit.state',
             'jem.venues.edit.own'     => 'core.edit.own',
             'jem.venues.edit.created' => 'core.edit',
+            'jem.categories.access'   => 'core.manage',
+            'jem.types.access'        => 'core.manage',
+            'jem.types.create'        => 'core.create',
+            'jem.types.delete'        => 'core.delete',
+            'jem.types.edit'          => 'core.edit',
+            'jem.types.edit.state'    => 'core.edit.state',
             'jem.attendees.manage'  => 'core.edit',
             'jem.registrations.history' => 'core.edit',
             'jem.notifications.templates' => 'core.edit',
@@ -2191,6 +2199,43 @@ SQL;
             . ' ADD COLUMN ' . $db->quoteName('custom_fields')
             . ' MEDIUMTEXT NULL DEFAULT NULL AFTER ' . $db->quoteName('event_image_default_storage')
         )->execute();
+    }
+
+    /**
+     * Ensure JEM categories have Joomla assets before category rules are used.
+     *
+     * Earlier 5.1 prereleases did not include asset_id. The repair is additive,
+     * preserves existing rules and is also safe for clean installations.
+     */
+    private function repair510CategoryAclSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        require_once __DIR__ . '/admin/classes/categoryasset.class.php';
+        JemCategoryAsset::ensureSchema($db);
+
+        foreach (JemCategoryAsset::repair($db) as $categoryId) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_CATEGORY_ASSET_FAILED', $categoryId),
+                'warning'
+            );
+        }
+    }
+
+    /**
+     * Ensure JEM venues have individual Joomla assets before venue-use rules are evaluated.
+     */
+    private function repair510VenueAclSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        require_once __DIR__ . '/admin/classes/venueasset.class.php';
+        JemVenueAsset::ensureSchema($db);
+
+        foreach (JemVenueAsset::repair($db) as $venueId) {
+            Factory::getApplication()->enqueueMessage(
+                Text::sprintf('COM_JEM_INSTALL_VENUE_ASSET_FAILED', $venueId),
+                'warning'
+            );
+        }
     }
 
     /**

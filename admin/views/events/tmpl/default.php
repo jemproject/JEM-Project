@@ -22,7 +22,7 @@ $user        = JemFactory::getUser();
 $userId        = $user->get('id');
 $listOrder    = $this->escape($this->state->get('list.ordering'));
 $listDirn    = $this->escape($this->state->get('list.direction'));
-$canOrder    = JemHelperBackend::can('event', 'edit.state');
+$canOrder    = JemHelperBackend::canManageAnyEvent('edit.state');
 $saveOrder    = $listOrder=='a.ordering';
 
 $params        = (isset($this->state->params)) ? $this->state->params : new Registry();
@@ -103,7 +103,7 @@ $ticketAvailabilityOptions = array(
                     }
 
                     $ordering    = ($listOrder == 'ordering');
-                    $canCreate    = JemHelperBackend::can('event', 'create');
+                    $canCreate    = JemHelperBackend::canCreateEvent();
                     $canEdit      = JemHelperBackend::can('event', 'edit', $row);
                     $venueRecord  = (object) array('created_by' => (int) ($row->venue_created_by ?? 0));
                     $canEditVenue = !empty($row->locid) && JemHelperBackend::can('venue', 'edit', $venueRecord);
@@ -291,7 +291,7 @@ $ticketAvailabilityOptions = array(
                 <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>
             </div>
 
-            <?php if (JemHelperBackend::can('event', 'edit') || $user->authorise('jem.events.edit.own', 'com_jem')) : ?>
+            <?php if (JemHelperBackend::canManageAnyEvent('edit')) : ?>
                 <template id="joomla-dialog-batch"><?php echo $this->loadTemplate('batch_body'); ?></template>
             <?php endif; ?>
     </div>

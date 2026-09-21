@@ -12,4 +12,14 @@ require_once JPATH_COMPONENT_SITE . '/classes/controller.form.class.php';
 class JemControllerType extends JemControllerForm
 {
     protected $text_prefix = 'COM_JEM_TYPE';
+
+    protected function allowAdd($data = array())
+    {
+        return JemHelperBackend::can('type', 'create');
+    }
+
+    protected function allowEdit($data = array(), $key = 'id')
+    {
+        return !empty($data[$key]) && JemHelperBackend::can('type', 'edit');
+    }
 }

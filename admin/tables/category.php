@@ -244,6 +244,54 @@ class JemTableCategory extends Nested
     }
 
     /**
+     * Return the Joomla asset name used by JEM category permissions.
+     */
+    protected function _getAssetName()
+    {
+        return 'com_jem.category.' . (int) $this->id;
+    }
+
+    /**
+     * Return a human-readable asset title.
+     */
+    protected function _getAssetTitle()
+    {
+        return (string) $this->catname;
+    }
+
+    /**
+     * Place category assets below their parent category or the JEM component.
+     */
+    protected function _getAssetParentId(?Table $table = null, $id = null)
+    {
+        $db = $this->getDatabase();
+
+        if ((int) $this->parent_id > 1) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('asset_id'))
+                ->from($db->quoteName('#__jem_categories'))
+                ->where($db->quoteName('id') . ' = ' . (int) $this->parent_id);
+            $db->setQuery($query);
+            $parentAssetId = (int) $db->loadResult();
+
+            if ($parentAssetId > 0) {
+                return $parentAssetId;
+            }
+        }
+
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__assets'))
+            ->where($db->quoteName('name') . ' = ' . $db->quote('com_jem'));
+        $db->setQuery($query);
+        $componentAssetId = (int) $db->loadResult();
+
+        return $componentAssetId > 0
+            ? $componentAssetId
+            : parent::_getAssetParentId($table, $id);
+    }
+
+    /**
      * Enforce category image requirements for direct list-view publication.
      */
     public function publish($pks = null, $state = 1, $userId = 0)

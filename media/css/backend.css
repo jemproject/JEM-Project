@@ -4800,6 +4800,14 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     width: fit-content !important;
 }
 
+.jem-category-permissions select:not([multiple]) {
+    padding-inline-end: calc(2.25rem + 10px);
+}
+
+.jem-venue-permissions select:not([multiple]) {
+    padding-inline-end: calc(2.25rem + 10px);
+}
+
 @media (max-width: 767.98px) {
     #event-form select:not([multiple]),
     #venue-form select:not([multiple]),

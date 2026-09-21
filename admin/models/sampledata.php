@@ -116,6 +116,9 @@ class JemModelSampledata extends BaseDatabaseModel
             }
 
             $this->_db->transactionCommit();
+            $transactionStarted = false;
+            $this->repairCategoryAssets();
+            $this->repairVenueAssets();
 
             return true;
         } catch (\Throwable $error) {
@@ -161,6 +164,76 @@ class JemModelSampledata extends BaseDatabaseModel
         $this->ensureLinksSchema();
         $this->ensureTimezoneSchema();
         $this->ensureCustomSeriesSchema();
+        $this->ensureCategoryAclSchema();
+        $this->ensureVenueAclSchema();
+    }
+
+    /**
+     * Ensure Sample Data can assign Joomla ACL assets to its JEM categories.
+     */
+    private function ensureCategoryAclSchema()
+    {
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/categoryasset.class.php';
+        JemCategoryAsset::ensureSchema($this->_db);
+    }
+
+    private function ensureVenueAclSchema()
+    {
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/venueasset.class.php';
+        JemVenueAsset::ensureSchema($this->_db);
+    }
+
+    /**
+     * Create the category assets only after the Sample Data transaction commits.
+     * Joomla's nested asset writer uses table locks which must not split the
+     * rollback boundary of the SQL and filesystem import.
+     */
+    private function repairCategoryAssets()
+    {
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/categoryasset.class.php';
+
+        try {
+            foreach (JemCategoryAsset::repair($this->_db) as $categoryId) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_SAMPLEDATA_CATEGORY_ASSET_FAILED', $categoryId),
+                    'warning'
+                );
+            }
+        } catch (\Throwable $error) {
+            JemHelper::addLogEntry(
+                'Unable to repair Sample Data category assets: ' . $error->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_SAMPLEDATA_CATEGORY_ASSETS_FAILED'),
+                'warning'
+            );
+        }
+    }
+
+    private function repairVenueAssets()
+    {
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/venueasset.class.php';
+
+        try {
+            foreach (JemVenueAsset::repair($this->_db) as $venueId) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::sprintf('COM_JEM_SAMPLEDATA_VENUE_ASSET_FAILED', $venueId),
+                    'warning'
+                );
+            }
+        } catch (\Throwable $error) {
+            JemHelper::addLogEntry(
+                'Unable to repair Sample Data venue assets: ' . $error->getMessage(),
+                __METHOD__,
+                Log::ERROR
+            );
+            Factory::getApplication()->enqueueMessage(
+                Text::_('COM_JEM_SAMPLEDATA_VENUE_ASSETS_FAILED'),
+                'warning'
+            );
+        }
     }
 
     private function ensureCustomSeriesSchema()

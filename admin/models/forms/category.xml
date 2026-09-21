@@ -124,8 +124,7 @@
 
     <field name="rules" type="rules"
         id="rules"
-        label="JFIELD_RULES_LABEL"
-        translate_label="false"
+        label="COM_JEM_CATEGORY_PERMISSIONS"
         filter="rules"
         validate="rules"
         class="inputbox"

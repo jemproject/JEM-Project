@@ -189,6 +189,10 @@ class JemViewEvents extends JemAdminView
         $options = array(HTMLHelper::_('select.option', '', Text::_('COM_JEM_EVENTS_MOVE_CATEGORY_SELECT')));
 
         foreach ($categories as $category) {
+            if (!JemHelperBackend::canEventCategories('create', array((int) $category->id))) {
+                continue;
+            }
+
             $options[] = HTMLHelper::_('select.option', (int) $category->id, str_repeat('- ', max(0, (int) $category->level - 1)) . $category->catname);
         }
 
@@ -200,11 +204,15 @@ class JemViewEvents extends JemAdminView
      */
     protected function getVenueMoveOptions()
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
+
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $venueIds = JemVenueAccess::getAuthorisedIds(JemFactory::getUser(), true);
         $query = $db->getQuery(true)
             ->select($db->quoteName(array('id', 'venue', 'city')))
             ->from($db->quoteName('#__jem_venues'))
             ->where($db->quoteName('published') . ' = 1')
+            ->where($db->quoteName('id') . ' IN (' . (implode(',', $venueIds) ?: '0') . ')')
             ->order($db->quoteName('venue') . ' ASC');
 
         $db->setQuery($query);
@@ -242,11 +250,10 @@ class JemViewEvents extends JemAdminView
 
         /* retrieving the allowed actions for the user */
         $canDo = JemHelperBackend::getActions(0);
-        $canCreate = JemHelperBackend::can('event', 'create');
-        $canEdit = JemHelperBackend::can('event', 'edit')
-            || ($canDo->get('jem.events.access') && $canDo->get('jem.events.edit.own'));
-        $canChangeState = JemHelperBackend::can('event', 'edit.state');
-        $canDelete = JemHelperBackend::can('event', 'delete');
+        $canCreate = JemHelperBackend::canCreateEvent();
+        $canEdit = JemHelperBackend::canManageAnyEvent('edit');
+        $canChangeState = JemHelperBackend::canManageAnyEvent('edit.state');
+        $canDelete = JemHelperBackend::canManageAnyEvent('delete');
         $showActionDropdown = $canChangeState;
 
         /* create */

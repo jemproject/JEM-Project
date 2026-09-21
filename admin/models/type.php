@@ -18,9 +18,14 @@ class JemModelType extends JemModelAdmin
     protected function canDelete($record)
     {
         if (!empty($record->id)) {
-            return JemFactory::getUser()->authorise('core.delete', 'com_jem');
+            return JemHelperBackend::can('type', 'delete');
         }
         return false;
+    }
+
+    protected function canEditState($record)
+    {
+        return !empty($record->id) && JemHelperBackend::can('type', 'edit.state');
     }
 
     public function getTable($name = 'jem_types', $prefix = '', $options = array())

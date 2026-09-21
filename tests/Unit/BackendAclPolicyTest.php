@@ -51,6 +51,9 @@ final class BackendAclPolicyTest extends TestCase
         yield 'core.manage on com_users does not grant author changes' => array('event', 'edit.created', array('jem.events.access', 'core.manage'), null, 7, false);
         yield 'venue delete is independent from event delete' => array('venue', 'delete', array('jem.venues.access', 'jem.events.delete'), null, 7, false);
         yield 'venue delete with venue permission' => array('venue', 'delete', array('jem.venues.access', 'jem.venues.delete'), null, 7, true);
+        yield 'type access is independent' => array('type', 'access', array('jem.types.access'), null, 7, true);
+        yield 'type create requires type access' => array('type', 'create', array('jem.types.create'), null, 7, false);
+        yield 'type state permission is independent' => array('type', 'edit.state', array('jem.types.access', 'jem.types.edit.state'), null, 7, true);
         yield 'unknown resources are denied' => array('category', 'edit', array('core.admin'), null, 7, false);
     }
 
@@ -60,6 +63,82 @@ final class BackendAclPolicyTest extends TestCase
         self::assertSame('jem.venues.edit.state', JemBackendAclPolicy::getAction('venue', 'edit.state'));
         self::assertSame('jem.events.edit.created', JemBackendAclPolicy::getAction('event', 'edit.created'));
         self::assertSame('jem.venues.edit.created', JemBackendAclPolicy::getAction('venue', 'edit.created'));
+        self::assertSame('jem.types.delete', JemBackendAclPolicy::getAction('type', 'delete'));
         self::assertNull(JemBackendAclPolicy::getAction('event', 'unknown'));
+    }
+
+    #[DataProvider('eventCategoryPermissionCombinations')]
+    public function testEventCategoryPermissionCombinations(
+        string $operation,
+        array $categories,
+        array $grants,
+        ?int $owner,
+        int $userId,
+        bool $expected
+    ): void {
+        $authorise = static function (string $action, string $asset) use ($grants): bool {
+            return in_array($action . '@' . $asset, $grants, true);
+        };
+
+        self::assertSame(
+            $expected,
+            JemBackendAclPolicy::allowsEventCategories(
+                $operation,
+                $categories,
+                $owner,
+                $userId,
+                $authorise
+            )
+        );
+    }
+
+    public static function eventCategoryPermissionCombinations(): iterable
+    {
+        $access = 'jem.events.access@com_jem';
+
+        yield 'component admin bypasses category checks' => array(
+            'delete', array(4, 7), array('core.admin@com_jem'), null, 9, true,
+        );
+        yield 'category actions still require event manager access' => array(
+            'edit', array(4), array('jem.events.edit@com_jem.category.4'), null, 9, false,
+        );
+        yield 'single category allow' => array(
+            'create', array(4), array($access, 'jem.events.create@com_jem.category.4'), null, 9, true,
+        );
+        yield 'every category must allow' => array(
+            'edit.state',
+            array(4, 7),
+            array($access, 'jem.events.edit.state@com_jem.category.4'),
+            null,
+            9,
+            false,
+        );
+        yield 'all categories allow' => array(
+            'delete',
+            array(4, 7),
+            array($access, 'jem.events.delete@com_jem.category.4', 'jem.events.delete@com_jem.category.7'),
+            null,
+            9,
+            true,
+        );
+        yield 'edit own requires stored owner and every category' => array(
+            'edit',
+            array(4, 7),
+            array($access, 'jem.events.edit.own@com_jem.category.4', 'jem.events.edit.own@com_jem.category.7'),
+            9,
+            9,
+            true,
+        );
+        yield 'edit own rejects submitted or different owner' => array(
+            'edit',
+            array(4),
+            array($access, 'jem.events.edit.own@com_jem.category.4'),
+            8,
+            9,
+            false,
+        );
+        yield 'categoryless events use component action' => array(
+            'create', array(), array($access, 'jem.events.create@com_jem'), null, 9, true,
+        );
     }
 }

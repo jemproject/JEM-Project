@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Rules;
 use Joomla\CMS\Table\Table;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
@@ -62,8 +63,36 @@ class JemTableVenue extends Table
             $array['metadata'] = (string) $registry;
         }
 
+        if (isset($array['rules']) && is_array($array['rules'])) {
+            $this->setRules(new Rules($array['rules']));
+        }
+
         //don't override without calling base class
         return parent::bind($array, $ignore);
+    }
+
+    protected function _getAssetName()
+    {
+        return 'com_jem.venue.' . (int) $this->id;
+    }
+
+    protected function _getAssetTitle()
+    {
+        return (string) $this->venue;
+    }
+
+    protected function _getAssetParentId(?Table $table = null, $id = null)
+    {
+        $db = $this->getDatabase();
+        $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('id'))
+                ->from($db->quoteName('#__assets'))
+                ->where($db->quoteName('name') . ' = ' . $db->quote('com_jem'))
+        );
+        $componentAssetId = (int) $db->loadResult();
+
+        return $componentAssetId > 0 ? $componentAssetId : parent::_getAssetParentId($table, $id);
     }
 
     /**

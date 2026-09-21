@@ -228,6 +228,10 @@ class JemModelVenue extends JemModelAdmin
      */
     public function validate($form, $data, $group = null)
     {
+        if (!Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem')) {
+            unset($data['rules']);
+        }
+
         $capacityProfileRequired = !empty($data['capacity_configuration_submitted'])
             && JemFeaturePolicy::current()->allows(JemFeaturePolicy::FEATURE_VENUE_CAPACITY);
 

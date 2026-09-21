@@ -27,9 +27,7 @@ class JemControllerTypes extends AdminController
         JemHelper::requirePostToken();
 
         $app = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.edit.state', 'com_jem') && !$user->authorise('core.admin', 'com_jem')) {
+        if (!JemHelperBackend::can('type', 'edit.state')) {
             echo '0';
             $app->close();
         }
@@ -68,9 +66,7 @@ class JemControllerTypes extends AdminController
         Session::checkToken() or jexit(Text::_('COM_JEM_GLOBAL_INVALID_TOKEN'));
 
         $app  = Factory::getApplication();
-        $user = $app->getIdentity();
-
-        if (!$user->authorise('core.delete', 'com_jem')) {
+        if (!JemHelperBackend::can('type', 'delete')) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 

@@ -16,8 +16,8 @@ use Joomla\CMS\Layout\LayoutHelper;
 $user      = JemFactory::getUser();
 $listOrder = $this->escape($this->state->get('list.ordering'));
 $listDirn  = $this->escape($this->state->get('list.direction'));
-$canEdit   = $user->authorise('core.edit', 'com_jem');
-$canEditState = $user->authorise('core.edit.state', 'com_jem');
+$canEdit   = JemHelperBackend::can('type', 'edit');
+$canEditState = JemHelperBackend::can('type', 'edit.state');
 $activeEntityFilter = (int) $this->state->get('filter_entity');
 $saveOrder = $canEditState
     && $activeEntityFilter > 0

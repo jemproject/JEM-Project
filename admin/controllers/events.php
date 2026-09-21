@@ -55,15 +55,19 @@ class JemControllerEvents extends AdminController
         $task   = $this->getTask();
         $value  = ArrayHelper::getValue($values, $task, 0, 'int');
 
-        if (!JemHelperBackend::can('event', 'edit.state')) {
-            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
-        }
-
         if (empty($ids)) {
             Factory::getApplication()->enqueueMessage(Text::_('JERROR_NO_ITEMS_SELECTED'), 'warning');
         } else {
             // Get the model.
             $model = $this->getModel();
+
+            foreach ($ids as $id) {
+                $record = $model->getItem((int) $id);
+
+                if (!is_object($record) || !JemHelperBackend::can('event', 'edit.state', $record)) {
+                    throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+                }
+            }
 
             // Publish the items.
             if (!$model->featured($ids, $value)) {
@@ -87,13 +91,19 @@ class JemControllerEvents extends AdminController
         $ids = array_values(array_filter($ids));
         $batch = $app->input->get('batch', array(), 'array');
 
+        if (!empty($batch['category_id'])
+            && !JemHelperBackend::canEventCategories('create', array((int) $batch['category_id']))) {
+            throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $model = $this->getModel();
-        $globAuth = JemHelperBackend::can('event', 'edit');
 
         foreach ($ids as $i => $id) {
             $record = $model->getItem((int) $id);
 
-            if (!$globAuth && (!is_object($record) || !JemHelperBackend::can('event', 'edit', $record))) {
+            // Always evaluate the stored categories. A component-level Allow
+            // may be overridden by an explicit Deny on one category.
+            if (!is_object($record) || !JemHelperBackend::can('event', 'edit', $record)) {
                 unset($ids[$i]);
                 $app->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_EDIT_NOT_PERMITTED'), 'notice');
             }
