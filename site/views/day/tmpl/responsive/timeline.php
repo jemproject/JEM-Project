@@ -1209,8 +1209,36 @@ unset($dayData);
     }
 
     @media (max-width: 720px) {
-        .jem-day-timeline-row {
-            grid-template-columns: 6.5rem 2rem minmax(0, 1fr);
+        #jem .jem-day-timeline-navigation {
+            flex-wrap: wrap;
+            gap: .35rem;
+        }
+
+        #jem .jem-day-timeline-navigation .jem-calendar-nav-title {
+            flex: 1 0 100%;
+            order: -1;
+            white-space: normal;
+        }
+
+        #jem .jem-day-timeline-window-form {
+            min-width: 0;
+        }
+
+        #jem .jem-day-timeline-window-select {
+            max-width: 6.5rem;
+        }
+
+        .jem-day-timeline-list,
+        .jem-day-timeline-day-label,
+        .jem-day-timeline-day-empty {
+            width: 100%;
+        }
+
+        .jem-day-timeline-row,
+        .jem-day-timeline-right .jem-day-timeline-row,
+        .jem-day-timeline-left .jem-day-timeline-row,
+        .jem-day-timeline-alternate .jem-day-timeline-row {
+            grid-template-columns: 4rem 1.5rem minmax(0, 1fr);
         }
 
         .jem-day-timeline-row::before {
@@ -1221,14 +1249,14 @@ unset($dayData);
         .jem-day-timeline-right .jem-day-timeline-list::before,
         .jem-day-timeline-left .jem-day-timeline-list::before,
         .jem-day-timeline-alternate .jem-day-timeline-list::before {
-            left: 7.5rem;
+            left: 4.75rem;
         }
 
         .jem-day-timeline-grid::after,
         .jem-day-timeline-right .jem-day-timeline-grid::after,
         .jem-day-timeline-left .jem-day-timeline-grid::after,
         .jem-day-timeline-alternate .jem-day-timeline-grid::after {
-            left: 7.5rem;
+            left: 4.75rem;
         }
 
         .jem-day-timeline-left .jem-day-timeline-time,
@@ -1236,7 +1264,24 @@ unset($dayData);
         .jem-day-timeline-alternate .jem-day-timeline-row .jem-day-timeline-time {
             grid-column: 1;
             margin-left: 0;
+            margin-right: .35rem;
+            font-size: .9rem;
             text-align: right;
+        }
+
+        .jem-day-timeline-left .jem-day-timeline-card,
+        .jem-day-timeline-right .jem-day-timeline-card,
+        .jem-day-timeline-alternate .jem-day-timeline-row .jem-day-timeline-card {
+            margin-left: .25rem;
+            margin-bottom: .9rem;
+            min-width: 0;
+            overflow-wrap: anywhere;
+            padding: .65rem .7rem;
+        }
+
+        .jem-day-timeline-card h3,
+        .jem-day-timeline-detail-title .jem-day-timeline-detail-value {
+            font-size: 1.15rem;
         }
 
         .jem-day-timeline-left .jem-day-timeline-card,
@@ -1266,6 +1311,13 @@ unset($dayData);
         .jem-day-timeline-right .jem-day-timeline-card .jem-day-timeline-meta,
         .jem-day-timeline-alternate .jem-day-timeline-side-right .jem-day-timeline-card .jem-day-timeline-meta {
             justify-content: var(--jem-timeline-right-meta-justify, flex-start);
+        }
+
+        .jem-day-timeline-meta-item,
+        .jem-day-timeline-category-badge,
+        .jem-day-timeline-type-badge {
+            max-width: 100%;
+            white-space: normal;
         }
 
         .jem-day-timeline-left .jem-day-timeline-card .jem-day-timeline-content,
