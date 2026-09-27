@@ -689,6 +689,12 @@ class JemModelEvent extends JemModelAdmin
         if (!$this->validateOnlineMeetingData($data)) {
             return false;
         }
+
+        if (isset($data['event_links']) && !$this->validateLinkData($data['event_links'])) {
+            $this->setError(Text::_('COM_JEM_EVENT_ERROR_VALIDATE_LINKS'));
+
+            return false;
+        }
         $createArticleMode = isset($data['create_article']) ? (int) $data['create_article'] : 0;
         $articleTargetCategoryId = isset($data['article_target_category_id']) ? (int) $data['article_target_category_id'] : 0;
         unset($data['create_article']);
@@ -1065,27 +1071,19 @@ class JemModelEvent extends JemModelAdmin
                     }
                 }
 
-                // check for recurrence
-                // when filled it will perform the cleanup function
-                $table->load($pk);
-                if (($table->recurrence_number > 0) && ($table->dates != null)) {
-                    JemHelper::cleanup(2); // 2 = force on save, needs special attention
-                }
-
                 // Store links event
-                if (isset($data['event_links']))
-                {
-                    if (!$this->validateLinkData($data['event_links']))
-                    {
-                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_VALIDATE_LINKS'));
-                        return false;
-                    }
-
-                    if (!$this->saveLinks($pk, $data['event_links']))
-                    {
+                if (isset($data['event_links'])) {
+                    if (!$this->saveLinks($pk, $data['event_links'])) {
                         $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
                         return false;
                     }
+                }
+
+                // Generate recurrences only after the root links have been stored,
+                // so every new occurrence can copy the current link set.
+                $table->load($pk);
+                if (($table->recurrence_number > 0) && ($table->dates != null)) {
+                    JemHelper::cleanup(2); // 2 = force on save, needs special attention
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
@@ -1139,6 +1137,12 @@ class JemModelEvent extends JemModelAdmin
                 $saved = parent::save($event);
 
                 if ($saved){
+                    if (isset($data['event_links']) && !$this->saveLinks((int) $event['id'], $data['event_links'])) {
+                        $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+
+                        return false;
+                    }
+
                     foreach ($diff as $d => $value) {
                         // update only the fields that were changed
                         if (in_array($d, $fieldAllow)) {
@@ -1425,6 +1429,9 @@ class JemModelEvent extends JemModelAdmin
                 if (!$this->_storeCategoriesSelected((int) $copy->id, $categories, !$backend, true)) {
                     throw new RuntimeException($this->getError());
                 }
+                if (!JemHelper::copyEventLinks($rootEventId, (int) $copy->id)) {
+                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+                }
             }
 
             if ($manageTransaction) {
@@ -1510,6 +1517,9 @@ class JemModelEvent extends JemModelAdmin
                 if (!$eventId && !$this->_storeCategoriesSelected((int) $event->id, $categories, !$backend, true)) {
                     throw new RuntimeException($this->getError());
                 }
+                if (!$eventId && !JemHelper::copyEventLinks($sourceEventId, (int) $event->id)) {
+                    throw new RuntimeException(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+                }
             }
             if ($manageTransaction) {
                 $db->transactionCommit();
@@ -1563,6 +1573,11 @@ class JemModelEvent extends JemModelAdmin
                 return false;
             }
             if (!$this->_storeCategoriesSelected($eventId, $categories, !$backend, false)) {
+                return false;
+            }
+            if (isset($data['event_links']) && !$this->saveLinks($eventId, $data['event_links'])) {
+                $this->setError(Text::_('COM_JEM_EVENT_ERROR_SAVE_LINKS'));
+
                 return false;
             }
         }

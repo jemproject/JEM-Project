@@ -2425,6 +2425,43 @@ class JemHelper
     }
 
     /**
+     * Copy the complete link set to a newly created event occurrence.
+     *
+     * Link ids are deliberately excluded so each occurrence owns independent
+     * rows while retaining the source ordering, presentation and audit data.
+     *
+     * @param   int  $sourceEventId  Source event id.
+     * @param   int  $targetEventId  Newly created target event id.
+     *
+     * @return  bool
+     */
+    static public function copyEventLinks($sourceEventId, $targetEventId)
+    {
+        $sourceEventId = (int) $sourceEventId;
+        $targetEventId = (int) $targetEventId;
+
+        if ($sourceEventId <= 0 || $targetEventId <= 0 || $sourceEventId === $targetEventId) {
+            return false;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $columns = array(
+            'event_id', 'type', 'title', 'description', 'url', 'params', 'ordering',
+            'state', 'created', 'created_by', 'modified', 'modified_by'
+        );
+        $sourceColumns = array_slice($columns, 1);
+        $query = 'INSERT INTO ' . $db->quoteName('#__jem_links')
+            . ' (' . implode(', ', $db->quoteName($columns)) . ')'
+            . ' SELECT ' . $targetEventId . ', ' . implode(', ', $db->quoteName($sourceColumns))
+            . ' FROM ' . $db->quoteName('#__jem_links')
+            . ' WHERE ' . $db->quoteName('event_id') . ' = ' . $sourceEventId;
+
+        $db->setQuery($query);
+
+        return $db->execute();
+    }
+
+    /**
      * Performs daily scheduled cleanups
      *
      * Currently it archives and removes outdated events
@@ -2582,6 +2619,10 @@ class JemHelper
                                     $safeTitle = htmlspecialchars($ref_event->title, ENT_QUOTES, 'UTF-8');
                                     echo 'Error saving categories for event "' . $safeTitle . '" new recurrences' . "\n";
                                 }
+                            }
+
+                            if (!self::copyEventLinks((int) $ref_event->id, (int) $new_event->id)) {
+                                throw new RuntimeException('Error saving links for new recurrence');
                             }
                         }
 
