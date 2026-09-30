@@ -19,6 +19,9 @@ final class EventFormControlAlignmentTest extends TestCase
         $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
 
         self::assertStringContainsString('.jem-time-select {', $css, $fileName);
+        self::assertStringContainsString('min-width: 5rem;', $css, $fileName);
+        self::assertStringContainsString('padding-inline-end: calc(2.25rem + 10px);', $css, $fileName);
+        self::assertStringContainsString('#event-form select:not([multiple]):not(.select-time)', $css, $fileName);
         self::assertStringContainsString('#event-form joomla-field-fancy-select .choices__item', $css, $fileName);
         self::assertStringNotContainsString("\ndiv.controls {", $css, $fileName);
         self::assertStringContainsString('div.item-image div.controls {', $css, $fileName);

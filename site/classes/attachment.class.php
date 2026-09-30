@@ -30,6 +30,16 @@ require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 class JemAttachment
 {
     /**
+     * Return the configured attachment base directory.
+     */
+    static protected function getAttachmentBasePath()
+    {
+        $jemsettings = JemHelper::config();
+
+        return Path::clean(JPATH_SITE.'/'.$jemsettings->attachments_path);
+    }
+
+    /**
      * Attachment identifiers are stored as type + numeric id, e.g. event12 or venue7.
      */
     static protected function isValidObject($object)
@@ -46,8 +56,7 @@ class JemAttachment
             return false;
         }
 
-        $jemsettings = JemHelper::config();
-        $basePath = Path::clean(JPATH_SITE.'/'.$jemsettings->attachments_path);
+        $basePath = self::getAttachmentBasePath();
         $path = Path::clean($basePath.'/'.$object.'/'.$file);
         $baseCheck = rtrim(strtolower($basePath), '\\/') . DIRECTORY_SEPARATOR;
 
@@ -213,6 +222,19 @@ class JemAttachment
         }
 
         if (!(is_array($post_files) && count($post_files))) {
+            return false;
+        }
+
+        require_once JPATH_SITE.'/components/com_jem/classes/attachmentprotection.class.php';
+
+        if (!JemAttachmentProtection::protect(self::getAttachmentBasePath())) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ERROR_ATTACHMENT_PROTECTION_FAILED'), 'error');
+            JemLog::warning(
+                'JEM-W-ATTACH-PROTECT',
+                'Attachment upload stopped because direct-access protection could not be installed',
+                array('object' => $object, 'user_id' => (int) $user->id)
+            );
+
             return false;
         }
 

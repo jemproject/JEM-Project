@@ -24,7 +24,6 @@ if (!is_array($selectedAssignmentIds)) {
     $selectedAssignmentIds = array();
 }
 $allocationMode = (string) ($this->item->venue_allocation_mode ?? 'none');
-$existingCommerce = in_array((string) ($this->item->pricing_mode ?? 'classic'), array('priced', 'single', 'multiple'), true);
 $canOverrideConflict = Factory::getApplication()->getIdentity()->authorise('core.admin', 'com_jem');
 ?>
 
@@ -36,12 +35,6 @@ $canOverrideConflict = Factory::getApplication()->getIdentity()->authorise('core
             <?php echo $this->form->renderField('capacity_mode'); ?>
         </div>
     </fieldset>
-
-    <?php if ($existingCommerce) : ?>
-        <div class="alert alert-warning"><?php echo Text::_('COM_JEM_EVENT_VENUE_CAPACITY_EXISTING_COMMERCE'); ?></div>
-    <?php else : ?>
-        <div class="alert alert-info"><?php echo Text::_('COM_JEM_EVENT_VENUE_CAPACITY_COMMERCE_DEFERRED'); ?></div>
-    <?php endif; ?>
 
     <div class="jem-event-capacity-details" <?php echo $allocationMode === 'none' ? 'hidden' : ''; ?>>
         <div class="jem-event-pricing-readiness" aria-label="<?php echo htmlspecialchars(Text::_('COM_JEM_EVENT_VENUE_CAPACITY_TAB'), ENT_QUOTES, 'UTF-8'); ?>">

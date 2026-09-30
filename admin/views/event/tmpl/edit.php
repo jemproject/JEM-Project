@@ -654,6 +654,11 @@ $this->document->addStyleDeclaration('
                 <?php echo $this->loadTemplate('capacity'); ?>
                 <?php echo HTMLHelper::_('uitab.endTab'); ?>
             <?php endif; ?>
+            <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PRICING)) : ?>
+                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'pricing', Text::_('COM_JEM_EVENT_PRICING_CAPACITY_TAB')); ?>
+                <?php echo $this->loadTemplate('pricing'); ?>
+                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php endif; ?>
             <?php echo JemCategoryCustomFields::renderJoomlaFormTabs($this->form, 'myTab', 'event-fields', 'event'); ?>
             <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'attachments', Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB')); ?>
             <?php //echo HTMLHelper::_('tabs.panel',Text::_('COM_JEM_EVENT_ATTACHMENTS_TAB'), 'attachments' ); ?>

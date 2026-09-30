@@ -14,22 +14,26 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringContainsString("classes/featurepolicy.class.php", $factory);
         self::assertStringContainsString("PROFILE_ESSENTIAL = 'essential'", $policy);
         self::assertStringContainsString("PROFILE_ADVANCED = 'advanced'", $policy);
+        self::assertStringContainsString("PROFILE_TICKETING = 'ticketing'", $policy);
         self::assertStringContainsString("PROFILE_COMMERCE = 'commerce'", $policy);
         self::assertStringContainsString('SELECTABLE_PROFILES', $policy);
     }
 
-    public function testSettingsExposeTwoEnabledProfilesAndOneDisabledPreview(): void
+    public function testSettingsExposeTwoEnabledProfilesAndTwoDisabledPreviews(): void
     {
         $form = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/forms/settings.xml');
         $layout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/settings/tmpl/default_profile.php');
         $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/settings.php');
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/backend.css');
 
         self::assertStringContainsString('name="operating_profile"', $form);
         self::assertStringContainsString('<option value="essential">', $form);
         self::assertStringContainsString('<option value="advanced">', $form);
+        self::assertStringNotContainsString('<option value="ticketing">', $form);
         self::assertStringNotContainsString('<option value="commerce">', $form);
+        self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_TICKETING', $layout);
         self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_COMMERCE', $layout);
-        self::assertStringContainsString('aria-disabled="true"', $layout);
+        self::assertSame(2, substr_count($layout, 'aria-disabled="true"'));
         self::assertStringContainsString('<fieldset class="options-form jem-operating-profile', $layout);
         self::assertStringContainsString('COM_JEM_OPERATING_PROFILE_DESC', $layout);
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_QUESTION', $layout);
@@ -43,7 +47,12 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_COMING_SOON', $layout);
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_ESSENTIAL_VERSION', $layout);
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_ADVANCED_VERSION', $layout);
+        self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_TICKETING_VERSION', $layout);
         self::assertStringNotContainsString('COM_JEM_OPERATING_PROFILE_COMMERCE_VERSION', $layout);
+        self::assertMatchesRegularExpression(
+            '/\.jem-operating-profile-grid\s*\{[^}]*grid-template-columns:\s*repeat\(4,/s',
+            $css
+        );
         self::assertStringContainsString('normaliseSelectableProfile', $model);
     }
 
@@ -55,6 +64,7 @@ final class OperatingProfileContractsTest extends TestCase
         self::assertStringContainsString("('operating_profile', 'essential')", $install);
         self::assertStringContainsString("('operating_profile_configured', '0')", $install);
         self::assertStringContainsString("VALUES ('operating_profile', 'essential')", $update);
+        self::assertStringNotContainsString("VALUES ('operating_profile', 'ticketing')", $update);
         self::assertStringNotContainsString("VALUES ('operating_profile', 'commerce')", $update);
     }
 

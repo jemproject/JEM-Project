@@ -191,7 +191,7 @@ final class EventPricingCapacityViewTest extends TestCase
         self::assertStringContainsString('@media (max-width: 767.98px)', $css);
     }
 
-    public function testEventEditorExposesNonCommercialVenueCapacityWorkflow(): void
+    public function testEventEditorSeparatesVenueCapacityAndAdvancedPricingWorkflows(): void
     {
         $edit = $this->read('/admin/views/event/tmpl/edit.php');
         $capacity = $this->read('/admin/views/event/tmpl/edit_capacity.php');
@@ -199,7 +199,9 @@ final class EventPricingCapacityViewTest extends TestCase
 
         self::assertStringContainsString("loadTemplate('capacity')", $edit);
         self::assertStringContainsString('COM_JEM_EVENT_VENUE_CAPACITY_TAB', $edit);
-        self::assertStringNotContainsString("loadTemplate('pricing')", $edit);
+        self::assertStringContainsString("loadTemplate('pricing')", $edit);
+        self::assertStringContainsString('JemFeaturePolicy::FEATURE_PRICING', $edit);
+        self::assertStringContainsString('COM_JEM_EVENT_PRICING_CAPACITY_TAB', $edit);
         self::assertStringContainsString('jem-event-pricing-readiness', $capacity);
         self::assertStringContainsString('jem-event-venue-configuration-select', $capacity);
         self::assertStringContainsString('configuration_custom_required', $capacity);

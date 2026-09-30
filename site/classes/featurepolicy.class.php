@@ -17,6 +17,7 @@ final class JemFeaturePolicy
 {
     public const PROFILE_ESSENTIAL = 'essential';
     public const PROFILE_ADVANCED = 'advanced';
+    public const PROFILE_TICKETING = 'ticketing';
     public const PROFILE_COMMERCE = 'commerce';
 
     public const FEATURE_PROGRAMMES = 'programmes';
@@ -43,6 +44,17 @@ final class JemFeaturePolicy
             self::FEATURE_SPACE_SCHEDULING,
             self::FEATURE_CAPACITY_REGISTRATION,
             self::FEATURE_NOTIFICATION_AUTOMATION,
+            self::FEATURE_PRICING,
+        ),
+        self::PROFILE_TICKETING => array(
+            self::FEATURE_PROGRAMMES,
+            self::FEATURE_VENUE_HIERARCHY,
+            self::FEATURE_VENUE_CAPACITY,
+            self::FEATURE_SPACE_SCHEDULING,
+            self::FEATURE_CAPACITY_REGISTRATION,
+            self::FEATURE_NOTIFICATION_AUTOMATION,
+            self::FEATURE_PRICING,
+            self::FEATURE_TICKETING,
         ),
         self::PROFILE_COMMERCE => array(
             self::FEATURE_PROGRAMMES,
@@ -131,7 +143,17 @@ final class JemFeaturePolicy
 
     public function isAdvanced(): bool
     {
-        return $this->profile === self::PROFILE_ADVANCED;
+        return $this->allows(self::FEATURE_PROGRAMMES);
+    }
+
+    public function isTicketing(): bool
+    {
+        return $this->allows(self::FEATURE_TICKETING);
+    }
+
+    public function isCommerce(): bool
+    {
+        return $this->allows(self::FEATURE_PAYMENTS);
     }
 
     public function allows($feature): bool
