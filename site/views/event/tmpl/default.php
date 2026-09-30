@@ -680,7 +680,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                     <?php
                     echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
                     ?>
-                    <?php if (!empty($this->item->times)) : ?>
+                    <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                         <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
                     <?php endif; ?>
                 </div>
@@ -710,7 +710,7 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
                 ?>
             </dd>
-            <?php if (!empty($this->item->times)) : ?>
+            <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                 <dt class="timezone"><?php echo Text::_('COM_JEM_EVENT_TIMEZONE'); ?>:</dt>
                 <dd class="timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></dd>
             <?php endif; ?>

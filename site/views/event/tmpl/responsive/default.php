@@ -597,7 +597,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             <?php
                             echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
                             ?>
-                            <?php if (!empty($this->item->times)) : ?>
+                            <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                                 <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
                             <?php endif; ?>
                         </div>
@@ -630,7 +630,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
               ?>
             </span>
                     </dd>
-                    <?php if (!empty($this->item->times)) : ?>
+                    <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                         <dt class="jem-timezone"><?php echo Text::_('COM_JEM_EVENT_TIMEZONE'); ?>:</dt>
                         <dd class="jem-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></dd>
                     <?php endif; ?>

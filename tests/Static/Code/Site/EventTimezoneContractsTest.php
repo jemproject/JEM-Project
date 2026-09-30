@@ -196,6 +196,56 @@ final class EventTimezoneContractsTest extends TestCase
         }
     }
 
+    public function testEventTimezoneDisplaySupportsGlobalAndPerEventOverrides(): void
+    {
+        $settingsForm = $this->read('/admin/models/forms/settings.xml');
+        self::assertStringContainsString('name="event_show_timezone" type="radio"', $settingsForm);
+        self::assertMatchesRegularExpression(
+            '/name="event_show_timezone" type="radio".*?default="1"/s',
+            $settingsForm
+        );
+
+        foreach (array('/admin/models/forms/event.xml', '/site/models/forms/event.xml') as $path) {
+            $eventForm = $this->read($path);
+            self::assertStringContainsString('name="event_show_timezone" type="list"', $eventForm, $path);
+            self::assertMatchesRegularExpression(
+                '/name="event_show_timezone" type="list".*?<option value="">JGLOBAL_USE_GLOBAL<\/option>.*?<option value="1">JSHOW<\/option>.*?<option value="0">JHIDE<\/option>/s',
+                $eventForm,
+                $path
+            );
+        }
+
+        foreach (array(
+            '/site/views/event/tmpl/default.php',
+            '/site/views/event/tmpl/responsive/default.php',
+        ) as $path) {
+            $template = $this->read($path);
+            self::assertSame(
+                2,
+                substr_count($template, "!empty(\$this->item->times) && ((int) \$params->get('event_show_timezone', 1) === 1)"),
+                $path
+            );
+        }
+
+        foreach (array(
+            '/site/views/editevent/tmpl/edit.php',
+            '/site/views/editevent/tmpl/responsive/edit.php',
+        ) as $path) {
+            self::assertStringContainsString("getInput('event_show_timezone', 'attribs')", $this->read($path), $path);
+        }
+
+        foreach (array('/admin/language/en-GB/com_jem.ini', '/site/language/en-GB/com_jem.ini') as $path) {
+            $language = $this->read($path);
+            self::assertStringContainsString('COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_LABEL=', $language, $path);
+            self::assertStringContainsString('COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_DESC=', $language, $path);
+        }
+
+        self::assertStringContainsString(
+            '"event_details_layout":"details","event_show_timezone":"1"',
+            $this->read('/admin/sql/install.mysql.utf8.sql')
+        );
+    }
+
     private function read(string $relativePath): string
     {
         $path = JEM_TEST_ROOT . $relativePath;
