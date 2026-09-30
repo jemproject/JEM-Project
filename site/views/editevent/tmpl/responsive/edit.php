@@ -866,6 +866,8 @@ $document->addStyleDeclaration('
                     <dd data-jem-advanced-field><?php echo $this->form->getInput('timezone_mode'); ?></dd>
                     <dt data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>
                     <dd data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getInput('timezone'); ?></dd>
+                    <dt data-jem-advanced-field><?php echo $this->form->getLabel('event_show_timezone', 'attribs'); ?></dt>
+                    <dd data-jem-advanced-field><?php echo $this->form->getInput('event_show_timezone', 'attribs'); ?></dd>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

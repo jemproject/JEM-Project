@@ -861,6 +861,7 @@ $document->addStyleDeclaration('
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
                     <li data-jem-advanced-field><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
                     <li data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
+                    <li data-jem-advanced-field><?php echo $this->form->getLabel('event_show_timezone', 'attribs'); ?><?php echo $this->form->getInput('event_show_timezone', 'attribs'); ?></li>
                     <?php if($this->jemsettings->defaultCategory && empty($this->item->id)) {
                         $this->form->setFieldAttribute('cats', 'default', $this->jemsettings->defaultCategory);
                     } ?>

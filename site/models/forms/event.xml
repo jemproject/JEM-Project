@@ -592,6 +592,18 @@
                     filter="cmd"
             />
         </fieldset>
+        <fieldset name="event_display_options">
+            <field name="event_show_timezone" type="list"
+                    label="COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_LABEL"
+                    description="COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_DESC"
+                    class="form-select w-auto jem-options-width-auto"
+                    default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
+        </fieldset>
         <fieldset name="article_content_options">
             <field name="article_usage" type="list"
                     label="COM_JEM_EVENT_ARTICLE_USAGE"

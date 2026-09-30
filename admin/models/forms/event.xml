@@ -653,6 +653,16 @@
                 <option value="details">COM_JEM_EVENT_DETAILS_LAYOUT_DETAILS</option>
                 <option value="compact">COM_JEM_EVENT_DETAILS_LAYOUT_COMPACT</option>
             </field>
+            <field name="event_show_timezone" type="list"
+                label="COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_LABEL"
+                description="COM_JEM_EVENT_FIELD_SHOW_TIMEZONE_DESC"
+                class="inputbox btn-group btn-group-yesno"
+                default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="1">JSHOW</option>
+                <option value="0">JHIDE</option>
+            </field>
             <field name="event_show_venue_name" type="list"
                 label="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_LABEL"
                 description="COM_JEM_EVENT_FIELD_SHOW_VENUE_NAME_DESC"
