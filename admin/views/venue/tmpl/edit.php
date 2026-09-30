@@ -1106,6 +1106,7 @@ Text::script('JCANCEL');
                             <?php else : ?>
                                 <?php echo $this->form->getInput('type_id'); ?>
                             <?php endif; ?>
+                            <li><div class="label-form"><?php echo $this->form->renderField('age_level_id'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
                         </ul>
                         <div class="clr"></div>

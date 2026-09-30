@@ -268,6 +268,7 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
     <h2 class="jem">
         <?php echo $renderVenueHeading(); ?>
         <?php echo JemOutput::editbutton($this->venue, $this->params, null, $this->permissions->canEditVenue, 'venue'); ?>
+        <?php echo JemOutput::ageBadge($this->venue, 'jem-age-badge--inline'); ?>
     </h2>
 
     <div class="jem-venue-overview-panel">

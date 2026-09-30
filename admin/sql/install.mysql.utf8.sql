@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
     `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',
     `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `age_level_id` int(11) unsigned NULL DEFAULT NULL,
     `venue_allocation_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'none',
     `capacity_mode` varchar(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
     `pricing_mode` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'classic',
@@ -106,6 +107,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     KEY `idx_language` (`language`),
     KEY `idx_article` (`article_id`),
     KEY `idx_type` (`type_id`),
+    KEY `idx_age_level` (`age_level_id`),
     KEY `idx_start_utc` (`start_utc`),
     KEY `idx_end_utc` (`end_utc`),
     KEY `idx_series` (`series_id`, `series_order`),
@@ -129,6 +131,28 @@ CREATE TABLE IF NOT EXISTS `#__jem_event_series` (
     KEY `idx_created_by` (`created_by`),
     KEY `idx_published` (`published`)
     ) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `#__jem_age_levels` (
+    `id` int(11) unsigned NOT NULL auto_increment,
+    `title` varchar(100) NOT NULL DEFAULT '',
+    `min_age` tinyint(3) unsigned NOT NULL DEFAULT '0',
+    `badge_background` char(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937',
+    `badge_text` char(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF',
+    `published` tinyint(1) NOT NULL DEFAULT '1',
+    `ordering` int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_age_level_min_age` (`min_age`),
+    KEY `idx_age_level_state_order` (`published`, `ordering`)
+    ) ENGINE=InnoDB;
+
+INSERT IGNORE INTO `#__jem_age_levels`
+    (`id`, `title`, `min_age`, `badge_background`, `badge_text`, `published`, `ordering`)
+VALUES
+    (1, 'All ages', 0, '#247A3D', '#FFFFFF', 1, 1),
+    (2, 'Ages 6 and over', 6, '#2F6F9F', '#FFFFFF', 1, 2),
+    (3, 'Ages 12 and over', 12, '#B78324', '#FFFFFF', 1, 3),
+    (4, 'Ages 16 and over', 16, '#B55B00', '#FFFFFF', 1, 4),
+    (5, 'Adults only', 18, '#B3261E', '#FFFFFF', 1, 5);
 
 CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (
     `id` int(11) unsigned NOT NULL auto_increment,
@@ -266,6 +290,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     `attribs` varchar(5120) DEFAULT NULL,
     `language` char(7) NOT NULL DEFAULT '*',
     `type_id` int(11) unsigned NULL DEFAULT NULL,
+    `age_level_id` int(11) unsigned NULL DEFAULT NULL,
     `parent_venue_id` int(11) unsigned NULL DEFAULT NULL,
     `venue_tree_order` int(11) unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
@@ -276,6 +301,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_venues` (
     KEY `idx_createdby` (`created_by`),
     KEY `idx_language` (`language`),
     KEY `idx_type` (`type_id`),
+    KEY `idx_age_level` (`age_level_id`),
     KEY `idx_parent_venue` (`parent_venue_id`, `venue_tree_order`)
     ) ENGINE=InnoDB;
 

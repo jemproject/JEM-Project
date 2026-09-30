@@ -871,6 +871,7 @@ $document->addStyleDeclaration('
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
+                    <li><?php echo $this->form->getLabel('age_level_id'); ?><?php echo $this->form->getInput('age_level_id'); ?></li>
                     <?php if ($showContactField) : ?>
                         <li><?php echo $this->form->getLabel('contactid'); ?> <?php echo $this->form->getInput('contactid'); ?></li>
                     <?php else : ?>

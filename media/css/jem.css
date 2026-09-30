@@ -4245,3 +4245,38 @@ div#jem .jem-custom-field-group__field-value {
 .jem-image-required-invalid input[type="file"] {
     border-color: #dc3545;
 }
+.jem-age-badge {
+    align-items: center;
+    background: var(--jem-age-badge-bg, #1f2937);
+    border: 2px solid var(--jem-age-badge-color, #fff);
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .28);
+    color: var(--jem-age-badge-color, #fff);
+    display: inline-flex;
+    font-size: .82rem;
+    font-weight: 800;
+    height: 2.5rem;
+    justify-content: center;
+    letter-spacing: -.02em;
+    line-height: 1;
+    min-width: 2.5rem;
+    padding: .25rem;
+    white-space: nowrap;
+    z-index: 4;
+}
+
+.jem-age-badge--inline {
+    margin-inline-start: .45rem;
+    vertical-align: middle;
+}
+
+.jem-event-overview-media,
+.jem-venue-overview-media {
+    position: relative;
+}
+
+.jem-age-badge--overlay {
+    inset-block-start: .55rem;
+    inset-inline-start: .55rem;
+    position: absolute;
+}

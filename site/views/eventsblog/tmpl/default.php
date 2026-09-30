@@ -117,7 +117,17 @@ $periods = array(
                 $category = !empty($row->categories) ? reset($row->categories) : null;
                 $location = implode(', ', array_filter(array($row->venue ?? '', $row->city ?? '')));
                 $hasRegistration = (int) ($row->registra ?? 0) > 0;
-                $canRegister = $hasRegistration && $row->registrationOpen && $row->availabilityState !== 'soldout';
+                $ageAccessState = (string) ($row->age_access_state ?? JemAgeAccess::UNRESTRICTED);
+                $ageRegistrationMessage = $ageAccessState === JemAgeAccess::UNKNOWN
+                    ? 'COM_JEM_AGE_ACCESS_COMPLETE_PROFILE'
+                    : ($ageAccessState === JemAgeAccess::RESTRICTED
+                        ? 'COM_JEM_AGE_ACCESS_REGISTRATION_DENIED'
+                        : '');
+                $ageRegistrationBlocked = $ageRegistrationMessage !== '';
+                $canRegister = $hasRegistration
+                    && $row->registrationOpen
+                    && $row->availabilityState !== 'soldout'
+                    && !$ageRegistrationBlocked;
                 $blogImage = '<img class="jem-eventsblog-image" src="'
                     . htmlspecialchars($row->blogImage, ENT_QUOTES, 'UTF-8')
                     . '" alt="" loading="lazy">';
@@ -128,8 +138,12 @@ $periods = array(
                 <article class="jem-eventsblog-card<?php echo !empty($row->featured) ? ' is-featured' : ''; ?>">
                     <a class="jem-eventsblog-image-link" href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>" tabindex="-1" aria-hidden="true">
                         <?php echo $blogImage; ?>
+                        <?php echo JemOutput::ageBadge($row, 'jem-age-badge--overlay'); ?>
                     </a>
                     <div class="jem-eventsblog-card-body">
+                        <?php if (($row->age_minimum ?? null) !== null) : ?>
+                            <span class="visually-hidden"><?php echo Text::sprintf('COM_JEM_AGE_ACCESS_MINIMUM', (int) $row->age_minimum); ?></span>
+                        <?php endif; ?>
                         <div class="jem-eventsblog-date">
                             <span class="icon-calendar" aria-hidden="true"></span>
                             <?php echo JemOutput::formatShortDateTime($row->dates, $row->times, $row->enddates, $row->endtimes, $this->jemsettings->showtime); ?>
@@ -147,7 +161,7 @@ $periods = array(
                             <?php if ($canRegister) : ?>
                                 <a class="btn btn-primary" href="<?php echo htmlspecialchars($row->eventLink, ENT_QUOTES, 'UTF-8'); ?>"><?php echo Text::_($row->availabilityState === 'waitinglist' ? 'COM_JEM_EVENTSBLOG_JOIN_WAITINGLIST' : 'COM_JEM_REGISTER'); ?></a>
                             <?php else : ?>
-                                <span class="btn btn-secondary disabled" aria-disabled="true"><?php echo Text::_($row->availabilityState === 'soldout' ? 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT' : 'COM_JEM_EVENTSBLOG_REGISTRATION_CLOSED'); ?></span>
+                                <span class="btn btn-secondary disabled" aria-disabled="true"><?php echo Text::_($ageRegistrationBlocked ? $ageRegistrationMessage : ($row->availabilityState === 'soldout' ? 'COM_JEM_EVENT_AVAILABILITY_SOLDOUT' : 'COM_JEM_EVENTSBLOG_REGISTRATION_CLOSED')); ?></span>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>

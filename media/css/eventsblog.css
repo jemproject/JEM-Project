@@ -78,6 +78,13 @@
     display: flex;
     justify-content: center;
     overflow: hidden;
+    position: relative;
+}
+
+.jem-eventsblog-image-link .jem-age-badge--overlay {
+    inset-block-start: .65rem;
+    inset-inline-start: .65rem;
+    position: absolute;
 }
 
 .jem-eventsblog-image-link > .jem-eventsblog-status-image {

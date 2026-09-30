@@ -17,6 +17,7 @@ use Joomla\Filesystem\File;
 use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 /**
  * JEM Event Table
  */
@@ -56,6 +57,9 @@ class JemTableEvent extends Table
 
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
+        }
+        if (array_key_exists('age_level_id', $array)) {
+            $array['age_level_id'] = JemAgeAccess::normaliseLevelId($array['age_level_id']);
         }
         if (array_key_exists('created_by', $array)) {
             // 'created_by' is int(11) unsigned NOT NULL DEFAULT '0'; an empty

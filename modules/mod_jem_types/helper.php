@@ -51,11 +51,13 @@ class ModJemTypesHelper
         $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $parentTypeId . ')';
         $eventTreeCondition = self::eventTreeCondition($params, 'a');
         $eventParentCondition = ' AND ' . JemHelper::getEventParentVisibilityWhere('a', $levels);
+        $ageCondition = JemAgeAccess::sqlVisibilityCondition($db, 'a', 'eal', 'val', $user);
+        $countCondition = 'c.id IS NOT NULL AND (' . $ageCondition . ')';
 
         $query = $db->getQuery(true)
             ->select(array(
                 't.id', 't.name', 't.alias', 't.icon', 't.color', 't.description', 't.base_language', 't.translation_languages', 't.translations',
-                'COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) AS event_count',
+                'COUNT(DISTINCT CASE WHEN ' . $countCondition . ' THEN a.id END) AS event_count',
             ))
             ->from($db->quoteName('#__jem_types', 't'))
             ->join('LEFT',
@@ -82,6 +84,8 @@ class ModJemTypesHelper
                 ' AND ' . $db->quoteName('v.published') . ' = 1' .
                 ' AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')'
             )
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON ' . $db->quoteName('eal.id') . ' = ' . $db->quoteName('a.age_level_id'))
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON ' . $db->quoteName('val.id') . ' = ' . $db->quoteName('v.age_level_id'))
             ->where($db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('t.entity') . ' = 1')
             ->where($db->quoteName('t.access') . ' IN (' . $levelsList . ')')
@@ -94,7 +98,7 @@ class ModJemTypesHelper
         }
 
         if ($params->get('hide_empty', 0)) {
-            $query->having('COUNT(DISTINCT CASE WHEN c.id IS NOT NULL THEN a.id END) > 0');
+            $query->having('COUNT(DISTINCT CASE WHEN ' . $countCondition . ' THEN a.id END) > 0');
         }
 
         $db->setQuery($query);
@@ -123,6 +127,7 @@ class ModJemTypesHelper
         $filterLanguage = Multilanguage::isEnabled();
         $n      = max(1, (int) $params->get('top_n', 3));
         $effectiveTypeId = 'COALESCE(NULLIF(' . $db->quoteName('a.type_id') . ', 0), ' . $db->quoteName('parent.type_id') . ')';
+        $ageCondition = JemAgeAccess::sqlVisibilityCondition($db, 'a', 'eal', 'val', $user);
 
         // Load all active types
         $typeQuery = $db->getQuery(true)
@@ -158,7 +163,11 @@ class ModJemTypesHelper
 
             $eventQuery = $db->getQuery(true)
                 ->select(array(
-                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id',
+                    'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id', 'a.created_by',
+                    'eal.id AS event_age_id', 'eal.title AS event_age_title', 'eal.min_age AS event_age_minimum',
+                    'eal.badge_background AS event_age_background', 'eal.badge_text AS event_age_text',
+                    'val.id AS venue_age_id', 'val.title AS venue_age_title', 'val.min_age AS venue_age_minimum',
+                    'val.badge_background AS venue_age_background', 'val.badge_text AS venue_age_text',
                     '(' . $caseSlug . ') AS slug',
                 ))
                 ->from($db->quoteName('#__jem_events', 'a'))
@@ -166,6 +175,8 @@ class ModJemTypesHelper
                 ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
                 ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('rel.catid'))
                 ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('a.locid'))
+                ->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON ' . $db->quoteName('eal.id') . ' = ' . $db->quoteName('a.age_level_id'))
+                ->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON ' . $db->quoteName('val.id') . ' = ' . $db->quoteName('v.age_level_id'))
                 ->where($effectiveTypeId . ' = ' . (int) $type->id)
                 ->where(JemHelper::getEventPublicationWhere('a'))
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
@@ -175,7 +186,10 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where(JemHelper::getVenueHierarchyVisibilityWhere('a', $levels))
-                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
+                ->where($ageCondition)
+                ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.created_by, '
+                    . 'eal.id, eal.title, eal.min_age, eal.badge_background, eal.badge_text, '
+                    . 'val.id, val.title, val.min_age, val.badge_background, val.badge_text')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
 
@@ -186,6 +200,12 @@ class ModJemTypesHelper
 
             $db->setQuery($eventQuery);
             $events = $db->loadObjectList();
+            $events = array_values(array_filter($events ?: array(), static function ($event) use ($user) {
+                $canEdit = $user->can('edit', 'event', (int) $event->id, (int) $event->created_by);
+                JemAgeAccess::decorateEvent($event, $user, $canEdit);
+
+                return JemAgeAccess::canViewEvent($event);
+            }));
             JemHelper::applyAssociatedArticleEventContentToEvents($events, $levels);
 
             $associatedArticles = JemHelper::getAssociatedArticles($events, $levels);

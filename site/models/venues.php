@@ -91,10 +91,13 @@ class JemModelVenues extends JemModelEventslist
                              'l.map', 'l.latitude', 'l.longitude', 'l.published', 'l.access',
                              'l.parent_venue_id', 'tree_parent.venue AS parent_venue_name',
                              'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',
-                             'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time'));
+                             'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time',
+                             'val.id AS venue_age_id', 'val.title AS venue_age_title', 'val.min_age AS venue_age_minimum',
+                             'val.badge_background AS venue_age_background', 'val.badge_text AS venue_age_text'));
         $query->select(array($case_when_l));
         $query->from('#__jem_venues as l');
         $query->join('LEFT', '#__jem_venues AS tree_parent ON tree_parent.id = l.parent_venue_id');
+        $query->join('LEFT', '#__jem_age_levels AS val ON val.id = l.age_level_id');
         $query->join('LEFT', '#__jem_events AS a ON l.id = a.locid');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
         $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
@@ -184,6 +187,10 @@ class JemModelVenues extends JemModelEventslist
                 return false;
             }
 
+            foreach ($items as $item) {
+                JemAgeAccess::decorateVenue($item);
+            }
+
             // Add the items to the internal cache.
             $this->cache[$store] = $items;
         }
@@ -201,6 +208,8 @@ class JemModelVenues extends JemModelEventslist
         $query->select(array('a.id'));
         $query->from('#__jem_events as a');
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+        $query->join('LEFT', '#__jem_age_levels AS eal ON eal.id = a.age_level_id');
+        $query->join('LEFT', '#__jem_age_levels AS val ON val.id = l.age_level_id');
         $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
         $query->join('LEFT', '#__jem_categories AS c ON c.id = rel.catid');
 
@@ -208,6 +217,7 @@ class JemModelVenues extends JemModelEventslist
         $query->where('l.id= '. $db->quote($id));
         # view access level
         $query->where('a.access IN (' . implode(',', $levels) . ')');
+        $query->where(JemAgeAccess::sqlVisibilityCondition($db, 'a', 'eal', 'val', $user));
         // Note: categories are filtered in getCategories() called below
         //       so we don't need to check c.access here
 

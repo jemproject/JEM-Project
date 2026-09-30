@@ -20,11 +20,14 @@ use Joomla\Utilities\ArrayHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 /**
  * JEM Venue Table
  */
 class JemTableVenue extends Table
 {
+    protected $ageLevelSubmitted = false;
+
     public function __construct(&$db)
     {
         parent::__construct('#__jem_venues', 'id', $db);
@@ -43,6 +46,12 @@ class JemTableVenue extends Table
 
         if (array_key_exists('type_id', $array) && $array['type_id'] === '') {
             $array['type_id'] = null;
+        }
+
+        $this->ageLevelSubmitted = array_key_exists('age_level_id', $array);
+
+        if ($this->ageLevelSubmitted) {
+            $array['age_level_id'] = JemAgeAccess::normaliseLevelId($array['age_level_id']);
         }
 
         if (array_key_exists('created_by', $array)) {
@@ -439,6 +448,17 @@ class JemTableVenue extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        if ($ret && $this->ageLevelSubmitted) {
+            $db = $this->getDatabase();
+            $ageLevel = $this->age_level_id === null
+                ? 'NULL'
+                : (string) (int) $this->age_level_id;
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__jem_venues'))
+                ->set($db->quoteName('age_level_id') . ' = ' . $ageLevel)
+                ->where($db->quoteName('id') . ' = ' . (int) $this->id);
+            $db->setQuery($query)->execute();
+        }
         if (!$ret) {
             foreach ($uploadedImage as $uploadedPath) {
                 if (File::exists($uploadedPath)) {

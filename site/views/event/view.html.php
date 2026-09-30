@@ -313,7 +313,15 @@ class JemViewEvent extends JemView
         $this->dateUnregistationUntil = JemHelper::getEventUnregistrationDeadline($item);
         $this->registrationWindowState   = JemHelper::getEventRegistrationWindowState($item, $timeNow);
         $this->unregistrationWindowState = JemHelper::getEventUnregistrationWindowState($item, $timeNow);
-        $this->allowRegistration         = $this->registrationWindowState === 'open';
+        $ageAccessState = (string) ($item->age_access_state ?? JemAgeAccess::UNRESTRICTED);
+        $this->ageRegistrationMessage = '';
+        if ($userId > 0 && $ageAccessState === JemAgeAccess::UNKNOWN) {
+            $this->ageRegistrationMessage = 'COM_JEM_AGE_ACCESS_DATE_OF_BIRTH_REQUIRED';
+        } elseif ($userId > 0 && $ageAccessState === JemAgeAccess::RESTRICTED) {
+            $this->ageRegistrationMessage = 'COM_JEM_AGE_ACCESS_REGISTRATION_DENIED';
+        }
+        $this->allowRegistration = $this->registrationWindowState === 'open'
+            && $this->ageRegistrationMessage === '';
         $this->allowAnnulation           = $this->unregistrationWindowState === 'open';
 
         // Timecheck for registration
@@ -327,6 +335,8 @@ class JemViewEvent extends JemView
         $formhandler = 0; // too late to unregister
         $hasActiveRegistration = is_object($registration) && in_array((int) $registration->status, array(1, 2), true);
         $this->showRegistrationAction = $this->allowRegistration || $hasActiveRegistration;
+        $this->showRegistrationAction = $this->showRegistrationAction
+            || $this->ageRegistrationMessage !== '';
 
         if (is_object($registration)){
             if($registration->status != 0) { // is the user already registered at the event

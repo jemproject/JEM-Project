@@ -16,6 +16,7 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Registry\Registry;
+use Joomla\String\StringHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
@@ -141,6 +142,29 @@ class JemModelSettings extends AdminModel
         }
 
         return $groups;
+    }
+
+    /**
+     * Return configurable JEM age classifications.
+     *
+     * @return array
+     */
+    public function getAgeLevels()
+    {
+        try {
+            $db = Factory::getContainer()->get(DatabaseDriver::class);
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array(
+                    'id', 'title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering',
+                )))
+                ->from($db->quoteName('#__jem_age_levels'))
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('min_age') . ' ASC');
+            $db->setQuery($query);
+
+            return $db->loadObjectList() ?: array();
+        } catch (Throwable $error) {
+            return array();
+        }
     }
 
     /**
@@ -502,6 +526,10 @@ class JemModelSettings extends AdminModel
             return false;
         }
 
+        if (!$this->storeAgeLevels()) {
+            return false;
+        }
+
         //
         // Old table - deprecated, maybe already removed
         //
@@ -736,6 +764,174 @@ class JemModelSettings extends AdminModel
             }
         } catch (Exception $e) {
             $this->setError($e->getMessage());
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Persist the classifications posted by the Age access settings tab.
+     */
+    protected function storeAgeLevels(): bool
+    {
+        $input = Factory::getApplication()->input;
+
+        if (!$input->exists('jem_age_levels')) {
+            return true;
+        }
+
+        $rows = json_decode((string) $input->get('jem_age_levels', '', 'raw'), true);
+        if (!is_array($rows) || count($rows) > 100) {
+            $this->setError(Text::_('COM_JEM_AGE_LEVELS_INVALID'));
+
+            return false;
+        }
+
+        $normalised = array();
+        $minimumAges = array();
+        $titles = array();
+        $levelIds = array();
+
+        foreach ($rows as $index => $row) {
+            if (!is_array($row)) {
+                $this->setError(Text::_('COM_JEM_AGE_LEVELS_INVALID'));
+
+                return false;
+            }
+
+            $title = trim(strip_tags((string) ($row['title'] ?? '')));
+            $minimum = filter_var($row['min_age'] ?? null, FILTER_VALIDATE_INT, array(
+                'options' => array('min_range' => 0, 'max_range' => 120),
+            ));
+            $background = strtoupper(trim((string) ($row['badge_background'] ?? '')));
+            $text = strtoupper(trim((string) ($row['badge_text'] ?? '')));
+            $id = max(0, (int) ($row['id'] ?? 0));
+            $titleKey = StringHelper::strtolower($title);
+
+            if ($title === '' || StringHelper::strlen($title) > 100 || $minimum === false
+                || isset($minimumAges[(int) $minimum])
+                || isset($titles[$titleKey])
+                || ($id > 0 && isset($levelIds[$id]))
+                || !preg_match('/^#[0-9A-F]{6}$/D', $background)
+                || !preg_match('/^#[0-9A-F]{6}$/D', $text)) {
+                $this->setError(Text::_('COM_JEM_AGE_LEVELS_INVALID'));
+
+                return false;
+            }
+
+            $minimumAges[(int) $minimum] = true;
+            $titles[$titleKey] = true;
+            if ($id > 0) {
+                $levelIds[$id] = true;
+            }
+            $normalised[] = array(
+                'id' => $id,
+                'title' => $title,
+                'min_age' => (int) $minimum,
+                'badge_background' => $background,
+                'badge_text' => $text,
+                'published' => empty($row['published']) ? 0 : 1,
+                'ordering' => $index + 1,
+            );
+        }
+
+        $db = Factory::getContainer()->get(DatabaseDriver::class);
+
+        try {
+            $db->transactionStart();
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName(array('id', 'min_age')))
+                    ->from($db->quoteName('#__jem_age_levels'))
+            );
+            $existingLevels = $db->loadAssocList('id') ?: array();
+            $existingIds = array_map('intval', array_keys($existingLevels));
+            $savedIds = array();
+
+            // Move submitted rows to an unused range before applying their
+            // final values. This permits administrators to swap two minimum
+            // ages without a transient collision on the unique index.
+            $temporaryAge = 121;
+            foreach ($normalised as $row) {
+                if ($row['id'] < 1 || !in_array($row['id'], $existingIds, true)) {
+                    continue;
+                }
+
+                $query = $db->getQuery(true)
+                    ->update($db->quoteName('#__jem_age_levels'))
+                    ->set($db->quoteName('min_age') . ' = ' . $temporaryAge++)
+                    ->where($db->quoteName('id') . ' = ' . $row['id']);
+                $db->setQuery($query)->execute();
+            }
+
+            foreach ($normalised as $row) {
+                $columns = array('title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering');
+
+                if ($row['id'] > 0 && in_array($row['id'], $existingIds, true)) {
+                    $sets = array();
+                    foreach ($columns as $column) {
+                        $sets[] = $db->quoteName($column) . ' = ' . (
+                            in_array($column, array('title', 'badge_background', 'badge_text'), true)
+                                ? $db->quote($row[$column])
+                                : (int) $row[$column]
+                        );
+                    }
+                    $query = $db->getQuery(true)
+                        ->update($db->quoteName('#__jem_age_levels'))
+                        ->set($sets)
+                        ->where($db->quoteName('id') . ' = ' . $row['id']);
+                    $db->setQuery($query)->execute();
+                    $savedIds[] = $row['id'];
+                    continue;
+                }
+
+                $query = $db->getQuery(true)
+                    ->insert($db->quoteName('#__jem_age_levels'))
+                    ->columns(array_map(array($db, 'quoteName'), $columns))
+                    ->values(implode(',', array(
+                        $db->quote($row['title']),
+                        $row['min_age'],
+                        $db->quote($row['badge_background']),
+                        $db->quote($row['badge_text']),
+                        $row['published'],
+                        $row['ordering'],
+                    )));
+                $db->setQuery($query)->execute();
+                $savedIds[] = (int) $db->insertid();
+            }
+
+            foreach (array_diff($existingIds, $savedIds) as $id) {
+                $query = $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName('#__jem_events'))
+                    ->where($db->quoteName('age_level_id') . ' = ' . (int) $id);
+                $venueQuery = $db->getQuery(true)
+                    ->select('COUNT(*)')
+                    ->from($db->quoteName('#__jem_venues'))
+                    ->where($db->quoteName('age_level_id') . ' = ' . (int) $id);
+                $db->setQuery($query);
+                $used = (int) $db->loadResult();
+                $db->setQuery($venueQuery);
+                $used += (int) $db->loadResult();
+
+                $query = $db->getQuery(true);
+                if ($used > 0) {
+                    $query->update($db->quoteName('#__jem_age_levels'))
+                        ->set($db->quoteName('published') . ' = 0')
+                        ->where($db->quoteName('id') . ' = ' . (int) $id);
+                } else {
+                    $query->delete($db->quoteName('#__jem_age_levels'))
+                        ->where($db->quoteName('id') . ' = ' . (int) $id);
+                }
+                $db->setQuery($query)->execute();
+            }
+
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            $db->transactionRollback();
+            $this->setError($error->getMessage());
 
             return false;
         }

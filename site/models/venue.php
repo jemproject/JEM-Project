@@ -199,6 +199,14 @@ class JemModelVenue extends JemModelEventslist
                        ' CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(\':\', v.id, v.alias) ELSE v.id END as slug');
         $query->from($db->quoteName('#__jem_venues', 'v'));
         $query->join('LEFT', $db->quoteName('#__jem_venues', 'pv') . ' ON pv.id = v.parent_venue_id');
+        $query->select(array(
+            'val.id AS venue_age_id',
+            'val.title AS venue_age_title',
+            'val.min_age AS venue_age_minimum',
+            'val.badge_background AS venue_age_background',
+            'val.badge_text AS venue_age_text',
+        ));
+        $query->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON val.id = v.age_level_id');
 
         $typeLanguage = Factory::getApplication()->getLanguage()->getTag();
         $typeLanguageCondition = '(jt.language IN (' . $db->quote('*') . ', ' . $db->quote($typeLanguage) . ') OR jt.base_language <> ' . $db->quote('') . ' OR jt.translation_languages IS NOT NULL)';
@@ -265,6 +273,7 @@ class JemModelVenue extends JemModelEventslist
         $registry->loadString($_venue->attribs ?? '{}');
         $_venue->params = clone JemHelper::globalattribs();
         $_venue->params->merge($registry);
+        JemAgeAccess::decorateVenue($_venue);
 
         $_venue->attachments = JemAttachment::getAttachments('venue'.$_venue->id);
         $_venue->child_venues = $this->getChildVenues((int) $_venue->id);

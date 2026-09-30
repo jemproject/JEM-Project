@@ -401,6 +401,7 @@ class JemModelCategories extends BaseDatabaseModel
     {
         $app = Factory::getApplication();
         $params = $app->getParams('com_jem');
+        $user = JemFactory::getUser();
         $limit = $limit !== null ? max(0, $limit) : (int) $params->get('detcat_nr', 3);
         $cacheKey = (int) $id . ':' . (int) $limit;
 
@@ -415,6 +416,13 @@ class JemModelCategories extends BaseDatabaseModel
                 //remove events without categories (users have no access to them)
                 if (empty($item->categories)) {
                     unset ($this->_data[$cacheKey][$i]);
+                    continue;
+                }
+
+                $canEdit = $user->can('edit', 'event', (int) $item->id, (int) $item->created_by);
+                JemAgeAccess::decorateEvent($item, $user, $canEdit);
+                if (!JemAgeAccess::canViewEvent($item)) {
+                    unset($this->_data[$cacheKey][$i]);
                 }
             }
         }
@@ -477,12 +485,16 @@ class JemModelCategories extends BaseDatabaseModel
             $where .= ' AND l.access IN (' . implode(',', $levels) . ')';
         }
 
+        $where .= ' AND ' . JemAgeAccess::sqlVisibilityCondition($this->_db, 'a', 'eal', 'val', $user);
+
         $query = 'SELECT a.*,'
                . ' l.venue, l.street, l.postalCode, l.city, l.state, l.url, l.country, l.timezone AS venue_timezone, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.image_path AS venue_image_path, l.locimage_alt, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
                . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+               . ' eal.id AS event_age_id, eal.title AS event_age_title, eal.min_age AS event_age_minimum, eal.badge_background AS event_age_background, eal.badge_text AS event_age_text,'
+               . ' val.id AS venue_age_id, val.title AS venue_age_title, val.min_age AS venue_age_minimum, val.badge_background AS venue_age_background, val.badge_text AS venue_age_text,'
                . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
                . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug,'
                . ' CASE WHEN a.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_event,'
@@ -490,6 +502,8 @@ class JemModelCategories extends BaseDatabaseModel
                . ' CASE WHEN l.access IN (' . implode(',',$levels) . ') THEN 1 ELSE 0 END as user_has_access_venue'
                . ' FROM #__jem_events AS a'
                . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+               . ' LEFT JOIN #__jem_age_levels AS eal ON eal.id = a.age_level_id'
+               . ' LEFT JOIN #__jem_age_levels AS val ON val.id = l.age_level_id'
                . ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id'
                . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid '
                . $where
@@ -613,6 +627,7 @@ class JemModelCategories extends BaseDatabaseModel
         if ($task !== 'archive') {
             $where_sub .= ' AND (' . JemHelper::getEventPublicationWhere('i', false) . ')';
         }
+        $where_sub .= ' AND ' . JemAgeAccess::sqlVisibilityCondition($this->_db, 'i', 'ieal', 'ival', $user);
         $where_sub .= ' AND c.id = cc.id';
 
         $effectiveTypeId = $this->_typeid > 0 ? $this->_typeid : $this->_filterTypeid;
@@ -654,6 +669,9 @@ class JemModelCategories extends BaseDatabaseModel
                . ' ('
                . '  SELECT COUNT(DISTINCT i.id)'
                . '  FROM #__jem_events AS i'
+               . '  LEFT JOIN #__jem_venues AS iv ON iv.id = i.locid'
+               . '  LEFT JOIN #__jem_age_levels AS ieal ON ieal.id = i.age_level_id'
+               . '  LEFT JOIN #__jem_age_levels AS ival ON ival.id = iv.age_level_id'
                . '  LEFT JOIN #__jem_cats_event_relations AS rel ON rel.itemid = i.id'
                . '  LEFT JOIN #__jem_categories AS cc ON cc.id = rel.catid'
                . $where_sub

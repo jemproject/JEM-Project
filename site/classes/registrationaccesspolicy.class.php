@@ -57,6 +57,8 @@ final class JemRegistrationAccessPolicy
     public const INVITATION_REQUIRED = 'invitation_required';
     public const REGISTRATION_NOT_FOUND = 'registration_not_found';
     public const CANCELLATION_CLOSED = 'cancellation_closed';
+    public const AGE_UNKNOWN = 'age_unknown';
+    public const AGE_RESTRICTED = 'age_restricted';
 
     /**
      * Resolve a registration window without trusting the rendered form.
@@ -133,7 +135,8 @@ final class JemRegistrationAccessPolicy
         int $status,
         bool $publishedNow,
         bool $registrationOpen,
-        bool $unregistrationOpen
+        bool $unregistrationOpen,
+        string $ageState = 'unrestricted'
     ): JemRegistrationAccessDecision {
         if (!in_array($status, array(-1, 1), true)) {
             return self::deny(self::INVALID_RESPONSE, 'COM_JEM_ATTENDEES_STATUS_UNKNOWN');
@@ -170,6 +173,14 @@ final class JemRegistrationAccessPolicy
 
         if (!$registrationOpen) {
             return self::deny(self::REGISTRATION_CLOSED, 'COM_JEM_EVENT_REGISTRATION_CLOSED');
+        }
+
+        if ($ageState === 'unknown') {
+            return self::deny(self::AGE_UNKNOWN, 'COM_JEM_AGE_ACCESS_DATE_OF_BIRTH_REQUIRED');
+        }
+
+        if ($ageState === 'restricted') {
+            return self::deny(self::AGE_RESTRICTED, 'COM_JEM_AGE_ACCESS_REGISTRATION_DENIED');
         }
 
         $invitedOnly = (((int) self::value($event, 'reginvitedonly', 0)) & 1) !== 0;

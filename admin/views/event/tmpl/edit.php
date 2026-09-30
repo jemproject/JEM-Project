@@ -532,6 +532,7 @@ $this->document->addStyleDeclaration('
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
+                    <li><div class="label-form"><?php echo $this->form->renderField('age_level_id'); ?></div></li>
                     <?php if ($contactField) : ?>
                         <li><div class="label-form"><?php echo $this->form->renderfield('contactid'); ?></div></li>
                     <?php else : ?>

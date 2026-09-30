@@ -137,6 +137,29 @@ final class RegistrationAccessPolicyTest extends TestCase
         self::assertSame('COM_JEM_ERROR_ANNULATION_NOT_ALLOWED', $decision->getMessageKey());
     }
 
+    public function testAgeClassifiedRegistrationRequiresADateOfBirth(): void
+    {
+        $decision = $this->decide(array('ageState' => 'unknown'));
+
+        self::assertFalse($decision->isAllowed());
+        self::assertSame(JemRegistrationAccessPolicy::AGE_UNKNOWN, $decision->getReason());
+        self::assertSame('COM_JEM_AGE_ACCESS_DATE_OF_BIRTH_REQUIRED', $decision->getMessageKey());
+    }
+
+    public function testUnderageRegistrationIsRejectedButExistingCancellationRemainsAllowed(): void
+    {
+        $registration = new RegistrationAccessValueStub(array('id' => 91, 'status' => 1));
+        $registrationDecision = $this->decide(array('ageState' => 'restricted'));
+        $cancellationDecision = $this->decide(array(
+            'status' => -1,
+            'ageState' => 'restricted',
+            'registration' => $registration,
+        ));
+
+        self::assertSame(JemRegistrationAccessPolicy::AGE_RESTRICTED, $registrationDecision->getReason());
+        self::assertTrue($cancellationDecision->isAllowed());
+    }
+
     private function decide(array $overrides = array()): JemRegistrationAccessDecision
     {
         $values = array_replace(array(
@@ -148,6 +171,7 @@ final class RegistrationAccessPolicyTest extends TestCase
             'publishedNow' => true,
             'registrationOpen' => true,
             'unregistrationOpen' => true,
+            'ageState' => 'unrestricted',
         ), $overrides);
 
         return JemRegistrationAccessPolicy::decide(
@@ -158,7 +182,8 @@ final class RegistrationAccessPolicyTest extends TestCase
             $values['status'],
             $values['publishedNow'],
             $values['registrationOpen'],
-            $values['unregistrationOpen']
+            $values['unregistrationOpen'],
+            $values['ageState']
         );
     }
 

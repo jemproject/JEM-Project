@@ -2087,6 +2087,43 @@ static public function lightbox() {
     }
 
     /**
+     * Render an accessible JEM-owned age classification badge.
+     *
+     * @param object $item    Decorated event or venue row
+     * @param string $classes Additional internal classes
+     *
+     * @return string
+     */
+    static public function ageBadge($item, $classes = '')
+    {
+        if (!is_object($item) || ($item->age_minimum ?? null) === null) {
+            return '';
+        }
+
+        $minimum = max(0, (int) $item->age_minimum);
+        $label = $minimum . '+';
+        $classification = trim((string) ($item->age_level_title ?? ''));
+        $title = $classification !== ''
+            ? Text::sprintf('COM_JEM_AGE_ACCESS_LEVEL_LABEL', $classification, $minimum)
+            : Text::sprintf('COM_JEM_AGE_ACCESS_MINIMUM', $minimum);
+        $background = preg_match('/^#[0-9a-f]{6}$/i', (string) ($item->age_badge_background ?? ''))
+            ? (string) $item->age_badge_background
+            : '#1F2937';
+        $text = preg_match('/^#[0-9a-f]{6}$/i', (string) ($item->age_badge_text ?? ''))
+            ? (string) $item->age_badge_text
+            : '#FFFFFF';
+        $class = trim('jem-age-badge ' . preg_replace('/[^a-z0-9_\- ]/i', '', (string) $classes));
+
+        return '<span class="' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '"'
+            . ' style="--jem-age-badge-bg:' . htmlspecialchars($background, ENT_QUOTES, 'UTF-8')
+            . ';--jem-age-badge-color:' . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . '"'
+            . ' title="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '"'
+            . ' aria-label="' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '">'
+            . htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
+            . '</span>';
+    }
+
+    /**
      * Create public event status and ticket availability badges.
      *
      * @param object $event            Event row

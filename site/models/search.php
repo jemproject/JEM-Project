@@ -104,7 +104,8 @@ class JemModelSearch extends BaseDatabaseModel
                 $this->_data = $this->_getList($query, $pagination->limitstart, $pagination->limit);
             }
 
-            $levels = JemFactory::getUser()->getAuthorisedViewLevels();
+            $user = JemFactory::getUser();
+            $levels = $user->getAuthorisedViewLevels();
 
             foreach ($this->_data as $i => $item) {
                 JemHelper::applyAssociatedArticleEventContentToEvents(array($item), $levels);
@@ -113,6 +114,13 @@ class JemModelSearch extends BaseDatabaseModel
 
                 //remove events without categories (users have no access to them)
                 if (empty($item->categories)) {
+                    unset($this->_data[$i]);
+                    continue;
+                }
+
+                $canEdit = $user->can('edit', 'event', (int) $item->id, (int) $item->created_by);
+                JemAgeAccess::decorateEvent($item, $user, $canEdit);
+                if (!JemAgeAccess::canViewEvent($item)) {
                     unset($this->_data[$i]);
                 }
             }
@@ -161,12 +169,16 @@ class JemModelSearch extends BaseDatabaseModel
                           . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                           . ' l.locdescription, l.locimage, l.image_path AS venue_image_path, l.locimage_alt, l.latitude, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
                           . ' l.publish_up AS l_publish_up, l.publish_down AS l_publish_down, l.version AS l_version,'
+                          . ' eal.id AS event_age_id, eal.title AS event_age_title, eal.min_age AS event_age_minimum, eal.badge_background AS event_age_background, eal.badge_text AS event_age_text,'
+                          . ' val.id AS venue_age_id, val.title AS venue_age_title, val.min_age AS venue_age_minimum, val.badge_background AS venue_age_background, val.badge_text AS venue_age_text,'
                           . ' c.name AS country_name,'
                           . ' CASE WHEN CHAR_LENGTH(a.alias) THEN CONCAT_WS(\':\', a.id, a.alias) ELSE a.id END as slug,'
                           . ' CASE WHEN CHAR_LENGTH(l.alias) THEN CONCAT_WS(\':\', a.locid, l.alias) ELSE a.locid END as venueslug'
                           . ' FROM #__jem_events AS a'
                           . ' INNER JOIN #__jem_cats_event_relations AS rel ON rel.itemid = a.id '
                           . ' LEFT JOIN #__jem_venues AS l ON l.id = a.locid'
+                          . ' LEFT JOIN #__jem_age_levels AS eal ON eal.id = a.age_level_id'
+                          . ' LEFT JOIN #__jem_age_levels AS val ON val.id = l.age_level_id'
                           . ' LEFT JOIN #__jem_countries AS c ON c.iso2 = l.country'
                           . $where
                           . ' GROUP BY a.id '
@@ -241,6 +253,7 @@ class JemModelSearch extends BaseDatabaseModel
         $where .= ' AND a.access IN (' . implode(', ', $levels) .')';
         $where .= ' AND ' . JemHelper::getEventParentVisibilityWhere('a', $levels);
         $where .= ' AND ' . JemHelper::getVenueHierarchyVisibilityWhere('a', $levels);
+        $where .= ' AND ' . JemAgeAccess::sqlVisibilityCondition($this->_db, 'a', 'eal', 'val', $user);
 
         switch ((string) $params->get('event_tree_mode', 'calendar')) {
             case 'parents':

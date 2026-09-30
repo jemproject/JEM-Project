@@ -35,6 +35,7 @@ class JemMapHelper
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
+        $jemUser  = \JemFactory::getUser();
         $levels   = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
@@ -83,6 +84,8 @@ class JemMapHelper
 
         if ($dateUsed || $catUsed) {
             $query->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.locid') . ' = ' . $db->quoteName('v.id'));
+            $query->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON ' . $db->quoteName('eal.id') . ' = ' . $db->quoteName('e.age_level_id'));
+            $query->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON ' . $db->quoteName('val.id') . ' = ' . $db->quoteName('v.age_level_id'));
             $query->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.itemid') . ' = ' . $db->quoteName('e.id'));
             $query->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'));
             $query->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1');
@@ -90,6 +93,7 @@ class JemMapHelper
             self::applyEventTreeFilter($query, 'e', $params);
             $query->where($db->quoteName('c.published') . ' = 1');
             self::applyPublishWindow($query, 'e');
+            $query->where(\JemAgeAccess::sqlVisibilityCondition($db, 'e', 'eal', 'val', $jemUser));
 
             if ($eventAccess !== '') {
                 $query->where($db->quoteName('e.access') . ' IN (' . $eventAccess . ')');
@@ -236,6 +240,7 @@ class JemMapHelper
     {
         $db       = Factory::getDbo();
         $user     = Factory::getApplication()->getIdentity();
+        $jemUser  = \JemFactory::getUser();
         $levels   = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
@@ -269,6 +274,7 @@ class JemMapHelper
                 'e.endtimes',
                 'e.event_status',
                 'e.ticket_availability',
+                'e.created_by',
                 'v.id AS venue_id',
                 'v.venue',
                 'v.alias AS venue_alias',
@@ -282,6 +288,16 @@ class JemMapHelper
                 'vt.name AS venue_type_name',
                 'vt.icon AS venue_type_icon',
                 'vt.color AS venue_type_color',
+                'eal.id AS event_age_id',
+                'eal.title AS event_age_title',
+                'eal.min_age AS event_age_minimum',
+                'eal.badge_background AS event_age_background',
+                'eal.badge_text AS event_age_text',
+                'val.id AS venue_age_id',
+                'val.title AS venue_age_title',
+                'val.min_age AS venue_age_minimum',
+                'val.badge_background AS venue_age_background',
+                'val.badge_text AS venue_age_text',
             ])
             ->from($db->quoteName('#__jem_events', 'e'))
             ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
@@ -289,6 +305,8 @@ class JemMapHelper
             ->join('INNER', $db->quoteName('#__jem_categories', 'c') . ' ON ' . $db->quoteName('c.id') . ' = ' . $db->quoteName('cr.catid'))
             ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $eventTypeJoin)
             ->join('LEFT', $db->quoteName('#__jem_types', 'vt') . ' ON ' . $venueTypeJoin)
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON ' . $db->quoteName('eal.id') . ' = ' . $db->quoteName('e.age_level_id'))
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON ' . $db->quoteName('val.id') . ' = ' . $db->quoteName('v.age_level_id'))
             ->where($db->quoteName('e.published') . ' = 1')
             ->where($db->quoteName('v.published') . ' = 1')
             ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
@@ -299,6 +317,8 @@ class JemMapHelper
                 'v.longitude IS NOT NULL',
                 "v.longitude <> ''",
             ]);
+
+        $query->where(\JemAgeAccess::sqlVisibilityCondition($db, 'e', 'eal', 'val', $jemUser));
 
         $categoryTypeAccess = $typeAccess !== '' ? ' AND ct.access IN (' . $typeAccess . ')' : '';
         $categoryContentAccess = $categoryAccess !== '' ? ' AND c2.access IN (' . $categoryAccess . ')' : '';
@@ -347,7 +367,14 @@ class JemMapHelper
 
         $db->setQuery($query);
 
-        return $db->loadObjectList();
+        $events = $db->loadObjectList() ?: array();
+
+        return array_values(array_filter($events, static function ($event) use ($jemUser) {
+            $canEdit = $jemUser->can('edit', 'event', (int) $event->id, (int) $event->created_by);
+            \JemAgeAccess::decorateEvent($event, $jemUser, $canEdit);
+
+            return \JemAgeAccess::canViewEvent($event);
+        }));
     }
 
     /**
@@ -393,6 +420,7 @@ class JemMapHelper
     {
         $db     = Factory::getDbo();
         $user   = Factory::getApplication()->getIdentity();
+        $jemUser = \JemFactory::getUser();
         $levels = $user->getAuthorisedViewLevels();
         $settings = \JemHelper::config();
         $eventAccess = self::accessList($levels, $settings->access_level_locked_events ?? '["1"]');
@@ -407,6 +435,8 @@ class JemMapHelper
             ->join('INNER', $db->quoteName('#__jem_cats_event_relations', 'cr') . ' ON ' . $db->quoteName('cr.catid') . ' = ' . $db->quoteName('c.id'))
             ->join('INNER', $db->quoteName('#__jem_events', 'e') . ' ON ' . $db->quoteName('e.id') . ' = ' . $db->quoteName('cr.itemid'))
             ->join('INNER', $db->quoteName('#__jem_venues', 'v') . ' ON ' . $db->quoteName('v.id') . ' = ' . $db->quoteName('e.locid'))
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON ' . $db->quoteName('eal.id') . ' = ' . $db->quoteName('e.age_level_id'))
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON ' . $db->quoteName('val.id') . ' = ' . $db->quoteName('v.age_level_id'))
             ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON ' . $db->quoteName('t.id') . ' = ' . $db->quoteName('e.type_id') . ' AND ' . $db->quoteName('t.entity') . ' = 1 AND ' . $db->quoteName('t.published') . ' = 1')
             ->where($db->quoteName('c.published') . ' = 1')
             ->where($db->quoteName('c.catname') . ' <> ' . $db->quote('root'))
@@ -415,6 +445,8 @@ class JemMapHelper
             ->where($db->quoteName('v.id') . ' IN (' . ($visibleVenueIds ? implode(',', $visibleVenueIds) : '0') . ')')
             ->where('COALESCE(' . $db->quoteName('e.enddates') . ', ' . $db->quoteName('e.dates') . ') >= ' . $db->quote($today))
             ->order($db->quoteName('c.lft') . ' ASC');
+
+        $query->where(\JemAgeAccess::sqlVisibilityCondition($db, 'e', 'eal', 'val', $jemUser));
 
         self::applyPublishWindow($query, 'e');
 

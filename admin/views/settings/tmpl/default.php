@@ -162,6 +162,14 @@ jQuery(document).ready(function($) {
                     <div class="clr"></div>
 
 
+                    <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'age-access-settings', Text::_('COM_JEM_AGE_ACCESS_SETTINGS')); ?>
+                    <fieldset class="adminform">
+                        <?php echo $this->loadTemplate('ageaccess'); ?>
+                    </fieldset>
+                    <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                    <div class="clr"></div>
+
+
                     <?php echo HTMLHelper::_('uitab.addTab', 'settings-pane', 'pdf-settings', Text::_('COM_JEM_PDF_SETTINGS')); ?>
                         <fieldset class="adminform">
                             <?php echo $this->loadTemplate('pdf'); ?>

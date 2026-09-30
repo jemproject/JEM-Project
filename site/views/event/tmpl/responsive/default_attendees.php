@@ -314,6 +314,8 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                     } else {
                         echo Text::_('COM_JEM_NOT_ALLOWED_TO_REGISTER');
                     }
+                } elseif (!empty($this->ageRegistrationMessage) && empty($this->registration)) {
+                    echo Text::_($this->ageRegistrationMessage);
                 } else {
                     switch ($this->formhandler) {
                         case 0:

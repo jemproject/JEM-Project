@@ -141,6 +141,15 @@ ALTER TABLE `#__jem_categories` ADD KEY `idx_asset_id` (`asset_id`) /** CAN FAIL
 ALTER TABLE `#__jem_venues` ADD COLUMN `asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `id` /** CAN FAIL **/;
 ALTER TABLE `#__jem_venues` ADD KEY `idx_asset_id` (`asset_id`) /** CAN FAIL **/;
 
+-- JEM 5.1.0: configurable JEM age classifications. Existing records remain
+-- unrestricted (NULL) until an administrator explicitly assigns a level.
+CREATE TABLE IF NOT EXISTS `#__jem_age_levels` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `title` VARCHAR(100) NOT NULL DEFAULT '', `min_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0', `badge_background` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937', `badge_text` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_age_level_min_age` (`min_age`), KEY `idx_age_level_state_order` (`published`,`ordering`)) ENGINE=InnoDB;
+INSERT IGNORE INTO `#__jem_age_levels` (`id`,`title`,`min_age`,`badge_background`,`badge_text`,`published`,`ordering`) VALUES (1,'All ages',0,'#247A3D','#FFFFFF',1,1),(2,'Ages 6 and over',6,'#2F6F9F','#FFFFFF',1,2),(3,'Ages 12 and over',12,'#B78324','#FFFFFF',1,3),(4,'Ages 16 and over',16,'#B55B00','#FFFFFF',1,4),(5,'Adults only',18,'#B3261E','#FFFFFF',1,5);
+ALTER TABLE `#__jem_events` ADD COLUMN `age_level_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `type_id` /** CAN FAIL **/;
+ALTER TABLE `#__jem_events` ADD KEY `idx_age_level` (`age_level_id`) /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD COLUMN `age_level_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `type_id` /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD KEY `idx_age_level` (`age_level_id`) /** CAN FAIL **/;
+
 -- JEM 5.1.0: stable ID-based venue media paths. Empty image_path keeps the
 -- legacy flat images/jem/venues directory; no existing files are moved here.
 ALTER TABLE `#__jem_venues` ADD COLUMN `image_path` VARCHAR(255) NOT NULL DEFAULT '' AFTER `locimage` /** CAN FAIL **/;

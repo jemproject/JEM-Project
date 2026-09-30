@@ -295,6 +295,12 @@
             entity="1"
             class="form-select"
         />
+        <field name="age_level_id" type="agelevel"
+            class="form-select w-auto"
+            label="COM_JEM_AGE_LEVEL"
+            description="COM_JEM_EVENT_AGE_LEVEL_DESC"
+            filter="integer"
+        />
         <field name="publish_up" type="calendar"
             label="JGLOBAL_FIELD_PUBLISH_UP_LABEL"
             description="JGLOBAL_FIELD_PUBLISH_UP_DESC"

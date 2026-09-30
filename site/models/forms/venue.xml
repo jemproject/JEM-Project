@@ -196,6 +196,12 @@
             entity="3"
             class="form-select"
         />
+        <field name="age_level_id" type="agelevel"
+            class="form-select w-auto"
+            label="COM_JEM_AGE_LEVEL"
+            description="COM_JEM_VENUE_AGE_LEVEL_DESC"
+            filter="integer"
+        />
     </fieldset>
 
     <fieldset name="custom">

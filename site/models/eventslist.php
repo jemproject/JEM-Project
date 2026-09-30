@@ -816,6 +816,23 @@ class JemModelEventslist extends ListModel
             $query->select(array('l.publish_up AS l_publish_up', 'l.publish_down AS l_publish_down', 'l.published AS l_published', 'l.state', 'l.street', 'l.url', 'l.color AS l_color', 'l.venue', 'l.timezone AS venue_timezone', 'l.version AS l_version'));
         }
         $query->join('LEFT', '#__jem_venues AS l ON l.id = a.locid');
+
+        # Effective event and venue age classification.
+        $query->select(array(
+            'eal.id AS event_age_id',
+            'eal.title AS event_age_title',
+            'eal.min_age AS event_age_minimum',
+            'eal.badge_background AS event_age_background',
+            'eal.badge_text AS event_age_text',
+            'val.id AS venue_age_id',
+            'val.title AS venue_age_title',
+            'val.min_age AS venue_age_minimum',
+            'val.badge_background AS venue_age_background',
+            'val.badge_text AS venue_age_text',
+        ));
+        $query->join('LEFT', '#__jem_age_levels AS eal ON eal.id = a.age_level_id');
+        $query->join('LEFT', '#__jem_age_levels AS val ON val.id = l.age_level_id');
+        $query->where(JemAgeAccess::sqlVisibilityCondition($db, 'a', 'eal', 'val', JemFactory::getUser()));
         
         
 
@@ -1475,7 +1492,14 @@ class JemModelEventslist extends ListModel
                 continue;
             } else {
                 # write access permissions.
-                $item->params->set('access-edit', $user->can('edit', 'event', $item->id, $item->created_by));
+                $canEdit = $user->can('edit', 'event', $item->id, $item->created_by);
+                $item->params->set('access-edit', $canEdit);
+                JemAgeAccess::decorateEvent($item, $user, $canEdit);
+
+                if (!JemAgeAccess::canViewEvent($item)) {
+                    unset($items[$index]);
+                    continue;
+                }
             }
         } // foreach
 

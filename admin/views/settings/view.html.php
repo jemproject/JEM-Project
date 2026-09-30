@@ -24,6 +24,7 @@ class JemViewSettings extends JemAdminView
 {
     public $form;
     public $countryGroups;
+    public $ageLevels;
     protected $data;
     public $state;
 
@@ -40,6 +41,7 @@ class JemViewSettings extends JemAdminView
         $state       = $this->get('State');
         $config      = $this->get('ConfigInfo');
         $countryGroups = $this->get('CountryGroups');
+        $ageLevels     = $this->get('AgeLevels');
         $jemsettings = $this->get('Data');
         $settings    = JemHelper::globalattribs();
         $this->document = $document;
@@ -83,6 +85,7 @@ class JemViewSettings extends JemAdminView
         $this->jemsettings = $jemsettings;
         $this->config      = $config;
         $this->countryGroups = $countryGroups;
+        $this->ageLevels     = $ageLevels;
         $this->settings       = $settings;
         $this->featurePolicy  = JemFeaturePolicy::current();
         $this->customFieldLanguages = JemCustomFields::getLanguageTags();

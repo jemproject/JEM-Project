@@ -1049,6 +1049,7 @@ Text::script('JCANCEL');
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
+                    <li><?php echo $this->form->getLabel('age_level_id'); ?><?php echo $this->form->getInput('age_level_id'); ?></li>
                     <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
                 </ul>

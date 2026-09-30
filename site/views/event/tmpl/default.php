@@ -159,6 +159,7 @@ $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginal
     $styleAttribute = trim((string) $style) !== '' ? ' style="' . $this->escape(trim((string) $style)) . '"' : '';
     $html = '<div class="' . $this->escape($classes) . '"' . $styleAttribute . '>';
     $html .= $image;
+    $html .= JemOutput::ageBadge($this->item, 'jem-age-badge--overlay');
     $html .= '</div>';
 
     return $html;
@@ -651,6 +652,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             </h2>
         <?php endif; ?>
 
+        <?php if ($detailImageLayout === 'hidden' || empty($this->dimage['original'])) : ?>
+            <?php echo JemOutput::ageBadge($this->item, 'jem-age-badge--inline'); ?>
+        <?php endif; ?>
+
         <?php if ($detailImageLayout === 'header') : ?>
             <?php echo $renderEventDetailImage($detailImageHeaderClass, $detailImageHeaderStyle, true); ?>
         <?php endif; ?>
@@ -749,6 +754,17 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 endif;
 
                 ?>
+
+            <?php if (($this->item->age_minimum ?? null) !== null) : ?>
+                <dt class="age-classification"><?php echo Text::_('COM_JEM_AGE_LEVEL'); ?>:</dt>
+                <dd class="age-classification">
+                    <?php echo $this->escape(Text::sprintf(
+                        'COM_JEM_AGE_LEVEL_OPTION',
+                        (string) $this->item->age_level_title,
+                        (int) $this->item->age_minimum
+                    )); ?>
+                </dd>
+            <?php endif; ?>
 
             <?php if ($params->get('event_show_hits')) : ?>
                 <dt class="hits"><?php echo Text::_('COM_JEM_EVENT_HITS_LABEL'); ?>:</dt>

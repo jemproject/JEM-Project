@@ -93,7 +93,7 @@ class JemModelEvent extends ItemModel
                         'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.article_id, a.online_meeting_url, a.online_meeting_label, a.version, a.featured, ' .
                         'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                         'a.hits, a.language, a.event_status, a.ticket_availability, a.timezone_mode, a.timezone, a.start_utc, a.end_utc, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order, ' .
-                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax'));
+                        'a.parent_event_id, a.event_tree_order, a.show_in_calendar, a.type_id, a.age_level_id, a.venue_allocation_mode, a.capacity_mode, a.venue_snapshot, a.pricing_mode, a.pricing_revision, a.currency, a.prices_include_tax'));
                 $query->from('#__jem_events AS a');
 
                 $query->select('pe.title AS parent_event_title, pe.alias AS parent_event_alias');
@@ -110,8 +110,23 @@ class JemModelEvent extends ItemModel
                     'l.id AS locid, l.alias AS localias, l.venue, l.city, l.state, l.url, l.locdescription, l.locimage, l.image_path AS venue_image_path, l.locimage_alt, ' .
                     'l.attribs AS venue_attribs, ' .
                     'l.postalCode, l.street, l.country, l.map, l.created_by AS venueowner, l.latitude, l.longitude, ' .
-                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id, l.parent_venue_id');
+                    'l.checked_out AS vChecked_out, l.checked_out_time AS vChecked_out_time, l.published as locpublished, l.timezone AS venue_timezone, l.type_id AS venue_type_id, l.age_level_id AS venue_age_level_id, l.parent_venue_id');
                 $query->join('LEFT', '#__jem_venues AS l ON a.locid = l.id');
+
+                $query->select(array(
+                    'eal.id AS event_age_id',
+                    'eal.title AS event_age_title',
+                    'eal.min_age AS event_age_minimum',
+                    'eal.badge_background AS event_age_background',
+                    'eal.badge_text AS event_age_text',
+                    'val.id AS venue_age_id',
+                    'val.title AS venue_age_title',
+                    'val.min_age AS venue_age_minimum',
+                    'val.badge_background AS venue_age_background',
+                    'val.badge_text AS venue_age_text',
+                ));
+                $query->join('LEFT', '#__jem_age_levels AS eal ON eal.id = a.age_level_id');
+                $query->join('LEFT', '#__jem_age_levels AS val ON val.id = l.age_level_id');
 
                 # Join over the category tables
                 $query->join('LEFT', '#__jem_cats_event_relations AS rel ON rel.itemid = a.id');
@@ -278,6 +293,11 @@ class JemModelEvent extends ItemModel
                 #  - publishing state and user permissions allow that (e.g. unpublished event but user is editor, owner, or publisher)
                 $data->params->set('access-view', $access_view && !empty($data->categories) && in_array($data->access, $levels));
 
+                JemAgeAccess::decorateEvent($data, $user, $access_edit);
+                if (!JemAgeAccess::canViewEvent($data)) {
+                    throw new Exception(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'), 404);
+                }
+
                 $this->_item[$pk] = $data;
             }
             catch (Exception $e)
@@ -361,15 +381,21 @@ class JemModelEvent extends ItemModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
             ->select(array(
-                'e.id', 'e.title', 'e.alias', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
+                'e.id', 'e.title', 'e.alias', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes', 'e.created_by',
                 'e.parent_event_id', 'e.event_tree_order', 'e.locid', 'e.event_status', 'e.type_id',
                 'e.venue_allocation_mode', 'e.capacity_mode', 'e.venue_snapshot',
                 'v.venue', 'v.alias AS venue_alias', 'v.parent_venue_id',
+                'eal.id AS event_age_id', 'eal.title AS event_age_title', 'eal.min_age AS event_age_minimum',
+                'eal.badge_background AS event_age_background', 'eal.badge_text AS event_age_text',
+                'val.id AS venue_age_id', 'val.title AS venue_age_title', 'val.min_age AS venue_age_minimum',
+                'val.badge_background AS venue_age_background', 'val.badge_text AS venue_age_text',
                 "CASE WHEN CHAR_LENGTH(e.alias) THEN CONCAT_WS(':', e.id, e.alias) ELSE e.id END AS slug",
                 "CASE WHEN CHAR_LENGTH(v.alias) THEN CONCAT_WS(':', v.id, v.alias) ELSE v.id END AS venueslug",
             ))
             ->from($db->quoteName('#__jem_events', 'e'))
             ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'eal') . ' ON eal.id = e.age_level_id')
+            ->join('LEFT', $db->quoteName('#__jem_age_levels', 'val') . ' ON val.id = v.age_level_id')
             ->join('LEFT', $db->quoteName('#__jem_types', 't') . ' ON t.id = e.type_id AND t.entity = 1')
             ->where('e.parent_event_id = ' . $parentId)
             ->where(JemHelper::getEventPublicationWhere('e'))
@@ -383,8 +409,15 @@ class JemModelEvent extends ItemModel
         $items = $db->loadObjectList() ?: array();
 
         return array_values(array_filter($items, function ($item) use ($user, $levels) {
-            return empty($item->parent_venue_id)
-                || $this->canViewVenueAncestors((int) $item->parent_venue_id, $user, $levels);
+            if (!empty($item->parent_venue_id)
+                && !$this->canViewVenueAncestors((int) $item->parent_venue_id, $user, $levels)) {
+                return false;
+            }
+
+            $canEdit = $user->can('edit', 'event', (int) $item->id, (int) $item->created_by);
+            JemAgeAccess::decorateEvent($item, $user, $canEdit);
+
+            return JemAgeAccess::canViewEvent($item);
         }));
     }
 
@@ -1470,7 +1503,8 @@ class JemModelEvent extends ItemModel
                 $status,
                 JemHelper::isEventPublishedNow($e),
                 JemHelper::isEventRegistrationOpen($e),
-                JemHelper::isEventUnregistrationOpen($e)
+                JemHelper::isEventUnregistrationOpen($e),
+                (string) ($e->age_access_state ?? JemAgeAccess::UNRESTRICTED)
             );
             if (!$decision->isAllowed()) {
                 $this->setError(Text::_($decision->getMessageKey()));

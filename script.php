@@ -323,6 +323,7 @@ class com_jemInstallerScript
             $this->repair501SchemaFallback();
             $this->repairModuleStatusSettings();
             $this->repair510HierarchySchemaFallback();
+            $this->repair510AgeAccessSchema();
             $this->repair510RegistrationSchema();
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
@@ -2370,6 +2371,84 @@ SQL;
                     );
                     $db->execute();
                 }
+            }
+        }
+    }
+
+    /**
+     * Add age classifications for installations which already recorded an
+     * earlier JEM 5.1.0 prerelease schema.
+     *
+     * @return void
+     */
+    private function repair510AgeAccessSchema()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        $db->setQuery(
+            'CREATE TABLE IF NOT EXISTS ' . $db->quoteName('#__jem_age_levels') . ' ('
+            . $db->quoteName('id') . ' INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,'
+            . $db->quoteName('title') . " VARCHAR(100) NOT NULL DEFAULT '',"
+            . $db->quoteName('min_age') . " TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('badge_background') . " CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937',"
+            . $db->quoteName('badge_text') . " CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF',"
+            . $db->quoteName('published') . " TINYINT(1) NOT NULL DEFAULT '1',"
+            . $db->quoteName('ordering') . " INT(11) NOT NULL DEFAULT '0',"
+            . ' PRIMARY KEY (' . $db->quoteName('id') . '),'
+            . ' UNIQUE KEY ' . $db->quoteName('idx_age_level_min_age')
+            . ' (' . $db->quoteName('min_age') . '),'
+            . ' KEY ' . $db->quoteName('idx_age_level_state_order')
+            . ' (' . $db->quoteName('published') . ', ' . $db->quoteName('ordering') . ')'
+            . ') ENGINE=InnoDB'
+        )->execute();
+
+        $db->setQuery(
+            'INSERT IGNORE INTO ' . $db->quoteName('#__jem_age_levels')
+            . ' (' . implode(', ', $db->quoteName(array(
+                'id', 'title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering',
+            ))) . ') VALUES '
+            . "(1, 'All ages', 0, '#247A3D', '#FFFFFF', 1, 1),"
+            . "(2, 'Ages 6 and over', 6, '#2F6F9F', '#FFFFFF', 1, 2),"
+            . "(3, 'Ages 12 and over', 12, '#B78324', '#FFFFFF', 1, 3),"
+            . "(4, 'Ages 16 and over', 16, '#B55B00', '#FFFFFF', 1, 4),"
+            . "(5, 'Adults only', 18, '#B3261E', '#FFFFFF', 1, 5)"
+        )->execute();
+
+        foreach (array('#__jem_events', '#__jem_venues') as $table) {
+            $resolvedTable = $db->replacePrefix($table);
+            if (!in_array($resolvedTable, $db->getTableList(), true)) {
+                continue;
+            }
+
+            $columns = array_change_key_case($db->getTableColumns($resolvedTable, false), CASE_LOWER);
+            if (!isset($columns['age_level_id'])) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName($table)
+                    . ' ADD COLUMN ' . $db->quoteName('age_level_id')
+                    . ' INT(11) UNSIGNED NULL DEFAULT NULL AFTER ' . $db->quoteName('type_id')
+                )->execute();
+            }
+
+            $keyNames = array();
+            foreach ((array) $db->getTableKeys($resolvedTable) as $name => $key) {
+                if (is_string($name)) {
+                    $keyNames[] = strtolower($name);
+                }
+                if (is_object($key)) {
+                    foreach (array('Key_name', 'key_name', 'name') as $property) {
+                        if (isset($key->$property)) {
+                            $keyNames[] = strtolower((string) $key->$property);
+                        }
+                    }
+                }
+            }
+
+            if (!in_array('idx_age_level', $keyNames, true)) {
+                $db->setQuery(
+                    'ALTER TABLE ' . $db->quoteName($table)
+                    . ' ADD INDEX ' . $db->quoteName('idx_age_level')
+                    . ' (' . $db->quoteName('age_level_id') . ')'
+                )->execute();
             }
         }
     }
