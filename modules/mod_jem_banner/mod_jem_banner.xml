@@ -197,7 +197,7 @@
                     <option value="full">MOD_JEM_BANNER_EVENT_IMAGE_SOURCE_FULL</option>
                 </field>
                 <field name="event_image_display" type="list"
-                       default="original_limited"
+                       default="thumbnail"
                        label="MOD_JEM_BANNER_EVENT_IMAGE_DISPLAY"
                        description="MOD_JEM_BANNER_EVENT_IMAGE_DISPLAY_DESC"
                        class="form-select w-auto"

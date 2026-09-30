@@ -108,6 +108,58 @@ class JemControllerEvent extends JemControllerForm
     }
 
     /**
+     * Resize one oversized stored event image to the configured maximum.
+     */
+    public function repairImage()
+    {
+        $app = Factory::getApplication();
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
+
+        try {
+            if (strtoupper($app->input->server->getString('REQUEST_METHOD', '')) !== 'POST') {
+                throw new RuntimeException(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_INVALID'), 405);
+            }
+            if (!Session::checkToken('post')) {
+                throw new RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+            }
+
+            $eventId = $app->input->post->getInt('id', 0);
+            $field = $app->input->post->getCmd('field', '');
+            $expected = strtolower($app->input->post->getAlnum('expected', ''));
+
+            if (!$eventId || !$this->allowEdit(array('id' => $eventId), 'id')) {
+                throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            $model = $this->getModel();
+            $result = $model ? $model->repairStoredImage($eventId, $field, $expected) : false;
+
+            if ($result === false) {
+                throw new RuntimeException(
+                    $model && $model->getError()
+                        ? $model->getError()
+                        : Text::_('COM_JEM_EVENT_IMAGE_REPAIR_FAILED')
+                );
+            }
+
+            echo new JsonResponse(
+                $result,
+                Text::sprintf(
+                    'COM_JEM_EVENT_IMAGE_REPAIR_SUCCESS',
+                    (int) $result['width'],
+                    (int) $result['height'],
+                    (int) $result['maximum']
+                )
+            );
+        } catch (Throwable $e) {
+            echo new JsonResponse($e);
+        }
+
+        $app->close();
+    }
+
+    /**
      * Method to save a record.
      *
      * @param   string  $key     The name of the primary key of the URL variable.

@@ -362,7 +362,9 @@ class JemImage
         $profile,
         $allowDimensionReduction = true,
         $requestedMaxDimension = null,
-        $requestedRatio = null
+        $requestedRatio = null,
+        $processingTargetWidth = null,
+        $processingTargetHeight = null
     )
     {
         $path = Path::clean((string) $path);
@@ -374,8 +376,12 @@ class JemImage
             $path,
             $extension,
             $inspectionLimit,
-            (int) ($jemsettings->imagewidth ?? 0),
-            (int) ($jemsettings->imagehight ?? 0)
+            $processingTargetWidth === null
+                ? (int) ($jemsettings->imagewidth ?? 0)
+                : max(0, (int) $processingTargetWidth),
+            $processingTargetHeight === null
+                ? (int) ($jemsettings->imagehight ?? 0)
+                : max(0, (int) $processingTargetHeight)
         );
 
         if (!$resource['accepted']) {
@@ -455,6 +461,81 @@ class JemImage
             if (!File::copy($source, $working)
                 || !self::prepareWorkingImage($working, $jemsettings, (string) $profile, $analysis)
                 || !self::validatePreparedImage($working, $jemsettings, (string) $profile)) {
+                return false;
+            }
+
+            return self::replaceNormalisedImage($working, $source, (string) $thumbnail, $jemsettings);
+        } finally {
+            if (File::exists($working)) {
+                File::delete($working);
+            }
+        }
+    }
+
+    /**
+     * Reduce an oversized stored original to the configured maximum while
+     * preserving its aspect ratio, then rebuild its thumbnail atomically.
+     *
+     * Unlike profile normalisation, this repair action never crops or pads an
+     * existing image. It only addresses dimensions that exceed the current
+     * global image boundary.
+     */
+    static public function resizeStoredImageToMaximum($source, $thumbnail, $jemsettings, $profile)
+    {
+        $source = Path::clean((string) $source);
+
+        if (!JemImageProfilePolicy::isProfile((string) $profile)) {
+            return false;
+        }
+
+        $maximum = JemImageProfilePolicy::maxDimension($jemsettings);
+        $analysis = self::analyseStoredImage(
+            $source,
+            $jemsettings,
+            (string) $profile,
+            true,
+            $maximum,
+            JemImageProfilePolicy::UPLOAD_RATIO_ORIGINAL,
+            $maximum,
+            $maximum
+        );
+
+        if (!$analysis['accepted']
+            || $analysis['minimum_not_met']
+            || (int) $analysis['frames'] !== 1) {
+            return false;
+        }
+
+        if ((int) $analysis['width'] <= $maximum && (int) $analysis['height'] <= $maximum) {
+            return true;
+        }
+
+        $geometry = JemImageProfilePolicy::geometry(
+            (int) $analysis['width'],
+            (int) $analysis['height'],
+            $maximum,
+            JemImageProfilePolicy::MODE_NONE,
+            1,
+            1
+        );
+        $working = self::temporaryImagePath($source, 'repair');
+
+        try {
+            if (!self::transformImage($source, $working, $geometry)) {
+                return false;
+            }
+
+            $resource = JemImageResourcePolicy::inspect(
+                $working,
+                strtolower(File::getExt($working)),
+                $maximum,
+                (int) ($jemsettings->imagewidth ?? 0),
+                (int) ($jemsettings->imagehight ?? 0)
+            );
+
+            if (!$resource['accepted']
+                || (int) $resource['width'] < JemImageProfilePolicy::minDimension($jemsettings)
+                || (int) $resource['height'] < JemImageProfilePolicy::minDimension($jemsettings)) {
                 return false;
             }
 
@@ -785,10 +866,18 @@ class JemImage
      * @param   object  $params          Module parameters registry.
      * @param   string  $defaultDisplay  Legacy display mode used when the new option is absent.
      *
-     * @return  array|false  Image data from flyercreator(), enriched for module rendering.
+     * @return  array|false  Validated image data enriched for module rendering.
      */
     static public function getModuleEventImageData($event, $params, $defaultDisplay = 'thumbnail')
     {
+        $configuredDisplay = $params->get('event_image_display', null);
+        $display = strtolower(trim((string) ($configuredDisplay ?? $defaultDisplay)));
+        if (!in_array($display, array('thumbnail', 'original_limited'), true)) {
+            $display = in_array($defaultDisplay, array('thumbnail', 'original_limited'), true)
+                ? $defaultDisplay
+                : 'thumbnail';
+        }
+
         $source = strtolower(trim((string) $params->get('event_image_source', 'intro')));
         if (!in_array($source, array('intro', 'full'), true)) {
             $source = 'intro';
@@ -802,26 +891,31 @@ class JemImage
             return false;
         }
 
-        $data = self::flyercreator($image, 'event', $event->image_path ?? '');
+        $folderPath = $event->image_path ?? '';
+        $thumbnailFallback = false;
+        $data = $display === 'thumbnail'
+            ? self::existingEventThumbnailData($image, $folderPath)
+            : false;
+
+        if (!$data) {
+            $data = self::flyercreator($image, 'event', $folderPath);
+        }
+        if (!$data && $display === 'original_limited') {
+            $data = self::existingEventThumbnailData($image, $folderPath);
+            $thumbnailFallback = (bool) $data;
+        }
         if (!$data) {
             return false;
         }
 
-        $configuredDisplay = $params->get('event_image_display', null);
-        $display = strtolower(trim((string) ($configuredDisplay ?? $defaultDisplay)));
-        if (!in_array($display, array('thumbnail', 'original_limited'), true)) {
-            $display = in_array($defaultDisplay, array('thumbnail', 'original_limited'), true)
-                ? $defaultDisplay
-                : 'thumbnail';
-        }
-
-        $data['display_mode'] = $display;
-        $data['display'] = $display === 'original_limited' ? $data['original'] : $data['thumb'];
+        $effectiveDisplay = $thumbnailFallback ? 'thumbnail' : $display;
+        $data['display_mode'] = $effectiveDisplay;
+        $data['display'] = $effectiveDisplay === 'original_limited' ? $data['original'] : $data['thumb'];
         $data['display_style'] = '';
         $data['display_container_style'] = '';
 
         // Missing parameters identify upgraded module instances. Keep their legacy styling unchanged.
-        if ($display === 'original_limited' && $configuredDisplay !== null) {
+        if ($effectiveDisplay === 'original_limited' && $configuredDisplay !== null) {
             $maxWidth = (int) $params->get('event_image_max_width', 800);
             $maxHeight = (int) $params->get('event_image_max_height', 800);
             $maxWidth = $maxWidth > 0 ? min($maxWidth, 4096) : 800;
@@ -831,6 +925,69 @@ class JemImage
         }
 
         return $data;
+    }
+
+    /**
+     * Return a validated existing JEM event thumbnail without decoding the
+     * original image. This keeps list and card modules usable for legacy
+     * originals that exceed the current processing boundary.
+     */
+    private static function existingEventThumbnailData($image, $folderPath = '')
+    {
+        $image = ltrim(str_replace('\\', '/', trim((string) $image)), '/');
+
+        if ($image === '') {
+            return false;
+        }
+
+        if (strpos($image, '/') === false) {
+            $imgOrig = JemEventImagePath::imagePath($folderPath, $image);
+            $imgThumb = JemEventImagePath::thumbPath($folderPath, $image);
+        } else {
+            $managedPrefix = JemEventImagePath::BASE . '/';
+            $managedThumbPrefix = JemEventImagePath::BASE . '/' . JemEventImagePath::THUMB . '/';
+
+            if (strpos($image, $managedPrefix) !== 0 || strpos($image, $managedThumbPrefix) === 0) {
+                return false;
+            }
+
+            $imgOrig = $image;
+            $imgThumb = $managedThumbPrefix . substr($image, strlen($managedPrefix));
+        }
+
+        $source = Path::clean(JPATH_SITE . '/' . $imgOrig);
+        $thumbnail = Path::clean(JPATH_SITE . '/' . $imgThumb);
+        $base = Path::clean(JPATH_SITE . '/' . JemEventImagePath::BASE);
+        $thumbBase = Path::clean(
+            JPATH_SITE . '/' . JemEventImagePath::BASE . '/' . JemEventImagePath::THUMB
+        );
+
+        if (!JemEventImagePath::isInsideBase($source, $base)
+            || !JemEventImagePath::isInsideBase($thumbnail, $thumbBase)
+            || !File::exists($source)
+            || !File::exists($thumbnail)) {
+            return false;
+        }
+
+        $resource = JemImageResourcePolicy::inspect(
+            $thumbnail,
+            strtolower(File::getExt($thumbnail)),
+            JemImageProfilePolicy::displayMaxDimension(JemHelper::config())
+        );
+
+        if (!$resource['accepted']) {
+            return false;
+        }
+
+        return array(
+            'original' => $imgOrig,
+            'thumb' => $imgThumb,
+            'thumb_is_original' => false,
+            'width' => (int) $resource['width'],
+            'height' => (int) $resource['height'],
+            'thumbwidth' => (int) $resource['width'],
+            'thumbheight' => (int) $resource['height'],
+        );
     }
 
     /**

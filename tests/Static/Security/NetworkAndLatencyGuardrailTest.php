@@ -17,6 +17,7 @@ final class NetworkAndLatencyGuardrailTest extends TestCase
         'admin/views/venue/tmpl/edit.php:fetch',
         'admin/views/venues/tmpl/default.php:fetch',
         'media/js/attachments.js:fetch',
+        'media/js/image-repair.js:fetch',
         'media/js/load-more.js:XMLHttpRequest',
         'modules/mod_jem_cal/tmpl/grid.php:fetch',
         'site/controller.php:XMLHttpRequest',

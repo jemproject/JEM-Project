@@ -600,6 +600,8 @@ $this->document->addStyleDeclaration('
                             $this->item->datimage ?? ''
                         ),
                         'currentImageAlt' => $this->item->title ?? Text::_('COM_JEM_EVENT_INTRO_IMAGE'),
+                        'repairEventId' => (int) ($this->item->id ?? 0),
+                        'repairField' => 'datimage',
                     ),
                     JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
                 );
@@ -621,6 +623,8 @@ $this->document->addStyleDeclaration('
                             $this->item->fullimage ?? ''
                         ),
                         'currentImageAlt' => $this->item->title ?? Text::_('COM_JEM_EVENT_FULLIMAGE'),
+                        'repairEventId' => (int) ($this->item->id ?? 0),
+                        'repairField' => 'fullimage',
                         'extraRows' => array(
                             array(
                                 'label' => $this->form->getLabel('fullimage_layout'),

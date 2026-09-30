@@ -19,7 +19,7 @@ final class ModuleEventImageOptionsTest extends TestCase
     {
         yield 'teaser' => array('mod_jem_teaser', 'thumbnail');
         yield 'wide' => array('mod_jem_wide', 'thumbnail');
-        yield 'banner' => array('mod_jem_banner', 'original_limited');
+        yield 'banner' => array('mod_jem_banner', 'thumbnail');
         yield 'jubilee' => array('mod_jem_jubilee', 'original_limited');
     }
 
@@ -116,6 +116,9 @@ final class ModuleEventImageOptionsTest extends TestCase
         self::assertStringContainsString("\$source === 'full' && !empty(\$event->fullimage)", $image);
         self::assertStringContainsString(": (string) (\$event->datimage ?? '')", $image);
         self::assertStringContainsString("array('thumbnail', 'original_limited')", $image);
+        self::assertStringContainsString('existingEventThumbnailData', $image);
+        self::assertStringContainsString("\$display === 'thumbnail'", $image);
+        self::assertStringContainsString("\$thumbnailFallback ? 'thumbnail' : \$display", $image);
         self::assertStringContainsString("min(\$maxWidth, 4096)", $image);
         self::assertStringContainsString("min(\$maxHeight, 4096)", $image);
         self::assertStringContainsString("max-width:min(100%,", $image);

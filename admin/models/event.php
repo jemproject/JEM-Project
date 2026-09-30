@@ -538,6 +538,113 @@ class JemModelEvent extends JemModelAdmin
     }
 
     /**
+     * Repair one oversized image assigned to a stored event.
+     *
+     * The requested field is mapped to a trusted profile and the path is
+     * rebuilt from the stored event record. No client-supplied filename or
+     * directory is used.
+     *
+     * @param   integer  $eventId  Stored event id.
+     * @param   string   $field    datimage or fullimage.
+     * @param   string   $expected Fingerprint of the image shown in the editor.
+     *
+     * @return  array|false  Updated dimensions on success, false on failure.
+     */
+    public function repairStoredImage($eventId, $field, $expected)
+    {
+        $profiles = array(
+            'datimage' => JemImageProfilePolicy::EVENT_INTRO,
+            'fullimage' => JemImageProfilePolicy::EVENT_FULL,
+        );
+        $eventId = (int) $eventId;
+        $field = (string) $field;
+        $expected = strtolower((string) $expected);
+
+        if ($eventId < 1 || !isset($profiles[$field]) || preg_match('/^[a-f0-9]{64}$/D', $expected) !== 1) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_INVALID'));
+
+            return false;
+        }
+
+        $event = $this->getItem($eventId);
+        $storedFilename = is_object($event) ? trim((string) ($event->$field ?? '')) : '';
+        $normalisedFilename = str_replace('\\', '/', $storedFilename);
+        $filename = File::makeSafe(basename($normalisedFilename));
+
+        if (!is_object($event) || (int) ($event->id ?? 0) !== $eventId
+            || $storedFilename === '' || $filename === '' || strpos($normalisedFilename, '/') !== false) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_NOT_FOUND'));
+
+            return false;
+        }
+
+        $folder = JemEventImagePath::normaliseRelativeFolder($event->image_path ?? '');
+        $relativeSource = JemEventImagePath::imagePath($folder, $filename);
+        if (!hash_equals(hash('sha256', $field . "\0" . $relativeSource), $expected)) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_CHANGED'));
+
+            return false;
+        }
+
+        $source = Path::clean(JPATH_SITE . '/' . $relativeSource);
+        $thumbnail = Path::clean(JPATH_SITE . '/' . JemEventImagePath::thumbPath($folder, $filename));
+        $base = Path::clean(JPATH_SITE . '/' . JemEventImagePath::BASE);
+        $thumbBase = Path::clean(JPATH_SITE . '/' . JemEventImagePath::BASE . '/' . JemEventImagePath::THUMB);
+
+        if (!JemEventImagePath::isInsideBase($source, $base)
+            || !JemEventImagePath::isInsideBase($thumbnail, $thumbBase)
+            || !File::exists($source)) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_NOT_FOUND'));
+
+            return false;
+        }
+
+        $settings = JemHelper::config();
+        $maximum = JemImageProfilePolicy::maxDimension($settings);
+        $before = JemImage::analyseStoredImage(
+            $source,
+            $settings,
+            $profiles[$field],
+            true,
+            $maximum,
+            JemImageProfilePolicy::UPLOAD_RATIO_ORIGINAL,
+            $maximum,
+            $maximum
+        );
+
+        if (!$before['accepted'] || (int) $before['frames'] !== 1) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_UNSAFE'));
+
+            return false;
+        }
+
+        if (!JemImage::resizeStoredImageToMaximum(
+            $source,
+            $thumbnail,
+            $settings,
+            $profiles[$field]
+        )) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_FAILED'));
+
+            return false;
+        }
+
+        $after = @getimagesize($source);
+        if (!is_array($after) || (int) ($after[0] ?? 0) < 1 || (int) ($after[1] ?? 0) < 1) {
+            $this->setError(Text::_('COM_JEM_EVENT_IMAGE_REPAIR_FAILED'));
+
+            return false;
+        }
+
+        return array(
+            'field' => $field,
+            'width' => (int) $after[0],
+            'height' => (int) $after[1],
+            'maximum' => $maximum,
+        );
+    }
+
+    /**
      * Method to save the form data.
      *
      * @param  $data array

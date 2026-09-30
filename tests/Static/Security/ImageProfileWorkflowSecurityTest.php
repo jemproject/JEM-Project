@@ -124,6 +124,39 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
         self::assertStringContainsString('COM_JEM_HOUSEKEEPING_IMAGE_NORMALISE_CONFIRM', $layout);
     }
 
+    public function testStoredEventImageRepairIsAuthorisedBoundedAndAtomic(): void
+    {
+        $controller = $this->read('admin/controllers/event.php');
+        $model = $this->read('admin/models/event.php');
+        $layout = $this->read('admin/layouts/image/editor.php');
+        $script = $this->read('media/js/image-repair.js');
+        $image = $this->read('site/classes/image.class.php');
+        self::assertMatchesRegularExpression(
+            '/function resizeStoredImageToMaximum\([\s\S]*?JemImageProfilePolicy::MODE_NONE[\s\S]*?replaceNormalisedImage\(\$working, \$source/s',
+            $image
+        );
+
+        self::assertStringContainsString("getString('REQUEST_METHOD'", $controller);
+        self::assertStringContainsString("!== 'POST'", $controller);
+        self::assertStringContainsString("Session::checkToken('post')", $controller);
+        self::assertStringContainsString("\$this->allowEdit(array('id' => \$eventId), 'id')", $controller);
+        self::assertStringContainsString("'datimage' => JemImageProfilePolicy::EVENT_INTRO", $model);
+        self::assertStringContainsString("'fullimage' => JemImageProfilePolicy::EVENT_FULL", $model);
+        self::assertStringContainsString("hash_equals(hash('sha256'", $model);
+        self::assertStringContainsString('JemEventImagePath::isInsideBase', $model);
+        self::assertStringContainsString('resizeStoredImageToMaximum', $model);
+        self::assertStringContainsString('$processingTargetWidth', $image);
+        self::assertStringContainsString('$processingTargetHeight', $image);
+        self::assertStringContainsString('data-jem-image-repair', $layout);
+        self::assertStringContainsString("extension_loaded('gd')", $layout);
+        self::assertStringContainsString("method: 'POST'", $script);
+        self::assertStringContainsString("credentials: 'same-origin'", $script);
+        self::assertStringContainsString('new URLSearchParams', $script);
+        self::assertStringContainsString('jemImageRepairExpected', $script);
+        self::assertStringContainsString("Joomla.getOptions('csrf.token'", $script);
+        self::assertStringNotContainsString('innerHTML', $script);
+    }
+
     public function testUpgradeDefaultsAndPackageValidationCoverTheFeature(): void
     {
         foreach (array('admin/sql/install.mysql.utf8.sql', 'admin/sql/updates/mysql/5.1.0.sql') as $path) {

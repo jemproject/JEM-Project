@@ -75,6 +75,12 @@ class JemViewEvent extends JemAdminView
         $wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
         $wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
         $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
+        $wa->registerAndUseScript(
+            'com_jem.image-repair',
+            'media/com_jem/js/image-repair.js',
+            array('version' => 'auto'),
+            array('defer' => true)
+        );
 
         $access2           = JemHelper::getAccesslevelOptions();
         $this->access      = $access2;
