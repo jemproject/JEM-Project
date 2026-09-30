@@ -17,10 +17,12 @@ final class AgeAccessContractsTest extends TestCase
         self::assertSame(2, substr_count($install, '`age_level_id` int(11) unsigned NULL DEFAULT NULL'));
         self::assertSame(2, substr_count($upgrade, 'ADD COLUMN `age_level_id` INT(11) UNSIGNED NULL DEFAULT NULL'));
 
-        foreach (array(0, 6, 12, 16, 18) as $minimumAge) {
-            self::assertMatchesRegularExpression('/\(\d+,\s*\'[^\']+\',\s*' . $minimumAge . ',\s*\'#[0-9A-F]{6}\'/i', $install);
-            self::assertMatchesRegularExpression('/\(\d+,\s*\'[^\']+\',\s*' . $minimumAge . ',\s*\'#[0-9A-F]{6}\'/i', $upgrade);
+        foreach (array(0, 6, 12, 16, 18, 65) as $minimumAge) {
+            self::assertMatchesRegularExpression('/\(\d+,\s*\'[^\']+\',\s*' . $minimumAge . ',\s*\d+,\s*\'[^\']+\',\s*\'#[0-9A-F]{6}\'/i', $install);
+            self::assertMatchesRegularExpression('/\(\d+,\s*\'[^\']+\',\s*' . $minimumAge . ',\s*\d+,\s*\'[^\']+\',\s*\'#[0-9A-F]{6}\'/i', $upgrade);
         }
+
+        self::assertStringContainsString("(6, 'Seniors', 65, 99, '65+'", $install);
     }
 
     public function testEventAndVenueFormsExposeOneOptionalAgeLevel(): void
@@ -58,17 +60,20 @@ final class AgeAccessContractsTest extends TestCase
         }
     }
 
-    public function testAgeServiceUsesEventDateAndTheStricterEventOrVenueLevel(): void
+    public function testAgeServiceUsesEventDateAndTheEventVenueRangeIntersection(): void
     {
         $service = $this->read('site/classes/ageaccess.class.php');
         $factory = $this->read('site/factory.php');
 
         self::assertStringContainsString('/classes/ageaccess.class.php', $factory);
         self::assertStringContainsString('return $ages ? max($ages) : null;', $service);
+        self::assertStringContainsString('return $ages ? min($ages) : null;', $service);
+        self::assertStringContainsString('isAgeWithinRange', $service);
         self::assertStringContainsString('$birth->diff($event)->y', $service);
         self::assertStringContainsString("'profile.dob'", $service);
         self::assertStringContainsString('sqlVisibilityCondition', $service);
         self::assertStringContainsString('TIMESTAMPDIFF(YEAR, ', $service);
+        self::assertStringContainsString(' BETWEEN ', $service);
     }
 
     public function testListsAndDirectEventAccessApplyTheSameAgePolicy(): void
@@ -127,6 +132,15 @@ final class AgeAccessContractsTest extends TestCase
         self::assertStringContainsString("loadTemplate('ageaccess')", $settingsView);
         self::assertStringContainsString('name="jem_age_levels"', $settingsTemplate);
         self::assertStringContainsString('function escapeAttribute(value)', $settingsTemplate);
+        self::assertStringContainsString('jem-age-maximum', $settingsTemplate);
+        self::assertStringContainsString('jem-age-preview', $settingsTemplate);
+        self::assertStringContainsString('max="99"', $settingsTemplate);
+        self::assertStringContainsString('jem-age-color-control', $settingsTemplate);
+        self::assertStringContainsString('.jem-age-color-control input[type="text"]', $settingsTemplate);
+        self::assertStringContainsString('width: 100%;', $settingsTemplate);
+        self::assertStringContainsString('form-control-color::-webkit-color-swatch-wrapper', $settingsTemplate);
+        self::assertStringContainsString('jem-age-cell--published', $settingsTemplate);
+        self::assertStringContainsString('@media (max-width: 767.98px)', $settingsTemplate);
         self::assertStringContainsString(".replace(/\"/g, '&quot;')", $settingsTemplate);
         self::assertStringContainsString('function ageBadge', $output);
         self::assertStringContainsString('aria-label=', $output);

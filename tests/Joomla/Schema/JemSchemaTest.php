@@ -74,7 +74,9 @@ final class JemSchemaTest extends JoomlaTestCase
         yield 'capacity pools' => array('jem_capacity_pools', array('id', 'event_id', 'code', 'name', 'capacity', 'published', 'ordering'));
         yield 'event prices' => array('jem_event_prices', array('id', 'event_id', 'capacity_pool_id', 'code', 'name', 'amount', 'tax_rate_id', 'quota', 'min_quantity', 'max_quantity', 'available_from', 'available_until', 'min_age', 'max_age', 'access_level_id', 'user_group_id', 'verification_mode', 'published', 'ordering'));
         yield 'register items' => array('jem_register_items', array('id', 'register_id', 'registration_revision', 'line_number', 'line_kind', 'event_price_id', 'capacity_pool_id', 'quantity', 'currency', 'price_includes_tax', 'unit_net', 'unit_tax', 'unit_gross', 'line_net', 'line_tax', 'line_gross', 'tax_type', 'tax_rate', 'condition_snapshot', 'created'));
-        yield 'age levels' => array('jem_age_levels', array('id', 'title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering'));
+        yield 'age levels' => array('jem_age_levels', array(
+            'id', 'title', 'min_age', 'max_age', 'badge_label', 'badge_background', 'badge_text', 'published', 'ordering',
+        ));
     }
 
     #[DataProvider('criticalColumnProvider')]

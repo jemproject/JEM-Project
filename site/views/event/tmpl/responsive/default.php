@@ -685,7 +685,8 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                             <?php echo $this->escape(Text::sprintf(
                                 'COM_JEM_AGE_LEVEL_OPTION',
                                 (string) $this->item->age_level_title,
-                                (int) $this->item->age_minimum
+                                (int) $this->item->age_minimum,
+                                (int) ($this->item->age_maximum ?? JemAgeAccess::MAX_SUPPORTED_AGE)
                             )); ?>
                         </dd>
                     <?php endif; ?>

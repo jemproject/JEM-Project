@@ -203,6 +203,8 @@ class JemModelVenue extends JemModelEventslist
             'val.id AS venue_age_id',
             'val.title AS venue_age_title',
             'val.min_age AS venue_age_minimum',
+            'val.max_age AS venue_age_maximum',
+            'val.badge_label AS venue_age_label',
             'val.badge_background AS venue_age_background',
             'val.badge_text AS venue_age_text',
         ));

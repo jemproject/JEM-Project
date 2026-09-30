@@ -165,8 +165,10 @@ class ModJemTypesHelper
                 ->select(array(
                     'a.id', 'a.title', 'a.alias', 'a.attribs', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.article_id', 'a.created_by',
                     'eal.id AS event_age_id', 'eal.title AS event_age_title', 'eal.min_age AS event_age_minimum',
+                    'eal.max_age AS event_age_maximum', 'eal.badge_label AS event_age_label',
                     'eal.badge_background AS event_age_background', 'eal.badge_text AS event_age_text',
                     'val.id AS venue_age_id', 'val.title AS venue_age_title', 'val.min_age AS venue_age_minimum',
+                    'val.max_age AS venue_age_maximum', 'val.badge_label AS venue_age_label',
                     'val.badge_background AS venue_age_background', 'val.badge_text AS venue_age_text',
                     '(' . $caseSlug . ') AS slug',
                 ))
@@ -188,8 +190,8 @@ class ModJemTypesHelper
                 ->where(JemHelper::getVenueHierarchyVisibilityWhere('a', $levels))
                 ->where($ageCondition)
                 ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.created_by, '
-                    . 'eal.id, eal.title, eal.min_age, eal.badge_background, eal.badge_text, '
-                    . 'val.id, val.title, val.min_age, val.badge_background, val.badge_text')
+                    . 'eal.id, eal.title, eal.min_age, eal.max_age, eal.badge_label, eal.badge_background, eal.badge_text, '
+                    . 'val.id, val.title, val.min_age, val.max_age, val.badge_label, val.badge_background, val.badge_text')
                 ->order($db->quoteName('a.dates') . ' ASC')
                 ->setLimit($n);
 

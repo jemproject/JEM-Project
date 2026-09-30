@@ -93,6 +93,7 @@ class JemModelVenues extends JemModelEventslist
                              'l.custom1', 'l.custom2', 'l.custom3', 'l.custom4', 'l.custom5', 'l.custom6', 'l.custom7', 'l.custom8', 'l.custom9', 'l.custom10',
                              'l.meta_keywords', 'l.meta_description', 'l.checked_out', 'l.checked_out_time',
                              'val.id AS venue_age_id', 'val.title AS venue_age_title', 'val.min_age AS venue_age_minimum',
+                             'val.max_age AS venue_age_maximum', 'val.badge_label AS venue_age_label',
                              'val.badge_background AS venue_age_background', 'val.badge_text AS venue_age_text'));
         $query->select(array($case_when_l));
         $query->from('#__jem_venues as l');

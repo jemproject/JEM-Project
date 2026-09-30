@@ -155,7 +155,8 @@ class JemModelSettings extends AdminModel
             $db = Factory::getContainer()->get(DatabaseDriver::class);
             $query = $db->getQuery(true)
                 ->select($db->quoteName(array(
-                    'id', 'title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering',
+                    'id', 'title', 'min_age', 'max_age', 'badge_label', 'badge_background', 'badge_text',
+                    'published', 'ordering',
                 )))
                 ->from($db->quoteName('#__jem_age_levels'))
                 ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('min_age') . ' ASC');
@@ -790,7 +791,7 @@ class JemModelSettings extends AdminModel
         }
 
         $normalised = array();
-        $minimumAges = array();
+        $ranges = array();
         $titles = array();
         $levelIds = array();
 
@@ -803,15 +804,23 @@ class JemModelSettings extends AdminModel
 
             $title = trim(strip_tags((string) ($row['title'] ?? '')));
             $minimum = filter_var($row['min_age'] ?? null, FILTER_VALIDATE_INT, array(
-                'options' => array('min_range' => 0, 'max_range' => 120),
+                'options' => array('min_range' => 0, 'max_range' => 99),
             ));
+            $maximum = filter_var($row['max_age'] ?? null, FILTER_VALIDATE_INT, array(
+                'options' => array('min_range' => 0, 'max_range' => 99),
+            ));
+            $badgeLabel = trim(strip_tags((string) ($row['badge_label'] ?? '')));
             $background = strtoupper(trim((string) ($row['badge_background'] ?? '')));
             $text = strtoupper(trim((string) ($row['badge_text'] ?? '')));
             $id = max(0, (int) ($row['id'] ?? 0));
             $titleKey = StringHelper::strtolower($title);
 
+            $rangeKey = (int) $minimum . ':' . (int) $maximum;
+
             if ($title === '' || StringHelper::strlen($title) > 100 || $minimum === false
-                || isset($minimumAges[(int) $minimum])
+                || $maximum === false || (int) $maximum < (int) $minimum
+                || StringHelper::strlen($badgeLabel) > 32
+                || isset($ranges[$rangeKey])
                 || isset($titles[$titleKey])
                 || ($id > 0 && isset($levelIds[$id]))
                 || !preg_match('/^#[0-9A-F]{6}$/D', $background)
@@ -821,7 +830,13 @@ class JemModelSettings extends AdminModel
                 return false;
             }
 
-            $minimumAges[(int) $minimum] = true;
+            if ($badgeLabel === '') {
+                $badgeLabel = (int) $maximum < 99
+                    ? (int) $minimum . '–' . (int) $maximum
+                    : (int) $minimum . '+';
+            }
+
+            $ranges[$rangeKey] = true;
             $titles[$titleKey] = true;
             if ($id > 0) {
                 $levelIds[$id] = true;
@@ -830,6 +845,8 @@ class JemModelSettings extends AdminModel
                 'id' => $id,
                 'title' => $title,
                 'min_age' => (int) $minimum,
+                'max_age' => (int) $maximum,
+                'badge_label' => $badgeLabel,
                 'badge_background' => $background,
                 'badge_text' => $text,
                 'published' => empty($row['published']) ? 0 : 1,
@@ -843,7 +860,7 @@ class JemModelSettings extends AdminModel
             $db->transactionStart();
             $db->setQuery(
                 $db->getQuery(true)
-                    ->select($db->quoteName(array('id', 'min_age')))
+                    ->select($db->quoteName(array('id', 'min_age', 'max_age')))
                     ->from($db->quoteName('#__jem_age_levels'))
             );
             $existingLevels = $db->loadAssocList('id') ?: array();
@@ -851,8 +868,8 @@ class JemModelSettings extends AdminModel
             $savedIds = array();
 
             // Move submitted rows to an unused range before applying their
-            // final values. This permits administrators to swap two minimum
-            // ages without a transient collision on the unique index.
+            // final values. This permits administrators to swap two ranges
+            // without a transient collision on the composite unique index.
             $temporaryAge = 121;
             foreach ($normalised as $row) {
                 if ($row['id'] < 1 || !in_array($row['id'], $existingIds, true)) {
@@ -861,19 +878,26 @@ class JemModelSettings extends AdminModel
 
                 $query = $db->getQuery(true)
                     ->update($db->quoteName('#__jem_age_levels'))
-                    ->set($db->quoteName('min_age') . ' = ' . $temporaryAge++)
+                    ->set(array(
+                        $db->quoteName('min_age') . ' = ' . $temporaryAge,
+                        $db->quoteName('max_age') . ' = ' . $temporaryAge,
+                    ))
                     ->where($db->quoteName('id') . ' = ' . $row['id']);
                 $db->setQuery($query)->execute();
+                $temporaryAge++;
             }
 
             foreach ($normalised as $row) {
-                $columns = array('title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering');
+                $columns = array(
+                    'title', 'min_age', 'max_age', 'badge_label', 'badge_background', 'badge_text',
+                    'published', 'ordering',
+                );
 
                 if ($row['id'] > 0 && in_array($row['id'], $existingIds, true)) {
                     $sets = array();
                     foreach ($columns as $column) {
                         $sets[] = $db->quoteName($column) . ' = ' . (
-                            in_array($column, array('title', 'badge_background', 'badge_text'), true)
+                            in_array($column, array('title', 'badge_label', 'badge_background', 'badge_text'), true)
                                 ? $db->quote($row[$column])
                                 : (int) $row[$column]
                         );
@@ -893,6 +917,8 @@ class JemModelSettings extends AdminModel
                     ->values(implode(',', array(
                         $db->quote($row['title']),
                         $row['min_age'],
+                        $row['max_age'],
+                        $db->quote($row['badge_label']),
                         $db->quote($row['badge_background']),
                         $db->quote($row['badge_text']),
                         $row['published'],

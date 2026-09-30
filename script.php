@@ -2390,28 +2390,108 @@ SQL;
             . $db->quoteName('id') . ' INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,'
             . $db->quoteName('title') . " VARCHAR(100) NOT NULL DEFAULT '',"
             . $db->quoteName('min_age') . " TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',"
+            . $db->quoteName('max_age') . " TINYINT(3) UNSIGNED NOT NULL DEFAULT '99',"
+            . $db->quoteName('badge_label') . " VARCHAR(32) NOT NULL DEFAULT '',"
             . $db->quoteName('badge_background') . " CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937',"
             . $db->quoteName('badge_text') . " CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF',"
             . $db->quoteName('published') . " TINYINT(1) NOT NULL DEFAULT '1',"
             . $db->quoteName('ordering') . " INT(11) NOT NULL DEFAULT '0',"
             . ' PRIMARY KEY (' . $db->quoteName('id') . '),'
-            . ' UNIQUE KEY ' . $db->quoteName('idx_age_level_min_age')
-            . ' (' . $db->quoteName('min_age') . '),'
+            . ' UNIQUE KEY ' . $db->quoteName('idx_age_level_range')
+            . ' (' . $db->quoteName('min_age') . ', ' . $db->quoteName('max_age') . '),'
             . ' KEY ' . $db->quoteName('idx_age_level_state_order')
             . ' (' . $db->quoteName('published') . ', ' . $db->quoteName('ordering') . ')'
             . ') ENGINE=InnoDB'
         )->execute();
 
+        $ageTable = $db->replacePrefix('#__jem_age_levels');
+        $ageColumns = array_change_key_case($db->getTableColumns($ageTable, false), CASE_LOWER);
+        if (!isset($ageColumns['max_age'])) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_age_levels')
+                . ' ADD COLUMN ' . $db->quoteName('max_age')
+                . " TINYINT(3) UNSIGNED NOT NULL DEFAULT '99' AFTER " . $db->quoteName('min_age')
+            )->execute();
+        }
+        if (!isset($ageColumns['badge_label'])) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_age_levels')
+                . ' ADD COLUMN ' . $db->quoteName('badge_label')
+                . " VARCHAR(32) NOT NULL DEFAULT '' AFTER " . $db->quoteName('max_age')
+            )->execute();
+        }
+
+        $db->setQuery(
+            'ALTER TABLE ' . $db->quoteName('#__jem_age_levels')
+            . ' MODIFY ' . $db->quoteName('max_age')
+            . " TINYINT(3) UNSIGNED NOT NULL DEFAULT '99'"
+        )->execute();
+        $db->setQuery(
+            'UPDATE IGNORE ' . $db->quoteName('#__jem_age_levels')
+            . ' SET ' . $db->quoteName('max_age') . ' = 99'
+            . ' WHERE ' . $db->quoteName('max_age') . ' > 99'
+        )->execute();
+
+        $ageKeys = array();
+        foreach ((array) $db->getTableKeys($ageTable) as $name => $key) {
+            if (is_string($name)) {
+                $ageKeys[] = strtolower($name);
+            }
+            if (is_object($key)) {
+                foreach (array('Key_name', 'key_name', 'name') as $property) {
+                    if (isset($key->$property)) {
+                        $ageKeys[] = strtolower((string) $key->$property);
+                    }
+                }
+            }
+        }
+        $ageKeys = array_unique($ageKeys);
+        if (in_array('idx_age_level_min_age', $ageKeys, true)) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_age_levels')
+                . ' DROP INDEX ' . $db->quoteName('idx_age_level_min_age')
+            )->execute();
+        }
+        if (!in_array('idx_age_level_range', $ageKeys, true)) {
+            $db->setQuery(
+                'ALTER TABLE ' . $db->quoteName('#__jem_age_levels')
+                . ' ADD UNIQUE INDEX ' . $db->quoteName('idx_age_level_range')
+                . ' (' . $db->quoteName('min_age') . ', ' . $db->quoteName('max_age') . ')'
+            )->execute();
+        }
+
         $db->setQuery(
             'INSERT IGNORE INTO ' . $db->quoteName('#__jem_age_levels')
             . ' (' . implode(', ', $db->quoteName(array(
-                'id', 'title', 'min_age', 'badge_background', 'badge_text', 'published', 'ordering',
+                'id', 'title', 'min_age', 'max_age', 'badge_label', 'badge_background', 'badge_text', 'published', 'ordering',
             ))) . ') VALUES '
-            . "(1, 'All ages', 0, '#247A3D', '#FFFFFF', 1, 1),"
-            . "(2, 'Ages 6 and over', 6, '#2F6F9F', '#FFFFFF', 1, 2),"
-            . "(3, 'Ages 12 and over', 12, '#B78324', '#FFFFFF', 1, 3),"
-            . "(4, 'Ages 16 and over', 16, '#B55B00', '#FFFFFF', 1, 4),"
-            . "(5, 'Adults only', 18, '#B3261E', '#FFFFFF', 1, 5)"
+            . "(1, 'All ages', 0, 99, '0+', '#247A3D', '#FFFFFF', 1, 1),"
+            . "(2, 'Ages 6 and over', 6, 99, '6+', '#2F6F9F', '#FFFFFF', 1, 2),"
+            . "(3, 'Ages 12 and over', 12, 99, '12+', '#B78324', '#FFFFFF', 1, 3),"
+            . "(4, 'Ages 16 and over', 16, 99, '16+', '#B55B00', '#FFFFFF', 1, 4),"
+            . "(5, 'Adults only', 18, 99, '18+', '#B3261E', '#FFFFFF', 1, 5),"
+            . "(6, 'Seniors', 65, 99, '65+', '#6F42C1', '#FFFFFF', 1, 6)"
+        )->execute();
+
+        $db->setQuery(
+            'UPDATE ' . $db->quoteName('#__jem_age_levels')
+            . ' SET ' . $db->quoteName('badge_label') . ' = CASE'
+            . ' WHEN ' . $db->quoteName('max_age') . ' < 99 THEN CONCAT('
+            . $db->quoteName('min_age') . ", '–', " . $db->quoteName('max_age') . ')'
+            . ' ELSE CONCAT(' . $db->quoteName('min_age') . ", '+') END"
+            . ' WHERE ' . $db->quoteName('badge_label') . " = ''"
+        )->execute();
+
+        $db->setQuery(
+            'INSERT INTO ' . $db->quoteName('#__jem_age_levels')
+            . ' (' . implode(', ', $db->quoteName(array(
+                'title', 'min_age', 'max_age', 'badge_label', 'badge_background', 'badge_text', 'published', 'ordering',
+            ))) . ') SELECT '
+            . $db->quote('Seniors') . ', 65, 99, ' . $db->quote('65+') . ', '
+            . $db->quote('#6F42C1') . ', ' . $db->quote('#FFFFFF') . ', 1, 6'
+            . ' WHERE NOT EXISTS (SELECT 1 FROM ' . $db->quoteName('#__jem_age_levels', 'age_existing')
+            . ' WHERE ' . $db->quoteName('age_existing.min_age') . ' = 65'
+            . ' AND ' . $db->quoteName('age_existing.max_age') . ' = 99)'
         )->execute();
 
         foreach (array('#__jem_events', '#__jem_venues') as $table) {

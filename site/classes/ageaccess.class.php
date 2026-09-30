@@ -18,6 +18,7 @@ use Joomla\Database\DatabaseDriver;
  */
 final class JemAgeAccess
 {
+    public const MAX_SUPPORTED_AGE = 99;
     public const UNRESTRICTED = 'unrestricted';
     public const GUEST = 'guest';
     public const ELIGIBLE = 'eligible';
@@ -43,6 +44,34 @@ final class JemAgeAccess
     }
 
     /**
+     * Return the stricter non-null maximum age.
+     */
+    public static function effectiveMaxAge($eventMaxAge, $venueMaxAge): ?int
+    {
+        $ages = array();
+
+        foreach (array($eventMaxAge, $venueMaxAge) as $age) {
+            if ($age !== null && $age !== '') {
+                $ages[] = min(self::MAX_SUPPORTED_AGE, max(0, (int) $age));
+            }
+        }
+
+        return $ages ? min($ages) : null;
+    }
+
+    public static function isAgeWithinRange(int $age, int $minimumAge, int $maximumAge): bool
+    {
+        return $minimumAge <= $maximumAge && $age >= $minimumAge && $age <= $maximumAge;
+    }
+
+    public static function formatRange(int $minimumAge, int $maximumAge): string
+    {
+        return $maximumAge < self::MAX_SUPPORTED_AGE
+            ? $minimumAge . '-' . $maximumAge
+            : $minimumAge . '+';
+    }
+
+    /**
      * Calculate complete years on the event date.
      */
     public static function ageOnDate(string $birthDate, string $eventDate): ?int
@@ -58,13 +87,19 @@ final class JemAgeAccess
     }
 
     /**
-     * Assess access for one minimum age.
+     * Assess access for one inclusive age range.
      */
-    public static function assess($user, $minimumAge, string $eventDate): string
+    public static function assess($user, $minimumAge, string $eventDate, $maximumAge = null): string
     {
-        if ($minimumAge === null || $minimumAge === '') {
+        if (($minimumAge === null || $minimumAge === '')
+            && ($maximumAge === null || $maximumAge === '')) {
             return self::UNRESTRICTED;
         }
+
+        $minimumAge = $minimumAge === null || $minimumAge === '' ? 0 : max(0, (int) $minimumAge);
+        $maximumAge = $maximumAge === null || $maximumAge === ''
+            ? self::MAX_SUPPORTED_AGE
+            : min(self::MAX_SUPPORTED_AGE, max(0, (int) $maximumAge));
 
         $userId = self::userValue($user, 'id', 0);
         $guest = (bool) self::userValue($user, 'guest', $userId < 1);
@@ -73,7 +108,7 @@ final class JemAgeAccess
             return self::GUEST;
         }
 
-        if ((int) $minimumAge === 0) {
+        if ($minimumAge === 0 && $maximumAge === self::MAX_SUPPORTED_AGE) {
             return self::ELIGIBLE;
         }
 
@@ -88,7 +123,9 @@ final class JemAgeAccess
             return self::UNKNOWN;
         }
 
-        return $age >= (int) $minimumAge ? self::ELIGIBLE : self::RESTRICTED;
+        return self::isAgeWithinRange($age, $minimumAge, $maximumAge)
+            ? self::ELIGIBLE
+            : self::RESTRICTED;
     }
 
     /**
@@ -102,7 +139,7 @@ final class JemAgeAccess
 
         $eventLevel = self::levelFromRow($event, 'event_age_');
         $venueLevel = self::levelFromRow($event, 'venue_age_');
-        $effective = self::stricterLevel($eventLevel, $venueLevel);
+        $effective = self::combineLevels($eventLevel, $venueLevel);
 
         self::applyLevel($event, $effective);
 
@@ -110,7 +147,8 @@ final class JemAgeAccess
         $event->age_access_state = self::assess(
             $user ?: Factory::getApplication()->getIdentity(),
             $event->age_minimum,
-            $eventDate
+            $eventDate,
+            $event->age_maximum
         );
         $event->age_visibility_bypass = $bypass;
 
@@ -229,9 +267,15 @@ final class JemAgeAccess
             . ', ' . $db->quote('0000-00-00') . '), CURRENT_DATE)';
         $minimum = 'GREATEST(COALESCE(' . $db->quoteName($eventAgeAlias . '.min_age') . ', 0), '
             . 'COALESCE(' . $db->quoteName($venueAgeAlias . '.min_age') . ', 0))';
+        $maximum = 'LEAST(COALESCE(' . $db->quoteName($eventAgeAlias . '.max_age') . ', '
+            . self::MAX_SUPPORTED_AGE . '), COALESCE(' . $db->quoteName($venueAgeAlias . '.max_age') . ', '
+            . self::MAX_SUPPORTED_AGE . '))';
+        $age = 'TIMESTAMPDIFF(YEAR, ' . $birthDateSql . ', ' . $eventDate . ')';
 
-        return '(' . $eventDate . ' < ' . $birthDateSql
-            . ' OR TIMESTAMPDIFF(YEAR, ' . $birthDateSql . ', ' . $eventDate . ') >= ' . $minimum . ')';
+        return '((' . $db->quoteName($eventAgeAlias . '.id') . ' IS NULL AND '
+            . $db->quoteName($venueAgeAlias . '.id') . ' IS NULL) OR ('
+            . $minimum . ' = 0 AND ' . $maximum . ' = ' . self::MAX_SUPPORTED_AGE . ') OR '
+            . $age . ' BETWEEN ' . $minimum . ' AND ' . $maximum . ')';
     }
 
     private static function levelFromRow($row, string $prefix): ?object
@@ -246,12 +290,17 @@ final class JemAgeAccess
             'id' => (int) ($row->{$prefix . 'id'} ?? 0),
             'title' => (string) ($row->{$prefix . 'title'} ?? ''),
             'minimum' => max(0, (int) $minimum),
+            'maximum' => min(
+                self::MAX_SUPPORTED_AGE,
+                max(0, (int) ($row->{$prefix . 'maximum'} ?? self::MAX_SUPPORTED_AGE))
+            ),
+            'label' => trim((string) ($row->{$prefix . 'label'} ?? '')),
             'background' => self::normaliseColor($row->{$prefix . 'background'} ?? '', '#1F2937'),
             'text' => self::normaliseColor($row->{$prefix . 'text'} ?? '', '#FFFFFF'),
         );
     }
 
-    private static function stricterLevel(?object $eventLevel, ?object $venueLevel): ?object
+    private static function combineLevels(?object $eventLevel, ?object $venueLevel): ?object
     {
         if ($eventLevel === null) {
             return $venueLevel;
@@ -261,17 +310,43 @@ final class JemAgeAccess
             return $eventLevel;
         }
 
-        return $venueLevel->minimum > $eventLevel->minimum ? $venueLevel : $eventLevel;
+        $minimum = max($eventLevel->minimum, $venueLevel->minimum);
+        $maximum = min($eventLevel->maximum, $venueLevel->maximum);
+
+        if ($venueLevel->minimum === $minimum && $venueLevel->maximum === $maximum) {
+            $effective = clone $venueLevel;
+        } elseif ($eventLevel->minimum === $minimum && $eventLevel->maximum === $maximum) {
+            $effective = clone $eventLevel;
+        } else {
+            $effective = clone ($venueLevel->minimum > $eventLevel->minimum ? $venueLevel : $eventLevel);
+            $effective->label = self::formatRange($minimum, $maximum);
+        }
+
+        $effective->minimum = $minimum;
+        $effective->maximum = $maximum;
+        $effective->conflict = $minimum > $maximum;
+
+        if ($effective->conflict) {
+            $effective->label = '-';
+        }
+
+        return $effective;
     }
 
     private static function applyLevel($item, ?object $level): void
     {
         $item->effective_age_level_id = $level ? (int) $level->id : null;
         $item->age_minimum = $level ? (int) $level->minimum : null;
+        $item->age_maximum = $level ? (int) $level->maximum : null;
         $item->age_level_title = $level ? (string) $level->title : '';
         $item->age_badge_background = $level ? (string) $level->background : '';
         $item->age_badge_text = $level ? (string) $level->text : '';
-        $item->age_badge_label = $level ? (int) $level->minimum . '+' : '';
+        $item->age_badge_label = $level
+            ? ((string) $level->label !== ''
+                ? (string) $level->label
+                : self::formatRange((int) $level->minimum, (int) $level->maximum))
+            : '';
+        $item->age_range_conflict = $level ? !empty($level->conflict) : false;
     }
 
     private static function normaliseEventDate(string $eventDate): string

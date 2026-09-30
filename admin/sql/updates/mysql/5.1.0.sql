@@ -143,8 +143,14 @@ ALTER TABLE `#__jem_venues` ADD KEY `idx_asset_id` (`asset_id`) /** CAN FAIL **/
 
 -- JEM 5.1.0: configurable JEM age classifications. Existing records remain
 -- unrestricted (NULL) until an administrator explicitly assigns a level.
-CREATE TABLE IF NOT EXISTS `#__jem_age_levels` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `title` VARCHAR(100) NOT NULL DEFAULT '', `min_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0', `badge_background` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937', `badge_text` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_age_level_min_age` (`min_age`), KEY `idx_age_level_state_order` (`published`,`ordering`)) ENGINE=InnoDB;
-INSERT IGNORE INTO `#__jem_age_levels` (`id`,`title`,`min_age`,`badge_background`,`badge_text`,`published`,`ordering`) VALUES (1,'All ages',0,'#247A3D','#FFFFFF',1,1),(2,'Ages 6 and over',6,'#2F6F9F','#FFFFFF',1,2),(3,'Ages 12 and over',12,'#B78324','#FFFFFF',1,3),(4,'Ages 16 and over',16,'#B55B00','#FFFFFF',1,4),(5,'Adults only',18,'#B3261E','#FFFFFF',1,5);
+CREATE TABLE IF NOT EXISTS `#__jem_age_levels` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `title` VARCHAR(100) NOT NULL DEFAULT '', `min_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0', `max_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '99', `badge_label` VARCHAR(32) NOT NULL DEFAULT '', `badge_background` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937', `badge_text` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_age_level_range` (`min_age`,`max_age`), KEY `idx_age_level_state_order` (`published`,`ordering`)) ENGINE=InnoDB;
+ALTER TABLE `#__jem_age_levels` ADD COLUMN `max_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '99' AFTER `min_age` /** CAN FAIL **/;
+ALTER TABLE `#__jem_age_levels` MODIFY `max_age` TINYINT(3) UNSIGNED NOT NULL DEFAULT '99' /** CAN FAIL **/;
+ALTER TABLE `#__jem_age_levels` ADD COLUMN `badge_label` VARCHAR(32) NOT NULL DEFAULT '' AFTER `max_age` /** CAN FAIL **/;
+ALTER TABLE `#__jem_age_levels` DROP INDEX `idx_age_level_min_age` /** CAN FAIL **/;
+UPDATE IGNORE `#__jem_age_levels` SET `max_age` = 99 WHERE `max_age` > 99;
+ALTER TABLE `#__jem_age_levels` ADD UNIQUE KEY `idx_age_level_range` (`min_age`,`max_age`) /** CAN FAIL **/;
+INSERT IGNORE INTO `#__jem_age_levels` (`id`,`title`,`min_age`,`max_age`,`badge_label`,`badge_background`,`badge_text`,`published`,`ordering`) VALUES (1,'All ages',0,99,'0+','#247A3D','#FFFFFF',1,1),(2,'Ages 6 and over',6,99,'6+','#2F6F9F','#FFFFFF',1,2),(3,'Ages 12 and over',12,99,'12+','#B78324','#FFFFFF',1,3),(4,'Ages 16 and over',16,99,'16+','#B55B00','#FFFFFF',1,4),(5,'Adults only',18,99,'18+','#B3261E','#FFFFFF',1,5),(6,'Seniors',65,99,'65+','#6F42C1','#FFFFFF',1,6);
 ALTER TABLE `#__jem_events` ADD COLUMN `age_level_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `type_id` /** CAN FAIL **/;
 ALTER TABLE `#__jem_events` ADD KEY `idx_age_level` (`age_level_id`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_venues` ADD COLUMN `age_level_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `type_id` /** CAN FAIL **/;

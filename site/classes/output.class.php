@@ -2101,11 +2101,24 @@ static public function lightbox() {
         }
 
         $minimum = max(0, (int) $item->age_minimum);
-        $label = $minimum . '+';
+        $maximum = min(
+            JemAgeAccess::MAX_SUPPORTED_AGE,
+            max(0, (int) ($item->age_maximum ?? JemAgeAccess::MAX_SUPPORTED_AGE))
+        );
+        $label = trim((string) ($item->age_badge_label ?? ''));
+        $label = $label !== '' ? $label : JemAgeAccess::formatRange($minimum, $maximum);
         $classification = trim((string) ($item->age_level_title ?? ''));
-        $title = $classification !== ''
-            ? Text::sprintf('COM_JEM_AGE_ACCESS_LEVEL_LABEL', $classification, $minimum)
-            : Text::sprintf('COM_JEM_AGE_ACCESS_MINIMUM', $minimum);
+        if (!empty($item->age_range_conflict)) {
+            $title = Text::_('COM_JEM_AGE_ACCESS_NO_COMMON_RANGE');
+        } elseif ($maximum < JemAgeAccess::MAX_SUPPORTED_AGE) {
+            $title = $classification !== ''
+                ? Text::sprintf('COM_JEM_AGE_ACCESS_LEVEL_RANGE_LABEL', $classification, $minimum, $maximum)
+                : Text::sprintf('COM_JEM_AGE_ACCESS_RANGE', $minimum, $maximum);
+        } else {
+            $title = $classification !== ''
+                ? Text::sprintf('COM_JEM_AGE_ACCESS_LEVEL_LABEL', $classification, $minimum)
+                : Text::sprintf('COM_JEM_AGE_ACCESS_MINIMUM', $minimum);
+        }
         $background = preg_match('/^#[0-9a-f]{6}$/i', (string) ($item->age_badge_background ?? ''))
             ? (string) $item->age_badge_background
             : '#1F2937';

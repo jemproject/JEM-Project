@@ -136,23 +136,26 @@ CREATE TABLE IF NOT EXISTS `#__jem_age_levels` (
     `id` int(11) unsigned NOT NULL auto_increment,
     `title` varchar(100) NOT NULL DEFAULT '',
     `min_age` tinyint(3) unsigned NOT NULL DEFAULT '0',
+    `max_age` tinyint(3) unsigned NOT NULL DEFAULT '99',
+    `badge_label` varchar(32) NOT NULL DEFAULT '',
     `badge_background` char(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#1F2937',
     `badge_text` char(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#FFFFFF',
     `published` tinyint(1) NOT NULL DEFAULT '1',
     `ordering` int(11) NOT NULL DEFAULT '0',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_age_level_min_age` (`min_age`),
+    UNIQUE KEY `idx_age_level_range` (`min_age`, `max_age`),
     KEY `idx_age_level_state_order` (`published`, `ordering`)
     ) ENGINE=InnoDB;
 
 INSERT IGNORE INTO `#__jem_age_levels`
-    (`id`, `title`, `min_age`, `badge_background`, `badge_text`, `published`, `ordering`)
+    (`id`, `title`, `min_age`, `max_age`, `badge_label`, `badge_background`, `badge_text`, `published`, `ordering`)
 VALUES
-    (1, 'All ages', 0, '#247A3D', '#FFFFFF', 1, 1),
-    (2, 'Ages 6 and over', 6, '#2F6F9F', '#FFFFFF', 1, 2),
-    (3, 'Ages 12 and over', 12, '#B78324', '#FFFFFF', 1, 3),
-    (4, 'Ages 16 and over', 16, '#B55B00', '#FFFFFF', 1, 4),
-    (5, 'Adults only', 18, '#B3261E', '#FFFFFF', 1, 5);
+    (1, 'All ages', 0, 99, '0+', '#247A3D', '#FFFFFF', 1, 1),
+    (2, 'Ages 6 and over', 6, 99, '6+', '#2F6F9F', '#FFFFFF', 1, 2),
+    (3, 'Ages 12 and over', 12, 99, '12+', '#B78324', '#FFFFFF', 1, 3),
+    (4, 'Ages 16 and over', 16, 99, '16+', '#B55B00', '#FFFFFF', 1, 4),
+    (5, 'Adults only', 18, 99, '18+', '#B3261E', '#FFFFFF', 1, 5),
+    (6, 'Seniors', 65, 99, '65+', '#6F42C1', '#FFFFFF', 1, 6);
 
 CREATE TABLE IF NOT EXISTS `#__jem_tax_rates` (
     `id` int(11) unsigned NOT NULL auto_increment,

@@ -20,7 +20,7 @@ class JFormFieldAgelevel extends FormField
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'title', 'min_age', 'published')))
+            ->select($db->quoteName(array('id', 'title', 'min_age', 'max_age', 'published')))
             ->from($db->quoteName('#__jem_age_levels'))
             ->where('(' . $db->quoteName('published') . ' = 1 OR ' . $db->quoteName('id') . ' = ' . (int) $this->value . ')')
             ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('min_age') . ' ASC');
@@ -37,7 +37,12 @@ class JFormFieldAgelevel extends FormField
         );
 
         foreach ($levels as $level) {
-            $label = Text::sprintf('COM_JEM_AGE_LEVEL_OPTION', $level->title, (int) $level->min_age);
+            $label = Text::sprintf(
+                'COM_JEM_AGE_LEVEL_OPTION',
+                $level->title,
+                (int) $level->min_age,
+                (int) $level->max_age
+            );
 
             if (!(int) $level->published) {
                 $label .= ' ' . Text::_('JUNPUBLISHED');

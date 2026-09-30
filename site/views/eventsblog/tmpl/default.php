@@ -142,7 +142,11 @@ $periods = array(
                     </a>
                     <div class="jem-eventsblog-card-body">
                         <?php if (($row->age_minimum ?? null) !== null) : ?>
-                            <span class="visually-hidden"><?php echo Text::sprintf('COM_JEM_AGE_ACCESS_MINIMUM', (int) $row->age_minimum); ?></span>
+                            <span class="visually-hidden"><?php echo Text::sprintf(
+                                'COM_JEM_AGE_ACCESS_RANGE',
+                                (int) $row->age_minimum,
+                                (int) ($row->age_maximum ?? JemAgeAccess::MAX_SUPPORTED_AGE)
+                            ); ?></span>
                         <?php endif; ?>
                         <div class="jem-eventsblog-date">
                             <span class="icon-calendar" aria-hidden="true"></span>
