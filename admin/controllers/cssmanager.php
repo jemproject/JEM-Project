@@ -33,6 +33,7 @@ class JemControllerCssmanager extends AdminController
         $this->registerTask('deletecustom',          'deletecustom');
         $this->registerTask('downloadcustom',        'downloadcustom');
         $this->registerTask('createusercss',         'createusercss');
+        $this->registerTask('migratelegacyoverrides', 'migratelegacyoverrides');
     }
 
 
@@ -191,6 +192,49 @@ class JemControllerCssmanager extends AdminController
         $this->setRedirect(Route::_('index.php?option=com_jem&task=source.edit&id=' . base64_encode('custom#:' . $file), false));
 
         return true;
+    }
+
+    public function migratelegacyoverrides()
+    {
+        JemHelper::requirePostToken();
+
+        $app = Factory::getApplication();
+
+        if (!JemHelperBackend::canManage('jem.tools.manage')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $result = $this->getModel()->migrateLegacyModuleCssOverrides();
+        $migrated = count($result['migrated']);
+        $failed = count($result['failed']);
+        $skipped = count($result['skipped']);
+
+        if ($migrated > 0) {
+            $app->enqueueMessage(
+                Text::plural('COM_JEM_CSSMANAGER_LEGACY_MIGRATED', $migrated),
+                'message'
+            );
+        }
+
+        if ($failed > 0) {
+            $app->enqueueMessage(
+                Text::plural('COM_JEM_CSSMANAGER_LEGACY_FAILED', $failed),
+                'warning'
+            );
+        }
+
+        if ($migrated === 0 && $failed === 0) {
+            $app->enqueueMessage(
+                $skipped > 0
+                    ? Text::_('COM_JEM_CSSMANAGER_LEGACY_CONFLICTS_REMAIN')
+                    : Text::_('COM_JEM_CSSMANAGER_LEGACY_NONE_PENDING'),
+                'info'
+            );
+        }
+
+        $this->setRedirect(Route::_('index.php?option=com_jem&view=cssmanager', false));
+
+        return $failed === 0;
     }
 
 }

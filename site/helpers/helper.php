@@ -33,6 +33,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/recurrencevalidator.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/modulecssoverride.class.php');
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -4247,6 +4248,7 @@ class JemHelper
         $templateName = $app->getTemplate();
         $css = self::getModuleLayoutName($css);
         $filestyle = $css . '.css';
+        $legacyFilestyle = JemModuleCssOverride::getLegacyFileName($module, $css);
         $asset = $module . ($css ? '.' . $css : '');
         $styleUri = '';
 
@@ -4258,9 +4260,21 @@ class JemHelper
         else if (file_exists(JPATH_SITE . '/templates/' . $templateName . '/html/' . $module . '/' . $filestyle)) {
             $styleUri = 'templates/' . $templateName . '/html/'. $module . '/' . $filestyle;
         }
+        //Temporarily support template overrides that still use pre-JEM 5 filenames.
+        else if ($legacyFilestyle !== '' && file_exists(JPATH_SITE . '/templates/' . $templateName . '/css/' . $module . '/' . $legacyFilestyle)) {
+            $styleUri = 'templates/' . $templateName . '/css/'. $module . '/' . $legacyFilestyle;
+        }
+        //Temporarily support the legacy template HTML override location and filename.
+        else if ($legacyFilestyle !== '' && file_exists(JPATH_SITE . '/templates/' . $templateName . '/html/' . $module . '/' . $legacyFilestyle)) {
+            $styleUri = 'templates/' . $templateName . '/html/'. $module . '/' . $legacyFilestyle;
+        }
         //Search in media folder
         else if (file_exists(JPATH_SITE . '/media/' . $module . '/css/' . $filestyle)) {
             $styleUri = 'media/' . $module . '/css/' . $filestyle;
+        }
+        //Temporarily support custom module media overrides with pre-JEM 5 filenames.
+        else if ($legacyFilestyle !== '' && file_exists(JPATH_SITE . '/media/' . $module . '/css/' . $legacyFilestyle)) {
+            $styleUri = 'media/' . $module . '/css/' . $legacyFilestyle;
         }
         //Search in the module
         else if (file_exists(JPATH_SITE . '/modules/' . $module . '/tmpl/' . $filestyle)) {

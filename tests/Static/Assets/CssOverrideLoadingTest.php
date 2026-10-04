@@ -95,6 +95,33 @@ final class CssOverrideLoadingTest extends TestCase
         self::assertStringContainsString("assetExists('style', \$asset)", $method);
     }
 
+    public function testMaintenanceBranchTemporarilyFallsBackToLegacyModuleCssNames(): void
+    {
+        $method = $this->method('loadModuleStyleSheet', 'loadIconFont');
+
+        self::assertStringContainsString(
+            'JemModuleCssOverride::getLegacyFileName($module, $css)',
+            $method
+        );
+        self::assertSame(10, substr_count($method, '$legacyFilestyle'));
+
+        $orderedMarkers = array(
+            '//Search for template overrides' => 'current template override',
+            '//Temporarily support template overrides' => 'legacy template override',
+            '//Search in media folder' => 'current media stylesheet',
+            '//Temporarily support custom module media overrides' => 'legacy media stylesheet',
+            '//Search in the module' => 'bundled module stylesheet',
+        );
+        $lastPosition = -1;
+
+        foreach ($orderedMarkers as $marker => $label) {
+            $position = strpos($method, $marker);
+            self::assertIsInt($position, $label);
+            self::assertGreaterThan($lastPosition, $position, $label . ' is out of order.');
+            $lastPosition = $position;
+        }
+    }
+
     public function testViewsAndModulesDoNotBypassTheComponentCssResolver(): void
     {
         $roots = array('admin', 'site', 'modules');

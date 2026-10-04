@@ -233,6 +233,7 @@ final class JemPackageBuilder
             $requiredComponentEntries[] = 'site/classes/eventslistmenupolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/imageresourcepolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/loadmorerequestpolicy.class.php';
+            $requiredComponentEntries[] = 'site/classes/modulecssoverride.class.php';
             $requiredComponentEntries[] = 'site/classes/pdfimagepolicy.class.php';
             $requiredComponentEntries[] = 'site/classes/registrationservice.class.php';
             $requiredComponentEntries[] = 'site/common/views/tmpl/responsive/default_jem_eventslist_item.php';

@@ -19,6 +19,8 @@ class JemViewCssmanager extends JemAdminView
 
     protected $files;
 
+    protected $legacyModuleOverrides;
+
     public function display($tpl = null)
     {
         if (!JemHelperBackend::canManage('jem.tools.manage')) {
@@ -26,6 +28,7 @@ class JemViewCssmanager extends JemAdminView
         }
 
         $this->files = $this->get('Files');
+        $this->legacyModuleOverrides = $this->get('LegacyModuleCssOverrides');
         $this->statusLinenumber = $this->get('StatusLinenumber');
 
         // Check for errors.

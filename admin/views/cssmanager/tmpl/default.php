@@ -138,6 +138,18 @@ if (!empty($this->files['usercss'])) {
 }
 
 $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
+$legacyModuleOverrides = is_array($this->legacyModuleOverrides ?? null)
+    ? $this->legacyModuleOverrides
+    : array();
+$legacyPendingCount = count(array_filter($legacyModuleOverrides, function ($item) {
+    return ($item['status'] ?? '') === 'pending';
+}));
+$legacyStatusLabels = array(
+    'pending'      => array('bg-warning text-dark', 'COM_JEM_CSSMANAGER_LEGACY_STATUS_PENDING'),
+    'conflict'     => array('bg-danger', 'COM_JEM_CSSMANAGER_LEGACY_STATUS_CONFLICT'),
+    'not_writable' => array('bg-secondary', 'COM_JEM_CSSMANAGER_LEGACY_STATUS_NOT_WRITABLE'),
+    'unsafe'       => array('bg-dark', 'COM_JEM_CSSMANAGER_LEGACY_STATUS_UNSAFE'),
+);
 ?>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=cssmanager'); ?>" method="post" name="adminForm" id="adminForm">
@@ -147,6 +159,49 @@ $toggleLabel = Text::_('COM_JEM_CSSMANAGER_TOGGLE_SECTION');
     </div> -->
     <?php endif; ?>
     <div id="j-main-container" class="j-main-container">
+        <?php if ($legacyModuleOverrides) : ?>
+            <div class="alert alert-warning" role="alert">
+                <h2 class="h4"><?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_TITLE'); ?></h2>
+                <p><?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_DESC'); ?></p>
+                <p><?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_SAFETY'); ?></p>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-3">
+                        <thead>
+                            <tr>
+                                <th scope="col"><?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_SOURCE'); ?></th>
+                                <th scope="col"><?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_TARGET'); ?></th>
+                                <th scope="col"><?php echo Text::_('COM_JEM_CSSMANAGER_STATUS'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($legacyModuleOverrides as $legacyOverride) : ?>
+                                <?php
+                                $legacyStatus = $legacyOverride['status'] ?? 'unsafe';
+                                $legacyStatusDefinition = $legacyStatusLabels[$legacyStatus] ?? $legacyStatusLabels['unsafe'];
+                                ?>
+                                <tr>
+                                    <td><code class="text-break"><?php echo htmlspecialchars($legacyOverride['sourceRelative'], ENT_COMPAT, 'UTF-8'); ?></code></td>
+                                    <td><code class="text-break"><?php echo htmlspecialchars($legacyOverride['targetRelative'], ENT_COMPAT, 'UTF-8'); ?></code></td>
+                                    <td>
+                                        <span class="badge <?php echo $legacyStatusDefinition[0]; ?>">
+                                            <?php echo Text::_($legacyStatusDefinition[1]); ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php if ($legacyPendingCount > 0 && $canManageTools) : ?>
+                    <button type="button" class="btn btn-warning"
+                        data-jem-css-task="cssmanager.migratelegacyoverrides"
+                        data-jem-css-confirm="<?php echo htmlspecialchars(Text::_('COM_JEM_CSSMANAGER_LEGACY_CONFIRM'), ENT_QUOTES, 'UTF-8'); ?>">
+                        <span class="icon-folder" aria-hidden="true"></span>
+                        <?php echo Text::_('COM_JEM_CSSMANAGER_LEGACY_MIGRATE'); ?>
+                    </button>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <fieldset class="adminform">
             <legend><?php echo Text::_('COM_JEM_CSSMANAGER_DESCRIPTION_LEGEND');?></legend>
             <div class="jem-cssmanager-header">
