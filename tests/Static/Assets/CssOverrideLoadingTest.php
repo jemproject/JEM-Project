@@ -93,6 +93,11 @@ final class CssOverrideLoadingTest extends TestCase
         self::assertStringContainsString("JPATH_SITE . '/media/'", $method);
         self::assertStringContainsString("JPATH_SITE . '/modules/'", $method);
         self::assertStringContainsString("assetExists('style', \$asset)", $method);
+        self::assertStringNotContainsString(
+            'JemModuleCssOverride::getLegacyFileName',
+            $method,
+            'JEM 5.1 must not load legacy module CSS filenames at runtime.'
+        );
     }
 
     public function testViewsAndModulesDoNotBypassTheComponentCssResolver(): void

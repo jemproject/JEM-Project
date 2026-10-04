@@ -19,6 +19,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\Path;
 
 require_once JPATH_SITE . '/components/com_jem/classes/cssfilepolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/modulecssoverride.class.php';
 
 /**
  * Model-CSSManager
@@ -504,6 +505,66 @@ class JemModelCssmanager extends BaseDatabaseModel
         }
 
         return $result;
+    }
+
+    /**
+     * Return legacy module CSS overrides that require administrator attention.
+     *
+     * @return array
+     */
+    public function getLegacyModuleCssOverrides()
+    {
+        return JemModuleCssOverride::discover(JPATH_SITE, $this->getSiteTemplateNames());
+    }
+
+    /**
+     * Rename safe legacy module CSS overrides after explicit administrator approval.
+     *
+     * @return array
+     */
+    public function migrateLegacyModuleCssOverrides()
+    {
+        $result = JemModuleCssOverride::migrate(JPATH_SITE, $this->getSiteTemplateNames());
+        $user = Factory::getApplication()->getIdentity();
+        $userInfo = $user && (int) $user->id > 0 ? $user->name . ' (#' . (int) $user->id . ')' : 'Unknown';
+
+        foreach ($result['migrated'] as $item) {
+            $this->logCssOperation(
+                'Legacy module CSS override migrated: "' . $item['sourceRelative'] . '" to "'
+                . $item['targetRelative'] . '", user "' . $userInfo . '"',
+                Log::INFO
+            );
+        }
+
+        foreach ($result['failed'] as $item) {
+            $this->logCssOperation(
+                'Legacy module CSS override migration failed: "' . $item['sourceRelative'] . '" to "'
+                . $item['targetRelative'] . '", user "' . $userInfo . '"',
+                Log::WARNING
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return the installed frontend template names that can contain module overrides.
+     *
+     * @return array
+     */
+    protected function getSiteTemplateNames()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select('DISTINCT ' . $db->quoteName('template'))
+            ->from($db->quoteName('#__template_styles'))
+            ->where($db->quoteName('client_id') . ' = 0');
+
+        $db->setQuery($query);
+
+        return array_values(array_filter(array_map('strval', (array) $db->loadColumn()), function ($template) {
+            return (bool) preg_match('/^[A-Za-z0-9_-]+$/', $template);
+        }));
     }
 
     /**

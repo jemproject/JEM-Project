@@ -20,6 +20,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
  */
 class JemViewMain extends JemAdminView
 {
+    protected $legacyModuleOverrideCount = 0;
 
     public function display($tpl = null)
     {
@@ -44,6 +45,12 @@ class JemViewMain extends JemAdminView
         $this->operatingProfileConfigured = (int) JemConfig::getInstance()
             ->toRegistry()
             ->get('operating_profile_configured', 0);
+
+        if (JemHelperBackend::canManage('jem.tools.manage')) {
+            require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/cssmanager.php';
+            $cssManagerModel = new JemModelCssmanager(array('ignore_request' => true));
+            $this->legacyModuleOverrideCount = count($cssManagerModel->getLegacyModuleCssOverrides());
+        }
 
         // Add toolbar
         $this->addToolbar();

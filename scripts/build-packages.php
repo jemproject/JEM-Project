@@ -259,6 +259,7 @@ final class JemPackageBuilder
             'site/classes/imageprofilepolicy.class.php',
             'site/classes/imagepublicationpolicy.class.php',
             'site/classes/loadmorerequestpolicy.class.php',
+            'site/classes/modulecssoverride.class.php',
             'site/classes/pdfimagepolicy.class.php',
             'site/classes/registrationservice.class.php',
             'site/classes/venueimagepath.class.php',

@@ -47,6 +47,21 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
 <?php // Group titles, tile groups and the "Add" badge are defined in media/com_jem/css/backend.css. ?>
 <form action="<?php echo Route::_('index.php?option=com_jem'); ?>" id="application-form" method="post" name="adminForm" class="form-validate">
     <div id="j-main-container" class="j-main-container">
+        <?php if ($canManageTools && !empty($this->legacyModuleOverrideCount)) : ?>
+            <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-3" role="alert">
+                <div>
+                    <strong><?php echo Text::_('COM_JEM_MAIN_LEGACY_MODULE_CSS_TITLE'); ?></strong>
+                    <div>
+                        <?php echo $this->legacyModuleOverrideCount === 1
+                            ? Text::_('COM_JEM_MAIN_LEGACY_MODULE_CSS_DESC_1')
+                            : Text::sprintf('COM_JEM_MAIN_LEGACY_MODULE_CSS_DESC_MORE', $this->legacyModuleOverrideCount); ?>
+                    </div>
+                </div>
+                <a class="btn btn-warning" href="index.php?option=com_jem&amp;view=cssmanager">
+                    <?php echo Text::_('COM_JEM_MAIN_LEGACY_MODULE_CSS_ACTION'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
         <?php if ($canConfigure) : ?>
             <section class="jem-operating-profile-summary<?php echo empty($this->operatingProfileConfigured) ? ' border-warning' : ''; ?>" aria-label="<?php echo Text::_('COM_JEM_OPERATING_PROFILE'); ?>">
                 <div>
