@@ -180,7 +180,15 @@ class JemControllerEvent extends JemControllerForm
 
         if ($recordId > 0) {
             $record = $model->getItem($recordId);
-            $storedCategories = is_object($record) ? array_map('intval', (array) ($record->cats ?? array())) : array();
+
+            if (!is_object($record) || (int) ($record->id ?? 0) !== $recordId) {
+                throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+
+            $storedCategories = array_values(array_unique(array_filter(array_map(
+                'intval',
+                (array) ($record->cats ?? array())
+            ))));
             $addedCategories = array_values(array_diff($submittedCategories, $storedCategories));
 
             if ($isCopy && !JemHelperBackend::canEventCategories('create', $submittedCategories)) {
@@ -198,7 +206,15 @@ class JemControllerEvent extends JemControllerForm
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        $canEditState = JemHelperBackend::canEventCategories('edit.state', $submittedCategories, $record);
+        $authorizationCategories = !$isCopy && $recordId > 0
+            ? $storedCategories
+            : $submittedCategories;
+        $authorizationRecord = !$isCopy && $recordId > 0 ? $record : null;
+        $canEditState = JemHelperBackend::canEventCategories(
+            'edit.state',
+            $authorizationCategories,
+            $authorizationRecord
+        );
         $categoriesChanged = $recordId > 0
             && (array_values(array_diff($storedCategories, $submittedCategories)) !== array()
                 || array_values(array_diff($submittedCategories, $storedCategories)) !== array());

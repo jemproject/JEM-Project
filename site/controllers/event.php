@@ -360,12 +360,15 @@ class JemControllerEvent extends JemControllerForm
         }
 
         $user = JemFactory::getUser();
+        $authorizationCategories = $recordId > 0
+            ? $storedCategories
+            : $submittedCategories;
         $canPublish = $user->can(
             'publish',
             'event',
             $recordId,
             $item ? (int) ($item->created_by ?? 0) : (int) $user->id,
-            $submittedCategories
+            $authorizationCategories
         );
         $categoriesChanged = $recordId > 0
             && (array_values(array_diff($storedCategories, $submittedCategories)) !== array()

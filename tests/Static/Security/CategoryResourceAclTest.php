@@ -59,6 +59,37 @@ final class CategoryResourceAclTest extends TestCase
         self::assertStringContainsString("(array) \$this->getJemGroups(\$fields)", $frontendUser);
     }
 
+    public function testExistingEventStateAuthorizationUsesStoredResourceData(): void
+    {
+        $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/event.php');
+        $backendController = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/event.php');
+        $frontendController = (string) file_get_contents(JEM_TEST_ROOT . '/site/controllers/event.php');
+
+        self::assertStringContainsString('$stateRecord = $this->getStoredEventAclRecord($recordId);', $model);
+        self::assertStringContainsString('$categoryIds = $stateRecord->cats;', $model);
+        self::assertStringContainsString('protectBackendEventAclData($data, $cats, $new, $task)', $model);
+        self::assertStringContainsString('$storedEvent = $this->getStoredEventAclRecord(', $model);
+        self::assertStringContainsString(
+            '$authorizationCategories = $createsNewRecord ? $categories : $storedCategories;',
+            $model
+        );
+
+        foreach (array($backendController, $frontendController) as $controller) {
+            self::assertStringContainsString('$authorizationCategories =', $controller);
+            self::assertStringContainsString('? $storedCategories', $controller);
+            self::assertStringContainsString(': $submittedCategories;', $controller);
+        }
+
+        self::assertStringNotContainsString(
+            "canEventCategories('edit.state', \$submittedCategories",
+            $backendController
+        );
+        self::assertStringNotContainsString(
+            "\$item ? (int) (\$item->created_by ?? 0) : (int) \$user->id,\n            \$submittedCategories",
+            $frontendController
+        );
+    }
+
     public function testFrontendUnpublishedListsRequireEveryAssignedCategory(): void
     {
         $eventsList = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/eventslist.php');

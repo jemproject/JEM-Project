@@ -249,18 +249,22 @@ class JemModelEvent extends JemModelAdmin
                 (array) $form->getValue('cats')
             ))));
             $stateRecord = null;
+            $canEditState = false;
 
             if ($recordId > 0) {
-                $stateRecord = (object) array(
-                    'id' => $recordId,
-                    'created_by' => (int) $form->getValue('created_by'),
-                    'cats' => $categoryIds,
-                );
-            }
+                $stateRecord = $this->getStoredEventAclRecord($recordId);
 
-            $canEditState = $recordId > 0
-                ? JemHelperBackend::canEventCategories('edit.state', $categoryIds, $stateRecord)
-                : JemHelperBackend::canManageAnyEvent('edit.state');
+                if ($stateRecord !== null) {
+                    $categoryIds = $stateRecord->cats;
+                    $canEditState = JemHelperBackend::canEventCategories(
+                        'edit.state',
+                        $categoryIds,
+                        $stateRecord
+                    );
+                }
+            } else {
+                $canEditState = JemHelperBackend::canManageAnyEvent('edit.state');
+            }
 
             if (!$canEditState) {
                 foreach (array('featured', 'ordering', 'publish_up', 'publish_down', 'published') as $fieldName) {
@@ -763,6 +767,9 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
         $data['cats']         = $cats;
+        if ($backend && !$this->protectBackendEventAclData($data, $cats, $new, $task)) {
+            return false;
+        }
         if (!JemVenueAccess::canUse(JemFactory::getUser(), (int) ($data['locid'] ?? 0))) {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_VENUE_NOT_ALLOWED'));
 
@@ -2005,6 +2012,126 @@ class JemModelEvent extends JemModelAdmin
         } catch (Throwable $e) {
             return array();
         }
+    }
+
+    /**
+     * Load the stored Event properties which define its ACL context.
+     *
+     * @param   integer  $eventId  Event id.
+     *
+     * @return object|null
+     */
+    protected function getStoredEventAclRecord($eventId)
+    {
+        $eventId = (int) $eventId;
+
+        if ($eventId < 1) {
+            return null;
+        }
+
+        $table = $this->getTable();
+
+        if (!$table->load($eventId)) {
+            return null;
+        }
+
+        return (object) array(
+            'id'           => $eventId,
+            'created_by'   => (int) ($table->created_by ?? 0),
+            'created'      => $table->created ?? null,
+            'published'    => (int) ($table->published ?? 0),
+            'featured'     => (int) ($table->featured ?? 0),
+            'ordering'     => $table->ordering ?? null,
+            'publish_up'   => $table->publish_up ?? null,
+            'publish_down' => $table->publish_down ?? null,
+            'cats'         => $this->getEventCategoryIds($eventId),
+        );
+    }
+
+    /**
+     * Re-authorize backend Event data against its stored ACL context.
+     *
+     * Submitted categories describe the requested mutation. They authorize a
+     * new Event or copy, but they must never narrow the authorization context
+     * of an existing Event.
+     *
+     * @param   array    $data        Submitted Event data, updated in place.
+     * @param   array    $categories  Normalized submitted category ids.
+     * @param   boolean  $new         True for a new Event.
+     * @param   string   $task        Current controller task.
+     *
+     * @return boolean
+     */
+    protected function protectBackendEventAclData(array &$data, array $categories, $new, $task)
+    {
+        $isCopy = $task === 'save2copy';
+        $createsNewRecord = $new || $isCopy;
+        $storedEvent = null;
+        $storedCategories = array();
+
+        if ($createsNewRecord) {
+            if (!JemHelperBackend::canEventCategories('create', $categories)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+                return false;
+            }
+        } else {
+            $storedEvent = $this->getStoredEventAclRecord((int) ($data['id'] ?? 0));
+
+            if ($storedEvent === null || !JemHelperBackend::can('event', 'edit', $storedEvent)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+                return false;
+            }
+
+            $storedCategories = $storedEvent->cats;
+            $addedCategories = array_values(array_diff($categories, $storedCategories));
+
+            if ($addedCategories && !JemHelperBackend::canEventCategories('create', $addedCategories)) {
+                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+                return false;
+            }
+        }
+
+        $authorizationCategories = $createsNewRecord ? $categories : $storedCategories;
+        $canEditState = JemHelperBackend::canEventCategories(
+            'edit.state',
+            $authorizationCategories,
+            $storedEvent
+        );
+        $categoriesChanged = !$createsNewRecord
+            && (array_values(array_diff($storedCategories, $categories)) !== array()
+                || array_values(array_diff($categories, $storedCategories)) !== array());
+
+        if (!$createsNewRecord && (int) $storedEvent->published !== 0 && $categoriesChanged && !$canEditState) {
+            $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+
+            return false;
+        }
+
+        if (!$canEditState) {
+            if ($createsNewRecord) {
+                $data['published'] = 0;
+                $data['featured'] = 0;
+                unset($data['ordering'], $data['publish_up'], $data['publish_down']);
+            } else {
+                foreach (array('published', 'featured', 'ordering', 'publish_up', 'publish_down') as $field) {
+                    $data[$field] = $storedEvent->$field;
+                }
+            }
+        }
+
+        if (!JemHelperBackend::can('event', 'edit.created')) {
+            if ($createsNewRecord) {
+                unset($data['created_by'], $data['created']);
+            } else {
+                $data['created_by'] = $storedEvent->created_by;
+                $data['created'] = $storedEvent->created;
+            }
+        }
+
+        return true;
     }
 
     /**
