@@ -23,6 +23,7 @@ use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 

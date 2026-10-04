@@ -1099,7 +1099,7 @@ class JemCategoryCustomFields
     {
         $fieldId = (int) $field->id;
         $value = trim((string) $field->value);
-        $label = Text::_((string) ($field->label ?? $field->name));
+        $label = Text::_(self::resolveJoomlaFieldLabelSource($field));
         $prefix = Text::plural((string) $field->params->get('prefix', ''), $value);
         $suffix = Text::plural((string) $field->params->get('suffix', ''), $value);
         $class = htmlspecialchars($classPrefix . $fieldId, ENT_QUOTES, 'UTF-8');
@@ -1135,7 +1135,7 @@ class JemCategoryCustomFields
     {
         $fieldId = (int) $field->id;
         $value = trim((string) $field->value);
-        $label = Text::_((string) ($field->label ?? $field->name));
+        $label = Text::_(self::resolveJoomlaFieldLabelSource($field));
         $prefix = Text::plural((string) $field->params->get('prefix', ''), $value);
         $suffix = Text::plural((string) $field->params->get('suffix', ''), $value);
         $class = htmlspecialchars($classPrefix . $fieldId, ENT_QUOTES, 'UTF-8');
@@ -1159,6 +1159,29 @@ class JemCategoryCustomFields
         }
 
         return $html . '</span></div>';
+    }
+
+    /**
+     * Resolve the first non-empty Joomla field label source.
+     *
+     * Joomla field objects can expose an empty label while retaining their
+     * configured title. The field name remains the final stable fallback.
+     *
+     * @param   object  $field  Prepared Joomla field.
+     *
+     * @return string
+     */
+    protected static function resolveJoomlaFieldLabelSource($field)
+    {
+        foreach (array('label', 'title', 'name') as $property) {
+            $label = trim((string) ($field->$property ?? ''));
+
+            if ($label !== '') {
+                return $label;
+            }
+        }
+
+        return '';
     }
 
     /**

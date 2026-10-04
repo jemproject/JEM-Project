@@ -16,6 +16,7 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';

@@ -152,4 +152,36 @@ final class CategoryCustomFieldsConfigurationTest extends TestCase
 
         self::assertSame(array('rows' => '', 'cards' => ''), $presentation);
     }
+
+    public function testJoomlaFieldLabelUsesTheFirstNonEmptySource(): void
+    {
+        $method = new ReflectionMethod(JemCategoryCustomFields::class, 'resolveJoomlaFieldLabelSource');
+        $method->setAccessible(true);
+
+        self::assertSame(
+            'Explicit label',
+            $method->invoke(null, (object) array(
+                'label' => ' Explicit label ',
+                'title' => 'Field title',
+                'name'  => 'field-name',
+            ))
+        );
+        self::assertSame(
+            'Field title',
+            $method->invoke(null, (object) array(
+                'label' => ' ',
+                'title' => ' Field title ',
+                'name'  => 'field-name',
+            ))
+        );
+        self::assertSame(
+            'field-name',
+            $method->invoke(null, (object) array(
+                'label' => '',
+                'title' => '',
+                'name'  => ' field-name ',
+            ))
+        );
+        self::assertSame('', $method->invoke(null, (object) array()));
+    }
 }

@@ -55,6 +55,21 @@ final class CategoryCustomFieldsContractsTest extends TestCase
         );
     }
 
+    public function testFrontendSharedModelsLoadTheirBackendAclDependency(): void
+    {
+        foreach (array(
+            '/admin/models/event.php'    => 'class JemModelEvent',
+            '/admin/models/venue.php'    => 'class JemModelVenue',
+            '/admin/models/category.php' => 'class JemModelCategory',
+        ) as $path => $classDeclaration) {
+            $model = $this->read($path);
+            $require = "require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';";
+
+            self::assertSame(1, substr_count($model, $require), $path);
+            self::assertLessThan(strpos($model, $classDeclaration), strpos($model, $require), $path);
+        }
+    }
+
     public function testVenueFormsSaveAndRenderOnlyVenueContextFields(): void
     {
         $venueModel = $this->read('/admin/models/venue.php');
@@ -183,6 +198,7 @@ final class CategoryCustomFieldsContractsTest extends TestCase
         self::assertStringContainsString('addDetailSeparator', $helper);
         self::assertStringContainsString('jem-custom-field-group-card', $helper);
         self::assertStringContainsString('renderJoomlaGroupedDetailRow', $helper);
+        self::assertSame(2, substr_count($helper, 'Text::_(self::resolveJoomlaFieldLabelSource($field))'));
         self::assertStringContainsString('jem-custom-field-group__field-label', $helper);
         self::assertStringContainsString(". \$escapedLabel . ':</span> '", $helper);
         self::assertStringContainsString('id="' . "' . \$groupDomId . '" . '-label"', $helper);
