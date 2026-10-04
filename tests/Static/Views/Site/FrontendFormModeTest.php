@@ -50,7 +50,7 @@ final class FrontendFormModeTest extends TestCase
     }
 
     #[DataProvider('eventLayouts')]
-    public function testEventSelectorsUseTheAvailableContentWidth(string $relativePath): void
+    public function testEventSelectorsUseResponsiveContentWidths(string $relativePath): void
     {
         $source = $this->read($relativePath);
 
@@ -63,7 +63,19 @@ final class FrontendFormModeTest extends TestCase
             $source
         );
         self::assertMatchesRegularExpression(
-            '/\.jem-editevent-field-cats select\s*\{.*?width:\s*100%\s*!important;.*?max-width:\s*100%\s*!important;/s',
+            '/\.jem-editevent-field-cats > select\s*\{.*?width:\s*fit-content\s*!important;.*?max-width:\s*100%\s*!important;/s',
+            $source
+        );
+        self::assertMatchesRegularExpression(
+            '/\.jem-editevent-field-cats\s*\{.*?align-items:\s*center;.*?column-gap:\s*\.625rem;/s',
+            $source
+        );
+        self::assertMatchesRegularExpression(
+            '/\.jem-editevent-field-cats > \.choices \.choices__inner\s*\{.*?padding-inline-end:\s*calc\(7\.5px \+ 10px\);/s',
+            $source
+        );
+        self::assertMatchesRegularExpression(
+            '/@media \(max-width: 767\.98px\).*?\.jem-editevent-field-cats > select\s*\{.*?width:\s*100%\s*!important;.*?max-width:\s*100%\s*!important;/s',
             $source
         );
     }
@@ -209,7 +221,7 @@ final class FrontendFormModeTest extends TestCase
             $style
         );
         self::assertMatchesRegularExpression(
-            '/\.jem_editevent form select:not\(\[multiple\]\),.*?padding-inline-end:\s*calc\(2\.25rem \+ 5px\);.*?width:\s*fit-content !important;/s',
+            '/\.jem_editevent form select:not\(\[multiple\]\):not\(\.select-time\),.*?padding-inline-end:\s*calc\(2\.25rem \+ 5px\);.*?width:\s*fit-content !important;/s',
             $style
         );
     }

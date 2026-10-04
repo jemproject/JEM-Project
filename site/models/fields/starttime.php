@@ -25,9 +25,19 @@ class JFormFieldStarttime extends FormField
 
     public function getInput()
     {
-        $starthours = JEMHelper::buildtimeselect(23, 'starthours', substr( $this->value, 0, 2 ),array('class'=>'form-select valid form-control-success'));
-        $startminutes = JEMHelper::buildtimeselect(59, 'startminutes', substr($this->value, 3, 2 ),array('class'=>'form-select valid form-control-success'));
-        $var2 = $starthours.$startminutes;
-        return $var2;
+        $starthours = JEMHelper::buildtimeselect(
+            23,
+            'starthours',
+            substr($this->value, 0, 2),
+            array('class' => 'form-select select-time valid form-control-success')
+        );
+        $startminutes = JEMHelper::buildtimeselect(
+            59,
+            'startminutes',
+            substr($this->value, 3, 2),
+            array('class' => 'form-select select-time valid form-control-success')
+        );
+
+        return '<span class="jem-time-select">' . $starthours . $startminutes . '</span>';
     }
 }

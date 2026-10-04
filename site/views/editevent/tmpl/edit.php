@@ -189,21 +189,26 @@ $document->addStyleDeclaration('
         max-width: 14rem;
         flex: 0 0 14rem;
     }
-    .jem-editevent-field-cats > joomla-field-fancy-select,
-    .jem-editevent-field-cats > .choices,
-    .jem-editevent-field-cats > select {
-        flex: 1 1 14rem;
-        min-width: 0;
-        width: auto !important;
-        max-width: none !important;
+    .jem-editevent-field-cats {
+        align-items: center;
+        column-gap: .625rem;
     }
     .jem-editevent-field-cats joomla-field-fancy-select,
     .jem-editevent-field-cats joomla-field-fancy-select .choices,
+    .jem-editevent-field-cats > .choices,
+    .jem-editevent-field-cats > select {
+        display: inline-block;
+        flex: 0 1 auto;
+        min-width: 0;
+        width: fit-content !important;
+        max-width: 100% !important;
+    }
     .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
-    .jem-editevent-field-cats .choices,
-    .jem-editevent-field-cats select {
+    .jem-editevent-field-cats > .choices .choices__inner {
+        box-sizing: border-box;
         width: 100% !important;
         max-width: 100% !important;
+        padding-inline-end: calc(7.5px + 10px);
     }
     .jem-editevent-field-cats .choices__list--dropdown,
     .jem-editevent-field-cats .choices__list[aria-expanded] {
@@ -421,9 +426,8 @@ $document->addStyleDeclaration('
         .jem-editevent-field-date input[type="date"],
         .jem-editevent-field-cats joomla-field-fancy-select,
         .jem-editevent-field-cats joomla-field-fancy-select .choices,
-        .jem-editevent-field-cats joomla-field-fancy-select .choices__inner,
-        .jem-editevent-field-cats .choices,
-        .jem-editevent-field-cats select {
+        .jem-editevent-field-cats > .choices,
+        .jem-editevent-field-cats > select {
             width: 100% !important;
             max-width: 100% !important;
         }

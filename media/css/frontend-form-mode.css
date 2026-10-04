@@ -44,7 +44,7 @@
     width: auto !important;
 }
 
-#jem.jem_editevent form select:not([multiple]),
+#jem.jem_editevent form select:not([multiple]):not(.select-time),
 #jem.jem_editvenue form select:not([multiple]),
 #jem.jem_editcategory form select:not([multiple]) {
     display: inline-block;
@@ -52,6 +52,18 @@
     min-width: 0;
     padding-inline-end: calc(2.25rem + 5px);
     width: fit-content !important;
+}
+
+#jem.jem_editevent .jem-time-select {
+    align-items: center;
+    display: inline-flex;
+    gap: 0.375rem;
+    max-width: 100%;
+}
+
+#jem.jem_editevent .jem-time-select .select-time {
+    flex: 0 0 auto;
+    margin: 0;
 }
 
 #jem .jem-event-notifications .jem-dl {
@@ -100,7 +112,7 @@
 }
 
 @media (max-width: 767.98px) {
-    #jem.jem_editevent form select:not([multiple]),
+    #jem.jem_editevent form select:not([multiple]):not(.select-time),
     #jem.jem_editvenue form select:not([multiple]),
     #jem.jem_editcategory form select:not([multiple]) {
         width: 100% !important;

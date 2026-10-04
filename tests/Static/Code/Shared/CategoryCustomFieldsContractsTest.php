@@ -55,6 +55,21 @@ final class CategoryCustomFieldsContractsTest extends TestCase
         );
     }
 
+    public function testFrontendCategoryFieldRetainsBoundValuesAcrossReloads(): void
+    {
+        $field = $this->read('/site/models/fields/catoptions.php');
+        $boundValue = '$selectedcats = $this->normaliseCategoryIds($this->value);';
+        $defaultFallback = '$selectedcats = $this->normaliseCategoryIds($this->default);';
+        $preferredFallback = '$selectedcats = $this->normaliseCategoryIds((string) $this->element[\'prefer\']);';
+
+        self::assertStringContainsString($boundValue, $field);
+        self::assertStringContainsString($defaultFallback, $field);
+        self::assertStringContainsString($preferredFallback, $field);
+        self::assertLessThan(strpos($field, $defaultFallback), strpos($field, $boundValue));
+        self::assertLessThan(strpos($field, $preferredFallback), strpos($field, $defaultFallback));
+        self::assertStringNotContainsString("->from('#__jem_cats_event_relations')", $field);
+    }
+
     public function testFrontendSharedModelsLoadTheirBackendAclDependency(): void
     {
         foreach (array(

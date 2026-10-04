@@ -27,6 +27,23 @@ final class EventFormControlAlignmentTest extends TestCase
         self::assertStringContainsString('div.item-image div.controls {', $css, $fileName);
     }
 
+    public function testFrontendTimeFieldsKeepHourAndMinuteControlsSeparated(): void
+    {
+        foreach (array('starttime.php', 'endtime.php') as $fileName) {
+            $field = (string) file_get_contents(JEM_TEST_ROOT . '/site/models/fields/' . $fileName);
+
+            self::assertStringContainsString('form-select select-time', $field, $fileName);
+            self::assertStringContainsString('class="jem-time-select"', $field, $fileName);
+        }
+
+        $fileName = 'frontend-form-mode.css';
+        $css = (string) file_get_contents(JEM_TEST_ROOT . '/media/css/' . $fileName);
+
+        self::assertStringContainsString('#jem.jem_editevent .jem-time-select {', $css, $fileName);
+        self::assertStringContainsString('gap: 0.375rem;', $css, $fileName);
+        self::assertStringContainsString('select:not([multiple]):not(.select-time)', $css, $fileName);
+    }
+
     public function testCategoryChoicesUsePlainTextHierarchyLabels(): void
     {
         foreach (array(

@@ -25,9 +25,19 @@ class JFormFieldEndtime extends FormField
 
     public function getInput()
     {
-        $endhours = JEMHelper::buildtimeselect(23, 'endhours', substr( $this->value, 0, 2 ),array('class'=>'form-select valid form-control-success'));
-        $endminutes = JEMHelper::buildtimeselect(59, 'endminutes', substr($this->value, 3, 2 ),array('class'=>'form-select valid form-control-success'));
-        $var2 = $endhours.$endminutes;
-        return $var2;
+        $endhours = JEMHelper::buildtimeselect(
+            23,
+            'endhours',
+            substr($this->value, 0, 2),
+            array('class' => 'form-select select-time valid form-control-success')
+        );
+        $endminutes = JEMHelper::buildtimeselect(
+            59,
+            'endminutes',
+            substr($this->value, 3, 2),
+            array('class' => 'form-select select-time valid form-control-success')
+        );
+
+        return '<span class="jem-time-select">' . $endhours . $endminutes . '</span>';
     }
 }
