@@ -399,12 +399,16 @@ class JemModelSettings extends AdminModel
         if (empty($data['pdf_imageheight'])) {
             $data['pdf_imageheight'] = 40;
         }
-        if (!empty($data['pdf_enabled_views']) && is_array($data['pdf_enabled_views'])) {
-            $data['pdf_enabled_views'] = implode(',', array_unique(array_filter(array_map('trim', $data['pdf_enabled_views']))));
+        $pdfEnabledViews = $data['pdf_enabled_views'] ?? array();
+
+        if (!is_array($pdfEnabledViews)) {
+            $pdfEnabledViews = explode(',', (string) $pdfEnabledViews);
         }
-        if (empty($data['pdf_enabled_views'])) {
-            $data['pdf_enabled_views'] = 'annualcalendar,attendeeregistrations,calendar,categories,category,day,event,eventslist,eventsmap,myattendances,myevents,mytimeline,myvenues,specialdays,typeevents,typevenues,venue,venues,venueslist,venuesmap,weekcal';
-        }
+
+        $data['pdf_enabled_views'] = implode(
+            ',',
+            array_unique(array_filter(array_map('trim', $pdfEnabledViews)))
+        );
         $data['defaultCurrency'] = $this->normaliseDefaultCurrency($data['defaultCurrency'] ?? '');
         $storedCurrency = $this->normaliseDefaultCurrency(
             JemConfig::getInstance()->toRegistry()->get('defaultCurrency', '')
