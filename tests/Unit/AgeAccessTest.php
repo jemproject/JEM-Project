@@ -50,6 +50,33 @@ final class AgeAccessTest extends TestCase
         self::assertNull(JemAgeAccess::ageOnDate('2000-02-30', '2026-09-21'));
     }
 
+    public function testJoomlaProfileDatetimeIsNormalisedToItsCalendarDate(): void
+    {
+        $method = new ReflectionMethod(JemAgeAccess::class, 'normaliseProfileBirthDate');
+
+        self::assertSame('2009-02-15', $method->invoke(null, '2009-02-15'));
+        $birthDate = $method->invoke(null, ' 2009-02-15 00:00:00 ');
+        self::assertSame('2009-02-15', $birthDate);
+        self::assertSame('2009-02-15', $method->invoke(null, '2009-02-15T23:59:59'));
+        self::assertSame(17, JemAgeAccess::ageOnDate($birthDate, '2027-02-14'));
+        self::assertSame(18, JemAgeAccess::ageOnDate($birthDate, '2027-02-15'));
+    }
+
+    public function testMalformedProfileDatetimeIsNotConvertedIntoAValidDate(): void
+    {
+        $normalise = new ReflectionMethod(JemAgeAccess::class, 'normaliseProfileBirthDate');
+        $createDate = new ReflectionMethod(JemAgeAccess::class, 'createDate');
+
+        foreach (array(
+            '2009-02-15 24:00:00',
+            '2009-02-15 12:60:00',
+            '2009-02-30 00:00:00',
+            '2009-02-15 00:00:00 UTC',
+        ) as $value) {
+            self::assertNull($createDate->invoke(null, $normalise->invoke(null, $value)), $value);
+        }
+    }
+
     public function testGuestsCanSeeClassifiedEventsAndUnrestrictedEventsNeedNoProfile(): void
     {
         $guest = new AgeAccessValueStub(array('id' => 0, 'guest' => 1));

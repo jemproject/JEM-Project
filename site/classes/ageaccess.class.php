@@ -229,7 +229,7 @@ final class JemAgeAccess
             $value = is_string($decoded) ? $decoded : $value;
         }
 
-        $value = trim((string) $value);
+        $value = self::normaliseProfileBirthDate((string) $value);
         $birthDate = self::createDate($value);
         $today = self::createDate(Factory::getDate()->format('Y-m-d'));
         self::$birthDates[$userId] = $birthDate && $today && $birthDate <= $today ? $value : null;
@@ -370,6 +370,24 @@ final class JemAgeAccess
         }
 
         return $date;
+    }
+
+    /**
+     * Convert Joomla's stored profile DOB representation to a calendar date.
+     */
+    private static function normaliseProfileBirthDate(string $value): string
+    {
+        $value = trim($value);
+
+        if (preg_match(
+            '/^(\d{4}-\d{2}-\d{2})[ T](?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/D',
+            $value,
+            $matches
+        )) {
+            return $matches[1];
+        }
+
+        return $value;
     }
 
     private static function normaliseColor($value, string $fallback): string
