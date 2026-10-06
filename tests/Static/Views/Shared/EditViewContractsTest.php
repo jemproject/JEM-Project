@@ -63,6 +63,23 @@ final class EditViewContractsTest extends TestCase
         }
     }
 
+    public function testAdminEventPublicationStatusUsesTheMainTab(): void
+    {
+        $template = $this->read(JEM_TEST_ROOT . '/admin/views/event/tmpl/edit.php');
+        $mainTab = strpos($template, "HTMLHelper::_('uitab.addTab', 'myTab', 'info'");
+        $published = strpos($template, "renderfield('published')");
+        $advancedTab = strpos($template, "HTMLHelper::_('uitab.addTab', 'myTab', 'advanced'");
+        $eventStatus = strpos($template, "renderfield('event_status')");
+
+        self::assertNotFalse($mainTab);
+        self::assertNotFalse($published);
+        self::assertNotFalse($advancedTab);
+        self::assertNotFalse($eventStatus);
+        self::assertSame(1, substr_count($template, "renderfield('published')"));
+        self::assertTrue($mainTab < $published && $published < $advancedTab);
+        self::assertTrue($advancedTab < $eventStatus);
+    }
+
     /**
      * @return iterable<string, array{string, list<string>, list<string>}>
      */

@@ -538,6 +538,7 @@ $this->document->addStyleDeclaration('
                     <?php else : ?>
                         <?php echo $this->form->getInput('contactid'); ?>
                     <?php endif; ?>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('featured'); ?></div></li>
                 </ul>
             </fieldset>
@@ -643,7 +644,6 @@ $this->document->addStyleDeclaration('
             <fieldset class="adminform">
                 <ul class="adminformlist">
                     <li><div class="label-form"><?php echo $this->form->renderfield('access'); ?></div></li>
-                    <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('event_status'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('ticket_availability'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('online_meeting_url'); ?></div></li>
