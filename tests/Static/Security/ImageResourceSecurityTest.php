@@ -34,6 +34,19 @@ final class ImageResourceSecurityTest extends TestCase
         self::assertStringNotContainsString('imagecreatefrom', $policy);
     }
 
+    public function testGeneratedImagesUseNonExecutableFilePermissions(): void
+    {
+        $image = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/image.class.php');
+        $processorCount = substr_count(
+            $image,
+            'new \\stefangabos\\Zebra_Image\\Zebra_Image()'
+        );
+
+        self::assertGreaterThan(0, $processorCount);
+        self::assertSame($processorCount, substr_count($image, '$image->chmod_value = 0644;'));
+        self::assertStringNotContainsString('$image->chmod_value = 0755;', $image);
+    }
+
     public function testPackageValidationRequiresTheSharedPolicy(): void
     {
         $builder = (string) file_get_contents(JEM_TEST_ROOT . '/scripts/build-packages.php');

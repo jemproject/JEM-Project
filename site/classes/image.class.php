@@ -119,6 +119,7 @@ class JemImage
 
         // create a new instance of the class
         $image = new \stefangabos\Zebra_Image\Zebra_Image();
+        $image->chmod_value = 0644;
 
         // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;
