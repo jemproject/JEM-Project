@@ -125,6 +125,7 @@ class JemImage
 
         // create a new instance of the class
         $image = new \stefangabos\Zebra_Image\Zebra_Image();
+        $image->chmod_value = 0644;
 
         // indicate a source image (a GIF, PNG, JPEG or WEBP file)
         $image->source_path = $name;
@@ -635,6 +636,7 @@ class JemImage
     private static function transformImage($source, $target, array $geometry)
     {
         $image = new \stefangabos\Zebra_Image\Zebra_Image();
+        $image->chmod_value = 0644;
         $image->source_path = (string) $source;
         $image->target_path = (string) $target;
         $image->jpeg_quality = 95;
