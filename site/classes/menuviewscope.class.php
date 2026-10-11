@@ -33,7 +33,8 @@ class JemMenuViewScope
             return false;
         }
 
-        if (!array_key_exists('id', $query)) {
+        // Day ids select dates within the same menu, not different content records.
+        if ($view === 'day' || !array_key_exists('id', $query)) {
             return true;
         }
 

@@ -14,6 +14,30 @@ final class MenuViewScopeTest extends TestCase
      */
     public static function scopeProvider(): iterable
     {
+        yield 'day menu keeps page text after changing date' => array(
+            array('option' => 'com_jem', 'view' => 'day', 'id' => 0),
+            'day',
+            '20261012',
+            true,
+        );
+        yield 'fixed-date day menu keeps page text after navigation' => array(
+            array('option' => 'com_jem', 'view' => 'day', 'id' => '20261011'),
+            'day',
+            '20261012',
+            true,
+        );
+        yield 'day menu text does not leak into an event' => array(
+            array('option' => 'com_jem', 'view' => 'day', 'id' => 0),
+            'event',
+            42,
+            false,
+        );
+        yield 'another component cannot own day page text' => array(
+            array('option' => 'com_content', 'view' => 'day', 'id' => 0),
+            'day',
+            '20261012',
+            false,
+        );
         yield 'matching list view without record id' => array(
             array('option' => 'com_jem', 'view' => 'eventslist'),
             'eventslist',

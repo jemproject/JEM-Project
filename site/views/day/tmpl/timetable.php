@@ -217,9 +217,7 @@ $previousWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timetable
 $nextWeekLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $nextWeekDate->format('Ymd') . $extraLink);
 $previousLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $previousDate->format('Ymd') . $extraLink);
 $nextLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . $nextDate->format('Ymd') . $extraLink);
-$todayMenuLink = 'index.php?option=com_jem&view=day&id=0';
-$todayMenuItem = Factory::getApplication()->getMenu()->getItems('link', $todayMenuLink, true);
-$todayLink = Route::_($todayMenuLink . ($todayMenuItem ? '&Itemid=' . (int) $todayMenuItem->id : ''));
+$todayLink = Route::_('index.php?option=com_jem&view=day&layout=timetable&id=' . str_replace('-', '', JemHelper::getJoomlaDate()) . $extraLink);
 $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->format('Y-m-d'));
 ?>
 <div id="jem" class="jem_day jem_day_timetable jem_day_timetable_<?php echo $this->escape($orientation); ?> jem_day_timetable_axis_<?php echo $this->escape($horizontalAxis); ?><?php echo $this->pageclass_sfx;?>">
