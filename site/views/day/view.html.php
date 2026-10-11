@@ -95,10 +95,18 @@ class JemViewDay extends JemView
         $model = $this->getModel();
         $model->setDate($requestDate);
 
+        $isTimetableLayout = in_array($this->getLayout(), array('timetable', 'timeline'), true);
+        if ($isTimetableLayout) {
+            // These layouts have no pagination: load the complete, date-bounded range.
+            // Initialise request state first so it cannot restore a saved limit/offset.
+            $model->getState();
+            $model->setLimit(0);
+            $model->setLimitStart(0);
+        }
+
         // Get data from model
         $rows = $this->get('Items');
         $day  = $this->get('Day');
-        $isTimetableLayout = in_array($this->getLayout(), array('timetable', 'timeline'), true);
 
         $daydate     = JemOutput::formatdate($day);
         $showdaydate = true; // show by default
