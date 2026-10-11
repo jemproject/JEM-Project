@@ -9,6 +9,86 @@
 var $content;   // the content object
 var $select_value;
 var $select_element;
+var jemWeeklySelection = null;
+
+function weeklyStartDay() {
+    var input = document.getElementById('jform_dates');
+    var value = input ? input.value : '';
+    var wrapper = input && input.closest('.field-calendar');
+    var calendar = wrapper && wrapper._joomlaCalendar;
+    if (value && calendar && typeof Date.parseFieldDate === 'function') {
+        var parsed = Date.parseFieldDate(value, calendar.params.dateFormat, calendar.params.dateType, calendar.strings);
+        if (parsed.print(calendar.params.dateFormat, calendar.params.dateType, true, calendar.strings) !== value) {
+            return [];
+        }
+        return [['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'][parsed.getDay()]];
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return [];
+    }
+    var date = new Date(value + 'T12:00:00Z');
+    return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value
+        ? [] : [['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'][date.getUTCDay()]];
+}
+
+function weeklySelection() {
+    if (jemWeeklySelection === null) {
+        var stored = document.getElementById('recurrence_byday').value;
+        var marked = /^W:[1-7](?:,[1-7])*$/.test(stored);
+        jemWeeklySelection = {
+            custom: marked,
+            days: marked ? stored.slice(2).split(',').map(function (day) { return $weekday[Number(day) - 1][0]; }) : []
+        };
+    }
+    if (!jemWeeklySelection.custom) {
+        jemWeeklySelection.days = weeklyStartDay();
+    }
+    return jemWeeklySelection;
+}
+
+function generateWeeklyDays() {
+    var state = weeklySelection();
+    var container = document.createElement('div');
+    container.className = 'jem-weekly-days';
+    var label = document.createElement('label');
+    label.htmlFor = 'recurrence_weekly_select';
+    label.textContent = Joomla.Text._('COM_JEM_RECURRENCE_WEEKLY_DAYS');
+    container.appendChild(label);
+    var fancy = document.createElement('joomla-field-fancy-select');
+    var select = document.createElement('select');
+    select.id = 'recurrence_weekly_select';
+    select.multiple = true;
+    select.setAttribute('aria-describedby', 'recurrence_weekly_help');
+    $weekday.forEach(function (day) {
+        var option = document.createElement('option');
+        option.value = day[0];
+        option.textContent = day[1];
+        option.selected = state.days.includes(day[0]);
+        select.appendChild(option);
+    });
+    var hidden = document.createElement('input');
+    hidden.type = 'hidden';
+    hidden.value = state.days.join(',');
+    // Unchanged legacy Weekly does not opt into a different recurrence rule.
+    if (state.custom) {
+        hidden.name = 'recurrence_weekly_days';
+    }
+    select.addEventListener('change', function () {
+        state.custom = true;
+        state.days = Array.from(select.options).filter(function (option) { return option.selected; })
+            .map(function (option) { return option.value; });
+        hidden.name = 'recurrence_weekly_days';
+        hidden.value = state.days.join(',');
+    });
+    fancy.appendChild(select);
+    container.appendChild(fancy);
+    container.appendChild(hidden);
+    var help = document.createElement('small');
+    help.id = 'recurrence_weekly_help';
+    help.textContent = Joomla.Text._('COM_JEM_RECURRENCE_WEEKLY_HELP');
+    container.appendChild(help);
+    return container;
+}
 
 function start_recurrencescript(el) {
 
@@ -16,6 +96,15 @@ function start_recurrencescript(el) {
     $content = document.getElementById('recurrence_output');  // get the object (position) of the output
     // $select_element = $("#"+el);
     $select_element = document.getElementById(el);
+
+    var date = document.getElementById('jform_dates');
+    if (date) {
+        date.addEventListener('change', function () {
+            if ($select_element.value === '2' && !weeklySelection().custom) {
+                output_recurrencescript();
+            }
+        });
+    }
 
     output_recurrencescript(); // start the output
 
@@ -55,6 +144,9 @@ function output_recurrencescript() {
         // robust DOM handling (no replaceChild on empty container)
         $content.textContent = '';
         $content.appendChild($element);
+        if ($select_value === '2') {
+            $content.appendChild(generateWeeklyDays());
+        }
 
         set_parameter();	// set the new parameter
 
@@ -480,4 +572,5 @@ function set_parameter() {
     // include the value into the recurrence_number input tag
     document.getElementById("recurrence_number").value =
         document.getElementById("recurrence_selectlist").value;
+    document.getElementById('recurrence_number_saved').value = document.getElementById('recurrence_number').value;
 }

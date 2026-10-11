@@ -124,6 +124,10 @@ use Joomla\CMS\Date\Date;
                 $recurr_info = str_ireplace('[placeholder]',
                     $this->item->recurr_bak->recurrence_number,
                     Text::_('COM_JEM_OUTPUT_WEEK'));
+                $weeklyDays = JemHelper::weeklyRecurrenceDayNames($this->item->recurr_bak->recurrence_byday ?? null);
+                if ($weeklyDays) {
+                    $recurr_info .= ' (' . $this->escape($weeklyDays) . ')';
+                }
                 break;
             case 3:
                 $recurr_type = Text::_('COM_JEM_MONTHLY');

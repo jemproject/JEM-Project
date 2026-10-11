@@ -35,7 +35,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/venueimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
-require_once(JPATH_SITE.'/components/com_jem/classes/recurrencevalidator.class.php');
+require_once __DIR__ . '/../classes/recurrencevalidator.class.php';
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -3079,8 +3079,20 @@ class JemHelper
     }
 
     /**
-     * this methode calculate the next date
+     * Format explicitly selected weekly days for the recurrence summary.
      */
+    public static function weeklyRecurrenceDayNames(?string $rule): string
+    {
+        $names = array(
+            'MO' => 'MONDAY', 'TU' => 'TUESDAY', 'WE' => 'WEDNESDAY',
+            'TH' => 'THURSDAY', 'FR' => 'FRIDAY', 'SA' => 'SATURDAY', 'SU' => 'SUNDAY',
+        );
+        $days = JemRecurrenceValidator::weeklyDays($rule);
+
+        return $days ? implode(', ', array_map(static fn ($day) => Text::_('COM_JEM_' . $names[$day]), $days)) : '';
+    }
+
+    /** Calculate the next occurrence, preserving unmarked legacy recurrence rules. */
     static public function calculate_recurrence($recurrence_row)
     {
         // get the recurrence information
@@ -3098,6 +3110,18 @@ class JemHelper
                 $start_day = $start_day + ($recurrence_number * $day_time);
                 break;
             case "2":
+                if (JemRecurrenceValidator::weeklyDays($recurrence_row['recurrence_byday'] ?? null) !== null) {
+                    $next = JemRecurrenceValidator::nextWeeklyOccurrence($recurrence_row);
+                    if ($next === false) {
+                        JemHelper::addLogEntry(
+                            'Skipping invalid weekly recurrence for event ID ' . (int) ($recurrence_row['id'] ?? 0),
+                            __METHOD__,
+                            Log::WARNING
+                        );
+                    }
+
+                    return $next;
+                }
                 // +1 hour for the Summer to Winter clock change
                 $start_day = mktime(1, 0, 0, $date_array["month"], $date_array["day"], $date_array["year"]);
                 $start_day = $start_day + ($recurrence_number * $week_time);
