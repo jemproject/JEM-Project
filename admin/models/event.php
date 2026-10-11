@@ -648,6 +648,27 @@ class JemModelEvent extends JemModelAdmin
         $invitedusers         = $data['invited'] ?? '';
         $recurrencenumber     = $jinput->get('recurrence_number', '', 'int');
         $recurrencebyday      = $jinput->get('recurrence_byday', '', 'string');
+        // Only the new weekly control opts in. Legacy templates/rules retain their semantics.
+        if ((int) ($data['recurrence_type'] ?? 0) === 2 && $jinput->exists('recurrence_weekly_days')) {
+            $recurrencebyday = JemRecurrenceValidator::encodeWeeklyDays(
+                $jinput->get('recurrence_weekly_days', '', 'string')
+            );
+            if ($recurrencebyday === false) {
+                $this->setError(Text::_('COM_JEM_RECURRENCE_WEEKLY_INVALID'));
+
+                return false;
+            }
+            // Include day changes in the existing recurrence-change detection.
+            $data['recurrence_byday'] = $recurrencebyday;
+        }
+        if ((int) ($data['recurrence_type'] ?? 0) === 2
+            && JemRecurrenceValidator::weeklyDays($recurrencebyday) !== null
+            && (JemRecurrenceValidator::weeklyDays($recurrencebyday) === false || $recurrencenumber < 1 || $recurrencenumber > 52)
+        ) {
+            $this->setError(Text::_('COM_JEM_RECURRENCE_WEEKLY_INVALID'));
+
+            return false;
+        }
         $recurrencebylastday  = $jinput->get('recurrence_bylastday', '', 'string');
         if ((int) ($data['recurrence_type'] ?? 0) === 4) {
             $normalisedRecurrenceDays = JemRecurrenceValidator::normaliseWeekdays($recurrencebyday);

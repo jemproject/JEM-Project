@@ -190,6 +190,12 @@ class JemViewEditevent extends JemView
         // Load scripts
         $wa->registerScript('jem.attachments', 'com_jem/attachments.js')->useScript('jem.attachments');
         $wa->registerScript('jem.recurrence', 'com_jem/recurrence.js')->useScript('jem.recurrence');
+        $wa->usePreset('choicesjs')->useScript('webcomponent.field-fancy-select');
+        $wa->registerAndUseStyle('jem.recurrence', 'com_jem/recurrence.css');
+        Text::script('COM_JEM_RECURRENCE_WEEKLY_DAYS');
+        Text::script('COM_JEM_RECURRENCE_WEEKLY_HELP');
+        Text::script('JGLOBAL_SELECT_NO_RESULTS_MATCH');
+        Text::script('JGLOBAL_SELECT_PRESS_TO_SELECT');
         $wa->registerScript('jem.seo', 'com_jem/seo.js')->useScript('jem.seo');
         $wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
         $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
