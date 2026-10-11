@@ -3566,6 +3566,7 @@ SQL;
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $tables = array(
+            '#__jem_age_levels',
             '#__jem_attachments',
             '#__jem_categories',
             '#__jem_cats_event_relations',
@@ -3574,6 +3575,7 @@ SQL;
             '#__jem_event_space_layouts',
             '#__jem_space_conflict_overrides',
             '#__jem_events',
+            '#__jem_event_series',
             '#__jem_event_prices',
             '#__jem_groupmembers',
             '#__jem_groups',
