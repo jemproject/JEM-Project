@@ -59,9 +59,8 @@ class JemViewDay extends JemView
         }
 
         // Decide which parameters should take priority
-        $useMenuItemParams = ($menuitem && $menuitem->query['option'] == 'com_jem'
-                                        && $menuitem->query['view'] == 'day'
-                                        && !isset($menuitem->query['id']));
+        $useMenuItemParams = ($menuitem && ($menuitem->query['option'] ?? '') === 'com_jem'
+                                        && ($menuitem->query['view'] ?? '') === 'day');
 
         // Retrieving data
         $requestVenueId = $jinput->getInt('locid', 0);

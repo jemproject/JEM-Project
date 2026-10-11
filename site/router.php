@@ -17,7 +17,7 @@ use Joomla\CMS\Component\Router\Rules\StandardRules;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Menu\AbstractMenu;
 
-require_once (JPATH_SITE.'/components/com_jem/services/JemNomenuRules.php');
+require_once __DIR__ . '/services/JemNomenuRules.php';
 
 class JemRouter extends RouterView
 {
@@ -60,7 +60,6 @@ class JemRouter extends RouterView
             'categories',
             'category',
             'attendees',
-            'day',
             'myattendances',
             'myevents',
             'mytimeline',
@@ -90,6 +89,8 @@ class JemRouter extends RouterView
             $this->registerView($viewConfig);
         }
 
+        // A Day date is navigation state, not a content id used to select a menu item.
+        $this->registerView(new RouterViewConfiguration('day'));
         $this->registerView(new RouterViewConfiguration('specialdays'));
         $this->registerView(new RouterViewConfiguration('attendeeregistrations'));
         $this->registerView(new RouterViewConfiguration('eventsblog'));
@@ -99,6 +100,28 @@ class JemRouter extends RouterView
         $this->attachRule(new MenuRules($this));
         $this->attachRule(new StandardRules($this));
         $this->attachRule(new JemNomenuRules($this));
+    }
+
+    /**
+     * Keep an explicitly selected Day menu while navigating dates or layouts.
+     */
+    public function preprocess($query)
+    {
+        if (($query['view'] ?? '') === 'day'
+            && isset($query['Itemid'])
+            && is_numeric($query['Itemid'])) {
+            $item = $this->menu->getItem((int) $query['Itemid']);
+            $language = $query['lang'] ?? '*';
+
+            if ($item
+                && ($item->query['option'] ?? '') === 'com_jem'
+                && ($item->query['view'] ?? '') === 'day'
+                && ($language === '*' || $item->language === '*' || $item->language === $language)) {
+                return $query;
+            }
+        }
+
+        return parent::preprocess($query);
     }
 }
 function jemBuildRoute(&$query)

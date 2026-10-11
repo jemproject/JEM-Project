@@ -21,6 +21,41 @@ namespace Joomla\CMS\Uri {
         {
             return new self();
         }
+
+        public function toString(): string
+        {
+            return '/day';
+        }
+    }
+}
+
+namespace Joomla\CMS\Language {
+    final class Text
+    {
+        public static function _(string $key): string
+        {
+            return $key;
+        }
+    }
+}
+
+namespace Joomla\CMS\Router {
+    final class Route
+    {
+        public static function _(string $url): string
+        {
+            return $url;
+        }
+    }
+}
+
+namespace Joomla\CMS\HTML {
+    final class HTMLHelper
+    {
+        public static function _(string $key, ...$args): string
+        {
+            return '';
+        }
     }
 }
 
@@ -30,7 +65,7 @@ namespace {
     {
         public static function config(): object
         {
-            return (object) [];
+            return (object) array_fill_keys(['showtitle', 'showlocate', 'showcity', 'showcat', 'showstate'], 0);
         }
 
         public static function globalattribs(): object
@@ -55,16 +90,91 @@ namespace {
     {
         public static function getUser(): object
         {
-            return (object) [];
+            return new class {
+                public function can(string $action, string $type): bool
+                {
+                    return false;
+                }
+            };
+        }
+    }
+
+    final class JemOutput
+    {
+        public static function formatdate(string $date): string
+        {
+            return $date;
+        }
+    }
+
+    final class DayViewParams
+    {
+        public function __construct(private array $values = [])
+        {
+        }
+
+        public function get(string $key, mixed $default = null): mixed
+        {
+            return $this->values[$key] ?? $default;
+        }
+
+        public function set(string $key, mixed $value): void
+        {
+            $this->values[$key] = $value;
+        }
+
+        public function def(string $key, mixed $value): void
+        {
+            $this->values[$key] ??= $value;
+        }
+
+        public function toArray(): array
+        {
+            return $this->values;
         }
     }
 
     final class DayPaginationApplication
     {
         public object $input;
+        public DayViewParams $params;
+        public object $document;
+        public object $pathway;
+        public ?object $menuItem = null;
 
         public function __construct()
         {
+            $this->params = new DayViewParams();
+            $this->document = new class {
+                public string $title = '';
+
+                public function setTitle(string $title): void
+                {
+                    $this->title = $title;
+                }
+
+                public function addHeadLink(...$args): void
+                {
+                }
+            };
+            $this->pathway = new class {
+                public array $items = ['Original menu'];
+
+                public function getPathway(): array
+                {
+                    return $this->items;
+                }
+
+                public function setItemName(int $index, string $name): void
+                {
+                    $this->items[$index] = $name;
+                }
+
+                public function addItem(string $name): void
+                {
+                    $this->items[] = $name;
+                }
+            };
             $this->input = new class {
                 public function getCmd(string $key, string $default = ''): string
                 {
@@ -85,27 +195,36 @@ namespace {
 
         public function getMenu(): object
         {
-            return new class {
+            return new class ($this->menuItem) {
+                public function __construct(private ?object $item)
+                {
+                }
+
                 public function getActive(): ?object
                 {
-                    return null;
+                    return $this->item;
                 }
             };
         }
 
         public function getDocument(): object
         {
-            return (object) [];
+            return $this->document;
         }
 
         public function getParams(): object
         {
-            return (object) [];
+            return $this->params;
         }
 
         public function getPathWay(): object
         {
-            return (object) [];
+            return $this->pathway;
+        }
+
+        public function get(string $key, mixed $default = null): mixed
+        {
+            return $default;
         }
 
         public function getUserStateFromRequest(string $key, string $request, mixed $default, string $type): mixed
@@ -167,10 +286,12 @@ namespace {
         }
     }
 
+    #[\AllowDynamicProperties]
     class JemView
     {
         public DayPaginationModel $model;
         public string $layout = 'default';
+        public bool $stopAfterItems = true;
 
         public function __construct($config = [])
         {
@@ -193,10 +314,24 @@ namespace {
         public function get(string $property): mixed
         {
             if ($property === 'Items') {
-                throw new DayPaginationItemsLoaded($this->model->getItems());
+                if ($this->stopAfterItems) {
+                    throw new DayPaginationItemsLoaded($this->model->getItems());
+                }
+
+                return $this->model->getItems();
+            }
+            if ($property === 'Day') {
+                return '2026-10-11';
+            }
+            if ($property === 'Pagination') {
+                return (object) [];
             }
 
             throw new \LogicException('Unexpected view request: ' . $property);
+        }
+
+        public function display($tpl = null)
+        {
         }
     }
 }

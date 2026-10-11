@@ -264,6 +264,17 @@ class JemNomenuRules implements RulesInterface
      */
     public function build(&$query, &$segments)
     {
+        // StandardRules has already resolved this Day menu. Keep its date in the
+        // query instead of turning it into a menu-less segment and losing context.
+        if (!isset($query['view']) && isset($query['Itemid'])) {
+            $item = $this->router->menu->getItem($query['Itemid']);
+            if ($item
+                && ($item->query['option'] ?? '') === 'com_jem'
+                && ($item->query['view'] ?? '') === 'day') {
+                return;
+            }
+        }
+
         if (isset($query['view'], $query['a_id'])
             && in_array($query['view'], array('editevent', 'editvenue'), true)) {
             $segments[] = $query['view'];
