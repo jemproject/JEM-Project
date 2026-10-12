@@ -16,8 +16,9 @@
             <option value="">COM_JEM_SELECT_COUNTRY</option>
         </field>
         <field name="region_code" type="text" label="COM_JEM_TAX_RATE_FIELD_REGION" maxlength="100" class="form-control" />
-        <field name="valid_from" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_FROM" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />
-        <field name="valid_until" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_UNTIL" format="%Y-%m-%d" showtime="false" translateformat="true" class="form-control" />
+        <!-- Validity uses date-only values; the table validates Y-m-d without timezone conversion. -->
+        <field name="valid_from" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_FROM" format="%Y-%m-%d" showtime="false" translateformat="false" filter="raw" class="form-control" />
+        <field name="valid_until" type="calendar" label="COM_JEM_TAX_RATE_FIELD_VALID_UNTIL" format="%Y-%m-%d" showtime="false" translateformat="false" filter="raw" class="form-control" />
         <field name="description" type="textarea" label="JGLOBAL_DESCRIPTION" rows="5" filter="safehtml" class="form-control" />
         <field name="published" type="list" label="JSTATUS" default="1" class="form-select"><option value="1">JPUBLISHED</option><option value="0">JUNPUBLISHED</option></field>
         <field name="ordering" type="hidden" default="0" />

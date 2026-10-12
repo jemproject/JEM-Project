@@ -64,6 +64,23 @@ final class PricingTaxKernelContractsTest extends TestCase
         self::assertStringNotContainsString('(float)', $this->read('/admin/views/taxrates/tmpl/default.php'));
     }
 
+    public function testTaxValidityCalendarsKeepTheStrictDateOnlyContract(): void
+    {
+        $form = simplexml_load_string($this->read('/admin/models/forms/taxrate.xml'));
+        self::assertNotFalse($form);
+
+        foreach (['valid_from', 'valid_until'] as $name) {
+            $fields = $form->xpath('//field[@name="' . $name . '"]');
+            self::assertCount(1, $fields);
+            self::assertSame('calendar', (string) $fields[0]['type']);
+            self::assertSame('%Y-%m-%d', (string) $fields[0]['format']);
+            self::assertSame('false', (string) $fields[0]['translateformat']);
+            self::assertSame('false', (string) $fields[0]['showtime']);
+            self::assertSame('raw', (string) $fields[0]['filter']);
+            self::assertSame('', (string) $fields[0]['filterformat']);
+        }
+    }
+
     public function testOneGlobalCurrencyInitialisesEventsAndUsesUniqueSymbolLabels(): void
     {
         $settingsForm = $this->read('/admin/models/forms/settings.xml');
