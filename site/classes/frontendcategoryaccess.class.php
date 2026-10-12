@@ -17,6 +17,9 @@ abstract class JemFrontendCategoryAccess
      */
     public static function canCreate($user, $parentId = 0)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return false;
+        }
         if (empty($user->id) || $user->get('guest', 0)) {
             return false;
         }
@@ -36,6 +39,9 @@ abstract class JemFrontendCategoryAccess
      */
     public static function canEdit($user, $category)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return false;
+        }
         if (empty($user->id) || !is_object($category) || empty($category->id)) {
             return false;
         }
@@ -59,6 +65,9 @@ abstract class JemFrontendCategoryAccess
      */
     public static function canEditState($user, $category = null, $parentId = 0)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return false;
+        }
         if (empty($user->id)) {
             return false;
         }

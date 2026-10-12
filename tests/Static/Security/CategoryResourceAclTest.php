@@ -17,12 +17,13 @@ final class CategoryResourceAclTest extends TestCase
         self::assertStringContainsString('`asset_id` int(10) unsigned', $install);
         self::assertStringContainsString('ADD COLUMN `asset_id`', $update);
         self::assertStringContainsString("return 'com_jem.category.' . (int) \$this->id;", $table);
-        self::assertStringContainsString('repair510CategoryAclSchema()', $script);
-        self::assertStringContainsString('JemCategoryAsset::ensureSchema($db)', $script);
-        self::assertStringContainsString('JemCategoryAsset::repair($db)', $script);
+        self::assertStringContainsString('repair510ResourceAcl()', $script);
+        $migration = (string) file_get_contents(JEM_TEST_ROOT . '/admin/classes/aclmigration.class.php');
+        self::assertStringContainsString('JemCategoryAsset::ensureSchema($db)', $migration);
+        self::assertStringContainsString("\$runner->repair('category')", $migration);
         self::assertStringContainsString('NO_ZERO_DATE', $assetService);
         self::assertStringContainsString('SET SESSION sql_mode', $assetService);
-        self::assertStringContainsString("'com_jem.category.' . (int) \$category->id", $assetService);
+        self::assertStringContainsString("->repair('category')", $assetService);
     }
 
     public function testCategoryRulesAndOperationsUseStoredCategoryAssets(): void

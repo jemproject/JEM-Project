@@ -11,7 +11,9 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\HTML\HTMLHelper;
 
-require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+if (!class_exists('JemMoney')) {
+    require_once JPATH_SITE . '/components/com_jem/classes/money.class.php';
+}
 
 class JFormFieldCurrencyOptions extends ListField
 {
@@ -37,6 +39,21 @@ class JFormFieldCurrencyOptions extends ListField
             }
         } catch (Throwable $e) {
             // Keep the event form usable while an update is still running.
+        }
+
+        if (!$currencies) {
+            $path = __DIR__ . '/../../data/currencies/country-currencies.json';
+            $catalogue = is_file($path) ? json_decode((string) file_get_contents($path), true) : [];
+            foreach ((array) ($catalogue['currencies'] ?? []) as $currency) {
+                if (is_string($currency) && preg_match('/^[A-Z]{3}$/D', $currency) === 1) {
+                    $currencies[$currency] = true;
+                }
+            }
+        }
+        // The configured value must remain selectable even during a partial upgrade.
+        $selected = strtoupper(trim((string) ($this->value ?: $this->default ?: 'EUR')));
+        if (preg_match('/^[A-Z]{3}$/D', $selected) === 1) {
+            $currencies[$selected] = true;
         }
 
         ksort($currencies, SORT_STRING);

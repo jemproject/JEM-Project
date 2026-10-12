@@ -204,6 +204,10 @@ class JemConfig
         $keys = array_keys($list);
 
         foreach ($data as $k => $v) {
+            // Only the migration runner owns this state; an old Settings form must not overwrite it.
+            if ($k === 'acl_migration_state') {
+                continue;
+            }
             $query = $db->getQuery(true);
             if (in_array($k, $keys)) {
                 if ($v == $list[$k]) {

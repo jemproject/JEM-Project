@@ -47,6 +47,16 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
 <?php // Group titles, tile groups and the "Add" badge are defined in media/com_jem/css/backend.css. ?>
 <form action="<?php echo Route::_('index.php?option=com_jem'); ?>" id="application-form" method="post" name="adminForm" class="form-validate">
     <div id="j-main-container" class="j-main-container">
+        <?php if (JemAclMigrationStatus::pending()) : ?>
+            <div class="alert alert-warning" role="alert">
+                <p><?php echo Text::_('COM_JEM_ACL_MIGRATION_PENDING'); ?></p>
+                <?php if ($this->user->authorise('core.admin', 'com_jem')) : ?>
+                    <button type="submit" name="task" value="aclmigration.resume" class="btn btn-warning">
+                        <?php echo Text::_('COM_JEM_ACL_MIGRATION_RESUME'); ?>
+                    </button>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <?php if ($canManageTools && !empty($this->legacyModuleOverrideCount)) : ?>
             <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-3" role="alert">
                 <div>

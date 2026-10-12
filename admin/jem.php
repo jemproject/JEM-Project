@@ -56,6 +56,11 @@ $input = Factory::getApplication()->input;
 $task = $input->getCmd('task', '');
 $view = $input->getCmd('view', 'main');
 $taskController = strtolower(strtok($task, '.') ?: '');
+if (JemAclMigrationStatus::pending()
+    && in_array($taskController, ['event', 'events', 'category', 'categories', 'venue', 'venues'], true)
+    && !str_ends_with($task, '.cancel')) {
+    throw new \RuntimeException(Text::_('COM_JEM_ACL_MIGRATION_PENDING'), 503);
+}
 $notificationViews = array(
     'notificationcontent', 'notificationhistory', 'notifications',
     'notificationtemplate', 'notificationtemplates', 'reminder', 'reminders',

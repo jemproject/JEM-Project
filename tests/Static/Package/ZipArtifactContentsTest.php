@@ -6,6 +6,41 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageContainsResumableAclMigration(): void
+    {
+        if (!class_exists(ZipArchive::class)) {
+            self::markTestSkipped('PHP zip extension is required to inspect package artifacts.');
+        }
+
+        $packages = $this->currentPackageZipFiles();
+        self::assertNotEmpty($packages, 'Build the current package before running release verification.');
+        foreach ($packages as $package) {
+            foreach ([
+                'script.php',
+                'jem.xml',
+                'admin/classes/aclassetmigration.class.php',
+                'admin/classes/aclmigration.class.php',
+                'admin/classes/categoryasset.class.php',
+                'admin/classes/venueasset.class.php',
+                'admin/controllers/aclmigration.php',
+                'admin/helpers/helper.php',
+                'admin/jem.php',
+                'admin/language/en-GB/com_jem.ini',
+                'admin/models/fields/currencyoptions.php',
+                'admin/views/main/tmpl/default.php',
+                'site/classes/aclmigrationstatus.class.php',
+                'site/classes/config.class.php',
+                'site/classes/frontendcategoryaccess.class.php',
+                'site/classes/user.class.php',
+                'site/classes/venueaccess.class.php',
+                'site/factory.php',
+                'site/jem.php',
+            ] as $entry) {
+                self::assertSame(file_get_contents(JEM_TEST_ROOT . '/' . $entry), $this->componentEntryContents($package, $entry), $entry);
+            }
+        }
+    }
+
     public function testExistingPackageArtifactsDoNotContainDevelopmentFiles(): void
     {
         if (!class_exists(ZipArchive::class)) {

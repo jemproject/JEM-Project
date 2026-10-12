@@ -16,6 +16,9 @@ final class JemVenueAccess
 {
     public static function canUse($user, $venueId)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return false;
+        }
         $venueId = (int) $venueId;
         if ($venueId === 0) {
             return true;
@@ -35,6 +38,9 @@ final class JemVenueAccess
 
     public static function getAuthorisedIds($user, $publishedOnly = true)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return array();
+        }
         if (empty($user->id) || $user->get('guest', 0)) {
             return array();
         }

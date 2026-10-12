@@ -329,8 +329,6 @@ class com_jemInstallerScript
             $this->repair510PricingSchema();
             $this->repair510MediaSchema();
             $this->repair510CategoryCustomFieldsSchema();
-            $this->repair510CategoryAclSchema();
-            $this->repair510VenueAclSchema();
             $this->repair510ImageProfileSettings();
             $this->repair510OperatingProfile($type);
             $this->installCountryCurrencyCatalogue();
@@ -339,6 +337,8 @@ class com_jemInstallerScript
             $this->repairLegacyRecurrenceRoots();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
+            // Essential catalogues and settings must be usable before optional continuation.
+            $this->repair510ResourceAcl();
         }
     }
 
@@ -2202,40 +2202,13 @@ SQL;
         )->execute();
     }
 
-    /**
-     * Ensure JEM categories have Joomla assets before category rules are used.
-     *
-     * Earlier 5.1 prereleases did not include asset_id. The repair is additive,
-     * preserves existing rules and is also safe for clean installations.
-     */
-    private function repair510CategoryAclSchema()
+    /** Run a bounded migration, keeping maintenance/settings available on failure. */
+    private function repair510ResourceAcl(): void
     {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        require_once __DIR__ . '/admin/classes/categoryasset.class.php';
-        JemCategoryAsset::ensureSchema($db);
-
-        foreach (JemCategoryAsset::repair($db) as $categoryId) {
-            Factory::getApplication()->enqueueMessage(
-                Text::sprintf('COM_JEM_INSTALL_CATEGORY_ASSET_FAILED', $categoryId),
-                'warning'
-            );
-        }
-    }
-
-    /**
-     * Ensure JEM venues have individual Joomla assets before venue-use rules are evaluated.
-     */
-    private function repair510VenueAclSchema()
-    {
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        require_once __DIR__ . '/admin/classes/venueasset.class.php';
-        JemVenueAsset::ensureSchema($db);
-
-        foreach (JemVenueAsset::repair($db) as $venueId) {
-            Factory::getApplication()->enqueueMessage(
-                Text::sprintf('COM_JEM_INSTALL_VENUE_ASSET_FAILED', $venueId),
-                'warning'
-            );
+        require_once __DIR__ . '/admin/classes/aclmigration.class.php';
+        $result = JemAclMigration::run(Factory::getContainer()->get('DatabaseDriver'));
+        if (!$result['complete']) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_ACL_MIGRATION_PENDING'), 'warning');
         }
     }
 

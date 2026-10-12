@@ -418,6 +418,9 @@ abstract class JemUserAbstract extends User
      */
     public function getAccessDecision($action, $type, $id = false, $created_by = false, $categoryIds = false)
     {
+        if (class_exists('JemAclMigrationStatus', false) && JemAclMigrationStatus::pending()) {
+            return JemAccessDecision::deny('ACL_MIGRATION_PENDING', 'migration', 'joomla_acl', $action, $type, 0);
+        }
         $userId = (int) $this->id;
         $actions = array_values(array_unique(array_map('strval', (array) $action)));
         $resultAction = count($actions) === 1 ? $actions[0] : $actions;

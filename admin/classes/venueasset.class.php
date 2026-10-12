@@ -7,9 +7,7 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table;
 
 /**
  * Creates and repairs Joomla ACL assets for JEM venues.
@@ -72,62 +70,8 @@ final class JemVenueAsset
     public static function repair($db = null)
     {
         $db = $db ?: Factory::getContainer()->get('DatabaseDriver');
-        $table = $db->replacePrefix('#__jem_venues');
+        require_once __DIR__ . '/aclassetmigration.class.php';
 
-        if (!in_array($table, $db->getTableList(), true)) {
-            return array();
-        }
-
-        $columns = array_change_key_case($db->getTableColumns($table, false), CASE_LOWER);
-        if (!isset($columns['asset_id'])) {
-            return array();
-        }
-
-        $componentAsset = Table::getInstance('Asset');
-        if (!$componentAsset->loadByName('com_jem')) {
-            return array();
-        }
-
-        $db->setQuery(
-            $db->getQuery(true)
-                ->select($db->quoteName(array('id', 'venue', 'asset_id')))
-                ->from($db->quoteName('#__jem_venues'))
-                ->order($db->quoteName('id') . ' ASC')
-        );
-        $failures = array();
-
-        foreach ((array) $db->loadObjectList() as $venue) {
-            $asset = Table::getInstance('Asset');
-            $assetName = 'com_jem.venue.' . (int) $venue->id;
-            $exists = $asset->loadByName($assetName);
-
-            if (!$exists) {
-                $asset->name = $assetName;
-                $asset->rules = '{}';
-            }
-
-            $asset->title = (string) $venue->venue;
-            if (!$exists || (int) $asset->parent_id !== (int) $componentAsset->id) {
-                $asset->setLocation((int) $componentAsset->id, 'last-child');
-            }
-
-            if (!$asset->check() || !$asset->store()) {
-                $failures[] = (int) $venue->id;
-                continue;
-            }
-
-            if ((int) $venue->asset_id !== (int) $asset->id) {
-                $db->setQuery(
-                    $db->getQuery(true)
-                        ->update($db->quoteName('#__jem_venues'))
-                        ->set($db->quoteName('asset_id') . ' = ' . (int) $asset->id)
-                        ->where($db->quoteName('id') . ' = ' . (int) $venue->id)
-                )->execute();
-            }
-        }
-
-        Access::clearStatics();
-
-        return $failures;
+        return (new JemAclAssetMigration($db))->repair('venue');
     }
 }

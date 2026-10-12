@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Table\Table;
 
@@ -54,6 +55,12 @@ $controller = BaseController::getInstance('Jem');
 
 // Perform the Request task
 $input = Factory::getApplication()->input;
+$task = $input->getCmd('task');
+if (JemAclMigrationStatus::pending()
+    && in_array(strtolower(strtok($task, '.') ?: ''), ['event', 'venue', 'category', 'myevents', 'myvenues'], true)
+    && !str_ends_with($task, '.cancel')) {
+    throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 503);
+}
 $controller->execute($input->getCmd('task'));
 JemHelper::loadFrontendUserCss();
 

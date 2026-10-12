@@ -63,6 +63,9 @@ class JemHelperBackend
      */
     public static function can($type, $operation, $record = null)
     {
+        if (in_array($type, ['event', 'venue'], true) && JemAclMigrationStatus::pending() && $operation !== 'access') {
+            return false;
+        }
         $user = JemFactory::getUser();
         $owner = is_object($record) && isset($record->created_by) ? (int) $record->created_by : null;
 
@@ -88,6 +91,9 @@ class JemHelperBackend
      */
     public static function canEventCategories($operation, array $categoryIds, $record = null)
     {
+        if (JemAclMigrationStatus::pending()) {
+            return false;
+        }
         $user = JemFactory::getUser();
         $owner = is_object($record) && isset($record->created_by) ? (int) $record->created_by : null;
 
@@ -107,6 +113,9 @@ class JemHelperBackend
      */
     public static function canCreateEvent(array $categoryIds = array())
     {
+        if (JemAclMigrationStatus::pending()) {
+            return false;
+        }
         if ($categoryIds) {
             return self::canEventCategories('create', $categoryIds);
         }
@@ -204,6 +213,9 @@ class JemHelperBackend
      */
     public static function canCategory($operation, $record = null, $parentId = 1)
     {
+        if (JemAclMigrationStatus::pending()) {
+            return false;
+        }
         $user = JemFactory::getUser();
 
         if ($user->authorise('core.admin', self::$extension)) {

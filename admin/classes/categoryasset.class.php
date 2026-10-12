@@ -7,9 +7,7 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Table\Table;
 
 /**
  * Creates and repairs Joomla ACL assets for JEM's private category tree.
@@ -89,71 +87,8 @@ final class JemCategoryAsset
     public static function repair($db = null)
     {
         $db = $db ?: Factory::getContainer()->get('DatabaseDriver');
-        $categoryTable = $db->replacePrefix('#__jem_categories');
+        require_once __DIR__ . '/aclassetmigration.class.php';
 
-        if (!in_array($categoryTable, $db->getTableList(), true)) {
-            return array();
-        }
-
-        $columns = array_change_key_case($db->getTableColumns($categoryTable, false), CASE_LOWER);
-
-        if (!isset($columns['asset_id'])) {
-            return array();
-        }
-
-        $componentAsset = Table::getInstance('Asset');
-
-        if (!$componentAsset->loadByName('com_jem')) {
-            return array();
-        }
-
-        $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'parent_id', 'catname', 'asset_id')))
-            ->from($db->quoteName('#__jem_categories'))
-            ->where($db->quoteName('id') . ' > 1')
-            ->order($db->quoteName('lft') . ' ASC');
-        $db->setQuery($query);
-        $categories = (array) $db->loadObjectList();
-        $assetIds = array(1 => (int) $componentAsset->id);
-        $failures = array();
-
-        foreach ($categories as $category) {
-            $parentAssetId = $assetIds[(int) $category->parent_id] ?? (int) $componentAsset->id;
-            $assetName = 'com_jem.category.' . (int) $category->id;
-            $asset = Table::getInstance('Asset');
-            $exists = $asset->loadByName($assetName);
-
-            if (!$exists) {
-                $asset->name = $assetName;
-                $asset->title = (string) $category->catname;
-                $asset->rules = '{}';
-                $asset->setLocation($parentAssetId, 'last-child');
-            } else {
-                $asset->title = (string) $category->catname;
-
-                if ((int) $asset->parent_id !== $parentAssetId) {
-                    $asset->setLocation($parentAssetId, 'last-child');
-                }
-            }
-
-            if (!$asset->check() || !$asset->store()) {
-                $failures[] = (int) $category->id;
-                continue;
-            }
-
-            $assetIds[(int) $category->id] = (int) $asset->id;
-
-            if ((int) $category->asset_id !== (int) $asset->id) {
-                $query = $db->getQuery(true)
-                    ->update($db->quoteName('#__jem_categories'))
-                    ->set($db->quoteName('asset_id') . ' = ' . (int) $asset->id)
-                    ->where($db->quoteName('id') . ' = ' . (int) $category->id);
-                $db->setQuery($query)->execute();
-            }
-        }
-
-        Access::clearStatics();
-
-        return $failures;
+        return (new JemAclAssetMigration($db))->repair('category');
     }
 }

@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\User\User;
 
+require_once __DIR__ . '/classes/aclmigrationstatus.class.php';
+
 // Can't use JPATH_COMPONENT_SITE because factory maybe used in module or plugin!
 require_once (JPATH_SITE.'/components/com_jem/classes/user.class.php');
 require_once (JPATH_SITE.'/components/com_jem/classes/config.class.php');
