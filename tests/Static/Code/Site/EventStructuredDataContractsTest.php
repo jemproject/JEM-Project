@@ -34,6 +34,20 @@ final class EventStructuredDataContractsTest extends TestCase
         self::assertStringContainsString("'virtual_location_visible' => \$showOnlineMeeting", $view);
     }
 
+    public function testDescriptionUsesTheSamePreparedTextAsTheTemplates(): void
+    {
+        $view = $this->read('/site/views/event/view.html.php');
+        $start = strpos($view, 'protected function prepareEventStructuredData(');
+        self::assertNotFalse($start);
+        $end = strpos($view, '$detailImageLayout =', $start);
+        self::assertNotFalse($end);
+        $projection = substr($view, $start, $end - $start);
+        self::assertStringContainsString("\$params->get('event_show_description', 1)", $projection);
+        self::assertStringContainsString("\$description = (string) (\$item->text ?? '');", $projection);
+        self::assertStringNotContainsString('$item->fulltext', $projection);
+        self::assertStringNotContainsString('$item->introtext', $projection);
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

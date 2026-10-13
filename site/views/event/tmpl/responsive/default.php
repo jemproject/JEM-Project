@@ -797,22 +797,12 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             $moreInformationText = Text::_($moreInformationText);
         }
         $showMoreInformation = $params->get('access-view') && $moreInformationDisplay !== '' && !empty($this->item->articlelink);
-        $eventIntroHtml = trim((string) $this->item->introtext);
         $eventFullHtml = trim((string) $this->item->fulltext);
         $eventCompactHasMore = $eventLayout === 'compact'
             && $eventFullHtml !== ''
             && $eventFullHtml !== '<br>';
-        $eventDescriptionHtml = '';
-
-        if ($eventLayout === 'compact') {
-            $eventDescriptionHtml = $eventIntroHtml;
-        } elseif ($eventFullHtml !== '' && $eventFullHtml !== '<br>') {
-            $eventDescriptionHtml = $params->get('event_show_intro')
-                ? trim($eventIntroHtml . $eventFullHtml)
-                : $eventFullHtml;
-        } else {
-            $eventDescriptionHtml = $this->item->text;
-        }
+        // The view has already selected and prepared the visible text once.
+        $eventDescriptionHtml = (string) $this->item->text;
 
         $showEventDescription = $params->get('event_show_description','1')
             && ($eventDescriptionHtml !== '' && $eventDescriptionHtml !== '<br>' || $eventCompactHasMore)

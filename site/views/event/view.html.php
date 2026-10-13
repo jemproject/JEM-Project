@@ -206,14 +206,30 @@ class JemViewEvent extends JemView
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
-        if ($item->params->get('show_intro', '1') == '1') {
-            $item->text = $item->introtext.' '.$item->fulltext;
+        // Select the visible description before preparing content plugins.
+        // Keep the same layout precedence as the default and responsive templates.
+        $eventLayout = (string) $item->params->get('event_details_layout', '');
+        if ($eventLayout === '') {
+            $eventLayout = (string) $this->settings->get('event_details_layout', 'details');
         }
-        elseif ($item->fulltext) {
-            $item->text = $item->fulltext;
+        if (!in_array($eventLayout, ['details', 'compact'], true)) {
+            $eventLayout = 'details';
         }
-        else  {
-            $item->text = $item->introtext;
+        foreach (['jem_layout', 'jem_event_layout'] as $layoutParameter) {
+            $layoutOverride = $app->input->getCmd($layoutParameter, '');
+            if (in_array($layoutOverride, ['details', 'compact'], true)) {
+                $eventLayout = $layoutOverride;
+            }
+        }
+
+        $introHtml = trim((string) $item->introtext);
+        $fullHtml = trim((string) $item->fulltext);
+        if ($eventLayout === 'compact' || $fullHtml === '' || $fullHtml === '<br>') {
+            $item->text = $introHtml;
+        } else {
+            $item->text = $item->params->get('event_show_intro')
+                ? trim($introHtml . $fullHtml)
+                : $fullHtml;
         }
 
         // Process the content plugins //
@@ -526,36 +542,10 @@ class JemViewEvent extends JemView
         }
 
         $params = $item->params;
-        $eventLayout = (string) $params->get('event_details_layout', '');
-        if ($eventLayout === '') {
-            $eventLayout = (string) $this->settings->get('event_details_layout', 'details');
-        }
-        if (!in_array($eventLayout, array('details', 'compact'), true)) {
-            $eventLayout = 'details';
-        }
-
-        $layoutOverride = $app->input->getCmd('jem_layout', '');
-        if (in_array($layoutOverride, array('details', 'compact'), true)) {
-            $eventLayout = $layoutOverride;
-        }
-        $eventLayoutOverride = $app->input->getCmd('jem_event_layout', '');
-        if (in_array($eventLayoutOverride, array('details', 'compact'), true)) {
-            $eventLayout = $eventLayoutOverride;
-        }
-
         $description = '';
         if ((int) $params->get('event_show_description', 1) === 1) {
-            $introHtml = trim((string) ($item->introtext ?? ''));
-            $fullHtml = trim((string) ($item->fulltext ?? ''));
-            if ($eventLayout === 'compact') {
-                $description = $introHtml;
-            } elseif ($fullHtml !== '' && $fullHtml !== '<br>') {
-                $description = $params->get('event_show_intro')
-                    ? trim($introHtml . $fullHtml)
-                    : $fullHtml;
-            } else {
-                $description = (string) ($item->text ?? '');
-            }
+            // Match the plugin-prepared description actually rendered by this response.
+            $description = (string) ($item->text ?? '');
         }
 
         $detailImageLayout = (string) ($item->fullimage_layout ?? 'global');
