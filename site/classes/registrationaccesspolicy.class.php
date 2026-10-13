@@ -122,7 +122,7 @@ final class JemRegistrationAccessPolicy
     /**
      * Decide whether a frontend user may register or cancel their own place.
      *
-     * Positive responses create or update a reservation and therefore require
+     * Positive responses and initial negative answers require
      * a currently published, viewable event plus all registration settings.
      * A cancellation only releases an existing row owned by the current user;
      * it remains possible after visibility changes so capacity is not trapped.
@@ -150,17 +150,19 @@ final class JemRegistrationAccessPolicy
             return self::deny(self::AUTHENTICATION_REQUIRED, 'JERROR_ALERTNOAUTHOR');
         }
 
-        if ($status < 0) {
-            if (!self::hasOwnedRegistration($registration)) {
-                return self::deny(self::REGISTRATION_NOT_FOUND, 'COM_JEM_REGISTRATION_NOT_FOUND');
-            }
-
+        if ($status < 0 && self::hasOwnedRegistration($registration)) {
             $currentStatus = (int) self::value($registration, 'status', 0);
             if (in_array($currentStatus, array(1, 2), true) && !$unregistrationOpen) {
                 return self::deny(self::CANCELLATION_CLOSED, 'COM_JEM_ERROR_ANNULATION_NOT_ALLOWED');
             }
 
             return self::allow();
+        }
+
+        // A first "not attending" answer is not a cancellation. It must be
+        // explicitly requested by the event and pass the normal access checks.
+        if ($status < 0 && !(bool) self::value($event, 'requestanswer', false)) {
+            return self::deny(self::REGISTRATION_NOT_FOUND, 'COM_JEM_REGISTRATION_NOT_FOUND');
         }
 
         if (!$publishedNow || !self::eventIsViewable($event)) {

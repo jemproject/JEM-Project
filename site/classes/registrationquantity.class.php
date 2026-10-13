@@ -16,6 +16,7 @@ final class JemRegistrationQuantity
     public const INCREASE = 'increase';
     public const DECREASE = 'decrease';
     public const CANCEL = 'cancel';
+    public const DECLINE = 'decline';
 
     private const MAX_DATABASE_INTEGER = 2147483647;
 
@@ -158,6 +159,20 @@ final class JemRegistrationQuantity
                 'status'    => $currentStatus === JemRegistrationTransition::WAITING_LIST
                     ? JemRegistrationTransition::WAITING_LIST
                     : JemRegistrationTransition::ATTENDING,
+            );
+        }
+
+        if (
+            $requestedStatus === JemRegistrationTransition::NOT_ATTENDING
+            && !$hasRegistration
+            && !empty($event->requestanswer)
+            && $cancelPlaces === 0
+        ) {
+            return (object) array(
+                'operation' => self::DECLINE,
+                'quantity'  => 0,
+                'places'    => 0,
+                'status'    => JemRegistrationTransition::NOT_ATTENDING,
             );
         }
 
