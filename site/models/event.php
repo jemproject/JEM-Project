@@ -386,9 +386,10 @@ class JemModelEvent extends ItemModel
      *
      * @param  int  The id of the event.
      * @param  int  The id of the parent event.
+     * @param  bool  $failOnQueryError  Propagate query failures before cancellation writes.
      * @return mixed  item data object on success, false on failure.
      */
-    public function getListRecurrenceEventsbyId ($id, $pk, $datetimeFrom, $iduser=null, $status=null)
+    public function getListRecurrenceEventsbyId($id, $pk, $datetimeFrom, $iduser = null, $status = null, $failOnQueryError = false)
     {
         // Initialise variables.
         $pk = (!empty($pk)) ? $pk : (int) $this->getState('event.id');
@@ -512,6 +513,9 @@ class JemModelEvent extends ItemModel
             }
             catch (RuntimeException $e)
             {
+                if ($failOnQueryError) {
+                    throw $e;
+                }
                 Factory::getApplication()->enqueueMessage($e->getMessage(), 'notice');
             }
 
@@ -562,6 +566,9 @@ class JemModelEvent extends ItemModel
         }
         catch (Exception $e)
         {
+            if ($failOnQueryError && $e instanceof RuntimeException) {
+                throw $e;
+            }
             if ($e->getCode() == 404) {
                 // Need to go thru the error handler to allow Redirect to
                 // work.
@@ -783,12 +790,14 @@ class JemModelEvent extends ItemModel
     /**
      * Method to get user registration data if available.
      *
+     * @param  bool  $failOnQueryError  Propagate query failures before cancellation writes.
+     * @throws RuntimeException When a strict cancellation lookup fails.
      * @access public
      * @return mixed false if not registered, object with id, status, comment else
      *               status -1 if not attending, 0 if invited,
      *               1 if attending, 2 if on waiting list
      */
-    public function getUserRegistration($eventId = null, $userid = 0)
+    public function getUserRegistration($eventId = null, $userid = 0, $failOnQueryError = false)
     {
         // Initialize variables
         $userid = (int)$userid;
@@ -804,16 +813,18 @@ class JemModelEvent extends ItemModel
 
         // usercheck
         // -1 if user will not attend, 0 if invened/unknown, 1 if registeredm 2 if on waiting list
-        $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places'
-            . ' FROM #__jem_register'
-            . ' WHERE uid = ' . $this->_db->quote($userid)
-            . ' AND event = ' . $this->_db->quote($eventId);
-        $this->_db->setQuery($query);
-
         try {
+            $query = 'SELECT IF (status > 0, waiting + 1, status) AS status, id, comment, places'
+                . ' FROM #__jem_register'
+                . ' WHERE uid = ' . $this->_db->quote($userid)
+                . ' AND event = ' . $this->_db->quote($eventId);
+            $this->_db->setQuery($query);
             $result = $this->_db->loadObject();
         }
         catch (Exception $e) {
+            if ($failOnQueryError) {
+                throw $this->cancellationLookupException($e, (int) $eventId);
+            }
             $result = false;
         }
 
@@ -993,6 +1004,9 @@ class JemModelEvent extends ItemModel
      * Load only the fields needed to release an existing registration which
      * belongs to the current user. This deliberately bypasses view visibility
      * without exposing protected event content.
+     *
+     * @return object|false False only when no matching registration exists or IDs are invalid.
+     * @throws RuntimeException When the lookup fails.
      */
     protected function getOwnedCancellationEvent($eventId, $userId)
     {
@@ -1002,30 +1016,47 @@ class JemModelEvent extends ItemModel
             return false;
         }
 
-        $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true)
-            ->select(array(
-                'e.id', 'e.id AS did', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
-                'e.timezone_mode', 'e.timezone', 'e.start_utc', 'e.end_utc',
-                'e.registra', 'e.registra_from', 'e.registra_until',
-                'e.unregistra', 'e.unregistra_until', 'e.reginvitedonly',
-                'e.recurrence_type', 'e.recurrence_first_id', 'e.series_id',
-                'e.seriesbooking', 'e.singlebooking', 'e.maxbookeduser',
-                'e.maxplaces', 'e.reservedplaces', 'e.waitinglist',
-                'v.timezone AS venue_timezone',
-            ))
-            ->from($db->quoteName('#__jem_events', 'e'))
-            ->join('INNER', $db->quoteName('#__jem_register', 'r')
-                . ' ON r.event = e.id AND r.uid = ' . $userId)
-            ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
-            ->where('e.id = ' . $eventId);
-        $db->setQuery($query, 0, 1);
-
         try {
+            $db = Factory::getContainer()->get('DatabaseDriver');
+            $query = $db->getQuery(true)
+                ->select(array(
+                    'e.id', 'e.id AS did', 'e.dates', 'e.enddates', 'e.times', 'e.endtimes',
+                    'e.timezone_mode', 'e.timezone', 'e.start_utc', 'e.end_utc',
+                    'e.registra', 'e.registra_from', 'e.registra_until',
+                    'e.unregistra', 'e.unregistra_until', 'e.reginvitedonly',
+                    'e.recurrence_type', 'e.recurrence_first_id', 'e.series_id',
+                    'e.seriesbooking', 'e.singlebooking', 'e.minbookeduser', 'e.maxbookeduser',
+                    'e.maxplaces', 'e.reservedplaces', 'e.waitinglist',
+                    'v.timezone AS venue_timezone',
+                ))
+                ->from($db->quoteName('#__jem_events', 'e'))
+                ->join('INNER', $db->quoteName('#__jem_register', 'r')
+                    . ' ON r.event = e.id AND r.uid = ' . $userId)
+                ->join('LEFT', $db->quoteName('#__jem_venues', 'v') . ' ON v.id = e.locid')
+                ->where('e.id = ' . $eventId);
+            $db->setQuery($query, 0, 1);
             return $db->loadObject() ?: false;
         } catch (RuntimeException $e) {
-            return false;
+            throw $this->cancellationLookupException($e, $eventId);
         }
+    }
+
+    /**
+     * Keep database details out of frontend messages while retaining a safe diagnostic.
+     */
+    protected function cancellationLookupException(\Throwable $exception, int $eventId): \RuntimeException
+    {
+        try {
+            JemLog::error('JEM_CANCELLATION_LOOKUP_FAILED', 'Cancellation lookup failed.', [
+                'event_id' => $eventId,
+                'exception_class' => get_class($exception),
+                'exception_code' => (int) $exception->getCode(),
+            ]);
+        } catch (\Throwable $logException) {
+            // A logging failure must not turn a failed lookup into an absent registration.
+        }
+
+        return new \RuntimeException(Text::_('COM_JEM_CANCELLATION_LOAD_FAILED'), 0, $exception);
     }
 
     /**
@@ -1050,7 +1081,16 @@ class JemModelEvent extends ItemModel
         //    $app = Factory::getApplication('site');
         //    $user = JemFactory::getUser();
         //    $jemsettings = JemHelper::config();
-        $registration = (empty($uid) || empty($eventId)) ? false : $this->getUserRegistration($eventId, $uid);
+        try {
+            $registration = (empty($uid) || empty($eventId))
+                ? false : $this->getUserRegistration($eventId, $uid, $status < 0);
+        } catch (RuntimeException $e) {
+            if ($status >= 0) {
+                throw $e;
+            }
+            $errMsg = Text::_('COM_JEM_CANCELLATION_LOAD_FAILED');
+            return false;
+        }
         $onwaiting = 0;
 
         try {
@@ -1062,7 +1102,12 @@ class JemModelEvent extends ItemModel
         }
 
         if (!$event && $status < 0 && is_object($registration)) {
-            $event = $this->getOwnedCancellationEvent($eventId, $uid);
+            try {
+                $event = $this->getOwnedCancellationEvent($eventId, $uid);
+            } catch (RuntimeException $e) {
+                $errMsg = Text::_('COM_JEM_CANCELLATION_LOAD_FAILED');
+                return false;
+            }
         }
 
         if (empty($event)) {
@@ -1184,11 +1229,18 @@ class JemModelEvent extends ItemModel
         }
 
         if (!$event && $status < 0) {
-            $event = $this->getOwnedCancellationEvent($eventId, $uid);
+            try {
+                $event = $this->getOwnedCancellationEvent($eventId, $uid);
+            } catch (RuntimeException $e) {
+                $this->setError(Text::_('COM_JEM_CANCELLATION_LOAD_FAILED'));
+                return false;
+            }
         }
 
         if (!$event) {
-            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
+            $this->setError(Text::_($status < 0
+                ? 'COM_JEM_REGISTRATION_NOT_FOUND'
+                : 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND') . ' [id: ' . $eventId . ']');
             return false;
         }
 
@@ -1196,7 +1248,22 @@ class JemModelEvent extends ItemModel
         if($event->recurrence_type || !empty($event->series_id)){
 
             if(($event->seriesbooking && !$event->singlebooking) || ($event->singlebooking && $checkseries)) {
-                $events = $this->getListRecurrenceEventsbyId($event->id, $event->recurrence_first_id, time());
+                try {
+                    $events = $this->getListRecurrenceEventsbyId(
+                        $event->id,
+                        $event->recurrence_first_id,
+                        time(),
+                        null,
+                        null,
+                        $status < 0
+                    );
+                } catch (RuntimeException $e) {
+                    if ($status >= 0) {
+                        throw $e;
+                    }
+                    $this->setError($this->cancellationLookupException($e, $eventId)->getMessage());
+                    return false;
+                }
             }
         }
 
@@ -1204,9 +1271,19 @@ class JemModelEvent extends ItemModel
             $events [] = clone $event;
         }
 
-        $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $status < 0);
+        try {
+            $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $status < 0);
+        } catch (RuntimeException $e) {
+            if ($status >= 0) {
+                throw $e;
+            }
+            $this->setError(Text::_('COM_JEM_CANCELLATION_LOAD_FAILED'));
+            return false;
+        }
         if ($events === false) {
-            $this->setError(Text::_('COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
+            $this->setError(Text::_($status < 0
+                ? 'COM_JEM_REGISTRATION_NOT_FOUND'
+                : 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND'));
             return false;
         }
 
@@ -1216,7 +1293,15 @@ class JemModelEvent extends ItemModel
         $registrations = array();
         $authorisedEvents = array();
         foreach ($events as $e) {
-            $reg = $this->getUserRegistration($e->id);
+            try {
+                $reg = $this->getUserRegistration($e->id, $uid, $status < 0);
+            } catch (RuntimeException $exception) {
+                if ($status >= 0) {
+                    throw $exception;
+                }
+                $this->setError(Text::_('COM_JEM_CANCELLATION_LOAD_FAILED'));
+                return false;
+            }
 
             if ($status < 0 && !is_object($reg)) {
                 continue;
