@@ -1011,10 +1011,51 @@ class JemModelEventslist extends ListModel
         # ordering
         $orderby = $this->getState('filter.orderby');
         if ($orderby) {
-            $query->order($orderby);
+            $query->order($this->getEventOrdering($query, (array) $orderby));
         }
 
         return $query;
+    }
+
+    /**
+     * Order missing UTC values in the event timezone, before applying the limit.
+     *
+     * Only legacy candidates without UTC need conversion. Reuse the complete
+     * filtered query so hidden/unrelated events do not enter the fallback. PHP
+     * supplies historical/future DST rules without MySQL timezone tables. This
+     * is read-only; the installer already rebuilds persisted UTC values.
+     */
+    protected function getEventOrdering($query, array $ordering): array
+    {
+        $utcOrders = array_intersect($ordering, array('a.start_utc ASC', 'a.start_utc DESC'));
+        if (!$utcOrders) {
+            return $ordering;
+        }
+
+        $db = $this->getDatabase();
+        $missing = clone $query;
+        $missing->clear('select')->clear('order')->clear('limit')->clear('offset')
+            ->select(array('a.id', 'a.dates', 'a.times', 'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone'))
+            ->where('a.start_utc IS NULL')
+            ->where('a.dates IS NOT NULL');
+        $db->setQuery($missing);
+        $cases = array();
+
+        foreach ($db->loadObjectList() as $event) {
+            JemHelper::setEventUtcDates($event, $event->venue_timezone);
+            if ($event->start_utc !== null) {
+                $cases[] = 'WHEN ' . (int) $event->id . ' THEN ' . $db->quote($event->start_utc);
+            }
+        }
+
+        if ($cases) {
+            $expression = 'COALESCE(a.start_utc, CASE a.id ' . implode(' ', $cases) . ' END)';
+            foreach ($utcOrders as $key => $order) {
+                $ordering[$key] = $expression . (substr($order, -4) === 'DESC' ? ' DESC' : ' ASC');
+            }
+        }
+
+        return $ordering;
     }
 
     /**

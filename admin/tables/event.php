@@ -387,6 +387,10 @@ class JemTableEvent extends Table
             }
         }
 
+        // Recurrence generation calls store() directly, without check(). Never
+        // persist UTC values copied from the source event's previous dates.
+        JemHelper::setEventUtcDates($this);
+
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
         if ($ret && $images_to_delete) {
