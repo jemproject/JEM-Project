@@ -21,7 +21,15 @@ class JemViewVenueelement extends Htmlview {
 
     public function display($tpl = null)
     {
-        if (!JemHelperBackend::can('venue', 'access')) {
+        // Assigning a venue does not require access to the Venues manager.
+        // The model loads JemVenueAccess and still filters every result by use permission.
+        if (
+            !JemHelperBackend::can('venue', 'access')
+            && !(
+                JemHelperBackend::can('event', 'access')
+                && JemVenueAccess::getAuthorisedIds(JemFactory::getUser(), true) !== []
+            )
+        ) {
             throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
