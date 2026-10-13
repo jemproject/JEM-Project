@@ -141,10 +141,11 @@ namespace {
     class JemHelper
     {
         public static bool $cancellationOpen = true;
+        public static array $settings = ['showfroregistra' => 1, 'regallowinvitation' => 0];
 
         public static function config(): object
         {
-            return (object) ['showfroregistra' => 1, 'regallowinvitation' => 0];
+            return (object) self::$settings;
         }
 
         public static function globalattribs(): object
@@ -159,12 +160,12 @@ namespace {
 
         public static function isEventPublishedNow($event): bool
         {
-            return false;
+            return !empty($event->published);
         }
 
         public static function isEventRegistrationOpen($event): bool
         {
-            return false;
+            return !empty($event->registration_open);
         }
 
         public static function isEventUnregistrationOpen($event): bool
@@ -294,6 +295,7 @@ namespace {
     class JemRegistrationService
     {
         public static array $writes = [];
+        public static array $writeOptions = [];
 
         public function __construct($database)
         {
@@ -302,8 +304,15 @@ namespace {
         public function saveMany(array $rows, array $options): array
         {
             self::$writes[] = $rows;
+            self::$writeOptions[] = $options;
 
-            return array_map(static fn ($row) => (object) ['after' => $row], $rows);
+            return array_map(static function ($row) {
+                $stored = clone $row;
+                $stored->id = $stored->id ?? 1000 + $stored->event;
+                \Joomla\CMS\Factory::$database->registrations[$stored->event] = $stored;
+
+                return (object) ['after' => $stored];
+            }, $rows);
         }
     }
 

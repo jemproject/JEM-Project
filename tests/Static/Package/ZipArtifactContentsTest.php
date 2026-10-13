@@ -6,6 +6,25 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageContainsInitialNegativeResponseAndCancellationFixes(): void
+    {
+        $entries = array(
+            'site/models/event.php',
+            'site/classes/registrationaccesspolicy.class.php',
+            'site/classes/registrationquantity.class.php',
+            'site/language/en-GB/com_jem.ini',
+        );
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    (string) file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry),
+                    $this->relativePath($zipFile) . ':packages/com_jem.zip:' . $entry
+                );
+            }
+        }
+    }
+
     public function testExistingPackageArtifactsDoNotContainDevelopmentFiles(): void
     {
         if (!class_exists(ZipArchive::class)) {

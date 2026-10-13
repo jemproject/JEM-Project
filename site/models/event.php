@@ -1221,6 +1221,20 @@ class JemModelEvent extends ItemModel
             $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
             return false;
         }
+
+        // Determine intent from the current user's stored response, never from
+        // a posted registration ID. A first negative answer creates a zero-place
+        // response; cancellation only changes responses that already exist.
+        $isCancellation = false;
+        if ($status < 0) {
+            try {
+                $isCancellation = is_object($this->getUserRegistration($eventId, $uid, true));
+            } catch (RuntimeException $exception) {
+                $this->setError(Text::_('COM_JEM_CANCELLATION_LOAD_FAILED'));
+                return false;
+            }
+        }
+
         try {
             $event = $this->getItem($eventId);
         }
@@ -1228,7 +1242,7 @@ class JemModelEvent extends ItemModel
             $event = false;
         }
 
-        if (!$event && $status < 0) {
+        if (!$event && $isCancellation) {
             try {
                 $event = $this->getOwnedCancellationEvent($eventId, $uid);
             } catch (RuntimeException $e) {
@@ -1272,7 +1286,7 @@ class JemModelEvent extends ItemModel
         }
 
         try {
-            $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $status < 0);
+            $events = $this->getAuthoritativeRegistrationEvents($events, $event, $uid, $isCancellation);
         } catch (RuntimeException $e) {
             if ($status >= 0) {
                 throw $e;
@@ -1303,7 +1317,12 @@ class JemModelEvent extends ItemModel
                 return false;
             }
 
-            if ($status < 0 && !is_object($reg)) {
+            if ($isCancellation && !is_object($reg)) {
+                continue;
+            }
+            if ($status < 0 && !$isCancellation && is_object($reg)) {
+                // A first series answer must not cancel existing reservations
+                // on other occurrences or overwrite previously saved answers.
                 continue;
             }
 
@@ -1382,6 +1401,7 @@ class JemModelEvent extends ItemModel
             $stored = (new JemRegistrationService($this->_db))->saveMany($pending, array(
                 'respectPlaces' => true,
                 'allowWaiting'  => true,
+                'requireNew'    => $status < 0 && !$isCancellation,
             ));
         } catch (Throwable $e) {
             $this->setError(Text::_('COM_JEM_ERROR_REGISTRATION'));
