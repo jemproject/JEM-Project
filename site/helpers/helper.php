@@ -36,6 +36,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/categoryimagepath.class.php
 require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 require_once __DIR__ . '/../classes/recurrencevalidator.class.php';
+require_once __DIR__ . '/../classes/recurrenceexclusions.class.php';
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -2910,6 +2911,23 @@ class JemHelper
                     $db->setQuery($query);
                     $reference = $db->loadAssoc();
 
+                    // Read the root policy, not the arbitrary row selected by GROUP BY.
+                    // If legacy cleanup removed the root, use the surviving occurrence copy.
+                    try {
+                        $policyQuery = $db->getQuery(true)->select($db->quoteName('attribs'))
+                            ->from($db->quoteName('#__jem_events'))
+                            ->where('id = ' . (int) $recurrence_row['first_id']);
+                        $rootAttribs = $db->setQuery($policyQuery)->loadResult();
+                        $exclusionSelection = JemRecurrenceExclusions::fromAttribs($rootAttribs ?? $reference['attribs']);
+                        $exclusionRows = JemRecurrenceExclusions::loadRows($db, $exclusionSelection);
+                        $copyAttribs = new Registry($reference['attribs'] ?? '');
+                        $copyAttribs->set('recurrence_exclusions', $exclusionSelection);
+                        $reference['attribs'] = (string) $copyAttribs;
+                    } catch (Throwable $exception) {
+                        self::addLogEntry('Cannot load recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
+                        continue;
+                    }
+
                     // if reference event is "unpublished"(0) new event is "unpublished" too
                     // but on "archived"(2) and "trashed"(-2) reference events create "published"(1) event
                     if ($reference['published'] != 0) {
@@ -2956,6 +2974,23 @@ class JemHelper
                             || strtotime($recurrence_row['dates']) <= strtotime($recurrence_row['recurrence_limit_date']))
                             && strtotime($recurrence_row['dates']) <= strtotime($shieldDate))
                     {
+                        try {
+                            $excluded = $exclusionRows && JemRecurrenceExclusions::matches(
+                                $exclusionRows, $recurrence_row['dates'], $recurrence_row['enddates']
+                            );
+                        } catch (Throwable $exception) {
+                            self::addLogEntry('Invalid recurrence exclusions for series ' . (int) $recurrence_row['first_id'], __METHOD__, Log::ERROR);
+                            break;
+                        }
+                        if ($excluded) {
+                            // Advance without storing, counting or moving the skipped occurrence.
+                            $nextRecurrence = JemHelper::calculate_recurrence($recurrence_row);
+                            if ($nextRecurrence === false) {
+                                break;
+                            }
+                            $recurrence_row = $nextRecurrence;
+                            continue;
+                        }
                         $new_event = Table::getInstance('Event', 'JemTable');
                         $new_event->bind($reference, array('id', 'hits', 'dates', 'enddates','checked_out_time','checked_out'));
                         $new_event->recurrence_first_id = $recurrence_row['first_id'];

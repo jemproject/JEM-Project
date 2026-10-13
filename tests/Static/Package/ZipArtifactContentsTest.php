@@ -6,6 +6,24 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageContainsRecurrenceExclusions(): void
+    {
+        $entries = [
+            'site/classes/recurrenceexclusions.class.php', 'site/helpers/helper.php',
+            'admin/models/event.php', 'site/models/editevent.php',
+            'admin/models/fields/recurrenceexclusions.php', 'site/models/fields/recurrenceexclusions.php',
+            'admin/models/forms/event.xml', 'site/models/forms/event.xml',
+            'admin/views/event/tmpl/edit.php', 'site/views/editevent/tmpl/edit_extended.php',
+            'site/views/editevent/tmpl/responsive/edit_extended.php',
+            'admin/language/en-GB/com_jem.ini', 'site/language/en-GB/com_jem.ini',
+        ];
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach ($entries as $entry) {
+                self::assertSame(file_get_contents(JEM_TEST_ROOT . '/' . $entry), $this->componentEntryContents($zipFile, $entry));
+            }
+        }
+    }
+
     public function testCurrentPackageContainsInitialNegativeResponseAndCancellationFixes(): void
     {
         $entries = array(

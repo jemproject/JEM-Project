@@ -642,6 +642,9 @@
             <option value="6">COM_JEM_LASTDAY</option>
             <option value="7">COM_JEM_CUSTOM_DATES</option>
         </field>
+        <field name="recurrence_exclusions" type="recurrenceexclusions" multiple="true" filter="array"
+            label="COM_JEM_RECURRENCE_EXCLUDE_LABEL" description="COM_JEM_RECURRENCE_EXCLUDE_DESC"
+            class="form-select" showon="recurrence_type:1,2,3,4,5,6" />
         <field name="recurrence_limit_date" type="calendarjem"
             default="now"
             label="COM_JEM_EDITEVENT_FIELD_RECURRENCE_COUNTER"

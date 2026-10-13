@@ -30,6 +30,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.p
 require_once JPATH_SITE . '/components/com_jem/classes/eventseries.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/recurrencevalidator.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/recurrenceexclusions.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/venueaccess.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/eventpricingcapacity.class.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/classes/spaceavailability.class.php';
@@ -300,6 +301,7 @@ class JemModelEvent extends JemModelAdmin
             $registry->loadString($item->attribs ?? '{}');
             $item->attribs = $registry->toArray();
             $item->registration_intro = $item->attribs['registration_intro'] ?? '';
+            $item->recurrence_exclusions = JemRecurrenceExclusions::fromAttribs($item->attribs);
             $item->registration_footer = $item->attribs['registration_footer'] ?? '';
             try {
                 require_once JPATH_SITE . '/components/com_jem/factory.php';
@@ -840,6 +842,43 @@ class JemModelEvent extends JemModelAdmin
         $data['attribs']['registration_footer'] = $registrationFooter;
         unset($data['registration_intro'], $data['registration_footer']);
 
+        // Keep this policy in existing event parameters: no schema migration is needed.
+        $exclusionsSubmitted = array_key_exists('recurrence_exclusions', $data);
+        try {
+            $previousEvent = $this->getTable();
+            if (!$new && !$previousEvent->load((int) $data['id'])) {
+                throw new RuntimeException('Cannot load recurrence policy');
+            }
+            $previousExclusions = JemRecurrenceExclusions::fromAttribs($previousEvent->attribs ?? '');
+            $exclusions = $exclusionsSubmitted
+                ? JemRecurrenceExclusions::normalise($data['recurrence_exclusions']) : $previousExclusions;
+            if (!$new && !empty($previousEvent->recurrence_first_id) && $exclusions !== $previousExclusions) {
+                $this->setError(Text::_('COM_JEM_RECURRENCE_EXCLUDE_EDIT_ROOT'));
+                return false;
+            }
+            if ($exclusionsSubmitted && array_diff($exclusions, $previousExclusions)) {
+                $availableExclusions = JemRecurrenceExclusions::options(
+                    Factory::getContainer()->get('DatabaseDriver'), $app->getIdentity()->getAuthorisedViewLevels()
+                );
+                if (array_diff($exclusions, $previousExclusions, array_keys($availableExclusions))) {
+                    throw new InvalidArgumentException('Unavailable recurrence exclusion');
+                }
+            }
+            $data['attribs']['recurrence_exclusions'] = $exclusions;
+            unset($data['recurrence_exclusions']);
+            if ($exclusions && !empty($data['dates']) && empty($previousEvent->recurrence_first_id)
+                && in_array((int) ($data['recurrence_type'] ?? 0), [1, 2, 3, 4, 5, 6], true)
+                && JemRecurrenceExclusions::matches(
+                    JemRecurrenceExclusions::loadRows(Factory::getContainer()->get('DatabaseDriver'), $exclusions),
+                    $data['dates'], $data['enddates'] ?? null
+                )) {
+                $app->enqueueMessage(Text::_('COM_JEM_RECURRENCE_EXCLUDE_ROOT_NOTICE'), 'warning');
+            }
+        } catch (Throwable $exception) {
+            $this->setError(Text::_('COM_JEM_RECURRENCE_EXCLUDE_INVALID'));
+            return false;
+        }
+
         if (array_key_exists('type_id', $data) && $data['type_id'] === '') {
             $data['type_id'] = null;
         }
@@ -1046,7 +1085,10 @@ class JemModelEvent extends JemModelAdmin
             }
 
             // Get the fields changed
-            $diff = array_diff_assoc($data, $eventdb);
+            // Parameters contain the exclusion selection; compare their serialised values.
+            $comparisonData = $data;
+            $comparisonData['attribs'] = (string) new Registry($data['attribs']);
+            $diff = array_diff_assoc($comparisonData, $eventdb);
 
             //If $diff contains some of fields (Defined in $fieldNotAllow) then dissolve recurrence and save again serie
             //If not, update de field of this event (save=false).
@@ -1334,6 +1376,11 @@ class JemModelEvent extends JemModelAdmin
                         }
                     }
                     $events[] = $event;
+                }
+                // A past root may be outside the normal future-occurrence update set.
+                // Its policy is authoritative for scheduled generation and must also be saved.
+                if ($exclusionsSubmitted && !in_array((int) $data['id'], array_map('intval', array_column($events, 'id')), true)) {
+                    $events[] = $data;
                 }
             } else {
                 // the event is a child

@@ -861,6 +861,9 @@
     <fieldset name="recurrence"
               label="COM_JEM_RECURRING_EVENTS"
     >
+        <field name="recurrence_exclusions" type="recurrenceexclusions" multiple="true" filter="array"
+            label="COM_JEM_RECURRENCE_EXCLUDE_LABEL" description="COM_JEM_RECURRENCE_EXCLUDE_DESC"
+            class="form-select" showon="recurrence_type:1,2,3,4,5,6" />
         <field name="recurrence_type" type="list"
             default="0"
             label="COM_JEM_RECURRENCE"

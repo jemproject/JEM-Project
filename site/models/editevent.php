@@ -209,6 +209,7 @@ class JemModelEditevent extends JemModelEvent
         $registry->loadString($value->attribs ?? '{}');
         $value->registration_intro = $registry->get('registration_intro', '');
         $value->registration_footer = $registry->get('registration_footer', '');
+        $value->recurrence_exclusions = JemRecurrenceExclusions::fromAttribs($value->attribs ?? '');
 
         $globalregistry = JemHelper::globalattribs();
 

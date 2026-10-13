@@ -34,7 +34,8 @@ final class RecurrenceValidatorTest extends TestCase
             $helper
         );
         self::assertStringContainsString('Skipping invalid recurrence definition for event ID', $helper);
-        self::assertSame(2, substr_count($helper, '$nextRecurrence === false'));
+        // Initial calculation, normal advance and advance past an excluded occurrence.
+        self::assertSame(3, substr_count($helper, '$nextRecurrence === false'));
     }
 
     public function testEventSaveRejectsInvalidWeekdayRules(): void

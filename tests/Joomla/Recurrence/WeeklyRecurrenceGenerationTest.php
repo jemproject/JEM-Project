@@ -68,4 +68,51 @@ final class WeeklyRecurrenceGenerationTest extends TestCase
         ]);
         self::assertSame('2026-11-02', $row['dates']);
     }
+
+    public function testSelectedSpecialDaysSkipOccurrencesWithoutMovingThem(): void
+    {
+        $row = ['dates' => '2026-10-14', 'enddates' => null, 'recurrence_type' => 2,
+            'recurrence_number' => 1, 'recurrence_byday' => 'W:3,5', 'counter' => 0];
+        $days = [['start_date' => '2026-10-16'], ['start_date' => '2026-10-23']];
+        $created = [$row['dates']]; // The manually created initial event remains.
+        while (($row = JemHelper::calculate_recurrence($row)) !== false && $row['dates'] <= '2026-10-30') {
+            if (!JemRecurrenceExclusions::matches($days, $row['dates'], $row['enddates'])) {
+                $created[] = $row['dates'];
+                $row['counter']++;
+            }
+        }
+        self::assertSame(['2026-10-14', '2026-10-21', '2026-10-28', '2026-10-30'], $created);
+        self::assertSame(3, $row['counter']);
+    }
+
+    public function testAllCandidatesCanBeExcludedWithinTheGenerationHorizon(): void
+    {
+        $row = ['dates' => '2026-10-14', 'enddates' => null, 'recurrence_type' => 2,
+            'recurrence_number' => 1, 'recurrence_byday' => 'W:3,5'];
+        $excluded = 0;
+        while (($row = JemHelper::calculate_recurrence($row)) !== false && $row['dates'] <= '2026-10-30') {
+            self::assertTrue(JemRecurrenceExclusions::matches([['weekdays' => '3,5']], $row['dates']));
+            $excluded++;
+        }
+        self::assertSame(5, $excluded);
+        self::assertSame('2026-11-04', $row['dates']);
+    }
+
+    public function testThreeDayWeeklyEventKeepsItsDurationAndExcludesTheWholeOccurrence(): void
+    {
+        foreach ([null, 'W:3'] as $weekdays) {
+            $row = ['dates' => '2026-10-14', 'enddates' => '2026-10-16', 'recurrence_type' => 2,
+                'recurrence_number' => 1, 'recurrence_byday' => $weekdays];
+            $row = JemHelper::calculate_recurrence($row);
+            self::assertSame('2026-10-21', $row['dates']);
+            self::assertSame('2026-10-23', $row['enddates']);
+            // A closure on Thursday skips Wednesday-to-Friday, not just Thursday.
+            self::assertTrue(JemRecurrenceExclusions::matches(
+                [['start_date' => '2026-10-22']], $row['dates'], $row['enddates']
+            ));
+            $row = JemHelper::calculate_recurrence($row);
+            self::assertSame('2026-10-28', $row['dates']);
+            self::assertSame('2026-10-30', $row['enddates']);
+        }
+    }
 }
