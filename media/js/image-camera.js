@@ -48,6 +48,7 @@
     var editorPointer = null;
     var editorKeepSelectionOnCancel = false;
     var editorSourceFiles = new WeakMap();
+    var editorFileRequests = new WeakMap();
 
     var fallbacks = {
         COM_JEM_CAMERA_DIALOG_TITLE: 'Take photo',
@@ -1285,11 +1286,45 @@
         }
     }
 
+    // A matching ratio (including Original) still needs the upload size limits.
+    async function downscaledFile(file, image, config) {
+        var width = image.naturalWidth;
+        var height = image.naturalHeight;
+        var maxDimension = Math.max(1, Number(config.maxDimension) || Math.max(width, height));
+        var maxBytes = Math.max(1, Number(config.maxBytes) || file.size);
+
+        if (width <= maxDimension && height <= maxDimension && file.size <= maxBytes) {
+            return file;
+        }
+
+        var geometry = sourceAndOutputGeometry(width, height, config);
+        var canvas = document.createElement('canvas');
+        canvas.width = geometry.outputWidth;
+        canvas.height = geometry.outputHeight;
+        canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+
+        var processed = await compressCanvas(canvas, config, file.type);
+        var extension = (config.extensions || {})[processed.mime]
+            || (processed.mime === 'image/jpeg' ? 'jpg' : processed.mime.replace('image/', ''));
+        var baseName = file.name.replace(/\.[^.]+$/, '') || 'jem-image';
+
+        return new File([processed.blob], baseName + '-resized.' + extension, {
+            type: processed.mime,
+            lastModified: Date.now()
+        });
+    }
+
     async function inspectSelectedFile(input, file, keepSelectionOnCancel) {
+        var request = {};
+        var selectedFile = input.files && input.files[0];
+        editorFileRequests.set(input, request);
+        var isCurrent = function () {
+            return editorFileRequests.get(input) === request
+                && input.files && input.files[0] === selectedFile && Boolean(selectedFile);
+        };
         var config = uploadConfigForInput(input);
 
-        if (!config || config.mode === 'none'
-            || !/^image\/(?:jpeg|png|webp)$/i.test(file.type || '')) {
+        if (!config || !/^image\/(?:jpeg|png|webp)$/i.test(file.type || '')) {
             assignSelectedFile(input, file);
             dispatchAcceptedFile(input);
             return;
@@ -1298,16 +1333,26 @@
         try {
             var image = await loadSelectedImage(file);
 
-            if (imageMatchesRatio(image, config)) {
-                assignSelectedFile(input, file);
+            if (!isCurrent()) {
+                return;
+            }
+            if (config.mode === 'none' || imageMatchesRatio(image, config)) {
+                var processedFile = await downscaledFile(file, image, config);
+                if (!isCurrent()) {
+                    return;
+                }
+                assignSelectedFile(input, processedFile);
                 dispatchAcceptedFile(input);
                 return;
             }
 
             openImageEditor(input, file, config, image, keepSelectionOnCancel);
         } catch (error) {
-            assignSelectedFile(input, file);
-            dispatchAcceptedFile(input);
+            // Keep the original on processing failure; server validation remains authoritative.
+            if (isCurrent()) {
+                assignSelectedFile(input, file);
+                dispatchAcceptedFile(input);
+            }
         }
     }
 
@@ -1524,6 +1569,7 @@
             return;
         }
         if (!input.files || !input.files[0]) {
+            editorFileRequests.delete(input);
             editorSourceFiles.delete(input);
             return;
         }
