@@ -19,6 +19,9 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 class JemCategories
 {
+    /** Request-local routing data, separated by database and authorised view levels. */
+    private static ?\WeakMap $routeCache = null;
+
     /**
      * Array to hold the object instances
      *
@@ -461,32 +464,54 @@ class JemCategories
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
         $parentcats = array();
-        $cid = $this->id;
+        $cid = (int) $this->id;
         $user = JemFactory::getUser();
-        $levels = $user->getAuthorisedViewLevels();
+        $levels = array_values(array_unique(array_map('intval', $user->getAuthorisedViewLevels())));
+        sort($levels);
+        $levelKey = implode(',', $levels);
+        self::$routeCache ??= new \WeakMap();
+        self::$routeCache[$db] ??= new \stdClass();
+        $contexts = self::$routeCache[$db];
+        $contexts->{$levelKey} ??= (object) array('nodes' => array(), 'paths' => array());
+        $cache = $contexts->{$levelKey};
+        $pathId = $cid;
+
+        if (array_key_exists($pathId, $cache->paths)) {
+            return $cache->paths[$pathId];
+        }
+
+        $visited = array();
 
         do {
-            $sql = $db->getQuery(true);
+            if (isset($visited[$cid])) {
+                break;
+            }
+            $visited[$cid] = true;
 
-            $sql->select('id, parent_id, catname');
+            if (!array_key_exists($cid, $cache->nodes)) {
+                $sql = $db->getQuery(true);
 
-            // Handle the alias CASE WHEN portion of the query
-            $case_when_cat_alias = ' CASE WHEN ';
-            $case_when_cat_alias .= $sql->charLength('alias');
-            $case_when_cat_alias .= ' THEN ';
-            $cat_id = $sql->castAs('CHAR', 'id');
-            $case_when_cat_alias .= $sql->concatenate(array($cat_id, 'alias'), ':');
-            $case_when_cat_alias .= ' ELSE ';
-            $case_when_cat_alias .= $cat_id.' END as slug';
-            $sql->select($case_when_cat_alias);
+                $sql->select('id, parent_id, catname');
 
-            $sql->from('#__jem_categories');
-            $sql->where('id = ' . (int) $cid);
-            $sql->where('published = 1');
-            $sql->where('access IN ('.implode(',', $levels).')');
+                // Handle the alias CASE WHEN portion of the query
+                $case_when_cat_alias = ' CASE WHEN ';
+                $case_when_cat_alias .= $sql->charLength('alias');
+                $case_when_cat_alias .= ' THEN ';
+                $cat_id = $sql->castAs('CHAR', 'id');
+                $case_when_cat_alias .= $sql->concatenate(array($cat_id, 'alias'), ':');
+                $case_when_cat_alias .= ' ELSE ';
+                $case_when_cat_alias .= $cat_id.' END as slug';
+                $sql->select($case_when_cat_alias);
 
-            $db->setQuery($sql);
-            $row = $db->loadObject();
+                $sql->from('#__jem_categories');
+                $sql->where('id = ' . $cid);
+                $sql->where('published = 1');
+                $sql->where('access IN (' . ($levelKey === '' ? '0' : $levelKey) . ')');
+
+                $db->setQuery($sql);
+                $cache->nodes[$cid] = $db->loadObject();
+            }
+            $row = $cache->nodes[$cid];
 
             if ($row) {
                 $parentcats[] = $row->slug;
@@ -495,10 +520,11 @@ class JemCategories
                 $parent_id = 0;
             }
 
-            $cid = $parent_id;
+            $cid = (int) $parent_id;
         } while ($parent_id > 0);
 
         $parentcats = array_reverse($parentcats);
+        $cache->paths[$pathId] = $parentcats;
         return $parentcats;
     }
 

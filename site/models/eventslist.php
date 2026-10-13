@@ -13,6 +13,7 @@ use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseQuery;
 use Joomla\CMS\Date\Date;
 
 // ensure JemFactory is loaded (because model is used by modules too)
@@ -27,6 +28,13 @@ require_once(JPATH_SITE.'/components/com_jem/classes/customfields.class.php');
 class JemModelEventslist extends ListModel
 {
     protected $show_archived_events = 0;
+
+    /** Category filters and results belong to this model's current request context only. */
+    private $categoryQueryContext;
+    private $categoryQuery;
+    private $allCategoryIds;
+
+    private const CATEGORY_BATCH_SIZE = 500;
 
     /**
      * Constructor.
@@ -1465,6 +1473,14 @@ class JemModelEventslist extends ListModel
         $calendarMultiday = $this->getState('filter.calendar_multiday');
         $stateParams = $this->getState('params');
         $contentLimit = (int) $this->getState('list.content_limit', 0);
+        $itemIds = array_map(static function ($item) {
+            return (int) $item->id;
+        }, $items);
+        $categoriesByItem = $this->getCategoriesForItems($itemIds);
+        // ACL must see every relation, not just published/visible menu categories.
+        $aclCategoryIds = !empty($user->id) && !$user->get('guest', 0)
+            ? $this->getAclCategoryIdsForItems(array_keys($categoriesByItem))
+            : array();
 
         # Convert the parameter fields into objects.
         foreach ($items as $index => $item)
@@ -1488,7 +1504,7 @@ class JemModelEventslist extends ListModel
             );
 
             # adding categories
-            $item->categories = $this->getCategories($item->id);
+            $item->categories = $categoriesByItem[(int) $item->id] ?? array();
 
             # check if the item-categories is empty, if so the user has no access to that event at all.
             if (empty($item->categories)) {
@@ -1496,7 +1512,10 @@ class JemModelEventslist extends ListModel
                 continue;
             } else {
                 # write access permissions.
-                $canEdit = $user->can('edit', 'event', $item->id, $item->created_by);
+                $canEdit = $user->can(
+                    'edit', 'event', $item->id, $item->created_by,
+                    $aclCategoryIds[(int) $item->id] ?? false
+                );
                 $item->params->set('access-edit', $canEdit);
                 JemAgeAccess::decorateEvent($item, $user, $canEdit);
 
@@ -1528,6 +1547,125 @@ class JemModelEventslist extends ListModel
      */
     public function getCategories($id)
     {
+        if ($id !== 'all') {
+            return $this->getCategoriesForItems(array((int) $id))[(int) $id] ?? array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $this->getCategoryQuery();
+
+        if ($this->allCategoryIds !== null) {
+            return $this->allCategoryIds;
+        }
+
+        $query->clear('select')->select('DISTINCT c.id');
+
+        // A top-category condition may reference relation/event aliases. Keep
+        // those joins in that case; otherwise include empty categories too.
+        if (!$this->getState('filter.category_top')) {
+            $query->clear('join');
+        }
+
+        $query->order('c.id');
+        $db->setQuery($query);
+        $this->allCategoryIds = $db->loadColumn();
+
+        return $this->allCategoryIds;
+    }
+
+    /** Load only the current page's categories, keeping assignment order per event. */
+    public function getCategoriesForItems(array $itemIds): array
+    {
+        $itemIds = array_values(array_unique(array_filter(array_map('intval', $itemIds), static function ($id) {
+            return $id > 0;
+        })));
+        $categories = array();
+
+        if (!$itemIds) {
+            return $categories;
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $baseQuery = $this->getCategoryQuery();
+
+        foreach (array_chunk($itemIds, self::CATEGORY_BATCH_SIZE) as $batch) {
+            $query = clone $baseQuery;
+            $query->select('rel.itemid AS category_item_id, rel.id AS category_relation_id')
+                ->where('rel.itemid IN (' . implode(',', $batch) . ')')
+                ->order('rel.itemid, rel.id');
+            $db->setQuery($query);
+
+            foreach ($db->loadObjectList() as $category) {
+                $itemId = (int) $category->category_item_id;
+                $categoryId = (int) $category->id;
+                unset($category->category_item_id, $category->category_relation_id);
+                $categories[$itemId][$categoryId] = $category;
+            }
+        }
+
+        return array_map('array_values', $categories);
+    }
+
+    /** Preload relation IDs without applying display filters or changing ACL decisions. */
+    protected function getAclCategoryIdsForItems(array $itemIds): array
+    {
+        $itemIds = array_values(array_unique(array_filter(array_map('intval', $itemIds), static function ($id) {
+            return $id > 0;
+        })));
+        $categories = array();
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        foreach (array_chunk($itemIds, self::CATEGORY_BATCH_SIZE) as $batch) {
+            $query = $db->getQuery(true)
+                ->select('itemid, catid')
+                ->from('#__jem_cats_event_relations')
+                ->where('itemid IN (' . implode(',', $batch) . ')')
+                ->order('itemid, id');
+            $db->setQuery($query);
+
+            foreach ($db->loadObjectList() as $relation) {
+                $categories[(int) $relation->itemid][] = (int) $relation->catid;
+            }
+        }
+
+        return $categories;
+    }
+
+    /** Count event groups in SQL; retain Joomla's fallback for custom aggregations. */
+    protected function _getListCount($query)
+    {
+        if (
+            $query instanceof DatabaseQuery
+            && $query->type === 'select'
+            && $query->having === null
+            && $query->merge === null
+            && $query->querySet === null
+            && !$query->getBounded()
+            && $query->group !== null
+            && $query->group->getElements() === array('a.id')
+            && $query->from !== null
+            && $query->from->getElements() === array('#__jem_events as a')
+            && !array_filter((array) $query->join, static function ($join) {
+                // A right/full join could introduce a NULL event group which
+                // COUNT(DISTINCT a.id) would omit. Only optimise our usual joins.
+                return !in_array($join->getName(), array('LEFT JOIN', 'INNER JOIN', 'JOIN'), true);
+            })
+        ) {
+            $countQuery = clone $query;
+            $countQuery->clear('select')->clear('order')->clear('limit')->clear('offset')->clear('group')
+                ->select('COUNT(DISTINCT a.id)');
+            $db = $this->getDatabase();
+            $db->setQuery($countQuery);
+
+            return (int) $db->loadResult();
+        }
+
+        return parent::_getListCount($query);
+    }
+
+    /** Build the same visibility/menu filters once, before querying any batches. */
+    protected function getCategoryQuery()
+    {
         $app         = Factory::getApplication();
         $user        = JemFactory::getUser();
         $levels      = $this->getViewAccessLevels();
@@ -1539,6 +1677,23 @@ class JemModelEventslist extends ListModel
 
         // Query
         $db = Factory::getContainer()->get('DatabaseDriver');
+        $context = serialize(array(
+            spl_object_id($db), $levels, $user->getAuthorisedViewLevels(),
+            $includechildevents, $jemsettings->access_level_locked_categories,
+            $settings->get('global_show_filter'),
+            $this->getState('filter.strict_access', false),
+            $this->getState('filter.category_top'),
+            $this->getState('filter.category_id'),
+            $this->getState('filter.category_id.include', true),
+            $this->getState('filter.req_catid'),
+            $this->getState('filter.filter_type'),
+            $this->getState('filter.filter_search'),
+        ));
+
+        if ($context === $this->categoryQueryContext) {
+            return clone $this->categoryQuery;
+        }
+
         $query = $db->getQuery(true);
 
         $case_when_c  = ' CASE WHEN ';
@@ -1560,10 +1715,6 @@ class JemModelEventslist extends ListModel
 
         $query->select(array('a.id AS multi'));
         $query->join('LEFT','#__jem_events AS a ON a.id = rel.itemid');
-
-        if ($id != 'all'){
-            $query->where('rel.itemid ='.(int)$id);
-        }
 
         $query->where('c.published = 1');
 
@@ -1678,16 +1829,11 @@ class JemModelEventslist extends ListModel
             }
         }
 
-        $db->setQuery($query);
+        $this->categoryQueryContext = $context;
+        $this->categoryQuery = clone $query;
+        $this->allCategoryIds = null;
 
-        if ($id == 'all') {
-            $cats = $db->loadColumn(0);
-            $cats = array_unique($cats);
-            return ($cats);
-        } else {
-            $cats = $db->loadObjectList();
-        }
-        return $cats;
+        return $query;
     }
 
     /**
