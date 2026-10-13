@@ -1768,6 +1768,7 @@ class com_jemInstallerScript
             '#__jem_cats_event_relations',
             '#__jem_countries',
             '#__jem_events',
+            '#__jem_event_series',
             '#__jem_groupmembers',
             '#__jem_groups',
             '#__jem_import_profiles',

@@ -479,14 +479,7 @@ foreach ($rows as $row) {
             continue;
         }
 
-        if ($hourDisplay === 'event_hours') {
-            $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
-
-            if ($eventMinutes < $rangeStartMinutes || $eventMinutes >= $rangeEndMinutes) {
-                continue;
-            }
-        }
-
+        // Display hours control the grid, not which events are included.
         $dayRange[$rowDate]['timedRows'][] = $dayRow;
         $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
         $dayRange[$rowDate]['timedRowsByHour'][$eventMinutes][] = $dayRow;

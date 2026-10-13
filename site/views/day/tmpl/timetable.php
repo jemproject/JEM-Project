@@ -287,7 +287,6 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
             return $timestamp ?: $fallback;
         };
         $timedRows = array();
-        $visibleTimedRows = array();
         $allDayRows = array();
         $minTime = null;
         $maxTime = null;
@@ -311,33 +310,26 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
             if ($eventEndHour < $eventStartHour) {
                 $eventEndHour = 23;
             }
-            $isInConfiguredRange = ($eventStartHour < $rangeEndHour && $eventEndHour >= $rangeStartHour);
-
             $timedRows[] = array($row, $startTime, $endTime);
-            if ($isInConfiguredRange) {
-                $visibleTimedRows[] = array($row, $startTime, $endTime);
-            }
             $minTime = $minTime === null ? $startTime : min($minTime, $startTime);
             $maxTime = $maxTime === null ? $endTime : max($maxTime, $endTime);
 
-            if (!$isInConfiguredRange) {
-                continue;
-            }
-
-            for ($hour = max($rangeStartHour, $eventStartHour); $hour <= min($rangeEndHour - 1, $eventEndHour); $hour++) {
+            // Retain every occupied hour, including events outside the configured grid.
+            for ($hour = $eventStartHour; $hour <= $eventEndHour; $hour++) {
                 $activeHourKeys[$hour] = $hour;
             }
         }
 
-        if ($minTime === null) {
-            $minTime = strtotime($gridDate . ' 08:00');
-            $maxTime = strtotime($gridDate . ' 18:00');
-        }
-
         $configuredGridStart = strtotime($gridDate . ' ' . sprintf('%02d:00', $rangeStartHour));
         $configuredGridEnd = strtotime($gridDate . ' ' . sprintf('%02d:00', $rangeEndHour));
-        $gridStart = max($configuredGridStart, floor($minTime / $slotSeconds) * $slotSeconds);
-        $gridEnd = min($configuredGridEnd, ceil($maxTime / $slotSeconds) * $slotSeconds);
+        $minTime = $minTime ?? $configuredGridStart;
+        $maxTime = $maxTime ?? $configuredGridEnd;
+        // The configured range is a baseline, never an event visibility filter.
+        $gridStart = min($configuredGridStart, floor($minTime / $slotSeconds) * $slotSeconds);
+        $gridEnd = min(
+            strtotime($gridDate . ' +1 day'),
+            max($configuredGridEnd, ceil($maxTime / $slotSeconds) * $slotSeconds)
+        );
         if ($gridEnd <= $gridStart) {
             $gridStart = $configuredGridStart;
             $gridEnd = $configuredGridEnd;
@@ -390,8 +382,7 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
         }
 
         $venueRows = array();
-        $renderedTimedRows = $hourDisplay === 'event_hours' ? $visibleTimedRows : $timedRows;
-        foreach ($renderedTimedRows as $eventData) {
+        foreach ($timedRows as $eventData) {
             list($row, $startTime, $endTime) = $eventData;
             $venueKey = !empty($row->locid) ? 'venue-' . (int) $row->locid : 'venue-0';
             if (!isset($venueRows[$venueKey])) {
