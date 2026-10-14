@@ -281,7 +281,7 @@
     --jem-timetable-rail: #e4e4e4;
     --jem-timetable-venue-bg: #eef3f2;
     --jem-timetable-venue-color: #dce8e6;
-    overflow-x: visible;
+    overflow-x: auto;
     margin: 1rem 0 1.5rem;
     padding-bottom: 0.4rem;
     background: #f7f7f7;
@@ -289,7 +289,11 @@
 }
 
 #jem.jem_day_timetable .jem-timetable-horizontal-stage {
-    min-width: 0;
+    min-width: max(40rem, calc(var(--jem-timetable-slots) * 3rem + var(--jem-timetable-label-width)));
+}
+
+#jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-horizontal-stage {
+    min-width: max(27rem, calc(var(--jem-timetable-slots) * 7rem + var(--jem-timetable-label-width)));
 }
 
 #jem.jem_day_timetable .jem-timetable-horizontal-header,
@@ -407,10 +411,14 @@
 
 #jem.jem_day_timetable .jem-timetable-track-all-day {
     background-color: #b7b9bc;
+    grid-auto-rows: minmax(2.5rem, auto);
+    row-gap: .25rem;
 }
 
 #jem.jem_day_timetable .jem-timetable-horizontal-venues-top .jem-timetable-track {
     min-height: 3.7rem;
+    grid-auto-rows: minmax(2.5rem, auto);
+    row-gap: .25rem;
 }
 
 #jem.jem_day_timetable .jem-timetable-venue-cell {
@@ -441,6 +449,7 @@
 }
 
 #jem.jem_day_timetable .jem-timetable-block {
+    box-sizing: border-box;
     --jem-timetable-event-text: #111111;
     z-index: 1;
     position: absolute;

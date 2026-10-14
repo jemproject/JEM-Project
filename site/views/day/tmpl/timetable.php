@@ -12,6 +12,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 
+require_once JPATH_SITE . '/components/com_jem/classes/dayschedule.class.php';
+
 JemHelper::loadCss('timetable');
 
 $getCategoryColor = static function ($row) {
@@ -96,6 +98,9 @@ $getEventUrl = static function ($row) {
 };
 
 $getTimeValue = static function ($row, $field, $fallback = null) {
+    if (isset($row->day_schedule)) {
+        return $row->day_schedule['all_day'] ? $fallback : $row->day_schedule[$field === 'times' ? 'start' : 'end'];
+    }
     $time = trim((string) ($row->$field ?? ''));
 
     if ($time === '') {
@@ -112,7 +117,7 @@ $sortTime = static function ($row) use ($getTimeValue) {
 };
 
 $formatGridTime = static function ($timestamp) {
-    return date('H:i', $timestamp);
+    return gmdate('H:i', $timestamp);
 };
 
 $buildTooltip = function ($row, $timeRange = '') {
@@ -120,6 +125,10 @@ $buildTooltip = function ($row, $timeRange = '') {
 
     if ($timeRange !== '') {
         $parts[] = $this->escape($timeRange);
+    }
+
+    if (!empty($row->day_schedule['continuation'])) {
+        $parts[] = $this->escape($row->day_schedule['actual']);
     }
 
     if (!empty($row->venue)) {
@@ -178,6 +187,14 @@ $getEventBackgroundColor = static function ($row) use ($eventBackgroundMode, $cu
 };
 $useStrongVenueHeader = ($eventBackgroundMode === 'venue');
 $currentDate = new DateTimeImmutable($this->day ?? date('Y-m-d'));
+$projectedRows = array();
+foreach ($rows as $row) {
+    foreach (JemDaySchedule::project($row, $currentDate->format('Y-m-d'), JemHelper::getEventTimeZoneName($row)) as $session) {
+        $projectedRows[] = $session;
+    }
+}
+$rows = $projectedRows;
+usort($rows, static fn ($a, $b) => $sortTime($a) <=> $sortTime($b));
 $showEmptyDays = (int) $this->params->get('show_empty_days', 0) === 1;
 $showWeekNavigation = (int) $this->params->get('show_week_navigation', 1) === 1;
 $previousWeekDate = $currentDate->modify('-1 week');
@@ -277,17 +294,6 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
         $slotMinutes = 60;
         $slotSeconds = $slotMinutes * 60;
         $gridDate = $currentDate->format('Y-m-d');
-        $getDisplayTimeValue = static function ($row, $field, $fallback = null) use ($gridDate) {
-            $time = trim((string) ($row->$field ?? ''));
-
-            if ($time === '') {
-                return $fallback;
-            }
-
-            $timestamp = strtotime($gridDate . ' ' . $time);
-
-            return $timestamp ?: $fallback;
-        };
         $timedRows = array();
         $allDayRows = array();
         $minTime = null;
@@ -295,20 +301,14 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
         $activeHourKeys = array();
 
         foreach ($rows as $row) {
-            $startTime = $getDisplayTimeValue($row, 'times');
-
-            if (!$startTime) {
+            if ($row->day_schedule['all_day']) {
                 $allDayRows[] = $row;
                 continue;
             }
-
-            $endTime = $getDisplayTimeValue($row, 'endtimes', $startTime + 3600);
-            if ($endTime <= $startTime) {
-                $endTime = $startTime + 3600;
-            }
-
-            $eventStartHour = (int) date('G', $startTime);
-            $eventEndHour = (int) date('G', $endTime - 1);
+            $startTime = $row->day_schedule['start'];
+            $endTime = $row->day_schedule['end'];
+            $eventStartHour = (int) gmdate('G', $startTime);
+            $eventEndHour = (int) gmdate('G', $endTime - 1);
             if ($eventEndHour < $eventStartHour) {
                 $eventEndHour = 23;
             }
@@ -322,14 +322,14 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
             }
         }
 
-        $configuredGridStart = strtotime($gridDate . ' ' . sprintf('%02d:00', $rangeStartHour));
-        $configuredGridEnd = strtotime($gridDate . ' ' . sprintf('%02d:00', $rangeEndHour));
+        $configuredGridStart = strtotime($gridDate . ' ' . sprintf('%02d:00 UTC', $rangeStartHour));
+        $configuredGridEnd = strtotime($gridDate . ' ' . sprintf('%02d:00 UTC', $rangeEndHour));
         $minTime = $minTime ?? $configuredGridStart;
         $maxTime = $maxTime ?? $configuredGridEnd;
         // The configured range is a baseline, never an event visibility filter.
         $gridStart = min($configuredGridStart, floor($minTime / $slotSeconds) * $slotSeconds);
         $gridEnd = min(
-            strtotime($gridDate . ' +1 day'),
+            strtotime($gridDate . ' UTC +1 day'),
             max($configuredGridEnd, ceil($maxTime / $slotSeconds) * $slotSeconds)
         );
         if ($gridEnd <= $gridStart) {
@@ -379,12 +379,13 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
 
         $timeSlotIndexes = array();
         foreach ($timeSlots as $index => $timeSlot) {
-            $timeSlotKey = ($hourDisplay === 'event_hours') ? (int) $timeSlot : (int) date('G', $timeSlot);
+            $timeSlotKey = ($hourDisplay === 'event_hours') ? (int) $timeSlot : (int) gmdate('G', $timeSlot);
             $timeSlotIndexes[$timeSlotKey] = (int) $index;
         }
 
         $venueRows = array();
-        foreach ($timedRows as $eventData) {
+        // Include all-day-only venues in the vertical column map too.
+        foreach (array_merge($timedRows, array_map(static fn ($row) => [$row, null, null], $allDayRows)) as $eventData) {
             list($row, $startTime, $endTime) = $eventData;
             $venueKey = !empty($row->locid) ? 'venue-' . (int) $row->locid : 'venue-0';
             if (!isset($venueRows[$venueKey])) {
@@ -397,8 +398,27 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                 );
             }
 
-            $venueRows[$venueKey]['items'][] = $eventData;
+            if ($startTime !== null) {
+                if ($hourDisplay === 'event_hours') {
+                    $startIndex = $timeSlotIndexes[(int) gmdate('G', $startTime)];
+                    $endIndex = $timeSlotIndexes[(int) gmdate('G', $endTime - 1)];
+                    $left = ($startIndex / $slotCount) * 100;
+                    $width = (($endIndex - $startIndex + 1) / $slotCount) * 100;
+                } else {
+                    $left = (($startTime - $gridStart) / ($gridEnd - $gridStart)) * 100;
+                    $width = (($endTime - $startTime) / ($gridEnd - $gridStart)) * 100;
+                }
+                $width = min(100, max(3, $width));
+                $eventData['position'] = [max(0, min(100 - $width, $left)), $width];
+                $venueRows[$venueKey]['items'][] = $eventData;
+            }
         }
+        foreach ($venueRows as &$venueRow) {
+            $lanes = JemDaySchedule::lanes($venueRow['items']);
+            $venueRow['items'] = $lanes['items'];
+            $venueRow['lanes'] = $lanes['count'];
+        }
+        unset($venueRow);
         ?>
         <?php if ($horizontalAxis === 'venue') : ?>
             <?php
@@ -420,29 +440,32 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
 
                     <?php foreach ($timeSlots as $timeSlot) : ?>
                         <?php
-                        $slotStart = ($hourDisplay === 'event_hours') ? strtotime($gridDate . ' ' . sprintf('%02d:00', (int) $timeSlot)) : $timeSlot;
+                        $slotStart = ($hourDisplay === 'event_hours') ? strtotime($gridDate . ' ' . sprintf('%02d:00 UTC', (int) $timeSlot)) : $timeSlot;
                         $slotEnd = $slotStart + $slotSeconds;
+                        $slotItems = array();
+                        $slotLanes = 1;
+                        foreach ($venueRows as $venueKey => $venueRow) {
+                            $slotItems[$venueKey] = array_values(array_filter($venueRow['items'],
+                                static fn ($item) => $item[1] < $slotEnd && $item[2] > $slotStart));
+                            $slotLanes = max($slotLanes, count($slotItems[$venueKey]));
+                        }
                         ?>
                         <div class="jem-timetable-horizontal-row">
                             <div class="jem-timetable-venue"><?php echo $this->escape($formatGridTime($slotStart)); ?></div>
                             <div class="jem-timetable-track">
-                                <?php foreach ($venueRows as $venueRow) : ?>
-                                    <div class="jem-timetable-venue-cell"></div>
+                                <?php foreach ($venueKeys as $column => $venueKey) : ?>
+                                    <div class="jem-timetable-venue-cell" style="grid-column: <?php echo $column + 1; ?>; grid-row: 1 / span <?php echo $slotLanes; ?>;"></div>
                                 <?php endforeach; ?>
                                 <?php foreach ($venueRows as $venueIndex => $venueRow) : ?>
-                                    <?php foreach ($venueRow['items'] as $eventData) : ?>
+                                    <?php foreach ($slotItems[$venueIndex] as $lane => $eventData) : ?>
                                         <?php
                                         list($row, $startTime, $endTime) = $eventData;
-                                        if ($startTime >= $slotEnd || $endTime <= $slotStart) {
-                                            continue;
-                                        }
-
-                                        $timeRange = $formatGridTime($startTime) . ' - ' . $formatGridTime($endTime);
+                                        $timeRange = $row->day_schedule['label'];
                                         $accentColor = $getEventBackgroundColor($row);
                                         $textColor = $getContrastColor($accentColor);
                                         $gridColumnStart = array_search($venueIndex, $venueKeys, true) + 1;
                                         ?>
-                                        <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;">
+                                        <a class="jem-timetable-block" data-event-id="<?php echo (int) $row->id; ?>" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>; grid-row: <?php echo $lane + 1; ?>;">
                                             <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                             <span class="jem-timetable-block-time"><?php echo $this->escape($timeRange); ?></span>
                                             <?php  ?>
@@ -454,11 +477,20 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                     <?php endforeach; ?>
 
                     <?php if (!empty($allDayRows)) : ?>
+                        <?php
+                        $allDayCounts = array();
+                        foreach ($allDayRows as $row) {
+                            $key = 'venue-' . (int) ($row->locid ?? 0);
+                            $allDayCounts[$key] = ($allDayCounts[$key] ?? 0) + 1;
+                        }
+                        $allDayLanes = max($allDayCounts);
+                        $allDayPositions = array();
+                        ?>
                         <div class="jem-timetable-horizontal-row">
                             <div class="jem-timetable-venue"><?php echo Text::_('COM_JEM_TIMETABLE_ALL_DAY'); ?></div>
                             <div class="jem-timetable-track jem-timetable-track-all-day">
-                                <?php foreach ($venueRows as $venueRow) : ?>
-                                    <div class="jem-timetable-venue-cell"></div>
+                                <?php foreach ($venueKeys as $column => $venueKey) : ?>
+                                    <div class="jem-timetable-venue-cell" style="grid-column: <?php echo $column + 1; ?>; grid-row: 1 / span <?php echo $allDayLanes; ?>;"></div>
                                 <?php endforeach; ?>
                                 <?php foreach ($allDayRows as $row) : ?>
                                     <?php
@@ -466,8 +498,9 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                                     $textColor = $getContrastColor($accentColor);
                                     $venueKey = !empty($row->locid) ? 'venue-' . (int) $row->locid : 'venue-0';
                                     $gridColumnStart = max(1, (int) array_search($venueKey, $venueKeys, true) + 1);
+                                    $allDayPositions[$venueKey] = ($allDayPositions[$venueKey] ?? 0) + 1;
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>;">
+                                    <a class="jem-timetable-block" data-event-id="<?php echo (int) $row->id; ?>" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: <?php echo (int) $gridColumnStart; ?> / <?php echo (int) ($gridColumnStart + 1); ?>; grid-row: <?php echo $allDayPositions[$venueKey]; ?>;">
                                         <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                         <?php  ?>
                                     </a>
@@ -492,35 +525,21 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                     </div>
 
                     <?php foreach ($venueRows as $venueRow) : ?>
+                        <?php if (empty($venueRow['items'])) { continue; } ?>
                         <div class="jem-timetable-horizontal-row" style="--jem-timetable-venue-color: <?php echo $this->escape($venueRow['color']); ?>;">
                             <?php $strongVenueHeader = $useStrongVenueHeader && !empty($venueRow['has_color']); ?>
                             <?php $venueHeaderText = $strongVenueHeader ? $getContrastColor($venueRow['color']) : '#1f2a2a'; ?>
                             <div class="jem-timetable-venue<?php echo $strongVenueHeader ? ' jem-timetable-venue-strong' : ''; ?>" style="--jem-timetable-venue-text: <?php echo $this->escape($venueHeaderText); ?>;"><?php echo $this->escape($venueRow['title']); ?></div>
-                            <div class="jem-timetable-track">
+                            <div class="jem-timetable-track" style="min-height: calc(.76rem + <?php echo (int) $venueRow['lanes']; ?> * 2.75rem);">
                                 <?php foreach ($venueRow['items'] as $eventData) : ?>
                                     <?php
                                     list($row, $startTime, $endTime) = $eventData;
-                                    if ($hourDisplay === 'event_hours') {
-                                        $startHour = (int) date('G', $startTime);
-                                        $endHour = (int) date('G', $endTime - 1);
-                                        if ($endHour < $startHour) {
-                                            $endHour = 23;
-                                        }
-                                        $startIndex = isset($timeSlotIndexes[$startHour]) ? $timeSlotIndexes[$startHour] : 0;
-                                        $endIndex = isset($timeSlotIndexes[$endHour]) ? $timeSlotIndexes[$endHour] : $startIndex;
-                                        $leftPercent = ($startIndex / $slotCount) * 100;
-                                        $widthPercent = max(1.5, (($endIndex - $startIndex + 1) / $slotCount) * 100);
-                                    } else {
-                                        $eventStart = max($gridStart, $startTime);
-                                        $eventEnd = min($gridEnd, $endTime);
-                                        $leftPercent = (($eventStart - $gridStart) / ($gridEnd - $gridStart)) * 100;
-                                        $widthPercent = max(1.5, (($eventEnd - $eventStart) / ($gridEnd - $gridStart)) * 100);
-                                    }
-                                    $timeRange = $formatGridTime($startTime) . ' - ' . $formatGridTime($endTime);
+                                    [$leftPercent, $widthPercent, $lane] = $eventData['position'];
+                                    $timeRange = $row->day_schedule['label'];
                                     $accentColor = $getEventBackgroundColor($row);
                                     $textColor = $getContrastColor($accentColor);
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; left: <?php echo round($leftPercent, 4); ?>%; width: <?php echo round($widthPercent, 4); ?>%;">
+                                    <a class="jem-timetable-block" data-event-id="<?php echo (int) $row->id; ?>" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row, $timeRange); ?>" aria-label="<?php echo $buildTooltip($row, $timeRange); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; left: <?php echo round($leftPercent, 4); ?>%; width: calc(<?php echo round($widthPercent, 4); ?>% - .2rem); top: calc(.38rem + <?php echo $lane; ?> * 2.75rem); bottom: auto; height: 2.5rem;">
                                         <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                         <span class="jem-timetable-block-time"><?php echo $this->escape($timeRange); ?></span>
                                         <?php  ?>
@@ -534,12 +553,12 @@ $specialDayBadges = JemHelper::renderCalendarSpecialDayBadges($currentDate->form
                         <div class="jem-timetable-horizontal-row">
                             <div class="jem-timetable-venue"><?php echo Text::_('COM_JEM_TIMETABLE_ALL_DAY'); ?></div>
                             <div class="jem-timetable-track jem-timetable-track-all-day">
-                                <?php foreach ($allDayRows as $row) : ?>
+                                <?php foreach ($allDayRows as $lane => $row) : ?>
                                     <?php
                                     $accentColor = $getEventBackgroundColor($row);
                                     $textColor = $getContrastColor($accentColor);
                                     ?>
-                                    <a class="jem-timetable-block" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: 1 / -1;">
+                                    <a class="jem-timetable-block" data-event-id="<?php echo (int) $row->id; ?>" href="<?php echo $getEventUrl($row); ?>" title="<?php echo $buildTooltip($row); ?>" aria-label="<?php echo $buildTooltip($row); ?>" style="--jem-timetable-accent: <?php echo $this->escape($accentColor); ?>; --jem-timetable-event-text: <?php echo $this->escape($textColor); ?>; grid-column: 1 / -1; grid-row: <?php echo $lane + 1; ?>;">
                                         <span class="jem-timetable-block-title"><?php echo $this->escape($row->title); ?></span>
                                         <?php  ?>
                                     </a>

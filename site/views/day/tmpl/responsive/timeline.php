@@ -14,6 +14,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
+require_once JPATH_SITE . '/components/com_jem/classes/dayschedule.class.php';
+
 if (!isset($this->params) || !($this->params instanceof Registry)) {
     $this->params = Factory::getApplication()->getParams('com_jem');
 
@@ -121,6 +123,9 @@ $getContrastColor = static function ($color) {
 };
 
 $getDisplayTimeValue = static function ($row, $field, $fallback = null) {
+    if (isset($row->day_schedule)) {
+        return $row->day_schedule['all_day'] ? $fallback : $row->day_schedule[$field === 'times' ? 'start' : 'end'];
+    }
     $time = trim((string) ($row->$field ?? ''));
 
     if ($time === '') {
@@ -133,7 +138,7 @@ $getDisplayTimeValue = static function ($row, $field, $fallback = null) {
 };
 
 $formatGridTime = static function ($timestamp) {
-    return date('H:i', $timestamp);
+    return gmdate('H:i', $timestamp);
 };
 
 $formatGridMinutes = static function ($minutes) {
@@ -168,6 +173,10 @@ $buildTooltip = function ($row, $timeRange = '') {
 
     if ($timeRange !== '') {
         $parts[] = $this->escape($timeRange);
+    }
+
+    if (!empty($row->day_schedule['continuation'])) {
+        $parts[] = $this->escape($row->day_schedule['actual']);
     }
 
     if (!empty($row->venue)) {
@@ -470,19 +479,17 @@ foreach ($rows as $row) {
             continue;
         }
 
-        $dayRow = clone $row;
-        $dayRow->dates = $rowDate;
-        $startTime = $getDisplayTimeValue($dayRow, 'times');
-
-        if (!$startTime) {
-            $dayRange[$rowDate]['allDayRows'][] = $dayRow;
-            continue;
+        foreach (JemDaySchedule::project($row, $rowDate, JemHelper::getEventTimeZoneName($row)) as $dayRow) {
+            if ($dayRow->day_schedule['all_day']) {
+                $dayRange[$rowDate]['allDayRows'][] = $dayRow;
+                continue;
+            }
+            // Display hours control the grid, not which events are included.
+            $startTime = $dayRow->day_schedule['start'];
+            $dayRange[$rowDate]['timedRows'][] = $dayRow;
+            $eventMinutes = ((int) gmdate('G', $startTime) * 60) + (int) gmdate('i', $startTime);
+            $dayRange[$rowDate]['timedRowsByHour'][$eventMinutes][] = $dayRow;
         }
-
-        // Display hours control the grid, not which events are included.
-        $dayRange[$rowDate]['timedRows'][] = $dayRow;
-        $eventMinutes = ((int) date('G', $startTime) * 60) + (int) date('i', $startTime);
-        $dayRange[$rowDate]['timedRowsByHour'][$eventMinutes][] = $dayRow;
     }
 }
 
@@ -1680,14 +1687,11 @@ document.addEventListener('keydown', function (event) {
                     foreach ($hourRows as $row) :
                 ?>
                     <?php
-                    $startTime = $getDisplayTimeValue($row, 'times');
-                    $endTime = $getDisplayTimeValue($row, 'endtimes', $startTime + 3600);
-                    if ($endTime <= $startTime) {
-                        $endTime = $startTime + 3600;
-                    }
+                    $startTime = $row->day_schedule['start'];
+                    $endTime = $row->day_schedule['end'];
                     $durationHours = max(1, (int) ceil(($endTime - $startTime) / 3600));
                     $rowMinHeight = $eventHeightMode === 'duration' ? max(5.5, min(18, $durationHours * 3.5)) : 5.5;
-                    $timeRange = $formatGridTime($startTime) . ' - ' . $formatGridTime($endTime);
+                    $timeRange = $row->day_schedule['label'];
                     $accentColor = $getEventBackgroundColor($row);
                     $cardBackgroundColor = $eventColorMode === 'background' ? $accentColor : 'transparent';
                     $cardTextColor = $eventColorMode === 'background' ? $getContrastColor($accentColor) : 'inherit';
@@ -1766,8 +1770,10 @@ document.addEventListener('keydown', function (event) {
                     ?>
                     <article class="jem-day-timeline-row jem-day-timeline-side-<?php echo $this->escape($timelineEventSide); ?><?php echo !empty($row->featured) ? ' featured' : ''; ?> event_id<?php echo $this->escape($row->id); ?>" style="--jem-timeline-accent: <?php echo $this->escape($accentColor); ?>; --jem-timeline-card-background: <?php echo $this->escape($cardBackgroundColor); ?>; --jem-timeline-card-color: <?php echo $this->escape($cardTextColor); ?>; --jem-timeline-card-link-color: <?php echo $this->escape($cardLinkColor); ?>; min-height: <?php echo $this->escape(number_format($rowMinHeight, 1, '.', '')); ?>rem;">
                         <div class="jem-day-timeline-time">
-                            <span><?php echo $this->escape($formatGridTime($startTime)); ?></span>
-                            <small><?php echo $this->escape($formatGridTime($endTime)); ?></small>
+                            <span><?php echo $this->escape($row->day_schedule['start_label']); ?></span>
+                            <?php if ($row->day_schedule['end_label'] !== '') : ?>
+                                <small><?php echo $this->escape($row->day_schedule['end_label']); ?></small>
+                            <?php endif; ?>
                         </div>
                         <span class="jem-day-timeline-point" aria-hidden="true"></span>
                         <div class="jem-day-timeline-card is-clickable" data-href="<?php echo $this->escape($eventUrl); ?>" role="link" tabindex="0">

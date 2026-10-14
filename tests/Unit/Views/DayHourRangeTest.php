@@ -15,6 +15,8 @@ final class DayHourRangeTest extends TestCase
     {
         date_default_timezone_set('UTC');
         class_alias(DayHourRangeHelper::class, 'JemHelper');
+        class_alias(DayHourRangeText::class, 'Text');
+        require_once JEM_TEST_ROOT . '/site/classes/dayschedule.class.php';
     }
 
     #[DataProvider('rangeProvider')]
@@ -132,6 +134,13 @@ final class DayHourRangeTest extends TestCase
         $currentDate = new DateTimeImmutable('2026-10-22');
         $minimumVisibleHours = 1;
         $getVenueColorData = static fn ($row) => ['#ffffff', false];
+        $projected = [];
+        foreach ($rows as $row) {
+            $source = clone $row;
+            $source->dates = $source->dates ?? '2026-10-22';
+            array_push($projected, ...JemDaySchedule::project($source, '2026-10-22'));
+        }
+        $rows = $projected;
         eval($this->preparation('timetable.php', '$slotMinutes = 60;'));
 
         return compact('venueRows', 'timedRows', 'allDayRows', 'timeSlots', 'gridStart', 'gridEnd');
@@ -151,8 +160,21 @@ final class DayHourRangeTest extends TestCase
 
 final class DayHourRangeHelper
 {
+    public static function getEventTimeZoneName($event): string
+    {
+        return 'UTC';
+    }
+
     public static function isValidDate(string $date): bool
     {
         return preg_match('/^\d{4}-\d{2}-\d{2}$/D', $date) === 1;
+    }
+}
+
+final class DayHourRangeText
+{
+    public static function _(string $key): string
+    {
+        return $key;
     }
 }

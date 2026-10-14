@@ -6,6 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageContainsDayScheduleRenderingFix(): void
+    {
+        foreach ($this->currentPackageZipFiles() as $zipFile) {
+            foreach (['site/classes/dayschedule.class.php', 'site/classes/eventschedule.class.php',
+                'site/views/day/tmpl/timetable.php', 'site/views/day/tmpl/responsive/timetable.php',
+                'site/views/day/tmpl/timeline.php', 'site/views/day/tmpl/responsive/timeline.php',
+                'media/css/timetable.css'] as $entry) {
+                self::assertSame(file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($zipFile, $entry), $entry);
+            }
+        }
+    }
+
     public function testCurrentPackageContainsRecurrenceExclusions(): void
     {
         $entries = [
