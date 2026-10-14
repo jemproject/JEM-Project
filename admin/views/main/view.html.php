@@ -152,9 +152,16 @@ class JemViewMain extends JemAdminView
     protected function quickiconPostButton($task, $image, $text)
     {
         $lang = Factory::getApplication()->getLanguage();
+        $confirmation = $task === 'sampledata.load'
+            ? ' onsubmit="return window.confirm(' . htmlspecialchars(
+                json_encode(Text::_('COM_JEM_SAMPLEDATA_CONFIRM'), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT),
+                ENT_QUOTES,
+                'UTF-8'
+            ) . ');"'
+            : '';
         ?>
         <div style="float:<?php echo ($lang->isRTL()) ? 'right' : 'left'; ?>;">
-            <form action="index.php?option=com_jem" method="post" class="jem-quickicon-form">
+            <form action="index.php?option=com_jem" method="post" class="jem-quickicon-form"<?php echo $confirmation; ?>>
                 <div class="icon">
                     <button type="submit" name="task" value="<?php echo htmlspecialchars($task, ENT_QUOTES, 'UTF-8'); ?>">
                         <?php echo HTMLHelper::_('image', 'com_jem/'.$image, $text, NULL, true); ?>

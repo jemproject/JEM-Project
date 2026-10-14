@@ -38,14 +38,16 @@ class JemControllerSampledata extends BaseController
         $model = $this->getModel('sampledata');
 
         if (!$model->loadData()) {
-            $msg = Text::_('COM_JEM_SAMPLEDATA_FAILED');
+            $msg = $model->getError() ?: Text::_('COM_JEM_SAMPLEDATA_FAILED');
+            $type = 'error';
         } else {
             $msg = Text::_('COM_JEM_SAMPLEDATA_SUCCESSFULL');
+            $type = 'message';
         }
 
         $link = 'index.php?option=com_jem&view=main';
 
-        $this->setRedirect($link, $msg);
+        $this->setRedirect($link, $msg, $type);
      }
 }
 ?>

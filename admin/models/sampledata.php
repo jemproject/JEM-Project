@@ -12,11 +12,13 @@ use Joomla\CMS\Factory;
 use Joomla\Archive\Archive;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
 
-// TODO: Improve error handling
+require_once __DIR__ . '/../classes/sampledataimport.php';
+require_once __DIR__ . '/../classes/sampledatafiles.php';
 
 /**
  * Sampledata Model
@@ -37,6 +39,10 @@ class JemModelSampledata extends BaseDatabaseModel
      * @var array
      */
     private $filelist = array();
+    private $defaultCategoryId = 0;
+    private $existingTypeIds = array();
+    private $extractionFolder;
+    private $mediaFiles;
 
     /**
      * Constructor
@@ -45,12 +51,7 @@ class JemModelSampledata extends BaseDatabaseModel
     {
         parent::__construct();
 
-        if ($this->checkForJemData()) {
-            return false;
-        }
-
         $this->sampleDataDir = JPATH_COMPONENT_ADMINISTRATOR . '/assets/';
-        $this->filelist = $this->unpack();
     }
 
     /**
@@ -60,50 +61,105 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     public function loadData()
     {
-        if ($this->checkForJemData()) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'), 'warning');
-            return false;
-        }
+        $transactionStarted = false;
+        $this->mediaFiles = null;
+        $this->extractionFolder = null;
+        try {
+            if ($this->checkForJemData()) {
+                $this->setError(Text::_('COM_JEM_SAMPLEDATA_DATA_ALREADY_INSTALLED'));
+                return false;
+            }
 
-        $this->ensureSampleDataSchema();
+            // Schema repair may use DDL; complete it before the data transaction.
+            $this->ensureSampleDataSchema();
+            $buffer = @file_get_contents($this->sampleDataDir . 'sampledata.sql');
+            if ($buffer === false) {
+                throw new RuntimeException('Could not read the bundled sample SQL.');
+            }
+            $buffer = $this->prepareDateExpressions($buffer);
+            $queries = $this->splitSql($buffer);
+            $this->_db->setQuery("SELECT value FROM #__jem_config WHERE keyname = 'custom_fields_config'");
+            $keepFields = JemSampleDataImport::hasFieldConfiguration($this->_db->loadResult());
+            $this->_db->setQuery('SELECT id FROM #__jem_types');
+            $this->existingTypeIds = array_map('intval', $this->_db->loadColumn());
 
-        $scriptfile = $this->sampleDataDir . 'sampledata.sql';
-        // load sql file
-        if (!($buffer = file_get_contents($scriptfile))) {
-            return false;
-        }
+            $settings = JemHelper::config();
+            $this->mediaFiles = new JemSampleDataFiles(array(
+                Path::clean(JPATH_ROOT . '/images/jem'),
+                Path::clean(JPATH_ROOT . '/' . $settings->attachments_path),
+            ));
+            $this->filelist = $this->unpack();
+            if (!is_array($this->filelist)) {
+                throw new RuntimeException(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_EXTRACT_ARCHIVE'));
+            }
 
-        $buffer = $this->prepareDateExpressions($buffer);
-
-        // extract queries out of sql file
-        $queries = $this->splitSql($buffer);
-
-        // Process queries
-        foreach ($queries as $query) {
-            $query = trim($query);
-            if ($query != '' && $query[0] != '#') {
-                $this->_db->setQuery($query);
+            $this->_db->transactionStart();
+            $transactionStarted = true;
+            if ($this->defaultCategoryId > 0) {
+                $this->_db->setQuery('DELETE FROM #__jem_categories WHERE id = ' . (int) $this->defaultCategoryId);
                 $this->_db->execute();
+            }
+            foreach ($queries as $query) {
+                $query = trim($query);
+                if ($query === '' || $query[0] === '#') {
+                    continue;
+                }
+                foreach (JemSampleDataImport::queries($query, $keepFields) as $safeQuery) {
+                    $this->_db->setQuery($safeQuery);
+                    $this->_db->execute();
+                }
+            }
+
+            if ($keepFields) {
+                // No event or venue existed before this import. Do not put demo
+                // values such as "Adults" into the site's own price/date fields.
+                $emptyFields = array();
+                for ($index = 1; $index <= 10; $index++) {
+                    $emptyFields[] = $this->_db->quoteName('custom' . $index) . " = ''";
+                }
+                foreach (array('#__jem_events', '#__jem_venues') as $table) {
+                    $this->_db->setQuery($this->_db->getQuery(true)->update($table)->set($emptyFields));
+                    $this->_db->execute();
+                }
+            }
+            $this->rebuildEventUtcDates();
+            $this->assignCurrentUserId();
+            $this->moveImages();
+            $this->moveAttachments();
+
+            $this->_db->transactionCommit();
+            $transactionStarted = false;
+        } catch (\Throwable $error) {
+            $recovered = true;
+            if ($transactionStarted) {
+                try {
+                    $this->_db->transactionRollback();
+                } catch (\Throwable $rollbackError) {
+                    $recovered = false;
+                    JemHelper::addLogEntry('Sample Data rollback failed: ' . $rollbackError->getMessage(), __METHOD__, Log::ERROR);
+                }
+            }
+            if ($this->mediaFiles && !$this->mediaFiles->rollback()) {
+                $recovered = false;
+            }
+            if (!$recovered) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_RECOVERY_INCOMPLETE'), 'warning');
+            }
+            $reason = htmlspecialchars(str_replace(JPATH_ROOT, '[ROOT]', $error->getMessage()), ENT_QUOTES, 'UTF-8');
+            $this->setError(Text::sprintf('COM_JEM_SAMPLEDATA_FAILED_REASON', $reason));
+            JemHelper::addLogEntry('Sample Data import failed: ' . $error->getMessage(), __METHOD__, Log::ERROR);
+            return false;
+        } finally {
+            if ($this->extractionFolder && is_dir($this->extractionFolder) && !$this->deleteTmpFolder()) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
             }
         }
 
-        // Populate the derived UTC boundaries after venues and timezone modes exist.
-        $this->rebuildEventUtcDates();
-
-        // Assign the current manager as creator for all sample records.
-        $this->assignCurrentUserId();
-
-        // move images in proper directory
-        $this->moveImages();
-
-        // move attachments in proper directory
-        $this->moveAttachments();
-
-        // delete temporary extraction folder
-        if (!$this->deleteTmpFolder()) {
-            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_UNABLE_TO_DELETE_TMP_FOLDER'), 'warning');
+        // The data and files are committed. Do not report a rollback for later
+        // permission-asset repairs, which have their own warning handling.
+        if ($keepFields) {
+            Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_SAMPLEDATA_FIELD_CONFIG_KEPT'), 'notice');
         }
-
         return true;
     }
 
@@ -416,6 +472,7 @@ class JemModelSampledata extends BaseDatabaseModel
         // Clean the paths to use for archive extraction
         $extractdir = Path::clean(JPATH_ROOT . '/tmp/' . $tmpdir);
         $archive = Path::clean($archive);
+        $this->extractionFolder = $extractdir;
 
         // extract archive
 
@@ -520,8 +577,7 @@ class JemModelSampledata extends BaseDatabaseModel
                 $subDirectory .= "small/";
             }
 
-            // Use native PHP copy function instead of File::copy
-            copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
+            $this->mediaFiles->copy($this->filelist['folder'] . '/' . $file, $imagebase . $subDirectory . $file);
         }
         return true;
     }
@@ -554,11 +610,7 @@ class JemModelSampledata extends BaseDatabaseModel
 
             $destination = Path::clean($attachmentBase . '/' . $object);
 
-            if (!Folder::exists($destination)) {
-                Folder::create($destination);
-            }
-
-            File::copy($this->filelist['folder'] . '/' . $file, $destination . '/' . $filename);
+            $this->mediaFiles->copy($this->filelist['folder'] . '/' . $file, $destination . '/' . $filename);
         }
 
         return true;
@@ -571,9 +623,9 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function deleteTmpFolder()
     {
-        if ($this->filelist['folder']) {
+        if ($this->extractionFolder) {
             // Use native PHP function to recursively delete directory
-            if (!$this->removeDirectory($this->filelist['folder'])) {
+            if (!$this->removeDirectory($this->extractionFolder)) {
                 return false;
             }
             return true;
@@ -589,21 +641,20 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function removeDirectory($dir)
     {
-        if (!is_dir($dir)) {
+        if (is_link($dir)) {
+            return @unlink($dir);
+        }
+        $entries = @scandir($dir);
+        if ($entries === false) {
             return false;
         }
-
-        $files = array_diff(scandir($dir), array('.', '..'));
-        
-        foreach ($files as $file) {
+        $complete = true;
+        foreach (array_diff($entries, array('.', '..')) as $file) {
             $path = $dir . '/' . $file;
-            if (is_dir($path)) {
-                $this->removeDirectory($path);
-            } else {
-                unlink($path);
-            }
+            $removed = is_dir($path) && !is_link($path) ? $this->removeDirectory($path) : @unlink($path);
+            $complete = $removed && $complete;
         }
-        return rmdir($dir);
+        return $complete && @rmdir($dir);
     }
 
     /**
@@ -613,6 +664,18 @@ class JemModelSampledata extends BaseDatabaseModel
      */
     private function checkForJemData()
     {
+        $this->defaultCategoryId = 0;
+        // Categories alone do not prove that importing stable demo IDs is safe.
+        foreach (array('#__jem_events', '#__jem_venues', '#__jem_cats_event_relations',
+            '#__jem_register', '#__jem_attachments', '#__jem_links', '#__jem_groups', '#__jem_groupmembers',
+            '#__jem_event_series') as $table) {
+            if ($this->getTableColumns($table)) {
+                $this->_db->setQuery('SELECT 1 FROM ' . $table, 0, 1);
+                if ($this->_db->loadResult() !== null) {
+                    return true;
+                }
+            }
+        }
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true);
 
@@ -637,12 +700,7 @@ class JemModelSampledata extends BaseDatabaseModel
             $events = $db->loadObjectList();
 
             if(empty($events)){
-                //Delete Uncategorised category before load demo data
-                $query = $db->getQuery(true);
-                $query->delete('#__jem_categories');
-                $query->where('catname=' . $db->quote($result[0]->catname));
-                $db->setQuery($query);
-                $db->execute();
+                $this->defaultCategoryId = (int) $result[0]->id;
 
                 return false;
             }
@@ -673,6 +731,9 @@ class JemModelSampledata extends BaseDatabaseModel
             $query->update($table);
             $query->set('created_by = ' . $db->quote($userId));
             $query->where(array('created_by = 62'));
+            if ($table === '#__jem_types' && $this->existingTypeIds) {
+                $query->where('id NOT IN (' . implode(',', $this->existingTypeIds) . ')');
+            }
             $db->setQuery($query);
             $db->execute();
         }
