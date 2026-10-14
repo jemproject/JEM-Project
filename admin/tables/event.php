@@ -18,6 +18,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
 /**
  * JEM Event Table
  */
@@ -257,6 +258,10 @@ class JemTableEvent extends Table
         //    $this->endtimes = NULL;
         //}
 
+        if (!$this->checkEventSchedule()) {
+            return false;
+        }
+
         // Check begin date is before end date
 
         // Check if end date is set
@@ -295,6 +300,21 @@ class JemTableEvent extends Table
         }
 
         return true;
+    }
+
+    private function checkEventSchedule(): bool
+    {
+        try {
+            JemEventSchedule::validate($this);
+            JemEventSchedule::synchroniseEnvelope($this);
+            if (JemEventSchedule::definition($this) !== null) {
+                JemEventSchedule::intervals($this, JemHelper::getEventTimeZoneName($this));
+            }
+            return true;
+        } catch (InvalidArgumentException $error) {
+            $this->setError(Text::_($error->getMessage()));
+            return false;
+        }
     }
 
     protected function hierarchyRecordExists($table, $id)
@@ -460,6 +480,10 @@ class JemTableEvent extends Table
      */
     public function store($updateNulls = true)
     {
+        // Background recurrence and custom-series saves bypass check().
+        if (!$this->checkEventSchedule()) {
+            return false;
+        }
 
         $date        = Factory::getDate();
         $user        = JemFactory::getUser();

@@ -506,6 +506,7 @@ $this->document->addStyleDeclaration('
                     <li><div class="label-form"><?php echo $this->form->renderfield('enddates'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('times'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('endtimes'); ?></div></li>
+                    <li><div class="label-form"><?php echo $this->form->renderfield('event_schedule'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone_mode'); ?></div></li>
                     <li><div class="label-form"><?php echo $this->form->renderfield('timezone'); ?></div></li>
                     <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_PROGRAMMES)) : ?>

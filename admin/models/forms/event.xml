@@ -117,6 +117,8 @@
             description="COM_JEM_ENDTIME_DESC"
             required="false"
         />
+        <field name="event_schedule" type="eventschedule"
+            label="COM_JEM_SCHEDULE_LABEL" description="COM_JEM_SCHEDULE_HELP" filter="raw" />
         <field name="timezone_mode" type="list"
             class="inputbox form-select"
             label="COM_JEM_EVENT_TIMEZONE_MODE"

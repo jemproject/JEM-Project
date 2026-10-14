@@ -300,6 +300,8 @@ class JemModelEvent extends JemModelAdmin
             $registry = new Registry;
             $registry->loadString($item->attribs ?? '{}');
             $item->attribs = $registry->toArray();
+            $item->event_schedule = isset($item->attribs['event_schedule'])
+                ? json_encode($item->attribs['event_schedule']) : '';
             $item->registration_intro = $item->attribs['registration_intro'] ?? '';
             $item->recurrence_exclusions = JemRecurrenceExclusions::fromAttribs($item->attribs);
             $item->registration_footer = $item->attribs['registration_footer'] ?? '';
@@ -652,6 +654,25 @@ class JemModelEvent extends JemModelAdmin
         );
     }
 
+    /** Validate all explicit programmes before the first write in a series update. */
+    private function validateEventScheduleBatch(array $events): bool
+    {
+        foreach ($events as $event) {
+            try {
+                $event = (object) $event;
+                if (JemEventSchedule::definition($event) !== null) {
+                    JemEventSchedule::intervals($event, JemHelper::getEventTimeZoneName($event));
+                }
+            } catch (InvalidArgumentException $error) {
+                $this->setError(Text::_($error->getMessage()) . ' [ID:' . (int) ($event->id ?? 0) . ']');
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Method to save the form data.
      *
@@ -841,6 +862,30 @@ class JemModelEvent extends JemModelAdmin
         $data['attribs']['registration_intro'] = $registrationIntro;
         $data['attribs']['registration_footer'] = $registrationFooter;
         unset($data['registration_intro'], $data['registration_footer']);
+
+        require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
+        if (!$this->normaliseEventDates($data)) {
+            return false;
+        }
+        $scheduleTimes = null;
+        try {
+            // Validate the submitted selectors, not stale hidden/general time values.
+            if (!empty($data['event_schedule']) || ($existingEvent && JemEventSchedule::definition($existingEvent) !== null)) {
+                $data['times'] = JemEventSchedule::editorTime($jinput->getString('starthours', ''), $jinput->getString('startminutes', ''));
+                $data['endtimes'] = JemEventSchedule::editorTime($jinput->getString('endhours', ''), $jinput->getString('endminutes', ''));
+            }
+            JemEventSchedule::mergeSubmission($data, $existingEvent);
+            if (JemEventSchedule::definition((object) $data) !== null) {
+                $scheduledEvent = (object) $data;
+                JemEventSchedule::synchroniseEnvelope($scheduledEvent);
+                JemEventSchedule::intervals($scheduledEvent, JemHelper::getEventTimeZoneName($scheduledEvent));
+                $scheduleTimes = ['times' => $scheduledEvent->times, 'endtimes' => $scheduledEvent->endtimes];
+                $data = array_replace($data, $scheduleTimes);
+            }
+        } catch (InvalidArgumentException $error) {
+            $this->setError(Text::_($error->getMessage()));
+            return false;
+        }
 
         // Keep this policy in existing event parameters: no schema migration is needed.
         $exclusionsSubmitted = array_key_exists('recurrence_exclusions', $data);
@@ -1033,6 +1078,11 @@ class JemModelEvent extends JemModelAdmin
                 }
             } else {
                 $data['endtimes'] = null;
+            }
+
+            if ($scheduleTimes !== null) {
+                // The legacy recurrence comparison treats hour 00 as empty.
+                $data = array_replace($data, $scheduleTimes);
             }
 
             // Alias
@@ -1378,13 +1428,20 @@ class JemModelEvent extends JemModelAdmin
                     $events[] = $event;
                 }
                 // A past root may be outside the normal future-occurrence update set.
-                // Its policy is authoritative for scheduled generation and must also be saved.
-                if ($exclusionsSubmitted && !in_array((int) $data['id'], array_map('intval', array_column($events, 'id')), true)) {
+                // Its exclusion policy and programme govern future generation too.
+                if (($exclusionsSubmitted || $scheduleTimes !== null)
+                    && !in_array((int) $data['id'], array_map('intval', array_column($events, 'id')), true)) {
                     $events[] = $data;
                 }
             } else {
                 // the event is a child
                 $events[] = $data;
+            }
+
+            // A later occurrence may cross a DST gap or have an incompatible date range.
+            // Reject that programme before partially applying it to the series.
+            if (!$this->validateEventScheduleBatch($events)) {
+                return false;
             }
 
             //Fields allowed to update

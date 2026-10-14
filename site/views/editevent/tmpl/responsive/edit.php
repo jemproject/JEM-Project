@@ -887,6 +887,8 @@ $document->addStyleDeclaration('
                     <dd class="time-input"><?php echo $this->form->getInput('times'); ?></dd>
                     <dt><?php echo $this->form->getLabel('endtimes'); ?></dt>
                     <dd class="time-input"><?php echo $this->form->getInput('endtimes'); ?></dd>
+                    <dt><?php echo $this->form->getLabel('event_schedule'); ?></dt>
+                    <dd><?php echo $this->form->getInput('event_schedule'); ?></dd>
                     <dt data-jem-advanced-field><?php echo $this->form->getLabel('timezone_mode'); ?></dt>
                     <dd data-jem-advanced-field><?php echo $this->form->getInput('timezone_mode'); ?></dd>
                     <dt data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?></dt>

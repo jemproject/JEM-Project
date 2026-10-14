@@ -595,9 +595,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         <?php endif; ?>
                         <div class="jem-event-compact-when">
                             <?php
-                            echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
+                            echo JemOutput::formatEventSchedule($this->item);
                             ?>
-                            <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
+                            <?php if (JemEventSchedule::hasTimes($this->item) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                                 <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
                             <?php endif; ?>
                         </div>
@@ -624,13 +624,13 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                     <?php endif; ?>
                     <dt class="jem-when hasTooltip" data-original-title="<?php echo Text::_('COM_JEM_WHEN'); ?>"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
                     <dd class="jem-when">
-            <span style="white-space: nowrap;">
+            <span class="jem-event-schedule-summary">
               <?php
-              echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+              echo JemOutput::formatEventSchedule($this->item);
               ?>
             </span>
                     </dd>
-                    <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
+                    <?php if (JemEventSchedule::hasTimes($this->item) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                         <dt class="jem-timezone"><?php echo Text::_('COM_JEM_EVENT_TIMEZONE'); ?>:</dt>
                         <dd class="jem-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></dd>
                     <?php endif; ?>

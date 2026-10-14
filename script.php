@@ -335,6 +335,7 @@ class com_jemInstallerScript
             $this->installEuropeanTaxRateCatalogue();
             $this->registerNotificationTemplates();
             $this->repairLegacyRecurrenceRoots();
+            $this->ensureEventScheduleStorage();
             $this->rebuildEventUtcDates();
             $this->migrateBackendAcl($type === 'update');
             // Essential catalogues and settings must be usable before optional continuation.
@@ -2506,13 +2507,28 @@ SQL;
         }
     }
 
-    /**
-     * Backfill canonical UTC event boundaries after install or update.
-     *
-     * @return void
-     */
+    /** Keep programme storage usable when reinstalling the same 5.1 beta schema version. */
+    private function ensureEventScheduleStorage(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $columns = $db->getTableColumns('#__jem_events');
+        $type = strtolower((string) ($columns['attribs'] ?? ''));
+        if (in_array($type, ['mediumtext', 'longtext'], true)) {
+            return;
+        }
+        if ($type === '') {
+            throw new RuntimeException('Missing JEM event parameters column.');
+        }
+        // Widen only; never rewrite, truncate or reset existing parameter values.
+        $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events')
+            . ' MODIFY ' . $db->quoteName('attribs') . ' MEDIUMTEXT NULL DEFAULT NULL');
+        $db->execute();
+    }
+
+    /** Backfill canonical UTC event boundaries after install or update. */
     private function rebuildEventUtcDates()
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
         $db = Factory::getContainer()->get('DatabaseDriver');
         $tables = $db->getTableList();
 
@@ -2530,7 +2546,7 @@ SQL;
 
         $query = $db->getQuery(true)
             ->select(array(
-                'a.id', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes',
+                'a.id', 'a.dates', 'a.enddates', 'a.times', 'a.endtimes', 'a.attribs',
                 'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone',
             ))
             ->from($db->quoteName('#__jem_events', 'a'))
@@ -2560,6 +2576,14 @@ SQL;
                         ($event->enddates ?: $event->dates) . ' ' . ($event->endtimes ?: '23:59:59'),
                         $timeZone
                     );
+                    if (JemEventSchedule::definition($event) !== null) {
+                        $sessions = JemEventSchedule::intervals($event, $timeZoneName);
+                        if ($sessions) {
+                            $start = $sessions[0]['start'];
+                            $last = $sessions[count($sessions) - 1];
+                            $end = $last['all_day'] ? $last['end']->modify('-1 second') : $last['end'];
+                        }
+                    }
                     $startUtc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
                     $endUtc = $end->setTimezone($utc)->format('Y-m-d H:i:s');
                 } catch (\Exception $e) {

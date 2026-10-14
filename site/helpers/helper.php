@@ -37,6 +37,7 @@ require_once(JPATH_SITE.'/components/com_jem/classes/menuviewscope.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/cssfilepolicy.class.php');
 require_once __DIR__ . '/../classes/recurrencevalidator.class.php';
 require_once __DIR__ . '/../classes/recurrenceexclusions.class.php';
+require_once __DIR__ . '/../classes/eventschedule.class.php';
 
 /**
  * Holds some usefull functions to keep the code a bit cleaner
@@ -496,6 +497,15 @@ class JemHelper
             $start = new \DateTimeImmutable((string) $event->dates . ' ' . $startTime, $timeZone);
             $end   = new \DateTimeImmutable($endDate . ' ' . $endTime, $timeZone);
 
+            if (JemEventSchedule::definition($event) !== null) {
+                $sessions = JemEventSchedule::intervals($event, $timeZoneName);
+                if ($sessions) {
+                    $start = $sessions[0]['start'];
+                    $finalSession = $sessions[count($sessions) - 1];
+                    $end = $finalSession['all_day'] ? $finalSession['end']->modify('-1 second') : $finalSession['end'];
+                }
+            }
+
             $event->start_utc = $start->setTimezone($utc)->format('Y-m-d H:i:s');
             $event->end_utc   = $end->setTimezone($utc)->format('Y-m-d H:i:s');
         } catch (\Exception $e) {
@@ -522,7 +532,7 @@ class JemHelper
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select(array('id', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone'))
+            ->select(array('id', 'locid', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'attribs'))
             ->from($db->quoteName('#__jem_events'))
             ->where($db->quoteName('locid') . ' = ' . $venueId)
             ->where($db->quoteName('timezone_mode') . ' = ' . $db->quote('venue'));
@@ -3137,6 +3147,9 @@ class JemHelper
         $day_time = 86400;    // 60s * 60min * 24h
         $week_time = $day_time * 7;
         $date_array = JemHelper::generate_date($recurrence_row['dates'], $recurrence_row['enddates']);
+        $calendarDuration = !empty($recurrence_row['enddates'])
+            ? (int) JemEventSchedule::date($recurrence_row['dates'])->diff(JemEventSchedule::date($recurrence_row['enddates']))->format('%r%a')
+            : 0;
 
         switch($recurrence_type) {
             case "1":
@@ -3263,7 +3276,9 @@ class JemHelper
         $recurrence_row['dates'] = date("Y-m-d", $start_day);
 
         if ($recurrence_row['enddates']) {
-            $recurrence_row['enddates'] = date("Y-m-d", $start_day + $date_array["day_diff"]);
+            // A programme spans calendar days, not multiples of 86400 seconds across DST.
+            $recurrence_row['enddates'] = JemEventSchedule::date($recurrence_row['dates'])
+                ->modify('+' . $calendarDuration . ' days')->format('Y-m-d');
         }
 
         if ($start_day < $date_array["unixtime"]) {
@@ -3988,6 +4003,26 @@ class JemHelper
 
     static public function icalAddEvent(&$calendartool, $event)
     {
+        // Export must not mutate the source record's dates or end time.
+        $event = clone $event;
+        $event->jem_schedule_unknown_end = JemEventSchedule::definition($event) !== null
+            && !empty($event->times) && empty($event->endtimes);
+        // Configured sessions share one JEM event. Legacy exports remain unchanged.
+        if (empty($event->jem_schedule_session) && JemEventSchedule::definition($event) !== null
+            && JemEventSchedule::definition($event)['mode'] !== 'continuous' && !empty($event->dates)) {
+            foreach (JemEventSchedule::intervals($event, JemHelper::getEventTimeZoneName($event)) as $session) {
+                $part = clone $event;
+                $part->jem_schedule_session = $session['key'];
+                $part->dates = $session['start']->format('Y-m-d');
+                $part->enddates = ($session['all_day'] ? $session['end']->modify('-1 day') : $session['end'])->format('Y-m-d');
+                $part->times = $session['all_day'] ? null : $session['start']->format('H:i:s');
+                $part->endtimes = $session['all_day'] || !$session['end_known'] ? null : $session['end']->format('H:i:s');
+                if (!self::icalAddEvent($calendartool, $part)) {
+                    return false;
+                }
+            }
+            return true;
+        }
         $language = Factory::getApplication()->getLanguage();
         self::loadComponentLanguage($language);
 
@@ -4050,7 +4085,7 @@ class JemHelper
                 $dtStartParams['TZID'] = $timezone_name;
             }
 
-            if (!$event->endtimes || $event->endtimes == '00:00:00') {
+            if (!$event->endtimes || ($event->endtimes == '00:00:00' && JemEventSchedule::definition($event) === null)) {
                 $event->endtimes = $event->times;
             }
 
@@ -4187,7 +4222,12 @@ class JemHelper
         $e->setSummary($event->title);
         $e->setCategories(implode(', ', $categories));
         $e->setDtstart($dtStart, $dtStartParams);
-        $e->setDtend($dtEnd, $dtEndParams);
+        // RFC 5545 requires DTEND > DTSTART. Omit unknown/point ends for explicit
+        // programmes without changing the historical export of unconfigured events.
+        if (empty($event->jem_schedule_unknown_end)
+            && (JemEventSchedule::definition($event) === null || $dtEnd > $dtStart)) {
+            $e->setDtend($dtEnd, $dtEndParams);
+        }
         $e->setDescription($description);
         $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
         if ($location !== '') {
@@ -4203,7 +4243,8 @@ class JemHelper
             }
         }
         $e->setUrl($link);
-        $e->setUid('event' . $event->id . '@' . $sitename);
+        $sessionSuffix = isset($event->jem_schedule_session) ? '-session-' . $event->jem_schedule_session : '';
+        $e->setUid('event' . $event->id . $sessionSuffix . '@' . $sitename);
 
         return true;
     }

@@ -75,7 +75,7 @@ final class EventUtcOrderingTest extends TestCase
             start_utc TEXT, end_utc TEXT, timezone_mode TEXT, timezone TEXT, locid INTEGER DEFAULT 0,
             published INTEGER DEFAULT 1, access INTEGER DEFAULT 1, created TEXT, created_by INTEGER,
             modified TEXT, modified_by INTEGER, created_by_alias TEXT, language TEXT,
-            datimage TEXT DEFAULT "", fullimage TEXT DEFAULT "", image_path TEXT DEFAULT ""
+            datimage TEXT DEFAULT "", fullimage TEXT DEFAULT "", image_path TEXT DEFAULT "", attribs TEXT
         )')->execute();
         $this->db->queries = [];
     }

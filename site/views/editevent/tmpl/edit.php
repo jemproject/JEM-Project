@@ -860,6 +860,7 @@ $document->addStyleDeclaration('
                     <li class="jem-editevent-field-date"><?php echo $this->form->getLabel('enddates'); ?><?php echo $this->form->getInput('enddates'); ?></li>
                     <li><?php echo $this->form->getLabel('times'); ?><?php echo $this->form->getInput('times'); ?></li>
                     <li><?php echo $this->form->getLabel('endtimes'); ?><?php echo $this->form->getInput('endtimes'); ?></li>
+                    <li><?php echo $this->form->getLabel('event_schedule'); ?><?php echo $this->form->getInput('event_schedule'); ?></li>
                     <li data-jem-advanced-field><?php echo $this->form->getLabel('timezone_mode'); ?><?php echo $this->form->getInput('timezone_mode'); ?></li>
                     <li data-jem-advanced-field<?php echo $showWhenCustomTimezoneAttribute; ?>><?php echo $this->form->getLabel('timezone'); ?><?php echo $this->form->getInput('timezone'); ?></li>
                     <li data-jem-advanced-field><?php echo $this->form->getLabel('event_show_timezone', 'attribs'); ?><?php echo $this->form->getInput('event_show_timezone', 'attribs'); ?></li>

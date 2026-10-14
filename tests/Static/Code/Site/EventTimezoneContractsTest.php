@@ -222,7 +222,7 @@ final class EventTimezoneContractsTest extends TestCase
             $template = $this->read($path);
             self::assertSame(
                 2,
-                substr_count($template, "!empty(\$this->item->times) && ((int) \$params->get('event_show_timezone', 1) === 1)"),
+                substr_count($template, "JemEventSchedule::hasTimes(\$this->item) && ((int) \$params->get('event_show_timezone', 1) === 1)"),
                 $path
             );
         }

@@ -678,9 +678,9 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
                 <?php endif; ?>
                 <div class="jem-event-compact-when">
                     <?php
-                    echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times, $this->item->enddates, $this->item->endtimes);
+                    echo JemOutput::formatEventSchedule($this->item);
                     ?>
-                    <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
+                    <?php if (JemEventSchedule::hasTimes($this->item) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                         <small class="jem-event-timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></small>
                     <?php endif; ?>
                 </div>
@@ -707,10 +707,10 @@ $renderVenueCompact = function ($venueaccess, $includeAddress = true) use ($para
             <dt class="when"><?php echo Text::_('COM_JEM_WHEN'); ?>:</dt>
             <dd class="when">
                 <?php
-                echo JemOutput::formatLongDateTime($this->item->dates, $this->item->times,$this->item->enddates, $this->item->endtimes);
+                echo JemOutput::formatEventSchedule($this->item);
                 ?>
             </dd>
-            <?php if (!empty($this->item->times) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
+            <?php if (JemEventSchedule::hasTimes($this->item) && ((int) $params->get('event_show_timezone', 1) === 1)) : ?>
                 <dt class="timezone"><?php echo Text::_('COM_JEM_EVENT_TIMEZONE'); ?>:</dt>
                 <dd class="timezone"><?php echo $this->escape(JemHelper::getEventTimeZoneName($this->item)); ?></dd>
             <?php endif; ?>

@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_events` (
     `access` int(10) UNSIGNED NOT NULL DEFAULT '1',
     `metadata` text NOT NULL,
     `featured` tinyint(3) unsigned NOT NULL DEFAULT '0',
-    `attribs` varchar(5120) NOT NULL DEFAULT '',
+    `attribs` MEDIUMTEXT NULL DEFAULT NULL,
     `language` char(7) NOT NULL DEFAULT '*',
     `event_status` varchar(30) NOT NULL DEFAULT 'scheduled',
     `ticket_availability` varchar(30) NOT NULL DEFAULT 'instock',

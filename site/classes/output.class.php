@@ -33,6 +33,38 @@ require_once __DIR__ . '/venuemappolicy.class.php';
  */
 class JemOutput
 {
+    /** Explicit event programme; legacy records keep their existing detail markup. */
+    public static function formatEventSchedule($event)
+    {
+        require_once __DIR__ . '/eventschedule.class.php';
+        $definition = JemEventSchedule::definition($event);
+        if ($definition === null || $definition['mode'] === 'continuous' || empty($event->dates)) {
+            return self::formatLongDateTime($event->dates, $event->times, $event->enddates, $event->endtimes);
+        }
+        $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+        $result = self::formatLongDateTime($event->dates, '', $event->enddates, '', false);
+        $result .= ' · ' . $escape(Text::_('COM_JEM_SCHEDULE_' . strtoupper($definition['mode'])));
+        if ($definition['mode'] === 'daily') {
+            return $result . ' · ' . (empty($event->times) ? $escape(Text::_('COM_JEM_SCHEDULE_ALL_DAY'))
+                : self::formattime($event->times) . ' – ' . (!empty($event->endtimes)
+                    ? self::formattime($event->endtimes) : $escape(Text::_('COM_JEM_SCHEDULE_END_UNKNOWN'))));
+        }
+        $config = JemEventSchedule::normalise($definition, $event);
+        $first = JemEventSchedule::date($event->dates);
+        foreach ($config['days'] as $day) {
+            $date = $first->modify('+' . $day['offset'] . ' days')->format('Y-m-d');
+            $parts = [];
+            foreach ($day['slots'] as $slot) {
+                $parts[] = self::formattime($slot['start']) . ' – ' . self::formattime($slot['end']);
+            }
+            $hours = $day['closed'] ? $escape(Text::_('COM_JEM_SCHEDULE_CLOSED'))
+                : ($day['all_day'] ? $escape(Text::_('COM_JEM_SCHEDULE_ALL_DAY')) : implode(', ', $parts));
+            $result .= '<br><span class="jem-event-schedule-day" data-schedule-day="' . $escape($date) . '">'
+                . self::formatdate($date) . ': ' . $hours . '</span>';
+        }
+        return $result;
+    }
+
     /**
      * Writes footer.
      */

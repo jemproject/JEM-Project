@@ -1475,7 +1475,8 @@ class JemModelEventslist extends ListModel
         $db = $this->getDatabase();
         $missing = clone $query;
         $missing->clear('select')->clear('order')->clear('limit')->clear('offset')
-            ->select(array('a.id', 'a.dates', 'a.times', 'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone'))
+            ->select(array('a.id', 'a.dates', 'a.times', 'a.enddates', 'a.endtimes', 'a.attribs',
+                'a.timezone_mode', 'a.timezone', 'l.timezone AS venue_timezone'))
             ->where('a.start_utc IS NULL')
             ->where('a.dates IS NOT NULL');
         $db->setQuery($missing);
