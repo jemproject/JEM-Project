@@ -146,7 +146,7 @@ class JemModelMyattendances extends BaseDatabaseModel
                . ' a.fulltext, a.hits, a.introtext, a.language, a.maxplaces, a.maxbookeduser, a.minbookeduser, a.reservedplaces, r.places, a.metadata, a.meta_keywords, a.meta_description, a.modified, a.modified_by, a.registra, a.unregistra,'
                . ' a.recurrence_byday, a.recurrence_counter, a.recurrence_limit, a.recurrence_limit_date, a.recurrence_number, a.version,'
                . ' a.waitinglist, a.requestanswer, a.seriesbooking, a.singlebooking, r.status, r.waiting, r.comment,'
-               . ' l.id, l.venue, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
+               . ' l.venue, l.postalCode, l.city, l.state, l.country, l.url, l.published AS l_published,'
                . ' l.alias AS l_alias, l.checked_out AS l_checked_out, l.checked_out_time AS l_checked_out_time, l.created AS l_created, l.created_by AS l_createdby,'
                . ' l.custom1 AS l_custom1, l.custom2 AS l_custom2, l.custom3 AS l_custom3, l.custom4 AS l_custom4, l.custom5 AS l_custom5, l.custom6 AS l_custom6, l.custom7 AS l_custom7, l.custom8 AS l_custom8, l.custom9 AS l_custom9, l.custom10 AS l_custom10,'
                . ' l.id AS l_id, l.latitude, l.locdescription, l.locimage, l.longitude, l.map, l.meta_description AS l_meta_description, l.meta_keywords AS l_meta_keywords, l.modified AS l_modified, l.modified_by AS l_modified_by,'
