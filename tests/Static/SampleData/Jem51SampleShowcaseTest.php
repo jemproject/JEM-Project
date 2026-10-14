@@ -228,8 +228,10 @@ final class Jem51SampleShowcaseTest extends TestCase
         self::assertStringContainsString('$this->filelist[\'folder\'] . \'/images/jem\'', $model);
         self::assertStringContainsString('$this->copyDirectoryContents($structuredImageBase', $model);
         self::assertStringContainsString('$this->createStructuredImageThumbnails($structuredImageBase)', $model);
-        self::assertStringContainsString('JemEventImagePath::createThumbnail(', $model);
-        self::assertStringContainsString('JemVenueImagePath::createThumbnail(', $model);
+        self::assertStringContainsString('JemEventImagePath::thumbPath(', $model);
+        self::assertStringContainsString('JemVenueImagePath::thumbPath(', $model);
+        self::assertStringContainsString('$this->mediaFiles->generate(', $model);
+        self::assertStringContainsString('JemImage::thumb(', $model);
         self::assertStringContainsString('private function copyDirectoryContents', $model);
         self::assertStringContainsString('COM_JEM_SAMPLEDATA_UNABLE_TO_COPY_IMAGE', $model);
     }

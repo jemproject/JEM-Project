@@ -78,7 +78,10 @@ final class FilePermissionGuardTest extends TestCase
         self::assertMatchesRegularExpression('/preg_match\\s*\\(\\s*[\'"]\\/\\^attachment-\\(\\(\\?:event\\|venue\\)\\\\d\\+\\)-\\(\\.\\+\\)\\$\\/[\'"]/', $contents);
         self::assertStringContainsString('$filename = File::makeSafe($matches[2])', $contents);
         self::assertStringContainsString('$destination = Path::clean($attachmentBase . \'/\' . $object)', $contents);
-        self::assertStringContainsString('Folder::create($destination)', $contents);
+        self::assertStringContainsString('$this->mediaFiles->copy($this->filelist[\'folder\'] . \'/\' . $file, $destination . \'/\' . $filename)', $contents);
+        $journal = $this->phpWithoutComments('admin/classes/sampledatafiles.php');
+        self::assertStringContainsString('$this->ensureDirectory(dirname($target))', $journal);
+        self::assertStringContainsString('$target = $this->checkedPath($target)', $journal);
     }
 
     public function testRepositoryFilesAreNotWorldWritableOnPosixFileSystems(): void
