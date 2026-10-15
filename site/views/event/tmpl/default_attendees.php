@@ -148,6 +148,20 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                         $showAttendenenames = 0;
                     }
                     break;
+                case 6: // show to confirmed attendees and users waiting for a place
+                    if (
+                        $this->user->get('guest')
+                        || !is_object($this->registration)
+                        || !in_array((int) $this->registration->status, [1, 2], true)
+                    ) {
+                        $showAttendenenames = 0;
+                    }
+                    break;
+                case 7: // reuse the effective permission to manage this event's attendees
+                    if ($this->user->get('guest') || empty($this->permissions->canEditAttendees)) {
+                        $showAttendenenames = 0;
+                    }
+                    break;
                 case 0: // show to none
                 default:
                     $showAttendenenames = 0;
