@@ -219,6 +219,56 @@ body.com_jem.body-overlayed {
     z-index: 2;
 }
 
+/* Shared visual size for action icons in every frontend toolbar.
+   Keep text buttons and content/status icons outside this scope. */
+#jem .buttons {
+    --jem-toolbar-icon-size: 1.125rem;
+    align-items: center;
+}
+
+#jem .buttons > a,
+#jem .buttons > span > a {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    min-height: calc(var(--jem-toolbar-icon-size) + 0.5rem);
+    vertical-align: middle;
+}
+
+#jem .buttons a > img {
+    box-sizing: content-box;
+    height: var(--jem-toolbar-icon-size);
+    max-height: none;
+    max-width: none;
+    object-fit: contain;
+    vertical-align: middle;
+    width: auto;
+}
+
+#jem .buttons a > :is(.fa, .fas, .far, .fa-solid, .fa-regular) {
+    font-size: var(--jem-toolbar-icon-size);
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Optical corrections: the envelope and square glyphs have shorter ink bounds. */
+#jem .buttons a > .jem-mailbutton {
+    font-size: calc(var(--jem-toolbar-icon-size) * 5 / 4);
+}
+
+#jem .buttons a > img[src*="/emailButton.svg"] {
+    height: calc(var(--jem-toolbar-icon-size) * 15 / 16);
+}
+
+#jem .buttons a > :is(.fa-square-plus, .fa-plus-square, .fa-pen-square, .fa-expand, .fa-compress) {
+    font-size: calc(var(--jem-toolbar-icon-size) * 8 / 7);
+}
+
+/* Retain legacy image mode, compensating for transparent status-icon margins. */
+#jem .buttons a > img:is([src*="/publish.webp"], [src*="/unpublish.webp"]) {
+    height: calc(var(--jem-toolbar-icon-size) * 8 / 7);
+}
+
 #jem .buttons {
     float: right;
 }

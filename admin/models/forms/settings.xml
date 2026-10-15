@@ -423,7 +423,7 @@
             label="COM_JEM_INCLUDE_ICON_FONT"
             description="COM_JEM_INCLUDE_ICON_FONT_DESC"
             class="inputbox btn-group btn-group-yesno"
-            default="0"
+            default="1"
             required="false"
         >
             <option value="1">JYES</option>
