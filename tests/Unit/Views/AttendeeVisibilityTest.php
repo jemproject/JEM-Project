@@ -13,13 +13,16 @@ final class AttendeeVisibilityTest extends TestCase
         int $userId,
         ?int $status,
         bool $admin,
+        bool $manager,
         bool $details,
-        array $expected
+        array $expected,
+        bool $hasRegistrations = true
     ): void {
         $view = new class {
             public $settings;
             public $user;
             public $registration;
+            public $permissions;
             public $registers = null;
             public array $regs = [];
         };
@@ -31,7 +34,7 @@ final class AttendeeVisibilityTest extends TestCase
             public function get(string $key, mixed $default = null): mixed
             {
                 return match ($key) {
-                    'event_show_attendeenames' => $this->audience,
+                    'event_show_attendeenames' => (string) $this->audience,
                     'event_show_more_attendeedetails' => $this->details,
                     default => $default,
                 };
@@ -53,6 +56,7 @@ final class AttendeeVisibilityTest extends TestCase
             }
         };
         $view->registration = $status === null ? false : (object) ['status' => $status];
+        $view->permissions = (object) ['canEditAttendees' => $manager];
         $view->regs['all'] = [
             (object) ['uid' => 11, 'status' => 1],
             (object) ['uid' => 12, 'status' => 2],
@@ -60,6 +64,9 @@ final class AttendeeVisibilityTest extends TestCase
             (object) ['uid' => 14, 'status' => 0],
         ];
         $view->regs['attending'] = [$view->regs['all'][0]];
+        if (!$hasRegistrations) {
+            $view->regs = ['all' => [], 'attending' => []];
+        }
 
         // Execute the real view and layout gates, not a duplicate of their logic.
         $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/event/view.html.php');
@@ -95,23 +102,30 @@ final class AttendeeVisibilityTest extends TestCase
     public static function audiences(): iterable
     {
         $users = [
-            'guest' => [0, null, false],
-            'logged in without registration' => [10, null, false],
-            'confirmed' => [11, 1, false],
-            'waiting' => [12, 2, false],
-            'declined' => [13, -1, false],
-            'invited' => [14, 0, false],
-            'admin without registration' => [15, null, true],
+            'guest' => [0, null, false, false],
+            'guest with stale manager flag' => [0, null, false, true],
+            'guest with stale confirmed registration' => [0, 1, false, false],
+            'guest with stale waiting registration' => [0, 2, false, false],
+            'logged in without registration' => [10, null, false, false],
+            'confirmed' => [11, 1, false, false],
+            'waiting' => [12, 2, false, false],
+            'declined' => [13, -1, false, false],
+            'invited' => [14, 0, false, false],
+            'component administrator without event edit permission' => [15, null, true, false],
+            'event manager without component access or registration' => [16, null, false, true],
+            'administrator with event edit permission' => [17, null, true, true],
         ];
 
-        foreach ([0, 1, 2, 3, 4, 5, 99] as $audience) {
-            foreach ($users as $name => [$id, $status, $admin]) {
+        foreach ([0, 1, 2, 3, 4, 5, 6, 7, 99] as $audience) {
+            foreach ($users as $name => [$id, $status, $admin, $manager]) {
                 foreach ([false, true] as $details) {
                     $allowed = match ($audience) {
                         1 => $admin,
-                        2 => $status === 1,
+                        2 => $id > 0 && $status === 1,
                         3 => true,
                         4, 5 => $id > 0,
+                        6 => $id > 0 && in_array($status, [1, 2], true),
+                        7 => $id > 0 && $manager,
                         default => false,
                     };
                     $expected = $allowed ? ($details && $id > 0 ? [11, 12, 13, 14] : [11]) : [];
@@ -122,13 +136,27 @@ final class AttendeeVisibilityTest extends TestCase
                     }
 
                     yield $audience . ' / ' . $name . ' / details ' . (int) $details
-                        => [$audience, $id, $status, $admin, $details, $expected];
+                        => [$audience, $id, $status, $admin, $manager, $details, $expected];
                 }
             }
         }
+
+        foreach (range(0, 7) as $audience) {
+            yield $audience . ' / no registrations' => [$audience, 17, null, true, true, true, [], false];
+        }
     }
 
-    public function testSettingsPreserveExistingValuesAndAddLoggedInUsers(): void
+    public function testEventManagersReuseTheExistingEventPermission(): void
+    {
+        $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/views/event/view.html.php');
+        self::assertStringContainsString(
+            "\$permissions->canEditAttendees = \$user->can('edit', 'event', \$item->id, \$item->created_by);",
+            $source
+        );
+        self::assertStringContainsString('$this->permissions    = $permissions;', $source);
+    }
+
+    public function testSettingsPreserveExistingValuesAndAddAudiences(): void
     {
         $xml = simplexml_load_file(JEM_TEST_ROOT . '/admin/models/forms/settings.xml');
         $field = $xml->xpath('//field[@name="event_show_attendeenames"]')[0];
@@ -140,14 +168,21 @@ final class AttendeeVisibilityTest extends TestCase
         ksort($options);
         self::assertSame([
             0 => 'COM_JEM_NOBODY',
-            1 => 'COM_JEM_ONLYADMINS',
+            1 => 'COM_JEM_ATTENDEE_JEM_ADMINISTRATORS',
             2 => 'COM_JEM_ALLATTENDING',
             3 => 'COM_JEM_EVERYBODY',
             4 => 'COM_JEM_ONLYUSER',
             5 => 'COM_JEM_LOGGED_IN_USERS',
+            6 => 'COM_JEM_ATTENDEE_CONFIRMED_AND_WAITING',
+            7 => 'COM_JEM_ATTENDEE_EVENT_MANAGERS',
         ], $options);
         $language = parse_ini_file(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
-        self::assertSame('- Event attendees only -', $language['COM_JEM_ALLATTENDING']);
+        self::assertSame('- Confirmed attendees only -', $language['COM_JEM_ALLATTENDING']);
+        self::assertSame('- Own registration only -', $language['COM_JEM_ONLYUSER']);
+        self::assertSame('- JEM administrators -', $language['COM_JEM_ATTENDEE_JEM_ADMINISTRATORS']);
+        self::assertSame('- Admins and JEM groups -', $language['COM_JEM_ONLYADMINS']);
+        self::assertSame('- Confirmed attendees and waiting list -', $language['COM_JEM_ATTENDEE_CONFIRMED_AND_WAITING']);
+        self::assertSame('- Event managers -', $language['COM_JEM_ATTENDEE_EVENT_MANAGERS']);
         self::assertSame('- Logged-in users -', $language['COM_JEM_LOGGED_IN_USERS']);
     }
 
