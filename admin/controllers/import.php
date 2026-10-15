@@ -2230,7 +2230,7 @@ class JemControllerImport extends BaseController
                     Log::WARNING
                 );
             }
-            $this->setRedirect('index.php?option=com_jem&view=import', $msg);
+            $this->setRedirect('index.php?option=com_jem&view=import', $msg, !empty($result['error']) ? 'warning' : 'message');
         } else {
             parent::display();
         }
@@ -5525,7 +5525,11 @@ class JemControllerImport extends BaseController
                 // Loading from EL tables, changing data, storing in JEM tables
                 $data = $model->getEventlistData("eventlist_".$tables->eltables[$table], $current, $size);
                 $data = $model->transformEventlistData($tables->jemtables[$table], $data);
-                $model->storeJemData("jem_".$tables->jemtables[$table], $data);
+                $result = $model->storeJemData("jem_".$tables->jemtables[$table], $data);
+                if (!empty($result['error'])) {
+                    $this->setRedirect($link, Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ERROR', $result['error']), 'error');
+                    return;
+                }
             }
 
             // Proceed with next bunch of data

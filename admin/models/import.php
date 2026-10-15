@@ -19,6 +19,7 @@ use Joomla\CMS\Log\Log;
 use Joomla\CMS\User\User;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpersistence.php';
 
 /**
  * JEM Component Import Model
@@ -274,41 +275,13 @@ class JemModelImport extends BaseDatabaseModel
                 continue;
             }
 
-            if ($replace) {
-                $checkQuery = $db->getQuery(true)
-                    ->select('COUNT(*)')
-                    ->from($db->quoteName($tablename))
-                    ->where($db->quoteName('id') . ' = ' . (int) $object->id);
-                $db->setQuery($checkQuery);
-                $exists = (bool) $db->loadResult();
-
-                if ($exists) {
-                    if (!$object->store()) {
-                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                        $rec['error']++;
-                        $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
-                        continue;
-                    }
-                    $rec['updated']++;
-                } else {
-                    try {
-                        $rowData = (object) get_object_vars($object);
-                        $db->insertObject($tablename, $rowData, 'id');
-                        $rec['added']++;
-                    } catch (\Exception $e) {
-                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
-                        $rec['error']++;
-                        $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
-                    }
-                }
-            } else {
-                if (!$object->store()) {
-                    echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                    $rec['error']++;
-                    $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
-                    continue;
-                }
-                $rec['added']++;
+            try {
+                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace)]++;
+            } catch (\RuntimeException $e) {
+                $this->setError($e->getMessage());
+                echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
+                $rec['error']++;
+                $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
             }
         }
 
@@ -508,44 +481,9 @@ class JemModelImport extends BaseDatabaseModel
                 if (!$object->checkCsvImport()) {
                     $this->setError($object->getError());
                     echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
+                    $rec['error']++;
+                    $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
                     continue;
-                }
-
-                // Store it in the db
-                if ($replace) {
-                    if ($values['id'] != '1') {
-                        // We want to keep id from database so first we try to insert into database.
-                        // if it fails, it means the record already exists, we can use store().
-                        $results = $object->insertIgnore();
-                        if ($results < 0) {
-                            if (!$object->storeCsvImport()) {
-                                echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                                $rec['error']++;
-                                $rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
-                                continue;
-                            } else {
-                                $rec['updated']++;
-                            }
-                        } else if( $results == 0) {
-                            $rec['duplicated']++;
-                            $rec['duplicatedids'] .= ($rec['duplicatedids']!=""?',':'') . $row[0];
-                        }else{
-                            $rec['added']++;
-                        }
-                    } else {
-                        // category with id=1 detected but it's not added or updated
-                        $rec['ignored']++;
-                        $rec['ignoredids'] .= ($rec['ignoredids']!=""?',':'') . $row[0];
-                    }
-                } else {
-                    if (!$object->storeCsvImport()) {
-                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                        $rec['error']++;
-                        $rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
-                        continue;
-                    } else {
-                        $rec['added']++;
-                    }
                 }
             } else {
                 // Check/Store of tables other then Category
@@ -559,32 +497,17 @@ class JemModelImport extends BaseDatabaseModel
                     continue;
                 }
 
-                // Store it in the db
-                if ($replace) {
-                    // We want to keep id from database so first we try to insert into database.
-                    // if it fails, it means the record already exists, we can use store().
-                    if (!$object->insertIgnore()) {
-                        if (!$object->store()) {
-                            echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                            $rec['error']++;
-                            $rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
-                            continue;
-                        } else {
-                            $rec['updated']++;
-                        }
-                    } else {
-                        $rec['added']++;
-                    }
-                } else {
-                    if (!$object->store()) {
-                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $object->getError() . "\n";
-                        $rec['error']++;
-                        $rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
-                        continue;
-                    } else {
-                        $rec['added']++;
-                    }
-                }
+            }
+
+            try {
+                $storeMethod = strcasecmp($objectname, 'JemTableCategory') === 0 ? 'storeCsvImport' : 'store';
+                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod)]++;
+            } catch (\RuntimeException $e) {
+                $this->setError($e->getMessage());
+                echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
+                $rec['error']++;
+                $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                continue;
             }
 
             if (strcasecmp($objectname, 'JemTableEvent') == 0) {
@@ -1083,6 +1006,7 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function storeJemData($tablename, &$data)
     {
+        $db = Factory::getContainer()->get('DatabaseDriver');
         $replace = true;
         if ((strcasecmp($tablename, 'jem_groupmembers') === 0) ||
             (strcasecmp($tablename, 'jem_cats_event_relations') === 0) ||
@@ -1107,34 +1031,20 @@ class JemModelImport extends BaseDatabaseModel
             if (!$object->check()) {
                 $this->setError($object->getError());
                 echo Text::_('COM_JEM_IMPORT_ERROR_CHECK').$object->getError()."\n";
+                $rec['error']++;
                 continue ;
             }
 
-            // Store it in the db
-            if ($replace) {
-                // We want to keep id from database so first we try to insert into database. if it fails,
-                // it means the record already exists, we can use store().
-                if (!$object->insertIgnore()) {
-                    if (!$object->store()) {
-                        echo Text::_('COM_JEM_IMPORT_ERROR_STORE').$object->getError()."\n";
-                        $rec['error']++;
-                        continue ;
-                    } else {
-                        $rec['updated']++;
-                    }
-                } else {
-                    $rec['added']++;
-                }
-            } else {
-                if (!$object->store()) {
-                    echo Text::_('COM_JEM_IMPORT_ERROR_STORE').$object->getError()."\n";
-                    $rec['error']++;
-                    continue ;
-                } else {
-                    $rec['added']++;
-                }
+            try {
+                $rec[JemImportPersistenceHelper::store($object, $db, $replace)]++;
+            } catch (\RuntimeException $e) {
+                $this->setError($e->getMessage());
+                echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
+                $rec['error']++;
             }
         }
+
+        return $rec;
     }
 
     /**
