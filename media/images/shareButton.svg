@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img">
-    <path fill="#4b4b4b" d="M22.5 5a4.5 4.5 0 1 1-1.1 8.86l-9.05 4.52a4.5 4.5 0 0 1 0 2.24l9.05 4.52A4.5 4.5 0 1 1 20.5 28c0-.38.05-.74.13-1.09l-9.05-4.52a4.5 4.5 0 1 1 0-5.78l9.05-4.52A4.5 4.5 0 0 1 22.5 5Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="1 1 22 22" role="img">
+    <g fill="none" stroke="#4b4b4b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 0 0 7 0l4-4a5 5 0 0 0-7-7l-2 2"/>
+        <path d="M14 11a5 5 0 0 0-7 0l-4 4a5 5 0 0 0 7 7l2-2"/>
+    </g>
 </svg>

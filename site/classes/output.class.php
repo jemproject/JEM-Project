@@ -795,7 +795,7 @@ static public function lightbox() {
 
         if ($settings->get('global_show_icons')) {
             $image = jemhtml::icon(
-                'com_jem/emailButton.webp',
+                'com_jem/emailButton.svg',
                 'fa fa-fw fa-lg fa-envelope jem-mailbutton',
                 Text::_('COM_JEM_INVITE_BY_EMAIL'),
                 null,
@@ -852,7 +852,7 @@ static public function lightbox() {
         if ($settings->get('global_show_icons')) {
             $image = jemhtml::icon(
                 'com_jem/shareButton.svg',
-                'fa fa-fw fa-lg fa-share-alt jem-sharebutton',
+                'fa fa-fw fa-lg fa-link jem-sharebutton',
                 $text,
                 null,
                 !$app->isClient('site')

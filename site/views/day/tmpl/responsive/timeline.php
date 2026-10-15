@@ -596,7 +596,7 @@ unset($dayData);
     }
 
     #jem .buttons .jem-day-timeline-layout-toggle .fa {
-        font-size: 1.15rem;
+        font-size: calc(var(--jem-toolbar-icon-size, 1.125rem) * 8 / 7);
     }
 
     .jem-day-timeline-row {
