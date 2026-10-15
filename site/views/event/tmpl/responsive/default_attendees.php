@@ -129,7 +129,7 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                         $showAttendenenames = 0;
                     }
                     break;
-                case 2: // show to registered
+                case 2: // show to confirmed event attendees
                     if ($this->user->get('guest') || !is_object($this->registration) || (int) $this->registration->status !== 1) {
                         $showAttendenenames = 0;
                     }
@@ -137,6 +137,11 @@ $registrationFooter = trim((string) $this->item->params->get('registration_foote
                 case 3: // show to all
                     break;
                 case 4: // show only to user
+                    break;
+                case 5: // show to logged-in users, without requiring event registration
+                    if ($this->user->get('guest')) {
+                        $showAttendenenames = 0;
+                    }
                     break;
                 case 0: // show to none
                 default:
