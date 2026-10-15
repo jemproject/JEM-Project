@@ -3168,6 +3168,7 @@
                 <option value="1">COM_JEM_ONLYADMINS</option>
                 <option value="2">COM_JEM_ALLATTENDING</option>
                 <option value="4">COM_JEM_ONLYUSER</option>
+                <option value="5">COM_JEM_LOGGED_IN_USERS</option>
                 <option value="3">COM_JEM_EVERYBODY</option>
             </field>
             <field name="event_show_attendeenames_order" type="list"
