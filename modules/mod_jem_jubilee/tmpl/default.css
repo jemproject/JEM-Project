@@ -164,3 +164,9 @@ div#jemmodulejubilee .hr {
 div#jemmodulejubilee .clr {
     clear: both;
 }
+
+/* Let the browser hyphenate text using the document's declared language. */
+#jemmodulejubilee .event-title,
+#jemmodulejubilee .desc {
+    hyphens: auto;
+}

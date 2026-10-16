@@ -156,3 +156,9 @@ div#jemmodulebanner .hr {
 div#jemmodulebanner .clr {
     clear: both;
 }
+
+/* Let the browser hyphenate text using the document's declared language. */
+#jemmodulebanner .event-title,
+#jemmodulebanner .desc {
+    hyphens: auto;
+}

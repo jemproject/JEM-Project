@@ -287,4 +287,10 @@
     color: var(--joomla-text-muted-color, #6c757d);
 }
 
+/* Let the browser hyphenate text using the document's declared language. */
+#jemmodulebanner_cards .event-title,
+#jemmodulebanner_cards .event-description {
+    hyphens: auto;
+}
+
 

@@ -245,3 +245,9 @@
     color: #666;
     grid-column: 1 / -1;
 }
+
+/* Let the browser hyphenate text using the document's declared language. */
+#jemmodulebanner .event-title,
+#jemmodulebanner .event-description {
+    hyphens: auto;
+}

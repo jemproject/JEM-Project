@@ -307,3 +307,9 @@ div#jemmoduleteaser .block-event-vencat {
     display: flex;
     gap: 5px;
 }
+
+/* Let the browser hyphenate text using the document's declared language. */
+#jemmoduleteaser .event-title,
+#jemmoduleteaser .jem-description-teaser {
+    hyphens: auto;
+}
