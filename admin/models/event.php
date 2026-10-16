@@ -981,6 +981,13 @@ class JemModelEvent extends JemModelAdmin
             return false;
         }
 
+        $this->normaliseAssociatedArticleSyncMode($data, $task === 'save2copy' ? array() : $previousArticleContentEvent);
+        $oldArticleAttribs = new Registry($existingEvent->attribs ?? array());
+        $newArticleAttribs = new Registry($data['attribs']);
+        $articlePolicyChanged = (int) ($data['article_id'] ?? 0) !== (int) ($existingEvent->article_id ?? 0)
+            || $oldArticleAttribs->get('article_usage', 'information') !== $newArticleAttribs->get('article_usage', 'information')
+            || $oldArticleAttribs->get('article_sync_mode', 'none') !== $newArticleAttribs->get('article_sync_mode', 'none');
+
         if (!$this->normaliseEventDates($data)) {
             return false;
         }
@@ -1400,13 +1407,7 @@ class JemModelEvent extends JemModelAdmin
                 }
 
                 $this->createAssociatedArticleIfRequested($pk, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
-                if (!empty($data['article_id'])
-                    && $this->eventUsesAssociatedArticleAsContent($data)
-                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
-                    $this->updateAssociatedArticleFromEvent((int) $pk, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'image_path'));
-                } else {
-                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
-                }
+                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $pk);
             }
         } else {
             // This event is part of a recurrence series. Check if it is the root event to apply changes to all occurrences in the series.
@@ -1429,7 +1430,7 @@ class JemModelEvent extends JemModelAdmin
                 }
                 // A past root may be outside the normal future-occurrence update set.
                 // Its exclusion policy and programme govern future generation too.
-                if (($exclusionsSubmitted || $scheduleTimes !== null)
+                if (($exclusionsSubmitted || $scheduleTimes !== null || $articlePolicyChanged)
                     && !in_array((int) $data['id'], array_map('intval', array_column($events, 'id')), true)) {
                     $events[] = $data;
                 }
@@ -1457,6 +1458,12 @@ class JemModelEvent extends JemModelAdmin
                     Factory::getApplication()->enqueueMessage($this->getError() . ' [ID:' . (int) ($event['id'] ?? 0) . ']', 'error');
                     continue;
                 }
+
+                // A series can contain distinct source articles and write policies.
+                $this->normaliseAssociatedArticleSyncMode(
+                    $event,
+                    $this->getAssociatedArticleSyncEventData((int) $event['id'])
+                );
 
                 // save the event
                 $saved = parent::save($event);
@@ -1490,13 +1497,7 @@ class JemModelEvent extends JemModelAdmin
 
             if ($saved) {
                 $this->createAssociatedArticleIfRequested((int) $table->id, $data, $cats, $createArticleMode, $new, $articleTargetCategoryId);
-                if (!empty($data['article_id'])
-                    && $this->eventUsesAssociatedArticleAsContent($data)
-                    && (empty($previousArticleContentEvent) || (int) ($previousArticleContentEvent['article_id'] ?? 0) !== (int) $data['article_id'])) {
-                    $this->updateAssociatedArticleFromEvent((int) $table->id, array('title', 'alias', 'introtext', 'fulltext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'image_path'));
-                } else {
-                    $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
-                }
+                $this->setAssociatedArticleSyncState($previousArticleContentEvent, $data, (int) $table->id);
             }
 
             // Update  and new attachment file
@@ -2644,9 +2645,14 @@ class JemModelEvent extends JemModelAdmin
         }
 
         $db = Factory::getContainer()->get('DatabaseDriver');
+        // Only a newly generated article opts in automatically. Linking an
+        // existing article (including alias matches above) must remain read-only.
+        $articleAttribs = new Registry($eventData['attribs'] ?? array());
+        $articleAttribs->set('article_sync_mode', 'settings');
         $article = (object) array(
             'id'         => $eventId,
-            'article_id' => $articleId
+            'article_id' => $articleId,
+            'attribs'    => $articleAttribs->toString()
         );
 
         $db->updateObject('#__jem_events', $article, 'id');
@@ -3420,28 +3426,12 @@ class JemModelEvent extends JemModelAdmin
 
         $newEventData = $this->prepareAssociatedArticleEventData($newEventData, $eventId);
 
-        if (empty($newEventData['article_id'])) {
-            $newEventData['article_id'] = $oldEventData['article_id'];
-        }
-
-        if (!$this->eventUsesAssociatedArticleAsContent($newEventData)) {
+        if ((int) ($newEventData['article_id'] ?? 0) !== (int) $oldEventData['article_id']
+            || !$this->eventAllowsAssociatedArticleSync($newEventData)) {
             return;
         }
 
         $changes = $this->getAssociatedArticleSyncChanges($oldEventData, $newEventData);
-
-        if (!$changes) {
-            return;
-        }
-
-        $imageChanges = array_intersect_key($changes, array('datimage' => true, 'fullimage' => true, 'image_path' => true));
-        if ($imageChanges && $this->updateAssociatedArticleFromEvent($eventId, array_keys($imageChanges))) {
-            Factory::getApplication()->enqueueMessage(
-                Text::sprintf('COM_JEM_EVENT_ARTICLE_SYNC_AUTO_UPDATED', implode(', ', array_values($imageChanges))),
-                'message'
-            );
-            $changes = array_diff_key($changes, $imageChanges);
-        }
 
         if (!$changes) {
             return;
@@ -3534,7 +3524,7 @@ class JemModelEvent extends JemModelAdmin
         $eventId = (int) $eventId;
         $eventData = $this->getAssociatedArticleSyncEventData($eventId);
 
-        if ($eventId <= 0 || !$eventData) {
+        if ($eventId <= 0 || !$eventData || !$this->eventAllowsAssociatedArticleSync($eventData)) {
             $this->setError(Text::_('COM_JEM_EVENT_ARTICLE_SYNC_NOT_AVAILABLE'));
 
             return false;
@@ -3679,6 +3669,37 @@ class JemModelEvent extends JemModelAdmin
         }
 
         return json_encode($images);
+    }
+
+    /**
+     * Reset write consent when the source changes. Legacy associations are read-only.
+     */
+    protected function normaliseAssociatedArticleSyncMode(array &$eventData, array $previous): void
+    {
+        $attribs = new Registry($eventData['attribs'] ?? array());
+        $sameSource = !empty($eventData['article_id'])
+            && (int) $eventData['article_id'] === (int) ($previous['article_id'] ?? 0)
+            && $this->eventUsesAssociatedArticleAsContent($previous);
+
+        if (!$sameSource || !$this->eventUsesAssociatedArticleAsContent($eventData)
+            || $attribs->get('article_sync_mode', 'none') !== 'settings') {
+            $attribs->set('article_sync_mode', 'none');
+        }
+
+        $eventData['attribs'] = $attribs->toArray();
+    }
+
+    /**
+     * Reading an article is not consent to overwrite it, even with Joomla edit ACL.
+     */
+    protected function eventAllowsAssociatedArticleSync(array $eventData): bool
+    {
+        $attribs = new Registry($eventData['attribs'] ?? array());
+
+        return $this->eventUsesAssociatedArticleAsContent($eventData)
+            && $attribs->get('article_sync_mode', 'none') === 'settings'
+            && (int) JemHelper::globalattribs()->get('event_use_associated_article', 1) === 1
+            && JemHelper::globalattribs()->get('event_article_content_change_action', 'ask') !== 'none';
     }
 
     /**
@@ -3859,6 +3880,12 @@ class JemModelEvent extends JemModelAdmin
 
             if ($childArticleId) {
                 $this->setAssociatedArticleForEvents(array((int) $child->id), $childArticleId);
+                // A distinct generated article belongs to this occurrence.
+                // Shared articles above retain the child's read-only default.
+                $childAttribs = new Registry($child->attribs ?? array());
+                $childAttribs->set('article_sync_mode', 'settings');
+                $childUpdate = (object) array('id' => (int) $child->id, 'attribs' => $childAttribs->toString());
+                Factory::getContainer()->get('DatabaseDriver')->updateObject('#__jem_events', $childUpdate, 'id');
             }
 
             $recurrenceCounter++;

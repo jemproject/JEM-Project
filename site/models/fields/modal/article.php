@@ -13,6 +13,8 @@ use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Session\Session;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Article modal field for the front area.
@@ -67,6 +69,8 @@ class JFormFieldModal_Article extends FormField
         $script[] = '        var idField = document.getElementById("' . $this->id . '_id");';
         $script[] = '        var createButton = document.getElementById("' . $this->id . '_create");';
         $script[] = '        var clearButton = document.getElementById("' . $this->id . '_clear");';
+        $script[] = '        var editButton = document.getElementById("' . $this->id . '_edit");';
+        $script[] = '        if (editButton) { editButton.hidden = !idField || idField.value !== editButton.dataset.articleId; }';
         $script[] = '        var hasArticle = idField && parseInt(idField.value, 10) > 0;';
         $script[] = '        if (createButton) { createButton.hidden = hasArticle; }';
         $script[] = '        if (clearButton) { clearButton.hidden = !hasArticle; }';
@@ -92,6 +96,7 @@ class JFormFieldModal_Article extends FormField
         $wa->addInlineScript(implode("\n", $script));
 
         $title = Text::_('COM_JEM_SELECT_ARTICLE');
+        $editLink = '';
 
         if ($value) {
             $db = Factory::getContainer()->get('DatabaseDriver');
@@ -99,14 +104,23 @@ class JFormFieldModal_Article extends FormField
             try {
                 $levels = array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels());
                 $query = $db->getQuery(true)
-                    ->select($db->quoteName('title'))
+                    ->select($db->quoteName(array('title', 'created_by')))
                     ->from($db->quoteName('#__content'))
                     ->where($db->quoteName('id') . ' = ' . (int) $value)
                     ->where($db->quoteName('state') . ' = 1')
                     ->where($db->quoteName('access') . ' IN (' . implode(',', $levels) . ')');
 
                 $db->setQuery($query);
-                $title = $db->loadResult() ?: $title;
+                $article = $db->loadObject();
+                $title = $article->title ?? $title;
+                $user = $app->getIdentity();
+                $asset = 'com_content.article.' . $value;
+                if ($article && !$user->guest && ($user->authorise('core.edit', $asset)
+                    || ((int) $article->created_by === (int) $user->id && $user->authorise('core.edit.own', $asset)))) {
+                    $editLink = Route::_('index.php?option=com_content&task=article.edit&a_id=' . $value
+                        . '&return=' . base64_encode(Uri::getInstance()->toString())
+                        . '&' . Session::getFormToken() . '=1');
+                }
             } catch (RuntimeException $e) {
                 $app->enqueueMessage($e->getMessage(), 'warning');
             }
@@ -125,6 +139,11 @@ class JFormFieldModal_Article extends FormField
         $html[] = '    ' . Text::_('JSEARCH_FILTER_CLEAR');
         $html[] = '  </button>';
         $html[] = '</div>';
+        if ($editLink !== '') {
+            $html[] = '<a id="' . $this->id . '_edit" data-article-id="' . $value . '" class="btn btn-secondary" href="'
+                . htmlspecialchars($editLink, ENT_QUOTES, 'UTF-8') . '">'
+                . Text::_('COM_JEM_EDIT_ASSOCIATED_ARTICLE') . '</a>';
+        }
         $html[] = HTMLHelper::_(
             'bootstrap.renderModal',
             $modalId,

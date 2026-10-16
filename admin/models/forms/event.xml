@@ -1219,6 +1219,14 @@
                 <option value="information">COM_JEM_EVENT_ARTICLE_USAGE_INFORMATION</option>
                 <option value="content">COM_JEM_EVENT_ARTICLE_USAGE_CONTENT</option>
             </field>
+            <field name="article_sync_mode" type="list"
+                label="COM_JEM_EVENT_ARTICLE_SYNC_MODE"
+                description="COM_JEM_EVENT_ARTICLE_SYNC_MODE_DESC"
+                class="form-select" default="none" filter="cmd"
+            >
+                <option value="none">COM_JEM_EVENT_ARTICLE_SYNC_READ_ONLY</option>
+                <option value="settings">COM_JEM_EVENT_ARTICLE_SYNC_SETTINGS</option>
+            </field>
         </fieldset>
         <fieldset name="evevents"
                   label="COM_JEM_EVENTS"

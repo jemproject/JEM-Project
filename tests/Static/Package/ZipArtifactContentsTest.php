@@ -6,6 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageProtectsAssociatedArticleSources(): void
+    {
+        foreach ($this->currentPackageZipFiles() as $package) {
+            foreach (['admin/models/event.php', 'admin/models/forms/event.xml', 'site/models/forms/event.xml',
+                'admin/views/event/tmpl/edit.php', 'site/views/editevent/tmpl/edit.php',
+                'site/views/editevent/tmpl/responsive/edit.php', 'site/models/fields/modal/article.php',
+                'admin/language/en-GB/com_jem.ini', 'site/language/en-GB/com_jem.ini'] as $entry) {
+                self::assertSame(file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($package, $entry), $entry);
+            }
+        }
+    }
+
     public function testCurrentPackageContainsDayScheduleRenderingFix(): void
     {
         foreach ($this->currentPackageZipFiles() as $zipFile) {

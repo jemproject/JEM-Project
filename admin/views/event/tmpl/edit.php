@@ -439,6 +439,7 @@ $this->document->addStyleDeclaration('
             }
 
             setArticleRowVisibility('.js-jem-article-selector', usesArticle);
+            setArticleRowVisibility('.js-jem-article-sync', usageValue === 'content');
             setArticleRowVisibility('.js-jem-article-target', usesArticle && hasAuto && autoArticleCategoryIds.length > 1);
             setArticleRowVisibility('.js-jem-article-usage', true);
             updateArticleTargetCategoryOptions((usesArticle && hasAuto) ? autoArticleCategories : []);
@@ -453,7 +454,10 @@ $this->document->addStyleDeclaration('
         $articleUsage.on('change', updateAssociatedArticleOptions);
         $articleAction.on('change', updateAssociatedArticleOptions);
         $('#jform_cats, select[name="jform[cats][]"], input[name="jform[cats][]"]').on('change', updateAssociatedArticleOptions);
-        $('#jform_article_id_id, #jform_article_id').on('change', updateAssociatedArticleOptions);
+        $('#jform_article_id_id, #jform_article_id').on('change', function () {
+            $('#jform_attribs_article_sync_mode').val('none').trigger('change');
+            updateAssociatedArticleOptions();
+        });
         $articleBlock.on('click', '.button-clear, .btn', function () {
             window.setTimeout(updateAssociatedArticleOptions, 100);
         });
@@ -551,6 +555,13 @@ $this->document->addStyleDeclaration('
                             <?php echo $this->form->getLabel('article_usage', 'attribs'); ?>
                             <?php echo $this->form->getInput('article_usage', 'attribs'); ?>
                         </div>
+                    </li>
+                    <li class="js-jem-article-sync">
+                        <div class="label-form jem-associated-article-row">
+                            <?php echo $this->form->getLabel('article_sync_mode', 'attribs'); ?>
+                            <?php echo $this->form->getInput('article_sync_mode', 'attribs'); ?>
+                        </div>
+                        <p class="alert alert-info small"><?php echo Text::_('COM_JEM_EVENT_ARTICLE_CONTENT_SOURCE_NOTE'); ?></p>
                     </li>
                     <li class="js-jem-article-selector">
                         <div class="label-form jem-associated-article-row">

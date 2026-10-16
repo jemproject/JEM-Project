@@ -30,6 +30,6 @@ final class EventScheduleContractsTest extends TestCase
         self::assertNotFalse($preflight);
         self::assertNotFalse($write);
         self::assertLessThan($write, $preflight);
-        self::assertStringContainsString('($exclusionsSubmitted || $scheduleTimes !== null)', $branch);
+        self::assertStringContainsString('($exclusionsSubmitted || $scheduleTimes !== null || $articlePolicyChanged)', $branch);
     }
 }
