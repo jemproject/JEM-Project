@@ -53,8 +53,3 @@
   color: #555;
 }
 
-/* Let the browser hyphenate text using the document's declared language. */
-#jemmodulebasic-tableadvanced .event-title {
-    hyphens: auto;
-}
-

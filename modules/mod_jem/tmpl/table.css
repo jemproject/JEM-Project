@@ -31,8 +31,3 @@
 
 }
 
-/* Let the browser hyphenate text using the document's declared language. */
-#jemmodulebasic .event-title {
-    hyphens: auto;
-}
-

@@ -26,8 +26,3 @@
   margin-left: 1em;
   margin-bottom: 10px;
 }
-
-/* Let the browser hyphenate text using the document's declared language. */
-#jemmodulebasic .event-title {
-    hyphens: auto;
-}

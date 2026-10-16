@@ -163,8 +163,3 @@ body.body-overlayed {
         border: none;
     }
 }
-
-/* Let the browser hyphenate text using the document's declared language. */
-#jemmodulebanner .desc {
-    hyphens: auto;
-}

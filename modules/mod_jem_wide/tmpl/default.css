@@ -73,8 +73,3 @@ div#jemmodulewide .image-preview {
         margin: 3px auto;
     }
 }
-
-/* Let the browser hyphenate text using the document's declared language. */
-#jemmodulewide .event-title {
-    hyphens: auto;
-}

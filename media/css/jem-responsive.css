@@ -3779,10 +3779,3 @@ div#jem .jem-custom-field-group__field-value {
     inset-inline-start: .55rem;
     position: absolute;
 }
-
-/* Let the browser hyphenate text using the document's declared language. */
-.mod-jem-types .mod-jem-types__link,
-.mod-jem-types .mod-jem-types__group-title,
-.mod-jem-types .mod-jem-types__event > a:first-child {
-    hyphens: auto;
-}
