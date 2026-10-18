@@ -36,6 +36,31 @@
     gap: 1rem;
 }
 
+.jem-image-metadata details.jem-image-metadata__details {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.jem-image-metadata .jem-image-metadata__details > summary {
+    cursor: pointer;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    font-weight: 600;
+}
+
+.jem-image-metadata .jem-image-metadata__details[open] > summary {
+    margin-bottom: .75rem;
+}
+
+.jem-image-metadata__details > summary:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
 .jem-image-metadata .jem-image-metadata__card {
     min-width: 0;
     margin: 0;
@@ -88,12 +113,16 @@ div#jem .jem-image-metadata .jem-image-metadata__card {
     max-width: 100%;
 }
 
-.jem-image-metadata .jem-image-metadata__footer-option {
+.jem-image-metadata__alignment .form-select {
+    padding-inline-end: calc(3rem + 5px);
+}
+
+.jem-image-metadata__custom-label {
     margin-top: .5rem;
 }
 
-.jem-image-metadata .jem-image-metadata__footer-option input[type="checkbox"] {
-    width: 1em;
+.jem-image-metadata__card .tox-tinymce {
+    max-width: 100%;
 }
 
 #jem .jem-image-figure {
@@ -108,6 +137,34 @@ div#jem .jem-image-figure .flyerimage {
     float: none !important;
 }
 
+/* Like event details, wrap large images before squeezing the resource fields. */
+div#jem.jem_category .jem-category-overview-panel:has(.jem-image-figure),
+div#jem.jem_venue .jem-venue-overview-panel:has(.jem-image-figure) {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+div#jem.jem_category .jem-category-overview-panel:has(.jem-image-figure) > .jem-category-overview-details,
+div#jem.jem_venue .jem-venue-overview-panel:has(.jem-image-figure) > .jem-venue-overview-details {
+    flex: 1 1 20rem;
+    min-width: 0;
+}
+
+div#jem.jem_category .jem-category-overview-panel:has(.jem-image-figure) > .jem-category-overview-media,
+div#jem.jem_venue .jem-venue-overview-panel:has(.jem-image-figure) > .jem-venue-overview-media {
+    flex: 0 1 auto;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 47.938rem) {
+    div#jem.jem_category .jem-category-overview-panel:has(.jem-image-figure) > .jem-category-overview-details,
+    div#jem.jem_venue .jem-venue-overview-panel:has(.jem-image-figure) > .jem-venue-overview-details {
+        flex: 0 1 auto;
+        width: 100%;
+    }
+}
+
 #jem .jem-image-caption {
     clear: both;
     font-size: .875em;
@@ -115,7 +172,11 @@ div#jem .jem-image-figure .flyerimage {
     margin-top: .35rem;
     overflow-wrap: anywhere;
     text-align: start;
-    max-width: 36rem;
+    /* Let the image size the figure; caption text must not widen its column. */
+    inline-size: 0;
+    min-inline-size: 100%;
+    max-inline-size: 100%;
+    box-sizing: border-box;
 }
 
 #jem .jem-image-credit {
@@ -142,13 +203,22 @@ div#jem .jem-image-figure .flyerimage {
 }
 
 #jem .jem-image-caption__text,
-#jem .jem-image-caption__text *,
 .lightbox .lb-caption .jem-lightbox-caption,
-.lightbox .lb-caption .jem-lightbox-caption *,
-.jem-image-popup__caption,
-.jem-image-popup__caption * {
+.jem-image-popup__caption {
     font-weight: 600;
     font-style: normal;
+}
+
+#jem .jem-image-caption__text strong,
+.lightbox .lb-caption .jem-lightbox-caption strong,
+.jem-image-popup__caption strong {
+    font-weight: 700;
+}
+
+#jem .jem-image-caption__text em,
+.lightbox .lb-caption .jem-lightbox-caption em,
+.jem-image-popup__caption em {
+    font-style: italic;
 }
 
 div#jem .jem-image-credit--footer {

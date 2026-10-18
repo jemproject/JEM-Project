@@ -7,9 +7,11 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormField;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Uri\Uri;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/featurepolicy.class.php';
@@ -36,6 +38,7 @@ class JFormFieldJemimagemetadata extends FormField
     private function renderMetadata(?string $selectedSlot = null, string $part = 'all'): string
     {
         HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', ['version' => 'auto', 'relative' => true]);
+        HTMLHelper::_('script', 'com_jem/image-metadata.js', ['version' => 'auto', 'relative' => true], ['defer' => true]);
         $context = (string) $this->element['context'];
         $values = JemImageMetadata::normalise($this->value, $context);
         if ($selectedSlot !== null) {
@@ -45,6 +48,18 @@ class JFormFieldJemimagemetadata extends FormField
             $values = [$selectedSlot => $values[$selectedSlot]];
         }
         $advanced = JemFeaturePolicy::current()->isAdvanced();
+        $editorLanguage = '';
+        if ($advanced && $part !== 'alt') {
+            // Use Joomla's bundled editor, independently of the user's description editor.
+            $app = Factory::getApplication();
+            $assets = $app->getDocument()->getWebAssetManager();
+            $assets->getRegistry()->addExtensionRegistryFile('plg_editors_tinymce');
+            $assets->useScript('tinymce');
+            $language = $app->getLanguage()->getTag();
+            if (is_file(JPATH_ROOT . '/media/vendor/tinymce/langs/' . $language . '.js')) {
+                $editorLanguage = $language;
+            }
+        }
         if ($part === 'details' && !$advanced) {
             $values = array_filter($values, static fn ($value) => $value['caption'] !== '' || !empty($value['credit']));
             if ($values === []) {
@@ -79,13 +94,18 @@ class JFormFieldJemimagemetadata extends FormField
                     . $escape(Text::_('COM_JEM_IMAGE_METADATA_ALT_SHORT_DESC')) . '</div></div></div>';
             }
             if ($part !== 'alt' && $advanced) {
-                $html .= '<div class="jem-image-metadata__cards"><fieldset class="jem-image-metadata__card">'
+                $hasText = $value['caption'] !== '' || !empty($value['credit']);
+                $html .= '<details class="jem-image-metadata__details"' . ($hasText ? ' open' : '') . '>'
+                    . '<summary>' . $escape(Text::_('COM_JEM_IMAGE_METADATA_DETAILS')) . '</summary>'
+                    . '<div class="jem-image-metadata__cards"><fieldset class="jem-image-metadata__card">'
                     . '<legend>' . $escape(Text::_('COM_JEM_IMAGE_METADATA_CAPTION')) . '</legend>'
                     . '<p class="jem-image-metadata__hint" id="' . $escape($id . '_caption-desc') . '">'
                     . $escape(Text::_('COM_JEM_IMAGE_METADATA_CAPTION_SHORT_DESC')) . '</p>';
                 $html .= '<label class="visually-hidden" for="' . $escape($id . '_caption') . '">'
                     . $escape(Text::_('COM_JEM_IMAGE_METADATA_CAPTION')) . '</label>';
                 $html .= '<textarea class="form-control" rows="2" maxlength="4096" id="' . $escape($id . '_caption')
+                    . '" data-jem-caption-editor data-jem-editor-language="' . $escape($editorLanguage)
+                    . '" data-jem-editor-base="' . $escape(Uri::root(true) . '/media/vendor/tinymce')
                     . '" name="' . $escape($name . '[caption]') . '"'
                     . ' aria-describedby="' . $escape($id . '_caption-desc') . '"'
                     . '>' . $escape($value['caption']) . '</textarea>';
@@ -105,16 +125,37 @@ class JFormFieldJemimagemetadata extends FormField
                     . '<label class="visually-hidden" for="' . $escape($id . '_credit') . '">'
                     . $escape(Text::_('COM_JEM_IMAGE_METADATA_CREDITS')) . '</label>'
                     . '<textarea class="form-control" rows="2" maxlength="4096" id="' . $escape($id . '_credit')
+                    . '" data-jem-credit-editor data-jem-editor-language="' . $escape($editorLanguage)
+                    . '" data-jem-editor-base="' . $escape(Uri::root(true) . '/media/vendor/tinymce')
                     . '" name="' . $escape($name . '[credit]') . '"'
                     . ' aria-describedby="' . $escape($id . '_credit-desc') . '"'
                     . '>' . $escape($value['credit'] ?? '') . '</textarea>';
-                $html .= '<div class="jem-image-metadata__footer-option form-check">'
-                    . '<input type="hidden" name="' . $escape($name . '[footer]') . '" value="0">'
-                    . '<input type="checkbox" class="form-check-input" id="' . $escape($id . '_footer')
-                    . '" name="' . $escape($name . '[footer]') . '" value="1"'
-                    . (!empty($value['footer']) ? ' checked' : '') . '>'
-                    . '<label class="form-check-label" for="' . $escape($id . '_footer') . '">'
-                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_SHOW_AS_FOOTER')) . '</label></div></fieldset></div>';
+                $labelMode = JemImageMetadata::creditLabelMode($value['credit_label'] ?? 'image_credit');
+                $html .= '<div class="jem-image-metadata__alignment"><label for="' . $escape($id . '_credit_label') . '">'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_CREDIT_LABEL')) . '</label>'
+                    . '<select class="form-select" data-jem-credit-label data-jem-reset-value="image_credit" id="'
+                    . $escape($id . '_credit_label') . '" name="' . $escape($name . '[credit_label]') . '">';
+                foreach (JemImageMetadata::CREDIT_LABELS as $label) {
+                    $html .= '<option value="' . $label . '"' . ($labelMode === $label ? ' selected' : '') . '>'
+                        . $escape(Text::_('COM_JEM_IMAGE_METADATA_LABEL_' . strtoupper($label))) . '</option>';
+                }
+                $html .= '</select></div><div class="jem-image-metadata__custom-label" data-jem-credit-custom>'
+                    . '<label for="' . $escape($id . '_credit_label_custom') . '">'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_CUSTOM_LABEL')) . '</label>'
+                    . '<input type="text" class="form-control" maxlength="80" id="' . $escape($id . '_credit_label_custom')
+                    . '" name="' . $escape($name . '[credit_label_custom]') . '" value="'
+                    . $escape($value['credit_label_custom'] ?? '') . '"></div>';
+                $html .= '<div class="jem-image-metadata__alignment"><label for="' . $escape($id . '_footer') . '">'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_CREDIT_POSITION')) . '</label>'
+                    . '<select class="form-select" data-jem-reset-value="0" id="' . $escape($id . '_footer')
+                    . '" name="' . $escape($name . '[footer]') . '"'
+                    . ' aria-describedby="' . $escape($id . '_footer-desc') . '"'
+                    . '><option value="0"' . (empty($value['footer']) ? ' selected' : '') . '>'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_POSITION_BELOW')) . '</option>'
+                    . '<option value="1"' . (!empty($value['footer']) ? ' selected' : '') . '>'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_POSITION_SECTION')) . '</option></select></div>'
+                    . '<div class="form-text" id="' . $escape($id . '_footer-desc') . '">'
+                    . $escape(Text::_('COM_JEM_IMAGE_METADATA_CREDIT_POSITION_DESC')) . '</div></fieldset></div></details>';
             } elseif ($part !== 'alt' && ($value['caption'] !== '' || !empty($value['credit']))) {
                 $html .= '<p class="alert alert-info jem-image-metadata__notice">'
                     . $escape(Text::_('COM_JEM_IMAGE_METADATA_EXISTING')) . '</p>';

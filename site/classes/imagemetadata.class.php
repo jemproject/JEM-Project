@@ -16,6 +16,37 @@ final class JemImageMetadata
     // Leave room for HTML entity expansion in both slots of a TEXT JSON column.
     public const MAX_CAPTION_BYTES = 4096;
 
+    public const CREDIT_LABELS = ['none', 'photo', 'image_credit', 'source', 'copyright', 'licence', 'custom'];
+
+    public static function creditLabelMode($value): string
+    {
+        return in_array($value, self::CREDIT_LABELS, true) ? $value : 'image_credit';
+    }
+
+    public static function customCreditLabel($value): string
+    {
+        return mb_substr(trim(preg_replace('/[\x00-\x1F\x7F]/', '', self::alt($value))), 0, 80, 'UTF-8');
+    }
+
+    /** The same safe credit markup is used inline, in section footers and popups. */
+    public static function creditHtml(string $credit, array $metadata = []): string
+    {
+        $credit = self::caption($credit);
+        if ($credit === '') {
+            return '';
+        }
+        $mode = self::creditLabelMode($metadata['credit_label'] ?? 'image_credit');
+        $label = match ($mode) {
+            'none' => '',
+            'custom' => self::customCreditLabel($metadata['credit_label_custom'] ?? ''),
+            'image_credit' => Text::_('COM_JEM_IMAGE_METADATA_FOOTER_LABEL'),
+            default => Text::_('COM_JEM_IMAGE_METADATA_LABEL_' . strtoupper($mode)),
+        };
+
+        return ($label === '' ? '' : '<span class="jem-image-credit__label">'
+            . htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</span> ') . $credit;
+    }
+
     public static function slots(string $context): array
     {
         return match ($context) {
@@ -40,7 +71,25 @@ final class JemImageMetadata
         return mb_substr(trim(strip_tags(is_scalar($value) ? (string) $value : '')), 0, 255, 'UTF-8');
     }
 
-    /** Build fresh markup: no submitted attributes survive except validated href. */
+    /** Accept only an opaque text colour, never arbitrary CSS declarations. */
+    private static function textColour(string $style): string
+    {
+        if (!preg_match('/^\s*color\s*:\s*(#[a-f0-9]{6}|#[a-f0-9]{3}|rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\))\s*;?\s*$/iD', $style, $match)) {
+            return '';
+        }
+        $colour = strtolower($match[1]);
+        if ($colour[0] === '#') {
+            return strlen($colour) === 4
+                ? '#' . $colour[1] . $colour[1] . $colour[2] . $colour[2] . $colour[3] . $colour[3]
+                : $colour;
+        }
+        preg_match_all('/\d+/', $colour, $channels);
+        $channels = array_map('intval', $channels[0]);
+
+        return max($channels) <= 255 ? sprintf('#%02x%02x%02x', ...$channels) : '';
+    }
+
+    /** Build fresh markup with validated links and canonical text colours only. */
     public static function caption($value): string
     {
         if (!is_string($value) || trim($value) === '') {
@@ -95,6 +144,9 @@ final class JemImageMetadata
                 } else {
                     $html .= $text;
                 }
+            } elseif ($tag === 'span') {
+                $colour = self::textColour($node->getAttribute('style'));
+                $html .= $colour !== '' ? '<span style="color: ' . $colour . ';">' . $text . '</span>' : $text;
             } elseif (in_array($tag, ['strong', 'em'], true)) {
                 $html .= '<' . $tag . '>' . $text . '</' . $tag . '>';
             } elseif ($tag === 'br') {
@@ -121,6 +173,13 @@ final class JemImageMetadata
             $credit = self::caption($entry['credit'] ?? '');
             if ($credit !== '') {
                 $result[$slot]['credit'] = $credit;
+            }
+            $label = self::creditLabelMode($entry['credit_label'] ?? 'image_credit');
+            if ($label !== 'image_credit') {
+                $result[$slot]['credit_label'] = $label;
+            }
+            if ($label === 'custom') {
+                $result[$slot]['credit_label_custom'] = self::customCreditLabel($entry['credit_label_custom'] ?? '');
             }
             if (in_array($entry['align'] ?? '', ['center', 'right'], true)) {
                 $result[$slot]['align'] = $entry['align'];
@@ -167,9 +226,15 @@ final class JemImageMetadata
                     $result[$slot]['align'] = $input[$slot]['align'];
                 }
             }
+            if ($advanced && array_key_exists('credit_label', $input[$slot])) {
+                $result[$slot]['credit_label'] = self::creditLabelMode($input[$slot]['credit_label']);
+            }
+            if ($advanced && array_key_exists('credit_label_custom', $input[$slot])) {
+                $result[$slot]['credit_label_custom'] = self::customCreditLabel($input[$slot]['credit_label_custom']);
+            }
         }
 
-        return $result;
+        return self::normalise($result, $context);
     }
 
     public static function prepareSubmission(array &$data, string $context, int $copySourceId = 0): void
@@ -277,14 +342,14 @@ final class JemImageMetadata
     }
 
     /** Escape separately for lightbox HTML, then for its containing data attribute. */
-    public static function lightboxTitle(string $title, string $caption, string $credit = ''): string
+    public static function lightboxTitle(string $title, string $caption, string $credit = '', array $metadata = []): string
     {
         $html = htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $caption = self::caption($caption);
         if ($caption !== '') {
             $html .= '<span class="jem-lightbox-caption">' . $caption . '</span>';
         }
-        $credit = self::caption($credit);
+        $credit = self::creditHtml($credit, $metadata);
         if ($credit !== '') {
             $html .= '<span class="jem-lightbox-credit">' . $credit . '</span>';
         }
@@ -292,10 +357,10 @@ final class JemImageMetadata
         return htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
-    public static function figure(string $imageHtml, string $caption, string $context, string $credit = '', string $alignment = 'left'): string
+    public static function figure(string $imageHtml, string $caption, string $context, string $credit = '', string $alignment = 'left', array $metadata = []): string
     {
         $caption = self::caption($caption);
-        $credit = self::caption($credit);
+        $credit = self::creditHtml($credit, $metadata);
         if (($caption === '' && $credit === '') || $imageHtml === '') {
             return $imageHtml;
         }
@@ -320,8 +385,6 @@ final class JemImageMetadata
         }
 
         return '<div class="jem-image-credit jem-image-credit--footer" role="note">'
-            . '<span class="jem-image-credit__label">'
-            . htmlspecialchars(Text::_('COM_JEM_IMAGE_METADATA_FOOTER_LABEL'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')
-            . '</span> ' . $metadata['credit'] . '</div>';
+            . self::creditHtml($metadata['credit'], $metadata) . '</div>';
     }
 }

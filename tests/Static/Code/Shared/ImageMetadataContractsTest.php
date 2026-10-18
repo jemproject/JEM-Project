@@ -6,6 +6,58 @@ use PHPUnit\Framework\TestCase;
 
 final class ImageMetadataContractsTest extends TestCase
 {
+    public function testImageTextDoesNotSetTheFigureWidth(): void
+    {
+        $css = file_get_contents(JEM_TEST_ROOT . '/media/css/image-metadata.css');
+        self::assertMatchesRegularExpression('/#jem \\.jem-image-caption\\s*\\{[^}]*inline-size: 0;[^}]*min-inline-size: 100%;[^}]*max-inline-size: 100%;/s', $css);
+        self::assertStringNotContainsString('max-width: 36rem', $css);
+        self::assertStringContainsString('.jem-category-overview-panel:has(.jem-image-figure)', $css);
+        self::assertStringContainsString('.jem-venue-overview-panel:has(.jem-image-figure)', $css);
+        self::assertMatchesRegularExpression('/\\.jem-image-credit--footer\\s*\\{[^}]*width: 100%;/s', $css);
+        self::assertStringContainsString('padding-inline-end: calc(3rem + 5px)', $css);
+    }
+
+    public function testCreditLabelFlowsThroughAllRenderersAndReset(): void
+    {
+        foreach (['site/views/event/tmpl/default.php', 'site/views/event/tmpl/responsive/default.php', 'site/classes/output.class.php'] as $path) {
+            $source = file_get_contents(JEM_TEST_ROOT . '/' . $path);
+            self::assertStringContainsString("\$metadata['credit'] ?? '', \$metadata)", $source);
+            self::assertStringContainsString("\$metadata['align'] ?? 'left', \$metadata)", $source);
+        }
+        $output = file_get_contents(JEM_TEST_ROOT . '/site/classes/output.class.php');
+        self::assertStringContainsString("JemImageMetadata::creditHtml(\$metadata['credit'] ?? '', \$metadata)", $output);
+        $field = file_get_contents(JEM_TEST_ROOT . '/site/models/fields/jemimagemetadata.php');
+        self::assertStringContainsString('data-jem-reset-value="image_credit"', $field);
+        self::assertStringContainsString('com_jem/image-metadata.js', $field);
+        $reset = file_get_contents(JEM_TEST_ROOT . '/media/js/other.js');
+        self::assertStringContainsString("field.dataset.jemResetValue || 'left'", $reset);
+    }
+
+    public function testCreditPlacementHasConsistentLabelsAndAccessibleHelp(): void
+    {
+        foreach (['admin', 'site'] as $client) {
+            $strings = parse_ini_file(JEM_TEST_ROOT . '/' . $client . '/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
+            self::assertSame('Credit position', $strings['COM_JEM_IMAGE_METADATA_CREDIT_POSITION']);
+            self::assertSame('Below image', $strings['COM_JEM_IMAGE_METADATA_POSITION_BELOW']);
+            self::assertSame('Bottom of section', $strings['COM_JEM_IMAGE_METADATA_POSITION_SECTION']);
+            self::assertSame('Caption', $strings['COM_JEM_IMAGE_METADATA_CAPTION']);
+            self::assertSame('Photo credit / licence', $strings['COM_JEM_IMAGE_METADATA_CREDITS']);
+            self::assertSame('Caption and credit (optional)', $strings['COM_JEM_IMAGE_METADATA_DETAILS']);
+        }
+        $source = file_get_contents(JEM_TEST_ROOT . '/site/models/fields/jemimagemetadata.php');
+        self::assertStringContainsString("Text::_('COM_JEM_IMAGE_METADATA_CREDIT_POSITION_DESC')", $source);
+        self::assertStringContainsString('data-jem-reset-value="0"', $source);
+        self::assertStringContainsString('data-jem-credit-editor', $source);
+        self::assertStringContainsString('data-jem-caption-editor', $source);
+        self::assertStringNotContainsString('data-jem-credit-preview', $source);
+        self::assertStringContainsString('jem-image-metadata__details', $source);
+        self::assertStringContainsString("\$hasText ? ' open' : ''", $source);
+        self::assertStringContainsString("useScript('tinymce')", $source);
+        self::assertStringNotContainsString('type="checkbox"', $source);
+        self::assertSame(2, substr_count($source, "\$id . '_footer-desc'"));
+        self::assertStringContainsString("' aria-describedby=\"' . \$escape(\$id . '_footer-desc')", $source);
+    }
+
     public function testFrontendImagePanelsPlaceMetadataAndClearAfterUploadControls(): void
     {
         foreach (['edit.php', 'responsive/edit.php'] as $layout) {

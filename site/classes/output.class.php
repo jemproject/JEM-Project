@@ -2467,14 +2467,14 @@ static public function lightbox() {
                         . '" data-jem-image-height="' . (int) $imageheight . '"';
                     $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$alt.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
                     $caption = '<template data-jem-image-caption>' . JemImageMetadata::caption($metadata['caption']) . '</template>';
-                    $caption .= '<template data-jem-image-credit>' . JemImageMetadata::caption($metadata['credit'] ?? '') . '</template>';
+                    $caption .= '<template data-jem-image-credit>' . JemImageMetadata::creditHtml($metadata['credit'] ?? '', $metadata) . '</template>';
                     $output = '<div class="flyerimage"><a href="' . $url . '" ' . $attributes . '>' . $icon . $caption . '</a></div>';
                 }
 
                 // if "Enable Pop Up Thumbnail" and lightbox are enabled
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
                     $url = $uri->base().$image['original'];
-                    $lightboxTitle = JemImageMetadata::lightboxTitle($precaption . ': ' . $imageTitle, $metadata['caption'], $metadata['credit'] ?? '');
+                    $lightboxTitle = JemImageMetadata::lightboxTitle($precaption . ': ' . $imageTitle, $metadata['caption'], $metadata['credit'] ?? '', $metadata);
                     if ($metadata['caption'] !== '' || !empty($metadata['credit'])) {
                         HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
                     }
@@ -2501,7 +2501,7 @@ static public function lightbox() {
 
         if ($showCaption && ($metadata['caption'] !== '' || !empty($metadata['credit']))) {
             HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
-            $output = JemImageMetadata::figure($output, $metadata['caption'], $type, empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left');
+            $output = JemImageMetadata::figure($output, $metadata['caption'], $type, empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left', $metadata);
         }
 
         return $output;

@@ -56,11 +56,20 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
                         $html = $form->getInput('image_metadata');
                         self::assertStringContainsString('name="jform[image_metadata][' . $slot . '][alt]"', $html);
                         self::assertStringContainsString('Accessible image', $html);
-                        self::assertStringNotContainsString('<details', $html);
+                        self::assertSame($profile === 'advanced', str_contains($html, '<details'));
+                        if ($profile === 'advanced') {
+                            self::assertStringContainsString('class="jem-image-metadata__details" open', $html);
+                        }
                         self::assertSame($profile === 'advanced', str_contains($html, '[caption]'));
                         self::assertSame($profile === 'advanced', str_contains($html, '[credit]'));
                         self::assertSame($profile === 'advanced', str_contains($html, '[footer]'));
                         self::assertSame($profile === 'advanced', str_contains($html, '[align]'));
+                        self::assertSame($profile === 'advanced', str_contains($html, '[credit_label]'));
+                        self::assertSame($profile === 'advanced', str_contains($html, '[credit_label_custom]'));
+                        if ($profile === 'advanced') {
+                            self::assertStringContainsString('value="image_credit" selected', $html);
+                            self::assertStringContainsString('data-jem-credit-custom', $html);
+                        }
                         self::assertSame($client === 'admin', str_contains($html, 'hide-aware-inline-help d-none'));
                         self::assertStringContainsString('Brief image description for accessibility.', $html);
                         self::assertStringNotContainsString('Do not enter HTML or copyright credits here.', $html);
@@ -182,7 +191,7 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
             $inline = JemOutput::flyer($record, $image, $context, $slot, true);
             self::assertStringContainsString('jem-image-caption__text', $inline);
             self::assertSame(1, substr_count($inline, 'Author credit'));
-            self::assertStringNotContainsString('Image credit:', $inline);
+            self::assertStringContainsString('Image credit:', $inline);
             self::assertSame('', JemOutput::imageCaptionFooter($record, $image, $context, $slot));
             $record->image_metadata[$slot]['footer'] = true;
             $inline = JemOutput::flyer($record, $image, $context, $slot, true);
@@ -220,6 +229,8 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
             foreach ([0, 1] as $mode) {
                 $settings->lightbox = $mode;
                 foreach ($records as [$context, $slot, $record]) {
+                    $record->image_metadata[$slot]['credit'] = 'Example photographer';
+                    $record->image_metadata[$slot]['credit_label'] = 'source';
                     $html = JemOutput::flyer($record, $image, $context, $slot);
                     self::assertStringNotContainsString('<script', $html);
                     self::assertStringNotContainsString('onclick=', $html);
@@ -228,6 +239,7 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
                     $anchor = $dom->getElementsByTagName('a')->item(0);
                     self::assertNotNull($anchor);
                     if ($mode === 0) {
+                        self::assertSame('Source: Example photographer', $dom->getElementsByTagName('template')->item(1)->textContent);
                         self::assertSame('Photo: Author', $dom->getElementsByTagName('template')->item(0)->textContent);
                         self::assertStringContainsString($title, $anchor->getAttribute('data-jem-image-title'));
                     } else {
@@ -236,6 +248,7 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
                         self::assertStringContainsString($title, $inner->textContent);
                         self::assertSame(0, $inner->getElementsByTagName('img')->length);
                         self::assertSame('Photo: Author', $inner->getElementsByTagName('span')->item(0)->textContent);
+                        self::assertStringContainsString('Source: Example photographer', $inner->textContent);
                     }
                 }
                 $full = JemOutput::flyer($records[0][2], $image, 'event', 'fullimage');

@@ -16,6 +16,49 @@ final class ImageMetadataFooterTextStub
 
 final class ImageMetadataTest extends TestCase
 {
+    public function testTextColoursAreCanonicalAndRoundTripSafely(): void
+    {
+        foreach (['color: #aBc;' => '#aabbcc', 'COLOR: #1234AB' => '#1234ab', 'color: rgb(18, 52, 171);' => '#1234ab'] as $style => $colour) {
+            $input = '<span style="' . $style . '" onclick="bad()" class="foreign"><strong>Photo</strong></span>';
+            $expected = '<span style="color: ' . $colour . ';"><strong>Photo</strong></span>';
+            self::assertSame($expected, JemImageMetadata::caption($input));
+            self::assertSame($expected, JemImageMetadata::caption($expected));
+            foreach (['event', 'venue', 'category'] as $context) {
+                $slot = JemImageMetadata::slots($context)[0];
+                $metadata = JemImageMetadata::normalise([$slot => ['caption' => $input, 'credit' => $input]], $context);
+                self::assertSame($expected, $metadata[$slot]['caption']);
+                self::assertSame($expected, $metadata[$slot]['credit']);
+                self::assertSame($metadata, JemImageMetadata::normalise(json_encode($metadata), $context));
+            }
+        }
+    }
+
+    public function testTextColourDoesNotAllowArbitraryCss(): void
+    {
+        foreach (['color: red', 'color: #12345678', 'color: rgba(0,0,0,0)', 'color: rgb(999,0,0)',
+            'color: url(https://example.org)', 'color: expression(alert(1))', 'background: #123456',
+            'color: #123456; position: fixed', 'color: var(--foreign)', 'color: #123456 !important',
+            'color: #123456; background-image:url(https://example.org)', 'color: #abc/*comment*/'] as $style) {
+            self::assertSame('Photo', JemImageMetadata::caption('<span style="' . $style . '">Photo</span>'));
+        }
+        self::assertSame('<strong>Photo</strong>', JemImageMetadata::caption('<strong style="color:#abcdef">Photo</strong>'));
+    }
+
+    public function testVisualCreditMarkupAndPositionRoundTripWithoutSchemaChanges(): void
+    {
+        $credit = '<a href="https://example.org/author?a=1&amp;b=2">Jane Smith</a>, Museum<br>'
+            . '<a href="https://example.org/licence">CC BY-SA 4.0</a>';
+        foreach (['event', 'venue', 'category'] as $context) {
+            $slot = JemImageMetadata::slots($context)[0];
+            foreach (['0', '1'] as $position) {
+                $result = JemImageMetadata::normalise([$slot => ['credit' => $credit, 'footer' => $position]], $context);
+                self::assertSame($credit, $result[$slot]['credit']);
+                self::assertSame($position === '1', !empty($result[$slot]['footer']));
+                self::assertSame($result, JemImageMetadata::normalise(json_encode($result), $context));
+            }
+        }
+    }
+
     public function testRemovingOneImageClearsItsMetadataWithoutTouchingOtherSlots(): void
     {
         foreach (['event', 'venue', 'category'] as $context) {
@@ -229,7 +272,7 @@ final class ImageMetadataTest extends TestCase
         foreach (['justify', '<script>', [], 'RIGHT'] as $invalid) {
             self::assertArrayNotHasKey('align', JemImageMetadata::normalise(['image' => ['align' => $invalid]], 'category')['image']);
         }
-        self::assertStringContainsString('jem-image-caption__text--center', JemImageMetadata::figure('<img>', 'Text', 'event', 'Credit', 'center'));
+        self::assertStringContainsString('jem-image-caption__text--center', JemImageMetadata::figure('<img>', 'Text', 'event', 'Credit', 'center', ['credit_label' => 'none']));
         self::assertStringNotContainsString('jem-image-caption__text--', JemImageMetadata::figure('<img>', 'Text', 'event', '', 'unsafe'));
     }
 }

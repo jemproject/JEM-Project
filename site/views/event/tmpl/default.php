@@ -139,7 +139,7 @@ $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginal
         require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
         $metadata = JemImageMetadata::resolve($this->item, 'event', $detailImageField);
         $imageAlt = $this->escape($metadata['alt'] !== '' ? $metadata['alt'] : $this->item->title);
-        $lightboxTitle = JemImageMetadata::lightboxTitle($this->item->title, $metadata['caption'], $metadata['credit'] ?? '');
+        $lightboxTitle = JemImageMetadata::lightboxTitle($this->item->title, $metadata['caption'], $metadata['credit'] ?? '', $metadata);
         $originalUrl = Uri::base() . ltrim((string) $this->dimage['original'], '/');
         $imageTitle  = $this->escape($this->item->title);
         $imageUrl    = $this->escape($originalUrl);
@@ -151,7 +151,7 @@ $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginal
             . '</div>';
         if ($metadata['caption'] !== '' || !empty($metadata['credit'])) {
             HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
-            $image = JemImageMetadata::figure($image, $metadata['caption'], 'event', empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left');
+            $image = JemImageMetadata::figure($image, $metadata['caption'], 'event', empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left', $metadata);
         }
     } else {
         $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField, true);

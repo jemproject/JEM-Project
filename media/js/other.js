@@ -111,13 +111,16 @@ jQuery(document).ready(function ($) {
             if (field.type === 'checkbox') {
                 field.checked = false;
             } else {
-                field.value = field.tagName === 'SELECT' ? 'left' : '';
+                field.value = field.tagName === 'SELECT' ? (field.dataset.jemResetValue || 'left') : '';
             }
             field.dispatchEvent(new Event('input', {bubbles: true}));
             field.dispatchEvent(new Event('change', {bubbles: true}));
         });
         panel.querySelectorAll('.jem-image-metadata__notice').forEach(function (notice) {
             notice.hidden = true;
+        });
+        panel.querySelectorAll('.jem-image-metadata__details').forEach(function (details) {
+            details.open = false;
         });
         if (removeImage) {
             removeImage.value = '1';
