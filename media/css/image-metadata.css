@@ -1,0 +1,219 @@
+/* Optional image metadata: shared by frontend and administrator forms. */
+.jem-image-metadata {
+    margin-block: 1rem;
+    width: 100%;
+    min-width: 0;
+}
+
+.jem-image-metadata .jem-image-metadata__slot {
+    border: 0;
+    margin: 0 0 1rem;
+    padding: 0;
+    min-width: 0;
+}
+
+.jem-image-metadata--alt,
+.jem-image-metadata--alt .jem-image-metadata__slot {
+    margin: 0;
+}
+
+.jem-image-metadata__slot legend {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: .5rem;
+}
+
+.jem-image-metadata input,
+.jem-image-metadata textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+}
+
+.jem-image-metadata__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: 1rem;
+}
+
+.jem-image-metadata .jem-image-metadata__card {
+    min-width: 0;
+    margin: 0;
+    padding: .75rem 1rem 1rem;
+    border: 1px solid var(--border-color, #d5dbe2);
+    border-radius: .25rem;
+}
+
+.jem-image-metadata__card legend {
+    float: none;
+    width: auto;
+    padding-inline: .25rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.jem-image-metadata__hint {
+    font-size: .875rem;
+    margin: 0 0 .75rem;
+}
+
+.jem-image-metadata__card label {
+    float: none;
+    width: auto;
+}
+
+.jem-image-metadata__card textarea {
+    display: block;
+}
+
+/* Legacy frontend layouts give every fieldset a dotted !important border. */
+div#jem .jem-image-metadata .jem-image-metadata__slot {
+    border: 0 !important;
+}
+
+div#jem .jem-image-metadata .jem-image-metadata__card {
+    border: 1px solid var(--border-color, #d5dbe2) !important;
+}
+
+.jem-image-metadata__alignment {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    margin-top: .5rem;
+}
+
+.jem-image-metadata__alignment .form-select {
+    width: auto;
+    max-width: 100%;
+}
+
+.jem-image-metadata .jem-image-metadata__footer-option {
+    margin-top: .5rem;
+}
+
+.jem-image-metadata .jem-image-metadata__footer-option input[type="checkbox"] {
+    width: 1em;
+}
+
+#jem .jem-image-figure {
+    display: inline-block;
+    margin: 0;
+    max-width: 100%;
+    min-width: 0;
+    vertical-align: top;
+}
+
+div#jem .jem-image-figure .flyerimage {
+    float: none !important;
+}
+
+#jem .jem-image-caption {
+    clear: both;
+    font-size: .875em;
+    line-height: 1.4;
+    margin-top: .35rem;
+    overflow-wrap: anywhere;
+    text-align: start;
+    max-width: 36rem;
+}
+
+#jem .jem-image-credit {
+    display: block;
+    font-size: .8rem;
+    line-height: 1.4;
+    margin-top: .3rem;
+    overflow-wrap: anywhere;
+    font-style: normal;
+    font-weight: 400;
+}
+
+#jem .jem-image-caption__text {
+    display: block;
+    text-align: left;
+}
+
+#jem .jem-image-caption__text--center {
+    text-align: center;
+}
+
+#jem .jem-image-caption__text--right {
+    text-align: right;
+}
+
+#jem .jem-image-caption__text,
+#jem .jem-image-caption__text *,
+.lightbox .lb-caption .jem-lightbox-caption,
+.lightbox .lb-caption .jem-lightbox-caption *,
+.jem-image-popup__caption,
+.jem-image-popup__caption * {
+    font-weight: 600;
+    font-style: normal;
+}
+
+div#jem .jem-image-credit--footer {
+    grid-column: 1 / -1;
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    clear: both;
+    margin-top: .5rem;
+    padding-top: .5rem;
+    border-top: 1px solid rgba(128, 128, 128, .25);
+    font-style: normal;
+    font-weight: 400;
+}
+
+/* Lightbox is appended to body, outside #jem. Keep its title on the first line. */
+.lightbox .lb-caption .jem-lightbox-caption,
+.lightbox .lb-caption .jem-lightbox-credit {
+    display: block;
+    margin-top: .3rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+#jem .jem-image-credit *,
+.lightbox .lb-caption .jem-lightbox-credit,
+.lightbox .lb-caption .jem-lightbox-credit *,
+.jem-image-popup__credit,
+.jem-image-popup__credit * {
+    font-style: normal;
+    font-weight: 400;
+}
+
+.lightbox .lb-caption .jem-lightbox-credit,
+.jem-image-popup__credit {
+    font-size: .9em;
+}
+
+.jem-image-popup {
+    margin: 0;
+    padding: 1rem;
+    background: #fff;
+    color: #222;
+    font: 1rem/1.4 system-ui, sans-serif;
+    overflow-wrap: anywhere;
+}
+
+.jem-image-popup figure {
+    margin: 0;
+}
+
+.jem-image-popup img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+}
+
+.jem-image-popup__title {
+    margin-top: .5rem;
+    font-weight: 600;
+}
+
+.jem-image-popup__caption,
+.jem-image-popup__credit {
+    margin-top: .3rem;
+}

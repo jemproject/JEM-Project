@@ -712,6 +712,9 @@ class JemTableEvent extends Table
         JemHelper::setEventUtcDates($this);
 
         // item must be stored BEFORE image deletion
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareStore($this, 'event');
+
         $ret = parent::store($updateNulls);
         if (!$ret) {
             foreach ($uploadedImages as $uploadedImage) {

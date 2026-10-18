@@ -396,7 +396,7 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
       }
     </style>
     <div class="jem-img jem-venue-overview-media">
-      <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue'); ?>
+      <?php echo JemOutput::flyer($this->venue, $this->limage, 'venue', null, true); ?>
     </div>
     <?php endif; ?>
 
@@ -419,6 +419,9 @@ $venueShowEvents = (int) $this->params->get('venue_show_events', 1) === 1
             <?php echo JemOutput::mapicon($this->venue, null, $venueMapSettings); ?>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
+    <?php if ($venueShowDetails && $venueShowImage) : ?>
+      <?php echo JemOutput::imageCaptionFooter($this->venue, $this->limage, 'venue'); ?>
     <?php endif; ?>
   </div>
   <?php if ($venueShowDescription || $venueShowEvents) : ?>

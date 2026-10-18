@@ -2387,8 +2387,10 @@ static public function lightbox() {
      * @param string $type
      */
 
-    static public function flyer($data, $image, $type, $id = null)
+    static public function flyer($data, $image, $type, $id = null, $showCaption = false)
     {
+        require_once __DIR__ . '/imagemetadata.class.php';
+        $metadata = JemImageMetadata::resolve($data, $type, (string) $id);
         $uri      = Uri::getInstance();
         $id_attr  = $id ? 'id="'.$id.'"' : '';
         $settings = JemHelper::config();
@@ -2430,6 +2432,8 @@ static public function lightbox() {
                 break;
         }
 
+        $alt = htmlspecialchars($metadata['alt'] !== '' ? $metadata['alt'] : (string) $info, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $imageTitle = (string) $info;
         $info = htmlspecialchars((string) $info, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         // Do we have an image?
@@ -2449,31 +2453,42 @@ static public function lightbox() {
             if ($thumbPath !== '' && is_file(JPATH_SITE . '/' . $thumbPath)) {
                 // if "Enable Pop Up Thumbnail" is disabled
                 if (($settings->gddisabled == 0) && ($settings->lightbox == 0))    {
-                    $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.$info.'" />';
+                    $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$alt.'" title="'.$info.'" />';
                     $output = '<div class="flyerimage">'.$icon.'</div>';
                 }
 
                 // if "Enable Pop Up Thumbnail" is enabled and lightbox disabled
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 0)) {
-                    $attributes = $id_attr.' class="flyerimage" onclick="window.open(\''.$uri->base().$image['original'].'\',\'Popup\',\'width='. $imagewidth.',height='.$imageheight.',location=no,menubar=no,scrollbars=no,status=no,toolbar=no,resizable=no\')"';
-                    $icon = '<img '.$attributes.' src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
-                    $output = '<div class="flyerimage">'.$icon.'</div>';
+                    HTMLHelper::_('script', 'com_jem/image-popup.js', array('version' => 'auto', 'relative' => true), array('defer' => true));
+                    $url = htmlspecialchars($uri->base() . $image['original'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                    $popupTitle = htmlspecialchars($precaption . ': ' . $imageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                    $attributes = $id_attr . ' class="flyerimage" data-jem-image-popup data-jem-image-title="' . $popupTitle
+                        . '" data-jem-image-alt="' . $alt . '" data-jem-image-width="' . (int) $imagewidth
+                        . '" data-jem-image-height="' . (int) $imageheight . '"';
+                    $icon = '<img src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$alt.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+                    $caption = '<template data-jem-image-caption>' . JemImageMetadata::caption($metadata['caption']) . '</template>';
+                    $caption .= '<template data-jem-image-credit>' . JemImageMetadata::caption($metadata['credit'] ?? '') . '</template>';
+                    $output = '<div class="flyerimage"><a href="' . $url . '" ' . $attributes . '>' . $icon . $caption . '</a></div>';
                 }
 
                 // if "Enable Pop Up Thumbnail" and lightbox are enabled
                 elseif (($settings->gddisabled == 1) && ($settings->lightbox == 1)) {
                     $url = $uri->base().$image['original'];
-                    $attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$precaption.': '.$info.'"';
-                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$info.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
+                    $lightboxTitle = JemImageMetadata::lightboxTitle($precaption . ': ' . $imageTitle, $metadata['caption'], $metadata['credit'] ?? '');
+                    if ($metadata['caption'] !== '' || !empty($metadata['credit'])) {
+                        HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
+                    }
+                    $attributes = $id_attr.' rel="lightbox" class="flyermodal flyerimage" data-lightbox="lightbox-image-'.$id.'" title="'.$info.'" data-title="'.$lightboxTitle.'" data-alt="'.$alt.'"';
+                    $icon = '<img class="example-thumbnail" itemprop="image" src="'.$uri->base().$image['thumb'].'" width="'.$thumbwidth.'" height="'.$thumbheight.'" alt="'.$alt.'" title="'.Text::_('COM_JEM_CLICK_TO_ENLARGE').'" />';
                     $output = '<div class="flyerimage"><a href="'.$url.'" '.$attributes.'>'.$icon.'</a></div>';
 
                 }
                 // If the resolved display image is unavailable, use the limited original image.
             } else {
-                $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$info.'" />';
+                $output = '<img '.$id_attr.' class="notmodal" src="'.$uri->base().$image['original'].'" width="'.$image['width'].'" height="'.$image['height'].'" alt="'.$alt.'" />';
             }
         }else{
-            $output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$info.'" />';
+            $output = '<img '.$id_attr.' class="notmodal img-responsive" src="'.$uri->base().$image['original'].'" style="width:auto;height:200px;" alt="'.$alt.'" />';
         }
 
         if (($type === 'event' || $type === 'venue') && is_object($data)) {
@@ -2484,7 +2499,23 @@ static public function lightbox() {
             );
         }
 
+        if ($showCaption && ($metadata['caption'] !== '' || !empty($metadata['credit']))) {
+            HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
+            $output = JemImageMetadata::figure($output, $metadata['caption'], $type, empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left');
+        }
+
         return $output;
+    }
+
+    public static function imageCaptionFooter($record, $image, string $context, string $slot = ''): string
+    {
+        require_once __DIR__ . '/imagemetadata.class.php';
+        $html = JemImageMetadata::footer($record, $image, $context, $slot);
+        if ($html !== '') {
+            HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
+        }
+
+        return $html;
     }
 
     /**

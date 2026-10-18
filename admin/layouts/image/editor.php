@@ -133,21 +133,16 @@ $isOversized = is_array($repairAnalysis)
                 </div>
             </div>
 
+            <?php if ($metadataField = $form->getField('image_metadata')) : ?>
+                <?php echo $metadataField->renderSlot($selectField, 'alt'); ?>
+            <?php endif; ?>
+
             <?php foreach ($extraRows as $row) : ?>
                 <div class="jem-image-upload-row<?php echo !empty($row['class']) ? ' ' . $this->escape($row['class']) : ''; ?>">
                     <div class="jem-image-upload-label"><?php echo $row['label']; ?></div>
                     <div class="jem-image-upload-control"><?php echo $row['input']; ?></div>
                 </div>
             <?php endforeach; ?>
-
-            <div class="jem-image-actions jem-image-actions--last">
-                <button
-                    type="button"
-                    class="btn btn-secondary btn-sm jem-image-action-button jem-image-clear"
-                    data-jem-image-select="<?php echo $this->escape($selectId); ?>"
-                    data-jem-image-file="<?php echo $this->escape($fileId); ?>"
-                ><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-            </div>
 
             <input type="hidden" name="<?php echo $this->escape($removeField); ?>" id="<?php echo $this->escape($removeField); ?>" value="0">
         </div>
@@ -167,5 +162,16 @@ $isOversized = is_array($repairAnalysis)
                 <?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?>
             </span>
         </div>
+    </div>
+    <?php if ($metadataField = $form->getField('image_metadata')) : ?>
+        <?php echo $metadataField->renderSlot($selectField, 'details'); ?>
+    <?php endif; ?>
+    <div class="jem-image-actions jem-image-actions--last">
+        <button
+            type="button"
+            class="btn btn-secondary btn-sm jem-image-action-button jem-image-clear"
+            data-jem-image-select="<?php echo $this->escape($selectId); ?>"
+            data-jem-image-file="<?php echo $this->escape($fileId); ?>"
+        ><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
     </div>
 </section>

@@ -79,10 +79,13 @@ $categoryEditButton = JemOutput::editbutton(
                 echo HTMLHelper::_('image', 'com_jem/noimage.webp', $this->category->catname, $imgattribs, true);
             }
             else {
-                echo JemOutput::flyer($this->category, $this->cimage, 'category');
+                echo JemOutput::flyer($this->category, $this->cimage, 'category', null, true);
             }
             ?>
             </div>
+        <?php endif; ?>
+        <?php if ($this->jemsettings->discatheader && !empty($this->category->image)) : ?>
+            <?php echo JemOutput::imageCaptionFooter($this->category, $this->cimage, 'category'); ?>
         <?php endif; ?>
     </div>
     <div class="jem-category-section-separator"></div>

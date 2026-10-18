@@ -227,6 +227,12 @@ WHERE `id` = 2;
 
 -- --------------------------------------------------------
 
+-- Image metadata example: the third Prado session demonstrates intro-image fallback,
+-- left-aligned captions and a separate footer credit. The attribution is fictional.
+UPDATE `#__jem_events`
+SET `image_metadata` = '{"datimage":{"alt":"Illustrated museum gallery with paintings, visitors and glowing digital connections.","caption":"Art meets technology: exploring new ways to connect museums and their visitors.","image":"event-prado-museum-technology-talk.webp","credit":"Illustration: Alex Morgan / Museum Lab (fictional credit for this JEM demo; not a licence statement).","footer":true}}'
+WHERE `id` = 16 AND `alias` = 'museum-technology-talk-prado-3';
+
 -- JEM 5.1 functional Sample Data showcase
 -- Three compact university examples cover Classic, Single and Multiple modes.
 -- Images and attachment files live in sampledata.zip.

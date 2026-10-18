@@ -2126,13 +2126,16 @@ SQL;
         $existingTables = $db->getTableList();
         $definitionsByTable = array(
             '#__jem_events' => array(
+                'image_metadata' => "TEXT NULL DEFAULT NULL",
                 'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `fullimage`",
             ),
             '#__jem_categories' => array(
+                'image_metadata' => "TEXT NULL DEFAULT NULL",
                 'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image`",
                 'event_image_default_storage' => "VARCHAR(20) NOT NULL DEFAULT 'shared_root' AFTER `image_as_default`",
             ),
             '#__jem_venues' => array(
+                'image_metadata' => "TEXT NULL DEFAULT NULL",
                 'image_path' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `locimage`",
                 'locimage_alt' => "VARCHAR(255) NOT NULL DEFAULT '' AFTER `image_path`",
             ),

@@ -163,6 +163,19 @@ final class SampleDataSafetyIntegrationTest extends TestCase
         self::assertSame([], glob($this->directory . '/tmp/sample_*'));
     }
 
+    public function testPradoImageMetadataIsImportedOnlyForTheSelectedOccurrence(): void
+    {
+        self::assertTrue($this->model->loadData(), implode('\n', JemHelper::$logs));
+        $metadata = json_decode($this->scalar('SELECT image_metadata FROM #__jem_events WHERE id=16'), true, 512, JSON_THROW_ON_ERROR);
+        self::assertSame('event-prado-museum-technology-talk.webp', $metadata['datimage']['image']);
+        self::assertSame($this->scalar('SELECT datimage FROM #__jem_events WHERE id=16'), $metadata['datimage']['image']);
+        self::assertStringContainsString('Art meets technology', $metadata['datimage']['caption']);
+        self::assertStringContainsString('fictional credit', $metadata['datimage']['credit']);
+        self::assertTrue($metadata['datimage']['footer']);
+        self::assertEquals(12, $this->scalar('SELECT recurrence_first_id FROM #__jem_events WHERE id=16'));
+        self::assertEquals(0, $this->scalar("SELECT COUNT(*) FROM #__jem_events WHERE id IN (12,15) AND image_metadata IS NOT NULL"));
+    }
+
     public function testConflictingMediaIsPreservedAndReported(): void
     {
         $zip = new ZipArchive();

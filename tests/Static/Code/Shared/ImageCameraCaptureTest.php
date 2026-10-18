@@ -101,7 +101,7 @@ final class ImageCameraCaptureTest extends TestCase
         self::assertStringNotContainsString('array(128, 512, 800', $helper);
         self::assertStringNotContainsString('array(128, 512, 800, 1280, 1920, 2560, 3840)', $helper);
         self::assertStringContainsString('$value > $minimum && $value < $maximum', $helper);
-        self::assertStringNotContainsString('$marks[] = $maximum;', $helper);
+        self::assertStringContainsString('$marks[] = $maximum;', $helper);
         self::assertStringContainsString('class="jem-image-resolution-range"', $helper);
         self::assertStringContainsString('data-jem-image-resolution-label=', $helper);
         self::assertStringContainsString('data-jem-image-ratio-select', $helper);
@@ -258,14 +258,14 @@ final class ImageCameraCaptureTest extends TestCase
             $template = $this->read($path);
 
             self::assertStringContainsString('class="jem-image-upload-label"', $template);
-            self::assertStringContainsString('jem-image-upload-row--alt', $template);
+            self::assertStringContainsString("renderSlot('locimage')", $template);
             self::assertStringContainsString('jem-image-action-button', $template);
             self::assertStringContainsString('JemImageCamera::resolutionControl(', $template);
             self::assertStringContainsString('jem-image-actions--last', $template);
-            self::assertLessThan(
-                strpos($template, 'jem-image-actions--last'),
-                strpos($template, 'jem-image-upload-row--alt'),
-                $path . ' must place Clear immediately after the alternative-text row'
+            self::assertGreaterThan(
+                strpos($template, 'jem-image-preview-stage'),
+                strpos($template, "renderSlot('locimage')"),
+                $path . ' must place metadata at the bottom of the image panel'
             );
             self::assertLessThan(
                 strpos($template, 'jem-image-preview-stage'),
@@ -348,6 +348,14 @@ final class ImageCameraCaptureTest extends TestCase
         $categoryField = $this->read('/site/models/fields/imageselectcategory.php');
 
         self::assertStringContainsString('search-placeholder=', $field);
+        self::assertStringContainsString('.choices[data-type="select-one"] .choices__inner', $field);
+        self::assertStringContainsString('align-items: center;', $field);
+        self::assertStringContainsString('padding-block: .5rem;', $field);
+        self::assertStringContainsString('padding-block: 0;', $field);
+        self::assertStringContainsString(
+            'padding-inline-end: calc(2.25rem + 10px);',
+            $this->read('/media/css/image-camera.css')
+        );
         self::assertStringContainsString('min-term-length="1"', $field);
         self::assertStringContainsString('min-width: 100% !important;', $field);
         self::assertStringContainsString('width: 100% !important;', $field);

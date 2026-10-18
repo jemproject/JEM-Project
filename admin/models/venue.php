@@ -328,6 +328,8 @@ class JemModelVenue extends JemModelAdmin
      */
     public function save($data)
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareSubmission($data, 'venue', (int) $this->getState('image_metadata.copy_source', 0));
         // Variables
         $app         = Factory::getApplication();
         $jinput      = $app->input;

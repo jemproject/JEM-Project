@@ -73,8 +73,11 @@ $categoryEditButton = JemOutput::editbutton(
     </div>
     <?php if (($this->jemsettings->discatheader) && (!empty($this->category->image))) : ?>
     <div class="jem-catimg jem-category-overview-media">
-      <?php echo JemOutput::flyer($this->category, $this->cimage, 'category'); ?>
+      <?php echo JemOutput::flyer($this->category, $this->cimage, 'category', null, true); ?>
     </div>
+    <?php endif; ?>
+    <?php if ($this->jemsettings->discatheader && !empty($this->category->image)) : ?>
+      <?php echo JemOutput::imageCaptionFooter($this->category, $this->cimage, 'category'); ?>
     <?php endif; ?>
   </div>
   <div class="jem-category-section-separator"></div>

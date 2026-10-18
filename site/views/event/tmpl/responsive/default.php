@@ -136,17 +136,25 @@ if (!empty($this->item->event_status_indicators_prepared)) {
 }
 $renderEventDetailImage = function ($layoutClass = '', $style = '', $useOriginalImage = false) use ($detailImageField) {
     if ($useOriginalImage && !empty($this->dimage['original'])) {
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        $metadata = JemImageMetadata::resolve($this->item, 'event', $detailImageField);
+        $imageAlt = $this->escape($metadata['alt'] !== '' ? $metadata['alt'] : $this->item->title);
+        $lightboxTitle = JemImageMetadata::lightboxTitle($this->item->title, $metadata['caption'], $metadata['credit'] ?? '');
         $originalUrl = Uri::base() . ltrim((string) $this->dimage['original'], '/');
         $imageTitle  = $this->escape($this->item->title);
         $imageUrl    = $this->escape($originalUrl);
         $lightboxId  = 'lightbox-event-header-' . (int) $this->item->id;
         $image = '<div class="flyerimage">'
-            . '<a href="' . $imageUrl . '" rel="lightbox" class="flyermodal flyerimage" data-lightbox="' . $lightboxId . '" title="' . $imageTitle . '" data-title="' . $imageTitle . '">'
-            . '<img class="jem-event-header-fullimage" src="' . $imageUrl . '" alt="' . $imageTitle . '" loading="lazy" />'
+            . '<a href="' . $imageUrl . '" rel="lightbox" class="flyermodal flyerimage" data-lightbox="' . $lightboxId . '" title="' . $imageTitle . '" data-title="' . $lightboxTitle . '" data-alt="' . $imageAlt . '">'
+            . '<img class="jem-event-header-fullimage" src="' . $imageUrl . '" alt="' . $imageAlt . '" loading="lazy" />'
             . '</a>'
             . '</div>';
+        if ($metadata['caption'] !== '' || !empty($metadata['credit'])) {
+            HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', array('version' => 'auto', 'relative' => true));
+            $image = JemImageMetadata::figure($image, $metadata['caption'], 'event', empty($metadata['footer']) ? ($metadata['credit'] ?? '') : '', $metadata['align'] ?? 'left');
+        }
     } else {
-        $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField);
+        $image = JemOutput::flyer($this->item, $this->dimage, 'event', $detailImageField, true);
     }
 
     if (empty($image)) {
@@ -778,6 +786,9 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
             <?php if (in_array($detailImageLayout, array('right', 'poster'), true)) : ?>
                 <?php echo $renderEventDetailImage($detailImageLayout === 'poster' ? 'jem-event-detail-image--poster' : ''); ?>
             <?php endif; ?>
+            <?php if ($detailImageLayout !== 'hidden') : ?>
+                <?php echo JemOutput::imageCaptionFooter($this->item, $this->dimage, 'event', $detailImageField); ?>
+            <?php endif; ?>
         </div>
 
         <?php if ($eventCustomFieldsPosition === 'before_description') : ?>
@@ -1239,7 +1250,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
 
                         <div class="jem-img">
-                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue', null, true); ?>
                         </div>
                     </div>
                 <?php else : ?>
@@ -1315,7 +1326,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
 
                         <div class="jem-img">
-                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue', null, true); ?>
                         </div>
                     <?php else : // $params->get('event_show_detailsadress', '1') == 0 ?>
                         <div class="jem-grow-2">
@@ -1333,7 +1344,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                         </div>
 
                         <div class="jem-img">
-                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue'); ?>
+                            <?php echo JemOutput::flyer($this->item, $this->limage, 'venue', null, true); ?>
                         </div>
                     <?php endif; /* event_show_detailsadress */ ?>
                 </div>
@@ -1399,6 +1410,7 @@ if ($params->get('access-view')) { /* This will show nothings otherwise - ??? */
                 <?php echo $this->loadTemplate('attachments'); ?>
                 <?php unset($this->attachmentParams); ?>
 
+                <?php echo JemOutput::imageCaptionFooter($this->item, $this->limage, 'venue'); ?>
                 </div>
             </div>
 

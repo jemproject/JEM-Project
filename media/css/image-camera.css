@@ -265,6 +265,11 @@
     width: 100%;
 }
 
+/* Add 5px to the existing form-select arrow clearance, only for image ratios. */
+:is(#event-form, #venue-form, #jem, .jem-admin-image-tab, .jem-edit-category-form) select.form-select.jem-image-ratio-select[data-jem-image-ratio-select] {
+    padding-inline-end: calc(2.25rem + 10px);
+}
+
 .jem-image-resolution-mark-track {
     position: absolute;
     z-index: 2;
@@ -339,6 +344,10 @@
 .jem-image-resolution-mark:nth-child(even)::after {
     top: auto;
     bottom: calc(100% + 0.05rem);
+}
+
+.jem-image-resolution-mark--hide-label::after {
+    content: none;
 }
 
 .jem-image-resolution-mark:hover::before,

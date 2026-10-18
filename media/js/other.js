@@ -107,6 +107,18 @@ jQuery(document).ready(function ($) {
         if (alternativeText) {
             alternativeText.value = '';
         }
+        panel.querySelectorAll('.jem-image-metadata input[type="text"], .jem-image-metadata textarea, .jem-image-metadata select, .jem-image-metadata input[type="checkbox"]').forEach(function (field) {
+            if (field.type === 'checkbox') {
+                field.checked = false;
+            } else {
+                field.value = field.tagName === 'SELECT' ? 'left' : '';
+            }
+            field.dispatchEvent(new Event('input', {bubbles: true}));
+            field.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+        panel.querySelectorAll('.jem-image-metadata__notice').forEach(function (notice) {
+            notice.hidden = true;
+        });
         if (removeImage) {
             removeImage.value = '1';
         }

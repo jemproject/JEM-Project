@@ -103,6 +103,7 @@ $isNew = empty($this->item->id);
                                 <?php endif; ?>
                             </div>
                         </div>
+                        <?php echo $this->form->getField('image_metadata')->renderSlot('image', 'alt'); ?>
                         <div class="jem-image-upload-row">
                             <div class="jem-image-upload-label"><?php echo $this->form->getLabel('image_as_default'); ?></div>
                             <div class="jem-image-upload-control"><?php echo $this->form->getInput('image_as_default'); ?></div>
@@ -111,14 +112,6 @@ $isNew = empty($this->item->id);
                             <div class="jem-image-upload-label"><?php echo $this->form->getLabel('event_image_default_storage'); ?></div>
                             <div class="jem-image-upload-control"><?php echo $this->form->getInput('event_image_default_storage'); ?></div>
                         </div>
-                        <?php if ($this->jemsettings->imageenabled != 0) : ?>
-                            <div class="jem-image-actions jem-image-actions--last">
-                                <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear"
-                                    data-jem-image-select="jform_image" data-jem-image-file="jform_userfile">
-                                    <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
-                                </button>
-                            </div>
-                        <?php endif; ?>
                         <input type="hidden" name="removeimage" id="removeimage" value="0">
                     </div>
                     <div class="jem-image-preview-stage<?php echo $this->item->image ? ' jem-image-preview-stage--has-image' : ''; ?>">
@@ -137,6 +130,15 @@ $isNew = empty($this->item->id);
                         </span>
                     </div>
                 </div>
+                <?php echo $this->form->getField('image_metadata')->renderSlot('image', 'details'); ?>
+                <?php if ($this->jemsettings->imageenabled != 0) : ?>
+                    <div class="jem-image-actions jem-image-actions--last">
+                        <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear"
+                            data-jem-image-select="jform_image" data-jem-image-file="jform_userfile">
+                            <?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>
+                        </button>
+                    </div>
+                <?php endif; ?>
             </fieldset>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 

@@ -912,6 +912,10 @@ class JemCategoryNode
      */
     public $image = null;
 
+    /** Image storage path and optional per-image accessibility/credit metadata. */
+    public $image_path = null;
+    public $image_metadata = null;
+
     /**
      * Category display color.
      */

@@ -680,6 +680,8 @@ class JemModelEvent extends JemModelAdmin
      */
     public function save($data)
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareSubmission($data, 'event', (int) $this->getState('image_metadata.copy_source', 0));
         // Variables
         $app         = Factory::getApplication();
         $jinput      = $app->input;
@@ -1446,7 +1448,7 @@ class JemModelEvent extends JemModelAdmin
             }
 
             //Fields allowed to update
-            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'parent_event_id', 'event_tree_order', 'show_in_calendar', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'image_path', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'age_level_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
+            $fieldAllow = ['title', 'locid', 'cats', 'dates', 'enddates', 'times', 'endtimes', 'timezone_mode', 'timezone', 'parent_event_id', 'event_tree_order', 'show_in_calendar', 'alias', 'modified', 'modified_by', 'version', 'author_ip', 'created', 'introtext', 'meta_keywords', 'meta_description', 'datimage', 'fullimage', 'image_path', 'image_metadata', 'fullimage_layout', 'checked_out', 'checked_out_time', 'registra', 'registra_from', 'registra_until', 'reginvitedonly', 'unregistra', 'unregistra_until', 'maxplaces', 'minbookeduser', 'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking', 'singlebooking', 'published', 'event_status', 'ticket_availability', 'type_id', 'age_level_id', 'article_id', 'online_meeting_url', 'online_meeting_label', 'contactid', 'custom1', 'custom2', 'custom3', 'custom4', 'custom5', 'custom6', 'custom7', 'custom8', 'custom9', 'custom10', 'fulltext', 'created_by_alias', 'access', 'featured', 'language'];
             $saved = false;
 
             // get the fields update
@@ -2013,7 +2015,7 @@ class JemModelEvent extends JemModelAdmin
         $allowed = array(
             'title', 'locid', 'timezone_mode', 'timezone', 'introtext', 'fulltext', 'article_id',
             'online_meeting_url', 'online_meeting_label', 'meta_keywords', 'meta_description',
-            'datimage', 'fullimage', 'image_path', 'fullimage_layout', 'registra', 'registra_from', 'registra_until',
+            'datimage', 'fullimage', 'image_path', 'image_metadata', 'fullimage_layout', 'registra', 'registra_from', 'registra_until',
             'unregistra', 'unregistra_until', 'reginvitedonly', 'maxplaces', 'minbookeduser',
             'maxbookeduser', 'reservedplaces', 'waitinglist', 'requestanswer', 'seriesbooking',
             'singlebooking', 'contactid', 'access', 'featured', 'language', 'type_id', 'age_level_id', 'attribs',
@@ -2411,7 +2413,7 @@ class JemModelEvent extends JemModelAdmin
 
         $db = Factory::getContainer()->get('DatabaseDriver');
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('id', 'image', 'image_path', 'event_image_default_storage')))
+            ->select($db->quoteName(array('id', 'image', 'image_path', 'image_metadata', 'event_image_default_storage')))
             ->from($db->quoteName('#__jem_categories'))
             ->whereIn($db->quoteName('id'), $catIds)
             ->where($db->quoteName('image_as_default') . ' = 1')
@@ -2454,6 +2456,7 @@ class JemModelEvent extends JemModelAdmin
 
             $data['datimage'] = $targetFilename;
             $data['image_path'] = $targetFolder;
+            JemImageMetadata::inheritCategory($data, $category);
 
             return true;
         }
@@ -4303,7 +4306,7 @@ class JemModelEvent extends JemModelAdmin
                     'a.custom1, a.custom2, a.custom3, a.custom4, a.custom5, a.custom6, a.custom7, a.custom8, a.custom9, a.custom10, ' .
                     'a.created, a.created_by, a.published, a.registra, a.registra_from, a.registra_until, a.unregistra, a.unregistra_until, ' .
                     'CASE WHEN a.modified = 0 THEN a.created ELSE a.modified END as modified, a.modified_by, ' .
-                    'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.fullimage_layout, a.version, a.featured, ' .
+                    'a.checked_out, a.checked_out_time, a.datimage, a.fullimage, a.image_path, a.image_metadata, a.fullimage_layout, a.version, a.featured, ' .
                     'a.seriesbooking, a.singlebooking, a.meta_keywords, a.meta_description, a.created_by_alias, a.introtext, a.fulltext, a.maxplaces, a.reservedplaces, a.minbookeduser, a.maxbookeduser, a.waitinglist, a.requestanswer, ' .
                     'a.hits, a.language, a.recurrence_type, a.recurrence_first_id, a.series_id, a.series_order' . ($iduser? ', r.waiting, r.places, r.status':'')))    ;
             $query->from('#__jem_events AS a');

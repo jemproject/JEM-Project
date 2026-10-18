@@ -409,4 +409,7 @@
             description="COM_JEM_FIELD_METADESCRIPTION_DESC"
         />
     </fieldset>
+    <fieldset name="image_metadata_fields" addfieldpath="/components/com_jem/models/fields">
+        <field name="image_metadata" type="jemimagemetadata" context="venue" filter="raw" />
+    </fieldset>
 </form>

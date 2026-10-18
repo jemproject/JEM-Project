@@ -67,6 +67,15 @@ final class AdminCodeContractsTest extends TestCase
     #[DataProvider('adminFormFieldProvider')]
     public function testAdminFormFieldsDefineJFormFieldClass(string $path): void
     {
+        // Shared image fields use a backend bridge instead of duplicating a class.
+        if (in_array(basename($path), ['imageselectcategory.php', 'imageselectevent.php', 'jemimagefile.php', 'jemimagemetadata.php'], true)) {
+            self::assertStringContainsString(
+                "JPATH_SITE . '/components/com_jem/models/fields/" . basename($path) . "'",
+                self::read($path)
+            );
+            $path = JEM_TEST_ROOT . '/site/models/fields/' . basename($path);
+        }
+
         self::assertMatchesRegularExpression(
             '/class\s+JFormField[A-Za-z0-9_]+\s+extends\s+[A-Za-z0-9_\\\\]+/',
             self::read($path),

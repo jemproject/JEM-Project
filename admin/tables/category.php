@@ -240,6 +240,9 @@ class JemTableCategory extends Nested
             return false;
         }
 
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareStore($this, 'category');
+
         return parent::store($updateNulls);
     }
 

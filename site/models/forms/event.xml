@@ -845,4 +845,7 @@
         </field>
     </fieldset>
 
+    <fieldset name="image_metadata_fields" addfieldpath="/components/com_jem/models/fields">
+        <field name="image_metadata" type="jemimagemetadata" context="event" filter="raw" />
+    </fieldset>
 </form>

@@ -24,6 +24,21 @@ class JemControllerVenue extends JemControllerForm
      */
     protected $text_prefix = 'COM_JEM_VENUE';
 
+    /** Preserve existing image credits when Joomla resets the copied record ID. */
+    public function save($key = null, $urlVar = 'id')
+    {
+        $this->checkToken();
+        $app = Factory::getApplication();
+        $data = $app->input->post->get('jform', array(), 'array');
+        $recordId = (int) ($data['id'] ?? $app->input->getInt('id'));
+        if ($this->getTask() === 'save2copy' && $recordId > 0
+            && $this->allowEdit(array('id' => $recordId))) {
+            $this->getModel()->setState('image_metadata.copy_source', $recordId);
+        }
+
+        return parent::save($key, $urlVar);
+    }
+
 
     /**
      * Constructor.

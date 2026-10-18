@@ -59,20 +59,8 @@ require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
                     <?php endif; ?>
                     </div>
                 </div>
-                <div class="jem-image-upload-row jem-image-upload-row--alt">
-                    <div class="jem-image-upload-label">
-                        <?php echo $this->form->getLabel('locimage_alt'); ?>
-                    </div>
-                    <div class="jem-image-upload-control">
-                        <?php echo $this->form->getInput('locimage_alt'); ?>
-                        <?php echo $this->form->getInput('image_path'); ?>
-                    </div>
-                </div>
-                <?php if ($this->jemsettings->imageenabled != 0) : ?>
-                    <div class="jem-image-actions jem-image-actions--last">
-                        <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear" data-jem-image-select="jform_locimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                    </div>
-                <?php endif; ?>
+                <?php echo $this->form->getField('image_metadata')->renderSlot('locimage', 'alt'); ?>
+                <?php echo $this->form->getInput('image_path'); ?>
             </div>
             <div class="jem-image-preview-stage<?php echo $this->item->locimage ? ' jem-image-preview-stage--has-image' : ''; ?>">
                 <?php if ($this->item->locimage) : ?>
@@ -90,5 +78,11 @@ require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
                 </span>
             </div>
         </div>
+        <?php echo $this->form->getField('image_metadata')->renderSlot('locimage', 'details'); ?>
+        <?php if ($this->jemsettings->imageenabled != 0) : ?>
+            <div class="jem-image-actions jem-image-actions--last">
+                <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear" data-jem-image-select="jform_locimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+            </div>
+        <?php endif; ?>
     </fieldset>
 <?php endif; ?>

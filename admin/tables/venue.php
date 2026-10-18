@@ -447,6 +447,9 @@ class JemTableVenue extends Table
         }
 
         // item must be stored BEFORE image deletion
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareStore($this, 'venue');
+
         $ret = parent::store($updateNulls);
         if ($ret && $this->ageLevelSubmitted) {
             $db = $this->getDatabase();

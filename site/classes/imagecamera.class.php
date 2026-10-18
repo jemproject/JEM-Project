@@ -214,6 +214,7 @@ final class JemImageCamera
             static fn(int $value): bool => $value > $minimum && $value < $maximum
         )));
         sort($marks, SORT_NUMERIC);
+        $marks[] = $maximum;
 
         $safeName = htmlspecialchars($fieldName, ENT_QUOTES, 'UTF-8');
         $safeId = htmlspecialchars($fieldId, ENT_QUOTES, 'UTF-8');
@@ -231,7 +232,7 @@ final class JemImageCamera
         foreach ($marks as $mark) {
             $naturalPosition = $maximum > $minimum
                 ? (($mark - $minimum) / ($maximum - $minimum)) * 100
-                : 50.0;
+                : 100.0;
             $labelOffset = $naturalPosition < 5.0
                 ? '0%'
                 : ($naturalPosition > 95.0 ? '-100%' : '-50%');
@@ -342,17 +343,18 @@ final class JemImageCamera
             . '</div>'
             . '<div class="jem-image-resolution-meta">'
             . ($showResolution
-                ? '<small class="jem-image-resolution-help">' . Text::_('COM_JEM_IMAGE_RESOLUTION_HELP') . '</small>'
+                ? '<small class="jem-image-resolution-help">'
+                    . htmlspecialchars(Text::_('COM_JEM_IMAGE_RESOLUTION_HELP'), ENT_QUOTES, 'UTF-8')
+                    . ($mandatoryPolicy === '' ? ' ' . htmlspecialchars(Text::sprintf(
+                        'COM_JEM_IMAGE_MAX_FILE_SIZE',
+                        JemImage::formattedMaxUploadSize($settings)
+                    ), ENT_QUOTES, 'UTF-8') : '')
+                    . '</small>'
                 : '')
-            . '<small class="' . ($mandatoryPolicy !== ''
-                ? 'jem-image-mandatory-policy'
-                : 'jem-image-profile-summary') . '">'
-            . htmlspecialchars(
-                $mandatoryPolicy !== '' ? $mandatoryPolicy : JemImage::profileSummary($settings, $profile),
-                ENT_QUOTES,
-                'UTF-8'
-            )
-            . '</small>'
+            . ($mandatoryPolicy !== ''
+                ? '<small class="jem-image-mandatory-policy">'
+                    . htmlspecialchars($mandatoryPolicy, ENT_QUOTES, 'UTF-8') . '</small>'
+                : '')
             . '</div>'
             . '</div>';
     }

@@ -118,7 +118,7 @@ class JemModelEditcategory extends JemModelCategory
 
         $allowedFields = array(
             'id', 'catname', 'alias', 'parent_id', 'type_id', 'color', 'description',
-            'image', 'image_path', 'image_as_default', 'event_image_default_storage', 'published',
+            'image', 'image_path', 'image_metadata', 'image_as_default', 'event_image_default_storage', 'published',
             'access', 'language', 'meta_keywords', 'meta_description',
         );
 

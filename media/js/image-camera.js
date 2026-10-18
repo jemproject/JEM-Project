@@ -138,17 +138,21 @@
 
         control.querySelectorAll('[data-jem-image-resolution-value]').forEach(function (mark) {
             var value = Number(mark.dataset.jemImageResolutionValue);
-            var visible = Number.isFinite(value) && value > minimum && value < maximum;
+            var visible = Number.isFinite(value) && (value === maximum || (value > minimum && value < maximum));
 
             mark.hidden = !visible;
             if (!visible) {
                 return;
             }
 
-            var position = ((value - minimum) / Math.max(1, maximum - minimum)) * 100;
+            var position = value === maximum ? 100 : ((value - minimum) / Math.max(1, maximum - minimum)) * 100;
             var labelOffset = position < 5 ? '0%' : (position > 95 ? '-100%' : '-50%');
             mark.style.setProperty('--jem-resolution-position', position.toFixed(3) + '%');
             mark.style.setProperty('--jem-resolution-label-offset', labelOffset);
+            // Keep the global maximum readable when a nearby preset is almost identical.
+            var trackWidth = mark.parentElement.clientWidth;
+            mark.classList.toggle('jem-image-resolution-mark--hide-label',
+                value !== maximum && (100 - position) * trackWidth / 100 < 48);
         });
     }
 
@@ -223,6 +227,16 @@
             range.min = String(minimum);
             number.min = String(minimum);
             setResolutionControlValue(control, range.value);
+            if (typeof ResizeObserver === 'function') {
+                var marksObserver = new ResizeObserver(function () {
+                    refreshResolutionMarks(control);
+                });
+                marksObserver.observe(range);
+            } else {
+                window.addEventListener('resize', function () {
+                    refreshResolutionMarks(control);
+                });
+            }
             refreshResolutionMarks(control);
         }
 

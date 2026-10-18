@@ -261,4 +261,7 @@
     >
         <option value="*">JALL</option>
     </field>
+    <fieldset name="image_metadata_fields" addfieldpath="/administrator/components/com_jem/models/fields">
+        <field name="image_metadata" type="jemimagemetadata" context="category" filter="raw" inlinehelp="true" />
+    </fieldset>
 </form>

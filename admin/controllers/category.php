@@ -76,6 +76,11 @@ class JemControllerCategory extends FormController
             }
         }
 
+        if ($this->getTask() === 'save2copy' && $recordId > 0
+            && $this->allowEdit(array('id' => $recordId))) {
+            $this->getModel()->setState('image_metadata.copy_source', $recordId);
+        }
+
         return parent::save($key, $urlVar);
     }
 

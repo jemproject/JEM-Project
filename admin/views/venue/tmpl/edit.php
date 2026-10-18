@@ -1139,13 +1139,6 @@ Text::script('JCANCEL');
                                 'currentImageAlt' => $this->item->locimage_alt
                                     ?? $this->item->venue
                                     ?? Text::_('COM_JEM_IMAGE_PROFILE_VENUE'),
-                                'extraRows' => array(
-                                    array(
-                                        'label' => $this->form->getLabel('locimage_alt'),
-                                        'input' => $this->form->getInput('locimage_alt'),
-                                        'class' => 'jem-image-upload-row--alt',
-                                    ),
-                                ),
                             ),
                             JPATH_ADMINISTRATOR . '/components/com_jem/layouts'
                         );

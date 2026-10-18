@@ -251,6 +251,11 @@ class JemControllerEvent extends JemControllerForm
 
         $app->input->post->set('jform', $data);
 
+        // Joomla resets the ID for Save as Copy; retain a permission-checked source.
+        if ($isCopy && $recordId > 0 && $this->allowEdit(array('id' => $recordId))) {
+            $model->setState('image_metadata.copy_source', $recordId);
+        }
+
         $result = parent::save($key, $urlVar);
 
         if ($result && $model) {

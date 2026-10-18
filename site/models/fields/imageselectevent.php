@@ -140,6 +140,14 @@ joomla-field-fancy-select.jem-image-fancy-select .choices__list[aria-expanded] {
     overflow-x: hidden;
     box-sizing: border-box;
 }
+joomla-field-fancy-select.jem-image-fancy-select .choices[data-type="select-one"] .choices__inner {
+    display: flex;
+    align-items: center;
+    padding-block: .5rem;
+}
+joomla-field-fancy-select.jem-image-fancy-select .choices__list--single {
+    padding-block: 0;
+}
 joomla-field-fancy-select.jem-image-fancy-select > select {
     position: absolute !important;
     width: 1px !important;

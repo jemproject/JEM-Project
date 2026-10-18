@@ -243,7 +243,9 @@ $document->addStyleDeclaration('
         grid-template-areas:
             "copy copy"
             "resolution resolution"
-            "control control";
+            "control control"
+            "metadata metadata"
+            "actions actions";
         gap: .75rem 1rem;
         align-items: center;
         min-width: 0;
@@ -263,6 +265,12 @@ $document->addStyleDeclaration('
     }
     .jem-editevent-image-field > .jem-image-upload-layout {
         grid-area: control;
+    }
+    .jem-editevent-image-field > .jem-image-metadata--details {
+        grid-area: metadata;
+    }
+    .jem-editevent-image-field > .jem-image-actions--last {
+        grid-area: actions;
     }
     .jem-editevent-image-field > .jem-image-resolution,
     .jem-editevent-image-field > .jem-image-resolution-slot {
@@ -436,7 +444,9 @@ $document->addStyleDeclaration('
             grid-template-areas:
                 "copy"
                 "resolution"
-                "control";
+                "control"
+                "metadata"
+                "actions";
         }
         .jem-editevent-image-control {
             display: grid;
@@ -1005,9 +1015,7 @@ $document->addStyleDeclaration('
                                                 <div class="jem-image-file-control"><?php echo $this->form->getInput('userfile'); ?></div>
                                             </div>
                                         </div>
-                                        <div class="jem-image-actions jem-image-actions--last">
-                                            <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-                                        </div>
+                                        <?php echo $this->form->getField('image_metadata')->renderSlot('datimage', 'alt'); ?>
                                         <input type="hidden" name="removeimage" id="removeimage" value="0" />
                                     </div>
                                     <div class="jem-image-preview-stage<?php echo $this->item->datimage ? ' jem-image-preview-stage--has-image' : ''; ?>">
@@ -1023,6 +1031,10 @@ $document->addStyleDeclaration('
                                         </div>
                                         <span class="jem-image-preview-empty"<?php echo $this->item->datimage ? ' hidden' : ''; ?>><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                                     </div>
+                                </div>
+                                <?php echo $this->form->getField('image_metadata')->renderSlot('datimage', 'details'); ?>
+                                <div class="jem-image-actions jem-image-actions--last">
+                                    <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_datimage" data-jem-image-file="jform_userfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                                 </div>
                             </div>
                             <div class="jem-editevent-image-field jem-image-upload-panel">
@@ -1050,12 +1062,10 @@ $document->addStyleDeclaration('
                                                 <div class="jem-image-file-control"><?php echo $this->form->getInput('fulluserfile'); ?></div>
                                             </div>
                                         </div>
+                                        <?php echo $this->form->getField('image_metadata')->renderSlot('fullimage', 'alt'); ?>
                                         <div class="jem-image-upload-row jem-editevent-image-layout-choice">
                                             <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_EVENT_FULLIMAGE_LAYOUT'); ?></div>
                                             <div class="jem-image-upload-control"><?php echo $this->form->getInput('fullimage_layout'); ?></div>
-                                        </div>
-                                        <div class="jem-image-actions jem-image-actions--last">
-                                            <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                                         </div>
                                         <input type="hidden" name="removefullimage" id="removefullimage" value="0" />
                                     </div>
@@ -1072,6 +1082,10 @@ $document->addStyleDeclaration('
                                         </div>
                                         <span class="jem-image-preview-empty"<?php echo !empty($this->item->fullimage) ? ' hidden' : ''; ?>><?php echo Text::_('COM_JEM_NO_IMAGE_SELECTED'); ?></span>
                                     </div>
+                                </div>
+                                <?php echo $this->form->getField('image_metadata')->renderSlot('fullimage', 'details'); ?>
+                                <div class="jem-image-actions jem-image-actions--last">
+                                    <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear jem-editevent-image-clear" data-jem-image-select="jform_fullimage" data-jem-image-file="jform_fulluserfile"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                                 </div>
                             </div>
                         </div>

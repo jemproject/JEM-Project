@@ -243,3 +243,8 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_c
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_new_text', '#ffffff');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_open_bg', '#247a3de6');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('module_status_color_open_text', '#ffffff');
+
+-- Optional per-image accessibility text and credits.
+ALTER TABLE `#__jem_events` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_categories` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;
+ALTER TABLE `#__jem_venues` ADD COLUMN `image_metadata` TEXT NULL DEFAULT NULL /** CAN FAIL **/;

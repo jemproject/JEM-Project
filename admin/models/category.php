@@ -215,6 +215,8 @@ class JemModelCategory extends AdminModel
      */
     public function save($data)
     {
+        require_once JPATH_SITE . '/components/com_jem/classes/imagemetadata.class.php';
+        JemImageMetadata::prepareSubmission($data, 'category', (int) $this->getState('image_metadata.copy_source', 0));
         // Initialise variables;
         $dispatcher = JemFactory::getDispatcher();
         $table = $this->getTable();
