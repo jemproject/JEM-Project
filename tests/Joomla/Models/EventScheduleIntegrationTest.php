@@ -210,8 +210,8 @@ final class EventScheduleIntegrationTest extends TestCase
         self::assertStringContainsString('UID:event42-session-1-0@schedule.test', $ics);
         self::assertStringContainsString('UID:event42-session-1-1@schedule.test', $ics);
         self::assertStringContainsString('UID:event42-session-2-0@schedule.test', $ics);
-        self::assertStringContainsString('DTSTART;TZID=Europe/Madrid:20261023T090000', $ics);
-        self::assertStringContainsString('DTEND;TZID=Europe/Madrid:20261023T120000', $ics);
+        self::assertStringContainsString('DTSTART:20261023T070000Z', $ics);
+        self::assertStringContainsString('DTEND:20261023T100000Z', $ics);
         self::assertStringContainsString('DTSTART;VALUE=DATE:20261024', $ics);
         self::assertStringContainsString('DTEND;VALUE=DATE:20261025', $ics);
         self::assertSame($before->enddates, $event->enddates);
@@ -229,12 +229,41 @@ final class EventScheduleIntegrationTest extends TestCase
         $event->attribs = ['event_schedule' => ['version' => 1, 'mode' => 'continuous', 'days' => []]];
         $ics = $this->export($event);
         self::assertSame(1, substr_count($ics, 'BEGIN:VEVENT'));
-        self::assertStringContainsString('DTEND;TZID=Europe/Madrid:20261024T000000', $ics);
+        self::assertStringContainsString('DTEND:20261023T220000Z', $ics);
         self::assertStringContainsString('UID:event42@schedule.test', $ics);
         $event->attribs = [];
         $legacy = $this->export($event);
         self::assertSame(1, substr_count($legacy, 'BEGIN:VEVENT'));
-        self::assertStringContainsString('DTEND;TZID=Europe/Madrid:20261024T220000', $legacy);
+        self::assertStringContainsString('DTEND:20261024T200000Z', $legacy);
+    }
+
+    public function testDailyIcalendarUsesEachSessionsDstOffsetAndSupportsFloat(): void
+    {
+        $event = (object) $this->source();
+        $event->dates = '2026-10-24';
+        $event->enddates = '2026-10-26';
+        $event->times = '14:00:00';
+        $event->endtimes = '16:00:00';
+        $event->attribs = ['event_schedule' => ['version' => 1, 'mode' => 'daily', 'days' => []]];
+        $ics = $this->export($event);
+        self::assertSame(3, substr_count($ics, 'BEGIN:VEVENT'));
+        self::assertStringContainsString('DTSTART:20261024T120000Z', $ics);
+        self::assertStringContainsString('DTSTART:20261025T130000Z', $ics);
+        self::assertStringContainsString('DTSTART:20261026T130000Z', $ics);
+        self::assertStringContainsString('DTEND:20261024T140000Z', $ics);
+        self::assertStringContainsString('DTEND:20261025T150000Z', $ics);
+        self::assertStringNotContainsString('TZID', $ics);
+        preg_match_all('/UID:(event42[^\r\n]+)/', $ics, $utcUids);
+
+        JemHelper::config()->ical_tz = 0;
+        $floating = $this->export($event);
+        foreach (['20261024', '20261025', '20261026'] as $date) {
+            self::assertStringContainsString('DTSTART:' . $date . "T140000\r\n", $floating);
+            self::assertStringContainsString('DTEND:' . $date . "T160000\r\n", $floating);
+        }
+        self::assertStringNotContainsString('TZID', $floating);
+        preg_match_all('/UID:(event42[^\r\n]+)/', $floating, $floatingUids);
+        self::assertSame($utcUids[1], $floatingUids[1]);
     }
 
     public function testFieldHtmlEscapesJsonAndKeepsLegacyBlank(): void
