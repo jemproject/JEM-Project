@@ -13,7 +13,7 @@ use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Database\DatabaseInterface;
 
-require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/languagecatalog.php';
+require_once __DIR__ . '/../helpers/languagecatalog.php';
 
 /**
  * Model for the JEM language package catalog.
@@ -56,7 +56,8 @@ class JemModelLanguages extends BaseDatabaseModel
                 'site' => false,
                 'administrator' => false,
             );
-            $installedVersion = (string) ($jemLanguages[$tag] ?? '');
+            $installedVersion = (string) ($jemLanguages[$tag]['version'] ?? '');
+            $installedDate = (string) ($jemLanguages[$tag]['date'] ?? '');
             $packages = $catalogLanguage['packages'] ?? array();
             $package = JemLanguageCatalogHelper::selectCompatiblePackage($packages, $jemVersion);
             $joomlaInstalled = !empty($joomlaLanguage['site']) || !empty($joomlaLanguage['administrator']);
@@ -77,7 +78,9 @@ class JemModelLanguages extends BaseDatabaseModel
                 'joomla_site' => (bool) $joomlaLanguage['site'],
                 'joomla_administrator' => (bool) $joomlaLanguage['administrator'],
                 'joomla_installed' => $joomlaInstalled,
+                'jem_installed' => array_key_exists($tag, $jemLanguages),
                 'installed_version' => $installedVersion,
+                'installed_date' => $installedDate,
                 'package' => $package,
                 'packages' => $packages,
                 'state' => $state,
@@ -145,28 +148,44 @@ class JemModelLanguages extends BaseDatabaseModel
     }
 
     /**
-     * Return installed JEM file extension versions indexed by language tag.
+     * Return package metadata by language tag; bundled English follows the component.
      */
     protected function getInstalledJemLanguages()
     {
         $db = Factory::getContainer()->get(DatabaseInterface::class);
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('element', 'manifest_cache')))
+            ->select($db->quoteName(array('type', 'element', 'manifest_cache')))
             ->from($db->quoteName('#__extensions'))
-            ->where($db->quoteName('type') . ' = ' . $db->quote('file'))
-            ->where($db->quoteName('element') . ' LIKE ' . $db->quote('com_jem_%'));
+            ->where(
+                '((' . $db->quoteName('type') . ' = ' . $db->quote('file')
+                . ' AND ' . $db->quoteName('element') . ' LIKE ' . $db->quote('com_jem_%') . ')'
+                . ' OR (' . $db->quoteName('type') . ' = ' . $db->quote('component')
+                . ' AND ' . $db->quoteName('element') . ' = ' . $db->quote('com_jem') . '))'
+            );
         $db->setQuery($query);
 
         $languages = array();
+        $bundledEnglish = null;
 
         foreach ((array) $db->loadObjectList() as $extension) {
+            if ($extension->type === 'component' && $extension->element === 'com_jem') {
+                $bundledEnglish = JemLanguageCatalogHelper::getInstalledPackageMetadata(
+                    (string) $extension->manifest_cache
+                );
+                continue;
+            }
+
             if (preg_match('/^com_jem_([a-z]{2,3}-[A-Z]{2})$/', (string) $extension->element, $matches) !== 1) {
                 continue;
             }
 
-            $manifest = json_decode((string) $extension->manifest_cache, true);
-            $version = is_array($manifest) ? trim((string) ($manifest['version'] ?? '')) : '';
-            $languages[$matches[1]] = $version;
+            $languages[$matches[1]] = JemLanguageCatalogHelper::getInstalledPackageMetadata(
+                (string) $extension->manifest_cache
+            );
+        }
+
+        if ($bundledEnglish !== null) {
+            $languages['en-GB'] = $bundledEnglish;
         }
 
         return $languages;

@@ -158,7 +158,34 @@ class JemLanguageCatalogHelper
             return 'available';
         }
 
-        return version_compare($package['version'], $installedVersion, '>') ? 'update' : 'installed';
+        $comparison = version_compare($package['version'], $installedVersion);
+
+        if ($comparison < 0) {
+            return 'newer_installed';
+        }
+
+        return $comparison > 0 ? 'update' : 'reinstall';
+    }
+
+    /**
+     * Read installed package metadata, never substituting catalog values or file dates.
+     */
+    public static function getInstalledPackageMetadata(string $manifestCache): array
+    {
+        $manifest = json_decode($manifestCache, true);
+        $metadata = ['version' => '', 'date' => ''];
+
+        if (!is_array($manifest)) {
+            return $metadata;
+        }
+
+        foreach (['version' => 'version', 'date' => 'creationDate'] as $field => $key) {
+            if (isset($manifest[$key]) && is_string($manifest[$key])) {
+                $metadata[$field] = trim($manifest[$key]);
+            }
+        }
+
+        return $metadata;
     }
 
     /**

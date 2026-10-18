@@ -1,189 +1,189 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jem-language-catalog version="1.0" published="2026-08-29" compatibility="major">
+<jem-language-catalog version="1.0" published="2026-10-18" compatibility="major">
     <language tag="bg-BG" name="Bulgarian">
-        <package id="bg-BG-5.0.0" element="com_jem_bg-BG" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="bg-BG.JEM-languagepack_v5.0.0.zip" bytes="134435">
+        <package id="bg-BG-5.0.1" element="com_jem_bg-BG" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="bg-BG.JEM-languagepack_v5.0.1.zip" bytes="148933">
             <download url="https://www.joomlaeventmanager.net/download?download=86%3Abulgarian-bulgaria" />
-            <checksum algorithm="sha256">be58af2fe4c616ed976fab55248651c0d6868540d9e59fab93002e8ab6f49ec4</checksum>
+            <checksum algorithm="sha256">9c005e7d3a63fa50d7abb5c40e1eafb4ad77e777fcb484e680e687e4458418ff</checksum>
         </package>
     </language>
     <language tag="ca-ES" name="Catalan (Spain)">
-        <package id="ca-ES-5.0.0" element="com_jem_ca-ES" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="ca-ES.JEM-languagepack_v5.0.0.zip" bytes="132676">
+        <package id="ca-ES-5.0.1" element="com_jem_ca-ES" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="ca-ES.JEM-languagepack_v5.0.1.zip" bytes="147225">
             <download url="https://www.joomlaeventmanager.net/download?download=87%3Acatalan-spain" />
-            <checksum algorithm="sha256">9cf8a7ec62fe6907b29026ec4fca813774012789a7294be3ccbca67fa3e7b2bf</checksum>
+            <checksum algorithm="sha256">57deda78e8c8699921b7da0088a6a48efafb9a3859276616b033ab26393fa68a</checksum>
         </package>
     </language>
     <language tag="zh-TW" name="Chinese (Taiwan)">
-        <package id="zh-TW-5.0.0" element="com_jem_zh-TW" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="zh-TW.JEM-languagepack_v5.0.0.zip" bytes="136266">
+        <package id="zh-TW-5.0.1" element="com_jem_zh-TW" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="zh-TW.JEM-languagepack_v5.0.1.zip" bytes="151225">
             <download url="https://www.joomlaeventmanager.net/download?download=88%3Achinese-taiwan" />
-            <checksum algorithm="sha256">0a0494a9cb3942cb46c7f53c10ecf7b20cba5b6237db5b9dfd331111db79548f</checksum>
+            <checksum algorithm="sha256">5fea8ea299df6b21136c59ddf7c26c552ab3fe98d0a8a78ce4a047ea4f7e89ea</checksum>
         </package>
     </language>
     <language tag="hr-HR" name="Croatian">
-        <package id="hr-HR-5.0.0" element="com_jem_hr-HR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="hr-HR.JEM-languagepack_v5.0.0.zip" bytes="129664">
+        <package id="hr-HR-5.0.1" element="com_jem_hr-HR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="hr-HR.JEM-languagepack_v5.0.1.zip" bytes="144082">
             <download url="https://www.joomlaeventmanager.net/download?download=89%3Acroatian-croatia" />
-            <checksum algorithm="sha256">bae0297f00e5be5bbfcf189b4a8758ef0c25065055adc1fb70bf1599eb960179</checksum>
+            <checksum algorithm="sha256">2cfa55f2ad4de9d70fa0071a32ce07bfc757ee4a4d931518c3a5a8ac86620f59</checksum>
         </package>
     </language>
     <language tag="cs-CZ" name="Czech">
-        <package id="cs-CZ-5.0.0" element="com_jem_cs-CZ" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="cs-CZ.JEM-languagepack_v5.0.0.zip" bytes="134039">
+        <package id="cs-CZ-5.0.1" element="com_jem_cs-CZ" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="cs-CZ.JEM-languagepack_v5.0.1.zip" bytes="148596">
             <download url="https://www.joomlaeventmanager.net/download?download=90%3Aczech" />
-            <checksum algorithm="sha256">3ba3224d71948bede87edc0f82248fb761f0a5ac928bbea75878945d177135e5</checksum>
+            <checksum algorithm="sha256">36a89787a535cb0fd5075da8fd45360b22bacf17a212e2a0d38890bc993f8f19</checksum>
         </package>
     </language>
     <language tag="da-DK" name="Danish (Denmark)">
-        <package id="da-DK-5.0.0" element="com_jem_da-DK" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="da-DK.JEM-languagepack_v5.0.0.zip" bytes="129311">
+        <package id="da-DK-5.0.1" element="com_jem_da-DK" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="da-DK.JEM-languagepack_v5.0.1.zip" bytes="143765">
             <download url="https://www.joomlaeventmanager.net/download?download=91%3Adanish-denmark" />
-            <checksum algorithm="sha256">436ebdf298265881075d7858e36c8d31d0704e395951853a2761897a1b1d2649</checksum>
+            <checksum algorithm="sha256">cd6c682108de123bd5d4a23c812b16795873d80a328fdc79374948cad371b03d</checksum>
         </package>
     </language>
     <language tag="nl-BE" name="Dutch (Belgium)">
-        <package id="nl-BE-5.0.0" element="com_jem_nl-BE" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="nl-BE.JEM-languagepack_v5.0.0.zip" bytes="139271">
+        <package id="nl-BE-5.0.1" element="com_jem_nl-BE" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="nl-BE.JEM-languagepack_v5.0.1.zip" bytes="156278">
             <download url="https://www.joomlaeventmanager.net/download?download=123%3Adutch-belgium" />
-            <checksum algorithm="sha256">cc639dcc532f41ad4402bf7119bc95fa14a19df7cb779c423cfab4f256b0f1ed</checksum>
+            <checksum algorithm="sha256">9e2380b630160dc3a6a346d5758ebd055bb12e8474220e54b3399c12aa33db88</checksum>
         </package>
     </language>
     <language tag="nl-NL" name="Dutch (Netherlands)">
-        <package id="nl-NL-5.0.0" element="com_jem_nl-NL" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="nl-NL.JEM-languagepack_v5.0.0.zip" bytes="138976">
+        <package id="nl-NL-5.0.1" element="com_jem_nl-NL" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="nl-NL.JEM-languagepack_v5.0.1.zip" bytes="155592">
             <download url="https://www.joomlaeventmanager.net/download?download=92%3Adutch-netherlands" />
-            <checksum algorithm="sha256">17f5dcdb0684c3fb920fdaebe83de4b5b48d7a99353017f40dfb0e7aba074622</checksum>
+            <checksum algorithm="sha256">356130da0e8c26a19b8a6082c72405ae03037a907bb075234c25e95c9fda018c</checksum>
         </package>
     </language>
     <language tag="et-EE" name="Estonian (Estonia)">
-        <package id="et-EE-5.0.0" element="com_jem_et-EE" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="et-EE.JEM-languagepack_v5.0.0.zip" bytes="133205">
+        <package id="et-EE-5.0.1" element="com_jem_et-EE" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="et-EE.JEM-languagepack_v5.0.1.zip" bytes="147771">
             <download url="https://www.joomlaeventmanager.net/download?download=93%3Aestonian-estonia" />
-            <checksum algorithm="sha256">5b48299526e29463af9efcbe255cfa671948e35b16ffb875e8792aacafe7c72a</checksum>
+            <checksum algorithm="sha256">0b8289753c10a70674689064b11a329c8364ac3c1f1ddf99b9e945f26f5aa1c1</checksum>
         </package>
     </language>
     <language tag="fi-FI" name="Finnish (Finland)">
-        <package id="fi-FI-5.0.0" element="com_jem_fi-FI" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="fi-FI.JEM-languagepack_v5.0.0.zip" bytes="130031">
+        <package id="fi-FI-5.0.1" element="com_jem_fi-FI" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="fi-FI.JEM-languagepack_v5.0.1.zip" bytes="144514">
             <download url="https://www.joomlaeventmanager.net/download?download=94%3Afinnish-finland" />
-            <checksum algorithm="sha256">9671bf3b9c2b28e4658c44d9ed537fa149006a5f413bd9727b16e53ceab6556e</checksum>
+            <checksum algorithm="sha256">d39d24da7c1076b3009f4a09a059e98e7c4db7cfc225323919c0a16c5ada1373</checksum>
         </package>
     </language>
     <language tag="fr-FR" name="French (France)">
-        <package id="fr-FR-5.0.0" element="com_jem_fr-FR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="fr-FR.JEM-languagepack_v5.0.0.zip" bytes="138176">
+        <package id="fr-FR-5.0.1" element="com_jem_fr-FR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="fr-FR.JEM-languagepack_v5.0.1.zip" bytes="154540">
             <download url="https://www.joomlaeventmanager.net/download?download=95%3Afrench-france" />
-            <checksum algorithm="sha256">0933fe77506f2921869c8f1b92ade6e9741e2ea1f4c6e4183b047bb3de7418e1</checksum>
+            <checksum algorithm="sha256">3cef58ae610cf8f3cfdf7f5a2004cc11b929acedf5335cf5183ff0b0ba6d0110</checksum>
         </package>
     </language>
     <language tag="gl-ES" name="Galician (Spain)">
-        <package id="gl-ES-5.0.0" element="com_jem_gl-ES" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="gl-ES.JEM-languagepack_v5.0.0.zip" bytes="129593">
+        <package id="gl-ES-5.0.1" element="com_jem_gl-ES" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="gl-ES.JEM-languagepack_v5.0.1.zip" bytes="144083">
             <download url="https://www.joomlaeventmanager.net/download?download=96%3Agalician-spain" />
-            <checksum algorithm="sha256">6f93a6f9c0069d441995be93f383442b796ab70167b85c378faed94d0086cdf6</checksum>
+            <checksum algorithm="sha256">a4da4f2735afdb1d9be829a24007c701df82c91fb42de5a960909cd750489227</checksum>
         </package>
     </language>
     <language tag="de-DE" name="German (Germany)">
-        <package id="de-DE-5.0.0" element="com_jem_de-DE" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="de-DE.JEM-languagepack_v5.0.0.zip" bytes="144644">
+        <package id="de-DE-5.0.1" element="com_jem_de-DE" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="de-DE.JEM-languagepack_v5.0.1.zip" bytes="162729">
             <download url="https://www.joomlaeventmanager.net/download?download=97%3Agerman-germany" />
-            <checksum algorithm="sha256">5d0a07de854315ddaa22987fc4f0a39f12db80b46b16447c94b81affa8042742</checksum>
+            <checksum algorithm="sha256">fc2daa77518cf75578913450f70f63aa2d2f596a3502dfe9fd1c30bd7da0e63a</checksum>
         </package>
     </language>
     <language tag="el-GR" name="Greek">
-        <package id="el-GR-5.0.0" element="com_jem_el-GR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="el-GR.JEM-languagepack_v5.0.0.zip" bytes="140368">
+        <package id="el-GR-5.0.1" element="com_jem_el-GR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="el-GR.JEM-languagepack_v5.0.1.zip" bytes="155039">
             <download url="https://www.joomlaeventmanager.net/download?download=98%3Agreek-greece" />
-            <checksum algorithm="sha256">d0886c0a69fc534e919c3395e319c154756ba0fed992e67493d12c32838b558f</checksum>
+            <checksum algorithm="sha256">bcc756d42cfe2838c5a879b68c76c311e8cf6aa95434b712bcbd586c0b5aba65</checksum>
         </package>
     </language>
     <language tag="hu-HU" name="Hungarian">
-        <package id="hu-HU-5.0.0" element="com_jem_hu-HU" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="hu-HU.JEM-languagepack_v5.0.0.zip" bytes="138765">
+        <package id="hu-HU-5.0.1" element="com_jem_hu-HU" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="hu-HU.JEM-languagepack_v5.0.1.zip" bytes="153373">
             <download url="https://www.joomlaeventmanager.net/download?download=99%3Ahungarian-hungaria" />
-            <checksum algorithm="sha256">2b7699599391098bba927d2ffc619143f60d8312fd428d8dcea611d8d33efd20</checksum>
+            <checksum algorithm="sha256">356dfe146ec1747d054de6a1e8b00ca392ebbdeeca49684d5e5db6a005f7ff56</checksum>
         </package>
     </language>
     <language tag="id-ID" name="Indonesian">
-        <package id="id-ID-5.0.0" element="com_jem_id-ID" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="id-ID.JEM-languagepack_v5.0.0.zip" bytes="129603">
+        <package id="id-ID-5.0.1" element="com_jem_id-ID" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="id-ID.JEM-languagepack_v5.0.1.zip" bytes="144072">
             <download url="https://www.joomlaeventmanager.net/download?download=100%3Aindonesian-indonesia" />
-            <checksum algorithm="sha256">c2f70688d39cb86b37936cbfa551e5c1d83f62e7e160a3cc4d6f53e802e4df0d</checksum>
+            <checksum algorithm="sha256">14785ecd62776a45af70051725351268d627ca77d86b6db2e3814b0609d45fbc</checksum>
         </package>
     </language>
     <language tag="it-IT" name="Italian">
-        <package id="it-IT-5.0.0" element="com_jem_it-IT" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="it-IT.JEM-languagepack_v5.0.0.zip" bytes="134351">
+        <package id="it-IT-5.0.1" element="com_jem_it-IT" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="it-IT.JEM-languagepack_v5.0.1.zip" bytes="150834">
             <download url="https://www.joomlaeventmanager.net/download?download=101%3Aitalian" />
-            <checksum algorithm="sha256">9dc9be6c4d805151f89ccd1f8bf600d7dbd7182fe93a163371bc4296239042ab</checksum>
+            <checksum algorithm="sha256">b92a1b9472d8c0e0e24242bf8824bf55ae5785f7d530b518f7ad2091deb59f14</checksum>
         </package>
     </language>
     <language tag="ja-JP" name="Japanese">
-        <package id="ja-JP-5.0.0" element="com_jem_ja-JP" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="ja-JP.JEM-languagepack_v5.0.0.zip" bytes="139228">
+        <package id="ja-JP-5.0.1" element="com_jem_ja-JP" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="ja-JP.JEM-languagepack_v5.0.1.zip" bytes="154146">
             <download url="https://www.joomlaeventmanager.net/download?download=102%3Ajapanese" />
-            <checksum algorithm="sha256">2ea35b4311f78960d82df9496b86ede9baead0efadfa807a920e4f388a7b2d19</checksum>
+            <checksum algorithm="sha256">01ce3b6607483729bca06f078f02ab91ebc4e461a5964851b2f216967b178a04</checksum>
         </package>
     </language>
     <language tag="nb-NO" name="Norwegian (Norway)">
-        <package id="nb-NO-5.0.0" element="com_jem_nb-NO" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="nb-NO.JEM-languagepack_v5.0.0.zip" bytes="129205">
+        <package id="nb-NO-5.0.1" element="com_jem_nb-NO" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="nb-NO.JEM-languagepack_v5.0.1.zip" bytes="145897">
             <download url="https://www.joomlaeventmanager.net/download?download=103%3Anorwegian-norway" />
-            <checksum algorithm="sha256">4d7d2b870bfdd43bf687303fed27bdd98e707fa66511b6b1965e692bd6680a95</checksum>
+            <checksum algorithm="sha256">af9a5c34e34e9a79c93032a8fce16cef92227effeba3d16b34a8dbd5bec023a3</checksum>
         </package>
     </language>
     <language tag="pl-PL" name="Polish">
-        <package id="pl-PL-5.0.0" element="com_jem_pl-PL" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="pl-PL.JEM-languagepack_v5.0.0.zip" bytes="131866">
+        <package id="pl-PL-5.0.1" element="com_jem_pl-PL" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="pl-PL.JEM-languagepack_v5.0.1.zip" bytes="146429">
             <download url="https://www.joomlaeventmanager.net/download?download=104%3Apolish" />
-            <checksum algorithm="sha256">a479b1f55723bba11bf4567dada085055e2ca5f105a9facdc2759e9644f65d39</checksum>
+            <checksum algorithm="sha256">bc20ee11e59f44d16af51d0bd4d9aaad929545cdcf2b47b1e4b8849a9a1449e0</checksum>
         </package>
     </language>
     <language tag="pt-BR" name="Portuguese (Brazil)">
-        <package id="pt-BR-5.0.0" element="com_jem_pt-BR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="pt-BR.JEM-languagepack_v5.0.0.zip" bytes="133518">
+        <package id="pt-BR-5.0.1" element="com_jem_pt-BR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="pt-BR.JEM-languagepack_v5.0.1.zip" bytes="148070">
             <download url="https://www.joomlaeventmanager.net/download?download=106%3Aportugese-brazil" />
-            <checksum algorithm="sha256">b9ff99298a3a9f021444dce956243f7fb69f5dafc0fb25e3d1bf76106814266b</checksum>
+            <checksum algorithm="sha256">ac6b98ef4d0433369d5e0492acd652f7089b186cdd2e9abd9625ded1b681f0f5</checksum>
         </package>
     </language>
     <language tag="pt-PT" name="Portuguese (Portugal)">
-        <package id="pt-PT-5.0.0" element="com_jem_pt-PT" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="pt-PT.JEM-languagepack_v5.0.0.zip" bytes="130294">
+        <package id="pt-PT-5.0.1" element="com_jem_pt-PT" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="pt-PT.JEM-languagepack_v5.0.1.zip" bytes="144767">
             <download url="https://www.joomlaeventmanager.net/download?download=105%3Aportugese-portugal" />
-            <checksum algorithm="sha256">d9bd3746a7bea1f1134c64b5b2728a93ca2232ad971033490fbf3352bf05e78f</checksum>
+            <checksum algorithm="sha256">66b35001d61c83ebe165ccfababee0395f9cd322b796095c524172bd6c8b4636</checksum>
         </package>
     </language>
     <language tag="ro-RO" name="Romanian">
-        <package id="ro-RO-5.0.0" element="com_jem_ro-RO" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="ro-RO.JEM-languagepack_v5.0.0.zip" bytes="127793">
+        <package id="ro-RO-5.0.1" element="com_jem_ro-RO" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="ro-RO.JEM-languagepack_v5.0.1.zip" bytes="142231">
             <download url="https://www.joomlaeventmanager.net/download?download=107%3Aromanian-romania" />
-            <checksum algorithm="sha256">bde96ac64cff16cd365e1b3d43085e6ac48ce0e46305138fa759df49781d79c0</checksum>
+            <checksum algorithm="sha256">640144486e7c7bc7171d36a4cd334b9e132de332fe40caeecbe61dc7f802628a</checksum>
         </package>
     </language>
     <language tag="ru-RU" name="Russian (Russia)">
-        <package id="ru-RU-5.0.0" element="com_jem_ru-RU" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="ru-RU.JEM-languagepack_v5.0.0.zip" bytes="137384">
+        <package id="ru-RU-5.0.1" element="com_jem_ru-RU" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="ru-RU.JEM-languagepack_v5.0.1.zip" bytes="177475">
             <download url="https://www.joomlaeventmanager.net/download?download=108%3Arussian-russia" />
-            <checksum algorithm="sha256">48e1ecc9e772719b38848556b1d4dc1f9f145f4e04ada9399ff9d1293d847d41</checksum>
+            <checksum algorithm="sha256">48de5dfe8d8bd3010f60e6c93843d0d6e21f33fa51989e594f2298639efa4306</checksum>
         </package>
     </language>
     <language tag="sk-SK" name="Slovak (Slovakia)">
-        <package id="sk-SK-5.0.0" element="com_jem_sk-SK" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="sk-SK.JEM-languagepack_v5.0.0.zip" bytes="133014">
+        <package id="sk-SK-5.0.1" element="com_jem_sk-SK" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="sk-SK.JEM-languagepack_v5.0.1.zip" bytes="147604">
             <download url="https://www.joomlaeventmanager.net/download?download=109%3Aslovak-slovakia" />
-            <checksum algorithm="sha256">fc44b53acb1688065e0c226bb03a77630a92bf62a0ea7a7dc633e96dd43e3ecb</checksum>
+            <checksum algorithm="sha256">936f593b8414fb5d394c51918937017995c0618e31b9faae2fd4369762f70d86</checksum>
         </package>
     </language>
     <language tag="sl-SI" name="Slovenian (Slovenia)">
-        <package id="sl-SI-5.0.0" element="com_jem_sl-SI" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="sl-SI.JEM-languagepack_v5.0.0.zip" bytes="130031">
+        <package id="sl-SI-5.0.1" element="com_jem_sl-SI" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="sl-SI.JEM-languagepack_v5.0.1.zip" bytes="144539">
             <download url="https://www.joomlaeventmanager.net/download?download=110%3Aslovenian-slovenia" />
-            <checksum algorithm="sha256">aa0d7238e0e60dec323bf2ad42fca55aab559706f6649807eded46c25c148f0f</checksum>
+            <checksum algorithm="sha256">2dbc60edfeb7c858d449483decc4035c48b496cfc83db8c079688b1dd39e0277</checksum>
         </package>
     </language>
     <language tag="es-AR" name="Spanish (Argentina)">
-        <package id="es-AR-5.0.0" element="com_jem_es-AR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="es-AR.JEM-languagepack_v5.0.0.zip" bytes="134568">
+        <package id="es-AR-5.0.1" element="com_jem_es-AR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="es-AR.JEM-languagepack_v5.0.1.zip" bytes="149209">
             <download url="https://www.joomlaeventmanager.net/download?download=111%3Aspanish-argentina" />
-            <checksum algorithm="sha256">b54f34ddfd62301b66d1e367c61130db459d34d9c3985ba4250f836032f2e2f7</checksum>
+            <checksum algorithm="sha256">f8e779bb2965b45d5c92f54626920c3fe4273af5664a2e599f257db44fbf42a1</checksum>
         </package>
     </language>
     <language tag="es-ES" name="Spanish (Spain)">
-        <package id="es-ES-5.0.0" element="com_jem_es-ES" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="es-ES.JEM-languagepack_v5.0.0.zip" bytes="137287">
+        <package id="es-ES-5.0.1" element="com_jem_es-ES" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="es-ES.JEM-languagepack_v5.0.1.zip" bytes="151139">
             <download url="https://www.joomlaeventmanager.net/download?download=112%3Aspanish-spain" />
-            <checksum algorithm="sha256">1871a568c2b16acfe8af806a2d8c6995dab81f102b9c108c3e79fb2cb13585da</checksum>
+            <checksum algorithm="sha256">dac55e18b4b2359353d301d5b008be1114144154aaa47abfb9526b619e75a6ee</checksum>
         </package>
     </language>
     <language tag="sv-SE" name="Swedish">
-        <package id="sv-SE-5.0.0" element="com_jem_sv-SE" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="sv-SE.JEM-languagepack_v5.0.0.zip" bytes="133329">
+        <package id="sv-SE-5.0.1" element="com_jem_sv-SE" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="sv-SE.JEM-languagepack_v5.0.1.zip" bytes="147881">
             <download url="https://www.joomlaeventmanager.net/download?download=113%3Aswedish-sweden" />
-            <checksum algorithm="sha256">3a2629fdeff8fa2df0e85057827472020057554452dc37e924cd0b803e7c869c</checksum>
+            <checksum algorithm="sha256">b0fe2ae9adccfb9b7feba3d58f8c7b53fb6cef02fc03fab22ce547de6354b0d5</checksum>
         </package>
     </language>
     <language tag="tr-TR" name="Turkish">
-        <package id="tr-TR-5.0.0" element="com_jem_tr-TR" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="tr-TR.JEM-languagepack_v5.0.0.zip" bytes="127924">
+        <package id="tr-TR-5.0.1" element="com_jem_tr-TR" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="tr-TR.JEM-languagepack_v5.0.1.zip" bytes="142335">
             <download url="https://www.joomlaeventmanager.net/download?download=114%3Aturkish-turkey" />
-            <checksum algorithm="sha256">fe8223404ec4dc4e3d574e6714f0e7af3cb8518b01fc2e02e408e20825015e30</checksum>
+            <checksum algorithm="sha256">fa11d8822ce1f03d5dcc7209368ebcf53163728e6cf53e2e0f554193590e4d40</checksum>
         </package>
     </language>
     <language tag="uk-UA" name="Ukrainian">
-        <package id="uk-UA-5.0.0" element="com_jem_uk-UA" type="file" version="5.0.0" jem="5.0" released="2026-08-18" language_layout="extension-local" filename="uk-UA.JEM-languagepack_v5.0.0.zip" bytes="138998">
+        <package id="uk-UA-5.0.1" element="com_jem_uk-UA" type="file" version="5.0.1" jem="5.0" released="2026-09-19" language_layout="extension-local" filename="uk-UA.JEM-languagepack_v5.0.1.zip" bytes="155978">
             <download url="https://www.joomlaeventmanager.net/download?download=115%3Aukrainian-ukrain" />
-            <checksum algorithm="sha256">591eaefb2cb930a80989c1c0a99aed75afeb5d2abcb4e40dad293723d3bcf972</checksum>
+            <checksum algorithm="sha256">c66073bcae79c94fbb55dc814e2a6766cd3a01a164aab4fb8bf1e3396b90595e</checksum>
         </package>
     </language>
 </jem-language-catalog>

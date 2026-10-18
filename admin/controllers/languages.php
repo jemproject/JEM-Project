@@ -13,10 +13,11 @@ use Joomla\CMS\Installer\InstallerHelper;
 use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\Database\DatabaseInterface;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 
-require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/languagecatalog.php';
+require_once __DIR__ . '/../helpers/languagecatalog.php';
 
 /**
  * Controller for verified JEM language package installation.
@@ -59,12 +60,21 @@ class JemControllerLanguages extends BaseController
         $unpacked = null;
 
         try {
-            $download = JemRemoteSourceHelper::download(
-                $package['url'],
-                array('zip'),
-                'zip',
-                $package['bytes']
-            );
+            // Read current installed metadata on every POST; never trust a UI action/version.
+            $installedVersion = $this->getInstalledPackageVersion($package['element']);
+            $state = JemLanguageCatalogHelper::getPackageState($package['tag'], true, $installedVersion, $package);
+
+            if ($state === 'newer_installed') {
+                $this->setRedirect($redirect, Text::_('COM_JEM_LANGUAGES_DOWNGRADE_BLOCKED'), 'warning');
+                return false;
+            }
+
+            if (!in_array($state, ['available', 'update', 'reinstall'], true)) {
+                $this->setRedirect($redirect, Text::_('COM_JEM_LANGUAGES_PACKAGE_INVALID'), 'error');
+                return false;
+            }
+
+            $download = $this->downloadPackage($package);
 
             if (strlen($download['body']) !== $package['bytes']
                 || !hash_equals($package['checksum'], hash('sha256', $download['body']))) {
@@ -89,13 +99,23 @@ class JemControllerLanguages extends BaseController
 
             $installer = Installer::getInstance();
 
+            if ($installedVersion !== null) {
+                // Use Joomla's update route without uninstalling existing translations.
+                $installer->setUpgrade(true);
+                $installer->setOverwrite(true);
+            }
+
             if (!$installer->install($unpacked['dir'])) {
                 throw new RuntimeException('package_install');
             }
 
             $this->setRedirect(
                 $redirect,
-                Text::sprintf('COM_JEM_LANGUAGES_INSTALL_SUCCESS', $package['tag'], $package['version'])
+                Text::sprintf(
+                    $state === 'reinstall' ? 'COM_JEM_LANGUAGES_REINSTALL_SUCCESS' : 'COM_JEM_LANGUAGES_INSTALL_SUCCESS',
+                    $package['tag'],
+                    $package['version']
+                )
             );
 
             return true;
@@ -113,6 +133,40 @@ class JemControllerLanguages extends BaseController
         $installed = LanguageHelper::getInstalledLanguages(null, false, false, 'element');
 
         return isset($installed[0][$tag]) || isset($installed[1][$tag]);
+    }
+
+    protected function downloadPackage(array $package): array
+    {
+        return JemRemoteSourceHelper::download(
+            $package['url'],
+            ['zip'],
+            'zip',
+            $package['bytes']
+        );
+    }
+
+    protected function getInstalledPackageVersion(string $element): ?string
+    {
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('file'))
+            ->where($db->quoteName('element') . ' = ' . $db->quote($element));
+        $cache = $db->setQuery($query)->loadResult();
+
+        if ($cache === null) {
+            return null;
+        }
+
+        $manifest = json_decode((string) $cache, true);
+        $version = is_array($manifest) ? trim((string) ($manifest['version'] ?? '')) : '';
+
+        if ($version === '') {
+            throw new RuntimeException('installed_package_metadata');
+        }
+
+        return $version;
     }
 
     protected function validatePackageManifest($directory, array $package)

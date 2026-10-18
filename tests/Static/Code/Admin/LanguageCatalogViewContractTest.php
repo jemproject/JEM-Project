@@ -51,7 +51,10 @@ final class LanguageCatalogViewContractTest extends TestCase
         $layout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/languages/tmpl/default.php');
 
         self::assertStringContainsString("\$displayPackage = \$package ?: (\$item['packages'][0] ?? null);", $layout);
-        self::assertStringContainsString("getVersionMajor(\$displayPackage['jem'])", $layout);
+        self::assertStringNotContainsString('COM_JEM_LANGUAGES_COMPATIBILITY', $layout);
+        self::assertStringContainsString('COM_JEM_LANGUAGES_CATALOG_PACKAGE', $layout);
+        self::assertStringContainsString('COM_JEM_LANGUAGES_INSTALLED_PACKAGE', $layout);
+        self::assertStringContainsString('COM_JEM_LANGUAGES_JEM_STATUS', $layout);
         self::assertStringContainsString("preg_quote(\$item['tag'], '/')", $layout);
         self::assertStringNotContainsString('<details', $layout);
         self::assertStringNotContainsString('COM_JEM_LANGUAGES_PACKAGE_HISTORY', $layout);
@@ -68,6 +71,11 @@ final class LanguageCatalogViewContractTest extends TestCase
         self::assertStringContainsString('hash_equals', $controller);
         self::assertStringContainsString('InstallerHelper::unpack', $controller);
         self::assertStringContainsString('Installer::getInstance()', $controller);
+        self::assertStringContainsString('$installer->setUpgrade(true)', $controller);
+        self::assertStringContainsString('$installer->setOverwrite(true)', $controller);
+        self::assertStringNotContainsString('->uninstall(', $controller);
+        self::assertLessThan(strpos($controller, '$this->downloadPackage('), strpos($controller, '$this->getInstalledPackageVersion('));
+        self::assertStringContainsString('COM_JEM_LANGUAGES_DOWNGRADE_BLOCKED', $controller);
     }
 
     public function testCompatibilityPolicyDoesNotRequireAContentLanguage(): void

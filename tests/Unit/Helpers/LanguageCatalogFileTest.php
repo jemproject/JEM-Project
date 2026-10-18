@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 require_once JEM_TEST_ROOT . '/admin/helpers/languagecatalog.php';
 
@@ -72,11 +73,12 @@ final class LanguageCatalogFileTest extends TestCase
         self::assertNotFalse($catalog);
 
         foreach ($catalog->language as $language) {
-            $packages = $language->xpath('./package[@jem="5.0"][@version="5.0.0"]');
+            $packages = $language->xpath('./package[@jem="5.0"][@version="5.0.1"]');
 
             self::assertIsArray($packages);
             self::assertCount(1, $packages, 'Missing JEM 5.0 package for ' . (string) $language['tag']);
             self::assertSame('extension-local', (string) $packages[0]['language_layout']);
+            self::assertSame('2026-09-19', (string) $packages[0]['released']);
         }
     }
 
@@ -116,7 +118,10 @@ final class LanguageCatalogFileTest extends TestCase
     public function testRuntimeValidationRejectsDuplicatePackageIdentifiers(): void
     {
         $xml = (string) file_get_contents(JEM_TEST_ROOT . self::CATALOG_PATH);
-        $xml = preg_replace('/id="ca-ES-5\.0\.0"/', 'id="bg-BG-5.0.0"', $xml, 1);
+        $catalog = simplexml_load_string($xml);
+        $firstId = (string) $catalog->language[0]->package['id'];
+        $secondId = (string) $catalog->language[1]->package['id'];
+        $xml = str_replace('id="' . $secondId . '"', 'id="' . $firstId . '"', $xml);
         $error = '';
 
         self::assertFalse(JemLanguageCatalogHelper::validateCatalogXml($xml, $error));
@@ -149,9 +154,7 @@ final class LanguageCatalogFileTest extends TestCase
         self::assertNull(JemLanguageCatalogHelper::selectCompatiblePackage($packages, '7.0.0'));
     }
 
-    /**
-     * @dataProvider packageStateProvider
-     */
+    #[DataProvider('packageStateProvider')]
     public function testPackageActionPolicy(
         string $tag,
         bool $joomlaInstalled,
@@ -174,8 +177,11 @@ final class LanguageCatalogFileTest extends TestCase
         yield 'Joomla language is required' => array('es-ES', false, '', $package, 'joomla_required');
         yield 'package can be installed' => array('es-ES', true, '', $package, 'available');
         yield 'newer package can update' => array('es-ES', true, '5.1.0', array('version' => '5.1.1'), 'update');
-        yield 'same package is installed' => array('es-ES', true, '5.1.0', $package, 'installed');
-        yield 'newer local package remains installed' => array('es-ES', true, '5.1.2', $package, 'installed');
+        yield 'same package can be reinstalled' => array('es-ES', true, '5.1.0', $package, 'reinstall');
+        yield 'newer local package cannot be downgraded' => array('es-ES', true, '5.1.2', $package, 'newer_installed');
+        yield 'installed package still requires Joomla language' => array('es-ES', false, '5.1.0', $package, 'joomla_required');
+        yield 'installed package unavailable in catalog' => array('es-ES', true, '5.1.0', null, 'incompatible');
+        yield 'English cannot be reinstalled from catalog' => array('en-GB', true, '5.1.0', $package, 'built_in');
     }
 
     public function testLanguagesAreOrderedByDefaultThenJoomlaInstallationThenName(): void
@@ -194,6 +200,24 @@ final class LanguageCatalogFileTest extends TestCase
             array('es-ES', 'en-GB', 'de-DE', 'bg-BG', 'fr-FR'),
             array_column($sorted, 'tag')
         );
+    }
+
+    #[DataProvider('installedMetadataProvider')]
+    public function testInstalledMetadataKeepsItsOwnVersionAndDate(string $cache, array $expected): void
+    {
+        self::assertSame($expected, JemLanguageCatalogHelper::getInstalledPackageMetadata($cache));
+    }
+
+    public static function installedMetadataProvider(): iterable
+    {
+        yield 'full date' => ['{"version":"5.0.1","creationDate":"2026-09-19"}', ['version' => '5.0.1', 'date' => '2026-09-19']];
+        yield 'partial date preserved' => ['{"version":"5.0.1","creationDate":"2026-09"}', ['version' => '5.0.1', 'date' => '2026-09']];
+        yield 'text date preserved' => ['{"version":"5.0.1","creationDate":"19 September 2026"}', ['version' => '5.0.1', 'date' => '19 September 2026']];
+        yield 'missing date' => ['{"version":"5.0.1"}', ['version' => '5.0.1', 'date' => '']];
+        yield 'trim whitespace' => ['{"version":" 5.0.1 ","creationDate":" 2026-09 "}', ['version' => '5.0.1', 'date' => '2026-09']];
+        yield 'malformed metadata' => ['broken', ['version' => '', 'date' => '']];
+        yield 'wrong types' => ['{"version":[],"creationDate":[]}', ['version' => '', 'date' => '']];
+        yield 'no metadata' => ['', ['version' => '', 'date' => '']];
     }
 
     public function testDownloadedPackageManifestMustMatchCatalogMetadata(): void

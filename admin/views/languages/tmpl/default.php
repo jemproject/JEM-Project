@@ -15,6 +15,8 @@ $stateLabels = array(
     'available' => array('success', 'COM_JEM_LANGUAGES_AVAILABLE'),
     'update' => array('warning', 'COM_JEM_LANGUAGES_UPDATE'),
     'installed' => array('success', 'COM_JEM_LANGUAGES_INSTALLED'),
+    'reinstall' => array('success', 'COM_JEM_LANGUAGES_INSTALLED'),
+    'newer_installed' => array('info', 'COM_JEM_LANGUAGES_NEWER_INSTALLED'),
     'built_in' => array('info', 'COM_JEM_LANGUAGES_BUILT_IN'),
     'joomla_required' => array('secondary', 'COM_JEM_LANGUAGES_JOOMLA_REQUIRED'),
     'incompatible' => array('secondary', 'COM_JEM_LANGUAGES_INCOMPATIBLE'),
@@ -53,6 +55,7 @@ $stateLabels = array(
     <?php endif; ?>
 
     <?php if (!empty($this->catalogStatus['available'])) : ?>
+    <p class="small text-muted"><?php echo Text::_('COM_JEM_LANGUAGES_REINSTALL_NOTE'); ?></p>
     <div class="table-responsive">
         <table class="table table-striped align-middle">
             <caption class="visually-hidden"><?php echo Text::_('COM_JEM_LANGUAGES_TITLE'); ?></caption>
@@ -60,8 +63,9 @@ $stateLabels = array(
                 <tr>
                     <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_LANGUAGE'); ?></th>
                     <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_JOOMLA_STATUS'); ?></th>
-                    <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_INSTALLED_VERSION'); ?></th>
-                    <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_COMPATIBILITY'); ?></th>
+                    <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_JEM_STATUS'); ?></th>
+                    <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_INSTALLED_PACKAGE'); ?></th>
+                    <th scope="col"><?php echo Text::_('COM_JEM_LANGUAGES_CATALOG_PACKAGE'); ?></th>
                     <th scope="col" class="text-end"><?php echo Text::_('COM_JEM_LANGUAGES_ACTION'); ?></th>
                 </tr>
             </thead>
@@ -75,10 +79,6 @@ $stateLabels = array(
                     '/\(' . preg_quote($item['tag'], '/') . '\)$/i',
                     trim((string) $item['name'])
                 ) === 1;
-                $majors = array_values(array_unique(array_filter(array_map(static function ($historyPackage) {
-                    return JemLanguageCatalogHelper::getVersionMajor($historyPackage['jem']);
-                }, $item['packages']))));
-                sort($majors, SORT_NATURAL);
                 ?>
                 <tr>
                     <th scope="row">
@@ -86,52 +86,45 @@ $stateLabels = array(
                         <?php if (!$nameContainsTag) : ?>
                             <span class="text-muted fw-normal">(<?php echo htmlspecialchars($item['tag'], ENT_QUOTES, 'UTF-8'); ?>)</span>
                         <?php endif; ?>
-                        <?php if ($displayPackage) : ?>
-                            <div class="small text-muted fw-normal mt-1">
-                                <?php echo htmlspecialchars($displayPackage['version'], ENT_QUOTES, 'UTF-8'); ?>
-                                &middot; JEM <?php echo htmlspecialchars(JemLanguageCatalogHelper::getVersionMajor($displayPackage['jem']), ENT_QUOTES, 'UTF-8'); ?>.x
-                                &middot; <?php echo htmlspecialchars($displayPackage['released'], ENT_QUOTES, 'UTF-8'); ?>
-                            </div>
-                        <?php endif; ?>
                     </th>
                     <td>
                         <?php if ($item['joomla_installed']) : ?>
                             <span class="badge bg-success"><?php echo Text::_('COM_JEM_LANGUAGES_JOOMLA_INSTALLED'); ?></span>
-                            <div class="small text-muted mt-1">
-                                <?php
-                                $clients = array();
-                                if ($item['joomla_site']) {
-                                    $clients[] = Text::_('COM_JEM_LANGUAGES_SITE');
-                                }
-                                if ($item['joomla_administrator']) {
-                                    $clients[] = Text::_('COM_JEM_LANGUAGES_ADMINISTRATOR');
-                                }
-                                echo htmlspecialchars(implode(' / ', $clients), ENT_QUOTES, 'UTF-8');
-                                ?>
-                            </div>
                         <?php else : ?>
                             <span class="badge bg-secondary"><?php echo Text::_('COM_JEM_LANGUAGES_JOOMLA_NOT_INSTALLED'); ?></span>
                         <?php endif; ?>
                     </td>
-                    <td><?php echo $item['installed_version'] !== '' ? htmlspecialchars($item['installed_version'], ENT_QUOTES, 'UTF-8') : '&mdash;'; ?></td>
                     <td>
-                        <?php if ($package) : ?>
-                            <?php echo Text::sprintf(
-                                'COM_JEM_LANGUAGES_COMPATIBLE_WITH',
-                                htmlspecialchars(JemLanguageCatalogHelper::getVersionMajor($package['jem']), ENT_QUOTES, 'UTF-8')
-                            ); ?>
-                        <?php elseif ($majors) : ?>
-                            <?php echo Text::sprintf('COM_JEM_LANGUAGES_ONLY_FOR', htmlspecialchars(implode('.x, ', $majors), ENT_QUOTES, 'UTF-8')); ?>
+                        <?php if ($item['state'] === 'built_in') : ?>
+                            <span class="badge bg-info"><?php echo Text::_('COM_JEM_LANGUAGES_BUILT_IN'); ?></span>
+                        <?php elseif ($item['jem_installed']) : ?>
+                            <span class="badge bg-success"><?php echo Text::_('COM_JEM_LANGUAGES_INSTALLED'); ?></span>
                         <?php else : ?>
-                            &mdash;
+                            <span class="badge bg-secondary"><?php echo Text::_('COM_JEM_LANGUAGES_NOT_INSTALLED'); ?></span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php echo $item['installed_version'] !== '' ? htmlspecialchars($item['installed_version'], ENT_QUOTES, 'UTF-8') : '&mdash;'; ?>
+                        <?php if (!empty($item['installed_date'])) : ?>
+                            <span class="small text-muted text-nowrap">[<?php echo htmlspecialchars($item['installed_date'], ENT_QUOTES, 'UTF-8'); ?>]</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php echo $displayPackage ? htmlspecialchars($displayPackage['version'], ENT_QUOTES, 'UTF-8') : '&mdash;'; ?>
+                        <?php if (!empty($displayPackage['released'])) : ?>
+                            <span class="small text-muted text-nowrap">[<?php echo htmlspecialchars($displayPackage['released'], ENT_QUOTES, 'UTF-8'); ?>]</span>
                         <?php endif; ?>
                     </td>
                     <td class="text-end">
-                        <?php if (in_array($item['state'], array('available', 'update'), true) && $package) : ?>
+                        <?php if (in_array($item['state'], array('available', 'update', 'reinstall'), true) && $package) : ?>
                             <form action="<?php echo Route::_('index.php?option=com_jem&task=languages.install'); ?>" method="post" class="d-inline">
                                 <input type="hidden" name="package_id" value="<?php echo htmlspecialchars($package['id'], ENT_QUOTES, 'UTF-8'); ?>">
                                 <button type="submit" class="btn btn-sm btn-primary">
-                                    <?php echo Text::_($item['state'] === 'update' ? 'COM_JEM_LANGUAGES_UPDATE_ACTION' : 'COM_JEM_LANGUAGES_INSTALL'); ?>
+                                    <?php echo Text::_(match ($item['state']) {
+                                        'update' => 'COM_JEM_LANGUAGES_UPDATE_ACTION',
+                                        'reinstall' => 'COM_JEM_LANGUAGES_REINSTALL',
+                                        default => 'COM_JEM_LANGUAGES_INSTALL',
+                                    }); ?>
                                 </button>
                                 <?php echo HTMLHelper::_('form.token'); ?>
                             </form>
