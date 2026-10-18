@@ -3465,16 +3465,14 @@ class JemHelper
     static public function getCalendarTool()
     {
         require_once JPATH_SITE.'/components/com_jem/classes/icalcreator/autoload.php';
-        $timezone_name = JemHelper::getTimeZoneName();
 
         $vcal = \Kigkonsult\Icalcreator\Vcalendar::factory([
             \Kigkonsult\Icalcreator\IcalInterface::UNIQUE_ID => 'com_jem',
         ]);
         $vcal->setCalscale('GREGORIAN');
         $vcal->setMethod('PUBLISH');
-        if ($timezone_name) {
-            $vcal->setXprop('X-WR-TIMEZONE', $timezone_name);
-        }
+        // Timed values are UTC or explicitly floating. A calendar-wide timezone
+        // would misrepresent floating values and exports containing several zones.
         return $vcal;
     }
 
@@ -3519,6 +3517,8 @@ class JemHelper
 
     static public function icalAddEvent(&$calendartool, $event)
     {
+        // Export must not mutate the source record's dates or end time.
+        $event = clone $event;
         $language = Factory::getApplication()->getLanguage();
         self::loadComponentLanguage($language);
 
@@ -3577,9 +3577,6 @@ class JemHelper
             $tz           = $timezone_name ? new \DateTimeZone($timezone_name) : null;
             $dtStart      = new \DateTime($event->dates . ' ' . $event->times, $tz);
             $dtStartParams = ['VALUE' => 'DATE-TIME'];
-            if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dtStartParams['TZID'] = $timezone_name;
-            }
 
             if (!$event->endtimes || $event->endtimes == '00:00:00') {
                 $event->endtimes = $event->times;
@@ -3602,8 +3599,16 @@ class JemHelper
 
             $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
             $dtEndParams = ['VALUE' => 'DATE-TIME'];
-            if ($jemsettings->ical_tz == 1 && $timezone_name) {
-                $dtEndParams['TZID'] = $timezone_name;
+            if ((int) $jemsettings->ical_tz === 1) {
+                // Each concrete occurrence uses its own offset at each boundary.
+                // UTC needs no VTIMEZONE and avoids client-specific TZID guessing.
+                $utc = new \DateTimeZone('UTC');
+                $dtStart->setTimezone($utc);
+                $dtEnd->setTimezone($utc);
+            } else {
+                // Without this flag iCalcreator infers TZID from the DateTime.
+                $dtStartParams[\Kigkonsult\Icalcreator\IcalInterface::ISLOCALTIME] = true;
+                $dtEndParams[\Kigkonsult\Icalcreator\IcalInterface::ISLOCALTIME] = true;
             }
         }
 
