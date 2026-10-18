@@ -186,10 +186,10 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
             ?>
             </div>
 
-            <?php if ($canManageTools) : ?>
                 <h3 class="jem-wei-group-title"><?php echo Text::_('COM_JEM_MAIN_GROUP_MISC'); ?></h3>
                 <div class="jem-wei-group">
                 <?php
+                if ($canManageTools) {
                     $this->quickiconButton('index.php?option=com_jem&amp;view=housekeeping', 'icon-48-housekeeping.svg', Text::_('COM_JEM_HOUSEKEEPING'));
                     $this->quickiconPostButton('frontendmenu.create', 'icon-48-frontendmenu.svg', Text::_('COM_JEM_MAIN_CREATE_FRONTEND_MENU'));
 
@@ -198,25 +198,17 @@ $profileLabel = Text::_('COM_JEM_OPERATING_PROFILE_' . strtoupper($featurePolicy
                         $icon = 'icon-48-update-y.svg';
                     }
                     $this->quickiconButton('index.php?option=com_jem&amp;view=updatecheck', $icon, Text::_('COM_JEM_UPDATECHECK_TITLE'));
+                }
                     $this->quickiconButton('index.php?option=com_jem&amp;view=help', 'icon-48-help.svg', Text::_('COM_JEM_HELP'));
+                    if ($this->jedReviewAvailable) {
+                        echo $this->loadTemplate('communitybuttons');
+                    }
                 ?>
                 </div>
-            <?php else : ?>
-                <div class="jem-wei-group">
-                    <?php $this->quickiconButton('index.php?option=com_jem&amp;view=help', 'icon-48-help.svg', Text::_('COM_JEM_HELP')); ?>
-                </div>
-            <?php endif; ?>
         </div>
-
-        <aside class="card mt-4 mw-100" style="max-width: 42rem;">
-            <div class="card-body">
-                <h3 class="h5 card-title"><?php echo Text::_('COM_JEM_MAIN_DONATE'); ?></h3>
-                <p class="card-text"><?php echo Text::_('COM_JEM_MAIN_DONATE_TEXT'); ?></p>
-                <a href="https://www.joomlaeventmanager.net/project/donate" target="_blank" rel="noopener noreferrer">
-                    <?php echo HTMLHelper::_('image', 'com_jem/PayPal_DonateButton.webp', Text::_('COM_JEM_MAIN_DONATE'), null, true); ?>
-                </a>
-            </div>
-        </aside>
     </div>
     <?php echo HTMLHelper::_('form.token'); ?>
 </form>
+<?php if ($this->jedReviewAvailable) : ?>
+    <?php echo $this->loadTemplate('review'); ?>
+<?php endif; ?>

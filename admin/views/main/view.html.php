@@ -21,6 +21,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 class JemViewMain extends JemAdminView
 {
     protected $legacyModuleOverrideCount = 0;
+    protected $jedReviewAvailable = false;
+    protected $communityCardDismissed = ['donate' => false, 'jed' => false];
 
     public function display($tpl = null)
     {
@@ -45,6 +47,25 @@ class JemViewMain extends JemAdminView
         $this->operatingProfileConfigured = (int) JemConfig::getInstance()
             ->toRegistry()
             ->get('operating_profile_configured', 0);
+
+        require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/jedreview.php';
+        if (JemJedReview::allowed($app, JemAclMigrationStatus::pending())) {
+            try {
+                foreach (array_keys(JemJedReview::cards()) as $card) {
+                    $this->communityCardDismissed[$card] = JemJedReview::dismissed(
+                        Factory::getContainer()->get('DatabaseDriver'),
+                        (int) $app->getIdentity()->id,
+                        $card
+                    );
+                }
+                $this->jedReviewAvailable = true;
+                HTMLHelper::_('stylesheet', 'com_jem/community-cards.css', ['version' => 'auto', 'relative' => true]);
+                HTMLHelper::_('script', 'com_jem/jed-review.js', ['version' => 'auto', 'relative' => true], ['defer' => true]);
+            } catch (Throwable $exception) {
+                // A community invitation must never prevent access to the dashboard.
+                \Joomla\CMS\Log\Log::add('JED invitation preference could not be loaded.', \Joomla\CMS\Log\Log::WARNING, 'com_jem');
+            }
+        }
 
         if (JemHelperBackend::canManage('jem.tools.manage')) {
             require_once JPATH_ADMINISTRATOR . '/components/com_jem/models/cssmanager.php';

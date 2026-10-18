@@ -1,0 +1,65 @@
+/* Match the dashboard tiles; only one representation of each action is visible. */
+.jem-community-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-block-start: 1.5rem;
+}
+.jem-community-cards > .card {
+    min-width: 0;
+    margin: 0;
+}
+.jem-community-intro {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-block-end: 1rem;
+}
+.jem-community-intro .card-text {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+.jem-community-donate-image,
+.jem-community-review-image {
+    width: 180px;
+    max-width: 40%;
+    height: auto;
+    flex-shrink: 0;
+}
+.jem-community-cards[hidden],
+[data-jem-community-card][hidden],
+[data-jem-community-button][hidden] {
+    display: none !important;
+}
+.jem-wei-menus [data-jem-community-button] .icon a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+/* Atum adds this marker as a flex item above external-link shortcut icons. */
+.jem-wei-menus [data-jem-community-button] .icon a[target="_blank"]::before {
+    content: none;
+    display: none;
+}
+.jem-wei-menus [data-jem-community-button] .icon img {
+    width: 65px;
+    /* Match the other dashboard icons, including their shared vertical padding. */
+    height: auto;
+}
+[data-jem-community-status]:empty {
+    display: none;
+}
+@media (max-width: 767.98px) {
+    .jem-community-cards {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .jem-community-intro {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .jem-community-donate-image,
+    .jem-community-review-image {
+        max-width: 100%;
+    }
+}
