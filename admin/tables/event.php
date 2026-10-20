@@ -685,9 +685,25 @@ class JemTableEvent extends Table
 
         // user check on frontend but not if caused by cleanup function (recurrence)
         if (!$backend && !(isset($this->_autocreate) && ($this->_autocreate === true))) {
-            // check if the user has the required rank to publish this event
-            if (!$this->id && !$user->can('publish', 'event', $this->id, $this->created_by)) {
-                $this->published = 0;
+            if (!$this->id) {
+                $formData = $jinput->post->get('jform', array(), 'array');
+                $categories = array_values(array_unique(array_filter(array_map(
+                    'intval',
+                    (array) ($formData['cats'] ?? array())
+                ))));
+                $canPublish = !empty($categories);
+
+                // A legacy group may grant one category in a mixed selection.
+                foreach ($categories as $categoryId) {
+                    if (!$user->can('publish', 'event', 0, $this->created_by, array($categoryId))) {
+                        $canPublish = false;
+                        break;
+                    }
+                }
+
+                if (!$canPublish) {
+                    $this->published = 0;
+                }
             }
         }
 

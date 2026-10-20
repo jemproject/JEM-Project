@@ -226,6 +226,13 @@ $document->addStyleDeclaration('
         overflow: hidden;
         text-overflow: ellipsis;
     }
+    #jem.jem_editevent .choices__list--dropdown .choices__item--selectable.is-highlighted[data-select-text],
+    #jem.jem_editevent .choices__list[aria-expanded] .choices__item--selectable.is-highlighted[data-select-text] {
+        padding-inline: var(--choices-dropdown-item-padding, 10px);
+    }
+    #jem.jem_editevent .choices__item--selectable[data-select-text]::after {
+        content: none !important;
+    }
     .jem-editevent-image-fields {
         display: grid;
         gap: .9rem;

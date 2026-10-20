@@ -1054,6 +1054,7 @@ Text::script('JCANCEL');
                         <ul class="adminformlist jem-venue-identity-fields">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                             <?php if ($this->featurePolicy->allows(JemFeaturePolicy::FEATURE_VENUE_HIERARCHY)) : ?>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('parent_venue_id'); ?></div></li>
                                 <li><div class="label-form"><?php echo $this->form->renderfield('timezone_inherited_note'); ?></div></li>
@@ -1188,9 +1189,6 @@ Text::script('JCANCEL');
                                     <ul class="adminformlist">
                                         <li><?php echo $this->form->getLabel('id'); ?>
                                             <?php echo $this->form->getInput('id'); ?></li>
-
-                                        <li><?php echo $this->form->getLabel('published'); ?>
-                                            <?php echo $this->form->getInput('published'); ?></li>
 
                                         <?php foreach($this->form->getFieldset('publish') as $field): ?>
                                             <li><?php echo $field->label; ?>
