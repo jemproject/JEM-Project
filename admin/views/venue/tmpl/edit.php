@@ -1056,6 +1056,7 @@ Text::script('JCANCEL');
                         <ul class="adminformlist">
                             <li><div class="label-form"><?php echo $this->form->renderfield('venue'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('alias'); ?></div></li>
+                            <li><div class="label-form"><?php echo $this->form->renderfield('published'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('street'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('postalCode'); ?></div></li>
                             <li><div class="label-form"><?php echo $this->form->renderfield('city'); ?></div></li>
@@ -1132,9 +1133,6 @@ Text::script('JCANCEL');
                                     <ul class="adminformlist">
                                         <li><?php echo $this->form->getLabel('id'); ?>
                                             <?php echo $this->form->getInput('id'); ?></li>
-
-                                        <li><?php echo $this->form->getLabel('published'); ?>
-                                            <?php echo $this->form->getInput('published'); ?></li>
 
                                         <?php foreach($this->form->getFieldset('publish') as $field): ?>
                                             <li><?php echo $field->label; ?>

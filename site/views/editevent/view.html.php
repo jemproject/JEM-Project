@@ -200,6 +200,21 @@ class JemViewEditevent extends JemView
         $wa->registerScript('jem.unlimited', 'com_jem/unlimited.js')->useScript('jem.unlimited');
         $wa->registerScript('jem.other', 'com_jem/other.js')->useScript('jem.other');
 
+        if (empty($item->id)) {
+            $publishableCategories = array();
+
+            foreach ($user->getJemCategories('add', 'event', array('use_disable' => true)) as $category) {
+                if (empty($category->disable)
+                    && $user->can('publish', 'event', 0, (int) $user->id, array((int) $category->id))) {
+                    $publishableCategories[] = (int) $category->id;
+                }
+            }
+
+            $document->addScriptOptions('jem.eventPublishState', $publishableCategories);
+            $wa->registerScript('jem.event-publish-state', 'com_jem/event-publish-state.js')
+                ->useScript('jem.event-publish-state');
+        }
+
         // Escape strings for HTML output
         $pageclass_sfx          = $item->params->get('pageclass_sfx');
         $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
@@ -219,10 +234,19 @@ class JemViewEditevent extends JemView
             $this->form->setFieldAttribute('catid', 'readonly', 'true');
         }
 
-        // disable for non-publishers
+        // A new event has no fixed category yet. Keep the field disabled until
+        // the selected categories all grant publish permission.
+        if (empty($item->id)) {
+            $this->form->setFieldAttribute('published', 'disabled', 'true');
+        }
+
+        // Preserve the existing-event permission check and safe default.
         if (empty($item->params) || !$item->params->get('access-change', false)) {
             $this->form->setFieldAttribute('published', 'default', 0);
-            $this->form->setFieldAttribute('published', 'readonly', 'true');
+
+            if (!empty($item->id)) {
+                $this->form->setFieldAttribute('published', 'readonly', 'true');
+            }
         }
 
         // configure image field: show max. file size, and possibly mark field as required
