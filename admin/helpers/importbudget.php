@@ -14,13 +14,13 @@ use Joomla\CMS\Language\Text;
  */
 class JemImportBudgetHelper
 {
-    public const MAX_FILE_BYTES = 10 * 1024 * 1024;
-    public const MAX_RECORDS = 10000;
+    public const MAX_FILE_BYTES = 16 * 1024 * 1024;
+    public const MAX_RECORDS = 20000;
     public const MAX_FIELDS = 512;
     public const MAX_STRUCTURE_DEPTH = 32;
-    public const MAX_STRUCTURE_NODES = 100000;
+    public const MAX_STRUCTURE_NODES = 600000;
     public const MAX_FIELD_BYTES = 1024 * 1024;
-    public const MAX_TOTAL_VALUE_BYTES = 20 * 1024 * 1024;
+    public const MAX_TOTAL_VALUE_BYTES = 32 * 1024 * 1024;
     public const MAX_LINE_BYTES = 1024 * 1024;
     public const MAX_ICS_LINES = 100000;
 
@@ -258,54 +258,17 @@ class JemImportBudgetHelper
 
     private static function assertJsonStructure($content)
     {
-        $depth = 0;
-        $nodes = 0;
-        $inString = false;
-        $escaped = false;
-        $stringBytes = 0;
-        $length = strlen($content);
+        // Keep the pre-decode scan in C rather than iterating every byte in PHP.
+        // It is deliberately conservative: punctuation inside strings can only
+        // cause an early rejection, never an unsafe acceptance. Decoded depth,
+        // node count and field sizes are checked again below.
+        $tokens = substr_count($content, ',')
+            + substr_count($content, ':')
+            + substr_count($content, '{')
+            + substr_count($content, '[');
 
-        for ($index = 0; $index < $length; $index++) {
-            $character = $content[$index];
-
-            if ($inString) {
-                if ($escaped) {
-                    $escaped = false;
-                } elseif ($character === '\\') {
-                    $escaped = true;
-                } elseif ($character === '"') {
-                    $inString = false;
-
-                    if ($stringBytes > self::MAX_FIELD_BYTES) {
-                        throw new RuntimeException(self::message('COM_JEM_IMPORT_LIMIT_FIELD_SIZE', self::formatMebibytes(self::MAX_FIELD_BYTES)));
-                    }
-                } else {
-                    $stringBytes++;
-                }
-
-                continue;
-            }
-
-            if ($character === '"') {
-                $inString = true;
-                $stringBytes = 0;
-                $nodes++;
-            } elseif ($character === '{' || $character === '[') {
-                $depth++;
-                $nodes++;
-
-                if ($depth > self::MAX_STRUCTURE_DEPTH) {
-                    throw new RuntimeException(self::message('COM_JEM_IMPORT_LIMIT_STRUCTURE_DEPTH', self::MAX_STRUCTURE_DEPTH));
-                }
-            } elseif ($character === '}' || $character === ']') {
-                $depth--;
-            } elseif ($character === ',') {
-                $nodes++;
-            }
-
-            if ($nodes > self::MAX_STRUCTURE_NODES) {
-                throw new RuntimeException(self::message('COM_JEM_IMPORT_LIMIT_STRUCTURE_NODES', self::MAX_STRUCTURE_NODES));
-            }
+        if ($tokens > self::MAX_STRUCTURE_NODES) {
+            throw new RuntimeException(self::message('COM_JEM_IMPORT_LIMIT_STRUCTURE_NODES', self::MAX_STRUCTURE_NODES));
         }
     }
 

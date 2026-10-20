@@ -309,6 +309,8 @@ class JemTableEvent extends Table
             JemEventSchedule::synchroniseEnvelope($this);
             if (JemEventSchedule::definition($this) !== null) {
                 JemEventSchedule::intervals($this, JemHelper::getEventTimeZoneName($this));
+            } else {
+                JemEventSchedule::validateLocalBounds($this, JemHelper::getEventTimeZoneName($this));
             }
             return true;
         } catch (InvalidArgumentException $error) {

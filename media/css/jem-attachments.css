@@ -122,7 +122,7 @@
 
 .jem-attachments-tab .jem-attachments-global-options {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     gap: .75rem;
     margin: 0 0 1rem;
@@ -190,12 +190,6 @@
     max-width: 11rem !important;
     height: 2.625rem !important;
     line-height: 1.2 !important;
-}
-
-@media (max-width: 900px) {
-    .jem-attachments-tab .jem-attachments-global-options {
-        flex-wrap: wrap;
-    }
 }
 
 .jem-attachments-tab .jem-attachments-global-options .btn-group > .btn,

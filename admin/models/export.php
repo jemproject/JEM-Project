@@ -301,7 +301,7 @@ class JemModelExport extends ListModel
      */
     private function putCsv($handle, array $fields, $separator, $delimiter)
     {
-        return JemCsv::putRow($handle, $fields, $separator, $delimiter, '\\');
+        return JemCsv::putRow($handle, $fields, $separator, $delimiter, '');
     }
 
     /**
@@ -329,6 +329,7 @@ class JemModelExport extends ListModel
     private function addVersionHeader(array $header)
     {
         $header[] = JemCsvMetadataHelper::VERSION_FIELD;
+        $header[] = JemCsvMetadataHelper::FORMAT_FIELD;
 
         return $header;
     }
@@ -459,9 +460,30 @@ class JemModelExport extends ListModel
 
             $query = $this->getListQuery();
             $items = $this->_getList($query);
+            $categoriesByEvent = array();
+            $eventIds = array_map(static function ($item) {
+                return (int) $item->id;
+            }, $items);
+
+            foreach (array_chunk($eventIds, 1000) as $batch) {
+                if (!$batch) {
+                    continue;
+                }
+
+                $relations = $db->getQuery(true)
+                    ->select($db->quoteName(array('itemid', 'catid')))
+                    ->from($db->quoteName('#__jem_cats_event_relations'))
+                    ->where($db->quoteName('itemid') . ' IN (' . implode(',', $batch) . ')')
+                    ->order($db->quoteName('id'));
+
+                foreach ((array) $db->setQuery($relations)->loadObjectList() as $relation) {
+                    $categoriesByEvent[(int) $relation->itemid][] = (int) $relation->catid;
+                }
+            }
 
             foreach ($items as $item) {
-                $item->categories = $this->getCatEvent($item->id);
+                $categories = $categoriesByEvent[(int) $item->id] ?? array();
+                $item->categories = $categories ? implode(',', $categories) : false;
             }
         } else {
             $header = $this->addVersionHeader(array_keys($db->getTableColumns('#__jem_events')));

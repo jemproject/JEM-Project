@@ -222,6 +222,26 @@ final class JemEventSchedule
         return $value;
     }
 
+    /** Validate the entered wall-clock boundaries before UTC conversion can normalise a DST gap. */
+    public static function validateLocalBounds($event, string $timezone): void
+    {
+        if (empty($event->dates)) {
+            return;
+        }
+
+        $zone = new DateTimeZone($timezone);
+        $start = self::time($event->times ?? null, true);
+        $end = self::time($event->endtimes ?? null, true);
+
+        if ($start !== null) {
+            self::instant((string) $event->dates, $start, $zone);
+        }
+
+        if ($end !== null) {
+            self::instant((string) (!empty($event->enddates) ? $event->enddates : $event->dates), $end, $zone);
+        }
+    }
+
     /** Session boundaries are half-open. Null/unknown end times are flagged, never invented. */
     public static function intervals($event, string $timezone = 'UTC', ?string $from = null, ?string $until = null): array
     {

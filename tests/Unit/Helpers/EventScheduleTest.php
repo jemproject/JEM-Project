@@ -117,6 +117,16 @@ final class EventScheduleTest extends TestCase
         JemEventSchedule::intervals($event, 'Europe/Madrid');
     }
 
+    public function testOrdinaryEventBoundaryRejectsNonexistentLocalTime(): void
+    {
+        $event = self::event();
+        $event->dates = $event->enddates = '2026-03-29';
+        $event->times = '02:30';
+
+        $this->expectExceptionMessage('COM_JEM_SCHEDULE_INVALID_LOCAL_TIME');
+        JemEventSchedule::validateLocalBounds($event, 'Europe/Madrid');
+    }
+
     public function testOpenDatesAndOutsideWindows(): void
     {
         $event = self::event();

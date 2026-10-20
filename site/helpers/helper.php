@@ -4159,25 +4159,6 @@ class JemHelper
         }
         $description .= Text::_('COM_JEM_ICS_EVENT_LINK') . ': ' . $link . "\n";
 
-        $htmlDescription = '<html><body>';
-        $htmlDescription .= '<p>' . htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8') . '</p>';
-
-        if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs && $includeOnlineMeetingInDescription) {
-            $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ONLINE_MEETING'), ENT_QUOTES, 'UTF-8') . ':</strong> '
-                . '<a href="' . htmlspecialchars($onlineMeetingUrl, ENT_QUOTES, 'UTF-8') . '">'
-                . htmlspecialchars($onlineMeetingLabel, ENT_QUOTES, 'UTF-8') . '</a></p>';
-        }
-
-        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_CATEGORY'), ENT_QUOTES, 'UTF-8') . ':</strong> '
-            . htmlspecialchars(implode(', ', $categories), ENT_QUOTES, 'UTF-8') . '</p>';
-        if ($venueConfiguration !== '') {
-            $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_EVENT_VENUE_CONFIGURATION'), ENT_QUOTES, 'UTF-8') . ':</strong> '
-                . htmlspecialchars($venueConfiguration, ENT_QUOTES, 'UTF-8') . '</p>';
-        }
-        $htmlDescription .= '<p><strong>' . htmlspecialchars(Text::_('COM_JEM_ICS_EVENT_LINK'), ENT_QUOTES, 'UTF-8') . ':</strong> '
-            . '<a href="' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($link, ENT_QUOTES, 'UTF-8') . '</a></p>';
-        $htmlDescription .= '</body></html>';
-
         // location
         $hasAddressLocation = (isset($event->street) && trim((string) $event->street) !== '')
             || (isset($event->postalCode) && trim((string) $event->postalCode) !== '')
@@ -4231,13 +4212,18 @@ class JemHelper
             && (JemEventSchedule::definition($event) === null || $dtEnd > $dtStart)) {
             $e->setDtend($dtEnd, $dtEndParams);
         }
+        // Plain text retains the event and meeting links for importers that
+        // do not accept optional conference or HTML-description properties.
         $e->setDescription($description);
-        $e->setXprop('X-ALT-DESC', $htmlDescription, array('FMTTYPE' => 'text/html'));
         if ($location !== '') {
             $e->setLocation($location);
         }
         if ($onlineMeetingUrl !== '' && $includeOnlineMeetingInIcs) {
-            $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
+            // Preserve the structured-link option when the administrator
+            // intentionally disables the interoperable text fallback.
+            if (!$includeOnlineMeetingInDescription) {
+                $e->setConference($onlineMeetingUrl, array('FEATURE' => 'AUDIO,VIDEO', 'LABEL' => $onlineMeetingLabel));
+            }
 
             if ($onlineMeetingPlatform['key'] === 'teams') {
                 $e->setXprop('X-MICROSOFT-SKYPETEAMSMEETINGURL', $onlineMeetingUrl);

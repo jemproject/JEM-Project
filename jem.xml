@@ -72,8 +72,8 @@
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=groups">COM_JEM_MENU_GROUPS</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=attachments">COM_JEM_MENU_ATTACHMENTS</menu>
             <menu type="separator" alias="jem-fields-separator-before">-</menu>
-            <menu img="../media/com_jem/images/jem.webp" link="option=com_fields&amp;view=fields&amp;context=com_jem.event">COM_JEM_MENU_FIELDS</menu>
-            <menu img="../media/com_jem/images/jem.webp" link="option=com_fields&amp;view=groups&amp;context=com_jem.event">COM_JEM_MENU_FIELD_GROUPS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_fields&amp;view=fields&amp;context=com_jem.event">COM_JEM_MAIN_JOOMLA_FIELDS</menu>
+            <menu img="../media/com_jem/images/jem.webp" link="option=com_fields&amp;view=groups&amp;context=com_jem.event">COM_JEM_MAIN_JOOMLA_FIELD_GROUPS</menu>
             <menu type="separator" alias="jem-fields-separator-after">-</menu>
             <menu img="../media/com_jem/images/jem.webp" link="option=com_jem&amp;view=settings">COM_JEM_MENU_SETTINGS</menu>
         </submenu>

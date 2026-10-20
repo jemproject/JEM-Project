@@ -57,6 +57,7 @@ class JemViewWeekcal extends HtmlView
             $model = $this->getModel();
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
+            $model->setState('filter.calendar_multiday', false);
             $rows = $this->get('Items');
 
             // initiate new CALENDAR
