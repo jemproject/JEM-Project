@@ -11,7 +11,7 @@ final class CsvMetadataTest extends TestCase
     public function testAddsVersionAsABackwardsCompatibleExtraColumn(): void
     {
         self::assertSame(
-            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1rc1'),
+            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1rc1', 'jem_csv_format' => 'rfc4180'),
             JemCsvMetadataHelper::addVersion(
                 array('id' => 791, 'title' => 'Test event'),
                 '5.0.1rc1'
@@ -32,5 +32,11 @@ final class CsvMetadataTest extends TestCase
     public function testRejectsUnsafeVersionMetadata(): void
     {
         self::assertSame('', JemCsvMetadataHelper::normaliseVersion('<script>alert(1)</script>'));
+    }
+
+    public function testNewAndLegacyExportsSelectTheCorrectCsvEscape(): void
+    {
+        self::assertTrue(JemCsvMetadataHelper::usesRfc4180(array('id', 'jem_csv_format')));
+        self::assertFalse(JemCsvMetadataHelper::usesRfc4180(array('id', 'jem_export_version')));
     }
 }

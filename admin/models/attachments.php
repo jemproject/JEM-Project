@@ -253,7 +253,7 @@ class JemModelAttachments extends ListModel
             'last_download',
             'file_status',
             'file_size',
-        ), ';', '"', '\\');
+        ), ';', '"', '');
 
         foreach ($items as $item) {
             $fileStatus = !$item->file_path_safe ? 'unsafe' : ($item->file_exists ? 'exists' : 'missing');
@@ -278,7 +278,7 @@ class JemModelAttachments extends ListModel
                 $item->last_download,
                 $fileStatus,
                 $item->file_size,
-            ), ';', '"', '\\');
+            ), ';', '"', '');
         }
 
         fclose($csv);

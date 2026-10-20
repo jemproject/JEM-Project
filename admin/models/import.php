@@ -20,6 +20,7 @@ use Joomla\CMS\User\User;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpersistence.php';
+require_once JPATH_SITE . '/components/com_jem/classes/registrationidentity.class.php';
 
 /**
  * JEM Component Import Model
@@ -50,6 +51,9 @@ class JemModelImport extends BaseDatabaseModel
      *  @var array
      */
     protected static $_user_ids = null;
+
+    /** @var boolean|null Whether the EventList source uses Joomla 1.5 access values. */
+    private $legacyEventlistAccess = null;
 
 
     /**
@@ -265,6 +269,9 @@ class JemModelImport extends BaseDatabaseModel
             $this->normaliseImportedManagerUserIds($values);
 
             $object = Table::getInstance($tableclass, '');
+            if ($replace && !empty($values['id'])) {
+                $object->load((int) $values['id']);
+            }
             $object->bind($values);
 
             if (!$object->check()) {
@@ -276,7 +283,7 @@ class JemModelImport extends BaseDatabaseModel
             }
 
             try {
-                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace)]++;
+                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, 'store', true)]++;
             } catch (\RuntimeException $e) {
                 $this->setError($e->getMessage());
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
@@ -473,6 +480,9 @@ class JemModelImport extends BaseDatabaseModel
 
             // Bind the data
             $object->reset(); // clear old data first - which does NOT reset 'id' !
+            if ($replace && !empty($values['id'])) {
+                $object->load((int) $values['id']);
+            }
             $object->bind($values);
 
             // check/store function for the Category Table
@@ -501,7 +511,7 @@ class JemModelImport extends BaseDatabaseModel
 
             try {
                 $storeMethod = strcasecmp($objectname, 'JemTableCategory') === 0 ? 'storeCsvImport' : 'store';
-                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod)]++;
+                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod, true)]++;
             } catch (\RuntimeException $e) {
                 $this->setError($e->getMessage());
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
@@ -559,6 +569,17 @@ class JemModelImport extends BaseDatabaseModel
 
         // store data
         foreach ($events as $itemid => $cats) {
+            if (!ctype_digit((string) $itemid) || (int) $itemid <= 0) {
+                throw new RuntimeException('Invalid event ID in category relations.');
+            }
+
+            foreach (array_keys((array) $cats) as $catid) {
+                if (!ctype_digit((string) $catid) || (int) $catid <= 0) {
+                    throw new RuntimeException('Invalid category ID in event relations.');
+                }
+            }
+
+            $itemid = (int) $itemid;
             // remove "old", unneeded relations of this event
             $query = $db->getQuery(true);
             $query->delete($db->quoteName('#__jem_cats_event_relations'));
@@ -573,6 +594,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values = array();
                 foreach($cats as $catid => $order)
                 {
+                    $catid = (int) $catid;
                     if ($replace) { // search for record to update
                         $query_id = $db->getQuery(true);
                         $query_id->select($db->quoteName('id'));
@@ -597,7 +619,7 @@ class JemModelImport extends BaseDatabaseModel
                         }
                     } else {
                         // not found: add new record
-                        $values[] = implode(',', array($catid, $itemid, $order));
+                        $values[] = implode(',', array($catid, $itemid, (int) $order));
                     }
                 }
 
@@ -705,10 +727,14 @@ class JemModelImport extends BaseDatabaseModel
     {
         $db = $this->_db;
         $db_tables = $db->setQuery('SHOW TABLES')->loadColumn();
-        $db_prefix = $db->getPrefix();
+        $resolvedPrefix = $prefix === '#__' ? $db->getPrefix() : $prefix;
+
+        if (!preg_match('/^[A-Za-z0-9_]+$/', $resolvedPrefix)) {
+            throw new RuntimeException('Invalid import table prefix.');
+        }
 
         foreach ($tables as $table => $value) {
-            if(in_array($db_prefix.$table,$db_tables)){
+            if (in_array($resolvedPrefix . $table, $db_tables, true)) {
                 $query = $db->getQuery('true');
 
                 $query->select('COUNT(*)')
@@ -719,8 +745,8 @@ class JemModelImport extends BaseDatabaseModel
                 try {
                     $tables[$table] = $db->loadResult();
                     // Don't count the root category
-                    if (strcasecmp($table, 'jem_categories') == 0) {
-                        $tables[$table];
+                    if (strcasecmp($table, 'jem_categories') === 0) {
+                        $tables[$table] = max(0, (int) $tables[$table] - 1);
                     }
                 } catch (Exception $e) {
                     $tables[$table] = null;
@@ -795,6 +821,12 @@ class JemModelImport extends BaseDatabaseModel
             $valid_user_ids     = $this->_getUserIds();
 
             foreach ($data as $row) {
+                if (isset($row->access) && $this->usesLegacyEventlistAccess()) {
+                    $row->access = (int) $row->access + 1;
+                }
+
+                $this->assertEventlistAccess($row->access ?? null, $valid_view_levels);
+
                 if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
                     $row->access = $this->_getObjectViewLevel($row->object, $default_view_level);
                 }
@@ -822,6 +854,7 @@ class JemModelImport extends BaseDatabaseModel
                 // JEM now has a root category, so we shift IDs by 1
                 $row->id++;
                 $row->parent_id++;
+                $row->title = (string) ($row->catname ?? '');
 
                 // Description field has been renamed
                 if ($row->catdescription) {
@@ -829,10 +862,11 @@ class JemModelImport extends BaseDatabaseModel
                 }
 
                 // Ensure category has a valid view access level
-                if (isset($row->access) && $j15) {
+                if (isset($row->access) && $this->usesLegacyEventlistAccess()) {
                     // move from old (0, 1, 2) to (1, 2, 3)
                     ++$row->access;
                 }
+                $this->assertEventlistAccess($row->access ?? null, $valid_view_levels);
                 if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
                     $row->access = $default_view_level;
                 }
@@ -912,10 +946,11 @@ class JemModelImport extends BaseDatabaseModel
                 }
 
                 // Set view access level to category's view level or default view level
-                if (isset($row->access) && $j15) {
+                if (isset($row->access) && $this->usesLegacyEventlistAccess()) {
                     // move from old (0, 1, 2) to (1, 2, 3)
                     ++$row->access;
                 }
+                $this->assertEventlistAccess($row->access ?? null, $valid_view_levels);
                 if (empty($row->access) || !in_array($row->access, $valid_view_levels)) {
                     if (isset($row->catsid)) {
                         $row->access = (empty($row->catsid) || !array_key_exists($row->catsid, $cat_levels))
@@ -968,6 +1003,8 @@ class JemModelImport extends BaseDatabaseModel
                     unset($data[$k]);
                     continue;
                 }
+
+                $row->reference = JemRegistrationIdentity::generateRegistrationReference();
             }
         }
         // venues
@@ -997,6 +1034,27 @@ class JemModelImport extends BaseDatabaseModel
         }
 
         return $data;
+    }
+
+    /**
+     * EventList 1.0.x stores category IDs directly on events and uses the
+     * Joomla 1.5 access values 0/1/2. EventList 1.1 uses a relation table.
+     */
+    private function usesLegacyEventlistAccess(): bool
+    {
+        if ($this->legacyEventlistAccess === null) {
+            $columns = $this->_db->getTableColumns($this->elprefix . 'eventlist_events');
+            $this->legacyEventlistAccess = array_key_exists('catsid', $columns);
+        }
+
+        return $this->legacyEventlistAccess;
+    }
+
+    private function assertEventlistAccess($access, array $validLevels): void
+    {
+        if ($access !== null && $access !== '' && !in_array((int) $access, array_map('intval', $validLevels), true)) {
+            throw new RuntimeException('EventList access level has no matching Joomla view level.');
+        }
     }
 
     /**

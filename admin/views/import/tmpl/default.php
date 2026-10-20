@@ -598,7 +598,7 @@ if (!$venueCatalogEntry || JemImportCatalogHelper::getContext($venueCatalogEntry
 <?php if($this->progress->step > 1) : ?>
     <meta http-equiv="refresh" content="1; url=index.php?option=com_jem&amp;view=import&amp;task=import.eventlistimport&amp;step=<?php
     echo $this->progress->step; ?>&amp;table=<?php echo $this->progress->table; ?>&amp;current=<?php
-    echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>" />
+    echo $this->progress->current; ?>&amp;total=<?php echo $this->progress->total; ?>&amp;<?php echo Session::getFormToken(); ?>=1" />
 <?php endif; ?>
 
 <?php if (isset($this->sidebar)) : ?>

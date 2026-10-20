@@ -54,12 +54,25 @@ final class ImportBudgetTest extends TestCase
         }
     }
 
-    public function testRecordCollectionRejectsMoreThanTenThousandRows(): void
+    public function testRecordCollectionRejectsMoreThanTwentyThousandRows(): void
     {
         $this->expectException(RuntimeException::class);
         JemImportBudgetHelper::assertRecordList(
             array_fill(0, JemImportBudgetHelper::MAX_RECORDS + 1, array())
         );
+    }
+
+    public function testCatalogSizedJsonFitsWithinTheBoundedParser(): void
+    {
+        $row = array_fill_keys(
+            array_map(static fn (int $index): string => 'field_' . $index, range(1, 47)),
+            'A catalog value'
+        );
+        $events = array_fill(0, 3500, $row);
+        $content = json_encode(array('events' => $events), JSON_THROW_ON_ERROR);
+
+        self::assertLessThan(JemImportBudgetHelper::MAX_FILE_BYTES, strlen($content));
+        self::assertCount(3500, JemImportBudgetHelper::decodeJson($content)['events']);
     }
 
     public function testIcsRejectsAnOversizedUnfoldedProperty(): void

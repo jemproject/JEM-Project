@@ -197,6 +197,29 @@ class JemTableEvent extends Table
             }
         }
 
+        if ($this->dates !== null) {
+            $zone = new DateTimeZone(JemHelper::getEventTimeZoneName($this));
+            $boundaries = array(
+                array($this->dates, $this->times),
+                array($this->enddates ?: $this->dates, $this->endtimes),
+            );
+
+            foreach ($boundaries as $boundary) {
+                if (empty($boundary[1])) {
+                    continue;
+                }
+
+                $time = strlen((string) $boundary[1]) === 5 ? $boundary[1] . ':00' : (string) $boundary[1];
+                $wallTime = $boundary[0] . ' ' . $time;
+                $instant = DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $wallTime, $zone);
+
+                if (!$instant || $instant->format('Y-m-d H:i:s') !== $wallTime) {
+                    $this->setError(Text::_('COM_JEM_EVENT_ERROR_INVALID_LOCAL_TIME'));
+                    return false;
+                }
+            }
+        }
+
         // check startDate - don't delete other fields; it's ok to know a time but not the day
         //if ($this->dates == NULL) {
         //    $this->times = NULL;

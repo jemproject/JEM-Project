@@ -13,6 +13,8 @@ defined('_JEXEC') or die;
 class JemCsvMetadataHelper
 {
     const VERSION_FIELD = 'jem_export_version';
+    const FORMAT_FIELD = 'jem_csv_format';
+    const FORMAT_RFC4180 = 'rfc4180';
 
     /**
      * Add the exporting JEM version as an extra CSV column.
@@ -21,6 +23,7 @@ class JemCsvMetadataHelper
     public static function addVersion(array $row, $version)
     {
         $row[self::VERSION_FIELD] = self::normaliseVersion($version);
+        $row[self::FORMAT_FIELD] = self::FORMAT_RFC4180;
 
         return $row;
     }
@@ -39,6 +42,20 @@ class JemCsvMetadataHelper
         }
 
         return null;
+    }
+
+    /** New exports use RFC 4180 quoting; older JEM exports used PHP's backslash escape. */
+    public static function usesRfc4180(array $header)
+    {
+        foreach ($header as $field) {
+            $field = preg_replace('/^\xEF\xBB\xBF/', '', trim((string) $field));
+
+            if (strcasecmp($field, self::FORMAT_FIELD) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

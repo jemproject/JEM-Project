@@ -60,4 +60,32 @@ final class CsvOutputSafetyTest extends TestCase
             str_getcsv(rtrim($csv, "\r\n"), ';', '"', '')
         );
     }
+
+    public function testOnlySafeEscapedExportValuesAreRestored(): void
+    {
+        $cases = array(
+            '-33.8568' => '-33.8568',
+            '+31 20 123 4567' => '+31 20 123 4567',
+            "\nFirst line" => "\nFirst line",
+            '-' => '-',
+            '=1+1' => "'=1+1",
+            '-30% Early bird' => "'-30% Early bird",
+        );
+
+        foreach ($cases as $source => $expected) {
+            self::assertSame($expected, JemCsv::unprotectFormulaValue(JemCsv::protectFormulaValue($source)));
+        }
+    }
+
+    public function testDefaultWriterRoundTripsBackslashBeforeAQuoteWithRfc4180(): void
+    {
+        $stream = fopen('php://temp', 'w+');
+        $source = 'A backslash \\ before "a quote"';
+
+        JemCsv::putRow($stream, array($source));
+        rewind($stream);
+
+        self::assertSame(array($source), fgetcsv($stream, 0, ',', '"', ''));
+        fclose($stream);
+    }
 }

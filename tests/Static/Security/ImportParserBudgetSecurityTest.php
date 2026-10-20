@@ -16,7 +16,7 @@ final class ImportParserBudgetSecurityTest extends TestCase
         self::assertGreaterThanOrEqual(3, substr_count($controller, 'JemImportBudgetHelper::loadXml('));
         self::assertGreaterThanOrEqual(3, substr_count($controller, 'JemImportBudgetHelper::assertFileSize('));
         self::assertStringContainsString('JemImportBudgetHelper::assertIcs($content);', $controller);
-        self::assertStringContainsString('public const MAX_RECORDS = 10000;', $budget);
+        self::assertStringContainsString('public const MAX_RECORDS = 20000;', $budget);
         self::assertStringContainsString('public const MAX_FIELDS = 512;', $budget);
         self::assertStringContainsString('public const MAX_STRUCTURE_DEPTH = 32;', $budget);
         self::assertStringContainsString('JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING', $budget);

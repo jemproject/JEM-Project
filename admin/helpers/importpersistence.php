@@ -19,13 +19,15 @@ final class JemImportPersistenceHelper
      * explicit ID cannot use Table::store(), which would issue an UPDATE.
      * Database exceptions deliberately propagate to the import error handler.
      */
-    public static function store($table, $db, bool $replace, string $storeMethod = 'store'): string
+    public static function store($table, $db, bool $replace, string $storeMethod = 'store', bool $updateNulls = false): string
     {
         $key = $table->getKeyName();
         $id = $replace ? (int) $table->$key : 0;
 
         if ($id > 0 && self::exists($table, $db, $id)) {
-            if (!$table->$storeMethod() || !self::exists($table, $db, $id)) {
+            self::normaliseForStrictSql($table, $table->getFields(), $key);
+
+            if (!$table->$storeMethod($updateNulls) || !self::exists($table, $db, $id)) {
                 throw new RuntimeException($table->getError() ?: 'The imported record could not be updated.');
             }
 
@@ -36,6 +38,7 @@ final class JemImportPersistenceHelper
             // Exclude internal properties (for example ageLevelSubmitted) and
             // virtual import fields. Never use INSERT IGNORE to hide SQL errors.
             $record = (object) array_intersect_key(get_object_vars($table), $table->getFields());
+            self::normaliseForStrictSql($record, $table->getFields(), $key);
 
             if (!$db->insertObject($table->getTableName(), $record, $key)) {
                 throw new RuntimeException('The imported record could not be inserted.');
@@ -44,6 +47,7 @@ final class JemImportPersistenceHelper
             $table->$key = $record->$key;
         } else {
             $table->$key = 0;
+            self::normaliseForStrictSql($table, $table->getFields(), $key);
 
             if (!$table->$storeMethod()) {
                 throw new RuntimeException($table->getError() ?: 'The imported record could not be inserted.');
@@ -51,6 +55,36 @@ final class JemImportPersistenceHelper
         }
 
         return 'added';
+    }
+
+    /**
+     * Convert only invalid empty typed values. Missing required data is an
+     * error, not an implicit zero or empty title.
+     */
+    private static function normaliseForStrictSql($record, array $fields, string $key): void
+    {
+        foreach ($fields as $name => $field) {
+            if ($name === $key || !is_object($field)) {
+                continue;
+            }
+
+            $type = strtolower((string) ($field->Type ?? ''));
+            $isDate = (bool) preg_match('/^(?:date|datetime|timestamp|time)\b/', $type);
+            $isTyped = $isDate || (bool) preg_match('/^(?:tinyint|smallint|mediumint|int|bigint|decimal|float|double)\b/', $type);
+            $value = property_exists($record, $name) ? $record->$name : null;
+            $invalid = ($isTyped && $value === '')
+                || ($isDate && in_array($value, array('0', 0, '0000-00-00', '0000-00-00 00:00:00'), true));
+
+            if ($invalid) {
+                if (strtoupper((string) ($field->Null ?? '')) === 'YES') {
+                    $record->$name = null;
+                } elseif (($field->Default ?? null) !== null) {
+                    $record->$name = $field->Default;
+                } else {
+                    throw new RuntimeException('Missing or invalid required import field: ' . $name);
+                }
+            }
+        }
     }
 
     private static function exists($table, $db, int $id): bool

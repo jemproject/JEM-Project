@@ -205,10 +205,10 @@ class JemControllerExport extends AdminController
             fwrite($csv, "\xEF\xBB\xBF");
         }
 
-        JemCsv::putRow($csv, array_keys($items[0]), $separator, $delimiter, '\\');
+        JemCsv::putRow($csv, array_keys($items[0]), $separator, $delimiter, '');
 
         foreach ($items as $item) {
-            JemCsv::putRow($csv, array_values($item), $separator, $delimiter, '\\');
+            JemCsv::putRow($csv, array_values($item), $separator, $delimiter, '');
         }
 
         fclose($csv);

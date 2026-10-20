@@ -126,6 +126,7 @@ class JemViewVenue extends HtmlView
             $model = $this->getModel('VenueCal');
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
+            $model->setState('filter.calendar_multiday', false);
             $model->setDate(sprintf('%04d-%02d-01', $year, $month));
             $rows = $model->getItems();
             $venueid = $jinput->getInt('id');

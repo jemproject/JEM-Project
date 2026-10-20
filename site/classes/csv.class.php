@@ -33,6 +33,29 @@ class JemCsv
     }
 
     /**
+     * Restore safe values escaped by a versioned JEM CSV export.
+     * Formula-like text stays escaped and is never converted into a formula.
+     */
+    public static function unprotectFormulaValue($value)
+    {
+        if (!is_string($value) || strlen($value) < 2 || $value[0] !== "'") {
+            return $value;
+        }
+
+        $original = substr($value, 1);
+        $trimmed = trim($original);
+
+        if (is_numeric($trimmed)
+            || preg_match('/^-+$/', $trimmed)
+            || preg_match('/^ *[\x09-\x0D]/', $original)
+            || preg_match('/^\+\d[\d\s().-]{2,}$/', $trimmed)) {
+            return $original;
+        }
+
+        return $value;
+    }
+
+    /**
      * Apply CSV formula protection to a whole row.
      *
      * @param   array  $row
@@ -56,7 +79,7 @@ class JemCsv
      *
      * @return  integer|false
      */
-    public static function putRow($stream, array $row, $separator = ',', $enclosure = '"', $escape = '\\', $eol = "\n")
+    public static function putRow($stream, array $row, $separator = ',', $enclosure = '"', $escape = '', $eol = "\n")
     {
         return fputcsv(
             $stream,

@@ -152,6 +152,81 @@ final class ImportPersistenceTest extends TestCase
         self::assertLessThan($advance, $stop);
         self::assertStringContainsString('return;', substr($controller, $stop, $advance - $stop));
     }
+
+    public function testStrictSqlUpdateConvertsEmptyNullableFieldsAndPassesNulls(): void
+    {
+        $table = new ImportStrictTableFixture();
+        $table->id = 701;
+        $table->db->rows[701] = array('id' => 701, 'publish_down' => '2026-12-01 10:00:00');
+
+        self::assertSame('updated', JemImportPersistenceHelper::store($table, $table->db, true, 'store', true));
+        self::assertNull($table->publish_down);
+        self::assertNull($table->series_id);
+        self::assertTrue($table->updatedNulls);
+    }
+
+    public function testStrictSqlInsertConvertsLegacyZeroDate(): void
+    {
+        $table = new ImportStrictTableFixture();
+        $table->id = 702;
+        $table->publish_down = '0';
+
+        self::assertSame('added', JemImportPersistenceHelper::store($table, $table->db, true));
+        self::assertNull($table->db->rows[702]['publish_down']);
+    }
+}
+
+final class ImportStrictTableFixture
+{
+    public int $id = 0;
+    public string $title = 'Event';
+    public $publish_down = '';
+    public $series_id = '';
+    public bool $updatedNulls = false;
+    public ImportPersistenceDatabaseFixture $db;
+
+    public function __construct()
+    {
+        $this->db = new ImportPersistenceDatabaseFixture();
+    }
+
+    public function getKeyName(): string
+    {
+        return 'id';
+    }
+
+    public function getTableName(): string
+    {
+        return '#__jem_fixture';
+    }
+
+    public function getFields(): array
+    {
+        return array(
+            'id' => (object) array('Type' => 'int(11)', 'Null' => 'NO', 'Default' => null),
+            'title' => (object) array('Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => null),
+            'publish_down' => (object) array('Type' => 'datetime', 'Null' => 'YES', 'Default' => null),
+            'series_id' => (object) array('Type' => 'int(11)', 'Null' => 'YES', 'Default' => null),
+        );
+    }
+
+    public function getError(): string
+    {
+        return '';
+    }
+
+    public function store(bool $updateNulls = false): bool
+    {
+        $this->updatedNulls = $updateNulls;
+        $this->db->rows[$this->id] = array(
+            'id' => $this->id,
+            'title' => $this->title,
+            'publish_down' => $this->publish_down,
+            'series_id' => $this->series_id,
+        );
+
+        return true;
+    }
 }
 
 final class ImportPersistenceTableFixture

@@ -225,5 +225,57 @@ final class IcalendarTimezoneExportTest extends TestCase
         self::assertFalse(JemHelper::icalAddEvent($calendar, $this->event(['dates' => null])));
         self::assertStringNotContainsString('BEGIN:VEVENT', $calendar->createCalendar());
     }
+
+    public function testDefaultOnlineMeetingExportUsesPortableDescription(): void
+    {
+        $ics = $this->export([$this->event([
+            'online_meeting_url' => 'https://meet.example.org/room',
+            'online_meeting_label' => 'Meeting room',
+        ])], 1);
+
+        self::assertStringContainsString('https://meet.example.org/room', $ics);
+        self::assertStringContainsString('DESCRIPTION:', $ics);
+        self::assertStringNotContainsString('CONFERENCE;', $ics);
+        self::assertStringNotContainsString('X-ALT-DESC;', $ics);
+        self::assertStringContainsString('DTSTART:20261107T130000Z', $ics);
+    }
+
+    public function testStructuredOnlineMeetingIsRetainedWhenTextFallbackIsDisabled(): void
+    {
+        JemHelper::globalattribs()->set('event_online_meeting_ics_description', 0);
+
+        $ics = $this->export([$this->event([
+            'online_meeting_url' => 'https://meet.example.org/room',
+        ])], 1);
+
+        self::assertStringContainsString('CONFERENCE;VALUE=URI;', $ics);
+        self::assertStringContainsString('https://meet.example.org/room', $ics);
+        self::assertStringNotContainsString('X-ALT-DESC;', $ics);
+    }
+
+    public function testOnlineMeetingOptOutOmitsTheConnectionLink(): void
+    {
+        JemHelper::globalattribs()->set('event_online_meeting_ics', 0);
+
+        $ics = $this->export([$this->event([
+            'online_meeting_url' => 'https://meet.example.org/private-room',
+        ])], 1);
+
+        self::assertStringNotContainsString('https://meet.example.org/private-room', $ics);
+        self::assertStringNotContainsString('CONFERENCE;', $ics);
+        self::assertStringNotContainsString('X-ALT-DESC;', $ics);
+    }
+
+    public function testTeamsLinkRetainsOutlookHintsAndPlainTextFallback(): void
+    {
+        $ics = $this->export([$this->event([
+            'online_meeting_url' => 'https://teams.microsoft.com/l/meetup-join/example',
+        ])], 1);
+
+        self::assertStringContainsString('X-MICROSOFT-SKYPETEAMSMEETINGURL:', $ics);
+        self::assertStringContainsString('https://teams.microsoft.com/l/meetup-join/example', $ics);
+        self::assertStringNotContainsString('CONFERENCE;', $ics);
+        self::assertStringNotContainsString('X-ALT-DESC;', $ics);
+    }
 }
 
