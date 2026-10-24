@@ -145,6 +145,10 @@ class jem_events extends Table
      */
     public function check($jemsettings = null)
     {
+        if ($this->attribs === null || $this->attribs === '') {
+            $this->attribs = '{}';
+        }
+
         // Check fields
         if (empty($this->enddates)) {
             $this->enddates = NULL;

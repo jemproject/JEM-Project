@@ -121,6 +121,10 @@ class JemTableEvent extends Table
     {
         $jinput = Factory::getApplication()->input;
 
+        if ($this->attribs === null || $this->attribs === '') {
+            $this->attribs = '{}';
+        }
+
         $this->parent_event_id = empty($this->parent_event_id) ? null : (int) $this->parent_event_id;
         $this->event_tree_order = max(0, (int) ($this->event_tree_order ?? 0));
         $this->show_in_calendar = isset($this->show_in_calendar) ? (int) (bool) $this->show_in_calendar : 0;

@@ -174,6 +174,19 @@ final class ImportPersistenceTest extends TestCase
         self::assertSame('added', JemImportPersistenceHelper::store($table, $table->db, true));
         self::assertNull($table->db->rows[702]['publish_down']);
     }
+
+    public function testSparseEventImportFillsOnlyOptionalTextAndOmitsDateExpression(): void
+    {
+        $table = new ImportStrictTableFixture();
+        $table->id = 703;
+
+        self::assertSame('added', JemImportPersistenceHelper::store($table, $table->db, true));
+        self::assertSame('', $table->db->rows[703]['introtext']);
+        self::assertSame('', $table->db->rows[703]['fulltext']);
+        self::assertSame('', $table->db->rows[703]['metadata']);
+        self::assertNull($table->db->rows[703]['created']);
+        self::assertNull($table->db->rows[703]['notes']);
+    }
 }
 
 final class ImportStrictTableFixture
@@ -182,6 +195,11 @@ final class ImportStrictTableFixture
     public string $title = 'Event';
     public $publish_down = '';
     public $series_id = '';
+    public $introtext = null;
+    public $fulltext = null;
+    public $metadata = null;
+    public $notes = null;
+    public $created = 'current_timestamp()';
     public bool $updatedNulls = false;
     public ImportPersistenceDatabaseFixture $db;
 
@@ -207,6 +225,11 @@ final class ImportStrictTableFixture
             'title' => (object) array('Type' => 'varchar(255)', 'Null' => 'NO', 'Default' => null),
             'publish_down' => (object) array('Type' => 'datetime', 'Null' => 'YES', 'Default' => null),
             'series_id' => (object) array('Type' => 'int(11)', 'Null' => 'YES', 'Default' => null),
+            'introtext' => (object) array('Type' => 'mediumtext', 'Null' => 'NO', 'Default' => null),
+            'fulltext' => (object) array('Type' => 'mediumtext', 'Null' => 'NO', 'Default' => null),
+            'metadata' => (object) array('Type' => 'text', 'Null' => 'NO', 'Default' => null),
+            'notes' => (object) array('Type' => 'text', 'Null' => 'NO', 'Default' => null),
+            'created' => (object) array('Type' => 'datetime', 'Null' => 'NO', 'Default' => 'current_timestamp()'),
         );
     }
 

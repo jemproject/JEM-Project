@@ -100,13 +100,11 @@ class JemModelWeekcal extends JemModelEventslist
     {
         $items = parent::getItems();
 
-        if ($items) {
+        if ($items && $this->getState('filter.calendar_multiday', true) !== false) {
             $items = $this->calendarMultiday($items);
-
-            return $items;
         }
 
-        return array();
+        return $items ?: array();
     }
 
     /**

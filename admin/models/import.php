@@ -245,7 +245,7 @@ class JemModelImport extends BaseDatabaseModel
     {
         $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => '',
                      'duplicated' => 0, 'duplicatedids' => '', 'replaced' => 0, 'replacedids' => '',
-                     'error' => 0, 'errorids' => '');
+                     'error' => 0, 'errorids' => '', 'error_details' => array());
 
         $db = Factory::getContainer()->get('DatabaseDriver');
 
@@ -279,6 +279,7 @@ class JemModelImport extends BaseDatabaseModel
                 echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
                 $rec['error']++;
                 $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                $this->appendImportErrorDetail($rec, $sourceLine, (string) $object->getError());
                 continue;
             }
 
@@ -289,6 +290,7 @@ class JemModelImport extends BaseDatabaseModel
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
                 $rec['error']++;
                 $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                $this->appendImportErrorDetail($rec, $sourceLine, $e->getMessage());
             }
         }
 
@@ -355,6 +357,19 @@ class JemModelImport extends BaseDatabaseModel
         return is_numeric($line) && (int) $line > 0 ? (int) $line : null;
     }
 
+    /** Keep only a few bounded row errors for the import result message. */
+    private function appendImportErrorDetail(array &$result, $sourceLine, string $reason): void
+    {
+        if (count($result['error_details']) >= 3) {
+            return;
+        }
+
+        $result['error_details'][] = array(
+            'line' => (int) $sourceLine,
+            'reason' => substr(trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', strip_tags($reason))), 0, 300),
+        );
+    }
+
     /**
      * Import data corresponding to fieldsname into events table
      *
@@ -368,7 +383,7 @@ class JemModelImport extends BaseDatabaseModel
      */
     private function import($tablename, $prefix, $fieldsname, &$data, $replace = true)
     {
-        $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "" , 'duplicated' => 0, 'duplicatedids' => "", 'replaced' => 0, 'replacedids' => "", 'error' => 0, 'errorids' => "");
+        $rec = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'ignoredids' => "" , 'duplicated' => 0, 'duplicatedids' => "", 'replaced' => 0, 'replacedids' => "", 'error' => 0, 'errorids' => "", 'error_details' => array());
 
         // cats_event_relations table requires different handling
         if (strcasecmp($tablename, 'jem_cats_event_relations') == 0) {
@@ -493,6 +508,7 @@ class JemModelImport extends BaseDatabaseModel
                     echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
                     $rec['error']++;
                     $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                    $this->appendImportErrorDetail($rec, $sourceLine, (string) $object->getError());
                     continue;
                 }
             } else {
@@ -504,6 +520,7 @@ class JemModelImport extends BaseDatabaseModel
                     echo Text::_('COM_JEM_IMPORT_ERROR_CHECK') . $object->getError() . "\n";
                     $rec['error']++;
                     $rec['errorids'] .= ($rec['errorids']!=""?',':'') . $row[0];
+                    $this->appendImportErrorDetail($rec, $sourceLine, (string) $object->getError());
                     continue;
                 }
 
@@ -517,6 +534,7 @@ class JemModelImport extends BaseDatabaseModel
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
                 $rec['error']++;
                 $rec['errorids'] .= ($rec['errorids'] !== '' ? ',' : '') . $row[0];
+                $this->appendImportErrorDetail($rec, $sourceLine, $e->getMessage());
                 continue;
             }
 

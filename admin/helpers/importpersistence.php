@@ -72,6 +72,23 @@ final class JemImportPersistenceHelper
             $isDate = (bool) preg_match('/^(?:date|datetime|timestamp|time)\b/', $type);
             $isTyped = $isDate || (bool) preg_match('/^(?:tinyint|smallint|mediumint|int|bigint|decimal|float|double)\b/', $type);
             $value = property_exists($record, $name) ? $record->$name : null;
+
+            // These event text fields are optional to the author, but the
+            // database requires an empty string when a CSV omits them.
+            if ($value === null && in_array($name, array('introtext', 'fulltext', 'metadata'), true)
+                && preg_match('/^(?:tinytext|text|mediumtext|longtext)\b/', $type)
+                && strtoupper((string) ($field->Null ?? '')) !== 'YES') {
+                $record->$name = '';
+                continue;
+            }
+
+            // A table object's default expression is not a date value. Omit
+            // it from an INSERT so the database can supply its own default.
+            if ($isDate && is_string($value) && preg_match('/^current_timestamp(?:\(\d*\))?$/i', trim($value))) {
+                $record->$name = null;
+                continue;
+            }
+
             $invalid = ($isTyped && $value === '')
                 || ($isDate && in_array($value, array('0', 0, '0000-00-00', '0000-00-00 00:00:00'), true));
 

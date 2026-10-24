@@ -2229,6 +2229,16 @@ class JemControllerImport extends BaseController
                         $db->transactionRollback();
                         $transactionStarted = false;
                         $msg = Text::sprintf('COM_JEM_IMPORT_FILE_ROLLED_BACK', $result['error']);
+
+                        foreach (array_slice($result['error_details'] ?? array(), 0, 3) as $detail) {
+                            $line = (int) ($detail['line'] ?? 0);
+                            $reason = (string) ($detail['reason'] ?? '');
+                            $message = $line > 0
+                                ? Text::sprintf('COM_JEM_IMPORT_FILE_ROW_ERROR', $line, $reason)
+                                : $reason;
+                            $msg .= ' ' . htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                        }
+
                         $this->addImportLogEntry($logKey, $msg . ' File: ' . $file['name'], Log::WARNING);
                         $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
                         return;
@@ -3491,10 +3501,39 @@ class JemControllerImport extends BaseController
         }
 
         $sourceFields = array('SUMMARY', 'DTSTART', 'DTEND', 'DESCRIPTION', 'UID', 'LOCATION');
-        $sourceRecords = $this->buildSpecialDaysIcsSourceRecords($events);
+        $recurringEvents = array();
+        $plainEvents = array();
+
+        foreach ($events as $event) {
+            if ($this->getExternalIcsValue($event, 'RRULE') !== null) {
+                $recurringEvents[] = $event;
+            } else {
+                $plainEvents[] = $event;
+            }
+        }
+
+        $sourceRecords = $this->buildSpecialDaysIcsSourceRecords($plainEvents);
 
         if ($sourceRecords) {
-            return $this->buildSpecialDaysPreviewFromRecords($sourceRecords, $options, $sourceFields);
+            $preview = $this->buildSpecialDaysPreviewFromRecords($sourceRecords, $options, $sourceFields);
+
+            foreach ($recurringEvents as $event) {
+                $result = $this->normaliseSpecialDaysIcsEvent($event, $options, count($preview['rows']) + 1);
+                $preview['rows'][] = $result['preview'];
+                $preview['error_count']++;
+                $preview['skipped_count']++;
+                $preview['has_errors'] = true;
+            }
+
+            if ($recurringEvents) {
+                $preview['summary'] = Text::sprintf(
+                    'COM_JEM_IMPORT_SPECIAL_DAYS_PREVIEW_SUMMARY',
+                    $preview['valid_count'],
+                    $preview['error_count']
+                );
+            }
+
+            return $preview;
         }
 
         $rows = array();
@@ -3917,6 +3956,30 @@ class JemControllerImport extends BaseController
         return $property['value'] ?? null;
     }
 
+    /** Resolve an IANA or Windows iCalendar timezone without guessing. */
+    protected function resolveExternalIcsTimezone(string $tzid): \DateTimeZone
+    {
+        $tzid = trim($tzid, " \t\r\n\"'");
+
+        if (preg_match('#^/mozilla\.org/[^/]+/(.+)$#i', $tzid, $matches)) {
+            $tzid = $matches[1];
+        }
+
+        try {
+            return new \DateTimeZone($tzid);
+        } catch (\Exception $e) {
+            if (class_exists(\IntlTimeZone::class)) {
+                $iana = \IntlTimeZone::getIDForWindowsID($tzid, '001');
+
+                if (is_string($iana) && $iana !== '') {
+                    return new \DateTimeZone($iana);
+                }
+            }
+
+            throw $e;
+        }
+    }
+
     /**
      * Normalise an ICS date/time property into JEM date and time values.
      *
@@ -3956,7 +4019,7 @@ class JemControllerImport extends BaseController
 
             if ($source !== '') {
                 try {
-                    $sourceZone = new \DateTimeZone($source);
+                    $sourceZone = $this->resolveExternalIcsTimezone($source);
                     $siteZone = new \DateTimeZone((string) Factory::getApplication()->get('offset', 'UTC'));
                     $wallTime = $result['date'] . ' ' . $result['time'];
                     $moment = \DateTimeImmutable::createFromFormat('!Y-m-d H:i:s', $wallTime, $sourceZone);

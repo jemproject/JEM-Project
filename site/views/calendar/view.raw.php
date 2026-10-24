@@ -55,10 +55,11 @@ class JemViewCalendar extends HtmlView
         if ($settings2->get('global_show_ical_icon','0')==1) {
             // Get data from the model
             $model = $this->getModel();
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
+            $model->getState();
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
             $model->setState('filter.calendar_multiday', false);
-            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
 
             $rows = $model->getItems();
 
