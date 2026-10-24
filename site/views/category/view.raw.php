@@ -99,10 +99,11 @@ class JemViewCategory extends HtmlView
             // Get data from the model
             $model = $this->getModel('CategoryCal');
             $model->setId($catid);
+            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
+            $model->getState();
             $model->setState('list.start',0);
             $model->setState('list.limit',$settings->ical_max_items);
             $model->setState('filter.calendar_multiday', false);
-            $model->setDate(sprintf('%04d-%02d-01', $year, $month));
 
             $rows = $model->getItems();
 
