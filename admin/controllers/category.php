@@ -42,6 +42,19 @@ class JemControllerCategory extends FormController
         return JemHelperBackend::canCategory('create', null, $parentId);
     }
 
+    /** Preserve the selected parent between the add task and the edit form. */
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
+    {
+        $append = parent::getRedirectToItemAppend($recordId, $urlVar);
+        $parentId = Factory::getApplication()->input->getInt('parent_id', 1);
+
+        if (!$recordId && $parentId > 1) {
+            $append .= '&parent_id=' . $parentId;
+        }
+
+        return $append;
+    }
+
     protected function allowEdit($data = array(), $key = 'id')
     {
         $recordId = (int) ($data[$key] ?? 0);

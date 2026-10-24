@@ -337,7 +337,9 @@ class com_jemInstallerScript
             $this->repairLegacyRecurrenceRoots();
             $this->ensureEventScheduleStorage();
             $this->rebuildEventUtcDates();
-            $this->migrateBackendAcl($type === 'update');
+            if (self::shouldMigrateBackendAcl($type, $this->oldRelease)) {
+                $this->migrateBackendAcl($type === 'update');
+            }
             // Essential catalogues and settings must be usable before optional continuation.
             $this->repair510ResourceAcl();
         }
@@ -1898,6 +1900,14 @@ SQL;
      *
      * @return void
      */
+    private static function shouldMigrateBackendAcl($type, $oldRelease)
+    {
+        // Map legacy permissions only on first entry to 5.1. Repeating the
+        // mapping on beta updates would turn newly unset actions into Allows.
+        return $type !== 'update'
+            || ($oldRelease !== '' && version_compare($oldRelease, '5.1.0dev', 'lt'));
+    }
+
     private function migrateBackendAcl($preserveLegacyManage)
     {
         $db = Factory::getContainer()->get('DatabaseDriver');

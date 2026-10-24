@@ -158,7 +158,7 @@ class JemViewDay extends JemView
 
         // Check if the user has permission to add things
         $permissions = new stdClass();
-        $permissions->canAddEvent = $user->can('add', 'event');
+        $permissions->canAddEvent = JemFrontendAccess::canAddEventSomewhere($user);
         $permissions->canAddVenue = $user->can('add', 'venue');
 
         // add alternate feed link (w/o specific date)

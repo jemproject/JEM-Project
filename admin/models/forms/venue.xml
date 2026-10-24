@@ -13,6 +13,7 @@
             label="JGLOBAL_FIELD_ID_LABEL"
             description ="JGLOBAL_FIELD_ID_DESC"
         />
+        <field name="asset_id" type="hidden" filter="unset" />
         <field name="venue" type="text"
             class="inputbox"
             size="40"

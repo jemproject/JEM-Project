@@ -40,9 +40,10 @@ final class EventCategoryBindingTest extends TestCase
             '$this->normaliseEventCategoryIds($data[\'cats\'] ?? array())',
             $model
         );
-        self::assertStringContainsString('validateEventCategoryIds($cats, $backend, $new)', $model);
+        self::assertStringContainsString("validateEventCategoryIds(\$cats, \$backend, \$new, (int) (\$data['id'] ?? 0))", $model);
         self::assertStringContainsString('$data[\'cats\']         = $cats;', $model);
         self::assertStringContainsString('$user->getJemCategories(', $model);
+        self::assertStringContainsString('array_diff($categories, $this->getEventCategoryIds($eventId))', $model);
         self::assertStringContainsString('array_diff($categories, array_unique($allowedIds))', $model);
     }
 

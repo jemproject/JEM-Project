@@ -114,6 +114,16 @@ namespace {
             self::assertSame(array('add', 'event', false, false, array(8, 9)), $user->lastCanArguments);
         }
 
+        public function testCategoryCreateGrantOpensOnlyAnUnselectedOrAllowedEventForm(): void
+        {
+            $user = new FrontendAccessUserStub(array(1), false, array(8));
+
+            self::assertTrue(JemFrontendAccess::canAddEventSomewhere($user));
+            self::assertFalse(JemFrontendAccess::canAddEventSomewhere($user, 9));
+            self::assertFalse(JemFrontendAccess::canAddEventSomewhere(new FrontendAccessUserStub(array(1), false)));
+            self::assertFalse(JemFrontendAccess::canAddEventSomewhere(new FrontendAccessUserStub(array(1), false, array(8), 0)));
+        }
+
         public function testEditPermissionRequiresViewLevelAndUsesStoredOwner(): void
         {
             $user = new FrontendAccessUserStub(array(1, 3), true);
@@ -190,19 +200,26 @@ namespace {
 
     final class FrontendAccessUserStub
     {
+        public int $id;
+
         /** @var list<int> */
         private array $levels;
 
         private bool $result;
 
+        /** @var list<int> */
+        private array $categoryIds;
+
         /** @var array<int, mixed> */
         public array $lastCanArguments = array();
 
         /** @param list<int> $levels */
-        public function __construct(array $levels, bool $result)
+        public function __construct(array $levels, bool $result, array $categoryIds = array(), int $id = 1)
         {
+            $this->id = $id;
             $this->levels = $levels;
             $this->result = $result;
+            $this->categoryIds = $categoryIds;
         }
 
         public function getAuthorisedViewLevels(): array
@@ -215,6 +232,11 @@ namespace {
             $this->lastCanArguments = $arguments;
 
             return $this->result;
+        }
+
+        public function getJemCategories($action, $type): array
+        {
+            return array_fill_keys($this->categoryIds, true);
         }
     }
 }

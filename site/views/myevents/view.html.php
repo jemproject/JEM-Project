@@ -179,7 +179,7 @@ class JemViewMyevents extends JemView
 
             // Set the user permissions
             $permissions = new stdClass();
-            $permissions->canAddEvent = $user->can('add', 'event');
+            $permissions->canAddEvent = JemFrontendAccess::canAddEventSomewhere($user);
             $permissions->canAddVenue = $user->can('add', 'venue');
             $permissions->canPublishEvent = $canPublishEvent;
 

@@ -68,7 +68,10 @@ class JemViewTypeevents extends JemView
             $this->action        = $uri->toString();
             $this->jemsettings   = $jemsettings;
             $this->settings      = $settings;
-            $this->permissions   = (object) array('canAddEvent' => $user->can('add', 'event'), 'canAddVenue' => $user->can('add', 'venue'));
+            $this->permissions = (object) array(
+                'canAddEvent' => JemFrontendAccess::canAddEventSomewhere($user),
+                'canAddVenue' => $user->can('add', 'venue'),
+            );
             $this->pagetitle     = $pagetitle;
             $this->pageclass_sfx = '';
             $this->print         = $print;
@@ -140,7 +143,7 @@ class JemViewTypeevents extends JemView
         $document->setMetaData('title', $pagetitle);
 
         $permissions = new stdClass();
-        $permissions->canAddEvent = $user->can('add', 'event');
+        $permissions->canAddEvent = JemFrontendAccess::canAddEventSomewhere($user);
         $permissions->canAddVenue = $user->can('add', 'venue');
 
         $this->type          = $typeObj;

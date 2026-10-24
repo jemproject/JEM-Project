@@ -272,24 +272,23 @@ abstract class JemUserAbstract extends User
         $jemsettings = JemHelper::config();
         $asset = 'com_jem';
 
-        $all = (bool)$this->authorise('core.manage', $asset);
+        // core.manage opens the backend; it is not an Event/Venue operation grant.
+        $all = false;
 
-        if (!$all) {
-            foreach ($action as $act) {
-                switch ($act) {
-                    case 'add':
-                        $all = (bool)$this->authorise('core.create', $asset);
-                        break;
-                    case 'edit':
-                        $all = (bool) $this->authorise('core.edit', $asset)
-                            || ($owner && (bool) $this->authorise('core.edit.own', $asset));
-                        break;
-                    case 'publish':
-                        $all = (bool)$this->authorise('core.edit.state', $asset);
-                        break;
-                    default:
-                        break;
-                }
+        foreach ($action as $act) {
+            switch ($act) {
+                case 'add':
+                    $all = (bool)$this->authorise('core.create', $asset);
+                    break;
+                case 'edit':
+                    $all = (bool) $this->authorise('core.edit', $asset)
+                        || ($owner && (bool) $this->authorise('core.edit.own', $asset));
+                    break;
+                case 'publish':
+                    $all = (bool)$this->authorise('core.edit.state', $asset);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -555,18 +554,6 @@ abstract class JemUserAbstract extends User
             }
 
             $legacyActions[] = $act;
-
-            if ($this->authorise('core.manage', $asset)) {
-                return JemAccessDecision::allow(
-                    'component_acl',
-                    'joomla_core_manage',
-                    $act,
-                    $type,
-                    $recordId,
-                    $reasons,
-                    array('grantedPermission' => 'core.manage')
-                );
-            }
 
             switch ($act) {
                 case 'add':

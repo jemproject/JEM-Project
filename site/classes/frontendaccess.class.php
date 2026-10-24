@@ -214,6 +214,26 @@ abstract class JemFrontendAccess
     }
 
     /**
+     * A new event has no category yet; a category grant may still open its editor.
+     */
+    public static function canAddEventSomewhere($user, $categoryId = 0)
+    {
+        if ((int) ($user->id ?? 0) < 1) {
+            return false;
+        }
+
+        $categoryId = (int) $categoryId;
+
+        if ($categoryId > 0) {
+            return self::canAdd($user, 'event', $categoryId);
+        }
+
+        return self::canAdd($user, 'event')
+            || (method_exists($user, 'getJemCategories')
+                && (bool) $user->getJemCategories('add', 'event'));
+    }
+
+    /**
      * Explain an edit permission decision, including the record view level.
      *
      * @return JemAccessDecision
@@ -301,7 +321,7 @@ abstract class JemFrontendAccess
             return self::canEdit($user, 'event', $item);
         }
 
-        if (self::canAdd($user, 'event', $app->input->getInt('catid', 0))) {
+        if (self::canAddEventSomewhere($user, $app->input->getInt('catid', 0))) {
             return true;
         }
 

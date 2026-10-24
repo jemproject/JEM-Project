@@ -62,6 +62,22 @@ final class FrontendEditorAccessTest extends TestCase
         self::assertStringContainsString('JemFrontendAccess::canUseEventSelectors($app, $user, $model)', $selectorAccess);
     }
 
+    public function testCategoryDelegatedUserCanOpenTheNewEventFormButSaveStillChecksCategories(): void
+    {
+        $controller = $this->read('/site/controller.php');
+        $eventController = $this->read('/site/controllers/event.php');
+        $eventView = $this->read('/site/views/editevent/view.html.php');
+        $field = $this->read('/admin/models/fields/catoptions.php');
+
+        self::assertStringContainsString('JemFrontendAccess::canAddEventSomewhere($user, $categoryId)', $controller);
+        self::assertStringContainsString('JemFrontendAccess::canAddEventSomewhere($user)', $eventController);
+        self::assertStringContainsString("\$this->assertFrontendCanAdd('event', \$categories)", $eventController);
+        self::assertStringContainsString('JemFrontendAccess::canAddEventSomewhere(', $eventView);
+        self::assertStringContainsString("isClient('site')", $field);
+        self::assertStringContainsString("getJemCategories('add', 'event')", $field);
+        self::assertStringContainsString("JemHelperBackend::canEventCategories('create', array(\$categoryId))", $field);
+    }
+
     public function testGuestGateRunsBeforeEventSelectorLayouts(): void
     {
         $view = $this->read('/site/views/editevent/view.html.php');

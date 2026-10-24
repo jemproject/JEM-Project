@@ -124,6 +124,10 @@ class JFormFieldCatOptions extends ListField
         $selectedCategoryIds = $recordId > 0
             ? $this->normaliseCategoryIds($this->value)
             : array();
+        $frontend = Factory::getApplication()->isClient('site');
+        $creatableIds = $frontend
+            ? array_map('intval', array_keys((array) JemFactory::getUser()->getJemCategories('add', 'event')))
+            : array();
 
         // Choices.js treats option labels as plain text. Build a plain-text tree
         // instead of relying on the legacy HTML stored in treename.
@@ -134,7 +138,9 @@ class JFormFieldCatOptions extends ListField
             $name = (string) ($options[$i]->catname ?? $options[$i]->text ?? '');
             $options[$i]->disable = $categoryId > 0
                 && !in_array($categoryId, $selectedCategoryIds, true)
-                && !JemHelperBackend::canEventCategories('create', array($categoryId));
+                && !($frontend
+                    ? in_array($categoryId, $creatableIds, true)
+                    : JemHelperBackend::canEventCategories('create', array($categoryId)));
             $options[$i]->text = str_repeat("\xC2\xA0\xC2\xA0", $depth)
                 . ($depth > 0 ? '└─ ' : '')
                 . $name;

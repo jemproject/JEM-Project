@@ -112,6 +112,44 @@ final class BackendAclGuardTest extends TestCase
         self::assertStringContainsString("'jem.types.access'", $script);
     }
 
+    public function testBackendAclMappingDoesNotRepeatOnBetaOrUnknownVersionUpdates(): void
+    {
+        require_once JEM_TEST_ROOT . '/script.php';
+        $method = new ReflectionMethod(com_jemInstallerScript::class, 'shouldMigrateBackendAcl');
+
+        self::assertTrue($method->invoke(null, 'install', ''));
+        self::assertTrue($method->invoke(null, 'update', '5.0.2beta1'));
+        self::assertFalse($method->invoke(null, 'update', '5.1.0beta1'));
+        self::assertFalse($method->invoke(null, 'update', '5.1.0beta4'));
+        self::assertFalse($method->invoke(null, 'update', '5.1.0'));
+        self::assertFalse($method->invoke(null, 'update', ''));
+    }
+
+    public function testVenueFormKeepsItsAssetIdWhileCategoryAddKeepsTheSelectedParent(): void
+    {
+        $venueForm = simplexml_load_file(JEM_TEST_ROOT . '/admin/models/forms/venue.xml');
+        self::assertNotFalse($venueForm);
+        $assetFields = $venueForm->xpath('//field[@name="asset_id"]');
+        self::assertCount(1, $assetFields);
+        self::assertSame('unset', (string) $assetFields[0]['filter']);
+
+        $categoryController = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/category.php');
+        self::assertStringContainsString('protected function getRedirectToItemAppend(', $categoryController);
+        self::assertStringContainsString("'&parent_id=' . \$parentId", $categoryController);
+    }
+
+    public function testFrontendManagePermissionIsNotAnImplicitResourceGrant(): void
+    {
+        $userClass = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/user.class.php');
+        $categories = substr($userClass, strpos($userClass, 'public function getJemCategories('),
+            strpos($userClass, 'public function getAccessDecision(') - strpos($userClass, 'public function getJemCategories('));
+        $decision = substr($userClass, strpos($userClass, 'public function getAccessDecision('),
+            strpos($userClass, 'private function getResourceAclDecision(') - strpos($userClass, 'public function getAccessDecision('));
+
+        self::assertStringNotContainsString("authorise('core.manage'", $categories);
+        self::assertStringNotContainsString("authorise('core.manage'", $decision);
+    }
+
     public function testEventAndVenueFormsGateTheAuthorFieldWithTheDedicatedPermissionOnly(): void
     {
         $files = array(

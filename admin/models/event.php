@@ -786,7 +786,7 @@ class JemModelEvent extends JemModelAdmin
 
         // Variables
         $cats                 = $this->normaliseEventCategoryIds($data['cats'] ?? array());
-        if (empty($cats) || !$this->validateEventCategoryIds($cats, $backend, $new)) {
+        if (empty($cats) || !$this->validateEventCategoryIds($cats, $backend, $new, (int) ($data['id'] ?? 0))) {
             $this->setError(Text::_('COM_JEM_EVENT_ERROR_STORE_CATEGORIES'));
 
             return false;
@@ -2287,10 +2287,11 @@ class JemModelEvent extends JemModelAdmin
      * @param   array    $categories  Submitted category ids.
      * @param   boolean  $backend     True for administrator requests.
      * @param   boolean  $new         True when creating an event.
+     * @param   integer  $eventId     Stored event id for an edit.
      *
      * @return  boolean
      */
-    protected function validateEventCategoryIds(array $categories, $backend, $new)
+    protected function validateEventCategoryIds(array $categories, $backend, $new, $eventId = 0)
     {
         if ($backend) {
             $allowedCategories = JemCategories::getCategoriesTree();
@@ -2303,10 +2304,13 @@ class JemModelEvent extends JemModelAdmin
             }
         } else {
             $user = JemFactory::getUser();
-            $allowedCategories = $user->getJemCategories(
-                $new ? array('add') : array('add', 'edit'),
-                'event'
-            );
+            // Existing associations are not new category assignments. Only
+            // newly added categories need Create; unchanged hidden ones survive.
+            if (!$new) {
+                $categories = array_diff($categories, $this->getEventCategoryIds($eventId));
+            }
+
+            $allowedCategories = $user->getJemCategories('add', 'event');
             $allowedIds = array_map('intval', array_keys((array) $allowedCategories));
         }
 
@@ -4427,10 +4431,26 @@ class JemModelEvent extends JemModelAdmin
          *  But these categories must not removed from this event!
          */
         if ($frontend) {
-            // Note: JFormFieldCatOptions calls the same function to know which categories user is allowed (un)select.
-            $limit_cats = array_keys($user->getJemCategories($new ? array('add') : array('add', 'edit'), 'event'));
-            $del_cats = array_intersect($del_cats, $limit_cats);
-            $add_cats = array_intersect($add_cats, $limit_cats);
+            $owner = false;
+
+            if (!$new) {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName('created_by'))
+                    ->from($db->quoteName('#__jem_events'))
+                    ->where($db->quoteName('id') . ' = ' . $eventId);
+                $db->setQuery($query);
+                $storedOwner = (int) $db->loadResult();
+                $owner = $storedOwner > 0 && $storedOwner === (int) $user->id;
+            }
+
+            $editableIds = array_keys($user->getJemCategories(
+                array('add', 'edit'),
+                'event',
+                array('owner' => $owner)
+            ));
+            $creatableIds = array_keys($user->getJemCategories('add', 'event'));
+            $del_cats = array_intersect($del_cats, $editableIds);
+            $add_cats = array_intersect($add_cats, $creatableIds);
         }
 
         if (!empty($del_cats)) {

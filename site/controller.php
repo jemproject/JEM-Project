@@ -111,7 +111,10 @@ class JemController extends BaseController
             } else {
                 $categoryId = ($type === 'event') ? $jinput->getInt('catid', 0) : 0;
 
-                JemFrontendAccess::enforce(JemFrontendAccess::decideAdd($user, $type, $categoryId));
+                // The new Event form may be opened before a Category is chosen.
+                if ($type !== 'event' || !JemFrontendAccess::canAddEventSomewhere($user, $categoryId)) {
+                    JemFrontendAccess::enforce(JemFrontendAccess::decideAdd($user, $type, $categoryId));
+                }
             }
         }
 

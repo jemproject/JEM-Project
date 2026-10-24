@@ -37,7 +37,11 @@ class JemControllerEvent extends JemControllerForm
             return false;
         }
 
-        $this->assertFrontendCanAdd('event', Factory::getApplication()->input->getInt('catid', 0));
+        $categoryId = Factory::getApplication()->input->getInt('catid', 0);
+
+        if (!JemFrontendAccess::canAddEventSomewhere(JemFactory::getUser(), $categoryId)) {
+            $this->assertFrontendCanAdd('event', $categoryId);
+        }
 
         return parent::add();
     }
@@ -55,7 +59,9 @@ class JemControllerEvent extends JemControllerForm
         $inputCatId = Factory::getApplication()->input->getInt('catid', 0);
         $categoryIds = ArrayHelper::getValue($data, 'cats', $inputCatId ? array($inputCatId) : array(), 'array');
 
-        return JemFrontendAccess::canAdd($user, 'event', $categoryIds);
+        return $categoryIds
+            ? JemFrontendAccess::canAdd($user, 'event', $categoryIds)
+            : JemFrontendAccess::canAddEventSomewhere($user);
     }
 
     /**
@@ -105,7 +111,11 @@ class JemControllerEvent extends JemControllerForm
             $categories = !empty($data['cats'])
                 ? (array) $data['cats']
                 : array_filter(array(Factory::getApplication()->input->getInt('catid', 0)));
-            $this->assertFrontendCanAdd('event', $categories);
+            if ($categories) {
+                $this->assertFrontendCanAdd('event', $categories);
+            } elseif (!JemFrontendAccess::canAddEventSomewhere(JemFactory::getUser())) {
+                $this->assertFrontendCanAdd('event');
+            }
         }
 
         $result = parent::cancel($key);
@@ -171,7 +181,12 @@ class JemControllerEvent extends JemControllerForm
             return false;
         }
 
-        $this->assertFrontendCanAdd('event', Factory::getApplication()->input->getInt('catid', 0));
+        $categoryId = Factory::getApplication()->input->getInt('catid', 0);
+
+        if (!JemFrontendAccess::canAddEventSomewhere(JemFactory::getUser(), $categoryId)) {
+            $this->assertFrontendCanAdd('event', $categoryId);
+        }
+
         $sourceId = $this->getFrontendRecordId(true);
         $source = $this->getFrontendItemOrFail($sourceId, 'COM_JEM_EVENT_ERROR_EVENT_NOT_FOUND');
         $this->assertFrontendCanEdit('event', $source);

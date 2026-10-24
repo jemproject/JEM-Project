@@ -88,7 +88,10 @@ class JemViewEditevent extends JemView
 
         if (empty($item->id)) {
             // Check if the user has access to the form
-            $authorised = (bool)$user->can('add', 'event');
+            $authorised = JemFrontendAccess::canAddEventSomewhere(
+                $user,
+                Factory::getApplication()->input->getInt('catid', 0)
+            );
         } else {
             // Check if user can edit
             $authorised = (bool)$item->params->get('access-edit');
