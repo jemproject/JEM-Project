@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Document\Feed\FeedItem;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
@@ -67,7 +68,7 @@ class JemViewEventslist extends HtmlView
                 $created = ($row->created ? date('r', strtotime($row->created)) : '');
 
                 // load individual item creator class
-                $item = new JFeedItem();
+                $item = new FeedItem();
                 $item->title       = $title;
                 $item->link        = $link;
                 $item->description = $description;
