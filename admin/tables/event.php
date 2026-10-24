@@ -487,6 +487,10 @@ class JemTableEvent extends Table
     public function store($updateNulls = true)
     {
         // Background recurrence and custom-series saves bypass check().
+        if ($this->attribs === null || $this->attribs === '') {
+            $this->attribs = '{}';
+        }
+
         if (!$this->checkEventSchedule()) {
             return false;
         }

@@ -249,6 +249,18 @@ final class EventslistCategoryLoadingTest extends TestCase
         self::assertSame(3, $other->getTotal());
     }
 
+    public function testImportedEventWithNullAttribsRemainsVisibleInList(): void
+    {
+        $this->db->setQuery('UPDATE t_jem_events SET attribs = NULL WHERE id = 10')->execute();
+        $this->model->setState('list.limit', 1);
+
+        $items = $this->model->getItems();
+
+        self::assertCount(1, $items);
+        self::assertSame(10, $items[0]->id);
+        self::assertSame(array('access-edit' => false), $items[0]->params->toArray());
+    }
+
     public function testGuestsSkipAclPreloadAndRowsWithoutCategoriesAreRemoved(): void
     {
         $this->user->guest = 1;

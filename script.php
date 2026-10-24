@@ -336,6 +336,7 @@ class com_jemInstallerScript
             $this->registerNotificationTemplates();
             $this->repairLegacyRecurrenceRoots();
             $this->ensureEventScheduleStorage();
+            $this->repairNullEventAttribs();
             $this->rebuildEventUtcDates();
             if (self::shouldMigrateBackendAcl($type, $this->oldRelease)) {
                 $this->migrateBackendAcl($type === 'update');
@@ -2566,6 +2567,22 @@ SQL;
         $db->setQuery('ALTER TABLE ' . $db->quoteName('#__jem_events')
             . ' MODIFY ' . $db->quoteName('attribs') . ' MEDIUMTEXT NULL DEFAULT NULL');
         $db->execute();
+    }
+
+    /** Repair rows imported by earlier 5.1 betas without changing existing parameters. */
+    private function repairNullEventAttribs(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+
+        if (!in_array($db->replacePrefix('#__jem_events'), $db->getTableList(), true)) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__jem_events'))
+            ->set($db->quoteName('attribs') . ' = ' . $db->quote('{}'))
+            ->where($db->quoteName('attribs') . ' IS NULL');
+        $db->setQuery($query)->execute();
     }
 
     /** Backfill canonical UTC event boundaries after install or update. */

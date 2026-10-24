@@ -264,7 +264,7 @@ class JemModelEvent extends ItemModel
 
                 # Convert parameter fields to objects.
                 $registry = new Registry;
-                $registry->loadString($data->attribs);
+                $registry->loadString($data->attribs ?? '{}');
                 $data->params = clone JemHelper::globalattribs(); // returns Registry object
                 $data->params->merge($registry);
 
@@ -780,7 +780,7 @@ class JemModelEvent extends ItemModel
 
             # Convert parameter fields to objects.
             $registry = new Registry;
-            $registry->loadString($data[0]->attribs);
+            $registry->loadString($data[0]->attribs ?? '{}');
             $data[0]->params = clone JemHelper::globalattribs(); // returns Registry object
             $data[0]->params->merge($registry);
 

@@ -1528,7 +1528,7 @@ class JemModelEventslist extends ListModel
         foreach ($items as $index => $item)
         {
             $eventParams = new Registry;
-            $eventParams->loadString($item->attribs);
+            $eventParams->loadString($item->attribs ?? '{}');
 
             if (empty($stateParams)) {
                 $item->params = new Registry;

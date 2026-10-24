@@ -141,6 +141,39 @@ final class EventScheduleIntegrationTest extends TestCase
         self::assertSame([], $this->db->queries);
     }
 
+    public function testDirectStoreNormalisesMissingEventAttribs(): void
+    {
+        $source = $this->source();
+        unset($source['attribs']);
+        Factory::getContainer()->set(\Joomla\Database\DatabaseInterface::class, $this->db, true);
+
+        self::assertSame('{}', $this->store($source)->attribs);
+
+        $source['attribs'] = '';
+        self::assertSame('{}', $this->store($source)->attribs);
+    }
+
+    public function testInstallerRepairsOnlyNullEventAttribsOnRepeatedRuns(): void
+    {
+        $this->db->setQuery("INSERT INTO t_jem_events (attribs) VALUES (NULL), ('{\"keep\":\"value\"}')")
+            ->execute();
+        require_once JEM_TEST_ROOT . '/script.php';
+        $repair = new ReflectionMethod(com_jemInstallerScript::class, 'repairNullEventAttribs');
+        $installer = new com_jemInstallerScript();
+
+        $repair->invoke($installer);
+        self::assertSame(
+            array('{}', '{"keep":"value"}'),
+            $this->db->setQuery('SELECT attribs FROM t_jem_events ORDER BY id')->loadColumn()
+        );
+
+        $repair->invoke($installer);
+        self::assertSame(
+            array('{}', '{"keep":"value"}'),
+            $this->db->setQuery('SELECT attribs FROM t_jem_events ORDER BY id')->loadColumn()
+        );
+    }
+
     public function testVenueAndInstallerUtcRefreshUseActiveSessions(): void
     {
         $source = $this->source();
