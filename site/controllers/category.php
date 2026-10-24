@@ -153,6 +153,8 @@ class JemControllerCategory extends JemControllerForm
 
         if ($recordId) {
             $append .= '&' . $urlVar . '=' . (int) $recordId;
+        } elseif (($parentId = $this->input->getInt('parent_id', 0)) > 1) {
+            $append .= '&parent_id=' . $parentId;
         }
 
         if ($itemId) {

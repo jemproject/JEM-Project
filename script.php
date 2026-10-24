@@ -1954,6 +1954,28 @@ SQL;
             'jem.notifications.resend' => 'core.edit',
             'jem.tools.manage'      => 'core.admin',
         );
+        // These actions already existed in 5.0.1; an unset rule is intentional.
+        $actionsSince501 = array(
+            'jem.events.access', 'jem.events.create', 'jem.events.delete', 'jem.events.edit',
+            'jem.events.edit.state', 'jem.events.edit.own', 'jem.events.edit.created',
+            'jem.venues.access', 'jem.venues.create', 'jem.venues.delete', 'jem.venues.edit',
+            'jem.venues.edit.state', 'jem.venues.edit.own', 'jem.venues.edit.created',
+            'jem.attendees.manage', 'jem.tools.manage',
+        );
+        $fromGranular = $preserveLegacyManage && $this->oldRelease !== ''
+            && version_compare($this->oldRelease, '5.0.1', 'ge');
+
+        if ($fromGranular) {
+            foreach (array(
+                'jem.registrations.history',
+                'jem.notifications.templates',
+                'jem.notifications.history',
+                'jem.notifications.resend',
+            ) as $targetAction) {
+                $sourceActions[$targetAction] = 'jem.attendees.manage';
+            }
+        }
+
         $changed = false;
 
         foreach ($groupIds as $groupId) {
@@ -1969,7 +1991,15 @@ SQL;
                     continue;
                 }
 
-                if (!$legacyManager && !Access::checkGroup($groupId, $sourceAction, 'com_jem')) {
+                if ($fromGranular && in_array($targetAction, $actionsSince501, true)) {
+                    continue;
+                }
+
+                // Only pre-5.0.1 managers need the historical broad mapping.
+                // core.manage never implied access to the component Options.
+                $legacyGrant = $legacyManager && !$fromGranular && $targetAction !== 'core.options';
+
+                if (!$legacyGrant && !Access::checkGroup($groupId, $sourceAction, 'com_jem')) {
                     continue;
                 }
 

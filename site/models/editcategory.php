@@ -90,7 +90,8 @@ class JemModelEditcategory extends JemModelCategory
     {
         $app = Factory::getApplication();
         $user = JemFactory::getUser();
-        $recordId = (int) $this->getState('editcategory.id');
+        // ignore_request skips populateState(); the controller has validated a_id.
+        $recordId = (int) $this->getState('editcategory.id', $app->input->getInt('a_id', 0));
         $submittedId = (int) ($submittedData['id'] ?? 0);
 
         if ($submittedId !== $recordId) {

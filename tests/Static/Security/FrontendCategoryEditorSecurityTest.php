@@ -67,6 +67,17 @@ final class FrontendCategoryEditorSecurityTest extends TestCase
         self::assertStringContainsString('getAuthorisedViewLevels', $policy);
     }
 
+    public function testEditingUsesValidatedIdAndChildRedirectKeepsItsParent(): void
+    {
+        $controller = $this->read('site/controllers/category.php');
+        $model = $this->read('site/models/editcategory.php');
+
+        self::assertStringContainsString("'&parent_id=' . \$parentId", $controller);
+        self::assertStringContainsString("\$app->input->getInt('a_id', 0)", $model);
+        self::assertStringContainsString('if ($submittedId !== $recordId)', $model);
+        self::assertStringContainsString('JemFrontendCategoryAccess::canEdit($user, $stored)', $model);
+    }
+
     public function testModelRevalidatesHierarchyFieldsStateAndImages(): void
     {
         $model = $this->read('site/models/editcategory.php');

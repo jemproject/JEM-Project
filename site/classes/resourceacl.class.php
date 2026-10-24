@@ -65,4 +65,55 @@ final class JemResourceAclPolicy
 
         return $hasUnset ? null : true;
     }
+
+    /**
+     * Apply a legacy JEM Group grant only where category Event ACL is unused.
+     * Every category must allow the same requested operation.
+     */
+    public static function allowsLegacyEventCategories(
+        $operation,
+        array $categories,
+        array $groupIds,
+        array $viewLevels,
+        callable $resourceDecision,
+        callable $hasCategoryRules
+    ) {
+        if (!$categories || !$groupIds) {
+            return false;
+        }
+
+        $groupIds = array_map('intval', $groupIds);
+        $viewLevels = array_map('intval', $viewLevels);
+
+        foreach ($categories as $category) {
+            $categoryId = (int) ($category->id ?? 0);
+
+            if ($categoryId < 1 || (int) ($category->published ?? 0) !== 1
+                || !in_array((int) ($category->access ?? 0), $viewLevels, true)) {
+                return false;
+            }
+
+            $decision = $resourceDecision($operation, $categoryId);
+
+            if ($decision === true) {
+                continue;
+            }
+
+            if ($decision === false || $hasCategoryRules($categoryId)) {
+                return false;
+            }
+
+            $groupId = (int) ($category->groupid ?? 0);
+
+            if ($groupId > 0 && !in_array($groupId, $groupIds, true)) {
+                return false;
+            }
+
+            if ($groupId === 0 && $operation === 'publish') {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

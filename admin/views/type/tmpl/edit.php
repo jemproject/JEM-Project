@@ -362,10 +362,12 @@ $blockEvents = (int) ($typeAttribs['block_events'] ?? 0);
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <?php echo $this->form->getLabel('published'); ?>
-                        <?php echo $this->form->getInput('published'); ?>
-                    </div>
+                    <?php if ($this->form->getField('published')) : ?>
+                        <div class="mb-3">
+                            <?php echo $this->form->getLabel('published'); ?>
+                            <?php echo $this->form->getInput('published'); ?>
+                        </div>
+                    <?php endif; ?>
 
                     <div class="mb-3">
                         <?php echo $this->form->getLabel('access'); ?>

@@ -38,7 +38,6 @@ final class JemUserAccessDecisionTest extends TestCase
             'CATEGORY_VIEW_DENIED',
             'JEM_GROUP_REQUIRED',
             'JEM_GROUP_ACTION_DENIED',
-            'joomla_core_manage',
             'joomla_acl',
             'jem_global_setting',
             'jem_autopublish',
@@ -46,6 +45,18 @@ final class JemUserAccessDecisionTest extends TestCase
         ) as $contractValue) {
             self::assertStringContainsString($contractValue, $code);
         }
+    }
+
+    public function testLegacyGroupFallbackUsesCategoryAclAndAllCategories(): void
+    {
+        $code = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/user.class.php');
+
+        self::assertStringContainsString('JemResourceAclPolicy::allowsLegacyEventCategories(', $code);
+        self::assertStringContainsString('hasCategoryEventAclRules((int) $categoryId)', $code);
+        self::assertStringContainsString("Access::getAssetRules('com_jem.category.' . (int) \$categoryId, true, false)", $code);
+        self::assertStringContainsString('array_diff($categoryIds, $foundIds)', $code);
+        self::assertStringContainsString("!\$this->getJemCategories('add', 'event')", $code);
+        self::assertStringContainsString("if (\$type === 'event' && \$recordId > 0)", $code);
     }
 
     public function testEveryRepositoryConsumerStillUsesTheSupportedCanSignature(): void

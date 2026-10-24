@@ -125,6 +125,16 @@ final class BackendAclGuardTest extends TestCase
         self::assertFalse($method->invoke(null, 'update', ''));
     }
 
+    public function testFirstGranularUpdateDoesNotWidenExistingActions(): void
+    {
+        $script = (string) file_get_contents(JEM_TEST_ROOT . '/script.php');
+
+        self::assertStringContainsString("version_compare(\$this->oldRelease, '5.0.1', 'ge')", $script);
+        self::assertStringContainsString('in_array($targetAction, $actionsSince501, true)', $script);
+        self::assertStringContainsString("\$sourceActions[\$targetAction] = 'jem.attendees.manage'", $script);
+        self::assertStringContainsString("\$targetAction !== 'core.options'", $script);
+    }
+
     public function testVenueFormKeepsItsAssetIdWhileCategoryAddKeepsTheSelectedParent(): void
     {
         $venueForm = simplexml_load_file(JEM_TEST_ROOT . '/admin/models/forms/venue.xml');
@@ -148,6 +158,18 @@ final class BackendAclGuardTest extends TestCase
 
         self::assertStringNotContainsString("authorise('core.manage'", $categories);
         self::assertStringNotContainsString("authorise('core.manage'", $decision);
+    }
+
+    public function testTypeFormSaveCannotChangeStateWithoutDedicatedPermission(): void
+    {
+        $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/type.php');
+        $layout = (string) file_get_contents(JEM_TEST_ROOT . '/admin/views/type/tmpl/edit.php');
+
+        self::assertStringContainsString("!JemHelperBackend::can('type', 'edit.state')", $model);
+        self::assertStringContainsString("\$form->removeField('published')", $model);
+        self::assertStringContainsString("\$data['published'] = (int) \$stored->published", $model);
+        self::assertStringContainsString("\$data['published'] = 0", $model);
+        self::assertStringContainsString("\$this->form->getField('published')", $layout);
     }
 
     public function testEventAndVenueFormsGateTheAuthorFieldWithTheDedicatedPermissionOnly(): void

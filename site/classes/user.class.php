@@ -278,14 +278,14 @@ abstract class JemUserAbstract extends User
         foreach ($action as $act) {
             switch ($act) {
                 case 'add':
-                    $all = (bool)$this->authorise('core.create', $asset);
+                    $all = $all || (bool) $this->authorise('core.create', $asset);
                     break;
                 case 'edit':
-                    $all = (bool) $this->authorise('core.edit', $asset)
+                    $all = $all || (bool) $this->authorise('core.edit', $asset)
                         || ($owner && (bool) $this->authorise('core.edit.own', $asset));
                     break;
                 case 'publish':
-                    $all = (bool)$this->authorise('core.edit.state', $asset);
+                    $all = $all || (bool) $this->authorise('core.edit.state', $asset);
                     break;
                 default:
                     break;
@@ -366,7 +366,12 @@ abstract class JemUserAbstract extends User
         $cats = $db->loadObjectList('id');
 
         foreach ($cats as $categoryId => $category) {
-            $legacyAllowed = $all || array_key_exists((int) $category->groupid, $jemgroups);
+            $unrestrictedGroup = $type === 'event' && (int) $category->groupid === 0
+                && $jemgroups && (in_array('add', $action, true) || in_array('edit', $action, true));
+            $legacyAllowed = $all || $unrestrictedGroup || array_key_exists((int) $category->groupid, $jemgroups);
+            if ($type === 'event' && $this->hasCategoryEventAclRules((int) $categoryId)) {
+                $legacyAllowed = false;
+            }
             $allowed = false;
 
             foreach ($action as $act) {
@@ -481,7 +486,8 @@ abstract class JemUserAbstract extends User
             $categoryIds = array();
         }
 
-        if ($type === 'event' && empty($categoryIds) && $recordId > 0) {
+        // Existing Events always use stored relations, never caller-supplied IDs.
+        if ($type === 'event' && $recordId > 0) {
             $categoryIds = $this->getEventCategoryIdsForAcl($recordId);
         }
 
@@ -551,6 +557,38 @@ abstract class JemUserAbstract extends User
                     array('categoryIds' => $categoryIds)
                 );
                 continue;
+            }
+
+            // An ACL-managed category cannot be opened by any legacy grant.
+            // Other categories may still use the compatible legacy policy.
+            if ($type === 'event' && $categoryIds) {
+                $managedCategoryDenied = false;
+
+                foreach ($categoryIds as $categoryId) {
+                    if (!$this->hasCategoryEventAclRules($categoryId)) {
+                        continue;
+                    }
+
+                    $categoryAllowed = $this->getResourceAclDecision('event', $act, array($categoryId)) === true;
+                    $ownCategoryAllowed = $act === 'edit' && $created_by > 0 && $created_by === $userId
+                        && $this->getResourceAclDecision('event', 'edit.own', array($categoryId)) === true;
+
+                    if (!$categoryAllowed && !$ownCategoryAllowed) {
+                        $managedCategoryDenied = true;
+                        break;
+                    }
+                }
+
+                if ($managedCategoryDenied) {
+                    $reasons[] = $reason(
+                        JemAccessDecision::ACTION_NOT_ALLOWED,
+                        'resource_acl',
+                        'joomla_acl',
+                        $act,
+                        array('categoryIds' => $categoryIds)
+                    );
+                    continue;
+                }
             }
 
             $legacyActions[] = $act;
@@ -707,7 +745,23 @@ abstract class JemUserAbstract extends User
             );
         }
 
-        if (empty($categoryIds) && (($type !== 'event') || (empty($id) && !in_array('publish', $legacyActions, true)))) {
+        // A group grant cannot open an empty new-Event form when no category
+        // remains available after the category ACL policy is applied.
+        if ($type === 'event' && !$recordId && !$categoryIds
+            && in_array('add', $legacyActions, true)
+            && !$this->getJemCategories('add', 'event')) {
+            return JemAccessDecision::deny(
+                JemAccessDecision::JEM_GROUP_ACTION_DENIED,
+                'category_group',
+                'jem_group',
+                'add',
+                $type,
+                0,
+                $reasons
+            );
+        }
+
+        if ($type !== 'event' || (empty($categoryIds) && empty($id) && !in_array('publish', $legacyActions, true))) {
             return JemAccessDecision::allow(
                 'jem_group',
                 array_keys($jemgroups) === array(0) ? 'jem_global_setting' : 'jem_group',
@@ -722,12 +776,11 @@ abstract class JemUserAbstract extends User
         $whereCats = empty($categoryIds) ? '' : ' AND c.id IN (' . implode(',', $categoryIds) . ')';
         $levels = array_map('intval', $this->getAuthorisedViewLevels());
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = 'SELECT DISTINCT c.id, c.groupid, c.access FROM #__jem_categories AS c';
+        $query = 'SELECT DISTINCT c.id, c.groupid, c.access, c.published FROM #__jem_categories AS c';
 
         if (!empty($id)) {
             $query .= ' LEFT JOIN #__jem_cats_event_relations AS rel ON rel.catid = c.id'
-                . ' WHERE rel.itemid = ' . $id
-                . ' AND c.published = 1';
+                . ' WHERE rel.itemid = ' . $id;
         } else {
             $query .= ' WHERE c.published = 1';
         }
@@ -736,7 +789,9 @@ abstract class JemUserAbstract extends User
         $db->setQuery($query);
         $cats = (array) $db->loadObjectList();
 
-        if (empty($cats)) {
+        $foundIds = array_map(static function ($cat) { return (int) $cat->id; }, $cats);
+
+        if (empty($cats) || array_diff($categoryIds, $foundIds)) {
             $reasons[] = $reason(JemAccessDecision::CATEGORY_NOT_FOUND, 'category', 'jem_category', $resultAction);
 
             return JemAccessDecision::deny(
@@ -751,59 +806,64 @@ abstract class JemUserAbstract extends User
             );
         }
 
-        $unspecific = in_array('publish', $actions, true) ? -1 : 0;
-        $restrictedCategory = false;
-        $inaccessibleCategory = false;
+        foreach ($legacyActions as $act) {
+            if (!in_array($act, array('add', 'edit', 'publish'), true)) {
+                continue;
+            }
 
-        foreach ($cats as $cat) {
-            if (empty($cat->groupid)) {
-                if ($unspecific === 0) {
-                    $unspecific = 1;
+            $actionGroupIds = array();
+
+            foreach ($jemgroups as $groupId => $group) {
+                if ((int) $groupId === 0 && $act === 'edit' && $edit) {
+                    $actionGroupIds[] = 0;
+                } elseif ((int) $groupId > 0 && !empty($group[$act . 'event'])) {
+                    $actionGroupIds[] = (int) $groupId;
                 }
-                continue;
             }
 
-            $restrictedCategory = true;
-            $unspecific = -1;
+            if (JemResourceAclPolicy::allowsLegacyEventCategories(
+                $act,
+                $cats,
+                $actionGroupIds,
+                $levels,
+                function ($operation, $categoryId) {
+                    return $this->getResourceAclDecision('event', $operation, array($categoryId));
+                },
+                function ($categoryId) {
+                    return $this->hasCategoryEventAclRules($categoryId);
+                }
+            )) {
+                $unrestricted = true;
 
-            if (!in_array((int) $cat->access, $levels, true)) {
-                $inaccessibleCategory = true;
-                $reasons[] = $reason(
-                    JemAccessDecision::CATEGORY_VIEW_DENIED,
-                    'category_view_level',
-                    'joomla_view_level',
-                    $resultAction,
-                    array('categoryId' => (int) $cat->id)
-                );
-                continue;
-            }
+                foreach ($cats as $cat) {
+                    if ((int) $cat->groupid > 0 || $this->hasCategoryEventAclRules((int) $cat->id)) {
+                        $unrestricted = false;
+                        break;
+                    }
+                }
 
-            if (array_key_exists((int) $cat->groupid, $jemgroups)) {
                 return JemAccessDecision::allow(
                     'category_group',
-                    'jem_group',
-                    $resultAction,
+                    $unrestricted ? 'jem_unrestricted_category' : 'jem_group',
+                    $act,
                     $type,
                     $recordId,
                     $reasons,
                     array(
-                        'categoryId' => (int) $cat->id,
-                        'groupId' => (int) $cat->groupid,
+                        'categoryIds' => $foundIds,
+                        'groupIds' => $actionGroupIds,
                     )
                 );
             }
         }
 
-        if ($unspecific === 1) {
-            return JemAccessDecision::allow(
-                'category_group',
-                'jem_unrestricted_category',
-                $resultAction,
-                $type,
-                $recordId,
-                $reasons,
-                array('categoryIds' => array_map(static function ($cat) { return (int) $cat->id; }, $cats))
-            );
+        $inaccessibleCategory = false;
+        $restrictedCategory = false;
+
+        foreach ($cats as $cat) {
+            $inaccessibleCategory = $inaccessibleCategory
+                || !in_array((int) $cat->access, $levels, true);
+            $restrictedCategory = $restrictedCategory || (int) $cat->groupid > 0;
         }
 
         $code = $inaccessibleCategory
@@ -854,6 +914,23 @@ abstract class JemUserAbstract extends User
                 return Access::getAssetRules($asset, true, true)->allow($action, $groups);
             }
         );
+    }
+
+    /**
+     * Category and ancestor Event rules take precedence over JEM Group fallback.
+     * Component rules are intentionally excluded: they are handled by decide().
+     */
+    private function hasCategoryEventAclRules($categoryId)
+    {
+        $rules = Access::getAssetRules('com_jem.category.' . (int) $categoryId, true, false)->getData();
+
+        foreach ($rules as $action => $identities) {
+            if (strpos($action, 'jem.events.') === 0 && $identities->getData()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

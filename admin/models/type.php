@@ -9,6 +9,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
@@ -39,7 +40,35 @@ class JemModelType extends JemModelAdmin
         if (empty($form)) {
             return false;
         }
+
+        if (!JemHelperBackend::can('type', 'edit.state')) {
+            $form->removeField('published');
+        }
+
         return $form;
+    }
+
+    public function save($data)
+    {
+        if (!JemHelperBackend::can('type', 'edit.state')) {
+            $id = (int) ($data['id'] ?? 0);
+
+            if ($id > 0) {
+                $stored = $this->getTable();
+
+                if (!$stored->load($id)) {
+                    $this->setError($stored->getError() ?: Text::_('JERROR_ALERTNOAUTHOR'));
+
+                    return false;
+                }
+
+                $data['published'] = (int) $stored->published;
+            } else {
+                $data['published'] = 0;
+            }
+        }
+
+        return parent::save($data);
     }
 
     protected function loadFormData()
