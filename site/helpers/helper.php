@@ -3599,7 +3599,10 @@ class JemHelper
 
             $dtEnd       = new \DateTime($event->enddates . ' ' . $event->endtimes, $tz);
             $dtEndParams = ['VALUE' => 'DATE-TIME'];
-            if ((int) $jemsettings->ical_tz === 1) {
+            // Floating times are only meaningful in the site's timezone.
+            // Preserve the instant of events in another timezone using UTC.
+            $isForeignZone = $timezone_name !== self::getJoomlaTimeZoneName();
+            if ((int) $jemsettings->ical_tz === 1 || $isForeignZone) {
                 // Each concrete occurrence uses its own offset at each boundary.
                 // UTC needs no VTIMEZONE and avoids client-specific TZID guessing.
                 $utc = new \DateTimeZone('UTC');
@@ -3687,7 +3690,10 @@ class JemHelper
         $e->setSummary($event->title);
         $e->setCategories(implode(', ', $categories));
         $e->setDtstart($dtStart, $dtStartParams);
-        $e->setDtend($dtEnd, $dtEndParams);
+        // RFC 5545 requires DTEND to be later than DTSTART.
+        if ($dtEnd > $dtStart) {
+            $e->setDtend($dtEnd, $dtEndParams);
+        }
         // Plain text retains the event and meeting links for importers that
         // do not accept optional conference or HTML-description properties.
         $e->setDescription($description);
@@ -3706,6 +3712,12 @@ class JemHelper
                 $e->setXprop('X-MICROSOFT-LOCATIONDISPLAYNAME', $onlineMeetingLabel);
                 $e->setXprop('X-MICROSOFT-CDO-ONLINEMEETINGINFORMATION', $onlineMeetingUrl);
             }
+        }
+        $eventStatus = strtolower(trim((string) ($event->event_status ?? '')));
+        if ($eventStatus === 'cancelled') {
+            $e->setStatus(\Kigkonsult\Icalcreator\IcalInterface::CANCELLED);
+        } elseif ($eventStatus === 'postponed') {
+            $e->setStatus(\Kigkonsult\Icalcreator\IcalInterface::TENTATIVE);
         }
         $e->setUrl($link);
         $e->setUid('event' . $event->id . '@' . $sitename);

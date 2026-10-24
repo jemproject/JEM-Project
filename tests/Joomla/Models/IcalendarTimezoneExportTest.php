@@ -133,6 +133,7 @@ final class IcalendarTimezoneExportTest extends TestCase
             'Kathmandu quarter-hour zone' => ['Asia/Kathmandu', '2026-11-07', '14:00:00', '2026-11-07', '16:00:00', '20261107T081500Z', '20261107T101500Z'],
             'New York autumn transition' => ['America/New_York', '2026-11-01', '00:30:00', '2026-11-01', '02:30:00', '20261101T043000Z', '20261101T073000Z'],
             'UTC source' => ['UTC', '2026-11-07', '14:00:00', '2026-11-07', '16:00:00', '20261107T140000Z', '20261107T160000Z'],
+            'site timezone' => ['Europe/Madrid', '2026-11-07', '14:00:00', '2026-11-07', '16:00:00', '20261107T130000Z', '20261107T150000Z'],
         ];
         foreach ($cases as $name => $case) {
             yield $name . ' UTC' => [1, ...$case];
@@ -155,14 +156,15 @@ final class IcalendarTimezoneExportTest extends TestCase
             'timezone' => $zone, 'dates' => $date, 'times' => $time,
             'enddates' => $endDate, 'endtimes' => $endTime,
         ])], $mode);
-        $start = $mode === 1 ? $utcStart : str_replace('-', '', $date) . 'T' . str_replace(':', '', $time);
-        $end = $mode === 1 ? $utcEnd : str_replace('-', '', $endDate) . 'T' . str_replace(':', '', $endTime);
+        $useUtc = $mode === 1 || $zone !== 'Europe/Madrid';
+        $start = $useUtc ? $utcStart : str_replace('-', '', $date) . 'T' . str_replace(':', '', $time);
+        $end = $useUtc ? $utcEnd : str_replace('-', '', $endDate) . 'T' . str_replace(':', '', $endTime);
         self::assertStringContainsString("DTSTART:" . $start . "\r\n", $ics);
         self::assertStringContainsString("DTEND:" . $end . "\r\n", $ics);
         self::assertStringContainsString('UID:event130@ics.test', $ics);
         self::assertStringContainsString('SUMMARY:DST test', $ics);
         self::assertStringContainsString('CATEGORIES:Talks', $ics);
-        if ($mode === 1) {
+        if ($useUtc) {
             // Simulate the receiving calendar displaying UTC in the event's zone.
             foreach ([[$start, $date . ' ' . $time], [$end, $endDate . ' ' . $endTime]] as [$value, $expected]) {
                 $parsed = DateTimeImmutable::createFromFormat('!Ymd\THis\Z', $value, new DateTimeZone('UTC'));
@@ -201,22 +203,44 @@ final class IcalendarTimezoneExportTest extends TestCase
         self::assertSame(1, substr_count($ics, 'DTSTART:20261107T190000Z'));
         self::assertSame(1, substr_count($ics, 'DTEND:20261107T210000Z'));
         $floating = $this->export($events, 0);
-        self::assertSame(5, substr_count($floating, "DTSTART:20261107T140000\r\n"));
+        self::assertSame(3, substr_count($floating, "DTSTART:20261107T140000\r\n"));
+        self::assertSame(1, substr_count($floating, "DTSTART:20261107T130000Z\r\n"));
+        self::assertSame(1, substr_count($floating, "DTSTART:20261107T190000Z\r\n"));
         Factory::$config->set('offset', 'invalid/timezone');
         self::assertStringContainsString('DTSTART:20261107T140000Z', $this->export([$events[2]], 1));
     }
 
-    public function testOvernightAndMissingEndRetainExistingRules(): void
+    public function testOvernightAndMissingEndRemainValid(): void
     {
         $overnight = $this->event(['dates' => '2026-10-24', 'enddates' => null, 'times' => '23:30:00', 'endtimes' => '03:30:00']);
         $ics = $this->export([$overnight], 1);
         self::assertStringContainsString('DTSTART:20261024T213000Z', $ics);
         self::assertStringContainsString('DTEND:20261025T023000Z', $ics);
         $floating = $this->export([$overnight], 0);
-        self::assertStringContainsString('DTEND:20261025T033000', $floating);
+        self::assertStringContainsString('DTEND:20261025T023000Z', $floating);
         $unknown = $this->export([$this->event(['enddates' => null, 'endtimes' => null])], 1);
         self::assertStringContainsString('DTSTART:20261107T130000Z', $unknown);
-        self::assertStringContainsString('DTEND:20261107T130000Z', $unknown);
+        self::assertStringNotContainsString('DTEND:', $unknown);
+        $multiday = $this->export([$this->event(['enddates' => '2026-11-09', 'endtimes' => null])], 1);
+        self::assertStringContainsString('DTEND:20261109T130000Z', $multiday);
+    }
+
+    public function testEventStatusIsExportedForCancelledAndPostponedEvents(): void
+    {
+        foreach ([0, 1] as $mode) {
+            foreach ([
+                'cancelled' => 'STATUS:CANCELLED',
+                'postponed' => 'STATUS:TENTATIVE',
+            ] as $status => $expected) {
+                $ics = $this->export([$this->event(['event_status' => $status])], $mode);
+                self::assertStringContainsString($expected . "\r\n", $ics);
+            }
+
+            foreach (['scheduled', 'rescheduled', 'moved_online'] as $status) {
+                $ics = $this->export([$this->event(['event_status' => $status])], $mode);
+                self::assertStringNotContainsString('STATUS:', $ics);
+            }
+        }
     }
 
     public function testOpenDateDoesNotCreateAnInvalidCalendarEvent(): void
