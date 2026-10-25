@@ -86,6 +86,10 @@
                 <option value="0">JNO</option>
                 <option value="2">COM_JEM_ABOVE</option>
                 <option value="1">COM_JEM_BELOW</option>
+                <option value="3">COM_JEM_BELOW_WITH_VENUES</option>
+                <option value="4">COM_JEM_ABOVE_WITH_VENUES</option>
+                <option value="5">COM_JEM_BELOW_ONLY_VENUES</option>
+                <option value="6">COM_JEM_ABOVE_ONLY_VENUES</option>
             </field>
             <field name="calendar_display_mode" type="list"
                 default="calendar"

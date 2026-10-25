@@ -1,0 +1,79 @@
+/* Shared one-day and week hourly calendar. */
+#jem .jem-hourgrid { clear: both; color: var(--body-color, inherit); --jem-hourgrid-hour-height: 4.5rem; }
+#jem .jem-hourgrid-navigation { clear: both; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem; padding: .75rem 0; }
+#jem .jem-hourgrid-navigation strong { order: 0; margin-inline: 1rem; }
+#jem .jem-hourgrid-navigation a { display: inline-flex; align-items: center; justify-content: center; min-width: 2rem; min-height: 2rem; padding: .25rem .55rem; border: 1px solid var(--border-color, #cbd5e1); border-radius: .2rem; }
+#jem .jem-hourgrid-days { display: grid; grid-template-columns: repeat(var(--jem-hourgrid-columns, 7), minmax(0, 1fr)); margin: 1rem 0; border: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-single-day .jem-hourgrid-days { --jem-hourgrid-columns: 1; }
+#jem .jem-hourgrid-week { grid-template-columns: 3rem repeat(7, minmax(0, 1fr)); --jem-hourgrid-gutter: 0rem; }
+#jem .jem-hourgrid-week .jem-hourgrid-day { display: contents; }
+#jem .jem-hourgrid-week .jem-hourgrid-date,
+#jem .jem-hourgrid-week .jem-hourgrid-all-day,
+#jem .jem-hourgrid-week .jem-hourgrid-plot { grid-column: var(--jem-hourgrid-column); border-inline-end: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-week .jem-hourgrid-date,
+#jem .jem-hourgrid-axis-heading { grid-row: 1; }
+#jem .jem-hourgrid-week .jem-hourgrid-all-day,
+#jem .jem-hourgrid-axis-all-day { grid-row: 2; }
+#jem .jem-hourgrid-week .jem-hourgrid-plot,
+#jem .jem-hourgrid-axis-plot { grid-row: 3; }
+#jem .jem-hourgrid-axis-heading,
+#jem .jem-hourgrid-axis-all-day { border-bottom: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-axis-heading,
+#jem .jem-hourgrid-axis-all-day,
+#jem .jem-hourgrid-axis-plot { grid-column: 1; }
+#jem .jem-hourgrid-axis-all-day { display: flex; align-items: center; justify-content: center; font-size: .68rem; font-weight: 600; text-align: center; }
+#jem .jem-hourgrid-axis-plot { position: relative; height: calc(var(--jem-hourgrid-hours) * var(--jem-hourgrid-hour-height)); }
+#jem .jem-hourgrid-axis-hour { position: absolute; inset-inline: 0; padding-inline-end: .25rem; text-align: end; font-size: .75rem; line-height: 1; transform: translateY(-50%); }
+#jem .jem-hourgrid-week .jem-hourgrid-hour,
+#jem .jem-hourgrid-week .jem-hourgrid-all-day-label { display: none; }
+#jem .jem-hourgrid-day { min-width: 0; border-inline-end: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-day:last-child { border-inline-end: 0; }
+#jem .jem-hourgrid-date { min-height: 2.75rem; margin: 0; padding: .55rem .35rem; text-align: center; font-size: .95rem; font-weight: 700; border-bottom: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-date h3 { margin: 0; font-size: inherit; font-weight: inherit; line-height: 1.3; }
+#jem .jem-hourgrid-day-link { color: inherit; text-decoration: none; }
+#jem .jem-hourgrid-day-link:hover,
+#jem .jem-hourgrid-day-link:focus-visible { color: inherit; text-decoration: underline; }
+#jem .jem-hourgrid-day-link:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+#jem .jem-hourgrid-day-mobile { display: none; }
+#jem .jem-hourgrid-weekend .jem-hourgrid-date,
+#jem .jem-hourgrid-weekend .jem-hourgrid-all-day { background-color: color-mix(in srgb, var(--jem-hourgrid-weekend-color) 22%, var(--body-bg, white)); }
+#jem .jem-hourgrid-all-day { min-height: 3rem; padding: .2rem; border-bottom: 2px solid var(--border-color, #cbd5e1); display: grid; align-content: start; gap: .2rem; }
+#jem .jem-hourgrid-single-day .jem-hourgrid-all-day { border-bottom: 0; }
+#jem .jem-hourgrid-all-day-label { font-size: .75rem; font-weight: 600; }
+#jem .jem-hourgrid-all-day-event,
+#jem .jem-hourgrid-event { display: block; min-width: 0; padding: .2rem .3rem; border-inline-start: .25rem solid var(--jem-hourgrid-accent); border-radius: .15rem; background: color-mix(in srgb, var(--jem-hourgrid-accent) 22%, var(--body-bg, white)); color: var(--body-color, #1c2833); text-decoration: none; overflow: hidden; overflow-wrap: anywhere; }
+#jem .jem-hourgrid-event:hover,
+#jem .jem-hourgrid-event:focus-visible,
+#jem .jem-hourgrid-all-day-event:hover,
+#jem .jem-hourgrid-all-day-event:focus-visible { outline: 2px solid var(--jem-hourgrid-accent); outline-offset: -2px; text-decoration: underline; z-index: 2; }
+#jem .jem-hourgrid-plot { position: relative; height: calc(var(--jem-hourgrid-hours) * var(--jem-hourgrid-hour-height)); background: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--jem-hourgrid-hour-height) - 1px), var(--border-color, #cbd5e1) calc(var(--jem-hourgrid-hour-height) - 1px), var(--border-color, #cbd5e1) var(--jem-hourgrid-hour-height)) right top / calc(100% - var(--jem-hourgrid-gutter, 3rem)) 100% no-repeat; }
+#jem .jem-hourgrid-single-day .jem-hourgrid-plot { background-image: repeating-linear-gradient(to bottom, var(--border-color, #cbd5e1) 0, var(--border-color, #cbd5e1) 1px, transparent 1px, transparent var(--jem-hourgrid-hour-height)); }
+#jem .jem-hourgrid-plot:dir(rtl) { background-position: left top; }
+#jem .jem-hourgrid-weekend .jem-hourgrid-plot { background-color: color-mix(in srgb, var(--jem-hourgrid-weekend-color) 22%, var(--body-bg, white)); }
+#jem .jem-hourgrid-hour { position: absolute; inset-inline-start: 0; width: var(--jem-hourgrid-gutter, 3rem); box-sizing: border-box; padding-inline-end: .2rem; text-align: end; font-size: .75rem; line-height: 1; transform: translateY(-50%); border-inline-end: 1px solid var(--border-color, #cbd5e1); }
+#jem .jem-hourgrid-event { position: absolute; box-sizing: border-box; min-height: 1.25rem; font-size: .78rem; line-height: 1.25; }
+#jem .jem-hourgrid-event-time,
+#jem .jem-hourgrid-event-title,
+#jem .jem-hourgrid-event-venue { display: block; }
+#jem .jem-hourgrid-event-title { font-weight: 700; }
+#jem .jem-hourgrid-event-venue { font-size: .9em; }
+#jem .jem-hourgrid-empty { display: none; }
+@media (max-width: 60rem) {
+    #jem .jem-hourgrid-days { grid-template-columns: 1fr; gap: .5rem; border: 0; }
+    #jem .jem-hourgrid-week { --jem-hourgrid-gutter: 3rem; }
+    #jem .jem-hourgrid-week .jem-hourgrid-day { display: block; }
+    #jem .jem-hourgrid-day-short { display: none; }
+    #jem .jem-hourgrid-day-mobile { display: inline; }
+    #jem .jem-hourgrid-axis-heading,
+    #jem .jem-hourgrid-axis-all-day,
+    #jem .jem-hourgrid-axis-plot { display: none; }
+    #jem .jem-hourgrid-week .jem-hourgrid-hour,
+    #jem .jem-hourgrid-week .jem-hourgrid-all-day-label { display: block; }
+    #jem .jem-hourgrid-week .jem-hourgrid-date,
+    #jem .jem-hourgrid-week .jem-hourgrid-all-day,
+    #jem .jem-hourgrid-week .jem-hourgrid-plot { grid-column: auto; grid-row: auto; border-inline-end: 0; }
+    #jem .jem-hourgrid-day { border: 1px solid var(--border-color, #cbd5e1); }
+    #jem .jem-hourgrid-day-empty .jem-hourgrid-plot { display: none; }
+    #jem .jem-hourgrid-day-empty .jem-hourgrid-all-day { min-height: 0; }
+    #jem .jem-hourgrid-empty { display: block; padding: .5rem; margin: 0; }
+}

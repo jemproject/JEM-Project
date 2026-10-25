@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/calendarfilter.php';
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -45,11 +46,25 @@ use Joomla\CMS\Factory;
     <?php
     echo JemCalendarAgendaHelper::renderToggle();
     if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
-        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows);
+        $calendarYear = isset($this->calendarYear) ? (int) $this->calendarYear : (int) date('Y');
+        $calendarMonth = isset($this->calendarMonth) ? (int) $this->calendarMonth : (int) date('m');
+        $startDate = sprintf('%04d-%02d-01', $calendarYear, $calendarMonth);
+        $endDate = date('Y-m-t', strtotime($startDate));
+        $displayLegend = (int) $this->params->get('displayLegend', 1);
+        $legend = JemCalendarFilterHelper::render((array) $this->rows, $displayLegend, $startDate, $endDate);
+        if (in_array($displayLegend, array(2, 4, 6), true)) {
+            echo $legend;
+        }
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $startDate, $endDate, '', true);
+        if (in_array($displayLegend, array(1, 3, 5), true)) {
+            echo $legend;
+        }
         if ($this->params->get('showfootertext')) :
             echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
         endif;
-        echo JemOutput::footer();
+        echo '<div class="copyright">';
+        JemOutput::footer();
+        echo '</div>';
         echo '</div>';
         return;
     endif;
@@ -206,7 +221,10 @@ use Joomla\CMS\Factory;
 
         $categoryFilterClasses = array_values(array_unique($categoryFilterClasses));
         $categoryFilterClassAttribute = implode(' ', $categoryFilterClasses);
-        $content = '<div class="event-filter ' . $categoryFilterClassAttribute . '" data-categories="' . $this->escape($categoryFilterClassAttribute) . '">';
+        $venueFilterClass = (int) ($row->locid ?? 0) > 0 ? 'venue' . (int) $row->locid : '';
+        $content = '<div class="event-filter ' . $categoryFilterClassAttribute . ' ' . $venueFilterClass
+            . '" data-categories="' . $this->escape($categoryFilterClassAttribute)
+            . '" data-venue="' . $venueFilterClass . '">';
         $contentend = '</div>';
 
         // Build color output depending on $categoryColorMarker
@@ -426,148 +444,20 @@ use Joomla\CMS\Factory;
         $this->cal->enableNewEventLinks($html);
     }
 
-    $displayLegend = (int)$this->params->get('displayLegend', 1);
-    if ($displayLegend == 2) : ?>
-        <!-- Calendar legend above -->
-        <div id="jlcalendarlegend">
+    $displayLegend = (int) $this->params->get('displayLegend', 1);
+    $calendarLegend = JemCalendarFilterHelper::render((array) $this->rows, $displayLegend, $calendarStartDate, $calendarEndDate);
 
-            <!-- Calendar buttons -->
-            <div class="calendarButtons jem-row jem-justify-start">
-                <button id="buttonshowall" class="calendarButton btn btn-outline-dark">
-                    <?php echo Text::_('COM_JEM_SHOWALL'); ?>
-                </button>
-                <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
-                    <?php echo Text::_('COM_JEM_HIDEALL'); ?>
-                </button>
-            </div>
+    if (in_array($displayLegend, array(2, 4, 6), true)) {
+        echo $calendarLegend . $specialDaysLegendHtml;
+    }
 
-            <!-- Calendar Legend -->
-            <div class="calendarLegends jem-row jem-justify-start">
-                <?php if (!empty($countcatevents)) : ?>
-                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
-                <?php endif; ?>
-                <?php
-                if ($this->params->get('displayLegend')) {
-
-                    ##############
-                    ## FOR EACH ##
-                    ##############
-
-                    $counter = array();
-
-                    # walk through events
-                    foreach ($this->rows as $row) {
-                        foreach ($row->categories as $cat) {
-                            # skip foreign categories - we are restricted to one
-                            if ($cat->id != $this->catid) {
-                                continue;
-                            }
-
-                            # sort out dupes for the counter (catid-legend)
-                            if (!in_array($cat->id, $counter)) {
-                                # add cat id to cat counter
-                                $counter[] = $cat->id;
-
-                                # build legend
-                                if (array_key_exists($cat->id, $countcatevents)) {
-                                    ?>
-                                    <button class="eventCat btn btn-outline-dark" id="cat<?php echo $cat->id; ?>">
-                                        <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-                                        echo $this->escape($cat->catname) . ' (' . (int) $countcatevents[$cat->id] . ')';
-                                        ?>
-                                    </button>
-                                    <?php
-                                }
-                            }
-                        }
-                    }
-                }
-                ?>
-            </div>
-            <?php echo $specialDaysLegendHtml; ?>
-        </div>
-    <?php endif; ?>
-
-    <?php
-    // print the calendar
     echo $this->cal->showMonth();
+
+    if (in_array($displayLegend, array(0, 1, 3, 5), true)) {
+        echo $calendarLegend . $specialDaysLegendHtml;
+    }
     ?>
-
-    <?php if (($displayLegend == 1) || ($displayLegend == 0)) : ?>
-        <!-- Calendar legend below -->
-        <div id="jlcalendarlegend">
-
-            <!-- Calendar buttons -->
-            <div class="calendarButtons jem-row jem-justify-start">
-                <button id="buttonshowall" class="calendarButton btn btn-outline-dark">
-                    <?php echo Text::_('COM_JEM_SHOWALL'); ?>
-                </button>
-                <button id="buttonhideall" class="calendarButton btn btn-outline-dark">
-                    <?php echo Text::_('COM_JEM_HIDEALL'); ?>
-                </button>
-            </div>
-            <!-- Calendar Legend -->
-            <div class="calendarLegends jem-row jem-justify-start">
-                <?php
-                if ($displayLegend == 1) {
-                    if (!empty($countcatevents)) {
-                    ?>
-                    <div class="legend-label"><?php echo Text::_('COM_JEM_CATEGORIES'); ?></div>
-                    <?php
-                    }
-
-                    ##############
-                    ## FOR EACH ##
-                    ##############
-
-                    $counter = array();
-
-                    # walk through events
-                    foreach ($this->rows as $row) {
-                        foreach ($row->categories as $cat) {
-                            # skip foreign categories - we are restricted to one
-                            if ($cat->id != $this->catid) {
-                                continue;
-                            }
-
-                            # sort out dupes for the counter (catid-legend)
-                            if (!in_array($cat->id, $counter)) {
-                                # add cat id to cat counter
-                                $counter[] = $cat->id;
-
-                                # build legend
-                                if (array_key_exists($cat->id, $countcatevents)) {
-                                    ?>
-                                    <button class="eventCat btn btn-outline-dark me-2" id="cat<?php echo $cat->id; ?>">
-                                        <?php
-                                        if (!empty($cat->color)) {
-                                            $class = $categoryColorMarker ? 'colorpicbar' : 'colorpicblock ms-2';
-                                            echo '<span class="' . $class . '" style="background-color:' . $cat->color . ';"></span>';
-                                        }
-
-                                        $text = $cat->catname . ' (' . $countcatevents[$cat->id] . ')';
-                                        $textClass = $categoryColorMarker ? 'colorpicbartext' : 'colorpicblocktext pe-2';
-                                        echo '<span class="' . $textClass . '">' . $this->escape($text) . '</span>';
-                                        ?>
-                                    </button>
-                                    <?php
-                                }
-                            }
-                        }
-                    }
-                }
-                ?>
-            </div>
-            <?php echo $specialDaysLegendHtml; ?>
-        </div>
-    <?php endif; ?>
-
     <div class="clr"></div>
-
     <?php if ($this->params->get('showfootertext')) : ?>
         <div class="description no_space floattext">
             <?php echo $this->params->get('footertext'); ?>

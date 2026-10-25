@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 require_once JPATH_SITE . '/components/com_jem/helpers/calendaragenda.php';
+require_once JPATH_SITE . '/components/com_jem/helpers/calendarfilter.php';
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -45,11 +46,21 @@ use Joomla\CMS\Factory;
     if (JemCalendarAgendaHelper::getMode($this->params) === 'agenda') :
         $agendaStartDate = sprintf('%04d-%02d-01', (int) $this->calendarYear, (int) $this->calendarMonth);
         $agendaEndDate = date('Y-m-t', strtotime($agendaStartDate));
-        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, date('F Y', strtotime($agendaStartDate)));
+        $displayLegend = (int) $this->params->get('displayLegend', 1);
+        $legend = JemCalendarFilterHelper::render((array) $this->rows, $displayLegend, $agendaStartDate, $agendaEndDate);
+        if (in_array($displayLegend, array(2, 4, 6), true)) {
+            echo $legend;
+        }
+        echo JemCalendarAgendaHelper::renderAgenda((array) $this->rows, $agendaStartDate, $agendaEndDate, date('F Y', strtotime($agendaStartDate)), true);
+        if (in_array($displayLegend, array(1, 3, 5), true)) {
+            echo $legend;
+        }
         if ($this->params->get('showfootertext')) :
             echo '<div class="description no_space floattext">' . $this->params->get('footertext') . '</div>';
         endif;
-        echo JemOutput::footer();
+        echo '<div class="copyright">';
+        JemOutput::footer();
+        echo '</div>';
         echo '</div>';
         return;
     endif;

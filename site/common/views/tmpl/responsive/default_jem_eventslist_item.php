@@ -21,6 +21,7 @@ $showIconsInEventData = (bool) $displayData['showIconsInEventData'];
 $showAvailabilityText = (bool) $displayData['showAvailabilityText'];
 $structuredData = !empty($displayData['structuredData']);
 $imagePathAware = !empty($displayData['imagePathAware']);
+$calendarFilter = !empty($displayData['calendarFilter']);
 $escape = static function ($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 };
@@ -40,6 +41,10 @@ if ($pageClass !== '') {
 
 $classes .= ' event_id' . (int) $row->id;
 
+if ($calendarFilter) {
+    $classes .= ' event-filter';
+}
+
 if (!empty($row->locid)) {
     $classes .= ' venue_id' . (int) $row->locid;
 }
@@ -52,7 +57,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
     && !$listClickable
     && (int) $jemsettings->gddisabled === 1;
 ?>
-<li class="<?php echo $escape($classes); ?>"<?php echo $structuredData ? ' itemscope="itemscope" itemtype="https://schema.org/Event"' : ''; ?><?php if ($listClickable) : ?> data-jem-event-url="<?php echo $escape($eventRoute); ?>"<?php endif; ?>>
+<li class="<?php echo $escape($classes); ?>"<?php echo $calendarFilter ? JemCalendarFilterHelper::dataAttributes($row) : ''; ?><?php echo $structuredData ? ' itemscope="itemscope" itemtype="https://schema.org/Event"' : ''; ?><?php if ($listClickable) : ?> data-jem-event-url="<?php echo $escape($eventRoute); ?>"<?php endif; ?>>
     <?php if ((int) $jemsettings->showeventimage === 1) : ?>
         <div class="jem-list-img">
             <?php if (!empty($row->datimage)) : ?>

@@ -203,6 +203,7 @@ if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params
                 'showAvailabilityText' => $showAvailabilityText,
                 'structuredData' => true,
                 'imagePathAware' => false,
+                'calendarFilter' => $this->getName() === 'day',
             );
             require __DIR__ . '/default_jem_eventslist_item.php';
 

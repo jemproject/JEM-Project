@@ -63,6 +63,8 @@ namespace {
     // Loaded only inside isolated tests, never into Joomla or the main PHPUnit process.
     final class JemHelper
     {
+        public static array $loadedCss = [];
+
         public static function config(): object
         {
             return (object) array_fill_keys(['showtitle', 'showlocate', 'showcity', 'showcat', 'showstate'], 0);
@@ -75,6 +77,7 @@ namespace {
 
         public static function loadCss(string $name): void
         {
+            self::$loadedCss[] = $name;
         }
 
         public static function loadCustomCss(): void
