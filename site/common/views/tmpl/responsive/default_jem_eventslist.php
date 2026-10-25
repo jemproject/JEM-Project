@@ -221,6 +221,7 @@ if (jem_common_show_filter($this) && !$filterBelow): ?>
                 'showIconsInEventData' => $showiconsineventdata,
                 'showAvailabilityText' => $showAvailabilityText,
                 'imagePathAware' => true,
+                'calendarFilter' => $this->getName() === 'day',
                 'itemDisplay' => $itemDisplay,
             );
             require __DIR__ . '/default_jem_eventslist_item.php';

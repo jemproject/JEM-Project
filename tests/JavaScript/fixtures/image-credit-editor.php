@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 $root = dirname(__DIR__, 3);
-require $root . '/vendor/autoload.php';
+require (getenv('JEM_TEST_VENDOR_ROOT') ?: $root . '/vendor') . '/autoload.php';
 require $root . '/tests/bootstrap.php';
 require $root . '/tests/Joomla/ImageMetadataJoomlaIntegrationTest.php';
 ImageMetadataJoomlaIntegrationTest::setUpBeforeClass();
@@ -43,4 +43,20 @@ foreach (['site', 'admin'] as $client) {
 }
 $empty = Joomla\CMS\Form\Form::getInstance('empty_credit', $root . '/site/models/forms/category.xml', ['control' => 'empty_credit']);
 $html .= '<form id="empty_credit">' . $empty->getInput('image_metadata') . '</form>';
-echo json_encode(['html' => $html, 'formChecks' => 12], JSON_THROW_ON_ERROR);
+$head = Joomla\CMS\Factory::getApplication()->getDocument()->getHeadData();
+$assetChecks = 0;
+foreach (['styleSheets' => 'css/image-metadata.css', 'scripts' => 'js/image-metadata.js'] as $type => $asset) {
+    $expected = substr(hash_file('sha256', JPATH_ROOT . '/media/com_jem/' . $asset), 0, 12);
+    foreach ($head[$type] as $url => $attributes) {
+        if (str_contains($url, 'com_jem/' . $asset)) {
+            if (($attributes['options']['version'] ?? '') !== $expected) {
+                throw new RuntimeException('Image metadata asset does not use its content version: ' . $asset);
+            }
+            $assetChecks++;
+        }
+    }
+}
+if ($assetChecks !== 2) {
+    throw new RuntimeException('Image metadata assets were not registered.');
+}
+echo json_encode(['html' => $html, 'formChecks' => 12, 'assetChecks' => $assetChecks], JSON_THROW_ON_ERROR);

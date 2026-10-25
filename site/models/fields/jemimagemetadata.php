@@ -37,8 +37,19 @@ class JFormFieldJemimagemetadata extends FormField
 
     private function renderMetadata(?string $selectedSlot = null, string $part = 'all'): string
     {
-        HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', ['version' => 'auto', 'relative' => true]);
-        HTMLHelper::_('script', 'com_jem/image-metadata.js', ['version' => 'auto', 'relative' => true], ['defer' => true]);
+        // A beta package may be reinstalled without changing its version.
+        $assetVersion = static function (string $file): string {
+            $hash = is_file($file) ? hash_file('sha256', $file) : false;
+
+            return $hash === false ? 'auto' : substr($hash, 0, 12);
+        };
+        $mediaRoot = JPATH_ROOT . '/media/com_jem/';
+        HTMLHelper::_('stylesheet', 'com_jem/image-metadata.css', [
+            'version' => $assetVersion($mediaRoot . 'css/image-metadata.css'), 'relative' => true,
+        ]);
+        HTMLHelper::_('script', 'com_jem/image-metadata.js', [
+            'version' => $assetVersion($mediaRoot . 'js/image-metadata.js'), 'relative' => true,
+        ], ['defer' => true]);
         $context = (string) $this->element['context'];
         $values = JemImageMetadata::normalise($this->value, $context);
         if ($selectedSlot !== null) {
@@ -69,6 +80,11 @@ class JFormFieldJemimagemetadata extends FormField
         $inlineHelp = filter_var((string) $this->element['inlinehelp'], FILTER_VALIDATE_BOOLEAN);
         $helpClass = $inlineHelp ? 'form-text hide-aware-inline-help d-none' : 'form-text';
         $escape = static fn ($value) => htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $linkLabels = '';
+        foreach (['new_tab', 'same_tab', 'parent', 'top'] as $targetLabel) {
+            $linkLabels .= ' data-jem-link-' . str_replace('_', '-', $targetLabel) . '="'
+                . $escape(Text::_('COM_JEM_IMAGE_METADATA_LINK_' . strtoupper($targetLabel))) . '"';
+        }
         $wrapperId = $this->id . ($selectedSlot !== null ? '_' . $selectedSlot . '_controls' : '')
             . ($part !== 'all' ? '_' . $part : '');
         $html = '<div class="jem-image-metadata jem-image-metadata--' . $part . '" id="' . $escape($wrapperId) . '">';
@@ -106,7 +122,8 @@ class JFormFieldJemimagemetadata extends FormField
                 $html .= '<textarea class="form-control" rows="2" maxlength="4096" id="' . $escape($id . '_caption')
                     . '" data-jem-caption-editor data-jem-editor-language="' . $escape($editorLanguage)
                     . '" data-jem-editor-base="' . $escape(Uri::root(true) . '/media/vendor/tinymce')
-                    . '" name="' . $escape($name . '[caption]') . '"'
+                    . '"'
+                    . ' name="' . $escape($name . '[caption]') . '"'
                     . ' aria-describedby="' . $escape($id . '_caption-desc') . '"'
                     . '>' . $escape($value['caption']) . '</textarea>';
                 $html .= '<div class="jem-image-metadata__alignment"><label for="' . $escape($id . '_align') . '">'
@@ -127,7 +144,8 @@ class JFormFieldJemimagemetadata extends FormField
                     . '<textarea class="form-control" rows="2" maxlength="4096" id="' . $escape($id . '_credit')
                     . '" data-jem-credit-editor data-jem-editor-language="' . $escape($editorLanguage)
                     . '" data-jem-editor-base="' . $escape(Uri::root(true) . '/media/vendor/tinymce')
-                    . '" name="' . $escape($name . '[credit]') . '"'
+                    . '"' . $linkLabels
+                    . ' name="' . $escape($name . '[credit]') . '"'
                     . ' aria-describedby="' . $escape($id . '_credit-desc') . '"'
                     . '>' . $escape($value['credit'] ?? '') . '</textarea>';
                 $labelMode = JemImageMetadata::creditLabelMode($value['credit_label'] ?? 'image_credit');

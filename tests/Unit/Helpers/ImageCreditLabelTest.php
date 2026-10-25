@@ -30,7 +30,7 @@ final class ImageCreditLabelTest extends TestCase
     public function testAllLabelsRenderConsistentlyInBothPositionsAndLightbox(): void
     {
         foreach ([
-            'none' => '', 'photo' => 'Photo:', 'image_credit' => 'Image credit:',
+            'none' => '', 'photo' => 'Photo:', 'image_credit' => 'Credits:',
             'source' => 'Source:', 'copyright' => 'Copyright:', 'licence' => 'Licence:',
             'custom' => 'Courtesy of:',
         ] as $mode => $label) {
@@ -56,9 +56,9 @@ final class ImageCreditLabelTest extends TestCase
     {
         foreach ([null, '', [], '<script>', 'UNKNOWN', 12] as $invalid) {
             self::assertSame('image_credit', JemImageMetadata::creditLabelMode($invalid));
-            self::assertStringContainsString('Image credit:', JemImageMetadata::creditHtml('Author', ['credit_label' => $invalid]));
+            self::assertStringContainsString('Credits:', JemImageMetadata::creditHtml('Author', ['credit_label' => $invalid]));
         }
-        self::assertStringContainsString('Image credit:', JemImageMetadata::creditHtml('Already saved author'));
+        self::assertStringContainsString('Credits:', JemImageMetadata::creditHtml('Already saved author'));
         self::assertSame('', JemImageMetadata::creditHtml('', ['credit_label' => 'photo']));
         self::assertSame('', JemImageMetadata::creditHtml('<br>', ['credit_label' => 'photo']));
         self::assertSame('Author', JemImageMetadata::creditHtml('Author', ['credit_label' => 'custom']));

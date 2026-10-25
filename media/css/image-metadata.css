@@ -111,10 +111,11 @@ div#jem .jem-image-metadata .jem-image-metadata__card {
 .jem-image-metadata__alignment .form-select {
     width: auto;
     max-width: 100%;
+    padding-inline-end: 4.5rem;
 }
 
-.jem-image-metadata__alignment .form-select {
-    padding-inline-end: calc(3rem + 5px);
+.jem-image-metadata__alignment [data-jem-credit-label] {
+    min-inline-size: 14rem;
 }
 
 .jem-image-metadata__custom-label {

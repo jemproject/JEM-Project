@@ -84,14 +84,41 @@ final class ImageMetadataTest extends TestCase
     public function testCaptionKeepsLimitedFormattingAndUnicodeCredits(): void
     {
         $html = 'Foto: <strong>María</strong><br><a href="https://example.org/photo?x=1&amp;y=2" target="_blank" onclick="bad()">Fuente</a>';
-        self::assertSame('Foto: <strong>María</strong><br><a href="https://example.org/photo?x=1&amp;y=2">Fuente</a>', JemImageMetadata::caption($html));
+        self::assertSame('Foto: <strong>María</strong><br><a href="https://example.org/photo?x=1&amp;y=2" target="_blank" rel="noopener noreferrer">Fuente</a>', JemImageMetadata::caption($html));
         self::assertSame(JemImageMetadata::caption($html), JemImageMetadata::caption(JemImageMetadata::caption($html)));
+    }
+
+    public function testCaptionAndCreditPreserveOnlyKnownLinkTargets(): void
+    {
+        foreach (['event', 'venue', 'category'] as $context) {
+            $slot = JemImageMetadata::slots($context)[0];
+            foreach (['_blank', '_self', '_parent', '_top'] as $target) {
+                $input = '<a href="https://example.org/credit" target="' . $target
+                    . '" rel="opener" onclick="bad()">Source</a>';
+                $expected = '<a href="https://example.org/credit" target="' . $target . '"'
+                    . ($target === '_blank' ? ' rel="noopener noreferrer"' : '') . '>Source</a>';
+                $result = JemImageMetadata::normalise([$slot => ['caption' => $input, 'credit' => $input]], $context);
+                self::assertSame($expected, $result[$slot]['caption']);
+                self::assertSame($expected, $result[$slot]['credit']);
+                self::assertSame($result, JemImageMetadata::normalise($result, $context));
+                self::assertStringContainsString($expected, JemImageMetadata::figure('<img>', $input, $context));
+                self::assertStringContainsString($expected, html_entity_decode(
+                    JemImageMetadata::lightboxTitle('Photo', $input), ENT_QUOTES | ENT_HTML5, 'UTF-8'
+                ));
+            }
+        }
+
+        foreach (['external', '_BLANK', ''] as $target) {
+            $input = '<a href="https://example.org/credit" target="' . $target . '" rel="opener">Source</a>';
+            self::assertSame('<a href="https://example.org/credit">Source</a>', JemImageMetadata::caption($input));
+        }
     }
 
     public function testCaptionRejectsActiveContentAndUnsafeLinks(): void
     {
         foreach (['javascript:alert(1)', 'data:text/html,hello', '//example.org', 'file:///secret', "https://example.org/\nunsafe"] as $url) {
             self::assertSame('Credit', JemImageMetadata::caption('<a href="' . $url . '">Credit</a>'));
+            self::assertSame('Credit', JemImageMetadata::caption('<a href="' . $url . '" target="_blank">Credit</a>'));
         }
         self::assertSame('Photo', JemImageMetadata::caption('<script>alert(1)</script><svg onload="bad()">bad</svg><img src=x onerror=bad()>Photo'));
         self::assertSame('', JemImageMetadata::caption('<br><strong> </strong>'));

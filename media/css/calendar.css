@@ -1201,7 +1201,7 @@ div#jem .rowcolor {
 
 #jlcalendarlegend .eventCat.catoff,
 #jlcalendarlegend .eventVenues.catoff,
-#jlcalendarlegend .eventSpecialDayType.catoff,
+#jem .eventSpecialDayType.catoff,
 #jem .jem-annual-special-days-filter.catoff {
     color: #6c757d !important;
     background-color: #f1f3f5;

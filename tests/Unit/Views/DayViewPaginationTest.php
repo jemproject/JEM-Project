@@ -11,6 +11,28 @@ use PHPUnit\Framework\TestCase;
 #[PreserveGlobalState(false)]
 final class DayViewPaginationTest extends TestCase
 {
+    public function testDefaultTimetableModeLoadsAllRows(): void
+    {
+        require_once JEM_TEST_ROOT . '/tests/Support/day_view_pagination_stubs.php';
+        require_once JEM_TEST_ROOT . '/site/views/day/view.html.php';
+
+        $app = new DayPaginationApplication();
+        $app->params->set('day_display_mode', 'timetable');
+        \Joomla\CMS\Factory::$application = $app;
+        $model = new DayPaginationModel(range(1, 25), 10, 20);
+        $view = new JemViewDay();
+        $view->model = $model;
+        $view->layout = 'default';
+
+        try {
+            $view->display();
+            self::fail('The view must request event rows.');
+        } catch (DayPaginationItemsLoaded $loaded) {
+            self::assertSame(range(1, 25), $loaded->rows);
+            self::assertContains('calendar-hourgrid', JemHelper::$loadedCss);
+        }
+    }
+
     #[DataProvider('paginationProvider')]
     public function testViewLoadsTheExpectedRows(
         string $layout,

@@ -250,9 +250,9 @@ function jem_common_show_filter(&$obj) {
                 <?php }
             } ?>
             <?php if (!empty($row->featured)) : ?>
-                <li class="jem-event jem-list-column jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-featured <?php echo $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } echo $this->getName() === 'day' ? ' event-filter' : ''; ?>"<?php echo $this->getName() === 'day' ? JemCalendarFilterHelper::dataAttributes($row) : ''; ?> <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php else : ?>
-                <li class="jem-event jem-list-column jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } ?>" <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
+                <li class="jem-event jem-list-column jem-small-list jem-odd<?php echo ($row->odd +1) . $this->params->get('pageclass_sfx') . ' event_id' . $this->escape($row->id); if (!empty($row->locid)) {  echo ' venue_id' . $this->escape($row->locid); } echo $this->getName() === 'day' ? ' event-filter' : ''; ?>"<?php echo $this->getName() === 'day' ? JemCalendarFilterHelper::dataAttributes($row) : ''; ?> <?php if ($this->jemsettings->showdetails == 1 && (!$isSafari)) : echo 'onclick="location.href=\''.Route::_(JemHelperRoute::getEventRoute($row->slug)).'\'"'; endif; ?> >
             <?php endif; ?>
             <div class="jem-list-row jem-small-list">
                 <?php if ($this->jemsettings->showeventimage == 1) : ?>

@@ -6,6 +6,19 @@ use PHPUnit\Framework\TestCase;
 
 final class HelpDocumentationLinksTest extends TestCase
 {
+    public function testImageEditorGuideExplainsSelectionAndMetadata(): void
+    {
+        $guide = file_get_contents(JEM_TEST_ROOT . '/admin/help/en-GB/image-editor.html');
+        $map = file_get_contents(JEM_TEST_ROOT . '/admin/help/en-GB/documentation.html');
+
+        foreach (['Select Image', 'Server image', 'Upload new image', 'not</strong> a box',
+            'Alternative text', 'Caption and credit', 'Photo credit / licence', 'Open link in...',
+            'New tab', 'Credit label', 'Credit position', 'Clear'] as $control) {
+            self::assertStringContainsString($control, $guide);
+        }
+        self::assertStringContainsString('href="image-editor.html"', $map);
+    }
+
     public function testHelpPagesExposeOnlineManualSections(): void
     {
         $missing = array();

@@ -19,6 +19,7 @@ $showIconsInEventTitle = (bool) $displayData['showIconsInEventTitle'];
 $showIconsInEventData = (bool) $displayData['showIconsInEventData'];
 $showAvailabilityText = (bool) $displayData['showAvailabilityText'];
 $imagePathAware = !empty($displayData['imagePathAware']);
+$calendarFilter = !empty($displayData['calendarFilter']);
 $itemDisplay = $displayData['itemDisplay'] ?? array(
     'venue' => (int) $jemsettings->showlocate === 1,
     'city' => (int) $jemsettings->showcity === 1,
@@ -46,6 +47,10 @@ if ($pageClass !== '') {
 
 $classes .= ' event_id' . (int) $row->id;
 
+if ($calendarFilter) {
+    $classes .= ' event-filter';
+}
+
 if (!empty($row->locid)) {
     $classes .= ' venue_id' . (int) $row->locid;
 }
@@ -58,7 +63,7 @@ $detailsClickable = (int) $jemsettings->showdetails === 1
     && !$listClickable
     && (int) $jemsettings->gddisabled === 1;
 ?>
-<li class="<?php echo $escape($classes); ?>"<?php if ($listClickable) : ?> data-jem-event-url="<?php echo $escape($eventRoute); ?>"<?php endif; ?>>
+<li class="<?php echo $escape($classes); ?>"<?php echo $calendarFilter ? JemCalendarFilterHelper::dataAttributes($row) : ''; ?><?php if ($listClickable) : ?> data-jem-event-url="<?php echo $escape($eventRoute); ?>"<?php endif; ?>>
     <?php if ((int) $jemsettings->showeventimage === 1) : ?>
         <div class="jem-list-img">
             <?php if (!empty($row->datimage)) : ?>

@@ -14,6 +14,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
 
+require_once __DIR__ . '/../../helpers/calendaragenda.php';
+
 /**
  * Weekcal-View
  */
@@ -43,6 +45,9 @@ class JemViewWeekcal extends JemView
         // Load css
         JemHelper::loadCss('jem');
         JemHelper::loadCss('calendar');
+        if (in_array(JemCalendarAgendaHelper::getWeekMode($params), array('timetable', 'agenda'), true)) {
+            JemHelper::loadCss('calendar-hourgrid');
+        }
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
 
@@ -98,6 +103,12 @@ class JemViewWeekcal extends JemView
 
         // get data from model and set the month
         $model = $this->getModel();
+        if (JemCalendarAgendaHelper::getWeekMode($params) === 'timetable') {
+            $model->getState();
+            $model->setLimit(0);
+            $model->setLimitStart(0);
+            $model->setState('filter.calendar_multiday', false);
+        }
 
         $rows = $this->get('Items');
 
@@ -127,7 +138,8 @@ class JemViewWeekcal extends JemView
 
         $partItemid = ($itemid > 0) ? '&Itemid=' . $itemid : '';
         $partDate = ($year ? ('&yearID=' . $year) : '') . ($week ? ('&weekID=' . $week) : '');
-        $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid;
+        $url_base = 'index.php?option=com_jem&view=weekcal' . $partItemid
+            . '&mode=' . JemCalendarAgendaHelper::getWeekMode($params);
         $archive_link = Route::_($url_base . $partDate);
         $nrweeks = max(1, (int) $params->get('nrweeks', 1));
         $weekStart = (new \DateTimeImmutable())->setISODate($year, $week, 1);

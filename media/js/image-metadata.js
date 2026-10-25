@@ -46,7 +46,14 @@
                 const colour = tag === 'span' ? textColour(node.getAttribute('style') || '') : '';
                 if (['a', 'strong', 'em', 'br'].includes(tag) || colour) {
                     const element = document.createElement(tag);
-                    if (tag === 'a') element.setAttribute('href', href);
+                    if (tag === 'a') {
+                        element.setAttribute('href', href);
+                        const target = node.getAttribute('target');
+                        if (['_blank', '_self', '_parent', '_top'].includes(target)) {
+                            element.setAttribute('target', target);
+                            if (target === '_blank') element.setAttribute('rel', 'noopener noreferrer');
+                        }
+                    }
                     if (colour) element.setAttribute('style', 'color: ' + colour + ';');
                     copy(node, element);
                     destination.appendChild(element);
@@ -93,13 +100,21 @@
             resize: false,
             contextmenu: false,
             link_title: false,
-            link_target_list: false,
+            ...(caption ? {} : {
+                link_target_list: [
+                    {title: field.dataset.jemLinkNewTab, value: '_blank'},
+                    {title: field.dataset.jemLinkSameTab, value: '_self'},
+                    {title: field.dataset.jemLinkParent, value: '_parent'},
+                    {title: field.dataset.jemLinkTop, value: '_top'}
+                ],
+                link_default_target: '_blank'
+            }),
             link_default_protocol: 'https',
             convert_urls: false,
             paste_as_text: true,
             newline_behavior: 'linebreak',
             indent: false,
-            valid_elements: 'p,br,strong/b,em/i,a[href],span[style]',
+            valid_elements: 'p,br,strong/b,em/i,a[href|target|rel],span[style]',
             valid_styles: {span: 'color'},
             content_style: 'body {font-family:system-ui,sans-serif;font-size:14px;margin:8px;} p {margin:0;} a {overflow-wrap:anywhere;}',
             setup: function (instance) {

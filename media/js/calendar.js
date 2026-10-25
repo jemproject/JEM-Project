@@ -26,11 +26,11 @@ jQuery(document).ready(function ($) {
             hiddenVenues.push($(this).data('filterClass') || $(this).attr('id'));
         });
 
-        $('#jlcalendarlegend .eventSpecialDayType.catoff, .jem-annual-special-days-legend .eventSpecialDayType.catoff').each(function () {
+        $('#jem .eventSpecialDayType.catoff').each(function () {
             hiddenSpecialDayTypes.push($(this).data('filterClass') || $(this).attr('id'));
         });
 
-        $('.jlcalendar .event-filter').each(function () {
+        $('#jem .event-filter').each(function () {
             var item = $(this);
             var itemCategories = item.data('categories') || '';
             var itemVenue = item.data('venue') || '';
@@ -121,6 +121,7 @@ jQuery(document).ready(function ($) {
         allHidden = false;
         updateGlobalButtons(null);
         $(this).toggleClass('catoff');
+        $(this).attr('aria-pressed', $(this).hasClass('catoff') ? 'false' : 'true');
         refreshCalendarFilters();
     });
 
@@ -130,11 +131,12 @@ jQuery(document).ready(function ($) {
         allHidden = false;
         updateGlobalButtons(null);
         $(this).toggleClass('catoff');
+        $(this).attr('aria-pressed', $(this).hasClass('catoff') ? 'false' : 'true');
         refreshCalendarFilters();
     });
 
     /* special day types filtering */
-    $(document).on('click', '#jlcalendarlegend .eventSpecialDayType, .jem-annual-special-days-legend .eventSpecialDayType', function (event) {
+    $(document).on('click', '#jem .eventSpecialDayType', function (event) {
         event.preventDefault();
         allHidden = false;
         updateGlobalButtons(null);
@@ -148,7 +150,7 @@ jQuery(document).ready(function ($) {
         event.preventDefault();
         allHidden = false;
         updateGlobalButtons(this);
-        $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues, #jlcalendarlegend .eventSpecialDayType, .jem-annual-special-days-legend .eventSpecialDayType').removeClass('catoff').attr('aria-pressed', 'true');
+        $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues, #jem .eventSpecialDayType').removeClass('catoff').attr('aria-pressed', 'true');
         refreshCalendarFilters();
     });
 
@@ -157,7 +159,7 @@ jQuery(document).ready(function ($) {
         event.preventDefault();
         allHidden = true;
         updateGlobalButtons(this);
-        $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues, #jlcalendarlegend .eventSpecialDayType, .jem-annual-special-days-legend .eventSpecialDayType').addClass('catoff').attr('aria-pressed', 'false');
+        $('#jlcalendarlegend .eventCat, #jlcalendarlegend .eventVenues, #jem .eventSpecialDayType').addClass('catoff').attr('aria-pressed', 'false');
         refreshCalendarFilters();
     });
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

@@ -140,7 +140,11 @@ final class JemImageMetadata
                 $href = trim($node->getAttribute('href'));
                 if (strlen($href) <= 2048 && !preg_match('/[\x00-\x20\x7f]/', $href)
                     && preg_match('~^https?://~i', $href) && filter_var($href, FILTER_VALIDATE_URL)) {
-                    $html .= '<a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '">' . $text . '</a>';
+                    $target = $node->getAttribute('target');
+                    $target = in_array($target, ['_blank', '_self', '_parent', '_top'], true) ? $target : '';
+                    $html .= '<a href="' . htmlspecialchars($href, ENT_QUOTES, 'UTF-8') . '"'
+                        . ($target === '' ? '' : ' target="' . $target . '"')
+                        . ($target === '_blank' ? ' rel="noopener noreferrer"' : '') . '>' . $text . '</a>';
                 } else {
                     $html .= $text;
                 }

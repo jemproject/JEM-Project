@@ -27,6 +27,71 @@ class JemCalendarAgendaHelper
         return $mode === 'agenda' ? 'agenda' : 'calendar';
     }
 
+    public static function getDayMode($params): string
+    {
+        $requested = strtolower(Factory::getApplication()->input->getCmd('mode', ''));
+        if (in_array($requested, array('list', 'timetable'), true)) {
+            return $requested;
+        }
+
+        $configured = $params && method_exists($params, 'get')
+            ? strtolower((string) $params->get('day_display_mode', 'list')) : 'list';
+
+        return $configured === 'timetable' ? 'timetable' : 'list';
+    }
+
+    public static function getWeekMode($params): string
+    {
+        $requested = strtolower(Factory::getApplication()->input->getCmd('mode', ''));
+        if (in_array($requested, array('calendar', 'timetable', 'agenda'), true)) {
+            return $requested;
+        }
+
+        $configured = $params && method_exists($params, 'get')
+            ? strtolower((string) $params->get('calendar_display_mode', 'calendar')) : 'calendar';
+
+        return in_array($configured, array('timetable', 'agenda'), true) ? $configured : 'calendar';
+    }
+
+    /**
+     * Show only the next available layout in the upper-right action bar.
+     */
+    public static function renderCycleToggle(string $view, $params): string
+    {
+        $order = $view === 'day'
+            ? array('list', 'timetable')
+            : array('calendar', 'timetable', 'agenda');
+        $currentMode = $view === 'day' ? self::getDayMode($params) : self::getWeekMode($params);
+        $position = array_search($currentMode, $order, true);
+        $nextMode = $order[((int) $position + 1) % count($order)];
+        $labels = array(
+            'list' => 'COM_JEM_CALENDAR_MODE_LIST',
+            'agenda' => 'COM_JEM_CALENDAR_MODE_LIST',
+            'calendar' => 'COM_JEM_ANNUALCALENDAR_SHOW_CALENDAR',
+            'timetable' => 'COM_JEM_CALENDAR_MODE_TIMETABLE',
+        );
+        $icons = array(
+            'list' => 'fa-list',
+            'agenda' => 'fa-list',
+            'calendar' => 'fa-calendar-days',
+            'timetable' => 'fa-clock',
+        );
+        $uri = clone Uri::getInstance();
+        $query = $uri->getQuery(true);
+        unset($query['format'], $query['tmpl'], $query['print']);
+        $query['mode'] = $nextMode;
+        $uri->setQuery($query);
+        $label = Text::_($labels[$nextMode]);
+        $escapedLabel = htmlspecialchars($label, ENT_QUOTES, 'UTF-8');
+
+        return '<span class="jem-calendar-layout-toggle">'
+            . '<a class="jem-layout-toggle" href="' . htmlspecialchars((string) $uri, ENT_QUOTES, 'UTF-8')
+            . '" title="' . $escapedLabel . '" aria-label="' . $escapedLabel . '">'
+            . '<i class="fa fa-fw fa-lg ' . $icons[$nextMode] . '" aria-hidden="true"></i>'
+            . '<span class="jem-layout-toggle-label">' . $escapedLabel . '</span>'
+            . '</a></span>';
+    }
+
     public static function renderToggle(): string
     {
         $current = Uri::getInstance();
@@ -55,7 +120,13 @@ class JemCalendarAgendaHelper
             . '</span>';
     }
 
-    public static function renderAgenda(array $rows, string $startDate = '', string $endDate = '', string $subtitle = ''): string
+    public static function renderAgenda(
+        array $rows,
+        string $startDate = '',
+        string $endDate = '',
+        string $subtitle = '',
+        bool $interactiveFilters = false
+    ): string
     {
         $eventsByDate = array();
         $categoryLegend = array();
@@ -157,7 +228,10 @@ class JemCalendarAgendaHelper
                     }
                 }
 
-                $html[] = '<li class="jem-calendar-agenda-event">'
+                $filterAttributes = $interactiveFilters
+                    ? JemCalendarFilterHelper::attributes($event, 'jem-calendar-agenda-event event-filter')
+                    : ' class="jem-calendar-agenda-event"';
+                $html[] = '<li' . $filterAttributes . '>'
                     . '<span class="jem-calendar-agenda-time">' . htmlspecialchars($time, ENT_COMPAT, 'UTF-8') . '</span>'
                     . '<a class="jem-calendar-agenda-title" href="' . $eventLink . '">' . htmlspecialchars((string) ($event->title ?? ''), ENT_COMPAT, 'UTF-8') . '</a>'
                     . '<span class="jem-calendar-agenda-venue">' . $venueHtml . '</span>'
@@ -172,7 +246,7 @@ class JemCalendarAgendaHelper
 
         $html[] = '</div>';
 
-        if ($categoryLegend) {
+        if ($categoryLegend && !$interactiveFilters) {
             $html[] = '<div class="jem-calendar-agenda-legend">';
             $html[] = '<span class="jem-calendar-agenda-legend-title">' . Text::_('COM_JEM_CATEGORIES') . '</span>';
 

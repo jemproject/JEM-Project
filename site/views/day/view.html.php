@@ -14,6 +14,8 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
+require_once __DIR__ . '/../../helpers/calendaragenda.php';
+
 /**
  * Day-View
  */
@@ -66,14 +68,24 @@ class JemViewDay extends JemView
         $requestVenueId = $jinput->getInt('locid', 0);
         $requestCategoryId = $jinput->getInt('catid', 0);
         $requestDate = $jinput->getCmd('id', '');
+        $isHourGrid = !in_array($this->getLayout(), array('timetable', 'timeline'), true)
+            && JemCalendarAgendaHelper::getDayMode($params) === 'timetable';
 
         // Load css
         JemHelper::loadCss('jem');
+        JemHelper::loadCss('calendar');
         if (in_array($this->getLayout(), array('timetable', 'timeline'), true)) {
             JemHelper::loadCss('timetable');
         }
+        if ($isHourGrid) {
+            JemHelper::loadCss('calendar-hourgrid');
+        }
         JemHelper::loadCustomCss();
         JemHelper::loadCustomTag();
+
+        $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
+        $document->addScript(Uri::root() . 'media/com_jem/js/calendar.js'
+            . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
         if ($print) {
             JemHelper::loadCss('print');
@@ -95,7 +107,7 @@ class JemViewDay extends JemView
         $model->setDate($requestDate);
 
         $isTimetableLayout = in_array($this->getLayout(), array('timetable', 'timeline'), true);
-        if ($isTimetableLayout) {
+        if ($isTimetableLayout || $isHourGrid) {
             // These layouts have no pagination: load the complete, date-bounded range.
             // Initialise request state first so it cannot restore a saved limit/offset.
             $model->getState();
@@ -205,6 +217,7 @@ class JemViewDay extends JemView
         $this->settings      = $settings;
         $this->permissions   = $permissions;
         $this->day           = $day;
+        $this->dayEnd        = $model->getDayEnd();
         $this->daydate       = $daydate;
         $this->showdaydate   = $showdaydate; // if true daydate will be shown as h2 sub heading
         $this->pageclass_sfx =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;

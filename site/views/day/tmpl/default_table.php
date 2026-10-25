@@ -95,9 +95,9 @@ use Joomla\CMS\Router\Route;
                 <?php foreach ($this->rows as $row) : ?>
                     <?php $odd = 1 - $odd; ?>
                     <?php if (!empty($row->featured)) : ?>
-                    <tr class="featured featured<?php echo $row->id.$this->params->get('pageclass_sfx'); ?>">
+                    <tr<?php echo JemCalendarFilterHelper::attributes($row, 'featured featured' . (int) $row->id . $this->params->get('pageclass_sfx') . ' event-filter'); ?>>
                     <?php else : ?>
-                    <tr class="sectiontableentry<?php echo ($odd + 1) . $this->params->get('pageclass_sfx'); ?>">
+                    <tr<?php echo JemCalendarFilterHelper::attributes($row, 'sectiontableentry' . ($odd + 1) . $this->params->get('pageclass_sfx') . ' event-filter'); ?>>
                     <?php endif; ?>
 
                         <td headers="jem_date" style="text-align: left;">

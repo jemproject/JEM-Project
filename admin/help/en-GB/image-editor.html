@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>Adding images and image details</title>
+        <link href="../css/help.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="doclinks">
+            <strong>Online manual:</strong>
+            <a href="https://www.joomlaeventmanager.net/documentation/backend" target="_blank">Backend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/frontend" target="_blank">Frontend</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/modules" target="_blank">Modules</a>
+            <a href="https://www.joomlaeventmanager.net/documentation/plugins" target="_blank">Plugins</a>
+        </div>
+        <h1>Adding images and image details</h1>
+        <p>Events, venues and categories can show an image with its own description and credit. An event has two image slots: the intro image for lists and cards, and an optional full image for its detail page. Edit each slot separately.</p>
+
+        <h2>1. Choose the image</h2>
+        <ol>
+            <li>In the backend, open the record's <strong>Image</strong> tab. In the frontend, open its image section.</li>
+            <li>To reuse an image already on the server, click <strong>Select Image</strong> in the backend or choose it from the searchable <strong>Server image</strong> list in the frontend.</li>
+            <li>To add a file from your computer, click <strong>Upload</strong> in the backend or use <strong>Upload new image</strong> in the frontend. Choose a server image <em>or</em> a new upload for each slot, not both.</li>
+            <li>Check the image preview, then save the record. The folder shown beside the selector tells you where JEM looks for images; it is <strong>not</strong> a box in which you must type the image's full file path.</li>
+        </ol>
+        <p>JEM applies its configured image-processing rules to new uploads. Selecting an existing server image does not require uploading it again.</p>
+
+        <h2>2. Add the image details</h2>
+        <p><strong>Alternative text</strong> is a short description for accessibility. It is not the place for a copyright notice. In the Advanced JEM profile, open <strong>Caption and credit</strong> beneath that image if it is collapsed:</p>
+        <ul>
+            <li><strong>Caption:</strong> describe what the image shows. Bold, italic and text colour are available.</li>
+            <li><strong>Photo credit / licence:</strong> enter the photographer, source or licence. Select text and click the link button if you want to link to a source or licence page. In the link dialog, <strong>Open link in...</strong> defaults to <strong>New tab</strong>; change it for that link if needed.</li>
+            <li><strong>Credit label:</strong> choose a short prefix such as Photo, Credits, Source or Copyright. Choose None for unlabelled text, or Custom for your own prefix.</li>
+            <li><strong>Credit position:</strong> show it below the image or at the bottom of the event, venue or category section. “Bottom of section” does not mean the website footer.</li>
+        </ul>
+        <p>Save and inspect the public detail page. The caption and credit are shown with the detail image; the credit can appear below the image without opening it. List thumbnails do not show these details. If you replace an image, check and update its description and credit for the new picture. <strong>Clear</strong> removes the selected image and resets its image details.</p>
+        <p>If the Caption and credit controls are unavailable, ask the site administrator whether JEM's Advanced profile is enabled.</p>
+    </body>
+</html>

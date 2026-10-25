@@ -191,7 +191,7 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
             $inline = JemOutput::flyer($record, $image, $context, $slot, true);
             self::assertStringContainsString('jem-image-caption__text', $inline);
             self::assertSame(1, substr_count($inline, 'Author credit'));
-            self::assertStringContainsString('Image credit:', $inline);
+            self::assertStringContainsString('Credits:', $inline);
             self::assertSame('', JemOutput::imageCaptionFooter($record, $image, $context, $slot));
             $record->image_metadata[$slot]['footer'] = true;
             $inline = JemOutput::flyer($record, $image, $context, $slot, true);
@@ -199,7 +199,7 @@ final class ImageMetadataJoomlaIntegrationTest extends JoomlaTestCase
             self::assertStringNotContainsString('Author credit', $inline);
             $footer = JemOutput::imageCaptionFooter($record, $image, $context, $slot);
             self::assertStringContainsString('jem-image-credit--footer', $footer);
-            self::assertStringContainsString('<span class="jem-image-credit__label">Image credit:</span> Author credit', $footer);
+            self::assertStringContainsString('<span class="jem-image-credit__label">Credits:</span> Author credit', $footer);
             self::assertSame(1, substr_count($footer, 'Author credit'));
             self::assertSame('', JemOutput::imageCaptionFooter($record, [], $context, $slot));
         }

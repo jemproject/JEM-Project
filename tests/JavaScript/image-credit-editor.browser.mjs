@@ -89,15 +89,19 @@ try {
             const label = card.querySelector('[data-jem-credit-label]');
             const position = card.querySelector('select[name$="[footer]"]');
             const initial = field.value;
+            const targets = editor.options.get('link_target_list').map(option=>option.value).join(',') === '_blank,_self,_parent,_top';
+            const defaultTarget = editor.options.get('link_default_target') === '_blank';
             editor.setContent('Jane Smith, Museum, CC BY-SA 4.0');
             const node = editor.getBody().querySelector('p').firstChild;
             const range = editor.getDoc().createRange(); range.setStart(node, 0); range.setEnd(node, 10);
             editor.selection.setRng(range);
-            editor.execCommand('mceInsertLink', false, {href:'https://example.org/author?a=1&b=2'});
+            editor.execCommand('mceInsertLink', false, {href:'https://example.org/author?a=1&b=2',target:'_blank'});
             editor.save(); field.dispatchEvent(new Event('input', {bubbles:true}));
             const saved = new DOMParser().parseFromString(field.value, 'text/html');
             const linked = saved.querySelector('a')?.textContent === 'Jane Smith';
             const href = saved.querySelector('a')?.getAttribute('href');
+            const target = saved.querySelector('a')?.getAttribute('target');
+            const rel = saved.querySelector('a')?.getAttribute('rel');
             editor.selection.select(editor.getBody().querySelector('a'));
             editor.execCommand('unlink'); editor.save();
             const unlinked = !field.value.includes('<a ') && field.value.includes('Jane Smith');
@@ -119,14 +123,16 @@ try {
             field.value = ''; field.dispatchEvent(new Event('input',{bubbles:true}));
             field.dispatchEvent(new Event('change',{bubbles:true}));
             const cleared = editor.getContent() === '';
-            results.push({id:field.id, noPreview, linked, href, unlinked, breaks, none, escaped, savedPosition, safe, cleared,
+            results.push({id:field.id, noPreview, targets, defaultTarget, linked, href, target, rel, unlinked, breaks, none, escaped, savedPosition, safe, cleared,
                 initialPreserved:initial.includes('https://example.org/source')});
         }
         return results;
     })()`);
     for (const item of result) {
         assert.equal(item.href, 'https://example.org/author?a=1&b=2');
-        for (const [key, value] of Object.entries(item)) if (!['id', 'href'].includes(key)) assert.equal(value, true, item.id + ':' + key);
+        assert.equal(item.target, '_blank');
+        assert.equal(item.rel, 'noopener noreferrer');
+        for (const [key, value] of Object.entries(item)) if (!['id', 'href', 'target', 'rel'].includes(key)) assert.equal(value, true, item.id + ':' + key);
     }
     await evaluate('document.querySelectorAll("form").forEach(f => f.reset())');
     await new Promise(resolve => setTimeout(resolve, 150));
@@ -139,7 +145,11 @@ try {
             e.execCommand('Bold'); e.execCommand('Italic'); e.save();
             const formatted=e.targetElm.value.includes('<strong>') && e.targetElm.value.includes('<em>');
             const toolbar=e.options.get('toolbar') === 'bold italic forecolor';
-            return {formatted,toolbar};
+            const noLinkPlugin=!e.hasPlugin('link');
+            e.setContent('<p><a href="https://example.org" target="_self">Museum workshop</a></p>');
+            e.save();
+            const sameTab=e.targetElm.value.includes('target="_self"');
+            return {formatted,toolbar,noLinkPlugin,sameTab};
         });
     })()`);
     assert.equal(captions.length,8);
@@ -164,7 +174,26 @@ try {
     assert.equal(await evaluate('tinymce.get().filter(e=>e.targetElm.hasAttribute("data-jem-caption-editor")).every(e=>e.getContent().includes("Museum workshop") && !e.getContent().includes("<strong>"))'),true,'Caption reset restores original content');
     await evaluate('tinymce.get().find(e=>e.targetElm.hasAttribute("data-jem-credit-editor")).execCommand("mceLink", false, {dialog:true})');
     assert.equal(await evaluate('!!document.querySelector(".tox-dialog input")'), true, 'Native link dialog opens');
+    const targetDialog = await evaluate(`(() => {
+        const dialog = document.querySelector('.tox-dialog');
+        const label = [...dialog.querySelectorAll('label')].find(item => item.textContent.includes('Open link in'));
+        const control = label?.parentElement.querySelector('[role=combobox]');
+        const rect = control?.getBoundingClientRect();
+        return {label:!!label, selected:control?.textContent, visible:!!rect && rect.width > 0 && rect.height > 0};
+    })()`);
+    assert.deepEqual(targetDialog, {label:true, selected:'New tab', visible:true}, 'Visible target selector defaults to new tab');
+    assert.equal(fixture.assetChecks, 2, 'Image metadata assets use their content hashes as cache versions');
+    if (process.env.JEM_TEST_DIALOG_SCREENSHOT) {
+        const shot = await send('Page.captureScreenshot', {format:'png'}, sessionId);
+        await writeFile(resolve(process.env.JEM_TEST_DIALOG_SCREENSHOT), Buffer.from(shot.data, 'base64'));
+    }
     await evaluate('tinymce.get().find(e=>e.targetElm.hasAttribute("data-jem-credit-editor")).windowManager.close()');
+    assert.equal(await evaluate(`[...document.querySelectorAll('.jem-image-metadata__alignment .form-select')].every(select =>
+        parseFloat(getComputedStyle(select).paddingRight) >= 72)`), true,
+        'Image metadata selectors keep their text clear of the arrow');
+    assert.equal(await evaluate(`[...document.querySelectorAll('[data-jem-credit-label]')].every(select =>
+        select.getBoundingClientRect().width >= 222 && select.selectedOptions[0].textContent === 'Credits:')`), true,
+        'Credit label shows the shorter default text at a usable width');
     assert.equal(await evaluate(`(() => {
         const form=document.querySelector('#site_venue_advanced');
         form.querySelector('.jem-image-clear').click();
