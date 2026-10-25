@@ -30,8 +30,12 @@ class JemViewVenue extends HtmlView
         $app          = Factory::getApplication();
         $jinput       = $app->input;
 
-        $year = (int)$jinput->getInt('yearID', date("Y"));
-        $month = (int)$jinput->getInt('monthID', date("m"));
+        $currentDate = explode('-', JemHelper::getJoomlaDate());
+        list($year, $month) = JemHelper::normaliseCalendarMonth(
+            $jinput->getInt('yearID', (int) $currentDate[0]),
+            $jinput->getInt('monthID', (int) $currentDate[1])
+        );
+
         $layout = $jinput->getCmd('layout', '');
 
         if ($layout === 'pdf' && $jinput->getBool('venue_calendar_pdf', false)) {

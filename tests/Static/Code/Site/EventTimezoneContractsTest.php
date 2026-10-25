@@ -183,6 +183,7 @@ final class EventTimezoneContractsTest extends TestCase
         foreach ($views as $path => $expectedCalls) {
             $code = $this->read($path);
 
+            self::assertStringContainsString('JemHelper::normaliseCalendarMonth(', $code, $path);
             self::assertSame(
                 $expectedCalls,
                 substr_count($code, "setDate(sprintf('%04d-%02d-01', \$year, \$month))"),
@@ -190,6 +191,32 @@ final class EventTimezoneContractsTest extends TestCase
             );
             self::assertStringNotContainsString('setDate(mktime(', $code);
         }
+    }
+
+    public function testCalendarModelsDefendAgainstMalformedMonthDates(): void
+    {
+        $eventsList = $this->read('/site/models/eventslist.php');
+        self::assertStringContainsString('protected function getCalendarMonthDate($date)', $eventsList);
+        self::assertStringContainsString('JemHelper::isValidCalendarDate($date)', $eventsList);
+        self::assertStringContainsString("'JEM-W-0102'", $eventsList);
+        self::assertStringContainsString('JemHelper::getJoomlaDate()', $eventsList);
+
+        $helper = $this->read('/site/helpers/helper.php');
+        self::assertStringContainsString("'JEM-W-0101'", $helper);
+        self::assertStringContainsString('$year <= 2100', $helper);
+
+        foreach (array(
+            '/site/models/calendar.php',
+            '/site/models/categorycal.php',
+        ) as $path) {
+            $code = $this->read($path);
+            self::assertStringContainsString('$this->getCalendarMonthDate($this->_date)', $code, $path);
+            self::assertStringNotContainsString('new DateTimeImmutable((string) $this->_date', $code, $path);
+        }
+
+        $venueCalendar = $this->read('/site/models/venuecal.php');
+        self::assertStringContainsString('$this->getCalendarMonthDate($this->_date)', $venueCalendar);
+        self::assertStringNotContainsString('new DateTimeImmutable((string) $this->_date', $venueCalendar);
     }
 
     public function testEventTimezoneDisplaySupportsGlobalAndPerEventOverrides(): void

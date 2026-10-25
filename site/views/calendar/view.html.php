@@ -80,8 +80,17 @@ class JemViewCalendar extends JemView
         $calendarScript = JPATH_ROOT . '/media/com_jem/js/calendar.js';
         $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
-        $year  = (int)$jinput->getInt('yearID', date("Y"));
-        $month = (int)$jinput->getInt('monthID', date("m"));
+        $currentDate    = explode('-', JemHelper::getJoomlaDate());
+        $requestedYear  = $jinput->getInt('yearID', (int) $currentDate[0]);
+        $requestedMonth = $jinput->getInt('monthID', (int) $currentDate[1]);
+        list($year, $month, $validCalendarMonth) = JemHelper::normaliseCalendarMonth(
+            $requestedYear,
+            $requestedMonth
+        );
+
+        if (!$validCalendarMonth) {
+            $app->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+        }
 
         // get data from model and set the month
         $model = $this->getModel();

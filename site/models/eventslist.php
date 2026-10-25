@@ -151,6 +151,52 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Resolve a calendar month in Joomla's timezone.
+     *
+     * @param   mixed  $date  Calendar date or legacy Unix timestamp.
+     *
+     * @return  DateTimeImmutable
+     */
+    protected function getCalendarMonthDate($date): DateTimeImmutable
+    {
+        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
+        $dateType = gettype($date);
+        $dateValue = is_scalar($date) ? substr((string) $date, 0, 64) : '';
+
+        if (is_numeric($date)) {
+            try {
+                $timestamp = (int) $date;
+                $selectedDate = (new DateTimeImmutable('@' . $timestamp))->setTimezone($timeZone);
+                $year = (int) $selectedDate->format('Y');
+
+                if ($year >= 1 && $year <= 2100) {
+                    return $selectedDate;
+                }
+            } catch (\Throwable $exception) {
+                // Continue with the safe Joomla-date fallback below.
+            }
+        } elseif (is_string($date) && JemHelper::isValidCalendarDate($date)) {
+            $selectedDate = DateTimeImmutable::createFromFormat('!Y-m-d', $date, $timeZone);
+            $year = $selectedDate instanceof DateTimeImmutable ? (int) $selectedDate->format('Y') : 0;
+
+            if ($year >= 1 && $year <= 2100) {
+                return $selectedDate;
+            }
+        }
+
+        JemLog::warning(
+            'JEM-W-0102',
+            'Invalid calendar model date; using the current Joomla date.',
+            array(
+                'date_type' => $dateType,
+                'date_value' => $dateValue,
+            )
+        );
+
+        return new DateTimeImmutable(JemHelper::getJoomlaDate(), $timeZone);
+    }
+
+    /**
      * Preserve the list context while the explicit load-more task is running.
      */
     private function getEffectiveRequestTask(): string

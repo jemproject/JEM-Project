@@ -388,6 +388,40 @@ class JemHelper
     }
 
     /**
+     * Validate a requested calendar month and fall back to the current Joomla month.
+     *
+     * @param   mixed  $year   Requested calendar year.
+     * @param   mixed  $month  Requested calendar month.
+     *
+     * @return  array{0: int, 1: int, 2: bool}  Year, month, and whether the request was valid.
+     */
+    public static function normaliseCalendarMonth($year, $month)
+    {
+        $year = (int) $year;
+        $month = (int) $month;
+
+        if ($year >= 1 && $year <= 2100 && $month >= 1 && $month <= 12) {
+            return array($year, $month, true);
+        }
+
+        $currentDate = explode('-', self::getJoomlaDate());
+        $currentYear = (int) $currentDate[0];
+        $currentMonth = (int) $currentDate[1];
+
+        JemLog::warning(
+            'JEM-W-0101',
+            'Invalid calendar month request; using the current Joomla month.',
+            array(
+                'year_id' => $year,
+                'month_id' => $month,
+                'fallback_month' => sprintf('%04d-%02d', $currentYear, $currentMonth),
+            )
+        );
+
+        return array($currentYear, $currentMonth, false);
+    }
+
+    /**
      * Check whether a timezone can be used for event date calculations.
      *
      * @param   string  $timeZone  Timezone identifier.

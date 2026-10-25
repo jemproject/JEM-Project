@@ -42,6 +42,39 @@ final class EventDateValidationTest extends JoomlaTestCase
         self::assertFalse(JemHelper::isValidCalendarDate(''));
     }
 
+    public function testCalendarMonthValidationRejectsMalformedRequestValues(): void
+    {
+        self::assertSame(array(2026, 10, true), JemHelper::normaliseCalendarMonth(2026, 10));
+
+        $normalised = JemHelper::normaliseCalendarMonth(810337805, -365803542);
+        $currentDate = explode('-', JemHelper::getJoomlaDate());
+
+        self::assertSame((int) $currentDate[0], $normalised[0]);
+        self::assertSame((int) $currentDate[1], $normalised[1]);
+        self::assertFalse($normalised[2]);
+    }
+
+    public function testCalendarMonthValidationRejectsOutOfRangeValues(): void
+    {
+        self::assertFalse(JemHelper::normaliseCalendarMonth(0, 10)[2]);
+        self::assertTrue(JemHelper::normaliseCalendarMonth(2100, 10)[2]);
+        self::assertFalse(JemHelper::normaliseCalendarMonth(2101, 10)[2]);
+        self::assertFalse(JemHelper::normaliseCalendarMonth(2026, 0)[2]);
+        self::assertFalse(JemHelper::normaliseCalendarMonth(2026, 13)[2]);
+    }
+
+    public function testCalendarModelDateRejectsMalformedValuesWithoutParsingErrors(): void
+    {
+        require_once JEM_TEST_ROOT . '/site/models/eventslist.php';
+
+        $model = (new ReflectionClass(JemModelEventslist::class))->newInstanceWithoutConstructor();
+        $resolve = new ReflectionMethod(JemModelEventslist::class, 'getCalendarMonthDate');
+
+        self::assertSame('2026-10-01', $resolve->invoke($model, '2026-10-01')->format('Y-m-d'));
+        self::assertSame(JemHelper::getJoomlaDate(), $resolve->invoke($model, array('invalid'))->format('Y-m-d'));
+        self::assertSame(JemHelper::getJoomlaDate(), $resolve->invoke($model, '2101-01-01')->format('Y-m-d'));
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

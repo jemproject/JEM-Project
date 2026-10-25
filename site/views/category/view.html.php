@@ -87,8 +87,17 @@ class JemViewCategory extends JemView
             $document->addScript($url . 'media/com_jem/js/calendar.js' . (is_file($calendarScript) ? '?v=' . filemtime($calendarScript) : ''));
 
             // Retrieve date variables
-            $year  = (int)$app->input->getInt('yearID', date("Y"));
-            $month = (int)$app->input->getInt('monthID', date("m"));
+            $currentDate    = explode('-', JemHelper::getJoomlaDate());
+            $requestedYear  = $app->input->getInt('yearID', (int) $currentDate[0]);
+            $requestedMonth = $app->input->getInt('monthID', (int) $currentDate[1]);
+            list($year, $month, $validCalendarMonth) = JemHelper::normaliseCalendarMonth(
+                $requestedYear,
+                $requestedMonth
+            );
+
+            if (!$validCalendarMonth) {
+                $app->enqueueMessage(Text::_('COM_JEM_INVALID_DATE_REQUESTED_USING_CURRENT'), 'notice');
+            }
 
             $catid = $app->input->getInt('id', 0);
             if (empty($catid)) {
