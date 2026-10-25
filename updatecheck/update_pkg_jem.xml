@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<updates version="1.0" published="2026-09-14">
+<updates version="1.0" published="2026-10-25">
     <!-- Latest JEM 2 release for Joomla 2.5 and Joomla 3; required before migrating to JEM 4. -->
     <update>
         <name>JEM Package</name>
@@ -47,12 +47,12 @@
         <maintainerurl>https://www.joomlaeventmanager.net</maintainerurl>
         <targetplatform name="joomla" version="^(4\..*|5\..*)$"/>
         <php_minimum>8.1</php_minimum>
-        <sha256>c29989d3d4c56e6dc9f49244efd864d897113d761bad92a13269961c05e168fb</sha256>
-        <sha384>e11c27144594deae47d603b3fc4514b2927e7e381320d84bfcf8e13e459f3496f7b249f98ae52b958905404960f462e9</sha384>
-        <sha512>82d75a672de4eabf469a8d3c2f6c4c96bb27a57bcf2e3fbda781826278cf4ffc28e911a928838c99f935fe1b81378f9eb5ebb70abb187892c1efa8c74c329e76</sha512>
-        <date>2026-07-07</date>
+        <sha256>7248e0659ee72cbe60988f602c10d5ec429b7cd0dc4caa5e617cd26e4586f38d</sha256>
+        <sha384>1fee27f6d22d2cc33574468675dcdce191f79f2a94032554355c5856226fb0822fd352750d29760fc3b5da1f9a7c70be</sha384>
+        <sha512>65131106f700db8f3ba09181c4e51cd3556237e3b0fc56bd6284c224e93699aabd9d6e058bb618db2d2a42858a45014870d1009c6f535f2303d6753593dd5a79</sha512>
+        <date>2026-10-25 00:00</date>
         <notes>JEM 4.5.0 for Joomla! 4.x and Joomla! 5.x. This is the bridge release for installations migrating from JEM 2.3.6. [JEM 4.x changelog](https://www.joomlaeventmanager.net/project/changelog-jem#jem4-tab)</notes>
-        <changes>JEM 4.5.0 is the latest stable JEM 4 release and supports migration from the JEM 2.3.6 baseline.</changes>
+        <changes>The refreshed JEM 4.5.0 package restores legacy SQL migrations and validates the JEM 2.3.6 minimum upgrade version.</changes>
     </update>
     <!-- Latest published JEM 5 stable release for Joomla 5.4 or newer and Joomla 6. -->
     <update>
