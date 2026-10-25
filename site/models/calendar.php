@@ -60,10 +60,7 @@ class JemModelCalendar extends JemModelEventslist
         ###########
 
         #only select events within specified dates. (chosen month)
-        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
-        $selectedDate = is_numeric($this->_date)
-            ? (new DateTimeImmutable('@' . (int) $this->_date))->setTimezone($timeZone)
-            : new DateTimeImmutable((string) $this->_date, $timeZone);
+        $selectedDate = $this->getCalendarMonthDate($this->_date);
         $monthstart = $selectedDate->modify('first day of this month')->format('Y-m-01');
         $monthend   = $selectedDate->modify('last day of this month')->format('Y-m-d');
 

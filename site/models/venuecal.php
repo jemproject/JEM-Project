@@ -130,13 +130,10 @@ class JemModelVenueCal extends JemModelEventslist
 
     protected function applyCalendarDateState()
     {
-        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
         // setDate() historically receives mktime() output from the view. It is
         // a civil calendar selection, not an instant to convert between zones;
         // converting it could move the first day back into the previous month.
-        $selectedDate = is_numeric($this->_date)
-            ? new DateTimeImmutable(date('Y-m-d', (int) $this->_date), $timeZone)
-            : new DateTimeImmutable((string) $this->_date, $timeZone);
+        $selectedDate = $this->getCalendarMonthDate($this->_date, true);
         $filterDateFrom = $selectedDate->modify('first day of this month')->format('Y-m-01');
         $filterDateTo = $selectedDate->modify('last day of this month')->format('Y-m-d');
 

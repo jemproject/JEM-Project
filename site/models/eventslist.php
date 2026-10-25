@@ -181,6 +181,58 @@ class JemModelEventslist extends ListModel
     }
 
     /**
+     * Resolve a calendar month in Joomla's timezone.
+     *
+     * The venue calendar may receive a legacy timestamp representing a civil
+     * month rather than an instant. In that case, retain its PHP-local date.
+     *
+     * @param   mixed  $date            Calendar date or legacy Unix timestamp.
+     * @param   bool   $civilTimestamp  Treat a timestamp as a civil date.
+     *
+     * @return  DateTimeImmutable
+     */
+    protected function getCalendarMonthDate($date, bool $civilTimestamp = false): DateTimeImmutable
+    {
+        $timeZone = new DateTimeZone(JemHelper::getJoomlaTimeZoneName());
+        $dateType = gettype($date);
+        $dateValue = is_scalar($date) ? substr((string) $date, 0, 64) : '';
+
+        if (is_numeric($date)) {
+            try {
+                $timestamp = (int) $date;
+                $selectedDate = $civilTimestamp
+                    ? new DateTimeImmutable(date('Y-m-d', $timestamp), $timeZone)
+                    : (new DateTimeImmutable('@' . $timestamp))->setTimezone($timeZone);
+                $year = (int) $selectedDate->format('Y');
+
+                if ($year >= 1 && $year <= 2100) {
+                    return $selectedDate;
+                }
+            } catch (\Throwable $exception) {
+                // Continue with the safe Joomla-date fallback below.
+            }
+        } elseif (is_string($date) && JemHelper::isValidCalendarDate($date)) {
+            $selectedDate = DateTimeImmutable::createFromFormat('!Y-m-d', $date, $timeZone);
+            $year = $selectedDate instanceof DateTimeImmutable ? (int) $selectedDate->format('Y') : 0;
+
+            if ($year >= 1 && $year <= 2100) {
+                return $selectedDate;
+            }
+        }
+
+        JemLog::warning(
+            'JEM-W-0102',
+            'Invalid calendar model date; using the current Joomla date.',
+            array(
+                'date_type' => $dateType,
+                'date_value' => $dateValue,
+            )
+        );
+
+        return new DateTimeImmutable(JemHelper::getJoomlaDate(), $timeZone);
+    }
+
+    /**
      * Apply the shared contact and custom-field configuration used by Eventslist.
      *
      * Only visible and editable rows may read visitor input. Fixed rows always
