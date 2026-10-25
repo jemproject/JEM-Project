@@ -146,7 +146,8 @@ foreach ($this->rows as $row) {
 
     for ($eventDate = $eventStartDate; $eventDate <= $eventEndDate; $eventDate = $eventDate->modify('+1 day')) {
         $eventDateKey = $eventDate->format('Y-m-d');
-        $dedupeKey = (int) ($row->id ?? 0) . ':' . $eventDateKey;
+        $dedupeKey = (int) ($row->id ?? 0) . ':' . $eventDateKey
+            . ':' . (string) ($row->calendar_occurrence_key ?? '');
 
         if (isset($eventDateKeys[$dedupeKey])) {
             continue;

@@ -2820,8 +2820,9 @@ class JemPdfView
     {
         $id = (string) ($row->id ?? $row->eventid ?? $row->slug ?? $row->title ?? '');
         $multi = (string) ($row->multi ?? '');
+        $slot = (string) ($row->calendar_occurrence_key ?? '');
 
-        return $id . '|' . $dateKey . '|' . $multi;
+        return $id . '|' . $dateKey . '|' . $multi . '|' . $slot;
     }
 
     private static function buildCalendarCategoryLegend(array $rows): array

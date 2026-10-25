@@ -21,6 +21,7 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventslistmenupolicy.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/eventfilterconfig.class.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/customfields.class.php');
+require_once(JPATH_SITE.'/components/com_jem/classes/calendarschedule.class.php');
 
 /**
  * Model-Eventslist
@@ -1890,6 +1891,11 @@ class JemModelEventslist extends ListModel
         $startdayonly = $this->getState('filter.calendar_startdayonly');
         $rangeStart   = (string) $this->getState('filter.date.from', '');
         $rangeEnd     = (string) $this->getState('filter.date.to', '');
+        $items = $this->projectCalendarSchedules($items, $rangeStart, $rangeEnd, (bool) $startdayonly);
+
+        if (!$items) {
+            return array();
+        }
 
         if (!$startdayonly) {
             foreach ($items as $item)
@@ -1967,6 +1973,33 @@ class JemModelEventslist extends ListModel
         array_multisort($time, SORT_ASC, $title, SORT_ASC, $items);
 
         return $items;
+    }
+
+    /** Keep legacy expansion unchanged; only explicit per-day programmes need slot rows. */
+    protected function projectCalendarSchedules($items, string $from, string $to, bool $startDayOnly): array
+    {
+        $rows = [];
+
+        foreach ($items as $item) {
+            $definition = JemEventSchedule::definition($item);
+
+            if (($definition['mode'] ?? null) !== 'per_day') {
+                $rows[] = $item;
+                continue;
+            }
+
+            foreach (JemCalendarSchedule::projectPerDay(
+                $item,
+                JemHelper::getEventTimeZoneName($item),
+                $from,
+                $to,
+                $startDayOnly
+            ) as $occurrence) {
+                $rows[] = $occurrence;
+            }
+        }
+
+        return $rows;
     }
 
     /**

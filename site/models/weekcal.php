@@ -132,6 +132,12 @@ class JemModelWeekcal extends JemModelEventslist
         $app          = Factory::getApplication();
         $params       = $app->getParams();
         $startdayonly = $this->getState('filter.calendar_startdayonly');
+        $items = $this->projectCalendarSchedules(
+            $items,
+            (string) $this->getState('filter.date.from', ''),
+            (string) $this->getState('filter.date.to', ''),
+            (bool) $startdayonly
+        );
 
         if (!$startdayonly) {
             foreach ($items as $i => $item)
