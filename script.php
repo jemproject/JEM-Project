@@ -261,7 +261,17 @@ class com_jemInstallerScript
 
         if ($type == 'update') {
             // Installed component version
-            $this->oldRelease = $this->getParam('version');
+            $this->oldRelease = trim((string) $this->getParam('version'));
+            if ($this->oldRelease === '' || version_compare($this->oldRelease, '2.3.6', 'lt')) {
+                $app->enqueueMessage(
+                    Text::sprintf(
+                        'COM_JEM_PREFLIGHT_UNSUPPORTED_UPGRADE_VERSION',
+                        $this->oldRelease !== '' ? $this->oldRelease : 'unknown'
+                    ),
+                    'error'
+                );
+                return false;
+            }
             // Installing component version as per Manifest file
             // $this->newRelease = $parent->get('manifest')->version;
             if (version_compare($this->newRelease, $this->oldRelease, 'lt')) {
@@ -272,11 +282,13 @@ class com_jemInstallerScript
             // Check and remove obsolete files and folder
             $this->deleteObsoleteFiles();
 
-            // Check columns in database
-            $this->checkColumnsIntoDatabase();
+            // Legacy SQL scripts add these columns; pre-adding them would make the migration fail.
+            if (version_compare($this->oldRelease, '4.1.0', 'ge')) {
+                $this->checkColumnsIntoDatabase();
+            }
 
             // Verify the data type of 'unregistra_until' in the database
-            if ($this->oldRelease < '4.3.1') {
+            if (version_compare($this->oldRelease, '4.3.1', 'lt')) {
                 $this->checkUnregistraUntil();
             }
 
@@ -336,7 +348,7 @@ class com_jemInstallerScript
         $query->select('manifest_cache')->from('#__extensions')->where(array("type = 'component'", "element = 'com_jem'"));
         $db->setQuery($query);
         $manifest = json_decode($db->loadResult(), true);
-        return $manifest[$name];
+        return is_array($manifest) ? ($manifest[$name] ?? null) : null;
     }
 
     /**
@@ -777,13 +789,6 @@ class com_jemInstallerScript
             '/administrator/components/com_jem/sql/updates/2.3.0-beta2.sql',
             '/administrator/components/com_jem/sql/updates/2.3.0-dev1.sql',
             '/administrator/components/com_jem/sql/updates/2.3.1.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.13.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.14.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.15.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.16.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/2.3.17.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/4.0b2.sql',
-            '/administrator/components/com_jem/sql/updates/mysql/4.0b4.sql',
             '/administrator/language/en-GB/en-GB.plg_content_jem.ini',
             '/administrator/language/en-GB/en-GB.plg_content_jem.sys.ini',
             '/administrator/language/en-GB/en-GB.plg_finder_jem.ini',

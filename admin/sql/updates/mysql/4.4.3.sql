@@ -1,0 +1,25 @@
+-- Schema bridge for upgrades from JEM 4.4.x to 4.5.0; 4.4.3 is not a product release.
+-- Preserve existing type IDs, names, entity values and icons.
+ALTER TABLE `#__jem_types`
+  CHANGE COLUMN `type` `entity` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1=Event, 2=Category, 3=Venue, 4=Day',
+  ADD COLUMN `alias` VARCHAR(100) NOT NULL DEFAULT '' AFTER `name`,
+  ADD COLUMN `description` TEXT DEFAULT NULL AFTER `alias`,
+  ADD COLUMN `base_language` CHAR(7) NOT NULL DEFAULT '' AFTER `description`,
+  ADD COLUMN `translation_languages` VARCHAR(255) DEFAULT NULL AFTER `base_language`,
+  ADD COLUMN `translations` MEDIUMTEXT DEFAULT NULL AFTER `translation_languages`,
+  ADD COLUMN `color` VARCHAR(7) DEFAULT NULL AFTER `icon`,
+  ADD COLUMN `published` TINYINT(1) NOT NULL DEFAULT 1 AFTER `color`,
+  ADD COLUMN `ordering` INT(11) NOT NULL DEFAULT 0 AFTER `published`,
+  ADD COLUMN `access` INT(10) UNSIGNED NOT NULL DEFAULT 1 AFTER `ordering`,
+  ADD COLUMN `language` CHAR(7) NOT NULL DEFAULT '*' AFTER `access`,
+  ADD COLUMN `checked_out` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `language`,
+  ADD COLUMN `checked_out_time` DATETIME NULL DEFAULT NULL AFTER `checked_out`,
+  ADD COLUMN `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER `checked_out_time`,
+  ADD COLUMN `created_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `created`,
+  ADD COLUMN `modified` DATETIME NULL DEFAULT NULL AFTER `created_by`,
+  ADD COLUMN `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT 0 AFTER `modified`,
+  ADD COLUMN `attribs` TEXT DEFAULT NULL AFTER `modified_by`,
+  ADD KEY `idx_entity` (`entity`),
+  ADD KEY `idx_published` (`published`),
+  ADD KEY `idx_access` (`access`),
+  ADD KEY `idx_checkout` (`checked_out`);

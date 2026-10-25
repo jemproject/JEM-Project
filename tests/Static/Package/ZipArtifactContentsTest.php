@@ -225,6 +225,13 @@ final class ZipArtifactContentsTest extends TestCase
 
         self::assertSame(
             array(
+                'admin/sql/updates/mysql/2.3.13.sql',
+                'admin/sql/updates/mysql/2.3.14.sql',
+                'admin/sql/updates/mysql/2.3.15.sql',
+                'admin/sql/updates/mysql/2.3.16.sql',
+                'admin/sql/updates/mysql/2.3.17.sql',
+                'admin/sql/updates/mysql/4.0b2.sql',
+                'admin/sql/updates/mysql/4.0b4.sql',
                 'admin/sql/updates/mysql/4.1.0.sql',
                 'admin/sql/updates/mysql/4.2.0.sql',
                 'admin/sql/updates/mysql/4.2.1.sql',
@@ -237,10 +244,11 @@ final class ZipArtifactContentsTest extends TestCase
                 'admin/sql/updates/mysql/4.4.0.sql',
                 'admin/sql/updates/mysql/4.4.1.sql',
                 'admin/sql/updates/mysql/4.4.2.sql',
+                'admin/sql/updates/mysql/4.4.3.sql',
                 'admin/sql/updates/mysql/4.5.0.sql',
             ),
             $updates,
-            $label . ' must include SQL updates from 4.1.0 onward only.'
+            $label . ' must include the JEM 2.3.6 to 4.5.0 migration chain.'
         );
     }
 
@@ -271,7 +279,7 @@ final class ZipArtifactContentsTest extends TestCase
     {
         $relative = $this->relativePath($zipFile);
 
-        return str_contains(basename($zipFile), '4.5.0beta5')
+        return basename($zipFile) === 'pkg_jem_v4.5.0.zip'
             || str_starts_with($relative, 'build/pkg_stage/');
     }
 

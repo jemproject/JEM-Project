@@ -67,11 +67,52 @@ class Pkg_JemInstallerScript
     }
 
     public function preflight($type, $parent) {
+        if ($type !== 'uninstall' && !$this->checkUpgradePath()) {
+            return false;
+        }
+
         // Prevent installation if requirements are not met.
         if (!$this->checkRequirements()){
             return false;
         }
         return true;
+    }
+
+    /**
+     * Stop unsupported upgrades before installing any package children.
+     *
+     * @return bool
+     */
+    private function checkUpgradePath()
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true);
+        $query->select('manifest_cache')
+            ->from('#__extensions')
+            ->where(array("type = 'component'", "element = 'com_jem'"));
+        $db->setQuery($query);
+        $extension = $db->loadAssoc();
+
+        if (!$extension) {
+            return true;
+        }
+
+        $manifest = json_decode((string) ($extension['manifest_cache'] ?? ''), true);
+        $version = is_array($manifest) ? trim((string) ($manifest['version'] ?? '')) : '';
+
+        if ($version !== '' && version_compare($version, '2.3.6', 'ge')) {
+            return true;
+        }
+
+        Factory::getApplication()->enqueueMessage(
+            sprintf(
+                'Cannot upgrade JEM %s directly to JEM 4.5.0. Update to JEM 2.3.6 first, then install JEM 4.5.0. No JEM database migration was run.',
+                $version !== '' ? $version : 'unknown'
+            ),
+            'error'
+        );
+
+        return false;
     }
 
     public function makeRoute($uri) {
