@@ -4686,6 +4686,21 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
     margin: 0;
 }
 
+.jem-admin-image-tab joomla-field-fancy-select.jem-image-fancy-select,
+.jem-admin-image-tab joomla-field-fancy-select.jem-image-fancy-select .choices,
+.jem-admin-image-tab joomla-field-fancy-select.jem-image-fancy-select .choices__inner {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.jem-admin-image-tab joomla-field-fancy-select.jem-image-fancy-select .choices__list--dropdown .choices__item,
+.jem-admin-image-tab joomla-field-fancy-select.jem-image-fancy-select .choices__list[aria-expanded] .choices__item {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+}
+
 .jem-admin-image-tab .jem-image-upload-row--alt input[type="text"] {
     width: 100%;
     max-width: none;

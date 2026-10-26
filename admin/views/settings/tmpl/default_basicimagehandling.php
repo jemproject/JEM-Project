@@ -141,6 +141,7 @@ $globalGroup = 'globalattribs';
         <fieldset class="options-form jem-image-settings-general">
             <legend><?php echo Text::_('COM_JEM_IMAGE_GENERAL_SETTINGS'); ?></legend>
             <ul class="adminformlist">
+                <li><div class="label-form"><?php echo $this->form->renderfield('image_filename_policy'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('image_filetypes'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('sizelimit'); ?></div></li>
                 <li><div class="label-form"><?php echo $this->form->renderfield('image_min_dimension'); ?></div></li>

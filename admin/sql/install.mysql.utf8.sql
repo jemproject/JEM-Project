@@ -921,6 +921,7 @@ INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES
 ('showcat', '1'),
 ('catfrowidth', '15%'),
 ('image_filetypes', 'jpg,gif,png,webp'),
+('image_filename_policy', 'unique'),
 ('sizelimit', '400'),
 ('image_min_dimension', '64'),
 ('image_max_dimension', '2560'),

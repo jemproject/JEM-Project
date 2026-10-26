@@ -26,12 +26,14 @@ use Joomla\Filesystem\Path;
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/helper.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/categorycustomfields.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 /**
  * Category Model
  */
 class JemModelCategory extends AdminModel
 {
+    protected $imageReplacements = array();
     /**
      * The prefix to use with controller messages.
      * @var string
@@ -332,6 +334,9 @@ class JemModelCategory extends AdminModel
             return false;
         }
 
+        JemImageFilenamePolicy::finish(array(), $this->imageReplacements, true);
+        $this->imageReplacements = array();
+
         JemCategoryCustomFields::clearCache();
 
         if (!$this->syncCategoryImageStorage($table)) {
@@ -424,30 +429,30 @@ class JemModelCategory extends AdminModel
                 return false;
             }
 
-            $filename = JemImage::sanitize($directory . DIRECTORY_SEPARATOR, (string) $file['name']);
-            $target = Path::clean($directory . DIRECTORY_SEPARATOR . $filename);
-            $thumbnail = Path::clean($thumbnailDirectory . DIRECTORY_SEPARATOR . $filename);
             $requestedDimension = $app->input->post->getInt(
                 'image_max_dimension',
                 JemImageProfilePolicy::defaultUploadMaxDimension($settings, JemImageProfilePolicy::CATEGORY)
             );
             $requestedRatio = $app->input->post->getCmd('image_ratio', '');
 
-            if (!JemImage::uploadProfileImage(
+            $filename = JemImageFilenamePolicy::uploadProfile(
                 $file,
-                $target,
-                $thumbnail,
+                $directory,
+                $thumbnailDirectory,
                 $settings,
                 JemImageProfilePolicy::CATEGORY,
                 $requestedDimension,
-                $requestedRatio
-            )) {
+                $requestedRatio,
+                'userfile',
+                $uploadedPaths,
+                $this->imageReplacements
+            );
+            if ($filename === false) {
                 $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
 
                 return false;
             }
 
-            $uploadedPaths = array($target, $thumbnail);
             $data['image'] = $filename;
 
             return true;
@@ -541,11 +546,8 @@ class JemModelCategory extends AdminModel
      */
     protected function removeUploadedImagePaths(array $paths)
     {
-        foreach ($paths as $path) {
-            if ($path !== '' && File::exists($path)) {
-                File::delete($path);
-            }
-        }
+        JemImageFilenamePolicy::finish($paths, $this->imageReplacements, false);
+        $this->imageReplacements = array();
     }
 
     /**

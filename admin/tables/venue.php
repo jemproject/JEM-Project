@@ -20,6 +20,7 @@ use Joomla\Utilities\ArrayHelper;
 
 require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 /**
  * JEM Venue Table
@@ -359,6 +360,7 @@ class JemTableVenue extends Table
         array_walk($allowable, function(&$v){$v = trim($v);});
         $image_to_delete = false;
         $uploadedImage = array();
+        $replacedImages = array();
 
         // Process direct uploads in both editors. The frontend upload setting
         // does not restrict authorised administrator image management.
@@ -383,23 +385,22 @@ class JemTableVenue extends Table
             }
 
             if (!empty($file['name'])) {
-                $filename = JemImage::sanitize($image_dir, $file['name']);
-                $filepath = $image_dir . $filename;
-                $thumbnail = JemVenueImagePath::absoluteThumbFolder($this->image_path ?? '') . $filename;
-
-                if (!JemImage::uploadProfileImage(
+                $filename = JemImageFilenamePolicy::uploadProfile(
                     $file,
-                    $filepath,
-                    $thumbnail,
+                    $image_dir,
+                    JemVenueImagePath::absoluteThumbFolder($this->image_path ?? ''),
                     $jemsettings,
                     JemImageProfilePolicy::VENUE,
                     $imageMaxDimension,
-                    $imageRatio
-                )) {
+                    $imageRatio,
+                    'userfile',
+                    $uploadedImage,
+                    $replacedImages
+                );
+                if ($filename === false) {
                     return false;
                 }
 
-                $uploadedImage = array($filepath, $thumbnail);
                 $image_to_delete = $this->locimage; // delete previous image
                 $this->locimage = $filename;
             } elseif (!empty($removeimage)) {
@@ -436,11 +437,7 @@ class JemTableVenue extends Table
 
         $missingImages = JemImagePublicationPolicy::missingForRecord('venue', $this, $jemsettings);
         if ($missingImages) {
-            foreach ($uploadedImage as $uploadedPath) {
-                if (File::exists($uploadedPath)) {
-                    File::delete($uploadedPath);
-                }
-            }
+            JemImageFilenamePolicy::finish($uploadedImage, $replacedImages, false);
             $this->setError(JemImagePublicationPolicy::recordFailureMessage((string) $this->venue, $missingImages));
 
             return false;
@@ -462,13 +459,7 @@ class JemTableVenue extends Table
                 ->where($db->quoteName('id') . ' = ' . (int) $this->id);
             $db->setQuery($query)->execute();
         }
-        if (!$ret) {
-            foreach ($uploadedImage as $uploadedPath) {
-                if (File::exists($uploadedPath)) {
-                    File::delete($uploadedPath);
-                }
-            }
-        }
+        JemImageFilenamePolicy::finish($uploadedImage, $replacedImages, (bool) $ret);
         if ($ret) {
             JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
             $this->synchroniseChildVenueTimezones((int) $this->id, (string) $this->timezone);

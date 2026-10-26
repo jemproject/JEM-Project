@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Form\Field\FileField;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 /**
  * File upload field enhanced with the shared JEM camera popup.
@@ -26,6 +27,18 @@ class JFormFieldJemimagefile extends FileField
         $resolutionFieldId = (string) ($this->element['resolutionfield'] ?? '');
         $settings = JemHelper::config();
         $input = preg_replace('/<br\s*\/?>.*$/is', '', parent::getInput());
+        $resource = $profile === 'venue' ? 'venue' : ($profile === 'category' ? 'category' : 'event');
+
+        $filenameControls = JemImageFilenamePolicy::mode($settings) === JemImageFilenamePolicy::ORIGINAL
+            ? JemImageFilenamePolicy::renderControls(
+                (string) $this->fieldname,
+                $resource,
+                (string) $this->id,
+                (string) ($this->form ? $this->form->getValue('image_path', null, '') : ''),
+                (int) ($this->form ? $this->form->getValue('id', null, 0) : 0),
+                (int) ($this->form ? $this->form->getValue('parent_id', null, 1) : 1)
+            )
+            : '';
 
         return '<div class="jem-image-source-controls">'
             . '<div class="jem-image-file-input">' . $input . '</div>'
@@ -38,6 +51,7 @@ class JFormFieldJemimagefile extends FileField
                 '',
                 $resolutionFieldId
             )
-            . '</div>';
+            . '</div>'
+            . $filenameControls;
     }
 }

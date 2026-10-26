@@ -204,7 +204,8 @@ class JemImage
         $jemsettings,
         $profile,
         $requestedMaxDimension = null,
-        $requestedRatio = null
+        $requestedRatio = null,
+        $replace = false
     )
     {
         if (!JemImageProfilePolicy::isProfile((string) $profile)
@@ -269,6 +270,24 @@ class JemImage
             }
 
             if (!self::validatePreparedImage($working, $jemsettings, (string) $profile, $requestedRatio)) {
+                return false;
+            }
+
+            if ($replace) {
+                if (!File::exists($target) || !self::replaceNormalisedImage($working, $target, $thumbnail, $jemsettings)) {
+                    Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'warning');
+
+                    return false;
+                }
+
+                $working = '';
+
+                return true;
+            }
+
+            if (File::exists($target)) {
+                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_IMAGE_FILENAME_EXISTS'), 'warning');
+
                 return false;
             }
 
@@ -801,6 +820,62 @@ class JemImage
                 }
             }
         }
+    }
+
+    /**
+     * Keep a record-level replacement reversible until its database save succeeds.
+     */
+    public static function backupReplacement($source, $thumbnail): array
+    {
+        if (!File::exists($source)) {
+            return array();
+        }
+
+        $sourceBackup = self::temporaryImagePath($source, 'record-backup');
+        $thumbnailBackup = '';
+
+        if (!File::copy($source, $sourceBackup)) {
+            return array();
+        }
+
+        if ($thumbnail !== '' && File::exists($thumbnail)) {
+            $thumbnailBackup = self::temporaryImagePath($thumbnail, 'record-backup');
+
+            if (!File::copy($thumbnail, $thumbnailBackup)) {
+                File::delete($sourceBackup);
+
+                return array();
+            }
+        }
+
+        return array($source, $sourceBackup, $thumbnail, $thumbnailBackup);
+    }
+
+    public static function finishReplacement(array $backup, bool $committed): bool
+    {
+        if (count($backup) !== 4) {
+            return false;
+        }
+
+        list($source, $sourceBackup, $thumbnail, $thumbnailBackup) = $backup;
+
+        if ($committed) {
+            $result = File::delete($sourceBackup);
+
+            return $thumbnailBackup === '' ? $result : File::delete($thumbnailBackup) && $result;
+        }
+
+        $restored = (!File::exists($source) || File::delete($source)) && File::move($sourceBackup, $source);
+
+        if ($thumbnail !== '') {
+            $restored = (!File::exists($thumbnail) || File::delete($thumbnail)) && $restored;
+
+            if ($thumbnailBackup !== '') {
+                $restored = File::move($thumbnailBackup, $thumbnail) && $restored;
+            }
+        }
+
+        return $restored;
     }
 
     private static function imageOrientation($path, $imageType)

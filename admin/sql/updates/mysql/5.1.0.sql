@@ -174,6 +174,7 @@ ALTER TABLE `#__jem_venue_capacity_areas` ADD COLUMN `image_alt` VARCHAR(255) NO
 -- JEM 5.1.0: configurable upload and aspect-ratio profiles. Existing images
 -- remain untouched until an administrator runs the manual Housekeeping action.
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_min_dimension', '64');
+INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_filename_policy', 'unique');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('image_max_dimension', '2560');
 INSERT IGNORE INTO `#__jem_config` (`keyname`, `value`) VALUES ('sizelimit', '400');
 UPDATE `#__jem_config` SET `value` = '400' WHERE `keyname` = 'sizelimit' AND `value` = '200';

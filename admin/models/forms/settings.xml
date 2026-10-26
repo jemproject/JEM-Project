@@ -691,6 +691,15 @@
     <fieldset name="evimagehandling"
               label="COM_JEM_IMAGE_HANDLING"
     >
+        <field name="image_filename_policy" type="list"
+            label="COM_JEM_IMAGE_FILENAME_POLICY"
+            description="COM_JEM_IMAGE_FILENAME_POLICY_DESC"
+            default="unique"
+            filter="cmd"
+        >
+            <option value="unique">COM_JEM_IMAGE_FILENAME_UNIQUE</option>
+            <option value="original">COM_JEM_IMAGE_FILENAME_ORIGINAL</option>
+        </field>
         <field name="image_filetypes" type="text"
             label="COM_JEM_IMAGE_FILETYPES"
             description="COM_JEM_IMAGE_FILETYPES_DESC"

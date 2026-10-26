@@ -53,7 +53,6 @@ class JFormFieldImageselectevent extends ListField
         $this->addFancySelectStyle();
 
         $fancyAttr  = ' class="jem-image-fancy-select"';
-        $fancyAttr .= ' style="width: min(100%, 24rem); max-width: 100%;"';
         $fancyAttr .= $this->required ? ' required aria-required="true"' : '';
         $fancyAttr .= $this->disabled ? ' disabled="disabled"' : '';
         $fancyAttr .= ' placeholder="' . Text::_('JGLOBAL_TYPE_OR_SELECT_SOME_OPTIONS') . '"';

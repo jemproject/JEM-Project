@@ -357,30 +357,30 @@ class JemModelEditcategory extends JemModelCategory
                 return false;
             }
 
-            $filename = JemImage::sanitize($directory . DIRECTORY_SEPARATOR, (string) $file['name']);
-            $target = Path::clean($directory . DIRECTORY_SEPARATOR . $filename);
-            $thumbnail = Path::clean($thumbnailDirectory . DIRECTORY_SEPARATOR . $filename);
             $requestedDimension = $app->input->post->getInt(
                 'image_max_dimension',
                 JemImageProfilePolicy::defaultUploadMaxDimension($settings, JemImageProfilePolicy::CATEGORY)
             );
             $requestedRatio = $app->input->post->getCmd('image_ratio', '');
 
-            if (!JemImage::uploadProfileImage(
+            $filename = JemImageFilenamePolicy::uploadProfile(
                 $file,
-                $target,
-                $thumbnail,
+                $directory,
+                $thumbnailDirectory,
                 $settings,
                 JemImageProfilePolicy::CATEGORY,
                 $requestedDimension,
-                $requestedRatio
-            )) {
+                $requestedRatio,
+                'userfile',
+                $uploadedPaths,
+                $this->imageReplacements
+            );
+            if ($filename === false) {
                 $this->setError(Text::_('COM_JEM_UPLOAD_FAILED'));
 
                 return false;
             }
 
-            $uploadedPaths = array($target, $thumbnail);
             $data['image'] = $filename;
 
             return true;

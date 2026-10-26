@@ -17,6 +17,7 @@ use Joomla\Filesystem\File;
 use Joomla\Utilities\ArrayHelper;
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/imagepublicationpolicy.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/ageaccess.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventschedule.class.php';
 /**
@@ -547,6 +548,7 @@ class JemTableEvent extends Table
         array_walk($allowable, function(&$v){$v = trim($v);});
         $images_to_delete = array();
         $uploadedImages = array();
+        $replacedImages = array();
 
         // Process direct uploads in both editors. The frontend upload setting
         // does not restrict authorised administrator image management.
@@ -599,23 +601,22 @@ class JemTableEvent extends Table
             if (!empty($file['name'])) {
                 // only on first event, skip on recurrence events
                 //if (empty($this->recurrence_first_id)) {
-                    $filename = JemImage::sanitize($image_dir, $file['name']);
-                    $filepath = $image_dir . $filename;
-                    $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
-
-                    if (!JemImage::uploadProfileImage(
+                    $filename = JemImageFilenamePolicy::uploadProfile(
                         $file,
-                        $filepath,
-                        $thumbnail,
+                        $image_dir,
+                        JemEventImagePath::absoluteThumbFolder($this->image_path),
                         $jemsettings,
                         JemImageProfilePolicy::EVENT_INTRO,
                         $imageMaxDimension,
-                        $imageRatio
-                    )) {
+                        $imageRatio,
+                        'userfile',
+                        $uploadedImages,
+                        $replacedImages
+                    );
+                    if ($filename === false) {
                         return false;
                     }
 
-                    $uploadedImages[] = array($filepath, $thumbnail);
                     $images_to_delete[] = $this->datimage; // delete previous image
                     $this->datimage = $filename;
                 //}
@@ -633,31 +634,24 @@ class JemTableEvent extends Table
             }
 
             if (!empty($fullFile['name'])) {
-                $filename = JemImage::sanitize($image_dir, $fullFile['name']);
-                $filepath = $image_dir . $filename;
-                $thumbnail = JemEventImagePath::absoluteThumbFolder($this->image_path) . $filename;
-
-                if (!JemImage::uploadProfileImage(
+                $filename = JemImageFilenamePolicy::uploadProfile(
                     $fullFile,
-                    $filepath,
-                    $thumbnail,
+                    $image_dir,
+                    JemEventImagePath::absoluteThumbFolder($this->image_path),
                     $jemsettings,
                     JemImageProfilePolicy::EVENT_FULL,
                     $fullImageMaxDimension,
-                    $fullImageRatio
-                )) {
-                    foreach ($uploadedImages as $uploadedImage) {
-                        foreach ($uploadedImage as $uploadedPath) {
-                            if (File::exists($uploadedPath)) {
-                                File::delete($uploadedPath);
-                            }
-                        }
-                    }
+                    $fullImageRatio,
+                    'fulluserfile',
+                    $uploadedImages,
+                    $replacedImages
+                );
+                if ($filename === false) {
+                    JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, false);
 
                     return false;
                 }
 
-                $uploadedImages[] = array($filepath, $thumbnail);
                 $images_to_delete[] = $this->fullimage;
                 $this->fullimage = $filename;
             } elseif (!empty($removefullimage)) {
@@ -720,13 +714,7 @@ class JemTableEvent extends Table
         if (!(isset($this->_autocreate) && ($this->_autocreate === true))) {
             $missingImages = JemImagePublicationPolicy::missingForRecord('event', $this, $jemsettings);
             if ($missingImages) {
-                foreach ($uploadedImages as $uploadedImage) {
-                    foreach ($uploadedImage as $uploadedPath) {
-                        if (File::exists($uploadedPath)) {
-                            File::delete($uploadedPath);
-                        }
-                    }
-                }
+                JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, false);
                 $this->setError(JemImagePublicationPolicy::recordFailureMessage((string) $this->title, $missingImages));
 
                 return false;
@@ -742,15 +730,7 @@ class JemTableEvent extends Table
         JemImageMetadata::prepareStore($this, 'event');
 
         $ret = parent::store($updateNulls);
-        if (!$ret) {
-            foreach ($uploadedImages as $uploadedImage) {
-                foreach ($uploadedImage as $uploadedPath) {
-                    if (File::exists($uploadedPath)) {
-                        File::delete($uploadedPath);
-                    }
-                }
-            }
-        }
+        JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, (bool) $ret);
         if ($ret && $images_to_delete) {
             foreach (array_filter(array_unique($images_to_delete)) as $image_to_delete) {
                 JemHelper::delete_unused_image_files('event', $image_to_delete, $previousImagePath);

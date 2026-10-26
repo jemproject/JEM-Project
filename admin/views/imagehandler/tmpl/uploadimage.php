@@ -10,8 +10,10 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Factory;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imagecamera.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 $targetDirectory = '/images/jem/events/';
 
@@ -214,6 +216,16 @@ $cameraButton = JemImageCamera::button(
                 <input class="inputbox" name="userfile" id="userfile" type="file" accept="image/*" />
                 <?php echo $cameraButton; ?>
             </div>
+            <?php if (JemImageFilenamePolicy::mode($this->jemsettings) === JemImageFilenamePolicy::ORIGINAL) : ?>
+                <?php echo JemImageFilenamePolicy::renderControls(
+                    'userfile',
+                    $this->task === 'imagehandler.venueimgup' ? 'venue'
+                        : ($this->task === 'imagehandler.categoriesimgup' ? 'category' : 'event'),
+                    'userfile',
+                    (string) ($this->imagePath ?? ''),
+                    Factory::getApplication()->input->getInt('record_id', 0)
+                ); ?>
+            <?php endif; ?>
             <div class="jem-upload-actions">
                 <input class="btn btn-primary" type="submit" value="<?php echo Text::_('COM_JEM_UPLOAD') ?>" name="adminForm" />
             </div>
