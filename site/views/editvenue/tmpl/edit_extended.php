@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 //$max_custom_fields = $this->settings->get('global_editvenue_maxnumcustomfields', -1); // default to All
 ?>
@@ -30,6 +31,9 @@ use Joomla\CMS\Language\Text;
                     <?php if ($this->jemsettings->imageenabled != 0) : ?>
                         <div class="jem-image-file-control">
                             <div class="jem-image-file-input"><?php echo $this->form->getInput('userfile'); ?></div>
+                            <?php if (JemImageFilenamePolicy::mode($this->jemsettings) === JemImageFilenamePolicy::ORIGINAL) : ?>
+                                <?php echo JemImageFilenamePolicy::renderControls('userfile', 'venue', 'jform_userfile', (int) ($this->item->id ?? 0)); ?>
+                            <?php endif; ?>
                         </div>
                         <div class="jem-image-actions">
                             <button type="button" class="button3 btn btn-secondary btn-sm jem-image-action-button jem-image-clear"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>

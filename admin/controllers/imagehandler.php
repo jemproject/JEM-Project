@@ -12,9 +12,11 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Filesystem\File;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Response\JsonResponse;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\Session\Session;
 use Joomla\Filesystem\Path;
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 /**
  * JEM Component Imagehandler Controller
@@ -80,6 +82,51 @@ class JemControllerImagehandler extends BaseController
     }
 
     /**
+     * Check an upload name when the file is selected, without changing files.
+     */
+    public function checkFilename()
+    {
+        $app = Factory::getApplication();
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
+        JemHelper::setNoStoreHeaders();
+        $app->sendHeaders();
+
+        try {
+            if (strtoupper($app->input->server->getString('REQUEST_METHOD', '')) !== 'POST') {
+                throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 405);
+            }
+            if (!Session::checkToken('post')) {
+                throw new RuntimeException(Text::_('JINVALID_TOKEN'), 403);
+            }
+
+            $resource = $app->input->post->getCmd('resource', '');
+            $tasks = array(
+                'event' => 'eventimgup',
+                'venue' => 'venueimgup',
+                'category' => 'categoriesimgup',
+            );
+
+            if (!isset($tasks[$resource])
+                || !$this->canUploadForTask($tasks[$resource], $app->input->post->getInt('record_id', 0))) {
+                throw new RuntimeException(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+            }
+            if (JemImageFilenamePolicy::mode(JemAdmin::config()) !== JemImageFilenamePolicy::ORIGINAL) {
+                throw new RuntimeException(Text::_('COM_JEM_IMAGE_FILENAME_INVALID'), 400);
+            }
+
+            echo new JsonResponse(JemImageFilenamePolicy::checkExisting(
+                $resource,
+                $app->input->post->getString('filename', ''),
+                $app->input->post->getString('stem', '')
+            ));
+        } catch (Throwable $exception) {
+            echo new JsonResponse($exception);
+        }
+
+        $app->close();
+    }
+
+    /**
      * logic for uploading an image
      *
      * @access public
@@ -113,7 +160,6 @@ class JemControllerImagehandler extends BaseController
         }
 
         $base_Dir = Path::clean($directories[$task]) . DIRECTORY_SEPARATOR;
-        $baseCheck = rtrim(strtolower($base_Dir), '\\/') . DIRECTORY_SEPARATOR;
 
         //do we have an upload?
         if (empty($file['name'])) {
@@ -128,31 +174,17 @@ class JemControllerImagehandler extends BaseController
             return;
         }
 
-        //check the image
-        $check = JemImage::check($file, $jemsettings);
-
-        if ($check === false) {
-            $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
-            return;
-        }
-
-        //sanitize the image filename
-        $filename = JemImage::sanitize($base_Dir, $file['name']);
-        $filepath = Path::clean($base_Dir . $filename);
-
-        if (strpos(strtolower($filepath), $baseCheck) !== 0) {
-            $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
-            $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
-            return;
-        }
-
-        //upload the image
-        if (!File::upload($file['tmp_name'], $filepath)) {
+        $newFiles = array();
+        $replacements = array();
+        $filename = JemImageFilenamePolicy::upload(
+            $file, $base_Dir, $jemsettings, 'userfile', $newFiles, $replacements
+        );
+        if ($filename === false) {
             $app->enqueueMessage(Text::_('COM_JEM_UPLOAD_FAILED'), 'error');
             $app->redirect('index.php?option=com_jem&view=imagehandler&task=' . $task . '&tmpl=component');
             return;
         } else {
+            JemImageFilenamePolicy::finish(array(), $replacements, true);
             echo "<script> alert(" . json_encode(Text::_('COM_JEM_UPLOAD_COMPLETE')) . "); window.parent.SelectImage(" . json_encode($filename) . ", " . json_encode($filename) . "); </script>\n";
             $app->close();
         }

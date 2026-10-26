@@ -13,6 +13,7 @@ use Joomla\CMS\Form\FormHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 
 $app = Factory::getApplication();
 $document = $app->getDocument();
@@ -965,6 +966,9 @@ $document->addStyleDeclaration('
                                             <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></div>
                                             <div class="jem-image-upload-control jem-editevent-image-upload">
                                                 <div class="jem-image-file-control"><?php echo $this->form->getInput('userfile'); ?></div>
+                                                <?php if (JemImageFilenamePolicy::mode($this->jemsettings) === JemImageFilenamePolicy::ORIGINAL) : ?>
+                                                    <?php echo JemImageFilenamePolicy::renderControls('userfile', 'event', 'jform_userfile', (int) ($this->item->id ?? 0)); ?>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="jem-image-actions jem-image-actions--last">
@@ -1003,6 +1007,9 @@ $document->addStyleDeclaration('
                                             <div class="jem-image-upload-label"><?php echo Text::_('COM_JEM_UPLOAD_NEW_IMAGE'); ?></div>
                                             <div class="jem-image-upload-control jem-editevent-image-upload">
                                                 <div class="jem-image-file-control"><?php echo $this->form->getInput('fulluserfile'); ?></div>
+                                                <?php if (JemImageFilenamePolicy::mode($this->jemsettings) === JemImageFilenamePolicy::ORIGINAL) : ?>
+                                                    <?php echo JemImageFilenamePolicy::renderControls('fulluserfile', 'event', 'jform_fulluserfile', (int) ($this->item->id ?? 0)); ?>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="jem-image-upload-row jem-editevent-image-layout-choice">

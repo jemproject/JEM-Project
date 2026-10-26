@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 use Joomla\Filesystem\File;
 use Joomla\Utilities\ArrayHelper;
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 /**
  * JEM Event Table
  */
@@ -317,6 +318,8 @@ class JemTableEvent extends Table
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
         $images_to_delete = array();
+        $uploadedImages = array();
+        $replacedImages = array();
 
         // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
         if (!$backend) {
@@ -341,19 +344,14 @@ class JemTableEvent extends Table
                 if (!empty($file['name'])) {
                     // only on first event, skip on recurrence events
                     //if (empty($this->recurrence_first_id)) {
-                        //check the image
-                        $check = JemImage::check($file, $jemsettings);
-
-                        if ($check !== false) {
-                            //sanitize the image filename
-                            $filename = JemImage::sanitize($image_dir, $file['name']);
-                            $filepath = $image_dir . $filename;
-
-                            if (File::upload($file['tmp_name'], $filepath)) {
-                                $images_to_delete[] = $this->datimage; // delete previous image
-                                $this->datimage = $filename;
-                            }
+                        $filename = JemImageFilenamePolicy::upload(
+                            $file, $image_dir, $jemsettings, 'userfile', $uploadedImages, $replacedImages
+                        );
+                        if ($filename === false) {
+                            return false;
                         }
+                        $images_to_delete[] = $this->datimage;
+                        $this->datimage = $filename;
                     //}
                 } elseif (!empty($removeimage)) {
                     // if removeimage is non-zero remove image from event
@@ -369,17 +367,16 @@ class JemTableEvent extends Table
                 }
 
                 if (!empty($fullFile['name'])) {
-                    $check = JemImage::check($fullFile, $jemsettings);
+                    $filename = JemImageFilenamePolicy::upload(
+                        $fullFile, $image_dir, $jemsettings, 'fulluserfile', $uploadedImages, $replacedImages
+                    );
+                    if ($filename === false) {
+                        JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, false);
 
-                    if ($check !== false) {
-                        $filename = JemImage::sanitize($image_dir, $fullFile['name']);
-                        $filepath = $image_dir . $filename;
-
-                        if (File::upload($fullFile['tmp_name'], $filepath)) {
-                            $images_to_delete[] = $this->fullimage;
-                            $this->fullimage = $filename;
-                        }
+                        return false;
                     }
+                    $images_to_delete[] = $this->fullimage;
+                    $this->fullimage = $filename;
                 } elseif (!empty($removefullimage)) {
                     $images_to_delete[] = $this->fullimage;
                     $this->fullimage = '';
@@ -437,6 +434,7 @@ class JemTableEvent extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, (bool) $ret);
         if ($ret && $images_to_delete) {
             foreach (array_filter(array_unique($images_to_delete)) as $image_to_delete) {
                 JemHelper::delete_unused_image_files('event', $image_to_delete);

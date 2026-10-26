@@ -1,0 +1,42 @@
+.jem-image-collision-dialog {
+    background: var(--body-bg, var(--bs-body-bg, #fff));
+    border: 1px solid var(--border-color, var(--bs-border-color, #adb5bd));
+    border-radius: 0.5rem;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.25);
+    color: var(--body-color, var(--bs-body-color, #212529));
+    margin: auto;
+    max-height: calc(100vh - 2rem);
+    max-width: min(32rem, calc(100vw - 2rem));
+    overflow-y: auto;
+    padding: 1.25rem;
+    width: 100%;
+}
+
+.jem-image-collision-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.jem-image-collision-dialog h3 {
+    font-size: 1.25rem;
+    margin-block: 0 0.75rem;
+}
+
+.jem-image-collision-message {
+    overflow-wrap: anywhere;
+}
+
+.jem-image-collision-dialog .form-select {
+    width: 100% !important;
+}
+
+.jem-image-replace-confirm[hidden] {
+    display: none !important;
+}
+
+.jem-image-collision-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}

@@ -16,6 +16,7 @@ use Joomla\Registry\Registry;
 use Joomla\String\StringHelper;
 
 use Joomla\Utilities\ArrayHelper;
+require_once JPATH_SITE . '/components/com_jem/classes/imagefilenamepolicy.class.php';
 /**
  * JEM Venue Table
  */
@@ -239,6 +240,8 @@ class JemTableVenue extends Table
         $allowable = explode(',', strtolower($filetypes));
         array_walk($allowable, function(&$v){$v = trim($v);});
         $image_to_delete = false;
+        $uploadedImages = array();
+        $replacedImages = array();
 
         // get image (frontend) - allow "removal on save" (Hoffi, 2014-06-07)
         if (!$backend) {
@@ -255,19 +258,14 @@ class JemTableVenue extends Table
                 }
 
                 if (!empty($file['name'])) {
-                    //check the image
-                    $check = JemImage::check($file, $jemsettings);
-
-                    if ($check !== false) {
-                        //sanitize the image filename
-                        $filename = JemImage::sanitize($image_dir, $file['name']);
-                        $filepath = $image_dir . $filename;
-
-                        if (File::upload($file['tmp_name'], $filepath)) {
-                            $image_to_delete = $this->locimage; // delete previous image
-                            $this->locimage = $filename;
-                        }
+                    $filename = JemImageFilenamePolicy::upload(
+                        $file, $image_dir, $jemsettings, 'userfile', $uploadedImages, $replacedImages
+                    );
+                    if ($filename === false) {
+                        return false;
                     }
+                    $image_to_delete = $this->locimage;
+                    $this->locimage = $filename;
                 } elseif (!empty($removeimage)) {
                     // if removeimage is non-zero remove image from venue
                     // (file will be deleted later (e.g. housekeeping) if unused)
@@ -298,6 +296,7 @@ class JemTableVenue extends Table
 
         // item must be stored BEFORE image deletion
         $ret = parent::store($updateNulls);
+        JemImageFilenamePolicy::finish($uploadedImages, $replacedImages, (bool) $ret);
         if ($ret) {
             JemHelper::refreshVenueEventUtcDates($this->id, $this->timezone);
         }
