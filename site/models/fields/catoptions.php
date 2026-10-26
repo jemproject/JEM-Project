@@ -158,9 +158,8 @@ class JFormFieldCatOptions extends ListField
         $userid = (int) $user->get('id');
 
         if (empty($id)) {
-            // for new events also show all categories user is allowed to see, disable non-useable categories
-            // (to show same list in both cases, and allow "unusable" parents for structuring)
-            $mitems = $user->getJemCategories('add', 'event', array('use_disable' => true));
+            // For new events only show categories where the user can add events.
+            $mitems = $user->getJemCategories('add', 'event', array('use_disable' => false));
         } else {
             $query = $db->getQuery(true);
             $query = 'SELECT COUNT(*)'
@@ -170,8 +169,8 @@ class JFormFieldCatOptions extends ListField
             $db->setQuery($query);
             $owner = $db->loadResult();
 
-            // on edit show all categories user is allowed to see, disable non-useable categories
-            $mitems = $user->getJemCategories(array('add', 'edit'), 'event', array('use_disable' => true, 'owner' => $owner));
+            // On edit only show categories where the user can add or edit events.
+            $mitems = $user->getJemCategories(array('add', 'edit'), 'event', array('use_disable' => false, 'owner' => $owner));
         }
 
         if (!$mitems)

@@ -26,7 +26,7 @@ $saveOrderingUrl = Route::_('index.php?option=com_jem&task=venues.saveOrderAjax&
 $hideOrderNumbers = (int) JemHelper::globalattribs()->get('backend_show_order_numbers', 1) === 0;
 $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 $wa->useScript('table.columns');
-$columnStorageKey = 'joomla-tablecolumns-jem-venues-hierarchy';
+$columnStorageKey = 'joomla-tablecolumns-jem-venues-hierarchy-v2';
 
 $eventStateColumns = array(
     'event_published' => array(1, 'icon-publish', Text::_('JPUBLISHED')),
@@ -101,6 +101,25 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
         cursor: default;
         opacity: .55;
     }
+
+    #venueList .jem-venues-name {
+        min-width: 12rem;
+    }
+
+    #venueList .jem-venues-compact {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    #venueList .jem-venues-alias {
+        overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 992px) {
+        .jem-venues-table-wrap {
+            overflow-x: auto;
+        }
+    }
 </style>
 
 <form action="<?php echo Route::_('index.php?option=com_jem&view=venues'); ?>" method="post" name="adminForm" id="adminForm">
@@ -111,10 +130,11 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
             // Website remains available in Joomla's column chooser, but the
             // hierarchy-focused layout hides it for first-time visitors.
             if (window.localStorage && window.localStorage.getItem('<?php echo $columnStorageKey; ?>') === null) {
-                window.localStorage.setItem('<?php echo $columnStorageKey; ?>', '7');
+                window.localStorage.setItem('<?php echo $columnStorageKey; ?>', '6');
             }
         </script>
-        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList" data-name="jem-venues-hierarchy">
+        <div class="jem-venues-table-wrap">
+        <table class="table table-striped itemList<?php echo $hideOrderNumbers ? ' jem-hide-order-numbers' : ''; ?>" id="venueList" data-name="jem-venues-hierarchy-v2">
             <thead>
             <tr>
                 <th class="center jem-list-check">
@@ -126,46 +146,43 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                 <th class="center nowrap jem-list-status">
                     <?php echo Text::_('JSTATUS'); ?>
                 </th>
-                <th class="title">
+                <th class="title jem-venues-name">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_VENUE', 'a.venue', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:20%">
-                    <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ALIAS', 'a.alias', $listDirn, $listOrder); ?>
-                </th>
-                <th style="width:5%" class="center" nowrap="nowrap">
+                <th class="center jem-venues-compact">
                     <?php echo Text::_('COM_JEM_COLOR'); ?>
                 </th>
-                <th style="width:7%" class="center" nowrap="nowrap">
+                <th class="center jem-venues-compact">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_PARENT_VENUE_ID', 'a.parent_venue_id', $listDirn, $listOrder); ?>
                 </th>
                 <th>
                     <?php echo Text::_('COM_JEM_WEBSITE'); ?>
                 </th>
-                <th style="width:10%">
+                <th>
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_CITY', 'a.city', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:5%" class="center">
+                <th class="center">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_STATE', 'a.state', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:5%" class="center">
+                <th class="center jem-venues-compact">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_COUNTRY', 'a.country', $listDirn, $listOrder); ?>
                 </th>
                 <?php if ($canAccessEvents) : ?>
-                <th style="width:15%" class="center" nowrap="nowrap">
+                <th class="center jem-venues-compact">
                     <span class="visually-hidden"><?php echo Text::_('COM_JEM_EVENT_STATE_COUNTS'); ?></span>
                     <?php echo $renderEventStateHeader($eventStateColumns); ?>
                 </th>
                 <?php endif; ?>
-                <th style="width:5%" class="center" nowrap="nowrap">
+                <th class="center jem-venues-compact">
                     <?php echo HTMLHelper::_('searchtools.sort', 'JGRID_HEADING_ACCESS', 'a.access', $listDirn, $listOrder); ?>
                 </th>
                 <th>
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_AUTHOR', 'u.name', $listDirn, $listOrder); ?>
                 </th>
-                <th class="center nowrap">
+                <th class="center jem-venues-compact">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_DATE_CREATED', 'a.created', $listDirn, $listOrder); ?>
                 </th>
-                <th style="width:1%" class="center" nowrap="nowrap">
+                <th class="center jem-venues-compact">
                     <?php echo HTMLHelper::_('searchtools.sort', 'COM_JEM_ID', 'a.id', $listDirn, $listOrder); ?>
                 </th>
             </tr>
@@ -193,7 +210,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <input type="hidden" name="order[]" class="jem-venues-order-input" value="<?php echo (int) $item->ordering; ?>">
                     </td>
                     <td class="center"><?php echo $published; ?></td>
-                    <td style="text-align:left" class="venue">
+                    <td style="text-align:left" class="venue jem-venues-name">
                         <?php echo str_repeat('<span class="gi">|&mdash;</span>', $hierarchyLevel); ?>
                         <?php if ($item->checked_out) : ?>
                             <?php echo HTMLHelper::_('jgrid.checkedout', $i, $item->editor, $item->checked_out_time, 'venues.', $canCheckin); ?>
@@ -205,6 +222,11 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                         <?php else : ?>
                             <?php echo $this->escape($item->venue); ?>
                         <?php endif; ?>
+                        <?php if (!empty($item->alias)) : ?>
+                            <p class="smallsub small text-muted mb-0 jem-venues-alias">
+                                <?php echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
+                            </p>
+                        <?php endif; ?>
                         <?php if (!empty($item->parent_venue_id) && !empty($item->parent_venue_name)) : ?>
                             <div class="small text-muted jem-hierarchy-parent">
                                 <span class="icon-level-up-alt" aria-hidden="true"></span>
@@ -213,13 +235,6 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
                                     <?php echo $this->escape($item->parent_venue_name); ?>
                                 </a>
                             </div>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if (StringHelper::strlen($item->alias) > 25) : ?>
-                            <?php echo $this->escape(StringHelper::substr($item->alias, 0 , 25)).'...'; ?>
-                        <?php else : ?>
-                            <?php echo $this->escape($item->alias); ?>
                         <?php endif; ?>
                     </td>
                     <td class="center">
@@ -284,6 +299,7 @@ $renderEventStateCounts = static function ($item) use ($eventStateColumns) {
             <?php endforeach; ?>
             </tbody>
         </table>
+        </div>
 
         <div class="ms-auto mb-4 me-0">
             <?php echo  (method_exists($this->pagination, 'getPaginationLinks') ? $this->pagination->getPaginationLinks(null) : $this->pagination->getListFooter()); ?>

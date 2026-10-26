@@ -300,7 +300,13 @@ final class EventVenueHierarchyContractsTest extends TestCase
     {
         $backend = $this->read('admin/views/venues/tmpl/default.php');
         self::assertStringContainsString('COM_JEM_PARENT_VENUE_ID', $backend);
-        self::assertStringContainsString('window.localStorage.setItem(\'<?php echo $columnStorageKey; ?>\', \'7\')', $backend);
+        self::assertStringContainsString('COM_JEM_PARENT_VENUE_ID="Parent ID"', $this->read('admin/language/en-GB/com_jem.ini'));
+        self::assertStringContainsString('COM_JEM_PARENT_VENUE_ID="Parent venue ID"', $this->read('site/language/en-GB/com_jem.ini'));
+        self::assertStringContainsString('window.localStorage.setItem(\'<?php echo $columnStorageKey; ?>\', \'6\')', $backend);
+        self::assertStringContainsString('data-name="jem-venues-hierarchy-v2"', $backend);
+        self::assertStringContainsString("'COM_JEM_VENUE', 'a.venue'", $backend);
+        self::assertStringNotContainsString("'COM_JEM_ALIAS', 'a.alias'", $backend);
+        self::assertStringContainsString("Text::sprintf('JGLOBAL_LIST_ALIAS', \$this->escape(\$item->alias))", $backend);
         self::assertStringContainsString('<span class="gi">|&mdash;</span>', $backend);
 
         foreach (array(
