@@ -46,6 +46,21 @@ final class EventCategoryBindingTest extends TestCase
         self::assertStringContainsString('array_diff($categories, array_unique($allowedIds))', $model);
     }
 
+    public function testFrontendCategoryFieldOnlyListsUsableCategories(): void
+    {
+        $field = $this->read('/site/models/fields/catoptions.php');
+
+        self::assertStringContainsString(
+            "getJemCategories('add', 'event', array('use_disable' => false))",
+            $field
+        );
+        self::assertStringContainsString(
+            "getJemCategories(array('add', 'edit'), 'event', array('use_disable' => false, 'owner' => \$owner))",
+            $field
+        );
+        self::assertStringNotContainsString("'use_disable' => true", $field);
+    }
+
     private function read(string $relativePath): string
     {
         $contents = file_get_contents(JEM_TEST_ROOT . $relativePath);
