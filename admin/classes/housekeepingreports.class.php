@@ -151,16 +151,9 @@ final class JemHousekeepingReports
                 unset($view);
             }
             if (isset($data['report']['overrides']['templates'])) {
-                foreach ($data['report']['overrides']['templates'] as &$override) {
-                    $template = (string) $override['template'];
-                    $override['template'] = self::REDACTED;
-                    $override['winner'] = str_replace('/templates/' . $template . '/', '/templates/[redacted]/', $override['winner']);
-                    $override['load_order'] = array_map(
-                        static fn($path): string => str_replace('/templates/' . $template . '/', '/templates/[redacted]/', $path),
-                        $override['load_order']
-                    );
-                }
-                unset($override);
+                $data['report']['overrides']['templates'] = self::redactedTemplateOverrides(
+                    $data['report']['overrides']['templates']
+                );
             }
             if (isset($data['report']['overrides']['css'])) {
                 foreach ($data['report']['overrides']['css'] as &$override) {
@@ -199,6 +192,37 @@ final class JemHousekeepingReports
             $data,
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR
         );
+    }
+
+    /** Hide every template layer and collapse duplicate winners without changing the stored audit. */
+    private static function redactedTemplateOverrides(array $overrides): array
+    {
+        $seen = array();
+        $redacted = array();
+
+        foreach ($overrides as $override) {
+            $winner = (string) ($override['winner'] ?? '');
+            $identity = $winner . "\0" . (string) ($override['target'] ?? '');
+            if (isset($seen[$identity])) {
+                continue;
+            }
+            $seen[$identity] = true;
+
+            $override['template'] = self::REDACTED;
+            $override['winner'] = self::redactTemplatePath($winner);
+            $override['load_order'] = array_map(
+                static fn($path): string => self::redactTemplatePath((string) $path),
+                (array) ($override['load_order'] ?? array())
+            );
+            $redacted[] = $override;
+        }
+
+        return $redacted;
+    }
+
+    private static function redactTemplatePath(string $path): string
+    {
+        return (string) preg_replace('#(/templates/)[^/]+/#', '$1' . self::REDACTED . '/', $path);
     }
 
     /** Retain aggregate counters, but export only explicitly selected detail rows. */

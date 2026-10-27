@@ -13,6 +13,56 @@ require_once dirname(__DIR__) . '/JoomlaTestCase.php';
 #[PreserveGlobalState(false)]
 final class HousekeepingDiagnosticsJoomlaIntegrationTest extends JoomlaTestCase
 {
+    public function testExportWithoutNamesRedactsParentLayersAndDeduplicatesSharedWinners(): void
+    {
+        self::bootJoomlaSite();
+        $path = getenv('JEM_TEST_SOURCE') === '1'
+            ? JEM_TEST_ROOT . '/admin/classes/housekeepingreports.class.php'
+            : JPATH_ADMINISTRATOR . '/components/com_jem/classes/housekeepingreports.class.php';
+        require_once $path;
+
+        $parentPath = 'site/templates/cassiopeia/html/com_jem/event/default.php';
+        $childPath = 'site/templates/cassiopeia_extended/html/com_jem/event/default.php';
+        $nativePath = 'components/com_jem/views/event/tmpl/default.php';
+        $shared = array(
+            'client' => 'site', 'template' => 'cassiopeia', 'kind' => 'view',
+            'target' => 'com_jem/event/default.php', 'winner' => $parentPath,
+            'load_order' => array($parentPath, $nativePath),
+        );
+        $fallback = array_replace($shared, array('template' => 'cassiopeia_extended'));
+        $own = array_replace($fallback, array(
+            'winner' => $childPath,
+            'load_order' => array($childPath, $parentPath, $nativePath),
+        ));
+        $stored = array(
+            'id' => 7,
+            'data' => array('schema' => 'jem-diagnostics/v1', 'report' => array(
+                'notice' => 0, 'lines' => array(), 'module_items' => array(),
+                'plugin_items' => array(), 'languages' => array('items' => array()),
+                'overrides' => array('templates' => array($shared, $fallback, $own)),
+            )),
+        );
+        $reports = new JemHousekeepingReports();
+        $selection = array('override_templates' => true);
+        $redactedJson = $reports->export($stored, false, '', $selection);
+        $redacted = json_decode($redactedJson, true, 512, JSON_THROW_ON_ERROR);
+        $templates = $redacted['report']['overrides']['templates'];
+
+        self::assertCount(2, $templates);
+        self::assertStringNotContainsString('cassiopeia', $redactedJson);
+        self::assertSame('[redacted]', $templates[0]['template']);
+        self::assertSame('site/templates/[redacted]/html/com_jem/event/default.php', $templates[0]['winner']);
+        self::assertSame(array(
+            'site/templates/[redacted]/html/com_jem/event/default.php',
+            'site/templates/[redacted]/html/com_jem/event/default.php',
+            $nativePath,
+        ), $templates[1]['load_order']);
+
+        $full = json_decode($reports->export($stored, true, '', $selection), true, 512, JSON_THROW_ON_ERROR);
+        self::assertCount(3, $full['report']['overrides']['templates']);
+        self::assertSame('cassiopeia_extended', $full['report']['overrides']['templates'][1]['template']);
+    }
+
     public function testDetectedOverridePathsResolveWithoutDeletingFiles(): void
     {
         self::bootJoomlaSite();

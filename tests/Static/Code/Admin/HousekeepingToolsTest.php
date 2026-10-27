@@ -291,6 +291,21 @@ final class HousekeepingToolsTest extends TestCase
         self::assertCount(1, $form->xpath('//field[@name="event_associated_article_access"]'));
     }
 
+    public function testRestoreExplainsWhyAbsentStoredValuesAreRestorable(): void
+    {
+        $defaults = $this->read('admin/classes/housekeepingdefaults.class.php');
+        $language = $this->read('admin/language/en-GB/com_jem.ini');
+        $banner = simplexml_load_file(JEM_TEST_ROOT . '/modules/mod_jem_banner/mod_jem_banner.xml');
+
+        self::assertNotFalse($banner);
+        self::assertSame('5', (string) $banner->xpath('//field[@name="count"]')[0]['default']);
+        self::assertStringContainsString("\$params->get('count', '2')", $this->read('modules/mod_jem_banner/helper.php'));
+        self::assertStringContainsString("'changed' => \$current === null ||", $defaults);
+        self::assertStringContainsString('Not stored counts as different:', $language);
+        self::assertStringContainsString('writing that default may change behaviour', $language);
+        self::assertStringContainsString('COM_JEM_TOOLS_CURRENT="Stored value"', $language);
+    }
+
     public function testImageAuditCountsEntitiesAndToolGridIsResponsive(): void
     {
         $model = $this->read('admin/models/housekeeping.php');
@@ -408,6 +423,8 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString("'sha256'", $reports);
         self::assertStringContainsString("'#__jem_config'", $reports);
         self::assertStringContainsString("self::REDACTED", $reports);
+        self::assertStringContainsString('redactedTemplateOverrides(', $reports);
+        self::assertStringContainsString("#(/templates/)[^/]+/#", $reports);
         self::assertStringContainsString('selectedReportSections', $reports);
         self::assertStringContainsString("JPATH_ADMINISTRATOR", $reports);
         self::assertStringContainsString("'administrator' => JPATH_ADMINISTRATOR", $overrides);
