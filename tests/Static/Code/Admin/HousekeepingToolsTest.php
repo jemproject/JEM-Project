@@ -349,6 +349,11 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString('function runDiagnostics()', $controller);
         self::assertStringContainsString('function downloadDiagnostics()', $controller);
         self::assertStringContainsString('function sendDiagnostics()', $controller);
+        self::assertStringContainsString('str_replace(array("\\r\\n", "\\r"), "\\n", $value)', $controller);
+        self::assertLessThan(
+            strpos($controller, "mb_strlen(\$value, 'UTF-8') > 2000"),
+            strpos($controller, 'str_replace(array("\\r\\n", "\\r"), "\\n", $value)')
+        );
         self::assertStringContainsString('JemHelper::requirePostToken()', $controller);
         self::assertStringContainsString("getInt('send_consent', 0) !== 1", $controller);
         self::assertStringContainsString("'info@joomlaeventmanager.net'", $controller);

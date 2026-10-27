@@ -297,6 +297,8 @@ class JemControllerHousekeeping extends BaseController
     private function diagnosticObservations(): string
     {
         $value = trim(Factory::getApplication()->input->post->getString('observations', ''));
+        // Browsers count a textarea line break once, but may submit it as CRLF.
+        $value = str_replace(array("\r\n", "\r"), "\n", $value);
         if (mb_strlen($value, 'UTF-8') > 2000) {
             throw new \InvalidArgumentException(Text::_('COM_JEM_TOOLS_OBSERVATIONS_TOO_LONG'));
         }
