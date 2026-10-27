@@ -611,9 +611,19 @@ class JemControllerHousekeeping extends BaseController
         $model = $this->getModel('housekeeping');
         $deleteAttachmentFiles = (bool) $app->input->post->getInt('deleteattachments', 0);
         $deleteImageFiles = (bool) $app->input->post->getInt('deleteimages', 0);
-        $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
-
         $link = 'index.php?option=com_jem&view=housekeeping';
+        try {
+            $completed = $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
+        } catch (\Throwable $error) {
+            JemHelper::addLogEntry('Error resetting JEM data: ' . $error->getMessage(), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            $completed = false;
+        }
+
+        if (!$completed) {
+            $this->setRedirect($link, Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_FAILED'), 'error');
+            return;
+        }
+
         $msg = ($deleteAttachmentFiles || $deleteImageFiles)
             ? Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_AND_FILES_DONE')
             : Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_DONE');

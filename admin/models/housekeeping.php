@@ -9,12 +9,14 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Access\Access;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Filesystem\File;
 use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Client\ClientHelper;
+use Joomla\CMS\Table\Asset;
 use Joomla\Filesystem\Path;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
@@ -829,6 +831,10 @@ class JemModelHousekeeping extends BaseDatabaseModel
             'types',
         );
         $db = Factory::getContainer()->get('DatabaseDriver');
+        // TRUNCATE bypasses the category and venue Table::delete() asset cleanup.
+        // Validate the shared Joomla tree before any files or records are removed.
+        $recordAssetIds = $this->getRecordAssetIds($db);
+        $tablesReset = true;
 
         if ($deleteImageFiles && !$this->deleteAllImageFiles()) {
             JemHelper::addLogEntry('Error deleting image files while truncating JEM data', __METHOD__, Log::ERROR);
@@ -847,6 +853,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
                 // report but continue
                 JemHelper::addLogEntry('Error truncating #__jem_'.$table, __METHOD__, Log::ERROR);
                 $result = false;
+                $tablesReset = false;
             }
         }
 
@@ -867,10 +874,63 @@ class JemModelHousekeeping extends BaseDatabaseModel
             $result = false;
         }
 
+        // Do not remove ACL for records that a failed TRUNCATE may have retained.
+        if ($tablesReset && !$this->deleteRecordAssets($db, $recordAssetIds)) {
+            $result = false;
+        }
+
         $categoryTable = $this->getTable('category', 'JemTable');
         $categoryTable->addRoot();
 
         return $result;
+    }
+
+    /**
+     * Return only JEM category and venue record assets, deepest first.
+     * The global nested set must be sound before the irreversible reset begins.
+     */
+    private function getRecordAssetIds($db): array
+    {
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'parent_id', 'lft', 'rgt', 'level', 'name')))
+            ->from($db->quoteName('#__assets'));
+        $assets = (array) $db->setQuery($query)->loadAssocList('id');
+        $recordAssets = array_filter($assets, static function ($asset) {
+            return preg_match('/^com_jem\.(?:category|venue)\.[0-9]+$/D', (string) $asset['name']) === 1;
+        });
+
+        require_once __DIR__ . '/../classes/aclassetmigration.class.php';
+        JemAclAssetMigration::validateTree($assets);
+        uasort($recordAssets, static function ($left, $right) {
+            return ((int) $right['level'] <=> (int) $left['level'])
+                ?: ((int) $right['lft'] <=> (int) $left['lft']);
+        });
+
+        return array_map('intval', array_keys($recordAssets));
+    }
+
+    /** Delete record assets without cascading into assets owned by other extensions. */
+    private function deleteRecordAssets($db, array $ids): bool
+    {
+        try {
+            foreach ($ids as $id) {
+                $asset = new Asset($db);
+
+                if (!$asset->load($id)
+                    || preg_match('/^com_jem\.(?:category|venue)\.[0-9]+$/D', (string) $asset->name) !== 1
+                    || !$asset->delete($id, false)) {
+                    JemHelper::addLogEntry('Error deleting JEM record asset #' . $id, __METHOD__, Log::ERROR);
+                    return false;
+                }
+            }
+
+            return $this->getRecordAssetIds($db) === array();
+        } catch (\Throwable $error) {
+            JemHelper::addLogEntry('Error deleting JEM record assets: ' . $error->getMessage(), __METHOD__, Log::ERROR);
+            return false;
+        } finally {
+            Access::clearStatics();
+        }
     }
 
     /**

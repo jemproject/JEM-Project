@@ -49,4 +49,21 @@ final class HousekeepingDataResetTest extends TestCase
         self::assertStringNotContainsString("'countries',", $code);
         self::assertStringNotContainsString("'config',", $code);
     }
+
+    public function testMassResetValidatesAndDeletesOnlyJemRecordAssets(): void
+    {
+        $model = (string) file_get_contents(JEM_TEST_ROOT . '/admin/models/housekeeping.php');
+        $controller = (string) file_get_contents(JEM_TEST_ROOT . '/admin/controllers/housekeeping.php');
+
+        self::assertLessThan(
+            strpos($model, 'if ($deleteImageFiles &&'),
+            strpos($model, '$recordAssetIds = $this->getRecordAssetIds($db);')
+        );
+        self::assertStringContainsString('JemAclAssetMigration::validateTree($assets)', $model);
+        self::assertStringContainsString('^com_jem\\.(?:category|venue)\\.[0-9]+$', $model);
+        self::assertStringContainsString('$asset->delete($id, false)', $model);
+        self::assertStringContainsString('if ($tablesReset && !$this->deleteRecordAssets($db, $recordAssetIds))', $model);
+        self::assertStringContainsString('if (!$completed)', $controller);
+        self::assertStringContainsString('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_FAILED', $controller);
+    }
 }
