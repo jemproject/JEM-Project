@@ -6,6 +6,22 @@ use PHPUnit\Framework\TestCase;
 
 final class HousekeepingToolsTest extends TestCase
 {
+    public function testZombieRelationTileCountsOnlyBrokenReferences(): void
+    {
+        $model = $this->read('admin/models/housekeeping.php');
+        $layout = $this->read('admin/views/housekeeping/tmpl/default.php');
+        $language = $this->read('admin/language/en-GB/com_jem.ini');
+        $method = substr($model, strpos($model, 'public function getCountcats()'));
+
+        self::assertStringContainsString('SELECT COUNT(*) FROM #__jem_cats_event_relations AS rel', $method);
+        self::assertStringContainsString('LEFT JOIN #__jem_events AS e ON e.id = rel.itemid', $method);
+        self::assertStringContainsString('LEFT JOIN #__jem_categories AS c ON c.id = rel.catid', $method);
+        self::assertStringContainsString('WHERE e.id IS NULL OR c.id IS NULL', $method);
+        self::assertStringContainsString('return (int) $db->loadResult();', $method);
+        self::assertStringContainsString('COM_JEM_HOUSEKEEPING_BROKEN_CATSEVENT_RELS', $layout);
+        self::assertStringContainsString('COM_JEM_HOUSEKEEPING_BROKEN_CATSEVENT_RELS="Broken references: %d"', $language);
+    }
+
     public function testDiagnosticsScanAllContentWithoutContextFilters(): void
     {
         $diagnostics = $this->read('admin/classes/housekeepingdiagnostics.class.php');

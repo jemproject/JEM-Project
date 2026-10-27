@@ -1002,24 +1002,16 @@ class JemModelHousekeeping extends BaseDatabaseModel
         return $result;
     }
 
-    /**
-     * Method to count the cat_relations table
-     *
-     * @access public
-     * @return int
-     */
+    /** Count relations whose event or category no longer exists. */
     public function getCountcats()
     {
         $db = Factory::getContainer()->get('DatabaseDriver');
-        $query = $db->getQuery(true);
-        $query->select(array('*'));
-        $query->from('#__jem_cats_event_relations');
-        $db->setQuery($query);
-        $db->execute();
+        $db->setQuery('SELECT COUNT(*) FROM #__jem_cats_event_relations AS rel'
+            . ' LEFT JOIN #__jem_events AS e ON e.id = rel.itemid'
+            . ' LEFT JOIN #__jem_categories AS c ON c.id = rel.catid'
+            . ' WHERE e.id IS NULL OR c.id IS NULL');
 
-        $total = $db->loadObjectList();
-
-        return is_array($total) ? count($total) : 0;
+        return (int) $db->loadResult();
     }
 
     /**
