@@ -79,10 +79,13 @@ final class HousekeepingDiagnosticsJoomlaIntegrationTest extends JoomlaTestCase
         self::assertFileExists($path);
         require_once $path;
 
-        $report = (new JemHousekeepingDiagnostics())->run();
         $db = Factory::getContainer()->get(DatabaseDriver::class);
+        $assetsBefore = $db->setQuery('SELECT id, parent_id, lft, rgt, level, name FROM #__assets ORDER BY id')->loadAssocList();
+        $report = (new JemHousekeepingDiagnostics())->run();
+        $assetsAfter = $db->setQuery('SELECT id, parent_id, lft, rgt, level, name FROM #__assets ORDER BY id')->loadAssocList();
+        self::assertSame($assetsBefore, $assetsAfter);
 
-        foreach (array('events', 'categories', 'venues', 'types', 'attachments') as $kind) {
+        foreach (array('events', 'categories', 'venues', 'types', 'special_days', 'attachments') as $kind) {
             $query = $db->getQuery(true)
                 ->select('COUNT(*) AS ' . $db->quoteName('total'))
                 ->select('COALESCE(MAX(' . $db->quoteName('id') . '), 0) AS ' . $db->quoteName('last_id'))
@@ -91,13 +94,49 @@ final class HousekeepingDiagnosticsJoomlaIntegrationTest extends JoomlaTestCase
             $counts = $db->loadAssoc();
             self::assertSame((int) $counts['total'], $report['inventory'][$kind]['total']);
             self::assertSame((int) $counts['last_id'], $report['inventory'][$kind]['last_id']);
-            if (in_array($kind, array('events', 'categories', 'venues'), true)) {
+            if ($kind !== 'attachments') {
+                $query = $db->getQuery(true)
+                    ->select('COALESCE(SUM(' . $db->quoteName('published') . ' = 2), 0) AS ' . $db->quoteName('archived'))
+                    ->select('COALESCE(SUM(' . $db->quoteName('published') . ' = -2), 0) AS ' . $db->quoteName('trashed'))
+                    ->select('COALESCE(SUM(' . $db->quoteName('published') . ' IN (1, 2, -2)), 0) AS ' . $db->quoteName('shown_count'))
+                    ->from($db->quoteName('#__jem_' . $kind));
+                $db->setQuery($query);
+                $states = $db->loadAssoc();
+                self::assertSame((int) $states['archived'], $report['inventory'][$kind]['archived']);
+                self::assertSame((int) $states['trashed'], $report['inventory'][$kind]['trashed']);
+                self::assertSame(
+                    (int) $states['shown_count'],
+                    $report['inventory'][$kind]['active'] + $report['inventory'][$kind]['archived'] + $report['inventory'][$kind]['trashed']
+                );
+            }
+            if (in_array($kind, array('events', 'categories', 'venues', 'special_days'), true)) {
                 self::assertSame(
                     $report['inventory'][$kind]['active'],
                     $report['inventory'][$kind]['public'] + $report['inventory'][$kind]['private']
                 );
             }
         }
+        self::assertArrayNotHasKey('archived', $report['inventory']['attachments']);
+        self::assertArrayNotHasKey('trashed', $report['inventory']['attachments']);
+        $parentIds = array();
+        foreach (array('event' => 'events', 'venue' => 'venues', 'category' => 'categories') as $type => $table) {
+            $db->setQuery('SELECT id FROM #__jem_' . $table);
+            $parentIds[$type] = array_fill_keys(array_map('intval', $db->loadColumn()), true);
+        }
+        $db->setQuery('SELECT object FROM #__jem_attachments');
+        $orphaned = 0;
+        foreach ($db->loadColumn() as $object) {
+            if (!preg_match('/^(event|venue|category)([0-9]+)$/iD', (string) $object, $matches)
+                || !isset($parentIds[strtolower($matches[1])][(int) $matches[2]])) {
+                $orphaned++;
+            }
+        }
+        self::assertSame($orphaned, $report['inventory']['attachments']['orphaned']);
+        self::assertSame($orphaned, count(array_filter(
+            $report['lines'],
+            static fn(array $line): bool => $line['code'] === 'COM_JEM_TOOLS_ATTACHMENT_ORPHANED'
+                && $line['severity'] === 'error'
+        )));
 
         self::assertSame(array(
             'component_schema', 'menu', 'published', 'publication_window', 'event_dates',

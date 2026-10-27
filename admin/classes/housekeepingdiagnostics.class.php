@@ -49,11 +49,26 @@ final class JemHousekeepingDiagnostics
             'languages' => array('total' => 0, 'active' => 0, 'items' => array()),
             'menu_views' => array('total' => 0, 'active' => 0, 'items' => array()),
             'inventory' => array(
-                'events' => array('total' => 0, 'active' => 0, 'public' => 0, 'private' => 0, 'last_id' => 0),
-                'categories' => array('total' => 0, 'active' => 0, 'public' => 0, 'private' => 0, 'last_id' => 0),
-                'venues' => array('total' => 0, 'active' => 0, 'public' => 0, 'private' => 0, 'last_id' => 0),
-                'types' => array('total' => 0, 'active' => 0, 'last_id' => 0),
-                'attachments' => array('total' => 0, 'last_id' => 0),
+                'events' => array(
+                    'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                ),
+                'categories' => array(
+                    'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                ),
+                'venues' => array(
+                    'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                ),
+                'types' => array(
+                    'total' => 0, 'active' => 0, 'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                ),
+                'special_days' => array(
+                    'total' => 0, 'active' => 0, 'public' => 0, 'private' => 0,
+                    'archived' => 0, 'trashed' => 0, 'last_id' => 0,
+                ),
+                'attachments' => array('total' => 0, 'orphaned' => 0, 'last_id' => 0),
             ),
             'module_items' => array(),
             'plugin_items' => array(),
@@ -71,6 +86,7 @@ final class JemHousekeepingDiagnostics
 
             foreach (array(
                 'component' => 'checkComponent',
+                'permissions' => 'checkPermissionMigration',
                 'extensions' => 'checkExtensions',
                 'types' => 'checkTypes',
                 'languages' => 'checkLanguages',
@@ -78,6 +94,7 @@ final class JemHousekeepingDiagnostics
                 'images' => 'checkImageBounds',
                 'content' => 'checkContent',
                 'inventory' => 'checkOtherInventory',
+                'special_days' => 'checkSpecialDaysInventory',
                 'overrides' => 'checkOverrides',
                 'frontend' => 'checkFrontendReadiness',
             ) as $area => $method) {
@@ -105,6 +122,71 @@ final class JemHousekeepingDiagnostics
         }
 
         return $report;
+    }
+
+    /**
+     * Report the JEM migration state and the Joomla asset-tree prerequisite without changing either.
+     */
+    private function checkPermissionMigration(array &$report): void
+    {
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName('value'))
+            ->from($this->db->quoteName('#__jem_config'))
+            ->where($this->db->quoteName('keyname') . ' = ' . $this->db->quote('acl_migration_state'));
+        $this->db->setQuery($query);
+        $state = $this->db->loadResult();
+
+        if ($state !== null) {
+            $migration = json_decode((string) $state, true);
+            if (!is_array($migration) || empty($migration['complete'])) {
+                $reason = is_array($migration) ? trim((string) ($migration['error'] ?? '')) : '';
+                $this->add(
+                    $report,
+                    'error',
+                    Text::sprintf('COM_JEM_TOOLS_ACL_MIGRATION_PENDING', $reason !== '' ? $reason : Text::_('COM_JEM_TOOLS_ACL_MIGRATION_NO_REASON')),
+                    Text::_('COM_JEM_TOOLS_RECOMMEND_ACL_MIGRATION'),
+                    'index.php?option=com_jem',
+                    'COM_JEM_TOOLS_OPEN_CONTROL_PANEL',
+                    'JEM',
+                    'COM_JEM_TOOLS_ACL_MIGRATION_PENDING'
+                );
+            }
+        }
+
+        require_once __DIR__ . '/aclassetmigration.class.php';
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName(array('id', 'parent_id', 'lft', 'rgt', 'level', 'name')))
+            ->from($this->db->quoteName('#__assets'));
+        $this->db->setQuery($query);
+        $assets = (array) $this->db->loadAssocList('id');
+
+        try {
+            JemAclAssetMigration::validateTree($assets);
+        } catch (RuntimeException $error) {
+            $this->add(
+                $report,
+                'error',
+                Text::sprintf('COM_JEM_TOOLS_ACL_TREE_INCONSISTENT', $error->getMessage()),
+                Text::_('COM_JEM_TOOLS_RECOMMEND_ACL_TREE'),
+                '',
+                '',
+                'Joomla',
+                'COM_JEM_TOOLS_ACL_TREE_INCONSISTENT'
+            );
+        }
+
+        if (!in_array('com_jem', array_column($assets, 'name'), true)) {
+            $this->add(
+                $report,
+                'error',
+                Text::_('COM_JEM_TOOLS_ACL_COMPONENT_ASSET_MISSING'),
+                Text::_('COM_JEM_TOOLS_RECOMMEND_ACL_TREE'),
+                '',
+                '',
+                'JEM',
+                'COM_JEM_TOOLS_ACL_COMPONENT_ASSET_MISSING'
+            );
+        }
     }
 
     private function checkComponent(array &$report): void
@@ -722,6 +804,40 @@ final class JemHousekeepingDiagnostics
         }
 
         $this->frontendSource = compact('events', 'categories', 'venues', 'assignments', 'guestLevels');
+        $this->checkAttachmentReferences($report, $events, $categories, $venues);
+    }
+
+    /** Find stored attachments whose referenced JEM record is no longer present. */
+    private function checkAttachmentReferences(array &$report, array $events, array $categories, array $venues): void
+    {
+        $recordsByType = array('event' => $events, 'venue' => $venues, 'category' => $categories);
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName(array('id', 'object')))
+            ->from($this->db->quoteName('#__jem_attachments'));
+        $this->db->setQuery($query);
+
+        foreach ((array) $this->db->loadObjectList() as $attachment) {
+            $object = (string) $attachment->object;
+            $matches = array();
+            $known = preg_match('/^(event|venue|category)([0-9]+)$/iD', $object, $matches);
+            $records = $known ? $recordsByType[strtolower($matches[1])] : null;
+            if ($known && isset($records[(int) $matches[2]])) {
+                continue;
+            }
+
+            $id = (int) $attachment->id;
+            $report['inventory']['attachments']['orphaned']++;
+            $this->add(
+                $report,
+                'error',
+                Text::sprintf('COM_JEM_TOOLS_ATTACHMENT_ORPHANED', $id, $object),
+                Text::_('COM_JEM_TOOLS_RECOMMEND_ATTACHMENT_ORPHANED'),
+                'index.php?option=com_jem&task=attachment.edit&id=' . $id,
+                'COM_JEM_TOOLS_OPEN_ATTACHMENT',
+                Text::sprintf('COM_JEM_TOOLS_SUBJECT_ATTACHMENT', $id),
+                'COM_JEM_TOOLS_ATTACHMENT_ORPHANED'
+            );
+        }
     }
 
     private function countItem(array &$report, string $kind, int $published, int $id, int $access, array $guestLevels): void
@@ -731,6 +847,10 @@ final class JemHousekeepingDiagnostics
         if ($published === 1) {
             $report['inventory'][$kind]['active']++;
             $report['inventory'][$kind][in_array($access, $guestLevels, true) ? 'public' : 'private']++;
+        } elseif ($published === 2) {
+            $report['inventory'][$kind]['archived']++;
+        } elseif ($published === -2) {
+            $report['inventory'][$kind]['trashed']++;
         }
     }
 
@@ -1021,7 +1141,15 @@ final class JemHousekeepingDiagnostics
                 $query->select(
                     'COALESCE(SUM(' . $this->db->quoteName('published') . ' = 1), 0) AS '
                     . $this->db->quoteName('active')
-                );
+                )
+                    ->select(
+                        'COALESCE(SUM(' . $this->db->quoteName('published') . ' = 2), 0) AS '
+                        . $this->db->quoteName('archived')
+                    )
+                    ->select(
+                        'COALESCE(SUM(' . $this->db->quoteName('published') . ' = -2), 0) AS '
+                        . $this->db->quoteName('trashed')
+                    );
             }
 
             $this->db->setQuery($query);
@@ -1031,7 +1159,29 @@ final class JemHousekeepingDiagnostics
 
             if ($kind === 'types') {
                 $report['inventory'][$kind]['active'] = (int) ($counts['active'] ?? 0);
+                $report['inventory'][$kind]['archived'] = (int) ($counts['archived'] ?? 0);
+                $report['inventory'][$kind]['trashed'] = (int) ($counts['trashed'] ?? 0);
             }
+        }
+    }
+
+    private function checkSpecialDaysInventory(array &$report): void
+    {
+        $query = $this->db->getQuery(true)
+            ->select($this->db->quoteName(array('id', 'published', 'access')))
+            ->from($this->db->quoteName('#__jem_special_days'));
+        $this->db->setQuery($query);
+        $guestLevels = array_map('intval', Access::getAuthorisedViewLevels(0));
+
+        foreach ((array) $this->db->loadObjectList() as $day) {
+            $this->countItem(
+                $report,
+                'special_days',
+                (int) $day->published,
+                (int) $day->id,
+                (int) $day->access,
+                $guestLevels
+            );
         }
     }
 

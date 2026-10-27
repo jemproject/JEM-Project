@@ -249,7 +249,9 @@ class JemAclAssetMigration
             $left = (int) $asset['lft'];
             $right = (int) $asset['rgt'];
             if ($left < 0 || $left >= $right || isset($coordinates[$left]) || isset($coordinates[$right])) {
-                throw new RuntimeException('The Joomla ACL tree has invalid or duplicate coordinates. Restore or repair it before continuing.');
+                $reason = $left < 0 || $left >= $right ? 'invalid lft/rgt interval' : 'duplicate lft/rgt coordinate';
+                throw new RuntimeException('The Joomla ACL tree has invalid or duplicate coordinates. Restore or repair it before continuing.'
+                    . self::describeAsset($asset, $reason));
             }
             $coordinates[$left] = $coordinates[$right] = true;
             while ($stack && $left > (int) end($stack)['rgt']) {
@@ -259,12 +261,36 @@ class JemAclAssetMigration
             if ($parent ? ((int) $asset['parent_id'] !== (int) $parent['id'] || $right >= (int) $parent['rgt']
                     || (int) $asset['level'] !== (int) $parent['level'] + 1)
                 : ((int) $asset['parent_id'] !== 0 || (int) $asset['level'] !== 0 || ++$roots > 1 || $asset['name'] !== 'root.1')) {
-                throw new RuntimeException('The Joomla ACL hierarchy is inconsistent. No automatic global rebuild was attempted.');
+                if (!$parent) {
+                    $reason = 'outside the root asset or an additional root';
+                } elseif ($right >= (int) $parent['rgt']) {
+                    $reason = 'overlaps asset #' . (int) $parent['id'];
+                } elseif ((int) $asset['parent_id'] !== (int) $parent['id']) {
+                    $reason = 'parent_id differs from nesting below asset #' . (int) $parent['id'];
+                } else {
+                    $reason = 'level differs from nesting below asset #' . (int) $parent['id'];
+                }
+                throw new RuntimeException('The Joomla ACL hierarchy is inconsistent. No automatic global rebuild was attempted.'
+                    . self::describeAsset($asset, $reason));
             }
             $stack[] = $asset;
         }
         if ($roots !== 1) {
             throw new RuntimeException('The Joomla ACL root is missing.');
         }
+    }
+
+    private static function describeAsset(array $asset, string $reason): string
+    {
+        return sprintf(
+            ' First problem: asset #%d "%s" (parent_id %d, level %d, lft %d, rgt %d): %s.',
+            (int) $asset['id'],
+            substr((string) $asset['name'], 0, 100),
+            (int) $asset['parent_id'],
+            (int) $asset['level'],
+            (int) $asset['lft'],
+            (int) $asset['rgt'],
+            $reason
+        );
     }
 }

@@ -86,6 +86,7 @@ final class JemHousekeepingReports
         $query = $this->db->getQuery(true)
             ->select($this->db->quoteName(array('id', 'created', 'created_by')))
             ->from($this->db->quoteName('#__jem_diagnostic_reports'))
+            ->order($this->db->quoteName('created') . ' DESC')
             ->order($this->db->quoteName('id') . ' DESC');
         $this->db->setQuery($query, 0, max(1, min(20, $limit)));
 

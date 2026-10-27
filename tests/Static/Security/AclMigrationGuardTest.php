@@ -42,4 +42,52 @@ final class AclMigrationGuardTest extends TestCase
         self::assertStringNotContainsString('LOCK TABLES', $runner);
         self::assertStringContainsString('$db->transactionRollback();', $runner);
     }
+
+    public function testAssetTreeValidationNamesTheFirstBadAsset(): void
+    {
+        require_once JEM_TEST_ROOT . '/admin/classes/aclassetmigration.class.php';
+
+        $assets = array(
+            array('id' => 1, 'name' => 'root.1', 'parent_id' => 0, 'level' => 0, 'lft' => 0, 'rgt' => 5),
+            array('id' => 2, 'name' => 'com_jem', 'parent_id' => 1, 'level' => 1, 'lft' => 1, 'rgt' => 4),
+            array('id' => 3, 'name' => 'com_jem.category.3', 'parent_id' => 2, 'level' => 2, 'lft' => 2, 'rgt' => 3),
+        );
+        JemAclAssetMigration::validateTree($assets);
+
+        $assets[2]['parent_id'] = 9999;
+        try {
+            JemAclAssetMigration::validateTree($assets);
+            self::fail('An invalid parent must be reported.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('asset #3 "com_jem.category.3"', $error->getMessage());
+            self::assertStringContainsString('parent_id 9999', $error->getMessage());
+        }
+
+        $assets[2]['parent_id'] = 2;
+        $assets[2]['lft'] = 3;
+        $assets[2]['rgt'] = 2;
+        try {
+            JemAclAssetMigration::validateTree($assets);
+            self::fail('Invalid coordinates must be reported.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('asset #3 "com_jem.category.3"', $error->getMessage());
+            self::assertStringContainsString('invalid lft/rgt interval', $error->getMessage());
+        }
+    }
+
+    public function testDiagnosticsOnlyInspectsPermissionMigrationAndAssetTree(): void
+    {
+        $diagnostics = file_get_contents(JEM_TEST_ROOT . '/admin/classes/housekeepingdiagnostics.class.php');
+        $start = strpos($diagnostics, 'private function checkPermissionMigration(');
+        $end = strpos($diagnostics, 'private function checkComponent(', $start);
+        self::assertNotFalse($start);
+        self::assertNotFalse($end);
+        $check = substr($diagnostics, $start, $end - $start);
+
+        self::assertStringContainsString("'permissions' => 'checkPermissionMigration'", $diagnostics);
+        self::assertStringContainsString('JemAclAssetMigration::validateTree($assets)', $check);
+        self::assertStringContainsString("'COM_JEM_TOOLS_ACL_MIGRATION_PENDING'", $check);
+        self::assertStringNotContainsString('JemAclMigration::run(', $check);
+        self::assertDoesNotMatchRegularExpression('/\\b(?:UPDATE|INSERT|DELETE|REPLACE)\\s+(?:INTO\\s+|FROM\\s+)?#__assets\\b/i', $check);
+    }
 }

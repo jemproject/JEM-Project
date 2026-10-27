@@ -38,9 +38,9 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringNotContainsString('COM_JEM_TOOLS_PUBLISHED_TOTAL', $layout);
         self::assertStringContainsString("if (\$line['subject'] !== 'JEM')", $layout);
         self::assertStringContainsString('jem-tools-extension-table', $layout);
-        self::assertStringContainsString("array_count_values(array_column(\$this->diagnosticReport['module_items'], 'module'))", $layout);
+        self::assertStringNotContainsString('moduleTypeCounts', $layout);
         self::assertStringContainsString("if (\$kind === 'modules')", $layout);
-        self::assertStringContainsString('COM_JEM_TOOLS_TYPE_INSTANCES', $layout);
+        self::assertStringNotContainsString('COM_JEM_TOOLS_TYPE_INSTANCES', $layout);
         self::assertStringContainsString('jem-tools-diagnostics-table', $layout);
         self::assertStringContainsString('COM_JEM_TOOLS_MENU_VIEWS', $layout);
         self::assertStringContainsString('COM_JEM_TOOLS_VERSION_DATE', $layout);
@@ -91,7 +91,24 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringNotContainsString("Route::_(\$line['action_url'])", $layout);
     }
 
-    public function testDiagnosticSummaryTablesShowOnlyPublishedCounts(): void
+    public function testRecentReportsShowEightNewestBesideRunChecks(): void
+    {
+        $view = $this->read('admin/views/housekeeping/view.html.php');
+        $reports = $this->read('admin/classes/housekeepingreports.class.php');
+        $layout = $this->read('admin/views/housekeeping/tmpl/diagnostics.php');
+
+        self::assertStringContainsString('$reports->recent(8)', $view);
+        self::assertStringContainsString("->order(\$this->db->quoteName('created') . ' DESC')", $reports);
+        self::assertStringContainsString("->order(\$this->db->quoteName('id') . ' DESC')", $reports);
+        self::assertStringContainsString('d-flex flex-column flex-lg-row align-items-lg-center', $layout);
+        self::assertStringContainsString('flex-grow-1 overflow-auto', $layout);
+        self::assertLessThan(
+            strpos($layout, 'task=housekeeping.runDiagnostics'),
+            strpos($layout, "Text::_('COM_JEM_TOOLS_RECENT_REPORTS')")
+        );
+    }
+
+    public function testDiagnosticSummaryKeepsPublishedArchiveAndTrashCountsSeparate(): void
     {
         $layout = $this->read('admin/views/housekeeping/tmpl/diagnostics.php');
         $start = strpos($layout, "Text::_('COM_JEM_TOOLS_CONTENT_INVENTORY')");
@@ -116,7 +133,17 @@ final class HousekeepingToolsTest extends TestCase
         self::assertTrue($nameHeader < $statusHeader && $statusHeader < $idHeader);
         self::assertStringContainsString('icon-file text-secondary', $component);
         self::assertStringContainsString('icon-publish text-success', $component);
-        self::assertStringContainsString('<td colspan="5"', $component);
+        self::assertStringContainsString('<div class="table-responsive">', $component);
+        self::assertStringContainsString("Text::_('JARCHIVED')", $component);
+        self::assertStringContainsString("Text::_('JTRASHED')", $component);
+        self::assertStringContainsString("Text::_('COM_JEM_ATTACHMENT_ORPHANED')", $component);
+        self::assertStringContainsString("\$inventory['archived']", $component);
+        self::assertStringContainsString("\$inventory['trashed']", $component);
+        self::assertStringContainsString("\$inventory['orphaned']", $component);
+        self::assertStringContainsString("' text-danger fw-bold'", $component);
+        self::assertStringContainsString("(int) \$inventory['active'] + (int) \$inventory['archived'] + (int) \$inventory['trashed']", $component);
+        self::assertStringContainsString("isset(\$inventory['active'], \$inventory['archived'], \$inventory['trashed'])", $component);
+        self::assertStringContainsString('<td colspan="8"', $component);
         $header = substr($layout, 0, $start);
         self::assertStringContainsString('<p class="mb-0 mt-2">', $header);
         self::assertSame(4, substr_count($header, '&ndash;'));
@@ -131,10 +158,12 @@ final class HousekeepingToolsTest extends TestCase
             '<div class="col-12 col-xl-6"><div class="card h-100">'
         ));
         self::assertStringContainsString("'types' => 'COM_JEM_TYPES'", $component);
+        self::assertStringContainsString("'special_days' => 'COM_JEM_SPECIAL_DAYS'", $component);
         self::assertStringContainsString("'attachments' => 'COM_JEM_ATTACHMENTS'", $component);
         self::assertStringContainsString('COM_JEM_TOOLS_LAST_ID', $component);
         self::assertStringContainsString("'categories' => 'category'", $component);
-        self::assertStringNotContainsString("['total']", $component);
+        self::assertStringContainsString("\$inventory['total']", $component);
+        self::assertStringNotContainsString("\$inventory[\$kind === 'attachments' ? 'total' : 'active']", $component);
         self::assertStringContainsString("['total']", $menus);
         self::assertStringContainsString('COM_JEM_TOOLS_MENU_ITEM_IDS', $menus);
         self::assertStringContainsString('COM_JEM_TOOLS_CONFIGURED_LAYOUT', $menus);
@@ -178,6 +207,29 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString("header.setAttribute('aria-sort', direction)", $sorting);
         self::assertStringContainsString('value="housekeeping.sendDiagnostics" disabled', $layout);
         self::assertStringContainsString('send.disabled = !consent.checked', $sorting);
+    }
+
+    public function testModuleTableShowsNameTypeAndLinkedInstanceId(): void
+    {
+        $layout = $this->read('admin/views/housekeeping/tmpl/diagnostics.php');
+        $start = strpos($layout, "foreach (array('modules' => 'module_items', 'plugins' => 'plugin_items')");
+        $end = strpos($layout, "Text::_('COM_JEM_TOOLS_MENU_VIEWS')", $start);
+
+        self::assertNotFalse($start);
+        self::assertNotFalse($end);
+        $table = substr($layout, $start, $end - $start);
+        $name = strpos($table, "Text::_('COM_JEM_TOOLS_NAME')");
+        $type = strpos($table, "'COM_JEM_TOOLS_TYPE' : 'COM_JEM_TOOLS_EXTENSION'");
+        $id = strpos($table, "Text::_('COM_JEM_TOOLS_ID')");
+
+        self::assertNotFalse($name);
+        self::assertNotFalse($type);
+        self::assertNotFalse($id);
+        self::assertTrue($name < $type && $type < $id);
+        self::assertStringContainsString('><?php echo $escape($item[\'name\']); ?></a>', $table);
+        self::assertStringContainsString('>#<?php echo (int) $item[\'id\']; ?></a>', $table);
+        self::assertStringNotContainsString('moduleTypeCounts', $table);
+        self::assertStringNotContainsString('COM_JEM_TOOLS_TYPE_INSTANCES', $table);
     }
 
     public function testDiagnosticSeverityCardsFilterStoredFindingsAndPreservePagination(): void
@@ -350,8 +402,8 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString('name="include_template_overrides" value="1"', $layout);
         self::assertStringContainsString('name="include_language_overrides" value="1"', $layout);
         self::assertStringContainsString('name="include_css_overrides" value="1"', $layout);
-        self::assertStringContainsString('COM_JEM_TOOLS_MODULE_ITEM', $layout);
-        self::assertStringContainsString('class="d-flex justify-content-end" method="post"', $layout);
+        self::assertStringNotContainsString('COM_JEM_TOOLS_MODULE_ITEM', $layout);
+        self::assertStringContainsString('class="d-flex justify-content-end flex-shrink-0 ms-lg-auto" method="post"', $layout);
         self::assertStringContainsString('<div class="col-12"><div class="card h-100"><div class="card-body">', $layout);
         self::assertLessThan(strpos($layout, "Text::_('COM_JEM_TOOLS_OVERRIDES')"), strpos($layout, "Text::_('COM_JEM_TOOLS_LANGUAGES')"));
     }

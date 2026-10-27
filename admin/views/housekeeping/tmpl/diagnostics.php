@@ -81,44 +81,44 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                     </div>
                 <?php endif; ?>
             </div>
-            <form class="d-flex justify-content-end" method="post" action="<?php echo Route::_('index.php?option=com_jem&task=housekeeping.runDiagnostics'); ?>">
-                <button class="btn btn-primary" type="submit"><?php echo Text::_('COM_JEM_TOOLS_RUN_CHECK'); ?></button>
-                <?php echo HTMLHelper::_('form.token'); ?>
-            </form>
-            <?php if ($this->diagnosticRecent) : ?>
-                <div class="d-flex flex-wrap align-items-center gap-2 small mt-3">
-                    <span class="fw-semibold me-1"><?php echo Text::_('COM_JEM_TOOLS_RECENT_REPORTS'); ?>:</span>
-                    <span class="text-muted"><?php echo Text::_('COM_JEM_TOOLS_RECENT_REPORTS_HINT'); ?></span>
-                    <?php foreach ($this->diagnosticRecent as $recent) : ?>
-                        <div class="d-inline-flex align-items-center border rounded<?php echo $this->diagnosticReportId === (int) $recent->id ? ' border-primary' : ''; ?>">
-                            <a class="px-2 py-1" href="<?php echo $escape(Route::_('index.php?option=com_jem&view=housekeeping&tool=diagnostics&report=' . (int) $recent->id, false)); ?>"
-                               <?php echo $this->diagnosticReportId === (int) $recent->id ? 'aria-current="page"' : ''; ?>
-                               title="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_OPEN_SAVED_REPORT', (int) $recent->id)); ?>">
-                                #<?php echo (int) $recent->id; ?> (<?php echo $escape($formatReportDate((string) $recent->created)); ?>)
-                            </a>
-                            <?php if ($this->diagnosticDeleteAllowed) : ?>
-                                <form class="m-0" method="post" action="<?php echo Route::_('index.php?option=com_jem&task=housekeeping.deleteDiagnosticReport'); ?>"
-                                      onsubmit="return confirm(<?php echo $escape(json_encode(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT_CONFIRM', (int) $recent->id))); ?>);">
-                                    <input type="hidden" name="report_id" value="<?php echo (int) $recent->id; ?>">
-                                    <input type="hidden" name="return_report" value="<?php echo (int) $this->diagnosticReportId; ?>">
-                                    <input type="hidden" name="delete_report_nonce" value="<?php echo $escape($this->diagnosticDeleteNonce); ?>">
-                                    <?php echo HTMLHelper::_('form.token'); ?>
-                                    <button class="btn btn-sm btn-link text-danger px-2" type="submit"
-                                            title="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT', (int) $recent->id)); ?>"
-                                            aria-label="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT', (int) $recent->id)); ?>">
-                                        <span class="icon-times" aria-hidden="true"></span>
-                                    </button>
-                                </form>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-3">
+                <?php if ($this->diagnosticRecent) : ?>
+                    <div class="d-flex align-items-center gap-2 small flex-grow-1 overflow-auto" style="min-width: 0;">
+                        <span class="fw-semibold flex-shrink-0"><?php echo Text::_('COM_JEM_TOOLS_RECENT_REPORTS'); ?>:</span>
+                        <?php foreach ($this->diagnosticRecent as $recent) : ?>
+                            <div class="d-inline-flex align-items-center flex-shrink-0 border rounded<?php echo $this->diagnosticReportId === (int) $recent->id ? ' border-primary' : ''; ?>">
+                                <a class="px-2 py-1" href="<?php echo $escape(Route::_('index.php?option=com_jem&view=housekeeping&tool=diagnostics&report=' . (int) $recent->id, false)); ?>"
+                                   <?php echo $this->diagnosticReportId === (int) $recent->id ? 'aria-current="page"' : ''; ?>
+                                   title="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_OPEN_SAVED_REPORT', (int) $recent->id)); ?>">
+                                    #<?php echo (int) $recent->id; ?> (<?php echo $escape($formatReportDate((string) $recent->created)); ?>)
+                                </a>
+                                <?php if ($this->diagnosticDeleteAllowed) : ?>
+                                    <form class="m-0" method="post" action="<?php echo Route::_('index.php?option=com_jem&task=housekeeping.deleteDiagnosticReport'); ?>"
+                                          onsubmit="return confirm(<?php echo $escape(json_encode(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT_CONFIRM', (int) $recent->id))); ?>);">
+                                        <input type="hidden" name="report_id" value="<?php echo (int) $recent->id; ?>">
+                                        <input type="hidden" name="return_report" value="<?php echo (int) $this->diagnosticReportId; ?>">
+                                        <input type="hidden" name="delete_report_nonce" value="<?php echo $escape($this->diagnosticDeleteNonce); ?>">
+                                        <?php echo HTMLHelper::_('form.token'); ?>
+                                        <button class="btn btn-sm btn-link text-danger px-2" type="submit"
+                                                title="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT', (int) $recent->id)); ?>"
+                                                aria-label="<?php echo $escape(Text::sprintf('COM_JEM_TOOLS_DELETE_REPORT', (int) $recent->id)); ?>">
+                                            <span class="icon-times" aria-hidden="true"></span>
+                                        </button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <form class="d-flex justify-content-end flex-shrink-0 ms-lg-auto" method="post" action="<?php echo Route::_('index.php?option=com_jem&task=housekeeping.runDiagnostics'); ?>">
+                    <button class="btn btn-primary" type="submit"><?php echo Text::_('COM_JEM_TOOLS_RUN_CHECK'); ?></button>
+                    <?php echo HTMLHelper::_('form.token'); ?>
+                </form>
+            </div>
         </div></div></div>
     </div>
 
     <?php if (is_array($this->diagnosticReport)) : ?>
-        <?php $moduleTypeCounts = array_count_values(array_column($this->diagnosticReport['module_items'], 'module')); ?>
         <div class="row g-3 mb-4">
             <div class="col-12 col-xl-6"><div class="card h-100"><div class="card-body">
                         <div class="d-flex justify-content-between align-items-center gap-2">
@@ -128,6 +128,7 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                 <?php echo Text::_('COM_JEM_TOOLS_REPORT_INCLUDE'); ?>
                             </label>
                         </div>
+                        <div class="table-responsive">
                         <table class="table table-sm mb-0" data-jem-sort-table data-jem-default-sort="id">
                             <thead>
                                 <tr>
@@ -136,6 +137,9 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                     <th scope="col" class="text-end" data-jem-sort="number" data-jem-sort-id-column><?php echo Text::_('COM_JEM_TOOLS_LAST_ID'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_PUBLIC'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_PRIVATE'); ?></th>
+                                    <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('JARCHIVED'); ?></th>
+                                    <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('JTRASHED'); ?></th>
+                                    <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_ATTACHMENT_ORPHANED'); ?></th>
                                     <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_COUNT'); ?></th>
                                 </tr>
                             </thead>
@@ -145,6 +149,7 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                     'categories' => 'COM_JEM_TOOLS_CATEGORIES',
                                     'venues' => 'COM_JEM_TOOLS_VENUES',
                                     'types' => 'COM_JEM_TYPES',
+                                    'special_days' => 'COM_JEM_SPECIAL_DAYS',
                                     'attachments' => 'COM_JEM_ATTACHMENTS',
                                 ) as $kind => $label) : ?>
                                     <?php $inventory = $this->diagnosticReport['inventory'][$kind] ?? null; ?>
@@ -153,7 +158,7 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                             <?php echo Text::_($label); ?>
                                         </th>
                                         <?php if ($inventory === null) : ?>
-                                            <td colspan="5" class="text-end text-muted"><?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?></td>
+                                            <td colspan="8" class="text-end text-muted"><?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?></td>
                                         <?php else : ?>
                                             <td class="text-nowrap">
                                                 <span class="<?php echo $kind === 'attachments' ? 'icon-file text-secondary' : 'icon-publish text-success'; ?> me-1" aria-hidden="true"></span>
@@ -163,7 +168,7 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                                 <?php if (!array_key_exists('last_id', $inventory)) : ?>
                                                     <?php echo Text::_('COM_JEM_TOOLS_RERUN_INVENTORY'); ?>
                                                 <?php elseif ((int) $inventory['last_id'] > 0) : ?>
-                                                    <?php $editTasks = array('events' => 'event', 'categories' => 'category', 'venues' => 'venue', 'types' => 'type', 'attachments' => 'attachment'); ?>
+                                                    <?php $editTasks = array('events' => 'event', 'categories' => 'category', 'venues' => 'venue', 'types' => 'type', 'special_days' => 'specialday', 'attachments' => 'attachment'); ?>
                                                     <a href="<?php echo $escape(Route::_('index.php?option=com_jem&task=' . $editTasks[$kind] . '.edit&id=' . (int) $inventory['last_id'], false)); ?>">#<?php echo (int) $inventory['last_id']; ?></a>
                                                 <?php else : ?>
                                                     &mdash;
@@ -171,12 +176,24 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                             </td>
                                             <td class="text-end"><?php echo isset($inventory['public']) ? (int) $inventory['public'] : '&mdash;'; ?></td>
                                             <td class="text-end"><?php echo isset($inventory['private']) ? (int) $inventory['private'] : '&mdash;'; ?></td>
-                                            <td class="text-end"><?php echo (int) $inventory[$kind === 'attachments' ? 'total' : 'active']; ?></td>
+                                            <td class="text-end"><?php echo isset($inventory['archived']) ? (int) $inventory['archived'] : '&mdash;'; ?></td>
+                                            <td class="text-end"><?php echo isset($inventory['trashed']) ? (int) $inventory['trashed'] : '&mdash;'; ?></td>
+                                            <td class="text-end<?php echo $kind === 'attachments' && !empty($inventory['orphaned']) ? ' text-danger fw-bold' : ''; ?>">
+                                                <?php echo $kind === 'attachments' && isset($inventory['orphaned']) ? (int) $inventory['orphaned'] : '&mdash;'; ?>
+                                            </td>
+                                            <td class="text-end">
+                                                <?php echo $kind === 'attachments'
+                                                    ? (int) $inventory['total']
+                                                    : (isset($inventory['active'], $inventory['archived'], $inventory['trashed'])
+                                                        ? (int) $inventory['active'] + (int) $inventory['archived'] + (int) $inventory['trashed']
+                                                        : '&mdash;'); ?>
+                                            </td>
                                         <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                        </div>
                         <div class="small text-muted mt-1"><?php echo Text::_('COM_JEM_TOOLS_PUBLIC_PRIVATE_NOTE'); ?></div>
                     </div></div></div>
             <div class="col-12 col-xl-6"><div class="card h-100"><div class="card-body">
@@ -226,14 +243,9 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                         <thead><tr>
                             <th scope="col"><input class="form-check-input" type="checkbox" data-jem-select-all="report"
                                                    aria-label="<?php echo $escape(Text::_('COM_JEM_TOOLS_REPORT_SELECT_ALL')); ?>"></th>
-                            <th scope="col" data-jem-sort="text"><?php echo Text::_($kind === 'modules' ? 'COM_JEM_TOOLS_MODULE_ITEM' : 'COM_JEM_TOOLS_NAME'); ?></th>
-                            <th scope="col" data-jem-sort="text"><?php echo Text::_('COM_JEM_TOOLS_EXTENSION'); ?></th>
-                            <?php if ($kind !== 'modules') : ?>
-                                <th scope="col" data-jem-sort="number" data-jem-sort-id-column><?php echo Text::_('COM_JEM_TOOLS_ID'); ?></th>
-                            <?php endif; ?>
-                            <?php if ($kind === 'modules') : ?>
-                                <th scope="col" class="text-end" data-jem-sort="number"><?php echo Text::_('COM_JEM_TOOLS_TYPE_INSTANCES'); ?></th>
-                            <?php endif; ?>
+                            <th scope="col" data-jem-sort="text"><?php echo Text::_('COM_JEM_TOOLS_NAME'); ?></th>
+                            <th scope="col" data-jem-sort="text"><?php echo Text::_($kind === 'modules' ? 'COM_JEM_TOOLS_TYPE' : 'COM_JEM_TOOLS_EXTENSION'); ?></th>
+                            <th scope="col" data-jem-sort="number" data-jem-sort-id-column><?php echo Text::_('COM_JEM_TOOLS_ID'); ?></th>
                         </tr></thead>
                         <tbody>
                             <?php foreach ($this->diagnosticReport[$itemsKey] as $item) : ?>
@@ -250,22 +262,19 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                                         <span class="tbody-icon" aria-hidden="true"><span class="<?php echo $item['active'] ? 'icon-publish' : 'icon-unpublish'; ?>"></span></span>
                                         <span class="visually-hidden"><?php echo Text::_('COM_JEM_TOOLS_' . ($item['active'] ? 'ACTIVE' : 'INACTIVE')); ?></span>
                                         <?php if ($kind === 'modules') : ?>
-                                            <a href="<?php echo $escape(Route::_('index.php?option=com_modules&task=module.edit&id=' . (int) $item['id'], false)); ?>">#<?php echo (int) $item['id']; ?> <?php echo $escape($item['name']); ?></a>
+                                            <a href="<?php echo $escape(Route::_('index.php?option=com_modules&task=module.edit&id=' . (int) $item['id'], false)); ?>"><?php echo $escape($item['name']); ?></a>
                                         <?php else : ?>
                                             <?php echo $escape($item['name']); ?>
                                         <?php endif; ?>
                                     </th>
-                                    <td data-label="<?php echo $escape(Text::_('COM_JEM_TOOLS_EXTENSION')); ?>"><?php echo $escape($item['module']); ?></td>
-                                    <?php if ($kind !== 'modules') : ?>
-                                        <td data-label="<?php echo $escape(Text::_('COM_JEM_TOOLS_ID')); ?>">
+                                    <td data-label="<?php echo $escape(Text::_($kind === 'modules' ? 'COM_JEM_TOOLS_TYPE' : 'COM_JEM_TOOLS_EXTENSION')); ?>"><?php echo $escape($item['module']); ?></td>
+                                    <td data-label="<?php echo $escape(Text::_('COM_JEM_TOOLS_ID')); ?>">
+                                        <?php if ($kind === 'modules') : ?>
+                                            <a href="<?php echo $escape(Route::_('index.php?option=com_modules&task=module.edit&id=' . (int) $item['id'], false)); ?>">#<?php echo (int) $item['id']; ?></a>
+                                        <?php else : ?>
                                             <a href="<?php echo $escape(Route::_('index.php?option=com_plugins&task=plugin.edit&extension_id=' . (int) $item['id'], false)); ?>">#<?php echo (int) $item['id']; ?></a>
-                                        </td>
-                                    <?php endif; ?>
-                                    <?php if ($kind === 'modules') : ?>
-                                        <td class="text-end" data-label="<?php echo $escape(Text::_('COM_JEM_TOOLS_TYPE_INSTANCES')); ?>">
-                                            <?php echo (int) ($moduleTypeCounts[$item['module']] ?? 0); ?>
-                                        </td>
-                                    <?php endif; ?>
+                                        <?php endif; ?>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

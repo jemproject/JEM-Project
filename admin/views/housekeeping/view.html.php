@@ -41,7 +41,7 @@ class JemViewHousekeeping extends JemAdminView
             $reports = new JemHousekeepingReports();
             $this->diagnosticReportId = max(0, $app->input->getInt('report', 0));
             $this->diagnosticStored = $reports->load($this->diagnosticReportId);
-            $this->diagnosticRecent = $reports->recent();
+            $this->diagnosticRecent = $reports->recent(8);
             $this->diagnosticReport = $this->diagnosticStored['data']['report'] ?? null;
             $this->diagnosticDeleteAllowed = $app->getIdentity()->authorise('core.admin');
             $this->diagnosticDeleteNonce = $this->diagnosticDeleteAllowed && $this->diagnosticRecent
