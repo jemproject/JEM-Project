@@ -28,6 +28,8 @@ class JemLog
     protected static $loggerAdded = false;
     protected static $messageLoggerRegistered = false;
     protected static $loggedMessages = array();
+    protected static $eventslistTraceId = null;
+    protected static $eventslistTraceStep = 0;
 
     /**
      * Configure Joomla file loggers for all JEM channels.
@@ -64,11 +66,18 @@ class JemLog
      * @param   integer      $priority  Joomla log priority.
      * @param   string|null  $code      JEM message code.
      * @param   array        $context   Extra structured context.
+     * @param   bool         $requestContext  Include URL, IP and user context.
      *
      * @return void
      */
-    public static function add($message, $where = null, $priority = Log::DEBUG, $code = null, array $context = array())
-    {
+    public static function add(
+        $message,
+        $where = null,
+        $priority = Log::DEBUG,
+        $code = null,
+        array $context = array(),
+        bool $requestContext = true
+    ) {
         self::addFileLogger();
 
         $source = self::resolveSource($where);
@@ -76,7 +85,7 @@ class JemLog
         $category = self::getCategory($channel);
         $code = $code ?: self::getDefaultCode($priority);
 
-        $context = array_merge(self::getRequestContext(), $context);
+        $context = $requestContext ? array_merge(self::getRequestContext(), $context) : $context;
         $sourceText = self::formatSource($source);
         $contextText = self::formatContext($context);
         $entryMessage = $code . ' | ' . trim((string) $message) . $sourceText . $contextText;
@@ -85,6 +94,75 @@ class JemLog
         $entry->where = $source['function'];
 
         Log::add($entry);
+    }
+
+    /**
+     * Trace the Events List pipeline without event contents, URL, IP or user data.
+     * Only numeric and boolean metrics supplied by JEM code are accepted.
+     */
+    public static function traceEventslist(string $stage, array $metrics = array()): void
+    {
+        try {
+            if (self::getConfiguredLevel() < 4) {
+                return;
+            }
+
+            $app = Factory::getApplication();
+            if (!$app->isClient('site')) {
+                return;
+            }
+
+            $view = $app->input->getCmd('view', '');
+            if ($view !== '' && $view !== 'eventslist') {
+                return;
+            }
+
+            $menu = $app->getMenu()->getActive();
+            if ($view === '' && $menu) {
+                parse_str((string) parse_url((string) $menu->link, PHP_URL_QUERY), $menuQuery);
+                $view = is_string($menuQuery['view'] ?? null) ? $menuQuery['view'] : '';
+            }
+
+            if ($view !== 'eventslist') {
+                return;
+            }
+
+            if (self::$eventslistTraceId === null) {
+                self::$eventslistTraceId = bin2hex(random_bytes(6));
+            }
+
+            $context = array(
+                'trace_id' => self::$eventslistTraceId,
+                'step' => ++self::$eventslistTraceStep,
+                'menu_id' => $menu ? (int) $menu->id : 0,
+            );
+            $context = array_merge($context, self::normaliseTraceMetrics($metrics));
+
+            $stage = preg_replace('/[^a-z0-9._-]/i', '', $stage);
+            if ($stage !== '') {
+                self::add('Eventslist trace: ' . $stage, null, Log::DEBUG, 'JEM-D-0101', $context, false);
+            }
+        } catch (\Throwable) {
+            // A diagnostic trace must never prevent the frontend from rendering.
+        }
+    }
+
+    /** Reject strings, objects and unrecognised metric names before writing a trace. */
+    private static function normaliseTraceMetrics(array $metrics): array
+    {
+        $safe = array();
+
+        foreach ($metrics as $name => $value) {
+            if (!is_string($name) || !preg_match('/^[a-z][a-z0-9_]*$/', $name)
+                || in_array($name, array('trace_id', 'step', 'menu_id'), true)
+                || (!is_int($value) && !is_bool($value))) {
+                continue;
+            }
+
+            $safe[$name] = $value;
+        }
+
+        return $safe;
     }
 
     public static function info($code, $message, array $context = array())
@@ -233,6 +311,10 @@ class JemLog
 
             $class = isset($trace['class']) ? $trace['class'] . '::' : '';
             $function = isset($trace['function']) ? $class . $trace['function'] : '';
+
+            if ($function === 'JemModelEventslist::traceEventslist') {
+                continue;
+            }
 
             $source['file'] = $file;
             $source['line'] = isset($trace['line']) ? (int) $trace['line'] : '';

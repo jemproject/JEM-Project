@@ -328,6 +328,7 @@ class com_jemInstallerScript
             $this->repair510NotificationSchema();
             $this->repair510PricingSchema();
             $this->repair510MediaSchema();
+            $this->repair510DiagnosticReportsSchema();
             $this->repair510CategoryCustomFieldsSchema();
             $this->repair510ImageProfileSettings();
             $this->repair510OperatingProfile($type);
@@ -344,6 +345,26 @@ class com_jemInstallerScript
             // Essential catalogues and settings must be usable before optional continuation.
             $this->repair510ResourceAcl();
         }
+    }
+
+    /**
+     * Create the report log for installations that already recorded 5.1.0.sql.
+     */
+    private function repair510DiagnosticReportsSchema(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $table = $db->quoteName('#__jem_diagnostic_reports');
+        $db->setQuery(
+            'CREATE TABLE IF NOT EXISTS ' . $table . ' ('
+            . $db->quoteName('id') . ' BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,'
+            . $db->quoteName('created') . ' DATETIME NOT NULL,'
+            . $db->quoteName('created_by') . ' INT(11) UNSIGNED NOT NULL DEFAULT 0,'
+            . $db->quoteName('payload') . ' MEDIUMTEXT NOT NULL,'
+            . 'PRIMARY KEY (' . $db->quoteName('id') . '),'
+            . 'KEY ' . $db->quoteName('idx_created') . ' (' . $db->quoteName('created') . ')'
+            . ') ENGINE=InnoDB'
+        );
+        $db->execute();
     }
 
     /**

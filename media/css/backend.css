@@ -2775,7 +2775,210 @@ img#imagelib {
     background-color: var(--table-bg);
 }
 
-.table-striped.housekeeping tbody tr td:nth-child(1) {padding: 6px 0 6px 6px; width: 60px;}
+/* Housekeeping remains a toolbox; each action has room for its description. */
+.table.housekeeping,
+.table.housekeeping tbody {
+    display: block;
+    width: 100%;
+}
+
+.table.housekeeping tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.table.housekeeping tbody tr {
+    display: flex;
+    align-items: flex-start;
+    min-width: 0;
+    border: 1px solid var(--border-color, #d7dce1);
+    border-radius: 0.5rem;
+    background: var(--body-bg, #fff);
+}
+
+.table.housekeeping tbody tr td {
+    border: 0;
+    background: transparent;
+}
+
+.table.housekeeping tbody tr td:first-child {
+    flex: 0 0 96px;
+    width: 96px;
+    padding: 0.75rem;
+}
+
+.table.housekeeping tbody tr td:last-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.75rem;
+}
+
+.table.housekeeping h3 {
+    margin-top: 0;
+}
+
+@media (max-width: 900px) {
+    .table.housekeeping tbody {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.jem-tools-console {
+    max-height: 28rem;
+    overflow: auto;
+    border: 1px solid var(--border-color, #d7dce1);
+    border-radius: 0.375rem;
+}
+
+.jem-tools-console-line {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border-color, #d7dce1);
+}
+
+.jem-tools-console-line:last-child {
+    border-bottom: 0;
+}
+
+.jem-tools-console-notice {
+    background: var(--info-bg, rgba(72, 134, 183, 0.12));
+}
+
+.jem-tools-console-warning {
+    background: var(--warning-bg, rgba(246, 157, 0, 0.16));
+}
+
+.jem-tools-console-error {
+    background: var(--danger-bg, rgba(200, 50, 50, 0.16));
+}
+
+.jem-tools-diagnostics-table tr.jem-tools-console-notice > * {
+    background-color: var(--info-bg, rgba(72, 134, 183, 0.12));
+}
+
+.jem-tools-diagnostics-table tr.jem-tools-console-warning > * {
+    background-color: var(--warning-bg, rgba(246, 157, 0, 0.16));
+}
+
+.jem-tools-diagnostics-table tr.jem-tools-console-error > * {
+    background-color: var(--danger-bg, rgba(200, 50, 50, 0.16));
+}
+
+.jem-tools-diagnostics-table th:first-child,
+.jem-tools-diagnostics-table td:last-child {
+    white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+    .jem-tools-diagnostics-table thead {
+        display: none;
+    }
+
+    .jem-tools-diagnostics-table tbody,
+    .jem-tools-diagnostics-table tr,
+    .jem-tools-diagnostics-table th,
+    .jem-tools-diagnostics-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .jem-tools-diagnostics-table tbody tr {
+        border-bottom: 1px solid var(--border-color, #d7dce1);
+    }
+
+    .jem-tools-diagnostics-table tbody td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 600;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .jem-tools-extension-table thead {
+        display: none;
+    }
+
+    .jem-tools-extension-table tbody,
+    .jem-tools-extension-table tr,
+    .jem-tools-extension-table th,
+    .jem-tools-extension-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .jem-tools-extension-table tbody tr {
+        border-bottom: 1px solid var(--border-color, #d7dce1);
+    }
+
+    .jem-tools-extension-table tbody td::before {
+        content: attr(data-label);
+        display: inline-block;
+        margin-right: 0.5rem;
+        font-weight: 600;
+    }
+}
+
+.jem-tools-value {
+    display: inline-block;
+    max-width: 22rem;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.jem-restore-filter-button {
+    --jem-restore-filter-color: #274c77;
+    --jem-restore-filter-background: #e8f0fb;
+    min-height: 2.75rem;
+    min-width: 7.5rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--jem-restore-filter-color);
+    background: var(--jem-restore-filter-background);
+    color: var(--jem-restore-filter-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    font-weight: 600;
+}
+
+.jem-restore-filter-button[data-jem-restore-filter="same"] {
+    --jem-restore-filter-color: #21633b;
+    --jem-restore-filter-background: #e3f4e9;
+}
+
+.jem-restore-filter-button[data-jem-restore-filter="different"] {
+    --jem-restore-filter-color: #8a5200;
+    --jem-restore-filter-background: #fff1d6;
+}
+
+.jem-restore-filter-button:hover,
+.jem-restore-filter-button:focus-visible {
+    background: var(--jem-restore-filter-background);
+    color: var(--jem-restore-filter-color);
+    filter: brightness(0.95);
+}
+
+.jem-restore-filter-button.active,
+.jem-restore-filter-button.active:hover,
+.jem-restore-filter-button.active:focus-visible {
+    background: var(--jem-restore-filter-color);
+    color: #fff;
+    filter: none;
+}
+
+.jem-restore-catalog-table .jem-restore-group-row > * {
+    background: #e9f0f8;
+}
+
+.jem-restore-catalog-table > :not(caption) > * > * {
+    padding-block: 0.3rem;
+    line-height: 1.25;
+}
+
+.jem-restore-group-toggle {
+    min-width: 2rem;
+    min-height: 2rem;
+}
 
 .jem-housekeeping-file-options {
     max-width: 760px;
@@ -4822,6 +5025,37 @@ table.itemList.jem-hide-order-numbers [class*="-position"] {
 
 .jem-venue-permissions select:not([multiple]) {
     padding-inline-end: calc(2.25rem + 10px);
+}
+
+.jem-housekeeping-tool .jem-tools-sort-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    text-align: inherit;
+    cursor: pointer;
+}
+
+.jem-housekeeping-tool .jem-tools-sort-button:hover,
+.jem-housekeeping-tool .jem-tools-sort-button:focus-visible {
+    text-decoration: underline;
+}
+
+.jem-housekeeping-tool th[aria-sort="ascending"] .jem-tools-sort-button::after,
+.jem-housekeeping-tool th[aria-sort="descending"] .jem-tools-sort-button::after {
+    display: inline-block;
+    margin-inline-start: 0.35rem;
+    font-size: 0.7em;
+}
+
+.jem-housekeeping-tool th[aria-sort="ascending"] .jem-tools-sort-button::after {
+    content: "▲";
+}
+
+.jem-housekeeping-tool th[aria-sort="descending"] .jem-tools-sort-button::after {
+    content: "▼";
 }
 
 @media (max-width: 767.98px) {

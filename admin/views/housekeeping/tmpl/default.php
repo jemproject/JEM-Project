@@ -34,6 +34,9 @@ $profileLabels = static function (array $profiles) {
     </div>
     <div id="j-main-container" class="span10">
     <?php endif; ?>
+        <?php if ($this->tool === 'images') : ?>
+            <h2 class="h4"><?php echo Text::_('COM_JEM_HOUSEKEEPING_IMAGE_AUDIT'); ?></h2>
+        <?php endif; ?>
         <?php if (is_array($this->imageProfileReport)) : ?>
             <div class="alert alert-info jem-image-profile-report">
                 <h3><?php echo Text::_('COM_JEM_HOUSEKEEPING_IMAGE_REPORT'); ?></h3>
@@ -44,6 +47,20 @@ $profileLabels = static function (array $profiles) {
                     (int) $this->imageProfileReport['pending'],
                     (int) $this->imageProfileReport['blocked']
                 ); ?></p>
+                <div class="row row-cols-1 row-cols-sm-3 g-2 mb-3">
+                    <?php foreach (array('event', 'category', 'venue') as $entity) : ?>
+                        <?php $counts = $this->imageProfileReport['by_entity'][$entity]; ?>
+                        <div class="col"><div class="card h-100"><div class="card-body">
+                            <strong><?php echo Text::_('COM_JEM_TOOLS_IMAGE_' . strtoupper($entity)); ?></strong><br>
+                            <?php echo Text::sprintf(
+                                'COM_JEM_TOOLS_IMAGE_COUNTS',
+                                (int) $counts['total'],
+                                (int) $counts['not_normalised'],
+                                (int) $counts['missing']
+                            ); ?>
+                        </div></div></div>
+                    <?php endforeach; ?>
+                </div>
                 <?php if (!empty($this->imageProfileReport['details'])) : ?>
                     <details>
                         <summary><?php echo Text::_('COM_JEM_HOUSEKEEPING_IMAGE_REPORT_DETAILS'); ?></summary>
@@ -142,8 +159,42 @@ $profileLabels = static function (array $profiles) {
                 </div>
             <?php endif; ?>
         <?php endif; ?>
-        <table class="table table-striped housekeeping">
+        <?php if ($this->tool === 'images') : ?>
+            <div class="card mb-4"><div class="card-body">
+                <h3 class="h5"><?php echo Text::_('COM_JEM_TOOLS_CONSOLE'); ?></h3>
+                <div class="jem-tools-console" role="log">
+                    <?php if (is_array($this->imageRun) && $this->imageRun) : ?>
+                        <?php foreach ($this->imageRun as $line) : ?>
+                            <div class="jem-tools-console-line jem-tools-console-<?php echo htmlspecialchars($line['status'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($line['file'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <div class="jem-tools-console-line jem-tools-console-notice"><?php echo Text::_('COM_JEM_TOOLS_IMAGE_AUDIT_READONLY'); ?></div>
+                    <?php endif; ?>
+                </div>
+                <button type="submit" class="btn btn-outline-primary mt-3" onclick="this.form.task.value='housekeeping.resizethumbs';">
+                    <?php echo Text::_('COM_JEM_HOUSEKEEPING_RESIZE_THUMBNAILS'); ?>
+                </button>
+            </div></div>
+        <?php endif; ?>
+        <?php if ($this->tool !== 'images') : ?>
+        <table class="table housekeeping">
             <tbody>
+                <tr>
+                    <td><div class="linkicon"><a href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=diagnostics'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/icon-48-diagnostics.svg', Text::_('COM_JEM_TOOLS_DIAGNOSTICS'), null, true); ?>
+                    </a></div></td>
+                    <td><h3><?php echo Text::_('COM_JEM_TOOLS_DIAGNOSTICS'); ?></h3><?php echo Text::_('COM_JEM_TOOLS_DIAGNOSTICS_DESC'); ?></td>
+                </tr>
+                <?php if (JemHelperBackend::canManage('core.options')) : ?>
+                <tr>
+                    <td><div class="linkicon"><a href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=restore'); ?>">
+                        <?php echo HTMLHelper::_('image', 'com_jem/icon-48-restoredefaults.svg', Text::_('COM_JEM_TOOLS_RESTORE'), null, true); ?>
+                    </a></div></td>
+                    <td><h3><?php echo Text::_('COM_JEM_TOOLS_RESTORE'); ?></h3><?php echo Text::_('COM_JEM_TOOLS_RESTORE_DESC'); ?></td>
+                </tr>
+                <?php endif; ?>
                 <!-- CLEAN EVENT IMG -->
                 <tr>
                     <td>
@@ -190,9 +241,9 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.auditImages';">
+                            <a href="<?php echo Route::_('index.php?option=com_jem&view=housekeeping&tool=images'); ?>">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-statistics.svg', Text::_('COM_JEM_HOUSEKEEPING_IMAGE_AUDIT'), NULL, true); ?>
-                            </button>
+                            </a>
                         </div>
                     </td>
                     <td>
@@ -302,6 +353,7 @@ $profileLabels = static function (array $profiles) {
                 </tr>
             </tbody>
         </table>
+        <?php endif; ?>
         <?php if (isset($this->sidebar)) : ?>
             </div>
         <?php endif; ?>

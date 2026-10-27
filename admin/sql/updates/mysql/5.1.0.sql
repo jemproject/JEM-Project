@@ -1,4 +1,13 @@
 -- JEM 5.1.0: event programmes and nested venue hierarchies.
+CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `created` datetime NOT NULL,
+    `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+    `payload` mediumtext NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_created` (`created`)
+) ENGINE=InnoDB;
+
 -- Event programmes can exceed the old 5120-character parameter limit. Existing JSON is preserved.
 ALTER TABLE `#__jem_events` MODIFY `attribs` MEDIUMTEXT NULL DEFAULT NULL;
 -- Keep the shipped weekend rule editable and useful for historical and future calendars.

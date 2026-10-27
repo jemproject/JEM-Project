@@ -88,10 +88,12 @@ final class ImageProfileWorkflowSecurityTest extends TestCase
     {
         $controller = $this->read('admin/controllers/imagehandler.php');
         $image = $this->read('site/classes/image.class.php');
+        $filenamePolicy = $this->read('site/classes/imagefilenamepolicy.class.php');
 
         self::assertStringContainsString('profileForTask', $controller);
         self::assertStringContainsString('JemImageProfilePolicy::EVENT_FULL', $controller);
-        self::assertStringContainsString('JemImage::uploadProfileImage', $controller);
+        self::assertStringContainsString('JemImageFilenamePolicy::uploadProfile', $controller);
+        self::assertStringContainsString('JemImage::uploadProfileImage', $filenamePolicy);
         self::assertStringContainsString('temporaryImagePath', $image);
         self::assertStringContainsString('replaceNormalisedImage', $image);
         self::assertStringContainsString('validatePreparedImage', $image);

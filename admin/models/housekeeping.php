@@ -149,51 +149,35 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $height = max(1, (int) $jemsettings->imagehight);
         $count = 0;
 
-        foreach (array(JemModelHousekeeping::EVENTS, JemModelHousekeeping::VENUES, JemModelHousekeeping::CATEGORIES) as $type) {
-            $folder = $this->map[$type]['folder'];
-            $images = array_unique(array_filter((array) $this->getAssigned($type)));
-            $sourceBase = Path::clean(JPATH_SITE . '/images/jem/' . $folder);
-            $thumbBase = Path::clean($sourceBase . '/small');
-
-            if (!Folder::exists($thumbBase)) {
-                Folder::create($thumbBase);
+        // Stored image paths may use per-record subfolders. Resolve them through
+        // the same assignments as the profile audit, not a fixed root folder.
+        foreach ($this->getImageProfileAssignments($jemsettings) as $assignment) {
+            if ($assignment['conflict'] || !is_file($assignment['source'])) {
+                continue;
             }
 
-            foreach ($images as $image) {
-                if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
-                    JemHelper::addLogEntry('Skipping unsafe image path while regenerating thumbnails: ' . $image, __METHOD__, Log::WARNING);
-                    continue;
-                }
+            $source = $assignment['source'];
+            $thumb = $assignment['thumbnail'];
+            $thumbFolder = dirname($thumb);
+            if (!Folder::exists($thumbFolder) && !Folder::create($thumbFolder)) {
+                JemHelper::addLogEntry('Unable to create thumbnail folder: ' . $thumbFolder, __METHOD__, Log::WARNING);
+                continue;
+            }
+            if (File::exists($thumb) && !File::delete($thumb)) {
+                JemHelper::addLogEntry('Unable to remove old thumbnail: ' . $thumb, __METHOD__, Log::WARNING);
+                continue;
+            }
 
-                $source = Path::clean($sourceBase . '/' . $image);
-                $thumb = Path::clean($thumbBase . '/' . $image);
+            JemImage::thumb(
+                $source,
+                $thumb,
+                $width,
+                $height,
+                JemImageProfilePolicy::displayMaxDimension($jemsettings)
+            );
 
-                if (!is_file($source)) {
-                    continue;
-                }
-
-                if (File::exists($thumb) && !File::delete($thumb)) {
-                    JemHelper::addLogEntry('Unable to remove old thumbnail: ' . $thumb, __METHOD__, Log::WARNING);
-                    continue;
-                }
-
-                $thumbFolder = dirname($thumb);
-                if (!Folder::exists($thumbFolder) && !Folder::create($thumbFolder)) {
-                    JemHelper::addLogEntry('Unable to create thumbnail folder: ' . $thumbFolder, __METHOD__, Log::WARNING);
-                    continue;
-                }
-
-                JemImage::thumb(
-                    $source,
-                    $thumb,
-                    $width,
-                    $height,
-                    JemImageProfilePolicy::displayMaxDimension($jemsettings)
-                );
-
-                if (File::exists($thumb)) {
-                    $count++;
-                }
+            if (File::exists($thumb)) {
+                $count++;
             }
         }
 
@@ -202,7 +186,8 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
     /**
      * Read-only audit of all assigned event, venue and category originals.
-     * Counters represent physical files, not database references.
+     * Counters represent distinct assigned paths, including missing originals,
+     * rather than database references.
      */
     public function auditImageProfiles($ordering = 'file', $direction = 'asc', $limitstart = 0, $limit = self::IMAGE_CANDIDATE_PAGE_LIMIT)
     {
@@ -212,6 +197,12 @@ class JemModelHousekeeping extends BaseDatabaseModel
             'valid' => 0,
             'pending' => 0,
             'blocked' => 0,
+            'missing' => 0,
+            'by_entity' => array(
+                'event' => array('total' => 0, 'not_normalised' => 0, 'missing' => 0),
+                'category' => array('total' => 0, 'not_normalised' => 0, 'missing' => 0),
+                'venue' => array('total' => 0, 'not_normalised' => 0, 'missing' => 0),
+            ),
             'below_minimum' => 0,
             'over_maximum' => 0,
             'ratio_mismatch' => 0,
@@ -230,9 +221,38 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
         foreach ($this->getImageProfileAssignments($settings) as $assignment) {
             $report['total']++;
+            $entities = array_unique(array_column($assignment['uses'], 'entity'));
+            foreach ($entities as $entity) {
+                $report['by_entity'][$entity]['total']++;
+            }
+
+            if (!empty($assignment['invalid_reference'])) {
+                $report['invalid']++;
+                $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
+                $report['details'][] = $this->imageAuditDetail($assignment, 'invalid');
+                continue;
+            }
+
+            if (!is_file($assignment['source'])) {
+                $report['missing']++;
+                $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['missing']++;
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
+                $report['details'][] = $this->imageAuditDetail($assignment, 'missing');
+                continue;
+            }
+
             if ($assignment['conflict']) {
                 $report['conflicts']++;
                 $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['details'][] = $this->imageAuditDetail($assignment, 'conflict');
                 continue;
             }
@@ -241,6 +261,9 @@ class JemModelHousekeeping extends BaseDatabaseModel
             if (!$analysis['accepted']) {
                 $report['invalid']++;
                 $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['details'][] = $this->imageAuditDetail($assignment, 'invalid');
                 continue;
             }
@@ -260,17 +283,29 @@ class JemModelHousekeeping extends BaseDatabaseModel
 
             if ($analysis['minimum_not_met']) {
                 $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['details'][] = $this->imageAuditDetail($assignment, 'below_minimum');
             } elseif ($analysis['needs_normalisation'] && (int) $analysis['frames'] > 1) {
                 $report['animated_blocked']++;
                 $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['details'][] = $this->imageAuditDetail($assignment, 'animated_skip');
             } elseif ($analysis['needs_normalisation']
                 && !$this->isImageNormalisationCandidate($assignment, $analysis, $settings)) {
                 $report['blocked']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['details'][] = $this->imageAuditDetail($assignment, 'target_below_minimum');
             } elseif ($analysis['needs_normalisation']) {
                 $report['pending']++;
+                foreach ($entities as $entity) {
+                    $report['by_entity'][$entity]['not_normalised']++;
+                }
                 $report['candidates'][] = $this->imageNormalisationCandidate($assignment, $analysis, $settings);
             } else {
                 $report['valid']++;
@@ -323,6 +358,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
             'skipped' => 0,
             'failed' => 0,
             'failed_files' => array(),
+            'lines' => array(),
         );
 
         foreach ($this->getImageProfileAssignments($settings) as $assignment) {
@@ -330,7 +366,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
                 break;
             }
 
-            if ($assignment['conflict']) {
+            if ($assignment['conflict'] || !empty($assignment['invalid_reference']) || !is_file($assignment['source'])) {
                 continue;
             }
 
@@ -348,6 +384,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
             $analysis = JemImage::analyseStoredImage($assignment['source'], $settings, $assignment['profile'], true);
             if (!$this->isImageNormalisationCandidate($assignment, $analysis, $settings)) {
                 $result['skipped']++;
+                $result['lines'][] = array('status' => 'warning', 'file' => $this->imageRelativePath($assignment['source']));
                 continue;
             }
 
@@ -359,9 +396,11 @@ class JemModelHousekeeping extends BaseDatabaseModel
                 $assignment['profile']
             )) {
                 $result['completed']++;
+                $result['lines'][] = array('status' => 'notice', 'file' => $this->imageRelativePath($assignment['source']));
             } else {
                 $result['failed']++;
                 $result['failed_files'][] = $this->imageRelativePath($assignment['source']);
+                $result['lines'][] = array('status' => 'error', 'file' => $this->imageRelativePath($assignment['source']));
                 JemHelper::addLogEntry(
                     'Unable to normalise selected image: ' . $assignment['source'],
                     __METHOD__,
@@ -470,14 +509,30 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $settings
     ) {
         $filename = trim((string) $filename);
-        if ($filename === '' || File::makeSafe($filename) !== $filename) {
+        if ($filename === '') {
+            return;
+        }
+
+        if (File::makeSafe($filename) !== $filename || strpbrk($filename, '/\\') !== false) {
+            $assignments['invalid:' . $entity . ':' . $id . ':' . $profile] = array(
+                'source' => '',
+                'reference' => $filename,
+                'invalid_reference' => true,
+                'thumbnail' => '',
+                'profile' => (string) $profile,
+                'signature' => '',
+                'conflict' => false,
+                'uses' => array(array(
+                    'entity' => (string) $entity,
+                    'id' => (int) $id,
+                    'title' => (string) $title,
+                    'profile' => (string) $profile,
+                )),
+            );
             return;
         }
 
         $source = Path::clean(rtrim((string) $sourceFolder, '\\/') . '/' . $filename);
-        if (!is_file($source)) {
-            return;
-        }
 
         $key = strtolower(str_replace('\\', '/', $source));
         $signature = JemImageProfilePolicy::signature($settings, (string) $profile);
@@ -512,7 +567,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
             'id' => (int) ($use['id'] ?? 0),
             'title' => (string) ($use['title'] ?? ''),
             'profile' => (string) ($use['profile'] ?? $assignment['profile']),
-            'file' => basename((string) $assignment['source']),
+            'file' => (string) ($assignment['reference'] ?? basename((string) $assignment['source'])),
         );
     }
 
@@ -729,6 +784,7 @@ class JemModelHousekeeping extends BaseDatabaseModel
         // parents. Otherwise stale explicit IDs can block a later Sample Data
         // import even though events, venues and categories appear empty.
         $tables = array(
+            'diagnostic_reports',
             'notifications_attempts',
             'notifications',
             'register_items',

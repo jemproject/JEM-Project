@@ -746,6 +746,15 @@ CREATE TABLE IF NOT EXISTS `#__jem_groupmembers` (
     KEY `idx_user` (`member`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports` (
+    `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+    `created` datetime NOT NULL,
+    `created_by` int(11) unsigned NOT NULL DEFAULT 0,
+    `payload` mediumtext NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_created` (`created`)
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS `#__jem_config` (
     `keyname` varchar(100) NOT NULL,
     `value` text,

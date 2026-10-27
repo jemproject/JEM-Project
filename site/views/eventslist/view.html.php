@@ -52,6 +52,7 @@ class JemViewEventslist extends JemView
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
         $model = $this->getModel();
         $model->setState('Itemid', $menuactive->id);
+        JemLog::traceEventslist('view.display.start');
 
         if (method_exists($document, 'getWebAssetManager')) {
             $wa = $document->getWebAssetManager();
@@ -125,6 +126,7 @@ class JemViewEventslist extends JemView
 
         // Get data from model
         $rows = $this->get('Items');
+        JemLog::traceEventslist('view.display.items_return', array('page_count' => count((array) $rows)));
 
         $eventFilters = $this->prepareEventFilters($model, $params);
 
@@ -279,6 +281,10 @@ class JemViewEventslist extends JemView
 
         // Create the pagination object
         $pagination = $this->get('Pagination');
+        JemLog::traceEventslist('view.pagination.return', array(
+            'total_count' => (int) ($pagination->total ?? 0),
+            'page_count' => count((array) $rows),
+        ));
         if ($pagination->getAdditionalUrlParam('id') === "0") {
             $pagination->setAdditionalUrlParam('id', null);
         }
@@ -318,7 +324,9 @@ class JemViewEventslist extends JemView
             : $pageclass_sfx;
 
         $this->_prepareDocument();
+        JemLog::traceEventslist('view.display.before_render', array('page_count' => count((array) $rows)));
         parent::display($tpl);
+        JemLog::traceEventslist('view.display.return', array('page_count' => count((array) $rows)));
     }
 
     /**
