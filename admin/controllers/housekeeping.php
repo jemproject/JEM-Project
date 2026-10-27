@@ -604,6 +604,10 @@ class JemControllerHousekeeping extends BaseController
         $this->allowHousekeeping();
 
         $app = Factory::getApplication();
+        if (!$app->getIdentity()->authorise('core.admin')) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
         $nonce = $app->input->post->getString('truncate_nonce', '');
 
         if (!JemHelper::consumeActionNonce('housekeeping.truncateAllData', $nonce)) {

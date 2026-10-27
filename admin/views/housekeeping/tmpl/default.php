@@ -308,6 +308,7 @@ $profileLabels = static function (array $profiles) {
                         <?php echo Text::_('COM_JEM_HOUSEKEEPING_UNUSED_ATTACHMENT_FILES_DESC'); ?>
                     </td>
                 </tr>
+            <?php if ($this->truncateAllowed) : ?>
             <!-- TRUNCATE ALL DATA -->
                 <tr>
                     <td>
@@ -351,6 +352,7 @@ $profileLabels = static function (array $profiles) {
                         </fieldset>
                     </td>
                 </tr>
+            <?php endif; ?>
             </tbody>
         </table>
         <?php endif; ?>

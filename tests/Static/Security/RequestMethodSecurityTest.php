@@ -94,6 +94,21 @@ final class RequestMethodSecurityTest extends TestCase
         self::assertStringContainsString("HTMLHelper::_('form.token')", $layout);
     }
 
+    public function testDestructiveResetRequiresGlobalAdministrator(): void
+    {
+        $controller = $this->method('admin/controllers/housekeeping.php', 'truncateAllData');
+        $view = $this->read('admin/views/housekeeping/view.html.php');
+        $layout = $this->read('admin/views/housekeeping/tmpl/default.php');
+
+        self::assertStringContainsString('$this->allowHousekeeping()', $controller);
+        self::assertStringContainsString('!$app->getIdentity()->authorise(\'core.admin\')', $controller);
+        self::assertStringContainsString("throw new \\Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403)", $controller);
+        self::assertLessThan(strpos($controller, '$nonce ='), strpos($controller, "authorise('core.admin')"));
+        self::assertStringContainsString('$this->truncateAllowed = $app->getIdentity()->authorise(\'core.admin\')', $view);
+        self::assertMatchesRegularExpression('/\$this->truncateAllowed\s*\?\s*JemHelper::issueActionNonce/', $view);
+        self::assertStringContainsString('if ($this->truncateAllowed) : ?>', $layout);
+    }
+
     public function testProtectedReadsKeepAclAndDisableCachingWithoutUrlTokens(): void
     {
         $reads = array(
