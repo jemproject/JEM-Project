@@ -16,7 +16,6 @@ use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\Folder;
 use Joomla\CMS\Client\ClientHelper;
 use Joomla\Filesystem\Path;
-use Joomla\CMS\Filter\InputFilter;
 
 require_once JPATH_SITE . '/components/com_jem/classes/imageprofilepolicy.class.php';
 require_once JPATH_SITE . '/components/com_jem/classes/eventimagepath.class.php';
@@ -66,32 +65,49 @@ class JemModelHousekeeping extends BaseDatabaseModel
         ClientHelper::setCredentialsFromRequest('ftp');
 
         // Get some data from the request
-        $images    = $this->getImages($type);
+        $images = $this->getImages($type);
         $folder = $this->map[$type]['folder'];
+        $basePath = JPATH_SITE . '/images/jem/' . $folder;
+        $thumbBase = $basePath . '/small';
+        $deleted = 0;
 
-        $count = count($images);
-        $fail = 0;
-
-        foreach ($images as $image)
-        {
-            if ($image !== InputFilter::getInstance()->clean($image, 'path')) {
-                Factory::getApplication()->enqueueMessage(Text::_('COM_JEM_UNABLE_TO_DELETE').' '.htmlspecialchars($image, ENT_COMPAT, 'UTF-8'), 'warning');
-                $fail++;
+        foreach ($images as $image) {
+            $fullPath = self::containedExistingFile($basePath, $image);
+            if ($fullPath === null) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::_('COM_JEM_UNABLE_TO_DELETE') . ' ' . htmlspecialchars($image, ENT_COMPAT, 'UTF-8'),
+                    'warning'
+                );
                 continue;
             }
 
-            $fullPath = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/'.$image);
-            $fullPaththumb = Path::clean(JPATH_SITE.'/images/jem/'.$folder.'/small/'.$image);
+            try {
+                if (!File::delete($fullPath)) {
+                    throw new \RuntimeException('The image file could not be deleted.');
+                }
+                $deleted++;
+            } catch (\Throwable $error) {
+                Factory::getApplication()->enqueueMessage(
+                    Text::_('COM_JEM_UNABLE_TO_DELETE') . ' ' . htmlspecialchars($image, ENT_COMPAT, 'UTF-8'),
+                    'warning'
+                );
+                continue;
+            }
 
-            if (is_file($fullPath)) {
-                File::delete($fullPath);
-                if (is_file($fullPaththumb)) {
-                    File::delete($fullPaththumb);
+            $thumb = self::containedExistingFile($thumbBase, $image);
+            if ($thumb !== null) {
+                try {
+                    if (!File::delete($thumb)) {
+                        throw new \RuntimeException('The image thumbnail could not be deleted.');
+                    }
+                } catch (\Throwable $error) {
+                    Factory::getApplication()->enqueueMessage(
+                        Text::_('COM_JEM_UNABLE_TO_DELETE') . ' ' . htmlspecialchars('small/' . $image, ENT_COMPAT, 'UTF-8'),
+                        'warning'
+                    );
                 }
             }
         }
-
-        $deleted = $count - $fail;
 
         return $deleted;
     }
@@ -954,9 +970,22 @@ class JemModelHousekeeping extends BaseDatabaseModel
      */
     private function getImages($type)
     {
-        $images = array_diff($this->getAvailable($type), $this->getAssigned($type));
+        $images = self::unassignedImages($this->getAvailable($type), $this->getAssigned($type));
 
         return $images;
+    }
+
+    /** Compare names as the hosting filesystem does, while retaining original paths for deletion. */
+    private static function unassignedImages(array $available, array $assigned): array
+    {
+        $key = static function ($path): string {
+            $path = str_replace('\\', '/', rawurldecode((string) $path));
+
+            return PHP_OS_FAMILY === 'Windows' ? mb_strtolower($path, 'UTF-8') : $path;
+        };
+        $used = array_fill_keys(array_map($key, $assigned), true);
+
+        return array_values(array_filter($available, static fn($path): bool => !isset($used[$key($path)])));
     }
 
     /**
@@ -986,7 +1015,79 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $this->_db->setQuery($query);
         $assigned = $this->_db->loadColumn();
 
-        return $assigned;
+        return array_merge((array) $assigned, $this->getLinkImages($type));
+    }
+
+    /**
+     * Link images may live in the same folders as event, venue or category images.
+     */
+    private function getLinkImages($type): array
+    {
+        $folder = $this->map[$type]['folder'];
+        $query = $this->_db->getQuery(true)
+            ->select($this->_db->quoteName('params'))
+            ->from($this->_db->quoteName('#__jem_links'))
+            ->where($this->_db->quoteName('params') . ' LIKE ' . $this->_db->quote('%"image"%'));
+        $this->_db->setQuery($query);
+
+        return self::extractLinkImages((array) $this->_db->loadColumn(), $folder);
+    }
+
+    /** Return folder-relative paths from stored link parameters. */
+    private static function extractLinkImages(array $rows, string $folder): array
+    {
+        $prefix = 'images/jem/' . $folder . '/';
+        $images = array();
+
+        foreach ($rows as $json) {
+            $params = json_decode((string) $json, true);
+            $image = is_array($params) ? trim((string) ($params['image'] ?? '')) : '';
+            $fragment = strpos($image, '#joomlaImage://');
+            if ($fragment !== false) {
+                $image = substr($image, 0, $fragment);
+            }
+            $image = rawurldecode(str_replace('\\', '/', $image));
+            $image = ltrim($image, '/');
+
+            if (str_starts_with($image, $prefix) && strlen($image) > strlen($prefix)) {
+                $images[] = substr($image, strlen($prefix));
+            }
+        }
+
+        return array_values(array_unique($images));
+    }
+
+    /** Resolve a file only if its real path remains inside the requested folder. */
+    private static function containedExistingFile(string $basePath, string $relative): ?string
+    {
+        if ($relative === '' || str_contains($relative, "\0")) {
+            return null;
+        }
+
+        $base = realpath($basePath);
+        $file = realpath($basePath . '/' . $relative);
+        if ($base === false || $file === false || !is_file($file)) {
+            return null;
+        }
+
+        $base = rtrim(str_replace('\\', '/', $base), '/') . '/';
+        $normalised = str_replace('\\', '/', $file);
+        $expected = str_replace('\\', '/', Path::clean($base . $relative));
+        if (PHP_OS_FAMILY === 'Windows') {
+            $base = strtolower($base);
+            $normalised = strtolower($normalised);
+            $expected = strtolower($expected);
+        }
+
+        return str_starts_with($normalised, $base) && $normalised === $expected ? $file : null;
+    }
+
+    private static function isImageCandidate(string $relative): bool
+    {
+        $name = basename($relative);
+
+        return $name !== '' && $name[0] !== '.'
+            && (bool) preg_match('/\.(?:bmp|gif|jpe|jpeg|jfif|jpg|png|webp)$/iD', $name);
     }
 
     /**
@@ -1014,7 +1115,8 @@ class JemModelHousekeeping extends BaseDatabaseModel
                     continue;
                 }
                 $relative = ltrim(str_replace('\\', '/', substr($file, strlen($basePath))), '/');
-                if (is_file($file) && $relative !== '' && substr(basename($relative), 0, 1) != '.') {
+                if (self::isImageCandidate($relative)
+                    && self::containedExistingFile($basePath, $relative) !== null) {
                     $images[] = $relative;
                 }
             }

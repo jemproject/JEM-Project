@@ -199,7 +199,7 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleaneventimg';">
+                            <button type="submit" class="jem-housekeeping-action" onclick="if (!confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_CLEANUP_IMAGES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) return false; this.form.task.value='housekeeping.cleaneventimg'; return true;">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleaneventimg.svg', Text::_('COM_JEM_HOUSEKEEPING_EVENT_IMG'), NULL, true); ?>
                             </button>
                         </div>
@@ -213,7 +213,7 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleanvenueimg';">
+                            <button type="submit" class="jem-housekeeping-action" onclick="if (!confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_CLEANUP_IMAGES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) return false; this.form.task.value='housekeeping.cleanvenueimg'; return true;">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleanvenueimg.svg', Text::_('COM_JEM_HOUSEKEEPING_VENUE_IMG'), NULL, true); ?>
                             </button>
                         </div>
@@ -227,7 +227,7 @@ $profileLabels = static function (array $profiles) {
                 <tr>
                     <td>
                         <div class="linkicon">
-                            <button type="submit" class="jem-housekeeping-action" onclick="this.form.task.value='housekeeping.cleancategoryimg';">
+                            <button type="submit" class="jem-housekeeping-action" onclick="if (!confirm(<?php echo htmlspecialchars(json_encode(Text::_('COM_JEM_HOUSEKEEPING_CLEANUP_IMAGES_CONFIRM')), ENT_QUOTES, 'UTF-8'); ?>)) return false; this.form.task.value='housekeeping.cleancategoryimg'; return true;">
                                 <?php echo HTMLHelper::_('image', 'com_jem/icon-48-cleancategoryimg.svg', Text::_('COM_JEM_HOUSEKEEPING_CATEGORY_IMG'), NULL, true); ?>
                             </button>
                         </div>
