@@ -25,6 +25,13 @@ require_once JPATH_SITE . '/components/com_jem/classes/venueimagepath.class.php'
 require_once JPATH_SITE . '/components/com_jem/classes/categoryimagepath.class.php';
 
 /**
+ * A data reset was refused before deleting any JEM records or physical files.
+ */
+class JemHousekeepingResetPreflightException extends \RuntimeException
+{
+}
+
+/**
  * Housekeeping-Model
  */
 class JemModelHousekeeping extends BaseDatabaseModel
@@ -833,7 +840,11 @@ class JemModelHousekeeping extends BaseDatabaseModel
         $db = Factory::getContainer()->get('DatabaseDriver');
         // TRUNCATE bypasses the category and venue Table::delete() asset cleanup.
         // Validate the shared Joomla tree before any files or records are removed.
-        $recordAssetIds = $this->getRecordAssetIds($db);
+        try {
+            $recordAssetIds = $this->getRecordAssetIds($db);
+        } catch (\Throwable $error) {
+            throw new JemHousekeepingResetPreflightException('JEM data reset preflight failed', 0, $error);
+        }
         $tablesReset = true;
 
         if ($deleteImageFiles && !$this->deleteAllImageFiles()) {

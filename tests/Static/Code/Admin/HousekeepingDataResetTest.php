@@ -65,5 +65,11 @@ final class HousekeepingDataResetTest extends TestCase
         self::assertStringContainsString('if ($tablesReset && !$this->deleteRecordAssets($db, $recordAssetIds))', $model);
         self::assertStringContainsString('if (!$completed)', $controller);
         self::assertStringContainsString('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_FAILED', $controller);
+        self::assertStringContainsString('JemHousekeepingResetPreflightException', $model);
+        self::assertStringContainsString('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_PREFLIGHT_FAILED', $controller);
+        self::assertLessThan(
+            strpos($model, 'if ($deleteImageFiles &&'),
+            strpos($model, 'throw new JemHousekeepingResetPreflightException(')
+        );
     }
 }

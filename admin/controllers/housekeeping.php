@@ -620,6 +620,10 @@ class JemControllerHousekeeping extends BaseController
         $link = 'index.php?option=com_jem&view=housekeeping';
         try {
             $completed = $model->truncateAllData($deleteAttachmentFiles, $deleteImageFiles);
+        } catch (JemHousekeepingResetPreflightException $error) {
+            JemHelper::addLogEntry('JEM data reset refused before deletion: ' . $error->getPrevious()->getMessage(), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
+            $this->setRedirect($link, Text::_('COM_JEM_HOUSEKEEPING_TRUNCATE_ALL_DATA_PREFLIGHT_FAILED'), 'error');
+            return;
         } catch (\Throwable $error) {
             JemHelper::addLogEntry('Error resetting JEM data: ' . $error->getMessage(), __METHOD__, \Joomla\CMS\Log\Log::ERROR);
             $completed = false;
