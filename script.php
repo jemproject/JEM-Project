@@ -2091,6 +2091,9 @@ SQL;
                 'downloads'     => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `created_by`",
                 'last_download' => "DATETIME NULL DEFAULT NULL AFTER `downloads`",
             ),
+            '#__jem_types' => array(
+                'language' => "CHAR(7) NOT NULL DEFAULT '*'",
+            ),
         );
 
         foreach ($definitionsByTable as $table => $definitions) {
@@ -3646,6 +3649,7 @@ SQL;
         $tables = array(
             '#__jem_age_levels',
             '#__jem_attachments',
+            '#__jem_diagnostic_reports',
             '#__jem_categories',
             '#__jem_cats_event_relations',
             '#__jem_countries',

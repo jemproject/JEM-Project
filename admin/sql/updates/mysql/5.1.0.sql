@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports` (
     KEY `idx_created` (`created`)
 ) ENGINE=InnoDB;
 
+-- Restore a missing type language column before later update statements use it.
+ALTER TABLE `#__jem_types` ADD COLUMN `language` CHAR(7) NOT NULL DEFAULT '*' /** CAN FAIL **/;
+
 -- Event programmes can exceed the old 5120-character parameter limit. Existing JSON is preserved.
 ALTER TABLE `#__jem_events` MODIFY `attribs` MEDIUMTEXT NULL DEFAULT NULL;
 -- Keep the shipped weekend rule editable and useful for historical and future calendars.
@@ -109,7 +112,7 @@ ALTER TABLE `#__jem_capacity_pools` ADD COLUMN `venue_layout_revision` INT(10) U
 ALTER TABLE `#__jem_capacity_pools` ADD COLUMN `allocation_mode` VARCHAR(24) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT 'quantity' AFTER `venue_layout_revision` /** CAN FAIL **/;
 ALTER TABLE `#__jem_capacity_pools` ADD INDEX `idx_capacity_pool_venue_area` (`venue_capacity_area_id`) /** CAN FAIL **/;
 
-CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `is_default` TINYINT(1) NOT NULL DEFAULT '1', `published` TINYINT(1) NOT NULL DEFAULT '1', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`,`code`), KEY `idx_venue_capacity_profile_default` (`venue_id`,`is_default`,`published`)) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS `#__jem_venue_capacity_profiles` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `revision` INT(10) UNSIGNED NOT NULL DEFAULT '1', `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0', `is_default` TINYINT(1) NOT NULL DEFAULT '1', `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_capacity_profile_code` (`venue_id`,`code`), KEY `idx_venue_capacity_profile_default` (`venue_id`,`is_default`,`published`,`ordering`)) ENGINE=InnoDB;
 ALTER TABLE `#__jem_venue_capacity_profiles` ADD COLUMN `capacity` INT(10) UNSIGNED NOT NULL DEFAULT '0' AFTER `revision` /** CAN FAIL **/;
 ALTER TABLE `#__jem_venue_capacity_profiles` ADD COLUMN `ordering` INT(11) NOT NULL DEFAULT '0' AFTER `published` /** CAN FAIL **/;
 CREATE TABLE IF NOT EXISTS `#__jem_venue_spaces` (`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, `venue_id` INT(11) UNSIGNED NOT NULL, `code` VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL, `name` VARCHAR(255) NOT NULL DEFAULT '', `color` CHAR(7) CHARACTER SET ascii COLLATE ascii_bin NOT NULL DEFAULT '#2F6F9F', `description` TEXT NULL DEFAULT NULL, `published` TINYINT(1) NOT NULL DEFAULT '1', `ordering` INT(11) NOT NULL DEFAULT '0', `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, `created_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', `modified` DATETIME NULL DEFAULT NULL, `modified_by` INT(11) UNSIGNED NOT NULL DEFAULT '0', PRIMARY KEY (`id`), UNIQUE KEY `idx_venue_space_code` (`venue_id`,`code`), KEY `idx_venue_space_published` (`venue_id`,`published`,`ordering`)) ENGINE=InnoDB;
