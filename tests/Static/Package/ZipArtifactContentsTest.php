@@ -6,6 +6,33 @@ use PHPUnit\Framework\TestCase;
 
 final class ZipArtifactContentsTest extends TestCase
 {
+    public function testCurrentPackageContainsVenueBoardAndIsolatedModulePreview(): void
+    {
+        $entries = array(
+            'admin/controllers/frontendmenu.php',
+            'site/classes/venueboard.class.php',
+            'site/controller.php',
+            'site/router.php',
+            'site/views/day/tmpl/venueboard.php',
+            'site/views/day/tmpl/venueboard.xml',
+            'site/views/day/view.html.php',
+            'site/views/modulepreview/metadata.xml',
+            'site/views/modulepreview/tmpl/default.php',
+            'site/views/modulepreview/view.html.php',
+            'media/css/venueboard.css',
+        );
+
+        foreach ($this->currentPackageZipFiles() as $package) {
+            foreach ($entries as $entry) {
+                self::assertSame(
+                    file_get_contents(JEM_TEST_ROOT . '/' . $entry),
+                    $this->componentEntryContents($package, $entry),
+                    $entry
+                );
+            }
+        }
+    }
+
     public function testCurrentPackageProtectsAssociatedArticleSources(): void
     {
         foreach ($this->currentPackageZipFiles() as $package) {

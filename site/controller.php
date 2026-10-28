@@ -188,6 +188,9 @@ class JemController extends BaseController
                 case 'venuesmap':
                     $model = $this->getModel('venueslist');
                     break;
+                case 'modulepreview':
+                    $model = null;
+                    break;
                 default:
                     $model = $this->getModel('eventslist');
                     break;
@@ -204,7 +207,7 @@ class JemController extends BaseController
                 $model2 = $this->getModel('CategoryCal');
                 $view->setModel($model1, true);
                 $view->setModel($model2);
-            } else {
+            } elseif ($model) {
                 $view->setModel($model, true);
             }
 

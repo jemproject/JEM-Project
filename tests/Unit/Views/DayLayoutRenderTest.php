@@ -16,6 +16,28 @@ final class DayLayoutRenderTest extends TestCase
         require_once JEM_TEST_ROOT . '/tests/Support/day_layout_fixture.php';
     }
 
+    public function testVenueBoardRendersPublishedSpaceColumnsAndUnassignedEvents(): void
+    {
+        $rows = [
+            DayLayoutFixture::event(1, '11:00', '12:00', ['locid' => 7, 'title' => 'Workshop']),
+            DayLayoutFixture::event(2, '13:00', '14:00', ['locid' => 7, 'title' => 'Open activity']),
+        ];
+        $view = new DayLayoutFixture([], $rows);
+        $view->venueBoard = ['mode' => 'spaces', 'locations' => [
+            31 => (object) ['id' => 31, 'name' => 'Room A'],
+            32 => (object) ['id' => 32, 'name' => 'Room B'],
+        ]];
+        $view->venueBoardAssignments = [1 => [31, 32]];
+        $html = $view->render('venueboard');
+
+        self::assertStringContainsString('Room A', $html);
+        self::assertStringContainsString('Room B', $html);
+        self::assertStringContainsString('Other events', $html);
+        self::assertSame(2, substr_count($html, 'Workshop'));
+        self::assertSame(1, substr_count($html, 'Open activity'));
+        self::assertStringContainsString('Itemid=42&amp;catid=7', $html);
+    }
+
     #[DataProvider('timetables')]
     public function testTimetableRendersEveryEventAndSession(string $layout, string $orientation, string $hours): void
     {

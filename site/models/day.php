@@ -68,9 +68,10 @@ class JemModelDay extends JemModelEventslist
      * Method to set the date
      *
      * @access public
-     * @param  string
+     * @param  string    $date          Requested YYYYMMDD date.
+     * @param  int|null  $daysOverride  Force a one-day range for a one-day layout.
      */
-    public function setDate($date)
+    public function setDate($date, ?int $daysOverride = null)
     {
         $app = Factory::getApplication();
 
@@ -110,6 +111,9 @@ class JemModelDay extends JemModelEventslist
         $daysToShow = $requestedDaysToShow > 0
             ? max(1, min(30, $requestedDaysToShow))
             : max(1, min(30, (int) $params->get('timeline_days_to_show', 1)));
+        if ($daysOverride !== null) {
+            $daysToShow = max(1, min(30, $daysOverride));
+        }
         $startDate = new DateTimeImmutable($date);
         $this->_dateEnd = $startDate->modify('+' . ($daysToShow - 1) . ' days')->format('Y-m-d');
     }

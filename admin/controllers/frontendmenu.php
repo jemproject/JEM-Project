@@ -61,6 +61,7 @@ class JemControllerFrontendmenu extends BaseController
             'types'      => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_TYPES', 'COM_JEM_MENU_TYPES'), 'Types', 'types', '#', $rootId, 'url', 0),
             'management' => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_MANAGEMENT'), 'Management', 'management', '#', $rootId, 'url', 0, array(), $specialAccessId),
             'user'       => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_USER_AREA'), 'User Area', 'user-area', '#', $rootId, 'url', 0),
+            'modules'    => $this->createMenuItem($menutype, array('COM_JEM_FRONTEND_MENU_GROUP_MODULES'), 'Modules', 'modules', '#', $rootId, 'url', 0),
         );
 
         $items = array(
@@ -71,6 +72,7 @@ class JemControllerFrontendmenu extends BaseController
             array(array('COM_JEM_FRONTEND_MENU_TODAY', 'COM_JEM_TIMETABLE_TODAY', 'COM_JEM_DAY_VIEW_DEFAULT_TITLE'), 'Today', 'today', 'index.php?option=com_jem&view=day&id=0', $groups['calendars']),
             array(array('COM_JEM_FRONTEND_MENU_DAY_TIMETABLE', 'COM_JEM_DAY_VIEW_TIMETABLE_TITLE'), 'Day Timetable', 'day-timetable', 'index.php?option=com_jem&view=day&layout=timetable&id=0', $groups['calendars']),
             array(array('COM_JEM_FRONTEND_MENU_DAY_TIMELINE', 'COM_JEM_DAY_VIEW_TIMELINE_TITLE'), 'Day Timeline', 'day-timeline', 'index.php?option=com_jem&view=day&layout=timeline&id=0', $groups['calendars']),
+            array(array('COM_JEM_DAY_VIEW_VENUEBOARD_TITLE'), 'Day Venue Board', 'day-venue-board', 'index.php?option=com_jem&view=day&layout=venueboard&id=0', $groups['calendars']),
             array(array('COM_JEM_FRONTEND_MENU_ANNUAL_CALENDAR', 'COM_JEM_ANNUALCALENDAR_VIEW_DEFAULT_TITLE'), 'Annual Calendar', 'annual-calendar', 'index.php?option=com_jem&view=annualcalendar', $groups['calendars']),
             array(array('COM_JEM_FRONTEND_MENU_MONTHLY_CALENDAR', 'COM_JEM_CALENDAR_VIEW_DEFAULT_TITLE'), 'Monthly Calendar', 'monthly-calendar', 'index.php?option=com_jem&view=calendar', $groups['calendars']),
             array(array('COM_JEM_FRONTEND_MENU_WEEKLY_CALENDAR', 'COM_JEM_WEEKCAL_VIEW_DEFAULT_TITLE'), 'Weekly Calendar', 'weekly-calendar', 'index.php?option=com_jem&view=weekcal', $groups['calendars']),
@@ -124,7 +126,7 @@ class JemControllerFrontendmenu extends BaseController
             $this->keepExistingGeneratedMenuItems($menutype, array('category', 'sample-category-calendar', 'category-calendar'));
         }
 
-        // Keep Venue Calendar as the final entry in the Calendars group.
+        // Keep the Venue view (with Venue Calendar) last in the Calendars group.
         if ($venueCalendarItem) {
             $items[] = $venueCalendarItem;
         }
@@ -141,26 +143,278 @@ class JemControllerFrontendmenu extends BaseController
 
         $items[] = array(array('COM_JEM_FRONTEND_MENU_CATEGORIES_BY_TYPE'), 'Categories by Type', 'categories-by-type', 'index.php?option=com_jem&view=categories&id=1&typeid=0', $groups['types']);
 
+        $viewLayouts = $this->getGeneratedViewLayouts($items, $groups);
+        $viewHeadings = array();
+        $singleLayoutHeadings = array();
         foreach ($items as $item) {
             $itemType        = $item[5] ?? 'component';
             $itemComponentId = $item[6] ?? $componentId;
             $itemParams      = array_merge($this->getMenuItemDefaultParams($item[3]), $item[7] ?? array());
             $itemAccess      = ((int) $item[4] === (int) $groups['management']) ? $specialAccessId : 1;
+            $parentId        = $item[4];
 
-            $menuItemId = $this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $item[4], $itemType, $itemComponentId, array(), $itemAccess, $itemParams);
+            if ($itemType === 'component') {
+                $parts = array();
+                parse_str((string) parse_url($item[3], PHP_URL_QUERY), $parts);
+                $view = (string) ($parts['view'] ?? '');
+                $group = array_search((int) $item[4], $groups, true);
+
+                if (($parts['option'] ?? '') === 'com_jem' && preg_match('/^[a-z][a-z0-9]*$/', $view) && $group !== false) {
+                    $key = $group . ':' . $view;
+                    if (count($viewLayouts[$key]) > 1) {
+                        if (!isset($viewHeadings[$key])) {
+                            $viewTitle = $view === 'day' ? 'Day' : $item[1];
+                            $viewHeadings[$key] = $this->createMenuItem(
+                                $menutype,
+                                array('COM_JEM_' . strtoupper($view) . '_VIEW_DEFAULT_TITLE'),
+                                $viewTitle,
+                                'view-' . $group . '-' . $view,
+                                '#',
+                                $item[4],
+                                'heading',
+                                0,
+                                array(),
+                                $itemAccess
+                            );
+                        }
+                        $parentId = $viewHeadings[$key];
+                    } else {
+                        $singleLayoutHeadings[$key] = array($item[4], 'view-' . $group . '-' . $view);
+                    }
+                }
+            }
+
+            $menuItemId = $this->createMenuItem($menutype, $item[0], $item[1], $item[2], $item[3], $parentId, $itemType, $itemComponentId, array(), $itemAccess, $itemParams);
 
             if ($menuItemId) {
                 $created++;
 
                 if ($item[2] === 'venue-calendar') {
-                    $this->moveMenuItemToLastChild($menuItemId, $groups['calendars']);
+                    $this->moveMenuItemToLastChild($parentId === $groups['calendars'] ? $menuItemId : $parentId, $groups['calendars']);
                 }
             }
         }
 
+        foreach ($singleLayoutHeadings as [$groupId, $alias]) {
+            $this->unpublishEmptyGeneratedViewHeading($menutype, $groupId, $alias);
+        }
+
         $this->unpublishGeneratedMenuItems($menutype, array('sample-venue-calendar', 'sample-category-calendar'));
 
+        $created += $this->createModuleLayoutMenu($menutype, $groups['modules'], $componentId);
+
         return $created;
+    }
+
+    /** Count distinct layouts per generated view and menu group, not menu instances. */
+    protected function getGeneratedViewLayouts(array $items, array $groups): array
+    {
+        $viewLayouts = array();
+        foreach ($items as $item) {
+            if (($item[5] ?? 'component') !== 'component') {
+                continue;
+            }
+
+            $parts = array();
+            parse_str((string) parse_url($item[3], PHP_URL_QUERY), $parts);
+            $view = (string) ($parts['view'] ?? '');
+            $group = array_search((int) $item[4], $groups, true);
+
+            if (($parts['option'] ?? '') === 'com_jem' && preg_match('/^[a-z][a-z0-9]*$/', $view) && $group !== false) {
+                $viewLayouts[$group . ':' . $view][(string) ($parts['layout'] ?? 'default')] = true;
+            }
+        }
+
+        return $viewLayouts;
+    }
+
+    /** Create one isolated, published module instance and menu page per available layout. */
+    protected function createModuleLayoutMenu(string $menutype, int $groupId, int $componentId): int
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $modules = array(
+            'mod_jem', 'mod_jem_banner', 'mod_jem_cal', 'mod_jem_jubilee',
+            'mod_jem_map', 'mod_jem_teaser', 'mod_jem_types', 'mod_jem_wide',
+        );
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('element', 'name')))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('module'))
+            ->where($db->quoteName('client_id') . ' = 0')
+            ->where($db->quoteName('enabled') . ' = 1')
+            ->where($db->quoteName('element') . ' IN (' . implode(',', array_map(array($db, 'quote'), $modules)) . ')');
+        $db->setQuery($query);
+        $installed = $db->loadObjectList('element') ?: array();
+        $created = 0;
+
+        foreach ($modules as $module) {
+            if (!isset($installed[$module])) {
+                continue;
+            }
+
+            $layouts = $this->getModuleLayouts($module);
+            if (!$layouts) {
+                continue;
+            }
+
+            $language = Factory::getApplication()->getLanguage();
+            $language->load($module . '.sys', JPATH_SITE)
+                || $language->load($module . '.sys', JPATH_SITE . '/modules/' . $module);
+            $titleKey = strtoupper($module);
+            $title = $language->hasKey($titleKey)
+                ? Text::_($titleKey)
+                : (trim((string) $installed[$module]->name) ?: $module);
+            $moduleAlias = str_replace('_', '-', $module);
+            $moduleParentId = $this->createMenuItem(
+                $menutype, array(), $title, 'module-' . $moduleAlias, '#', $groupId, 'heading', 0
+            );
+
+            foreach ($layouts as $layout) {
+                $moduleId = $this->ensureGeneratedModuleInstance($module, $layout, $title);
+                $layoutTitle = ucfirst(str_replace(array('_', '-', ':'), ' ', $layout));
+                $alias = 'layout-' . $moduleAlias . '-' . strtolower(preg_replace('/[^a-zA-Z0-9-]+/', '-', $layout));
+                $link = 'index.php?option=com_jem&view=modulepreview&layout=default&module_id=' . $moduleId;
+                $menuItemId = $this->createMenuItem(
+                    $menutype, array(), $layoutTitle, $alias, $link, $moduleParentId,
+                    'component', $componentId, array(), 1, array('module_id' => $moduleId)
+                );
+                $this->assignGeneratedModuleToMenu($moduleId, $menuItemId);
+                $created++;
+            }
+        }
+
+        return $created;
+    }
+
+    /** Match Joomla's modulelayout field: top-level PHP files without underscores. */
+    protected function getModuleLayouts(string $module): array
+    {
+        $path = JPATH_SITE . '/modules/' . $module . '/tmpl';
+        $layouts = array();
+        foreach (glob($path . '/*.php') ?: array() as $file) {
+            $layout = basename($file, '.php');
+            if (preg_match('/^[a-zA-Z0-9-]+$/', $layout)) {
+                $layouts[] = $layout;
+            }
+        }
+        sort($layouts);
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('element'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('template'))
+            ->where($db->quoteName('client_id') . ' = 0')
+            ->where($db->quoteName('enabled') . ' = 1');
+        $db->setQuery($query);
+        foreach ($db->loadColumn() ?: array() as $template) {
+            if (!preg_match('/^[a-zA-Z0-9_-]+$/', (string) $template)) {
+                continue;
+            }
+            $overridePath = JPATH_SITE . '/templates/' . $template . '/html/' . $module;
+            foreach (glob($overridePath . '/*.php') ?: array() as $file) {
+                $layout = basename($file, '.php');
+                if (preg_match('/^[a-zA-Z0-9-]+$/', $layout) && !in_array($layout, $layouts, true)) {
+                    $layouts[] = $template . ':' . $layout;
+                }
+            }
+        }
+
+        return $layouts;
+    }
+
+    /** Never reuse or alter ordinary administrator-created module instances. */
+    protected function ensureGeneratedModuleInstance(string $module, string $layout, string $moduleTitle): int
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $note = 'JEM generated menu: ' . $module . ':' . $layout;
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__modules'))
+            ->where($db->quoteName('module') . ' = ' . $db->quote($module))
+            ->where($db->quoteName('note') . ' = ' . $db->quote($note))
+            ->where($db->quoteName('client_id') . ' = 0');
+        $db->setQuery($query, 0, 1);
+        $existingId = (int) $db->loadResult();
+
+        if ($existingId) {
+            $query = $db->getQuery(true)
+                ->update($db->quoteName('#__modules'))
+                ->set($db->quoteName('published') . ' = 1')
+                ->set($db->quoteName('position') . ' = ' . $db->quote('jem-menu-preview'))
+                ->where($db->quoteName('id') . ' = ' . $existingId);
+            $db->setQuery($query);
+            $db->execute();
+
+            return $existingId;
+        }
+
+        $params = $this->getModuleDefaultParams($module);
+        $params['layout'] = str_contains($layout, ':') ? $layout : '_:' . $layout;
+        $columns = array(
+            'title', 'note', 'content', 'ordering', 'position', 'checked_out', 'checked_out_time',
+            'publish_up', 'publish_down', 'published', 'module', 'access', 'showtitle', 'params',
+            'client_id', 'language',
+        );
+        $values = array(
+            $db->quote($moduleTitle . ' - ' . ucfirst(str_replace('-', ' ', $layout))),
+            $db->quote($note),
+            $db->quote(''),
+            0,
+            $db->quote('jem-menu-preview'),
+            0,
+            $db->quote('0000-00-00 00:00:00'),
+            'NULL',
+            'NULL',
+            1,
+            $db->quote($module),
+            1,
+            0,
+            $db->quote(json_encode($params)),
+            0,
+            $db->quote('*'),
+        );
+        $query = $db->getQuery(true)
+            ->insert($db->quoteName('#__modules'))
+            ->columns($db->quoteName($columns))
+            ->values(implode(',', $values));
+        $db->setQuery($query);
+        $db->execute();
+
+        return (int) $db->insertid();
+    }
+
+    protected function getModuleDefaultParams(string $module): array
+    {
+        $path = JPATH_SITE . '/modules/' . $module . '/' . $module . '.xml';
+        $xml = is_file($path) ? @simplexml_load_file($path) : false;
+        $defaults = array();
+        if (!$xml) {
+            return $defaults;
+        }
+
+        foreach ($xml->xpath('./config/fields[@name="params"]//field[@name and @default]') ?: array() as $field) {
+            $defaults[(string) $field['name']] = (string) $field['default'];
+        }
+
+        return $defaults;
+    }
+
+    protected function assignGeneratedModuleToMenu(int $moduleId, int $menuItemId): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->delete($db->quoteName('#__modules_menu'))
+            ->where($db->quoteName('moduleid') . ' = ' . $moduleId);
+        $db->setQuery($query);
+        $db->execute();
+
+        $query = $db->getQuery(true)
+            ->insert($db->quoteName('#__modules_menu'))
+            ->columns($db->quoteName(array('moduleid', 'menuid')))
+            ->values($moduleId . ',' . $menuItemId);
+        $db->setQuery($query);
+        $db->execute();
     }
 
     protected function ensureMenuType($menutype)
@@ -510,6 +764,45 @@ class JemControllerFrontendmenu extends BaseController
         }
 
         return $defaults;
+    }
+
+    /** Hide a former one-layout view heading only after its generated leaf has moved out. */
+    protected function unpublishEmptyGeneratedViewHeading(string $menutype, int $groupId, string $alias): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('id'))
+            ->from($db->quoteName('#__menu'))
+            ->where($db->quoteName('menutype') . ' = ' . $db->quote($menutype))
+            ->where($db->quoteName('parent_id') . ' = ' . $groupId)
+            ->where($db->quoteName('alias') . ' = ' . $db->quote($alias))
+            ->where($db->quoteName('type') . ' = ' . $db->quote('heading'))
+            ->where($db->quoteName('link') . ' = ' . $db->quote('#'))
+            ->where($db->quoteName('client_id') . ' = 0');
+        $db->setQuery($query, 0, 1);
+        $headingId = (int) $db->loadResult();
+
+        if (!$headingId) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->select('COUNT(*)')
+            ->from($db->quoteName('#__menu'))
+            ->where($db->quoteName('parent_id') . ' = ' . $headingId)
+            ->where($db->quoteName('published') . ' = 1');
+        $db->setQuery($query);
+
+        if ((int) $db->loadResult() > 0) {
+            return;
+        }
+
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__menu'))
+            ->set($db->quoteName('published') . ' = 0')
+            ->where($db->quoteName('id') . ' = ' . $headingId);
+        $db->setQuery($query);
+        $db->execute();
     }
 
     protected function unpublishGeneratedMenuItems($menutype, array $aliases)

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <layout title="COM_JEM_DAY_VIEW_VENUEBOARD_TITLE">
+        <message><![CDATA[COM_JEM_DAY_VIEW_VENUEBOARD_DESC]]></message>
+    </layout>
+    <fields name="params">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
+            <field name="days" type="text" default="0" size="2" label="COM_JEM_DAYS_FIELD" description="COM_JEM_DAYS_FIELD_DESC" class="form-control w-auto" />
+            <field name="event_tree_mode" type="list" default="calendar" label="COM_JEM_EVENT_TREE_MODE" description="COM_JEM_EVENT_TREE_MODE_DESC" class="form-select w-auto">
+                <option value="calendar">COM_JEM_EVENT_TREE_MODE_CALENDAR</option>
+                <option value="parents">COM_JEM_EVENT_TREE_MODE_PARENTS</option>
+                <option value="children">COM_JEM_EVENT_TREE_MODE_CHILDREN</option>
+                <option value="all">COM_JEM_EVENT_TREE_MODE_ALL</option>
+            </field>
+            <field name="onlyfeatured" type="radio" default="0" label="COM_JEM_DISPLAY_FEATUREDONLY" description="COM_JEM_DISPLAY_FEATUREDONLY_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="timeline_filter_venues" type="venueoptions" multiple="true" class="form-select w-auto" default="" label="COM_JEM_TIMELINE_FILTER_VENUES_LABEL" description="COM_JEM_VENUEBOARD_FILTER_VENUES_DESC" />
+            <field name="categoryswitch" type="radio" default="0" label="COM_JEM_TIMELINE_CATEGORY_FILTER_MODE_LABEL" description="COM_JEM_CATEGORYSWITCH_DESC" class="btn-group btn-group-yesno">
+                <option value="1">COM_JEM_INCLUDE</option>
+                <option value="0">COM_JEM_EXCLUDE</option>
+            </field>
+            <field name="categoryswitchcats" type="categoryedit" multiple="true" removeroot="true" class="form-select w-auto jem-options-width-auto" default="" label="COM_JEM_TIMELINE_FILTER_CATEGORIES_LABEL" description="COM_JEM_TIMELINE_FILTER_CATEGORIES_DESC" />
+            <field name="timeline_filter_types" type="jemtype" entity="1" multiple="true" class="form-select w-auto" default="" label="COM_JEM_TIMELINE_FILTER_TYPES_LABEL" description="COM_JEM_TIMELINE_FILTER_TYPES_DESC" />
+            <field name="showintrotext" type="radio" default="0" label="COM_JEM_DISPLAY_INTROTEXT" description="COM_JEM_DISPLAY_INTROTEXT_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="introtext" type="editor" filter="safehtml" hide="readmore,pagebreak,module,menu,fields,contact,article" default="" rows="8" cols="30" height="300px" label="COM_JEM_INTROTEXT_FIELD" description="COM_JEM_INTROTEXT_FIELD_DESC" />
+            <field name="showfootertext" type="radio" default="0" label="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT" description="COM_JEM_GLOBAL_FIELD_SHOW_FOOTERTEXT_DESC" class="btn-group btn-group-yesno">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="footertext" type="editor" filter="safehtml" hide="readmore,pagebreak,module,menu,fields,contact,article" default="" rows="8" cols="30" height="300px" label="COM_JEM_GLOBAL_FIELD_FOOTERTEXT" description="COM_JEM_GLOBAL_FIELD_FOOTERTEXT_DESC" />
+        </fieldset>
+    </fields>
+</metadata>

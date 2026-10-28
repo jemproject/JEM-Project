@@ -22,6 +22,11 @@ namespace Joomla\CMS\Uri {
             return new self();
         }
 
+        public static function root(): string
+        {
+            return '/';
+        }
+
         public function toString(): string
         {
             return '/day';
@@ -61,6 +66,10 @@ namespace Joomla\CMS\HTML {
 
 namespace {
     // Loaded only inside isolated tests, never into Joomla or the main PHPUnit process.
+    if (!defined('JPATH_ROOT')) {
+        define('JPATH_ROOT', JEM_TEST_ROOT);
+    }
+
     final class JemHelper
     {
         public static array $loadedCss = [];
@@ -99,6 +108,14 @@ namespace {
                     return false;
                 }
             };
+        }
+    }
+
+    final class JemFrontendAccess
+    {
+        public static function canAddEventSomewhere(object $user): bool
+        {
+            return false;
         }
     }
 
@@ -157,6 +174,10 @@ namespace {
                 }
 
                 public function addHeadLink(...$args): void
+                {
+                }
+
+                public function addScript(string $url): void
                 {
                 }
             };
@@ -249,6 +270,11 @@ namespace {
         public function setDate(string $date): void
         {
             $this->date = $date;
+        }
+
+        public function getDayEnd(): string
+        {
+            return $this->date;
         }
 
         public function getState(): array

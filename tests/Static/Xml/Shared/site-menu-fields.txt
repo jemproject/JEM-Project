@@ -134,7 +134,9 @@ site/views/day/tmpl/default.xml|calendar_contact_category
 site/views/day/tmpl/default.xml|calendar_contacts
 site/views/day/tmpl/default.xml|categoryswitch
 site/views/day/tmpl/default.xml|categoryswitchcats
+site/views/day/tmpl/default.xml|day_display_mode
 site/views/day/tmpl/default.xml|days
+site/views/day/tmpl/default.xml|displayLegend
 site/views/day/tmpl/default.xml|event_tree_mode
 site/views/day/tmpl/default.xml|footertext
 site/views/day/tmpl/default.xml|introtext
@@ -218,6 +220,17 @@ site/views/day/tmpl/timetable.xml|timetable_minimum_hours
 site/views/day/tmpl/timetable.xml|timetable_orientation
 site/views/day/tmpl/timetable.xml|timetable_range_end
 site/views/day/tmpl/timetable.xml|timetable_range_start
+site/views/day/tmpl/venueboard.xml|categoryswitch
+site/views/day/tmpl/venueboard.xml|categoryswitchcats
+site/views/day/tmpl/venueboard.xml|days
+site/views/day/tmpl/venueboard.xml|event_tree_mode
+site/views/day/tmpl/venueboard.xml|footertext
+site/views/day/tmpl/venueboard.xml|introtext
+site/views/day/tmpl/venueboard.xml|onlyfeatured
+site/views/day/tmpl/venueboard.xml|showfootertext
+site/views/day/tmpl/venueboard.xml|showintrotext
+site/views/day/tmpl/venueboard.xml|timeline_filter_types
+site/views/day/tmpl/venueboard.xml|timeline_filter_venues
 site/views/editcategory/tmpl/edit.xml|footertext
 site/views/editcategory/tmpl/edit.xml|introtext
 site/views/editcategory/tmpl/edit.xml|showfootertext

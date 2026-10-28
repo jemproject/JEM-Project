@@ -32,6 +32,7 @@ final class DayLayoutServices
         return [
             'COM_JEM_TIMETABLE_NO_VENUE' => 'No venue', 'COM_JEM_TIMETABLE_ALL_DAY' => 'All day',
             'COM_JEM_TIMETABLE_TODAY' => 'Today', 'COM_JEM_VENUE_SHORT' => 'Venue', 'COM_JEM_TIME_SHORT' => 'Time',
+            'COM_JEM_VENUEBOARD_OTHER_EVENTS' => 'Other events',
             'COM_JEM_TIMELINE_DAYS_WINDOW_1' => '1 day',
         ][$value] ?? $value;
     }
@@ -44,6 +45,7 @@ final class DayLayoutServices
     public static function renderCalendarSpecialDayBadges(...$args): string { return ''; }
     public static function renderCalendarContactFilterContext(...$args): string { return ''; }
     public static function getEventRoute($slug): string { return 'index.php?option=com_jem&view=event&id=' . $slug; }
+    public static function getVenueRoute($slug): string { return 'index.php?option=com_jem&view=venue&id=' . $slug; }
     public static function getCategoryList(...$args): array { return []; }
     public static function translateType(...$args): void {}
     public static function createButtonBar(...$args): string { return ''; }
@@ -71,6 +73,8 @@ final class DayLayoutFixture
     public string $task = '';
     public string $print_link = '';
     public array $permissions = [];
+    public array $venueBoard = ['mode' => 'venues', 'locations' => []];
+    public array $venueBoardAssignments = [];
 
     public function __construct(array $params = [], ?array $rows = null)
     {
@@ -122,7 +126,7 @@ final class DayLayoutFixture
 
     public function render(string $layout = 'timetable'): string
     {
-        if (!in_array($layout, ['timetable', 'responsive/timetable', 'timeline', 'responsive/timeline'], true)) {
+        if (!in_array($layout, ['timetable', 'responsive/timetable', 'timeline', 'responsive/timeline', 'venueboard'], true)) {
             throw new InvalidArgumentException('Unexpected fixture layout');
         }
         ob_start();

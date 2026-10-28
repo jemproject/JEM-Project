@@ -15,12 +15,97 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
 
 require_once __DIR__ . '/../../helpers/calendaragenda.php';
+require_once __DIR__ . '/../../classes/venueboard.class.php';
 
 /**
  * Day-View
  */
 class JemViewDay extends JemView
 {
+    public $venueBoard = array();
+    public $venueBoardAssignments = array();
+
+    /** Determine visible board columns before the existing Day query runs. */
+    private function prepareVenueBoard($model, $params, $user): array
+    {
+        $selectedIds = JemVenueBoard::selectedIds($params->get('timeline_filter_venues', array()));
+        if (count($selectedIds) !== 1) {
+            return array('mode' => 'venues', 'locations' => array());
+        }
+
+        $visibleIds = JemHelper::getVisibleVenueHierarchyIds($user->getAuthorisedViewLevels());
+        $venueId = $selectedIds[0];
+        if (!in_array($venueId, $visibleIds, true)) {
+            return array('mode' => 'venues', 'locations' => array());
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('id', 'venue', 'alias', 'parent_venue_id')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('id') . ' = ' . $venueId);
+        $db->setQuery($query);
+        $selectedVenue = $db->loadObject();
+
+        if (!$selectedVenue) {
+            return array('mode' => 'venues', 'locations' => array());
+        }
+
+        if ((int) $selectedVenue->parent_venue_id > 0) {
+            $query = $db->getQuery(true)
+                ->select($db->quoteName(array('id', 'name', 'color')))
+                ->from($db->quoteName('#__jem_venue_spaces'))
+                ->where($db->quoteName('venue_id') . ' = ' . $venueId)
+                ->where($db->quoteName('published') . ' = 1')
+                ->order($db->quoteName('ordering') . ' ASC, ' . $db->quoteName('name') . ' ASC');
+            $db->setQuery($query);
+            $spaces = $db->loadObjectList('id') ?: array();
+
+            return $spaces
+                ? array('mode' => 'spaces', 'locations' => $spaces)
+                : array('mode' => 'venues', 'locations' => array($venueId => (object) array('id' => $venueId, 'name' => $selectedVenue->venue, 'alias' => $selectedVenue->alias)));
+        }
+
+        $query = $db->getQuery(true)
+            ->select(array($db->quoteName('id'), $db->quoteName('venue', 'name'), $db->quoteName('alias')))
+            ->from($db->quoteName('#__jem_venues'))
+            ->where($db->quoteName('parent_venue_id') . ' = ' . $venueId)
+            ->where($db->quoteName('id') . ' IN (' . implode(',', $visibleIds) . ')')
+            ->order($db->quoteName('venue_tree_order') . ' ASC, ' . $db->quoteName('venue') . ' ASC');
+        $db->setQuery($query);
+        $children = $db->loadObjectList('id') ?: array();
+        $venueIds = array_merge(array($venueId), array_map('intval', array_keys($children)));
+        $model->setState('filter.venue_id', $venueIds);
+        $model->setState('filter.venue_id.include', true);
+
+        return array('mode' => 'venues', 'locations' => $children);
+    }
+
+    /** Load only assignments belonging to events already returned by the Day model. */
+    private function getVenueBoardAssignments(array $rows): array
+    {
+        $eventIds = array_values(array_unique(array_filter(array_map(static function ($row) {
+            return (int) ($row->id ?? 0);
+        }, $rows))));
+        if (!$eventIds) {
+            return array();
+        }
+
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $query = $db->getQuery(true)
+            ->select($db->quoteName(array('event_id', 'venue_space_id')))
+            ->from($db->quoteName('#__jem_event_space_layouts'))
+            ->where($db->quoteName('event_id') . ' IN (' . implode(',', $eventIds) . ')');
+        $db->setQuery($query);
+        $assignments = array();
+
+        foreach ($db->loadObjectList() ?: array() as $assignment) {
+            $assignments[(int) $assignment->event_id][] = (int) $assignment->venue_space_id;
+        }
+
+        return $assignments;
+    }
+
     public function __construct($config = array())
     {
         parent::__construct($config);
@@ -68,7 +153,8 @@ class JemViewDay extends JemView
         $requestVenueId = $jinput->getInt('locid', 0);
         $requestCategoryId = $jinput->getInt('catid', 0);
         $requestDate = $jinput->getCmd('id', '');
-        $isHourGrid = !in_array($this->getLayout(), array('timetable', 'timeline'), true)
+        $isVenueBoard = $this->getLayout() === 'venueboard';
+        $isHourGrid = !in_array($this->getLayout(), array('timetable', 'timeline', 'venueboard'), true)
             && JemCalendarAgendaHelper::getDayMode($params) === 'timetable';
 
         // Load css
@@ -76,6 +162,9 @@ class JemViewDay extends JemView
         JemHelper::loadCss('calendar');
         if (in_array($this->getLayout(), array('timetable', 'timeline'), true)) {
             JemHelper::loadCss('timetable');
+        }
+        if ($isVenueBoard) {
+            JemHelper::loadCss('venueboard');
         }
         if ($isHourGrid) {
             JemHelper::loadCss('calendar-hourgrid');
@@ -104,10 +193,15 @@ class JemViewDay extends JemView
 
         // Ensure menu date parameters are applied before loading events.
         $model = $this->getModel();
-        $model->setDate($requestDate);
+        $model->setDate($requestDate, $isVenueBoard ? 1 : null);
+        $venueBoard = array('mode' => 'venues', 'locations' => array());
+        if ($isVenueBoard) {
+            $model->getState();
+            $venueBoard = $this->prepareVenueBoard($model, $params, $user);
+        }
 
         $isTimetableLayout = in_array($this->getLayout(), array('timetable', 'timeline'), true);
-        if ($isTimetableLayout || $isHourGrid) {
+        if ($isTimetableLayout || $isHourGrid || $isVenueBoard) {
             // These layouts have no pagination: load the complete, date-bounded range.
             // Initialise request state first so it cannot restore a saved limit/offset.
             $model->getState();
@@ -118,6 +212,8 @@ class JemViewDay extends JemView
         // Get data from model
         $rows = $this->get('Items');
         $day  = $this->get('Day');
+        $venueBoardAssignments = $isVenueBoard && $venueBoard['mode'] === 'spaces'
+            ? $this->getVenueBoardAssignments($rows ?: array()) : array();
 
         $daydate     = JemOutput::formatdate($day);
         $showdaydate = true; // show by default
@@ -135,7 +231,15 @@ class JemViewDay extends JemView
       //$pathway->setItemName(1, $menuitem->title);
         } else {
             // TODO: If we can integrate $daydate into page_heading we should set $showdaydate to false.
-            $pagetitle   = $this->getLayout() === 'timeline' ? Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE') : ($isTimetableLayout ? Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE') : Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY'));
+            if ($isVenueBoard) {
+                $pagetitle = Text::_('COM_JEM_DAY_VIEW_VENUEBOARD_TITLE');
+            } elseif ($this->getLayout() === 'timeline') {
+                $pagetitle = Text::_('COM_JEM_DAY_VIEW_TIMELINE_TITLE');
+            } elseif ($isTimetableLayout) {
+                $pagetitle = Text::_('COM_JEM_DAY_VIEW_TIMETABLE_TITLE');
+            } else {
+                $pagetitle = Text::_('COM_JEM_DEFAULT_PAGE_TITLE_DAY');
+            }
             $params->set('page_heading', $pagetitle);
             $pathway->addItem($pagetitle);
         }
@@ -219,6 +323,8 @@ class JemViewDay extends JemView
         $this->day           = $day;
         $this->dayEnd        = $model->getDayEnd();
         $this->daydate       = $daydate;
+        $this->venueBoard    = $venueBoard;
+        $this->venueBoardAssignments = $venueBoardAssignments;
         $this->showdaydate   = $showdaydate; // if true daydate will be shown as h2 sub heading
         $this->pageclass_sfx =$pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
 

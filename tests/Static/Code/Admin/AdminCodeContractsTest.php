@@ -138,10 +138,10 @@ final class AdminCodeContractsTest extends TestCase
         self::assertStringContainsString("'venue-calendar',", $code);
         self::assertStringContainsString("'index.php?option=com_jem&view=venue&layout=calendar&id=' . \$this->slug(\$venue)", $code);
         self::assertStringContainsString("array('show_venue_selector' => '1')", $code);
-        self::assertStringContainsString('// Keep Venue Calendar as the final entry in the Calendars group.', $code);
+        self::assertStringContainsString('// Keep the Venue view (with Venue Calendar) last in the Calendars group.', $code);
         self::assertStringContainsString('$items[] = $venueCalendarItem;', $code);
         self::assertStringContainsString("if (\$item[2] === 'venue-calendar')", $code);
-        self::assertStringContainsString("\$this->moveMenuItemToLastChild(\$menuItemId, \$groups['calendars']);", $code);
+        self::assertStringContainsString("\$this->moveMenuItemToLastChild(\$parentId === \$groups['calendars'] ? \$menuItemId : \$parentId, \$groups['calendars']);", $code);
         self::assertStringContainsString('protected function moveMenuItemToLastChild($id, $parentId)', $code);
 
         self::assertGreaterThan(
