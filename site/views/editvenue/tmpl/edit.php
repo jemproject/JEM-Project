@@ -1017,7 +1017,13 @@ Text::script('JCANCEL');
                     <?php else : ?>
                         <?php echo $this->form->getInput('type_id'); ?>
                     <?php endif; ?>
-                    <li><?php echo $this->form->getLabel('access'); ?><?php echo $this->form->getInput('access'); ?></li>
+                    <li><?php echo $this->form->getLabel('access'); ?><?php
+                        echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]', array(
+                            'list.attr' => ' class="form-select inputbox" size="1"',
+                            'list.select' => $this->item->access,
+                            'id' => 'access',
+                        ));
+                        ?></li>
                     <li><?php echo $this->form->getLabel('published'); ?><?php echo $this->form->getInput('published'); ?></li>
                 </ul>
             </fieldset>

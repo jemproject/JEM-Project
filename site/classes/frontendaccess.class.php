@@ -19,6 +19,23 @@ require_once __DIR__ . '/accessdecision.class.php';
 abstract class JemFrontendAccess
 {
     /**
+     * Frontend editors may only assign a view level they can use themselves.
+     * Do not turn an unavailable Joomla default into Public implicitly.
+     */
+    public static function canAssignViewLevel($user, $access)
+    {
+        if ((!is_int($access) && (!is_string($access) || !ctype_digit($access))) || (int) $access < 1) {
+            return false;
+        }
+
+        return in_array(
+            (int) $access,
+            array_map('intval', (array) $user->getAuthorisedViewLevels()),
+            true
+        );
+    }
+
+    /**
      * Enforce an already-computed frontend view permission.
      *
      * Raw downloads do not pass through the HTML view, so they must apply the

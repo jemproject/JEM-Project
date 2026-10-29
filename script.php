@@ -635,6 +635,9 @@ class com_jemInstallerScript
                 'downloads'     => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `created_by`",
                 'last_download' => "DATETIME NULL DEFAULT NULL AFTER `downloads`",
             ),
+            '#__jem_types' => array(
+                'language' => "CHAR(7) NOT NULL DEFAULT '*'",
+            ),
         );
 
         foreach ($definitionsByTable as $table => $definitions) {

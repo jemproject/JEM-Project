@@ -92,7 +92,9 @@ class JemViewEditevent extends JemView
         }
 
         $access = isset($item->access) ? $item->access : 0;
-        $authorised = $authorised && in_array($access, $user->getAuthorisedViewLevels());
+        if (!empty($item->id)) {
+            $authorised = $authorised && JemFrontendAccess::canAssignViewLevel($user, $access);
+        }
 
         if ($authorised !== true) {
             throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
@@ -178,7 +180,24 @@ class JemViewEditevent extends JemView
             return false;
         }
 
-        $access2      = JemHelper::getAccesslevelOptions(true, $access);
+        if (empty($item->id)) {
+            $access = $this->form->getValue('access');
+
+            if (!JemFrontendAccess::canAssignViewLevel($user, $access)) {
+                $access = 0;
+                $app->enqueueMessage(Text::_('COM_JEM_FRONTEND_ACCESS_DEFAULT_UNAVAILABLE'), 'warning');
+            }
+
+            $item->access = $access;
+        }
+
+        $access2 = JemHelper::getAccesslevelOptions(true, $access);
+        if (empty($item->id) && !$access) {
+            array_unshift($access2, (object) array(
+                'value' => '0',
+                'text' => Text::_('COM_JEM_FRONTEND_ACCESS_CHOOSE'),
+            ));
+        }
         $this->access = $access2;
 
         // Load css

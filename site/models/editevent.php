@@ -26,6 +26,17 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditevent extends JemModelEvent
 {
+    public function save($data)
+    {
+        if (!JemFrontendAccess::canAssignViewLevel(JemFactory::getUser(), $data['access'] ?? null)) {
+            $this->setError(Text::_('COM_JEM_FRONTEND_ACCESS_INVALID'));
+
+            return false;
+        }
+
+        return parent::save($data);
+    }
+
     protected function canEditCustomSeriesOccurrence($event, $backend)
     {
         return JemFactory::getUser()->can('edit', 'event', (int) $event->id, (int) $event->created_by);
