@@ -1049,7 +1049,13 @@ Text::script('JCANCEL');
                     <dt><?php echo $this->form->getLabel('age_level_id'); ?></dt>
                     <dd><?php echo $this->form->getInput('age_level_id'); ?></dd>
                     <dt><?php echo $this->form->getLabel('access'); ?></dt>
-                    <dd><?php echo $this->form->getInput('access'); ?></dd>
+                    <dd><?php
+                        echo HTMLHelper::_('select.genericlist', $this->access, 'jform[access]', array(
+                            'list.attr' => ' class="form-select inputbox" size="1"',
+                            'list.select' => $this->item->access,
+                            'id' => 'access',
+                        ));
+                        ?></dd>
                     <dt><?php echo $this->form->getLabel('published'); ?></dt>
                     <dd><?php echo $this->form->getInput('published'); ?></dd>
                 </dl>

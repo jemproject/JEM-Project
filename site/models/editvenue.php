@@ -9,6 +9,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
@@ -22,6 +23,17 @@ require_once JPATH_SITE . '/components/com_jem/classes/customfields.class.php';
  */
 class JemModelEditvenue extends JemModelVenue
 {
+    public function save($data)
+    {
+        if (!JemFrontendAccess::canAssignViewLevel(JemFactory::getUser(), $data['access'] ?? null)) {
+            $this->setError(Text::_('COM_JEM_FRONTEND_ACCESS_INVALID'));
+
+            return false;
+        }
+
+        return parent::save($data);
+    }
+
     /**
      * Model typeAlias string. Used for version history.
      * @var        string

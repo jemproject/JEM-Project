@@ -26,6 +26,18 @@ namespace {
 
     final class FrontendAccessPolicyTest extends TestCase
     {
+        public function testFrontendAccessAssignmentRejectsUnviewableDefaultsAndInvalidValues(): void
+        {
+            $user = new FrontendAccessUserStub(array(1, 2, 5), true);
+
+            self::assertTrue(JemFrontendAccess::canAssignViewLevel($user, '2'));
+            self::assertTrue(JemFrontendAccess::canAssignViewLevel($user, 5));
+            self::assertFalse(JemFrontendAccess::canAssignViewLevel($user, 8));
+            self::assertFalse(JemFrontendAccess::canAssignViewLevel($user, 0));
+            self::assertFalse(JemFrontendAccess::canAssignViewLevel($user, '2invalid'));
+            self::assertFalse(JemFrontendAccess::canAssignViewLevel($user, array(2)));
+        }
+
         public function testCanonicalAndLegacyIdsAreNormalised(): void
         {
             $canonical = new FrontendAccessInputStub(array('a_id' => '42'));
