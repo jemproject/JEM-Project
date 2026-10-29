@@ -616,8 +616,14 @@ class PlgContentJemlistevents extends CMSPlugin
         if ($parameters['title'] === 'link') {
             $html .= '<a href="' . $linkdetails . '">';
         }
-        $fulltitle = htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8');
-        $title = mb_strlen($fulltitle) > $parameters['cut_title'] ? mb_substr($fulltitle, 0, $parameters['cut_title']) . '&nbsp;…' : $fulltitle;
+        $title = htmlspecialchars($event->title, ENT_QUOTES, 'UTF-8');
+        if (mb_strlen($event->title, 'UTF-8') > $parameters['cut_title']) {
+            $title = htmlspecialchars(
+                mb_substr($event->title, 0, $parameters['cut_title'], 'UTF-8'),
+                ENT_QUOTES,
+                'UTF-8'
+            ) . '&nbsp;…';
+        }
         $html .= $title;
         if ($parameters['title'] === 'link') {
             $html .= '</a>';

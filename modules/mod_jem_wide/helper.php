@@ -138,8 +138,12 @@ abstract class ModJemWideHelper
 
             # cut titel
             $fulltitle = htmlspecialchars($row->title, ENT_COMPAT, 'UTF-8');
-            if (mb_strlen($fulltitle) > $max_title_length) {
-                $title = mb_substr($fulltitle, 0, $max_title_length) . '...';
+            if (mb_strlen($row->title, 'UTF-8') > $max_title_length) {
+                $title = htmlspecialchars(
+                    mb_substr($row->title, 0, $max_title_length, 'UTF-8'),
+                    ENT_COMPAT,
+                    'UTF-8'
+                ) . '...';
             } else {
                 $title = $fulltitle;
             }
