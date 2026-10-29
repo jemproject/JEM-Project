@@ -16,6 +16,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Helper\ModuleHelper;
@@ -78,6 +79,27 @@ abstract class ModJemCalHelper extends ModuleHelper
             $module->in_ajax_call = true;
             return self::renderModule($module);
         }
+    }
+
+    /**
+     * Format stored wall-clock times without interpreting missing values as timestamps.
+     */
+    protected static function formatTooltipTimeRange(?string $startTime, ?string $endTime): string
+    {
+        $times = [];
+
+        foreach ([$startTime, $endTime] as $time) {
+            $valid = preg_match('/\A([01]\d|2[0-3]):([0-5]\d)(?::[0-5]\d)?\z/', (string) $time, $matches);
+            $times[] = $valid === 1 ? (int) $matches[1] . ':' . $matches[2] : '';
+        }
+
+        [$start, $end] = $times;
+
+        if ($start !== '') {
+            return $end !== '' ? $start . '-' . $end : $start;
+        }
+
+        return $end !== '' ? Text::sprintf('MOD_JEM_CAL_TIME_UNTIL', $end) : '';
     }
 
     public static function getDays($greq_year, $greq_month, &$params)
@@ -169,6 +191,9 @@ abstract class ModJemCalHelper extends ModuleHelper
         foreach ($events as $index => $event) {
             $hasEventAccess = !isset($event->user_has_access_event) || (bool) $event->user_has_access_event;
             $eventRoute     = $hasEventAccess ? Route::_(JemHelper::applyEventRouteLayout(JemHelperRoute::getEventRoute($event->slug), $params)) : Route::_('index.php?option=com_users&view=login');
+            $timeRange = $DisplayTime == 1
+                ? self::formatTooltipTimeRange($event->times, $event->endtimes)
+                : '';
 
             # Adding categories
             $nr      = is_array($event->categories) ? count($event->categories) : 0;
@@ -233,8 +258,8 @@ abstract class ModJemCalHelper extends ModuleHelper
                         if ($DisplayLink == 1) {
                             $title .= '<a href="' . $eventRoute . '">';
                         }
-                        if ($DisplayTime == 1) {
-                            $title .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
+                        if ($timeRange !== '') {
+                            $title .= htmlspecialchars($timeRange, ENT_COMPAT, 'UTF-8') . ' ';
                         }
                         $title .= htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
                         if ($DisplayCat == 1) {
@@ -255,8 +280,8 @@ abstract class ModJemCalHelper extends ModuleHelper
                         if ($DisplayLink == 1) {
                             $newTitle .= '<a href="' . $eventRoute . '">';
                         }
-                        if ($DisplayTime == 1) {
-                            $newTitle .= date('G:i', strtotime((string) $event->times)) . '-' . date('G:i', strtotime((string) $event->endtimes)) . ' ';
+                        if ($timeRange !== '') {
+                            $newTitle .= htmlspecialchars($timeRange, ENT_COMPAT, 'UTF-8') . ' ';
                         }
                         $newTitle .= htmlspecialchars($cut ? mb_substr($event->title,  0, $max_title_len) . '...' : $event->title, ENT_COMPAT, 'UTF-8');
                         if ($DisplayCat == 1) {
