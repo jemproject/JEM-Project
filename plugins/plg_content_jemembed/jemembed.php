@@ -246,11 +246,11 @@ class PlgContentJemembed extends CMSPlugin
                 );
                 $linkvenue = $this->buildUrl(Route::_(JemHelperRoute::getVenueRoute($event->venueslug)), $siteDomain);
                 
-                // Format title based on parameters
-                $fulltitle = htmlspecialchars($event->title, ENT_COMPAT, 'UTF-8');
+                // JSON carries plain text; clients escape it for their output context.
+                $fulltitle = (string) $event->title;
                 $displayTitle = $fulltitle;
-                if (mb_strlen($fulltitle) > $parameters['cut_title']) {
-                    $displayTitle = mb_substr($fulltitle, 0, max(1, $parameters['cut_title'] - 1)) . '…';
+                if (mb_strlen($fulltitle, 'UTF-8') > $parameters['cut_title']) {
+                    $displayTitle = mb_substr($fulltitle, 0, $parameters['cut_title'], 'UTF-8') . '…';
                 }
                 
                 // Build the formatted event data
