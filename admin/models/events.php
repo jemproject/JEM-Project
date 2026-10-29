@@ -238,15 +238,23 @@ class JemModelEvents extends ListModel
         // Filter by Date
         $startDate = $this->getState('filter_begin');
         $endDate   = $this->getState('filter_end');
+
+        // Use the start date when the event has no explicit end date.
+        $effectiveEndDate = 'COALESCE(a.enddates, a.dates)';
+
         if (!empty($startDate) && !empty($endDate)) {
             $query->where('(a.dates >= '.$db->Quote($startDate).')');
-            $query->where('(a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' . $db->Quote($endDate) . '))');
+            $query->where($effectiveEndDate . ' <= ' . $db->quote($endDate));
         } else {
             if (!empty($startDate)) {
                 $query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
             }
             if (!empty($endDate)) {
-                $query->where('(a.enddates IS NULL OR a.enddates <= ' . $db->Quote($endDate) . ' OR (a.enddates is null AND a.dates <= ' .  $db->Quote($endDate) . '))');
+                // Retain undated events when only one boundary is supplied.
+                $query->where(
+                    '(' . $effectiveEndDate . ' IS NULL'
+                    . ' OR ' . $effectiveEndDate . ' <= ' . $db->quote($endDate) . ')'
+                );
             }
         }
 

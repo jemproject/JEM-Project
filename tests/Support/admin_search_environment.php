@@ -64,6 +64,17 @@ final class AdminSearchDatabase extends \Joomla\Database\Sqlite\SqliteDriver
         $this->connect();
         $this->connection->sqliteCreateFunction('CONCAT', static fn (...$parts) => implode('', $parts));
     }
+
+    // PDO SQLite does not provide SELECT row counts. Count the actual result
+    // rows for Joomla's grouped-query total fallback in this isolated fixture.
+    public function getNumRows()
+    {
+        $count = 0;
+        while ($this->fetchArray() !== false) {
+            $count++;
+        }
+        return $count;
+    }
 }
 
 final class JemConfig
