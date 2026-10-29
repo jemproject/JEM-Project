@@ -133,7 +133,7 @@ class JemModelSpecialdays extends ListModel
             ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
+        if (trim((string) $search) !== '') {
             $search = $db->quote('%' . $db->escape($search, true) . '%');
             $query->where('(a.title LIKE ' . $search . ' OR a.description LIKE ' . $search . ')');
         }

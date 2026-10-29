@@ -148,7 +148,7 @@ class JemModelGroups extends ListModel
         // Filter by search
         $search = $this->getState('filter_search');
 
-        if (!empty($search)) {
+        if (trim((string) $search) !== '') {
             if (stripos($search, 'id:') === 0) {
                 $query->where('a.id = '.(int) substr($search, 3));
             } else {

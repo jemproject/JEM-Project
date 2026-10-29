@@ -179,7 +179,7 @@ class JemModelUsers extends BaseDatabaseModel
         /*
          * Search venues
          */
-        if ($search) {
+        if ($search !== '') {
             $where[] = ' LOWER(u.name) LIKE '.$this->_db->quote('%'.$search.'%');
         }
 

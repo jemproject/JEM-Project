@@ -109,7 +109,7 @@ class JemModelUserelement extends BaseDatabaseModel
         /*
          * Search name
          */
-        if ($search) {
+        if ($search !== '') {
             $where[] = ' LOWER(u.name) LIKE '.$db->quote('%'.$search.'%');
         }
 

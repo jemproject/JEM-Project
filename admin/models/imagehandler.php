@@ -179,7 +179,7 @@ class JemModelImagehandler extends BaseDatabaseModel
                 $this->_list = array();
                 foreach ($fileList as $file) {
                     if (is_file($basePath.'/'.$file) && substr($file, 0, 1) != '.') {
-                        if (empty($search) || stristr($file, $search)) {
+                        if ((string) $search === '' || stristr($file, $search) !== false) {
                             $tmp = new stdClass();
                             $tmp->name = $file;
                             $tmp->path = Path::clean($basePath.'/'.$file);

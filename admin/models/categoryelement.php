@@ -98,7 +98,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
 
         // select the records
         // note, since this is a tree we have to do the limits code-side
-        if ($search) {
+        if ($search !== '') {
             $query = 'SELECT c.id FROM #__jem_categories AS c' . ' WHERE LOWER(c.catname) LIKE ' . $db->Quote('%' . $this->_db->escape($search, true) . '%', false) . $where2;
             $db->setQuery($query);
             $search_rows = $db->loadColumn();
@@ -150,7 +150,7 @@ class JemModelCategoryelement extends BaseDatabaseModel
         $list = JemCategories::treerecurse($parentid, '', array(), $children, 9999, 0, 0);
 
         // eventually only pick out the searched items.
-        if ($search) {
+        if ($search !== '') {
             $list1 = array();
 
             foreach ($search_rows as $sid) {
