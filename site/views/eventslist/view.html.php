@@ -326,6 +326,7 @@ class JemViewEventslist extends JemView
         $this->_prepareDocument();
         JemLog::traceEventslist('view.display.before_render', array('page_count' => count((array) $rows)));
         parent::display($tpl);
+        JemLog::traceEventslistViewTemplate((string) $this->getLayout(), (string) $this->_template);
         JemLog::traceEventslist('view.display.return', array('page_count' => count((array) $rows)));
     }
 

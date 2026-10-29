@@ -37,7 +37,12 @@ require_once(JPATH_SITE.'/components/com_jem/factory.php');
 
 JemHelper::loadComponentLanguage();
 
-$list = ModJemHelper::getList($params);
+JemLog::beginEventslistModuleTrace($module, $params);
+try {
+    $list = ModJemHelper::getList($params);
+} finally {
+    JemLog::endEventslistModuleTrace();
+}
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
     return;

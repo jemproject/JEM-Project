@@ -42,6 +42,35 @@ final class EventslistTraceTest extends TestCase
         ), $actual);
     }
 
+    public function testEventIdsAreBoundedAndCannotContainEventData(): void
+    {
+        $method = new ReflectionMethod(JemLog::class, 'normaliseTraceMetrics');
+        $actual = $method->invoke(null, array(
+            'event_ids' => array_merge(range(1, 25), array('secret', -1, 0)),
+            'without_category_ids' => array(4, 9),
+            'array_value' => array('private title'),
+        ));
+
+        self::assertSame(range(1, 20), $actual['event_ids']);
+        self::assertSame(array(4, 9), $actual['without_category_ids']);
+        self::assertArrayNotHasKey('array_value', $actual);
+        self::assertSame(array(), $method->invoke(null, array('event_ids' => array(4, 9)), false));
+    }
+
+    public function testSqlAndErrorMessagesHideLiteralValues(): void
+    {
+        $queryMethod = new ReflectionMethod(JemLog::class, 'redactEventslistSql');
+        $errorMethod = new ReflectionMethod(JemLog::class, 'redactEventslistSqlError');
+        $query = $queryMethod->invoke(null, "SELECT a.id FROM #__jem_events AS a WHERE a.title = 'Private event' AND a.id = 123");
+        $error = $errorMethod->invoke(null, "Unknown column 'jt.language' in 'ON' near 'Private event'");
+
+        self::assertStringContainsString('#__jem_events', $query);
+        self::assertStringNotContainsString('Private event', $query);
+        self::assertStringNotContainsString('123', $query);
+        self::assertStringContainsString('Unknown column', $error);
+        self::assertStringNotContainsString('Private event', $error);
+    }
+
     public function testTraceDoesNotAddStandardRequestContext(): void
     {
         $source = (string) file_get_contents(JEM_TEST_ROOT . '/site/classes/log.class.php');
@@ -62,6 +91,7 @@ final class EventslistTraceTest extends TestCase
             'getListQuery.return',
             '_getListCount.return',
             'getItems.query_return',
+            'getItems.query_failed',
             'getCategoriesForItems.return',
             'getItems.visibility_return',
             'getItems.return',
@@ -71,5 +101,8 @@ final class EventslistTraceTest extends TestCase
 
         self::assertStringContainsString("traceEventslist('view.pagination.return'", $view);
         self::assertStringContainsString("traceEventslist('view.display.return'", $view);
+        self::assertStringContainsString('traceEventslistSql((string) $query)', $model);
+        self::assertStringContainsString('if ($items === false)', $model);
+        self::assertStringContainsString('traceEventslistViewTemplate', $view);
     }
 }

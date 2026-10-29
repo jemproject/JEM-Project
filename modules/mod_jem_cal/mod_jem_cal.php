@@ -150,7 +150,12 @@ $props_next_year = '&modjemcal_month='.$req_month.'&modjemcal_year='.$next_year;
 
 # Get data
 $params->set('module_id', $module->id); // used for debug log
-$days = ModJemCalHelper::getDays($offset_year, $offset_month, $params);
+JemLog::beginEventslistModuleTrace($module, $params);
+try {
+    $days = ModJemCalHelper::getDays($offset_year, $offset_month, $params);
+} finally {
+    JemLog::endEventslistModuleTrace();
+}
 
 $mod_name = 'mod_jem_cal';
 

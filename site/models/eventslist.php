@@ -732,13 +732,19 @@ class JemModelEventslist extends ListModel
             )));
 
             $levels = $forcedLevels ?: array(0);
-            $this->traceEventslist('getViewAccessLevels.return', array('level_count' => count($levels)));
+            $this->traceEventslist('getViewAccessLevels.return', array(
+                'level_count' => count($levels),
+                'access_level_ids' => $levels,
+            ));
 
             return $levels;
         }
 
         $levels = array_values(array_map('intval', JemFactory::getUser()->getAuthorisedViewLevels()));
-        $this->traceEventslist('getViewAccessLevels.return', array('level_count' => count($levels)));
+        $this->traceEventslist('getViewAccessLevels.return', array(
+            'level_count' => count($levels),
+            'access_level_ids' => $levels,
+        ));
 
         return $levels;
     }
@@ -1552,7 +1558,18 @@ class JemModelEventslist extends ListModel
             'country_filter_active' => !empty($this->getState('filter.country_id')),
             'featured_filter_active' => !empty($this->getState('filter.featured')),
             'search_active' => !empty($this->getState('filter.filter_search')),
+            'event_tree' => $eventTree,
+            'strict_access' => $strictAccess,
+            'category_filter_ids' => $this->normaliseParamIds($this->getState('filter.category_id')),
+            'venue_filter_ids' => $this->normaliseParamIds($this->getState('filter.venue_id')),
+            'type_filter_ids' => $this->normaliseParamIds($this->getState('filter.type_id')),
+            'published_states' => array_map('intval', (array) $this->getState('filter.published', 1)),
         ));
+
+        if (class_exists('JemLog', false) && method_exists('JemLog', 'traceEventslistSql')
+            && JemLog::getConfiguredLevel() === 5) {
+            JemLog::traceEventslistSql((string) $query);
+        }
 
         return $query;
     }
@@ -1610,7 +1627,22 @@ class JemModelEventslist extends ListModel
     {
         $items = parent::getItems();
 
-        $this->traceEventslist('getItems.query_return', array('page_count' => count((array) $items)));
+        if ($items === false) {
+            $error = (string) $this->getError();
+            $this->traceEventslist('getItems.query_failed', array('query_error_present' => $error !== ''));
+            if (class_exists('JemLog', false) && method_exists('JemLog', 'traceEventslistSqlError')) {
+                JemLog::traceEventslistSqlError($error);
+            }
+
+            return array();
+        }
+
+        $this->traceEventslist('getItems.query_return', array(
+            'page_count' => count($items),
+            'event_ids' => array_map(static function ($item) {
+                return (int) $item->id;
+            }, $items),
+        ));
 
         if (empty($items)) {
             $this->traceEventslist('getItems.return', array('page_count' => 0));
@@ -1626,10 +1658,19 @@ class JemModelEventslist extends ListModel
         $itemIds = array_map(static function ($item) {
             return (int) $item->id;
         }, $items);
-        $categoriesByItem = $this->getCategoriesForItems($itemIds);
+        try {
+            $categoriesByItem = $this->getCategoriesForItems($itemIds);
+        } catch (\RuntimeException $e) {
+            if (class_exists('JemLog', false) && method_exists('JemLog', 'traceEventslistSqlError')) {
+                JemLog::traceEventslistSqlError($e->getMessage());
+            }
+
+            throw $e;
+        }
         $this->traceEventslist('getItems.categories_loaded', array(
             'page_count' => count($items),
             'with_categories_count' => count($categoriesByItem),
+            'event_ids' => array_keys($categoriesByItem),
         ));
         // ACL must see every relation, not just published/visible menu categories.
         $aclCategoryIds = !empty($user->id) && !$user->get('guest', 0)
@@ -1638,6 +1679,8 @@ class JemModelEventslist extends ListModel
 
         $withoutCategories = 0;
         $blockedByAge = 0;
+        $withoutCategoryIds = array();
+        $ageRestrictedIds = array();
 
         # Convert the parameter fields into objects.
         foreach ($items as $index => $item)
@@ -1667,6 +1710,7 @@ class JemModelEventslist extends ListModel
             if (empty($item->categories)) {
                 unset ($items[$index]);
                 $withoutCategories++;
+                $withoutCategoryIds[] = (int) $item->id;
                 continue;
             } else {
                 # write access permissions.
@@ -1680,6 +1724,7 @@ class JemModelEventslist extends ListModel
                 if (!JemAgeAccess::canViewEvent($item)) {
                     unset($items[$index]);
                     $blockedByAge++;
+                    $ageRestrictedIds[] = (int) $item->id;
                     continue;
                 }
             }
@@ -1689,6 +1734,11 @@ class JemModelEventslist extends ListModel
             'without_categories_count' => $withoutCategories,
             'age_restricted_count' => $blockedByAge,
             'remaining_count' => count($items),
+            'without_category_ids' => $withoutCategoryIds,
+            'age_restricted_ids' => $ageRestrictedIds,
+            'event_ids' => array_map(static function ($item) {
+                return (int) $item->id;
+            }, $items),
         ));
 
         if ($items) {
@@ -1701,7 +1751,12 @@ class JemModelEventslist extends ListModel
             }
         }
 
-        $this->traceEventslist('getItems.return', array('page_count' => count($items)));
+        $this->traceEventslist('getItems.return', array(
+            'page_count' => count($items),
+            'event_ids' => array_map(static function ($item) {
+                return (int) $item->id;
+            }, $items),
+        ));
 
         return $items;
     }

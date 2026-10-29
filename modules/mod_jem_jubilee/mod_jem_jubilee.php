@@ -40,7 +40,12 @@ switch($params->get('color')) {
         break;
 }
 
-$list = ModJemJubileeHelper::getList($params);
+JemLog::beginEventslistModuleTrace($module, $params);
+try {
+    $list = ModJemJubileeHelper::getList($params);
+} finally {
+    JemLog::endEventslistModuleTrace();
+}
 
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {

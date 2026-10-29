@@ -30,6 +30,7 @@ class JemLog
     protected static $loggedMessages = array();
     protected static $eventslistTraceId = null;
     protected static $eventslistTraceStep = 0;
+    protected static $eventslistModuleContext = null;
 
     /**
      * Configure Joomla file loggers for all JEM channels.
@@ -98,7 +99,7 @@ class JemLog
 
     /**
      * Trace the Events List pipeline without event contents, URL, IP or user data.
-     * Only numeric and boolean metrics supplied by JEM code are accepted.
+     * Event ID lists are limited to twenty positive integers.
      */
     public static function traceEventslist(string $stage, array $metrics = array()): void
     {
@@ -107,36 +108,14 @@ class JemLog
                 return;
             }
 
-            $app = Factory::getApplication();
-            if (!$app->isClient('site')) {
+            if (!self::isEventslistTraceRequest()) {
                 return;
             }
 
-            $view = $app->input->getCmd('view', '');
-            if ($view !== '' && $view !== 'eventslist') {
-                return;
-            }
-
-            $menu = $app->getMenu()->getActive();
-            if ($view === '' && $menu) {
-                parse_str((string) parse_url((string) $menu->link, PHP_URL_QUERY), $menuQuery);
-                $view = is_string($menuQuery['view'] ?? null) ? $menuQuery['view'] : '';
-            }
-
-            if ($view !== 'eventslist') {
-                return;
-            }
-
-            if (self::$eventslistTraceId === null) {
-                self::$eventslistTraceId = bin2hex(random_bytes(6));
-            }
-
-            $context = array(
-                'trace_id' => self::$eventslistTraceId,
-                'step' => ++self::$eventslistTraceStep,
-                'menu_id' => $menu ? (int) $menu->id : 0,
+            $context = array_merge(
+                self::nextEventslistTraceContext(),
+                self::normaliseTraceMetrics($metrics, self::getConfiguredLevel() === 5)
             );
-            $context = array_merge($context, self::normaliseTraceMetrics($metrics));
 
             $stage = preg_replace('/[^a-z0-9._-]/i', '', $stage);
             if ($stage !== '') {
@@ -147,15 +126,189 @@ class JemLog
         }
     }
 
+    /** Mark model queries made by a JEM module, including its effective layout. */
+    public static function beginEventslistModuleTrace($module, $params): void
+    {
+        self::$eventslistModuleContext = null;
+
+        try {
+            if (self::getConfiguredLevel() < 4) {
+                return;
+            }
+
+            $type = (string) ($module->module ?? '');
+            $layout = (string) $params->get('layout', 'default');
+            if (!preg_match('/^mod_jem(?:_[a-z]+)?$/', $type)
+                || !preg_match('/^[a-z0-9:_-]{1,80}$/i', $layout)) {
+                return;
+            }
+
+            $layoutPath = \Joomla\CMS\Helper\ModuleHelper::getLayoutPath($type, $layout);
+            self::$eventslistModuleContext = array(
+                'consumer' => 'module',
+                'module_id' => (int) ($module->id ?? 0),
+                'module_type' => $type,
+                'layout' => $layout,
+                'override_used' => strpos(str_replace('\\', '/', $layoutPath), str_replace('\\', '/', JPATH_THEMES) . '/') === 0,
+            );
+        } catch (\Throwable) {
+            self::$eventslistModuleContext = null;
+        }
+    }
+
+    public static function endEventslistModuleTrace(): void
+    {
+        self::$eventslistModuleContext = null;
+    }
+
+    /** Record query shape only; SQL literals and numeric values are redacted. */
+    public static function traceEventslistSql(string $sql): void
+    {
+        try {
+            if (self::getConfiguredLevel() !== 5 || !self::isEventslistTraceRequest()) {
+                return;
+            }
+
+            $safeSql = self::redactEventslistSql($sql);
+            self::add(
+                'Eventslist trace: query.sql',
+                null,
+                Log::DEBUG,
+                'JEM-D-0102',
+                array_merge(self::nextEventslistTraceContext(), array(
+                    'sql_shape' => substr($safeSql, 0, 12000),
+                    'sql_truncated' => strlen($safeSql) > 12000,
+                )),
+                false
+            );
+        } catch (\Throwable) {
+            // Logging must not affect the frontend.
+        }
+    }
+
+    /** Record a Joomla-caught database error without echoing private SQL values. */
+    public static function traceEventslistSqlError(string $message): void
+    {
+        try {
+            if (self::getConfiguredLevel() !== 5 || !self::isEventslistTraceRequest()) {
+                return;
+            }
+
+            $context = self::nextEventslistTraceContext();
+            if (preg_match('/Unknown column [\'\"]([a-z][a-z0-9_]*\.[a-z][a-z0-9_]*)[\'\"]/i', $message, $match)) {
+                $context['missing_column'] = $match[1];
+            }
+
+            $context['sql_error'] = self::redactEventslistSqlError($message);
+            self::add('Eventslist trace: query.failed', null, Log::ERROR, 'JEM-E-0102', $context, false);
+        } catch (\Throwable) {
+            // Logging must not affect the frontend.
+        }
+    }
+
+    /** Identify the template selected by Joomla after rendering, not just a possible override. */
+    public static function traceEventslistViewTemplate(string $layout, string $templatePath): void
+    {
+        try {
+            if (self::getConfiguredLevel() !== 5 || !self::isEventslistTraceRequest()) {
+                return;
+            }
+
+            $context = self::nextEventslistTraceContext();
+            $context['layout'] = preg_match('/^[a-z0-9:_-]{1,80}$/i', $layout) ? $layout : '[custom]';
+            $context['override_used'] = strpos(str_replace('\\', '/', $templatePath), str_replace('\\', '/', JPATH_THEMES) . '/') === 0;
+            self::add('Eventslist trace: view.template', null, Log::DEBUG, 'JEM-D-0103', $context, false);
+        } catch (\Throwable) {
+            // Logging must not affect the frontend.
+        }
+    }
+
+    private static function redactEventslistSql(string $sql): string
+    {
+        $sql = preg_replace('/\/\*.*?\*\/|--[^\r\n]*/s', ' ', $sql);
+        $sql = preg_replace('/\'(?:\'\'|\\\\.|[^\'\\\\])*\'|\"(?:\"\"|\\\\.|[^\"\\\\])*\"/s', '?', $sql);
+        $sql = preg_replace('/\b0x[0-9a-f]+\b/i', '?', $sql);
+        $sql = preg_replace('/(?<![a-z0-9_])\d+(?:\.\d+)?(?![a-z0-9_])/i', '?', $sql);
+
+        return (string) $sql;
+    }
+
+    private static function redactEventslistSqlError(string $message): string
+    {
+        $message = preg_replace('/\'(?:\'\'|\\\\.|[^\'\\\\])*\'|\"(?:\"\"|\\\\.|[^\"\\\\])*\"/s', '[redacted]', $message);
+
+        return substr((string) $message, 0, 1000);
+    }
+
+    private static function isEventslistTraceRequest(): bool
+    {
+        $app = Factory::getApplication();
+        if (!$app->isClient('site')) {
+            return false;
+        }
+
+        if (self::$eventslistModuleContext !== null) {
+            return true;
+        }
+
+        $view = $app->input->getCmd('view', '');
+        if ($view === '') {
+            $menu = $app->getMenu()->getActive();
+            if ($menu) {
+                parse_str((string) parse_url((string) $menu->link, PHP_URL_QUERY), $menuQuery);
+                $view = is_string($menuQuery['view'] ?? null) ? $menuQuery['view'] : '';
+            }
+        }
+
+        return $view === 'eventslist';
+    }
+
+    private static function nextEventslistTraceContext(): array
+    {
+        if (self::$eventslistTraceId === null) {
+            self::$eventslistTraceId = bin2hex(random_bytes(6));
+        }
+
+        $menu = Factory::getApplication()->getMenu()->getActive();
+        $context = array(
+            'trace_id' => self::$eventslistTraceId,
+            'step' => ++self::$eventslistTraceStep,
+            'menu_id' => $menu ? (int) $menu->id : 0,
+        );
+
+        return array_merge($context, self::$eventslistModuleContext ?? array('consumer' => 'view'));
+    }
+
     /** Reject strings, objects and unrecognised metric names before writing a trace. */
-    private static function normaliseTraceMetrics(array $metrics): array
+    private static function normaliseTraceMetrics(array $metrics, bool $includeEventIds = true): array
     {
         $safe = array();
 
         foreach ($metrics as $name => $value) {
             if (!is_string($name) || !preg_match('/^[a-z][a-z0-9_]*$/', $name)
-                || in_array($name, array('trace_id', 'step', 'menu_id'), true)
-                || (!is_int($value) && !is_bool($value))) {
+                || in_array($name, array('trace_id', 'step', 'menu_id', 'consumer'), true)) {
+                continue;
+            }
+
+            if ($includeEventIds
+                && in_array($name, array(
+                    'event_ids', 'without_category_ids', 'age_restricted_ids',
+                    'category_filter_ids', 'venue_filter_ids', 'type_filter_ids',
+                    'published_states', 'access_level_ids',
+                ), true)
+                && is_array($value)) {
+                $safe[$name] = array_slice(array_values(array_filter($value, static function ($id) {
+                    return is_int($id) && $id > 0;
+                })), 0, 20);
+                continue;
+            }
+
+            if ($name === 'event_tree' && in_array($value, array('all', 'calendar', 'children', 'parents'), true)) {
+                $safe[$name] = $value;
+                continue;
+            }
+
+            if (!is_int($value) && !is_bool($value)) {
                 continue;
             }
 

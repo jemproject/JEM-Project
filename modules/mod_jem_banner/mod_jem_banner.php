@@ -41,7 +41,12 @@ switch($params->get('color')) {
         break;
 }
 
-$list = ModJemBannerHelper::getList($params);
+JemLog::beginEventslistModuleTrace($module, $params);
+try {
+    $list = ModJemBannerHelper::getList($params);
+} finally {
+    JemLog::endEventslistModuleTrace();
+}
 
 // check if any results returned
 if (empty($list) && !$params->get('show_no_events')) {
