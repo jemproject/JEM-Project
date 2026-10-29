@@ -16,6 +16,7 @@ use Joomla\CMS\Pagination\Pagination;
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdiagnostics.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingreports.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdefaults.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 /**
  * Housekeeping-View
@@ -39,6 +40,8 @@ class JemViewHousekeeping extends JemAdminView
 
         if ($this->tool === 'diagnostics') {
             $reports = new JemHousekeepingReports();
+            $this->diagnosticImported = JemHousekeepingReports::consumeRequestPreview();
+            $this->diagnosticDebugAll = JemLog::getConfiguredLevel() === 5;
             $this->diagnosticReportId = max(0, $app->input->getInt('report', 0));
             $this->diagnosticStored = $reports->load($this->diagnosticReportId);
             $this->diagnosticRecent = $reports->recent(8);

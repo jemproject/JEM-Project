@@ -35,7 +35,7 @@ class JemAclAssetMigration
         do {
             $rows = $this->rows($type);
             $assets = $this->assets();
-            self::validateTree($assets);
+            self::validateForJemMigration($assets);
             $names = array_column($assets, null, 'name');
             $component = $names['com_jem'] ?? null;
             if (!$component) {
@@ -160,7 +160,7 @@ class JemAclAssetMigration
         $db->transactionStart();
         try {
             $assets = $this->assets(true);
-            self::validateTree($assets);
+            self::validateForJemMigration($assets);
             if (!isset($assets[$parentId])) {
                 throw new RuntimeException('The ACL parent changed during migration. Please retry.');
             }
@@ -219,7 +219,7 @@ class JemAclAssetMigration
             $db->setQuery('UPDATE #__assets SET parent_id = CASE id ' . implode(' ', $parents)
                 . ' END WHERE id IN (' . implode(',', array_map('intval', $inserted)) . ')')->execute();
             $this->link($this->table($type), $links);
-            self::validateTree($this->assets());
+            self::validateForJemMigration($this->assets());
             $db->transactionCommit();
         } catch (Throwable $error) {
             $db->transactionRollback();
@@ -238,9 +238,22 @@ class JemAclAssetMigration
             . implode(' ', $cases) . ' END WHERE id IN (' . implode(',', array_map('intval', array_keys($links))) . ')')->execute();
     }
 
-    /** Validate nesting without renumbering, deleting or rewriting any assets. */
-    public static function validateTree(array $assets): void
+    /** Keep foreign ACL metadata errors from blocking JEM while checking shared coordinates. */
+    public static function validateForJemMigration(array $assets): void
     {
+        self::validateTree($assets, true);
+    }
+
+    /** Validate nesting without renumbering, deleting or rewriting any assets. */
+    public static function validateTree(array $assets, bool $jemMigration = false): void
+    {
+        $jem = null;
+        foreach ($assets as $asset) {
+            if ($asset['name'] === 'com_jem') {
+                $jem = $asset;
+                break;
+            }
+        }
         uasort($assets, static fn($a, $b) => (int) $a['lft'] <=> (int) $b['lft']);
         $stack = [];
         $coordinates = [];
@@ -258,13 +271,22 @@ class JemAclAssetMigration
                 array_pop($stack);
             }
             $parent = $stack ? end($stack) : null;
-            if ($parent ? ((int) $asset['parent_id'] !== (int) $parent['id'] || $right >= (int) $parent['rgt']
-                    || (int) $asset['level'] !== (int) $parent['level'] + 1)
+            $isJem = $asset['name'] === 'com_jem' || str_starts_with((string) $asset['name'], 'com_jem.');
+            $insideJem = $jem !== null && $left > (int) $jem['lft'] && $right < (int) $jem['rgt'];
+            $checkLineage = !$jemMigration || $isJem || $insideJem;
+            if ($parent ? ($right >= (int) $parent['rgt']
+                    || ($checkLineage && ((int) $asset['parent_id'] !== (int) $parent['id']
+                        || (int) $asset['level'] !== (int) $parent['level'] + 1))
+                    || ($jemMigration && $isJem && ($asset['name'] === 'com_jem'
+                        ? $parent['name'] !== 'root.1' : !$insideJem)))
                 : ((int) $asset['parent_id'] !== 0 || (int) $asset['level'] !== 0 || ++$roots > 1 || $asset['name'] !== 'root.1')) {
                 if (!$parent) {
                     $reason = 'outside the root asset or an additional root';
                 } elseif ($right >= (int) $parent['rgt']) {
                     $reason = 'overlaps asset #' . (int) $parent['id'];
+                } elseif ($jemMigration && $isJem && ($asset['name'] === 'com_jem'
+                    ? $parent['name'] !== 'root.1' : !$insideJem)) {
+                    $reason = 'JEM asset is outside its component hierarchy';
                 } elseif ((int) $asset['parent_id'] !== (int) $parent['id']) {
                     $reason = 'parent_id differs from nesting below asset #' . (int) $parent['id'];
                 } else {

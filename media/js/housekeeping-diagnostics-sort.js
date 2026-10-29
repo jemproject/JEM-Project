@@ -2,18 +2,6 @@
     'use strict';
 
     function initialise() {
-        const consent = document.getElementById('jem-diagnostic-consent');
-        const send = document.querySelector('button[value="housekeeping.sendDiagnostics"]');
-
-        if (consent && send) {
-            const updateSend = () => {
-                send.disabled = !consent.checked;
-            };
-
-            consent.addEventListener('change', updateSend);
-            updateSend();
-        }
-
         document.querySelectorAll('[data-jem-select-all]').forEach((selectAll) => {
             const table = selectAll.closest('table');
             const itemClass = selectAll.dataset.jemSelectAll === 'overrides'

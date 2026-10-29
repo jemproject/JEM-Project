@@ -218,6 +218,52 @@ final class AclMigrationRecoveryTest extends TestCase
         self::assertSame($before, $this->snapshot());
     }
 
+    public function testForeignParentMismatchDoesNotBlockJemMigration(): void
+    {
+        $this->seed(3);
+        $this->sql("UPDATE #__assets SET rgt=13 WHERE id=1");
+        $this->sql("UPDATE #__assets SET name='com_contact',rgt=6 WHERE id=2");
+        $this->sql('UPDATE #__assets SET lft=lft+4,rgt=rgt+4 WHERE id IN (3,4,5)');
+        $this->sql("INSERT INTO #__assets VALUES (6,2,2,5,2,'com_contact.category.38','Contact category','{}'),"
+            . "(7,2,3,4,4,'com_contact.contact.7','Contact','{}')");
+
+        $before = $this->snapshot();
+        try {
+            JemAclAssetMigration::validateTree($before);
+            self::fail('The global diagnostic must identify the foreign ACL mismatch.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('com_contact.contact.7', $error->getMessage());
+        }
+
+        $result = JemAclMigration::run($this->db, 60);
+        self::assertTrue($result['complete'], $result['error']);
+        self::assertFalse(JemAclMigrationStatus::pending());
+        $after = $this->snapshot();
+        foreach ([2, 6, 7] as $id) {
+            foreach (['id', 'parent_id', 'level', 'name', 'title', 'rules'] as $field) {
+                self::assertSame($before[$id][$field], $after[$id][$field]);
+            }
+        }
+        JemAclAssetMigration::validateForJemMigration($after);
+        $names = array_column($after, null, 'name');
+        foreach ($this->db->setQuery('SELECT id,asset_id FROM #__jem_categories')->loadAssocList() as $row) {
+            $asset = $names['com_jem.category.' . $row['id']];
+            self::assertSame((int) $asset['id'], (int) $row['asset_id']);
+            self::assertSame(3, (int) $asset['parent_id']);
+        }
+
+        $this->sql("UPDATE #__jem_categories SET catname='Renamed' WHERE id=2");
+        $retry = JemAclMigration::run($this->db, 60);
+        self::assertTrue($retry['complete'], $retry['error']);
+        $updated = $this->snapshot();
+        self::assertSame('Renamed', array_column($updated, null, 'name')['com_jem.category.2']['title']);
+        foreach ([2, 6, 7] as $id) {
+            foreach (['id', 'parent_id', 'level', 'name', 'title', 'rules'] as $field) {
+                self::assertSame($before[$id][$field], $updated[$id][$field]);
+            }
+        }
+    }
+
     public function testCurrencyFieldRemainsSelectableWithEmptyCatalogue(): void
     {
         require_once JEM_TEST_ROOT . '/site/classes/money.class.php';

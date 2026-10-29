@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdefaults.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingdiagnostics.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/classes/housekeepingreports.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
 
 /**
  * Housekeeping-Controller
@@ -140,9 +141,7 @@ class JemControllerHousekeeping extends BaseController
         }
     }
 
-    /**
-     * Download the reviewed report as structured JSON.
-     */
+    /** Download the reviewed report as structured JSON, even when INIs are selected. */
     public function downloadDiagnostics(): void
     {
         JemHelper::requirePostToken();
@@ -158,102 +157,91 @@ class JemControllerHousekeeping extends BaseController
             $selection
         );
 
-        $files = $reports->languageFiles($stored, $selection);
-        if ($files) {
-            $zip = new \ZipArchive();
-            $temporary = tempnam(sys_get_temp_dir(), 'jem-report-');
-            if ($temporary === false) {
-                throw new \RuntimeException('Unable to create the diagnostic archive.');
-            }
-            try {
-                if ($zip->open($temporary, \ZipArchive::OVERWRITE) !== true) {
-                    throw new \RuntimeException('Unable to create the diagnostic archive.');
-                }
-                $zip->addFromString($this->diagnosticFilename(), $json);
-                foreach ($files as $file) {
-                    $zip->addFromString($file['path'], $file['content']);
-                }
-                $zip->close();
-                $payload = file_get_contents($temporary);
-                if ($payload === false) {
-                    throw new \RuntimeException('Unable to read the diagnostic archive.');
-                }
-            } finally {
-                @unlink($temporary);
-            }
-            $filename = str_replace('.json', '.zip', $this->diagnosticFilename());
-            $contentType = 'application/zip';
-        } else {
-            $payload = $json;
-            $filename = $this->diagnosticFilename();
-            $contentType = 'application/json; charset=utf-8';
-        }
-
-        $app->setHeader('Content-Type', $contentType, true);
+        $app->setHeader('Content-Type', 'application/json; charset=utf-8', true);
         $app->setHeader(
             'Content-Disposition',
-            'attachment; filename="' . $filename . '"',
+            'attachment; filename="' . $this->diagnosticFilename() . '"',
             true
         );
         $app->setHeader('X-Content-Type-Options', 'nosniff', true);
+        $app->setHeader('Cache-Control', 'private, no-store', true);
+        $app->sendHeaders();
+        echo $json;
+        $app->close();
+    }
+
+    /** Download JSON, selected JEM INIs and bounded JEM logs without sending data. */
+    public function downloadDiagnosticsZip(): void
+    {
+        JemHelper::requirePostToken();
+        $this->allowHousekeeping();
+        if (JemLog::getConfiguredLevel() !== 5) {
+            throw new \Exception(Text::_('JERROR_ALERTNOAUTHOR'), 403);
+        }
+
+        $stored = $this->diagnosticReportFromPost();
+        $reports = new JemHousekeepingReports();
+        $selection = $this->diagnosticSelection();
+        $json = $reports->export(
+            $stored,
+            Factory::getApplication()->input->post->getInt('include_names', 0) === 1,
+            $this->diagnosticObservations(),
+            $selection
+        );
+        $jsonFilename = $this->diagnosticFilename();
+        try {
+            $payload = JemHousekeepingReports::createArchive(
+                $json,
+                $jsonFilename,
+                array_merge($reports->languageFiles($stored, $selection), $reports->jemLogFiles())
+            );
+        } catch (\Throwable $error) {
+            $this->setRedirect(
+                'index.php?option=com_jem&view=housekeeping&tool=diagnostics&report=' . (int) $stored['id'],
+                Text::_('COM_JEM_TOOLS_ARCHIVE_FAILED'),
+                'warning'
+            );
+            return;
+        }
+
+        $app = Factory::getApplication();
+        $app->setHeader('Content-Type', 'application/zip', true);
+        $app->setHeader('Content-Disposition', 'attachment; filename="' . str_replace('.json', '.zip', $jsonFilename) . '"', true);
+        $app->setHeader('X-Content-Type-Options', 'nosniff', true);
+        $app->setHeader('Cache-Control', 'private, no-store', true);
         $app->sendHeaders();
         echo $payload;
         $app->close();
     }
 
-    /**
-     * Send the selected report only after explicit administrator consent.
-     */
-    public function sendDiagnostics(): void
+    /** Preview an uploaded JSON or ZIP for this request only; never store its contents. */
+    public function previewDiagnostics(): void
     {
         JemHelper::requirePostToken();
         $this->allowHousekeeping();
         $app = Factory::getApplication();
-        $stored = $this->diagnosticReportFromPost();
-        $id = (int) $stored['id'];
-        $url = 'index.php?option=com_jem&view=housekeeping&tool=diagnostics&report=' . $id;
+        $file = $app->input->files->get('diagnostic_file', array(), 'array');
 
-        if ($app->input->post->getInt('send_consent', 0) !== 1) {
-            $this->setRedirect($url, Text::_('COM_JEM_TOOLS_SEND_CONSENT_REQUIRED'), 'warning');
+        try {
+            if (empty($file['name']) || !empty($file['error']) || !is_uploaded_file($file['tmp_name'] ?? '')) {
+                throw new \InvalidArgumentException(Text::_('COM_JEM_TOOLS_UPLOAD_INVALID'));
+            }
+            $preview = JemHousekeepingReports::previewUpload(
+                (string) $file['tmp_name'],
+                (string) $file['name'],
+                JemLog::getConfiguredLevel() === 5
+            );
+        } catch (\Throwable $error) {
+            $this->setRedirect('index.php?option=com_jem&view=housekeeping&tool=diagnostics', $error->getMessage(), 'warning');
             return;
         }
 
-        try {
-            $reports = new JemHousekeepingReports();
-            $selection = $this->diagnosticSelection();
-            $json = $reports->export(
-                $stored,
-                $app->input->post->getInt('include_names', 0) === 1,
-                $this->diagnosticObservations(),
-                $selection
-            );
-            $files = $reports->languageFiles($stored, $selection);
-            $size = strlen($json) + array_sum(array_map(static fn($file): int => strlen($file['content']), $files));
-            if ($size > 8388608) {
-                throw new \RuntimeException('The report is too large for email. Download the JSON file instead.');
-            }
-
-            $config = Factory::getConfig();
-            $mailer = Factory::getMailer();
-            if ($mailer->setSender(array($config->get('mailfrom'), $config->get('fromname'))) === false
-                || $mailer->addRecipient('info@joomlaeventmanager.net') === false) {
-                throw new \RuntimeException('Joomla rejected the mail envelope.');
-            }
-            $mailer->setSubject('JEM diagnostic report #' . $id);
-            $mailer->setBody(Text::sprintf('COM_JEM_TOOLS_MAIL_BODY', $id));
-            $mailer->isHtml(false);
-            $mailer->addStringAttachment($json, $this->diagnosticFilename(), 'base64', 'application/json');
-            foreach ($files as $file) {
-                $mailer->addStringAttachment($file['content'], $file['attachment_name'], 'base64', 'text/plain');
-            }
-            if (!$mailer->send()) {
-                throw new \RuntimeException('Joomla could not deliver the diagnostic report.');
-            }
-
-            $this->setRedirect($url, Text::_('COM_JEM_TOOLS_REPORT_SENT'));
-        } catch (\Throwable $error) {
-            $this->setRedirect($url, Text::_('COM_JEM_TOOLS_SEND_FAILED'), 'warning');
-        }
+        JemHousekeepingReports::setRequestPreview($preview);
+        $app->setHeader('Cache-Control', 'private, no-store', true);
+        $app->input->set('view', 'housekeeping');
+        $app->input->set('tool', 'diagnostics');
+        $app->input->set('report', 0);
+        $this->display();
     }
 
     private function diagnosticReportFromPost(): array

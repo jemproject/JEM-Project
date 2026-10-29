@@ -115,8 +115,37 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                     <?php echo HTMLHelper::_('form.token'); ?>
                 </form>
             </div>
+            <form class="d-flex flex-wrap align-items-end gap-2 mt-3" method="post" enctype="multipart/form-data"
+                  action="<?php echo Route::_('index.php?option=com_jem&task=housekeeping.previewDiagnostics'); ?>">
+                <div class="flex-grow-1" style="min-width: 16rem;">
+                    <label class="form-label" for="jem-diagnostic-file"><?php echo Text::_('COM_JEM_TOOLS_OPEN_REPORT'); ?></label>
+                    <input class="form-control" id="jem-diagnostic-file" name="diagnostic_file" type="file"
+                           accept="<?php echo $this->diagnosticDebugAll ? '.json,.zip,application/json,application/zip' : '.json,application/json'; ?>" required>
+                </div>
+                <button class="btn btn-outline-primary" type="submit"><?php echo Text::_('COM_JEM_TOOLS_OPEN_REPORT'); ?></button>
+                <span class="small text-muted"><?php echo Text::_($this->diagnosticDebugAll
+                    ? 'COM_JEM_TOOLS_OPEN_REPORT_DEBUG_DESC' : 'COM_JEM_TOOLS_OPEN_REPORT_DESC'); ?></span>
+                <?php echo HTMLHelper::_('form.token'); ?>
+            </form>
         </div></div></div>
     </div>
+
+    <?php if ($this->diagnosticImported) : ?>
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <h3 class="h5 mb-0"><?php echo Text::_('COM_JEM_TOOLS_IMPORTED_REPORT'); ?></h3>
+                    <span class="small text-muted"><?php echo $escape(strtoupper($this->diagnosticImported['source'])); ?>
+                        <?php echo $escape((string) ($this->diagnosticImported['data']['created_at'] ?? '')); ?></span>
+                </div>
+                <p class="text-muted mt-2"><?php echo Text::_('COM_JEM_TOOLS_IMPORTED_REPORT_DESC'); ?></p>
+                <details>
+                    <summary><?php echo Text::_('COM_JEM_TOOLS_IMPORTED_REPORT_CONTENT'); ?></summary>
+                    <pre class="border rounded p-3 mt-2 overflow-auto" style="max-height: 38rem;"><?php echo $escape($this->diagnosticImported['pretty']); ?></pre>
+                </details>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <?php if (is_array($this->diagnosticReport)) : ?>
         <div class="row g-3 mb-4">
@@ -757,17 +786,15 @@ HTMLHelper::_('script', 'com_jem/housekeeping-diagnostics-sort.js', ['version' =
                         <input class="form-check-input" type="checkbox" id="jem-diagnostic-names" name="include_names" value="1" checked>
                         <label class="form-check-label" for="jem-diagnostic-names"><?php echo Text::_('COM_JEM_TOOLS_INCLUDE_NAMES'); ?></label>
                     </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="jem-diagnostic-consent" name="send_consent" value="1" required>
-                        <label class="form-check-label" for="jem-diagnostic-consent"><?php echo Text::_('COM_JEM_TOOLS_SEND_CONSENT'); ?></label>
-                    </div>
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <button class="btn btn-primary" type="submit" name="task" value="housekeeping.sendDiagnostics" disabled>
-                            <?php echo Text::_('COM_JEM_TOOLS_SEND_JEM'); ?>
-                        </button>
-                        <button class="btn btn-outline-primary ms-auto" type="submit" name="task" value="housekeeping.downloadDiagnostics" formnovalidate>
+                    <div class="d-flex flex-wrap justify-content-end align-items-center gap-2">
+                        <button class="btn btn-outline-primary" type="submit" name="task" value="housekeeping.downloadDiagnostics">
                             <?php echo Text::_('COM_JEM_TOOLS_DOWNLOAD_JSON'); ?>
                         </button>
+                        <?php if ($this->diagnosticDebugAll) : ?>
+                            <button class="btn btn-primary" type="submit" name="task" value="housekeeping.downloadDiagnosticsZip">
+                                <?php echo Text::_('COM_JEM_TOOLS_DOWNLOAD_ZIP'); ?>
+                            </button>
+                        <?php endif; ?>
                     </div>
                     <?php echo HTMLHelper::_('form.token'); ?>
                 </form>

@@ -75,6 +75,49 @@ final class AclMigrationGuardTest extends TestCase
         }
     }
 
+    public function testMigrationIgnoresOnlyForeignParentMetadataErrors(): void
+    {
+        require_once JEM_TEST_ROOT . '/admin/classes/aclassetmigration.class.php';
+
+        $assets = [
+            ['id' => 1, 'name' => 'root.1', 'parent_id' => 0, 'level' => 0, 'lft' => 0, 'rgt' => 11],
+            ['id' => 2, 'name' => 'com_contact', 'parent_id' => 1, 'level' => 1, 'lft' => 1, 'rgt' => 6],
+            ['id' => 3, 'name' => 'com_contact.category.38', 'parent_id' => 2, 'level' => 2, 'lft' => 2, 'rgt' => 5],
+            ['id' => 4, 'name' => 'com_contact.contact.7', 'parent_id' => 2, 'level' => 4, 'lft' => 3, 'rgt' => 4],
+            ['id' => 5, 'name' => 'com_jem', 'parent_id' => 1, 'level' => 1, 'lft' => 7, 'rgt' => 10],
+            ['id' => 6, 'name' => 'com_jem.category.6', 'parent_id' => 5, 'level' => 2, 'lft' => 8, 'rgt' => 9],
+        ];
+
+        JemAclAssetMigration::validateForJemMigration($assets);
+        try {
+            JemAclAssetMigration::validateTree($assets);
+            self::fail('Diagnostics must still report the foreign asset error.');
+        } catch (RuntimeException $error) {
+            self::assertStringContainsString('com_contact.contact.7', $error->getMessage());
+        }
+
+        $assets[5]['parent_id'] = 3;
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('com_jem.category.6');
+        JemAclAssetMigration::validateForJemMigration($assets);
+    }
+
+    public function testMigrationStillRejectsForeignCoordinateErrors(): void
+    {
+        require_once JEM_TEST_ROOT . '/admin/classes/aclassetmigration.class.php';
+
+        $assets = [
+            ['id' => 1, 'name' => 'root.1', 'parent_id' => 0, 'level' => 0, 'lft' => 0, 'rgt' => 7],
+            ['id' => 2, 'name' => 'com_contact', 'parent_id' => 1, 'level' => 1, 'lft' => 1, 'rgt' => 4],
+            ['id' => 3, 'name' => 'com_contact.category.38', 'parent_id' => 99, 'level' => 4, 'lft' => 2, 'rgt' => 5],
+            ['id' => 4, 'name' => 'com_jem', 'parent_id' => 1, 'level' => 1, 'lft' => 5, 'rgt' => 6],
+        ];
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('overlaps asset #2');
+        JemAclAssetMigration::validateForJemMigration($assets);
+    }
+
     public function testDiagnosticsOnlyInspectsPermissionMigrationAndAssetTree(): void
     {
         $diagnostics = file_get_contents(JEM_TEST_ROOT . '/admin/classes/housekeepingdiagnostics.class.php');

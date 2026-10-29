@@ -14,12 +14,18 @@ use Joomla\Database\DatabaseDriver;
 require_once __DIR__ . '/housekeepingdefaults.class.php';
 
 /**
- * Private, versioned diagnostic reports for download or explicit support mail.
+ * Private, versioned diagnostic reports for local review and download.
  */
 final class JemHousekeepingReports
 {
     private const MAX_PAYLOAD_BYTES = 8388608;
+    private const MAX_PREVIEW_JSON_BYTES = 16777216;
+    private const MAX_ARCHIVE_BYTES = 33554432;
+    private const MAX_ARCHIVE_ENTRIES = 256;
+    private const MAX_LOG_BYTES = 2097152;
     private const REDACTED = '[redacted]';
+
+    private static ?array $requestPreview = null;
 
     private DatabaseDriver $db;
 
@@ -78,6 +84,157 @@ final class JemHousekeepingReports
             'created' => (string) $row->created,
             'created_by' => (int) $row->created_by,
             'data' => $data,
+        );
+    }
+
+    /** Hold an imported preview in memory for one request, never in the report table or session. */
+    public static function setRequestPreview(array $preview): void
+    {
+        self::$requestPreview = $preview;
+    }
+
+    public static function consumeRequestPreview(): ?array
+    {
+        $preview = self::$requestPreview;
+        self::$requestPreview = null;
+
+        return $preview;
+    }
+
+    /** Assemble only the known report, selected language files and JEM logs. */
+    public static function createArchive(string $json, string $jsonFilename, array $files): string
+    {
+        if (!preg_match('/^jem-diagnostics-\d{8}-\d{6}\.json$/D', $jsonFilename)
+            || strlen($json) > self::MAX_PREVIEW_JSON_BYTES
+            || count($files) + 1 > self::MAX_ARCHIVE_ENTRIES) {
+            throw new \InvalidArgumentException('The diagnostic JSON name or size is invalid.');
+        }
+
+        $temporary = tempnam(sys_get_temp_dir(), 'jem-report-');
+        if ($temporary === false) {
+            throw new \RuntimeException('Unable to create the diagnostic ZIP.');
+        }
+
+        $zip = new \ZipArchive();
+        $open = false;
+        try {
+            if ($zip->open($temporary, \ZipArchive::OVERWRITE) !== true) {
+                throw new \RuntimeException('Unable to create the diagnostic ZIP.');
+            }
+            $open = true;
+            if (!$zip->addFromString($jsonFilename, $json)) {
+                throw new \RuntimeException('Unable to add the diagnostic JSON to the ZIP.');
+            }
+            $size = strlen($json);
+            $seen = array($jsonFilename => true);
+            foreach ($files as $file) {
+                $path = (string) ($file['path'] ?? '');
+                $content = $file['content'] ?? null;
+                if (!preg_match('#^(?:logs/jem(?:-modules|-plugins)?\.log\.txt|(?:administrator/)?language/[a-z]{2,3}-[A-Z]{2}/[a-z0-9_]+(?:\.sys)?\.ini)$#D', $path)
+                    || isset($seen[$path]) || !is_string($content)) {
+                    throw new \InvalidArgumentException('An unexpected file was selected for the diagnostic ZIP.');
+                }
+                $seen[$path] = true;
+                $size += strlen($content);
+                if ($size > self::MAX_ARCHIVE_BYTES || !$zip->addFromString($path, $content)) {
+                    throw new \RuntimeException('The diagnostic ZIP exceeds the 32 MB limit or could not be built.');
+                }
+            }
+            $closed = $zip->close();
+            $open = false;
+            if (!$closed) {
+                throw new \RuntimeException('Unable to finish the diagnostic ZIP.');
+            }
+            $payload = file_get_contents($temporary);
+            if ($payload === false) {
+                throw new \RuntimeException('Unable to read the diagnostic ZIP.');
+            }
+
+            return $payload;
+        } finally {
+            if ($open) {
+                $zip->close();
+            }
+            @unlink($temporary);
+        }
+    }
+
+    /** Read only a bounded JEM JSON document from an uploaded file or ZIP. */
+    public static function previewUpload(string $path, string $name, bool $allowZip): array
+    {
+        $size = is_file($path) ? filesize($path) : false;
+        if ($size === false || $size <= 0 || $size > self::MAX_ARCHIVE_BYTES) {
+            throw new \InvalidArgumentException('The diagnostic file is empty or too large.');
+        }
+
+        $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        if ($extension === 'json') {
+            if ($size > self::MAX_PREVIEW_JSON_BYTES) {
+                throw new \InvalidArgumentException('The diagnostic JSON exceeds the 16 MB limit.');
+            }
+            $json = file_get_contents($path);
+        } elseif ($extension === 'zip' && $allowZip) {
+            $zip = new \ZipArchive();
+            if ($zip->open($path, \ZipArchive::CHECKCONS) !== true) {
+                throw new \InvalidArgumentException('The diagnostic ZIP is invalid.');
+            }
+            try {
+                if ($zip->numFiles > self::MAX_ARCHIVE_ENTRIES) {
+                    throw new \InvalidArgumentException('The diagnostic ZIP has too many entries.');
+                }
+                $jsonIndex = -1;
+                $expanded = 0;
+                for ($index = 0; $index < $zip->numFiles; $index++) {
+                    $entry = $zip->statIndex($index);
+                    $entryName = is_array($entry) ? (string) ($entry['name'] ?? '') : '';
+                    if ($entryName === '' || str_contains($entryName, '\\') || str_contains($entryName, ':')
+                        || str_starts_with($entryName, '/')
+                        || preg_match('#(^|/)\.\.?(/|$)#', $entryName)) {
+                        throw new \InvalidArgumentException('The diagnostic ZIP contains an unsafe entry name.');
+                    }
+                    $entrySize = (int) ($entry['size'] ?? 0);
+                    $expanded += $entrySize;
+                    if ($entrySize < 0 || $expanded > self::MAX_ARCHIVE_BYTES) {
+                        throw new \InvalidArgumentException('The diagnostic ZIP expands beyond the 32 MB limit.');
+                    }
+                    if (preg_match('/^jem-diagnostics-\d{8}-\d{6}\.json$/D', $entryName)) {
+                        if ($jsonIndex !== -1 || $entrySize > self::MAX_PREVIEW_JSON_BYTES) {
+                            throw new \InvalidArgumentException('The diagnostic ZIP must contain one JSON report under 16 MB.');
+                        }
+                        $jsonIndex = $index;
+                    }
+                }
+                if ($jsonIndex === -1) {
+                    throw new \InvalidArgumentException('The diagnostic ZIP does not contain a JEM JSON report.');
+                }
+                $json = $zip->getFromIndex($jsonIndex);
+            } finally {
+                $zip->close();
+            }
+        } else {
+            throw new \InvalidArgumentException('Select a JEM diagnostic JSON file, or a ZIP in Debug All mode.');
+        }
+
+        if (!is_string($json) || $json === '' || strlen($json) > self::MAX_PREVIEW_JSON_BYTES) {
+            throw new \InvalidArgumentException('The diagnostic JSON could not be read.');
+        }
+        try {
+            $data = json_decode($json, true, 64, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $error) {
+            throw new \InvalidArgumentException('The diagnostic JSON is invalid.', 0, $error);
+        }
+        if (!is_array($data) || ($data['schema'] ?? '') !== 'jem-diagnostics/v1'
+            || !isset($data['report']) || !is_array($data['report'])) {
+            throw new \InvalidArgumentException('The file is not a supported JEM diagnostic report.');
+        }
+
+        return array(
+            'source' => $extension,
+            'data' => $data,
+            'pretty' => json_encode(
+                $data,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR
+            ),
         );
     }
 
@@ -472,6 +629,53 @@ final class JemHousekeepingReports
                         );
                     }
                 }
+            }
+        }
+
+        return $files;
+    }
+
+    /** Include only JEM's three known log files, never arbitrary paths or unbounded logs. */
+    public function jemLogFiles(): array
+    {
+        require_once JPATH_SITE . '/components/com_jem/classes/log.class.php';
+
+        $configured = rtrim((string) Factory::getApplication()->get('log_path', JPATH_ADMINISTRATOR . '/logs'), '/\\');
+        $directory = realpath($configured);
+        if ($directory === false) {
+            return array();
+        }
+
+        $files = array();
+        foreach (JemLog::getLogFiles() as $name) {
+            $path = $directory . DIRECTORY_SEPARATOR . $name;
+            $resolved = realpath($path);
+            if (is_link($path) || $resolved === false || dirname($resolved) !== $directory
+                || !is_file($resolved) || !is_readable($resolved)) {
+                continue;
+            }
+            $handle = fopen($resolved, 'rb');
+            if ($handle === false) {
+                continue;
+            }
+            try {
+                $size = filesize($resolved);
+                if ($size === false) {
+                    continue;
+                }
+                if ($size > self::MAX_LOG_BYTES) {
+                    fseek($handle, -self::MAX_LOG_BYTES, SEEK_END);
+                    fgets($handle); // Do not begin a truncated log in the middle of a line.
+                }
+                $content = stream_get_contents($handle, self::MAX_LOG_BYTES);
+                if ($content !== false) {
+                    $files[] = array(
+                        'path' => 'logs/' . str_replace('.log.php', '.log.txt', $name),
+                        'content' => $content,
+                    );
+                }
+            } finally {
+                fclose($handle);
             }
         }
 

@@ -221,8 +221,8 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString("table.hasAttribute('data-jem-sort-groups')", $sorting);
         self::assertStringContainsString('const row = grouped ? item.rows[0] : item;', $sorting);
         self::assertStringContainsString("header.setAttribute('aria-sort', direction)", $sorting);
-        self::assertStringContainsString('value="housekeeping.sendDiagnostics" disabled', $layout);
-        self::assertStringContainsString('send.disabled = !consent.checked', $sorting);
+        self::assertStringNotContainsString('housekeeping.sendDiagnostics', $layout);
+        self::assertStringNotContainsString('jem-diagnostic-consent', $sorting);
     }
 
     public function testModuleTableShowsNameTypeAndLinkedInstanceId(): void
@@ -364,7 +364,7 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringNotContainsString('.checked =', $script);
     }
 
-    public function testDiagnosticReportsArePrivateAndRequireExplicitMailConsent(): void
+    public function testDiagnosticReportsUseLocalDownloadsAndReadOnlyPreviews(): void
     {
         $reports = $this->read('admin/classes/housekeepingreports.class.php');
         $controller = $this->read('admin/controllers/housekeeping.php');
@@ -379,25 +379,29 @@ final class HousekeepingToolsTest extends TestCase
         self::assertStringContainsString("'name'] = ''", $reports);
         self::assertStringContainsString('function runDiagnostics()', $controller);
         self::assertStringContainsString('function downloadDiagnostics()', $controller);
-        self::assertStringContainsString('function sendDiagnostics()', $controller);
+        self::assertStringContainsString('function downloadDiagnosticsZip()', $controller);
+        self::assertStringContainsString('function previewDiagnostics()', $controller);
+        self::assertStringNotContainsString('function sendDiagnostics()', $controller);
+        self::assertStringNotContainsString('Factory::getMailer()', $controller);
         self::assertStringContainsString('str_replace(array("\\r\\n", "\\r"), "\\n", $value)', $controller);
         self::assertLessThan(
             strpos($controller, "mb_strlen(\$value, 'UTF-8') > 2000"),
             strpos($controller, 'str_replace(array("\\r\\n", "\\r"), "\\n", $value)')
         );
         self::assertStringContainsString('JemHelper::requirePostToken()', $controller);
-        self::assertStringContainsString("getInt('send_consent', 0) !== 1", $controller);
-        self::assertStringContainsString("'info@joomlaeventmanager.net'", $controller);
-        self::assertGreaterThanOrEqual(2, substr_count($controller, '$this->diagnosticFilename()'));
+        self::assertStringContainsString('JemLog::getConfiguredLevel() !== 5', $controller);
+        self::assertStringContainsString('is_uploaded_file(', $controller);
+        self::assertStringContainsString('JemHousekeepingReports::setRequestPreview($preview)', $controller);
+        self::assertStringContainsString('function previewUpload(', $reports);
+        self::assertStringContainsString('function consumeRequestPreview()', $reports);
         self::assertStringContainsString("return 'jem-diagnostics-' . \$timestamp . '.json';", $controller);
         self::assertStringContainsString("HTMLHelper::_('form.token')", $layout);
         self::assertStringContainsString('name="include_names" value="1" checked', $layout);
-        self::assertStringContainsString('name="send_consent" value="1" required', $layout);
-        self::assertStringContainsString('class="btn btn-outline-primary ms-auto" type="submit" name="task" value="housekeeping.downloadDiagnostics" formnovalidate', $layout);
-        self::assertLessThan(
-            strpos($layout, 'value="housekeeping.downloadDiagnostics"'),
-            strpos($layout, 'value="housekeeping.sendDiagnostics"')
-        );
+        self::assertStringContainsString('value="housekeeping.downloadDiagnostics"', $layout);
+        self::assertStringContainsString('value="housekeeping.downloadDiagnosticsZip"', $layout);
+        self::assertStringContainsString('task=housekeeping.previewDiagnostics', $layout);
+        self::assertStringNotContainsString('housekeeping.sendDiagnostics', $layout);
+        self::assertStringNotContainsString('name="send_consent"', $layout);
         self::assertStringContainsString('repair510DiagnosticReportsSchema()', $installer);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports`', $installSql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS `#__jem_diagnostic_reports`', $updateSql);
