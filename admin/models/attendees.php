@@ -141,13 +141,13 @@ class JemModelAttendees extends ListModel
         $filter_type   = $this->getState('filter_type');
         $filter_search = $this->getState('filter_search');
 
-        if (!empty($filter_search) && $filter_type == 1) {
+        if (trim((string) $filter_search) !== '' && $filter_type == 1) {
             $filter_search = $db->Quote('%'.$db->escape($filter_search, true).'%');
             $query->where('u.name LIKE '.$filter_search);
         }
 
         // search username
-        if (!empty($filter_search) && $filter_type == 2) {
+        if (trim((string) $filter_search) !== '' && $filter_type == 2) {
             $filter_search = $db->Quote('%'.$db->escape($filter_search, true).'%');
             $query->where('u.username LIKE '.$filter_search);
         }

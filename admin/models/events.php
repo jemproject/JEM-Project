@@ -250,7 +250,7 @@ class JemModelEvents extends ListModel
         $filter = $this->getState('filter_type');
         $search = $this->getState('filter_search');
 
-        if (!empty($search)) {
+        if (trim((string) $search) !== '') {
             if (stripos($search, 'id:') === 0) {
                 $query->where('a.id = '.(int) substr($search, 3));
             } else {
@@ -374,7 +374,7 @@ class JemModelEvents extends ListModel
             # check if the item-categories is empty
             # in case of filtering we will unset the items without the reqeusted category
 
-            if ($search) {
+            if (trim((string) $search) !== '') {
                 if ($filter == 4) {
                     if (empty($item->categories)) {
                         unset ($items[$index]);
@@ -444,7 +444,7 @@ class JemModelEvents extends ListModel
         $filter = $this->getState('filter_type');
         $search = $this->getState('filter_search');
 
-        if (!empty($search)) {
+        if (trim((string) $search) !== '') {
             if (stripos($search, 'id:') === 0) {
                 $query->where('c.id = ' . (int)substr($search, 3));
             } else {

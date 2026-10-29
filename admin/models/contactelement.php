@@ -112,7 +112,7 @@ class JemModelContactelement extends BaseDatabaseModel
         $where[] = 'con.published = 1';
 
         // search
-        if ($search) {
+        if ($search !== '') {
             switch ($filter_type) {
                 case 1: /* name */
                     $where[] = 'LOWER(con.name) LIKE \'%'.$search.'%\' ';

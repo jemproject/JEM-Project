@@ -164,7 +164,7 @@ class JemModelAttachments extends ListModel
 
         if ($applyFilters) {
             $search = $this->getState('filter_search');
-            if (!empty($search)) {
+            if (trim((string) $search) !== '') {
                 if (stripos($search, 'id:') === 0) {
                     $query->where($db->quoteName('a.id') . ' = ' . (int) substr($search, 3));
                 } else {

@@ -219,7 +219,7 @@ class JemModelEventelement extends BaseDatabaseModel
         $where[] = ' c.published = 1';
         $where[] = ' c.access IN (' . implode(',', $levels) . ')';
 
-        if (!empty($filter_search)) {
+        if ($filter_search !== '') {
             switch ($filter_type) {
             case 1:
                 $where[] = ' LOWER(a.title) LIKE \'%'.$filter_search.'%\' ';

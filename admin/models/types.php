@@ -109,7 +109,7 @@ class JemModelTypes extends ListModel
               ->join('LEFT', $db->quoteName('#__users', 'u') . ' ON ' . $db->quoteName('u.id') . ' = ' . $db->quoteName('a.created_by'));
 
         $search = $this->getState('filter_search');
-        if (!empty($search)) {
+        if (trim((string) $search) !== '') {
             $search = $db->quote('%' . $db->escape($search, true) . '%');
             $query->where('a.name LIKE ' . $search);
         }
