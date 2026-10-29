@@ -170,7 +170,12 @@ class ModJemTypesHelper
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
                 ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id')
-                ->order($db->quoteName('a.dates') . ' ASC')
+                // NULL times (all-day or unspecified) come before timed events on the same date.
+                ->order(array(
+                    $db->quoteName('a.dates') . ' ASC',
+                    $db->quoteName('a.times') . ' ASC',
+                    $db->quoteName('a.id') . ' ASC',
+                ))
                 ->setLimit($n);
 
             if ($filterLanguage) {
