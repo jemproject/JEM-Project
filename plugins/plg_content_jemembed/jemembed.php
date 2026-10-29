@@ -63,6 +63,7 @@ class PlgContentJemembed extends CMSPlugin
     private const RATE_LIMIT_PER_IP = 60;
     private const RATE_LIMIT_PER_CREDENTIAL = 300;
     private const RESPONSE_CACHE_MINUTES = 1;
+    private const RESPONSE_CACHE_VERSION = 2;
 
     /**
      * Constructor
@@ -226,7 +227,7 @@ class PlgContentJemembed extends CMSPlugin
             }
             
             $parameters = JemEmbedRequestPolicy::normaliseParameters($parameters);
-            $cacheData = array($parameters, $siteDomain, $app->getLanguage()->getTag());
+            $cacheData = array(self::RESPONSE_CACHE_VERSION, $parameters, $siteDomain, $app->getLanguage()->getTag());
             $cacheKey = hash('sha256', json_encode($cacheData) ?: serialize($cacheData));
             $cachedResponse = $this->getCachedResponse($cacheKey);
 
@@ -441,6 +442,7 @@ class PlgContentJemembed extends CMSPlugin
     {
         // Retrieve Eventslist model for the data
         $model = BaseDatabaseModel::getInstance('Eventslist', 'JemModel', array('ignore_request' => true));
+        $db = Factory::getContainer()->get('DatabaseDriver');
         $guest = JemFactory::getUser(0);
 
         // The feed is always evaluated as a public visitor. A logged-in Joomla
@@ -453,8 +455,9 @@ class PlgContentJemembed extends CMSPlugin
         $model->setState(
             'list.select',
             'a.alias,a.article_id,a.attribs,a.created_by,a.dates,a.enddates,a.endtimes,a.featured,' .
-            'a.id,LEFT(a.introtext, ' . $contentLimit . ') AS introtext,' .
-            'LEFT(a.fulltext, ' . $contentLimit . ') AS fulltext,a.locid,a.times,a.title'
+            'a.id,LEFT(' . $db->quoteName('a.introtext') . ', ' . $contentLimit . ') AS ' .
+            $db->quoteName('introtext') . ',LEFT(' . $db->quoteName('a.fulltext') . ', ' . $contentLimit . ') AS ' .
+            $db->quoteName('fulltext') . ',a.locid,a.times,a.title'
         );
         $model->setState('list.compact_select', true);
         $model->setState('list.content_limit', $contentLimit);
@@ -546,7 +549,14 @@ class PlgContentJemembed extends CMSPlugin
 
         $model->setState('filter.groupby', array('a.id'));
 
-        // Retrieve the available Events.
-        return $model->getItems();
+        // Eventslist can turn a failed query into an empty array while retaining its error.
+        $items = $model->getItems();
+        $error = (string) $model->getError();
+
+        if (!is_array($items) || $error !== '') {
+            throw new \RuntimeException($error !== '' ? $error : 'Unable to load JEM events.');
+        }
+
+        return $items;
     }
 }

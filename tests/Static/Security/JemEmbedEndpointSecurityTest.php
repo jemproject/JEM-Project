@@ -66,8 +66,10 @@ final class JemEmbedEndpointSecurityTest extends TestCase
         $model = $this->read('site/models/eventslist.php');
         $helper = $this->read('site/helpers/helper.php');
 
-        self::assertStringContainsString('LEFT(a.introtext, ', $plugin);
-        self::assertStringContainsString('LEFT(a.fulltext, ', $plugin);
+        self::assertStringContainsString("\$db->quoteName('a.introtext')", $plugin);
+        self::assertStringContainsString("\$db->quoteName('a.fulltext')", $plugin);
+        self::assertStringContainsString("\$db->quoteName('introtext')", $plugin);
+        self::assertStringContainsString("\$db->quoteName('fulltext')", $plugin);
         self::assertStringContainsString("setState('list.compact_select', true)", $plugin);
         self::assertStringContainsString("setState('list.content_limit', \$contentLimit)", $plugin);
         self::assertStringContainsString("setState('list.skip_attendee_numbers', true)", $plugin);

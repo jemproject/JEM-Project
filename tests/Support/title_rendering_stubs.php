@@ -6,7 +6,10 @@ declare(strict_types=1);
 namespace Joomla\CMS\MVC\Model {
     final class BaseDatabaseModel
     {
-        public static array $items = [];
+        public static array|false $items = [];
+        public static array $states = [];
+        public static string $error = '';
+        public static ?\Closure $loadItems = null;
         public static function addIncludePath($path, $prefix): void
         {
         }
@@ -18,11 +21,17 @@ namespace Joomla\CMS\MVC\Model {
 
         public function setState($name, $value): void
         {
+            self::$states[$name] = $value;
         }
 
-        public function getItems(): array
+        public function getItems(): array|false
         {
-            return self::$items;
+            return self::$loadItems !== null ? (self::$loadItems)() : self::$items;
+        }
+
+        public function getError(): string
+        {
+            return self::$error;
         }
     }
 }
@@ -58,6 +67,7 @@ namespace Joomla\CMS {
     final class Factory
     {
         public static object $application;
+        public static ?object $database = null;
         public static function getApplication(): object
         {
             return self::$application;
@@ -73,6 +83,10 @@ namespace Joomla\CMS {
             return new class {
                 public function get($key): object
                 {
+                    if (Factory::$database !== null) {
+                        return Factory::$database;
+                    }
+
                     return new class {
                         public function quote($text): string
                         {
@@ -176,6 +190,16 @@ namespace {
     }
     final class JemHelper
     {
+        public static function getJoomlaDate(): string
+        {
+            return '2026-10-30';
+        }
+
+        public static function getEventDateTimeWhere($kind, $operator): string
+        {
+            return 'a.' . $kind . '_utc ' . $operator . " '2026-10-30 12:00:00'";
+        }
+
         public static function config(): object
         {
             return (object) [];
