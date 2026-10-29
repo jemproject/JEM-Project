@@ -192,7 +192,12 @@ class ModJemTypesHelper
                 ->group('a.id, a.title, a.alias, a.attribs, a.dates, a.times, a.enddates, a.endtimes, a.article_id, a.created_by, '
                     . 'eal.id, eal.title, eal.min_age, eal.max_age, eal.badge_label, eal.badge_background, eal.badge_text, '
                     . 'val.id, val.title, val.min_age, val.max_age, val.badge_label, val.badge_background, val.badge_text')
-                ->order($db->quoteName('a.dates') . ' ASC')
+                // NULL times (all-day or unspecified) come before timed events on the same date.
+                ->order(array(
+                    $db->quoteName('a.dates') . ' ASC',
+                    $db->quoteName('a.times') . ' ASC',
+                    $db->quoteName('a.id') . ' ASC',
+                ))
                 ->setLimit($n);
 
             if ($filterLanguage) {
