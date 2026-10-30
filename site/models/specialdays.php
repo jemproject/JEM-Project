@@ -10,6 +10,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
+require_once JPATH_SITE . '/components/com_jem/classes/specialdayyears.class.php';
+
 class JemModelSpecialdays extends ListModel
 {
     public function __construct($config = array())
@@ -34,11 +36,15 @@ class JemModelSpecialdays extends ListModel
     {
         $app = Factory::getApplication();
         $params = $app->getParams();
+        $defaultYear = JemSpecialDayYears::periodYear(
+            new DateTimeImmutable('now'),
+            (int) $params->get('annual_start_month', 1)
+        );
 
         $this->setState('filter.search', $this->getUserStateFromRequest($this->context . '.filter_search', 'filter_search'));
         $this->setState('filter.state', $this->getUserStateFromRequest($this->context . '.filter_state', 'filter_state', '', 'string'));
         $this->setState('filter.day_type', $this->getUserStateFromRequest($this->context . '.filter_day_type', 'filter_day_type', '', 'string'));
-        $this->setState('filter.year', $app->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', (int) date('Y'), 'int'));
+        $this->setState('filter.year', $app->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', $defaultYear, 'int'));
         $this->setState('params', $params);
 
         parent::populateState('a.ordering', 'asc');
@@ -127,10 +133,12 @@ class JemModelSpecialdays extends ListModel
     public function getAvailableYears()
     {
         $db = $this->getDatabase();
-        $defaultYear = (int) date('Y');
+        $startMonth = (int) $this->getState('params')->get('annual_start_month', 1);
+        $today = new DateTimeImmutable('now');
+        $defaultYear = JemSpecialDayYears::periodYear($today, $startMonth);
         $years = array($defaultYear => $defaultYear);
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('start_date', 'end_date')))
+            ->select($db->quoteName(array('start_date', 'end_date', 'weekdays')))
             ->from($db->quoteName('#__jem_special_days'))
             ->where($db->quoteName('published') . ' IN (0, 1)');
 
@@ -141,32 +149,7 @@ class JemModelSpecialdays extends ListModel
             return $years;
         }
 
-        $nullDate = $db->getNullDate();
-
-        foreach ($rows as $row) {
-            $start = (!empty($row->start_date) && $row->start_date !== $nullDate) ? (string) $row->start_date : '';
-            $end = (!empty($row->end_date) && $row->end_date !== $nullDate) ? (string) $row->end_date : $start;
-
-            if ($start === '') {
-                continue;
-            }
-
-            try {
-                $startYear = (int) (new DateTimeImmutable($start))->format('Y');
-                $endYear = (int) (new DateTimeImmutable($end))->format('Y');
-            } catch (Exception $e) {
-                continue;
-            }
-
-            if ($endYear < $startYear) {
-                $endYear = $startYear;
-            }
-
-            for ($year = $startYear; $year <= $endYear; $year++) {
-                $years[$year] = $year;
-            }
-        }
-
+        $years += JemSpecialDayYears::availableYears($rows, $startMonth, $today);
         ksort($years);
 
         return $years;

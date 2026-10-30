@@ -41,6 +41,11 @@ final class AdminSearchApplication extends \Joomla\CMS\Application\CMSApplicatio
         return 'administrator';
     }
 
+    public function getParams($option = null)
+    {
+        return \Joomla\CMS\Component\ComponentHelper::getParams($option ?: 'com_jem');
+    }
+
     protected function doExecute()
     {
     }
