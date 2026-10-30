@@ -456,7 +456,7 @@ $showAttendeeColumn = ((int) $this->params->get('displayattendeecolumn', 0) === 
                         if ($enabled && ((int) $row->published >= 0)) :
                             $statusTask = ((int) $row->published === 1) ? 'unpublish' : 'publish';
                             ?>
-                            <a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i; ?>','myevents.<?php echo $statusTask; ?>')" class="jem-status-link">
+                            <a href="#" class="jem-status-link" data-jem-item-id="cb<?php echo (int) $i; ?>" data-jem-task="myevents.<?php echo $statusTask; ?>">
                                 <?php echo $statusIcon; ?>
                             </a>
                         <?php else :
