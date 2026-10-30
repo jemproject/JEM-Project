@@ -161,6 +161,19 @@ class JemModelAttendees extends BaseDatabaseModel
     }
 
     /**
+     * Read all filtered attendees for CSV or print, preserving event access checks.
+     * Do not reuse or replace the cached page, or change session pagination.
+     *
+     * @return  array  All matching attendees; empty when access is denied.
+     *
+     * @throws  \RuntimeException  When the database query fails.
+     */
+    public function getAllItems()
+    {
+        return $this->_getList($this->_buildQuery(), 0, 0);
+    }
+
+    /**
      * Method to get the total number of attendees
      *
      * @access public

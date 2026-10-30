@@ -101,7 +101,7 @@ class JemViewAttendees extends JemAdminView
      */
     protected function _displayprint($tpl = null)
     {
-        $rows = $this->get('Items');
+        $rows = $this->get('AllItems');
         $event = $this->get('Event');
 
         if (JemHelper::isValidDate($event->dates)) {
