@@ -42,7 +42,9 @@ class JemControllerAttachments extends AdminController
         $model = $this->getModel();
 
         if ($model->deleteWithFiles($cid)) {
-            $app->enqueueMessage(Text::plural('COM_JEM_ATTACHMENTS_N_ITEMS_DELETED_WITH_FILES', count($cid)));
+            $result = $model->getDeleteFileResult();
+            $app->enqueueMessage(Text::sprintf('COM_JEM_ATTACHMENTS_DELETE_RESULT', count($result->deleted), $result->files));
+            JemAttachmentDeletion::notifyCleanup($result);
         } else {
             $app->enqueueMessage($model->getError(), 'error');
         }

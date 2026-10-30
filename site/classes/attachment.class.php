@@ -21,6 +21,7 @@ use Joomla\CMS\Filter\InputFilter;
 // ensure JemFactory is loaded (because this class is used by modules or plugins too)
 require_once(JPATH_SITE.'/components/com_jem/factory.php');
 require_once(JPATH_SITE.'/components/com_jem/classes/log.class.php');
+require_once __DIR__ . '/attachmentdeletion.class.php';
 
 /**
  * Holds the logic for attachments manipulation
@@ -613,90 +614,93 @@ class JemAttachment
     }
 
     /**
-     * remove attachment for objects
+     * Delete an authorized attachment record, then clean up its unreferenced file.
      *
-     * @param  id from db
-     * @param  string object identification (should be event<eventid>, category<categoryid>, etc...)
-     * @return boolean
+     * @param int $id Attachment record ID.
+     * @return bool Whether record deletion was confirmed; cleanup warnings are queued separately.
      */
-    static public function remove($id)
+    public static function remove($id)
     {
-        $user = JemFactory::getUser();
-        // Support Joomla access levels instead of single group id
-        $levels = $user->getAuthorisedViewLevels();
-        $userid = $user->get('id');
+        try {
+            $user = JemFactory::getUser();
+            // Support Joomla access levels instead of single group id
+            $levels = $user->getAuthorisedViewLevels();
+            $userid = $user->get('id');
 
-        // then get info for files from db
-        $db = Factory::getContainer()->get('DatabaseDriver');
+            // then get info for files from db
+            $db = Factory::getContainer()->get('DatabaseDriver');
 
-        $query = 'SELECT * '
-               . ' FROM #__jem_attachments '
-               . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
+            $query = 'SELECT * '
+                   . ' FROM #__jem_attachments '
+                   . ' WHERE id = ' . $db->Quote($id) . ' AND access IN (0,' . implode(',', $levels) . ')';
 
-        $db->setQuery($query);
-        $res = $db->loadObject();
-
-        if (!$res) {
-            return false;
-        }
-
-        $attachment = $res;
-
-        // Event and venue attachments always follow the current record ACL. Being
-        // the attachment uploader must not bypass permissions removed later.
-        if (strncasecmp($res->object, 'event', 5) == 0) {
-            $type = 'event';
-            $itemid = (int)substr($res->object, 5);
-            $table = '#__jem_events';
-        } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
-            $type = 'venue';
-            $itemid = (int)substr($res->object, 5);
-            $table = '#__jem_venues';
-        } else {
-            $type = '';
-        }
-
-        if ($type !== '') {
-            $query = $db->getQuery(true)
-                ->select($db->quoteName(array('created_by', 'access')))
-                ->from($db->quoteName($table))
-                ->where($db->quoteName('id') . ' = ' . $itemid);
             $db->setQuery($query);
-            $item = $db->loadObject();
+            $res = $db->loadObject();
 
-            if (!$item
-                || !in_array((int) $item->access, array_map('intval', $levels), true)
-                || !$user->can('edit', $type, $itemid, (int) $item->created_by)) {
-                JemHelper::addLogEntry("User {$userid} is not permitted to remove attachment " . $res->object, __METHOD__);
+            if (!$res) {
                 return false;
             }
-        } elseif (empty($userid) || ($userid != $res->created_by)) {
+
+            $attachment = $res;
+
+            // Event and venue attachments always follow the current record ACL. Being
+            // the attachment uploader must not bypass permissions removed later.
+            if (strncasecmp($res->object, 'event', 5) == 0) {
+                $type = 'event';
+                $itemid = (int)substr($res->object, 5);
+                $table = '#__jem_events';
+            } elseif (strncasecmp($res->object, 'venue', 5) == 0) {
+                $type = 'venue';
+                $itemid = (int)substr($res->object, 5);
+                $table = '#__jem_venues';
+            } else {
+                $type = '';
+            }
+
+            if ($type !== '') {
+                $query = $db->getQuery(true)
+                    ->select($db->quoteName(array('created_by', 'access')))
+                    ->from($db->quoteName($table))
+                    ->where($db->quoteName('id') . ' = ' . $itemid);
+                $db->setQuery($query);
+                $item = $db->loadObject();
+
+                if (!$item
+                    || !in_array((int) $item->access, array_map('intval', $levels), true)
+                    || !$user->can('edit', $type, $itemid, (int) $item->created_by)) {
+                    JemHelper::addLogEntry("User {$userid} is not permitted to remove attachment " . $res->object, __METHOD__);
+                    return false;
+                }
+            } elseif (empty($userid) || ($userid != $res->created_by)) {
+                return false;
+            }
+
+            $path = self::getSafeAttachmentPath($res->object, $res->file);
+            if (!$path || (string) $res->file === '' || basename((string) $res->file) !== (string) $res->file) {
+                return false;
+            }
+
+            $result = JemAttachmentDeletion::execute(
+                $db,
+                [(int) $id => (object) ['object' => $res->object, 'file' => $res->file, 'path' => $path]],
+                static function () use ($db, $id) {
+                    $query = $db->getQuery(true)->delete($db->quoteName('#__jem_attachments'))
+                        ->where($db->quoteName('id') . ' = ' . (int) $id);
+                    return $db->setQuery($query)->execute();
+                }
+            );
+            if (!$result->success) {
+                return false;
+            }
+
+            JemAttachmentDeletion::notifyCleanup($result, true);
+            self::triggerActionLog('onJemAfterAttachmentDelete', array($attachment));
+
+            return true;
+        } catch (\Throwable $e) {
+            JemAttachmentDeletion::logFailure([(int) $id], 'form-removal', $e);
             return false;
         }
-
-        JemHelper::addLogEntry("User {$userid} removes attachment " . $res->object.'/'.$res->file, __METHOD__);
-        $path = self::getSafeAttachmentPath($res->object, $res->file);
-        if (!$path) {
-            return false;
-        }
-
-        if (file_exists($path)) {
-            File::delete($path);
-        }
-
-        $query = 'DELETE FROM #__jem_attachments '
-               . ' WHERE id = '. $db->Quote($id);
-
-        $db->setQuery($query);
-        $deleted = $db->execute();
-
-        if (!$deleted) {
-            return false;
-        }
-
-        self::triggerActionLog('onJemAfterAttachmentDelete', array($attachment));
-
-        return true;
     }
 
     /**
