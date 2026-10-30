@@ -252,7 +252,7 @@ if (!function_exists('jem_myvenues_country_flag')) {
                                 if ($enabled && ((int) $row->published >= 0)) :
                                     $statusTask = ((int) $row->published === 1) ? 'unpublish' : 'publish';
                                     ?>
-                                    <a href="javascript:void(0);" onclick="return listItemTask('cb<?php echo $i; ?>','myvenues.<?php echo $statusTask; ?>')" class="jem-status-link">
+                                    <a href="#" class="jem-status-link" data-jem-item-id="cb<?php echo (int) $i; ?>" data-jem-task="myvenues.<?php echo $statusTask; ?>">
                                         <?php echo $statusIcon; ?>
                                     </a>
                                 <?php else :

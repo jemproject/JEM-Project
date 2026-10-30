@@ -63,6 +63,14 @@ class JemViewMyevents extends JemView
             if ($print) {
                 JemHelper::loadCss('print');
                 $document->setMetaData('robots', 'noindex, nofollow');
+            } else {
+                $document->getWebAssetManager()->registerAndUseScript(
+                    'com_jem.frontend-list-actions',
+                    'media/com_jem/js/frontend-list-actions.js',
+                    array(),
+                    array('defer' => true),
+                    array('core')
+                );
             }
 
             $events = $this->get('Events');
