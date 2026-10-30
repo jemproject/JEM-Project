@@ -8,15 +8,18 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\Filesystem\File;
 use Joomla\Filesystem\Path;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
 require_once __DIR__ . '/admin.php';
+require_once JPATH_SITE . '/components/com_jem/classes/attachmentdeletion.class.php';
 
 class JemModelAttachment extends JemModelAdmin
 {
+    /** @var object|null Confirmed result of the last record-and-file deletion. */
+    protected $deleteFileResult = null;
+
     protected function canDelete($record)
     {
         return !empty($record->id)
@@ -175,30 +178,73 @@ class JemModelAttachment extends JemModelAdmin
         );
     }
 
+    /**
+     * Remove authorized attachment records before cleaning up their physical files.
+     *
+     * @param array $pks Selected attachment IDs.
+     * @return bool Whether all selected records were deleted and committed.
+     */
     public function deleteWithFiles(array $pks)
     {
-        $paths = array();
-
-        foreach ($pks as $pk) {
-            $table = $this->getTable();
-
-            if (!$table->load((int) $pk)
-                || !JemHelperBackend::canAccessAttachment($table->object, 'edit')) {
-                $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
-                return false;
-            }
-
-            $paths[(int) $pk] = $this->getAttachmentPath((int) $pk);
+        $this->deleteFileResult = null;
+        $pks = array_values(array_unique(array_filter(array_map('intval', $pks), static function ($id) {
+            return $id > 0;
+        })));
+        if (!$pks) {
+            $this->setError(Text::_('COM_JEM_SELECT_AN_ITEM_TO_DELETE'));
+            return false;
         }
 
-        foreach ($paths as $path) {
-
-            if ($path && is_file($path) && !File::delete($path)) {
-                return false;
+        $attachments = [];
+        try {
+            foreach ($pks as $pk) {
+                $table = $this->getTable();
+                if (!$table->load($pk) || !JemHelperBackend::canAccessAttachment($table->object, 'edit')) {
+                    $this->setError(Text::_('JERROR_ALERTNOAUTHOR'));
+                    return false;
+                }
+                $path = $this->resolveAttachmentPath($table->object, $table->file);
+                if (!$path) {
+                    $this->setError(Text::_('COM_JEM_ATTACHMENT_ERROR_INVALID_FILE'));
+                    return false;
+                }
+                $attachments[$pk] = (object) [
+                    'object' => (string) $table->object,
+                    'file' => (string) $table->file,
+                    'path' => $path,
+                ];
             }
+        } catch (\Throwable $e) {
+            JemAttachmentDeletion::logFailure($pks, 'preflight', $e);
+            $this->setError(Text::_('COM_JEM_ATTACHMENT_DELETE_FAILED'));
+            return false;
         }
 
-        return $this->delete($pks);
+        $this->deleteFileResult = JemAttachmentDeletion::execute(
+            $this->getDatabase(),
+            $attachments,
+            function () use (&$pks) {
+                return $this->delete($pks);
+            }
+        );
+        if (!$this->deleteFileResult->success) {
+            if (!$this->getError()) {
+                $this->setError(Text::_($this->deleteFileResult->error));
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get actual record/file counts and cleanup warnings for the last bulk removal.
+     *
+     * @return object|null Confirmed deletion result, or null before valid preflight.
+     */
+    public function getDeleteFileResult()
+    {
+        return $this->deleteFileResult;
     }
 
     public function getAttachmentPath($id)
