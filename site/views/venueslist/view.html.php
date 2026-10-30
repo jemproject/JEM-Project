@@ -142,6 +142,7 @@ class JemViewVenueslist extends JemView
         $pagetitle = Text::_('COM_JEM_VENUESLIST_PAGETITLE');
         $pageheading = $pagetitle;
         $pageclass_sfx = '';
+        $print_link = Route::_('index.php?option=com_jem&view=venueslist&print=1&tmpl=component');
 
         // Check to see which parameters should take priority
         if ($useMenuItemParams) {
@@ -150,7 +151,6 @@ class JemViewVenueslist extends JemView
             $pagetitle = $params->get('page_title', Text::_('COM_JEM_VENUESLIST_PAGETITLE'));
             $pageheading = $params->get('page_heading', $pagetitle);
             $pageclass_sfx = $params->get('pageclass_sfx');
-            $print_link = Route::_('index.php?option=com_jem&view=venueslist&print=1&tmpl=component');
         }
 
         $params->set('page_heading', $pageheading);
