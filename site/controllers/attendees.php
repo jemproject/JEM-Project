@@ -451,7 +451,7 @@ class JemControllerAttendees extends BaseController
         $comments          = $jemconfig->get('regallowcomments', 0);
 
         $model = $this->getModel('attendees');
-        $datas = $model->getData();
+        $datas = $model->getAllItems();
         $event = $model->getEvent();
         $waitinglist = isset($event->waitinglist) ? $event->waitinglist : false;
 

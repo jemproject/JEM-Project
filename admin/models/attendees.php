@@ -167,6 +167,23 @@ class JemModelAttendees extends ListModel
     }
 
     /**
+     * Read every filtered attendee for CSV or print, independently of list pagination.
+     * Reuse the list query without changing page state, session preferences or cache.
+     *
+     * @return  array|false  All matching attendees, or false on a database error.
+     */
+    public function getAllItems()
+    {
+        try {
+            return $this->_getList($this->getListQuery(), 0, 0);
+        } catch (\RuntimeException $e) {
+            $this->setError($e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Get event data
      *
      * @access public
@@ -306,7 +323,7 @@ class JemModelAttendees extends ListModel
         $comments  = $jemconfig->get('regallowcomments', 0);
 
         $event = $this->getEvent();
-        $items = $this->getItems();
+        $items = $this->getAllItems();
         $priced = in_array((string) ($event->pricing_mode ?? 'classic'), array('single', 'multiple', 'priced'), true);
         $breakdowns = $priced ? $this->getCommercialBreakdowns() : array();
 

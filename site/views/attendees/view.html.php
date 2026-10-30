@@ -185,7 +185,7 @@ class JemViewAttendees extends JemView
         // Emailaddress
         $enableemailaddress = $params->get('enableemailaddress', 0);
 
-        $rows      = $this->get('Data');
+        $rows      = $this->get('AllItems');
         $event     = $this->get('Event');
 
         //assign data to template

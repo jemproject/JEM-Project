@@ -116,7 +116,7 @@ class JemViewAttendees extends JemAdminView
      */
     protected function _displayprint($tpl = null)
     {
-        $rows = $this->get('Items');
+        $rows = $this->get('AllItems');
         $event = $this->get('Event');
         $this->commercialBreakdowns = $this->get('CommercialBreakdowns');
         $this->capacityBreakdowns = $this->get('CapacityBreakdowns');
