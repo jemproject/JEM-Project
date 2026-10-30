@@ -2,11 +2,17 @@
 
 declare(strict_types=1);
 
+use JemProject\Tests\Support\PhpClassContract;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class AdminCodeContractsTest extends TestCase
 {
+    /** @var array<string, array{string, string}> Approved format bridges and their targets. */
+    private const CONTROLLER_BRIDGES = [
+        'imagehandler.json.php' => ['imagehandler.php', 'JemControllerImagehandler'],
+    ];
+
     /**
      * @return iterable<string, array{string}>
      */
@@ -32,13 +38,44 @@ final class AdminCodeContractsTest extends TestCase
      */
     public static function adminControllerProvider(): iterable
     {
-        yield from self::rootPhpFilesWithExpectedClass(JEM_TEST_ROOT . '/admin/controllers', 'JemController');
+        foreach (self::rootPhpFilesWithExpectedClass(JEM_TEST_ROOT . '/admin/controllers', 'JemController') as $name => $case) {
+            if (!isset(self::CONTROLLER_BRIDGES[basename($case[0])])) {
+                yield $name => $case;
+            }
+        }
     }
 
     #[DataProvider('adminControllerProvider')]
     public function testAdminControllersKeepExpectedClassName(string $path, string $expectedClass): void
     {
         $this->assertExpectedClassByPrefix($path, $expectedClass);
+    }
+
+    /**
+     * List approved bridges independently of discovery so missing files still fail.
+     *
+     * @return iterable<string, array{string, string, string}>
+     */
+    public static function adminControllerBridgeProvider(): iterable
+    {
+        foreach (self::CONTROLLER_BRIDGES as $bridge => [$target, $class]) {
+            $directory = JEM_TEST_ROOT . '/admin/controllers/';
+            yield $bridge => [$directory . $bridge, $directory . $target, $class];
+        }
+    }
+
+    /**
+     * Verify that an approved JSON bridge delegates to the expected controller.
+     *
+     * @param string $bridge        Bridge file path.
+     * @param string $target        Expected implementation path.
+     * @param string $expectedClass Controller class required by Joomla.
+     * @return void
+     */
+    #[DataProvider('adminControllerBridgeProvider')]
+    public function testAdminControllerBridgesLoadExpectedClass(string $bridge, string $target, string $expectedClass): void
+    {
+        PhpClassContract::assertBridge($bridge, $target, $expectedClass);
     }
 
     /**
@@ -312,16 +349,16 @@ final class AdminCodeContractsTest extends TestCase
         return str_replace('\\', '/', substr($path, strlen(JEM_TEST_ROOT) + 1));
     }
 
+    /**
+     * Validate the expected class without assuming it is the first declaration.
+     *
+     * @param string $path          PHP implementation path.
+     * @param string $expectedClass Class name derived from the file and prefix.
+     * @return void
+     */
     private function assertExpectedClassByPrefix(string $path, string $expectedClass): void
     {
-        preg_match('/class\s+([A-Za-z0-9_]+)\s+extends\s+[A-Za-z0-9_\\\\]+/', self::read($path), $match);
-
-        self::assertNotSame(array(), $match, self::relativePath($path) . ' should define a class with an extends clause.');
-        self::assertSame(
-            strtolower($expectedClass),
-            strtolower($match[1]),
-            self::relativePath($path) . ' should define ' . $expectedClass . ' ignoring camel-case word boundaries.'
-        );
+        PhpClassContract::assertClass($path, $expectedClass);
     }
 
 }
