@@ -55,10 +55,21 @@ class JemControllerMyevents extends BaseController
             return;
         }
 
-        $total = count($cid);
-        $msg   = $total.' '.Text::_('COM_JEM_EVENT_PUBLISHED');
+        $total = (int) $model->getState('publish.updated', 0);
+        $skipped = (int) $model->getState('publish.skipped', 0);
+        $msg = $total > 0
+            ? $total . ' ' . Text::_('COM_JEM_EVENT_PUBLISHED')
+            : Text::_('COM_JEM_STATUS_NO_ITEMS_CHANGED');
 
-        $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
+        if ($skipped > 0) {
+            $msg .= ' ' . Text::sprintf('COM_JEM_STATUS_ITEMS_SKIPPED', $skipped);
+        }
+
+        $this->setRedirect(
+            JemHelperRoute::getMyEventsRoute(),
+            $msg,
+            $total === 0 || $skipped > 0 ? 'warning' : 'message'
+        );
     }
 
     /**
@@ -85,10 +96,21 @@ class JemControllerMyevents extends BaseController
             return;
         }
 
-        $total = count($cid);
-        $msg   = $total.' '.Text::_('COM_JEM_EVENT_UNPUBLISHED');
+        $total = (int) $model->getState('publish.updated', 0);
+        $skipped = (int) $model->getState('publish.skipped', 0);
+        $msg = $total > 0
+            ? $total . ' ' . Text::_('COM_JEM_EVENT_UNPUBLISHED')
+            : Text::_('COM_JEM_STATUS_NO_ITEMS_CHANGED');
 
-        $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
+        if ($skipped > 0) {
+            $msg .= ' ' . Text::sprintf('COM_JEM_STATUS_ITEMS_SKIPPED', $skipped);
+        }
+
+        $this->setRedirect(
+            JemHelperRoute::getMyEventsRoute(),
+            $msg,
+            $total === 0 || $skipped > 0 ? 'warning' : 'message'
+        );
     }
 
     /**
@@ -118,10 +140,21 @@ class JemControllerMyevents extends BaseController
             return;
         }
 
-        $total = count($cid);
-        $msg   = $total.' '.Text::_('COM_JEM_EVENT_TRASHED');
+        $total = (int) $model->getState('publish.updated', 0);
+        $skipped = (int) $model->getState('publish.skipped', 0);
+        $msg = $total > 0
+            ? $total . ' ' . Text::_('COM_JEM_EVENT_TRASHED')
+            : Text::_('COM_JEM_STATUS_NO_ITEMS_CHANGED');
 
-        $this->setRedirect(JemHelperRoute::getMyEventsRoute(), $msg);
+        if ($skipped > 0) {
+            $msg .= ' ' . Text::sprintf('COM_JEM_STATUS_ITEMS_SKIPPED', $skipped);
+        }
+
+        $this->setRedirect(
+            JemHelperRoute::getMyEventsRoute(),
+            $msg,
+            $total === 0 || $skipped > 0 ? 'warning' : 'message'
+        );
     }
 }
 ?>
