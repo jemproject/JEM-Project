@@ -432,9 +432,13 @@ function jem_common_show_filter(&$obj) {
                     <?php echo $this->lists['filter']; ?>
                     <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox" onchange="document.adminForm.submit();" />
                 </div>
+                <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-month">
+                    <label for="filter_month"><?php echo Text::_('COM_JEM_SEARCH_MONTH'); ?></label>
+                    <input type="month" name="filter_month" id="filter_month" pattern="[0-9]{4}-[0-9]{2}" title="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM_FORMAT'); ?>" class="inputbox form-control" placeholder="<?php echo Text::_('COM_JEM_SEARCH_YYYY-MM'); ?>" size="7" value="<?php echo $this->lists['month'] ?? '';?>">
+                </div>
                 <div class="jem-row jem-justify-start jem-nowrap jem-events-filter-actions">
                     <button class="buttonfilter btn" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-                    <button class="buttonfilter btn" type="button" data-jem-main-filters-clear<?php echo !empty($this->eventFilters['has_editable']) ? '' : ' onclick="document.getElementById(\'filter_search\').value=\'\';this.form.submit();"'; ?>><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
+                    <button class="buttonfilter btn" type="button" data-jem-main-filters-clear<?php echo !empty($this->eventFilters['has_editable']) ? '' : ' onclick="document.getElementById(\'filter_search\').value=\'\';document.getElementById(\'filter_month\').value=\'\';this.form.submit();"'; ?>><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
                 </div>
             </div>
         <?php endif; ?>
