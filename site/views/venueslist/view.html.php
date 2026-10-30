@@ -74,13 +74,11 @@ class JemViewVenueslist extends JemView
         // are no venues available?
         $novenues = (!$rows) ? 1 : 0;
 
-        // get variables
-        $filter_order     = $app->getUserStateFromRequest('com_jem.venueslist.filter_order', 'filter_order',     'a.city', 'cmd');
-        $filter_order_Dir = $app->getUserStateFromRequest('com_jem.venueslist.filter_order_Dir', 'filter_order_Dir',    '', 'word');
-//         $filter_state     = $app->getUserStateFromRequest('com_jem.venueslist.filter_state', 'filter_state',     '*', 'word');
-        $filter           = $app->getUserStateFromRequest('com_jem.venueslist.filter_type', 'filter_type', '', 'int');
-        $search           = $app->getUserStateFromRequest('com_jem.venueslist.filter_search', 'filter_search', '', 'string');
-        $state            = $this->get('State');
+        // Display the same menu-scoped, validated state used by the model query.
+        $state = $this->get('State');
+        [$filter_order, $filter_order_Dir] = explode(' ', (string) $state->get('filter.orderby', 'a.city ASC'), 2);
+        $filter           = (int) $state->get('filter.filter_type', 0);
+        $search           = (string) $state->get('filter.filter_search', '');
         $filterCountries  = (array) $state->get('filter.countries', array());
         $lists['show_venue_event_filter'] = (bool) $state->get('filter.show_venue_event_filter', false);
         $lists['show_all_venues'] = (bool) $state->get('filter.show_all_venues', false);
