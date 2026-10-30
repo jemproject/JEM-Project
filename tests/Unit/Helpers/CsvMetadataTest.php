@@ -11,7 +11,8 @@ final class CsvMetadataTest extends TestCase
     public function testAddsVersionAsABackwardsCompatibleExtraColumn(): void
     {
         self::assertSame(
-            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1beta2', 'jem_csv_format' => 'rfc4180'),
+            array('id' => 791, 'title' => 'Test event', 'jem_export_version' => '5.0.1beta2',
+                'jem_csv_format' => 'rfc4180', 'jem_csv_escape' => 'apostrophe-v2'),
             JemCsvMetadataHelper::addVersion(
                 array('id' => 791, 'title' => 'Test event'),
                 '5.0.1beta2'

@@ -134,6 +134,23 @@ final class ImportAuditLifecycleTest extends TestCase
         return file_get_contents($this->logDirectory . '/jem-import-types.log.php');
     }
 
+    public function testCsvExportAndReimportPreserveLiteralApostrophesInStoredTypes(): void
+    {
+        $names = ["'+31 20 123 4567", "'-", "'-33.8568", "'123", "'=1+1", "''123", "O'Connor"];
+        foreach ($names as $index => $name) {
+            $id = 710 + $index;
+            self::assertSame(1, $this->import('types', [['id' => $id, 'name' => $name]])['added']);
+            for ($cycle = 0; $cycle < 2; ++$cycle) {
+                $stored = $this->row('types', $id);
+                self::assertSame($name, $stored->name);
+                $decoded = JemProject\Tests\Support\CsvMigrationRoundtrip::record((array) $stored);
+                self::assertSame($name, $decoded['name']);
+                self::assertSame(1, $this->import('types', [$decoded])['updated']);
+                self::assertSame($name, $this->row('types', $id)->name);
+            }
+        }
+    }
+
     public function testTypeImportAssignsLocalAuthorAndLogsEachLocalId(): void
     {
         $record = ['id' => 71, 'name' => 'Imported', 'created' => '2012-03-04 05:06:07', 'created_by' => 777, 'modified_by' => 888];

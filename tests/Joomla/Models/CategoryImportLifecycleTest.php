@@ -149,6 +149,26 @@ final class CategoryImportLifecycleTest extends TestCase
         }
     }
 
+    public function testCsvExportAndReimportPreserveStoredCategoryNames(): void
+    {
+        $names = ["'+31 20 123 4567", "'-", "'-33.8568", "'=1+1", "O'Connor"];
+        foreach ($names as $index => $name) {
+            $id = 710 + $index;
+            $record = $this->record($name, $id);
+            $record['alias'] = 'csv-apostrophe-' . $id;
+            self::assertSame(1, $this->import([$record])['added']);
+            $stored = $this->db->setQuery('SELECT * FROM #__jem_categories WHERE id=' . $id)->loadAssoc();
+            self::assertSame($name, $stored['catname']);
+            $decoded = JemProject\Tests\Support\CsvMigrationRoundtrip::record($stored);
+            self::assertSame($name, $decoded['catname']);
+            self::assertSame(1, $this->import([$decoded])['updated']);
+            self::assertSame(
+                $name,
+                $this->db->setQuery('SELECT catname FROM #__jem_categories WHERE id=' . $id)->loadResult()
+            );
+        }
+    }
+
     public function testChildBeforeParentKeepsExplicitIdsAndCanDeleteWholeSubtree(): void
     {
         $result = $this->import([$this->record('Child', 301, 300), $this->record('Parent', 300)]);
