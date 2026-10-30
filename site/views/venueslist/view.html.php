@@ -119,7 +119,7 @@ class JemViewVenueslist extends JemView
                 'select.genericlist',
                 $countries,
                 'filter_country[]',
-                array('class' => 'form-select', 'onchange' => 'document.adminForm.submit();'),
+                array('class' => 'form-select', 'onchange' => 'this.form.submit();'),
                 'value',
                 'text',
                 reset($filterCountries) ?: '',

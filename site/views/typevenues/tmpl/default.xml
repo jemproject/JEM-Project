@@ -22,7 +22,7 @@
     </fields>
 
     <fields name="params">
-        <fieldset name="basic">
+        <fieldset name="basic" addfieldpath="/administrator/components/com_jem/models/fields">
             <field name="showstate" type="radio"
                 default="0"
                 label="COM_JEM_SHOWSTATE"
@@ -54,6 +54,22 @@
                 <option value="city_country_venue">COM_JEM_VENUESLIST_ORDER_CITY_COUNTRY_VENUE</option>
                 <option value="country_venue_city">COM_JEM_VENUESLIST_ORDER_COUNTRY_VENUE_CITY</option>
                 <option value="country_city_venue">COM_JEM_VENUESLIST_ORDER_COUNTRY_CITY_VENUE</option>
+            </field>
+            <field name="filtercountries" type="countryoptions"
+                default=""
+                multiple="true"
+                label="COM_JEM_VENUESLIST_FILTER_COUNTRIES"
+                description="COM_JEM_VENUESLIST_FILTER_COUNTRIES_DESC"
+                class="inputbox form-select w-auto jem-options-width-auto"
+            />
+            <field name="showcountryfilter" type="radio"
+                default="1"
+                label="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER"
+                description="COM_JEM_VENUESLIST_SHOW_COUNTRY_FILTER_DESC"
+                class="btn-group btn-group-yesno"
+            >
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
             </field>
             <field name="venue_event_filter" type="list"
                 default="0"
