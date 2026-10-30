@@ -370,7 +370,7 @@ class JemTableCategory extends Nested
 
         // If the store failed return false.
         if (!$stored) {
-            $e = Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), $stored->getError());
+            $e = Text::sprintf('JLIB_DATABASE_ERROR_STORE_FAILED', get_class($this), 'CSV category write failed.');
             $this->setError($e);
             return false;
         }

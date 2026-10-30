@@ -20,6 +20,7 @@ use Joomla\CMS\User\User;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpersistence.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/categoryimport.php';
 require_once JPATH_SITE . '/components/com_jem/classes/registrationidentity.class.php';
 
 /**
@@ -168,7 +169,29 @@ class JemModelImport extends BaseDatabaseModel
      */
     public function categoriesimport($fieldsname, &$data, $replace = true)
     {
-        return $this->import('Category', 'JemTable', $fieldsname, $data, $replace);
+        $db = $this->getDatabase();
+        $started = false;
+        $result = array('added' => 0, 'updated' => 0, 'ignored' => 0, 'error' => 0, 'error_details' => array());
+
+        try {
+            JemCategoryImportHelper::begin($db);
+            $started = true;
+            $result = $this->import('Category', 'JemTable', $fieldsname, $data, $replace);
+            if ($result['error']) {
+                throw new RuntimeException($this->getError() ?: 'The category import failed.');
+            }
+            $db->transactionCommit();
+        } catch (Throwable $error) {
+            if ($started) {
+                $db->transactionRollback();
+            }
+            $result['added'] = $result['updated'] = 0;
+            $result['error'] = max(1, count($data) - $result['ignored']);
+            $this->setError($error->getMessage());
+            $this->appendImportErrorDetail($result, null, $error->getMessage());
+        }
+
+        return $result;
     }
 
     /**
@@ -440,6 +463,7 @@ class JemModelImport extends BaseDatabaseModel
         $rootkey = $this->_rootkey();
 
         $events = []; // collects cat event relations
+        $categoryIds = array();
 
         // parse each row
         foreach ($data as $row) {
@@ -458,6 +482,8 @@ class JemModelImport extends BaseDatabaseModel
             $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
+                // Asset IDs belong to this Joomla installation, never to the source CSV.
+                unset($values['asset_id']);
                 if ((int) ($values['id'] ?? 0) === 1 || strtolower(trim($values['catname'] ?? '')) === 'root') {
                     $rec['ignored']++;
                     continue;
@@ -529,6 +555,9 @@ class JemModelImport extends BaseDatabaseModel
             try {
                 $storeMethod = strcasecmp($objectname, 'JemTableCategory') === 0 ? 'storeCsvImport' : 'store';
                 $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod, true)]++;
+                if (strcasecmp($objectname, 'JemTableCategory') === 0) {
+                    $categoryIds[] = (int) $object->id;
+                }
             } catch (\RuntimeException $e) {
                 $this->setError($e->getMessage());
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
@@ -554,7 +583,9 @@ class JemModelImport extends BaseDatabaseModel
         // Specific actions outside the foreach loop
 
         if (strcasecmp($objectname, 'JemTableCategory') == 0) {
-            $object->rebuild();
+            if (!$rec['error']) {
+                JemCategoryImportHelper::complete($object, $db, $categoryIds);
+            }
         }
 
         if (strcasecmp($objectname, 'JemTableEvent') == 0) {

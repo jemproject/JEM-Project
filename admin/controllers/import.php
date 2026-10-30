@@ -2222,12 +2222,17 @@ class JemControllerImport extends BaseController
                 $db = Factory::getContainer()->get('DatabaseDriver');
                 $transactionStarted = false;
                 try {
-                    $db->transactionStart();
-                    $transactionStarted = true;
+                    // Category imports own the transaction covering their tree and ACL assets.
+                    if ($type !== 'categories') {
+                        $db->transactionStart();
+                        $transactionStarted = true;
+                    }
                     $result = $model->{$type.'import'}($fields, $records, $replace);
 
                     if (!empty($result['error'])) {
-                        $db->transactionRollback();
+                        if ($transactionStarted) {
+                            $db->transactionRollback();
+                        }
                         $transactionStarted = false;
                         $msg = Text::sprintf('COM_JEM_IMPORT_FILE_ROLLED_BACK', $result['error']);
 
@@ -2245,7 +2250,9 @@ class JemControllerImport extends BaseController
                         return;
                     }
 
-                    $db->transactionCommit();
+                    if ($transactionStarted) {
+                        $db->transactionCommit();
+                    }
                     $transactionStarted = false;
                 } catch (\Throwable $e) {
                     if ($transactionStarted) {

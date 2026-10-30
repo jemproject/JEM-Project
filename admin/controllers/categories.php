@@ -137,6 +137,15 @@ class JemControllerCategories extends AdminController
 
          $msg = $model->delete($cid);
 
+         if ($msg === false) {
+             $this->setRedirect(
+                 'index.php?option=com_jem&view=categories',
+                 $model->getError() ?: Text::_('COM_JEM_CATEGORIES_DELETE_FAILED'),
+                 'error'
+             );
+             return;
+         }
+
          $cache = Factory::getCache('com_jem');
          $cache->clean();
 
