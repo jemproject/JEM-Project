@@ -336,7 +336,7 @@ class JemAttachment
                 $table->frontend = (int) ((int) $rec['frontend'] === 1);
             }
 
-            $table->created = date('Y-m-d H:i:s');
+            $table->created = Factory::getDate()->toSql();
             $table->created_by = $user->get('id');
 
             if (!($table->check() && $table->store())) {

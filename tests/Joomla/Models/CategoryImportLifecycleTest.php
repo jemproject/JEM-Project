@@ -47,6 +47,7 @@ final class CategoryImportLifecycleTest extends TestCase
             parse_ini_file(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW)
         ));
         Factory::$language = $language;
+        (new ReflectionProperty($language, 'metadata'))->setValue($language, ['tag' => 'en-GB']);
 
         $options = ['host' => '127.0.0.1', 'user' => getenv('JEM_TEST_MYSQL_USER') ?: 'root',
             'password' => getenv('JEM_TEST_MYSQL_PASSWORD') ?: '', 'prefix' => 't_'];

@@ -775,6 +775,8 @@ CREATE TABLE IF NOT EXISTS `#__jem_attachments` (
     `ordering` int(11) NOT NULL DEFAULT '0',
     `created` datetime NULL DEFAULT NULL,
     `created_by` int(11) NOT NULL DEFAULT '0',
+    `modified` datetime NULL DEFAULT NULL,
+    `modified_by` int(11) NOT NULL DEFAULT '0',
     `downloads` int(11) unsigned NOT NULL DEFAULT '0',
     `last_download` datetime NULL DEFAULT NULL,
     PRIMARY KEY (`id`)

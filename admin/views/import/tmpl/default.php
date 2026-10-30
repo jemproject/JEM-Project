@@ -48,6 +48,20 @@ $renderMigrationCsvBlock = function ($id, $title, $description, $showColumnsText
             <div class="jem-import-columns-list"><?php echo implode(', ', $fields); ?></div>
         </details>
         <div class="jem-import-row jem-import-row-compact">
+            <?php if ($id !== 'catevents') : ?>
+                <div class="jem-import-field">
+                    <label for="import_author_<?php echo $id; ?>">
+                        <?php echo Text::_('COM_JEM_IMPORT_AUTHOR_LABEL'); ?>
+                        <span><?php echo Text::_('COM_JEM_IMPORT_AUTHOR_HELP'); ?></span>
+                    </label>
+                    <select name="import_author_<?php echo $id; ?>" id="import_author_<?php echo $id; ?>" class="form-select">
+                        <option value="0"><?php echo Text::_('COM_JEM_IMPORT_AUTHOR_SELECT'); ?></option>
+                        <?php foreach ($this->importAuthorOptions[$id] ?? array() as $author) : ?>
+                            <option value="<?php echo (int) $author->value; ?>"><?php echo htmlspecialchars($author->text, ENT_QUOTES, 'UTF-8'); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
             <div class="jem-import-field jem-import-field-replace">
                 <label for="<?php echo $id; ?>-replace">
                     <?php echo Text::_('COM_JEM_IMPORT_REPLACEIFEXISTS_LABEL'); ?>

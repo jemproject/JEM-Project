@@ -2059,8 +2059,9 @@ SQL;
      *
      * Joomla owns the normal schema lifecycle through jem.xml,
      * install.mysql.utf8.sql and the versioned update SQL files. This fallback
-     * only restores missing 5.0.1 fields when Joomla already has that schema
-     * version recorded and therefore does not execute 5.0.1.sql again.
+     * restores explicitly listed missing fields, including attachment audit
+     * fields introduced in 5.0.2, when a recorded newer/beta schema skips them.
+     * Never replay complete historical SQL files here.
      *
      * @return void
      */
@@ -2088,6 +2089,8 @@ SQL;
                 'mobile'   => "VARCHAR(50) NOT NULL DEFAULT '' AFTER `phone`",
             ),
             '#__jem_attachments' => array(
+                'modified'     => "DATETIME NULL DEFAULT NULL AFTER `created_by`",
+                'modified_by'  => "INT(11) NOT NULL DEFAULT '0' AFTER `modified`",
                 'downloads'     => "INT(11) UNSIGNED NOT NULL DEFAULT '0' AFTER `created_by`",
                 'last_download' => "DATETIME NULL DEFAULT NULL AFTER `downloads`",
             ),

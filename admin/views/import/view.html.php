@@ -52,6 +52,7 @@ class JemViewImport extends JemAdminView
         $this->cateventsfields     = $cateventsfields;
         $this->attachmentfields    = $attachmentfields;
         $this->typefields          = $typefields;
+        $this->importAuthorOptions = JemImportAuthorHelper::options();
 
         $this->eventlistVersion = $this->get('EventlistVersion');
         $this->eventlistTables     = $this->get('EventlistTablesCount');

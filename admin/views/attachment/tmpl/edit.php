@@ -93,6 +93,12 @@ $formatBytes = function ($bytes) {
                         <div class="col-md-6 mb-0">
                             <?php echo $this->form->renderField('created_by'); ?>
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <?php echo $this->form->renderField('modified'); ?>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <?php echo $this->form->renderField('modified_by'); ?>
+                        </div>
                     </div>
                 </div>
             </div>

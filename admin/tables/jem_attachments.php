@@ -46,6 +46,12 @@ class jem_attachments extends Table
     public $created = '';
     /** @var int */
     public $created_by = 0;
+    /** @var string|null */
+    public $modified = null;
+    /** @var int */
+    public $modified_by = 0;
+    /** @var bool Internal CSV context; never populated by Table::bind(). */
+    protected $_importAudit = false;
     /** @var int */
     public $downloads = 0;
     /** @var string|null */
@@ -55,6 +61,60 @@ class jem_attachments extends Table
     public function __construct(& $db)
     {
         parent::__construct('#__jem_attachments', 'id', $db);
+    }
+
+    /**
+     * Preserve metadata supplied by the trusted importer, not a bound form field.
+     *
+     * @return void
+     */
+    public function useImportAudit(): void
+    {
+        $this->_importAudit = true;
+    }
+
+    /**
+     * Track the last editor without changing creation data or recording no-op saves.
+     *
+     * @param bool $updateNulls Whether nullable values should be written on update.
+     * @return bool Whether the attachment was persisted successfully.
+     */
+    public function store($updateNulls = false)
+    {
+        $db = $this->getDatabase();
+        $stored = null;
+        if ((int) $this->id > 0) {
+            $stored = $db->setQuery($db->getQuery(true)
+                ->select('*')->from($db->quoteName($this->getTableName()))
+                ->where($db->quoteName('id') . ' = ' . (int) $this->id))->loadObject();
+        }
+
+        $actor = (int) Factory::getApplication()->getIdentity()->id;
+        $now = Factory::getDate()->toSql();
+        if ($stored) {
+            // Neither a form nor an unchanged event save may rewrite this history.
+            $this->created = $stored->created;
+            $this->created_by = (int) $stored->created_by;
+            $changed = false;
+            foreach (array('object', 'file', 'name', 'description', 'icon', 'frontend', 'access', 'ordering') as $field) {
+                if ((string) $this->$field !== (string) $stored->$field) {
+                    $changed = true;
+                    break;
+                }
+            }
+            $this->modified = $changed || $this->_importAudit ? $now : $stored->modified;
+            $this->modified_by = $changed || $this->_importAudit ? $actor : (int) $stored->modified_by;
+        } elseif ($this->_importAudit) {
+            $this->modified = null;
+            $this->modified_by = 0;
+        } else {
+            $this->created = $now;
+            $this->created_by = $actor;
+            $this->modified = null;
+            $this->modified_by = 0;
+        }
+
+        return parent::store($updateNulls);
     }
 
     // overloaded check function
