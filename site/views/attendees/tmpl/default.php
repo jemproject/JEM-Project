@@ -262,11 +262,13 @@ $namelabel = $this->settings->get('global_regname', '1') ? 'COM_JEM_NAME' : 'COM
                         <td><?php if (!empty($row->uregdate)) { echo HTMLHelper::_('date', $row->uregdate, Text::_('DATE_FORMAT_LC5')); } ?></td>
                         <td class="center">
                             <?php
-                            $status = (int)$row->status;
-                            if($this->event->waitinglist) {
-                                if ($status === 1 && $row->waiting == 1) { $status = 2; }
+                            $status = (int) $row->status;
+                            if ($status === 1 && (int) $row->waiting === 1) {
+                                $status = 2;
+                            }
+                            if ($this->event->waitinglist) {
                                 echo jemhtml::toggleAttendanceStatus($row->id, $status, true);
-                            }else{
+                            } else {
                                 echo jemhtml::toggleAttendanceStatus($row->id, $status, false);
                             }
                             ?>

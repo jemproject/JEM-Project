@@ -283,7 +283,8 @@ class JemModelAttendees extends BaseDatabaseModel
             if ($filter_status >= 1) {
                 $waiting = $filter_status == 2 ? 1 : 0;
                 $filter_status = 1;
-                $where[] = '(a.waitinglist = 0 OR r.waiting = '.$waiting.')';
+                // The event setting must not reclassify existing registrations.
+                $where[] = 'r.waiting = ' . $waiting;
             }
             $where[] = 'r.status = '.$filter_status;
         }

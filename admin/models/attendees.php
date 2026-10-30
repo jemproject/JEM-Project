@@ -126,13 +126,13 @@ class JemModelAttendees extends ListModel
         // load only data from current event
         $query->where('r.event = '.$db->Quote($this->eventid));
 
-    // TODO: filter status
+        // Filter stored membership, independently of whether new waiting entries are enabled.
         $filter_status = $this->getState('filter_status', -2);
         if ($filter_status > -2) {
             if ($filter_status >= 1) {
                 $waiting = $filter_status == 2 ? 1 : 0;
                 $filter_status = 1;
-                $query->where('(a.waitinglist = 0 OR r.waiting = '.$db->quote($waiting).')');
+                $query->where('r.waiting = ' . $db->quote($waiting));
             }
             $query->where('r.status = '.$db->quote($filter_status));
         }

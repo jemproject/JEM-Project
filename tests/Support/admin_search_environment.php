@@ -130,7 +130,12 @@ final class JemHelper
 {
     public static function config(): object
     {
-        return new stdClass();
+        return (object) ['display_num' => 0];
+    }
+
+    public static function globalattribs(): \Joomla\Registry\Registry
+    {
+        return new \Joomla\Registry\Registry();
     }
 }
 
