@@ -2124,6 +2124,7 @@ class JemControllerImport extends BaseController
             // get fields, on first row of the file
             $fields = array();
             $versionColumn = null;
+            $escapeColumn = null;
             $csvEscape = '\\';
             $totalValueBytes = 0;
             if (($data = fgetcsv($handle, JemImportBudgetHelper::MAX_LINE_BYTES + 1, $separator, $delimiter)) !== false) {
@@ -2144,6 +2145,7 @@ class JemControllerImport extends BaseController
                 }
                 array_walk($data, 'jem_normalise_csv_utf8');
                 $versionColumn = JemCsvMetadataHelper::findVersionColumn($data);
+                $escapeColumn = JemCsvMetadataHelper::findEscapeColumn($data);
                 $csvEscape = JemCsvMetadataHelper::usesRfc4180($data) ? '' : '\\';
 
                 for ($c = 0; $c < $numfields; $c++) {
@@ -2200,8 +2202,14 @@ class JemControllerImport extends BaseController
                 } else {
                     // normalise to utf-8; UTF-8 without BOM must not be converted again
                     array_walk($data, 'jem_normalise_csv_utf8');
-                    if ($versionColumn !== null) {
-                        $data = array_map(array('JemCsv', 'unprotectFormulaValue'), $data);
+                    try {
+                        $data = JemCsvMetadataHelper::restoreFormulaEscapes($data, $versionColumn, $escapeColumn);
+                    } catch (UnexpectedValueException $e) {
+                        fclose($handle);
+                        $msg = Text::_('COM_JEM_IMPORT_CSV_ESCAPE_UNSUPPORTED');
+                        $this->addImportLogEntry($logKey, 'row=' . ($row + 1) . ' ' . $msg, Log::ERROR);
+                        $this->setRedirect('index.php?option=com_jem&view=import#jem-migration', $msg, 'error');
+                        return;
                     }
                     $rowJemVersion = JemCsvMetadataHelper::extractVersion($data, $versionColumn);
                     if ($rowJemVersion !== '') {

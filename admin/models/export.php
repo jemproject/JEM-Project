@@ -281,7 +281,7 @@ class JemModelExport extends ListModel
     }
 
     /**
-     * Writes a CSV row using the current PHP-safe fputcsv signature.
+     * Write a Migration CSV row with the declared v2 literal-apostrophe escaping.
      *
      * @param  resource $handle
      * @param  array    $fields
@@ -292,7 +292,7 @@ class JemModelExport extends ListModel
      */
     private function putCsv($handle, array $fields, $separator, $delimiter)
     {
-        return JemCsv::putRow($handle, $fields, $separator, $delimiter, '');
+        return JemCsv::putRow($handle, $fields, $separator, $delimiter, '', "\n", true);
     }
 
     /**
@@ -317,10 +317,18 @@ class JemModelExport extends ListModel
         return $this->jemVersion;
     }
 
+    /**
+     * Add metadata columns matching every JEM Migration data row.
+     *
+     * @param   array  $header  Exported database column names.
+     *
+     * @return  array  Header including quoting and cell-escaping revisions.
+     */
     private function addVersionHeader(array $header)
     {
         $header[] = JemCsvMetadataHelper::VERSION_FIELD;
         $header[] = JemCsvMetadataHelper::FORMAT_FIELD;
+        $header[] = JemCsvMetadataHelper::ESCAPE_FIELD;
 
         return $header;
     }
