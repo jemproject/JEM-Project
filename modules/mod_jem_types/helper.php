@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Multilanguage;
+use Joomla\Registry\Registry;
 
 class ModJemTypesHelper
 {
@@ -32,7 +33,7 @@ class ModJemTypesHelper
     /**
      * Count upcoming and ongoing events for each visible, published event type.
      *
-     * @param \Joomla\Registry\Registry $params Module settings, including hide_empty.
+     * @param Registry $params Module settings, including hide_empty.
      * @return array Type objects with their eligible event counts.
      */
     public static function getTypeSummary($params)
@@ -107,7 +108,7 @@ class ModJemTypesHelper
     /**
      * Return up to N upcoming or ongoing events per visible, published type.
      *
-     * @param \Joomla\Registry\Registry $params Module settings, including top_n and hide_empty.
+     * @param Registry $params Module settings, including top_n and hide_empty.
      * @return array Type objects containing their eligible events in chronological order.
      */
     public static function getTopNByType($params)

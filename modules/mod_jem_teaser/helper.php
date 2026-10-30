@@ -726,7 +726,7 @@ abstract class ModJemTeaserHelper
                     $startdate = JEMOutput::formatdate($row->dates, $dateFormat);
                     $date = Text::sprintf('MOD_JEM_TEASER_ON_DATE', $startdate);
                     # additionally show endtime, but on single day events only to prevent user confusion
-                    if (empty($row->enddates)) {
+                    if (empty($row->enddates) || $row->enddates === $row->dates) {
                         $endtimes = $row->endtimes;
                     }
                 }

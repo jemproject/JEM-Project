@@ -326,6 +326,7 @@ class com_jemInstallerScript
             $this->repairGeneratedTypeMenuItems();
             $this->repairDefaultWeekendRule();
             $this->repair501SchemaFallback();
+            $this->repair502SchemaParity();
             $this->repairModuleStatusSettings();
             $this->repairLegacyRecurrenceRoots();
             $this->rebuildEventUtcDates();
@@ -596,6 +597,84 @@ class com_jemInstallerScript
                 : 'COM_JEM_INSTALL_BACKEND_ACL_INITIALISED'),
             'notice'
         );
+    }
+
+    /**
+     * Align known legacy schema variants when an RC/beta skips versioned SQL.
+     *
+     * Only JEM-owned columns and recognised legacy indexes are changed.
+     * Preserve unknown creation dates and any custom indexes.
+     *
+     * @return void
+     */
+    private function repair502SchemaParity(): void
+    {
+        $db = Factory::getContainer()->get('DatabaseDriver');
+        $tables = $db->getTableList();
+
+        foreach (['categories', 'types', 'special_days'] as $suffix) {
+            $table = '#__jem_' . $suffix;
+
+            if (!in_array($db->replacePrefix($table), $tables, true)) {
+                continue;
+            }
+
+            $columns = $db->getTableColumns($table, false);
+            $changes = [];
+
+            if ($suffix === 'categories' && !isset($columns['image_as_default'])) {
+                $changes[] = "ADD COLUMN `image_as_default` TINYINT(1) NOT NULL DEFAULT '0'";
+            }
+
+            if ($suffix === 'types' && isset($columns['name']) && $columns['name']->Default === null) {
+                $changes[] = "ALTER COLUMN `name` SET DEFAULT ''";
+            }
+
+            if ($suffix === 'special_days') {
+                if (isset($columns['weekdays']) && strtolower($columns['weekdays']->Type) === 'varchar(30)') {
+                    $changes[] = "MODIFY `weekdays` VARCHAR(32) NOT NULL DEFAULT ''";
+                }
+
+                if (isset($columns['created']) && strtolower($columns['created']->Type) === 'datetime'
+                    && ($columns['created']->Null !== 'YES'
+                        || !in_array(strtolower((string) $columns['created']->Default), ['current_timestamp()', 'current_timestamp'], true))) {
+                    $changes[] = 'MODIFY `created` DATETIME NULL DEFAULT CURRENT_TIMESTAMP';
+                }
+
+                $indexes = [];
+                foreach ($db->getTableKeys($table) as $key) {
+                    $indexes[$key->Key_name][(int) $key->Seq_in_index] = $key->Column_name;
+                }
+
+                foreach ([
+                    'idx_day_type' => ['day_type'],
+                    'idx_published_dates' => ['published', 'start_date', 'end_date'],
+                    'idx_checkout' => ['checked_out'],
+                ] as $name => $fields) {
+                    if (!isset($indexes[$name])) {
+                        $changes[] = 'ADD INDEX ' . $db->quoteName($name)
+                            . ' (' . implode(', ', $db->quoteName($fields)) . ')';
+                    }
+                }
+
+                foreach ([
+                    'idx_type' => ['day_type'],
+                    'idx_dates' => ['start_date', 'end_date'],
+                    'idx_published' => ['published'],
+                ] as $name => $fields) {
+                    if (isset($indexes[$name])) {
+                        ksort($indexes[$name]);
+                        if (array_values($indexes[$name]) === $fields) {
+                            $changes[] = 'DROP INDEX ' . $db->quoteName($name);
+                        }
+                    }
+                }
+            }
+
+            if ($changes !== []) {
+                $db->setQuery('ALTER TABLE ' . $db->quoteName($table) . ' ' . implode(', ', $changes))->execute();
+            }
+        }
     }
 
     /**

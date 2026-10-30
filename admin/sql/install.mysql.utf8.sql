@@ -370,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `#__jem_special_days` (
   `published` tinyint(1) NOT NULL DEFAULT 1,
   `access` int(10) unsigned NOT NULL DEFAULT 1,
   `ordering` int(11) NOT NULL DEFAULT 0,
-  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` datetime NULL DEFAULT CURRENT_TIMESTAMP,
   `created_by` int(11) unsigned NOT NULL DEFAULT 0,
   `modified` datetime NULL DEFAULT NULL,
   `modified_by` int(11) unsigned NOT NULL DEFAULT 0,
