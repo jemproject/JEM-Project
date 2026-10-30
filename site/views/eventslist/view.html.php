@@ -48,7 +48,7 @@ class JemViewEventslist extends JemView
         $user        = JemFactory::getUser();
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
         $model = $this->getModel();
-        $model->setState('Itemid', $menuactive->id);
+        $model->setState('Itemid', (int) ($menuactive->id ?? 0));
 
         if (method_exists($document, 'getWebAssetManager')) {
             $wa = $document->getWebAssetManager();

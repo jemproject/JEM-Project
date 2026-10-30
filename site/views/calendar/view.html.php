@@ -106,7 +106,7 @@ class JemViewCalendar extends JemView
         $url_base = 'index.php?option=com_jem&view=calendar';
         $ical_link = $partDate;
         // Set Page title
-        $pagetitle = $params->def('page_title', $menuitem->title);
+        $pagetitle = $params->def('page_title', $menuitem->title ?? Text::_('COM_JEM_CALENDAR'));
         $params->def('page_heading', $pagetitle);
         $pageheading = $params->get('page_heading', $pagetitle);
         $pageclass_sfx = $params->get('pageclass_sfx');

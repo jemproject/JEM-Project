@@ -113,7 +113,7 @@ class JemViewWeekcal extends JemView
         $rows = $this->get('Items');
 
         // Set Page title
-        $pagetitle = $params->def('page_title', $menuitem->title);
+        $pagetitle = $params->def('page_title', $menuitem->title ?? Text::_('COM_JEM_WEEKCALENDAR'));
         $params->def('page_heading', $pagetitle);
         $pageclass_sfx = $params->get('pageclass_sfx');
 

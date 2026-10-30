@@ -130,7 +130,7 @@ class JemViewVenue extends JemView
             }
 
             // Set Page title
-            $pagetitle = $params->def('page_title', $menuitem->title);
+            $pagetitle = $params->def('page_title', $menuitem->title ?? $venue->venue);
             $params->def('page_heading', $params->get('page_title'));
             $pageclass_sfx = $params->get('pageclass_sfx');
 
