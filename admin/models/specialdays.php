@@ -11,6 +11,8 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
+require_once JPATH_SITE . '/components/com_jem/classes/specialdayyears.class.php';
+
 class JemModelSpecialdays extends ListModel
 {
     public function __construct($config = array())
@@ -200,7 +202,7 @@ class JemModelSpecialdays extends ListModel
         $db = $this->getDatabase();
         $years = array();
         $query = $db->getQuery(true)
-            ->select($db->quoteName(array('start_date', 'end_date')))
+            ->select($db->quoteName(array('start_date', 'end_date', 'weekdays')))
             ->from($db->quoteName('#__jem_special_days'))
             ->where($db->quoteName('published') . ' IN (0, 1)');
 
@@ -211,32 +213,15 @@ class JemModelSpecialdays extends ListModel
             return $years;
         }
 
-        $nullDate = $db->getNullDate();
-
-        foreach ($rows as $row) {
-            $start = (!empty($row->start_date) && $row->start_date !== $nullDate) ? (string) $row->start_date : '';
-
-            if ($start === '') {
-                continue;
-            }
-
-            try {
-                $year = (int) (new DateTimeImmutable($start))->format('Y');
-            } catch (Exception $e) {
-                continue;
-            }
-
-            $years[$year] = $year;
-        }
-
-        ksort($years);
-
-        return $years;
+        // Called while populateState() is running: do not recursively call getState().
+        $startMonth = (int) ComponentHelper::getParams('com_jem')->get('annual_start_month', 1);
+        return JemSpecialDayYears::availableYears($rows, $startMonth, new DateTimeImmutable('now'));
     }
 
     protected function getDefaultYear(array $years)
     {
-        $currentYear = (int) date('Y');
+        $startMonth = (int) ComponentHelper::getParams('com_jem')->get('annual_start_month', 1);
+        $currentYear = JemSpecialDayYears::periodYear(new DateTimeImmutable('now'), $startMonth);
 
         if (isset($years[$currentYear])) {
             return $currentYear;
