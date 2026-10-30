@@ -16,10 +16,11 @@ use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\Filesystem\File;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\User\User;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpersistence.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importauthor.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importjournal.php';
 
 /**
  * JEM Component Import Model
@@ -27,6 +28,64 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpersistence.php';
  */
 class JemModelImport extends BaseDatabaseModel
 {
+    private ?int $importAuthor = null;
+    private ?JemImportJournal $importJournal = null;
+
+    /**
+     * Validate the explicit author selected in the JEM CSV migration form.
+     *
+     * @param string $type Imported entity kind.
+     * @param int $id Selected local user ID.
+     * @return void
+     * @throws RuntimeException When the author is not eligible.
+     */
+    public function setImportAuthor(string $type, int $id): void
+    {
+        JemImportAuthorHelper::validate($type, $id);
+        $this->importAuthor = $id;
+    }
+
+    /**
+     * Share deferred row outcomes with the controller that owns the transaction.
+     *
+     * @return JemImportJournal Request-local row journal.
+     */
+    public function getImportJournal(): JemImportJournal
+    {
+        return $this->importJournal ??= new JemImportJournal();
+    }
+
+    /**
+     * Replace source user references while preserving existing local authorship.
+     *
+     * @param array $values Parsed source fields.
+     * @param string $type Imported entity kind.
+     * @param object $table Destination table with stored values loaded when present.
+     * @param bool $loaded Whether an existing destination record was loaded.
+     * @return array Normalised record fields.
+     */
+    private function applyImportAuthor(array $values, string $type, object $table, bool $loaded): array
+    {
+        $actor = (int) Factory::getApplication()->getIdentity()->id;
+        // External imports use the executing user; JEM CSV requires an explicit selection.
+        $normalised = JemImportAuthorHelper::normalise(
+            $values,
+            $type,
+            $loaded ? (object) $table->getProperties() : null,
+            $this->importAuthor ?? $actor,
+            $actor,
+            Factory::getDate()->toSql()
+        );
+        $dateField = $type === 'categories' ? 'created_time' : 'created';
+        $sourceDate = trim((string) ($values[$dateField] ?? ''));
+        if (!$loaded && $sourceDate !== '' && $normalised[$dateField] !== $sourceDate
+            && $normalised[$dateField] !== $sourceDate . ' 00:00:00') {
+            $this->getImportJournal()->record('warning', 0, 'Invalid source creation date; using the import time.');
+        }
+
+        return $normalised;
+    }
+
     /**
      *  The table prefix of this site.
      *  @var string
@@ -264,12 +323,15 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0;
             }
 
+            $kind = $tableclass === 'jem_types' ? 'types' : 'attachments';
+            $this->getImportJournal()->begin($kind, $sourceLine, (int) ($values['id'] ?? 0));
             $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
-            $this->normaliseImportedManagerUserIds($values);
 
             $object = Table::getInstance($tableclass, '');
-            if ($replace && !empty($values['id'])) {
-                $object->load((int) $values['id']);
+            $loaded = $replace && !empty($values['id']) && $object->load((int) $values['id']);
+            $values = $this->applyImportAuthor($values, $kind, $object, $loaded);
+            if ($kind === 'attachments') {
+                $object->useImportAudit();
             }
             $object->bind($values);
 
@@ -283,7 +345,12 @@ class JemModelImport extends BaseDatabaseModel
             }
 
             try {
-                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, 'store', true)]++;
+                // Do not let table defaults replace an unknown historical author on update.
+                $object->created = $values['created'];
+                $object->created_by = $values['created_by'];
+                $outcome = JemImportPersistenceHelper::store($object, $db, (bool) $replace, 'store', true);
+                $rec[$outcome]++;
+                $this->getImportJournal()->record($outcome, (int) $object->id);
             } catch (\RuntimeException $e) {
                 $this->setError($e->getMessage());
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";
@@ -296,49 +363,6 @@ class JemModelImport extends BaseDatabaseModel
         return $rec;
     }
 
-    /**
-     * Keep imported creator/editor ids tied to users allowed to manage JEM.
-     *
-     * @param  array  $values  Row values prepared for binding
-     *
-     * @return void
-     */
-    private function normaliseImportedManagerUserIds(array &$values)
-    {
-        $currentUserId = (int) Factory::getApplication()->getIdentity()->id;
-
-        if (array_key_exists('created_by', $values) && !$this->isImportManagerUser((int) $values['created_by'])) {
-            $values['created_by'] = $currentUserId;
-        }
-
-        if (!empty($values['modified_by']) && !$this->isImportManagerUser((int) $values['modified_by'])) {
-            $values['modified_by'] = $currentUserId;
-        }
-    }
-
-    /**
-     * Checks whether an imported user id belongs to an administrator or JEM manager.
-     *
-     * @param  int  $userId
-     *
-     * @return bool
-     */
-    private function isImportManagerUser($userId)
-    {
-        if ($userId <= 0) {
-            return false;
-        }
-
-        try {
-            $user = User::getInstance($userId);
-        } catch (\Throwable $e) {
-            return false;
-        }
-
-        return $user
-            && !$user->guest
-            && JemHelperBackend::canManage('jem.tools.manage');
-    }
 
     /**
      * Return source position metadata added by the import controller.
@@ -359,6 +383,7 @@ class JemModelImport extends BaseDatabaseModel
     /** Keep only a few bounded row errors for the import result message. */
     private function appendImportErrorDetail(array &$result, $sourceLine, string $reason): void
     {
+        $this->getImportJournal()->record('error', 0, $reason);
         if (count($result['error_details']) >= 3) {
             return;
         }
@@ -436,6 +461,7 @@ class JemModelImport extends BaseDatabaseModel
         // retrieve the specified table
         $object = Table::getInstance($tablename, $prefix);
         $objectname = get_class($object);
+        $kind = array('JemTableEvent' => 'events', 'JemTableVenue' => 'venues', 'JemTableCategory' => 'categories')[$objectname] ?? $tablename;
         $rootkey = $this->_rootkey();
 
         $events = []; // collects cat event relations
@@ -454,6 +480,7 @@ class JemModelImport extends BaseDatabaseModel
                 $values[$field] = ($field !== $pk) ? $row[$k] : 0; // set key to given value or 0 depending on $replace
             }
 
+            $this->getImportJournal()->begin($kind, $sourceLine, (int) ($values['id'] ?? 0));
             $values = JemImportSecurityHelper::sanitiseRecord($values, $tablename, $sourceLine);
 
             if (strcasecmp($objectname, 'JemTableCategory') == 0) {
@@ -494,9 +521,8 @@ class JemModelImport extends BaseDatabaseModel
 
             // Bind the data
             $object->reset(); // clear old data first - which does NOT reset 'id' !
-            if ($replace && !empty($values['id'])) {
-                $object->load((int) $values['id']);
-            }
+            $loaded = $replace && !empty($values['id']) && $object->load((int) $values['id']);
+            $values = $this->applyImportAuthor($values, $kind, $object, $loaded);
             $object->bind($values);
 
             // check/store function for the Category Table
@@ -527,7 +553,9 @@ class JemModelImport extends BaseDatabaseModel
 
             try {
                 $storeMethod = strcasecmp($objectname, 'JemTableCategory') === 0 ? 'storeCsvImport' : 'store';
-                $rec[JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod, true)]++;
+                $outcome = JemImportPersistenceHelper::store($object, $db, (bool) $replace, $storeMethod, true);
+                $rec[$outcome]++;
+                $this->getImportJournal()->record($outcome, (int) $object->id);
             } catch (\RuntimeException $e) {
                 $this->setError($e->getMessage());
                 echo Text::_('COM_JEM_IMPORT_ERROR_STORE') . $e->getMessage() . "\n";

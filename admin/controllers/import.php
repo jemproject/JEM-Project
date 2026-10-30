@@ -24,6 +24,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/remotesource.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importcatalog.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importsecurity.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importjournal.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importxlsx.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importvenue.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpreview.php';
@@ -40,6 +41,7 @@ require_once JPATH_SITE . '/components/com_jem/classes/specialdaydate.class.php'
 class JemControllerImport extends BaseController
 {
     protected static $importLoggers = array();
+    private string $importLogOperation = '';
     protected $externalSourceWarnings = array();
     protected $externalSourceWarningCount = 0;
 
@@ -485,9 +487,11 @@ class JemControllerImport extends BaseController
             foreach (array_chunk($records, JemImportPreviewHelper::PAGE_SIZE) as $batch) {
                 $batchResult = $model->eventsimport($fields, $batch, false);
                 $this->mergeExternalImportResult($result, $batchResult);
+                $this->writeImportRows('external_csv', $model, false);
             }
         } catch (RuntimeException $e) {
             ob_end_clean();
+            $this->writeImportRows('external_csv', $model, false, $e);
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
@@ -632,9 +636,11 @@ class JemControllerImport extends BaseController
                 }
                 $batchResult = $model->eventsimport($fields, $batch, false);
                 $this->mergeExternalImportResult($result, $batchResult);
+                $this->writeImportRows('external_ics', $model, false);
             }
         } catch (RuntimeException $e) {
             ob_end_clean();
+            $this->writeImportRows('external_ics', $model, false, $e);
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_ics', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
@@ -981,10 +987,12 @@ class JemControllerImport extends BaseController
 
                 $batchResult = $model->eventsimport($fields, $batch, false);
                 $this->mergeExternalImportResult($result, $batchResult);
+                $this->writeImportRows($format === 'ics' ? 'external_ics' : 'external_csv', $model, false);
                 unset($batchOptions, $batchPreview, $batchResult);
             }
         } catch (RuntimeException $e) {
             ob_end_clean();
+            $this->writeImportRows($format === 'ics' ? 'external_ics' : 'external_csv', $model, false, $e);
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry($format === 'ics' ? 'external_ics' : 'external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#event-import', $msg, 'error');
@@ -1307,10 +1315,12 @@ class JemControllerImport extends BaseController
 
                 $batchResult = $model->venuesimport($fields, $batch, false);
                 $this->mergeExternalImportResult($result, $batchResult);
+                $this->writeImportRows('external_csv', $model, false);
                 unset($batchOptions, $batchPreview, $batchResult);
             }
         } catch (RuntimeException $e) {
             ob_end_clean();
+            $this->writeImportRows('external_csv', $model, false, $e);
             $msg = Text::sprintf('COM_JEM_IMPORT_SECURITY_BLOCKED', $e->getMessage());
             $this->addImportLogEntry('external_csv', $msg, Log::WARNING);
             $this->setRedirect('index.php?option=com_jem&view=import#venue-import', $msg, 'error');
@@ -2037,6 +2047,16 @@ class JemControllerImport extends BaseController
 
         $replace = Factory::getApplication()->input->post->getInt('replace_'.$type, 0);
         $logKey = $this->getImportLogKeyForCsvType($type);
+        $model = $this->getModel('import');
+        if ($type !== 'catevents') {
+            try {
+                $model->setImportAuthor($type, Factory::getApplication()->input->post->getInt('import_author_' . $type, 0));
+            } catch (\RuntimeException $e) {
+                $this->addImportLogEntry($logKey, $e->getMessage(), Log::ERROR);
+                $this->setRedirect('index.php?option=com_jem&view=import#jem-migration', $e->getMessage(), 'error');
+                return;
+            }
+        }
         $object = Table::getInstance('jem_'.$dbname, '');
         $object_fields = get_object_vars($object);
         $jemconfig = JemConfig::getInstance()->toRegistry();
@@ -2111,6 +2131,7 @@ class JemControllerImport extends BaseController
                     JemImportBudgetHelper::assertTabularRow($data, $totalValueBytes);
                 } catch (RuntimeException $e) {
                     fclose($handle);
+                    $this->addImportLogEntry($logKey, 'row=1 ' . $e->getMessage(), Log::ERROR);
                     $this->setRedirect('index.php?option=com_jem&view=import', $e->getMessage(), 'error');
                     return;
                 }
@@ -2165,6 +2186,7 @@ class JemControllerImport extends BaseController
                     JemImportBudgetHelper::assertTabularRow($data, $totalValueBytes);
                 } catch (RuntimeException $e) {
                     fclose($handle);
+                    $this->addImportLogEntry($logKey, 'row=' . ($row + 1) . ' ' . $e->getMessage(), Log::ERROR);
                     $this->setRedirect('index.php?option=com_jem&view=import', $e->getMessage(), 'error');
                     return;
                 }
@@ -2172,6 +2194,8 @@ class JemControllerImport extends BaseController
                 $num = count($data);
 
                 if ($numfields != $num) {
+                    $this->addImportLogEntry($logKey, 'row=' . ($row + 1)
+                        . ' outcome=SKIPPED reason=Column count mismatch; expected=' . $numfields . ' actual=' . $num, Log::WARNING);
                     $msg .= "<p>".Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_FIELDS_COUNT_ERROR', $num, $row)."</p>\n";
                 } else {
                     // normalise to utf-8; UTF-8 without BOM must not be converted again
@@ -2218,7 +2242,6 @@ class JemControllerImport extends BaseController
 
             // database update
             if (count($records)) {
-                $model = $this->getModel('import');
                 $db = Factory::getContainer()->get('DatabaseDriver');
                 $transactionStarted = false;
                 try {
@@ -2230,6 +2253,7 @@ class JemControllerImport extends BaseController
                         $db->transactionRollback();
                         $transactionStarted = false;
                         $msg = Text::sprintf('COM_JEM_IMPORT_FILE_ROLLED_BACK', $result['error']);
+                        $this->writeImportRows($logKey, $model, true);
 
                         foreach (array_slice($result['error_details'] ?? array(), 0, 3) as $detail) {
                             $line = (int) ($detail['line'] ?? 0);
@@ -2252,12 +2276,15 @@ class JemControllerImport extends BaseController
                         $db->transactionRollback();
                     }
 
-                    $this->addImportLogEntry($logKey, $e->getMessage() . ' File: ' . $file['name'], Log::WARNING);
+                    $this->writeImportRows($logKey, $model, true, $e);
+                    $this->addImportLogEntry($logKey, $e->getMessage() . ' File: ' . $file['name'], Log::ERROR);
                     $msg = Text::_('COM_JEM_IMPORT_FILE_FAILED_ROLLED_BACK');
                     $this->addImportLogEntry($logKey, $msg . ' File: ' . $file['name'], Log::WARNING);
                     $this->setRedirect('index.php?option=com_jem&view=import', $msg, 'error');
                     return;
                 }
+                // Row outcomes are emitted only after the transaction has committed.
+                $this->writeImportRows($logKey, $model, false);
                 if ($result['added']) {
                     $msg .= "<p>" . Text::sprintf('COM_JEM_IMPORT_NUMBER_OF_ROWS_ADDED', $result['added']) . "</p>\n";
                 }
@@ -2361,10 +2388,11 @@ class JemControllerImport extends BaseController
      * @param   string   $key       Import log key.
      * @param   string   $message   Log message.
      * @param   integer  $priority  Joomla log priority.
+     * @param   boolean  $normaliseHeader  Normalise the header once after a row batch.
      *
      * @return void
      */
-    protected function addImportLogEntry($key, $message, $priority = Log::INFO)
+    protected function addImportLogEntry($key, $message, $priority = Log::INFO, $normaliseHeader = true)
     {
         $files = array(
             'external_csv' => 'jem-import-external-csv.log.php',
@@ -2396,8 +2424,58 @@ class JemControllerImport extends BaseController
             self::$importLoggers[$key] = true;
         }
 
-        Log::add($message, $priority, $category);
-        $this->normaliseImportLogHeader($files[$key]);
+        if ($this->importLogOperation === '') {
+            $this->importLogOperation = bin2hex(random_bytes(8));
+        }
+        $actor = (int) Factory::getApplication()->getIdentity()->id;
+        $directory = rtrim(Factory::getApplication()->get('log_path', JPATH_ADMINISTRATOR . '/logs'), '/\\');
+        if (!is_dir($directory)) {
+            Folder::create($directory);
+        }
+        // All JEM import writers share this lock, including header normalisation.
+        $lock = fopen($directory . DIRECTORY_SEPARATOR . $files[$key] . '.lock', 'c');
+        if (!$lock) {
+            throw new RuntimeException('Cannot open the import log lock.');
+        }
+        try {
+            if (!flock($lock, LOCK_EX)) {
+                throw new RuntimeException('Cannot lock the import log.');
+            }
+            Log::add('operation=' . $this->importLogOperation . ' user_id=' . $actor . ' '
+                . JemImportJournal::clean((string) $message), $priority, $category);
+            if ($normaliseHeader) {
+                $this->normaliseImportLogHeader($files[$key]);
+            }
+        } finally {
+            flock($lock, LOCK_UN);
+            fclose($lock);
+        }
+    }
+
+    /**
+     * Write every processed row with the final transaction outcome.
+     *
+     * @param string $key Allowlisted import log key.
+     * @param JemModelImport $model Import model owning the buffered outcomes.
+     * @param bool $rolledBack Whether previously staged writes were reverted.
+     * @param Throwable|null $failure Optional exception interrupting the operation.
+     * @return void
+     */
+    protected function writeImportRows(string $key, $model, bool $rolledBack, ?\Throwable $failure = null): void
+    {
+        $entries = $model->getImportJournal()->drain($failure);
+        $hasErrors = $failure !== null;
+        foreach ($entries as $entry) {
+            $hasErrors = $hasErrors || $entry['outcome'] === 'error';
+            [$message, $level] = JemImportJournal::format($entry, $rolledBack);
+            $priority = array('info' => Log::INFO, 'warning' => Log::WARNING, 'error' => Log::ERROR)[$level];
+            $this->addImportLogEntry($key, $message, $priority, false);
+        }
+        if ($entries) {
+            $this->addImportLogEntry($key, 'Row log entries: ' . count($entries)
+                . '; result=' . ($rolledBack ? 'rolled_back' : ($hasErrors ? 'completed_with_errors' : 'completed')),
+                $rolledBack || $hasErrors ? Log::WARNING : Log::INFO);
+        }
     }
 
     /**
@@ -2416,29 +2494,47 @@ class JemControllerImport extends BaseController
             return;
         }
 
-        $content = file($path, FILE_IGNORE_NEW_LINES);
-
-        if (!$content) {
+        $handle = fopen($path, 'r+b');
+        if (!$handle) {
             return;
         }
 
-        $content = array_values(array_filter($content, function ($line) {
-            $trimmed = trim((string) $line);
-
-            return $trimmed !== '#' && $trimmed !== "#<?php die('Forbidden.'); ?>";
-        }));
-
-        $jemInfo = $this->getJemManifestLogInfo();
-
-        foreach ($content as &$line) {
-            if (strpos($line, '#Software:') === 0 && strpos($line, 'JEM ') === false) {
-                $line .= ' | JEM ' . $jemInfo['version'] . ' (' . $jemInfo['date'] . ')';
-                break;
+        try {
+            if (!flock($handle, LOCK_EX)) {
+                return;
             }
+            $prefix = fread($handle, 4096);
+            $guard = "#<?php die('Forbidden.'); ?>";
+            if (str_contains($prefix, $guard) && preg_match('/^#Software:.*JEM /m', $prefix)) {
+                return;
+            }
+            rewind($handle);
+            $content = preg_split('/\r\n|\r|\n/', (string) stream_get_contents($handle));
+            $content = array_values(array_filter($content, static function ($line) {
+                return trim($line) !== '#';
+            }));
+            if (!in_array($guard, $content, true)) {
+                array_unshift($content, $guard);
+            }
+            $jemInfo = $this->getJemManifestLogInfo();
+            foreach ($content as &$line) {
+                if (strpos($line, '#Software:') === 0 && strpos($line, 'JEM ') === false) {
+                    $line .= ' | JEM ' . $jemInfo['version'] . ' (' . $jemInfo['date'] . ')';
+                    break;
+                }
+            }
+            unset($line);
+            // Read and write under the same lock so a concurrent append cannot be lost.
+            rewind($handle);
+            $content = rtrim(implode(PHP_EOL, $content)) . PHP_EOL;
+            if (fwrite($handle, $content) !== strlen($content)) {
+                throw new RuntimeException('Cannot write the import log header.');
+            }
+            ftruncate($handle, ftell($handle));
+        } finally {
+            flock($handle, LOCK_UN);
+            fclose($handle);
         }
-        unset($line);
-
-        file_put_contents($path, implode(PHP_EOL, $content) . PHP_EOL, LOCK_EX);
     }
 
     /**
@@ -2531,6 +2627,8 @@ class JemControllerImport extends BaseController
             $hash = $this->getImportedIcsHash($record[7] ?? '');
             if ($hash !== '' && isset($knownHashes[$hash])) {
                 $skipped++;
+                $this->addImportLogEntry('external_ics', 'entity=events row=' . (int) ($record['_jem_source_line'] ?? 0)
+                    . ' outcome=SKIPPED reason=ICS item already imported.', Log::WARNING, false);
                 continue;
             }
 
@@ -3881,6 +3979,12 @@ class JemControllerImport extends BaseController
         }
 
         $status = $valid ? Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_OK') : Text::_('COM_JEM_IMPORT_EXTERNAL_STATUS_ERROR');
+        if (!$valid) {
+            foreach ($notes as $note) {
+                $this->addImportLogEntry('external_ics', 'entity=events row=' . (int) $line
+                    . ' phase=validation ' . $note, Log::ERROR, false);
+            }
+        }
 
         return array(
             'valid' => $valid,
@@ -3899,6 +4003,7 @@ class JemControllerImport extends BaseController
                 !empty($options['locid']) ? (int) $options['locid'] : null,
                 (string) $options['language'],
                 (string) (int) $options['catid'],
+                '_jem_source_line' => (int) $line,
             ),
             'preview' => array(
                 'status' => $status,
@@ -4256,6 +4361,9 @@ class JemControllerImport extends BaseController
 
         foreach ($fields as $field) {
             $record[] = array_key_exists($field, $data) ? $data[$field] : '';
+        }
+        if (isset($data['_jem_source_line'])) {
+            $record['_jem_source_line'] = (int) $data['_jem_source_line'];
         }
 
         return $record;
@@ -4759,6 +4867,9 @@ class JemControllerImport extends BaseController
         $record = JemImportSecurityHelper::sanitiseSourceRecord($record, $context, $sourceLine, $warnings);
 
         if ($warnings) {
+            foreach ($warnings as $warning) {
+                $this->addImportLogEntry('external_csv', 'row=' . (int) $sourceLine . ' ' . $warning, Log::WARNING, false);
+            }
             $this->externalSourceWarningCount += count($warnings);
             $remaining = max(0, 100 - count($this->externalSourceWarnings));
 
@@ -5089,6 +5200,11 @@ class JemControllerImport extends BaseController
             }
         }
         $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'events', $line);
+        $recordData['_jem_source_line'] = (int) $line;
+        foreach ($notes as $note) {
+            $this->addImportLogEntry('external_csv', 'entity=events row=' . (int) $line
+                . ' phase=validation ' . $note, $valid ? Log::WARNING : Log::ERROR, false);
+        }
 
         return array(
             'valid' => $valid,
@@ -5191,6 +5307,11 @@ class JemControllerImport extends BaseController
             }
         }
         $recordData = JemImportSecurityHelper::sanitiseRecord($recordData, 'venues', $line);
+        $recordData['_jem_source_line'] = (int) $line;
+        foreach ($notes as $note) {
+            $this->addImportLogEntry('external_csv', 'entity=venues row=' . (int) $line
+                . ' phase=validation ' . $note, $valid ? Log::WARNING : Log::ERROR, false);
+        }
 
         return array(
             'valid' => $valid,
