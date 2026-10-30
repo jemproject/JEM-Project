@@ -95,9 +95,10 @@ class JemModelVenueslist extends ListModel
 
         $orderby = $filter_order . ' ' . $filter_order_Dir;
 
-        $this->setState('filter.orderby',$orderby);
+        parent::populateState('a.venue', 'ASC');
 
-         parent::populateState('a.venue', 'ASC');
+        // Keep the validated JEM ordering authoritative after framework state loading.
+        $this->setState('filter.orderby', $orderby);
     }
 
 
