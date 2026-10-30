@@ -32,23 +32,25 @@
         <field name="day_type" type="hidden" />
 
         <field name="start_date"
-               type="calendar"
+               type="specialdaycalendar"
                label="COM_JEM_SPECIAL_DAY_FIELD_START_DATE"
                description="COM_JEM_SPECIAL_DAY_FIELD_START_DATE_DESC"
                required="true"
                format="%Y-%m-%d"
-               filter="string"
+               translateformat="false"
+               filter="raw"
                showtime="false"
                class="form-control"
         />
 
         <field name="end_date"
-               type="calendar"
+               type="specialdaycalendar"
                label="COM_JEM_SPECIAL_DAY_FIELD_END_DATE"
                description="COM_JEM_SPECIAL_DAY_FIELD_END_DATE_DESC"
                required="true"
                format="%Y-%m-%d"
-               filter="string"
+               translateformat="false"
+               filter="raw"
                showtime="false"
                class="form-control"
         />

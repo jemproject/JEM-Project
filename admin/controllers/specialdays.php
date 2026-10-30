@@ -18,6 +18,7 @@ use Joomla\Utilities\ArrayHelper;
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importencoding.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importbudget.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/classes/specialdaydate.class.php';
 
 class JemControllerSpecialdays extends AdminController
 {
@@ -379,15 +380,7 @@ class JemControllerSpecialdays extends AdminController
 
     private function normaliseSpecialDayCsvDate($date)
     {
-        $date = trim((string) $date);
-
-        if ($date === '' || strtoupper($date) === 'NULL' || $date === '0000-00-00') {
-            return null;
-        }
-
-        $timestamp = strtotime($date);
-
-        return $timestamp ? date('Y-m-d', $timestamp) : null;
+        return JemSpecialDayDate::fromCsv($date);
     }
 
     private function normaliseSpecialDayCsvWeekdays($weekdays)

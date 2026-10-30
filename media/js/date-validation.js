@@ -42,6 +42,15 @@
     }
 
     function registerValidator() {
+        // Run after Joomla has initialised its calendars. Keep rejected input visible
+        // instead of displaying the parser's replacement date on the validation retry.
+        setTimeout(function () {
+            document.querySelectorAll('[data-jem-invalid-date]').forEach(function (field) {
+                field.value = field.getAttribute('data-jem-invalid-date');
+                field.removeAttribute('data-jem-invalid-date');
+            });
+        }, 0);
+
         if (!document.formvalidator) {
             return;
         }
