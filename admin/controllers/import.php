@@ -29,6 +29,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importvenue.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/importpreview.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/helpers/csvmetadata.php';
 require_once JPATH_SITE . '/components/com_jem/classes/csv.class.php';
+require_once JPATH_SITE . '/components/com_jem/classes/specialdaydate.class.php';
 
 /**
  * JEM Component Import Controller
@@ -3586,7 +3587,8 @@ class JemControllerImport extends BaseController
             $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
             $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
-            if ($end['date'] && !$end['time'] && $start['date'] && !$start['time']) {
+            if (JemSpecialDayDate::normalise($end['date']) !== null && !$end['time']
+                && JemSpecialDayDate::normalise($start['date']) !== null && !$start['time']) {
                 $endTimestamp = strtotime($end['date']);
                 $startTimestamp = strtotime($start['date']);
 
@@ -5422,7 +5424,7 @@ class JemControllerImport extends BaseController
         $startDate = $this->normaliseSpecialDaysDate($data['start_date'] ?? '');
         $endDate = $this->normaliseSpecialDaysDate($data['end_date'] ?? '');
 
-        if ($startDate && !$endDate) {
+        if ($startDate && trim((string) ($data['end_date'] ?? '')) === '') {
             $endDate = $startDate;
         }
 
@@ -5531,7 +5533,8 @@ class JemControllerImport extends BaseController
         $start = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTSTART'));
         $end = $this->normaliseExternalIcsDateProperty($this->getExternalIcsProperty($event, 'DTEND'));
 
-        if ($end['date'] && !$end['time'] && $start['date'] && !$start['time']) {
+        if (JemSpecialDayDate::normalise($end['date']) !== null && !$end['time']
+            && JemSpecialDayDate::normalise($start['date']) !== null && !$start['time']) {
             $endTimestamp = strtotime($end['date']);
             $startTimestamp = strtotime($start['date']);
 
@@ -5563,9 +5566,9 @@ class JemControllerImport extends BaseController
             $notes[] = Text::_('COM_JEM_SPECIAL_DAY_ERROR_TYPE_REQUIRED');
         }
 
-        if (!$start['date'] || !$end['date']) {
+        if (JemSpecialDayDate::normalise($start['date']) === null || JemSpecialDayDate::normalise($end['date']) === null) {
             $valid = false;
-            $notes[] = Text::_('COM_JEM_SPECIAL_DAY_ERROR_DATE_RANGE_REQUIRED');
+            $notes[] = Text::_('COM_JEM_IMPORT_SPECIAL_DAYS_DATE_FORMAT_ERROR');
         }
 
         if (!empty($start['converted']) || !empty($end['converted'])) {
@@ -5627,28 +5630,7 @@ class JemControllerImport extends BaseController
 
     protected function normaliseSpecialDaysDate($date)
     {
-        $date = trim((string) $date);
-
-        if ($date === '' || strtoupper($date) === 'NULL' || $date === '0000-00-00') {
-            return null;
-        }
-
-        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $date, $parts)) {
-            // A slash date with both parts <= 12 has no unambiguous order.
-            if ((int) $parts[1] <= 12) {
-                return null;
-            }
-
-            $parsed = \DateTimeImmutable::createFromFormat('!d/m/Y', $date);
-            $expected = (int) $parts[1] . '/' . (int) $parts[2] . '/' . $parts[3];
-            return $parsed && $parsed->format('j/n/Y') === $expected
-                ? $parsed->format('Y-m-d')
-                : null;
-        }
-
-        $timestamp = strtotime($date);
-
-        return $timestamp ? date('Y-m-d', $timestamp) : null;
+        return JemSpecialDayDate::fromCsv($date);
     }
 
     protected function normaliseSpecialDaysWeekdays($weekdays)

@@ -12,6 +12,8 @@ use Joomla\CMS\Filter\OutputFilter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Table\Table;
 
+require_once JPATH_SITE . '/components/com_jem/classes/specialdaydate.class.php';
+
 class jem_special_days extends Table
 {
     public $id = null;
@@ -99,13 +101,21 @@ class jem_special_days extends Table
 
         $this->weekdays = $this->normaliseWeekdays($this->weekdays);
 
-        $this->start_date = $this->normaliseDate($this->start_date);
-        $this->end_date = $this->normaliseDate($this->end_date);
-
-        if ($this->start_date === null || $this->end_date === null) {
-            $this->setError(Text::_('COM_JEM_SPECIAL_DAY_ERROR_DATE_RANGE_REQUIRED'));
-            return false;
+        $dates = array();
+        $dateFields = array(
+            'start_date' => 'COM_JEM_SPECIAL_DAY_FIELD_START_DATE',
+            'end_date' => 'COM_JEM_SPECIAL_DAY_FIELD_END_DATE',
+        );
+        foreach ($dateFields as $field => $label) {
+            $dates[$field] = $this->normaliseDate($this->$field);
+            if ($dates[$field] === null) {
+                $this->setError(Text::sprintf('COM_JEM_EVENT_ERROR_INVALID_DATE', Text::_($label)));
+                return false;
+            }
         }
+
+        $this->start_date = $dates['start_date'];
+        $this->end_date = $dates['end_date'];
 
         if ($this->start_date !== null && $this->end_date !== null && $this->end_date < $this->start_date) {
             $tmp = $this->start_date;
@@ -185,13 +195,7 @@ class jem_special_days extends Table
 
     private function normaliseDate($date)
     {
-        $date = trim((string) $date);
-
-        if ($date === '' || $date === '0000-00-00') {
-            return null;
-        }
-
-        return preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) ? $date : null;
+        return JemSpecialDayDate::normalise($date);
     }
 
     private function normaliseWeekdays($weekdays)

@@ -10,6 +10,10 @@ final class RecurrenceSourceStream
 
     private static function resolve(string $path): string
     {
+        $adminPrefix = 'jemrecurrence://site/administrator/components/com_jem/';
+        if (str_starts_with($path, $adminPrefix)) {
+            return JEM_TEST_ROOT . '/admin/' . substr($path, strlen($adminPrefix));
+        }
         $prefix = 'jemrecurrence://site/components/com_jem/';
         if (!str_starts_with($path, $prefix)) {
             throw new RuntimeException('Unexpected recurrence fixture path: ' . $path);

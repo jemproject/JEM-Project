@@ -17,6 +17,7 @@ use Joomla\CMS\Table\Table;
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/importencoding.php';
 require_once JPATH_ADMINISTRATOR . '/components/com_jem/helpers/importbudget.php';
 require_once JPATH_SITE . '/components/com_jem/helpers/helper.php';
+require_once JPATH_SITE . '/components/com_jem/classes/specialdaydate.class.php';
 Table::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_jem/tables');
 
 class JemControllerSpecialdays extends BaseController
@@ -266,15 +267,7 @@ class JemControllerSpecialdays extends BaseController
 
     private function normaliseSpecialDayCsvDate($date)
     {
-        $date = trim((string) $date);
-
-        if ($date === '' || strtoupper($date) === 'NULL' || $date === '0000-00-00') {
-            return null;
-        }
-
-        $timestamp = strtotime($date);
-
-        return $timestamp ? date('Y-m-d', $timestamp) : null;
+        return JemSpecialDayDate::fromCsv($date);
     }
 
     private function normaliseSpecialDayCsvWeekdays($weekdays)
