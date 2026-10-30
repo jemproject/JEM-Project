@@ -78,16 +78,20 @@ class JemViewVenues extends JemView
             $item->EventsArchived = $model->AssignedEvents($item->locid,"2");
         }
 
-        $pagetitle = $params->def('page_title', $menuitem->title);
+        $menuTitle = $menuitem->title ?? Text::_('COM_JEM_VENUES');
+        $pagetitle = $params->def('page_title', $menuTitle);
         $pageheading = $params->def('page_heading', $params->get('page_title'));
         $pageclass_sfx = $params->get('pageclass_sfx');
 
         //pathway
         $pathway = $app->getPathWay();
-    $pathwayKeys = array_keys($pathway->getPathway());
-    $lastPathwayEntryIndex = end($pathwayKeys);
-    $pathway->setItemName($lastPathwayEntryIndex, $menuitem->title);
-    //$pathway->setItemName(1, $menuitem->title);
+        if ($menuitem) {
+            $pathwayKeys = array_keys($pathway->getPathway());
+            if ($pathwayKeys) {
+                $lastPathwayEntryIndex = end($pathwayKeys);
+                $pathway->setItemName($lastPathwayEntryIndex, $menuTitle);
+            }
+        }
 
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=venues&task=archive'));

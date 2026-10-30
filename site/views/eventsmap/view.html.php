@@ -256,7 +256,7 @@ class JemViewEventsMap extends JemView
         }
 
         // Set Page title        
-        $params->def('page_title', $menuitem->title);
+        $params->def('page_title', $menuitem->title ?? Text::_('COM_JEM_EVENTSMAP_PAGETITLE'));
         $pagetitle      = $params->get('page_title', Text::_('COM_JEM_EVENTSMAP_PAGETITLE'));
         $pageheading    = $params->get('page_heading', $pagetitle);
         $pageclass_sfx  = $params->get('pageclass_sfx');

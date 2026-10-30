@@ -216,7 +216,7 @@ class JemViewMyevents extends JemView
             $this->pdf_link = $pdf_link;
             $this->archive_link = $archive_link;
             $this->pageclass_sfx = $pageclass_sfx ? htmlspecialchars($pageclass_sfx) : $pageclass_sfx;
-            $this->itemid = $menuitem->id;
+            $this->itemid = (int) ($menuitem->id ?? 0);
         }
         parent::display($tpl);
     }

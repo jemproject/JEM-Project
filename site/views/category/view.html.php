@@ -128,7 +128,7 @@ class JemViewCategory extends JemView
             }
 
             // Set Page title
-            $pagetitle = $params->def('page_title', $menuitem->title);
+            $pagetitle = $params->def('page_title', $menuitem->title ?? $category->catname);
             $params->def('page_heading', $params->get('page_title'));
             $pageclass_sfx = $params->get('pageclass_sfx');
 
