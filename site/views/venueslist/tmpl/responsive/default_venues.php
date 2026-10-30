@@ -75,24 +75,7 @@ $uri = Uri::getInstance();
 
 
 <?php
-function jem_common_show_filter(&$obj) {
-  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
-    return false;
-  }
-  if (!empty($obj->lists['show_venue_event_filter'])) {
-    return true;
-  }
-  if ((int) $obj->params->get('showcountryfilter', 1)) {
-    return true;
-  }
-  if ($obj->settings->get('global_show_filter',1)) {
-    return true;
-  }
-  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
-    return true;
-  }
-  return false;
-}
+$filterBelow = JemHelper::jemStringContains((string) $this->params->get('pageclass_sfx', ''), 'jem-filterbelow');
 
 if (!function_exists('jem_venueslist_country_name')) {
     function jem_venueslist_country_name($country)
@@ -387,40 +370,8 @@ if ($showEditColumn) {
       }
   }
 </style>
-<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-  <div id="jem_filter" class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
-    <div class="jem-venueslist-filter-label">
-      <?php echo '<label for="filter">'.Text::_('COM_JEM_FILTER').'</label>'; ?>
-    </div>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-search">
-      <?php echo $this->lists['filter']; ?>
-      <input type="text" name="filter_search" id="filter_search" value="<?php echo htmlspecialchars($this->lists['search'], ENT_QUOTES, 'UTF-8');?>" class="inputbox form-control" onchange="document.adminForm.submit();" />
-    </div>
-    <?php if (!empty($this->lists['country_filter'])) : ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-country">
-      <label for="filter_country"><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-      <?php echo $this->lists['country_filter']; ?>
-    </div>
-    <?php endif; ?>
-    <?php if (!empty($this->lists['show_venue_event_filter'])) : ?>
-    <label class="jem-row jem-align-center jem-nowrap">
-      <input type="hidden" name="show_all_venues" value="0">
-      <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
-      <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
-    </label>
-    <?php endif; ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-actions">
-      <button class="btn btn-primary" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-      <button class="btn btn-secondary" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-    </div>
-          <?php if ($this->settings->get('global_display',1)) : ?>
-    <div class="jem-row jem-justify-start jem-nowrap jem-venueslist-filter-limit">
-        <label for="limit"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-        <?php echo $this->pagination->getLimitBox(); ?>
-    </div>
-    <?php endif; ?>
-  </div>
-
+<?php if (!$filterBelow) : ?>
+    <?php echo $this->loadTemplate('filters'); ?>
 <?php endif; ?>
 
 <div class="jem-sort jem-sort-small">
@@ -569,14 +520,8 @@ if ($showEditColumn) {
   <?php endif; ?>
 </ul>
 
-<?php if (!empty($this->lists['show_venue_event_filter']) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
-<div class="floattext jem-form jem-row jem-justify-start jem-venueslist-filter">
-    <label class="jem-row jem-align-center jem-nowrap">
-        <input type="hidden" name="show_all_venues" value="0">
-        <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
-        <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
-    </label>
-</div>
+<?php if ($filterBelow) : ?>
+    <?php echo $this->loadTemplate('filters'); ?>
 <?php endif; ?>
 
 <div class="pagination">

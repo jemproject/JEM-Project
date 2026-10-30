@@ -99,24 +99,7 @@ use Joomla\CMS\Uri\Uri;
 <form action="<?php echo htmlspecialchars($this->action); ?>" method="post" id="adminForm" name="adminForm">
 
 <?php
-function jem_common_show_filter(&$obj) {
-  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-hidefilter')) {
-    return false;
-  }
-  if (!empty($obj->lists['show_venue_event_filter'])) {
-    return true;
-  }
-  if ((int) $obj->params->get('showcountryfilter', 1)) {
-    return true;
-  }
-  if ($obj->settings->get('global_show_filter',1)) {
-    return true;
-  }
-  if (JemHelper::jemStringContains($obj->params->get('pageclass_sfx'), 'jem-showfilter')) {
-    return true;
-  }
-  return false;
-}
+$filterBelow = JemHelper::jemStringContains((string) $this->params->get('pageclass_sfx', ''), 'jem-filterbelow');
 
 if (!function_exists('jem_venueslist_country_name')) {
     function jem_venueslist_country_name($country)
@@ -362,40 +345,8 @@ foreach ((array) $this->rows as $venueRow) {
     }
 }
 ?>
-<?php if (jem_common_show_filter($this) && !JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')): ?>
-    <div id="jem_filter" class="jem-venueslist-filter d-flex flex-wrap align-items-center gap-2 mb-2">
-        <?php if ($this->settings->get('global_show_filter',1)) : ?>
-        <div class="jem-venueslist-filter-search d-flex flex-wrap align-items-center gap-2">
-            <label for="filter" class="mb-0"><?php echo Text::_('COM_JEM_FILTER'); ?></label>
-            <?php echo $this->lists['filter']; ?>
-            <input type="text" name="filter_search" id="filter_search" value="<?php echo $this->lists['search']; ?>" class="form-control form-control-sm" style="flex:1 1 8rem;min-width:6rem;max-width:20rem;" onchange="document.adminForm.submit();" />
-            <button class="btn btn-primary btn-sm" type="submit"><?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?></button>
-            <button class="btn btn-secondary btn-sm" type="button" onclick="document.getElementById('filter_search').value='';var c=document.getElementById('filter_country');if(c){c.selectedIndex=0;}this.form.submit();"><?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?></button>
-        </div>
-        <?php endif; ?>
-
-        <?php if (!empty($this->lists['country_filter'])) : ?>
-        <div class="jem-venueslist-filter-country d-flex align-items-center gap-2">
-            <label for="filter_country" class="mb-0"><?php echo Text::_('COM_JEM_COUNTRY'); ?></label>
-            <?php echo $this->lists['country_filter']; ?>
-        </div>
-        <?php endif; ?>
-
-        <?php if (!empty($this->lists['show_venue_event_filter'])) : ?>
-        <label class="d-flex align-items-center gap-1 mb-0">
-            <input type="hidden" name="show_all_venues" value="0">
-            <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
-            <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
-        </label>
-        <?php endif; ?>
-
-        <?php if ($this->settings->get('global_display',1)) : ?>
-        <div class="jem-venueslist-filter-limit d-flex align-items-center gap-2 ms-auto">
-            <label for="limit" class="mb-0"><?php echo Text::_('COM_JEM_DISPLAY_NUM'); ?></label>
-            <?php echo $this->pagination->getLimitBox(); ?>
-        </div>
-        <?php endif; ?>
-    </div>
+<?php if (!$filterBelow) : ?>
+    <?php echo $this->loadTemplate('filters'); ?>
 <?php endif; ?>
 
     <div class="table table-responsive table-striped table-hover table-sm">
@@ -542,17 +493,10 @@ foreach ((array) $this->rows as $venueRow) {
     <input type="hidden" name="task" value="" />
     <input type="hidden" name="option" value="com_jem" />
     <?php echo HTMLHelper::_('form.token'); ?>
-</form>
-
-<?php if (!empty($this->lists['show_venue_event_filter']) && JemHelper::jemStringContains($this->params->get('pageclass_sfx'), 'jem-filterbelow')) : ?>
-<div class="jem-venueslist-filter d-flex align-items-center gap-2 mt-2">
-    <label class="d-flex align-items-center gap-1 mb-0">
-        <input type="hidden" name="show_all_venues" value="0">
-        <input type="checkbox" name="show_all_venues" value="1"<?php echo !empty($this->lists['show_all_venues']) ? ' checked' : ''; ?> onchange="this.form.submit();">
-        <?php echo Text::_('COM_JEM_SHOW_ALL_VENUES'); ?>
-    </label>
-</div>
+<?php if ($filterBelow) : ?>
+    <?php echo $this->loadTemplate('filters'); ?>
 <?php endif; ?>
+</form>
 
 <div class="pagination">
     <?php echo $this->pagination->getPagesLinks(); ?>

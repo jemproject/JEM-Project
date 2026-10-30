@@ -36,8 +36,8 @@ final class VenueEventFilterTest extends TestCase
     public function testFrontendOverrideCanShowAllVenuesAgain(): void
     {
         foreach (array(
-            'site/views/venueslist/tmpl/default_venues.php',
-            'site/views/venueslist/tmpl/responsive/default_venues.php',
+            'site/views/venueslist/tmpl/default_filters.php',
+            'site/views/venueslist/tmpl/responsive/default_filters.php',
             'site/views/venues/tmpl/default.php',
             'site/views/venues/tmpl/responsive/default.php',
         ) as $path) {
