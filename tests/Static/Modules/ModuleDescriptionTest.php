@@ -47,7 +47,7 @@ final class ModuleDescriptionTest extends TestCase
         );
         yield 'types' => array(
             'mod_jem_types',
-            'Lists published JEM event types with upcoming event counts, or groups the next events under each type.',
+            'Lists published JEM event types with counts of upcoming and ongoing events, or groups those events under each type.',
         );
     }
 
