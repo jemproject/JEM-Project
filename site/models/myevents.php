@@ -139,23 +139,31 @@ class JemModelMyevents extends BaseDatabaseModel
     /**
      * Method to (un)publish a event
      *
+     * A successful query may change no rows; read publish.updated and publish.skipped.
+     *
      * @access public
-     * @return boolean True on success
+     * @return boolean True on successful processing, false on error.
      */
     public function publish($cid = array(), $publish = 1)
     {
-        $result = false;
-        $user   = JemFactory::getUser();
+        // Keep the boolean API; callers can read the last operation's real counts.
+        $this->setState('publish.updated', 0);
+        $this->setState('publish.skipped', 0);
+        $user = JemFactory::getUser();
         $userid = (int) $user->get('id');
 
-        if (is_array($cid) && count($cid)) {
-            ArrayHelper::toInteger($cid);
-            $cid = array_filter(array_unique($cid));
+        if (!is_array($cid) || empty($cid) || $publish < -2 || $publish > 2) {
+            return false;
+        }
 
-            if (empty($cid) || ($publish < -2) || ($publish > 2)) {
-                return false;
-            }
+        ArrayHelper::toInteger($cid);
+        $cid = array_filter(array_unique($cid));
 
+        if (empty($cid)) {
+            return false;
+        }
+
+        try {
             $query = $this->_db->getQuery(true)
                 ->select(array('id', 'created_by'))
                 ->from($this->_db->quoteName('#__jem_events'))
@@ -175,24 +183,29 @@ class JemModelMyevents extends BaseDatabaseModel
                 return false;
             }
 
-            $cids = implode(',', $allowed);
-
+            // Exclude unchanged rows even on drivers configured to count matched rows.
+            // Retain the checkout guard in SQL, not just in an earlier snapshot.
             $query = 'UPDATE #__jem_events'
-                   . ' SET published = '. (int) $publish
-                   . ' WHERE id IN ('. $cids .')'
-                   . ' AND (checked_out = 0 OR checked_out Is null OR (checked_out = ' .$userid. '))'
-                   ;
-
+                . ' SET published = ' . (int) $publish
+                . ' WHERE id IN (' . implode(',', $allowed) . ')'
+                . ' AND (published IS NULL OR published <> ' . (int) $publish . ')'
+                . ' AND (checked_out = 0 OR checked_out IS NULL OR checked_out = ' . $userid . ')';
             $this->_db->setQuery($query);
-            $result = true;
 
             if ($this->_db->execute() === false) {
-                $this->setError($this->_db->getErrorMsg());
-                $result = false;
+                $this->setError(Text::_('COM_JEM_STATUS_UPDATE_FAILED'));
+                return false;
             }
+
+            $updated = (int) $this->_db->getAffectedRows();
+            $this->setState('publish.updated', $updated);
+            $this->setState('publish.skipped', count($cid) - $updated);
+        } catch (\RuntimeException $exception) {
+            $this->setError(Text::_('COM_JEM_STATUS_UPDATE_FAILED'));
+            return false;
         }
 
-        return $result;
+        return true;
     }
 
     /**

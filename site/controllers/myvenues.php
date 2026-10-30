@@ -84,10 +84,21 @@ class JemControllerMyvenues extends BaseController
             return;
         }
 
-        $total = count($cid);
-        $msg   = $total . ' ' . Text::_($message);
+        $total = (int) $model->getState('publish.updated', 0);
+        $skipped = (int) $model->getState('publish.skipped', 0);
+        $msg = $total > 0
+            ? $total . ' ' . Text::_($message)
+            : Text::_('COM_JEM_STATUS_NO_ITEMS_CHANGED');
 
-        $this->setRedirect(JemHelperRoute::getMyVenuesRoute(), $msg);
+        if ($skipped > 0) {
+            $msg .= ' ' . Text::sprintf('COM_JEM_STATUS_ITEMS_SKIPPED', $skipped);
+        }
+
+        $this->setRedirect(
+            JemHelperRoute::getMyVenuesRoute(),
+            $msg,
+            $total === 0 || $skipped > 0 ? 'warning' : 'message'
+        );
     }
 }
 ?>
