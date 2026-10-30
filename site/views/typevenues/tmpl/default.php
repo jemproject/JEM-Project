@@ -12,11 +12,12 @@ use Joomla\CMS\Language\Text;
 
 $layoutSuffix = JemHelper::getLayoutStyleSuffix();
 
+// Joomla prepends template paths: add the fallback before the selected style.
+$this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl');
+
 if (!empty($layoutSuffix)) {
     $this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl/' . $layoutSuffix);
 }
-
-$this->addTemplatePath(JPATH_SITE . '/components/com_jem/views/venueslist/tmpl');
 ?>
 
 <div id="jem" class="jem_typevenues jem_venueslist<?php echo $this->pageclass_sfx; ?>">
