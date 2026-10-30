@@ -122,6 +122,26 @@ class JemViewTypevenues extends JemView
         $lists['show_venue_event_filter'] = (bool) $state->get('filter.show_venue_event_filter', false);
         $lists['show_all_venues'] = (bool) $state->get('filter.show_all_venues', false);
 
+        if ((int) $params->get('showcountryfilter', 1)) {
+            $filterCountries = (array) $state->get('filter.countries', array());
+            $countries = array_merge(
+                array(HTMLHelper::_('select.option', '', Text::_('JALL'))),
+                $this->get('CountryOptions')
+            );
+            $lists['country_filter'] = HTMLHelper::_(
+                'select.genericlist',
+                $countries,
+                'filter_country[]',
+                array('class' => 'form-select', 'onchange' => 'this.form.submit();'),
+                'value',
+                'text',
+                reset($filterCountries) ?: '',
+                'filter_country'
+            );
+        } else {
+            $lists['country_filter'] = '';
+        }
+
         $typeName  = htmlspecialchars($typeObj->name, ENT_QUOTES, 'UTF-8');
         $pagetitle = Text::sprintf('COM_JEM_TYPEVENUES_TITLE', $typeName);
 

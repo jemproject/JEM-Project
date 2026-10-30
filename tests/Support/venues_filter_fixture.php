@@ -176,8 +176,8 @@ final class VenuesFilterFixture
         $this->lists = [
             'filter' => '<select id="filter_type" name="filter_type"><option value="2">Venue</option></select>',
             'search' => 'North "Hall" & Club',
-            'country_filter' => $options['country'] && $options['view'] === 'venueslist'
-                ? '<select id="filter_country" name="filter_country[]" onchange="document.adminForm.submit()">'
+            'country_filter' => $options['country']
+                ? '<select id="filter_country" name="filter_country[]" onchange="this.form.submit()">'
                     . '<option value="">All</option><option value="ES" selected>Spain</option></select>'
                 : '',
             'show_venue_event_filter' => $options['all'],

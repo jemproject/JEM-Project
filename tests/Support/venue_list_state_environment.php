@@ -187,6 +187,19 @@ final class Text
     }
 }
 
+final class JemHelperCountries
+{
+    /** @return array<object> Synthetic catalog; production model performs menu restriction/normalization. */
+    public static function getCountryOptions(): array
+    {
+        return [
+            (object) ['value' => 'ES', 'text' => 'Spain'],
+            (object) ['value' => 'DE', 'text' => 'Germany'],
+            (object) ['value' => '', 'text' => 'Invalid country'],
+        ];
+    }
+}
+
 final class HTMLHelper
 {
     /** @param string $key Helper name. @param mixed ...$args Arguments. @return mixed Synthetic option/select. */
@@ -200,10 +213,14 @@ final class HTMLHelper
         }
         [$options, $name, $attributes, $valueKey, $textKey, $selected] = $args;
         $id = $args[6] ?? $name;
-        $html = '<select name="' . htmlspecialchars($name, ENT_QUOTES) . '" id="' . htmlspecialchars($id, ENT_QUOTES) . '">';
+        $html = '<select name="' . htmlspecialchars($name, ENT_QUOTES) . '" id="' . htmlspecialchars($id, ENT_QUOTES) . '"';
+        foreach ($attributes as $attribute => $value) {
+            $html .= ' ' . htmlspecialchars($attribute, ENT_QUOTES) . '="' . htmlspecialchars((string) $value, ENT_QUOTES) . '"';
+        }
+        $html .= '>';
         foreach ($options as $option) {
             $html .= '<option value="' . htmlspecialchars((string) $option->$valueKey, ENT_QUOTES) . '"'
-                . ((string) $selected === (string) $option->$valueKey ? ' selected' : '') . '>'
+                . ((string) $selected === (string) $option->$valueKey ? ' selected="selected"' : '') . '>'
                 . htmlspecialchars((string) $option->$textKey, ENT_QUOTES) . '</option>';
         }
 
@@ -213,8 +230,8 @@ final class HTMLHelper
 
 final class ViewState
 {
-    /** @param Registry $state Populated production model state. */
-    public function __construct(private Registry $state)
+    /** @param Registry $state Populated model state. @param array<object>|null $countries Model country options. */
+    public function __construct(private Registry $state, private ?array $countries = null)
     {
     }
 
@@ -223,7 +240,7 @@ final class ViewState
     {
         return match ($name) {
             'State' => $this->state,
-            'CountryOptions' => [(object) ['value' => 'ES', 'text' => 'Spain'], (object) ['value' => 'DE', 'text' => 'Germany']],
+            'CountryOptions' => $this->countries ?? [(object) ['value' => 'ES', 'text' => 'Spain'], (object) ['value' => 'DE', 'text' => 'Germany']],
             default => throw new RuntimeException('Unexpected model request: ' . $name),
         };
     }

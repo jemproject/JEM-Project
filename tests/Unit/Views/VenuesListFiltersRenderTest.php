@@ -44,7 +44,7 @@ final class VenuesListFiltersRenderTest extends TestCase
         $xpath = new DOMXPath($document);
         $hidden = str_contains($options['suffix'], 'jem-hidefilter');
         $search = !$hidden && ($options['search'] || str_contains($options['suffix'], 'jem-showfilter'));
-        $country = !$hidden && $options['country'] && $options['view'] === 'venueslist';
+        $country = !$hidden && $options['country'];
         $limit = !$hidden && $options['limit'];
         $all = !$hidden && $options['all'];
         $expected = [
