@@ -164,6 +164,41 @@ final class BackendSearchToolsTest extends TestCase
         self::assertStringContainsString("a.locid = ' . \$venueId", $model);
     }
 
+    /**
+     * Expose an explicit, clearable match choice and translated validation warnings.
+     *
+     * @return void
+     */
+    public function testEventDateMatchingOptionsPreserveTheDefaultAndShowWarnings(): void
+    {
+        $form = simplexml_load_file(JEM_TEST_ROOT . '/admin/models/forms/filter_events.xml');
+        $fields = $form->xpath('/form/fields[@name="filter"]/field[@name="date_match"]');
+        self::assertCount(1, $fields);
+        $field = $fields[0];
+        self::assertSame('list', (string) $field['type']);
+        self::assertSame('', (string) $field['default']);
+        self::assertSame('options', (string) $field['validate']);
+        self::assertSame('js-select-submit-on-change', (string) $field['class']);
+        self::assertSame(
+            ['' => 'COM_JEM_EVENTS_FILTER_DATE_CONTAINED', 'overlap' => 'COM_JEM_EVENTS_FILTER_DATE_OVERLAP'],
+            array_reduce(iterator_to_array($field->option, false), static function (array $options, SimpleXMLElement $option): array {
+                $options[(string) $option['value']] = (string) $option;
+                return $options;
+            }, [])
+        );
+        $language = parse_ini_file(JEM_TEST_ROOT . '/admin/language/en-GB/com_jem.ini', false, INI_SCANNER_RAW);
+        foreach (['COM_JEM_EVENTS_FILTER_DATE_INVALID', 'COM_JEM_EVENTS_FILTER_DATE_REVERSED'] as $key) {
+            self::assertArrayHasKey($key, $language);
+            self::assertNotSame('', $language[$key]);
+        }
+        $view = file_get_contents(JEM_TEST_ROOT . '/admin/views/events/view.html.php');
+        self::assertStringContainsString("get('filter.date_error')", $view);
+        self::assertStringContainsString("enqueueMessage(Text::_(\$dateError), 'warning')", $view);
+        $help = file_get_contents(JEM_TEST_ROOT . '/admin/help/en-GB/listevents.html');
+        self::assertStringContainsString('Fully within period', $help);
+        self::assertStringContainsString('Overlaps period', $help);
+    }
+
     public function testDynamicFiltersPreserveDomainAndPermissionRules(): void
     {
         $specialDays = (string) file_get_contents(

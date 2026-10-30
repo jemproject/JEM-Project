@@ -48,6 +48,10 @@ class JemViewEvents extends JemAdminView
         $this->activeFilters = $this->get('ActiveFilters');
         $this->total         = $this->get('Total');
 
+        if ($dateError = $this->state->get('filter.date_error')) {
+            $app->enqueueMessage(Text::_($dateError), 'warning');
+        }
+
         foreach (array('search_type', 'category_id', 'event_type_id', 'venue_id', 'access') as $filter) {
             if (isset($this->activeFilters[$filter]) && (string) $this->activeFilters[$filter] === '0') {
                 unset($this->activeFilters[$filter]);
