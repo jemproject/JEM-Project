@@ -9,7 +9,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
-use Joomla\CMS\Date\Date;
 use Joomla\CMS\Language\Multilanguage;
 
 class ModJemTypesHelper
@@ -31,7 +30,10 @@ class ModJemTypesHelper
     }
 
     /**
-     * Summary mode: returns all published event types (entity=1) with event count.
+     * Count upcoming and ongoing events for each visible, published event type.
+     *
+     * @param \Joomla\Registry\Registry $params Module settings, including hide_empty.
+     * @return array Type objects with their eligible event counts.
      */
     public static function getTypeSummary($params)
     {
@@ -41,8 +43,8 @@ class ModJemTypesHelper
         $levels = $user->getAuthorisedViewLevels();
         $levels = array_map('intval', $levels);
         $levelsList = implode(',', $levels);
-        $date   = new Date('now', $app->get('offset'));
-        $today  = $date->format('Y-m-d');
+        $notFinishedWhere = $db->quoteName('a.dates') . ' IS NOT NULL AND '
+            . JemHelper::getEventDateTimeWhere('end', '>');
         $language = $app->getLanguage()->getTag();
         $filterLanguage = Multilanguage::isEnabled();
         $eventLanguageCondition = $filterLanguage ? ' AND ' . self::languageFilter($db, $db->quoteName('a.language'), $language) : '';
@@ -62,7 +64,7 @@ class ModJemTypesHelper
                 ' AND ' . JemHelper::getEventPublicationWhere('a') .
                 ' AND ' . $db->quoteName('a.access') . ' IN (' . $levelsList . ')' .
                 $eventLanguageCondition .
-                ' AND (COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today) . ')'
+                ' AND (' . $notFinishedWhere . ')'
             )
             ->join('LEFT', $db->quoteName('#__jem_cats_event_relations', 'rel') . ' ON ' . $db->quoteName('rel.itemid') . ' = ' . $db->quoteName('a.id'))
             ->join('LEFT',
@@ -103,7 +105,10 @@ class ModJemTypesHelper
     }
 
     /**
-     * Top-N mode: for each published type, returns the next N upcoming events.
+     * Return up to N upcoming or ongoing events per visible, published type.
+     *
+     * @param \Joomla\Registry\Registry $params Module settings, including top_n and hide_empty.
+     * @return array Type objects containing their eligible events in chronological order.
      */
     public static function getTopNByType($params)
     {
@@ -113,8 +118,8 @@ class ModJemTypesHelper
         $levels = $user->getAuthorisedViewLevels();
         $levels = array_map('intval', $levels);
         $levelsList = implode(',', $levels);
-        $date   = new Date('now', $app->get('offset'));
-        $today  = $date->format('Y-m-d');
+        $notFinishedWhere = $db->quoteName('a.dates') . ' IS NOT NULL AND '
+            . JemHelper::getEventDateTimeWhere('end', '>');
         $language = $app->getLanguage()->getTag();
         $filterLanguage = Multilanguage::isEnabled();
         $n      = max(1, (int) $params->get('top_n', 3));
@@ -165,7 +170,7 @@ class ModJemTypesHelper
                 ->where($effectiveTypeId . ' = ' . (int) $type->id)
                 ->where(JemHelper::getEventPublicationWhere('a'))
                 ->where($db->quoteName('a.access') . ' IN (' . $levelsList . ')')
-                ->where('COALESCE(' . $db->quoteName('a.enddates') . ', ' . $db->quoteName('a.dates') . ') >= ' . $db->quote($today))
+                ->where($notFinishedWhere)
                 ->where($db->quoteName('c.published') . ' = 1')
                 ->where($db->quoteName('c.access') . ' IN (' . $levelsList . ')')
                 ->where('(' . $db->quoteName('a.locid') . ' IS NULL OR ' . $db->quoteName('a.locid') . ' = 0 OR (' . $db->quoteName('v.published') . ' = 1 AND ' . $db->quoteName('v.access') . ' IN (' . $levelsList . ')))')
