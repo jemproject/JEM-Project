@@ -442,7 +442,7 @@ use Joomla\CMS\Factory;
 
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 ps-0 pe-0 ' : '') . '" style="' . $featuredstyle;
+        $content .= '<div class="eventcontentinner jem-calendar-event event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
         $style = '';
         $eventBackgroundColor = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {
@@ -462,9 +462,9 @@ use Joomla\CMS\Factory;
             $content .= $color;
         }
 
-        $content .= $editicon;
+        $content .= '<div class="eventcontenttextbody">' . $editicon;
         $content .= JemHelper::caltooltip($catname.$eventname.$timehtml.$venue.$contact.$eventstate, $eventdate, $row->title . $statusicon, $detaillink, 'editlinktip hasTip', $timetp, $category->color);
-        $content .= $eventaccess . $contentend . '</div></div>';
+        $content .= $eventaccess . '</div></div></div>' . $contentend;
 
         $this->cal->setEventContent($year, $month, $day, $content);
     endforeach;

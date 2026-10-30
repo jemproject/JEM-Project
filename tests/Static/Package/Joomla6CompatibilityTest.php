@@ -64,7 +64,7 @@ final class Joomla6CompatibilityTest extends TestCase
             $manifest = simplexml_load_file(JEM_TEST_ROOT . $relativePath);
 
             self::assertNotFalse($manifest);
-            self::assertSame('5.1.0beta5', (string) $manifest->version);
+            self::assertSame('5.1.0beta6', (string) $manifest->version);
             self::assertCount(38, explode(';', (string) $manifest->notes));
             self::assertStringContainsString('guided, non-overwriting migration', (string) $manifest->notes);
             self::assertStringContainsString('Issue #2320', (string) $manifest->notes);

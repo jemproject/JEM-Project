@@ -424,7 +424,7 @@ use Joomla\CMS\Factory;
         //generate the output
         // if we have exact one color from categories we can use this as background color of event
         $content .= '<div class="event-filter ' . implode(' ', $eventFilterClasses) . '" data-categories="' . $this->escape(implode(' ', array_filter($eventFilterClasses, static function ($class) { return strpos($class, 'cat') === 0; }))) . '" data-venue="' . ($venueId > 0 ? 'venue' . $venueId : '') . '">';
-        $content .= '<div class="eventcontentinner event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . ($categoryColorMarker ? ' pt-0 ps-0 pe-0 ' : '') . '" style="' . $featuredstyle;
+        $content .= '<div class="eventcontentinner jem-calendar-event event_id' . $eventid . ' cat_id' . $category->id . ' ' . $featuredclass . '" style="' . $featuredstyle;
         $style = '';
         $eventBackgroundColor = '';
         if (!empty($evbg_usecatcolor) && count($catcolor) === 1) {

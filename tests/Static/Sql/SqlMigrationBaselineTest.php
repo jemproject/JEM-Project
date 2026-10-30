@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 final class SqlMigrationBaselineTest extends TestCase
 {
-    public function testImageAsDefaultIsIntroducedOnlyByTheJem500Migration(): void
+    public function testImageAsDefaultHasAnOptionalRepairForLegacyInstallations(): void
     {
         $files = glob(JEM_TEST_ROOT . '/admin/sql/updates/mysql/*.sql') ?: array();
         usort($files, static function (string $left, string $right): int {
@@ -32,9 +32,10 @@ final class SqlMigrationBaselineTest extends TestCase
         self::assertSame(
             array(
                 '5.0.0.sql: ALTER TABLE `#__jem_categories` ADD COLUMN `image_as_default` tinyint(1) NOT NULL DEFAULT 0;',
+                "5.0.2.sql: ALTER TABLE `#__jem_categories` ADD COLUMN `image_as_default` TINYINT(1) NOT NULL DEFAULT '0' /** CAN FAIL **/;",
             ),
             $additions,
-            'image_as_default must be introduced by the JEM 5.0.0 migration.'
+            'Keep the original migration and the optional 5.0.2 legacy-schema repair.'
         );
     }
 

@@ -235,6 +235,48 @@ div#jem .jem-calendar-event-title {
     opacity: 1;
 }
 
+/* Keep calendar card text vertically balanced, independently of marker bars. */
+div#jem .eventcontentinner.jem-calendar-event {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+}
+
+div#jem .jem-calendar-event > .eventcontenttextbar,
+div#jem .jem-calendar-event > .eventcontenttextblock {
+    padding: 0;
+}
+
+div#jem .jem-calendar-event .eventcontenttextbody {
+    display: flow-root;
+    padding: 5px;
+}
+
+div#jem .jem-calendar-event .eventcontenttextbody > .editlinktip,
+div#jem .jem-calendar-event .eventcontenttextbody > .editlinktip > a {
+    display: block;
+}
+
+div#jem .jem-calendar-event .jem-calendar-event-time {
+    padding-top: 0;
+}
+
+div#jem .jem-calendar-event .eventcontenttop {
+    position: relative;
+    top: auto;
+    height: 8px;
+    min-height: 8px;
+    padding: 0;
+}
+
+div#jem .jem-calendar-event .eventcontentbottom {
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
 /* *** CALENDAR WEEK ADDITIONS START *** */
 div#jem a .eventcontenttop {
     text-decoration: none;

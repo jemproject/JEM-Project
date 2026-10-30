@@ -239,6 +239,22 @@ namespace {
     }
     final class JemOutput
     {
+        public static array $timeCalls = [];
+
+        /**
+         * Record time-formatting inputs; tests exercise module policy, not shared formatting.
+         *
+         * @param string $time Stored clock value.
+         * @param string $format Requested display format.
+         * @param bool $addSuffix Whether the configured suffix is requested.
+         * @return string Unformatted clock value for explicit forwarding assertions.
+         */
+        public static function formattime($time, $format = '', $addSuffix = true): string
+        {
+            self::$timeCalls[] = [$time, $format, $addSuffix];
+            return $time;
+        }
+
         public static function moduleStatusRibbonScale($params): int
         {
             return 100;
