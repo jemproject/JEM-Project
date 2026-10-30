@@ -213,11 +213,11 @@ $wa->addInlineScript('
                     </td>
                     <td class="center">
                         <?php
-                        $status = (int)$row->status;
-                        if($this->event->waitinglist) {
-                            if ($status === 1 && $row->waiting == 1) {
-                                $status = 2;
-                            }
+                        $status = (int) $row->status;
+                        if ($status === 1 && (int) $row->waiting === 1) {
+                            $status = 2;
+                        }
+                        if ($this->event->waitinglist) {
                             echo jemhtml::toggleAttendanceStatus($i, $status, $canChange && !$isPriced);
                         } else {
                             echo jemhtml::toggleAttendanceStatus($i, $status, false);
