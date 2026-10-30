@@ -97,14 +97,12 @@ abstract class ModJemTeaserHelper
             $cal_from = "";
         }
 
-        # currently running events only (today + offset is inbetween start and end date of event)
+        # Events occurring on the Joomla-local date reached by the hour offset.
         elseif ($type == 3) {
-            $offset_days = (int)round($offset_hours / 24);
-
             $model->setState('filter.published', 1);
             $model->setState('filter.orderby', array('a.start_utc ASC', 'a.dates ASC', 'a.times ASC', 'a.created ASC'));
 
-            $targetDate = $db->quote(JemHelper::getJoomlaDate($offset_days));
+            $targetDate = $db->quote(JemHelper::getJoomlaDateWithHourOffset($offset_hours));
             $cal_from = ' (a.dates <= ' . $targetDate . ' AND IFNULL(a.enddates,a.dates) >= ' . $targetDate . ')';
         }
 

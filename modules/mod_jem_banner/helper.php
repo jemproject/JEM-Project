@@ -64,7 +64,6 @@ abstract class ModJemBannerHelper
         #  4: featured               - ? (same as upcoming yet)
         #  5: open date              - no limit
         $type = (int)$params->get('type');
-        $offset_days    = (int)($params->get('offset_hours', 0) / 24); // hours given must be multiple of 24, truncate to full days
         $offset_minutes = (int)($params->get('offset_hours', 0) * 60);
         $max_days       = (int) $params->get('max_days', 0); // empty = unlimited
         $max_minutes    = $max_days ? ($max_days * 24 * 60 + $offset_minutes) : false;
@@ -107,7 +106,7 @@ abstract class ModJemBannerHelper
                 break;
 
             case 3: # running events (one day)
-                $target_date = $db->quote(JemHelper::getJoomlaDate($offset_days));
+                $target_date = $db->quote(JemHelper::getJoomlaDateWithHourOffset((int) $params->get('offset_hours', 0)));
                 $cal_from = " (a.dates <= $target_date AND IFNULL(a.enddates, a.dates) >= $target_date) ";
                 $cal_to = "";
                 break;

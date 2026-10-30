@@ -388,6 +388,30 @@ class JemHelper
     }
 
     /**
+     * Return the Joomla-local date reached after an offset in elapsed hours.
+     *
+     * UTC arithmetic preserves the offset across daylight-saving transitions.
+     * This selects a whole calendar day, not events running at the target instant.
+     *
+     * @param int                     $offsetHours Signed number of elapsed hours.
+     * @param \DateTimeInterface|null $now         Reference instant; null uses the current time.
+     * @return string Local calendar date in YYYY-MM-DD format.
+     */
+    public static function getJoomlaDateWithHourOffset(int $offsetHours = 0, ?\DateTimeInterface $now = null): string
+    {
+        $utc = new \DateTimeZone('UTC');
+        $instant = $now === null
+            ? new \DateTimeImmutable('now', $utc)
+            : \DateTimeImmutable::createFromInterface($now)->setTimezone($utc);
+
+        if ($offsetHours !== 0) {
+            $instant = $instant->modify(sprintf('%+d hours', $offsetHours));
+        }
+
+        return $instant->setTimezone(new \DateTimeZone(self::getJoomlaTimeZoneName()))->format('Y-m-d');
+    }
+
+    /**
      * Validate a requested calendar month and fall back to the current Joomla month.
      *
      * @param   mixed  $year   Requested calendar year.

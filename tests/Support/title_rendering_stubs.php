@@ -190,13 +190,30 @@ namespace {
     }
     final class JemHelper
     {
+        public static array $hourOffsets = [];
+        public static array $minuteOffsets = [];
+        public static string $hourOffsetDate = '2026-10-30';
+
+        /**
+         * Record module wiring; real date arithmetic is tested separately with Joomla's helper.
+         *
+         * @param int $hours Configured signed hours.
+         * @return string Controlled target date for the SQL fixture.
+         */
+        public static function getJoomlaDateWithHourOffset(int $hours): string
+        {
+            self::$hourOffsets[] = $hours;
+            return self::$hourOffsetDate;
+        }
+
         public static function getJoomlaDate(): string
         {
             return '2026-10-30';
         }
 
-        public static function getEventDateTimeWhere($kind, $operator): string
+        public static function getEventDateTimeWhere($kind, $operator, $offsetMinutes = 0): string
         {
+            self::$minuteOffsets[] = $offsetMinutes;
             return 'a.' . $kind . '_utc ' . $operator . " '2026-10-30 12:00:00'";
         }
 
