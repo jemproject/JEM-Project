@@ -144,6 +144,19 @@
             event item. Type in any text and press Enter or click the go button. You also can filter the search by
             limiting it to the venue, category, city or event title. Use the selectbox on the left for that.
         </p>
+        <p><strong>Date matching:</strong>
+            Start Date and End Date are inclusive. The default, <strong>Fully within period</strong>,
+            shows events starting on or after Start Date and finishing on or before End Date.
+            <strong>Overlaps period</strong> also shows events crossing either boundary.
+            For example, a May 29 &ndash; June 3 event overlaps June 1 &ndash; June 30, but is not fully within it.
+            With only Start Date, overlap includes events that have not ended before that date;
+            with only End Date, it includes events starting on or before that date.
+            An absent end date uses the event's start date. In overlap mode, legacy zero end dates
+            are also treated as absent, and events without a known start date are excluded when filtering by date.
+            The default mode retains undated events when only one boundary is supplied, subject to any known end date.
+            Without date boundaries, neither mode restricts the list by date.
+            Invalid or reversed filter dates show a warning and no results; correct them or use Clear.
+        </p>
         <p><strong>Drop Down:</strong>
             Select the number of list entries displayed per page [Options between 5 &ndash; 100 or All].
         </p>

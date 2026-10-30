@@ -11,6 +11,8 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Database\DatabaseInterface;
+use Joomla\Database\QueryInterface;
 
 /**
  * Model-Events
@@ -45,7 +47,7 @@ class JemModelEvents extends ListModel
                     'access', 'a.access', 'access_level',
                     'search', 'published', 'search_type',
                     'category_id', 'event_type_id', 'venue_id',
-                    'begin', 'end',
+                    'begin', 'end', 'date_match',
             );
         }
 
@@ -93,6 +95,10 @@ class JemModelEvents extends ListModel
         $this->setState('filter_end', $end);
         $this->setState('filter.end', $end);
 
+        $dateMatch = $this->getUserStateFromRequest($this->context . '.filter_date_match', 'filter_date_match', '', 'cmd');
+        $this->setState('filter_date_match', $dateMatch);
+        $this->setState('filter.date_match', $dateMatch);
+
         $featured = $this->getUserStateFromRequest($this->context.'.filter_featured', 'filter_featured', '', 'string');
         $this->setState('filter_featured', $featured);
         $this->setState('filter.featured', $featured);
@@ -121,6 +127,20 @@ class JemModelEvents extends ListModel
         parent::populateState($defaultOrdering, $defaultDirection);
 
         $this->syncLegacyFilterState($app);
+
+        // Search Tools input can bypass the legacy string filter.
+        foreach (array('begin', 'end', 'date_match') as $name) {
+            $value = $this->state->get('filter.' . $name, '');
+            if ($name === 'date_match') {
+                $value = $value === 'overlap' ? 'overlap' : '';
+            } else {
+                $value = is_string($value) ? trim($value) : ($value === null ? '' : 'invalid');
+            }
+            $this->setState('filter_' . $name, $value);
+            $this->setState('filter.' . $name, $value);
+            $app->setUserState($this->context . '.filter_' . $name, $value);
+            $app->setUserState($this->context . '.filter.' . $name, $value);
+        }
     }
 
     /**
@@ -144,6 +164,7 @@ class JemModelEvents extends ListModel
         $id .= ':' . $this->getState('filter_venue_id');
         $id .= ':' . $this->getState('filter_begin');
         $id .= ':' . $this->getState('filter_end');
+        $id .= ':' . $this->getState('filter_date_match');
         $id .= ':' . $this->getState('filter_featured');
         $id .= ':' . $this->getState('filter.access');
 
@@ -235,28 +256,7 @@ class JemModelEvents extends ListModel
             $query->where('a.locid = ' . $venueId);
         }
 
-        // Filter by Date
-        $startDate = $this->getState('filter_begin');
-        $endDate   = $this->getState('filter_end');
-
-        // Use the start date when the event has no explicit end date.
-        $effectiveEndDate = 'COALESCE(a.enddates, a.dates)';
-
-        if (!empty($startDate) && !empty($endDate)) {
-            $query->where('(a.dates >= '.$db->Quote($startDate).')');
-            $query->where($effectiveEndDate . ' <= ' . $db->quote($endDate));
-        } else {
-            if (!empty($startDate)) {
-                $query->where('(a.dates IS NULL OR a.dates >= '.$db->Quote($startDate).')');
-            }
-            if (!empty($endDate)) {
-                // Retain undated events when only one boundary is supplied.
-                $query->where(
-                    '(' . $effectiveEndDate . ' IS NULL'
-                    . ' OR ' . $effectiveEndDate . ' <= ' . $db->quote($endDate) . ')'
-                );
-            }
-        }
+        $this->applyDateFilter($query, $db);
 
         // Filter by search in title
         $filter = $this->getState('filter_type');
@@ -334,6 +334,89 @@ class JemModelEvents extends ListModel
     }
 
     /**
+     * Restrict the administrator list by inclusive containment or overlap.
+     *
+     * Invalid input returns no matches; the view displays the validation warning.
+     * No dates stored on events are modified.
+     *
+     * @param QueryInterface    $query Query receiving the date conditions.
+     * @param DatabaseInterface $db    Database used to quote date boundaries.
+     * @return void
+     */
+    private function applyDateFilter(QueryInterface $query, DatabaseInterface $db): void
+    {
+        $error = $this->getDateFilterError();
+        $this->setState('filter.date_error', $error);
+        if ($error !== '') {
+            $query->where('1 = 0');
+            return;
+        }
+
+        $startDate = $this->getState('filter_begin', '');
+        $endDate = $this->getState('filter_end', '');
+        if ($startDate === '' && $endDate === '') {
+            return;
+        }
+
+        if ($this->getState('filter_date_match') === 'overlap') {
+            // A missing/legacy-zero end means one day, not an unbounded event.
+            $effectiveEndDate = "COALESCE(NULLIF(a.enddates, '0000-00-00'), a.dates)";
+            $query->where("a.dates IS NOT NULL AND a.dates <> '0000-00-00'");
+            if ($startDate !== '') {
+                $query->where($effectiveEndDate . ' >= ' . $db->quote($startDate));
+            }
+            if ($endDate !== '') {
+                $query->where('a.dates <= ' . $db->quote($endDate));
+            }
+            return;
+        }
+
+        // Preserve the existing containment and one-boundary undated policies.
+        $effectiveEndDate = 'COALESCE(a.enddates, a.dates)';
+        if ($startDate !== '' && $endDate !== '') {
+            $query->where('a.dates >= ' . $db->quote($startDate));
+            $query->where($effectiveEndDate . ' <= ' . $db->quote($endDate));
+        } else {
+            if ($startDate !== '') {
+                $query->where('(a.dates IS NULL OR a.dates >= ' . $db->quote($startDate) . ')');
+            }
+            if ($endDate !== '') {
+                $query->where(
+                    '(' . $effectiveEndDate . ' IS NULL'
+                    . ' OR ' . $effectiveEndDate . ' <= ' . $db->quote($endDate) . ')'
+                );
+            }
+        }
+    }
+
+    /**
+     * Validate optional YYYY-MM-DD boundaries without silently repairing input.
+     *
+     * @return string Translation key for invalid/reversed dates, or an empty string.
+     */
+    private function getDateFilterError(): string
+    {
+        $startDate = $this->getState('filter_begin', '');
+        $endDate = $this->getState('filter_end', '');
+        foreach (array($startDate, $endDate) as $date) {
+            if ($date === '') {
+                continue;
+            }
+            if (
+                !is_string($date)
+                || !preg_match('/^[1-9][0-9]{3}-[0-9]{2}-[0-9]{2}$/D', $date)
+                || !checkdate((int) substr($date, 5, 2), (int) substr($date, 8, 2), (int) substr($date, 0, 4))
+            ) {
+                return 'COM_JEM_EVENTS_FILTER_DATE_INVALID';
+            }
+        }
+        if ($startDate !== '' && $endDate !== '' && $startDate > $endDate) {
+            return 'COM_JEM_EVENTS_FILTER_DATE_REVERSED';
+        }
+        return '';
+    }
+
+    /**
      * Keep existing flat filter URLs compatible with Joomla Search Tools.
      *
      * @param  Joomla\CMS\Application\CMSApplication  $app  Application object.
@@ -351,6 +434,7 @@ class JemModelEvents extends ListModel
             'venue_id'      => array('filter_venue_id', 'filter_venue_id', 0),
             'begin'         => array('filter_begin', 'filter_begin', ''),
             'end'           => array('filter_end', 'filter_end', ''),
+            'date_match'    => array('filter_date_match', 'filter_date_match', ''),
             'featured'      => array('filter_featured', 'filter_featured', ''),
             'access'        => array('filter_access', 'filter_access', 0),
         );

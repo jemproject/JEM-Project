@@ -53,6 +53,19 @@
         />
 
         <field
+            name="date_match"
+            type="list"
+            label="COM_JEM_EVENTS_FILTER_DATE_MATCH"
+            description="COM_JEM_EVENTS_FILTER_DATE_MATCH_DESC"
+            default=""
+            class="js-select-submit-on-change"
+            validate="options"
+        >
+            <option value="">COM_JEM_EVENTS_FILTER_DATE_CONTAINED</option>
+            <option value="overlap">COM_JEM_EVENTS_FILTER_DATE_OVERLAP</option>
+        </field>
+
+        <field
             name="featured"
             type="list"
             label="JFEATURED"
