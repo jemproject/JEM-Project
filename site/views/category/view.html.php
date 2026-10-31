@@ -114,8 +114,7 @@ class JemViewCategory extends JemView
             $rows     = $this->get('Items', 'CategoryCal');
 
             if (empty($category)) {
-                $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
             } elseif (!$category->user_has_access_category) {
                 if ($user->get('guest') || !$user->get('id')) {
                     $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');
@@ -227,8 +226,7 @@ class JemViewCategory extends JemView
             $parent   = $this->get('Parent');
 
             if (empty($category)) {
-                $app->enqueueMessage(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 'error');
-                return false;
+                throw new \Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
             } else if(!$category->user_has_access_category) {
                 if ($user->get('guest') || !$user->get('id')) {
                     $app->enqueueMessage(Text::_('COM_JEM_LOGIN_TO_ACCESS'), 'warning');

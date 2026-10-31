@@ -49,9 +49,7 @@ class JemViewCategory extends HtmlView
             $category = $model->getCategory();
 
             if (empty($category)) {
-                $app->close();
-
-                return;
+                throw new \Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess(!empty($category->user_has_access_category), $app)) {
@@ -91,9 +89,7 @@ class JemViewCategory extends HtmlView
             $categoryItem = $categoryModel->getCategory();
 
             if (empty($categoryItem)) {
-                $app->close();
-
-                return;
+                throw new \Exception(Text::_('JGLOBAL_CATEGORY_NOT_FOUND'), 404);
             }
 
             if (!JemFrontendAccess::enforceViewAccess(!empty($categoryItem->user_has_access_category), $app)) {
