@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
@@ -29,13 +31,7 @@ class JemModelAttendeeregistrations extends BaseDatabaseModel
         $app = Factory::getApplication();
         $settings = JemHelper::config();
 
-        if ($app->input->getInt('limitstart', null) === null) {
-            $app->setUserState('com_jem.attendeeregistrations.limitstart', 0);
-        }
-
-        $limit = $app->getUserStateFromRequest('com_jem.attendeeregistrations.limit', 'limit', $settings->display_num, 'int');
-        $limitstart = $app->getUserStateFromRequest('com_jem.attendeeregistrations.limitstart', 'limitstart', 0, 'int');
-        $limitstart = $limit ? (int) (floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.attendeeregistrations', $settings->display_num);
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);

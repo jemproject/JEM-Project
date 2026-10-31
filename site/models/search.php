@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
@@ -63,10 +65,12 @@ class JemModelSearch extends BaseDatabaseModel
         $this->resetSearchFilters((int) $jemsettings->display_num);
 
         //get the number of events from database
-        $limit      = $this->getSearchFilter('limit', $jemsettings->display_num, 'int');
-        $limitstart = $app->input->getInt('limitstart', 0);
-        // correct start value if required
-        $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve(
+            $app,
+            'com_jem.search',
+            $jemsettings->display_num,
+            $this->isSearchFilterEnabled('limit')
+        );
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);

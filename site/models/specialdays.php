@@ -7,6 +7,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 
@@ -47,7 +49,14 @@ class JemModelSpecialdays extends ListModel
         $this->setState('filter.year', $app->getUserStateFromRequest($this->context . '.filter_year', 'filter_year', $defaultYear, 'int'));
         $this->setState('params', $params);
 
-        parent::populateState('a.ordering', 'asc');
+        $page = \JemListLimit::resolve(
+            $app,
+            $this->context . '.' . $app->input->getInt('Itemid', 0),
+            $app->get('list_limit', 20)
+        );
+        \JemListLimit::populate($this, $app, $this->context, $page, function (): void {
+            parent::populateState('a.ordering', 'asc');
+        });
     }
 
     protected function getStoreId($id = '')

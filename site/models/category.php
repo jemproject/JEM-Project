@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 Use Joomla\Utilities\ArrayHelper;
@@ -125,18 +127,9 @@ class JemModelCategory extends JemModelEventslist
 
         # limit/start
 
-        /* Preserve limitstart when it is missing from the request. */
-        if ($app->input->getInt('limitstart', null) === null) {
-            $app->setUserState('com_jem.category.'.$itemid.'.limitstart', 0);
-        }
-
         if (empty($format) || ($format == 'html')) {
-            $limit = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+            [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.category.' . $itemid, $jemsettings->display_num);
             $this->setState('list.limit', $limit);
-
-            $limitstart = $app->getUserStateFromRequest('com_jem.category.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-            // correct start value if required
-            $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
             $this->setState('list.start', $limitstart);
         }
 

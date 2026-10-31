@@ -6,6 +6,8 @@ namespace JemProject\Tests\VenueState;
 
 use RuntimeException;
 
+require_once JEM_TEST_ROOT . '/site/classes/listlimit.class.php';
+
 /** Isolated state dependencies; no Joomla installation or database is required. */
 final class Registry
 {
@@ -39,6 +41,7 @@ final class InputFilter
     public function clean(mixed $value, string $type): mixed
     {
         return match ($type) {
+            'raw' => $value,
             'int' => (int) $value,
             'bool' => (bool) $value,
             'array' => (array) $value,
@@ -51,6 +54,12 @@ final class InputFilter
 
 final class Input
 {
+    /** @param string $key Field. @param mixed $value Value. @return void */
+    public function set(string $key, mixed $value): void
+    {
+        $this->values[$key] = $value;
+    }
+
     /** @param array<string, mixed> $values Request fields. */
     public function __construct(private array $values)
     {
@@ -71,6 +80,12 @@ final class Input
 
 final class Application
 {
+    /** @param string $key Session key. @param mixed $default Fallback. @return mixed */
+    public function getUserState(string $key, mixed $default = null): mixed
+    {
+        return $this->session[$key] ?? $default;
+    }
+
     public array $session = [];
     public Input $input;
     public Registry $params;
