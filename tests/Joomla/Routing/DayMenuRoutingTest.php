@@ -114,6 +114,22 @@ final class DayMenuRoutingTest extends TestCase
     public static function navigationProvider(): iterable
     {
         foreach ([false, true] as $strict) {
+            // Print context must survive both preprocess (non-SEF) and build/parse.
+            $printLayouts = ['default', 'timeline', 'timetable'];
+            if (is_file(JEM_TEST_ROOT . '/site/views/day/tmpl/venueboard.php')) {
+                $printLayouts[] = 'venueboard';
+            }
+            foreach ($printLayouts as $printLayout) {
+                yield "print $printLayout strict=$strict" => [$printLayout, 202, '20261101', true, $strict, [
+                    'print' => 1, 'tmpl' => 'component', 'mode' => 'timetable',
+                    'timeline_days_to_show' => $printLayout === 'venueboard' ? 1 : 7,
+                    'jem_timeline_layout' => 'details', 'show_archived_events' => 1,
+                    'locids' => '9,10', 'catids' => '8,11', 'pub' => '1,2',
+                    'filter_search' => 'A&B + # café', 'filter_type' => 1,
+                    'filter_order' => 'a.title', 'filter_order_Dir' => 'DESC',
+                    'limit' => 10, 'limitstart' => 20,
+                ]];
+            }
             foreach (['timeline', 'timetable', 'default'] as $layout) {
                 foreach ([101, 202] as $menuId) {
                     foreach ([false, true] as $legacy) {

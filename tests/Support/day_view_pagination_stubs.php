@@ -22,6 +22,12 @@ namespace Joomla\CMS\Uri {
             return new self();
         }
 
+        /** @return string Fixture site root. */
+        public static function root(): string
+        {
+            return '/';
+        }
+
         public function toString(): string
         {
             return '/day';
@@ -61,6 +67,10 @@ namespace Joomla\CMS\HTML {
 
 namespace {
     // Loaded only inside isolated tests, never into Joomla or the main PHPUnit process.
+    if (!defined('JPATH_ROOT')) {
+        define('JPATH_ROOT', JEM_TEST_ROOT);
+    }
+
     final class JemHelper
     {
         public static array $loadedCss = [];
@@ -104,6 +114,12 @@ namespace {
 
     final class JemOutput
     {
+        /** @param string $link URL. @param bool $archive Context. @return string Print-service boundary for heading tests. */
+        public static function buildPrintLink(string $link, bool $archive = false): string
+        {
+            return $link . '&print=1&tmpl=component' . ($archive ? '&task=archive' : '');
+        }
+
         public static function formatdate(string $date): string
         {
             return $date;
@@ -159,6 +175,11 @@ namespace {
                 public function addHeadLink(...$args): void
                 {
                 }
+
+                /** @param string $url Script URL. @return void No document output needed. */
+                public function addScript(string $url): void
+                {
+                }
             };
             $this->pathway = new class {
                 public array $items = ['Original menu'];
@@ -185,6 +206,12 @@ namespace {
                 }
 
                 public function getInt(string $key, int $default = 0): int
+                {
+                    return $default;
+                }
+
+                /** @param string $key Input. @param string $default Default. @return string Value. */
+                public function getString(string $key, string $default = ''): string
                 {
                     return $default;
                 }
@@ -251,7 +278,13 @@ namespace {
             $this->date = $date;
         }
 
-        public function getState(): array
+        /** @return string One-day fixture interval. */
+        public function getDayEnd(): string
+        {
+            return $this->date;
+        }
+
+        public function getState(?string $key = null, mixed $default = null): mixed
         {
             // Joomla populates request/session state on the first getState(), not setState().
             if (!$this->populated) {
@@ -260,7 +293,7 @@ namespace {
                 $this->populated = true;
             }
 
-            return $this->state;
+            return $key === null ? $this->state : ($this->state[$key] ?? $default);
         }
 
         public function setLimit(int $limit): void
