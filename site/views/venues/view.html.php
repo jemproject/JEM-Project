@@ -95,14 +95,14 @@ class JemViewVenues extends JemView
 
         if ($task == 'archive') {
             $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_('index.php?option=com_jem&view=venues&task=archive'));
-            $print_link = Route::_('index.php?option=com_jem&view=venues&task=archive&print=1&tmpl=component');
-            $pdf_link = Route::_('index.php?option=com_jem&view=venues&task=archive&format=raw&layout=pdf');
+            $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venues&task=archive&print=1&tmpl=component'));
+            $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venues&task=archive&format=raw&layout=pdf'));
             $pagetitle   .= ' - '.Text::_('COM_JEM_ARCHIVE');
             $pageheading .= ' - '.Text::_('COM_JEM_ARCHIVE');
             $params->set('page_heading', $pageheading);
         } else {
-            $print_link = Route::_('index.php?option=com_jem&view=venues&print=1&tmpl=component');
-            $pdf_link = Route::_('index.php?option=com_jem&view=venues&format=raw&layout=pdf');
+            $print_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venues&print=1&tmpl=component'));
+            $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venues&format=raw&layout=pdf'));
         }
 
         // Add site name to title if param is set

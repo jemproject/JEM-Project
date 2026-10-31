@@ -148,10 +148,10 @@ class JemViewVenue extends JemView
 
             // create the pathway
             if ($task == 'archive') {
-                $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component'));
                 $archive_link = Route::_('index.php?option=com_jem&view=venue&layout=calendar&id=' . $idVenue);
             } else {
-                $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component'));
                 $archive_link = $uri->toString() . (str_contains($uri->toString() ?? '','?')?'&':'?') . 'id=' . $venue->id;
             }
 
@@ -174,9 +174,9 @@ class JemViewVenue extends JemView
             $partMode = in_array($requestedMode, array('calendar', 'agenda'), true) ? '&mode=' . $requestedMode : '';
             $url_base .= $partMode;
             $navigationBase = $url_base . $partArchive . ($print ? '&print=1&tmpl=component' : '');
-            $print_link = Route::_(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive'));
-            $pdf_link = Route::_('index.php?option=com_jem&view=venue&layout=pdf' . $partVenid
-                . $partItemid . $partDate . $partArchive . '&venue_calendar_pdf=1&format=raw');
+            $print_link = Route::_(JemOutput::prepareExportLink(JemOutput::buildPrintLink($url_base . $partDate, $task === 'archive')));
+            $pdf_link = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=venue&layout=pdf' . $partVenid
+                . $partItemid . $partDate . $partArchive . '&venue_calendar_pdf=1&format=raw'));
             $archive_link = Route::_($url_base . $partDate);
 
             // init calendar
@@ -316,15 +316,15 @@ class JemViewVenue extends JemView
             // create the pathway
             if ($task == 'archive') {
                 $pathway->addItem (Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive'));
-                $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getVenueRoute($venue->slug).'&task=archive&print=1&tmpl=component'));
                 $pagetitle   .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
             } else {
                 //$pathway->addItem($venue->venue, Route::_(JemHelperRoute::getVenueRoute($venue->slug)));
-                $print_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getVenueRoute($venue->slug).'&print=1&tmpl=component'));
             }
             $archive_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug));
-            $pdf_link = Route::_(JemHelperRoute::getVenueRoute($venue->slug) . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf');
+            $pdf_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getVenueRoute($venue->slug) . ($task == 'archive' ? '&task=archive' : '') . '&format=raw&layout=pdf'));
 
             $params->set('page_heading', $pageheading);
 

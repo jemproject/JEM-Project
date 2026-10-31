@@ -11,6 +11,13 @@ use PHPUnit\Framework\TestCase;
 /** Execute production menu/title/link preparation without a Joomla application or database. */
 final class VenuePrintLinkTest extends TestCase
 {
+    /** @return void Load the shared production URL helper with an empty request. */
+    protected function setUp(): void
+    {
+        require_once JEM_TEST_ROOT . '/tests/Support/export_link_environment.php';
+        \JemProject\Tests\ExportLink\Factory::$application = new \JemProject\Tests\ExportLink\Application([]);
+    }
+
     /**
      * Exercise matching, absent and unrelated menus in ordinary, archive and print requests.
      *
@@ -49,6 +56,7 @@ final class VenuePrintLinkTest extends TestCase
         // Only external translation/routing/registry services are substituted; the decision is production code.
         $prepare = eval(
             'namespace ' . __NAMESPACE__ . ';'
+            . 'use JemProject\\Tests\\ExportLink\\JemOutput;'
             . 'use ' . __NAMESPACE__ . '\\VenuePrintLinkRoute as Route;'
             . 'use ' . __NAMESPACE__ . '\\VenuePrintLinkText as Text;'
             . 'return static function ($menuitem, $params, $print, $task) {'

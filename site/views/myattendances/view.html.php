@@ -146,13 +146,13 @@ class JemViewMyattendances extends JemView
 
             if ($task == 'archive') {
                 $pathway->addItem(Text::_('COM_JEM_ARCHIVE'), Route::_(JemHelperRoute::getMyAttendancesRoute() . '&task=archive'));
-                $print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&task=archive&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyAttendancesRoute() . '&task=archive&print=1&tmpl=component'));
                 $pagetitle .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $pageheading .= ' - ' . Text::_('COM_JEM_ARCHIVE');
                 $archive_link = Route::_('index.php?option=com_jem&view=myattendances');
                 $params->set('page_heading', $pageheading);
             } else {
-                $print_link = Route::_(JemHelperRoute::getMyAttendancesRoute() . '&print=1&tmpl=component');
+                $print_link = Route::_(JemOutput::prepareExportLink(JemHelperRoute::getMyAttendancesRoute() . '&print=1&tmpl=component'));
                 $archive_link = $uri->toString();
             }
 

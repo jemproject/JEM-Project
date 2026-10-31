@@ -77,8 +77,8 @@ class JemViewTypevenues extends JemView
             $this->pagetitle     = $pagetitle;
             $this->pageclass_sfx = '';
             $this->print         = $print;
-            $this->print_link    = JemOutput::buildPrintLink($uri->toString());
-            $this->pdf_link      = Route::_('index.php?option=com_jem&view=typevenues&id=' . (int) $requestedTypeId . '&format=raw&layout=pdf');
+            $this->print_link    = JemOutput::buildPrintLink(JemOutput::prepareExportLink($uri->toString(), true));
+            $this->pdf_link      = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=typevenues&id=' . (int) $requestedTypeId . '&format=raw&layout=pdf'));
             $this->task          = '';
             $this->show_status   = false;
 
@@ -174,8 +174,8 @@ class JemViewTypevenues extends JemView
         $this->pagetitle     = $pagetitle;
         $this->pageclass_sfx = '';
         $this->print         = $print;
-        $this->print_link    = JemOutput::buildPrintLink($uri->toString());
-        $this->pdf_link      = Route::_('index.php?option=com_jem&view=typevenues&id=' . (int) $typeObj->id . '&format=raw&layout=pdf');
+        $this->print_link    = JemOutput::buildPrintLink(JemOutput::prepareExportLink($uri->toString(), true));
+        $this->pdf_link      = Route::_(JemOutput::prepareExportLink('index.php?option=com_jem&view=typevenues&id=' . (int) $typeObj->id . '&format=raw&layout=pdf'));
         $this->task          = '';
         $this->show_status   = $permissions->canEditPublishVenue;
 

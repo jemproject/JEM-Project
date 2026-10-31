@@ -115,7 +115,7 @@ class JemViewAttendees extends JemView
         // Emailaddress
         $enableemailaddress = $params->get('enableemailaddress', 0);
 
-        $print_link = 'index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id='.$event->id;
+        $print_link = JemOutput::prepareExportLink('index.php?option=com_jem&view=attendees&layout=print&task=print&tmpl=component&id=' . $event->id);
         $backlink = 'attendees';
 
 
