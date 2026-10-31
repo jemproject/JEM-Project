@@ -35,8 +35,9 @@ final class InstallerSchemaParityTest extends TestCase
             }
         });
         $options = ['host' => '127.0.0.1', 'user' => getenv('JEM_TEST_MYSQL_USER') ?: 'root',
-            'password' => getenv('JEM_TEST_MYSQL_PASSWORD') ?: '', 'prefix' => 't_'];
-        $this->server = new mysqli($options['host'], $options['user'], $options['password']);
+            'password' => getenv('JEM_TEST_MYSQL_PASSWORD') ?: '', 'prefix' => 't_',
+            'port' => (int) (getenv('JEM_TEST_MYSQL_PORT') ?: 3306)];
+        $this->server = new mysqli($options['host'], $options['user'], $options['password'], '', $options['port']);
         $this->database = 'jem_schemaparity_' . bin2hex(random_bytes(8));
         $this->server->query('CREATE DATABASE ' . $this->database . ' CHARACTER SET utf8mb4');
         $this->db = new Joomla\Database\Mysqli\MysqliDriver($options + ['database' => $this->database]);
@@ -103,6 +104,7 @@ final class InstallerSchemaParityTest extends TestCase
             '442 beta fallback' => ['442', false],
             '450 SQL and fallback' => ['450', true],
             '450 beta fallback' => ['450', false],
+            '501 SQL and fallback' => ['501', true],
             'current reinstall' => ['current', false],
         ];
     }
@@ -121,6 +123,10 @@ final class InstallerSchemaParityTest extends TestCase
         }
         if ($variant === '450') {
             $this->db->setQuery('ALTER TABLE #__jem_categories DROP COLUMN image_as_default')->execute();
+        }
+        if ($variant === '501') {
+            $this->db->setQuery('ALTER TABLE #__jem_special_days DROP INDEX idx_day_type,'
+                . ' DROP INDEX idx_published_dates, DROP INDEX idx_checkout')->execute();
         }
         $this->db->setQuery("INSERT INTO #__jem_special_days(title,created) VALUES ('Unknown history',NULL),('Known history','2012-03-04 05:06:07')")->execute();
         if ($runSql) {

@@ -12,8 +12,9 @@ ALTER TABLE `#__jem_types` ALTER COLUMN `name` SET DEFAULT '';
 ALTER TABLE `#__jem_special_days` MODIFY `weekdays` VARCHAR(32) NOT NULL DEFAULT '';
 -- NULL means unknown history; never manufacture a creation date for legacy rows.
 -- Separate the expression default: Joomla checks MODIFY defaults as literals.
+-- MySQL requires parentheses for an expression in ALTER COLUMN SET DEFAULT.
 ALTER TABLE `#__jem_special_days` MODIFY `created` DATETIME NULL;
-ALTER TABLE `#__jem_special_days` ALTER COLUMN `created` SET DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE `#__jem_special_days` ALTER COLUMN `created` SET DEFAULT (CURRENT_TIMESTAMP);
 ALTER TABLE `#__jem_special_days` ADD INDEX `idx_day_type` (`day_type`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_special_days` ADD INDEX `idx_published_dates` (`published`, `start_date`, `end_date`) /** CAN FAIL **/;
 ALTER TABLE `#__jem_special_days` ADD INDEX `idx_checkout` (`checked_out`) /** CAN FAIL **/;
