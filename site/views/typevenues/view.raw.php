@@ -42,6 +42,8 @@ class JemViewTypevenues extends HtmlView
             ? Text::sprintf('COM_JEM_TYPEVENUES_TITLE', (string) $type->name)
             : Text::_('COM_JEM_VENUES');
 
-        JemPdfView::renderTypeVenueList($typeName, $type, (array) $model->getItems(), 'jem-type-venues.pdf');
+        // Match the HTML view: an unresolved type must not become a general-list export.
+        $rows = $type ? (array) $model->getItems() : array();
+        JemPdfView::renderTypeVenueList($typeName, $type, $rows, 'jem-type-venues.pdf');
     }
 }
