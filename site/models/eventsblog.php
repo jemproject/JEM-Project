@@ -103,7 +103,8 @@ class JemModelEventsblog extends JemModelEventslist
             $this->setState('filter.calendar_to', null);
         }
 
-        $limit   = max(1, min(100, $input->getInt('limit', (int) $params->get('blog_events_per_page', 12))));
+        // Blog page size belongs to the menu; request input only selects the page offset.
+        $limit   = max(1, min(100, (int) $params->get('blog_events_per_page', 12)));
         $startAt = max(0, $input->getInt('limitstart', 0));
 
         $this->setState('list.limit', $limit);
