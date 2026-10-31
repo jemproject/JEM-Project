@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Pagination\Pagination;
@@ -152,10 +154,13 @@ class JemModelCategories extends BaseDatabaseModel
         $this->_search           = trim($app->input->getString('filter_search', ''));
 
         //get the number of events from database
-        $limit      = $app->input->getInt('limit', $params->get('cat_num'));
-        $limitstart = $app->input->getInt('limitstart', 0);
-        // correct start value if required
-        $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve(
+            $app,
+            'com_jem.categories.' . $app->input->getInt('id', 0) . ':' . $app->input->getInt('Itemid', 0),
+            $params->get('cat_num', 4),
+            true,
+            true
+        );
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);

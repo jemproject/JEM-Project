@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Filter\InputFilter;
@@ -88,15 +90,7 @@ class JemModelAttendees extends BaseDatabaseModel
 
         $this->_reguser = $settings->get('global_regname', '1');
 
-        /* Preserve limitstart when it is missing from the request. */
-        if ($app->input->getInt('limitstart', null) === null) {
-            $app->setUserState('com_jem.attendees.limitstart', 0);
-        }
-
-        $limit      = $app->getUserStateFromRequest( 'com_jem.attendees.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart = $app->getUserStateFromRequest( 'com_jem.attendees.limitstart', 'limitstart', 0, 'int' );
-        // correct start value if required
-        $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.attendees', $jemsettings->display_num);
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);
@@ -481,10 +475,7 @@ class JemModelAttendees extends BaseDatabaseModel
     {
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
-        $limit       = $app->getUserStateFromRequest('com_jem.addusers.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
-        // correct start value if required
-        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.addusers', $jemsettings->display_num);
 
         $query = $this->_buildQueryUsers();
         $total = $this->_getListCount($query);

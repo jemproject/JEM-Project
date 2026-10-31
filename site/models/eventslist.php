@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\CMS\MVC\Model\ListModel;
@@ -537,14 +539,8 @@ class JemModelEventslist extends ListModel
 
         # limit/start
         if (empty($format) || ($format == 'html')) {
-            if ($app->input->get('limitstart', null, 'int') === null) {
-                $app->setUserState('com_jem.eventslist.' . $itemid . '.limitstart', 0);
-            }
-
-            $limit      = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limit', 'limit', $jemsettings->display_num, 'int');
+            [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.eventslist.' . $itemid, $jemsettings->display_num);
             $this->setState('list.limit', $limit);
-            $limitstart = $app->getUserStateFromRequest('com_jem.eventslist.' . $itemid . '.limitstart', 'limitstart', 0, 'int');
-            $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
             $this->setState('list.start', $limitstart);
         }
 

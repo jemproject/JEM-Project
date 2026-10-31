@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
@@ -473,10 +475,7 @@ class JemModelEditevent extends JemModelEvent
     {
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
-        $limit       = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
-        // correct start value if required
-        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.selectvenue', $jemsettings->display_num);
 
         $query = $this->buildQueryVenues();
         $total = $this->_getListCount($query);
@@ -515,10 +514,7 @@ class JemModelEditevent extends JemModelEvent
     {
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
-        $limit       = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
-        // correct start value if required
-        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.selectcontact', $jemsettings->display_num);
 
         if (!JemHelper::isContactComponentEnabled()) {
             return new Pagination(0, $limitstart, $limit);
@@ -634,9 +630,7 @@ class JemModelEditevent extends JemModelEvent
     {
         $jemsettings = JemHelper::config();
         $app         = Factory::getApplication();
-        $limit       = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart  = $app->input->getInt('limitstart', 0);
-        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.selectarticle', $jemsettings->display_num);
 
         $query = $this->buildQueryArticles();
         $total = $this->_getListCount($query);

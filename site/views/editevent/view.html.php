@@ -371,8 +371,6 @@ class JemViewEditevent extends JemView
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectvenue.filter_type', 'filter_type', 0, 'int');
         $filter_state     = $app->getUserStateFromRequest('com_jem.selectvenue.filter_state', 'filter_state', '*', 'word');
         $search           = $app->getUserStateFromRequest('com_jem.selectvenue.filter_search', 'filter_search', '', 'string');
-        $limitstart       = $jinput->get('limitstart', '0', 'int');
-        $limit            = $app->getUserStateFromRequest('com_jem.selectvenue.limit', 'limit', $jemsettings->display_num, 'int');
 
         // Get/Create the model
         $rows       = $this->get('Venues');
@@ -422,8 +420,6 @@ class JemViewEditevent extends JemView
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectcontact.filter_order_Dir', 'filter_order_Dir', '', 'word');
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectcontact.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectcontact.filter_search', 'filter_search', '', 'string');
-        $limitstart       = $jinput->get('limitstart', '0', 'int');
-        $limit            = $app->getUserStateFromRequest('com_jem.selectcontact.limit', 'limit', $jemsettings->display_num, 'int');
 
         // Load css
         JemHelper::loadCss('jem');
@@ -476,8 +472,6 @@ class JemViewEditevent extends JemView
         $filter_order_Dir = $app->getUserStateFromRequest('com_jem.selectarticle.filter_order_Dir', 'filter_order_Dir', 'ASC', 'word');
         $filter_type      = $app->getUserStateFromRequest('com_jem.selectarticle.filter_type', 'filter_type', 0, 'int');
         $search           = $app->getUserStateFromRequest('com_jem.selectarticle.filter_search', 'filter_search', '', 'string');
-        $limitstart       = $jinput->get('limitstart', '0', 'int');
-        $limit            = $app->getUserStateFromRequest('com_jem.selectarticle.limit', 'limit', $jemsettings->display_num, 'int');
 
         JemHelper::loadCss('jem');
         JemHelper::loadCustomCss();

@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Pagination\Pagination;
@@ -58,15 +60,7 @@ class JemModelMyevents extends BaseDatabaseModel
 
         //get the number of events from database
 
-        /* Preserve limitstart when it is missing from the request. */
-        if ($app->input->getInt('limitstart', null) === null) {
-            $app->setUserState('com_jem.myevents.limitstart', 0);
-        }
-
-        $limit      = $app->getUserStateFromRequest('com_jem.myevents.limit', 'limit', $jemsettings->display_num, 'int');
-        $limitstart = $app->getUserStateFromRequest('com_jem.myevents.limitstart', 'limitstart', 0, 'int');
-        // correct start value if required
-        $limitstart = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.myevents', $jemsettings->display_num);
 
         $this->setState('limit', $limit);
         $this->setState('limitstart', $limitstart);

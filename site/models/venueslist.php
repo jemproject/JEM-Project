@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die;
 
+require_once __DIR__ . '/../classes/listlimit.class.php';
+
 use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -48,16 +50,8 @@ class JemModelVenueslist extends ListModel
         $task        = $jinput->getCmd('task');
         $itemid      = $jinput->getInt('id', 0) . ':' . $jinput->getInt('Itemid', 0);
 
-        /* Preserve limitstart when it is missing from the request. */
-        if ($app->input->getInt('limitstart', null) === null) {
-            $app->setUserState('com_jem.venueslist.limitstart', 0);
-        }
-
-        $limit       = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.limit', 'limit', $jemsettings->display_num, 'int');
+        [$limit, $limitstart] = \JemListLimit::resolve($app, 'com_jem.venueslist.' . $itemid, $jemsettings->display_num);
         $this->setState('list.limit', $limit);
-        $limitstart  = $app->getUserStateFromRequest('com_jem.venueslist.'.$itemid.'.limitstart', 'limitstart', 0, 'int');
-        // correct start value if required
-        $limitstart  = $limit ? (int)(floor($limitstart / $limit) * $limit) : 0;
         $this->setState('list.start', $limitstart);
 
         # Search - variables
@@ -95,7 +89,9 @@ class JemModelVenueslist extends ListModel
 
         $orderby = $filter_order . ' ' . $filter_order_Dir;
 
-        parent::populateState('a.venue', 'ASC');
+        \JemListLimit::populate($this, $app, $this->context, [$limit, $limitstart], function (): void {
+            parent::populateState('a.venue', 'ASC');
+        });
 
         // Keep the validated JEM ordering authoritative after framework state loading.
         $this->setState('filter.orderby', $orderby);
